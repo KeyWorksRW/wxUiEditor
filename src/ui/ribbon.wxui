@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+<wxUiEditorData data_version="11">
+  <node class="Project" converted_art="../xpm" local_pch_file="pch.h" original_art="../art_src">
+    <node class="Panel" base_file="ribbonpanel_base" derived_name="RibbonPanel" name="RibbonPanelBase" size="900,300" window_style="wxTAB_TRAVERSAL">
+      <node class="wxBoxSizer" access="protected:" name="parent_sizer" orient="wxVERTICAL">
+        <node class="wxRibbonBar" style="wxRIBBON_BAR_SHOW_PAGE_LABELS" theme="MSW" flags="wxEXPAND">
+          <node class="wxRibbonPage" access="none" label="Forms" name="page_forms">
+            <node class="wxRibbonPanel" access="none" label="Windows" name="panel_form_windows">
+              <node class="wxRibbonToolBar" access="none" name="forms_bar_windows" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\wxDialog.xpm; [-1; -1]" help="wxDialog" id="NewDialog" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\panel.xpm; [-1; -1]" help="Panel" id="NewPanel" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\wxFrame.xpm; [-1; -1]" help="wxFrame" id="NewFrame" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" bitmap="HDR; ..\xpm\wxWizard.xpm; [-1; -1]" label="Wizard" name="panel_wizard">
+              <node class="wxRibbonToolBar" access="none" name="forms_bar_wizard" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\wxWizard.xpm; [-1; -1]" help="wxWizard" id="NewWizard" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\wizpage.xpm; [-1; -1]" help="WizardPageSimple" id="NewWizPage" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Bars" name="panel_bars">
+              <node class="wxRibbonToolBar" access="none" name="forms_bar_bars" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\menubar.xpm; [-1; -1]" help="MenuBar" id="NewMenuBar" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\toolbar.xpm; [-1; -1]" help="ToolBar" id="NewToolBar" />
+              </node>
+            </node>
+          </node>
+          <node class="wxRibbonPage" access="none" label="Sizers" name="pg_sizer">
+            <node class="wxRibbonPanel" access="none" label="Basic" name="panel_basic">
+              <node class="wxRibbonToolBar" access="none" name="sizer_bar_basic" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ../xpm\sizer_horizontal.xpm; [-1; -1]" help="wxBoxSizer" id="NewHorzSizer" />
+                <node class="ribbonTool" bitmap="HDR; ../xpm\sizer.xpm; [-1; -1]" help="VerticalBoxSizer" id="NewVertSizer" />
+                <node class="ribbonTool" bitmap="HDR; ../xpm\staticbox_sizer.xpm; [-1; -1]" help="wxStaticBoxSizer" id="NewStaticSizer" />
+                <node class="ribbonTool" bitmap="HDR; ../xpm\wrap_sizer.xpm; [-1; -1]" help="wxWrapSizer" id="NewWrapSizer" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Grids" name="sizer_panel_grids">
+              <node class="wxRibbonToolBar" access="none" name="sizer_bar_grids" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\grid_sizer.xpm; [-1; -1]" help="wxGridSizer" id="NewGridSizer" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\flex_grid_sizer.xpm; [-1; -1]" help="wxFlexGridSizer" id="NewFlexGrid" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\grid_bag_sizer.xpm; [-1; -1]" help="wxGridBagSizer" id="NewGridBag" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Other" name="sizer_panel_other">
+              <node class="wxRibbonToolBar" access="none" name="sizer_bar_other" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\stddialogbuttonsizer.xpm; [-1; -1]" help="wxStdDialogButtonSizer" id="NewStdBtn" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\text_sizer.xpm; [-1; -1]" help="TextSizer" id="NewTextSizer" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\spacer.xpm; [-1; -1]" help="spacer" id="NewSizeSpacer" />
+              </node>
+            </node>
+          </node>
+          <node class="wxRibbonPage" access="none" label="Common" name="pg_common">
+            <node class="wxRibbonPanel" access="none" label="Controls" name="panel_common_controls" style="wxRIBBON_PANEL_STRETCH|wxRIBBON_PANEL_FLEXIBLE">
+              <node class="wxRibbonToolBar" access="none" name="common_bar_controls" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick" wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                <node class="ribbonTool" bitmap="HDR; ../xpm\static_text.xpm; [-1; -1]" help="wxStaticText" id="NewStaticCtrl" />
+                <node class="ribbonTool" bitmap="HDR; ../xpm\wxTextCtrl.xpm; [-1; -1]" help="wxTextCtrl" id="NewTextCtrl" />
+                <node class="ribbonTool" bitmap="HDR; ../xpm\wxCheckBox.xpm; [-1; -1]" help="wxCheckBox" id="NewCheckbox" kind="wxRIBBON_BUTTON_DROPDOWN" />
+                <node class="ribbonTool" bitmap="HDR; ../xpm\radio_button.xpm; [-1; -1]" help="wxRadioButton" id="NewRadiobtn" />
+                <node class="ribbonTool" bitmap="HDR; ../xpm\button.xpm; [-1; -1]" help="Buttons" id="NewButton" kind="wxRIBBON_BUTTON_DROPDOWN" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\spin_ctrl.xpm; [-1; -1]" help="Spin controls" id="NewSpin" kind="wxRIBBON_BUTTON_DROPDOWN" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Choices" name="panel_choices" style="wxRIBBON_PANEL_STRETCH|wxRIBBON_PANEL_FLEXIBLE">
+              <node class="wxRibbonToolBar" access="none" name="common_bar_choices" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick" wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                <node class="ribbonTool" bitmap="HDR; ../xpm\combo_box.xpm; [-1; -1]" help="Combos &amp; Choice" id="NewCombobox" kind="wxRIBBON_BUTTON_DROPDOWN" />
+                <node class="ribbonTool" bitmap="HDR; ../xpm\list_box.xpm; [-1; -1]" help="Lists" id="NewListbox" kind="wxRIBBON_BUTTON_DROPDOWN" />
+                <node class="ribbonTool" bitmap="HDR; ../xpm\radio_box.xpm; [-1; -1]" help="wxRadioBox" id="NewRadioBox" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Pickers" name="panel_pickkers" style="wxRIBBON_PANEL_STRETCH|wxRIBBON_PANEL_FLEXIBLE">
+              <node class="wxRibbonToolBar" access="none" name="common_bar_pickers" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\filePicker.xpm; [-1; -1]" help="wxFilePickerCtrl" id="NewFilePicker" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\dirPicker.xpm; [-1; -1]" help="wxDirPickerCtrl" id="NewDirPicker" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\fontPicker.xpm; [-1; -1]" help="wxFontPickerCtrl" id="NewFontPicker" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\colourPickerIcon.xpm; [-1; -1]" help="wxColourPickerCtrl" id="NewColorPicker" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\datepicker.xpm; [-1; -1]" help="wxDatePickerCtrl" id="NewDatePicker" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\timepicker.xpm; [-1; -1]" help="wxTimePickerCtrl" id="NewTimePickerCtrl" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Other" name="panel_other" style="wxRIBBON_PANEL_STRETCH|wxRIBBON_PANEL_FLEXIBLE">
+              <node class="wxRibbonToolBar" access="none" name="common_bar_other" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\static_bitmap.xpm; [-1; -1]" help="wxStaticBitmap" id="NewBitmap" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\static_line.xpm; [-1; -1]" help="wxStaticLine" id="NewLine" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\slider.xpm; [-1; -1]" help="wxSlider" id="NewSlider" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\gauge.xpm; [-1; -1]" help="wxGauge" id="NewGauge" />
+              </node>
+            </node>
+          </node>
+          <node class="wxRibbonPage" access="none" label="Containers" name="page_containers">
+            <node class="wxRibbonPanel" access="none" label="Windows" name="panel_windows">
+              <node class="wxRibbonToolBar" access="none" name="container_bar_windows" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\panel.xpm; [-1; -1]" help="wxPanel" id="NewPanel" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\splitter_window.xpm; [-1; -1]" help="wxSplitterWindow" id="NewSplitter" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\scrollwin.xpm; [-1; -1]" help="wxScrolledWindow" id="NewScrollWin" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\collpane.xpm; [-1; -1]" help="wxCollapsiblePane" id="NewCollapsible" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Books" name="panel_books">
+              <node class="wxRibbonToolBar" access="none" name="container_bar_books" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\choicebook.xpm; [-1; -1]" help="wxChoicebook" id="NewChoiceBook" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\listbook.xpm; [-1; -1]" help="wxListbook" id="NewListBook" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\notebook.xpm; [-1; -1]" help="wxNotebook" id="NewNotebook" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\simple_book.xpm; [-1; -1]" help="wxSimplebook" id="NewSimpleBook" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Page" name="panel_page">
+              <node class="wxRibbonToolBar" access="none" name="container_bar_page" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\book_page.xpm; [-1; -1]" help="BookPage" id="NewBookPage" />
+              </node>
+            </node>
+          </node>
+          <node class="wxRibbonPage" access="none" label="Data" name="page_data">
+            <node class="wxRibbonPanel" access="none" label="Properties" name="panel_properties">
+              <node class="wxRibbonToolBar" access="none" name="data_bar_properties" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\propgrid.xpm; [-1; -1]" help="wxPropertyGrid" id="NewPropGrid" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\propgridman.xpm; [-1; -1]" help="wxPropertyGridManager" id="NewPropManager" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\propgridpage.xpm; [-1; -1]" help="propGridPage" id="NewGridPage" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\propgriditem.xpm; [-1; -1]" help="propGridItem" id="NewPropItem" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Trees" name="panel_data_trees">
+              <node class="wxRibbonToolBar" access="none" name="data_bar_trees" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\tree_ctrl.xpm; [-1; -1]" help="wxTreeCtrl" id="NewTreeCtrl" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\treelistctrl.xpm; [-1; -1]" help="wxTreeListCtrl" id="NewTreeList" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\treelistctrlcolumn.xpm; [-1; -1]" help="TreeListCtrlColumn" id="NewTreeColumn" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="DataView" name="panel_trees">
+              <node class="wxRibbonToolBar" access="none" name="data_bar_dataview" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick" wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\dataview_ctrl.xpm; [-1; -1]" help="Data Control" id="NewDataCtrl" kind="wxRIBBON_BUTTON_DROPDOWN" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\dataviewlist_column.xpm; [-1; -1]" help="dataViewColumn" id="NewDataColumn" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\doc_mdi_parent_frame.xpm; [-1; -1]" help="dataViewListColumn" id="NewDataListColumn" />
+              </node>
+            </node>
+          </node>
+          <node class="wxRibbonPage" access="none" label="Bars" name="page_bars">
+            <node class="wxRibbonPanel" access="none" label="Menu" name="panel_bars_menu">
+              <node class="wxRibbonToolBar" access="none" name="bars_bar_menu" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\menubar.xpm; [-1; -1]" help="wxMenuBar" id="NewMenuBar" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\menu.xpm; [-1; -1]" help="wxMenu" id="NewMenu" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\submenu.xpm; [-1; -1]" help="submenu" id="NewSubMenu" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\menuitem.xpm; [-1; -1]" help="wxMenuItem" id="NewMenuItem" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\separator.xpm; [-1; -1]" help="separator" id="NewMenuSeparator" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Tool" name="panel_bars_tool">
+              <node class="wxRibbonToolBar" access="none" name="bars_bar_tool" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\toolbar.xpm; [-1; -1]" help="wxToolBar" id="NewToolBar" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\tool.xpm; [-1; -1]" help="tool" id="NewTool" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\toolseparator.xpm; [-1; -1]" help="toolSeparator" id="NewToolSeparator" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Ribbon" name="panel_bars_ribbon">
+              <node class="wxRibbonToolBar" access="none" name="bars_bar_ribbon" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick" wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\ribbon_bar.xpm; [-1; -1]" help="wxRibbonBar" id="NewRibbonBar" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\ribbon_page.xpm; [-1; -1]" help="wxRibbonPage" id="NewRibbonPage" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\ribbon_panel.xpm; [-1; -1]" help="wxRibbonPanel" id="NewRibbonPanel" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\ribbon_buttonbar.xpm; [-1; -1]" help="Ribbon Bar Type" id="NewRibbonType" kind="wxRIBBON_BUTTON_DROPDOWN" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\ribbon_button.xpm; [-1; -1]" help="ribbonButton" id="NewRibbonTool" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\ribbon_gallery_item.xpm; [-1; -1]" help="ribbonGalleryItem" id="NewGalleryItem" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Other" name="panel_bars_rother">
+              <node class="wxRibbonToolBar" access="none" name="bars_bar_other" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\statusbar.xpm; [-1; -1]" help="wxStatusBar" id="NewStatusBar" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\infobar.xpm; [-1; -1]" help="wxInfoBar" id="NewInfoBar" />
+              </node>
+            </node>
+          </node>
+          <node class="wxRibbonPage" access="none" label="Other" name="pg_other">
+            <node class="wxRibbonPanel" access="none" label="Editors" name="panel_editors">
+              <node class="wxRibbonToolBar" access="none" name="other_bar_editors" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\richtextctrl.xpm; [-1; -1]" help="wxRichTextCtrl" id="NewRichText" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\scintilla.xpm; [-1; -1]" help="wxStyledTextCtrl" id="NewScintilla" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\grid.xpm; [-1; -1]" help="wxGrid" id="NewGrid" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="Controls" name="panel_controls">
+              <node class="wxRibbonToolBar" access="none" name="other_bar_ctrls" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\hyperlink_ctrl.xpm; [-1; -1]" help="wxHyperlinkCtrl" id="NewHyperLink" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\search.xpm; [-1; -1]" help="wxSearchCtrl" id="NewSearch" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\calendar.xpm; [-1; -1]" help="wxCalendarCtrl" id="NewCalendar" />
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\genericdir_ctrl.xpm; [-1; -1]" help="wxGenericDirCtrl" id="NewGenericDir" />
+              </node>
+            </node>
+            <node class="wxRibbonPanel" access="none" label="HTML" name="panel_html">
+              <node class="wxRibbonToolBar" access="none" name="other_bar_html" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node class="ribbonTool" bitmap="HDR; ..\xpm\htmlwin.xpm; [-1; -1]" help="wxHtmlWindow" id="NewHtml" />
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

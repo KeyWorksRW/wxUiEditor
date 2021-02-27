@@ -1,0 +1,267 @@
+/////////////////////////////////////////////////////////////////////////////
+// Purpose:   Undoable command classes derived from UndoAction
+// Author:    Ralph Walden
+// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../LICENSE
+/////////////////////////////////////////////////////////////////////////////
+
+#include "pch.h"
+
+#include "undo_cmds.h"
+
+#include "mainframe.h"   // MainFrame -- Main window frame
+#include "node.h"        // Node class
+#include "prop_names.h"  // Property names
+
+///////////////////////////////// InsertNodeAction ////////////////////////////////////
+
+InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const ttlib::cstr& undo_str, int pos) :
+    UndoAction(undo_str.c_str()), m_pos(pos)
+{
+    m_old_selected = wxGetFrame().GetSelectedNodePtr();
+    m_node = node->GetSharedPtr();
+    m_parent = parent->GetSharedPtr();
+}
+
+void InsertNodeAction::Change()
+{
+    m_node->SetParent(m_parent);
+
+    if (m_parent->GetClassName() == "wxGridBagSizer" && m_parent->GetChildCount() > 0)
+    {
+        // This is a child of a wxGridBagSizer, so if m_pos is -1, then add as a new row. If m_pos >= 0, then add as a column
+
+        auto row = -1;
+        if (m_pos < 0)
+        {
+            for (size_t pos = 0; pos < m_parent->GetChildCount(); ++pos)
+            {
+                auto child_row = m_parent->GetChild(pos)->prop_as_int(txtRow);
+                if (child_row > row)
+                    row = child_row;
+            }
+
+            m_parent->AddChild(m_node);
+            m_node->get_prop_ptr(txtRow)->set_value(row + 1);
+        }
+        else
+        {
+            if (m_pos > 0)
+            {
+                // This assumes the children are in row order, which is not necessarily the case
+                row = m_parent->GetChild(m_pos - 1)->prop_as_int(txtRow);
+            }
+            auto col = -1;
+            for (size_t pos = 0; pos < m_parent->GetChildCount(); ++pos)
+            {
+                if (m_parent->GetChild(pos)->prop_as_int(txtRow) == row)
+                {
+                    auto child_col = m_parent->GetChild(pos)->prop_as_int(txtColumn);
+                    if (child_col > col)
+                    {
+                        auto col_span = m_parent->GetChild(pos)->prop_as_int(txtColSpan);
+                        col = child_col + (col_span - 1);
+                    }
+                }
+            }
+            if (row == -1)
+                ++row;
+            m_node->get_prop_ptr(txtRow)->set_value(row);
+            m_node->get_prop_ptr(txtColumn)->set_value(col + 1);
+
+            m_parent->AddChild(m_node);
+            m_parent->ChangeChildPosition(m_node, m_pos);
+        }
+    }
+    else
+    {
+        m_parent->AddChild(m_node);
+        if (m_pos >= 0)
+            m_parent->ChangeChildPosition(m_node, m_pos);
+    }
+    wxGetFrame().SelectNode(m_node.get(), false, false);
+}
+
+void InsertNodeAction::Revert()
+{
+    m_parent->RemoveChild(m_node);
+    m_node->SetParent(NodeSharedPtr());
+    wxGetFrame().SelectNode(m_old_selected.get());
+}
+
+///////////////////////////////// RemoveNodeAction ////////////////////////////////////
+
+RemoveNodeAction::RemoveNodeAction(Node* node, const ttlib::cstr& undo_str, bool AddToClipboard) :
+    UndoAction(undo_str.c_str())
+{
+    m_AddToClipboard = AddToClipboard;
+    m_node = node->GetSharedPtr();
+    m_parent = node->GetParentPtr();
+    m_old_pos = m_parent->GetChildPosition(node);
+    m_old_selected = wxGetFrame().GetSelectedNodePtr();
+}
+
+void RemoveNodeAction::Change()
+{
+    m_parent->RemoveChild(m_node);
+    m_node->SetParent(NodeSharedPtr());
+
+    if (m_parent->GetChildCount())
+    {
+        auto pos = (m_old_pos < m_parent->GetChildCount() ? m_old_pos : m_parent->GetChildCount() - 1);
+        wxGetFrame().SelectNode(m_parent->GetChild(pos));
+    }
+    else
+    {
+        wxGetFrame().SelectNode(m_parent.get());
+    }
+}
+
+void RemoveNodeAction::Revert()
+{
+    m_parent->AddChild(m_node);
+    m_node->SetParent(m_parent);
+    m_parent->ChangeChildPosition(m_node, m_old_pos);
+
+    wxGetFrame().SelectNode(m_old_selected.get(), true, false);
+}
+
+///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
+
+ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, std::string_view value) : m_property(prop)
+{
+    ttlib::cstr undo_str = "change " + prop->GetPropName();
+    SetUndoString(undo_str);
+
+    m_change_value << value;
+    m_revert_value = prop->GetValue();
+}
+
+ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_property(prop)
+{
+    ttlib::cstr undo_str = "change " + prop->GetPropName();
+    SetUndoString(undo_str);
+
+    m_change_value << value;
+    m_revert_value = prop->GetValue();
+}
+
+void ModifyPropertyAction::Change()
+{
+    m_property->set_value(m_change_value);
+}
+
+void ModifyPropertyAction::Revert()
+{
+    m_property->set_value(m_revert_value);
+}
+
+///////////////////////////////// ModifyEventAction ////////////////////////////////////
+
+ModifyEventAction::ModifyEventAction(NodeEvent* event, std::string_view value) : m_event(event)
+{
+    ttlib::cstr undo_str = "change " + event->get_name() + " handler";
+    SetUndoString(undo_str);
+
+    m_change_value << value;
+    m_revert_value = event->get_value();
+}
+
+void ModifyEventAction::Change()
+{
+    m_event->set_value(m_change_value);
+}
+
+void ModifyEventAction::Revert()
+{
+    m_event->set_value(m_revert_value);
+}
+
+///////////////////////////////// ChangePositionAction ////////////////////////////////////
+
+ChangePositionAction::ChangePositionAction(Node* node, size_t position)
+{
+    ttlib::cstr undo_str = "change " + node->GetClassName() + " position";
+    SetUndoString(undo_str);
+
+    m_node = node->GetSharedPtr();
+    m_parent = node->GetParentPtr();
+
+    m_change_pos = position;
+    m_revert_pos = m_parent->GetChildPosition(node);
+}
+
+void ChangePositionAction::Change()
+{
+    m_parent->ChangeChildPosition(m_node, m_change_pos);
+}
+
+void ChangePositionAction::Revert()
+{
+    m_parent->ChangeChildPosition(m_node, m_revert_pos);
+}
+
+///////////////////////////////// ChangeParentAction ////////////////////////////////////
+
+ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
+{
+    ttlib::cstr undo_str = "change " + node->GetClassName() + " parent";
+    SetUndoString(undo_str);
+
+    m_node = node->GetSharedPtr();
+    m_change_parent = parent->GetSharedPtr();
+    m_revert_parent = node->GetParentPtr();
+
+    m_revert_position = m_revert_parent->GetChildPosition(node);
+    m_revert_row = node->prop_as_int(txtRow);
+    m_revert_col = node->prop_as_int(txtColumn);
+}
+
+void ChangeParentAction::Change()
+{
+    if (m_change_parent->AddChild(m_node))
+    {
+        m_revert_parent->RemoveChild(m_node);
+        m_node->SetParent(m_change_parent);
+
+        // TODO: [KeyWorks - 11-18-2020] If we got moved into a gridbag sizer, then things are a bit complicated since row
+        // and column aren't going to be right. We need to make some intelligent guess and change the node's property
+        // accordingly
+    }
+}
+
+void ChangeParentAction::Revert()
+{
+    m_change_parent->RemoveChild(m_node);
+
+    m_node->SetParent(m_revert_parent);
+    m_revert_parent->AddChild(m_node);
+    m_revert_parent->ChangeChildPosition(m_node, m_revert_position);
+    if (auto prop = m_node->get_prop_ptr(txtRow); prop)
+        prop->set_value(m_revert_row);
+    if (auto prop = m_node->get_prop_ptr(txtColumn); prop)
+        prop->set_value(m_revert_col);
+}
+
+///////////////////////////////// MultiAction ////////////////////////////////////
+
+void MultiAction::Add(UndoActionPtr command)
+{
+    m_cmds.emplace_back(command);
+}
+
+void MultiAction::Change()
+{
+    for (auto& cmd: m_cmds)
+    {
+        cmd->Change();
+    }
+}
+
+void MultiAction::Revert()
+{
+    for (auto cmd = m_cmds.rbegin(); cmd != m_cmds.rend(); ++cmd)
+    {
+        cmd->get()->Revert();
+    }
+}

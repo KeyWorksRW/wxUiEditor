@@ -1,0 +1,297 @@
+# Requires ttBld.exe version 1.7.2 or higher to process -- see https://github.com/KeyWorksRW/ttBld
+
+# This version will automatically be used if ttBld is run on a Windows OS
+
+Options:
+    Project:     wxUiEditor   # project name
+    Exe_type:    window       # [window | console | lib | dll]
+    Pch:         pch.h        # name of precompiled header file, or "none" if not using precompiled headers
+    Ms_linker:   true         # true means use link.exe even when compiling with clang-cl
+
+    Optimize:    space        # [space | speed] optimization to use in release builds
+    Warn:        4            # [1-4] warning level
+    Crt_rel:     dll          # [static | dll] type of CRT to link to in release builds
+    Crt_dbg:     dll          # [static | dll] type of CRT to link to in debug builds
+
+    CFlags_cmn:  /std:c++17 /Zc:__cplusplus /utf-8
+    CFlags_rel:  /DNDEBUG     # static wxWidgets libraries in release build
+    CFlags_dbg:  -DWXUSINGDLL # dll wxWidgets libraries in debug build
+
+    TargetDir:   ../bin       # target directory
+    Natvis:      wxui.natvis  # MSVC Debug visualizer
+
+    IncDirs:     ./;nodes;generate;utils;customprops;../../ttLib/include
+
+    BuildLibs:   ../../ttLib/src/wxsrc  # Libraries to build first and then link to
+
+Files:
+    wxUiEditor.rc         # Windows resources
+
+    mainapp.cpp           # Main application class
+    mainframe.cpp         # Main window frame
+
+    appoptions.cpp        # Application-wide options
+    bitmaps.cpp           # Map of bitmaps accessed by name
+    cstm_event.cpp        # Custom Event handling
+    frame_status_bar.cpp  # MainFrame status bar functions
+    gzip.cpp              # Convert compiled GZIP arrays into original strings/images
+    pjtsettings.cpp       # Hold data for currently loaded project
+    startup.cpp           # Dialog to display is wxUE is launched with no arguments
+    strings.cpp           # Contains translatable strings
+    undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
+    undo_stack.cpp        # Maintain an undo and redo stack
+    xpm.cpp               # All xpm files
+
+    customprops/art_prop_dlg.cpp     # Art Property Dialog for image property
+    customprops/img_props.cpp        # Handles property grid image properties
+    customprops/img_string_prop.cpp  # Derived wxStringProperty class for handling wxImage files or art
+    customprops/pg_image.cpp         # Custom property grid class for images
+    customprops/pg_point.cpp         # Custom wxPGProperty for wxPoint
+    customprops/pg_size.cpp          # Custom wxPGProperty for wxSize
+
+    generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
+    generate/gen_codefiles.cpp     # Generate code files
+    generate/gen_derived.cpp       # Generate Derived class code
+    generate/gen_inherit.cpp       # Generate Inherited class code
+    generate/write_code.cpp        # Write code to Scintilla or file
+
+    generate/base_generator.cpp    # Base widget generator class
+    generate/gen_initialize.cpp    # Initialize all widget generate classes
+    generate/gen_common.cpp        # Common widget generation functions
+
+    generate/book_widgets.cpp      # Book generation classes
+    generate/btn_widgets.cpp       # Button generation class
+    generate/checkbox_widgets.cpp  # wxCheckBox generation class
+    generate/combo_widgets.cpp     # Combo and choice generation classes
+    generate/ctrl_widgets.cpp      # Calendar, GenericDir, Search Ctrl generation classes
+    generate/dataview_widgets.cpp  # wxDataView generation classes
+    generate/form_widgets.cpp      # Form generation classes
+    generate/grid_widgets.cpp      # Grid generation classes
+    generate/listbox_widgets.cpp   # ListBox generation classes
+    generate/listctrl_widgets.cpp  # ListCtrl generation class
+    generate/menu_widgets.cpp      # Menu generation classes
+    generate/misc_widgets.cpp      # Miscellaneous generation classes
+    generate/panel_widgets.cpp     # Panel generation classes
+    generate/picker_widgets.cpp    # Picker generation classes
+    generate/radio_widgets.cpp     # Radio button and Radio box generation classes
+    generate/ribbon_widgets.cpp    # Ribbon generation classes
+    generate/sizer_widgets.cpp     # Sizer generation classes
+    generate/spin_widgets.cpp      # Spin and ScrollBar generation classes
+    generate/text_widgets.cpp      # Text generation classes
+    generate/toolbar_widgets.cpp   # Toolbar generation classes
+    generate/tree_widgets.cpp      # wxTreeCtrl generation classes
+    generate/window_widgets.cpp    # Splitter and Scroll generation classes
+    generate/wizard_form.cpp       # Wizard form class
+
+    mockup/mockup_parent.cpp    # Top-level MockUp Parent window
+    mockup/mockup_content.cpp   # Mockup of a form's contents
+    mockup/mockup_wizard.cpp    # Emulate a wxWizard
+
+    nodes/node.cpp              # Contains user-modifiable node
+    nodes/node_creator.cpp      # Class used to create nodes
+    nodes/node_decl.cpp         # Contains the declarations for a node (properties, events, etc.)
+    nodes/node_prop.cpp         # NodeProperty class
+    nodes/node_types.cpp        # Stores node types and allowable child count
+
+    panels/code_display.cpp     # Display code in scintilla control
+    panels/base_panel.cpp       # Code generation panel
+    panels/nav_panel.cpp        # Navigation panel
+    panels/navpopupmenu.cpp     # Context-menu for Navigation panel
+    panels/propgrid_panel.cpp   # Property panel
+    panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar
+
+    project/import_formblder.cpp  # Import a wxFormBuider project
+    project/import_winres.cpp     # Import a Windows resource file
+    project/import_wxsmith.cpp    # Process XRC files
+    project/loadproject.cpp       # Load wxUiEditor project
+    project/oldproject.cpp        # Load older version of wxUiEditor project
+    project/saveproject.cpp       # Save a wxUiEditor project file
+    project/winres_ctrl.cpp       # Process Windows Resource control data
+    project/winres_form.cpp       # Process a Windows Resource form (usually a dialog)
+
+    utils/font_prop.cpp         # FontProperty class
+    utils/loadxml.cpp           # Load internal xml files
+    utils/utils.cpp             # Utility functions that work with properties
+
+    ../pugixml/pugixml.cpp      # XML parser
+
+    ui/embedimg.cpp             # Convert image to Header (.h) or XPM (.xpm) file
+    ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
+    ui/newproject.cpp           # Dialog to create a new project
+    ui/optionsdlg.cpp           # Dialog containing special Debugging commands
+
+# wxUiEditor generated files
+
+    ui/artpropdlg_base.cpp
+    ui/embedimg_base.cpp
+    ui/importwinres_base.cpp
+    ui/mainframe_base.cpp
+    ui/newproject_base.cpp
+    ui/optionsdlg_base.cpp
+    ui/ribbonpanel_base.cpp
+
+DebugFiles:
+    debugging/msgframe.cpp      # Stores messages
+
+    ui/debugsettings.cpp        # Settings while running the Debug version of wxUiEditor
+    ui/debugsettingsBase.cpp
+
+GZIP:
+    xml/aui.xml: xml/aui.hgz
+    xml/bars.xml: xml/bars.hgz
+    xml/containers.xml: xml/containers.hgz
+    xml/forms.xml: xml/forms.hgz
+    xml/interface.xml: xml/interface.hgz
+    xml/sizers.xml: xml/sizers.hgz
+    xml/widgets.xml: xml/widgets.hgz
+
+XPM:
+    art_src/nav_coll_expand.png: xpm/nav_coll_expand.xpm
+    art_src/nav_collapse.png: xpm/nav_collapse.xpm
+    art_src/nav_expand.png: xpm/nav_expand.xpm
+    art_src/nav_movedown.png: xpm/nav_movedown.xpm
+    art_src/nav_moveleft.png: xpm/nav_moveleft.xpm
+    art_src/nav_moveright.png: xpm/nav_moveright.xpm
+    art_src/nav_moveup.png: xpm/nav_moveup.xpm
+
+    art_src/alignbottom.png: xpm/alignbottom.xpm
+    art_src/aligncenter.png: xpm/aligncenter.xpm
+    art_src/alignleft.png: xpm/alignleft.xpm
+    art_src/alignright.png: xpm/alignright.xpm
+    art_src/aligntop.png: xpm/aligntop.xpm
+    art_src/alignvertcenter.png: xpm/alignvertcenter.xpm
+    art_src/auinotebook.png: xpm/auinotebook.xpm
+    art_src/auitoolbar.png: xpm/auitoolbar.xpm
+    art_src/bitmap_button.png: xpm/bitmap_button.xpm
+    art_src/bitmap_toggle_button.png: xpm/bitmap_toggle_button.xpm
+    art_src/bmp_combo_box.png: xpm/bmp_combo_box.xpm
+    art_src/book_page.png: xpm/book_page.xpm
+    art_src/bottom.png: xpm/bottom.xpm
+    art_src/calendar.png: xpm/calendar.xpm
+    art_src/check3state.png: xpm/check3state.xpm
+    art_src/colourPickerIcon.png: xpm/colourPickerIcon.xpm
+    art_src/copy.png: xpm/copy.xpm
+    art_src/cut.png: xpm/cut.xpm
+    art_src/dataview_ctrl.png: xpm/dataview_ctrl.xpm
+    art_src/dataviewlist_column.png: xpm/dataviewlist_column.xpm
+    art_src/dataviewlist_ctrl.png: xpm/dataviewlist_ctrl.xpm
+    art_src/dataviewtree_ctrl.png: xpm/dataviewtree_ctrl.xpm
+    art_src/datepicker.png: xpm/datepicker.xpm
+    art_src/debug_16.png: xpm/debug_16.xpm
+    art_src/debug_32.png: xpm/debug_32.xpm
+    art_src/default.png: xpm/default.xpm
+    art_src/delete.png: xpm/delete.xpm
+    art_src/wxDialog.png: xpm/wxDialog.xpm
+    art_src/dirPicker.png: xpm/dirPicker.xpm
+    art_src/doc_mdi_parent_frame.png: xpm/doc_mdi_parent_frame.xpm
+    art_src/doc_parent_frame.png: xpm/doc_parent_frame.xpm
+    art_src/document.png: xpm/document.xpm
+    art_src/empty.png: xpm/empty.xpm
+    art_src/expand.png: xpm/expand.xpm
+    art_src/filePicker.png: xpm/filePicker.xpm
+    art_src/flex_grid_sizer.png: xpm/flex_grid_sizer.xpm
+    art_src/fontPicker.png: xpm/fontPicker.xpm
+    art_src/wxFrame.png: xpm/wxFrame.xpm
+    art_src/gauge.png: xpm/gauge.xpm
+    art_src/generate.png: xpm/generate.xpm
+    art_src/genericdir_ctrl.png: xpm/genericdir_ctrl.xpm
+    art_src/grid.png: xpm/grid.xpm
+    art_src/grid_bag_sizer.png: xpm/grid_bag_sizer.xpm
+    art_src/grid_sizer.png: xpm/grid_sizer.xpm
+    art_src/hidden.png: xpm/hidden.xpm
+    art_src/htmlwin.png: xpm/htmlwin.xpm
+    art_src/hyperlink_ctrl.png: xpm/hyperlink_ctrl.xpm
+    art_src/infobar.png: xpm/infobar.xpm
+    art_src/left.png: xpm/left.xpm
+    art_src/logo16.png: xpm/logo16.xpm
+    art_src/logo32.png: xpm/logo32.xpm
+    art_src/logo64.png: xpm/logo64.xpm
+    art_src/magnify.png: xpm/magnify.xpm
+    art_src/menu.png: xpm/menu.xpm
+    art_src/wxMenuBar.png: xpm/wxMenuBar.xpm
+    art_src/menuitem.png: xpm/menuitem.xpm
+    art_src/moveColLeft.png: xpm/moveColLeft.xpm
+    art_src/moveColRight.png: xpm/moveColRight.xpm
+    art_src/moveRowDown.png: xpm/moveRowDown.xpm
+    art_src/moveRowUp.png: xpm/moveRowUp.xpm
+    art_src/new.png: xpm/new.xpm
+    art_src/open.png: xpm/open.xpm
+    art_src/paste.png: xpm/paste.xpm
+    art_src/project.png: xpm/project.xpm
+    art_src/propgriditem.png: xpm/propgriditem.xpm
+    art_src/propgridpage.png: xpm/propgridpage.xpm
+    art_src/radio_box.png: xpm/radio_box.xpm
+    art_src/redo.png: xpm/redo.xpm
+    art_src/ribbon_bar.png: xpm/ribbon_bar.xpm
+    art_src/ribbon_button.png: xpm/ribbon_button.xpm
+    art_src/ribbon_button_dropdown.png: xpm/ribbon_button_dropdown.xpm
+    art_src/ribbon_button_hybrid.png: xpm/ribbon_button_hybrid.xpm
+    art_src/ribbon_button_toggle.png: xpm/ribbon_button_toggle.xpm
+    art_src/ribbon_buttonbar.png: xpm/ribbon_buttonbar.xpm
+    art_src/ribbon_gallery.png: xpm/ribbon_gallery.xpm
+    art_src/ribbon_gallery_item.png: xpm/ribbon_gallery_item.xpm
+    art_src/ribbon_page.png: xpm/ribbon_page.xpm
+    art_src/ribbon_panel.png: xpm/ribbon_panel.xpm
+    art_src/richtextctrl.png: xpm/richtextctrl.xpm
+    art_src/right.png: xpm/right.xpm
+    art_src/save.png: xpm/save.xpm
+    art_src/scintilla.png: xpm/scintilla.xpm
+    art_src/scrollbar.png: xpm/scrollbar.xpm
+    art_src/search.png: xpm/search.xpm
+    art_src/separator.png: xpm/separator.xpm
+    art_src/sizer.png: xpm/sizer.xpm
+    art_src/sizer_horizontal.png: xpm/sizer_horizontal.xpm
+    art_src/slider.png: xpm/slider.xpm
+    art_src/spacer.png: xpm/spacer.xpm
+    art_src/spin_ctrl.png: xpm/spin_ctrl.xpm
+    art_src/spin_ctrl_double.png: xpm/spin_ctrl_double.xpm
+    art_src/spinbtn.png: xpm/spinbtn.xpm
+    art_src/static_bitmap.png: xpm/static_bitmap.xpm
+    art_src/static_line.png: xpm/static_line.xpm
+    art_src/staticbox_sizer.png: xpm/staticbox_sizer.xpm
+    art_src/statusbar.png: xpm/statusbar.xpm
+    art_src/stddialogbuttonsizer.png: xpm/stddialogbuttonsizer.xpm
+    art_src/submenu.png: xpm/submenu.xpm
+    art_src/text_sizer.png: xpm/text_sizer.xpm
+    art_src/timepicker.png: xpm/timepicker.xpm
+    art_src/timer.png: xpm/timer.xpm
+    art_src/title_close.png: xpm/title_close.xpm
+    art_src/toggle_button.png: xpm/toggle_button.xpm
+    art_src/tool.png: xpm/tool.xpm
+    art_src/wxToolBar.png: xpm/wxToolBar.xpm
+    art_src/toolseparator.png: xpm/toolseparator.xpm
+    art_src/top.png: xpm/top.xpm
+    art_src/tree_ctrl.png: xpm/tree_ctrl.xpm
+    art_src/treelistctrl.png: xpm/treelistctrl.xpm
+    art_src/treelistctrlcolumn.png: xpm/treelistctrlcolumn.xpm
+    art_src/undo.png: xpm/undo.xpm
+    art_src/unknown.png: xpm/unknown.xpm
+    art_src/wxWizard.png: xpm/wxWizard.xpm
+    art_src/wxWizardPageSimple.png: xpm/wxWizardPageSimple.xpm
+    art_src/wrap_sizer.png: xpm/wrap_sizer.xpm
+    art_src/wxButton.png: xpm/wxButton.xpm
+    art_src/wxCheckBox.png: xpm/wxCheckBox.xpm
+    art_src/wxCheckListBox.png: xpm/wxCheckListBox.xpm
+    art_src/wxChoice.png: xpm/wxChoice.xpm
+    art_src/wxChoicebook.png: xpm/wxChoicebook.xpm
+    art_src/wxCollapsiblePane.png: xpm/wxCollapsiblePane.xpm
+    art_src/wxComboBox.png: xpm/wxComboBox.xpm
+    art_src/wxListBox.png: xpm/wxListBox.xpm
+    art_src/wxListView.png: xpm/wxListView.xpm
+    art_src/wxListbook.png: xpm/wxListbook.xpm
+    art_src/wxNotebook.png: xpm/wxNotebook.xpm
+    art_src/wxPanel.png: xpm/wxPanel.xpm
+    art_src/wxPropertyGrid.png: xpm/wxPropertyGrid.xpm
+    art_src/wxPropertyGridManager.png: xpm/wxPropertyGridManager.xpm
+    art_src/wxRadioButton.png: xpm/wxRadioButton.xpm
+    art_src/wxScrolledWindow.png: xpm/wxScrolledWindow.xpm
+    art_src/wxSimplebook.png: xpm/wxSimplebook.xpm
+    art_src/wxSplitterWindow.png: xpm/wxSplitterWindow.xpm
+    art_src/wxStaticText.png: xpm/wxStaticText.xpm
+    art_src/wxTextCtrl.png: xpm/wxTextCtrl.xpm
+
+Docs:
+    ../README.md
+    ../docs/DEV_NOTES.md
+    ../docs/import_formbuilder.md
+    nodes/README.md

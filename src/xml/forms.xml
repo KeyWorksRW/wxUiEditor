@@ -1,0 +1,322 @@
+<?xml version="1.0"?>
+<GeneratorDefitions>
+
+  <compinfo class="Project" type="project" image="project" >
+    <property name="source_ext" type="option"
+        hidden="1">
+      <option name=".cpp"/>
+      <option name=".cc"/>
+      <option name=".cxx"/>
+    .cpp
+    </property>
+    <property name="header_ext" type="option"
+        hidden="1">
+      <option name=".h"/>
+      <option name=".hh"/>
+      <option name=".hpp"/>
+      <option name=".hxx"/>
+    .h
+    </property>
+    <property name="local_pch_file" type="file"
+        help="The filename of a local precompiled header file. The file will be included in quotes.">
+    </property>
+    <property name="src_preamble" type="text"
+        help="Code to generate at the top of the source file after the inclusion of any local precompiled header file. This can include er files, comments, macros, etc."/>
+    <property name="original_art" type="path"
+        help="The directory containing your original artwork.">
+    </property>
+    <property name="converted_art" type="path"
+        help="The directory containing XPM and PNG header files.">
+    </property>
+    <property name="internationalize" type="bool"
+        help="Wrap strings in a _() macro which expands into a call to wxGetTranslation().">
+      0
+    </property>
+    <property name="help_provider" type="option"
+        help="The class of help provider to use for context-sensitive help.">
+      <option name="none" help="No support for context-sensitive help."/>
+      <option name="wxSimpleHelpProvider" help="Use wxSimpleHelpProvider to provide context-sensitive help."/>
+      <option name="wxHelpControllerHelpProvider" help="Use wxHelpControllerHelpProvider to provide context-sensitive help."/>
+      none
+    </property>
+    <property name="namespace" type="string"
+        help="Namespace to enclose class declarations in. Separate nested namespaces with a double colon (e.g. company::app::subname)"/>
+  </compinfo>
+
+  <compinfo class="wxDialog" image="wxDialog" type="form">
+    <inherits class="wxTopLevelWindow"/>
+    <inherits class="wxWindow"/>
+    <property name="class_name" type="string" help="The name of the base class.">MyDialogBase</property>
+    <property name="title" type="translate" help="The text to display on the dialog's title bar."/>
+    <property name="persist" type="bool"
+      help="Use wxPersistentRegisterAndRestore to save/restore the size and position of the dialog.">
+      0
+    </property>
+    <category name="Code generation">
+      <property name="base_file" type="file"
+          help="The filename of the base class.">
+        mydialog_base
+      </property>
+      <property name="base_src_includes" type="text"
+          help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
+      <property name="base_hdr_includes" type="text"
+          help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files."/>
+      <property name="derived_class_name" type="string"
+          help="The name of the derived class.">
+        MyDialog
+      </property>
+      <property name="derived_file" type="file" help="The filename of the derived class."/>
+    </category>
+    <property name="style" type="bitlist">
+      <option name="wxCAPTION" help="Puts a caption on the dialog box."/>
+      <option name="wxDEFAULT_DIALOG_STYLE"
+        help="Equivalent to a combination of wxCAPTION, wxCLOSE_BOX and wxSYSTEM_MENU (the last one is not used under Unix)"/>
+      <option name="wxRESIZE_BORDER" help="Display a resizeable frame around the window."/>
+      <option name="wxSYSTEM_MENU" help="Display a system menu."/>
+      <option name="wxCLOSE_BOX" help="Displays a close box on the dialog."/>
+      <option name="wxMAXIMIZE_BOX" help="Displays a maximize box on the dialog."/>
+      <option name="wxMINIMIZE_BOX" help="Displays a minimize box on the dialog."/>
+      <option name="wxSTAY_ON_TOP" help="The dialog stays on top of all other windows."/>
+      <option name="wxDIALOG_NO_PARENT"
+        help="By default, a dialog created with a NULL parent window will be given the application's top level window as parent. Use this style to prevent this from happening and create an orphan dialog. Not recommended for modal dialogs."/>
+      wxDEFAULT_DIALOG_STYLE
+    </property>
+    <property name="extra_style" type="bitlist">
+      <option name="wxDIALOG_EX_CONTEXTHELP"
+        help="Under Windows, puts a query button on the caption. When pressed, Windows will go into a context-sensitive help mode and wxWidgets will send a wxEVT_HELP event if the user clicked on an application window. Note: The Project's &quot;help_provider&quot; property must be set for context-sensitive help to work."/>
+      <option name="wxDIALOG_EX_METAL" help="On Mac OS X, frames with this style will be shown with a metallic look."/>
+    </property>
+    <property name="center" type="option" help="Centers the dialog box on the display in the chosen direction.">
+      <option name="no"/>
+      <option name="wxHORIZONTAL"/>
+      <option name="wxVERTICAL"/>
+      <option name="wxBOTH"/>
+      wxBOTH
+    </property>
+    <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent" help="Generated when the dialog is being initialized."/>
+  </compinfo>
+
+  <compinfo class="PanelForm" image="wxPanel" type="form">
+    <inherits class="AUI Events"/>
+    <inherits class="wxWindow">
+      <property name="window_style">wxTAB_TRAVERSAL</property>
+      <property name="size" type="wxSize">500,300</property>
+    </inherits>
+    <property name="class_name" type="string" help="The name of the base class.">MyPanelBase</property>
+    <category name="Code generation">
+      <property name="base_file" type="file" help="The filename of the base class.">mypanel_base</property>
+      <property name="base_src_includes" type="text"
+          help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
+      <property name="base_hdr_includes" type="text"
+          help="This preamble is placed unchanged in the generated base file after all wx/ include files. It can include other header files, add comments, etc."/>
+      <property name="derived_class_name" type="string" help="The name of the derived class.">MyPanel</property>
+      <property name="derived_file" type="file" help="The filename of the derived class."/>
+    </category>
+    <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent" help="generated when the panel is being initialised."/>
+    <property name="aui_managed" help="Manage this panel by AUI manager." type="bool">0</property>
+    <property name="aui_manager_style" help="Configure AUI manager." type="bitlist">
+      <option name="wxAUI_MGR_DEFAULT"
+        help="Default behavior, combines: wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE | wxAUI_MGR_NO_VENETIAN_BLINDS_FADE."/>
+      <option name="wxAUI_MGR_ALLOW_FLOATING" help="Allow a pane to be undocked to take the form of a wxMiniFrame."/>
+      <option name="wxAUI_MGR_ALLOW_ACTIVE_PANE" help="Change the color of the title bar of the pane when it is activated."/>
+      <option name="wxAUI_MGR_TRANSPARENT_DRAG" help="Make the pane transparent during its movement."/>
+      <option name="wxAUI_MGR_TRANSPARENT_HINT" help="The possible location for docking is indicated by a translucent area."/>
+      <option name="wxAUI_MGR_VENETIAN_BLINDS_HINT"
+        help="The possible location for docking is indicated by gradually appearing partially transparent hint."/>
+      <option name="wxAUI_MGR_RECTANGLE_HINT" help="The possible location for docking is indicated by a rectangular outline."/>
+      <option name="wxAUI_MGR_HINT_FADE" help="The translucent area where the pane could be docked appears gradually."/>
+      <option name="wxAUI_MGR_NO_VENETIAN_BLINDS_FADE"
+        help="Used in complement of wxAUI_MGR_VENETIAN_BLINDS_HINT to show the docking hint immediately."/>
+      <option name="wxAUI_MGR_LIVE_RESIZE"
+        help="When a docked pane is resized, its content is refreshed in live (instead of moving the border alone and refreshing the content at the end)."/>
+      wxAUI_MGR_DEFAULT
+    </property>
+  </compinfo>
+
+  <compinfo class="wxFrame" image="wxFrame" type="form">
+    <inherits class="wxTopLevelWindow"/>
+    <inherits class="AUI Events"/>
+    <inherits class="wxWindow">
+      <property name="window_style">wxTAB_TRAVERSAL</property>
+      <property name="size" type="wxSize">500,300</property>
+    </inherits>
+    <property name="class_name" type="string" help="The name of the base class.">MyFrameBase</property>
+    <category name="Code generation">
+      <property name="base_file" type="file" help="The filename of the base class.">myframe_base</property>
+      <property name="base_src_includes" type="text"
+          help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
+      <property name="base_hdr_includes" type="text"
+          help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files."/>
+      <property name="derived_class_name" type="string" help="The name of the derived class.">MyFrame</property>
+      <property name="derived_file" type="file" help="The filename of the derived class."/>
+    </category>
+    <property name="title" type="translate" help="The text to display on the frame's title bar."/>
+    <property name="style" type="bitlist">
+      <option name="wxDEFAULT_FRAME_STYLE"
+        help="Defined as wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN"/>
+      <option name="wxICONIZE" help="Display the frame iconized (minimized). Windows only."/>
+      <option name="wxCAPTION" help="Puts a caption on the frame."/>
+      <option name="wxMINIMIZE" help="Identical to wxICONIZE. Windows only."/>
+      <option name="wxMINIMIZE_BOX" help="Displays a minimize box on the frame."/>
+      <option name="wxMAXIMIZE" help="Displays the frame maximized. Windows only."/>
+      <option name="wxMAXIMIZE_BOX" help="Displays a maximize box on the frame."/>
+      <option name="wxCLOSE_BOX" help="Displays a close box on the frame."/>
+      <option name="wxSTAY_ON_TOP" help="Stay on top of all other windows, see also wxFRAME_FLOAT_ON_PARENT."/>
+      <option name="wxSYSTEM_MENU" help="Displays a system menu."/>
+      <option name="wxRESIZE_BORDER" help="Displays a resizeable border around the window."/>
+      <option name="wxFRAME_TOOL_WINDOW"
+        help="Causes a frame with a small titlebar to be created; the frame does not appear in the taskbar under Windows or GTK+."/>
+      <option name="wxFRAME_NO_TASKBAR"
+        help="Creates an otherwise normal frame but it does not appear in the taskbar under Windows or GTK+ (note that it will minimize to the desktop window under Windows which may seem strange to the users and thus it might be better to use this style only without wxMINIMIZE_BOX style). In wxGTK, the flag is respected only if GTK+ is at least version 2.2 and the window manager supports _NET_WM_STATE_SKIP_TASKBAR hint. Has no effect under other platforms."/>
+      <option name="wxFRAME_FLOAT_ON_PARENT"
+        help="The frame will always be on top of its parent (unlike wxSTAY_ON_TOP). A frame created with this style must have a non-NULL parent."/>
+      <option name="wxFRAME_SHAPED" help="Windows with this style are allowed to have their shape changed with the SetShape method."/>
+      wxDEFAULT_FRAME_STYLE
+    </property>
+    <property name="extra_style" type="bitlist">
+      <option name="wxFRAME_EX_CONTEXTHELP"
+        help="Under Windows, puts a query button on the caption. When pressed, Windows will go into a context-sensitive help mode and wxWidgets will send a wxEVT_HELP event if the user clicked on an application window. You cannot use this style together with wxMAXIMIZE_BOX or wxMINIMIZE_BOX, so you should use wxDEFAULT_FRAME_STYLE & ~ (wxMINIMIZE_BOX | wxMAXIMIZE_BOX) for the frames having this style (the dialogs don't have a minimize or a maximize box by default). Note: The Project's &quot;help_provider&quot; property must be set for context-sensitive help to work."/>
+      <option name="wxFRAME_EX_METAL" help="On Mac OS X, frames with this style will be shown with a metallic look. This is an extra style."/>
+    </property>
+    <property name="center" type="option" help="Centers the dialog box on the display in the chosen direction.">
+      <option name=""/>
+      <option name="wxHORIZONTAL"/>
+      <option name="wxVERTICAL"/>
+      <option name="wxBOTH"/>
+      wxBOTH
+    </property>
+    <property name="aui_managed" help="Manage this frame by AUI manager." type="bool">0</property>
+    <property name="aui_manager_style" help="Configure AUI manager." type="bitlist">
+      <option name="wxAUI_MGR_DEFAULT"
+        help="Default behavior, combines: wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE | wxAUI_MGR_NO_VENETIAN_BLINDS_FADE."/>
+      <option name="wxAUI_MGR_ALLOW_FLOATING" help="Allow a pane to be undocked to take the form of a wxMiniFrame."/>
+      <option name="wxAUI_MGR_ALLOW_ACTIVE_PANE" help="Change the color of the title bar of the pane when it is activated."/>
+      <option name="wxAUI_MGR_TRANSPARENT_DRAG" help="Make the pane transparent during its movement."/>
+      <option name="wxAUI_MGR_TRANSPARENT_HINT" help="The possible location for docking is indicated by a translucent area."/>
+      <option name="wxAUI_MGR_VENETIAN_BLINDS_HINT"
+        help="The possible location for docking is indicated by gradually appearing partially transparent hint."/>
+      <option name="wxAUI_MGR_RECTANGLE_HINT" help="The possible location for docking is indicated by a rectangular outline."/>
+      <option name="wxAUI_MGR_HINT_FADE" help="The translucent area where the pane could be docked appears gradually."/>
+      <option name="wxAUI_MGR_NO_VENETIAN_BLINDS_FADE"
+        help="Used in complement of wxAUI_MGR_VENETIAN_BLINDS_HINT to show the docking hint immediately."/>
+      <option name="wxAUI_MGR_LIVE_RESIZE"
+        help="When a docked pane is resized, its content is refreshed in live (instead of moving the border alone and refreshing the content at the end)."/>
+      wxAUI_MGR_DEFAULT
+    </property>
+  </compinfo>
+
+  <compinfo class="MenuBar" image="wxMenuBar" type="menubar_form">
+    <inherits class="wxWindow"/>
+    <property name="class_name" type="string" help="The name of the base class.">MyMenuBarBase</property>
+    <property name="label" type="translate">MyMenuBar</property>
+    <category name="Code generation">
+      <property name="base_file" type="file" help="The filename of the base class.">mymenubar_base</property>
+      <property name="base_src_includes" type="text"
+          help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
+      <property name="base_hdr_includes" type="text"
+        help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files."/>
+      <property name="derived_class_name" type="text" help="The name of the derived class.">MyMenuBar</property>
+      <property name="derived_file" type="file" help="The filename of the derived class."/>
+    </category>
+    <property name="style" type="bitlist">
+      <option name="wxMB_DOCKABLE" help="Allows the menu bar to be detached (wxGTK only)."/>
+    </property>
+  </compinfo>
+
+  <compinfo class="ToolBar" image="wxToolBar" type="toolbar_form">
+    <inherits class="wxWindow"/>
+    <property name="class_name" type="string" help="The name of the base class.">MyToolBarBase</property>
+    <category name="Code generation">
+      <property name="base_file" type="file" help="The filename of the base class.">mytoolbar_base</property>
+      <property name="base_src_includes" type="text"
+          help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
+      <property name="base_hdr_includes" type="text"
+        help="This preamble is placed unchanged in the generated base include file after all wx/ include files. It is normally used to include additional header files."/>
+      <property name="derived_class_name" type="text" help="The name of the derived class.">MyToolBar</property>
+      <property name="derived_file" type="file" help="The filename of the derived class."/>
+    </category>
+    <property name="bitmapsize" type="wxSize" help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels."/>
+    <property name="margins" type="wxSize" help="Values to be used as margins for the toolbar."/>
+    <property name="packing" type="uint"
+        help="Value used for spacing tools. Remarks: The packing is used for spacing in the vertical direction if the toolbar is horizontal, and for spacing in the horizontal direction if the toolbar is vertical.">1</property>
+    <property name="separation" type="uint"
+        help="The default separator size. Remarks: This is the size between each toolbar tool.">5</property>
+    <property name="style" type="bitlist">
+      <option name="wxTB_FLAT" help="Gives the toolbar a flat look (Windows and GTK only)."/>
+      <option name="wxTB_DOCKABLE" help="Makes the toolbar floatable and dockable (GTK only)."/>
+      <option name="wxTB_HORIZONTAL" help="Specifies horizontal layout."/>
+      <option name="wxTB_VERTICAL" help="Specifies vertical layout."/>
+      <option name="wxTB_TEXT" help="Shows the text in the toolbar buttons; by default only icons are shown."/>
+      <option name="wxTB_NOICONS" help="Specifies no icons in the toolbar buttons; by default they are shown."/>
+      <option name="wxTB_NODIVIDER" help="Specifies no divider (border) above the toolbar (Windows only)."/>
+      <option name="wxTB_NOALIGN" help="Specifies no alignment with the parent window (Windows only, not very useful)."/>
+      <option name="wxTB_HORZ_LAYOUT"
+        help="Shows the text and the icons alongside, not vertically stacked (Windows and GTK 2 only). This style must be used with wxTB_TEXT."/>
+      <option name="wxTB_HORZ_TEXT" help="Combination of wxTB_HORZ_LAYOUT and wxTB_TEXT."/>
+      wxTB_HORIZONTAL
+    </property>
+  </compinfo>
+
+  <compinfo class="wxWizard" image="wxWizard" type="wizard">
+    <inherits class="wxTopLevelWindow"/>
+    <inherits class="wxWindow"/>
+    <property name="class_name" type="string" help="The name of the base class.">MyWizardBase</property>
+    <category name="Code generation">
+      <property name="base_file" type="file" help="The filename of the base class.">mywizard_base</property>
+      <property name="base_src_includes" type="text"
+          help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
+      <property name="base_hdr_includes" type="text"
+        help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files."/>
+      <property name="derived_class_name" type="string" help="The name of the derived class.">MyWizard</property>
+      <property name="derived_file" type="file" help="The filename of the derived class."/>
+    </category>
+    <property name="title" type="translate" help="The text to display on the Wizard's title bar."/>
+    <property name="bitmap" type="image" help="Bitmap to display on the left side of the wizard (default: none)."/>
+    <property name="style" type="bitlist">
+      <option name="wxCAPTION" help="Puts a caption on the dialog box."/>
+      <option name="wxDEFAULT_DIALOG_STYLE"
+        help="Equivalent to a combination of wxCAPTION, wxCLOSE_BOX and wxSYSTEM_MENU (the last one is not used under Unix)"/>
+      <option name="wxRESIZE_BORDER" help="Display a resizeable frame around the window."/>
+      <option name="wxSYSTEM_MENU" help="Display a system menu."/>
+      <option name="wxCLOSE_BOX" help="Displays a close box on the dialog."/>
+      <option name="wxMAXIMIZE_BOX" help="Displays a maximize box on the dialog."/>
+      <option name="wxMINIMIZE_BOX" help="Displays a minimize box on the dialog."/>
+      <option name="wxSTAY_ON_TOP" help="The dialog stays on top of all other windows."/>
+      <option name="wxDIALOG_NO_PARENT"
+        help="By default, a dialog created with a NULL parent window will be given the application's top level window as parent. Use this style to prevent this from happening and create an orphan dialog. This is not recommended for modal dialogs."/>
+      wxDEFAULT_DIALOG_STYLE
+    </property>
+    <property name="extra_style" type="bitlist">
+      <option name="wxWIZARD_EX_HELPBUTTON" help="Shows a Help button using wxID_HELP."/>
+    </property>
+    <property name="center" type="option" help="Centers the dialog box on the display in the chosen direction.">
+      <option name=""/>
+      <option name="wxHORIZONTAL"/>
+      <option name="wxVERTICAL"/>
+      <option name="wxBOTH"/>
+      wxBOTH
+    </property>
+    <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent" help="Generated when the Wizard is being initialized."/>
+    <event name="wxEVT_WIZARD_PAGE_CHANGED" class="wxWizardEvent" help="This event cannot be vetoed."/>
+    <event name="wxEVT_WIZARD_PAGE_CHANGING" class="wxWizardEvent" help="This event can be vetoed."/>
+    <event name="wxEVT_WIZARD_BEFORE_PAGE_CHANGED" class="wxWizardEvent"
+        help="Generated after Next is clicked but before GetNext is called. Unlike wxEVT_WIZARD_PAGE_CHANGING, the handler for this function can change state that might affect the return value of GetNext. This event can be vetoed."/>
+    <event name="wxEVT_WIZARD_PAGE_SHOWN" class="wxWizardEvent" help="The page was shown and laid out (this event cannot be vetoed)."/>
+    <event name="wxEVT_WIZARD_CANCEL" class="wxWizardEvent" help="The user attempted to cancel the wizard (this event may be vetoed)."/>
+    <event name="wxEVT_WIZARD_HELP" class="wxWizardEvent" help="Generated when the help button is pressed. "/>
+    <event name="wxEVT_WIZARD_FINISHED" class="wxWizardEvent" help="Generated when the finish button is pressed."/>
+  </compinfo>
+
+  <compinfo class="wxWizardPageSimple" image="wxWizardPageSimple" type="wizardpagesimple">
+    <inherits class="wxWindow"/>
+    <property name="var_name" type="string">wizPage</property>
+    <property name="class_access" type="option">
+      <option name="none"/>
+      <option name="protected:"/>
+      <option name="public:"/>
+      none
+    </property>
+    <property name="bitmap" type="image" help="Page-specific bitmap (default: none)."/>
+  </compinfo>
+
+</GeneratorDefitions>

@@ -33,11 +33,9 @@ BraceWrapping:
   AfterStruct:      true
   AfterUnion:       true
   AfterExternBlock: true
-  BeforeCatch:      false
-  BeforeElse:       true
-  BeforeLambdaBody: false
-  BeforeWhile:      false
-  IndentBraces:     false
+  BeforeCatch:     false
+  BeforeElse:      true
+  IndentBraces:    false
   SplitEmptyFunction: true
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
@@ -49,7 +47,7 @@ BreakConstructorInitializersBeforeComma: false
 BreakConstructorInitializers: AfterColon
 BreakInheritanceList: AfterColon
 BreakStringLiterals: true
-ColumnLimit: 140
+ColumnLimit: 125
 CommentPragmas:  '^ IWYU pragma:'
 CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: false

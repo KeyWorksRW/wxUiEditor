@@ -12,6 +12,13 @@ build/
 archive/
 converted_art/
 tests/
+xpm/
+
+# Generated files to ignore
+messages.po
+
+# Ignore ttBld-generated GZIP header files
+*.hgz
 
 # File extensions to ignore
 *.backup
@@ -40,6 +47,10 @@ tests/
 *.tmp
 *.txt
 *.zip
+
+# cmake
+CMakeFiles/
+build/
 
 # CodeBlock files
 *.cbp

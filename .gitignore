@@ -73,6 +73,7 @@ build/
 # VSCode files
 .vscode/
 *.code-workspace
+*.code-search
 
 # Visual Studio files and folders
 # Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore

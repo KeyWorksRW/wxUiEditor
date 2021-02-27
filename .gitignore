@@ -1,0 +1,162 @@
+# Directories to ignore
+bin/
+bin32/
+bin64/
+lib/
+lib32/
+lib64/
+bld/
+build/
+
+.private/
+archive/
+converted_art/
+tests/
+
+# File extensions to ignore
+*.backup
+*.bak
+*.bat
+*.btm
+*.chm
+*.cmd
+*.db
+*.dll
+*.exe
+*.exp
+*.gch
+*.ilk
+*.ini
+*.lib
+*.obj
+*.ocx
+*.opendb
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.res
+*.rtf
+*.tmp
+*.txt
+*.zip
+
+# CodeBlock files
+*.cbp
+*.depend
+*.layout
+
+# CodeLite files
+.codelite/
+*.project
+*.workspace
+
+# Eclipse project files
+.project
+.cproject
+
+# SublimeText project files
+*.sublime-project
+*.sublime-workspace
+
+# VSCode files
+.vscode/
+*.code-workspace
+
+# Visual Studio files and folders
+# Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
+
+# User-specific files
+*.filters
+*.rsuser
+*.sln
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+*.vcproj
+*.vcxproj
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+
+# Build Results of an ATL Project
+[Dd]ebugPS/
+[Rr]eleasePS/
+dlldata.c
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Visual Studio Trace Files
+*.e2e
+
+# Visual Studio code coverage results
+*.coverage
+*.coveragexml
+
+# Visual Studio cache files
+# files ending in .cache can be ignored
+*.[Cc]ache
+# but keep track of directories ending in .cache
+!?*.[Cc]ache/
+
+# MSBuild Binary and Structured Log
+*.binlog

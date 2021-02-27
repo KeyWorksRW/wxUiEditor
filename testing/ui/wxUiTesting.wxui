@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<wxUiEditorData data_version="11">
+  <node class="Project" converted_art="../art" local_pch_file="pch.h" original_art="../art">
+    <node class="wxFrame" base_file="mainframe_base" class_name="MainFrameBase" derived_class_name="MainFrame" derived_file="mainframe" title="wxUiTesting" size="500,300" window_style="wxTAB_TRAVERSAL">
+      <node class="wxMenuBar" class_access="none" var_name="menubar">
+        <node class="wxMenu" class_access="none" label="&amp;Dialogs" var_name="menuDialogs">
+          <node class="wxMenuItem" help="Common controls" label="Common Controls..." var_name="menuItem" wxEVT_MENU="OnCommonDialog" />
+          <node class="wxMenuItem" label="Notebook Dialog..." var_name="menuItem1" wxEVT_MENU="OnNotebookDialog" />
+          <node class="wxMenuItem" label="Ribbon Dialog" var_name="menuItem2" wxEVT_MENU="OnRibbonDialog" />
+          <node class="wxMenuItem" label="Wizard" var_name="menuItem3" wxEVT_MENU="OnWizard" />
+          <node class="separator" />
+          <node class="wxMenuItem" id="wxID_EXIT" label="Exit" var_name="menuItem4" wxEVT_MENU="OnQuit" />
+        </node>
+      </node>
+      <node class="wxStatusBar" />
+    </node>
+    <node class="wxDialog" base_file="commonctrls_base" class_name="CommonCtrlsBase" derived_class_name="CommonCtrls" derived_file="commonctrls" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="Common controls">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+        <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer6" flags="wxEXPAND">
+          <node class="wxInfoBar" show_effect="wxSHOW_EFFECT_EXPAND" flags="wxEXPAND" />
+        </node>
+        <node class="wxBoxSizer" flags="wxEXPAND">
+          <node class="wxStaticText" label="Text:" alignment="wxALIGN_CENTER" borders="wxLEFT|wxTOP|wxBOTTOM" />
+          <node class="wxTextCtrl" style="wxTE_PROCESS_ENTER" value="Text &quot;ctrl&quot;" validator_variable="m_textCtrlValidate" wxEVT_TEXT_ENTER="OnProcessEnter" />
+          <node class="wxStaticText" label="More text:" var_name="m_staticText2" alignment="wxALIGN_CENTER" borders="wxLEFT|wxTOP|wxBOTTOM" />
+          <node class="wxTextCtrl" value="Another ctrl" var_name="m_textCtrl2" />
+          <node class="wxCheckBox" label="2-state Checkbox" alignment="wxALIGN_CENTER" wxEVT_CHECKBOX="OnCheckBox" />
+        </node>
+        <node class="wxBoxSizer" var_name="box_sizer2" flags="wxEXPAND">
+          <node class="wxButton" label="First btn" wxEVT_BUTTON="OnFirstBtn" />
+          <node class="wxButton" label="Second btn" var_name="m_btn2" />
+          <node class="wxRadioButton" label="First radio" style="wxRB_GROUP" alignment="wxALIGN_CENTER" wxEVT_RADIOBUTTON="OnRadio" />
+          <node class="wxRadioButton" label="Second radio" var_name="m_radioBtn2" alignment="wxALIGN_CENTER" wxEVT_RADIOBUTTON="OnRadio" />
+          <node class="wxCheckBox" label="Checkbox" var_name="m_checkBox2" alignment="wxALIGN_CENTER" wxEVT_CHECKBOX="OnCheckBox" />
+        </node>
+        <node class="wxStaticBoxSizer" label="Combos and Choices" var_name="m_static_box" flags="wxEXPAND">
+          <node class="wxBoxSizer" var_name="box_sizer3" flags="wxEXPAND">
+            <node class="wxStaticBoxSizer" label="Combo" var_name="m_static_box_sizer2" flags="wxEXPAND">
+              <node class="wxStaticText" label="Unsorted" var_name="m_staticText3" />
+              <node class="wxComboBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" selection_int="2" selection_string="item #2" tooltip="Item #0 should be selected by default" flags="wxEXPAND" wxEVT_COMBOBOX="OnCombo" />
+              <node class="wxStaticText" label="Sorted" var_name="m_staticText4" />
+              <node class="wxComboBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" selection_int="2" selection_string="item #2" style="wxCB_SORT" var_name="m_comboBox2" tooltip="Item #2 should be selected by default" wxEVT_COMBOBOX_CLOSEUP="OnComboClose" />
+            </node>
+            <node class="wxStaticBoxSizer" label="Choice" var_name="m_static_box_sizer3" flags="wxEXPAND">
+              <node class="wxStaticText" label="Unsorted" var_name="m_staticText5" />
+              <node class="wxChoice" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" selection_int="2" tooltip="Item #0 should be selected by default" wxEVT_CHOICE="OnChoice" />
+              <node class="wxStaticText" label="Sorted" var_name="m_staticText6" />
+              <node class="wxChoice" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" selection_int="2" style="wxCB_SORT" var_name="m_choice2" tooltip="Item #2 should be selected by default" wxEVT_CHOICE="OnChoice" />
+            </node>
+            <node class="wxStaticBoxSizer" label="List" var_name="m_static_box_sizer4" flags="wxEXPAND">
+              <node class="wxStaticText" label="Unsorted" var_name="m_staticText7" />
+              <node class="wxListBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" wxEVT_LISTBOX="OnListBox" />
+              <node class="wxStaticText" label="Sorted" var_name="m_staticText8" />
+              <node class="wxListBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" style="wxLB_SORT" var_name="m_listBox2" wxEVT_LISTBOX="OnListBox" />
+            </node>
+            <node class="wxStaticBoxSizer" label="Checked" var_name="m_static_box_sizer5" flags="wxEXPAND">
+              <node class="wxStaticText" label="Unsorted" var_name="m_staticText9" />
+              <node class="wxCheckListBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" wxEVT_CHECKLISTBOX="OnListChecked" />
+              <node class="wxStaticText" label="Sorted" var_name="m_staticText10" />
+              <node class="wxCheckListBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" style="wxLB_SORT" var_name="m_checkList2" />
+            </node>
+          </node>
+        </node>
+        <node class="wxFlexGridSizer" cols="4" flags="wxEXPAND">
+          <node class="wxStaticText" label="On Windows 10, the items may be be clipped unless they have a trailing space." var_name="m_staticText11" wrap="200" />
+          <node class="wxRadioBox" choices="&quot;Button zero &quot; &quot;Button one &quot; &quot;Button two &quot;" label="Radio Box" selection="1" style="wxRA_SPECIFY_ROWS" validator_variable="m_valRadio" wxEVT_RADIOBOX="OnRadioBox" />
+          <node class="wxStaticBitmap" bitmap="Art; wxART_GO_HOME; wxART_OTHER; [-1; -1]" />
+          <node class="wxBitmapComboBox" style="wxCB_READONLY" />
+        </node>
+        <node class="wxBoxSizer" var_name="box_sizer5" flags="wxEXPAND">
+          <node class="wxStaticText" label="Slider:" var_name="m_staticText12" alignment="wxALIGN_CENTER" borders="wxLEFT|wxTOP|wxBOTTOM" />
+          <node class="wxSlider" wxEVT_SLIDER="OnSlider" />
+          <node class="wxStaticText" label="Guage:" var_name="m_staticText13" alignment="wxALIGN_CENTER" borders="wxLEFT|wxTOP|wxBOTTOM" />
+          <node class="wxGauge" alignment="wxALIGN_CENTER" />
+        </node>
+        <node class="wxStdDialogButtonSizer" Help="true" flags="wxEXPAND" />
+      </node>
+    </node>
+    <node class="wxDialog" base_file="notebookdlg_base" class_name="NotebookDlgBase" derived_class_name="NotebookDlg" derived_file="notebookdlg" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" size="500,-1">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+        <node class="wxNotebook" flags="wxEXPAND" proportion="1">
+          <node class="BookPage" label="Pickers" window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer2">
+              <node class="wxStaticBoxSizer" label="Pickers" var_name="m_static_box" flags="wxEXPAND">
+                <node class="wxFilePickerCtrl" wildcard="BMP files|*.bmp" />
+                <node class="wxDirPickerCtrl" style="wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL" value="." />
+                <node class="wxColourPickerCtrl" />
+                <node class="wxDatePickerCtrl" />
+                <node class="wxTimePickerCtrl" />
+                <node class="wxFontPickerCtrl" style="wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL" value="Comic Sans MS,90,400,-1,70,0" />
+              </node>
+            </node>
+          </node>
+          <node class="BookPage" label="Spinners" var_name="m_panel2" window_style="wxBORDER_RAISED|wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer3">
+              <node class="wxScrollBar" flags="wxEXPAND" />
+              <node class="wxSpinCtrl" initial="4" validator_variable="m_spinValidate" />
+              <node class="wxSpinCtrlDouble" />
+              <node class="wxSpinButton" />
+            </node>
+          </node>
+          <node class="BookPage" label="HTML" select="true" var_name="m_panel3" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer4">
+              <node class="wxHtmlWindow" class_access="public:" />
+            </node>
+          </node>
+          <node class="BookPage" label="RTF" var_name="m_panel4" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer5">
+              <node class="wxRichTextCtrl" window_style="wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS" flags="wxEXPAND" proportion="1" />
+            </node>
+          </node>
+          <node class="BookPage" label="Scintilla" var_name="m_panel5" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer6">
+              <node class="wxStyledTextCtrl" flags="wxEXPAND" proportion="1" />
+            </node>
+          </node>
+          <node class="BookPage" label="Misc" var_name="m_panel6" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer7">
+              <node class="wxBoxSizer" flags="wxEXPAND">
+                <node class="wxToggleButton" label="Toggle" />
+                <node class="wxHyperlinkCtrl" alignment="wxALIGN_CENTER" />
+                <node class="wxSearchCtrl" value="Search for something..." proportion="1" />
+              </node>
+              <node class="wxBoxSizer" var_name="box_sizer2" flags="wxEXPAND" proportion="1">
+                <node class="wxCalendarCtrl" />
+                <node class="wxGenericDirCtrl" window_style="wxSUNKEN_BORDER" flags="wxEXPAND" proportion="1" />
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+    <node class="wxDialog" base_file="ribbondlg_base" class_name="RibbonDlgBase" derived_class_name="RibbonDlg" derived_file="ribbondlg" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="Ribbon Dialog" size="500,300">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+        <node class="wxRibbonBar" style="wxRIBBON_BAR_FLOW_HORIZONTAL|wxRIBBON_BAR_SHOW_PAGE_LABELS" theme="Generic" flags="wxEXPAND" proportion="1">
+          <node class="wxRibbonPage" label="First" select="true">
+            <node class="wxRibbonPanel" label="First Panel" />
+          </node>
+          <node class="wxRibbonPage" label="Second" var_name="m_ribbonPage2">
+            <node class="wxRibbonPanel" label="Second Panel" var_name="m_ribbonPanel2" />
+          </node>
+        </node>
+      </node>
+    </node>
+    <node class="PanelForm" size="500,300" window_style="wxTAB_TRAVERSAL">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+        <node class="wxSplitterWindow" flags="wxEXPAND" proportion="1">
+          <node class="wxPanel" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer2">
+              <node class="wxStaticText" label="Left Panel" />
+            </node>
+          </node>
+          <node class="wxPanel" var_name="m_panel2" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer3">
+              <node class="wxStaticText" label="Right Panel" var_name="m_staticText2" />
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+    <node class="wxWizard" base_file="wizard_base" class_name="WizardBase" derived_class_name="Wizard" derived_file="wizard" title="Wizard Tests" wxEVT_WIZARD_BEFORE_PAGE_CHANGED="OnBeforeChange">
+      <node class="wxWizardPageSimple">
+        <node class="wxBoxSizer">
+          <node class="wxStaticText" label="This is the first Wizard page" />
+        </node>
+      </node>
+      <node class="wxWizardPageSimple" var_name="m_wizPage2">
+        <node class="wxBoxSizer" var_name="box_sizer2">
+          <node class="wxStaticText" label="This is the second Wizard page" var_name="m_staticText2" />
+        </node>
+      </node>
+      <node class="wxWizardPageSimple" var_name="m_wizPage3">
+        <node class="wxBoxSizer" var_name="box_sizer3">
+          <node class="wxStaticText" label="This is the final Wizard page" var_name="m_staticText3" />
+        </node>
+      </node>
+    </node>
+    <node class="MenuBar">
+      <node class="wxMenu" />
+    </node>
+    <node class="ToolBar">
+      <node class="tool" label="" />
+    </node>
+  </node>
+</wxUiEditorData>

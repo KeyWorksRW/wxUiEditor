@@ -1,0 +1,38 @@
+# Requires ttBld.exe version 1.4.0 or higher to process -- see https://github.com/KeyWorksRW/ttBld
+
+Options:
+    Project:      wxUiTesting  # project name
+    Exe_type:     window       # [window | console | lib | dll]
+    Pch:          pch.h        # name of precompiled header file, or "none" if not using precompiledheaders
+    Optimize:     space        # [space | speed] optimization to use in release builds
+    Warn:         4            # [1-4] warning level
+
+    Crt_rel:      dll          # [static | dll] type of CRT to link to in release builds
+    Crt_dbg:      dll          # [static | dll] type of CRT to link to in debug builds
+    Ms_linker:    true         # true means use link.exe even when compiling with clang
+
+    # Note that if your compiler can generate c++20 code, a lot of deprecated warnings will be generated
+    # CFlags_cmn:   -std:c++latest /Zc:__cplusplus /utf-8 # common compiler flags
+    CFlags_cmn:   -std:c++17 /Zc:__cplusplus /utf-8 # common compiler flags
+
+
+    CFlags_rel:  /DNDEBUG       # static wxWidgets libraries in release build
+    CFlags_dbg:  -DWXUSINGDLL   # dll wxWidgets libraries in debug build
+
+    IncDirs:       ./;ui
+    TargetDir:   ../bin              # target directory
+    Natvis:      ../src/wxui.natvis  # MSVC Debug visualizer
+
+Files:
+    mainapp.cpp
+
+    ui/mainframe.cpp      # Main window
+    ui/mainframe_base.cpp  # wxUiEditor generated file
+    ui/commonctrls.cpp
+    ui/commonctrls_base.cpp
+    ui/notebookdlg.cpp
+    ui/notebookdlg_base.cpp
+    ui/ribbondlg.cpp
+    ui/ribbondlg_base.cpp
+    ui/wizard_base.cpp
+    ui/wizard.cpp

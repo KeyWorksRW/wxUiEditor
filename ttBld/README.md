@@ -1,0 +1,1 @@
+Version 1.7.2 or later of **ttBld.exe** is required to build this project. If you already have this or a newer version in your path, then nothing further is needed. If you don't, you can either get a release version from https://github.com/KeyWorksRW/ttBld or you can copy it from the subdirectory matching your platform into the project's `src/` directory.

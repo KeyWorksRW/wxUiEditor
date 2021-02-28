@@ -22,7 +22,7 @@ wxObject* ToolBarFormGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxToolBar(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-        node->prop_as_int(txtStyle) | node->prop_as_int("window_style") | wxTB_NOALIGN | wxTB_NODIVIDER | wxNO_BORDER);
+        node->prop_as_int(txt_style) | node->prop_as_int("window_style") | wxTB_NOALIGN | wxTB_NODIVIDER | wxNO_BORDER);
 
     if (node->HasValue("bitmapsize"))
         widget->SetToolBitmapSize(node->prop_as_wxSize("bitmapsize"));
@@ -63,7 +63,7 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
             if (!bmp.IsOk())
                 bmp = GetXPMImage("default");
 
-            toolbar->AddTool(wxID_ANY, childObj->GetPropertyAsString(txtLabel), bmp, wxNullBitmap,
+            toolbar->AddTool(wxID_ANY, childObj->GetPropertyAsString(txt_label), bmp, wxNullBitmap,
                              (wxItemKind) childObj->prop_as_int("kind"), childObj->GetPropertyAsString("help"),
                              wxEmptyString, child);
         }
@@ -87,7 +87,7 @@ std::optional<ttlib::cstr> ToolBarFormGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    code << node->prop_as_string(txtClassName) << "::" << node->prop_as_string(txtClassName);
+    code << node->prop_as_string(txt_class_name) << "::" << node->prop_as_string(txt_class_name);
     code << "(wxWindow* parent, wxWindowID id, ";
     code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
     if (node->prop_as_string("window_name").size())
@@ -144,7 +144,7 @@ std::optional<ttlib::cstr> ToolBarFormGenerator::GenEvents(NodeEvent* event, con
 {
     auto code = GenEventCode(event, class_name);
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
-    code.Replace(ttlib::cstr() << event->GetNode()->prop_as_string(txtVarName) << "->", "");
+    code.Replace(ttlib::cstr() << event->GetNode()->prop_as_string(txt_var_name) << "->", "");
     return code;
 }
 
@@ -171,7 +171,7 @@ wxObject* ToolBarGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                      node->prop_as_int(txtStyle) | node->prop_as_int("window_style") | wxTB_NODIVIDER | wxNO_BORDER);
+                      node->prop_as_int(txt_style) | node->prop_as_int("window_style") | wxTB_NODIVIDER | wxNO_BORDER);
 
     if (node->HasValue("bitmapsize"))
         widget->SetToolBitmapSize(node->prop_as_wxSize("bitmapsize"));
@@ -212,7 +212,7 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
             if (!bmp.IsOk())
                 bmp = GetXPMImage("default");
 
-            toolbar->AddTool(wxID_ANY, childObj->GetPropertyAsString(txtLabel), bmp, wxNullBitmap,
+            toolbar->AddTool(wxID_ANY, childObj->GetPropertyAsString(txt_label), bmp, wxNullBitmap,
                              (wxItemKind) childObj->prop_as_int("kind"), childObj->GetPropertyAsString("help"),
                              wxEmptyString, child);
         }
@@ -237,14 +237,14 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->prop_as_string(txtVarName);
+    code << node->prop_as_string(txt_var_name);
     if (node->FindParentForm()->GetClassName() == "wxFrame")
     {
         code << " = CreateToolBar(";
 
         auto& id = node->prop_as_string("id");
         auto& window_name = node->prop_as_string("window_name");
-        auto& style = node->prop_as_string(txtStyle);
+        auto& style = node->prop_as_string(txt_style);
         auto& win_style = node->prop_as_string("window_style");
 
         if (window_name.size())
@@ -375,7 +375,7 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
             code << node->get_node_name() << " = AddTool(" << node->prop_as_string("id") << ", ";
     }
 
-    auto& label = node->prop_as_string(txtLabel);
+    auto& label = node->prop_as_string(txt_label);
     if (label.size())
     {
         code << GenerateQuotedString(label);
@@ -387,7 +387,7 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
 
     code << ", " << GenerateBitmapCode(node->prop_as_string("bitmap"));
 
-    if (!node->HasValue(txtTooltip) && !node->HasValue("statusbar"))
+    if (!node->HasValue(txt_tooltip) && !node->HasValue("statusbar"))
     {
         if (node->prop_as_string("kind") != "wxITEM_NORMAL")
         {
@@ -398,9 +398,9 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
         return code;
     }
 
-    if (node->HasValue(txtTooltip) && !node->HasValue("statusbar"))
+    if (node->HasValue(txt_tooltip) && !node->HasValue("statusbar"))
     {
-        code << ",\n\t\t\t" << GenerateQuotedString(node->prop_as_string(txtTooltip));
+        code << ",\n\t\t\t" << GenerateQuotedString(node->prop_as_string(txt_tooltip));
         if (node->prop_as_string("kind") != "wxITEM_NORMAL")
         {
             code << ", " << node->prop_as_string("kind");
@@ -412,9 +412,9 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
         code << ", wxNullBitmap, ";
         code << node->prop_as_string("kind") << ", \n\t\t\t";
 
-        if (node->HasValue(txtTooltip))
+        if (node->HasValue(txt_tooltip))
         {
-            code << GenerateQuotedString(node->prop_as_string(txtTooltip));
+            code << GenerateQuotedString(node->prop_as_string(txt_tooltip));
         }
         else
         {

@@ -223,7 +223,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
         // Convert old orient name to orientationr
         else if (iter.cname().is_sameas("orient"))
         {
-            if (auto prop = new_node->get_prop_ptr(txtOrient); prop)
+            if (auto prop = new_node->get_prop_ptr(txt_orientation); prop)
             {
                 prop->set_value(iter.value());
                 continue;
@@ -233,7 +233,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
         // Convert old access name to class_access
         else if (iter.cname().is_sameas("access"))
         {
-            if (auto prop = new_node->get_prop_ptr(txtAccess); prop)
+            if (auto prop = new_node->get_prop_ptr(txt_class_access); prop)
             {
                 prop->set_value(iter.value());
                 continue;
@@ -243,7 +243,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
         // Convert old derived_name to derived_class_name
         else if (iter.cname().is_sameas("derived_name"))
         {
-            if (auto prop = new_node->get_prop_ptr(txtDerivedClassName); prop)
+            if (auto prop = new_node->get_prop_ptr(txt_derived_class_name); prop)
             {
                 prop->set_value(iter.value());
                 continue;
@@ -253,7 +253,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
         // Convert old hdr_preamble to  to derived_class_name
         else if (iter.cname().is_sameas("hdr_preamble"))
         {
-            if (auto prop = new_node->get_prop_ptr(txtHdrInclude); prop)
+            if (auto prop = new_node->get_prop_ptr(txt_base_hdr_includes); prop)
             {
                 prop->set_value(iter.value());
                 continue;

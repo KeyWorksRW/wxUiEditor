@@ -21,9 +21,9 @@ wxObject* ComboBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
                                  node->prop_as_wxSize("size"), 0, NULL,
-                                 node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                                 node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
-    auto& choices = node->prop_as_string(txtChoices);
+    auto& choices = node->prop_as_string(txt_choices);
     if (choices.size())
     {
         auto array = ConvertToArrayString(choices);
@@ -77,7 +77,7 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenConstruction(Node* node)
     // after all strings have been appended.
     code << "wxEmptyString";
 
-    if (node->prop_as_string("window_name").empty() && node->prop_as_string(txtStyle).empty() &&
+    if (node->prop_as_string("window_name").empty() && node->prop_as_string(txt_style).empty() &&
         node->prop_as_string("window_style").empty())
     {
         GeneratePosSizeFlags(node, code);
@@ -108,9 +108,9 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenSettings(Node* node, size_t& /*
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(txtChoices).size())
+    if (node->prop_as_string(txt_choices).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(txtChoices));
+        auto array = ConvertToArrayString(node->prop_as_string(txt_choices));
         for (auto& iter: array)
         {
             if (code.size())
@@ -155,9 +155,9 @@ wxObject* ChoiceGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxChoice(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), 0,
-                     NULL, node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                     NULL, node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
-    auto& items = node->prop_as_string(txtChoices);
+    auto& items = node->prop_as_string(txt_choices);
     if (items.size())
     {
         auto array = ConvertToArrayString(items);
@@ -204,7 +204,7 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxChoice(";
     code << GetParentName(node) << ", " << node->prop_as_string("id");
 
-    if (node->prop_as_string("window_name").empty() && node->prop_as_string(txtStyle).empty() &&
+    if (node->prop_as_string("window_name").empty() && node->prop_as_string(txt_style).empty() &&
         node->prop_as_string("window_style").empty())
     {
         GeneratePosSizeFlags(node, code);
@@ -235,9 +235,9 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenSettings(Node* node, size_t& /* a
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(txtChoices).size())
+    if (node->prop_as_string(txt_choices).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(txtChoices));
+        auto array = ConvertToArrayString(node->prop_as_string(txt_choices));
         for (auto& iter: array)
         {
             if (code.size())
@@ -280,11 +280,11 @@ bool ChoiceGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 
 wxObject* BitmapComboBoxGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txtValue),
+    auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txt_value),
                                        node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), 0, NULL,
-                                       node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                                       node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
-    auto& choices = node->prop_as_string(txtChoices);
+    auto& choices = node->prop_as_string(txt_choices);
     if (choices.size())
     {
         auto array = ConvertToArrayString(choices);
@@ -335,7 +335,7 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenConstruction(Node* node)
     // after all strings have been appended.
     code << "wxEmptyString";
 
-    if (node->prop_as_string("window_name").empty() && node->prop_as_string(txtStyle).empty() &&
+    if (node->prop_as_string("window_name").empty() && node->prop_as_string(txt_style).empty() &&
         node->prop_as_string("window_style").empty())
     {
         GeneratePosSizeFlags(node, code);
@@ -368,9 +368,9 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenSettings(Node* node, size
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(txtChoices).size())
+    if (node->prop_as_string(txt_choices).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(txtChoices));
+        auto array = ConvertToArrayString(node->prop_as_string(txt_choices));
         for (auto& iter: array)
         {
             if (code.size())

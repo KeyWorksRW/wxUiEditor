@@ -753,22 +753,22 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         }
                     }
                 }
-                else if (prop->GetPropName() == txtAccess && wxGetApp().IsPjtMemberPrefix())
+                else if (prop->GetPropName() == txt_class_access && wxGetApp().IsPjtMemberPrefix())
                 {
                     // TODO: [KeyWorks - 08-23-2020] This needs to be a preference
 
                     // If access is changed to local and the name starts with "m_", then the "m_" will be stripped off.
                     // Conversely, if the name is changed from local to a class member, a "m_" is added as a prefix (if it
                     // doesn't already have one).
-                    ttlib::cstr name = node->prop_as_string(txtVarName);
+                    ttlib::cstr name = node->prop_as_string(txt_var_name);
                     if (value == "none" && name.is_sameprefix("m_"))
                     {
                         name.erase(0, 2);
                         auto final_name = node->GetUniqueName(name);
                         if (final_name.size())
                             name = final_name;
-                        auto propChange = selected_node->get_prop_ptr(txtVarName);
-                        auto grid_property = m_prop_grid->GetPropertyByLabel(txtVarName);
+                        auto propChange = selected_node->get_prop_ptr(txt_var_name);
+                        auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
                         grid_property->SetValueFromString(name, 0);
                         modifyProperty(propChange, name);
                     }
@@ -778,8 +778,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         auto final_name = node->GetUniqueName(name);
                         if (final_name.size())
                             name = final_name;
-                        auto propChange = selected_node->get_prop_ptr(txtVarName);
-                        auto grid_property = m_prop_grid->GetPropertyByLabel(txtVarName);
+                        auto propChange = selected_node->get_prop_ptr(txt_var_name);
+                        auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
                         grid_property->SetValueFromString(name, 0);
                         modifyProperty(propChange, name);
                     }
@@ -844,12 +844,12 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             ttString value = m_prop_grid->GetPropertyValueAsString(property);
             value.Replace(" ", "");
             value.Replace(",", "|");
-            if (prop->GetPropName() == txtStyle)
+            if (prop->GetPropName() == txt_style)
             {
                 // Don't allow the user to combine incompatible styles
                 if (value.contains("wxFLP_OPEN") && value.contains("wxFLP_SAVE"))
                 {
-                    auto style_prop = node->get_prop_ptr(txtStyle);
+                    auto style_prop = node->get_prop_ptr(txt_style);
                     auto old_value = style_prop->GetValue();
                     if (old_value.contains("wxFLP_OPEN"))
                     {
@@ -859,7 +859,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                         // Change the format to what the property grid wants
                         value.Replace("|", ",");
-                        m_prop_grid->SetPropertyValue(txtStyle, value);
+                        m_prop_grid->SetPropertyValue(txt_style, value);
 
                         // Now put it back into the format we use internally
                         value.Replace(",", "|");
@@ -872,7 +872,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                         // Change the format to what the property grid wants
                         value.Replace("|", ",");
-                        m_prop_grid->SetPropertyValue(txtStyle, value);
+                        m_prop_grid->SetPropertyValue(txt_style, value);
 
                         // Now put it back into the format we use internally
                         value.Replace(",", "|");
@@ -973,7 +973,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 }
             }
 
-            if (prop->GetPropName() == txtVarName)
+            if (prop->GetPropName() == txt_var_name)
             {
                 if (newValue.empty())
                 {
@@ -982,11 +982,11 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     auto final_name = node->GetUniqueName(new_name);
                     newValue = final_name.size() ? final_name : new_name;
 
-                    auto grid_property = m_prop_grid->GetPropertyByLabel(txtVarName);
+                    auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
                     grid_property->SetValueFromString(newValue, 0);
                 }
             }
-            else if (prop->GetPropName() == txtChoices)
+            else if (prop->GetPropName() == txt_choices)
             {
 #if defined(_WIN32)
                 // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped. Adding
@@ -1022,7 +1022,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
             ModifyProperty(prop, newValue);
 
-            if (prop->GetPropName() == txtClassName)
+            if (prop->GetPropName() == txt_class_name)
             {
                 auto selected_node = wxGetFrame().GetSelectedNode();
                 if (!selected_node)
@@ -1037,7 +1037,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (newValue.Right(4) != "Base")
                         return;
 
-                    if (auto propType = selected_node->get_prop_ptr(txtDerivedClassName);
+                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
                         propType && propType->GetValue() == "MyDialog")
                         ReplaceDrvName(newValue, propType);
                     if (auto propType = selected_node->get_prop_ptr("base_file");
@@ -1053,7 +1053,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (newValue.Right(4) != "Base")
                         return;
 
-                    if (auto propType = selected_node->get_prop_ptr(txtDerivedClassName);
+                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
                         propType && propType->GetValue() == "MyFrame")
                         ReplaceDrvName(newValue, propType);
                     if (auto propType = selected_node->get_prop_ptr("base_file");
@@ -1068,7 +1068,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (newValue.Right(4) != "Base")
                         return;
 
-                    if (auto propType = selected_node->get_prop_ptr(txtDerivedClassName);
+                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
                         propType && propType->GetValue() == "MyPanel")
                         ReplaceDrvName(newValue, propType);
                     if (auto propType = selected_node->get_prop_ptr("base_file");
@@ -1083,7 +1083,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (newValue.Right(4) != "Base")
                         return;
 
-                    if (auto propType = selected_node->get_prop_ptr(txtDerivedClassName);
+                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
                         propType && propType->GetValue() == "MyWizard")
                         ReplaceDrvName(newValue, propType);
                     if (auto propType = selected_node->get_prop_ptr("base_file");
@@ -1098,7 +1098,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (newValue.Right(4) != "Base")
                         return;
 
-                    if (auto propType = selected_node->get_prop_ptr(txtDerivedClassName);
+                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
                         propType && propType->GetValue() == "MyMenuBar")
                         ReplaceDrvName(newValue, propType);
                     if (auto propType = selected_node->get_prop_ptr("base_file");
@@ -1113,7 +1113,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (newValue.Right(4) != "Base")
                         return;
 
-                    if (auto propType = selected_node->get_prop_ptr(txtDerivedClassName);
+                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
                         propType && propType->GetValue() == "MyToolBar")
                         ReplaceDrvName(newValue, propType);
                     if (auto propType = selected_node->get_prop_ptr("base_file");
@@ -1428,13 +1428,13 @@ void PropGridPanel::CreatePropCategory(const ttlib::cstr& name, Node* node, Node
 
 static constexpr auto lstLayoutProps = {
 
-    txtAlignment, txtBorders, txtBorderSize, txtFlags
+    txt_alignment, txt_borders, txt_border_size, txt_flags
 
 };
 
 static constexpr auto lstGridBagProps = {
 
-    txtRow, txtColumn, txtRowSpan, txtColSpan
+    txt_row, txt_column, txt_rowspan, txt_colspan
 
 };
 
@@ -1461,14 +1461,14 @@ void PropGridPanel::CreateLayoutCategory(Node* node, PropertyMap& itemMap)
 
     if (node->GetParent()->GetClassName() != "wxGridBagSizer")
     {
-        if (auto prop = node->get_prop_ptr(txtProportion); prop)
+        if (auto prop = node->get_prop_ptr(txt_proportion); prop)
         {
             auto id_prop = m_prop_grid->Append(GetProperty(prop));
 
             auto propInfo = prop->GetPropertyInfo();
             m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
 
-            itemMap[txtProportion] = prop;
+            itemMap[txt_proportion] = prop;
             m_property_map[id_prop] = prop;
         }
     }
@@ -1526,7 +1526,7 @@ void PropGridPanel::ReplaceDrvName(const wxString& newValue, NodeProperty* propT
 {
     wxString drvName = newValue;
     drvName.Replace("Base", wxEmptyString);
-    auto grid_property = m_prop_grid->GetPropertyByLabel(txtDerivedClassName);
+    auto grid_property = m_prop_grid->GetPropertyByLabel(txt_derived_class_name);
     grid_property->SetValueFromString(drvName, 0);
     ModifyProperty(propType, drvName);
 }

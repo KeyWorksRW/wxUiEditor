@@ -24,7 +24,7 @@ wxObject* CalendarCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                           node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -62,7 +62,7 @@ wxObject* GenericDirCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxGenericDirCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString("defaultfolder"),
                                        node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                       node->prop_as_int(txtStyle) | node->prop_as_int("window_style"),
+                                       node->prop_as_int(txt_style) | node->prop_as_int("window_style"),
                                        node->GetPropertyAsString("filter"), node->prop_as_int("defaultfilter"));
 
     widget->ShowHidden(node->prop_as_bool("show_hidden"));
@@ -129,9 +129,9 @@ bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 wxObject* SearchCtrlGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txtValue),
+    auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txt_value),
                                    node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                   node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                                   node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     if (node->HasValue("search_button"))
     {
@@ -156,8 +156,8 @@ std::optional<ttlib::cstr> SearchCtrlGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxSearchCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    if (node->HasValue(txtValue))
-        code << GenerateQuotedString(node->prop_as_string(txtValue));
+    if (node->HasValue(txt_value))
+        code << GenerateQuotedString(node->prop_as_string(txt_value));
     else
         code << "wxEmptyString";
 

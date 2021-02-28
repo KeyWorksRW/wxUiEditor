@@ -23,7 +23,7 @@ wxObject* TreeCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                       node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                       node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
 #if 0
 // REVIEW: [KeyWorks - 12-13-2020] This is the original code.
@@ -78,7 +78,7 @@ wxObject* TreeListViewGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxTreeListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                           node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -117,15 +117,15 @@ void TreeListCtrlColumnGenerator::AfterCreation(wxObject* wxobject, wxWindow* wx
     ASSERT(treeList);
     ASSERT(node);
 
-    treeList->AppendColumn(node->GetPropertyAsString(txtVarName), node->prop_as_int(txtWidth),
-                           static_cast<wxAlignment>(node->prop_as_int(txtAlignment)), node->GetSizerFlags().GetFlags());
+    treeList->AppendColumn(node->GetPropertyAsString(txt_var_name), node->prop_as_int(txt_width),
+                           static_cast<wxAlignment>(node->prop_as_int(txt_alignment)), node->GetSizerFlags().GetFlags());
 }
 
 std::optional<ttlib::cstr> TreeListCtrlColumnGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     code << node->get_parent_name() << "->AppendColumn(" << GenerateQuotedString(node->get_node_name()) << ", ";
-    code << node->prop_as_string(txtWidth) << ", " << node->prop_as_string(txtAlignment) << ", "
+    code << node->prop_as_string(txt_width) << ", " << node->prop_as_string(txt_alignment) << ", "
          << node->prop_as_string("flag");
     code << ")";
 

@@ -23,7 +23,7 @@ wxObject* SpinCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                       node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"),
+                       node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"),
                        node->prop_as_int("min"), node->prop_as_int("max"), node->prop_as_int("initial"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -78,9 +78,9 @@ bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* SpinCtrlDoubleGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txtValue),
+    auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txt_value),
                                        node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                       node->prop_as_int(txtStyle) | node->prop_as_int("window_style"),
+                                       node->prop_as_int(txt_style) | node->prop_as_int("window_style"),
                                        node->GetPropertyAsFloat("min"), node->GetPropertyAsFloat("max"),
                                        node->GetPropertyAsFloat("initial"), node->GetPropertyAsFloat("inc"));
 
@@ -151,7 +151,7 @@ wxObject* SpinButtonGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                         node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                         node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -189,7 +189,7 @@ wxObject* ScrollBarGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxScrollBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                        node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->SetScrollbar(node->prop_as_int("position"), node->prop_as_int("thumbsize"), node->prop_as_int("range"),
                          node->prop_as_int("pagesize"));

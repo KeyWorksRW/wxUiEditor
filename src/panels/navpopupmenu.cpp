@@ -316,7 +316,7 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             break;
 
         case MenuRESET_MIN_SIZE:
-            m_node->ModifyProperty(txtMinimumSize, "-1,-1");
+            m_node->ModifyProperty(txt_minimum_size, "-1,-1");
             break;
 
         case MenuRESET_MAX_SIZE:
@@ -358,21 +358,21 @@ void NavPopupMenu::OnUpdateEvent(wxUpdateUIEvent& event)
             break;
 
         case MenuBORDERS_ALL:
-            event.Check(m_node->prop_as_string(txtBorders).contains("wxALL"));
+            event.Check(m_node->prop_as_string(txt_borders).contains("wxALL"));
             break;
 
         case MenuBORDERS_NONE:
-            event.Check(m_node->prop_as_string(txtBorders).empty());
+            event.Check(m_node->prop_as_string(txt_borders).empty());
             break;
 
         case MenuBORDERS_HORIZONTAL:
-            event.Check(m_node->prop_as_string(txtBorders) == "wxLEFT|wxRIGHT" ||
-                        m_node->prop_as_string(txtBorders) == "wxRIGHT|wxLEFT|");
+            event.Check(m_node->prop_as_string(txt_borders) == "wxLEFT|wxRIGHT" ||
+                        m_node->prop_as_string(txt_borders) == "wxRIGHT|wxLEFT|");
             break;
 
         case MenuBORDERS_VERTICAL:
-            event.Check(m_node->prop_as_string(txtBorders) == "wxTOP|wxBOTTOM" ||
-                        m_node->prop_as_string(txtBorders) == "wxBOTTOM|wxTOP|");
+            event.Check(m_node->prop_as_string(txt_borders) == "wxTOP|wxBOTTOM" ||
+                        m_node->prop_as_string(txt_borders) == "wxBOTTOM|wxTOP|");
             break;
     }
 }
@@ -443,7 +443,7 @@ void NavPopupMenu::OnBorders(wxCommandEvent& event)
             break;
     }
 
-    m_node->ModifyProperty(txtBorders, value);
+    m_node->ModifyProperty(txt_borders, value);
 }
 
 void NavPopupMenu::CreateProjectMenu(Node* WXUNUSED(node))

@@ -20,12 +20,12 @@
 wxObject* BookPageGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                              node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                              node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
     auto book = wxDynamicCast(parent, wxBookCtrlBase);
     if (book)
     {
         auto cur_selection = book->GetSelection();
-        book->AddPage(widget, node->prop_as_string(txtLabel));
+        book->AddPage(widget, node->prop_as_string(txt_label));
         if (node->prop_as_bool("select"))
         {
             book->SetSelection(book->GetPageCount() - 1);
@@ -62,8 +62,8 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
 
     code << '\n';
     code << GetParentName(node) << "->AddPage(" << node->get_node_name() << ", ";
-    if (node->HasValue(txtLabel))
-        code << GenerateQuotedString(node->prop_as_string(txtLabel));
+    if (node->HasValue(txt_label))
+        code << GenerateQuotedString(node->prop_as_string(txt_label));
     else
         code << "wxEmptyString";
 
@@ -80,7 +80,7 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
 wxObject* PanelGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                              node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                              node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -110,9 +110,9 @@ std::optional<ttlib::cstr> PanelGenerator::GenConstruction(Node* node)
 
 wxObject* CollapsiblePaneGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txtLabel),
+    auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txt_label),
                                         node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                        node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                                        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Collapse(node->prop_as_bool("collapsed"));
 
@@ -129,7 +129,7 @@ std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxCollapsiblePane(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    auto& label = node->prop_as_string(txtLabel);
+    auto& label = node->prop_as_string(txt_label);
     if (label.size())
     {
         code << GenerateQuotedString(label);

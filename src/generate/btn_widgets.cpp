@@ -20,12 +20,12 @@ wxObject* ButtonGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                     node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                     node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     if (node->prop_as_bool("markup"))
-        widget->SetLabelMarkup(node->prop_as_wxString(txtLabel));
+        widget->SetLabelMarkup(node->prop_as_wxString(txt_label));
     else
-        widget->SetLabel(node->prop_as_wxString(txtLabel));
+        widget->SetLabel(node->prop_as_wxString(txt_label));
 
     if (node->prop_as_bool("default"))
         widget->SetDefault();
@@ -69,9 +69,9 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     {
         auto ctrl = wxStaticCast(widget, wxButton);
         if (node->prop_as_bool("markup"))
-            ctrl->SetLabelMarkup(node->prop_as_wxString(txtLabel));
+            ctrl->SetLabelMarkup(node->prop_as_wxString(txt_label));
         else
-            ctrl->SetLabel(node->prop_as_wxString(txtLabel));
+            ctrl->SetLabel(node->prop_as_wxString(txt_label));
 
         return true;
     }
@@ -82,7 +82,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
 
         if (node->prop_as_bool("markup"))
         {
-            wxStaticCast(widget, wxButton)->SetLabelMarkup(node->prop_as_wxString(txtLabel));
+            wxStaticCast(widget, wxButton)->SetLabelMarkup(node->prop_as_wxString(txt_label));
             return true;
         }
     }
@@ -107,7 +107,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxButton(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    auto& label = node->prop_as_string(txtLabel);
+    auto& label = node->prop_as_string(txt_label);
     if (label.size() && !node->prop_as_bool("markup"))
     {
         code << GenerateQuotedString(label);
@@ -137,7 +137,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txtLabel)) << ");";
+        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txt_label)) << ");";
     }
 
     if (node->prop_as_bool("default"))
@@ -208,12 +208,12 @@ wxObject* ToggleButtonGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                           node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     if (node->prop_as_bool("markup"))
-        widget->SetLabelMarkup(node->prop_as_wxString(txtLabel));
+        widget->SetLabelMarkup(node->prop_as_wxString(txt_label));
     else
-        widget->SetLabel(node->prop_as_wxString(txtLabel));
+        widget->SetLabel(node->prop_as_wxString(txt_label));
 
     widget->SetValue((node->prop_as_bool("pressed")));
 
@@ -253,9 +253,9 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
     {
         auto ctrl = wxStaticCast(widget, wxToggleButton);
         if (node->prop_as_bool("markup"))
-            ctrl->SetLabelMarkup(node->prop_as_wxString(txtLabel));
+            ctrl->SetLabelMarkup(node->prop_as_wxString(txt_label));
         else
-            ctrl->SetLabel(node->prop_as_wxString(txtLabel));
+            ctrl->SetLabel(node->prop_as_wxString(txt_label));
 
         return true;
     }
@@ -266,7 +266,7 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
 
         if (node->prop_as_bool("markup"))
         {
-            wxStaticCast(widget, wxToggleButton)->SetLabelMarkup(node->prop_as_wxString(txtLabel));
+            wxStaticCast(widget, wxToggleButton)->SetLabelMarkup(node->prop_as_wxString(txt_label));
             return true;
         }
     }
@@ -287,7 +287,7 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxToggleButton(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    auto& label = node->prop_as_string(txtLabel);
+    auto& label = node->prop_as_string(txt_label);
 
     // If markup is true, then the label has to be set in the GenSettings() section
     if (label.size() && !node->prop_as_bool("markup"))
@@ -326,7 +326,7 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txtLabel)) << ");";
+        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txt_label)) << ");";
     }
 
     if (node->HasValue("bitmap"))

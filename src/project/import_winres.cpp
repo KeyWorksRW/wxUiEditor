@@ -160,11 +160,11 @@ void WinResource::FormToNode(rcForm& form)
         auto parent_sizer = g_NodeCreator.CreateNode("wxBoxSizer", dlg_node.get());
         dlg_node->AddChild(parent_sizer);
         parent_sizer->SetParent(dlg_node);
-        parent_sizer->get_prop_ptr(txtOrient)->set_value("wxVERTICAL");
+        parent_sizer->get_prop_ptr(txt_orientation)->set_value("wxVERTICAL");
 
         if (form.m_Name.size())
         {
-            dlg_node->get_prop_ptr(txtVarName)->set_value(form.m_Name);
+            dlg_node->get_prop_ptr(txt_var_name)->set_value(form.m_Name);
         }
         if (form.m_Title.size())
         {
@@ -177,7 +177,7 @@ void WinResource::FormToNode(rcForm& form)
 
         if (form.m_Styles.size())
         {
-            dlg_node->get_prop_ptr(txtStyle)->set_value(form.m_Styles);
+            dlg_node->get_prop_ptr(txt_style)->set_value(form.m_Styles);
         }
         if (form.m_ExStyles.size())
         {

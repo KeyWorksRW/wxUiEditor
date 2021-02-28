@@ -117,10 +117,10 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
             m_header->writeLine((ttlib::cstr&) iter);
         }
 
-        if (form_node->prop_has_value(txtHdrInclude))
+        if (form_node->prop_has_value(txt_base_hdr_includes))
         {
             m_header->writeLine();
-            ttlib::cstr text = form_node->prop_as_string(txtHdrInclude);
+            ttlib::cstr text = form_node->prop_as_string(txt_base_hdr_includes);
             text.Replace("\\n", "\n", true);
             if (text.back() == '\n')
                 text.erase(text.size() - 1, 1);
@@ -157,9 +157,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     m_source->writeLine();
 
-    if (project->HasValue(txtSrcPreamble))
+    if (project->HasValue(txt_src_preamble))
     {
-        ttlib::cstr code = project->prop_as_string(txtSrcPreamble);
+        ttlib::cstr code = project->prop_as_string(txt_src_preamble);
 
         // The multi-line editor may have been used in which case there are escaped newlines and tabs -- we convert
         // those to the actual characters before generating the code. It's common with that editor to have a trailing
@@ -172,9 +172,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         m_source->writeLine();
     }
 
-    if (form_node->HasValue(txtSrcInclude))
+    if (form_node->HasValue(txt_base_src_includes))
     {
-        ttlib::cstr code = form_node->prop_as_string(txtSrcInclude);
+        ttlib::cstr code = form_node->prop_as_string(txt_base_src_includes);
 
         // The multi-line editor may have been used in which case there are escaped newlines and tabs -- we convert
         // those to the actual characters before generating the code. It's common with that editor to have a trailing
@@ -268,7 +268,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
         return;
     }
 
-    auto propName = node->get_prop_ptr(txtClassName);
+    auto propName = node->get_prop_ptr(txt_class_name);
     if (!propName)
     {
         FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << node->GetClassName() << " class.");
@@ -332,7 +332,7 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
 {
     if (auto typeName = node->GetNodeTypeName(); g_NodeCreator.HasCodeGenerator(typeName))
     {
-        if (auto prop = node->get_value_ptr(txtAccess); prop)
+        if (auto prop = node->get_value_ptr(txt_class_access); prop)
         {
             if (*prop != "none")
             {
@@ -416,7 +416,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
             }
             else if (*val_data_type == "int")
             {
-                auto prop = node->get_prop_ptr(txtValue);
+                auto prop = node->get_prop_ptr(txt_value);
                 if (!prop)
                     prop = node->get_prop_ptr("initial");
                 if (!prop)
@@ -432,7 +432,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
             }
             else if (*val_data_type == "wxString" || *val_data_type == "wxFileName")
             {
-                auto value = node->get_value_ptr(txtValue);
+                auto value = node->get_value_ptr(txt_value);
                 if (value && value->size())
                 {
                     code << " { " << GenerateQuotedString(*value) << " };";
@@ -494,7 +494,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     // If the component is set for local access only, then add the header file to the source set. Once all processing is
     // done, if this header was also used by a component with non-local access, then it will be removed from the source
     // set.
-    if (auto prop = node->get_value_ptr(txtAccess); prop && *prop == "none")
+    if (auto prop = node->get_value_ptr(txt_class_access); prop && *prop == "none")
         isAddToSrc = true;
 
     auto generator = node->GetNodeDeclaration()->GetGenerator();
@@ -665,7 +665,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 
 void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const wxString& classDecoration, const EventVector& events)
 {
-    auto propName = form_node->get_prop_ptr(txtClassName);
+    auto propName = form_node->get_prop_ptr(txt_class_name);
     if (!propName)
     {
         FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->GetClassName());
@@ -901,15 +901,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
                 if (parent->GetClassName() == "wxGridBagSizer")
                 {
-                    code << "wxGBPosition(" << node->prop_as_string(txtRow) << ", " << node->prop_as_string(txtColumn)
+                    code << "wxGBPosition(" << node->prop_as_string(txt_row) << ", " << node->prop_as_string(txt_column)
                          << "), ";
-                    code << "wxGBSpan(" << node->prop_as_string(txtRowSpan) << ", " << node->prop_as_string(txtColSpan)
+                    code << "wxGBSpan(" << node->prop_as_string(txt_rowspan) << ", " << node->prop_as_string(txt_colspan)
                          << "), ";
-                    if (node->prop_as_string(txtBorders).empty())
+                    if (node->prop_as_string(txt_borders).empty())
                         code << "0";
                     else
-                        code << node->prop_as_string(txtBorders);
-                    code << ", " << node->prop_as_string(txtBorderSize) << ");";
+                        code << node->prop_as_string(txt_borders);
+                    code << ", " << node->prop_as_string(txt_border_size) << ");";
                     code.Replace(", 0, 0);", ");");
                 }
                 else

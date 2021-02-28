@@ -22,8 +22,8 @@
 
 wxObject* BoxSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
-    auto sizer = new wxBoxSizer(node->prop_as_int(txtOrient));
-    sizer->SetMinSize(node->prop_as_wxSize(txtMinimumSize));
+    auto sizer = new wxBoxSizer(node->prop_as_int(txt_orientation));
+    sizer->SetMinSize(node->prop_as_wxSize(txt_minimum_size));
     return sizer;
 }
 
@@ -32,9 +32,9 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxBoxSizer(" << node->prop_as_string(txtOrient) << ");";
+    code << node->get_node_name() << " = new wxBoxSizer(" << node->prop_as_string(txt_orientation) << ");";
 
-    auto min_size = node->prop_as_wxSize(txtMinimumSize);
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
@@ -51,10 +51,10 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* GridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
-    auto sizer = new wxGridSizer(node->prop_as_int("rows"), node->prop_as_int("cols"), node->prop_as_int(txtVgap),
-                                 node->prop_as_int(txtHgap));
+    auto sizer = new wxGridSizer(node->prop_as_int("rows"), node->prop_as_int("cols"), node->prop_as_int(txt_vgap),
+                                 node->prop_as_int(txt_hgap));
 
-    sizer->SetMinSize(node->prop_as_wxSize(txtMinimumSize));
+    sizer->SetMinSize(node->prop_as_wxSize(txt_minimum_size));
 
     return sizer;
 }
@@ -67,8 +67,8 @@ std::optional<ttlib::cstr> GridSizerGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxGridSizer(";
     auto rows = node->prop_as_int("rows");
     auto cols = node->prop_as_int("cols");
-    auto vgap = node->prop_as_int(txtVgap);
-    auto hgap = node->prop_as_int(txtHgap);
+    auto vgap = node->prop_as_int(txt_vgap);
+    auto hgap = node->prop_as_int(txt_hgap);
 
     if (rows != 0)
     {
@@ -82,7 +82,7 @@ std::optional<ttlib::cstr> GridSizerGenerator::GenConstruction(Node* node)
     }
     code << ");";
 
-    auto min_size = node->prop_as_wxSize(txtMinimumSize);
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
@@ -99,8 +99,8 @@ bool GridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 wxObject* WrapSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
-    auto sizer = new wxWrapSizer(node->prop_as_int(txtOrient), node->prop_as_int(txtFlags));
-    sizer->SetMinSize(node->prop_as_wxSize(txtMinimumSize));
+    auto sizer = new wxWrapSizer(node->prop_as_int(txt_orientation), node->prop_as_int(txt_flags));
+    sizer->SetMinSize(node->prop_as_wxSize(txt_minimum_size));
     return sizer;
 }
 
@@ -109,13 +109,13 @@ std::optional<ttlib::cstr> WrapSizerGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxWrapSizer(" << node->prop_as_string(txtOrient);
-    auto wrap_flags = node->prop_as_string(txtWrapFlags);
+    code << node->get_node_name() << " = new wxWrapSizer(" << node->prop_as_string(txt_orientation);
+    auto wrap_flags = node->prop_as_string(txt_wrap_flags);
     if (wrap_flags.empty())
         wrap_flags = "0";
     code << ", " << wrap_flags << ");";
 
-    auto min_size = node->prop_as_wxSize(txtMinimumSize);
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
     if (min_size.x != -1 || min_size.y != -1)
     {
         code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
@@ -132,10 +132,10 @@ bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 wxObject* StaticBoxSizerGenerator::Create(Node* node, wxObject* parent)
 {
-    auto sizer = new wxStaticBoxSizer(node->prop_as_int(txtOrient), wxStaticCast(parent, wxWindow),
-                                      node->GetPropertyAsString(txtLabel));
+    auto sizer = new wxStaticBoxSizer(node->prop_as_int(txt_orientation), wxStaticCast(parent, wxWindow),
+                                      node->GetPropertyAsString(txt_label));
 
-    auto min_size = node->prop_as_wxSize(txtMinimumSize);
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
@@ -168,16 +168,16 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
         }
     }
 
-    code << node->get_node_name() << " = new wxStaticBoxSizer(" << node->prop_as_string(txtOrient) << ", " << parent_name;
+    code << node->get_node_name() << " = new wxStaticBoxSizer(" << node->prop_as_string(txt_orientation) << ", " << parent_name;
 
-    auto& label = node->prop_as_string(txtLabel);
+    auto& label = node->prop_as_string(txt_label);
     if (label.size())
     {
         code << ", " << GenerateQuotedString(label);
     }
     code << ");";
 
-    auto min_size = node->prop_as_wxSize(txtMinimumSize);
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
@@ -207,22 +207,22 @@ bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set
 wxObject* FlexGridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
     wxFlexGridSizer* sizer = new wxFlexGridSizer(node->prop_as_int("rows"), node->prop_as_int("cols"),
-                                                 node->prop_as_int(txtVgap), node->prop_as_int(txtHgap));
+                                                 node->prop_as_int(txt_vgap), node->prop_as_int(txt_hgap));
 
 #if 0
-    for (auto& col: node->GetPropertyAsVectorIntPair(txtGrowableCols))
+    for (auto& col: node->GetPropertyAsVectorIntPair(txt_growablecols))
     {
         sizer->AddGrowableCol(col.first, col.second);
     }
-    for (auto& row: node->GetPropertyAsVectorIntPair(txtGrowableRows))
+    for (auto& row: node->GetPropertyAsVectorIntPair(txt_growablerows))
     {
         sizer->AddGrowableRow(row.first, row.second);
     }
 #endif
 
-    sizer->SetMinSize(node->prop_as_wxSize(txtMinimumSize));
-    sizer->SetFlexibleDirection(node->prop_as_int(txtFlexibleDir));
-    sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->prop_as_int(txtNonFlexibleMode));
+    sizer->SetMinSize(node->prop_as_wxSize(txt_minimum_size));
+    sizer->SetFlexibleDirection(node->prop_as_int(txt_flexible_direction));
+    sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->prop_as_int(txt_non_flexible_grow_mode));
 
     return sizer;
 }
@@ -237,8 +237,8 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxFlexGridSizer(";
     auto rows = node->prop_as_int("rows");
     auto cols = node->prop_as_int("cols");
-    auto vgap = node->prop_as_int(txtVgap);
-    auto hgap = node->prop_as_int(txtHgap);
+    auto vgap = node->prop_as_int(txt_vgap);
+    auto hgap = node->prop_as_int(txt_hgap);
 
     // If rows is empty, only columns are supplied and wxFlexGridSizer will deduece the number of rows to use
     if (rows != 0)
@@ -251,7 +251,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
     // braces
     bool isExpanded = false;
 
-    if (auto& growable = node->prop_as_string(txtGrowableCols); growable.size())
+    if (auto& growable = node->prop_as_string(txt_growablecols); growable.size())
     {
         ttlib::multistr values(growable, ',');
         for (auto& iter: values)
@@ -274,7 +274,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
         }
     }
 
-    if (auto& growable = node->prop_as_string(txtGrowableRows); growable.size())
+    if (auto& growable = node->prop_as_string(txt_growablerows); growable.size())
     {
         ttlib::multistr values(growable, ',');
         for (auto& iter: values)
@@ -297,7 +297,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
         }
     }
 
-    auto& direction = node->prop_as_string(txtFlexibleDir);
+    auto& direction = node->prop_as_string(txt_flexible_direction);
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
         if (isExpanded)
@@ -308,7 +308,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
     code << (isExpanded ? "\n        " : "\n    ") << node->get_node_name() << "->SetFlexibleDirection(" << direction
          << ");";
 
-    auto& non_flex_growth = node->prop_as_string(txtNonFlexibleMode);
+    auto& non_flex_growth = node->prop_as_string(txt_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
         if (isExpanded)
@@ -331,26 +331,26 @@ bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_
 
 wxObject* GridBagSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
-    auto sizer = new wxGridBagSizer(node->prop_as_int(txtVgap), node->prop_as_int(txtHgap));
+    auto sizer = new wxGridBagSizer(node->prop_as_int(txt_vgap), node->prop_as_int(txt_hgap));
 
 #if 0
-    for (auto& col: node->GetPropertyAsVectorIntPair(txtGrowableCols))
+    for (auto& col: node->GetPropertyAsVectorIntPair(txt_growablecols))
     {
         sizer->AddGrowableCol(col.first, col.second);
     }
-    for (auto& row: node->GetPropertyAsVectorIntPair(txtGrowableRows))
+    for (auto& row: node->GetPropertyAsVectorIntPair(txt_growablerows))
     {
         sizer->AddGrowableRow(row.first, row.second);
     }
 #endif
 
-    sizer->SetMinSize(node->prop_as_wxSize(txtMinimumSize));
-    sizer->SetFlexibleDirection(node->prop_as_int(txtFlexibleDir));
-    sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->prop_as_int(txtNonFlexibleMode));
+    sizer->SetMinSize(node->prop_as_wxSize(txt_minimum_size));
+    sizer->SetFlexibleDirection(node->prop_as_int(txt_flexible_direction));
+    sizer->SetNonFlexibleGrowMode((wxFlexSizerGrowMode) node->prop_as_int(txt_non_flexible_grow_mode));
 
-    if (node->HasValue(txtEmptyCellSize))
+    if (node->HasValue(txt_empty_cell_size))
     {
-        sizer->SetEmptyCellSize(node->prop_as_wxSize(txtEmptyCellSize));
+        sizer->SetEmptyCellSize(node->prop_as_wxSize(txt_empty_cell_size));
     }
 
     return sizer;
@@ -379,9 +379,9 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
         auto node = mockup->GetNode(wxsizerItem);
 
         // Get the location of the item
-        wxGBSpan span(node->prop_as_int(txtRowSpan), node->prop_as_int(txtColSpan));
+        wxGBSpan span(node->prop_as_int(txt_rowspan), node->prop_as_int(txt_colspan));
 
-        int column = node->prop_as_int(txtColumn);
+        int column = node->prop_as_int(txt_column);
         if (column < 0)
         {
             // Needs to be auto positioned after the other children are added
@@ -393,7 +393,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
             continue;
         }
 
-        wxGBPosition position(node->prop_as_int(txtRow), column);
+        wxGBPosition position(node->prop_as_int(txt_row), column);
 
         if (sizer->CheckForIntersection(position, span))
         {
@@ -434,8 +434,8 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
 
     code << node->get_node_name() << " = new wxGridBagSizer(";
 
-    auto vgap = node->prop_as_int(txtVgap);
-    auto hgap = node->prop_as_int(txtHgap);
+    auto vgap = node->prop_as_int(txt_vgap);
+    auto hgap = node->prop_as_int(txt_hgap);
     if (vgap != 0 || hgap != 0)
     {
         code << vgap << ", " << hgap;
@@ -446,7 +446,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
     // braces
     bool isExpanded = false;
 
-    if (auto& growable = node->prop_as_string(txtGrowableCols); growable.size())
+    if (auto& growable = node->prop_as_string(txt_growablecols); growable.size())
     {
         ttlib::multistr values(growable, ',');
         for (auto& iter: values)
@@ -469,7 +469,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
         }
     }
 
-    if (auto& growable = node->prop_as_string(txtGrowableRows); growable.size())
+    if (auto& growable = node->prop_as_string(txt_growablerows); growable.size())
     {
         ttlib::multistr values(growable, ',');
         for (auto& iter: values)
@@ -492,7 +492,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
         }
     }
 
-    auto& direction = node->prop_as_string(txtFlexibleDir);
+    auto& direction = node->prop_as_string(txt_flexible_direction);
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
         if (isExpanded)
@@ -503,7 +503,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
     code << (isExpanded ? "\n        " : "\n    ") << node->get_node_name() << "->SetFlexibleDirection(" << direction
          << ");";
 
-    auto non_flex_growth = node->prop_as_string(txtNonFlexibleMode);
+    auto non_flex_growth = node->prop_as_string(txt_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
         if (isExpanded)
@@ -531,7 +531,7 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
 
     if (sizeritem->GetClassName() == "spacer")
     {
-        return new wxGBSizerItem(sizeritem->prop_as_int(txtWidth), sizeritem->prop_as_int(txtHeight), position, span,
+        return new wxGBSizerItem(sizeritem->prop_as_int(txt_width), sizeritem->prop_as_int(txt_height), position, span,
                                  sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
     }
 
@@ -561,24 +561,24 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    code << node->GetParent()->get_node_name() << "->Add(" << node->prop_as_string(txtWidth) << ", "
-         << node->prop_as_string(txtHeight) << ", ";
+    code << node->GetParent()->get_node_name() << "->Add(" << node->prop_as_string(txt_width) << ", "
+         << node->prop_as_string(txt_height) << ", ";
 
     if (node->GetParent()->GetClassName() == "wxGridBagSizer")
     {
-        code << "wxGBPosition(" << node->prop_as_string(txtRow) << ", " << node->prop_as_string(txtColumn) << "), ";
+        code << "wxGBPosition(" << node->prop_as_string(txt_row) << ", " << node->prop_as_string(txt_column) << "), ";
 
         // Only write the span if it's not a default value.
-        auto row_span = node->prop_as_int(txtRowSpan);
-        auto col_span = node->prop_as_int(txtColSpan);
+        auto row_span = node->prop_as_int(txt_rowspan);
+        auto col_span = node->prop_as_int(txt_colspan);
         if (row_span <= 1 && col_span <= 1)
             code << "wxGBSpan(), ";
         else
             code << "wxGBSpan(" << row_span << ", " << col_span << "), ";
 
-        auto alignment = node->prop_as_string(txtAlignment);
-        auto flags = node->prop_as_string(txtFlags);
-        auto borders = node->prop_as_string(txtBorders);
+        auto alignment = node->prop_as_string(txt_alignment);
+        auto flags = node->prop_as_string(txt_flags);
+        auto borders = node->prop_as_string(txt_borders);
 
         if (alignment.empty() && flags.empty())
         {
@@ -681,7 +681,7 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
             code << ").GetFlags(), ";
         }
 
-        auto border_size = node->prop_as_string(txtBorderSize);
+        auto border_size = node->prop_as_string(txt_border_size);
 
         // Using GetDefaultBorder() means it will change correctly on high DPI displays.
         if (border_size == "5")
@@ -716,7 +716,7 @@ wxObject* StdDialogButtonSizerGenerator::Create(Node* node, wxObject* parent)
 {
     auto sizer = new wxStdDialogButtonSizer();
 
-    sizer->SetMinSize(node->prop_as_wxSize(txtMinimumSize));
+    sizer->SetMinSize(node->prop_as_wxSize(txt_minimum_size));
 
     if (node->prop_as_bool("OK"))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_OK));
@@ -810,7 +810,7 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
     // The following code is used if a Save or ContextHelp button is requrested, or the parent form is not a Dialog
     code << node->get_node_name() << " = new wxStdDialogButtonSizer();";
 
-    auto min_size = node->prop_as_wxSize(txtMinimumSize);
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
@@ -951,7 +951,7 @@ std::optional<ttlib::cstr> TextSizerGenerator::GenConstruction(Node* node)
         code << " = wxTextSizerWrapper(" << parent->get_node_name() << ").CreateSizer(";
     }
 
-    code << GenerateQuotedString(node->prop_as_string("text")) << ", " << node->prop_as_string(txtWidth) << ");";
+    code << GenerateQuotedString(node->prop_as_string("text")) << ", " << node->prop_as_string(txt_width) << ");";
 
     return code;
 }

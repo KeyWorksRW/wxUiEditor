@@ -21,7 +21,7 @@ ttlib::cstr GenerateSizerFlags(Node* node)
 {
     ttlib::cstr code("wxSizerFlags");
 
-    if (auto& prop = node->prop_as_string(txtProportion); prop != "0")
+    if (auto& prop = node->prop_as_string(txt_proportion); prop != "0")
     {
         code << '(' << prop << ')';
     }
@@ -30,7 +30,7 @@ ttlib::cstr GenerateSizerFlags(Node* node)
         code << "()";
     }
 
-    if (auto& prop = node->prop_as_string(txtAlignment); prop.size())
+    if (auto& prop = node->prop_as_string(txt_alignment); prop.size())
     {
         if (prop.contains("wxALIGN_CENTER"))
         {
@@ -59,7 +59,7 @@ ttlib::cstr GenerateSizerFlags(Node* node)
         }
     }
 
-    if (auto& prop = node->prop_as_string(txtFlags); prop.size())
+    if (auto& prop = node->prop_as_string(txt_flags); prop.size())
     {
         if (prop.contains("wxEXPAND"))
         {
@@ -79,9 +79,9 @@ ttlib::cstr GenerateSizerFlags(Node* node)
         }
     }
 
-    if (auto& prop = node->prop_as_string(txtBorders); prop.size())
+    if (auto& prop = node->prop_as_string(txt_borders); prop.size())
     {
-        auto border_size = node->prop_as_string(txtBorderSize);
+        auto border_size = node->prop_as_string(txt_border_size);
         if (prop.contains("wxALL"))
         {
             if (border_size == "5")
@@ -145,7 +145,7 @@ ttlib::cstr GenerateSizerFlags(Node* node)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr)
 {
-    if (auto value = node->get_value_ptr(txtAccess); value && *value == "none")
+    if (auto value = node->get_value_ptr(txt_class_access); value && *value == "none")
     {
         set_src.insert(include);
     }
@@ -249,7 +249,7 @@ void GenSize(Node* node, ttlib::cstr& code)
 
 void GenStyle(Node* node, ttlib::cstr& code, ttlib::cview extra_style, ttlib::cview extra_def_value)
 {
-    auto& style = node->prop_as_string(txtStyle);
+    auto& style = node->prop_as_string(txt_style);
     auto& win_style = node->prop_as_string("window_style");
 
     if (style.empty() && win_style.empty() && extra_style.empty())
@@ -295,7 +295,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
 {
     auto pos = node->prop_as_wxPoint("pos");
     auto size = node->prop_as_wxPoint("size");
-    auto& style = node->prop_as_string(txtStyle);
+    auto& style = node->prop_as_string(txt_style);
     auto& win_style = node->prop_as_string("window_style");
     auto& win_name = node->prop_as_string("window_name");
 
@@ -665,7 +665,7 @@ ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& c
             code << "wxDefaultSize";
 
         code << ",\n    long style = ";
-        auto& style = node->prop_as_string(txtStyle);
+        auto& style = node->prop_as_string(txt_style);
         auto& win_style = node->prop_as_string("window_style");
         if (style.empty() && win_style.empty())
             code << "0";
@@ -697,9 +697,9 @@ ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& c
     else if (cmd == "base")
     {
         code << "public ";
-        if (node->HasValue(txtBaseClassName))
+        if (node->HasValue(txt_base_class_name))
         {
-            code << node->prop_as_string(txtBaseClassName);
+            code << node->prop_as_string(txt_base_class_name);
         }
         else
         {
@@ -748,7 +748,7 @@ ttlib::cstr GenFormSettings(Node* node)
 
     if (node->GetClassName() != "PanelForm" && node->GetClassName() != "wxToolBar")
     {
-        auto min_size = node->prop_as_wxSize(txtMinimumSize);
+        auto min_size = node->prop_as_wxSize(txt_minimum_size);
         auto max_size = node->prop_as_wxSize("maximum_size");
 
         if (min_size.x == -1 && min_size.y == -1 && max_size.x == -1 && max_size.y == -1)

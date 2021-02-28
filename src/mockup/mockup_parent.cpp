@@ -146,7 +146,7 @@ void MockupParent::CreateContent()
         m_panelTitleBar->Hide();
     }
 
-    auto minSize = m_form->prop_as_wxSize(txtMinimumSize);
+    auto minSize = m_form->prop_as_wxSize(txt_minimum_size);
     m_MockupWindow->SetMinSize(minSize);
 
     auto maxSize = m_form->prop_as_wxSize("maximum_size");
@@ -257,7 +257,7 @@ void MockupParent::MagnifyWindow(bool show)
 
     // Need to be at least as large as any dimensions the user set.
     new_size.IncTo(m_form->prop_as_wxSize("size"));
-    new_size.IncTo(m_form->prop_as_wxSize(txtMinimumSize));
+    new_size.IncTo(m_form->prop_as_wxSize(txt_minimum_size));
 
     new_size.DecToIfSpecified(m_form->prop_as_wxSize("maximum_size"));
 
@@ -420,7 +420,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
             // Need to be at least as large as any dimensions the user set.
             new_size.IncTo(m_form->prop_as_wxSize("size"));
-            new_size.IncTo(m_form->prop_as_wxSize(txtMinimumSize));
+            new_size.IncTo(m_form->prop_as_wxSize(txt_minimum_size));
 
             new_size.DecToIfSpecified(m_form->prop_as_wxSize("maximum_size"));
 

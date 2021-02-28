@@ -267,7 +267,7 @@ wxObject* PropertyGridGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxPropertyGrid(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                           node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     if (!node->GetPropertyAsString("extra_style").empty())
     {
@@ -291,8 +291,8 @@ void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
         {
             if (childObj->prop_as_string("type") == "Category")
             {
-                pg->Append(new wxPropertyCategory(childObj->GetPropertyAsString(txtLabel),
-                                                  childObj->GetPropertyAsString(txtLabel)));
+                pg->Append(new wxPropertyCategory(childObj->GetPropertyAsString(txt_label),
+                                                  childObj->GetPropertyAsString(txt_label)));
             }
             else
             {
@@ -300,8 +300,8 @@ void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
                     wxCreateDynamicObject("wx" + (childObj->GetPropertyAsString("type")) + "Property"), wxPGProperty);
                 if (prop)
                 {
-                    prop->SetLabel(childObj->GetPropertyAsString(txtLabel));
-                    prop->SetName(childObj->GetPropertyAsString(txtLabel));
+                    prop->SetLabel(childObj->GetPropertyAsString(txt_label));
+                    prop->SetName(childObj->GetPropertyAsString(txt_label));
                     pg->Append(prop);
 
                     if (childObj->GetPropertyAsString("help") != wxEmptyString)
@@ -351,7 +351,7 @@ wxObject* PropertyGridManagerGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxPropertyGridManager(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
                                             node->prop_as_wxSize("size"),
-                                            node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                                            node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     if (!node->GetPropertyAsString("extra_style").empty())
     {
@@ -377,7 +377,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
         if (childObj->GetClassName() == "propGridPage")
         {
             wxPropertyGridPage* page =
-                pgm->AddPage(childObj->GetPropertyAsString(txtLabel), childObj->prop_as_wxBitmap("bitmap"));
+                pgm->AddPage(childObj->GetPropertyAsString(txt_label), childObj->prop_as_wxBitmap("bitmap"));
 
             for (size_t j = 0; j < childObj->GetChildCount(); ++j)
             {
@@ -386,8 +386,8 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
                 {
                     if (innerChildObj->GetPropertyAsString("type") == "Category")
                     {
-                        page->Append(new wxPropertyCategory(innerChildObj->GetPropertyAsString(txtLabel),
-                                                            innerChildObj->GetPropertyAsString(txtLabel)));
+                        page->Append(new wxPropertyCategory(innerChildObj->GetPropertyAsString(txt_label),
+                                                            innerChildObj->GetPropertyAsString(txt_label)));
                     }
                     else
                     {
@@ -396,8 +396,8 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
                             wxPGProperty);
                         if (prop)
                         {
-                            prop->SetLabel(innerChildObj->GetPropertyAsString(txtLabel));
-                            prop->SetName(innerChildObj->GetPropertyAsString(txtLabel));
+                            prop->SetLabel(innerChildObj->GetPropertyAsString(txt_label));
+                            prop->SetName(innerChildObj->GetPropertyAsString(txt_label));
                             page->Append(prop);
 
                             if (innerChildObj->GetPropertyAsString("help") != wxEmptyString)
@@ -464,13 +464,13 @@ std::optional<ttlib::cstr> PropertyGridItemGenerator::GenConstruction(Node* node
     if (node->prop_as_string("type") == "Category")
     {
         code << "->Append(new wxPropertyCategory(";
-        code << GenerateQuotedString(node->prop_as_string(txtLabel)) << ", "
-             << GenerateQuotedString(node->prop_as_string(txtLabel)) << ");";
+        code << GenerateQuotedString(node->prop_as_string(txt_label)) << ", "
+             << GenerateQuotedString(node->prop_as_string(txt_label)) << ");";
     }
     else
     {
         code << "->Append(new wx" << node->prop_as_string("type") << "Property(";
-        code << GenerateQuotedString(node->prop_as_string(txtLabel)) << ", "
+        code << GenerateQuotedString(node->prop_as_string(txt_label)) << ", "
              << GenerateQuotedString(node->prop_as_string("help")) << ");";
     }
 
@@ -486,7 +486,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
-    code << GenerateQuotedString(node->prop_as_string(txtLabel)) << ", "
+    code << GenerateQuotedString(node->prop_as_string(txt_label)) << ", "
          << GenerateBitmapCode(node->prop_as_string("bitmap")) << ");";
 
     return code;

@@ -181,7 +181,7 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
     {
         node = NewNode(declaration);
         if (classname.is_sameas("VerticalBoxSizer"))
-            node->get_prop_ptr(txtOrient)->set_value("wxVERTICAL");
+            node->get_prop_ptr(txt_orientation)->set_value("wxVERTICAL");
     }
     else if (max_children != child_count::none)
     {
@@ -189,7 +189,7 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
         {
             node = NewNode(declaration);
             if (classname.is_sameas("VerticalBoxSizer"))
-                node->get_prop_ptr(txtOrient)->set_value("wxVERTICAL");
+                node->get_prop_ptr(txt_orientation)->set_value("wxVERTICAL");
         }
         else if (comp_type == GetNodeType("gbsizer"))
         {
@@ -262,18 +262,18 @@ void NodeCreator::SetDefaultLayoutProperties(Node* node)
 
     if (declaration->GetClassName() == "wxStdDialogButtonSizer")
     {
-        node->get_prop_ptr(txtBorders)->set_value("wxALL");
-        node->get_prop_ptr(txtFlags)->set_value("wxEXPAND");
+        node->get_prop_ptr(txt_borders)->set_value("wxALL");
+        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
         return;
     }
 
     auto node_type = node->GetNodeTypeName();
-    auto proportion = node->get_prop_ptr(txtProportion);
+    auto proportion = node->get_prop_ptr(txt_proportion);
 
     if (declaration->GetClassName() == "wxStaticLine" || declaration->GetClassName() == "wxStdDialogButtonSizer")
     {
-        node->get_prop_ptr(txtBorders)->set_value("wxALL");
-        node->get_prop_ptr(txtFlags)->set_value("wxEXPAND");
+        node->get_prop_ptr(txt_borders)->set_value("wxALL");
+        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
     }
     else if (node->IsSizer() || node_type == "splitter" || declaration->GetClassName() == "spacer")
     {
@@ -281,11 +281,11 @@ void NodeCreator::SetDefaultLayoutProperties(Node* node)
         {
             proportion->set_value("1");
         }
-        node->get_prop_ptr(txtFlags)->set_value("wxEXPAND");
+        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
     }
     else if (declaration->GetClassName() == "wxToolBar")
     {
-        node->get_prop_ptr(txtFlags)->set_value("wxEXPAND");
+        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
     }
     else if (node_type == "widget" || node_type == "statusbar")
     {
@@ -293,7 +293,7 @@ void NodeCreator::SetDefaultLayoutProperties(Node* node)
         {
             proportion->set_value("0");
         }
-        node->get_prop_ptr(txtBorders)->set_value("wxALL");
+        node->get_prop_ptr(txt_borders)->set_value("wxALL");
     }
     else if (node_type == "notebook" || node_type == "flatnotebook" || node_type == "listbook" ||
              node_type == "simplebook" || node_type == "choicebook" || node_type == "auinotebook" ||
@@ -303,8 +303,8 @@ void NodeCreator::SetDefaultLayoutProperties(Node* node)
         {
             proportion->set_value("1");
         }
-        node->get_prop_ptr(txtBorders)->set_value("wxALL");
-        node->get_prop_ptr(txtFlags)->set_value("wxEXPAND");
+        node->get_prop_ptr(txt_borders)->set_value("wxALL");
+        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
     }
 }
 
@@ -599,7 +599,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
                 if (child.m_help.empty())
                 {
-                    if (child.m_name == txtAccess)
+                    if (child.m_name == txt_class_access)
                         child.m_help = "Determines the type of access your derived class has to this item.";
                 }
 
@@ -661,17 +661,17 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         // All widgets need to have an access property after their name property. The XML file typically won't supply
         // this, so we add it here.
-        if (elem_prop && ttlib::is_sameas(name, txtVarName) && !elem_prop.attribute("name").as_cview().is_sameas(txtAccess))
+        if (elem_prop && ttlib::is_sameas(name, txt_var_name) && !elem_prop.attribute("name").as_cview().is_sameas(txt_class_access))
         {
             if (auto type = elem_prop.parent().attribute("type").as_cview();
                 type.is_sameas("widget") || type.is_sameas("expanded_widget"))
             {
-                category.AddProperty(txtAccess);
+                category.AddProperty(txt_class_access);
                 children.clear();
                 prop_info = std::make_shared<PropertyInfo>(
-                    txtAccess, Type::Option,
+                    txt_class_access, Type::Option,
                     "protected:", "Determines the type of access your derived class has to this item.", "", children);
-                obj_info->GetPropInfoMap()[txtAccess] = prop_info;
+                obj_info->GetPropInfoMap()[txt_class_access] = prop_info;
 
                 auto& opts = prop_info->GetOptions();
 

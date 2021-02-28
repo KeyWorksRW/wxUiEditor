@@ -327,7 +327,7 @@ void WxSmith::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node*
         }
         else if (iter.cname().is_sameas("border"))
         {
-            node->get_prop_ptr(txtBorderSize)->set_value(iter.text().as_string());
+            node->get_prop_ptr(txt_border_size)->set_value(iter.text().as_string());
         }
         else if (iter.cname().is_sameas("flag") &&
                  (node->GetClassName() == "sizeritem" || node->GetClassName() == "gbsizeritem"))

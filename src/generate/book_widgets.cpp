@@ -24,7 +24,7 @@ wxObject* ChoicebookGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                         node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                         node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     // TODO: [KeyWorks - 11-22-2020] If a bitmap size is specified, then we need to create an imagelist -- see issue #518
 
@@ -73,7 +73,7 @@ wxObject* ListbookGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                       node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                       node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     // TODO: [KeyWorks - 11-22-2020] If a bitmap size is specified, then we need to create an imagelist -- see issue #518
 
@@ -128,7 +128,7 @@ wxObject* NotebookGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                       node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                       node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     // TODO: [KeyWorks - 11-22-2020] If a bitmap size is specified, then we need to create an imagelist
 

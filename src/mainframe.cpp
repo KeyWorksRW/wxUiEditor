@@ -806,7 +806,7 @@ void MainFrame::UpdateMoveMenu()
 
 void MainFrame::FindItemName(Node* node)
 {
-    if (auto value = node->get_value_ptr(txtVarName); value && value->size())
+    if (auto value = node->get_value_ptr(txt_var_name); value && value->size())
     {
         m_generatedPanel->FindItemName(*value);
         return;
@@ -961,7 +961,7 @@ void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
         return;
     }
 
-    auto propFlag = m_selected_node->get_prop_ptr(txtFlags);
+    auto propFlag = m_selected_node->get_prop_ptr(txt_flags);
 
     if (!propFlag)
     {
@@ -980,7 +980,7 @@ void MainFrame::ToggleBorderFlag(Node* node, int border)
     if (!node)
         return;
 
-    auto propFlag = node->get_prop_ptr(txtBorders);
+    auto propFlag = node->get_prop_ptr(txt_borders);
 
     if (!propFlag)
         return;
@@ -1027,7 +1027,7 @@ void MainFrame::ChangeAlignment(Node* node, int align, bool vertical)
     if (!node)
         return;
 
-    auto propFlag = node->get_prop_ptr(txtAlignment);
+    auto propFlag = node->get_prop_ptr(txt_alignment);
 
     if (!propFlag)
         return;
@@ -1081,7 +1081,7 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
 
     auto prop_flags = m_selected_node->GetSizerFlags();
 
-    auto propOption = m_selected_node->get_prop_ptr(txtProportion);
+    auto propOption = m_selected_node->get_prop_ptr(txt_proportion);
     if (propOption)
     {
         *option = prop_flags.GetProportion();
@@ -1096,7 +1096,7 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
         auto parentName = sizer->GetClassName();
         if ("wxBoxSizer" == parentName || "wxStaticBoxSizer" == parentName)
         {
-            auto propOrient = sizer->get_prop_ptr(txtOrient);
+            auto propOrient = sizer->get_prop_ptr(txt_orientation);
             if (propOrient)
             {
                 *orient = propOrient->as_int();

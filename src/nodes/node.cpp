@@ -321,7 +321,7 @@ bool Node::ChangeChildPosition(NodeSharedPtr node, size_t pos)
 
 bool Node::IsLocal()
 {
-    auto value = get_value_ptr(txtAccess);
+    auto value = get_value_ptr(txt_class_access);
     return (value && *value == "none");
 }
 
@@ -393,9 +393,9 @@ const ttlib::cstr& Node::prop_as_string(ttlib::cview name)
 
 const ttlib::cstr& Node::get_node_name()
 {
-    if (auto it = m_prop_map.find(txtVarName); it != m_prop_map.end())
+    if (auto it = m_prop_map.find(txt_var_name); it != m_prop_map.end())
         return m_properties[it->second].get_value();
-    else if (it = m_prop_map.find(txtClassName); it != m_prop_map.end())
+    else if (it = m_prop_map.find(txt_class_name); it != m_prop_map.end())
         return m_properties[it->second].get_value();
     else
         return tt_empty_cstr;
@@ -461,10 +461,10 @@ wxArrayString Node::prop_as_wxArrayString(ttlib::cview name)
 wxSizerFlags Node::GetSizerFlags()
 {
     wxSizerFlags flags;
-    flags.Proportion(prop_as_int(txtProportion));
-    auto border_size = prop_as_int(txtBorderSize);
+    flags.Proportion(prop_as_int(txt_proportion));
+    auto border_size = prop_as_int(txt_border_size);
     int direction = 0;
-    auto& border_settings = prop_as_string(txtBorders);
+    auto& border_settings = prop_as_string(txt_borders);
     if (border_settings.contains("wxALL"))
     {
         direction = wxALL;
@@ -482,7 +482,7 @@ wxSizerFlags Node::GetSizerFlags()
     }
     flags.Border(direction, border_size);
 
-    if (auto& alignment = prop_as_string(txtAlignment); alignment.size())
+    if (auto& alignment = prop_as_string(txt_alignment); alignment.size())
     {
         if (alignment.contains("wxALIGN_CENTER"))
         {
@@ -508,7 +508,7 @@ wxSizerFlags Node::GetSizerFlags()
         }
     }
 
-    if (auto& prop = prop_as_string(txtFlags); prop.size())
+    if (auto& prop = prop_as_string(txt_flags); prop.size())
     {
         if (prop.contains("wxEXPAND"))
             flags.Expand();
@@ -609,12 +609,12 @@ void Node::CreateToolNode(const ttlib::cstr& name)
         new_node = new_node->CreateChildNode("VerticalBoxSizer");
         if (new_node)
         {
-            if (auto prop = new_node->get_prop_ptr(txtOrient); prop)
+            if (auto prop = new_node->get_prop_ptr(txt_orientation); prop)
             {
                 prop->set_value("wxVERTICAL");
                 frame.FirePropChangeEvent(prop);
             }
-            if (auto prop = new_node->get_prop_ptr(txtVarName); prop)
+            if (auto prop = new_node->get_prop_ptr(txt_var_name); prop)
             {
                 new_node->ModifyProperty(prop, "parent_sizer");
                 if (new_node->FixDuplicateName())
@@ -648,12 +648,12 @@ void Node::CreateToolNode(const ttlib::cstr& name)
         new_node = new_node->CreateChildNode("VerticalBoxSizer");
         if (new_node)
         {
-            if (auto prop = new_node->get_prop_ptr(txtOrient); prop)
+            if (auto prop = new_node->get_prop_ptr(txt_orientation); prop)
             {
                 prop->set_value("wxVERTICAL");
                 frame.FirePropChangeEvent(prop);
             }
-            if (auto prop = new_node->get_prop_ptr(txtVarName); prop)
+            if (auto prop = new_node->get_prop_ptr(txt_var_name); prop)
             {
                 new_node->ModifyProperty(prop, "parent_sizer");
                 if (new_node->FixDuplicateName())
@@ -678,13 +678,13 @@ void Node::CreateToolNode(const ttlib::cstr& name)
         auto node = new_node->GetParent();
         ASSERT(node);
 
-        if (auto prop = node->get_prop_ptr(txtBorders); prop)
+        if (auto prop = node->get_prop_ptr(txt_borders); prop)
         {
             if (GetAppOptions().get_SizersAllBorders())
                 prop->set_value("wxALL");
         }
 
-        if (auto prop = node->get_prop_ptr(txtFlags); prop)
+        if (auto prop = node->get_prop_ptr(txt_flags); prop)
         {
             if (GetAppOptions().get_SizersExpand())
                 prop->set_value("wxEXPAND");
@@ -767,7 +767,7 @@ ttlib::cstr Node::GetUniqueName(const ttlib::cstr& proposed_name)
 
 bool Node::FixDuplicateName(bool is_validator)
 {
-    auto name = get_value_ptr(is_validator ? "validator_variable" : txtVarName);
+    auto name = get_value_ptr(is_validator ? "validator_variable" : txt_var_name);
     if (!name || name->empty())
         return false;
 
@@ -820,7 +820,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set)
 {
     if (!IsForm())
     {
-        if (auto name = get_value_ptr(txtVarName); name)
+        if (auto name = get_value_ptr(txt_var_name); name)
         {
             name_set.emplace(*name);
         }

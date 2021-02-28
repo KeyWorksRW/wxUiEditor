@@ -30,7 +30,7 @@ constexpr const IMPORT_NAME_PAIR prop_pair[] = {
 
     { "bg", "background_colour" },
     { "fg", "background_colour" },
-    { "permission", txtAccess },
+    { "permission", txt_class_access },
     { "hover", "current" },
 
     { nullptr, nullptr },
@@ -208,7 +208,7 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 else if (prop_name.as_cview().is_sameas("precompiled_header"))
                 {
                     // wxFormBuilder calls it a precompiled header, but uses it as a preamble.
-                    new_node->get_prop_ptr(txtSrcPreamble)->set_value(xml_prop.text().as_string());
+                    new_node->get_prop_ptr(txt_src_preamble)->set_value(xml_prop.text().as_string());
                 }
 
                 else if (prop_name.as_cview().is_sameas("embedded_files_path"))
@@ -327,7 +327,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     else if (value.contains("wxNB_FLAT"))
                         value.Replace("wxNB_FLAT", "");  // this style is obsolete
 
-                    if (prop_name.is_sameas(txtStyle))
+                    if (prop_name.is_sameas(txt_style))
                     {
                         ProcessStyle(xml_prop, newobject.get(), prop);
                     }
@@ -474,13 +474,13 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     }
 
     // This will be caused by a spacer item which isn't actually a widget, so has no access property
-    else if (prop_name.is_sameas(txtAccess))
+    else if (prop_name.is_sameas(txt_class_access))
     {
         return;
     }
 
     // The label property in a wxMenuBar is not supported (since it can't actually be used)
-    else if (prop_name.is_sameas(txtLabel))
+    else if (prop_name.is_sameas(txt_label))
     {
         return;
     }
@@ -501,12 +501,12 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
         if (class_name.is_sameas("Project"))
             return;  // we don't use this (and neither does wxFormBuilder for that matter)
         else if (class_name.is_sameas("wxDialog"))
-            newobject->get_prop_ptr(txtClassName)->set_value(xml_prop.text().as_cview());
+            newobject->get_prop_ptr(txt_class_name)->set_value(xml_prop.text().as_cview());
     }
 
     else if (prop_name.is_sameas("border"))
     {
-        newobject->get_prop_ptr(txtBorderSize)->set_value(xml_prop.text().as_cview());
+        newobject->get_prop_ptr(txt_border_size)->set_value(xml_prop.text().as_cview());
     }
 
     else if (prop_name.is_sameas("enabled"))
@@ -556,14 +556,14 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
         }
         else
         {
-            auto prop = newobject->get_prop_ptr(txtValue);
+            auto prop = newobject->get_prop_ptr(txt_value);
             if (prop)
                 prop->set_value(xml_prop.text().as_cview());
         }
     }
-    else if (prop_name.is_sameas(txtFlags) && class_name.is_sameas("wxWrapSizer"))
+    else if (prop_name.is_sameas(txt_flags) && class_name.is_sameas("wxWrapSizer"))
     {
-        auto prop = newobject->get_prop_ptr(txtWrapFlags);
+        auto prop = newobject->get_prop_ptr(txt_wrap_flags);
         auto prop_value = xml_prop.text().as_cstr();
         if (prop_value.contains("wxWRAPSIZER_DEFAULT_FLAGS"))
             prop_value = "wxEXTEND_LAST_ON_EACH_LINE|wxREMOVE_LEADING_SPACES";
@@ -574,7 +574,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     {
         newobject->get_prop_ptr("selection_int")->set_value(xml_prop.text().as_cview());
     }
-    else if (prop_name.is_sameas(txtStyle) && class_name.is_sameas("wxCheckBox"))
+    else if (prop_name.is_sameas(txt_style) && class_name.is_sameas("wxCheckBox"))
     {
         // wxCHK_2STATE and wxCHK_3STATE are part of the type property instead of style
         ttlib::multistr styles(xml_prop.text().as_string());
@@ -597,20 +597,20 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
 
         if (new_style.size())
         {
-            auto prop = newobject->get_prop_ptr(txtStyle);
+            auto prop = newobject->get_prop_ptr(txt_style);
             prop->set_value("new_style");
         }
     }
-    else if (prop_name.is_sameas(txtStyle) && class_name.is_sameas("wxToolBar"))
+    else if (prop_name.is_sameas(txt_style) && class_name.is_sameas("wxToolBar"))
     {
-        auto prop = newobject->get_prop_ptr(txtStyle);
+        auto prop = newobject->get_prop_ptr(txt_style);
         auto prop_value = xml_prop.text().as_cstr();
         prop_value.Replace("wxTB_DEFAULT_STYLE", "wxTB_HORIZONTAL");
         prop->set_value(prop_value);
     }
     else if (prop_name.is_sameas("orient"))
     {
-        if (auto prop = newobject->get_prop_ptr(txtOrient); prop)
+        if (auto prop = newobject->get_prop_ptr(txt_orientation); prop)
         {
             prop->set_value(xml_prop.text().as_string());
         }
@@ -748,7 +748,7 @@ void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object,
     }
     if (border_value.size())
     {
-        prop = object->get_prop_ptr(txtBorders);
+        prop = object->get_prop_ptr(txt_borders);
         prop->set_value(border_value);
     }
 
@@ -784,7 +784,7 @@ void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object,
         bool isIgnored = false;
         if (flag_value.contains("wxALIGN_CENTER_VERTICAL") || flag_value.contains("wxALIGN_CENTRE_VERTICAL"))
         {
-            if (!parent->IsSizer() || !parent->prop_as_string(txtOrient).is_sameas("wxVERTICAL"))
+            if (!parent->IsSizer() || !parent->prop_as_string(txt_orientation).is_sameas("wxVERTICAL"))
             {
                 if (align_value.size())
                     align_value << '|';
@@ -795,7 +795,7 @@ void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object,
         }
         else if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") || flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
         {
-            if (!parent->IsSizer() || !parent->prop_as_string(txtOrient).is_sameas("wxHORIZONTAL"))
+            if (!parent->IsSizer() || !parent->prop_as_string(txt_orientation).is_sameas("wxHORIZONTAL"))
             {
                 if (align_value.size())
                     align_value << '|';
@@ -818,7 +818,7 @@ void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object,
     }
     if (align_value.size())
     {
-        prop = object->get_prop_ptr(txtAlignment);
+        prop = object->get_prop_ptr(txt_alignment);
         prop->set_value(align_value);
     }
 
@@ -847,7 +847,7 @@ void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object,
     }
     if (flags_value.size())
     {
-        prop = object->get_prop_ptr(txtFlags);
+        prop = object->get_prop_ptr(txt_flags);
         prop->set_value(flags_value);
     }
 }
@@ -1027,7 +1027,7 @@ void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* p
 
     if (border_value.size())
     {
-        auto prop = node->get_prop_ptr(txtBorders);
+        auto prop = node->get_prop_ptr(txt_borders);
         prop->set_value(border_value);
     }
 
@@ -1100,7 +1100,7 @@ void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* p
     }
     if (align_value.size())
     {
-        auto prop = node->get_prop_ptr(txtAlignment);
+        auto prop = node->get_prop_ptr(txt_alignment);
         prop->set_value(align_value);
     }
 
@@ -1139,7 +1139,7 @@ void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* p
     }
     if (flags_value.size())
     {
-        auto prop = node->get_prop_ptr(txtFlags);
+        auto prop = node->get_prop_ptr(txt_flags);
         prop->set_value(flags_value);
     }
 }

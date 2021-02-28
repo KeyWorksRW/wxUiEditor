@@ -19,9 +19,9 @@
 
 wxObject* RadioButtonGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txtLabel),
+    auto widget = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label),
                                     node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                    node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                                    node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     if (node->prop_as_bool("checked"))
         widget->SetValue(true);
@@ -35,7 +35,7 @@ bool RadioButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
 {
     if (prop->GetPropName() == "label")
     {
-        wxStaticCast(widget, wxRadioButton)->SetLabel(node->prop_as_wxString(txtLabel));
+        wxStaticCast(widget, wxRadioButton)->SetLabel(node->prop_as_wxString(txt_label));
         return true;
     }
     else if (prop->GetPropName() == "checked")
@@ -55,8 +55,8 @@ std::optional<ttlib::cstr> RadioButtonGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxRadioButton(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    if (node->prop_as_string(txtLabel).size())
-        code << GenerateQuotedString(node->prop_as_string(txtLabel));
+    if (node->prop_as_string(txt_label).size())
+        code << GenerateQuotedString(node->prop_as_string(txt_label));
     else
         code << "wxEmptyString";
 
@@ -115,16 +115,16 @@ bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 wxObject* RadioBoxGenerator::Create(Node* node, wxObject* parent)
 {
-    auto choices = node->prop_as_wxArrayString(txtChoices);
+    auto choices = node->prop_as_wxArrayString(txt_choices);
     if (!choices.Count())
     {
         choices.Add("at least one choice required");
     }
 
     auto widget =
-        new wxRadioBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txtLabel),
+        new wxRadioBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label),
                        node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), choices,
-                       node->prop_as_int("majorDimension"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                       node->prop_as_int("majorDimension"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     if (int selection = node->prop_as_int("selection"); static_cast<size_t>(selection) < choices.Count())
     {
@@ -141,7 +141,7 @@ bool RadioBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 {
     if (prop->GetPropName() == "label")
     {
-        wxStaticCast(widget, wxRadioBox)->SetLabel(node->prop_as_wxString(txtLabel));
+        wxStaticCast(widget, wxRadioBox)->SetLabel(node->prop_as_wxString(txt_label));
         return true;
     }
     else if (prop->GetPropName() == "selection")
@@ -168,7 +168,7 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
         choice_name.erase(0, 2);
     choice_name << "_choices";
     code << "\twxString " << choice_name << "[] = {";
-    auto array = ConvertToArrayString(node->prop_as_string(txtChoices));
+    auto array = ConvertToArrayString(node->prop_as_string(txt_choices));
     for (auto& iter: array)
     {
         code << "\n\t\t" << GenerateQuotedString(iter) << ",";
@@ -180,7 +180,7 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxRadioBox(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    auto& label = node->prop_as_string(txtLabel);
+    auto& label = node->prop_as_string(txt_label);
     if (label.size())
     {
         code << GenerateQuotedString(label);
@@ -214,7 +214,7 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
     }
     else
     {
-        if (node->prop_as_string("window_style").size() || node->prop_as_string(txtStyle) != "wxRA_SPECIFY_COLS")
+        if (node->prop_as_string("window_style").size() || node->prop_as_string(txt_style) != "wxRA_SPECIFY_COLS")
         {
             code << ", ";
             if (!isDimSet)

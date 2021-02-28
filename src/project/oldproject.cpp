@@ -444,7 +444,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
                     if (prop_name.is_sameas("name"))
                     {
                         // This gets special-cased because "name" is still used in some places, just not as the class name
-                        if (auto prop_varname = newobject.get()->get_prop_ptr(txtVarName); prop_varname)
+                        if (auto prop_varname = newobject.get()->get_prop_ptr(txt_var_name); prop_varname)
                         {
                             prop_varname->set_value(value);
                             xml_prop = xml_prop.next_sibling("property");
@@ -479,7 +479,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
 
     if (class_name.is_sameas("VerticalBoxSizer"))
     {
-        auto prop = newobject->get_prop_ptr(txtOrient);
+        auto prop = newobject->get_prop_ptr(txt_orientation);
         prop->set_value("wxVERTICAL");
     }
 
@@ -551,7 +551,7 @@ static bool ProcessCheckBox(pugi::xml_node& xml_prop, Node* node)
     auto prop_name = xml_prop.attribute("name").as_cview();
 
     // wxCHK_2STATE and wxCHK_3STATE are now part of the type property instead of style
-    if (prop_name.is_sameas(txtStyle))
+    if (prop_name.is_sameas(txt_style))
     {
         ttlib::multistr styles(xml_prop.text().as_string(), '|');
         ttlib::cstr new_style;
@@ -574,7 +574,7 @@ static bool ProcessCheckBox(pugi::xml_node& xml_prop, Node* node)
 
         if (new_style.size())
         {
-            auto prop = node->get_prop_ptr(txtStyle);
+            auto prop = node->get_prop_ptr(txt_style);
             prop->set_value(new_style);
         }
         return true;
@@ -594,21 +594,21 @@ static bool HandleDownLevelProperty(pugi::xml_node& xml_prop, ttlib::cview prop_
 
     if (prop_name.is_sameas("derived_name"))
     {
-        auto prop = node->get_prop_ptr(txtDerivedClassName);
+        auto prop = node->get_prop_ptr(txt_derived_class_name);
         prop->set_value(xml_prop.text().as_cview());
         return true;
     }
 
     if (prop_name.is_sameas("orient"))
     {
-        auto prop = node->get_prop_ptr(txtOrient);
+        auto prop = node->get_prop_ptr(txt_orientation);
         prop->set_value(xml_prop.text().as_cview());
         return true;
     }
 
     if (prop_name.is_sameas("access"))
     {
-        auto prop = node->get_prop_ptr(txtAccess);
+        auto prop = node->get_prop_ptr(txt_class_access);
         prop->set_value(xml_prop.text().as_cview());
         return true;
     }
@@ -617,7 +617,7 @@ static bool HandleDownLevelProperty(pugi::xml_node& xml_prop, ttlib::cview prop_
     {
         if (node->IsForm())
         {
-            auto prop = node->get_prop_ptr(txtClassName);
+            auto prop = node->get_prop_ptr(txt_class_name);
             prop->set_value(xml_prop.text().as_cview());
             return true;
         }
@@ -660,7 +660,7 @@ static bool HandleDownLevelProperty(pugi::xml_node& xml_prop, ttlib::cview prop_
 
         if (border_value.size())
         {
-            auto prop = node->get_prop_ptr(txtBorders);
+            auto prop = node->get_prop_ptr(txt_borders);
             prop->set_value(border_value);
         }
 
@@ -722,7 +722,7 @@ static bool HandleDownLevelProperty(pugi::xml_node& xml_prop, ttlib::cview prop_
         }
         if (align_value.size())
         {
-            auto prop = node->get_prop_ptr(txtAlignment);
+            auto prop = node->get_prop_ptr(txt_alignment);
             prop->set_value(align_value);
         }
 
@@ -751,7 +751,7 @@ static bool HandleDownLevelProperty(pugi::xml_node& xml_prop, ttlib::cview prop_
         }
         if (flags_value.size())
         {
-            auto prop = node->get_prop_ptr(txtFlags);
+            auto prop = node->get_prop_ptr(txt_flags);
             prop->set_value(flags_value);
         }
 
@@ -760,13 +760,13 @@ static bool HandleDownLevelProperty(pugi::xml_node& xml_prop, ttlib::cview prop_
 
     if (prop_name.is_sameas("border"))
     {
-        auto prop = node->get_prop_ptr(txtBorderSize);
+        auto prop = node->get_prop_ptr(txt_border_size);
         prop->set_value(xml_prop.text().as_cview());
 
         return true;
     }
 
-    if (prop_name.is_sameas(txtValue) && class_name.is_sameas("wxComboBox"))
+    if (prop_name.is_sameas(txt_value) && class_name.is_sameas("wxComboBox"))
     {
         auto prop = node->get_prop_ptr("selection_string");
         prop->set_value(xml_prop.text().as_cview());

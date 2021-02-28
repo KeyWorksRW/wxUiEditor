@@ -104,7 +104,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         }
     }
 
-    auto derived_name = form->prop_as_string(txtDerivedClassName);
+    auto derived_name = form->prop_as_string(txt_derived_class_name);
 
     m_header->Clear();
     m_source->Clear();
@@ -156,7 +156,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             m_source->writeLine();
         }
 
-        prop = project->get_value_ptr(txtSrcPreamble);
+        prop = project->get_value_ptr(txt_src_preamble);
         if (prop)
         {
             if (ttlib::cstr preamble = *prop; preamble.size())
@@ -191,7 +191,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             m_source->writeLine();
             m_source->writeLine(inc);
             m_source->writeLine();
-            if (auto preamble = project->get_value_ptr(txtSrcPreamble); preamble->size())
+            if (auto preamble = project->get_value_ptr(txt_src_preamble); preamble->size())
             {
                 ttlib::cstr code(*preamble);
 

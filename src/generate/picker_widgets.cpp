@@ -26,7 +26,7 @@ wxObject* DatePickerCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, node->prop_as_wxPoint("pos"),
-                             node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                             node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -63,7 +63,7 @@ wxObject* TimePickerCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxTimePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, node->prop_as_wxPoint("pos"),
-                             node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                             node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -99,11 +99,11 @@ bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 wxObject* FilePickerGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxFilePickerCtrl(
-        wxStaticCast(parent, wxWindow), node->prop_as_int("id"), node->GetPropertyAsString(txtValue),
+        wxStaticCast(parent, wxWindow), node->prop_as_int("id"), node->GetPropertyAsString(txt_value),
         node->prop_as_string("message").size() ? node->GetPropertyAsString("message") : wxFileSelectorPromptStr,
         node->prop_as_string("wildcard").size() ? node->GetPropertyAsString("wildcard") : wxFileSelectorDefaultWildcardStr,
         node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-        node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -118,7 +118,7 @@ std::optional<ttlib::cstr> FilePickerGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxFilePickerCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
     {
-        auto& path = node->prop_as_string(txtValue);
+        auto& path = node->prop_as_string(txt_value);
         if (path.size())
         {
             code << GenerateQuotedString(path);
@@ -178,10 +178,10 @@ bool FilePickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 wxObject* DirPickerGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxDirPickerCtrl(
-        wxStaticCast(parent, wxWindow), node->prop_as_int("id"), node->GetPropertyAsString(txtValue),
+        wxStaticCast(parent, wxWindow), node->prop_as_int("id"), node->GetPropertyAsString(txt_value),
         node->prop_as_string("message").size() ? node->GetPropertyAsString("message") : wxDirSelectorPromptStr,
         node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-        node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -196,7 +196,7 @@ std::optional<ttlib::cstr> DirPickerGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxDirPickerCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
     {
-        auto& path = node->prop_as_string(txtValue);
+        auto& path = node->prop_as_string(txt_value);
         if (path.size())
         {
             code << GenerateQuotedString(path);
@@ -241,9 +241,9 @@ bool DirPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 wxObject* ColourPickerGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), node->prop_as_int("id"), node->prop_as_wxColour(txtColour),
+        new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), node->prop_as_int("id"), node->prop_as_wxColour(txt_colour),
                                node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                               node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                               node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -257,8 +257,8 @@ std::optional<ttlib::cstr> ColourPickerGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxColourPickerCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
-    if (node->prop_as_string(txtColour).size())
-        code << node->prop_as_string(txtColour);
+    if (node->prop_as_string(txt_colour).size())
+        code << node->prop_as_string(txt_colour);
     else
         code << "*wxBLACK";
     GeneratePosSizeFlags(node, code, true, "wxCLRP_DEFAULT_STYLE", "wxCLRP_DEFAULT_STYLE");
@@ -282,9 +282,9 @@ bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 wxObject* FontPickerGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), node->prop_as_int("id"), node->prop_as_font(txtValue),
+        new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), node->prop_as_int("id"), node->prop_as_font(txt_value),
                              node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                             node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                             node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     if (node->HasValue("max_point_size"))
     {
@@ -303,9 +303,9 @@ std::optional<ttlib::cstr> FontPickerGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxFontPickerCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
-    if (node->prop_as_string(txtValue).size())
+    if (node->prop_as_string(txt_value).size())
     {
-        auto fontprop = node->prop_as_font_prop(txtValue);
+        auto fontprop = node->prop_as_font_prop(txt_value);
         wxFont font = fontprop.GetFont();
 
         code << "\n        \twxFont(";

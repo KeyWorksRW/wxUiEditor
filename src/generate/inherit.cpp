@@ -163,7 +163,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         code << "Hide();";
     }
 
-    auto size = node->prop_as_wxPoint(txtMinimumSize);
+    auto size = node->prop_as_wxPoint(txt_minimum_size);
     if (size.x != -1 || size.y != -1)
     {
         if (code.size())

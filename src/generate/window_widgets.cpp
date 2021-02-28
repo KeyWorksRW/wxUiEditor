@@ -65,7 +65,7 @@ wxObject* SplitterWindowGenerator::Create(Node* node, wxObject* parent)
 {
     auto splitter = new wxCustomSplitterWindow(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-        (node->prop_as_int(txtStyle) | node->prop_as_int("window_style")) & ~wxSP_PERMIT_UNSPLIT);
+        (node->prop_as_int(txt_style) | node->prop_as_int("window_style")) & ~wxSP_PERMIT_UNSPLIT);
 
     if (node->HasValue("sashgravity"))
     {
@@ -237,7 +237,7 @@ wxObject* ScrolledWindowGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxScrolled<wxPanel>(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
                                           node->prop_as_wxSize("size"),
-                                          node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                                          node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
     widget->SetScrollRate(node->prop_as_int("scroll_rate_x"), node->prop_as_int("scroll_rate_y"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

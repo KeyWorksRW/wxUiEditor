@@ -60,7 +60,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
         }
         else
         {
-            results.emplace_back() << _tt("No filename specified for ") << *form->get_value_ptr(txtClassName) << '\n';
+            results.emplace_back() << _tt("No filename specified for ") << *form->get_value_ptr(txt_class_name) << '\n';
         }
 
         try
@@ -192,7 +192,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else
         {
-            results.emplace_back() << _tt("No filename specified for ") << form->get_value_ptr(txtVarName)->c_str() << '\n';
+            results.emplace_back() << _tt("No filename specified for ") << form->get_value_ptr(txt_var_name)->c_str() << '\n';
             continue;
         }
 

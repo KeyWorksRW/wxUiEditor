@@ -303,13 +303,13 @@ int NavigationPanel::GetImageIndex(Node* node)
     const char* name = node->GetNodeDeclaration()->GetClassName().c_str();
     if (ttlib::is_sameas(name, "VerticalBoxSizer"))
     {
-        auto& prop = node->prop_as_string(txtOrient);
+        auto& prop = node->prop_as_string(txt_orientation);
         if (prop != "wxVERTICAL")
             name = "wxBoxSizer";
     }
     else if (ttlib::is_sameas(name, "wxBoxSizer"))
     {
-        auto& prop = node->prop_as_string(txtOrient);
+        auto& prop = node->prop_as_string(txt_orientation);
         if (prop != "wxHORIZONTAL")
             name = "VerticalBoxSizer";
     }
@@ -323,7 +323,7 @@ int NavigationPanel::GetImageIndex(Node* node)
 void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
 {
     ttlib::cstr text;
-    auto prop = node->get_prop_ptr(txtLabel);
+    auto prop = node->get_prop_ptr(txt_label);
     if (prop && prop->get_value().size())
     {
         text = prop->get_value();
@@ -336,11 +336,11 @@ void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
             text << "...";
         }
     }
-    else if (prop = node->get_prop_ptr(txtVarName); prop)
+    else if (prop = node->get_prop_ptr(txt_var_name); prop)
     {
         text = prop->get_value();
     }
-    else if (prop = node->get_prop_ptr(txtClassName); prop)
+    else if (prop = node->get_prop_ptr(txt_class_name); prop)
     {
         text = prop->get_value();
     }
@@ -427,7 +427,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     else
     {
         FAIL_MSG(ttlib::cstr("There is no tree item associated with this object.\n\tClass: ")
-                 << node->GetClassName() << "\n\tName: " << node->GetPropertyAsString(txtVarName).wx_str());
+                 << node->GetClassName() << "\n\tName: " << node->GetPropertyAsString(txt_var_name).wx_str());
     }
 }
 
@@ -435,7 +435,7 @@ void NavigationPanel::OnPropertyModified(CustomEvent& event)
 {
     auto prop = event.GetNodeProperty();
 
-    if (prop->GetPropName() == txtVarName || prop->GetPropName() == txtLabel)
+    if (prop->GetPropName() == txt_var_name || prop->GetPropName() == txt_label)
     {
         auto& class_name = prop->GetNode()->GetClassName();
         if (ttlib::contains(class_name, "bookpage"))
@@ -450,7 +450,7 @@ void NavigationPanel::OnPropertyModified(CustomEvent& event)
             UpdateDisplayName(it->second, it->first);
         }
     }
-    else if (prop->GetPropName() == txtOrient)
+    else if (prop->GetPropName() == txt_orientation)
     {
         if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
         {

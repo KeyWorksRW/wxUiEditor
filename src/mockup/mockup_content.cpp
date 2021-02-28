@@ -147,7 +147,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
                     created_sizer = wxStaticCast(created_object, wxSizer);
                 }
 
-                if (auto minsize = node->prop_as_wxSize(txtMinimumSize); minsize != wxDefaultSize)
+                if (auto minsize = node->prop_as_wxSize(txt_minimum_size); minsize != wxDefaultSize)
                 {
                     created_sizer->SetMinSize(minsize);
                     created_sizer->Layout();
@@ -192,8 +192,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             if (obj_parent->GetClassName() == "wxGridBagSizer")
             {
                 auto sizer = wxStaticCast(parentNode, wxGridBagSizer);
-                wxGBPosition position(child_obj->prop_as_int(txtRow), child_obj->prop_as_int(txtColumn));
-                wxGBSpan span(child_obj->prop_as_int(txtRowSpan), child_obj->prop_as_int(txtColSpan));
+                wxGBPosition position(child_obj->prop_as_int(txt_row), child_obj->prop_as_int(txt_column));
+                wxGBSpan span(child_obj->prop_as_int(txt_rowspan), child_obj->prop_as_int(txt_colspan));
 
                 if (created_window)
                     sizer->Add(created_window, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
@@ -240,7 +240,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->SetSize(size);
     }
 
-    if (auto minsize = node->prop_as_wxSize(txtMinimumSize); minsize != wxDefaultSize)
+    if (auto minsize = node->prop_as_wxSize(txt_minimum_size); minsize != wxDefaultSize)
     {
         window->SetMinSize(minsize);
     }

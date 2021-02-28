@@ -22,12 +22,12 @@ wxObject* StaticTextGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                         node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                         node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     if (node->prop_as_bool("markup"))
-        widget->SetLabelMarkup(node->prop_as_wxString(txtLabel));
+        widget->SetLabelMarkup(node->prop_as_wxString(txt_label));
     else
-        widget->SetLabel(node->prop_as_wxString(txtLabel));
+        widget->SetLabel(node->prop_as_wxString(txt_label));
 
     if (node->prop_as_int("wrap") > 0)
         widget->Wrap(node->prop_as_int("wrap"));
@@ -46,9 +46,9 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
 
         auto ctrl = wxStaticCast(widget, wxStaticText);
         if (node->prop_as_bool("markup"))
-            ctrl->SetLabelMarkup(node->prop_as_wxString(txtLabel));
+            ctrl->SetLabelMarkup(node->prop_as_wxString(txt_label));
         else
-            ctrl->SetLabel(node->prop_as_wxString(txtLabel));
+            ctrl->SetLabel(node->prop_as_wxString(txt_label));
 
         if (node->prop_as_int("wrap") > 0)
             ctrl->Wrap(node->prop_as_int("wrap"));
@@ -76,7 +76,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node)
     }
     else
     {
-        auto& label = node->prop_as_string(txtLabel);
+        auto& label = node->prop_as_string(txt_label);
         if (label.size())
         {
             code << GenerateQuotedString(label);
@@ -104,7 +104,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& 
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txtLabel)) << ");";
+        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txt_label)) << ");";
     }
 
     // Note that wrap MUST be called after the text is set, otherwise it will be ignored.
@@ -130,9 +130,9 @@ bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 wxObject* TextCtrlGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txtValue),
+    auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_value),
                                  node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                 node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                                 node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->SetMaxLength(node->prop_as_int("maxlength"));
 
@@ -160,8 +160,8 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxTextCtrl(";
 
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
-    if (node->prop_as_string(txtValue).size())
-        code << GenerateQuotedString(node->prop_as_string(txtValue));
+    if (node->prop_as_string(txt_value).size())
+        code << GenerateQuotedString(node->prop_as_string(txt_value));
     else
         code << "wxEmptyString";
 
@@ -193,7 +193,7 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenSettings(Node* node, size_t& au
     {
         if (code.size())
             code << '\n';
-        if (node->prop_as_string(txtStyle).contains("wxTE_MULTILINE"))
+        if (node->prop_as_string(txt_style).contains("wxTE_MULTILINE"))
         {
             code << "#if !defined(__WXGTK__))\n\t";
             code << node->get_node_name() << "->SetMaxLength(" << node->prop_as_string("maxlength") << ");\n";
@@ -233,7 +233,7 @@ wxObject* RichTextCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                           node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -287,7 +287,7 @@ wxObject* HtmlWindowGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                         node->prop_as_wxSize("size"), node->prop_as_int(txtStyle) | node->prop_as_int("window_style"));
+                         node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->SetPage("<b>wxHtmlWindow</b><br/><br/>This is a dummy page.</body></html>");
 
@@ -330,7 +330,7 @@ wxObject* StyledTextGenerator::Create(Node* node, wxObject* parent)
 
     auto scintilla = new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
                                           node->prop_as_wxSize("size"), node->prop_as_int("window_style"),
-                                          node->GetPropertyAsString(txtVarName));
+                                          node->GetPropertyAsString(txt_var_name));
 
     if (node->prop_as_int("line_numbers") != 0)
     {

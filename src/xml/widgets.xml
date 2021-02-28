@@ -947,10 +947,7 @@
   </compinfo>
 
   <compinfo class="wxGenericDirCtrl" image="genericdir_ctrl" type="expanded_widget">
-    <inherits class="wxTreeCtrlBase"/>
-    <inherits class="wxWindow">
-      <property name="window_style">wxSUNKEN_BORDER</property>
-    </inherits>
+    <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_genericDirCtrl</property>
     <property name="defaultfolder" type="translate" help="Initial Directory."/>

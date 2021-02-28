@@ -7,14 +7,17 @@
 
 #include "pch.h"
 
-#include <wx/button.h>  // wxButtonBase class
-#include <wx/event.h>   // Event classes
-#include <wx/tglbtn.h>  // wxToggleButtonBase
+#include <wx/button.h>             // wxButtonBase class
+#include <wx/commandlinkbutton.h>  // wxCommandLinkButtonBase and wxGenericCommandLinkButton classes
+#include <wx/event.h>              // Event classes
+#include <wx/tglbtn.h>             // wxToggleButtonBase
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 
 #include "btn_widgets.h"
+
+//////////////////////////////////////////  ButtonGenerator  //////////////////////////////////////////
 
 wxObject* ButtonGenerator::Create(Node* node, wxObject* parent)
 {
@@ -137,7 +140,8 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txt_label)) << ");";
+        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txt_label))
+             << ");";
     }
 
     if (node->prop_as_bool("default"))
@@ -326,7 +330,8 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txt_label)) << ");";
+        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txt_label))
+             << ");";
     }
 
     if (node->HasValue("bitmap"))
@@ -373,5 +378,62 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t
 bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/tglbtn.h>", set_src, set_hdr);
+    return true;
+}
+
+//////////////////////////////////////////  CommandLinkBtnGenerator  //////////////////////////////////////////
+
+wxObject* CommandLinkBtnGenerator::Create(Node* node, wxObject* parent)
+{
+    auto widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString("main_label"),
+                                          node->prop_as_wxString("note"), node->prop_as_wxPoint("pos"),
+                                          node->prop_as_wxSize("size"), node->prop_as_int("window_style"));
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = new wxCommandLinkButton(";
+    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+
+    if (node->HasValue("main_label"))
+    {
+        code << GenerateQuotedString(node->prop_as_string("main_label"));
+    }
+    else
+    {
+        code << "wxEmptyString";
+    }
+
+    code << ",\n        ";
+
+    if (node->HasValue("note"))
+    {
+        code << GenerateQuotedString(node->prop_as_string("note"));
+    }
+    else
+    {
+        code << "wxEmptyString";
+    }
+
+    GeneratePosSizeFlags(node, code, true);
+
+    return code;
+}
+
+std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool CommandLinkBtnGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/commandlinkbutton.h>", set_src, set_hdr);
     return true;
 }

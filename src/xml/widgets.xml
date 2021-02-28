@@ -164,6 +164,16 @@
     <event name="wxEVT_BUTTON" class="wxCommandEvent" help="Generated when the button is clicked"/>
   </compinfo>
 
+  <compinfo class="wxCommandLinkButton" image="wxCommandLinkButton" type="widget">
+    <inherits class="wxWindow"/>
+    <inherits class="sizer_child"/>
+    <property name="var_name" type="string">m_btn</property>
+    <property name="main_label" type="text">MyButton</property>
+    <property name="note" type="rawtext"/>
+    <property name="default" type="bool" help="If true, this will be the default button (it will be depressed when the return key is pressed)">0</property>
+    <event name="wxEVT_BUTTON" class="wxCommandEvent" help="Generated when the button is clicked"/>
+  </compinfo>
+
   <compinfo class="wxComboBox" image="wxComboBox" type="widget">
     <inherits class="Choice Validator"/>
     <inherits class="wxWindow"/>

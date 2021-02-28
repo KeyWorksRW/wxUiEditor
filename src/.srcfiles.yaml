@@ -278,6 +278,7 @@ XPM:
     art_src/wxChoicebook.png: xpm/wxChoicebook.xpm
     art_src/wxCollapsiblePane.png: xpm/wxCollapsiblePane.xpm
     art_src/wxComboBox.png: xpm/wxComboBox.xpm
+    art_src/wxCommandLinkButton.png: xpm/wxCommandLinkButton.xpm
     art_src/wxListBox.png: xpm/wxListBox.xpm
     art_src/wxListView.png: xpm/wxListView.xpm
     art_src/wxListbook.png: xpm/wxListbook.xpm

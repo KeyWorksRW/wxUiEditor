@@ -64,6 +64,7 @@
 #include "xpm/left.xpm"
 #include "xpm/wxActivityIndicator.xpm"
 #include "xpm/wxButton.xpm"
+#include "xpm/wxCommandLinkButton.xpm"
 #include "xpm/wxBannerWindow.xpm"
 #include "xpm/wxCheckBox.xpm"
 #include "xpm/wxCheckListBox.xpm"
@@ -165,6 +166,7 @@ static const std::unordered_map<std::string, const char**> map_xpm_strings = {
     { "wxActivityIndicator", wxActivityIndicator_xpm },
     { "wxBannerWindow", wxBannerWindow_xpm },
     { "wxButton", wxButton_xpm },
+    { "wxCommandLinkButton", wxCommandLinkButton_xpm },
     { "calendar", calendar_xpm },
     { "wxCheckBox", wxCheckBox_xpm },
     { "check3state", check3state_xpm },

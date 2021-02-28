@@ -43,6 +43,7 @@ enum
     MenuButton,
     MenuToggleButton,
     MenuStdDialogButton,
+    MenuCmdLinkButton,
 
 
     MenuSpin,
@@ -91,6 +92,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
             menu.Append(MenuButton, "Insert wxButton");
             menu.Append(MenuToggleButton, "Insert wxToggleButton");
             menu.Append(MenuStdDialogButton, "Insert wxStdDialogButtonSizer");
+            menu.Append(MenuCmdLinkButton, "Insert wxCommandLinkButton");
             break;
 
         case NewSpin:
@@ -187,6 +189,10 @@ void RibbonPanel::OnMenuEvent(wxCommandEvent& event)
 
         case MenuButton:
             wxGetFrame().CreateToolNode("wxButton");
+            break;
+
+        case MenuCmdLinkButton:
+            wxGetFrame().CreateToolNode("wxCommandLinkButton");
             break;
 
         case MenuToggleButton:

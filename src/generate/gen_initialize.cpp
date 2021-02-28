@@ -18,6 +18,7 @@
 #include <wx/choicebk.h>               // wxChoicebook: wxChoice and wxNotebook combination
 #include <wx/clrpicker.h>              // wxColourPickerCtrl base header
 #include <wx/collpane.h>               // wxCollapsiblePane
+#include <wx/commandlinkbutton.h>      // wxCommandLinkButtonBase and wxGenericCommandLinkButton classes
 #include <wx/dataview.h>               // wxDataViewCtrl base classes
 #include <wx/datectrl.h>               // implements wxDatePickerCtrl
 #include <wx/dirctrl.h>                // Directory control base header
@@ -108,6 +109,7 @@ void NodeCreator::InitGenerators()
     ADD_GENERATOR("wxChoicebook", ChoicebookGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxCollapsiblePane", CollapsiblePaneGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxComboBox", ComboBoxGenerator, GENERATOR_TYPE_WINDOW)
+    ADD_GENERATOR("wxCommandLinkButton", CommandLinkBtnGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxGauge", GaugeGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxHtmlWindow", HtmlWindowGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxHyperlinkCtrl", HyperlinkGenerator, GENERATOR_TYPE_WINDOW)

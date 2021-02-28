@@ -86,6 +86,7 @@
 #include "../xpm/wxBannerWindow.xpm"
 #include "../xpm/wxCheckBox.xpm"
 #include "../xpm/wxDialog.xpm"
+#include "../xpm/wxFileCtrl.xpm"
 #include "../xpm/wxFrame.xpm"
 #include "../xpm/wxTextCtrl.xpm"
 #include "../xpm/wxWizard.xpm"
@@ -353,7 +354,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
         other_bar_ctrls->AddTool(NewHyperLink, wxImage(hyperlink_ctrl_xpm), wxString::FromUTF8("wxHyperlinkCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(NewSearch, wxImage(search_xpm), wxString::FromUTF8("wxSearchCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(NewCalendar, wxImage(calendar_xpm), wxString::FromUTF8("wxCalendarCtrl"), wxRIBBON_BUTTON_NORMAL);
-        other_bar_ctrls->AddTool(NewGenericDir, wxImage(genericdir_ctrl_xpm), wxString::FromUTF8("wxGenericDirCtrl"), wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(NewFileCtrl, wxImage(wxFileCtrl_xpm), wxString::FromUTF8("wxFileCtrl"), wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(NewGenericDirCtrl, wxImage(genericdir_ctrl_xpm), wxString::FromUTF8("wxGenericDirCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(NewActivityIndicator, wxImage(wxActivityIndicator_xpm), wxString::FromUTF8("wxActivityIndicator"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(NewBannerWindow, wxImage(wxBannerWindow_xpm), wxString::FromUTF8("wxBannerWindow"), wxRIBBON_BUTTON_NORMAL);
     }

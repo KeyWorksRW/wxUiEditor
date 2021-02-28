@@ -22,6 +22,7 @@
 #include <wx/dataview.h>               // wxDataViewCtrl base classes
 #include <wx/datectrl.h>               // implements wxDatePickerCtrl
 #include <wx/dirctrl.h>                // Directory control base header
+#include <wx/filectrl.h>               // Header for wxFileCtrlBase and other common functions used by
 #include <wx/filepicker.h>             // wxFilePickerCtrl, wxDirPickerCtrl base header
 #include <wx/fontpicker.h>             // wxFontPickerCtrl base header
 #include <wx/frame.h>                  // wxFrame class interface
@@ -134,6 +135,7 @@ void NodeCreator::InitGenerators()
     ADD_GENERATOR("wxTextCtrl", TextCtrlGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxToggleButton", ToggleButtonGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxCalendarCtrl", CalendarCtrlGenerator, GENERATOR_TYPE_WINDOW)
+    ADD_GENERATOR("wxFileCtrl", FileCtrlGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxGenericDirCtrl", GenericDirCtrlGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxSearchCtrl", SearchCtrlGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxListView", ListViewGenerator, GENERATOR_TYPE_WINDOW)

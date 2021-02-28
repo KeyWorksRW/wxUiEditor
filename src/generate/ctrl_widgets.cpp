@@ -10,6 +10,7 @@
 #include <wx/calctrl.h>   // date-picker control
 #include <wx/dirctrl.h>   // Directory control base header
 #include <wx/event.h>     // Event classes
+#include <wx/filectrl.h>  // Header for wxFileCtrlBase and other common functions used by
 #include <wx/srchctrl.h>  // wxSearchCtrlBase class
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
@@ -53,6 +54,88 @@ std::optional<ttlib::cstr> CalendarCtrlGenerator::GenEvents(NodeEvent* event, co
 bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/calctrl.h>", set_src, set_hdr);
+    return true;
+}
+
+//////////////////////////////////////////  FileCtrlGenerator  //////////////////////////////////////////
+
+wxObject* FileCtrlGenerator::Create(Node* node, wxObject* parent)
+{
+    wxString wild;
+    if (node->HasValue("wildcard"))
+        wild = node->prop_as_wxString("wildcard");
+    else
+        wild = wxFileSelectorDefaultWildcardStr;
+
+    auto widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString("initial_folder"),
+                                 node->prop_as_wxString("initial_filename"), wild,
+                                 node->prop_as_int(txt_style) | node->prop_as_int("window_style"),
+                                 node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"));
+
+    if (!(node->prop_as_int(txt_style) & wxFC_NOSHOWHIDDEN))
+        widget->ShowHidden(node->prop_as_bool("show_hidden"));
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> FileCtrlGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    code << "    ";
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = new wxFileCtrl(";
+    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+
+    if (node->HasValue("initial_folder"))
+        code << GenerateQuotedString(node->prop_as_string("initial_folder"));
+    else
+        code << "wxEmptyString";
+    code << ", ";
+
+    if (node->HasValue("initial_filename"))
+        code << GenerateQuotedString(node->prop_as_string("initial_filename"));
+    else
+        code << "wxEmptyString";
+    code << ", ";
+
+    if (node->HasValue("wildcard"))
+        code << GenerateQuotedString(node->prop_as_string("wildcard"));
+    else
+        code << "wxFileSelectorDefaultWildcardStr";
+    code << ", ";
+
+    GenStyle(node, code);
+
+    code << ",\n            ";
+    GenPos(node, code);
+    code << ", ";
+    GenSize(node, code);
+    code << ", ";
+    if (node->HasValue("window_name"))
+    {
+        code << ", " << node->prop_as_string("window_name");
+    }
+    code << ");";
+
+    if (node->prop_as_bool("show_hidden"))
+    {
+        code << "\n    " << node->get_node_name() << "->ShowHidden(true);";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> FileCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/filectrl.h>", set_src, set_hdr);
     return true;
 }
 

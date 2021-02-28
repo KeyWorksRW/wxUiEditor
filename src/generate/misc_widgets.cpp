@@ -8,6 +8,7 @@
 #include "pch.h"
 
 #include <wx/activityindicator.h>  // wxActivityIndicator declaration.
+#include <wx/bannerwindow.h>       // wxBannerWindow class declaration
 #include <wx/event.h>              // Event classes
 #include <wx/gauge.h>              // wxGauge interface
 #include <wx/generic/statbmpg.h>   // wxGenericStaticBitmap header
@@ -21,6 +22,7 @@
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
+#include "write_code.h"  // WriteCode -- Write code to Scintilla or file
 
 #include "misc_widgets.h"
 
@@ -52,6 +54,94 @@ std::optional<ttlib::cstr> ActivityIndicatorGenerator::GenConstruction(Node* nod
 bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/activityindicator.h>", set_src, set_hdr);
+    return true;
+}
+
+//////////////////////////////////////////  BannerWindowGenerator  //////////////////////////////////////////
+
+wxObject* BannerWindowGenerator::Create(Node* node, wxObject* parent)
+{
+    auto widget = new wxBannerWindow(wxStaticCast(parent, wxWindow),
+                                     (wxDirection) g_NodeCreator.GetConstantAsInt(node->prop_as_string("direction")));
+
+    if (node->HasValue("bitmap"))
+    {
+        widget->SetBitmap(node->prop_as_wxBitmap("bitmap"));
+    }
+
+    else if (node->HasValue("start_colour") && node->HasValue("end_colour"))
+    {
+        widget->SetGradient(node->prop_as_wxColour("start_colour"), node->prop_as_wxColour("end_colour"));
+    }
+
+    if (node->HasValue("title") || node->HasValue("message"))
+    {
+        widget->SetText(node->prop_as_wxString("title"), node->prop_as_wxString("message"));
+    }
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> BannerWindowGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = new wxBannerWindow(";
+    code << GetParentName(node) << ", " << node->prop_as_string("direction") << ");";
+
+    return code;
+}
+
+std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t& auto_indent)
+{
+    ttlib::cstr code;
+    if (node->HasValue("bitmap"))
+    {
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string("bitmap")) << ");";
+    }
+    else if (node->HasValue("start_colour") && node->HasValue("end_colour"))
+    {
+        auto& start_colour = node->prop_as_string("start_colour");
+        code << node->get_node_name() << "->SetGradient(";
+        if (start_colour.contains("wx"))
+            code << "wxSystemSettings::GetColour(" << start_colour << ")";
+        else
+        {
+            wxColour colour = ConvertToColour(start_colour);
+            code << ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
+        }
+
+        code << ",\n    ";
+
+        auto& end_colour = node->prop_as_string("end_colour");
+        if (end_colour.contains("wx"))
+            code << "wxSystemSettings::GetColour(" << end_colour << "));";
+        else
+        {
+            wxColour colour = ConvertToColour(end_colour);
+            code << ttlib::cstr().Format("wxColour(%i, %i, %i));", colour.Red(), colour.Green(), colour.Blue());
+        }
+        auto_indent = indent::auto_keep_whitespace;
+    }
+
+    if (node->HasValue("title") || node->HasValue("message"))
+    {
+        if (code.size())
+            code << "\n";
+        code << node->get_node_name() << "->SetText(" << GenerateQuotedString(node->prop_as_string("title")) << ",\n    ";
+        code << GenerateQuotedString(node->prop_as_string("message")) << ");";
+        auto_indent = indent::auto_keep_whitespace;
+    }
+
+    return code;
+}
+
+bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/bannerwindow.h>", set_src, set_hdr);
     return true;
 }
 

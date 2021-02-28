@@ -11,6 +11,7 @@
 #include <wx/anybutton.h>              // wxAnyButtonBase class
 #include <wx/aui/auibar.h>             // wxaui: wx advanced user interface - docking window manager
 #include <wx/aui/auibook.h>            // wxaui: wx advanced user interface - notebook
+#include <wx/bannerwindow.h>           // wxBannerWindow class declaration
 #include <wx/button.h>                 // wxButtonBase class
 #include <wx/calctrl.h>                // date-picker control
 #include <wx/checkbox.h>               // wxCheckBox class interface
@@ -96,6 +97,7 @@ void NodeCreator::InitGenerators()
 {
     ADD_GENERATOR("BookPage", BookPageGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxWizardPageSimple", WizardPageGenerator, GENERATOR_TYPE_WINDOW)
+    ADD_GENERATOR("wxBannerWindow", BannerWindowGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxBitmapComboBox", BitmapComboBoxGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxActivityIndicator", ActivityIndicatorGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxButton", ButtonGenerator, GENERATOR_TYPE_WINDOW)

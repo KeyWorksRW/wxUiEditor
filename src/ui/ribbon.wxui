@@ -182,6 +182,7 @@
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\calendar.xpm; ; [-1; -1]" help="wxCalendarCtrl" id="NewCalendar" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\genericdir_ctrl.xpm; ; [-1; -1]" help="wxGenericDirCtrl" id="NewGenericDir" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\wxActivityIndicator.xpm; ; [-1; -1]" help="wxActivityIndicator" id="NewActivityIndicator" />
+                <node class="ribbonTool" bitmap="XPM; ..\xpm\wxBannerWindow.xpm; ; [-1; -1]" help="wxBannerWindow" id="NewBannerWindow" />
               </node>
             </node>
             <node class="wxRibbonPanel" label="HTML" var_name="panel_html">

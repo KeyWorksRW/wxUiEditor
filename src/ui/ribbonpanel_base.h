@@ -27,6 +27,7 @@ public:
     enum
     {
         NewActivityIndicator = wxID_HIGHEST + 1,
+        NewBannerWindow,
         NewBitmap,
         NewBookPage,
         NewButton,

@@ -94,7 +94,7 @@ static void AddPropIfUsed(ttlib::cview prop_name, ttlib::cview func_name, Node* 
         if (color.size())
         {
             if (code.size())
-                code << "\n\t";
+                code << "\n    ";
             if (!node->IsForm())
                 code << node->get_node_name() << "->";
             code << "SetBackgroundColour(";
@@ -113,7 +113,7 @@ static void AddPropIfUsed(ttlib::cview prop_name, ttlib::cview func_name, Node* 
         if (color.size())
         {
             if (code.size())
-                code << "\n\t";
+                code << "\n    ";
             if (!node->IsForm())
                 code << node->get_node_name() << "->";
             code << "SetForegroundColour(";
@@ -129,7 +129,7 @@ static void AddPropIfUsed(ttlib::cview prop_name, ttlib::cview func_name, Node* 
     else if (node->prop_as_string(prop_name).size())
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n    ";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << func_name << node->prop_as_string(prop_name) << ");";

@@ -1509,4 +1509,28 @@
     </property>
   </compinfo>
 
+  <compinfo class="wxBannerWindow" image="wxBannerWindow" type="widget">
+    <inherits class="wxWindow"/>
+    <inherits class="sizer_child"/>
+    <property name="var_name" type="string">m_banner</property>
+    <property name="title" type="translate"
+      help = "Title is rendered in bold and should be a single line."/>
+    <property name="message" type="rawtext"
+      help="The message can have multiple lines but is not wrapped automatically. Include explicit line breaks in the string if you want to have multiple lines."/>
+    <property name="bitmap" type="image"
+        help="Specifies a bitmap to use as the background."/>
+    <property name="start_colour" type="wxColour"
+        help="Specifies the starting colour of a gradient. Ignored if a bitmap is specified."/>
+    <property name="end_colour" type="wxColour"
+        help="Specifies the ending colour of a gradient. Ignored if a bitmap is specified"/>
+    <property name="direction" type="option"
+        help="Determines the placement of the banner and the direction of any text.">
+      <option name="wxTOP"/>
+      <option name="wxBOTTOM"/>
+      <option name="wxLEFT"/>
+      <option name="wxRIGHT"/>
+      wxTOP
+    </property>
+  </compinfo>
+
 </GeneratorDefitions>

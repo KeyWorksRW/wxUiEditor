@@ -73,6 +73,7 @@
 #include "xpm/wxCollapsiblePane.xpm"
 #include "xpm/wxComboBox.xpm"
 #include "xpm/wxDialog.xpm"
+#include "xpm/wxFileCtrl.xpm"
 #include "xpm/wxListBox.xpm"
 #include "xpm/wxListView.xpm"
 #include "xpm/wxListbook.xpm"
@@ -167,6 +168,7 @@ static const std::unordered_map<std::string, const char**> map_xpm_strings = {
     { "wxBannerWindow", wxBannerWindow_xpm },
     { "wxButton", wxButton_xpm },
     { "wxCommandLinkButton", wxCommandLinkButton_xpm },
+    { "wxFileCtrl", wxFileCtrl_xpm },
     { "calendar", calendar_xpm },
     { "wxCheckBox", wxCheckBox_xpm },
     { "check3state", check3state_xpm },

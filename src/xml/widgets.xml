@@ -975,6 +975,41 @@
     <event name="wxEVT_DIRCTRL_FILEACTIVATED" class="wxCommandEvent" help="The user activated a file by double-clicking or pressing Enter."/>
   </compinfo>
 
+  <compinfo class="wxFileCtrl" image="wxFileCtrl" type="expanded_widget">
+    <inherits class="wxWindow"/>
+    <inherits class="sizer_child"/>
+    <property name="var_name" type="string">m_fileCtrl</property>
+    <property name="initial_folder" type="translate" help="Initial folder."/>
+    <property name="initial_filename" type="translate" help="Initial file name."/>
+    <property name="wildcard" type="translate"
+        help="Sets the wildcard, which can contain multiple file types, for example: &quot;BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif&quot;."/>
+    <property name="filter_index" type="uint"
+        help="Sets the current filter (wildcard) index, starting from zero."/>
+    <property name="style" type="bitlist">
+      <option name="wxFC_OPEN"
+        help="Creates a file control suitable for opening files. Cannot be used with wxFC_SAVE."/>
+      <option name="wxFC_SAVE"
+        help="Creates an file control suitable for saving files. Cannot be used with wxFC_OPEN."/>
+      <option name="wxFC_MULTIPLE"
+        help="For wxFC_OPEN control only. Allows selecting multiple files. Cannot be combined with wxFC_SAVE."/>
+      <option name="wxFC_NOSHOWHIDDEN"
+        help="Hides the &quot;Show Hidden Files&quot; checkbox. Ignored on wxGTK"/>
+      wxFC_OPEN
+    </property>
+    <property name="show_hidden" type="bool"
+        help="Show hidden files">
+      0
+    </property>
+    <event name="wxEVT_FILECTRL_FILEACTIVATED" class="wxCommandEvent"
+        help="The user activated a file(by double-clicking or pressing Enter)."/>
+    <event name="wxEVT_FILECTRL_SELECTIONCHANGED" class="wxCommandEvent"
+        help="The user changed the current selection(by selecting or deselecting a file) ."/>
+    <event name="wxEVT_FILECTRL_FOLDERCHANGED" class="wxCommandEvent"
+        help="The current folder of the file control has been changed."/>
+    <event name="wxEVT_FILECTRL_FILTERCHANGED" class="wxCommandEvent"
+        help="The current file filter of the file control has been changed."/>
+</compinfo>
+
   <compinfo class="wxTreeCtrl" image="tree_ctrl" type="widget">
     <inherits class="wxTreeCtrlBase"/>
     <inherits class="wxWindow"/>

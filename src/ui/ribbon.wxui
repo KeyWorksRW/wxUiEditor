@@ -180,7 +180,8 @@
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\hyperlink_ctrl.xpm; ; [-1; -1]" help="wxHyperlinkCtrl" id="NewHyperLink" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\search.xpm; ; [-1; -1]" help="wxSearchCtrl" id="NewSearch" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\calendar.xpm; ; [-1; -1]" help="wxCalendarCtrl" id="NewCalendar" />
-                <node class="ribbonTool" bitmap="XPM; ..\xpm\genericdir_ctrl.xpm; ; [-1; -1]" help="wxGenericDirCtrl" id="NewGenericDir" />
+                <node class="ribbonTool" bitmap="XPM; ..\xpm\wxFileCtrl.xpm; ; [-1; -1]" help="wxFileCtrl" id="NewFileCtrl" />
+                <node class="ribbonTool" bitmap="XPM; ..\xpm\genericdir_ctrl.xpm; ; [-1; -1]" help="wxGenericDirCtrl" id="NewGenericDirCtrl" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\wxActivityIndicator.xpm; ; [-1; -1]" help="wxActivityIndicator" id="NewActivityIndicator" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\wxBannerWindow.xpm; ; [-1; -1]" help="wxBannerWindow" id="NewBannerWindow" />
               </node>

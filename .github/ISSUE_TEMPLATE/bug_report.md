@@ -2,7 +2,7 @@
 name: Bug report
 about: Report a bug in the program
 title: 'Bug: '
-labels: Bug
+labels: bug
 assignees: ''
 
 ---
@@ -15,4 +15,4 @@ assignees: ''
 -->
 
 ### Description:
-<!-- Remove this comment and describe the bug -->
+<!-- Provide a description of the bug here -->

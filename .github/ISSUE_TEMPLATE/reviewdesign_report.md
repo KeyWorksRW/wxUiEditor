@@ -2,10 +2,10 @@
 name: Design change
 about: Underlying design needs changing
 title: ''
-labels: Design Change
+labels: design change
 assignees: ''
 
 ---
 
 ### Description:
-<!-- Remove this comment and describe what you want to happen -->
+<!-- Provide a description of of what you want to happen here -->

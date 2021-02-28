@@ -2,10 +2,10 @@
 name: Feature request
 about: Suggest an idea that would enhance this project
 title: ''
-labels: Enhancement
+labels: enhancement
 assignees: ''
 
 ---
 
 ### Description:
-<!-- Remove this comment and describe what you want to happen -->
+<!-- Provide a description of of what you want to happen here -->

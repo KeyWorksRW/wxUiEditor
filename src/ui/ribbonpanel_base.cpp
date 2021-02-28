@@ -83,6 +83,7 @@
 #include "../xpm/wizpage.xpm"
 #include "../xpm/wrap_sizer.xpm"
 #include "../xpm/wxActivityIndicator.xpm"
+#include "../xpm/wxBannerWindow.xpm"
 #include "../xpm/wxCheckBox.xpm"
 #include "../xpm/wxDialog.xpm"
 #include "../xpm/wxFrame.xpm"
@@ -354,6 +355,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
         other_bar_ctrls->AddTool(NewCalendar, wxImage(calendar_xpm), wxString::FromUTF8("wxCalendarCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(NewGenericDir, wxImage(genericdir_ctrl_xpm), wxString::FromUTF8("wxGenericDirCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(NewActivityIndicator, wxImage(wxActivityIndicator_xpm), wxString::FromUTF8("wxActivityIndicator"), wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(NewBannerWindow, wxImage(wxBannerWindow_xpm), wxString::FromUTF8("wxBannerWindow"), wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_ctrls->Realize();
 

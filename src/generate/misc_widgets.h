@@ -20,6 +20,15 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 };
 
+class BannerWindowGenerator : public BaseGenerator
+{
+public:
+    wxObject* Create(Node* node, wxObject* parent) override;
+    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+};
+
 class StaticLineGenerator : public BaseGenerator
 {
 public:

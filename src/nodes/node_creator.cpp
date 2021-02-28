@@ -345,7 +345,7 @@ Type NodeCreator::ParsePropertyType(ttlib::cview str)
     }
 }
 
-// This is a list of component types that will generate component construction code.
+// This is a list of component types that will generate construction code.
 static constexpr const char* lstCodeGenerators[] = {
 
     "auinotebook",

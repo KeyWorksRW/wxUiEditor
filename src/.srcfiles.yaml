@@ -269,6 +269,7 @@ XPM:
     art_src/wxWizard.png: xpm/wxWizard.xpm
     art_src/wxWizardPageSimple.png: xpm/wxWizardPageSimple.xpm
     art_src/wrap_sizer.png: xpm/wrap_sizer.xpm
+    art_src/wxActivityIndicator.png: xpm/wxActivityIndicator.xpm
     art_src/wxButton.png: xpm/wxButton.xpm
     art_src/wxCheckBox.png: xpm/wxCheckBox.xpm
     art_src/wxCheckListBox.png: xpm/wxCheckListBox.xpm

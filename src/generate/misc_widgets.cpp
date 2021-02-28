@@ -7,21 +7,53 @@
 
 #include "pch.h"
 
-#include <wx/event.h>             // Event classes
-#include <wx/gauge.h>             // wxGauge interface
-#include <wx/generic/statbmpg.h>  // wxGenericStaticBitmap header
-#include <wx/hyperlink.h>         // Hyperlink control
-#include <wx/infobar.h>           // declaration of wxInfoBarBase defining common API of wxInfoBar
-#include <wx/slider.h>            // wxSlider interface
-#include <wx/statbmp.h>           // wxStaticBitmap class interface
-#include <wx/statline.h>          // wxStaticLine class interface
-#include <wx/statusbr.h>          // wxStatusBar class interface
+#include <wx/activityindicator.h>  // wxActivityIndicator declaration.
+#include <wx/event.h>              // Event classes
+#include <wx/gauge.h>              // wxGauge interface
+#include <wx/generic/statbmpg.h>   // wxGenericStaticBitmap header
+#include <wx/hyperlink.h>          // Hyperlink control
+#include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
+#include <wx/slider.h>             // wxSlider interface
+#include <wx/statbmp.h>            // wxStaticBitmap class interface
+#include <wx/statline.h>           // wxStaticLine class interface
+#include <wx/statusbr.h>           // wxStatusBar class interface
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
 #include "misc_widgets.h"
+
+//////////////////////////////////////////  ActivityIndicatorGenerator  //////////////////////////////////////////
+
+wxObject* ActivityIndicatorGenerator::Create(Node* node, wxObject* parent)
+{
+    auto widget = new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
+                                          node->prop_as_wxSize("size"), node->prop_as_int("window_style"));
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> ActivityIndicatorGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = new wxActivityIndicator(";
+    code << GetParentName(node) << ", " << node->prop_as_string("id");
+
+    GeneratePosSizeFlags(node, code);
+
+    return code;
+}
+
+bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/activityindicator.h>", set_src, set_hdr);
+    return true;
+}
 
 //////////////////////////////////////////  StaticLineGenerator  //////////////////////////////////////////
 

@@ -26,7 +26,8 @@ public:
 
     enum
     {
-        NewBitmap = wxID_HIGHEST + 1,
+        NewActivityIndicator = wxID_HIGHEST + 1,
+        NewBitmap,
         NewBookPage,
         NewButton,
         NewCalendar,

@@ -62,6 +62,7 @@
 #include "xpm/hyperlink_ctrl.xpm"
 #include "xpm/infobar.xpm"
 #include "xpm/left.xpm"
+#include "xpm/wxActivityIndicator.xpm"
 #include "xpm/wxButton.xpm"
 #include "xpm/wxCheckBox.xpm"
 #include "xpm/wxCheckListBox.xpm"
@@ -160,6 +161,7 @@ static const std::unordered_map<std::string, const char**> map_xpm_strings = {
     { "bmp_combo_box", bmp_combo_box_xpm },
     { "book_page", book_page_xpm },
     { "bottom", bottom_xpm },
+    { "wxActivityIndicator", wxActivityIndicator_xpm },
     { "wxButton", wxButton_xpm },
     { "calendar", calendar_xpm },
     { "wxCheckBox", wxCheckBox_xpm },

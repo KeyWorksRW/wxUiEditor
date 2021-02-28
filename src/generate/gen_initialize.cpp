@@ -7,6 +7,7 @@
 
 #include "pch.h"
 
+#include <wx/activityindicator.h>      // wxActivityIndicator declaration.
 #include <wx/anybutton.h>              // wxAnyButtonBase class
 #include <wx/aui/auibar.h>             // wxaui: wx advanced user interface - docking window manager
 #include <wx/aui/auibook.h>            // wxaui: wx advanced user interface - notebook
@@ -83,11 +84,11 @@
 
 #define ADD_GENERATOR(name, class, type)                            \
     {                                                               \
-        auto comp = new class();                                    \
-        comp->SetNodeType(type);                                    \
+        auto generator = new class();                               \
+        generator->SetNodeType(type);                               \
         if (auto class_info = GetNodeDeclaration(name); class_info) \
         {                                                           \
-            class_info->SetGenerator(comp);                         \
+            class_info->SetGenerator(generator);                    \
         }                                                           \
     }
 
@@ -96,6 +97,7 @@ void NodeCreator::InitGenerators()
     ADD_GENERATOR("BookPage", BookPageGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxWizardPageSimple", WizardPageGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxBitmapComboBox", BitmapComboBoxGenerator, GENERATOR_TYPE_WINDOW)
+    ADD_GENERATOR("wxActivityIndicator", ActivityIndicatorGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxButton", ButtonGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxCheckBox", CheckBoxGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("Check3State", Check3StateGenerator, GENERATOR_TYPE_WINDOW)

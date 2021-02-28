@@ -1497,4 +1497,16 @@
     <property name="help" type="translate" help="Property item's name."></property>
   </compinfo>
 
+  <compinfo class="wxActivityIndicator" image="wxActivityIndicator" type="widget">
+    <inherits class="wxWindow"/>
+    <inherits class="sizer_child"/>
+    <property name="var_name" type="string">m_indicator</property>
+    <property name="class_access" type="option">
+      <option name="none"/>
+      <option name="protected:"/>
+      <option name="public:"/>
+      protected:
+    </property>
+  </compinfo>
+
 </GeneratorDefitions>

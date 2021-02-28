@@ -39,6 +39,7 @@ enum
     MenuListBox,
     MenuCheckListBox,
     MenuListView,
+    MenuHtmlListBox,
 
     MenuButton,
     MenuToggleButton,
@@ -86,6 +87,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
             menu.Append(MenuListBox, "Insert wxListBox");
             menu.Append(MenuCheckListBox, "Insert wxCheckListBox");
             menu.Append(MenuListView, "Insert wxListView");
+            menu.Append(MenuHtmlListBox, "Insert wxSimpleHtmlListBox");
             break;
 
         case NewButton:
@@ -177,6 +179,10 @@ void RibbonPanel::OnMenuEvent(wxCommandEvent& event)
 
         case MenuListBox:
             wxGetFrame().CreateToolNode("wxListBox");
+            break;
+
+        case MenuHtmlListBox:
+            wxGetFrame().CreateToolNode("wxSimpleHtmlListBox");
             break;
 
         case MenuCheckListBox:

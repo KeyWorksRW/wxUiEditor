@@ -79,6 +79,10 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxLB_NO_SB)
     ADD_CONSTANT(wxLB_SORT)
 
+    // wxSimpleHtmlListBox
+    ADD_CONSTANT(wxHLB_DEFAULT_STYLE)
+    ADD_CONSTANT(wxHLB_MULTIPLE)
+
     // wxRadioBox
     ADD_CONSTANT(wxRA_SPECIFY_ROWS)
     ADD_CONSTANT(wxRA_SPECIFY_COLS)

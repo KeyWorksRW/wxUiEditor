@@ -252,6 +252,23 @@
     <event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent" help="Generated when the listbox is double-clicked."/>
   </compinfo>
 
+  <compinfo class="wxSimpleHtmlListBox" image="wxSimpleHtmlListBox" type="widget">
+    <inherits class="wxWindow"/>
+    <inherits class="sizer_child"/>
+    <property name="var_name" type="string">m_html_listbox</property>
+    <property name="choices" type="stringlist" help="Contents of the HTML list box."/>
+    <property name="style" type="bitlist">
+      <option name="wxHLB_DEFAULT_STYLE" help="The default style: wxBORDER_SUNKEN."/>
+      <option name="wxHLB_MULTIPLE" help="Multiple-selection list: the user can toggle multiple items on and off."/>
+      wxHLB_DEFAULT_STYLE
+    </property>
+    <event name="wxEVT_LISTBOX" class="wxCommandEvent" help="Generated when an item in the list is selected."/>
+    <event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent" help="Generated when the listbox is double-clicked."/>
+    <event name="EVT_HTML_CELL_CLICKED" class="wxHtmlCellEvent" help="A wxHtmlCell was clicked."/>
+    <event name="EVT_HTML_CELL_HOVER" class="wxHtmlCellEvent" help="The mouse passed over a wxHtmlCell."/>
+    <event name="EVT_HTML_LINK_CLICKED" class="wxHtmlCellEvent" help="A wxHtmlCell which contains a hyperlink was clicked."/>
+  </compinfo>
+
   <compinfo class="wxCheckListBox" image="wxCheckListBox" type="widget">
     <inherits class="List Validator"/>
     <inherits class="wxWindow"/>

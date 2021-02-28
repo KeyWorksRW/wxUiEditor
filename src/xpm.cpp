@@ -144,6 +144,7 @@
 #include "xpm/wxRadioButton.xpm"
 #include "xpm/wxScrolledWindow.xpm"
 #include "xpm/wxSimplebook.xpm"
+#include "xpm/wxSimpleHtmlListBox.xpm"
 #include "xpm/wxSplitterWindow.xpm"
 #include "xpm/wxStaticText.xpm"
 #include "xpm/wxTextCtrl.xpm"
@@ -247,6 +248,7 @@ static const std::unordered_map<std::string, const char**> map_xpm_strings = {
     { "search", search_xpm },
     { "separator", separator_xpm },
     { "wxSimplebook", wxSimplebook_xpm },
+    { "wxSimpleHtmlListBox", wxSimpleHtmlListBox_xpm },
     { "sizer", sizer_xpm },
     { "sizer_horizontal", sizer_horizontal_xpm },
     { "slider", slider_xpm },

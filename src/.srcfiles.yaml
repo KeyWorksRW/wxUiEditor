@@ -290,6 +290,7 @@ XPM:
     art_src/wxRadioButton.png: xpm/wxRadioButton.xpm
     art_src/wxScrolledWindow.png: xpm/wxScrolledWindow.xpm
     art_src/wxSimplebook.png: xpm/wxSimplebook.xpm
+    art_src/wxSimpleHtmlListBox.png: xpm/wxSimpleHtmlListBox.xpm
     art_src/wxSplitterWindow.png: xpm/wxSplitterWindow.xpm
     art_src/wxStaticText.png: xpm/wxStaticText.xpm
     art_src/wxTextCtrl.png: xpm/wxTextCtrl.xpm

@@ -29,6 +29,7 @@
 #include <wx/gauge.h>                  // wxGauge interface
 #include <wx/gbsizer.h>                // wxGridBagSizer:  A sizer that can lay out items in a grid,
 #include <wx/html/htmlwin.h>           // wxHtmlWindow class for parsing & displaying HTML
+#include <wx/htmllbox.h>               // wxHtmlListBox is a listbox whose items are wxHtmlCells
 #include <wx/hyperlink.h>              // Hyperlink control
 #include <wx/infobar.h>                // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/listbook.h>               // wxListbook: wxListView and wxNotebook combination
@@ -116,6 +117,7 @@ void NodeCreator::InitGenerators()
     ADD_GENERATOR("wxHyperlinkCtrl", HyperlinkGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxInfoBar", InfoBarGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxListBox", ListBoxGenerator, GENERATOR_TYPE_WINDOW)
+    ADD_GENERATOR("wxSimpleHtmlListBox", HtmlListBoxGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxListbook", ListbookGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxNotebook", NotebookGenerator, GENERATOR_TYPE_WINDOW)
     ADD_GENERATOR("wxPanel", PanelGenerator, GENERATOR_TYPE_WINDOW)

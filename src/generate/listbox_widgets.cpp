@@ -9,6 +9,7 @@
 
 #include <wx/checklst.h>  // wxCheckListBox class interface
 #include <wx/event.h>     // Event classes
+#include <wx/htmllbox.h>  // wxHtmlListBox is a listbox whose items are wxHtmlCells
 #include <wx/listbox.h>   // wxListBox class interface
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
@@ -16,6 +17,8 @@
 #include "utils.h"       // Utility functions that work with properties
 
 #include "listbox_widgets.h"
+
+//////////////////////////////////////////  ListBoxGenerator  //////////////////////////////////////////
 
 wxObject* ListBoxGenerator::Create(Node* node, wxObject* parent)
 {
@@ -274,5 +277,109 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenEvents(NodeEvent* event, co
 bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/checklst.h>", set_src, set_hdr);
+    return true;
+}
+
+//////////////////////////////////////////  HtmlListBoxGenerator  //////////////////////////////////////////
+
+wxObject* HtmlListBoxGenerator::Create(Node* node, wxObject* parent)
+{
+    auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
+                                          node->prop_as_wxSize("size"), 0, NULL,
+                                          node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+
+    auto& items = node->prop_as_string(txt_choices);
+    if (items.size())
+    {
+        auto array = ConvertToArrayString(items);
+        for (auto& iter: array)
+            widget->Append(wxString::FromUTF8(iter));
+    }
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = new wxSimpleHtmlListBox(";
+    code << GetParentName(node) << ", " << node->prop_as_string("id");
+
+    if (node->prop_as_string("window_name").empty() && node->prop_as_string("type") == "wxLB_SINGLE" &&
+        node->prop_as_string(txt_style).empty() && node->prop_as_string("window_style").empty())
+    {
+        GeneratePosSizeFlags(node, code);
+    }
+    else
+    {
+        // We have to generate a default validator before the window name, which GeneratePosSizeFlags doesn't do. We don't
+        // actually need that validator, since GenSettings will create it, but we have to supply something before the window
+        // name.
+
+        code << ", ";
+        GenPos(node, code);
+        code << ", ";
+        GenSize(node, code);
+        code << ", 0, NULL, ";
+
+        auto& style = node->prop_as_string(txt_style);
+        auto& win_style = node->prop_as_string("window_style");
+
+        if (style.empty() && win_style.empty())
+            code << "0";
+        else
+        {
+            if (style.size())
+            {
+                code << style;
+            }
+            if (win_style.size())
+            {
+                if (style.size())
+                    code << '|';
+                code << win_style;
+            }
+        }
+
+        if (node->prop_as_string("window_name").size())
+        {
+            code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+        }
+        code << ");";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> HtmlListBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    if (node->prop_as_string(txt_choices).size())
+    {
+        auto array = ConvertToArrayString(node->prop_as_string(txt_choices));
+        for (auto& iter: array)
+        {
+            if (code.size())
+                code << "\n";
+            code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
+        }
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> HtmlListBoxGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/htmllbox.h>", set_src, set_hdr);
     return true;
 }

@@ -14,12 +14,6 @@
 #include "../mainframe.h"             // MainFrame -- Main window frame
 #include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 
-void BaseGenerator::SetNodeType(size_t generator_type)
-{
-    ASSERT(generator_type >= GENERATOR_TYPE_ABSTRACT && generator_type <= GENERATOR_TYPE_SIZER);
-    m_generator_type = generator_type;
-}
-
 MockupParent* BaseGenerator::GetMockup()
 {
     return wxGetFrame().GetMockup();

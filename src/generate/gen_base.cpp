@@ -644,18 +644,6 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
             FAIL_MSG("Unrecognized class name so no idea how to declare it in the header file.");
         }
     }
-    else
-    {
-        auto generator = node->GetNodeDeclaration()->GetGenerator();
-        if (generator)
-        {
-            auto type = generator->GetNodeType();
-            if (type == GENERATOR_TYPE_ABSTRACT)
-                return code;
-        }
-
-        FAIL_MSG("Unrecognized class name so no idea how to declare it in the header file.");
-    }
 
     return code;
 }

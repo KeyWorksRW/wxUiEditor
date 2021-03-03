@@ -126,37 +126,29 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         // We don't create any children because the only thing visible is the mock menu
         return;
     }
+    else if (node->IsSizer())
+    {
+        if (node->GetClassName() == "wxStaticBoxSizer")
+        {
+            auto staticBoxSizer = wxStaticCast(created_object, wxStaticBoxSizer);
+            created_window = staticBoxSizer->GetStaticBox();
+            created_sizer = staticBoxSizer;
+        }
+        else
+        {
+            created_sizer = wxStaticCast(created_object, wxSizer);
+        }
+
+        if (auto minsize = node->prop_as_wxSize(txt_minimum_size); minsize != wxDefaultSize)
+        {
+            created_sizer->SetMinSize(minsize);
+            created_sizer->Layout();
+        }
+    }
     else
     {
-        switch (comp->GetNodeType())
-        {
-            case GENERATOR_TYPE_WINDOW:
-                created_window = wxStaticCast(created_object, wxWindow);
-                SetWindowProperties(node, created_window);
-                break;
-
-            case GENERATOR_TYPE_SIZER:
-                if (node->GetClassName() == "wxStaticBoxSizer")
-                {
-                    auto staticBoxSizer = wxStaticCast(created_object, wxStaticBoxSizer);
-                    created_window = staticBoxSizer->GetStaticBox();
-                    created_sizer = staticBoxSizer;
-                }
-                else
-                {
-                    created_sizer = wxStaticCast(created_object, wxSizer);
-                }
-
-                if (auto minsize = node->prop_as_wxSize(txt_minimum_size); minsize != wxDefaultSize)
-                {
-                    created_sizer->SetMinSize(minsize);
-                    created_sizer->Layout();
-                }
-                break;
-
-            default:
-                break;
-        }
+        created_window = wxStaticCast(created_object, wxWindow);
+        SetWindowProperties(node, created_window);
     }
 
     // Store the wxObject/Node pair both ways.

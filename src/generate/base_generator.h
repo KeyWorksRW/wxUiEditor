@@ -13,13 +13,6 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-enum GENERATOR_TYPE : size_t
-{
-    GENERATOR_TYPE_ABSTRACT = 0,
-    GENERATOR_TYPE_WINDOW,
-    GENERATOR_TYPE_SIZER,
-};
-
 class wxObject;
 class MockupParent;
 class wxWindow;
@@ -37,8 +30,6 @@ class BaseGenerator
 public:
     BaseGenerator() {}
 
-    void SetNodeType(size_t generator_type);
-
     MockupParent* GetMockup();
 
     virtual wxObject* Create(Node* /*node*/, wxObject* /*parent*/) { return nullptr; }
@@ -48,8 +39,6 @@ public:
 
     // Returns true if the Mockup window needs to be refreshed
     virtual bool OnSelected(Node* /*node*/) { return false; }
-
-    virtual size_t GetNodeType() { return m_generator_type; }
 
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenCode(const std::string& /*command*/, Node*) { return {}; }
@@ -67,7 +56,4 @@ public:
 
     // Bind wxEVT_LEFT_DOWN to this so that clicking on the widget will select it in the navigation panel
     void OnLeftClick(wxMouseEvent& event);
-
-private:
-    size_t m_generator_type { GENERATOR_TYPE_ABSTRACT };
 };

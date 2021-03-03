@@ -330,29 +330,26 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
 void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines)
 {
-    if (auto typeName = node->GetNodeTypeName(); g_NodeCreator.HasCodeGenerator(typeName))
+    if (auto prop = node->get_value_ptr(txt_class_access); prop)
     {
-        if (auto prop = node->get_value_ptr(txt_class_access); prop)
+        if (*prop != "none")
         {
-            if (*prop != "none")
+            if ((perm == Permission::Public && *prop == "public:") ||
+                (perm == Permission::Protected && *prop == "protected:"))
             {
-                if ((perm == Permission::Public && *prop == "public:") ||
-                    (perm == Permission::Protected && *prop == "protected:"))
-                {
-                    auto code = GetDeclaration(node);
-                    if (code.size())
-                        code_lines.insert(code);
-                }
+                auto code = GetDeclaration(node);
+                if (code.size())
+                    code_lines.insert(code);
             }
-
-            for (size_t i = 0; i < node->GetChildCount(); i++)
-            {
-                auto child = node->GetChild(i);
-                CollectMemberVariables(child, perm, code_lines);
-            }
-
-            return;
         }
+
+        for (size_t i = 0; i < node->GetChildCount(); i++)
+        {
+            auto child = node->GetChild(i);
+            CollectMemberVariables(child, perm, code_lines);
+        }
+
+        return;
     }
 
     for (size_t i = 0; i < node->GetChildCount(); i++)
@@ -842,10 +839,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     auto& type = node->GetNodeTypeName();
     auto declaration = node->GetNodeDeclaration();
 
-    if (g_NodeCreator.HasCodeGenerator(type))
+    if (auto generator = declaration->GetGenerator(); generator)
     {
-        auto generator = declaration->GetGenerator();
-
         if (auto result = generator->GenConstruction(node); result)
         {
             m_source->writeLine();
@@ -979,43 +974,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                     m_source->writeLine(result.value(), indent::none);
             }
             m_source->writeLine();
-        }
-    }
-
-    // Everything below here should be an abstract component
-
-    else if (type == "treelistctrlcolumn")
-    {
-        auto generator = declaration->GetGenerator();
-        if (generator)
-        {
-            if (auto result = generator->GenConstruction(node); result)
-            {
-                m_source->writeLine(result.value());
-            }
-        }
-    }
-    else if (type == "tool")
-    {
-        // REVIEW: [KeyWorks - 09-03-2020] This needs to be reworked since it could be an XPM string which has it's own
-        // sizing property.
-
-        auto toolbarsize = node->GetParent()->prop_as_wxSize("bitmapsize");
-        if (toolbarsize != wxDefaultSize)
-        {
-            auto prop = node->get_prop_ptr("bitmap");
-            if (prop)
-            {
-                // TODO: [KeyWorks - 01-24-2021] Need to set the scaling size of the image to whatever the toolbar size
-                // is set to.
-            }
-        }
-    }
-    else
-    {
-        for (size_t i = 0; i < node->GetChildCount(); i++)
-        {
-            GenConstruction(node->GetChild(i));
         }
     }
 

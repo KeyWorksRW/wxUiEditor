@@ -59,12 +59,6 @@ public:
         return (m_setOldHostTypes.find(old_type.c_str()) != m_setOldHostTypes.end());
     }
 
-    // Returns true if the component can generate construction code
-    bool HasCodeGenerator(const std::string& type_name)
-    {
-        return (m_setCodeGenGenerators.find(type_name) != m_setCodeGenGenerators.end());
-    }
-
     int_t GetAllowableChildren(Node* parent, ttlib::cview child_name, bool is_aui_parent = false) const;
 
     const NodeDeclarationMap& GetNodeDeclarationMap() const { return m_node_declarations; }
@@ -88,8 +82,6 @@ protected:
 
     void SetDefaultLayoutProperties(Node* node);
 
-    void InitializeCppTypes();
-
     void AddAllConstants();
 
 private:
@@ -98,7 +90,6 @@ private:
     std::unordered_map<std::string, std::unique_ptr<NodeType>> m_component_types;
     std::map<std::string, Type> m_propTypes;
 
-    std::unordered_set<std::string> m_setCodeGenGenerators;
     std::unordered_set<std::string> m_setOldHostTypes;
 
     std::unordered_map<std::string, int> m_map_constants;

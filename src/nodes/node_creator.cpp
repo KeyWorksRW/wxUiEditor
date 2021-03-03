@@ -48,7 +48,6 @@ void NodeCreator::Initialize()
     m_propTypes["editoption"] = Type::Edit_option;
 
     InitCompTypes();
-    InitializeCppTypes();
     InitDeclarations();
 }
 
@@ -342,64 +341,6 @@ Type NodeCreator::ParsePropertyType(ttlib::cview str)
     {
         FAIL_MSG(ttlib::cstr() << str << " does not have a known property type.");
         return Type::None;
-    }
-}
-
-// This is a list of component types that will generate construction code.
-static constexpr const char* lstCodeGenerators[] = {
-
-    "auinotebook",
-    "bookpage",
-    "choicebook",
-    "component",
-    "container",
-    "dataviewcolumn",
-    "dataviewctrl",
-    "dataviewlistcolumn",
-    "dataviewlistctrl",
-    "dataviewtreectrl",
-    "expanded_widget",
-    "gbsizer",
-    "gbsizer",
-    "listbook",
-    "menu",
-    "menubar",
-    "menuitem",
-    "nonvisual",
-    "notebook",
-    "propgrid",
-    "propgriditem",
-    "propgridman",
-    "propgridpage",
-    "ribbonbar",
-    "ribbonbutton",
-    "ribbonbuttonbar",
-    "ribbongallery",
-    "ribbongalleryitem",
-    "ribbonpage",
-    "ribbonpanel",
-    "ribbontool",
-    "ribbontoolbar",
-    "simplebook",
-    "sizer",
-    "splitter",
-    "statusbar",
-    "submenu",
-    "tool",
-    "toolbar",
-    "treelistctrl",
-    "widget",
-    "wizardpagesimple",
-
-};
-
-// clang-format on
-
-void NodeCreator::InitializeCppTypes()
-{
-    for (auto& iter: lstCodeGenerators)
-    {
-        m_setCodeGenGenerators.emplace(iter);
     }
 }
 

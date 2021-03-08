@@ -20,7 +20,7 @@
     <property name="local_pch_file" type="file"
         help="The filename of a local precompiled header file. The file will be included in quotes.">
     </property>
-    <property name="src_preamble" type="text"
+    <property name="src_preamble" type="string_edit"
         help="Code to generate at the top of the source file after the inclusion of any local precompiled header file. This can include er files, comments, macros, etc."/>
     <property name="original_art" type="path"
         help="The directory containing your original artwork.">
@@ -47,7 +47,7 @@
     <inherits class="wxTopLevelWindow"/>
     <inherits class="wxWindow"/>
     <property name="class_name" type="string" help="The name of the base class.">MyDialogBase</property>
-    <property name="title" type="translate" help="The text to display on the dialog's title bar."/>
+    <property name="title" type="string_escapes" help="The text to display on the dialog's title bar."/>
     <property name="persist" type="bool"
       help="Use wxPersistentRegisterAndRestore to save/restore the size and position of the dialog.">
       0
@@ -57,9 +57,9 @@
           help="The filename of the base class.">
         mydialog_base
       </property>
-      <property name="base_src_includes" type="text"
+      <property name="base_src_includes" type="string_edit"
           help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
-      <property name="base_hdr_includes" type="text"
+      <property name="base_hdr_includes" type="string_edit"
           help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files."/>
       <property name="derived_class_name" type="string"
           help="The name of the derived class.">
@@ -105,9 +105,9 @@
     <property name="class_name" type="string" help="The name of the base class.">MyPanelBase</property>
     <category name="Code generation">
       <property name="base_file" type="file" help="The filename of the base class.">mypanel_base</property>
-      <property name="base_src_includes" type="text"
+      <property name="base_src_includes" type="string_edit"
           help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
-      <property name="base_hdr_includes" type="text"
+      <property name="base_hdr_includes" type="string_edit"
           help="This preamble is placed unchanged in the generated base file after all wx/ include files. It can include other header files, add comments, etc."/>
       <property name="derived_class_name" type="string" help="The name of the derived class.">MyPanel</property>
       <property name="derived_file" type="file" help="The filename of the derived class."/>
@@ -143,14 +143,14 @@
     <property name="class_name" type="string" help="The name of the base class.">MyFrameBase</property>
     <category name="Code generation">
       <property name="base_file" type="file" help="The filename of the base class.">myframe_base</property>
-      <property name="base_src_includes" type="text"
+      <property name="base_src_includes" type="string_edit"
           help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
-      <property name="base_hdr_includes" type="text"
+      <property name="base_hdr_includes" type="string_edit"
           help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files."/>
       <property name="derived_class_name" type="string" help="The name of the derived class.">MyFrame</property>
       <property name="derived_file" type="file" help="The filename of the derived class."/>
     </category>
-    <property name="title" type="translate" help="The text to display on the frame's title bar."/>
+    <property name="title" type="string_escapes" help="The text to display on the frame's title bar."/>
     <property name="style" type="bitlist">
       <option name="wxDEFAULT_FRAME_STYLE"
         help="Defined as wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN"/>
@@ -208,14 +208,14 @@
   <compinfo class="MenuBar" image="wxMenuBar" type="menubar_form">
     <inherits class="wxWindow"/>
     <property name="class_name" type="string" help="The name of the base class.">MyMenuBarBase</property>
-    <property name="label" type="translate">MyMenuBar</property>
+    <property name="label" type="string_escapes">MyMenuBar</property>
     <category name="Code generation">
       <property name="base_file" type="file" help="The filename of the base class.">mymenubar_base</property>
-      <property name="base_src_includes" type="text"
+      <property name="base_src_includes" type="string_edit"
           help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
-      <property name="base_hdr_includes" type="text"
+      <property name="base_hdr_includes" type="string_edit"
         help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files."/>
-      <property name="derived_class_name" type="text" help="The name of the derived class.">MyMenuBar</property>
+      <property name="derived_class_name" type="string_edit" help="The name of the derived class.">MyMenuBar</property>
       <property name="derived_file" type="file" help="The filename of the derived class."/>
     </category>
     <property name="style" type="bitlist">
@@ -228,11 +228,11 @@
     <property name="class_name" type="string" help="The name of the base class.">MyToolBarBase</property>
     <category name="Code generation">
       <property name="base_file" type="file" help="The filename of the base class.">mytoolbar_base</property>
-      <property name="base_src_includes" type="text"
+      <property name="base_src_includes" type="string_edit"
           help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
-      <property name="base_hdr_includes" type="text"
+      <property name="base_hdr_includes" type="string_edit"
         help="This preamble is placed unchanged in the generated base include file after all wx/ include files. It is normally used to include additional header files."/>
-      <property name="derived_class_name" type="text" help="The name of the derived class.">MyToolBar</property>
+      <property name="derived_class_name" type="string_edit" help="The name of the derived class.">MyToolBar</property>
       <property name="derived_file" type="file" help="The filename of the derived class."/>
     </category>
     <property name="bitmapsize" type="wxSize" help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels."/>
@@ -263,14 +263,14 @@
     <property name="class_name" type="string" help="The name of the base class.">MyWizardBase</property>
     <category name="Code generation">
       <property name="base_file" type="file" help="The filename of the base class.">mywizard_base</property>
-      <property name="base_src_includes" type="text"
+      <property name="base_src_includes" type="string_edit"
           help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
-      <property name="base_hdr_includes" type="text"
+      <property name="base_hdr_includes" type="string_edit"
         help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files."/>
       <property name="derived_class_name" type="string" help="The name of the derived class.">MyWizard</property>
       <property name="derived_file" type="file" help="The filename of the derived class."/>
     </category>
-    <property name="title" type="translate" help="The text to display on the Wizard's title bar."/>
+    <property name="title" type="string_escapes" help="The text to display on the Wizard's title bar."/>
     <property name="bitmap" type="image" help="Bitmap to display on the left side of the wizard (default: none)."/>
     <property name="style" type="bitlist">
       <option name="wxCAPTION" help="Puts a caption on the dialog box."/>

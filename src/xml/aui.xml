@@ -63,7 +63,7 @@
   </compinfo>
 
   <compinfo class="auinotebookpage" image="auinotebook" type="auinotebookpage">
-    <property name="label" type="translate">a page</property>
+    <property name="label" type="string_escapes">a page</property>
     <property name="bitmap" type="image" help="Page Image"/>
     <property name="select" type="bool" help="Select Page when Adding">0</property>
   </compinfo>

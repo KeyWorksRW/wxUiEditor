@@ -216,21 +216,21 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
         case Type::Uint:
             return new wxUIntProperty(prop->GetPropName(), wxPG_LABEL, prop->as_int());
 
-        case Type::Wxstring:
-        case Type::Translate:
-            // This first doubles the backslash in escaped characters: \n, \t, \r, and "\"". Call wx_str() to convert to
-            // UTF16 on Windows.
+        case Type::String_Escapes:
+            // This first doubles the backslash in escaped characters: \n, \t, \r, and \.
             return new wxStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_escape_text().wx_str());
-
-        case Type::RawText:
-            return new wxLongStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_escape_text().wx_str());
-
-        case Type::Text:
-            // This includes a button that triggers a small text editor dialog
-            return new wxLongStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
         case Type::String:
             return new wxStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
+
+        case Type::String_Edit_Escapes:
+            // This includes a button that triggers a small text editor dialog
+            // This doubles the backslash in escaped characters: \n, \t, \r, and \.
+            return new wxLongStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_escape_text().wx_str());
+
+        case Type::String_Edit:
+            // This includes a button that triggers a small text editor dialog
+            return new wxLongStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
         case Type::Bool:
             return new wxBoolProperty(prop->GetPropName(), wxPG_LABEL, prop->GetValue() == "1");
@@ -495,7 +495,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                             //       interpreted as true
                             child = new wxBoolProperty(it->m_name, wxPG_LABEL, value.empty() || value == it->m_name);
                         }
-                        else if (Type::Wxstring == it->m_type)
+                        else if (Type::String_Escapes == it->m_type)
                         {
                             child = new wxStringProperty(it->m_name, wxPG_LABEL, value);
                         }
@@ -681,7 +681,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             break;
         }
 
-        case Type::Text:
+        case Type::String_Edit:
         case Type::ID:
         case Type::Int:
         case Type::Uint:
@@ -797,9 +797,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             break;
         }
 
-        case Type::Wxstring:
-        case Type::Translate:
-        case Type::RawText:
+        case Type::String_Escapes:
+        case Type::String_Edit_Escapes:
         {
             // PropGridPanel's text strings are formatted.
             auto value = ConvertEscapeSlashes(ttlib::cstr() << m_prop_grid->GetPropertyValueAsString(property).wx_str());
@@ -1199,24 +1198,20 @@ void PropGridPanel::OnPropertyModified(CustomEvent& event)
             break;
 
         case Type::String:
+        case Type::String_Edit:
             grid_property->SetValueFromString(prop->as_string(), 0);
             break;
 
-        case Type::Text:
-            grid_property->SetValueFromString(prop->as_string(), 0);
+        case Type::String_Edit_Escapes:
+        case Type::String_Escapes:
+            grid_property->SetValueFromString(prop->as_escape_text().wx_str(), 0);
             break;
 
         case Type::ID:
         case Type::Option:
         case Type::Edit_option:
         case Type::Parent:
-        case Type::Wxstring:
             grid_property->SetValueFromString(prop->as_escape_text(), 0);
-            break;
-
-        case Type::Translate:
-        case Type::RawText:
-            grid_property->SetValueFromString(prop->as_escape_text().wx_str(), 0);
             break;
 
         case Type::Bool:

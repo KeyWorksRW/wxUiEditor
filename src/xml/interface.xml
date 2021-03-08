@@ -21,7 +21,7 @@
 
   <compinfo class="UserCode" type="interface">
     <property name="enable_user_code" type="bool">0</property>
-    <property name="user_cpp_code" type="text"/>
+    <property name="user_cpp_code" type="string_edit"/>
   </compinfo>
 
   <compinfo class="wxWindow" type="interface">
@@ -78,7 +78,7 @@
       <option name="wxWS_EX_PROCESS_UI_UPDATES"
         help="This window should always process UI update events, even if the mode set by wxUpdateUIEvent::SetMode is wxUPDATE_UI_PROCESS_SPECIFIED."/>
     </property>
-    <property name="tooltip" type="translate"
+    <property name="tooltip" type="string_escapes"
         help="Attach a tooltip to the window."/>
     <property name="disabled" type="bool"
         help="Disable the window for user input. Note that when a parent window is disabled, all of its children are disabled as well and they are reenabled again when the parent is.">
@@ -94,9 +94,9 @@
         help="Sets the foreground colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list."/>
     <property name="background_colour" type="wxColour"
         help="Sets the background colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list."/>
-    <property name="context_help" type="translate"
+    <property name="context_help" type="string_escapes"
         help="Sets the help text to be used as context-sensitive help for this window."/>
-    <property name="window_name" type="wxString"
+    <property name="window_name" type="string_escapes"
         help="The name of the window. This parameter is used to associate a name with the item, allowing the application user to set Motif resource values for individual windows."/>
     <property name="base_class_name" type="string"
         help="If you have derived a class from a wxWidget class and you want this component to inherit from your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property."/>
@@ -192,11 +192,11 @@
   </compinfo>
 
   <compinfo class="AUI" type="interface">
-    <property name="aui_name" type="wxString"
+    <property name="aui_name" type="string_escapes"
         help="Sets the internal name of the pane."/>
     <property name="caption_visible" type="bool"
         help="Indicates that a pane caption should be visible.">1</property>
-    <property name="caption" type="translate"
+    <property name="caption" type="string_escapes"
         help="Sets the caption of the pane."/>
     <property name="close_button" type="bool"
         help="Indicates that a close button should be drawn for the pane.">

@@ -15,11 +15,10 @@ enum class Type : size_t
     None,
     Bool,
 
-    Text,           // "text" -- uses a multi-line editor, newlines are escaped
-    RawText,        // "text" -- uses a multi-line editor, but with raw newline characters
-    String,         // "string" -- like "text", but with no editor button
-    Wxstring,       // "wxString" -- places the string in quotes when used
-    Translate,      // "translate" places the string in quotes and surrounds it with _() macro
+    String,
+    String_Escapes, // This doubles the backslash in escaped characters: \n, \t, \r, and "\""
+    String_Edit,    // This includes a button that triggers a small text editor dialog
+    String_Edit_Escapes,
 
     Int,
     Uint,

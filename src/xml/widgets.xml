@@ -6,7 +6,7 @@
     <inherits class="String Validator"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_staticText</property>
-    <property name="label" type="rawtext">MyLabel</property>
+    <property name="label" type="string_edit_escapes">MyLabel</property>
     <property name="markup" type="bool"
         help="Simple markup can be used to apply different fonts or colours to different parts of the control label when supported. If markup is not supported by the control or platform, it is simply stripped and SetLabel() is used with the resulting string.">
       0
@@ -35,7 +35,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_textCtrl</property>
-    <property name="value" type="translate"/>
+    <property name="value" type="string_escapes"/>
     <property name="maxlength" type="string"
         help="The maximum length of user-entered text. 0 means no limit. Note that in wxGTK this function may only be used with single line text controls."/>
     <property name="style" type="bitlist">
@@ -84,7 +84,7 @@
     <property name="var_name" type="string">
       m_checkBox
     </property>
-    <property name="label" type="translate">
+    <property name="label" type="string_escapes">
       My Checkbox
     </property>
     <property name="checked" type="bool">0</property>
@@ -99,7 +99,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_checkBox</property>
-    <property name="label" type="translate">
+    <property name="label" type="string_escapes">
       My Checkbox
     </property>
     <property name="initial_state" type="option">
@@ -123,7 +123,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_radioBtn</property>
-    <property name="label" type="translate">My RadioBtn</property>
+    <property name="label" type="string_escapes">My RadioBtn</property>
     <property name="checked" type="bool">0</property>
     <property name="style" type="bitlist">
       <option name="wxRB_GROUP" help="Marks the beginning of a new group of radio buttons."/>
@@ -139,7 +139,7 @@
     <inherits class="String Validator"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_btn</property>
-    <property name="label" type="translate">MyButton</property>
+    <property name="label" type="string_escapes">MyButton</property>
     <property name="markup" type="bool"
         help="This can be used to apply fonts or colours to different parts of the label.">
       0
@@ -168,8 +168,8 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_btn</property>
-    <property name="main_label" type="text">MyButton</property>
-    <property name="note" type="rawtext"/>
+    <property name="main_label" type="string_edit">MyButton</property>
+    <property name="note" type="string_edit_escapes"/>
     <property name="default" type="bool" help="If true, this will be the default button (it will be depressed when the return key is pressed)">0</property>
     <event name="wxEVT_BUTTON" class="wxCommandEvent" help="Generated when the button is clicked"/>
   </compinfo>
@@ -180,7 +180,7 @@
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_comboBox</property>
     <property name="choices" type="stringlist" help="Contents of the Combo Box"></property>
-    <property name="selection_string" type="translate"
+    <property name="selection_string" type="string_escapes"
         help="Selects the item with the specified string in the control. Note that this is case-insensitive, i.e. the string is compared with all the elements of the control case-insensitively and the first matching entry is selected, even if it doesn't have exactly the same case as this string and there is an exact match afterwards."></property>
     <property name="selection_int" type="int"
         help="Sets the selection to the value unless it is -1. Ignored if the selection_string property contains a value.">
@@ -213,7 +213,7 @@
     <property name="var_name" type="string">m_choice</property>
     <property name="choices" type="stringlist"
         help="Array of strings used to initialise the choice control."/>
-    <property name="selection_string" type="translate"
+    <property name="selection_string" type="string_escapes"
         help="Selects the item with the specified string in the control. Note that this is case-insensitive, i.e. the string is compared with all the elements of the control case-insensitively and the first matching entry is selected, even if it doesn't have exactly the same case as this string and there is an exact match afterwards."></property>
     <property name="selection_int" type="int"
         help="Sets the selection to the value unless it is -1. Ignored if the selection_string property contains a value.">-1</property>
@@ -229,7 +229,7 @@
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_listBox</property>
     <property name="choices" type="stringlist" help="Contents of the List Box."/>
-    <property name="selection_string" type="translate"
+    <property name="selection_string" type="string_escapes"
         help="Selects the item with the specified string in the control. Note that this is case-insensitive, i.e. the string is compared with all the elements of the control case-insensitively and the first matching entry is selected, even if it doesn't have exactly the same case as this string and there is an exact match afterwards."></property>
     <property name="selection_int" type="int"
         help="Sets the selection to the value unless it is -1. Ignored if the selection_string property contains a value.">-1</property>
@@ -274,7 +274,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_checkList</property>
-    <property name="selection_string" type="translate"
+    <property name="selection_string" type="string_escapes"
         help="Selects the item with the specified string in the control. Note that this is case-insensitive, i.e. the string is compared with all the elements of the control case-insensitively and the first matching entry is selected, even if it doesn't have exactly the same case as this string and there is an exact match afterwards."></property>
     <property name="selection_int" type="int" help="Sets the selection to the value unless it is -1. Ignored if the selection_string property contains a value.">-1</property>
     <property name="choices" type="stringlist" help="List of default values."/>
@@ -346,7 +346,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_radioBox</property>
-    <property name="label" type="translate">My Radio Box</property>
+    <property name="label" type="string_escapes">My Radio Box</property>
     <property name="choices" type="stringlist"
         help="Contents of the Radio Box. On Windows, the last character may be clipped unless you include a trailing space.">
       &quot;Radio Button &quot;
@@ -497,9 +497,9 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_filePicker</property>
-    <property name="value" type="wxString"/>
-    <property name="message" type="translate"/>
-    <property name="wildcard" type="translate"/>
+    <property name="value" type="string_escapes"/>
+    <property name="message" type="string_escapes"/>
+    <property name="wildcard" type="string_escapes"/>
     <property name="style" type="bitlist">
       <option name="wxFLP_USE_TEXTCTRL"
         help="Creates a text control to the left of the picker button which is completely managed by the wxFilePickerCtrl and which can be used by the user to specify a path (see SetPath). The text control is automatically synchronized with button's value. Use functions defined in wxPickerBase to modify the text control."/>
@@ -523,8 +523,8 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_dirPicker</property>
-    <property name="value" type="wxString"/>
-    <property name="message" type="translate"/>
+    <property name="value" type="string_escapes"/>
+    <property name="message" type="string_escapes"/>
     <property name="style" type="bitlist">
       <option name="wxDIRP_DEFAULT_STYLE" help="The default style is wxDIRP_DIR_MUST_EXIST and wxDIRP_USE_TEXTCTRL."/>
       <option name="wxDIRP_USE_TEXTCTRL"
@@ -681,7 +681,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_spinCtrlDouble</property>
-    <property name="value" type="wxString"></property>
+    <property name="value" type="string_escapes"></property>
     <property name="min" type="float" help="Minimal value.">
       0
     </property>
@@ -737,7 +737,7 @@
     <inherits class="Boolean Validator"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_toggleBtn</property>
-    <property name="label" type="translate">MyButton</property>
+    <property name="label" type="string_escapes">MyButton</property>
     <property name="markup" type="bool"
         help="This can be used to apply fonts or colours to different parts of the label.">
       0
@@ -764,7 +764,7 @@
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_bmpComboBox</property>
     <property name="choices" type="stringlist" help="Contents of the Combo Box"></property>
-    <property name="selection_string" type="translate"
+    <property name="selection_string" type="string_escapes"
         help="Selects the item with the specified string in the control. Note that this is case-insensitive, i.e. the string is compared with all the elements of the control case-insensitively and the first matching entry is selected, even if it doesn't have exactly the same case as this string and there is an exact match afterwards.">
     </property>
     <property name="selection_int" type="int"
@@ -788,11 +788,11 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_hyperlink</property>
-    <property name="label" type="translate"
+    <property name="label" type="string_escapes"
         help="Text of the hyperlink">
       GitHub Website
     </property>
-    <property name="url" type="wxString"
+    <property name="url" type="string_escapes"
         help="Target of the hyperlink">
       https://github.com/
     </property>
@@ -820,7 +820,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_searchCtrl</property>
-    <property name="value" type="translate"/>
+    <property name="value" type="string_escapes"/>
     <property name="search_button" type="bool" help="Shows or hides the search button.">1</property>
     <property name="cancel_button" type="bool" help="Shows or hides the cancel button.">0</property>
     <property name="style" type="bitlist">
@@ -967,8 +967,8 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_genericDirCtrl</property>
-    <property name="defaultfolder" type="translate" help="Initial Directory."/>
-    <property name="filter" type="translate"
+    <property name="defaultfolder" type="string_escapes" help="Initial Directory."/>
+    <property name="filter" type="string_escapes"
         help="A filter string, using the same syntax as that for wxFileDialog. This may be empty if filters are not being used. Example: &quot;All files (*.*)|*.*|JPEG files (*.jpg)|*.jpg&quot;."/>
     <property name="defaultfilter" type="uint"
         help="The zero-indexed default filter setting.">
@@ -996,9 +996,9 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_fileCtrl</property>
-    <property name="initial_folder" type="translate" help="Initial folder."/>
-    <property name="initial_filename" type="translate" help="Initial file name."/>
-    <property name="wildcard" type="translate"
+    <property name="initial_folder" type="string_escapes" help="Initial folder."/>
+    <property name="initial_filename" type="string_escapes" help="Initial file name."/>
+    <property name="wildcard" type="string_escapes"
         help="Sets the wildcard, which can contain multiple file types, for example: &quot;BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif&quot;."/>
     <property name="filter_index" type="uint"
         help="Sets the current filter (wildcard) index, starting from zero."/>
@@ -1170,7 +1170,7 @@
   </compinfo>
 
   <compinfo class="TreeListCtrlColumn" image="treelistctrlcolumn" type="treelistctrlcolumn">
-    <property name="var_name" type="translate" help="The column label.">Column</property>
+    <property name="var_name" type="string_escapes" help="The column label.">Column</property>
     <property name="class_access" type="option">
       <option name="none"/>
       <option name="protected:"/>
@@ -1328,7 +1328,7 @@
       <option name="public:"/>
       protected:
     </property>
-    <property name="label" type="translate">Name</property>
+    <property name="label" type="string_escapes">Name</property>
     <property name="model_column" type="uint">0</property>
     <property name="type" type="option">
       <option name="Text" help="Appends a text column to the control and the store."/>
@@ -1380,7 +1380,7 @@
       <option name="public:"/>
       protected:
     </property>
-    <property name="label" type="translate">Name</property>
+    <property name="label" type="string_escapes">Name</property>
     <property name="type" type="option">
       <option name="Text" help="Appends a text column to the control and the store."/>
       <option name="Toggle" help="Appends a toggle column to the control and the store."/>
@@ -1518,7 +1518,7 @@
       <option name="public:"/>
       protected:
     </property>
-    <property name="label" type="translate" help="Label shown as a tooltip of the manager's tool button.">Page</property>
+    <property name="label" type="string_escapes" help="Label shown as a tooltip of the manager's tool button.">Page</property>
     <property name="bitmap" type="image" help="Bitmap shown in the property manager's header."/>
   </compinfo>
 
@@ -1530,7 +1530,7 @@
       <option name="public:"/>
       protected:
     </property>
-    <property name="label" type="translate" help="Label shown in parent property grid/page.">Name</property>
+    <property name="label" type="string_escapes" help="Label shown in parent property grid/page.">Name</property>
     <property name="type" type="option" help="Type of the property item.">
       <option name="Category" help="Append properties category."/>
       <option name="Bool" help="Append Boolean property to the parent property grid (page)."/>
@@ -1553,7 +1553,7 @@
       <option name="UInt" help="Append UInt property to the parent property grid (page)."/>
       String
     </property>
-    <property name="help" type="translate" help="Property item's name."></property>
+    <property name="help" type="string_escapes" help="Property item's name."></property>
   </compinfo>
 
   <compinfo class="wxActivityIndicator" image="wxActivityIndicator" type="widget">
@@ -1572,9 +1572,9 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_banner</property>
-    <property name="title" type="translate"
+    <property name="title" type="string_escapes"
       help = "Title is rendered in bold and should be a single line."/>
-    <property name="message" type="rawtext"
+    <property name="message" type="string_edit_escapes"
       help="The message can have multiple lines but is not wrapped automatically. Include explicit line breaks in the string if you want to have multiple lines."/>
     <property name="bitmap" type="image"
         help="Specifies a bitmap to use as the background."/>

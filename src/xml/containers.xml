@@ -98,7 +98,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_collapsible_pane</property>
-    <property name="label" type="translate">collapsible</property>
+    <property name="label" type="string_escapes">collapsible</property>
     <property name="collapsed" type="bool">0</property>
     <property name="style" type="bitlist">
       <option name="wxCP_DEFAULT_STYLE" help="The default style. It includes wxTAB_TRAVERSAL and wxBORDER_NONE."/>
@@ -215,7 +215,7 @@
       <option name="public:"/>
       none
     </property>
-    <property name="label" type="translate">page</property>
+    <property name="label" type="string_escapes">page</property>
     <property name="select" type="bool"
         help="Select Page when Adding">
       0
@@ -225,7 +225,7 @@
 
   <!-- wxFormBuilder import only -->
   <compinfo class="oldbookpage" type="oldbookpage">
-    <property name="label" type="translate"/>
+    <property name="label" type="string_escapes"/>
     <property name="bitmap" type="image"/>
     <property name="select" type="bool"/>
   </compinfo>

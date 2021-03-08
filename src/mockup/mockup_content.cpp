@@ -126,7 +126,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         // We don't create any children because the only thing visible is the mock menu
         return;
     }
-    else if (node->IsSizer())
+    else if (node->IsSizer() || node->GetClassName() == "wxStdDialogButtonSizer" || node->GetClassName() == "TextSizer")
     {
         if (node->GetClassName() == "wxStaticBoxSizer")
         {

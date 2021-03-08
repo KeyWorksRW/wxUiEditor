@@ -22,30 +22,31 @@ NodeCreator g_NodeCreator;
 
 void NodeCreator::Initialize()
 {
-    m_propTypes["bool"] = Type::Bool;
-    m_propTypes["text"] = Type::Text;
-    m_propTypes["rawtext"] = Type::RawText;
-    m_propTypes["string"] = Type::String;
-    m_propTypes["int"] = Type::Int;
-    m_propTypes["uint"] = Type::Uint;
-    m_propTypes["image"] = Type::Image;
     m_propTypes["bitlist"] = Type::Bitlist;
+    m_propTypes["bool"] = Type::Bool;
+    m_propTypes["editoption"] = Type::Edit_option;
+    m_propTypes["file"] = Type::File;
+    m_propTypes["id"] = Type::ID;
+    m_propTypes["image"] = Type::Image;
+    m_propTypes["option"] = Type::Option;
+    m_propTypes["parent"] = Type::Parent;
+    m_propTypes["path"] = Type::Path;
+    m_propTypes["stringlist"] = Type::Stringlist;
     m_propTypes["uintlist"] = Type::Uintlist;
     m_propTypes["uintpairlist"] = Type::Uintpairlist;
-    m_propTypes["option"] = Type::Option;
-    m_propTypes["id"] = Type::ID;
-    m_propTypes["path"] = Type::Path;
-    m_propTypes["file"] = Type::File;
-    m_propTypes["wxString"] = Type::Wxstring;
+    m_propTypes["wxColour"] = Type::Wxcolour;
+    m_propTypes["wxFont"] = Type::Wxfont;
     m_propTypes["wxPoint"] = Type::Wxpoint;
     m_propTypes["wxSize"] = Type::Wxsize;
-    m_propTypes["wxFont"] = Type::Wxfont;
-    m_propTypes["wxColour"] = Type::Wxcolour;
-    m_propTypes["stringlist"] = Type::Stringlist;
+
     m_propTypes["float"] = Type::Float;
-    m_propTypes["translate"] = Type::Translate;
-    m_propTypes["parent"] = Type::Parent;
-    m_propTypes["editoption"] = Type::Edit_option;
+    m_propTypes["int"] = Type::Int;
+    m_propTypes["uint"] = Type::Uint;
+
+    m_propTypes["string"] = Type::String;
+    m_propTypes["string_escapes"] = Type::String_Escapes;
+    m_propTypes["string_edit"] = Type::String_Edit;
+    m_propTypes["string_edit_escapes"] = Type::String_Edit_Escapes;
 
     InitCompTypes();
     InitDeclarations();

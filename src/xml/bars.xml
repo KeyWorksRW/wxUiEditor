@@ -23,7 +23,7 @@
       <option name="public:"/>
       protected:
     </property>
-    <property name="label" type="translate">MyMenu</property>
+    <property name="label" type="string_escapes">MyMenu</property>
   </compinfo>
 
   <compinfo class="submenu" image="submenu" type="submenu">
@@ -34,7 +34,7 @@
       <option name="public:"/>
       none
     </property>
-    <property name="label" type="translate">MySubMenu</property>
+    <property name="label" type="string_escapes">MySubMenu</property>
     <property name="bitmap" type="image" help="Bitmap for the submenu item."/>
   </compinfo>
 
@@ -46,13 +46,13 @@
       <option name="public:"/>
       none
     </property>
-    <property name="label" type="translate"
+    <property name="label" type="string_escapes"
         help="Text for the menu item, as shown on the menu. An accelerator key can be specified using the ampersand &quot;&amp;&quot; character.">
       MyMenuItem
     </property>
-    <property name="shortcut" type="wxString"
+    <property name="shortcut" type="string_escapes"
         help="Optional shortcut keyboard shortcut. Remarks: The general syntax is any combination of &quot;CTRL&quot;, &quot;ALT&quot; and &quot;SHIFT&quot; strings (case doesn't matter) separated by either '-' or '+' characters and followed by the accelerator itself. The accelerator may be any alphanumeric character, any function key (from F1 to F12)"/>
-    <property name="help" type="text" help="Optional help string that will be shown on the status bar."/>
+    <property name="help" type="string_edit" help="Optional help string that will be shown on the status bar."/>
     <property name="id" type="id">wxID_ANY</property>
     <property name="bitmap" type="image"
         help="Bitmap for the menu item. This doubles as the checked bitmap is the menu item is wxITEM_CHECK."/>
@@ -122,7 +122,7 @@
       <option name="public:"/>
       none
     </property>
-    <property name="label" type="translate"/>
+    <property name="label" type="string_escapes"/>
     <property name="bitmap" type="image" help="The primary tool bitmap."/>
     <property name="kind" type="option">
       <option name="wxITEM_NORMAL" help="A normal toolbar button."/>
@@ -133,8 +133,8 @@
       wxITEM_NORMAL
     </property>
     <property name="context_menu" type="bool" help="Specifies that a drop-down menu button will appear next to the tool button. Used only with wxAuiToolBar.">0</property>
-    <property name="tooltip" type="text" help="Help string used in the tooltip."/>
-    <property name="statusbar" type="text" help="This string is shown in the statusbar (if any) of the parent frame when the mouse pointer is inside the tool."/>
+    <property name="tooltip" type="string_edit" help="Help string used in the tooltip."/>
+    <property name="statusbar" type="string_edit" help="This string is shown in the statusbar (if any) of the parent frame when the mouse pointer is inside the tool."/>
     <property name="id" type="id">wxID_ANY</property>
     <event name="wxEVT_TOOL" class="wxCommandEvent" help=""/>
     <event name="wxEVT_TOOL_DROPDOWN" class="wxCommandEvent" help=""/>
@@ -266,7 +266,7 @@
       <option name="public:"/>
       none
     </property>
-    <property name="label" type="translate">MyRibbonPage</property>
+    <property name="label" type="string_escapes">MyRibbonPage</property>
     <property name="bitmap" type="image" help="wxRibbonPage bitmap."/>
     <property name="select" type="bool" help="Select this ribbon page when adding.">0</property>
   </compinfo>
@@ -280,7 +280,7 @@
       <option name="public:"/>
       none
     </property>
-    <property name="label" type="translate">MyRibbonPanel</property>
+    <property name="label" type="string_escapes">MyRibbonPanel</property>
     <property name="bitmap" type="image" help="wxRibbonPanel bitmap."/>
     <property name="style" type="bitlist">
       <option name="wxRIBBON_PANEL_DEFAULT_STYLE" help="Defined as no other flags set."/>
@@ -311,9 +311,9 @@
 
   <compinfo class="ribbonButton" image="ribbon_button" type="ribbonbutton">
     <inherits class="wxWindow"/>
-    <property name="label" type="translate">MyRibbonButton</property>
+    <property name="label" type="string_escapes">MyRibbonButton</property>
     <property name="bitmap" type="image" help="ribbonButton bitmap."/>
-    <property name="help" type="translate" help="ribbonButton"/>
+    <property name="help" type="string_escapes" help="ribbonButton"/>
     <property name="kind" type="option">
       <option name="wxRIBBON_BUTTON_NORMAL" help="Normal button or tool with a clickable area which causes some generic action."/>
       <option name="wxRIBBON_BUTTON_DROPDOWN" help="Dropdown button or tool with a clickable area which typically causes a dropdown menu."/>
@@ -357,7 +357,7 @@
          help="ID of the tool (used for event callbacks).">
     </property>
     <property name="bitmap" type="image" help="ribbonTool bitmap."/>
-    <property name="help" type="translate" help="ribbonTool"/>
+    <property name="help" type="string_escapes" help="ribbonTool"/>
     <property name="kind" type="option">
       <option name="wxRIBBON_BUTTON_NORMAL" help="Normal button or tool with a clickable area which causes some generic action."/>
       <option name="wxRIBBON_BUTTON_DROPDOWN" help="Dropdown button or tool with a clickable area which typically causes a dropdown menu."/>

@@ -101,7 +101,7 @@
       <option name="public:"/>
       protected:
     </property>
-    <property name="label" type="translate">label</property>
+    <property name="label" type="string_escapes">label</property>
     <property name="orientation" type="option">
       <option name="wxVERTICAL" help="Align items vertically"/>
       <option name="wxHORIZONTAL" help="Align items horizontally"/>
@@ -299,7 +299,7 @@
       <option name="public:"/>
       none
     </property>
-    <property name="text" type="rawtext"
+    <property name="text" type="string_edit_escapes"
         help="Splits text up at newlines and places the lines into wxStaticText objects with the specified maximum width in a vertical wxBoxSizer.">
       MyText
     </property>

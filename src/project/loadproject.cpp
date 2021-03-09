@@ -274,6 +274,27 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
             }
         }
 
+        // Convert old value property names
+        else if (iter.cname().is_sameas("value"))
+        {
+            if (class_name.is_sameas("wxFilePickerCtrl") || class_name.is_sameas("wxDirPickerCtrl"))
+            {
+                if (auto prop = new_node->get_prop_ptr("initial_path"); prop)
+                {
+                    prop->set_value(iter.value());
+                    continue;
+                }
+            }
+            else if (class_name.is_sameas("wxFontPickerCtrl"))
+            {
+                if (auto prop = new_node->get_prop_ptr("initial_font"); prop)
+                {
+                    prop->set_value(iter.value());
+                    continue;
+                }
+            }
+        }
+
         /////////////////////////////////// End slightly old project conversion //////////////////////////////////////
 
         if (auto prop = new_node->get_prop_ptr(iter.name()); prop)
@@ -307,15 +328,16 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                 // We get here if a property is specified that we don't recognize. While we can continue to load
                 // just fine, if the user attempts to save the project than the property will be lost.
 
-                // TODO: [KeyWorks - 06-03-2020] We need to store a list of unrecognized properties and display them to the
-                // user all at once after the project is completely loaded. We also need to flag the project file as
+                // TODO: [KeyWorks - 06-03-2020] We need to store a list of unrecognized properties and display them to
+                // the user all at once after the project is completely loaded. We also need to flag the project file as
                 // unsaveable (only SaveAs can be used. See issue #69).
 
                 MSG_WARNING(ttlib::cstr("Unrecognized property: ") << iter.name() << " in class: " << class_name);
 
                 appMsgBox(ttlib::cstr().Format(
                     "The property named \"%s\" of class \"%s\" is not supported by this version of wxUiEditor.\n"
-                    "If your project file was just converted from an older version, then the conversion was not complete.\n"
+                    "If your project file was just converted from an older version, then the conversion was not "
+                    "complete.\n"
                     "Otherwise, this project is from a newer version of wxUiEditor.\n\n"
                     "The property's value is: %s\n"
                     "If you save this project, YOU WILL LOSE DATA",

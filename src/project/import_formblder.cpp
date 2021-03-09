@@ -554,6 +554,14 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
         {
             newobject->get_prop_ptr("selection_string")->set_value(xml_prop.text().as_cview());
         }
+        else if (class_name.is_sameas("wxFilePickerCtrl") || class_name.is_sameas("wxDirPickerCtrl"))
+        {
+            newobject->get_prop_ptr("initial_path")->set_value(xml_prop.text().as_cview());
+        }
+        else if (class_name.is_sameas("wxFontPickerCtrl"))
+        {
+            newobject->get_prop_ptr("initial_font")->set_value(xml_prop.text().as_cview());
+        }
         else
         {
             auto prop = newobject->get_prop_ptr(txt_value);

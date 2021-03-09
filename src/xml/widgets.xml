@@ -497,7 +497,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_filePicker</property>
-    <property name="value" type="string_escapes"/>
+    <property name="initial_path" type="string_escapes"/>
     <property name="message" type="string_escapes"/>
     <property name="wildcard" type="string_escapes"/>
     <property name="style" type="bitlist">
@@ -523,7 +523,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_dirPicker</property>
-    <property name="value" type="string_escapes"/>
+    <property name="initial_path" type="string_escapes"/>
     <property name="message" type="string_escapes"/>
     <property name="style" type="bitlist">
       <option name="wxDIRP_DEFAULT_STYLE" help="The default style is wxDIRP_DIR_MUST_EXIST and wxDIRP_USE_TEXTCTRL."/>
@@ -546,7 +546,7 @@
     <property name="var_name" type="string">
       m_fontPicker
     </property>
-    <property name="value" type="wxFont"/>
+    <property name="initial_font" type="wxFont"/>
     <property name="min_point_size" type="uint"
         help="Sets the minimum point size value allowed for the user-chosen font">
         0
@@ -820,7 +820,7 @@
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_searchCtrl</property>
-    <property name="value" type="string_escapes"/>
+    <property name="value" type="string_escapes" help="Initial value"/>
     <property name="search_button" type="bool" help="Shows or hides the search button.">1</property>
     <property name="cancel_button" type="bool" help="Shows or hides the cancel button.">0</property>
     <property name="style" type="bitlist">

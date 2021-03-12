@@ -48,6 +48,7 @@ Files:
     customprops/pg_image.cpp         # Custom property grid class for images
     customprops/pg_point.cpp         # Custom wxPGProperty for wxPoint
     customprops/pg_size.cpp          # Custom wxPGProperty for wxSize
+    customprops/txt_string_prop.cpp  # Derived wxStringProperty class for single-line text
 
     generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
     generate/gen_codefiles.cpp     # Generate code files
@@ -123,6 +124,7 @@ Files:
 # wxUiEditor generated files
 
     ui/artpropdlg_base.cpp
+    ui/editstringdialog_base.cpp
     ui/embedimg_base.cpp
     ui/importwinres_base.cpp
     ui/mainframe_base.cpp

@@ -35,9 +35,10 @@
 
 // Various customized wxPGProperty classes
 
-#include "../customprops/pg_image.h"  // PropertyGrid_Image -- Custom property grid class for images
-#include "../customprops/pg_point.h"  // CustomPointProperty -- custom wxPGProperty for handling wxPoint
-#include "../customprops/pg_size.h"   // CustomSizeProperty -- custom wxPGProperty for handling wxSize
+#include "../customprops/pg_image.h"         // PropertyGrid_Image -- Custom property grid class for images
+#include "../customprops/pg_point.h"         // CustomPointProperty -- custom wxPGProperty for handling wxPoint
+#include "../customprops/pg_size.h"          // CustomSizeProperty -- custom wxPGProperty for handling wxSize
+#include "../customprops/txt_string_prop.h"  // EditStringProperty -- dialog for editing single-line strings
 
 #include "wx_id_list.cpp"  // wxID_ strings
 
@@ -231,6 +232,10 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
         case Type::String_Edit:
             // This includes a button that triggers a small text editor dialog
             return new wxLongStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
+
+        case Type::String_Edit_Single:
+            // This includes a button that triggers a small single-line custom text editor dialog
+            return new EditStringProperty(prop->GetPropName(), prop);
 
         case Type::Bool:
             return new wxBoolProperty(prop->GetPropName(), wxPG_LABEL, prop->GetValue() == "1");

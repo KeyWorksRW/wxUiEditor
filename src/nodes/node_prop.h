@@ -44,7 +44,7 @@ public:
     ttlib::cview as_cview() const { return m_value.subview(); }
     wxArrayString as_wxArrayString() const;
 
-    auto as_vector() const -> std::vector<std::string>;
+    auto as_vector() const -> std::vector<ttlib::cstr>;
 
     // This first doubles the backslash in escaped characters (\\n, \\t, \\r, and \\)
     ttlib::cstr as_escape_text() const;
@@ -75,7 +75,7 @@ public:
     ttlib::cstr getChildFromParent(const ttlib::cstr& childName) const;
 
     Node* GetNode() { return m_node; }
-    const std::string& GetPropName() const;
+    const ttlib::cstr& GetPropName() const;
 
     PropertyInfo* GetPropertyInfo() { return m_info; }
 

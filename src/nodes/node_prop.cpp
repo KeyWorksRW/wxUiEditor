@@ -24,9 +24,9 @@
 
 NodeProperty::NodeProperty(PropertyInfo* info, Node* node) : m_info(info), m_node(node) {}
 
-// The advantage of placing this one-line calls to PropertyInfo (m_info) here is that it reduces the header-file
+// The advantage of placing the one-line calls to PropertyInfo (m_info) here is that it reduces the header-file
 // dependency for other modeuls that need NodeProperty, and it allows for changes to PropertyInfo that don't require
-// recompiling every module that included node_prop.h.
+// recompiling every module that included prop_info.h.
 
 bool NodeProperty::IsDefaultValue() const
 {
@@ -38,7 +38,7 @@ Type NodeProperty::GetType() const
     return m_info->GetType();
 }
 
-const std::string& NodeProperty::GetPropName() const
+const ttlib::cstr& NodeProperty::GetPropName() const
 {
     return m_info->GetName();
 }
@@ -194,9 +194,9 @@ ttlib::cstr NodeProperty::as_escape_text() const
     return result;
 }
 
-std::vector<std::string> NodeProperty::as_vector() const
+std::vector<ttlib::cstr> NodeProperty::as_vector() const
 {
-    std::vector<std::string> array;
+    std::vector<ttlib::cstr> array;
     if (m_value.empty())
         return array;
     ttlib::cstr parse;

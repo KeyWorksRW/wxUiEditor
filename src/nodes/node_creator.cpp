@@ -47,6 +47,7 @@ void NodeCreator::Initialize()
     m_propTypes["string_escapes"] = Type::String_Escapes;
     m_propTypes["string_edit"] = Type::String_Edit;
     m_propTypes["string_edit_escapes"] = Type::String_Edit_Escapes;
+    m_propTypes["string_edit_single"] = Type::String_Edit_Single;
 
     InitCompTypes();
     InitDeclarations();

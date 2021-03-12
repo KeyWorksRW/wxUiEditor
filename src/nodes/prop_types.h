@@ -16,9 +16,10 @@ enum class Type : size_t
     Bool,
 
     String,
-    String_Escapes, // This doubles the backslash in escaped characters: \n, \t, \r, and "\""
-    String_Edit,    // This includes a button that triggers a small text editor dialog
-    String_Edit_Escapes,
+    String_Escapes,  // This doubles the backslash in escaped characters: \n, \t, \r, and "\""
+    String_Edit,     // This includes a button that triggers a small text editor dialog
+    String_Edit_Escapes,  // Includes editor dialog and also escapes characters
+    String_Edit_Single,  // Includes single-line text editor, does not process escapes
 
     Int,
     Uint,

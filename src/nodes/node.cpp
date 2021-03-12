@@ -741,7 +741,7 @@ ttlib::cstr Node::GetUniqueName(const ttlib::cstr& proposed_name)
         return {};
 
     std::unordered_set<std::string> name_set;
-    form->CollectUniqueNames(name_set);
+    form->CollectUniqueNames(name_set, this);
 
     if (auto it = name_set.find(new_name); it != name_set.end())
     {
@@ -776,7 +776,7 @@ bool Node::FixDuplicateName(bool is_validator)
         form = wxGetApp().GetProjectPtr().get();
 
     std::unordered_set<std::string> name_set;
-    form->CollectUniqueNames(name_set);
+    form->CollectUniqueNames(name_set, this);
 
     if (auto it = name_set.find(*name); it != name_set.end())
     {
@@ -816,16 +816,16 @@ void Node::FixPastedNames()
     }
 }
 
-void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set)
+void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node)
 {
-    if (!IsForm())
+    if (!IsForm() && cur_node != this)
     {
-        if (auto name = get_value_ptr(txt_var_name); name)
+        if (auto name = get_value_ptr(txt_var_name); name && name->size())
         {
             name_set.emplace(*name);
         }
 
-        if (auto name = get_value_ptr("validator_variable"); name)
+        if (auto name = get_value_ptr("validator_variable"); name && name->size())
         {
             name_set.emplace(*name);
         }
@@ -833,7 +833,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set)
 
     for (auto& iter: GetChildNodePtrs())
     {
-        iter->CollectUniqueNames(name_set);
+        iter->CollectUniqueNames(name_set, cur_node);
     }
 }
 

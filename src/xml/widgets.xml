@@ -387,7 +387,7 @@
     <property name="bitmap" type="image"/>
   </compinfo>
 
-  <compinfo class="wxStaticLine" image="static_line" type="widget">
+  <compinfo class="wxStaticLine" image="static_line" type="widget" flags="no_win_events">
     <inherits class="wxWindow"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">static_line</property>

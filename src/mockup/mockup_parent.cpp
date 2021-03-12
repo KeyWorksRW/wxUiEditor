@@ -377,6 +377,18 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     auto prop = event.GetNodeProperty();
     auto& prop_name = prop->GetPropName();
 
+    if (prop_name == "tooltip")
+    {
+        if (auto node = wxGetFrame().GetSelectedNode(); node)
+        {
+            if (auto window = wxStaticCast(Get_wxObject(node), wxWindow); window)
+            {
+                window->SetToolTip(prop->as_wxString());
+            }
+        }
+        return;
+    }
+
     for (auto& iter: NonUiProps)
     {
         if (prop_name == iter)

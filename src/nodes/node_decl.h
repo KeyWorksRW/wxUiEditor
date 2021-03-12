@@ -76,8 +76,13 @@ public:
 
     void ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category);
 
+    // Get internal component flags string (multiple flags seperated by a ';')
+    const ttlib::cstr& GetCompFlags() { return m_internal_flags; }
+    void SetCompFlags(ttlib::cview flags) { m_internal_flags = flags; }
+
 private:
     ttlib::cstr m_classname;
+    ttlib::cstr m_internal_flags;
 
     wxImage m_image;  // The node's image, primarily used in the navigation pane
 

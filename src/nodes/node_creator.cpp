@@ -396,6 +396,11 @@ void NodeCreator::ParseCompInfo(pugi::xml_node root)
         auto declaration = std::make_shared<NodeDeclaration>(class_name, GetNodeType(type));
         m_node_declarations[class_name] = declaration;
 
+        if (auto flags = comp_info.attribute("flags").as_cview(); flags.size())
+        {
+            declaration->SetCompFlags(flags);
+        }
+
         auto image_name = comp_info.attribute("image").as_cview();
         if (image_name.size())
         {
@@ -604,7 +609,8 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         // All widgets need to have an access property after their name property. The XML file typically won't supply
         // this, so we add it here.
-        if (elem_prop && ttlib::is_sameas(name, txt_var_name) && !elem_prop.attribute("name").as_cview().is_sameas(txt_class_access))
+        if (elem_prop && ttlib::is_sameas(name, txt_var_name) &&
+            !elem_prop.attribute("name").as_cview().is_sameas(txt_class_access))
         {
             if (auto type = elem_prop.parent().attribute("type").as_cview();
                 type.is_sameas("widget") || type.is_sameas("expanded_widget"))

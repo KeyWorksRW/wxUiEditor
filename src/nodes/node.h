@@ -187,7 +187,7 @@ public:
     void FixPastedNames();
 
     // Collects all unique var_name and validator_variable properties in the current form
-    void CollectUniqueNames(std::unordered_set<std::string>& name_set);
+    void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node);
 
     int_t FindInsertionPos(Node* child);
     int_t FindInsertionPos(NodeSharedPtr child) { return FindInsertionPos(child.get()); }

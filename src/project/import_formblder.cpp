@@ -77,6 +77,7 @@ const auto g_lstIgnoreProps = {
     "pane_border",
     "pane_position",
     "pane_size",
+    "parent",
     "pin_button",
     "resize",
     "show",

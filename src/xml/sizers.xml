@@ -108,10 +108,6 @@
       wxVERTICAL
     </property>
     <property name="id" type="id">wxID_ANY</property>
-    <property name="parent" type="bool"
-        help="Use encapsulated wxStaticBox as a parent of managed children">
-      1
-    </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
   </compinfo>
 

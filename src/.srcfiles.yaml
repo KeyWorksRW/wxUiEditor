@@ -250,7 +250,6 @@ XPM:
     art_src/spinbtn.png: xpm/spinbtn.xpm
     art_src/static_bitmap.png: xpm/static_bitmap.xpm
     art_src/static_line.png: xpm/static_line.xpm
-    art_src/staticbox_sizer.png: xpm/staticbox_sizer.xpm
     art_src/statusbar.png: xpm/statusbar.xpm
     art_src/stddialogbuttonsizer.png: xpm/stddialogbuttonsizer.xpm
     art_src/submenu.png: xpm/submenu.xpm
@@ -295,6 +294,9 @@ XPM:
     art_src/wxSimpleHtmlListBox.png: xpm/wxSimpleHtmlListBox.xpm
     art_src/wxSplitterWindow.png: xpm/wxSplitterWindow.xpm
     art_src/wxStaticText.png: xpm/wxStaticText.xpm
+    art_src/wxStaticBoxSizer.png: xpm/wxStaticBoxSizer.xpm
+    art_src/wxStaticCheckBoxSizer.png: xpm/wxStaticCheckBoxSizer.xpm
+    art_src/wxStaticRadioBtnSizer.png: xpm/wxStaticRadioBtnSizer.xpm
     art_src/wxTextCtrl.png: xpm/wxTextCtrl.xpm
 
 Docs:

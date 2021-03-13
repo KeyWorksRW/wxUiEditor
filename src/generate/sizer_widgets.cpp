@@ -20,6 +20,8 @@
 
 #include "sizer_widgets.h"
 
+//////////////////////////////////////////  BoxSizerGenerator  //////////////////////////////////////////
+
 wxObject* BoxSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
     auto sizer = new wxBoxSizer(node->prop_as_int(txt_orientation));
@@ -48,6 +50,8 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     return true;
 }
+
+//////////////////////////////////////////  GridSizerGenerator  //////////////////////////////////////////
 
 wxObject* GridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
@@ -97,6 +101,8 @@ bool GridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
+//////////////////////////////////////////  WrapSizerGenerator  //////////////////////////////////////////
+
 wxObject* WrapSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
     auto sizer = new wxWrapSizer(node->prop_as_int(txt_orientation), node->prop_as_int(txt_flags));
@@ -129,6 +135,8 @@ bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     InsertGeneratorInclude(node, "#include <wx/wrapsizer.h>", set_src, set_hdr);
     return true;
 }
+
+//////////////////////////////////////////  StaticBoxSizerGenerator  //////////////////////////////////////////
 
 wxObject* StaticBoxSizerGenerator::Create(Node* node, wxObject* parent)
 {
@@ -203,6 +211,8 @@ bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set
     InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
     return true;
 }
+
+//////////////////////////////////////////  FlexGridSizerGenerator  //////////////////////////////////////////
 
 wxObject* FlexGridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
@@ -328,6 +338,8 @@ bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     return true;
 }
+
+//////////////////////////////////////////  GridBagSizerGenerator  //////////////////////////////////////////
 
 wxObject* GridBagSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {

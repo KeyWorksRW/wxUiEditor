@@ -68,7 +68,6 @@
 #include "../xpm/static_bitmap.xpm"
 #include "../xpm/static_line.xpm"
 #include "../xpm/static_text.xpm"
-#include "../xpm/staticbox_sizer.xpm"
 #include "../xpm/statusbar.xpm"
 #include "../xpm/stddialogbuttonsizer.xpm"
 #include "../xpm/submenu.xpm"
@@ -88,6 +87,7 @@
 #include "../xpm/wxDialog.xpm"
 #include "../xpm/wxFileCtrl.xpm"
 #include "../xpm/wxFrame.xpm"
+#include "../xpm/wxStaticBoxSizer.xpm"
 #include "../xpm/wxTextCtrl.xpm"
 #include "../xpm/wxWizard.xpm"
 
@@ -142,7 +142,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     {
         sizer_bar_basic->AddTool(NewHorzSizer, wxImage(sizer_horizontal_xpm), wxString::FromUTF8("wxBoxSizer"), wxRIBBON_BUTTON_NORMAL);
         sizer_bar_basic->AddTool(NewVertSizer, wxImage(sizer_xpm), wxString::FromUTF8("VerticalBoxSizer"), wxRIBBON_BUTTON_NORMAL);
-        sizer_bar_basic->AddTool(NewStaticSizer, wxImage(staticbox_sizer_xpm), wxString::FromUTF8("wxStaticBoxSizer"), wxRIBBON_BUTTON_NORMAL);
+        sizer_bar_basic->AddTool(NewStaticSizer, wxImage(wxStaticBoxSizer_xpm), wxString::FromUTF8("wxStaticBoxSizer"), wxRIBBON_BUTTON_DROPDOWN);
         sizer_bar_basic->AddTool(NewWrapSizer, wxImage(wrap_sizer_xpm), wxString::FromUTF8("wxWrapSizer"), wxRIBBON_BUTTON_NORMAL);
     }
     sizer_bar_basic->Realize();
@@ -377,6 +377,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     forms_bar_wizard->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     forms_bar_bars->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     sizer_bar_grids->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     common_bar_controls->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);

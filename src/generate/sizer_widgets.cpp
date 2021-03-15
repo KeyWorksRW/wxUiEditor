@@ -8,7 +8,10 @@
 #include "pch.h"
 
 #include <wx/button.h>       // wxButtonBase class
+#include <wx/checkbox.h>     // wxCheckBox class interface
 #include <wx/gbsizer.h>      // wxGridBagSizer:  A sizer that can lay out items in a grid,
+#include <wx/radiobut.h>     // wxRadioButton declaration
+#include <wx/statbox.h>      // wxStaticBox base header
 #include <wx/statline.h>     // wxStaticLine class interface
 #include <wx/textwrapper.h>  // declaration of wxTextWrapper class
 #include <wx/wrapsizer.h>    // provide wrapping sizer for layout (wxWrapSizer)
@@ -19,6 +22,8 @@
 #include "node.h"        // Node class
 
 #include "sizer_widgets.h"
+
+//////////////////////////////////////////  BoxSizerGenerator  //////////////////////////////////////////
 
 wxObject* BoxSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
@@ -48,6 +53,8 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     return true;
 }
+
+//////////////////////////////////////////  GridSizerGenerator  //////////////////////////////////////////
 
 wxObject* GridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
@@ -97,6 +104,8 @@ bool GridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
+//////////////////////////////////////////  WrapSizerGenerator  //////////////////////////////////////////
+
 wxObject* WrapSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
     auto sizer = new wxWrapSizer(node->prop_as_int(txt_orientation), node->prop_as_int(txt_flags));
@@ -129,6 +138,8 @@ bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     InsertGeneratorInclude(node, "#include <wx/wrapsizer.h>", set_src, set_hdr);
     return true;
 }
+
+//////////////////////////////////////////  StaticBoxSizerGenerator  //////////////////////////////////////////
 
 wxObject* StaticBoxSizerGenerator::Create(Node* node, wxObject* parent)
 {
@@ -168,7 +179,8 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
         }
     }
 
-    code << node->get_node_name() << " = new wxStaticBoxSizer(" << node->prop_as_string(txt_orientation) << ", " << parent_name;
+    code << node->get_node_name() << " = new wxStaticBoxSizer(" << node->prop_as_string(txt_orientation) << ", "
+         << parent_name;
 
     auto& label = node->prop_as_string(txt_label);
     if (label.size())
@@ -188,13 +200,7 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
 
 std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
-    ttlib::cstr code;
-    auto node = event->GetNode();
-
-    code << node->get_node_name() << "->GetStaticBox()->Bind(wxEVT_UPDATE_UI, &" << class_name << "::" << event->get_value()
-         << ", this);";
-
-    return code;
+    return GenEventCode(event, class_name);
 }
 
 bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -203,6 +209,185 @@ bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set
     InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
     return true;
 }
+
+//////////////////////////////////////////  StaticCheckboxBoxSizerGenerator  //////////////////////////////////////////
+
+wxObject* StaticCheckboxBoxSizerGenerator::Create(Node* node, wxObject* parent)
+{
+    long style_value = 0;
+    if (node->prop_as_string(txt_style).contains("wxALIGN_RIGHT"))
+        style_value |= wxALIGN_RIGHT;
+
+    auto checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label),
+                                   wxDefaultPosition, wxDefaultSize, style_value);
+    if (node->prop_as_bool("checked"))
+        checkbox->SetValue(true);
+
+    auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, checkbox);
+
+    auto sizer = new wxStaticBoxSizer(staticbox, node->prop_as_int(txt_orientation));
+
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
+    if (min_size.x != -1 || min_size.y != -1)
+        sizer->SetMinSize(min_size);
+
+    return sizer;
+}
+
+std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    code << node->prop_as_string("checkbox_var_name") << " = new wxCheckBox(";
+    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+
+    if (node->prop_as_string(txt_label).size())
+    {
+        code << GenerateQuotedString(node->prop_as_string(txt_label));
+    }
+    else
+    {
+        code << "wxEmptyString";
+    }
+
+    GeneratePosSizeFlags(node, code);
+    code << '\n';
+
+    if (node->IsLocal())
+        code << "auto ";
+
+    std::string parent_name("this");
+    if (!node->GetParent()->IsForm())
+    {
+        auto parent = node->GetParent();
+        while (parent)
+        {
+            if (parent->IsContainer())
+            {
+                parent_name = parent->get_node_name();
+                break;
+            }
+            else if (parent->GetClassName() == "wxStaticBoxSizer")
+            {
+                parent_name = parent->get_node_name() + "->GetStaticBox()";
+                break;
+            }
+            parent = parent->GetParent();
+        }
+    }
+
+    code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY, ";
+    code << node->prop_as_string("checkbox_var_name") << "), " << node->prop_as_string(txt_orientation) << ");";
+
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
+    if (min_size.GetX() != -1 || min_size.GetY() != -1)
+    {
+        code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
+    InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
+
+    // The checkbox is always a class member, so we need to force it to be added to the header set
+    set_hdr.insert("#include <wx/checkbox.h>");
+    return true;
+}
+
+//////////////////////////////////////////  StaticRadioBtnBoxSizerGenerator  //////////////////////////////////////////
+
+wxObject* StaticRadioBtnBoxSizerGenerator::Create(Node* node, wxObject* parent)
+{
+    auto radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label));
+    if (node->prop_as_bool("checked"))
+        radiobtn->SetValue(true);
+
+    auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, radiobtn);
+
+    auto sizer = new wxStaticBoxSizer(staticbox, node->prop_as_int(txt_orientation));
+
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
+    if (min_size.x != -1 || min_size.y != -1)
+        sizer->SetMinSize(min_size);
+
+    return sizer;
+}
+
+std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    code << node->prop_as_string("radiobtn_var_name") << " = new wxRadioButton(";
+    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+
+    if (node->prop_as_string(txt_label).size())
+    {
+        code << GenerateQuotedString(node->prop_as_string(txt_label));
+    }
+    else
+    {
+        code << "wxEmptyString";
+    }
+    code << '\n';
+
+    if (node->IsLocal())
+        code << "auto ";
+
+    std::string parent_name("this");
+    if (!node->GetParent()->IsForm())
+    {
+        auto parent = node->GetParent();
+        while (parent)
+        {
+            if (parent->IsContainer())
+            {
+                parent_name = parent->get_node_name();
+                break;
+            }
+            else if (parent->GetClassName() == "wxStaticBoxSizer")
+            {
+                parent_name = parent->get_node_name() + "->GetStaticBox()";
+                break;
+            }
+            parent = parent->GetParent();
+        }
+    }
+
+    code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY, ";
+    code << node->prop_as_string("radiobtn_var_name") << "), " << node->prop_as_string(txt_orientation) << ");";
+
+    auto min_size = node->prop_as_wxSize(txt_minimum_size);
+    if (min_size.GetX() != -1 || min_size.GetY() != -1)
+    {
+        code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
+    InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
+
+    // The radiobtn is always a class member, so we need to force it to be added to the header set
+    set_hdr.insert("#include <wx/radiobut.h>");
+    return true;
+}
+
+//////////////////////////////////////////  FlexGridSizerGenerator  //////////////////////////////////////////
 
 wxObject* FlexGridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
@@ -328,6 +513,8 @@ bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     return true;
 }
+
+//////////////////////////////////////////  GridBagSizerGenerator  //////////////////////////////////////////
 
 wxObject* GridBagSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {

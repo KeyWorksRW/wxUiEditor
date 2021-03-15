@@ -46,10 +46,13 @@ enum
     MenuStdDialogButton,
     MenuCmdLinkButton,
 
-
     MenuSpin,
     MenuSpinDbl,
     MenuSpinBtn,
+
+    MenuStaticBox,
+    MenuStaticCheckboxBox,
+    MenuStaticRadioBtnBox,
 
     MenuDataCtrl,
     MenuDataTreeCtrl,
@@ -114,6 +117,12 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
             menu.Append(MenuRibbonTool, "Insert wxRibbonToolBar");
             menu.Append(MenuRibbonGallery, "Insert wxRibbonGallery");
             menu.Append(MenuRibbonSizer, "Insert wxBoxSizer");
+            break;
+
+        case NewStaticSizer:
+            menu.Append(MenuStaticBox, "Insert wxStaticBoxSizer");
+            menu.Append(MenuStaticCheckboxBox, "Insert CheckBox wxStaticBoxSizer");
+            menu.Append(MenuStaticRadioBtnBox, "Insert RadioButton wxStaticBoxSizer");
             break;
 
         default:
@@ -219,6 +228,18 @@ void RibbonPanel::OnMenuEvent(wxCommandEvent& event)
 
         case MenuSpinBtn:
             wxGetFrame().CreateToolNode("wxSpinButton");
+            break;
+
+        case MenuStaticBox:
+            wxGetFrame().CreateToolNode("wxStaticBoxSizer");
+            break;
+
+        case MenuStaticCheckboxBox:
+            wxGetFrame().CreateToolNode("StaticCheckboxBoxSizer");
+            break;
+
+        case MenuStaticRadioBtnBox:
+            wxGetFrame().CreateToolNode("StaticRadioBtnBoxSizer");
             break;
 
         default:

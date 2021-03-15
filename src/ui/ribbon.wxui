@@ -27,10 +27,10 @@
           </node>
           <node class="wxRibbonPage" label="Sizers" var_name="pg_sizer">
             <node class="wxRibbonPanel" label="Basic" var_name="panel_basic">
-              <node class="wxRibbonToolBar" var_name="sizer_bar_basic" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+              <node class="wxRibbonToolBar" var_name="sizer_bar_basic" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick" wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                 <node class="ribbonTool" bitmap="XPM; ../xpm\sizer_horizontal.xpm; ; [-1; -1]" help="wxBoxSizer" id="NewHorzSizer" />
                 <node class="ribbonTool" bitmap="XPM; ../xpm\sizer.xpm; ; [-1; -1]" help="VerticalBoxSizer" id="NewVertSizer" />
-                <node class="ribbonTool" bitmap="XPM; ../xpm\staticbox_sizer.xpm; ; [-1; -1]" help="wxStaticBoxSizer" id="NewStaticSizer" />
+                <node class="ribbonTool" bitmap="XPM; ../xpm\wxStaticBoxSizer.xpm; ; [-1; -1]" help="wxStaticBoxSizer" id="NewStaticSizer" kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node class="ribbonTool" bitmap="XPM; ../xpm\wrap_sizer.xpm; ; [-1; -1]" help="wxWrapSizer" id="NewWrapSizer" />
               </node>
             </node>

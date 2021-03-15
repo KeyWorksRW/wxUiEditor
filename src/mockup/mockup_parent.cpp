@@ -364,6 +364,8 @@ static const auto NonUiProps = {
     "validator_type",
     "validator_variable",
     "var_name",
+    "radiobtn_var_name",
+    "checkbox_var_name",
     "visited_color",
     "wildcard",
     "window_name",

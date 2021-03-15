@@ -128,7 +128,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     }
     else if (node->IsSizer() || node->GetClassName() == "wxStdDialogButtonSizer" || node->GetClassName() == "TextSizer")
     {
-        if (node->GetClassName() == "wxStaticBoxSizer")
+        if (node->IsStaticBoxSizer())
         {
             auto staticBoxSizer = wxStaticCast(created_object, wxStaticBoxSizer);
             created_window = staticBoxSizer->GetStaticBox();
@@ -195,12 +195,16 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             else
             {
                 auto sizer = wxStaticCast(parentNode, wxSizer);
-                if (created_window && child_obj->GetClassName() != "wxStaticBoxSizer")
+                if (created_window && !child_obj->IsStaticBoxSizer())
+                {
                     sizer->Add(created_window, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
                                sizer_flags.GetBorderInPixels());
+                }
                 else
+                {
                     sizer->Add(created_sizer, sizer_flags.GetProportion(), sizer_flags.GetFlags(),
                                sizer_flags.GetBorderInPixels());
+                }
             }
         }
     }

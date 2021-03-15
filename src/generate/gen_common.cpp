@@ -199,7 +199,7 @@ ttlib::cstr GetParentName(Node* node)
     {
         if (parent->IsSizer())
         {
-            if (parent->GetClassName() == "wxStaticBoxSizer")
+            if (parent->IsStaticBoxSizer())
             {
                 ttlib::cstr name = parent->get_node_name() + "->GetStaticBox()";
                 return name;
@@ -424,7 +424,26 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
         handler << event->get_name() << ", &" << class_name << "::" << event->get_value() << ", this";
     }
 
-    if (event->GetNode()->GetClassName() == "wxMenuItem" || event->GetNode()->GetClassName() == "tool")
+    auto node = event->GetNode();
+
+    if (node->IsStaticBoxSizer())
+    {
+        if (event->get_name() == "wxEVT_CHECKBOX")
+        {
+            code << node->prop_as_string("checkbox_var_name");
+        }
+        else if (event->get_name() == "wxEVT_RADIOBUTTON")
+        {
+            code << node->prop_as_string("radiobtn_var_name");
+        }
+        else
+        {
+            code << node->get_node_name() << "->GetStaticBox()";
+        }
+        code << "->Bind(" << handler << (is_lambda ? "\n    );" : ");");
+    }
+
+    else if (node->GetClassName() == "wxMenuItem" || node->GetClassName() == "tool")
     {
         code << "Bind(" << handler << comma;
         if (event->GetNode()->prop_as_string("id") != "wxID_ANY")

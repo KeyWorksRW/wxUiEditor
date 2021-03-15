@@ -119,7 +119,9 @@
 #include "xpm/spinbtn.xpm"
 #include "xpm/static_bitmap.xpm"
 #include "xpm/static_line.xpm"
-#include "xpm/staticbox_sizer.xpm"
+#include "xpm/wxStaticBoxSizer.xpm"
+#include "xpm/wxStaticCheckBoxSizer.xpm"
+#include "xpm/wxStaticRadioBtnSizer.xpm"
 #include "xpm/statusbar.xpm"
 #include "xpm/stddialogbuttonsizer.xpm"
 #include "xpm/submenu.xpm"
@@ -260,7 +262,9 @@ static const std::unordered_map<std::string, const char**> map_xpm_strings = {
     { "static_bitmap", static_bitmap_xpm },
     { "static_line", static_line_xpm },
     { "wxStaticText", wxStaticText_xpm },
-    { "staticbox_sizer", staticbox_sizer_xpm },
+    { "wxStaticBoxSizer", wxStaticBoxSizer_xpm },
+    { "wxStaticCheckBoxSizer", wxStaticCheckBoxSizer_xpm },
+    { "wxStaticRadioBtnSizer", wxStaticRadioBtnSizer_xpm },
     { "statusbar", statusbar_xpm },
     { "stddialogbuttonsizer", stddialogbuttonsizer_xpm },
     { "submenu", submenu_xpm },

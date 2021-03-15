@@ -2,15 +2,13 @@
 <GeneratorDefitions>
 
   <compinfo class="Project" type="project" image="project" >
-    <property name="source_ext" type="option"
-        hidden="1">
+    <property name="source_ext" type="option" hidden="1">
       <option name=".cpp"/>
       <option name=".cc"/>
       <option name=".cxx"/>
     .cpp
     </property>
-    <property name="header_ext" type="option"
-        hidden="1">
+    <property name="header_ext" type="option" hidden="1">
       <option name=".h"/>
       <option name=".hh"/>
       <option name=".hpp"/>

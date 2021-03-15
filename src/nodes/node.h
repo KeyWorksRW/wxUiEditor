@@ -100,7 +100,11 @@ public:
         return (GetNodeTypeName() == "form" || GetNodeTypeName() == "menubar_form" || GetNodeTypeName() == "toolbar_form" ||
                 GetNodeTypeName() == "wizard");
     }
-
+    bool IsStaticBoxSizer()
+    {
+        return (GetClassName() == "wxStaticBoxSizer" || GetClassName() == "StaticCheckboxBoxSizer" ||
+                GetClassName() == "StaticRadioBtnBoxSizer");
+    }
     bool IsSpacer() { return (GetClassName() == "spacer"); }
 
     bool IsSizer() { return (GetNodeTypeName() == "sizer" || GetNodeTypeName() == "gbsizer"); }

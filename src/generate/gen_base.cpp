@@ -343,6 +343,17 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
             }
         }
 
+        if (perm == Permission::Protected)
+            {
+                // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
+                if (node->prop_has_value("checkbox_var_name") || node->prop_has_value("radiobtn_var_name"))
+                {
+                    auto code = GetDeclaration(node);
+                    if (code.size())
+                        code_lines.insert(code);
+                }
+            }
+
         for (size_t i = 0; i < node->GetChildCount(); i++)
         {
             auto child = node->GetChild(i);
@@ -583,21 +594,21 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         if (class_name == "wxStdDialogButtonSizer")
         {
             if (node->prop_as_bool("OK"))
-                code << "\n\twxButton* " << node->get_node_name() << "OK;";
+                code << "\n    wxButton* " << node->get_node_name() << "OK;";
             if (node->prop_as_bool("Yes"))
-                code << "\n\twxButton* " << node->get_node_name() << "Yes;";
+                code << "\n    wxButton* " << node->get_node_name() << "Yes;";
             if (node->prop_as_bool("Save"))
-                code << "\n\twxButton* " << node->get_node_name() << "Save;";
+                code << "\n    wxButton* " << node->get_node_name() << "Save;";
             if (node->prop_as_bool("Apply"))
-                code << "\n\twxButton* " << node->get_node_name() << "Apply;";
+                code << "\n    wxButton* " << node->get_node_name() << "Apply;";
             if (node->prop_as_bool("No"))
-                code << "\n\twxButton* " << node->get_node_name() << "No;";
+                code << "\n    wxButton* " << node->get_node_name() << "No;";
             if (node->prop_as_bool("Cancel"))
-                code << "\n\twxButton* " << node->get_node_name() << "Cancel;";
+                code << "\n    wxButton* " << node->get_node_name() << "Cancel;";
             if (node->prop_as_bool("Help"))
-                code << "\n\twxButton* " << node->get_node_name() << "Help;";
+                code << "\n    wxButton* " << node->get_node_name() << "Help;";
             if (node->prop_as_bool("ContextHelp"))
-                code << "\n\twxButton* " << node->get_node_name() << "ContextHelp;";
+                code << "\n    wxButton* " << node->get_node_name() << "ContextHelp;";
         }
         else if (class_name == "wxStaticBitmap")
         {
@@ -606,6 +617,31 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
                 code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
         }
         return code;
+    }
+
+    else if (class_name == "StaticCheckboxBoxSizer")
+    {
+        if (node->prop_has_value("checkbox_var_name"))
+            code << "wxCheckBox* " << node->prop_as_string("checkbox_var_name") << ';';
+
+        if (!node->IsLocal())
+        {
+            if (code.size())
+                code << "\n    ";
+            code << "wxStaticBoxSizer* " << node->get_node_name() << ';';
+        }
+    }
+    else if (class_name == "StaticRadioBtnBoxSizer")
+    {
+        if (node->prop_has_value("radiobtn_var_name"))
+            code << "wxRadioButton* " << node->prop_as_string("radiobtn_var_name") << ';';
+
+        if (!node->IsLocal())
+        {
+            if (code.size())
+                code << "\n    ";
+            code << "wxStaticBoxSizer* " << node->get_node_name() << ';';
+        }
     }
 
     else if (class_name == "propGridItem")

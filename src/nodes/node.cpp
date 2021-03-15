@@ -672,8 +672,8 @@ void Node::CreateToolNode(const ttlib::cstr& name)
     {
         new_node->CreateChildNode("VerticalBoxSizer");
     }
-    else if (name == "wxBoxSizer" || name == "VerticalBoxSizer" || name == "wxStaticBoxSizer" || name == "wxWrapSizer" ||
-             name == "wxGridSizer" || name == "wxFlexGridSizer" || name == "wxGridBagSizer")
+    else if (name == "wxBoxSizer" || name == "VerticalBoxSizer" || name == "wxWrapSizer" ||
+             name == "wxGridSizer" || name == "wxFlexGridSizer" || name == "wxGridBagSizer" || name == "wxStaticBoxSizer" || name == "StaticCheckboxBoxSizer" || name == "StaticRadioBtnBoxSizer")
     {
         auto node = new_node->GetParent();
         ASSERT(node);
@@ -821,6 +821,18 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
     if (!IsForm() && cur_node != this)
     {
         if (auto name = get_value_ptr(txt_var_name); name && name->size())
+        {
+            name_set.emplace(*name);
+        }
+
+        // Check for StaticCheckboxBoxSizer checkbox variable
+        if (auto name = get_value_ptr("checkbox_var_name"); name && name->size())
+        {
+            name_set.emplace(*name);
+        }
+
+        // Check for StaticRadioBtnBoxSizer radiobtn variable
+        if (auto name = get_value_ptr("radiobtn_var_name"); name && name->size())
         {
             name_set.emplace(*name);
         }

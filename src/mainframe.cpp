@@ -1094,7 +1094,7 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
     if (sizer)
     {
         auto parentName = sizer->GetClassName();
-        if ("wxBoxSizer" == parentName || "wxStaticBoxSizer" == parentName)
+        if (parentName == "wxBoxSizer" || m_selected_node->IsStaticBoxSizer())
         {
             auto propOrient = sizer->get_prop_ptr(txt_orientation);
             if (propOrient)

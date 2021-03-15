@@ -199,7 +199,7 @@ ttlib::cstr GetParentName(Node* node)
     {
         if (parent->IsSizer())
         {
-            if (parent->GetClassName() == "wxStaticBoxSizer")
+            if (parent->IsStaticBoxSizer())
             {
                 ttlib::cstr name = parent->get_node_name() + "->GetStaticBox()";
                 return name;

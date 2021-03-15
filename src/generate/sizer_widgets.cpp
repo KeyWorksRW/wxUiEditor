@@ -200,13 +200,7 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
 
 std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
-    ttlib::cstr code;
-    auto node = event->GetNode();
-
-    code << node->get_node_name() << "->GetStaticBox()->Bind(wxEVT_UPDATE_UI, &" << class_name << "::" << event->get_value()
-         << ", this);";
-
-    return code;
+    return GenEventCode(event, class_name);
 }
 
 bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -295,13 +289,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
 
 std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
-    ttlib::cstr code;
-    auto node = event->GetNode();
-
-    code << node->get_node_name() << "->GetStaticBox()->Bind(wxEVT_UPDATE_UI, &" << class_name << "::" << event->get_value()
-         << ", this);";
-
-    return code;
+    return GenEventCode(event, class_name);
 }
 
 bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -386,13 +374,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
 
 std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
-    ttlib::cstr code;
-    auto node = event->GetNode();
-
-    code << node->get_node_name() << "->GetStaticBox()->Bind(wxEVT_UPDATE_UI, &" << class_name << "::" << event->get_value()
-         << ", this);";
-
-    return code;
+    return GenEventCode(event, class_name);
 }
 
 bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -102,11 +102,31 @@ void MockupContent::CreateAllGenerators()
 
 void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer)
 {
-    auto comp = node->GetNodeDeclaration()->GetGenerator();
+    auto comp = node->GetGenerator();
 
     auto created_object = comp->Create(node, parent);
     if (!created_object)
+    {
+        if (node->IsSpacer() && parentNode)
+        {
+            if (node->prop_as_int("proportion") != 0)
+            {
+                wxStaticCast(parentNode, wxSizer)->AddStretchSpacer(node->prop_as_int("proportion"));
+            }
+            else
+            {
+                auto width = node->prop_as_int("width");
+                auto height = node->prop_as_int("height");
+                if (node->prop_as_bool("add_default_border"))
+                {
+                    width += wxSizerFlags::GetDefaultBorder();
+                    height += wxSizerFlags::GetDefaultBorder();
+                }
+                wxStaticCast(parentNode, wxSizer)->Add(width, height);
+            }
+        }
         return;  // means the component doesn't create any UI element, and cannot have children
+    }
 
     wxWindow* created_window = nullptr;
     wxSizer* created_sizer = nullptr;

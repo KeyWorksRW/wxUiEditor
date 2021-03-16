@@ -151,7 +151,7 @@ void PropGridPanel::Create()
                 CreateEventCategory(info_base->GetClassName(), node, info_base, eventMap);
             }
 
-            if (node->GetParent() && node->GetParent()->IsSizer())
+            if (node->GetParent() && node->GetParent()->IsSizer() && !node->IsSpacer())
             {
                 CreateLayoutCategory(node, propMap);
             }

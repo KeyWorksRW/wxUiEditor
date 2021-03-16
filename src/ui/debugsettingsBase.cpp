@@ -8,6 +8,7 @@
 
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
+#include <wx/statbox.h>
 #include <wx/valgen.h>
 
 #include "debugsettingsBase.h"
@@ -20,7 +21,7 @@ DebugSettingsBase::DebugSettingsBase(wxWindow* parent, wxWindowID id, const wxSt
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    static_box = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("MSG Window Settings"));
+    auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("MSG Window Settings"));
     parent_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -31,7 +32,7 @@ DebugSettingsBase::DebugSettingsBase(wxWindow* parent, wxWindowID id, const wxSt
     m_checkBox->SetToolTip(wxString::FromUTF8("If checked, the MSG window will be displayed the first time it receives a non-filtered MSG. If unchecked, the window is never displayed unless you go here and click the Show Now button."));
     box_sizer->Add(m_checkBox, wxSizerFlags().Center().Border(wxALL));
 
-    box_sizer->Add(15, 0, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer->AddSpacer(15);
 
     m_btn = new wxButton(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Show Now"));
     box_sizer->Add(m_btn, wxSizerFlags().Border(wxALL));

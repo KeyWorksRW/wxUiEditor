@@ -12,7 +12,6 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
 
 class DebugSettingsBase : public wxDialog
 {
@@ -38,7 +37,6 @@ protected:
     wxCheckBox* m_checkBox3;
     wxCheckBox* m_checkBox4;
     wxCheckBox* m_checkBox;
-    wxStaticBoxSizer* static_box;
     wxStdDialogButtonSizer* std_button_sizer;
     wxButton* std_button_sizerOK;
     wxButton* std_button_sizerCancel;

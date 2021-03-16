@@ -29,7 +29,7 @@ EditStringDialogBase::EditStringDialogBase(wxWindow* parent, wxWindowID id, cons
     auto stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn_2), wxSizerFlags().Expand().Border(wxALL));
 
-    parent_sizer->Add(0, 0, wxSizerFlags().Border(wxALL));
+    parent_sizer->AddSpacer(0);
 
     SetSizerAndFit(parent_sizer);
 

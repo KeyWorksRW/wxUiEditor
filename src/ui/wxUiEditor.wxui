@@ -117,7 +117,7 @@
           <node class="wxRadioButton" label="&amp;PNG Header" var_name="m_radio_header" tooltip="Convert the original into a PNG file and save it as a header file that can be #included." borders="wxLEFT|wxRIGHT" wxEVT_RADIOBUTTON="OnHeaderOutput" />
           <node class="wxCheckBox" label="C++1&amp;7 encoding" var_name="m_check_constexpr" tooltip="If checked, this will prefix the array with &quot;inline constexpr&quot; instead of &quot;static&quot;." borders="wxRIGHT|wxLEFT" />
         </node>
-        <node class="wxStaticBoxSizer" class_access="none" label="Mask" flags="wxEXPAND">
+        <node class="wxStaticBoxSizer" label="Mask" flags="wxEXPAND">
           <node class="wxBoxSizer" var_name="box_sizer7" flags="wxEXPAND">
             <node class="wxCheckBox" label="&amp;Force Mask" var_name="m_UseMask" tooltip="Check this to override any mask specified in the original image file." borders="wxLEFT|wxRIGHT|wxTOP" wxEVT_CHECKBOX="OnForceMask" />
             <node class="wxCheckBox" label="Convert &amp;Alpha Channel to Mask" var_name="m_ConvertAlphaChannel" tooltip="Check this to replace any alpha channel with a mask." borders="wxLEFT|wxRIGHT|wxTOP" wxEVT_CHECKBOX="OnConvertAlpha" />
@@ -169,7 +169,7 @@
         <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer3" flags="wxEXPAND">
           <node class="wxCheckBox" checked="true" label="&amp;Empty project" var_name="m_checkBoxEmptyProject" wxEVT_CHECKBOX="OnEmptyProject" />
         </node>
-        <node class="wxStaticBoxSizer" label="Import Project(s)/File(s)" var_name="m_import_staticbox">
+        <node class="wxStaticBoxSizer" class_access="protected:" label="Import Project(s)/File(s)" var_name="m_import_staticbox">
           <node class="wxGridBagSizer" var_name="grid_bag_sizer_2" flags="wxEXPAND">
             <node class="wxRadioButton" label="Import wx&amp;FormBuilder Project(s)" var_name="m_radioBtnFormBuilder" wxEVT_RADIOBUTTON="OnFormBuilder" />
             <node class="wxRadioButton" label="Import wx&amp;Smith Project(s)" var_name="m_radioBtnSmith" column="1" wxEVT_RADIOBUTTON="OnWxSmith" />
@@ -249,6 +249,28 @@
         <node class="wxTextCtrl" get_function="GetResults" validator_variable="m_value" minimum_size="500,-1" border_size="20" flags="wxEXPAND" />
         <node class="wxStdDialogButtonSizer" var_name="stdBtn_2" flags="wxEXPAND" />
         <node class="spacer" />
+      </node>
+    </node>
+    <node class="wxDialog" base_file="eventhandlerdlg_base" class_name="EventHandlerDlgBase" derived_class_name="EventHandlerDlg" title="Event Handler" wxEVT_INIT_DIALOG="OnInit">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer" flags="wxEXPAND">
+        <node class="wxBoxSizer" orientation="wxVERTICAL" flags="wxEXPAND">
+          <node class="wxStaticText" label="..." var_name="m_static_bind_text" />
+          <node class="spacer" add_default_border="true" height="10" />
+          <node class="StaticRadioBtnBoxSizer" class_access="protected:" label="Use function" radiobtn_var_name="m_radio_use_function" var_name="m_function_box" flags="wxEXPAND" wxEVT_RADIOBUTTON="OnUseFunction">
+            <node class="wxTextCtrl" flags="wxEXPAND" wxEVT_TEXT="OnFunctionText" />
+          </node>
+          <node class="spacer" add_default_border="true" height="10" />
+          <node class="StaticRadioBtnBoxSizer" checked="false" class_access="protected:" label="Use lambda" radiobtn_var_name="m_radio_use_lambda" var_name="m_lambda_box" flags="wxEXPAND" wxEVT_RADIOBUTTON="OnUseLambda">
+            <node class="wxBoxSizer" var_name="box_sizer_2">
+              <node class="wxCheckBox" label="&amp;Capture this" var_name="m_check_capture_this" wxEVT_CHECKBOX="OnCapture" />
+              <node class="wxCheckBox" label="&amp;Include event parameter" var_name="m_check_include_event" wxEVT_CHECKBOX="OnIncludeEvent" />
+            </node>
+            <node class="wxStaticText" class_access="none" label="Lambda body:" var_name="staticText" />
+            <node class="wxStyledTextCtrl" line_numbers="false" use_tabs="false" var_name="m_stc" minimum_size="400,-1" border_size="10" />
+          </node>
+        </node>
+        <node class="spacer" add_default_border="true" height="10" />
+        <node class="wxStdDialogButtonSizer" flags="wxEXPAND" />
       </node>
     </node>
   </node>

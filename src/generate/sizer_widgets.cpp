@@ -335,7 +335,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     {
         code << "wxEmptyString";
     }
-    code << '\n';
+    code << ");\n";
 
     if (node->IsLocal())
         code << "auto ";

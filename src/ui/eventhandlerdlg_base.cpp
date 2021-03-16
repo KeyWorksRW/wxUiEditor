@@ -30,8 +30,8 @@ EventHandlerDlgBase::EventHandlerDlgBase(wxWindow* parent, wxWindowID id, const 
     m_function_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_use_function), wxVERTICAL);
     box_sizer->Add(m_function_box, wxSizerFlags().Expand().Border(wxALL));
 
-    m_textCtrl = new wxTextCtrl(m_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_function_box->Add(m_textCtrl, wxSizerFlags().Expand().Border(wxALL));
+    m_text_function = new wxTextCtrl(m_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_function_box->Add(m_text_function, wxSizerFlags().Expand().Border(wxALL));
 
     box_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
@@ -80,8 +80,9 @@ EventHandlerDlgBase::EventHandlerDlgBase(wxWindow* parent, wxWindowID id, const 
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &EventHandlerDlgBase::OnInit, this);
     m_radio_use_function->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseFunction, this);
-    m_textCtrl->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnFunctionText, this);
+    m_text_function->Bind(wxEVT_TEXT, &EventHandlerDlgBase::OnFunctionText, this);
     m_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseLambda, this);
     m_check_capture_this->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnCapture, this);
     m_check_include_event->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnIncludeEvent, this);
+    Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnOK, this, wxID_OK);
 }

@@ -257,7 +257,7 @@
           <node class="wxStaticText" label="..." var_name="m_static_bind_text" />
           <node class="spacer" add_default_border="true" height="10" />
           <node class="StaticRadioBtnBoxSizer" class_access="protected:" label="Use function" radiobtn_var_name="m_radio_use_function" var_name="m_function_box" flags="wxEXPAND" wxEVT_RADIOBUTTON="OnUseFunction">
-            <node class="wxTextCtrl" flags="wxEXPAND" wxEVT_TEXT="OnFunctionText" />
+            <node class="wxTextCtrl" var_name="m_text_function" flags="wxEXPAND" wxEVT_TEXT="OnFunctionText" />
           </node>
           <node class="spacer" add_default_border="true" height="10" />
           <node class="StaticRadioBtnBoxSizer" checked="false" class_access="protected:" label="Use lambda" radiobtn_var_name="m_radio_use_lambda" var_name="m_lambda_box" flags="wxEXPAND" wxEVT_RADIOBUTTON="OnUseLambda">
@@ -270,7 +270,7 @@
           </node>
         </node>
         <node class="spacer" add_default_border="true" height="10" />
-        <node class="wxStdDialogButtonSizer" flags="wxEXPAND" />
+        <node class="wxStdDialogButtonSizer" flags="wxEXPAND" OKButtonClicked="OnOK" />
       </node>
     </node>
   </node>

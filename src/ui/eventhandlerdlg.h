@@ -18,13 +18,16 @@ public:
     const wxString& GetResults() { return m_value; }
 
 protected:
+    void FormatBindText();
+
     // Handlers for EventHandlerDlgBase events
-    void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
-    void OnUseFunction(wxCommandEvent& WXUNUSED(event)) override;
-    void OnFunctionText(wxCommandEvent& WXUNUSED(event)) override;
-    void OnUseLambda(wxCommandEvent& WXUNUSED(event)) override;
     void OnCapture(wxCommandEvent& WXUNUSED(event)) override;
+    void OnFunctionText(wxCommandEvent& WXUNUSED(event)) override;
     void OnIncludeEvent(wxCommandEvent& WXUNUSED(event)) override;
+    void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
+    void OnOK(wxCommandEvent& event) override;
+    void OnUseFunction(wxCommandEvent& WXUNUSED(event)) override;
+    void OnUseLambda(wxCommandEvent& WXUNUSED(event)) override;
 
     wxString m_value;
 

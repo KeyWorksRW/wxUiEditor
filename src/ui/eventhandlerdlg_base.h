@@ -37,7 +37,7 @@ protected:
     wxStaticBoxSizer* m_lambda_box;
     wxStaticText* m_static_bind_text;
     wxStyledTextCtrl* m_stc;
-    wxTextCtrl* m_textCtrl;
+    wxTextCtrl* m_text_function;
 
     // Virtual event handlers -- override them in your derived class
 
@@ -45,6 +45,7 @@ protected:
     virtual void OnFunctionText(wxCommandEvent& event) { event.Skip(); }
     virtual void OnIncludeEvent(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseFunction(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseLambda(wxCommandEvent& event) { event.Skip(); }
 };

@@ -747,10 +747,49 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
 std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
+    code << node->GetParent()->get_node_name();
 
-    code << node->GetParent()->get_node_name() << "->Add(" << node->prop_as_string(txt_width) << ", "
-         << node->prop_as_string(txt_height) << ", ";
+    if (node->prop_as_int("proportion") != 0)
+    {
+        code << "->AddStretchSpacer(" << node->prop_as_string(txt_proportion) << ");";
+    }
+    else
+    {
+        if (node->prop_as_int("width") == node->prop_as_int("height"))
+        {
+            code << "->AddSpacer(" << node->prop_as_string(txt_width);
+        }
+        else if (node->GetParent()->HasValue("orientation"))
+        {
+            code << "->AddSpacer(";
+            if (node->GetParent()->prop_as_string("orientation") == "wxVERTICAL")
+            {
+                code << node->prop_as_string(txt_height);
+            }
+            else
+            {
+                code << node->prop_as_string(txt_width);
+            }
+        }
 
+        else
+        {
+            code << "->Add(" << node->prop_as_string(txt_width);
+            if (node->prop_as_bool("add_default_border"))
+                code << " + wxSizerFlags::GetDefaultBorder()";
+            code << ", " << node->prop_as_string(txt_height);
+        }
+
+        if (node->prop_as_bool("add_default_border"))
+            code << " + wxSizerFlags::GetDefaultBorder()";
+
+        code << ");";
+    }
+
+    // BUGBUG: [KeyWorks - 03-16-2021] Spacers get handled differently in a wxGridBagSizer. Since wxGridBagSizer needs a
+    // massiver overhaul (see #65), this entire section has been commented out until we can incorporate it into the
+    // wxGridBagSizer overhaul.
+#if 0
     if (node->GetParent()->GetClassName() == "wxGridBagSizer")
     {
         code << "wxGBPosition(" << node->prop_as_string(txt_row) << ", " << node->prop_as_string(txt_column) << "), ";
@@ -889,10 +928,7 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
         }
         code << ");";
     }
-    else
-    {
-        code << GenerateSizerFlags(node) << ");";
-    }
+#endif
 
     return code;
 }

@@ -358,13 +358,22 @@
   <compinfo class="spacer" image="spacer" type="widget">
       <inherits class="sizer_child"/>
     <property name="width" type="uint"
-        help="The width of the spacer">
+        help="The width of the spacer. Ignored if proportion is non-zero or the sizer is aligned vertically.">
       0
     </property>
     <property name="height" type="uint"
-        help="The height of the spacer">
+        help="The height of the spacer. Ignored if proportion is non-zero or the sizer is aligned horizontally.">
       0
     </property>
+    <property name="add_default_border" type="bool"
+        help="If checked, 5 is added to the spacer size on normal displays, and on Windows, 10 is added on a high DPI display. Ignored if strech is non-zero.">
+      0
+    </property>
+    <property name="proportion" type="uint"
+        help="If non-zero, the spacer is stretched in proportion to the other controls in the sizer.">
+      0
+    </property>
+
   </compinfo>
 
 </GeneratorDefitions>

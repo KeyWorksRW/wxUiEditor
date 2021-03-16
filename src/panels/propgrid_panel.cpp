@@ -35,6 +35,7 @@
 
 // Various customized wxPGProperty classes
 
+#include "../customprops/evt_string_prop.h"  // EventStringProperty -- dialog for editing event handlers
 #include "../customprops/pg_image.h"         // PropertyGrid_Image -- Custom property grid class for images
 #include "../customprops/pg_point.h"         // CustomPointProperty -- custom wxPGProperty for handling wxPoint
 #include "../customprops/pg_size.h"          // CustomSizeProperty -- custom wxPGProperty for handling wxSize
@@ -606,8 +607,9 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
         // We do not want to duplicate inherited events
         if (events.find(eventName) == events.end())
         {
-            auto grid_property =
-                new wxLongStringProperty(eventInfo->get_name(), wxPG_LABEL, CreateEscapedText(event->get_value()).wx_str());
+            // auto grid_property = new wxLongStringProperty(eventInfo->get_name(), wxPG_LABEL, CreateEscapedText(event->get_value()).wx_str());
+            auto grid_property = new EventStringProperty(event->get_name(), event);
+
             auto id = m_event_grid->Append(grid_property);
 
             m_event_grid->SetPropertyHelpString(id, wxGetTranslation(eventInfo->get_help()));

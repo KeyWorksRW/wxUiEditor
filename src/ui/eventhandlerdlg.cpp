@@ -9,7 +9,12 @@
 
 #include "eventhandlerdlg.h"  // auto-generated: eventhandlerdlg_base.h and eventhandlerdlg_base.cpp
 
-EventHandlerDlg::EventHandlerDlg(wxWindow* parent) : EventHandlerDlgBase(parent) {}
+#include "../nodes/node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
+
+EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
+{
+    m_value = event->get_value().wx_str();
+}
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {

@@ -9,10 +9,13 @@
 
 #include "eventhandlerdlg_base.h"
 
+class NodeEvent;
+
 class EventHandlerDlg : public EventHandlerDlgBase
 {
 public:
-    EventHandlerDlg(wxWindow* parent = nullptr);
+    EventHandlerDlg(wxWindow* parent, NodeEvent* event);
+    const wxString& GetResults() { return m_value; }
 
 protected:
     // Handlers for EventHandlerDlgBase events
@@ -22,4 +25,9 @@ protected:
     void OnUseLambda(wxCommandEvent& WXUNUSED(event)) override;
     void OnCapture(wxCommandEvent& WXUNUSED(event)) override;
     void OnIncludeEvent(wxCommandEvent& WXUNUSED(event)) override;
+
+    wxString m_value;
+
+private:
+    NodeEvent* m_event;
 };

@@ -43,6 +43,7 @@ Files:
     xpm.cpp               # All xpm files
 
     customprops/art_prop_dlg.cpp     # Art Property Dialog for image property
+    customprops/evt_string_prop.cpp  # Derived wxStringProperty class for event function
     customprops/img_props.cpp        # Handles property grid image properties
     customprops/img_string_prop.cpp  # Derived wxStringProperty class for handling wxImage files or art
     customprops/pg_image.cpp         # Custom property grid class for images

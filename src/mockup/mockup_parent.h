@@ -54,7 +54,7 @@ private:
 
     // This is the panel that emulates the form, and hosts the title bar and content panels.
     wxPanel* m_MockupWindow;
-    wxSize m_size_magnified { 400, 300 };
+    wxSize m_size_magnified;
 
     bool m_AreNodesCreated { false };
     bool m_IsMagnifyWindow { false };

@@ -116,6 +116,8 @@ void MockupParent::CreateContent()
 
     AutoFreeze freeze(this);
 
+    m_size_magnified = { 400, 300 };
+
     // Note that we show the form even if it's property has it set to hidden
     m_MockupWindow->Show();
 
@@ -236,7 +238,10 @@ void MockupParent::MagnifyWindow(bool show)
 
     auto cur_size = m_MockupWindow->GetSize();
     if (m_IsMagnifyWindow && cur_size.y >= m_size_magnified.y && cur_size.x >= m_size_magnified.x)
-        return;
+    {
+        m_size_magnified = cur_size;
+        m_size_magnified.IncBy(150);
+    }
 
     Freeze();
 

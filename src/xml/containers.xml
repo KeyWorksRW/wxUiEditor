@@ -191,6 +191,33 @@
         help="The page selection is about to be changed. This event can be vetoed."/>
   </compinfo>
 
+  <compinfo class="wxTreebook" image="wxTreebook" type="notebook">
+    <inherits class="wxWindow"/>
+    <inherits class="sizer_child"/>
+    <property name="var_name" type="string">m_treebook</property>
+    <property name="class_access" type="option">
+      <option name="none"/>
+      <option name="protected:"/>
+      <option name="public:"/>
+      protected:
+    </property>
+    <property name="style" type="bitlist">
+      <option name="wxNB_TOP" help="Place tabs on the top side."/>
+      <option name="wxNB_LEFT" help="Place tabs on the left side."/>
+      <option name="wxNB_RIGHT" help="Place tabs on the right side."/>
+      <option name="wxNB_BOTTOM" help="Place tabs under instead of above the treebook pages."/>
+      <option name="wxNB_FIXEDWIDTH" help="All tabs will have same width. (Windows only)"/>
+      <option name="wxNB_MULTILINE" help="There can be several rows of tabs. (Windows only)"/>
+      <option name="wxNB_NOPAGETHEME"
+        help="Display a solid colour on treebook pages, and not a gradient, which can reduce performance. (Windows only)"/>
+    </property>
+    <event name="wxEVT_TREEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+    <event name="wxEVT_TREEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
+        help="The page selection is about to be changed. This event can be vetoed."/>
+    <event name="wxEVT_TREEBOOK_NODE_COLLAPSED" class="wxBookCtrlEvent" help="Generated when the page node is going to be collapsed."/>
+    <event name="wxEVT_TREEBOOK_NODE_EXPANDED" class="wxBookCtrlEvent" help="Generated when the page node is going to be collapsed."/>
+  </compinfo>
+
   <compinfo class="wxSimplebook" image="wxSimplebook" type="simplebook">
     <inherits class="wxWindow"/>
     <property name="var_name" type="string">m_simplebook</property>
@@ -198,7 +225,6 @@
     <event name="wxEVT_BOOKCTRL_PAGE_CHANGING" class="wxBookCtrlEvent"
         help="The page selection is about to be changed. This event can be vetoed."/>
   </compinfo>
-
 
   <compinfo class="BookPage" image="book_page" type="bookpage">
     <inherits class="Common Events"/>

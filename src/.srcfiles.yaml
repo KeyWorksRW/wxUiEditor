@@ -186,7 +186,6 @@ XPM:
     art_src/debug_32.png: xpm/debug_32.xpm
     art_src/default.png: xpm/default.xpm
     art_src/delete.png: xpm/delete.xpm
-    art_src/wxDialog.png: xpm/wxDialog.xpm
     art_src/dirPicker.png: xpm/dirPicker.xpm
     art_src/doc_mdi_parent_frame.png: xpm/doc_mdi_parent_frame.xpm
     art_src/doc_parent_frame.png: xpm/doc_parent_frame.xpm
@@ -196,7 +195,6 @@ XPM:
     art_src/filePicker.png: xpm/filePicker.xpm
     art_src/flex_grid_sizer.png: xpm/flex_grid_sizer.xpm
     art_src/fontPicker.png: xpm/fontPicker.xpm
-    art_src/wxFrame.png: xpm/wxFrame.xpm
     art_src/gauge.png: xpm/gauge.xpm
     art_src/generate.png: xpm/generate.xpm
     art_src/genericdir_ctrl.png: xpm/genericdir_ctrl.xpm
@@ -213,7 +211,6 @@ XPM:
     art_src/logo64.png: xpm/logo64.xpm
     art_src/magnify.png: xpm/magnify.xpm
     art_src/menu.png: xpm/menu.xpm
-    art_src/wxMenuBar.png: xpm/wxMenuBar.xpm
     art_src/menuitem.png: xpm/menuitem.xpm
     art_src/moveColLeft.png: xpm/moveColLeft.xpm
     art_src/moveColRight.png: xpm/moveColRight.xpm
@@ -262,7 +259,6 @@ XPM:
     art_src/title_close.png: xpm/title_close.xpm
     art_src/toggle_button.png: xpm/toggle_button.xpm
     art_src/tool.png: xpm/tool.xpm
-    art_src/wxToolBar.png: xpm/wxToolBar.xpm
     art_src/toolseparator.png: xpm/toolseparator.xpm
     art_src/top.png: xpm/top.xpm
     art_src/tree_ctrl.png: xpm/tree_ctrl.xpm
@@ -270,12 +266,10 @@ XPM:
     art_src/treelistctrlcolumn.png: xpm/treelistctrlcolumn.xpm
     art_src/undo.png: xpm/undo.xpm
     art_src/unknown.png: xpm/unknown.xpm
-    art_src/wxWizard.png: xpm/wxWizard.xpm
-    art_src/wxWizardPageSimple.png: xpm/wxWizardPageSimple.xpm
     art_src/wrap_sizer.png: xpm/wrap_sizer.xpm
     art_src/wxActivityIndicator.png: xpm/wxActivityIndicator.xpm
-    art_src/wxButton.png: xpm/wxButton.xpm
     art_src/wxBannerWindow.png: xpm/wxBannerWindow.xpm
+    art_src/wxButton.png: xpm/wxButton.xpm
     art_src/wxCheckBox.png: xpm/wxCheckBox.xpm
     art_src/wxCheckListBox.png: xpm/wxCheckListBox.xpm
     art_src/wxChoice.png: xpm/wxChoice.xpm
@@ -283,24 +277,31 @@ XPM:
     art_src/wxCollapsiblePane.png: xpm/wxCollapsiblePane.xpm
     art_src/wxComboBox.png: xpm/wxComboBox.xpm
     art_src/wxCommandLinkButton.png: xpm/wxCommandLinkButton.xpm
+    art_src/wxDialog.png: xpm/wxDialog.xpm
     art_src/wxFileCtrl.png: xpm/wxFileCtrl.xpm
+    art_src/wxFrame.png: xpm/wxFrame.xpm
     art_src/wxListBox.png: xpm/wxListBox.xpm
     art_src/wxListView.png: xpm/wxListView.xpm
     art_src/wxListbook.png: xpm/wxListbook.xpm
+    art_src/wxMenuBar.png: xpm/wxMenuBar.xpm
     art_src/wxNotebook.png: xpm/wxNotebook.xpm
     art_src/wxPanel.png: xpm/wxPanel.xpm
     art_src/wxPropertyGrid.png: xpm/wxPropertyGrid.xpm
     art_src/wxPropertyGridManager.png: xpm/wxPropertyGridManager.xpm
     art_src/wxRadioButton.png: xpm/wxRadioButton.xpm
     art_src/wxScrolledWindow.png: xpm/wxScrolledWindow.xpm
-    art_src/wxSimplebook.png: xpm/wxSimplebook.xpm
     art_src/wxSimpleHtmlListBox.png: xpm/wxSimpleHtmlListBox.xpm
+    art_src/wxSimplebook.png: xpm/wxSimplebook.xpm
     art_src/wxSplitterWindow.png: xpm/wxSplitterWindow.xpm
-    art_src/wxStaticText.png: xpm/wxStaticText.xpm
     art_src/wxStaticBoxSizer.png: xpm/wxStaticBoxSizer.xpm
     art_src/wxStaticCheckBoxSizer.png: xpm/wxStaticCheckBoxSizer.xpm
     art_src/wxStaticRadioBtnSizer.png: xpm/wxStaticRadioBtnSizer.xpm
+    art_src/wxStaticText.png: xpm/wxStaticText.xpm
     art_src/wxTextCtrl.png: xpm/wxTextCtrl.xpm
+    art_src/wxToolBar.png: xpm/wxToolBar.xpm
+    art_src/wxTreebook.png: xpm/wxTreebook.xpm
+    art_src/wxWizard.png: xpm/wxWizard.xpm
+    art_src/wxWizardPageSimple.png: xpm/wxWizardPageSimple.xpm
 
 Docs:
     ../README.md

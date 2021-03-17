@@ -50,6 +50,7 @@
 #include <wx/tglbtn.h>                 // wxToggleButtonBase
 #include <wx/timectrl.h>               // Declaration of wxTimePickerCtrl class.
 #include <wx/toolbar.h>                // wxToolBar interface declaration
+#include <wx/treebook.h>               // wxTreebook: wxNotebook-like control presenting pages in a tree
 #include <wx/treelist.h>               // wxTreeListCtrl class declaration.
 #include <wx/wizard.h>                 // wxWizard class: a GUI control presenting the user with a
 #include <wx/wrapsizer.h>              // provide wrapping sizer for layout (wxWrapSizer)
@@ -119,6 +120,7 @@ void NodeCreator::InitGenerators()
     CREATE_GENERATOR("wxSimpleHtmlListBox", HtmlListBoxGenerator)
     CREATE_GENERATOR("wxListbook", ListbookGenerator)
     CREATE_GENERATOR("wxNotebook", NotebookGenerator)
+    CREATE_GENERATOR("wxTreebook", TreebookGenerator)
     CREATE_GENERATOR("wxPanel", PanelGenerator)
     CREATE_GENERATOR("wxRadioBox", RadioBoxGenerator)
     CREATE_GENERATOR("wxRadioButton", RadioButtonGenerator)

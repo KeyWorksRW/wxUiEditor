@@ -89,6 +89,7 @@
 #include "../xpm/wxFrame.xpm"
 #include "../xpm/wxStaticBoxSizer.xpm"
 #include "../xpm/wxTextCtrl.xpm"
+#include "../xpm/wxTreebook.xpm"
 #include "../xpm/wxWizard.xpm"
 
 RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
@@ -245,6 +246,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
         container_bar_books->AddTool(NewListBook, wxImage(listbook_xpm), wxString::FromUTF8("wxListbook"), wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(NewNotebook, wxImage(notebook_xpm), wxString::FromUTF8("wxNotebook"), wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(NewSimpleBook, wxImage(simple_book_xpm), wxString::FromUTF8("wxSimplebook"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(NewTreeBook, wxImage(wxTreebook_xpm), wxString::FromUTF8("wxTreebook"), wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_books->Realize();
 

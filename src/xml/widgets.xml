@@ -934,6 +934,40 @@
         help="Set ReadOnly Mode. Disables editing if set to true.">
       0
     </property>
+    <event name="wxEVT_STC_AUTOCOMP_CANCELLED" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_AUTOCOMP_CHAR_DELETED" class="wxStyledTextEvent" help="Generated when the user deleted a character while autocompletion list was active."/>
+    <event name="wxEVT_STC_AUTOCOMP_COMPLETED" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_AUTOCOMP_SELECTION" class="wxStyledTextEvent" help="Generated when the user has selected an item in an autocompletion list. The event is sent before the selection is inserted."/>
+    <event name="wxEVT_STC_AUTOCOMP_SELECTION_CHANGE" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_CALLTIP_CLICK" class="wxStyledTextEvent" help="Generated when the user clicks on a calltip. This event can be used to display the next function prototype when a function name is overloaded with different arguments."/>
+    <event name="wxEVT_STC_CHANGE" class="wxStyledTextEvent" help="Generated when the text (not the style) of the document changes. "/>
+    <event name="wxEVT_STC_CHARADDED" class="wxStyledTextEvent" help="Generated when the user types an ordinary text character (as opposed to a command character) that is entered into the text. You can use this to decide to display a call tip or an auto completion list."/>
+    <event name="wxEVT_STC_CLIPBOARD_COPY" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_CLIPBOARD_PASTE" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_DOUBLECLICK" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_DO_DROP" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_DRAG_OVER" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_DWELLEND" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_DWELLSTART" class="wxStyledTextEvent" help="Generated when the user keeps the mouse in one position for the dwell period."/>
+    <event name="wxEVT_STC_HOTSPOT_CLICK" class="wxStyledTextEvent" help="Generated when the user clicks on text that is in a style with the hotspot attribute set."/>
+    <event name="wxEVT_STC_HOTSPOT_DCLICK" class="wxStyledTextEvent" help="Generated when the user double clicks on text that is in a style with the hotspot attribute set."/>
+    <event name="wxEVT_STC_HOTSPOT_RELEASE_CLICK" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_INDICATOR_CLICK" class="wxStyledTextEvent" help="Generated when the user clicks the mouse on text that has an indicator."/>
+    <event name="wxEVT_STC_INDICATOR_RELEASE" class="wxStyledTextEvent" help="Generated when the user releases the mouse on text that has an indicator."/>
+    <event name="wxEVT_STC_MACRORECORD" class="wxStyledTextEvent" help="Generated each time a recordable change occurs,"/>
+    <event name="wxEVT_STC_MARGINCLICK" class="wxStyledTextEvent" help="Generated when the mouse was clicked inside a margin that was marked as sensitive."/>
+    <event name="wxEVT_STC_MARGIN_RIGHT_CLICK" class="wxStyledTextEvent" help="Generated when the mouse was right clicked inside a margin that was marked as sensitive."/>
+    <event name="wxEVT_STC_MODIFIED" class="wxStyledTextEvent" help="Generated when the text or styling of the document changes or is about to change."/>
+    <event name="wxEVT_STC_NEEDSHOWN" class="wxStyledTextEvent" help="Generated when a range of lines that is currently invisible should be made visible. "/>
+    <event name="wxEVT_STC_PAINTED" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_ROMODIFYATTEMPT" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_SAVEPOINTLEFT" class="wxStyledTextEvent" help="Generated when the save point is left."/>
+    <event name="wxEVT_STC_SAVEPOINTREACHED" class="wxStyledTextEvent" help="Generated when the save point is entered."/>
+    <event name="wxEVT_STC_START_DRAG" class="wxStyledTextEvent"/>
+    <event name="wxEVT_STC_STYLENEEDED" class="wxStyledTextEvent" help="Generated when about to display or print text that requires styling."/>
+    <event name="wxEVT_STC_UPDATEUI" class="wxStyledTextEvent" help="Generated when either the text or styling of the document has changed or the selection range or scroll position has changed."/>
+    <event name="wxEVT_STC_USERLISTSELECTION" class="wxStyledTextEvent" help="Generated when the user has selected an item in a user list. "/>
+    <event name="wxEVT_STC_ZOOM" class="wxStyledTextEvent" help="Generated when the user zooms the display using the keyboard."/>
   </compinfo>
 
   <compinfo class="wxCalendarCtrl" image="calendar" type="widget">

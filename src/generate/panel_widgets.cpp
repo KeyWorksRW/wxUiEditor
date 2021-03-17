@@ -12,15 +12,17 @@
 #include <wx/event.h>     // Event classes
 #include <wx/panel.h>     // Base header for wxPanel
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
+#include "../mainframe.h"  // MainFrame -- Main window frame
+#include "gen_common.h"    // GeneratorLibrary -- Generator classes
+#include "node.h"          // Node class
 
 #include "panel_widgets.h"
 
 wxObject* BookPageGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                              node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+    auto widget =
+        new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(txt_pos), node->prop_as_wxSize(txt_size),
+                    node->prop_as_int(txt_style) | node->prop_as_int(txt_window_style));
     auto book = wxDynamicCast(parent, wxBookCtrlBase);
     if (book)
     {
@@ -79,8 +81,9 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
 
 wxObject* PanelGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                              node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+    auto widget =
+        new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(txt_pos), node->prop_as_wxSize(txt_size),
+                    node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -111,14 +114,32 @@ std::optional<ttlib::cstr> PanelGenerator::GenConstruction(Node* node)
 wxObject* CollapsiblePaneGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txt_label),
-                                        node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
+                                        node->prop_as_wxPoint(txt_pos), node->prop_as_wxSize(txt_size),
                                         node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
-    widget->Collapse(node->prop_as_bool("collapsed"));
+    if (GetMockup()->IsShowingHidden())
+        widget->Collapse(false);
+    else
+        widget->Collapse(node->prop_as_bool("collapsed"));
 
-    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+    widget->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, &CollapsiblePaneGenerator::OnCollapse, this);
 
     return widget;
+}
+
+void CollapsiblePaneGenerator::OnCollapse(wxCollapsiblePaneEvent& event)
+{
+    if (auto wxobject = event.GetEventObject(); wxobject)
+    {
+        auto node = wxGetFrame().GetMockup()->GetNode(wxobject);
+
+        if (wxGetFrame().GetSelectedNode() != node)
+        {
+            wxGetFrame().GetMockup()->SelectNode(wxobject);
+        }
+    }
+
+    event.Skip();
 }
 
 std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenConstruction(Node* node)

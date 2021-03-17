@@ -531,6 +531,25 @@ Node* Node::CreateChildNode(ttlib::cview name)
 
     if (new_node)
     {
+#if defined(_WIN32)
+
+        // In a Windows build, the default background colour of white doesn't match the normal background color of the parent
+        // so we set it to the more normal Windows colour.
+
+        // REVIEW: [KeyWorks - 03-17-2021] Need to figure out a better way to do this which is cross platform. As it
+        // currently exists, if the Windows version of wxUiEditor is used, then ALL versions of the app the user creates will
+        // use this background color.
+
+        if (name.is_sameas("BookPage"))
+        {
+            if (auto prop = new_node->get_prop_ptr(txt_background_colour); prop)
+            {
+                prop->set_value("wxSYS_COLOUR_BTNFACE");
+                frame.FirePropChangeEvent(prop);
+            }
+        }
+#endif  // _WIN32
+
         ttlib::cstr undo_str = "insert " + name;
         frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
         new_node->FixDuplicateName();
@@ -629,22 +648,26 @@ void Node::CreateToolNode(const ttlib::cstr& name)
     {
         new_node = new_node->CreateChildNode("BookPage");
 
-#if defined(_WIN32)
-
-        // In a Windows build, the default background colour of white doesn't match the normal background color of the parent
-        // so we set it to the more normal Windows colour.
-
+        new_node = new_node->CreateChildNode("VerticalBoxSizer");
         if (new_node)
         {
-            if (auto prop = new_node->get_prop_ptr("background_colour"); prop)
+            if (auto prop = new_node->get_prop_ptr(txt_orientation); prop)
             {
-                prop->set_value("wxSYS_COLOUR_BTNFACE");
+                prop->set_value("wxVERTICAL");
                 frame.FirePropChangeEvent(prop);
             }
+            if (auto prop = new_node->get_prop_ptr(txt_var_name); prop)
+            {
+                new_node->ModifyProperty(prop, "parent_sizer");
+                if (new_node->FixDuplicateName())
+                {
+                    frame.FirePropChangeEvent(prop);
+                }
+            }
         }
-
-#endif  // _WIN32
-
+    }
+    else if (name == "BookPage")
+    {
         new_node = new_node->CreateChildNode("VerticalBoxSizer");
         if (new_node)
         {
@@ -672,8 +695,9 @@ void Node::CreateToolNode(const ttlib::cstr& name)
     {
         new_node->CreateChildNode("VerticalBoxSizer");
     }
-    else if (name == "wxBoxSizer" || name == "VerticalBoxSizer" || name == "wxWrapSizer" ||
-             name == "wxGridSizer" || name == "wxFlexGridSizer" || name == "wxGridBagSizer" || name == "wxStaticBoxSizer" || name == "StaticCheckboxBoxSizer" || name == "StaticRadioBtnBoxSizer")
+    else if (name == "wxBoxSizer" || name == "VerticalBoxSizer" || name == "wxWrapSizer" || name == "wxGridSizer" ||
+             name == "wxFlexGridSizer" || name == "wxGridBagSizer" || name == "wxStaticBoxSizer" ||
+             name == "StaticCheckboxBoxSizer" || name == "StaticRadioBtnBoxSizer")
     {
         auto node = new_node->GetParent();
         ASSERT(node);

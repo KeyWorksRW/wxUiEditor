@@ -99,7 +99,7 @@
     <node class="wxDialog" base_file="embedimg_base" class_name="EmbedImageBase" derived_class_name="EmbedImage" title="Convert Image" minimum_size="500,400" size="-1,-1">
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
         <node class="wxBoxSizer" borders="wxLEFT|wxRIGHT|wxTOP" flags="wxEXPAND">
-          <node class="wxCollapsiblePane" class_access="none" label="Dialog Description" var_name="collapsiblePane" borders="wxLEFT|wxRIGHT|wxTOP" flags="wxEXPAND" proportion="1">
+          <node class="wxCollapsiblePane" class_access="none" collapsed="true" label="Dialog Description" var_name="collapsiblePane" borders="wxLEFT|wxRIGHT|wxTOP" flags="wxEXPAND" proportion="1">
             <node class="wxBoxSizer" var_name="box_sizer2">
               <node class="wxStaticText" label="This dialog can be used to convert an image into a file that can be #included into a source file. The original image can be any file format that wxWidgets supports." var_name="m_staticDescription" wrap="360" />
             </node>

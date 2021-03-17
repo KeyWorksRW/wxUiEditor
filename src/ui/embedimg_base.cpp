@@ -27,6 +27,7 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     parent_sizer->Add(box_sizer, wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     auto collapsiblePane = new wxCollapsiblePane(this, wxID_ANY, wxString::FromUTF8("Dialog Description"));
+    collapsiblePane->Collapse();
     box_sizer->Add(collapsiblePane, wxSizerFlags(1).Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     auto box_sizer2 = new wxBoxSizer(wxHORIZONTAL);

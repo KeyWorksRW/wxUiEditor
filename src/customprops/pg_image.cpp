@@ -15,7 +15,7 @@
 
 #include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
 
-#include "../xpm/empty_png.h"
+#include "../xpm/empty.xpm"
 
 #include "pg_image.h"
 
@@ -92,7 +92,7 @@ void PropertyGrid_Image::RefreshChildren()
             }
 
             if (!bmp.IsOk())
-                bmp = LoadPngHdrImage(empty_png, sizeof(empty_png)).Scale(15, 15);
+                bmp = wxImage(empty_xpm).Scale(15, 15);
 
             Item(IndexImage)->SetValueImage(bmp);
             m_old_image = m_img_props.image;

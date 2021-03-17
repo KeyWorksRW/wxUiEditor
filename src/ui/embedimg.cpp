@@ -23,7 +23,7 @@
 #include "uifuncs.h"    // Miscellaneous functions for displaying UI
 #include "utils.h"      // Utility functions that work with properties
 
-#include "../xpm/empty_png.h"
+#include "../xpm/empty.xpm"
 
 void MainFrame::OnEmbedImageConverter(wxCommandEvent& WXUNUSED(event))
 {
@@ -81,6 +81,8 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
 
     m_btnConvert->Disable();
     m_ConvertAlphaChannel->Disable();
+
+    Fit();
 }
 
 void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
@@ -212,7 +214,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     {
         m_curImage.Destroy();
         m_orgImage.Destroy();
-        m_bmpOriginal->SetBitmap(LoadPngHdrImage(empty_png, sizeof(empty_png)));
+        m_bmpOriginal->SetBitmap(wxImage(empty_xpm));
 
         // If the input file is invalid, don't allow an output value
         m_fileHeader->SetPath(wxEmptyString);
@@ -227,10 +229,10 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
             m_btnConvert->Enable();
     }
 
-    // Various static text controls and the static bitmap for the current image may be shown or hidden bases on whether
+    // Various static text controls and the static bitmap for the current image may be shown or hidden based on whether
     // the image got loaded or not, so we simply resize the entire dialog.
 
-    GetSizer()->Fit(this);
+    Fit();
 }
 
 void EmbedImage::OnMask(wxCommandEvent& WXUNUSED(event))

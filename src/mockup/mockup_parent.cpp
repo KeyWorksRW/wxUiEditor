@@ -384,7 +384,11 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     {
         if (auto node = wxGetFrame().GetSelectedNode(); node)
         {
-            if (auto window = wxStaticCast(Get_wxObject(node), wxWindow); window)
+            if (node->IsStaticBoxSizer())
+            {
+                node->GetGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
+            }
+            else if (auto window = wxStaticCast(Get_wxObject(node), wxWindow); window)
             {
                 window->SetToolTip(prop->as_wxString());
             }

@@ -142,6 +142,8 @@
       wxVERTICAL
     </property>
     <property name="id" type="id">wxID_ANY</property>
+    <property name="tooltip" type="string_edit_escapes"
+        help="Attach a tooltip to the checkbox label."/>
     <property name="disabled" type="bool"
         help="Disable all of the sizer's children, but not the checkbox label.">
       0
@@ -173,6 +175,8 @@
       wxVERTICAL
     </property>
     <property name="id" type="id">wxID_ANY</property>
+    <property name="tooltip" type="string_edit_escapes"
+        help="Attach a tooltip to the radio button label."/>
     <property name="disabled" type="bool"
         help="Disable all of the sizer's children, but not the radio button label.">
       0

@@ -10,6 +10,7 @@
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
 class wxGBSizerItem;
+class wxRadioButton;
 
 // This class is needed to get it to display on the Sizers toolbar, but it's not an actual component
 class SpacerGenerator : public BaseGenerator
@@ -60,6 +61,11 @@ public:
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
+
+private:
+    wxCheckBox* m_checkbox;
 };
 
 class StaticRadioBtnBoxSizerGenerator : public BaseGenerator
@@ -70,6 +76,11 @@ public:
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
+
+private:
+    wxRadioButton* m_radiobtn;
 };
 
 class FlexGridSizerGenerator : public BaseGenerator

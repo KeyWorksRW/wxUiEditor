@@ -150,7 +150,7 @@ wxObject* StaticBoxSizerGenerator::Create(Node* node, wxObject* parent)
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
-    if (node->prop_as_bool("hidden"))
+    if (node->prop_as_bool(txt_hidden) && !GetMockup()->IsShowingHidden())
         sizer->GetStaticBox()->Hide();
 
     return sizer;
@@ -208,7 +208,7 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenSettings(Node* node, size
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
-    if (node->prop_as_bool("hidden"))
+    if (node->prop_as_bool(txt_hidden))
     {
         if (code.size())
             code << "\n    ";
@@ -251,7 +251,7 @@ wxObject* StaticCheckboxBoxSizerGenerator::Create(Node* node, wxObject* parent)
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
-    if (node->prop_as_bool("hidden"))
+    if (node->prop_as_bool(txt_hidden) && !GetMockup()->IsShowingHidden())
         sizer->GetStaticBox()->Hide();
 
     if (node->HasValue(txt_tooltip))
@@ -330,7 +330,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* no
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
-    if (node->prop_as_bool("hidden"))
+    if (node->prop_as_bool(txt_hidden))
     {
         if (code.size())
             code << "\n    ";
@@ -378,7 +378,7 @@ wxObject* StaticRadioBtnBoxSizerGenerator::Create(Node* node, wxObject* parent)
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
-    if (node->prop_as_bool("hidden"))
+    if (node->prop_as_bool(txt_hidden) && !GetMockup()->IsShowingHidden())
         sizer->GetStaticBox()->Hide();
 
     if (node->HasValue(txt_tooltip))
@@ -455,7 +455,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenSettings(Node* no
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
-    if (node->prop_as_bool("hidden"))
+    if (node->prop_as_bool(txt_hidden))
     {
         if (code.size())
             code << "\n    ";

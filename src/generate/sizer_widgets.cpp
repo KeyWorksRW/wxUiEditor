@@ -150,6 +150,9 @@ wxObject* StaticBoxSizerGenerator::Create(Node* node, wxObject* parent)
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
+    if (node->prop_as_bool("hidden"))
+        sizer->GetStaticBox()->Hide();
+
     return sizer;
 }
 
@@ -205,6 +208,12 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenSettings(Node* node, size
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
+    if (node->prop_as_bool("hidden"))
+    {
+        if (code.size())
+            code << "\n    ";
+        code << node->get_node_name() << "->GetStaticBox()->Hide();";
+    }
 
     return code;
 }
@@ -241,6 +250,9 @@ wxObject* StaticCheckboxBoxSizerGenerator::Create(Node* node, wxObject* parent)
     auto min_size = node->prop_as_wxSize(txt_minimum_size);
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
+
+    if (node->prop_as_bool("hidden"))
+        sizer->GetStaticBox()->Hide();
 
     return sizer;
 }
@@ -305,6 +317,12 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* no
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
+    if (node->prop_as_bool("hidden"))
+    {
+        if (code.size())
+            code << "\n    ";
+        code << node->get_node_name() << "->GetStaticBox()->Hide();";
+    }
 
     return code;
 }
@@ -339,6 +357,9 @@ wxObject* StaticRadioBtnBoxSizerGenerator::Create(Node* node, wxObject* parent)
     auto min_size = node->prop_as_wxSize(txt_minimum_size);
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
+
+    if (node->prop_as_bool("hidden"))
+        sizer->GetStaticBox()->Hide();
 
     return sizer;
 }
@@ -400,6 +421,12 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenSettings(Node* no
     if (node->prop_as_bool("disabled"))
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
+    }
+    if (node->prop_as_bool("hidden"))
+    {
+        if (code.size())
+            code << "\n    ";
+        code << node->get_node_name() << "->GetStaticBox()->Hide();";
     }
 
     return code;

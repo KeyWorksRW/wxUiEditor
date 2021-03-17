@@ -150,6 +150,9 @@ wxObject* StaticBoxSizerGenerator::Create(Node* node, wxObject* parent)
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
+    if (node->prop_as_bool("hidden"))
+        sizer->GetStaticBox()->Hide();
+
     return sizer;
 }
 
@@ -198,6 +201,23 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+    if (node->prop_as_bool("disabled"))
+    {
+        code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
+    }
+    if (node->prop_as_bool("hidden"))
+    {
+        if (code.size())
+            code << "\n    ";
+        code << node->get_node_name() << "->GetStaticBox()->Hide();";
+    }
+
+    return code;
+}
+
 std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
@@ -218,12 +238,12 @@ wxObject* StaticCheckboxBoxSizerGenerator::Create(Node* node, wxObject* parent)
     if (node->prop_as_string(txt_style).contains("wxALIGN_RIGHT"))
         style_value |= wxALIGN_RIGHT;
 
-    auto checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label),
-                                   wxDefaultPosition, wxDefaultSize, style_value);
+    m_checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label),
+                                wxDefaultPosition, wxDefaultSize, style_value);
     if (node->prop_as_bool("checked"))
-        checkbox->SetValue(true);
+        m_checkbox->SetValue(true);
 
-    auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, checkbox);
+    auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_checkbox);
 
     auto sizer = new wxStaticBoxSizer(staticbox, node->prop_as_int(txt_orientation));
 
@@ -231,7 +251,23 @@ wxObject* StaticCheckboxBoxSizerGenerator::Create(Node* node, wxObject* parent)
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
+    if (node->prop_as_bool("hidden"))
+        sizer->GetStaticBox()->Hide();
+
+    if (node->HasValue(txt_tooltip))
+        m_checkbox->SetToolTip(node->prop_as_wxString(txt_tooltip));
+
     return sizer;
+}
+
+bool StaticCheckboxBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, Node* node, NodeProperty* prop)
+{
+    if (prop->GetPropName() == txt_tooltip)
+    {
+        m_checkbox->SetToolTip(node->prop_as_wxString(txt_tooltip));
+    }
+
+    return false;
 }
 
 std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node* node)
@@ -287,6 +323,30 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
     return code;
 }
 
+std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+    if (node->prop_as_bool("disabled"))
+    {
+        code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
+    }
+    if (node->prop_as_bool("hidden"))
+    {
+        if (code.size())
+            code << "\n    ";
+        code << node->get_node_name() << "->GetStaticBox()->Hide();";
+    }
+    if (node->HasValue(txt_tooltip))
+    {
+        if (code.size())
+            code << "\n    ";
+        code << node->prop_as_string("checkbox_var_name") << "->SetToolTip("
+             << GenerateQuotedString(node->prop_as_string(txt_tooltip)) << ");";
+    }
+
+    return code;
+}
+
 std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
@@ -306,11 +366,11 @@ bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 
 wxObject* StaticRadioBtnBoxSizerGenerator::Create(Node* node, wxObject* parent)
 {
-    auto radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label));
+    m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label));
     if (node->prop_as_bool("checked"))
-        radiobtn->SetValue(true);
+        m_radiobtn->SetValue(true);
 
-    auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, radiobtn);
+    auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_radiobtn);
 
     auto sizer = new wxStaticBoxSizer(staticbox, node->prop_as_int(txt_orientation));
 
@@ -318,7 +378,23 @@ wxObject* StaticRadioBtnBoxSizerGenerator::Create(Node* node, wxObject* parent)
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
+    if (node->prop_as_bool("hidden"))
+        sizer->GetStaticBox()->Hide();
+
+    if (node->HasValue(txt_tooltip))
+        m_radiobtn->SetToolTip(node->prop_as_wxString(txt_tooltip));
+
     return sizer;
+}
+
+bool StaticRadioBtnBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, Node* node, NodeProperty* prop)
+{
+    if (prop->GetPropName() == txt_tooltip)
+    {
+        m_radiobtn->SetToolTip(node->prop_as_wxString(txt_tooltip));
+    }
+
+    return false;
 }
 
 std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node* node)
@@ -367,6 +443,30 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+    if (node->prop_as_bool("disabled"))
+    {
+        code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
+    }
+    if (node->prop_as_bool("hidden"))
+    {
+        if (code.size())
+            code << "\n    ";
+        code << node->get_node_name() << "->GetStaticBox()->Hide();";
+    }
+    if (node->HasValue(txt_tooltip))
+    {
+        if (code.size())
+            code << "\n    ";
+        code << node->prop_as_string("radiobtn_var_name") << "->SetToolTip("
+             << GenerateQuotedString(node->prop_as_string(txt_tooltip)) << ");";
     }
 
     return code;

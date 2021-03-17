@@ -148,7 +148,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_bool("disabled"))
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n    ";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "Enable(false);";
@@ -157,7 +157,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_bool("hidden"))
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n    ";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "Hide();";
@@ -167,7 +167,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (size.x != -1 || size.y != -1)
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n    ";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "SetMinSize(wxSize(" << size.x << ", " << size.y << "));";
@@ -177,7 +177,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (size.x != -1 || size.y != -1)
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n    ";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "SetMaxSize(wxSize(" << size.x << ", " << size.y << "));";
@@ -186,7 +186,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_string("tooltip").size())
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n    ";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "SetToolTip(" << GenerateQuotedString(node->prop_as_string("tooltip")) << ");";
@@ -195,7 +195,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_string("context_help").size())
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n    ";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "SetHelpText(" << GenerateQuotedString(node->prop_as_string("context_help")) << ");";

@@ -108,6 +108,14 @@
       wxVERTICAL
     </property>
     <property name="id" type="id">wxID_ANY</property>
+    <property name="disabled" type="bool"
+        help="Disable all of the sizer's children.">
+      0
+    </property>
+    <property name="hidden" type="bool"
+        help="Hides the sizer and it's children.">
+      0
+    </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
   </compinfo>
 
@@ -134,6 +142,16 @@
       wxVERTICAL
     </property>
     <property name="id" type="id">wxID_ANY</property>
+    <property name="tooltip" type="string_edit_escapes"
+        help="Attach a tooltip to the checkbox label."/>
+    <property name="disabled" type="bool"
+        help="Disable all of the sizer's children, but not the checkbox label.">
+      0
+    </property>
+    <property name="hidden" type="bool"
+        help="Hides the sizer and it's children.">
+      0
+    </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
     <event name="wxEVT_CHECKBOX" class="wxCommandEvent" help="Generated when the checkbox is clicked."/>
   </compinfo>
@@ -157,6 +175,16 @@
       wxVERTICAL
     </property>
     <property name="id" type="id">wxID_ANY</property>
+    <property name="tooltip" type="string_edit_escapes"
+        help="Attach a tooltip to the radio button label."/>
+    <property name="disabled" type="bool"
+        help="Disable all of the sizer's children, but not the radio button label.">
+      0
+    </property>
+    <property name="hidden" type="bool"
+        help="Hides the sizer and it's children.">
+      0
+    </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
     <event name="wxEVT_RADIOBUTTON" class="wxCommandEvent" help="Generated when the radio button is clicked."/>
   </compinfo>

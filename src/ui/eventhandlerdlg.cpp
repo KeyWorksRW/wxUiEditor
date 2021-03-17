@@ -508,6 +508,11 @@ const std::unordered_map<std::string, const char*> s_EventNames = {
     { "wxEVT_WIZARD_PAGE_CHANGING", "OnWizardPageChanging" },
     { "wxEVT_WIZARD_PAGE_SHOWN", "OnWizardPageShown" },
 
+    { "wxEVT_TREEBOOK_PAGE_CHANGED", "OnTreeBookPageChanged" },
+    { "wxEVT_TREEBOOK_PAGE_CHANGING", "OnTreeBookPageChanging" },
+    { "wxEVT_TREEBOOK_NODE_COLLAPSED", "OnTreeBookPageCollapsed" },
+    { "wxEVT_TREEBOOK_NODE_EXPANDED", "OnTreeBookPageExpanded" },
+
     { "wxEVT_STC_AUTOCOMP_CANCELLED", "OnAutoCompleteCancelled" },
     { "wxEVT_STC_AUTOCOMP_CHAR_DELETED", "OnAutoCompleteDeleted" },
     { "wxEVT_STC_AUTOCOMP_COMPLETED", "OnAutoCompleteCompleted" },

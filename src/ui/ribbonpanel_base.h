@@ -98,6 +98,7 @@ public:
         NewTool,
         NewToolBar,
         NewToolSeparator,
+        NewTreeBook,
         NewTreeColumn,
         NewTreeCtrl,
         NewTreeList,

@@ -30,6 +30,7 @@ public:
 
     // Given a component object, locate it's Node and select it in the Navigation pane
     void SelectNode(wxObject* wxobject);
+    void ClearIgnoreSelection() { m_isIgnoreSelection = false; }
 
     Node* GetNode(wxObject* wxobject);
     wxObject* Get_wxObject(Node* node);

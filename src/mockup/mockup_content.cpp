@@ -103,6 +103,9 @@ void MockupContent::CreateAllGenerators()
 void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer)
 {
     auto comp = node->GetGenerator();
+    ASSERT_MSG(comp, ttlib::cstr() << "Missing component for " << node->GetClassName());
+    if (!comp)
+        return;
 
     auto created_object = comp->Create(node, parent);
     if (!created_object)

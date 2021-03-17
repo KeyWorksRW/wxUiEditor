@@ -150,7 +150,7 @@ void MockupParent::CreateContent()
     auto minSize = m_form->prop_as_wxSize(txt_minimum_size);
     m_MockupWindow->SetMinSize(minSize);
 
-    auto maxSize = m_form->prop_as_wxSize("maximum_size");
+    auto maxSize = m_form->prop_as_wxSize(txt_maximum_size);
     m_MockupWindow->SetMaxSize(maxSize);
 
     if (m_form->GetClassName() == "wxWizard")
@@ -158,7 +158,7 @@ void MockupParent::CreateContent()
 
     m_panelContent->CreateAllGenerators();
 
-    auto org_size = m_form->prop_as_wxSize("org_size");
+    auto org_size = m_form->prop_as_wxSize(txt_size);
     if (m_IsMagnifyWindow && !(m_form->GetClassName() == "ToolBar" || m_form->GetClassName() == "MenuBar"))
     {
         org_size.IncTo(m_size_magnified);

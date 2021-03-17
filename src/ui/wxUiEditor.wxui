@@ -266,7 +266,7 @@
               <node class="wxCheckBox" label="&amp;Include event parameter" var_name="m_check_include_event" wxEVT_CHECKBOX="OnIncludeEvent" />
             </node>
             <node class="wxStaticText" class_access="none" label="Lambda body:" var_name="staticText" />
-            <node class="wxStyledTextCtrl" line_numbers="false" use_tabs="false" var_name="m_stc" minimum_size="400,-1" border_size="10" />
+            <node class="wxStyledTextCtrl" line_numbers="false" use_tabs="false" var_name="m_stc" minimum_size="400,-1" border_size="10" wxEVT_STC_CHANGE="OnChange" />
           </node>
         </node>
         <node class="spacer" add_default_border="true" height="10" />

@@ -84,5 +84,6 @@ EventHandlerDlgBase::EventHandlerDlgBase(wxWindow* parent, wxWindowID id, const 
     m_radio_use_lambda->Bind(wxEVT_RADIOBUTTON, &EventHandlerDlgBase::OnUseLambda, this);
     m_check_capture_this->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnCapture, this);
     m_check_include_event->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnIncludeEvent, this);
+    m_stc->Bind(wxEVT_STC_CHANGE, &EventHandlerDlgBase::OnChange, this);
     Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnOK, this, wxID_OK);
 }

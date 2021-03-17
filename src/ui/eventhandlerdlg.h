@@ -22,6 +22,7 @@ protected:
 
     // Handlers for EventHandlerDlgBase events
     void OnCapture(wxCommandEvent& WXUNUSED(event)) override;
+    void OnChange(wxStyledTextEvent& event) override;
     void OnFunctionText(wxCommandEvent& WXUNUSED(event)) override;
     void OnIncludeEvent(wxCommandEvent& WXUNUSED(event)) override;
     void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;

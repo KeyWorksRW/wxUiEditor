@@ -42,6 +42,7 @@ protected:
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnCapture(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChange(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnFunctionText(wxCommandEvent& event) { event.Skip(); }
     virtual void OnIncludeEvent(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }

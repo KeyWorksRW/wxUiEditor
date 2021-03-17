@@ -129,6 +129,11 @@ void EventHandlerDlg::OnIncludeEvent(wxCommandEvent& WXUNUSED(event))
     FormatBindText();
 }
 
+void EventHandlerDlg::OnChange(wxStyledTextEvent& WXUNUSED(event))
+{
+    FormatBindText();
+}
+
 void EventHandlerDlg::OnOK(wxCommandEvent& event)
 {
     if (m_radio_use_function->GetValue())

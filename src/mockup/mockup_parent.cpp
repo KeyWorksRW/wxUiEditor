@@ -119,7 +119,7 @@ void MockupParent::CreateContent()
     // Note that we show the form even if it's property has it set to hidden
     m_MockupWindow->Show();
 
-    if (auto background = m_form->get_prop_ptr("background_colour"); background && background->GetValue().size())
+    if (auto background = m_form->get_prop_ptr(txt_background_colour); background && background->GetValue().size())
     {
         m_panelContent->SetBackgroundColour(ConvertToColour(background->GetValue()));
     }
@@ -196,7 +196,7 @@ void MockupParent::CreateContent()
 
     // Enable and Hidden state may have changed, so update state accordingly
 
-    if (auto disabled = m_form->prop_as_bool("disabled"); disabled)
+    if (auto disabled = m_form->prop_as_bool(txt_disabled); disabled)
     {
         m_MockupWindow->Enable(false);
     }
@@ -257,10 +257,10 @@ void MockupParent::MagnifyWindow(bool show)
     }
 
     // Need to be at least as large as any dimensions the user set.
-    new_size.IncTo(m_form->prop_as_wxSize("size"));
+    new_size.IncTo(m_form->prop_as_wxSize(txt_size));
     new_size.IncTo(m_form->prop_as_wxSize(txt_minimum_size));
 
-    new_size.DecToIfSpecified(m_form->prop_as_wxSize("maximum_size"));
+    new_size.DecToIfSpecified(m_form->prop_as_wxSize(txt_maximum_size));
 
     m_MockupWindow->SetSize(new_size);
     m_MockupWindow->Refresh();
@@ -358,7 +358,7 @@ static const auto NonUiProps = {
     "set_function",
     "show_hidden",
     "thumbsize",
-    "tooltip",
+    txt_tooltip,
     "url",
     "validator_data_type",
     "validator_style",
@@ -380,7 +380,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     auto prop = event.GetNodeProperty();
     auto& prop_name = prop->GetPropName();
 
-    if (prop_name == "tooltip")
+    if (prop_name == txt_tooltip)
     {
         if (auto node = wxGetFrame().GetSelectedNode(); node)
         {
@@ -411,7 +411,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     if (auto node = wxGetFrame().GetSelectedNode(); node)
     {
-        if (prop_name == "disabled")
+        if (prop_name == txt_disabled)
         {
             if (node->IsStaticBoxSizer())
                 wxStaticCast(Get_wxObject(node), wxStaticBoxSizer)->GetStaticBox()->Enable(!prop->as_bool());
@@ -441,10 +441,10 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
             }
 
             // Need to be at least as large as any dimensions the user set.
-            new_size.IncTo(m_form->prop_as_wxSize("size"));
+            new_size.IncTo(m_form->prop_as_wxSize(txt_size));
             new_size.IncTo(m_form->prop_as_wxSize(txt_minimum_size));
 
-            new_size.DecToIfSpecified(m_form->prop_as_wxSize("maximum_size"));
+            new_size.DecToIfSpecified(m_form->prop_as_wxSize(txt_maximum_size));
 
             m_MockupWindow->SetSize(new_size);
             m_MockupWindow->Refresh();

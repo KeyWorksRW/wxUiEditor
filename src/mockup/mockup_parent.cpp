@@ -24,6 +24,7 @@
 #include <wx/scrolwin.h>  // wxScrolledWindow, wxScrolledControl and wxScrollHelper
 #include <wx/sizer.h>     // provide wxSizer class for layout
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
+#include <wx/statbox.h>   // wxStaticBox base header
 #include <wx/stattext.h>  // wxStaticText base header
 
 #include "mockup_parent.h"
@@ -408,7 +409,10 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     {
         if (prop_name == "disabled")
         {
-            wxStaticCast(Get_wxObject(node), wxControl)->Enable(!prop->as_bool());
+            if (node->IsStaticBoxSizer())
+                wxStaticCast(Get_wxObject(node), wxStaticBoxSizer)->GetStaticBox()->Enable(!prop->as_bool());
+            else
+                wxStaticCast(Get_wxObject(node), wxControl)->Enable(!prop->as_bool());
             return;
         }
 

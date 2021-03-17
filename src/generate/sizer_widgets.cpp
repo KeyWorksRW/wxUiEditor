@@ -198,6 +198,17 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+    if (node->prop_as_bool("disabled"))
+    {
+        code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
+    }
+
+    return code;
+}
+
 std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
@@ -287,6 +298,17 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
     return code;
 }
 
+std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+    if (node->prop_as_bool("disabled"))
+    {
+        code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
+    }
+
+    return code;
+}
+
 std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
@@ -367,6 +389,17 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
         code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+    if (node->prop_as_bool("disabled"))
+    {
+        code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
 
     return code;

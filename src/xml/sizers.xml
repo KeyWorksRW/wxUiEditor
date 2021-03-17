@@ -108,6 +108,10 @@
       wxVERTICAL
     </property>
     <property name="id" type="id">wxID_ANY</property>
+    <property name="disabled" type="bool"
+        help="Disable all of the sizer's children.">
+      0
+    </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
   </compinfo>
 
@@ -134,6 +138,10 @@
       wxVERTICAL
     </property>
     <property name="id" type="id">wxID_ANY</property>
+    <property name="disabled" type="bool"
+        help="Disable all of the sizer's children, but not the checkbox label.">
+      0
+    </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
     <event name="wxEVT_CHECKBOX" class="wxCommandEvent" help="Generated when the checkbox is clicked."/>
   </compinfo>
@@ -157,6 +165,10 @@
       wxVERTICAL
     </property>
     <property name="id" type="id">wxID_ANY</property>
+    <property name="disabled" type="bool"
+        help="Disable all of the sizer's children, but not the radio button label.">
+      0
+    </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
     <event name="wxEVT_RADIOBUTTON" class="wxCommandEvent" help="Generated when the radio button is clicked."/>
   </compinfo>

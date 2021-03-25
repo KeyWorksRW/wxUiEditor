@@ -625,8 +625,8 @@ void Node::CreateToolNode(const ttlib::cstr& name)
 
     if (name == "wxDialog" || name == "PanelForm" || name == "wxPanel")
     {
-        new_node = new_node->CreateChildNode("VerticalBoxSizer");
-        if (new_node)
+        auto child_node = new_node->CreateChildNode("VerticalBoxSizer");
+        if (child_node)
         {
             if (auto prop = new_node->get_prop_ptr(txt_orientation); prop)
             {
@@ -635,12 +635,14 @@ void Node::CreateToolNode(const ttlib::cstr& name)
             }
             if (auto prop = new_node->get_prop_ptr(txt_var_name); prop)
             {
-                new_node->ModifyProperty(prop, "parent_sizer");
-                if (new_node->FixDuplicateName())
+                child_node->ModifyProperty(prop, "parent_sizer");
+                if (child_node->FixDuplicateName())
                 {
                     frame.FirePropChangeEvent(prop);
                 }
             }
+
+            frame.SelectNode(new_node);
         }
     }
     else if (name == "wxNotebook" || name == "wxSimplebook" || name == "wxChoicebook" || name == "wxListbook" ||

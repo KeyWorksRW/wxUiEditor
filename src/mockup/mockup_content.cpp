@@ -11,12 +11,13 @@
 
 #include "pch.h"
 
-#include <wx/bookctrl.h>  // wxBookCtrlBase: common base class for wxList/Tree/Notebook
-#include <wx/collpane.h>  // wxCollapsiblePane
-#include <wx/gbsizer.h>   // wxGridBagSizer:  A sizer that can lay out items in a grid,
-#include <wx/sizer.h>     // provide wxSizer class for layout
-#include <wx/statbox.h>   // wxStaticBox base header
-#include <wx/statline.h>  // wxStaticLine class interface
+#include <wx/bookctrl.h>    // wxBookCtrlBase: common base class for wxList/Tree/Notebook
+#include <wx/collpane.h>    // wxCollapsiblePane
+#include <wx/gbsizer.h>     // wxGridBagSizer:  A sizer that can lay out items in a grid,
+#include <wx/ribbon/bar.h>  // Top-level component of the ribbon-bar-style interface
+#include <wx/sizer.h>       // provide wxSizer class for layout
+#include <wx/statbox.h>     // wxStaticBox base header
+#include <wx/statline.h>    // wxStaticLine class interface
 
 #include "mockup_content.h"
 
@@ -344,6 +345,51 @@ void MockupContent::OnNodeSelected(Node* node)
         auto book = wxDynamicCast(Get_wxObject(parent), wxBookCtrl);
         book->SetSelection(parent->GetChildPosition(node));
         m_mockupParent->ClearIgnoreSelection();
+
+        return;
+    }
+
+    else if (node->GetClassName() == "wxRibbonPage")
+    {
+        auto parent = node->GetParent();
+        ASSERT(parent->GetClassName() == "wxRibbonBar");
+
+        auto bar = wxStaticCast(Get_wxObject(parent), wxRibbonBar);
+        auto page = wxStaticCast(Get_wxObject(node), wxRibbonPage);
+        bar->SetActivePage(page);
+
+        return;
+    }
+    else if (node->GetClassName() == "wxRibbonPanel")
+    {
+        auto parent = node->GetParent();
+        ASSERT(parent->GetClassName() == "wxRibbonPage");
+
+        auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+        auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+        bar->SetActivePage(page);
+
+        return;
+    }
+    else if (node->GetClassName() == "wxRibbonButtonBar" || node->GetClassName() == "wxRibbonToolBar")
+    {
+        auto parent = node->GetParent()->GetParent();
+        ASSERT(parent->GetClassName() == "wxRibbonPage");
+
+        auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+        auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+        bar->SetActivePage(page);
+
+        return;
+    }
+    else if (node->GetClassName() == "ribbonButton" || node->GetClassName() == "ribbonTool")
+    {
+        auto parent = node->GetParent()->GetParent()->GetParent();
+        ASSERT(parent->GetClassName() == "wxRibbonPage");
+
+        auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+        auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+        bar->SetActivePage(page);
 
         return;
     }

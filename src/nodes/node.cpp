@@ -716,6 +716,14 @@ void Node::CreateToolNode(const ttlib::cstr& name)
                 prop->set_value("wxEXPAND");
         }
     }
+    else if (name == "wxStdDialogButtonSizer")
+    {
+        if (auto prop = new_node->get_prop_ptr(txt_flags); prop)
+        {
+            prop->set_value("wxEXPAND");
+            frame.FirePropChangeEvent(prop);
+        }
+    }
 }
 
 void Node::ModifyProperty(ttlib::cview name, int value)

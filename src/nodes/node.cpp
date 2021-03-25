@@ -598,8 +598,11 @@ Node* Node::CreateChildNode(ttlib::cview name)
         }
     }
 
-    frame.FireCreatedEvent(new_node.get());
-    frame.SelectNode(new_node.get(), true, true);
+    if (new_node)
+    {
+        frame.FireCreatedEvent(new_node.get());
+        frame.SelectNode(new_node.get(), true, true);
+    }
     return new_node.get();
 }
 
@@ -615,11 +618,11 @@ Node* Node::CreateNode(ttlib::cview name)
     return cur_selection->CreateChildNode(name);
 }
 
-void Node::CreateToolNode(const ttlib::cstr& name)
+bool Node::CreateToolNode(const ttlib::cstr& name)
 {
     auto new_node = CreateChildNode(name);
     if (!new_node)
-        return;
+        return false;
 
     auto& frame = wxGetFrame();
 
@@ -724,6 +727,8 @@ void Node::CreateToolNode(const ttlib::cstr& name)
             frame.FirePropChangeEvent(prop);
         }
     }
+
+    return true;
 }
 
 void Node::ModifyProperty(ttlib::cview name, int value)

@@ -168,7 +168,7 @@ public:
     Node* CreateChildNode(ttlib::cview name);
 
     Node* CreateNode(ttlib::cview name);
-    void CreateToolNode(const ttlib::cstr& name);
+    bool CreateToolNode(const ttlib::cstr& name);
 
     // This will modify the property and fire a EVT_NodePropChange event
     void ModifyProperty(ttlib::cview name, std::string_view value);

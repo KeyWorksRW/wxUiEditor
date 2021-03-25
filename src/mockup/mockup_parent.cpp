@@ -116,10 +116,12 @@ void MockupParent::CreateContent()
 
     AutoFreeze freeze(this);
 
+    m_size_magnified = { 400, 300 };
+
     // Note that we show the form even if it's property has it set to hidden
     m_MockupWindow->Show();
 
-    if (auto background = m_form->get_prop_ptr("background_colour"); background && background->GetValue().size())
+    if (auto background = m_form->get_prop_ptr(txt_background_colour); background && background->GetValue().size())
     {
         m_panelContent->SetBackgroundColour(ConvertToColour(background->GetValue()));
     }
@@ -150,7 +152,7 @@ void MockupParent::CreateContent()
     auto minSize = m_form->prop_as_wxSize(txt_minimum_size);
     m_MockupWindow->SetMinSize(minSize);
 
-    auto maxSize = m_form->prop_as_wxSize("maximum_size");
+    auto maxSize = m_form->prop_as_wxSize(txt_maximum_size);
     m_MockupWindow->SetMaxSize(maxSize);
 
     if (m_form->GetClassName() == "wxWizard")
@@ -158,7 +160,7 @@ void MockupParent::CreateContent()
 
     m_panelContent->CreateAllGenerators();
 
-    auto org_size = m_form->prop_as_wxSize("org_size");
+    auto org_size = m_form->prop_as_wxSize(txt_size);
     if (m_IsMagnifyWindow && !(m_form->GetClassName() == "ToolBar" || m_form->GetClassName() == "MenuBar"))
     {
         org_size.IncTo(m_size_magnified);
@@ -196,7 +198,7 @@ void MockupParent::CreateContent()
 
     // Enable and Hidden state may have changed, so update state accordingly
 
-    if (auto disabled = m_form->prop_as_bool("disabled"); disabled)
+    if (auto disabled = m_form->prop_as_bool(txt_disabled); disabled)
     {
         m_MockupWindow->Enable(false);
     }
@@ -236,7 +238,10 @@ void MockupParent::MagnifyWindow(bool show)
 
     auto cur_size = m_MockupWindow->GetSize();
     if (m_IsMagnifyWindow && cur_size.y >= m_size_magnified.y && cur_size.x >= m_size_magnified.x)
-        return;
+    {
+        m_size_magnified = cur_size;
+        m_size_magnified.IncBy(150);
+    }
 
     Freeze();
 
@@ -257,10 +262,10 @@ void MockupParent::MagnifyWindow(bool show)
     }
 
     // Need to be at least as large as any dimensions the user set.
-    new_size.IncTo(m_form->prop_as_wxSize("size"));
+    new_size.IncTo(m_form->prop_as_wxSize(txt_size));
     new_size.IncTo(m_form->prop_as_wxSize(txt_minimum_size));
 
-    new_size.DecToIfSpecified(m_form->prop_as_wxSize("maximum_size"));
+    new_size.DecToIfSpecified(m_form->prop_as_wxSize(txt_maximum_size));
 
     m_MockupWindow->SetSize(new_size);
     m_MockupWindow->Refresh();
@@ -358,7 +363,7 @@ static const auto NonUiProps = {
     "set_function",
     "show_hidden",
     "thumbsize",
-    "tooltip",
+    txt_tooltip,
     "url",
     "validator_data_type",
     "validator_style",
@@ -380,7 +385,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     auto prop = event.GetNodeProperty();
     auto& prop_name = prop->GetPropName();
 
-    if (prop_name == "tooltip")
+    if (prop_name == txt_tooltip)
     {
         if (auto node = wxGetFrame().GetSelectedNode(); node)
         {
@@ -411,7 +416,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     if (auto node = wxGetFrame().GetSelectedNode(); node)
     {
-        if (prop_name == "disabled")
+        if (prop_name == txt_disabled)
         {
             if (node->IsStaticBoxSizer())
                 wxStaticCast(Get_wxObject(node), wxStaticBoxSizer)->GetStaticBox()->Enable(!prop->as_bool());
@@ -441,10 +446,10 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
             }
 
             // Need to be at least as large as any dimensions the user set.
-            new_size.IncTo(m_form->prop_as_wxSize("size"));
+            new_size.IncTo(m_form->prop_as_wxSize(txt_size));
             new_size.IncTo(m_form->prop_as_wxSize(txt_minimum_size));
 
-            new_size.DecToIfSpecified(m_form->prop_as_wxSize("maximum_size"));
+            new_size.DecToIfSpecified(m_form->prop_as_wxSize(txt_maximum_size));
 
             m_MockupWindow->SetSize(new_size);
             m_MockupWindow->Refresh();

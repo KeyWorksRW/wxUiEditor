@@ -1294,12 +1294,12 @@ void PropGridPanel::OnPropertyModified(CustomEvent& event)
                     wxColourPropertyValue def;
                     def.m_type = ConvertToSystemColour(value);
                     def.m_colour = prop->as_color();
-                    m_prop_grid->SetPropertyValue(grid_property, WXVARIANT(def));
+                    m_prop_grid->SetPropertyValue(grid_property, def);
                 }
                 else
                 {
                     wxColourPropertyValue def(wxPG_COLOUR_CUSTOM, prop->as_color());
-                    m_prop_grid->SetPropertyValue(grid_property, WXVARIANT(def));
+                    m_prop_grid->SetPropertyValue(grid_property, def);
                 }
             }
         }

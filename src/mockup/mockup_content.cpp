@@ -11,11 +11,13 @@
 
 #include "pch.h"
 
-#include <wx/collpane.h>  // wxCollapsiblePane
-#include <wx/gbsizer.h>   // wxGridBagSizer:  A sizer that can lay out items in a grid,
-#include <wx/sizer.h>     // provide wxSizer class for layout
-#include <wx/statbox.h>   // wxStaticBox base header
-#include <wx/statline.h>  // wxStaticLine class interface
+#include <wx/bookctrl.h>    // wxBookCtrlBase: common base class for wxList/Tree/Notebook
+#include <wx/collpane.h>    // wxCollapsiblePane
+#include <wx/gbsizer.h>     // wxGridBagSizer:  A sizer that can lay out items in a grid,
+#include <wx/ribbon/bar.h>  // Top-level component of the ribbon-bar-style interface
+#include <wx/sizer.h>       // provide wxSizer class for layout
+#include <wx/statbox.h>     // wxStaticBox base header
+#include <wx/statline.h>    // wxStaticLine class interface
 
 #include "mockup_content.h"
 
@@ -289,12 +291,12 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->SetExtraStyle(extra_style->as_int());
     }
 
-    if (auto disabled = node->get_prop_ptr("disabled"); disabled && disabled->as_bool())
+    if (auto disabled = node->get_prop_ptr(txt_disabled); disabled && disabled->as_bool())
     {
         window->Disable();
     }
 
-    if (auto hidden = node->get_prop_ptr("hidden"); hidden && hidden->as_bool() && !m_mockupParent->IsShowingHidden())
+    if (auto hidden = node->get_prop_ptr(txt_hidden); hidden && hidden->as_bool() && !m_mockupParent->IsShowingHidden())
     {
         window->Show(false);
     }
@@ -334,6 +336,61 @@ void MockupContent::OnNodeSelected(Node* node)
         auto parent = node->GetParent();
         ASSERT(parent->GetClassName() == "wxWizard");
         m_wizard->SetSelection(parent->GetChildPosition(node));
+        return;
+    }
+
+    else if (node->GetClassName() == "BookPage")
+    {
+        auto parent = node->GetParent();
+        auto book = wxDynamicCast(Get_wxObject(parent), wxBookCtrl);
+        book->SetSelection(parent->GetChildPosition(node));
+        m_mockupParent->ClearIgnoreSelection();
+
+        return;
+    }
+
+    else if (node->GetClassName() == "wxRibbonPage")
+    {
+        auto parent = node->GetParent();
+        ASSERT(parent->GetClassName() == "wxRibbonBar");
+
+        auto bar = wxStaticCast(Get_wxObject(parent), wxRibbonBar);
+        auto page = wxStaticCast(Get_wxObject(node), wxRibbonPage);
+        bar->SetActivePage(page);
+
+        return;
+    }
+    else if (node->GetClassName() == "wxRibbonPanel")
+    {
+        auto parent = node->GetParent();
+        ASSERT(parent->GetClassName() == "wxRibbonPage");
+
+        auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+        auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+        bar->SetActivePage(page);
+
+        return;
+    }
+    else if (node->GetClassName() == "wxRibbonButtonBar" || node->GetClassName() == "wxRibbonToolBar")
+    {
+        auto parent = node->GetParent()->GetParent();
+        ASSERT(parent->GetClassName() == "wxRibbonPage");
+
+        auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+        auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+        bar->SetActivePage(page);
+
+        return;
+    }
+    else if (node->GetClassName() == "ribbonButton" || node->GetClassName() == "ribbonTool")
+    {
+        auto parent = node->GetParent()->GetParent()->GetParent();
+        ASSERT(parent->GetClassName() == "wxRibbonPage");
+
+        auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+        auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+        bar->SetActivePage(page);
+
         return;
     }
 

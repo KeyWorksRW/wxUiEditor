@@ -862,7 +862,10 @@ void MainFrame::CreateToolNode(const ttlib::cstr& name)
         return;
     }
 
-    m_selected_node->CreateToolNode(name);
+    if (!m_selected_node->CreateToolNode(name))
+    {
+        appMsgBox(ttlib::cstr() << "Unable to create " << name << " as a child of " << m_selected_node->GetClassName());
+    }
 }
 
 void MainFrame::CopyNode(Node* node)

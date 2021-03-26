@@ -16,6 +16,7 @@
 #include <wx/treebook.h>    // wxTreebook: wxNotebook-like control presenting pages in a tree
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "mainapp.h"     // App -- Main application class
 #include "node.h"        // Node class
 
 #include "book_widgets.h"
@@ -30,8 +31,26 @@ wxObject* BookPageGenerator::Create(Node* node, wxObject* parent)
     auto book = wxDynamicCast(parent, wxBookCtrlBase);
     if (book)
     {
+        if (node->HasValue("bitmap") && node->GetParent()->prop_as_bool("display_images"))
+        {
+            auto node_parent = node->GetParent();
+            int idx_image = 0;
+            for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+            {
+                if (node_parent->GetChild(idx_child) == node)
+                    break;
+                if (node_parent->GetChild(idx_child)->HasValue("bitmap"))
+                    ++idx_image;
+            }
+
+            book->AddPage(widget, node->prop_as_wxString(txt_label), false, idx_image);
+        }
+        else
+        {
+            book->AddPage(widget, node->prop_as_wxString(txt_label));
+        }
+
         auto cur_selection = book->GetSelection();
-        book->AddPage(widget, node->prop_as_string(txt_label));
         if (node->prop_as_bool("select"))
         {
             book->SetSelection(book->GetPageCount() - 1);
@@ -89,7 +108,45 @@ wxObject* NotebookGenerator::Create(Node* node, wxObject* parent)
         new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
                        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
-    // TODO: [KeyWorks - 11-22-2020] If a bitmap size is specified, then we need to create an imagelist
+    if (node->prop_as_bool("display_images"))
+    {
+        bool has_bitmaps = false;
+        for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+        {
+            if (node->GetChild(idx_child)->HasValue("bitmap"))
+            {
+                has_bitmaps = true;
+                break;
+            }
+        }
+
+        if (has_bitmaps)
+        {
+            auto size = node->prop_as_wxSize("bitmapsize");
+            if (size.x == -1)
+            {
+                size.x = 16;
+            }
+            if (size.y == -1)
+            {
+                size.y = 16;
+            }
+
+            auto img_list = new wxImageList(size.x, size.y);
+
+            for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+            {
+                if (node->GetChild(idx_child)->HasValue("bitmap"))
+                {
+                    auto img = wxGetApp().GetImage(node->GetChild(idx_child)->prop_as_string("bitmap"));
+                    ASSERT(img.IsOk());
+                    img_list->Add(img.Scale(size.x, size.y));
+                }
+            }
+
+            widget->AssignImageList(img_list);
+        }
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &NotebookGenerator::OnPageChanged, this);

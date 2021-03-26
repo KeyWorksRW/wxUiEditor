@@ -17,6 +17,8 @@
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
+#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+
 #include "propgrid_panel.h"
 
 #include "appoptions.h"   // AppOptions -- Application-wide options
@@ -607,7 +609,8 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
         // We do not want to duplicate inherited events
         if (events.find(eventName) == events.end())
         {
-            // auto grid_property = new wxLongStringProperty(eventInfo->get_name(), wxPG_LABEL, CreateEscapedText(event->get_value()).wx_str());
+            // auto grid_property = new wxLongStringProperty(eventInfo->get_name(), wxPG_LABEL,
+            // CreateEscapedText(event->get_value()).wx_str());
             auto grid_property = new EventStringProperty(event->get_name(), event);
 
             auto id = m_event_grid->Append(grid_property);
@@ -959,8 +962,22 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         }
 
         case Type::Image:
-            ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));
-            break;
+        {
+            ttlib::cstr value;
+            value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
+
+            // If the image field is empty, then the entire property needs to be cleared
+            ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
+            for (auto& iter: parts)
+            {
+                iter.BothTrim();
+            }
+
+            if (parts[IndexImage].empty())
+                value.clear();
+            modifyProperty(prop, value);
+        }
+        break;
 
         case Type::Path:
         {

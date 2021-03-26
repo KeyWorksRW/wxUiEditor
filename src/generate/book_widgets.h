@@ -9,6 +9,15 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
+class BookPageGenerator : public BaseGenerator
+{
+public:
+    wxObject* Create(Node* node, wxObject* parent) override;
+
+    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+};
+
 class ChoicebookGenerator : public BaseGenerator
 {
 public:

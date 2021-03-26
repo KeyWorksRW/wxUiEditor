@@ -18,65 +18,6 @@
 
 #include "panel_widgets.h"
 
-wxObject* BookPageGenerator::Create(Node* node, wxObject* parent)
-{
-    auto widget =
-        new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(txt_pos), node->prop_as_wxSize(txt_size),
-                    node->prop_as_int(txt_style) | node->prop_as_int(txt_window_style));
-    auto book = wxDynamicCast(parent, wxBookCtrlBase);
-    if (book)
-    {
-        auto cur_selection = book->GetSelection();
-        book->AddPage(widget, node->prop_as_string(txt_label));
-        if (node->prop_as_bool("select"))
-        {
-            book->SetSelection(book->GetPageCount() - 1);
-        }
-        else if (cur_selection >= 0)
-        {
-            book->SetSelection(cur_selection);
-        }
-
-        // TODO: [KeyWorks - 11-22-2020] If the page has a bitmap and the parent set bitmap size, then we need to add the
-        // image to the parent's image list
-    }
-
-    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-
-    return widget;
-}
-
-bool BookPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
-{
-    InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
-    return true;
-}
-
-std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto ";
-    code << node->get_node_name() << " = new wxPanel(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
-
-    GeneratePosSizeFlags(node, code);
-
-    code << '\n';
-    code << GetParentName(node) << "->AddPage(" << node->get_node_name() << ", ";
-    if (node->HasValue(txt_label))
-        code << GenerateQuotedString(node->prop_as_string(txt_label));
-    else
-        code << "wxEmptyString";
-
-    // Default is false, so only add parameter if it is true.
-    if (node->prop_as_bool("select"))
-        code << ", true";
-    code << ");";
-
-    return code;
-}
-
 //////////////////////////////////////////  PanelGenerator  //////////////////////////////////////////
 
 wxObject* PanelGenerator::Create(Node* node, wxObject* parent)

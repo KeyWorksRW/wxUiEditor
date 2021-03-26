@@ -30,6 +30,7 @@ constexpr const IMPORT_NAME_PAIR prop_pair[] = {
 
     { "bg", "background_colour" },
     { "fg", "background_colour" },
+    { "bitmapsize", "image_size" },
     { "permission", txt_class_access },
     { "hover", "current" },
 

@@ -88,18 +88,35 @@
     <Type Name="ttlib::openfile">
       <DisplayString>{m_filename,s}</DisplayString>
     </Type>
-  <Type Name="ttlib::cview">
-    <Intrinsic Name="size" Expression="_Mysize" />
-    <Intrinsic Name="data" Expression="_Mydata" />
-    <DisplayString>{_Mydata,s}</DisplayString>
-    <Expand>
-      <Item Name="[size]" ExcludeView="simple">size()</Item>
-      <ArrayItems>
-        <Size>size()</Size>
-        <ValuePointer>data()</ValuePointer>
-      </ArrayItems>
-    </Expand>
-  </Type>
+
+    <Type Name="ttlib::cview">
+      <Intrinsic Name="size" Expression="_Mysize" />
+      <Intrinsic Name="data" Expression="_Mydata" />
+      <DisplayString>{_Mydata,s8}</DisplayString>
+      <Expand>
+        <Item Name="[size]" ExcludeView="simple">size()</Item>
+        <ArrayItems>
+          <Size>size()</Size>
+          <ValuePointer>data()</ValuePointer>
+        </ArrayItems>
+      </Expand>
+    </Type>
+
+    <Type Name="ttlib::cstr">
+        <DisplayString Condition="_Myres &lt; _BUF_SIZE">{_Bx._Buf,s8}</DisplayString>
+        <DisplayString Condition="_Myres &gt;= _BUF_SIZE">{_Bx._Ptr,s8}</DisplayString>
+        <StringView Condition="_Myres &lt; _BUF_SIZE">_Bx._Buf,s8</StringView>
+        <StringView Condition="_Myres &gt;= _BUF_SIZE">_Bx._Ptr,s8</StringView>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">_Mysize</Item>
+            <Item Name="[capacity]" ExcludeView="simple">_Myres</Item>
+            <ArrayItems>
+                <Size>_Mysize</Size>
+                <ValuePointer Condition="_Myres &lt; _BUF_SIZE">_Bx._Buf</ValuePointer>
+                <ValuePointer Condition="_Myres &gt;= _BUF_SIZE">_Bx._Ptr</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
 
     <!-- wxWidgets visualizers -->
 
@@ -820,10 +837,10 @@
     <Intrinsic Name="bufSize" Expression="16" />
     <Intrinsic Name="isShortString" Expression="capacity() &lt; bufSize()" />
     <Intrinsic Name="isLongString" Expression="capacity() &gt;= bufSize()" />
-    <DisplayString Condition="isShortString()">{_Mypair._Myval2._Bx._Buf,na}</DisplayString>
-    <DisplayString Condition="isLongString()">{_Mypair._Myval2._Bx._Ptr,na}</DisplayString>
-    <StringView Condition="isShortString()">_Mypair._Myval2._Bx._Buf,na</StringView>
-    <StringView Condition="isLongString()">_Mypair._Myval2._Bx._Ptr,na</StringView>
+    <DisplayString Condition="isShortString()">{_Mypair._Myval2._Bx._Buf,s8}</DisplayString>
+    <DisplayString Condition="isLongString()">{_Mypair._Myval2._Bx._Ptr,s8}</DisplayString>
+    <StringView Condition="isShortString()">_Mypair._Myval2._Bx._Buf,s8</StringView>
+    <StringView Condition="isLongString()">_Mypair._Myval2._Bx._Ptr,s8</StringView>
     <Expand>
       <Item Name="[size]" ExcludeView="simple">size()</Item>
       <Item Name="[capacity]" ExcludeView="simple">capacity()</Item>

@@ -21,6 +21,13 @@
 
 #include "book_widgets.h"
 
+// These dimensions match the default size in containers.xml -- if you change them here, then you must also change every
+// "image_size" property in containers.xml. Doing so will break any project that has these values as the default, so you will
+// also need to do a project version increase and convert down-level projects. Bottom line: don't change these values!
+
+constexpr const int DEF_TAB_IMG_WIDTH = 16;
+constexpr const int DEF_TAB_IMG_HEIGHT = 16;
+
 //////////////////////////////////////////  BookPageGenerator  //////////////////////////////////////////
 
 wxObject* BookPageGenerator::Create(Node* node, wxObject* parent)
@@ -59,9 +66,6 @@ wxObject* BookPageGenerator::Create(Node* node, wxObject* parent)
         {
             book->SetSelection(cur_selection);
         }
-
-        // TODO: [KeyWorks - 11-22-2020] If the page has a bitmap and the parent set bitmap size, then we need to add the
-        // image to the parent's image list
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -95,6 +99,24 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
     // Default is false, so only add parameter if it is true.
     if (node->prop_as_bool("select"))
         code << ", true";
+
+    if (node->HasValue("bitmap") && node->GetParent()->prop_as_bool("display_images"))
+    {
+        auto node_parent = node->GetParent();
+        int idx_image = 0;
+        for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+        {
+            if (node_parent->GetChild(idx_child) == node)
+                break;
+            if (node_parent->GetChild(idx_child)->HasValue("bitmap"))
+                ++idx_image;
+        }
+
+        if (!node->prop_as_bool("select"))
+            code << ", false";
+        code << ", " << idx_image;
+    }
+
     code << ");";
 
     return code;
@@ -125,11 +147,11 @@ wxObject* NotebookGenerator::Create(Node* node, wxObject* parent)
             auto size = node->prop_as_wxSize("bitmapsize");
             if (size.x == -1)
             {
-                size.x = 16;
+                size.x = DEF_TAB_IMG_WIDTH;
             }
             if (size.y == -1)
             {
-                size.y = 16;
+                size.y = DEF_TAB_IMG_HEIGHT;
             }
 
             auto img_list = new wxImageList(size.x, size.y);
@@ -171,6 +193,57 @@ std::optional<ttlib::cstr> NotebookGenerator::GenConstruction(Node* node)
     code << GetParentName(node) << ", " << node->prop_as_string("id");
 
     GeneratePosSizeFlags(node, code);
+
+    if (node->prop_as_bool("display_images"))
+    {
+        bool has_bitmaps = false;
+        for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+        {
+            if (node->GetChild(idx_child)->HasValue("bitmap"))
+            {
+                has_bitmaps = true;
+                break;
+            }
+        }
+
+        if (has_bitmaps)
+        {
+            code.insert(0, "    ");
+            auto size = node->prop_as_wxSize("bitmapsize");
+            if (size.x == -1)
+            {
+                size.x = DEF_TAB_IMG_WIDTH;
+            }
+            if (size.y == -1)
+            {
+                size.y = DEF_TAB_IMG_HEIGHT;
+            }
+
+            // Enclose the code in braces to allow using "img_list" and "bmp" as variable names, as well as making the code
+            // more readable.
+
+            code << "\n    {";
+            code << "\n        auto img_list = new wxImageList(";
+            code << size.x << ", " << size.y << ");";
+
+            for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+            {
+                // Note: when we generate the code, we could look at the actual image and determine whether it's already the
+                // correct size and only scale it if needed. However, that requires the user to know to regenerate the code
+                // any time the image is changed to ensure it has the correct dimensions.
+
+                if (node->GetChild(idx_child)->HasValue("bitmap"))
+                {
+                    code << "\n        auto img_" << idx_child << " = ";
+                    code << GenerateBitmapCode(node->GetChild(idx_child)->prop_as_string("bitmap")) << ");";
+                    code << "\n        img_list->Add(img_" << idx_child << ".Scale(";
+                    code << size.x << ", " << size.y << ");";
+                }
+            }
+            code << "\n        " << node->get_node_name() << "->AssignImageList(img_list);";
+            code << "\n    }";
+        }
+    }
 
     return code;
 }

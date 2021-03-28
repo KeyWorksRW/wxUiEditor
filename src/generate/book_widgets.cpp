@@ -235,9 +235,11 @@ std::optional<ttlib::cstr> NotebookGenerator::GenConstruction(Node* node)
                 if (node->GetChild(idx_child)->HasValue("bitmap"))
                 {
                     code << "\n        auto img_" << idx_child << " = ";
-                    code << GenerateBitmapCode(node->GetChild(idx_child)->prop_as_string("bitmap")) << ");";
-                    code << "\n        img_list->Add(img_" << idx_child << ".Scale(";
-                    code << size.x << ", " << size.y << ");";
+                    code << GenerateBitmapCode(node->GetChild(idx_child)->prop_as_string("bitmap")) << ";";
+                    code << "\n        img_list->Add(img_" << idx_child;
+                    if (node->GetChild(idx_child)->prop_as_string("bitmap").is_sameprefix("Art;"))
+                        code << ".ConvertToImage()";
+                    code << ".Scale(" << size.x << ", " << size.y << "));";
                 }
             }
             code << "\n        " << node->get_node_name() << "->AssignImageList(img_list);";

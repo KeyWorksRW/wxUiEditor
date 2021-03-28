@@ -6,7 +6,13 @@
 
 #include "pch.h"
 
+#include <wx/bitmap.h>
+#include <wx/icon.h>
+#include <wx/image.h>
+
 #include "mainframe_base.h"
+
+#include "../../src/xpm/wxNotebook.xpm"
 
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
 		const wxPoint& pos, const wxSize& size, long style) :
@@ -22,7 +28,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
     menuDialogs->Append(menuItem);
 
-    auto menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Notebook Dialog..."));
+    auto menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Other Controls Dialog..."));
     menuDialogs->Append(menuItem1);
 
     auto menuItem2 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Ribbon Dialog"));
@@ -30,6 +36,13 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menuItem3 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Wizard"));
     menuDialogs->Append(menuItem3);
+
+    auto submenu = new wxMenu();
+
+    auto menu_item = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Notebook"));
+    menu_item->SetBitmap(wxImage(wxNotebook_xpm));
+    submenu->Append(menu_item);
+    menuDialogs->AppendSubMenu(submenu, wxString::FromUTF8("Book Controls"));
 
     menuDialogs->AppendSeparator();
 
@@ -48,5 +61,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnNotebookDialog, this, menuItem1->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnRibbonDialog, this, menuItem2->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnWizard, this, menuItem3->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnNotebook, this, menu_item->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnQuit, this, wxID_EXIT);
 }

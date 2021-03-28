@@ -7,12 +7,14 @@
 
 #include "pch.h"
 
-#include "mainframe.h"  // auto-generated: mainframeBase.h and mainframeBase.cpp
+#include "mainframe.h"  // auto-generated: ui/mainframe_base.h and ui/mainframe_base.cpp
 
 #include "commonctrls.h"
-#include "notebookdlg.h"
+#include "other_ctrls.h"
 #include "ribbondlg.h"
 #include "wizard.h"
+
+#include "ui/notebook_base.h"
 
 MainFrame::MainFrame(wxWindow* parent) : MainFrameBase(parent) {}
 
@@ -24,7 +26,7 @@ void MainFrame::OnCommonDialog(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::OnNotebookDialog(wxCommandEvent& WXUNUSED(event))
 {
-    NotebookDlg dlg(this);
+    OtherCtrlsDlg dlg(this);
     dlg.ShowModal();
 }
 
@@ -44,4 +46,10 @@ void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
     // true forces the frame to close
     Close(true);
+}
+
+void MainFrame::OnNotebook(wxCommandEvent& WXUNUSED(event))
+{
+    NotebookBase dlg(this);
+    dlg.ShowModal();
 }

@@ -7,9 +7,9 @@
 #include "pch.h"
 
 
-#include "notebookdlg.h"  // auto-generated: notebookdlgBase.h and notebookdlgBase.cpp
+#include "other_ctrls.h"  // auto-generated: other_ctrls_base.h and other_ctrls_base.cpp
 
-NotebookDlg::NotebookDlg(wxWindow* parent) : NotebookDlgBase(parent)
+OtherCtrlsDlg::OtherCtrlsDlg(wxWindow* parent) : OtherCtrlsBase(parent)
 {
 
 }

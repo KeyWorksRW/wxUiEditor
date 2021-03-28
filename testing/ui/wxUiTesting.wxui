@@ -5,9 +5,12 @@
       <node class="wxMenuBar" class_access="none" var_name="menubar">
         <node class="wxMenu" class_access="none" label="&amp;Dialogs" var_name="menuDialogs">
           <node class="wxMenuItem" help="Common controls" label="Common Controls..." var_name="menuItem" wxEVT_MENU="OnCommonDialog" />
-          <node class="wxMenuItem" label="Notebook Dialog..." var_name="menuItem1" wxEVT_MENU="OnNotebookDialog" />
+          <node class="wxMenuItem" label="Other Controls Dialog..." var_name="menuItem1" wxEVT_MENU="OnNotebookDialog" />
           <node class="wxMenuItem" label="Ribbon Dialog" var_name="menuItem2" wxEVT_MENU="OnRibbonDialog" />
           <node class="wxMenuItem" label="Wizard" var_name="menuItem3" wxEVT_MENU="OnWizard" />
+          <node class="submenu" label="Book Controls">
+            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxNotebook.xpm; ; [-1; -1]" label="Notebook" wxEVT_MENU="OnNotebook" />
+          </node>
           <node class="separator" />
           <node class="wxMenuItem" id="wxID_EXIT" label="Exit" var_name="menuItem4" wxEVT_MENU="OnQuit" />
         </node>
@@ -76,9 +79,9 @@
         <node class="wxStdDialogButtonSizer" Help="true" flags="wxEXPAND" />
       </node>
     </node>
-    <node class="wxDialog" base_file="notebookdlg_base" class_name="NotebookDlgBase" derived_class_name="NotebookDlg" derived_file="notebookdlg" persist="true" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" minimum_size="-1,-1" size="-1,-1">
+    <node class="wxDialog" base_file="other_ctrls_base" class_name="OtherCtrlsBase" derived_class_name="OtherCtrlsDlg" derived_file="other_ctrls" persist="true" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" minimum_size="-1,-1" size="-1,-1">
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
-        <node class="wxNotebook" display_images="true" image_size="24,24" flags="wxEXPAND" proportion="1">
+        <node class="wxNotebook" image_size="24,24" flags="wxEXPAND" proportion="1">
           <node class="BookPage" bitmap="Art; wxART_FILE_OPEN; wxART_OTHER; [-1; -1]" label="Pickers" window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">
             <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer2">
               <node class="wxStaticBoxSizer" label="Pickers" flags="wxEXPAND">
@@ -180,6 +183,27 @@
     </node>
     <node class="ToolBar">
       <node class="tool" label="" />
+    </node>
+    <node class="wxDialog" base_file="notebook_base" class_name="NotebookBase" derived_class_name="Notebook" derived_file="notebook" title="Notebook" minimum_size="600,600" size="-1,-1">
+      <node class="wxBoxSizer" orientation="wxVERTICAL">
+        <node class="wxNotebook" display_images="true" image_size="19,15" minimum_size="400,400" flags="wxEXPAND">
+          <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+              <node class="wxStaticText" label="This is a sentence in English." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\french.xpm; ; [-1; -1]" label="Français" var_name="page_2" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_2">
+              <node class="wxStaticText" label="Ceci est une phrase en français." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\japanese.xpm; ; [-1; -1]" label="日本語" var_name="page_3" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_3">
+              <node class="wxStaticText" label="これは日本語の文章です。" />
+            </node>
+          </node>
+        </node>
+      </node>
     </node>
   </node>
 </wxUiEditorData>

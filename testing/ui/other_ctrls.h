@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "notebookdlg_base.h"
+#include "other_ctrls_base.h"
 
-class NotebookDlg : public NotebookDlgBase
+class OtherCtrlsDlg : public OtherCtrlsBase
 {
 public:
-	NotebookDlg(wxWindow* parent = nullptr);
+	OtherCtrlsDlg(wxWindow* parent = nullptr);
 
 };

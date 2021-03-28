@@ -30,9 +30,15 @@ Files:
     ui/mainframe_base.cpp  # wxUiEditor generated file
     ui/commonctrls.cpp
     ui/commonctrls_base.cpp
-    ui/notebookdlg.cpp
-    ui/notebookdlg_base.cpp
+    ui/notebook_base.cpp
+    ui/other_ctrls.cpp
+    ui/other_ctrls_base.cpp
     ui/ribbondlg.cpp
     ui/ribbondlg_base.cpp
     ui/wizard_base.cpp
     ui/wizard.cpp
+
+XPM:
+    art/english.png: art/english.xpm
+    art/french.png: art/french.xpm
+    art/japanese.png: art/japanese.xpm

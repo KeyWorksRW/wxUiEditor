@@ -343,9 +343,9 @@ void MockupContent::OnNodeSelected(Node* node)
     {
         auto parent = node->GetParent();
         auto book = wxDynamicCast(Get_wxObject(parent), wxBookCtrl);
+        ASSERT(book);
         book->SetSelection(parent->GetChildPosition(node));
         m_mockupParent->ClearIgnoreSelection();
-
         return;
     }
 

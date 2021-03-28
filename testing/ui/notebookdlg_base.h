@@ -35,7 +35,7 @@ public:
 
     NotebookDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
         const wxString& title = wxString::FromUTF8("NoteBook Dialog"),
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, -1),
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
 
 protected:

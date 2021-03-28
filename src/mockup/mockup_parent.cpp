@@ -214,6 +214,9 @@ void MockupParent::OnNodeSelected(CustomEvent& event)
         return;
     }
 
+    if (!IsShown())
+        return;
+
     if (wxGetFrame().GetSelectedForm() != m_form)
     {
         CreateContent();

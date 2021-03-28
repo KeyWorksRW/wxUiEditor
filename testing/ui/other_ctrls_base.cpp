@@ -17,9 +17,9 @@
 #include <wx/statbox.h>
 #include <wx/valgen.h>
 
-#include "notebookdlg_base.h"
+#include "other_ctrls_base.h"
 
-NotebookDlgBase::NotebookDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
+OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent, wxWindowID id, const wxString& title,
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxDialog(parent, id, title, pos, size, style)
 {
@@ -28,26 +28,10 @@ NotebookDlgBase::NotebookDlgBase(wxWindow* parent, wxWindowID id, const wxString
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_notebook = new wxNotebook(this, wxID_ANY);
-    {
-        auto img_list = new wxImageList(16, 16);
-        auto img_0 = wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_OTHER);
-        img_list->Add(img_0.ConvertToImage().Scale(16, 16));
-        auto img_1 = wxArtProvider::GetBitmap(wxART_HELP_SIDE_PANEL, wxART_OTHER);
-        img_list->Add(img_1.ConvertToImage().Scale(16, 16));
-        auto img_2 = wxArtProvider::GetBitmap(wxART_GO_HOME, wxART_OTHER);
-        img_list->Add(img_2.ConvertToImage().Scale(16, 16));
-        auto img_3 = wxArtProvider::GetBitmap(wxART_HELP_PAGE, wxART_OTHER);
-        img_list->Add(img_3.ConvertToImage().Scale(16, 16));
-        auto img_4 = wxArtProvider::GetBitmap(wxART_EXECUTABLE_FILE, wxART_OTHER);
-        img_list->Add(img_4.ConvertToImage().Scale(16, 16));
-        auto img_5 = wxArtProvider::GetBitmap(wxART_REPORT_VIEW, wxART_OTHER);
-        img_list->Add(img_5.ConvertToImage().Scale(16, 16));
-        m_notebook->AssignImageList(img_list);
-    }
     parent_sizer->Add(m_notebook, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME|wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page, wxString::FromUTF8("Pickers"), false, 0);
+    m_notebook->AddPage(page, wxString::FromUTF8("Pickers"));
 
     auto parent_sizer2 = new wxBoxSizer(wxVERTICAL);
 
@@ -80,7 +64,7 @@ NotebookDlgBase::NotebookDlgBase(wxWindow* parent, wxWindowID id, const wxString
     page->SetSizerAndFit(parent_sizer2);
 
     auto m_panel2 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED|wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel2, wxString::FromUTF8("Spinners"), true, 1);
+    m_notebook->AddPage(m_panel2, wxString::FromUTF8("Spinners"), true);
 
     auto parent_sizer3 = new wxBoxSizer(wxVERTICAL);
 
@@ -103,7 +87,7 @@ NotebookDlgBase::NotebookDlgBase(wxWindow* parent, wxWindowID id, const wxString
     m_panel2->SetSizerAndFit(parent_sizer3);
 
     auto m_panel3 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel3, wxString::FromUTF8("HTML"), true, 2);
+    m_notebook->AddPage(m_panel3, wxString::FromUTF8("HTML"), true);
 
     auto parent_sizer4 = new wxBoxSizer(wxVERTICAL);
 
@@ -113,7 +97,7 @@ NotebookDlgBase::NotebookDlgBase(wxWindow* parent, wxWindowID id, const wxString
     m_panel3->SetSizerAndFit(parent_sizer4);
 
     auto m_panel4 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel4, wxString::FromUTF8("RTF"), false, 3);
+    m_notebook->AddPage(m_panel4, wxString::FromUTF8("RTF"));
 
     auto parent_sizer5 = new wxBoxSizer(wxVERTICAL);
 
@@ -123,7 +107,7 @@ NotebookDlgBase::NotebookDlgBase(wxWindow* parent, wxWindowID id, const wxString
     m_panel4->SetSizerAndFit(parent_sizer5);
 
     auto m_panel5 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel5, wxString::FromUTF8("Scintilla"), false, 4);
+    m_notebook->AddPage(m_panel5, wxString::FromUTF8("Scintilla"));
 
     auto parent_sizer6 = new wxBoxSizer(wxVERTICAL);
 
@@ -144,7 +128,7 @@ NotebookDlgBase::NotebookDlgBase(wxWindow* parent, wxWindowID id, const wxString
     m_panel5->SetSizerAndFit(parent_sizer6);
 
     auto m_panel6 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel6, wxString::FromUTF8("Misc"), false, 5);
+    m_notebook->AddPage(m_panel6, wxString::FromUTF8("Misc"));
 
     auto parent_sizer7 = new wxBoxSizer(wxVERTICAL);
 
@@ -177,6 +161,6 @@ NotebookDlgBase::NotebookDlgBase(wxWindow* parent, wxWindowID id, const wxString
 
     Centre(wxBOTH);
 
-    SetName("NotebookDlgBase");
+    SetName("OtherCtrlsBase");
     wxPersistentRegisterAndRestore(this);
 }

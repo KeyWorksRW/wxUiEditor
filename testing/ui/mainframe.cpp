@@ -10,7 +10,7 @@
 #include "mainframe.h"  // auto-generated: mainframeBase.h and mainframeBase.cpp
 
 #include "commonctrls.h"
-#include "notebookdlg.h"
+#include "other_ctrls.h"
 #include "ribbondlg.h"
 #include "wizard.h"
 
@@ -24,7 +24,7 @@ void MainFrame::OnCommonDialog(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::OnNotebookDialog(wxCommandEvent& WXUNUSED(event))
 {
-    NotebookDlg dlg(this);
+    OtherCtrlsDlg dlg(this);
     dlg.ShowModal();
 }
 

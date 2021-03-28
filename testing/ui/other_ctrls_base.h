@@ -28,12 +28,12 @@
 #include <wx/tglbtn.h>
 #include <wx/timectrl.h>
 
-class NotebookDlgBase : public wxDialog
+class OtherCtrlsBase : public wxDialog
 {
 public:
     wxHtmlWindow* m_htmlWin;
 
-    NotebookDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+    OtherCtrlsBase(wxWindow* parent, wxWindowID id = wxID_ANY,
         const wxString& title = wxString::FromUTF8("NoteBook Dialog"),
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

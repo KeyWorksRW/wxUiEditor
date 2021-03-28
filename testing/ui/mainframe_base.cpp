@@ -22,7 +22,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
     menuDialogs->Append(menuItem);
 
-    auto menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Notebook Dialog..."));
+    auto menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Other Controls Dialog..."));
     menuDialogs->Append(menuItem1);
 
     auto menuItem2 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Ribbon Dialog"));

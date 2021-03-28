@@ -5,7 +5,7 @@
       <node class="wxMenuBar" class_access="none" var_name="menubar">
         <node class="wxMenu" class_access="none" label="&amp;Dialogs" var_name="menuDialogs">
           <node class="wxMenuItem" help="Common controls" label="Common Controls..." var_name="menuItem" wxEVT_MENU="OnCommonDialog" />
-          <node class="wxMenuItem" label="Notebook Dialog..." var_name="menuItem1" wxEVT_MENU="OnNotebookDialog" />
+          <node class="wxMenuItem" label="Other Controls Dialog..." var_name="menuItem1" wxEVT_MENU="OnNotebookDialog" />
           <node class="wxMenuItem" label="Ribbon Dialog" var_name="menuItem2" wxEVT_MENU="OnRibbonDialog" />
           <node class="wxMenuItem" label="Wizard" var_name="menuItem3" wxEVT_MENU="OnWizard" />
           <node class="separator" />
@@ -76,9 +76,9 @@
         <node class="wxStdDialogButtonSizer" Help="true" flags="wxEXPAND" />
       </node>
     </node>
-    <node class="wxDialog" base_file="notebookdlg_base" class_name="NotebookDlgBase" derived_class_name="NotebookDlg" derived_file="notebookdlg" persist="true" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" minimum_size="-1,-1" size="-1,-1">
+    <node class="wxDialog" base_file="other_ctrls_base" class_name="OtherCtrlsBase" derived_class_name="OtherCtrlsDlg" derived_file="other_ctrls" persist="true" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" minimum_size="-1,-1" size="-1,-1">
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
-        <node class="wxNotebook" display_images="true" image_size="24,24" flags="wxEXPAND" proportion="1">
+        <node class="wxNotebook" image_size="24,24" flags="wxEXPAND" proportion="1">
           <node class="BookPage" bitmap="Art; wxART_FILE_OPEN; wxART_OTHER; [-1; -1]" label="Pickers" window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">
             <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer2">
               <node class="wxStaticBoxSizer" label="Pickers" flags="wxEXPAND">

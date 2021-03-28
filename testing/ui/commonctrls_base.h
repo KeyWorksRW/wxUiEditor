@@ -20,9 +20,7 @@
 #include <wx/listbox.h>
 #include <wx/radiobox.h>
 #include <wx/radiobut.h>
-#include <wx/sizer.h>
 #include <wx/slider.h>
-#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 
@@ -62,11 +60,6 @@ protected:
     wxRadioButton* m_radioBtn2;
     wxRadioButton* m_radioBtn;
     wxSlider* m_slider;
-    wxStaticBoxSizer* m_static_box;
-    wxStaticBoxSizer* m_static_box_sizer2;
-    wxStaticBoxSizer* m_static_box_sizer3;
-    wxStaticBoxSizer* m_static_box_sizer4;
-    wxStaticBoxSizer* m_static_box_sizer5;
     wxStaticText* m_staticText10;
     wxStaticText* m_staticText11;
     wxStaticText* m_staticText12;

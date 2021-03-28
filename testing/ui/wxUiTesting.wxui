@@ -33,27 +33,27 @@
           <node class="wxRadioButton" label="Second radio" var_name="m_radioBtn2" alignment="wxALIGN_CENTER" wxEVT_RADIOBUTTON="OnRadio" />
           <node class="wxCheckBox" label="Checkbox" var_name="m_checkBox2" alignment="wxALIGN_CENTER" wxEVT_CHECKBOX="OnCheckBox" />
         </node>
-        <node class="wxStaticBoxSizer" label="Combos and Choices" var_name="m_static_box" flags="wxEXPAND">
+        <node class="wxStaticBoxSizer" label="Combos and Choices" flags="wxEXPAND">
           <node class="wxBoxSizer" var_name="box_sizer3" flags="wxEXPAND">
-            <node class="wxStaticBoxSizer" label="Combo" var_name="m_static_box_sizer2" flags="wxEXPAND">
+            <node class="wxStaticBoxSizer" label="Combo" var_name="static_box_sizer2" flags="wxEXPAND">
               <node class="wxStaticText" label="Unsorted" var_name="m_staticText3" />
               <node class="wxComboBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" selection_int="2" selection_string="item #2" tooltip="Item #0 should be selected by default" flags="wxEXPAND" wxEVT_COMBOBOX="OnCombo" />
               <node class="wxStaticText" label="Sorted" var_name="m_staticText4" />
               <node class="wxComboBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" selection_int="2" selection_string="item #2" style="wxCB_SORT" var_name="m_comboBox2" tooltip="Item #2 should be selected by default" wxEVT_COMBOBOX_CLOSEUP="OnComboClose" />
             </node>
-            <node class="wxStaticBoxSizer" label="Choice" var_name="m_static_box_sizer3" flags="wxEXPAND">
+            <node class="wxStaticBoxSizer" label="Choice" var_name="static_box_sizer3" flags="wxEXPAND">
               <node class="wxStaticText" label="Unsorted" var_name="m_staticText5" />
               <node class="wxChoice" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" selection_int="2" tooltip="Item #0 should be selected by default" wxEVT_CHOICE="OnChoice" />
               <node class="wxStaticText" label="Sorted" var_name="m_staticText6" />
               <node class="wxChoice" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" selection_int="2" style="wxCB_SORT" var_name="m_choice2" tooltip="Item #2 should be selected by default" wxEVT_CHOICE="OnChoice" />
             </node>
-            <node class="wxStaticBoxSizer" label="List" var_name="m_static_box_sizer4" flags="wxEXPAND">
+            <node class="wxStaticBoxSizer" label="List" var_name="static_box_sizer4" flags="wxEXPAND">
               <node class="wxStaticText" label="Unsorted" var_name="m_staticText7" />
               <node class="wxListBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" wxEVT_LISTBOX="OnListBox" />
               <node class="wxStaticText" label="Sorted" var_name="m_staticText8" />
               <node class="wxListBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" style="wxLB_SORT" var_name="m_listBox2" wxEVT_LISTBOX="OnListBox" />
             </node>
-            <node class="wxStaticBoxSizer" label="Checked" var_name="m_static_box_sizer5" flags="wxEXPAND">
+            <node class="wxStaticBoxSizer" label="Checked" var_name="static_box_sizer5" flags="wxEXPAND">
               <node class="wxStaticText" label="Unsorted" var_name="m_staticText9" />
               <node class="wxCheckListBox" choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;" wxEVT_CHECKLISTBOX="OnListChecked" />
               <node class="wxStaticText" label="Sorted" var_name="m_staticText10" />
@@ -76,18 +76,18 @@
         <node class="wxStdDialogButtonSizer" Help="true" flags="wxEXPAND" />
       </node>
     </node>
-    <node class="wxDialog" base_file="notebookdlg_base" class_name="NotebookDlgBase" derived_class_name="NotebookDlg" derived_file="notebookdlg" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" size="500,-1">
+    <node class="wxDialog" base_file="notebookdlg_base" class_name="NotebookDlgBase" derived_class_name="NotebookDlg" derived_file="notebookdlg" persist="true" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" size="500,-1">
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
         <node class="wxNotebook" flags="wxEXPAND" proportion="1">
           <node class="BookPage" label="Pickers" window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">
             <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer2">
-              <node class="wxStaticBoxSizer" label="Pickers" var_name="m_static_box" flags="wxEXPAND">
+              <node class="wxStaticBoxSizer" label="Pickers" flags="wxEXPAND">
                 <node class="wxFilePickerCtrl" wildcard="BMP files|*.bmp" />
-                <node class="wxDirPickerCtrl" style="wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL" value="." />
+                <node class="wxDirPickerCtrl" initial_path="." style="wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL" />
                 <node class="wxColourPickerCtrl" />
                 <node class="wxDatePickerCtrl" />
                 <node class="wxTimePickerCtrl" />
-                <node class="wxFontPickerCtrl" style="wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL" value="Comic Sans MS,90,400,-1,70,0" />
+                <node class="wxFontPickerCtrl" initial_font="Comic Sans MS,90,400,-1,70,0" style="wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL" />
               </node>
             </node>
           </node>

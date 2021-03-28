@@ -21,11 +21,9 @@
 #include <wx/notebook.h>
 #include <wx/richtext/richtextctrl.h>
 #include <wx/scrolbar.h>
-#include <wx/sizer.h>
 #include <wx/spinbutt.h>
 #include <wx/spinctrl.h>
 #include <wx/srchctrl.h>
-#include <wx/statbox.h>
 #include <wx/stc/stc.h>
 #include <wx/tglbtn.h>
 #include <wx/timectrl.h>
@@ -63,7 +61,6 @@ protected:
     wxSpinButton* m_spinBtn;
     wxSpinCtrl* m_spinCtrl;
     wxSpinCtrlDouble* m_spinCtrlDouble;
-    wxStaticBoxSizer* m_static_box;
     wxStyledTextCtrl* m_scintilla;
     wxTimePickerCtrl* m_timePicker;
     wxToggleButton* m_toggleBtn;

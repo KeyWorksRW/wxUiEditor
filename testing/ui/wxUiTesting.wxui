@@ -8,6 +8,9 @@
           <node class="wxMenuItem" label="Other Controls Dialog..." var_name="menuItem1" wxEVT_MENU="OnNotebookDialog" />
           <node class="wxMenuItem" label="Ribbon Dialog" var_name="menuItem2" wxEVT_MENU="OnRibbonDialog" />
           <node class="wxMenuItem" label="Wizard" var_name="menuItem3" wxEVT_MENU="OnWizard" />
+          <node class="submenu" label="Book Controls">
+            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxNotebook.xpm; ; [-1; -1]" label="Notebook" wxEVT_MENU="OnNotebook" />
+          </node>
           <node class="separator" />
           <node class="wxMenuItem" id="wxID_EXIT" label="Exit" var_name="menuItem4" wxEVT_MENU="OnQuit" />
         </node>
@@ -180,6 +183,27 @@
     </node>
     <node class="ToolBar">
       <node class="tool" label="" />
+    </node>
+    <node class="wxDialog" base_file="notebook_base" class_name="NotebookBase" derived_class_name="Notebook" derived_file="notebook" title="Notebook" minimum_size="600,600" size="-1,-1">
+      <node class="wxBoxSizer" orientation="wxVERTICAL">
+        <node class="wxNotebook" display_images="true" image_size="19,15" minimum_size="400,400" flags="wxEXPAND">
+          <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+              <node class="wxStaticText" label="This is a sentence in English." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\french.xpm; ; [-1; -1]" label="Français" var_name="page_2" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_2">
+              <node class="wxStaticText" label="Ceci est une phrase en français." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\japanese.xpm; ; [-1; -1]" label="日本語" var_name="page_3" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_3">
+              <node class="wxStaticText" label="これは日本語の文章です。" />
+            </node>
+          </node>
+        </node>
+      </node>
     </node>
   </node>
 </wxUiEditorData>

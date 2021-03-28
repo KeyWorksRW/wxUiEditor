@@ -17,6 +17,7 @@ public:
     wxStatusBar* GetStatusBar() { return m_statusBar; }
 
 protected:
+    void OnNotebook(wxCommandEvent& event) override;
     void OnQuit(wxCommandEvent& event) override;
     void OnWizard(wxCommandEvent& event) override;
     void OnRibbonDialog(wxCommandEvent& event) override;

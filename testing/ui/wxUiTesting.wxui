@@ -76,7 +76,7 @@
         <node class="wxStdDialogButtonSizer" Help="true" flags="wxEXPAND" />
       </node>
     </node>
-    <node class="wxDialog" base_file="notebookdlg_base" class_name="NotebookDlgBase" derived_class_name="NotebookDlg" derived_file="notebookdlg" persist="true" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" size="500,-1">
+    <node class="wxDialog" base_file="notebookdlg_base" class_name="NotebookDlgBase" derived_class_name="NotebookDlg" derived_file="notebookdlg" persist="true" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" minimum_size="-1,-1" size="-1,-1">
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
         <node class="wxNotebook" display_images="true" image_size="24,24" flags="wxEXPAND" proportion="1">
           <node class="BookPage" bitmap="Art; wxART_FILE_OPEN; wxART_OTHER; [-1; -1]" label="Pickers" window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">

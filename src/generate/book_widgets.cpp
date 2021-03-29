@@ -28,6 +28,8 @@
 constexpr const int DEF_TAB_IMG_WIDTH = 16;
 constexpr const int DEF_TAB_IMG_HEIGHT = 16;
 
+static void AddBookImageList(Node* node, wxObject* widget);
+
 //////////////////////////////////////////  BookPageGenerator  //////////////////////////////////////////
 
 wxObject* BookPageGenerator::Create(Node* node, wxObject* parent)
@@ -130,45 +132,7 @@ wxObject* NotebookGenerator::Create(Node* node, wxObject* parent)
         new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
                        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
-    if (node->prop_as_bool("display_images"))
-    {
-        bool has_bitmaps = false;
-        for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
-        {
-            if (node->GetChild(idx_child)->HasValue("bitmap"))
-            {
-                has_bitmaps = true;
-                break;
-            }
-        }
-
-        if (has_bitmaps)
-        {
-            auto size = node->prop_as_wxSize("bitmapsize");
-            if (size.x == -1)
-            {
-                size.x = DEF_TAB_IMG_WIDTH;
-            }
-            if (size.y == -1)
-            {
-                size.y = DEF_TAB_IMG_HEIGHT;
-            }
-
-            auto img_list = new wxImageList(size.x, size.y);
-
-            for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
-            {
-                if (node->GetChild(idx_child)->HasValue("bitmap"))
-                {
-                    auto img = wxGetApp().GetImage(node->GetChild(idx_child)->prop_as_string("bitmap"));
-                    ASSERT(img.IsOk());
-                    img_list->Add(img.Scale(size.x, size.y));
-                }
-            }
-
-            widget->AssignImageList(img_list);
-        }
-    }
+    AddBookImageList(node, widget);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &NotebookGenerator::OnPageChanged, this);
@@ -325,8 +289,6 @@ wxObject* ListbookGenerator::Create(Node* node, wxObject* parent)
         new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
                        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
-    // TODO: [KeyWorks - 11-22-2020] If a bitmap size is specified, then we need to create an imagelist -- see issue #518
-
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &ListbookGenerator::OnPageChanged, this);
 
@@ -465,4 +427,50 @@ bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     InsertGeneratorInclude(node, "#include <wx/Simplebk.h>", set_src, set_hdr);
 
     return true;
+}
+
+//////////////////////////////////////////  Book utility functions  //////////////////////////////////////////
+
+static void AddBookImageList(Node* node, wxObject* widget)
+{
+    if (node->prop_as_bool("display_images"))
+    {
+        bool has_bitmaps = false;
+        for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+        {
+            if (node->GetChild(idx_child)->HasValue("bitmap"))
+            {
+                has_bitmaps = true;
+                break;
+            }
+        }
+
+        if (has_bitmaps)
+        {
+            auto size = node->prop_as_wxSize("bitmapsize");
+            if (size.x == -1)
+            {
+                size.x = DEF_TAB_IMG_WIDTH;
+            }
+            if (size.y == -1)
+            {
+                size.y = DEF_TAB_IMG_HEIGHT;
+            }
+
+            auto img_list = new wxImageList(size.x, size.y);
+
+            for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+            {
+                if (node->GetChild(idx_child)->HasValue("bitmap"))
+                {
+                    auto img = wxGetApp().GetImage(node->GetChild(idx_child)->prop_as_string("bitmap"));
+                    ASSERT(img.IsOk());
+                    img_list->Add(img.Scale(size.x, size.y));
+                }
+            }
+
+            auto book = wxStaticCast(widget, wxBookCtrlBase);
+            book->AssignImageList(img_list);
+        }
+    }
 }

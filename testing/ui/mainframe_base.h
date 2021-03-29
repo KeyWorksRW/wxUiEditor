@@ -34,6 +34,7 @@ protected:
     virtual void OnOtherCtrls(wxCommandEvent& event) { event.Skip(); }
     virtual void OnQuit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRibbonDialog(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnToolbook(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTreebook(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWizard(wxCommandEvent& event) { event.Skip(); }
 };

@@ -13,8 +13,10 @@
 #include <wx/listbook.h>    // wxListbook: wxListView and wxNotebook combination
 #include <wx/notebook.h>    // wxNotebook interface
 #include <wx/simplebook.h>  // wxBookCtrlBase-derived class without any controller.
+#include <wx/toolbook.h>    // wxToolbook: wxToolBar and wxNotebook combination
 #include <wx/treebook.h>    // wxTreebook: wxNotebook-like control presenting pages in a tree
 
+#include "bitmaps.h"     // Map of bitmaps accessed by name
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "mainapp.h"     // App -- Main application class
 #include "node.h"        // Node class
@@ -38,18 +40,29 @@ wxObject* BookPageGenerator::Create(Node* node, wxObject* parent)
     auto widget =
         new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(txt_pos), node->prop_as_wxSize(txt_size),
                     node->prop_as_int(txt_style) | node->prop_as_int(txt_window_style));
+
+    auto node_parent = node->GetParent();
     auto book = wxDynamicCast(parent, wxBookCtrlBase);
     if (book)
     {
-        if (node->HasValue("bitmap") && node->GetParent()->prop_as_bool("display_images"))
+        if (node_parent->GetClassName() == "wxToolbook")
         {
-            auto node_parent = node->GetParent();
+            int idx_image = 0;
+            for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child, ++idx_image)
+            {
+                if (node_parent->GetChild(idx_child) == node)
+                    break;
+            }
+            book->AddPage(widget, node->prop_as_wxString(txt_label), false, idx_image);
+        }
+        else if (node->HasValue("bitmap") && node_parent->prop_as_bool("display_images"))
+        {
             int idx_image = 0;
             for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
             {
                 if (node_parent->GetChild(idx_child) == node)
                     break;
-                if (node_parent->GetChild(idx_child)->HasValue("bitmap"))
+                if (node_parent->GetChild(idx_child)->HasValue("bitmap") || node_parent->GetClassName() == "wxToolbook")
                     ++idx_image;
             }
 
@@ -103,7 +116,8 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
     if (node->prop_as_bool("select"))
         code << ", true";
 
-    if (node->HasValue("bitmap") && node->GetParent()->prop_as_bool("display_images"))
+    if (node->HasValue("bitmap") &&
+        (node->GetParent()->prop_as_bool("display_images") || node->GetParent()->GetClassName() == "wxToolbook"))
     {
         auto node_parent = node->GetParent();
         int idx_image = 0;
@@ -286,6 +300,87 @@ bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     return true;
 }
 
+//////////////////////////////////////////  ToolbookGenerator  //////////////////////////////////////////
+
+wxObject* ToolbookGenerator::Create(Node* node, wxObject* parent)
+{
+    auto widget =
+        new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
+                       node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+
+    // A toolbook always has images, so we can't use AddBookImageList
+
+    auto size = node->prop_as_wxSize("bitmapsize");
+    if (size.x == -1)
+    {
+        size.x = DEF_TAB_IMG_WIDTH;
+    }
+    if (size.y == -1)
+    {
+        size.y = DEF_TAB_IMG_HEIGHT;
+    }
+
+    auto img_list = new wxImageList(size.x, size.y);
+
+    for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+    {
+        if (node->GetChild(idx_child)->HasValue("bitmap"))
+        {
+            auto img = wxGetApp().GetImage(node->GetChild(idx_child)->prop_as_string("bitmap"));
+            ASSERT(img.IsOk());
+            img_list->Add(img.Scale(size.x, size.y));
+        }
+        else
+        {
+            auto img = GetXPMImage("unknown");
+            ASSERT(img.IsOk());
+            img_list->Add(img.Scale(size.x, size.y));
+        }
+    }
+
+    auto book = wxStaticCast(widget, wxBookCtrlBase);
+    book->AssignImageList(img_list);
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+    widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &ToolbookGenerator::OnPageChanged, this);
+
+    return widget;
+}
+
+void ToolbookGenerator::OnPageChanged(wxTreebookEvent& event)
+{
+    auto book = wxDynamicCast(event.GetEventObject(), wxTreebook);
+    if (book && event.GetSelection() != wxNOT_FOUND)
+        GetMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    event.Skip();
+}
+
+std::optional<ttlib::cstr> ToolbookGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = new wxToolbook(";
+    code << GetParentName(node) << ", " << node->prop_as_string("id");
+
+    GeneratePosSizeFlags(node, code);
+    BookCtorAddImagelist(code, node);
+
+    return code;
+}
+
+std::optional<ttlib::cstr> ToolbookGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool ToolbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/toolbook.h>", set_src, set_hdr);
+
+    return true;
+}
+
 //////////////////////////////////////////  TreebookGenerator  //////////////////////////////////////////
 
 wxObject* TreebookGenerator::Create(Node* node, wxObject* parent)
@@ -430,7 +525,7 @@ static void AddBookImageList(Node* node, wxObject* widget)
 
 static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
 {
-    if (node->prop_as_bool("display_images"))
+    if (node->prop_as_bool("display_images") || node->GetClassName() == "wxToolbook")
     {
         bool has_bitmaps = false;
         for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)

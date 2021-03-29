@@ -101,6 +101,7 @@
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\listbook.xpm; ; [-1; -1]" help="wxListbook" id="NewListBook" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\notebook.xpm; ; [-1; -1]" help="wxNotebook" id="NewNotebook" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\simple_book.xpm; ; [-1; -1]" help="wxSimplebook" id="NewSimpleBook" />
+                <node class="ribbonTool" bitmap="XPM; ..\xpm\wxToolbook.xpm; ; [-1; -1]" help="wxToolbook" id="NewToolBook" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\wxTreebook.xpm; ; [-1; -1]" help="wxTreebook" id="NewTreeBook" />
               </node>
             </node>

@@ -29,7 +29,7 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
 protected:
-    void OnPageChanged(wxNotebookEvent& event);
+    void OnPageChanged(wxBookCtrlEvent& event);
 };
 
 class ListbookGenerator : public BaseGenerator
@@ -43,7 +43,7 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
 protected:
-    void OnPageChanged(wxNotebookEvent& event);
+    void OnPageChanged(wxBookCtrlEvent& event);
 };
 
 class NotebookGenerator : public BaseGenerator
@@ -57,7 +57,7 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
 protected:
-    void OnPageChanged(wxNotebookEvent& event);
+    void OnPageChanged(wxBookCtrlEvent& event);
 };
 
 class SimplebookGenerator : public BaseGenerator
@@ -71,7 +71,21 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
 protected:
-    void OnPageChanged(wxBookCtrlBaseEvent& event);
+    void OnPageChanged(wxBookCtrlEvent& event);
+};
+
+class ToolbookGenerator : public BaseGenerator
+{
+public:
+    wxObject* Create(Node* node, wxObject* parent) override;
+
+    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
+
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+protected:
+    void OnPageChanged(wxBookCtrlEvent& event);
 };
 
 class TreebookGenerator : public BaseGenerator
@@ -85,5 +99,5 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
 protected:
-    void OnPageChanged(wxTreebookEvent& event);
+    void OnPageChanged(wxBookCtrlEvent& event);
 };

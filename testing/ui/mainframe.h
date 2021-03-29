@@ -15,6 +15,7 @@ public:
     MainFrame(wxWindow* parent);
 
 protected:
+    void OnToolbook(wxCommandEvent& event) override;
     void OnTreebook(wxCommandEvent& event) override;
     void OnListbook(wxCommandEvent& event) override;
     void OnNotebook(wxCommandEvent& event) override;

@@ -134,8 +134,8 @@
       <option name="wxCHB_BOTTOM" help="Place labels below the page area."/>
       wxCHB_DEFAULT
     </property>
-    <event name="wxEVT_CHOICEBOOK_PAGE_CHANGED" class="wxChoicebookEvent" help="The page selection was changed."/>
-    <event name="wxEVT_CHOICEBOOK_PAGE_CHANGING" class="wxChoicebookEvent"
+    <event name="wxEVT_CHOICEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+    <event name="wxEVT_CHOICEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
         help="The page selection is about to be changed. This event can be vetoed (using wxNotifyEvent::Veto())."/>
   </compinfo>
 
@@ -166,8 +166,8 @@
       <option name="wxLB_BOTTOM" help="Place labels below the page area."/>
       wxLB_DEFAULT
     </property>
-    <event name="wxEVT_LISTBOOK_PAGE_CHANGED" class="wxListbookEvent" help="The page selection was changed."/>
-    <event name="wxEVT_LISTBOOK_PAGE_CHANGING" class="wxListbookEvent"
+    <event name="wxEVT_LISTBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+    <event name="wxEVT_LISTBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
         help="The page selection is about to be changed. This event can be vetoed."/>
   </compinfo>
 
@@ -199,8 +199,30 @@
       <option name="wxNB_NOPAGETHEME"
         help="Display a solid colour on notebook pages, and not a gradient, which can reduce performance. (Windows only)"/>
     </property>
-    <event name="wxEVT_NOTEBOOK_PAGE_CHANGED" class="wxNotebookEvent" help="The page selection was changed."/>
-    <event name="wxEVT_NOTEBOOK_PAGE_CHANGING" class="wxNotebookEvent"
+    <event name="wxEVT_NOTEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+    <event name="wxEVT_NOTEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
+        help="The page selection is about to be changed. This event can be vetoed."/>
+  </compinfo>
+
+  <compinfo class="wxToolbook" image="wxToolbook" type="notebook">
+    <inherits class="wxWindow"/>
+    <inherits class="sizer_child"/>
+    <property name="var_name" type="string">m_toolbook</property>
+    <property name="class_access" type="option">
+      <option name="none"/>
+      <option name="protected:"/>
+      <option name="public:"/>
+      protected:
+    </property>
+    <property name="image_size" type="wxSize"
+        help="All tool images will be scaled to this size.">
+      16, 16
+    </property>
+    <property name="style" type="bitlist">
+      <option name="wxTBK_HORZ_LAYOUT" help="Shows the text and the icons alongside, not vertically stacked (only implement under Windows and GTK 2 platforms as it relies on wxTB_HORZ_LAYOUT flag support)."/>
+    </property>
+    <event name="wxEVT_TOOLBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+    <event name="wxEVT_TOOLBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
         help="The page selection is about to be changed. This event can be vetoed."/>
   </compinfo>
 

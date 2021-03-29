@@ -299,6 +299,7 @@ XPM:
     art_src/wxStaticText.png: xpm/wxStaticText.xpm
     art_src/wxTextCtrl.png: xpm/wxTextCtrl.xpm
     art_src/wxToolBar.png: xpm/wxToolBar.xpm
+    art_src/wxToolbook.png: xpm/wxToolbook.xpm
     art_src/wxTreebook.png: xpm/wxTreebook.xpm
     art_src/wxWizard.png: xpm/wxWizard.xpm
     art_src/wxWizardPageSimple.png: xpm/wxWizardPageSimple.xpm

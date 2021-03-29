@@ -14,6 +14,7 @@
 
 #include "../../src/xpm/wxListbook.xpm"
 #include "../../src/xpm/wxNotebook.xpm"
+#include "../../src/xpm/wxToolbook.xpm"
 #include "../../src/xpm/wxTreebook.xpm"
 
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -49,6 +50,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     menu_notebook->SetBitmap(wxImage(wxNotebook_xpm));
     submenu->Append(menu_notebook);
 
+    auto menu_toolbook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Toolbook"));
+    menu_toolbook->SetBitmap(wxImage(wxToolbook_xpm));
+    submenu->Append(menu_toolbook);
+
     auto menu_treebook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Treebook"));
     menu_treebook->SetBitmap(wxImage(wxTreebook_xpm));
     submenu->Append(menu_treebook);
@@ -73,6 +78,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnWizard, this, menuItem3->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnListbook, this, menu_listbook->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnNotebook, this, menu_notebook->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnToolbook, this, menu_toolbook->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnTreebook, this, menu_treebook->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnQuit, this, wxID_EXIT);
 }

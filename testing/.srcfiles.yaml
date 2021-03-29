@@ -41,6 +41,7 @@ Files:
 
     ui/listbook_base.cpp
     ui/notebook_base.cpp
+    ui/toolbook_base.cpp
     ui/treebook_base.cpp
 
 XPM:

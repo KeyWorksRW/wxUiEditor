@@ -148,6 +148,7 @@
 #include "xpm/wxStaticText.xpm"
 #include "xpm/wxTextCtrl.xpm"
 #include "xpm/wxToolBar.xpm"
+#include "xpm/wxToolbook.xpm"
 #include "xpm/wxTreebook.xpm"
 #include "xpm/wxWizard.xpm"
 #include "xpm/wxWizardPageSimple.xpm"
@@ -227,6 +228,7 @@ static const std::unordered_map<std::string, const char**> map_xpm_strings = {
     { "moveRowUp", moveRowUp_xpm },
     { "wxNotebook", wxNotebook_xpm },
     { "wxTreebook", wxTreebook_xpm },
+    { "wxToolbook", wxToolbook_xpm },
     { "wxPanel", wxPanel_xpm },
     { "project", project_xpm },
     { "wxPropertyGrid", wxPropertyGrid_xpm },

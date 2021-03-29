@@ -14,8 +14,9 @@
 #include "ribbondlg.h"
 #include "wizard.h"
 
-#include "ui/notebook_base.h"
 #include "ui/listbook_base.h"
+#include "ui/notebook_base.h"
+#include "ui/toolbook_base.h"
 #include "ui/treebook_base.h"
 
 MainFrame::MainFrame(wxWindow* parent) : MainFrameBase(parent) {}
@@ -65,5 +66,11 @@ void MainFrame::OnListbook(wxCommandEvent& WXUNUSED(event))
 void MainFrame::OnTreebook(wxCommandEvent& WXUNUSED(event))
 {
     TreebookBase dlg(this);
+    dlg.ShowModal();
+}
+
+void MainFrame::OnToolbook(wxCommandEvent& WXUNUSED(event))
+{
+    ToolbookBase dlg(this);
     dlg.ShowModal();
 }

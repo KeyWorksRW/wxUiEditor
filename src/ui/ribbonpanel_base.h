@@ -97,6 +97,7 @@ public:
         NewTimePickerCtrl,
         NewTool,
         NewToolBar,
+        NewToolBook,
         NewToolSeparator,
         NewTreeBook,
         NewTreeColumn,

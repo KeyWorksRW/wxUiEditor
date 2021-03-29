@@ -11,6 +11,7 @@
           <node class="submenu" label="Book Controls">
             <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxListbook.xpm; ; [-1; -1]" label="Listbook" var_name="menu_listbook" wxEVT_MENU="OnListbook" />
             <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxNotebook.xpm; ; [-1; -1]" label="Notebook" var_name="menu_notebook" wxEVT_MENU="OnNotebook" />
+            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxToolbook.xpm; ; [-1; -1]" label="Toolbook" var_name="menu_toolbook" wxEVT_MENU="OnToolbook" />
             <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxTreebook.xpm; ; [-1; -1]" label="Treebook" var_name="menu_treebook" wxEVT_MENU="OnTreebook" />
           </node>
           <node class="separator" />
@@ -231,6 +232,27 @@
     <node class="wxDialog" base_file="treebook_base" class_name="TreebookBase" derived_class_name="Treebook" title="Treebook">
       <node class="wxBoxSizer" orientation="wxVERTICAL">
         <node class="wxTreebook" display_images="true" minimum_size="400,400">
+          <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+              <node class="wxStaticText" label="This is a sentence in English." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\french.xpm; ; [-1; -1]" label="Français" var_name="page_2" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_2">
+              <node class="wxStaticText" label="Ceci est une phrase en français." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\japanese.xpm; ; [-1; -1]" label="日本語" var_name="page_3" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_3">
+              <node class="wxStaticText" label="これは日本語の文章です。" />
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+    <node class="wxDialog" base_file="toolbook_base" class_name="ToolbookBase" derived_class_name="Toolbook" title="wxToolbook">
+      <node class="wxBoxSizer" orientation="wxVERTICAL">
+        <node class="wxToolbook" minimum_size="400,400">
           <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
             <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
               <node class="wxStaticText" label="This is a sentence in English." />

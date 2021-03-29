@@ -452,8 +452,8 @@ std::vector<std::string> ConvertToArrayString(ttlib::cview value)
     auto pos = parse.ExtractSubString(value);
     array.emplace_back(parse);
 
-    for (std::string_view tmp_value = ttlib::stepover(value.data() + pos); tmp_value.size();
-         tmp_value = ttlib::stepover(value.data() + pos))
+    for (auto tmp_value = ttlib::stepover(value.data() + pos); tmp_value.size();
+         tmp_value = ttlib::stepover(tmp_value.data() + pos))
     {
         pos = parse.ExtractSubString(tmp_value);
         array.emplace_back(parse);

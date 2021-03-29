@@ -294,7 +294,7 @@ wxObject* TreebookGenerator::Create(Node* node, wxObject* parent)
         new wxTreebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
                        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
-    // TODO: [KeyWorks - 11-22-2020] If a bitmap size is specified, then we need to create an imagelist
+    AddBookImageList(node, widget);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &TreebookGenerator::OnPageChanged, this);
@@ -319,6 +319,7 @@ std::optional<ttlib::cstr> TreebookGenerator::GenConstruction(Node* node)
     code << GetParentName(node) << ", " << node->prop_as_string("id");
 
     GeneratePosSizeFlags(node, code);
+    BookCtorAddImagelist(code, node);
 
     return code;
 }
@@ -426,7 +427,6 @@ static void AddBookImageList(Node* node, wxObject* widget)
         }
     }
 }
-
 
 static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
 {

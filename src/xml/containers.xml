@@ -214,6 +214,14 @@
       <option name="public:"/>
       protected:
     </property>
+    <property name="display_images" type="bool"
+        help="If true, will display an image on the tab in addition to any text.">
+      0
+    </property>
+    <property name="image_size" type="wxSize"
+        help="All tab images will be scaled to this size.">
+      16, 16
+    </property>
     <property name="style" type="bitlist">
       <option name="wxNB_TOP" help="Place tabs on the top side."/>
       <option name="wxNB_LEFT" help="Place tabs on the left side."/>

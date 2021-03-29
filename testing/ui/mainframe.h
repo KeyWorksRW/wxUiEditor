@@ -17,6 +17,7 @@ public:
     wxStatusBar* GetStatusBar() { return m_statusBar; }
 
 protected:
+    void OnTreebook(wxCommandEvent& event) override;
     void OnListbook(wxCommandEvent& event) override;
     void OnNotebook(wxCommandEvent& event) override;
     void OnQuit(wxCommandEvent& event) override;

@@ -16,6 +16,7 @@
 
 #include "ui/notebook_base.h"
 #include "ui/listbook_base.h"
+#include "ui/treebook_base.h"
 
 MainFrame::MainFrame(wxWindow* parent) : MainFrameBase(parent) {}
 
@@ -58,5 +59,11 @@ void MainFrame::OnNotebook(wxCommandEvent& WXUNUSED(event))
 void MainFrame::OnListbook(wxCommandEvent& WXUNUSED(event))
 {
     ListbookBase dlg(this);
+    dlg.ShowModal();
+}
+
+void MainFrame::OnTreebook(wxCommandEvent& WXUNUSED(event))
+{
+    TreebookBase dlg(this);
     dlg.ShowModal();
 }

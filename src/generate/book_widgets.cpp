@@ -29,6 +29,7 @@ constexpr const int DEF_TAB_IMG_WIDTH = 16;
 constexpr const int DEF_TAB_IMG_HEIGHT = 16;
 
 static void AddBookImageList(Node* node, wxObject* widget);
+static void BookCtorAddImagelist(ttlib::cstr& code, Node* node);
 
 //////////////////////////////////////////  BookPageGenerator  //////////////////////////////////////////
 
@@ -157,59 +158,7 @@ std::optional<ttlib::cstr> NotebookGenerator::GenConstruction(Node* node)
     code << GetParentName(node) << ", " << node->prop_as_string("id");
 
     GeneratePosSizeFlags(node, code);
-
-    if (node->prop_as_bool("display_images"))
-    {
-        bool has_bitmaps = false;
-        for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
-        {
-            if (node->GetChild(idx_child)->HasValue("bitmap"))
-            {
-                has_bitmaps = true;
-                break;
-            }
-        }
-
-        if (has_bitmaps)
-        {
-            code.insert(0, "    ");
-            auto size = node->prop_as_wxSize("bitmapsize");
-            if (size.x == -1)
-            {
-                size.x = DEF_TAB_IMG_WIDTH;
-            }
-            if (size.y == -1)
-            {
-                size.y = DEF_TAB_IMG_HEIGHT;
-            }
-
-            // Enclose the code in braces to allow using "img_list" and "bmp" as variable names, as well as making the code
-            // more readable.
-
-            code << "\n    {";
-            code << "\n        auto img_list = new wxImageList(";
-            code << size.x << ", " << size.y << ");";
-
-            for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
-            {
-                // Note: when we generate the code, we could look at the actual image and determine whether it's already the
-                // correct size and only scale it if needed. However, that requires the user to know to regenerate the code
-                // any time the image is changed to ensure it has the correct dimensions.
-
-                if (node->GetChild(idx_child)->HasValue("bitmap"))
-                {
-                    code << "\n        auto img_" << idx_child << " = ";
-                    code << GenerateBitmapCode(node->GetChild(idx_child)->prop_as_string("bitmap")) << ";";
-                    code << "\n        img_list->Add(img_" << idx_child;
-                    if (node->GetChild(idx_child)->prop_as_string("bitmap").is_sameprefix("Art;"))
-                        code << ".ConvertToImage()";
-                    code << ".Scale(" << size.x << ", " << size.y << "));";
-                }
-            }
-            code << "\n        " << node->get_node_name() << "->AssignImageList(img_list);";
-            code << "\n    }";
-        }
-    }
+    BookCtorAddImagelist(code, node);
 
     return code;
 }
@@ -289,6 +238,8 @@ wxObject* ListbookGenerator::Create(Node* node, wxObject* parent)
         new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
                        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
 
+    AddBookImageList(node, widget);
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &ListbookGenerator::OnPageChanged, this);
 
@@ -312,6 +263,7 @@ std::optional<ttlib::cstr> ListbookGenerator::GenConstruction(Node* node)
     code << GetParentName(node) << ", " << node->prop_as_string("id");
 
     GeneratePosSizeFlags(node, code);
+    BookCtorAddImagelist(code, node);
 
     return code;
 }
@@ -471,6 +423,63 @@ static void AddBookImageList(Node* node, wxObject* widget)
 
             auto book = wxStaticCast(widget, wxBookCtrlBase);
             book->AssignImageList(img_list);
+        }
+    }
+}
+
+
+static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
+{
+    if (node->prop_as_bool("display_images"))
+    {
+        bool has_bitmaps = false;
+        for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+        {
+            if (node->GetChild(idx_child)->HasValue("bitmap"))
+            {
+                has_bitmaps = true;
+                break;
+            }
+        }
+
+        if (has_bitmaps)
+        {
+            code.insert(0, "    ");
+            auto size = node->prop_as_wxSize("bitmapsize");
+            if (size.x == -1)
+            {
+                size.x = DEF_TAB_IMG_WIDTH;
+            }
+            if (size.y == -1)
+            {
+                size.y = DEF_TAB_IMG_HEIGHT;
+            }
+
+            // Enclose the code in braces to allow using "img_list" and "bmp" as variable names, as well as making the code
+            // more readable.
+
+            code << "\n    {";
+            code << "\n        auto img_list = new wxImageList(";
+            code << size.x << ", " << size.y << ");";
+
+            for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+            {
+                // Note: when we generate the code, we could look at the actual image and determine whether it's already the
+                // correct size and only scale it if needed. However, that requires the user to know to regenerate the code
+                // any time the image is changed to ensure it has the correct dimensions.
+
+                if (node->GetChild(idx_child)->HasValue("bitmap"))
+                {
+                    code << "\n        auto img_" << idx_child << " = ";
+                    code << GenerateBitmapCode(node->GetChild(idx_child)->prop_as_string("bitmap")) << ";";
+                    code << "\n        img_list->Add(img_" << idx_child;
+                    if (node->GetChild(idx_child)->prop_as_string("bitmap").is_sameprefix("Art;"))
+                        code << ".ConvertToImage()";
+                    code << ".Scale(" << size.x << ", " << size.y << "));";
+                }
+            }
+            code << "\n        " << node->get_node_name() << "->AssignImageList(img_list);";
+            code << "\n    }";
         }
     }
 }

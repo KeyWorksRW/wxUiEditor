@@ -29,8 +29,9 @@ protected:
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnCommonDialog(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnListbook(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNotebook(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnNotebookDialog(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOtherCtrls(wxCommandEvent& event) { event.Skip(); }
     virtual void OnQuit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRibbonDialog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWizard(wxCommandEvent& event) { event.Skip(); }

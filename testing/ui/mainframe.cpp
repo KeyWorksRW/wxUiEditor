@@ -15,6 +15,7 @@
 #include "wizard.h"
 
 #include "ui/notebook_base.h"
+#include "ui/listbook_base.h"
 
 MainFrame::MainFrame(wxWindow* parent) : MainFrameBase(parent) {}
 
@@ -24,7 +25,7 @@ void MainFrame::OnCommonDialog(wxCommandEvent& WXUNUSED(event))
     dlg.ShowModal();
 }
 
-void MainFrame::OnNotebookDialog(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnOtherCtrls(wxCommandEvent& WXUNUSED(event))
 {
     OtherCtrlsDlg dlg(this);
     dlg.ShowModal();
@@ -51,5 +52,11 @@ void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 void MainFrame::OnNotebook(wxCommandEvent& WXUNUSED(event))
 {
     NotebookBase dlg(this);
+    dlg.ShowModal();
+}
+
+void MainFrame::OnListbook(wxCommandEvent& WXUNUSED(event))
+{
+    ListbookBase dlg(this);
     dlg.ShowModal();
 }

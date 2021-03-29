@@ -12,6 +12,7 @@
 
 #include "mainframe_base.h"
 
+#include "../../src/xpm/wxListbook.xpm"
 #include "../../src/xpm/wxNotebook.xpm"
 
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -39,9 +40,13 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto submenu = new wxMenu();
 
-    auto menu_item = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Notebook"));
-    menu_item->SetBitmap(wxImage(wxNotebook_xpm));
-    submenu->Append(menu_item);
+    auto menu_listbook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Listbook"));
+    menu_listbook->SetBitmap(wxImage(wxListbook_xpm));
+    submenu->Append(menu_listbook);
+
+    auto menu_notebook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Notebook"));
+    menu_notebook->SetBitmap(wxImage(wxNotebook_xpm));
+    submenu->Append(menu_notebook);
     menuDialogs->AppendSubMenu(submenu, wxString::FromUTF8("Book Controls"));
 
     menuDialogs->AppendSeparator();
@@ -58,9 +63,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     // Event handlers
     Bind(wxEVT_MENU, &MainFrameBase::OnCommonDialog, this, menuItem->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnNotebookDialog, this, menuItem1->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnOtherCtrls, this, menuItem1->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnRibbonDialog, this, menuItem2->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnWizard, this, menuItem3->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnNotebook, this, menu_item->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnListbook, this, menu_listbook->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnNotebook, this, menu_notebook->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnQuit, this, wxID_EXIT);
 }

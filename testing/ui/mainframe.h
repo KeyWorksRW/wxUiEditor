@@ -17,10 +17,11 @@ public:
     wxStatusBar* GetStatusBar() { return m_statusBar; }
 
 protected:
+    void OnListbook(wxCommandEvent& event) override;
     void OnNotebook(wxCommandEvent& event) override;
     void OnQuit(wxCommandEvent& event) override;
     void OnWizard(wxCommandEvent& event) override;
     void OnRibbonDialog(wxCommandEvent& event) override;
-    void OnNotebookDialog(wxCommandEvent& event) override;
+    void OnOtherCtrls(wxCommandEvent& event) override;
     void OnCommonDialog(wxCommandEvent& event) override;
 };

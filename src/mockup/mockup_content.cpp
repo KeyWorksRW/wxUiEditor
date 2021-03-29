@@ -342,10 +342,13 @@ void MockupContent::OnNodeSelected(Node* node)
     else if (node->GetClassName() == "BookPage")
     {
         auto parent = node->GetParent();
-        auto book = wxDynamicCast(Get_wxObject(parent), wxBookCtrl);
+        auto book = wxStaticCast(Get_wxObject(parent), wxBookCtrlBase);
         ASSERT(book);
-        book->SetSelection(parent->GetChildPosition(node));
-        m_mockupParent->ClearIgnoreSelection();
+        if (book)
+        {
+            book->SetSelection(parent->GetChildPosition(node));
+            m_mockupParent->ClearIgnoreSelection();
+        }
         return;
     }
 

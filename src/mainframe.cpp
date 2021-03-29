@@ -1016,7 +1016,7 @@ void MainFrame::ToggleBorderFlag(Node* node, int border)
     ModifyProperty(propFlag, value);
 }
 
-void MainFrame::ModifyProperty(NodeProperty* prop, std::string_view value)
+void MainFrame::ModifyProperty(NodeProperty* prop, ttlib::cview value)
 {
     if (prop && value != prop->as_cview())
     {

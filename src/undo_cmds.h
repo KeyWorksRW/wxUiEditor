@@ -42,7 +42,7 @@ private:
 class ModifyPropertyAction : public UndoAction
 {
 public:
-    ModifyPropertyAction(NodeProperty* prop, std::string_view value);
+    ModifyPropertyAction(NodeProperty* prop, ttlib::cview value);
     ModifyPropertyAction(NodeProperty* prop, int value);
     void Change() override;
     void Revert() override;
@@ -56,7 +56,7 @@ private:
 class ModifyEventAction : public UndoAction
 {
 public:
-    ModifyEventAction(NodeEvent* event, std::string_view value);
+    ModifyEventAction(NodeEvent* event, ttlib::cview value);
     void Change() override;
     void Revert() override;
 

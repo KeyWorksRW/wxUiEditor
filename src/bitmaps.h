@@ -19,12 +19,12 @@ void InitializeIcons();
 // images created by the EmbedImage class or by bin2c.
 //
 // Call image.isOk() to verify that the image was loaded.
-wxImage convertPngHeader(std::string_view filename);
+wxImage convertPngHeader(ttlib::cview filename);
 
 // Converts an image stored as an unsigned char array in a header file. It's designed to read
 // header files created by wxUiEditor -- any other generated header file might or might not
 // work.
-wxImage GetHeaderImage(std::string_view filename);
+wxImage GetHeaderImage(ttlib::cview filename);
 
 // Returns wxImage(default.xpm) if string cannot be found. Default.xpm is a question mark.
 wxImage GetXPMImage(ttlib::cview name);

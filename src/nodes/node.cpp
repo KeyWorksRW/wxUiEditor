@@ -741,7 +741,7 @@ void Node::ModifyProperty(ttlib::cview name, int value)
     }
 }
 
-void Node::ModifyProperty(ttlib::cview name, std::string_view value)
+void Node::ModifyProperty(ttlib::cview name, ttlib::cview value)
 {
     auto prop = get_prop_ptr(name);
     if (prop && value != prop->as_cview())
@@ -760,7 +760,7 @@ void Node::ModifyProperty(NodeProperty* prop, int value)
     }
 }
 
-void Node::ModifyProperty(NodeProperty* prop, std::string_view value)
+void Node::ModifyProperty(NodeProperty* prop, ttlib::cview value)
 {
     if (prop && value != prop->as_cview())
     {

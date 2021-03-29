@@ -52,7 +52,7 @@ protected:
     void ReselectItem();
 
     void ModifyProperty(NodeProperty* prop, const wxString& str);
-    void modifyProperty(NodeProperty* prop, std::string_view str);
+    void modifyProperty(NodeProperty* prop, ttlib::cview str);
 
     int GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags);
 

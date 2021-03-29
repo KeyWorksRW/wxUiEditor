@@ -110,7 +110,7 @@ public:
     void RemoveNode(Node* node, bool isCutMode);
 
     // Call this MainFrame version if you don't have access to a node.
-    void ModifyProperty(NodeProperty* prop, std::string_view value);
+    void ModifyProperty(NodeProperty* prop, ttlib::cview value);
 
     void ChangeAlignment(Node* node, int align, bool vertical);
 

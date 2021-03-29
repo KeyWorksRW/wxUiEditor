@@ -14,8 +14,6 @@ class MainFrame : public MainFrameBase
 public:
     MainFrame(wxWindow* parent);
 
-    wxStatusBar* GetStatusBar() { return m_statusBar; }
-
 protected:
     void OnTreebook(wxCommandEvent& event) override;
     void OnListbook(wxCommandEvent& event) override;

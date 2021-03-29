@@ -30,13 +30,18 @@ Files:
     ui/mainframe_base.cpp  # wxUiEditor generated file
     ui/commonctrls.cpp
     ui/commonctrls_base.cpp
-    ui/notebook_base.cpp
     ui/other_ctrls.cpp
     ui/other_ctrls_base.cpp
     ui/ribbondlg.cpp
     ui/ribbondlg_base.cpp
     ui/wizard_base.cpp
     ui/wizard.cpp
+
+    # The following only have a base class, they don't use a derived class
+
+    ui/listbook_base.cpp
+    ui/notebook_base.cpp
+    ui/treebook_base.cpp
 
 XPM:
     art/english.png: art/english.xpm

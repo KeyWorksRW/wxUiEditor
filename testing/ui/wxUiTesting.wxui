@@ -5,11 +5,13 @@
       <node class="wxMenuBar" class_access="none" var_name="menubar">
         <node class="wxMenu" class_access="none" label="&amp;Dialogs" var_name="menuDialogs">
           <node class="wxMenuItem" help="Common controls" label="Common Controls..." var_name="menuItem" wxEVT_MENU="OnCommonDialog" />
-          <node class="wxMenuItem" label="Other Controls Dialog..." var_name="menuItem1" wxEVT_MENU="OnNotebookDialog" />
+          <node class="wxMenuItem" label="Other Controls Dialog..." var_name="menuItem1" wxEVT_MENU="OnOtherCtrls" />
           <node class="wxMenuItem" label="Ribbon Dialog" var_name="menuItem2" wxEVT_MENU="OnRibbonDialog" />
           <node class="wxMenuItem" label="Wizard" var_name="menuItem3" wxEVT_MENU="OnWizard" />
           <node class="submenu" label="Book Controls">
-            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxNotebook.xpm; ; [-1; -1]" label="Notebook" wxEVT_MENU="OnNotebook" />
+            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxListbook.xpm; ; [-1; -1]" label="Listbook" var_name="menu_listbook" wxEVT_MENU="OnListbook" />
+            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxNotebook.xpm; ; [-1; -1]" label="Notebook" var_name="menu_notebook" wxEVT_MENU="OnNotebook" />
+            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxTreebook.xpm; ; [-1; -1]" label="Treebook" var_name="menu_treebook" wxEVT_MENU="OnTreebook" />
           </node>
           <node class="separator" />
           <node class="wxMenuItem" id="wxID_EXIT" label="Exit" var_name="menuItem4" wxEVT_MENU="OnQuit" />
@@ -184,9 +186,51 @@
     <node class="ToolBar">
       <node class="tool" label="" />
     </node>
-    <node class="wxDialog" base_file="notebook_base" class_name="NotebookBase" derived_class_name="Notebook" derived_file="notebook" title="Notebook" minimum_size="600,600" size="-1,-1">
+    <node class="wxDialog" base_file="notebook_base" class_name="NotebookBase" derived_class_name="Notebook" title="Notebook" minimum_size="600,600" size="-1,-1">
       <node class="wxBoxSizer" orientation="wxVERTICAL">
         <node class="wxNotebook" display_images="true" image_size="19,15" minimum_size="400,400" flags="wxEXPAND">
+          <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+              <node class="wxStaticText" label="This is a sentence in English." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\french.xpm; ; [-1; -1]" label="Français" var_name="page_2" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_2">
+              <node class="wxStaticText" label="Ceci est une phrase en français." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\japanese.xpm; ; [-1; -1]" label="日本語" var_name="page_3" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_3">
+              <node class="wxStaticText" label="これは日本語の文章です。" />
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+    <node class="wxDialog" base_file="listbook_base" class_name="ListbookBase" derived_class_name="Listbook" title="Listbook">
+      <node class="wxBoxSizer" orientation="wxVERTICAL">
+        <node class="wxListbook" display_images="true" style="wxLB_LEFT" minimum_size="400,400">
+          <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+              <node class="wxStaticText" label="This is a sentence in English." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\french.xpm; ; [-1; -1]" label="Français" var_name="page_2" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_2">
+              <node class="wxStaticText" label="Ceci est une phrase en français." />
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\japanese.xpm; ; [-1; -1]" label="日本語" var_name="page_3" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_3">
+              <node class="wxStaticText" label="これは日本語の文章です。" />
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+    <node class="wxDialog" base_file="treebook_base" class_name="TreebookBase" derived_class_name="Treebook" title="Treebook">
+      <node class="wxBoxSizer" orientation="wxVERTICAL">
+        <node class="wxTreebook" display_images="true" minimum_size="400,400">
           <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
             <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
               <node class="wxStaticText" label="This is a sentence in English." />

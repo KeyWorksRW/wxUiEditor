@@ -14,8 +14,8 @@
 
 #include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
 
-#include "node_creator.h"   // NodeCreator class
-#include "utils.h"          // Utility functions that work with properties
+#include "node_creator.h"  // NodeCreator class
+#include "utils.h"         // Utility functions that work with properties
 
 ttlib::cstr DoubleToStr(double val)
 {
@@ -29,7 +29,7 @@ ttlib::cstr DoubleToStr(double val)
     return result;
 }
 
-ttlib::cstr ClearPropFlag(std::string_view flag, std::string_view currentValue)
+ttlib::cstr ClearPropFlag(ttlib::cview flag, ttlib::cview currentValue)
 {
     ttlib::cstr result;
     if (flag.empty() || currentValue.empty())
@@ -51,7 +51,7 @@ ttlib::cstr ClearPropFlag(std::string_view flag, std::string_view currentValue)
     return result;
 }
 
-ttlib::cstr ClearMultiplePropFlags(std::string_view flags, std::string_view currentValue)
+ttlib::cstr ClearMultiplePropFlags(ttlib::cview flags, ttlib::cview currentValue)
 {
     ttlib::cstr result;
     if (flags.empty() || currentValue.empty())
@@ -85,7 +85,7 @@ ttlib::cstr ClearMultiplePropFlags(std::string_view flags, std::string_view curr
     return result;
 }
 
-ttlib::cstr SetPropFlag(std::string_view flag, std::string_view currentValue)
+ttlib::cstr SetPropFlag(ttlib::cview flag, ttlib::cview currentValue)
 {
     ttlib::cstr result(currentValue);
     if (flag.empty())
@@ -107,7 +107,7 @@ ttlib::cstr SetPropFlag(std::string_view flag, std::string_view currentValue)
     return result;
 }
 
-bool isPropFlagSet(std::string_view flag, std::string_view currentValue)
+bool isPropFlagSet(ttlib::cview flag, ttlib::cview currentValue)
 {
     if (flag.empty() || currentValue.empty())
     {
@@ -125,7 +125,7 @@ bool isPropFlagSet(std::string_view flag, std::string_view currentValue)
     return false;
 }
 
-wxPoint ConvertToPoint(std::string_view value)
+wxPoint ConvertToPoint(ttlib::cview value)
 {
     wxPoint pt { -1, -1 };
     if (value.size())
@@ -143,7 +143,7 @@ wxPoint ConvertToPoint(std::string_view value)
     return pt;
 }
 
-wxSize ConvertToSize(std::string_view value)
+wxSize ConvertToSize(ttlib::cview value)
 {
     wxSize size { -1, -1 };
     if (value.size())
@@ -175,7 +175,7 @@ ttlib::cstr ConvertSizeToString(const wxSize& size)
     return str;
 }
 
-int ConvertBitlistToInt(std::string_view list)
+int ConvertBitlistToInt(ttlib::cview list)
 {
     int result = 0;
     if (list.size())
@@ -249,11 +249,11 @@ ttlib::cstr ConvertSystemColourToString(long colour)
     return str;
 }
 
-wxSystemColour ConvertToSystemColour(std::string_view value)
+wxSystemColour ConvertToSystemColour(ttlib::cview value)
 {
-// clang-format off
-    #define IS_SYSCOLOUR(name) if (value == #name) return name;
-    #define ELSE_IS_SYSCOLOUR(name) else if (value == #name) return name;
+    // clang-format off
+    #define IS_SYSCOLOUR(name) if (value.is_sameas(#name)) return name;
+    #define ELSE_IS_SYSCOLOUR(name) else if (value.is_sameas(#name)) return name;
 
     IS_SYSCOLOUR(wxSYS_COLOUR_SCROLLBAR)
 
@@ -295,7 +295,7 @@ wxSystemColour ConvertToSystemColour(std::string_view value)
     // clang-format on
 }
 
-wxColour ConvertToColour(std::string_view value)
+wxColour ConvertToColour(ttlib::cview value)
 {
     // check for system colour
     if (ttlib::is_sameprefix(value, "wx"))
@@ -443,7 +443,7 @@ ttlib::cstr CreateEscapedText(ttlib::cview str)
     return result;
 }
 
-std::vector<std::string> ConvertToArrayString(std::string_view value)
+std::vector<std::string> ConvertToArrayString(ttlib::cview value)
 {
     std::vector<std::string> array;
     if (value.empty())
@@ -452,9 +452,10 @@ std::vector<std::string> ConvertToArrayString(std::string_view value)
     auto pos = parse.ExtractSubString(value);
     array.emplace_back(parse);
 
-    for (value = ttlib::stepover(value.data() + pos); value.size(); value = ttlib::stepover(value.data() + pos))
+    for (std::string_view tmp_value = ttlib::stepover(value.data() + pos); tmp_value.size();
+         tmp_value = ttlib::stepover(value.data() + pos))
     {
-        pos = parse.ExtractSubString(value);
+        pos = parse.ExtractSubString(tmp_value);
         array.emplace_back(parse);
     }
 
@@ -463,7 +464,7 @@ std::vector<std::string> ConvertToArrayString(std::string_view value)
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string. Used when generating
 // code.
-ttlib::cstr ConvertToCodeString(std::string_view text)
+ttlib::cstr ConvertToCodeString(ttlib::cview text)
 {
     ttlib::cstr result;
 

@@ -826,7 +826,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case Type::String_Escapes:
         case Type::String_Edit_Escapes:
         {
-            // PropGridPanel's text strings are formatted.
             auto value = ConvertEscapeSlashes(ttlib::cstr() << m_prop_grid->GetPropertyValueAsString(property).wx_str());
             modifyProperty(prop, value);
             break;
@@ -1338,7 +1337,7 @@ void PropGridPanel::ModifyProperty(NodeProperty* prop, const wxString& str)
     m_isPropChangeSuspended = false;
 }
 
-void PropGridPanel::modifyProperty(NodeProperty* prop, std::string_view str)
+void PropGridPanel::modifyProperty(NodeProperty* prop, ttlib::cview str)
 {
     m_isPropChangeSuspended = true;
     wxGetFrame().ModifyProperty(prop, str);

@@ -16,7 +16,7 @@
 
 #include "bitmaps.h"
 
-wxImage convertPngHeader(std::string_view filename)
+wxImage convertPngHeader(ttlib::cview filename)
 {
     wxImage image;
 
@@ -142,7 +142,7 @@ wxImage convertPngHeader(std::string_view filename)
     return image;
 }
 
-wxImage GetHeaderImage(std::string_view filename)
+wxImage GetHeaderImage(ttlib::cview filename)
 {
     wxImage image;
 

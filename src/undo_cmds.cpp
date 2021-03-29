@@ -128,7 +128,7 @@ void RemoveNodeAction::Revert()
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
 
-ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, std::string_view value) : m_property(prop)
+ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview value) : m_property(prop)
 {
     ttlib::cstr undo_str = "change " + prop->GetPropName();
     SetUndoString(undo_str);
@@ -158,7 +158,7 @@ void ModifyPropertyAction::Revert()
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
-ModifyEventAction::ModifyEventAction(NodeEvent* event, std::string_view value) : m_event(event)
+ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event)
 {
     ttlib::cstr undo_str = "change " + event->get_name() + " handler";
     SetUndoString(undo_str);

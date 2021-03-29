@@ -162,7 +162,7 @@ bool NodeDeclaration::IsSubclassOf(const std::string& classname) const
     return false;
 }
 
-bool NodeDeclaration::isSubclassOf(std::string_view classname) const
+bool NodeDeclaration::isSubclassOf(ttlib::cview classname) const
 {
     if (m_classname.is_sameas(classname))
     {

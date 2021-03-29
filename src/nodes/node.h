@@ -171,13 +171,13 @@ public:
     bool CreateToolNode(const ttlib::cstr& name);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(ttlib::cview name, std::string_view value);
+    void ModifyProperty(ttlib::cview name, ttlib::cview value);
 
     // This will modify the property and fire a EVT_NodePropChange event
     void ModifyProperty(ttlib::cview name, int value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(NodeProperty* prop, std::string_view value);
+    void ModifyProperty(NodeProperty* prop, ttlib::cview value);
 
     // This will modify the property and fire a EVT_NodePropChange event
     void ModifyProperty(NodeProperty* prop, int value);

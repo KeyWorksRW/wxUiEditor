@@ -59,7 +59,7 @@ public:
     }
 
     bool IsSubclassOf(const std::string& classname) const;
-    bool isSubclassOf(std::string_view classname) const;
+    bool isSubclassOf(ttlib::cview classname) const;
 
     NodeDeclaration* GetBaseClass(size_t idx, bool inherited = true) const;
 

@@ -354,8 +354,7 @@ void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
         text << _tt(strIdProjectName) << wxGetApp().getProjectFileName().filename();
     }
 
-    // If there is no name, or if the user has requested to always display the wxWidgets class, then add the class name in
-    // parenthesis.
+    // If there is no name then add the class name in parenthesis.
     else if (text.empty())
     {
         text += " (" + node->GetClassName() + ")";
@@ -435,7 +434,7 @@ void NavigationPanel::OnPropertyModified(CustomEvent& event)
 {
     auto prop = event.GetNodeProperty();
 
-    if (prop->GetPropName() == txt_var_name || prop->GetPropName() == txt_label)
+    if (prop->GetPropName() == txt_var_name || prop->GetPropName() == txt_label || prop->GetPropName() == txt_class_name)
     {
         auto& class_name = prop->GetNode()->GetClassName();
         if (ttlib::contains(class_name, "bookpage"))

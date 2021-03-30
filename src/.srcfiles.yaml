@@ -120,6 +120,7 @@ Files:
     ui/embedimg.cpp             # Convert image to Header (.h) or XPM (.xpm) file
     ui/eventhandlerdlg.cpp      # Dialog for editing event handlers
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
+    ui/insertdialog.cpp
     ui/newproject.cpp           # Dialog to create a new project
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
 
@@ -127,9 +128,10 @@ Files:
 
     ui/artpropdlg_base.cpp
     ui/editstringdialog_base.cpp
-    ui/eventhandlerdlg_base.cpp
     ui/embedimg_base.cpp
+    ui/eventhandlerdlg_base.cpp
     ui/importwinres_base.cpp
+    ui/insertdialog_base.cpp
     ui/mainframe_base.cpp
     ui/newproject_base.cpp
     ui/optionsdlg_base.cpp

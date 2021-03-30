@@ -47,7 +47,8 @@ public:
         id_OptionsDlg,
         id_SaveProject,
         id_SaveProjectAs,
-        id_ShowHidden
+        id_ShowHidden,
+        id_insert_widget
     };
 
 protected:
@@ -76,6 +77,7 @@ protected:
     virtual void OnGenInhertedClass(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenerateCode(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImportFormBuilder(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInsertWidget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOpenProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOptionsDlg(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPaste(wxCommandEvent& event) { event.Skip(); }

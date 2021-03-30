@@ -45,6 +45,7 @@
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
 #include "ui/importwinresdlg.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
+#include "ui/insertdialog.h"     // InsertDialog -- Dialog to lookup and insert a widget
 
 #if defined(_DEBUG)
     #include "ui/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
@@ -278,6 +279,15 @@ void MainFrame::OnImportWindowsResource(wxCommandEvent&)
     }
 }
 
+void MainFrame::OnInsertWidget(wxCommandEvent&)
+{
+    InsertDialog dlg(this);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        CreateToolNode(dlg.GetWidget());
+    }
+}
+
 void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
 {
     if (!SaveWarning())
@@ -502,6 +512,7 @@ void MainFrame::UpdateFrame()
 
     bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == _ttwx(strIdMockupTabTitle));
     m_menuEdit->Enable(wxID_FIND, !isMockup);
+    m_menuEdit->Enable(id_insert_widget, m_selected_node && m_selected_node->GetClassName() != "Project");
 
     UpdateMoveMenu();
     UpdateLayoutTools();

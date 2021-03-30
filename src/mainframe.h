@@ -192,6 +192,7 @@ protected:
     void OnSaveAsProject(wxCommandEvent& event) override;
     void OnSaveProject(wxCommandEvent& event) override;
     void OnToggleExpandLayout(wxCommandEvent&) override;
+    void OnInsertWidget(wxCommandEvent&) override;
 
     void OnFindDialog(wxCommandEvent& event) override;
     void OnFind(wxFindDialogEvent& event);

@@ -25,6 +25,15 @@ void InsertDialog::OnNameText(wxCommandEvent& WXUNUSED(event))
     auto node_map = g_NodeCreator.GetNodeDeclarationMap();
     for (auto& iter: node_map)
     {
+#if !defined(_DEBUG)
+        // In a DEBUG build, we show all components, including the abstract ones -- including some that are only used for
+        // importing a wxFormBuilder project and won't work in our own projects. So don't be surprised if something shows up
+        // in the list that doesn't work!
+
+        if (!iter.second->GetClassName().is_sameprefix("wx"))
+            continue;
+#endif  // not defined(_DEBUG)
+
         if (iter.second->GetClassName().contains(name, tt::CASE::either))
             m_listBox->AppendString(iter.second->GetClassName().wx_str());
     }

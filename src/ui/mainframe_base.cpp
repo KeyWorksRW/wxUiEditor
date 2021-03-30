@@ -137,6 +137,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     menu_find->SetBitmap(wxArtProvider::GetBitmap(wxART_FIND, wxART_MENU));
     m_menuEdit->Append(menu_find);
 
+    auto menu_insert_widget = new wxMenuItem(m_menuEdit, id_insert_widget, wxString::FromUTF8("&Insert widget..."),
+    wxString::FromUTF8("Find text in the active code viewer."), wxITEM_NORMAL);
+    menu_insert_widget->SetBitmap(wxArtProvider::GetBitmap(wxART_EDIT, wxART_MENU));
+    m_menuEdit->Append(menu_insert_widget);
+
     m_menuEdit->AppendSeparator();
 
     auto submenu3 = new wxMenu();
@@ -363,6 +368,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().CanCopyNode()); },
         wxID_DELETE);
     Bind(wxEVT_MENU, &MainFrameBase::OnFindDialog, this, wxID_FIND);
+    Bind(wxEVT_MENU, &MainFrameBase::OnInsertWidget, this, id_insert_widget);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&) { wxGetFrame().MoveNode(MoveDirection::Up); },
         id_MoveUp);

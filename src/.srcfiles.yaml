@@ -288,6 +288,7 @@ XPM:
     art_src/wxMenuBar.png: xpm/wxMenuBar.xpm
     art_src/wxNotebook.png: xpm/wxNotebook.xpm
     art_src/wxPanel.png: xpm/wxPanel.xpm
+    art_src/wxPopupTransientWindow.png: xpm/wxPopupTransientWindow.xpm
     art_src/wxPropertyGrid.png: xpm/wxPropertyGrid.xpm
     art_src/wxPropertyGridManager.png: xpm/wxPropertyGridManager.xpm
     art_src/wxRadioButton.png: xpm/wxRadioButton.xpm

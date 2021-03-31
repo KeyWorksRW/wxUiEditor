@@ -129,6 +129,10 @@ void MockupParent::CreateContent()
     {
         m_panelContent->SetOwnBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
     }
+    else if (m_form->GetClassName() == "wxPopupTransientWindow")
+    {
+        m_panelContent->SetOwnBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    }
     else
     {
 #ifdef __WXGTK__

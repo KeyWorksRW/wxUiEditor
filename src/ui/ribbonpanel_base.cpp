@@ -87,6 +87,7 @@
 #include "../xpm/wxDialog.xpm"
 #include "../xpm/wxFileCtrl.xpm"
 #include "../xpm/wxFrame.xpm"
+#include "../xpm/wxPopupTransientWindow.xpm"
 #include "../xpm/wxStaticBoxSizer.xpm"
 #include "../xpm/wxTextCtrl.xpm"
 #include "../xpm/wxToolbook.xpm"
@@ -97,7 +98,6 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxPanel(parent, id, pos, size, style)
 {
-
     parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_rbnBar = new wxRibbonBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRIBBON_BAR_SHOW_PAGE_LABELS);
@@ -113,6 +113,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
         forms_bar_windows->AddTool(NewDialog, wxImage(wxDialog_xpm), wxString::FromUTF8("wxDialog"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(NewPanel, wxImage(panel_xpm), wxString::FromUTF8("Panel"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(NewFrame, wxImage(wxFrame_xpm), wxString::FromUTF8("wxFrame"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(NewPopupWin, wxImage(wxPopupTransientWindow_xpm), wxString::FromUTF8("wxPopupTransientWindow"), wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_windows->Realize();
 

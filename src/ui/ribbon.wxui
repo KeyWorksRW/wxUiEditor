@@ -10,6 +10,7 @@
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\wxDialog.xpm; ; [-1; -1]" help="wxDialog" id="NewDialog" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\panel.xpm; ; [-1; -1]" help="Panel" id="NewPanel" />
                 <node class="ribbonTool" bitmap="XPM; ..\xpm\wxFrame.xpm; ; [-1; -1]" help="wxFrame" id="NewFrame" />
+                <node class="ribbonTool" bitmap="XPM; ..\xpm\wxPopupTransientWindow.xpm; ; [-1; -1]" help="wxPopupTransientWindow" id="NewPopupWin" />
               </node>
             </node>
             <node class="wxRibbonPanel" bitmap="XPM; ..\xpm\wxWizard.xpm; ; [-1; -1]" label="Wizard" var_name="panel_wizard">

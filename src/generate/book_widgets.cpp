@@ -206,7 +206,7 @@ wxObject* ChoicebookGenerator::Create(Node* node, wxObject* parent)
     // TODO: [KeyWorks - 11-22-2020] If a bitmap size is specified, then we need to create an imagelist -- see issue #518
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-    widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &ChoicebookGenerator::OnPageChanged, this);
+    widget->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &ChoicebookGenerator::OnPageChanged, this);
 
     return widget;
 }
@@ -255,7 +255,7 @@ wxObject* ListbookGenerator::Create(Node* node, wxObject* parent)
     AddBookImageList(node, widget);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-    widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &ListbookGenerator::OnPageChanged, this);
+    widget->Bind(wxEVT_LISTBOOK_PAGE_CHANGED, &ListbookGenerator::OnPageChanged, this);
 
     return widget;
 }
@@ -342,14 +342,14 @@ wxObject* ToolbookGenerator::Create(Node* node, wxObject* parent)
     book->AssignImageList(img_list);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-    widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &ToolbookGenerator::OnPageChanged, this);
+    widget->Bind(wxEVT_TOOLBOOK_PAGE_CHANGED, &ToolbookGenerator::OnPageChanged, this);
 
     return widget;
 }
 
-void ToolbookGenerator::OnPageChanged(wxTreebookEvent& event)
+void ToolbookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
-    auto book = wxDynamicCast(event.GetEventObject(), wxTreebook);
+    auto book = wxDynamicCast(event.GetEventObject(), wxToolbook);
     if (book && event.GetSelection() != wxNOT_FOUND)
         GetMockup()->SelectNode(book->GetPage(event.GetSelection()));
     event.Skip();
@@ -392,12 +392,12 @@ wxObject* TreebookGenerator::Create(Node* node, wxObject* parent)
     AddBookImageList(node, widget);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-    widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &TreebookGenerator::OnPageChanged, this);
+    widget->Bind(wxEVT_TREEBOOK_PAGE_CHANGED, &TreebookGenerator::OnPageChanged, this);
 
     return widget;
 }
 
-void TreebookGenerator::OnPageChanged(wxTreebookEvent& event)
+void TreebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
     auto book = wxDynamicCast(event.GetEventObject(), wxTreebook);
     if (book && event.GetSelection() != wxNOT_FOUND)
@@ -439,12 +439,12 @@ wxObject* SimplebookGenerator::Create(Node* node, wxObject* parent)
                                    node->prop_as_wxSize("size"), node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-    widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &SimplebookGenerator::OnPageChanged, this);
+    widget->Bind(wxEVT_BOOKCTRL_PAGE_CHANGED, &SimplebookGenerator::OnPageChanged, this);
 
     return widget;
 }
 
-void SimplebookGenerator::OnPageChanged(wxBookCtrlBaseEvent& event)
+void SimplebookGenerator::OnPageChanged(wxBookCtrlEvent& event)
 {
     auto book = wxDynamicCast(event.GetEventObject(), wxSimplebook);
     if (book && event.GetSelection() != wxNOT_FOUND)

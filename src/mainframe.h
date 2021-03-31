@@ -85,6 +85,8 @@ public:
     Node* GetSelectedNode() { return (m_selected_node ? m_selected_node.get() : nullptr); };
     Node* GetSelectedForm();
 
+    Node* GetClipboard() { return (m_clipboard ? m_clipboard.get() : nullptr); }
+
     // Node will not be selected if it already is selected, unless force == true.
     // Returns true if selection changed, false if already selected or selection removed.
     bool SelectNode(Node* node, bool force = false, bool notify = true);

@@ -51,6 +51,7 @@ const std::map<int, const char*> englishStrings = {
     { strIdImportFormBuilder, "Import wxFormBuilder project" },
     { strIdUndo, "Undo" },
     { strIdRedo, "Redo" },
+    { strIdPaste, "Paste" },
 
 };
 

@@ -111,7 +111,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     auto forms_bar_windows = new wxRibbonToolBar(panel_form_windows, wxID_ANY);
     {
         forms_bar_windows->AddTool(NewDialog, wxImage(wxDialog_xpm), wxString::FromUTF8("wxDialog"), wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(NewPanel, wxImage(panel_xpm), wxString::FromUTF8("Panel"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(NewPanel, wxImage(panel_xpm), wxString::FromUTF8("PanelForm"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(NewFrame, wxImage(wxFrame_xpm), wxString::FromUTF8("wxFrame"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(NewPopupWin, wxImage(wxPopupTransientWindow_xpm), wxString::FromUTF8("wxPopupTransientWindow"), wxRIBBON_BUTTON_NORMAL);
     }

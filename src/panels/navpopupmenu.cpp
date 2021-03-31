@@ -35,10 +35,11 @@ static const auto lstBarClasses = {
 
 static const auto lstContainerClasses = {
 
+    "BookPage",
+    "PanelForm",
     "wxDialog",
     "wxPanel",
-    "PanelForm",
-    "BookPage",
+    "wxPopupTransientWindow",
     "wxWizardPageSimple",
 
 };
@@ -103,7 +104,23 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
 
     Append(MenuCUT, "Cut\tCtrl+X");
     Append(MenuCOPY, "Copy\tCtrl+C");
-    Append(MenuPASTE, "Paste\tCtrl+V");
+    if (wxGetFrame().GetClipboard())
+    {
+        ttlib::cstr menu_text = _tt(strIdPaste);
+        menu_text << ' ' << wxGetFrame().GetClipboard()->GetClassName();
+        menu_text << "\tCtrl+V";
+
+        Append(MenuPASTE, menu_text);
+    }
+    else
+    {
+        // There's nothing to paste, but we want to let the user know they could have pasted something, so we add the menu
+        // item and disable it.
+
+        auto item = Append(MenuPASTE, "Paste\tCtrl+V");
+        item->Enable(false);
+    }
+
     Append(MenuDELETE, "Delete\tCtrl+D");
     Append(MenuDUPLICATE, "Duplicate");
     AppendSeparator();
@@ -597,7 +614,22 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
 {
     Append(MenuCUT, "Cut\tCtrl+X");
     Append(MenuCOPY, "Copy\tCtrl+C");
-    Append(MenuPASTE, "Paste\tCtrl+V");
+    if (wxGetFrame().GetClipboard())
+    {
+        auto clipboard = wxGetFrame().GetClipboard();
+
+        // The selected node is a container, so there aren't very many things you can paste into it.
+
+        if (clipboard->IsForm() || clipboard->IsContainer() || (clipboard->IsSizer() && node->GetChildCount() == 0))
+        {
+            ttString menu_text = _ttwx(strIdPaste);
+            menu_text << ' ' << wxGetFrame().GetClipboard()->GetClassName();
+            menu_text << "\tCtrl+V";
+
+            Append(MenuPASTE, menu_text);
+        }
+    }
+
     Append(MenuDELETE, "Delete\tCtrl+D");
     AppendSeparator();
 
@@ -698,7 +730,22 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
 
 void NavPopupMenu::CreateTopSizerMenu(Node* node)
 {
-    Append(MenuPASTE, "Paste\tCtrl+V");
+    if (wxGetFrame().GetClipboard())
+    {
+        ttlib::cstr menu_text = _tt(strIdPaste);
+        menu_text << ' ' << wxGetFrame().GetClipboard()->GetClassName();
+        menu_text << "\tCtrl+V";
+
+        Append(MenuPASTE, menu_text);
+    }
+    else
+    {
+        // There's nothing to paste, but we want to let the user know they could have pasted something, so we add the menu
+        // item and disable it.
+
+        auto item = Append(MenuPASTE, "Paste\tCtrl+V");
+        item->Enable(false);
+    }
     AppendSeparator();
 
     // Many of the OnAddNew commands add to a child, so we need to "fake" the child to ourselves
@@ -728,7 +775,22 @@ void NavPopupMenu::CreateMenuMenu(Node* node)
 {
     Append(MenuCUT, "Cut\tCtrl+X");
     Append(MenuCOPY, "Copy\tCtrl+C");
-    Append(MenuPASTE, "Paste\tCtrl+V");
+    if (wxGetFrame().GetClipboard())
+    {
+        ttlib::cstr menu_text = _tt(strIdPaste);
+        menu_text << ' ' << wxGetFrame().GetClipboard()->GetClassName();
+        menu_text << "\tCtrl+V";
+
+        Append(MenuPASTE, menu_text);
+    }
+    else
+    {
+        // There's nothing to paste, but we want to let the user know they could have pasted something, so we add the menu
+        // item and disable it.
+
+        auto item = Append(MenuPASTE, "Paste\tCtrl+V");
+        item->Enable(false);
+    }
     Append(MenuDELETE, "Delete\tCtrl+D");
 
     AppendSeparator();

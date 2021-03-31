@@ -354,6 +354,20 @@
         help="The number of columns that the item spans.">1</property>
   </compinfo>
 
+  <compinfo class="Code Generation" type="interface">
+      <property name="base_file" type="file" help="The filename of the base class.">
+        filename_base
+      </property>
+      <property name="base_src_includes" type="string_edit"
+          help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
+      <property name="base_hdr_includes" type="string_edit"
+        help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files."/>
+      <property name="derived_class_name" type="string" help="The name of the derived class.">
+        DerivedClass
+      </property>
+      <property name="derived_file" type="file" help="The filename of the derived class."/>
+  </compinfo>
+
   <compinfo class="Text Validator" type="interface">
     <property name="validator_variable" type="string" help="Name of a member variable associated with the validator"/>
     <property name="validator_type" type="option" hidden="1" help="Type of a validator assigned to the window">

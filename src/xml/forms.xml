@@ -77,6 +77,7 @@
       <option name="wxBOTH"/>
       wxBOTH
     </property>
+    <property name="icon" type="image" help="Specifies the image to display in the title bar of the dialog."/>
     <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent" help="Generated when the dialog is being initialized."/>
   </compinfo>
 

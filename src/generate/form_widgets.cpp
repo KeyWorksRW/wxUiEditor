@@ -18,13 +18,6 @@
 
 //////////////////////////////////////////  DialogFormGenerator  //////////////////////////////////////////
 
-wxObject* DialogFormGenerator::Create(Node* /*node*/, wxObject* parent)
-{
-    // Note that this is NOT a wxDialog -- this function is used to Mockup the dialog, and for that we use a panel
-    // inside of a window.
-    return new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY);
-}
-
 std::optional<ttlib::cstr> DialogFormGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
@@ -66,15 +59,6 @@ bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 }
 
 //////////////////////////////////////////  FrameFormGenerator  //////////////////////////////////////////
-
-wxObject* FrameFormGenerator::Create(Node* /* node */, wxObject* parent)
-{
-    // Note that this is NOT a wxFrame -- this function is used to Mockup the dialog, and for that we use a panel
-    // inside of a window.
-    auto panel = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY);
-    panel->SetBackgroundColour(wxColour(50, 50, 50));
-    return panel;
-}
 
 std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
 {
@@ -119,12 +103,55 @@ bool FrameFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
-//////////////////////////////////////////  PanelFormGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  PopupWinGenerator  //////////////////////////////////////////
 
-wxObject* PanelFormGenerator::Create(Node* /* node */, wxObject* parent)
+std::optional<ttlib::cstr> PopupWinGenerator::GenConstruction(Node* node)
 {
-    return new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY);
+    ttlib::cstr code;
+
+    // This is the code to add to the source file
+    code << node->prop_as_string(txt_class_name) << "::" << node->prop_as_string(txt_class_name);
+    code << "(wxWindow* parent, int border) : wxPopupTransientWindow(parent, border)\n{";
+
+    return code;
 }
+
+std::optional<ttlib::cstr> PopupWinGenerator::GenCode(const std::string& cmd, Node* node)
+{
+    ttlib::cstr code;
+
+    if (cmd == "ctor_declare")
+    {
+        code << node->get_node_name() << "(wxWindow* parent, int border_flag = " << node->prop_as_string("border");
+        code << ");";
+        return code;
+    }
+    else if (cmd == "after_addchild")
+    {
+        return {};
+    }
+
+
+    return GenFormCode(cmd, node, "wxPopupTransientWindow");
+}
+
+std::optional<ttlib::cstr> PopupWinGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+std::optional<ttlib::cstr> PopupWinGenerator::GenSettings(Node* /* node */, size_t& /* auto_indent */)
+{
+    return {};
+}
+
+bool PopupWinGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/popupwin.h>", set_src, set_hdr);
+    return true;
+}
+
+//////////////////////////////////////////  PanelFormGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> PanelFormGenerator::GenConstruction(Node* node)
 {

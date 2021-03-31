@@ -344,15 +344,15 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
         }
 
         if (perm == Permission::Protected)
+        {
+            // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
+            if (node->prop_has_value("checkbox_var_name") || node->prop_has_value("radiobtn_var_name"))
             {
-                // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
-                if (node->prop_has_value("checkbox_var_name") || node->prop_has_value("radiobtn_var_name"))
-                {
-                    auto code = GetDeclaration(node);
-                    if (code.size())
-                        code_lines.insert(code);
-                }
+                auto code = GetDeclaration(node);
+                if (code.size())
+                    code_lines.insert(code);
             }
+        }
 
         for (size_t i = 0; i < node->GetChildCount(); i++)
         {
@@ -828,16 +828,19 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
             m_source->writeLine(code);
     }
 
+    m_source->SetLastLineBlank();
     for (size_t i = 0; i < form_node->GetChildCount(); i++)
     {
         GenConstruction(form_node->GetChild(i));
     }
 
-    m_source->writeLine();
     if (auto result = generator->GenCode("after_addchild", form_node); result)
     {
         if (result.value().size())
+        {
+            m_source->writeLine();
             m_source->writeLine(result.value(), indent::none);
+        }
     }
 
     if (form_node->prop_as_bool("persist"))

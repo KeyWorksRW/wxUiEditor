@@ -59,8 +59,8 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent, wxWindowID id, const wxString
     m_btn = new wxButton(this, wxID_ANY, wxString::FromUTF8("First btn"));
     box_sizer2->Add(m_btn, wxSizerFlags().Border(wxALL));
 
-    m_btn2 = new wxButton(this, wxID_ANY, wxString::FromUTF8("Second btn"));
-    box_sizer2->Add(m_btn2, wxSizerFlags().Border(wxALL));
+    auto btn2 = new wxButton(this, wxID_ANY, wxString::FromUTF8("Popup"));
+    box_sizer2->Add(btn2, wxSizerFlags().Border(wxALL));
 
     m_radioBtn = new wxRadioButton(this, wxID_ANY, wxString::FromUTF8("First radio"), wxDefaultPosition, wxDefaultSize,
     wxRB_GROUP);
@@ -221,6 +221,7 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent, wxWindowID id, const wxString
     m_textCtrl->Bind(wxEVT_TEXT_ENTER, &CommonCtrlsBase::OnProcessEnter, this);
     m_checkBox->Bind(wxEVT_CHECKBOX, &CommonCtrlsBase::OnCheckBox, this);
     m_btn->Bind(wxEVT_BUTTON, &CommonCtrlsBase::OnFirstBtn, this);
+    btn2->Bind(wxEVT_BUTTON, &CommonCtrlsBase::OnPopupBtn, this);
     m_radioBtn->Bind(wxEVT_RADIOBUTTON, &CommonCtrlsBase::OnRadio, this);
     m_radioBtn2->Bind(wxEVT_RADIOBUTTON, &CommonCtrlsBase::OnRadio, this);
     m_checkBox2->Bind(wxEVT_CHECKBOX, &CommonCtrlsBase::OnCheckBox, this);

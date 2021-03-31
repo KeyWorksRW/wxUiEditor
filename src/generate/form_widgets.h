@@ -9,11 +9,22 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
+// Note that the Mockup code does not call Create() for forms.
+
 class FrameFormGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenCode(const std::string& cmd, Node* node) override;
+    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
+    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+};
+
+class PopupWinGenerator : public BaseGenerator
+{
+public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenCode(const std::string& cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -25,8 +36,6 @@ public:
 class PanelFormGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
-
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenCode(const std::string& cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -38,8 +47,6 @@ public:
 class DialogFormGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* /*node*/, wxObject* parent) override;
-
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenCode(const std::string& cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;

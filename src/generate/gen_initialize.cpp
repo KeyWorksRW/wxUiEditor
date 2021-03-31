@@ -36,6 +36,7 @@
 #include <wx/listctrl.h>               // wxListView class
 #include <wx/notebook.h>               // wxNotebook interface
 #include <wx/panel.h>                  // Base header for wxPanel
+#include <wx/popupwin.h>               // wxPopupWindow interface declaration
 #include <wx/propgrid/manager.h>       // wxPropertyGridManager
 #include <wx/ribbon/buttonbar.h>       // Ribbon control similar to a tool bar
 #include <wx/ribbon/gallery.h>         // Ribbon control which displays a gallery of items to choose from
@@ -198,6 +199,7 @@ void NodeCreator::InitGenerators()
 
     CREATE_GENERATOR("wxDialog", DialogFormGenerator)
     CREATE_GENERATOR("wxFrame", FrameFormGenerator)
+    CREATE_GENERATOR("wxPopupTransientWindow", PopupWinGenerator)
     CREATE_GENERATOR("PanelForm", PanelFormGenerator)
     CREATE_GENERATOR("wxWizard", WizardFormGenerator)
 

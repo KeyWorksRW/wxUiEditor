@@ -317,4 +317,22 @@
     <property name="bitmap" type="image" help="Page-specific bitmap (default: none)."/>
   </compinfo>
 
+  <compinfo class="wxPopupTransientWindow" image="wxPopupTransientWindow" type="form">
+    <property name="class_name" type="string" help="The name of the base class.">MyPopupBase</property>
+    <property name="border" type="option" help="Specifies the type of border to use for the window.">
+      <option name="wxBORDER_NONE"/>
+      <option name="wxBORDER_RAISED" help="Displays a raised border."/>
+      wxBORDER_NONE
+    </property>
+    <category name="Code generation">
+      <property name="base_file" type="file" help="The filename of the base class.">mypopup_base</property>
+      <property name="base_src_includes" type="string_edit"
+          help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers."/>
+      <property name="base_hdr_includes" type="string_edit"
+          help="This preamble is placed unchanged in the generated base file after all wx/ include files. It can include other header files, add comments, etc."/>
+      <property name="derived_class_name" type="string" help="The name of the derived class.">MyPopup</property>
+      <property name="derived_file" type="file" help="The filename of the derived class."/>
+    </category>
+  </compinfo>
+
 </GeneratorDefitions>

@@ -68,6 +68,7 @@ public:
         NewMenuSeparator,
         NewNotebook,
         NewPanel,
+        NewPopupWin,
         NewPropGrid,
         NewPropItem,
         NewPropManager,

@@ -74,6 +74,7 @@
 #include "xpm/wxDialog.xpm"
 #include "xpm/wxFileCtrl.xpm"
 #include "xpm/wxFrame.xpm"
+#include "xpm/wxPopupTransientWindow.xpm"
 #include "xpm/wxListBox.xpm"
 #include "xpm/wxListView.xpm"
 #include "xpm/wxListbook.xpm"
@@ -198,6 +199,7 @@ static const std::unordered_map<std::string, const char**> map_xpm_strings = {
     { "flex_grid_sizer", flex_grid_sizer_xpm },
     { "fontPicker", fontPicker_xpm },
     { "wxFrame", wxFrame_xpm },
+    { "wxPopupTransientWindow", wxPopupTransientWindow_xpm },
     { "gauge", gauge_xpm },
     { "generate", generate_xpm },
     { "genericdir_ctrl", genericdir_ctrl_xpm },

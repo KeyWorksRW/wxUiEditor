@@ -13,6 +13,7 @@
 #include <wx/aui/auibook.h>        // wxaui: wx advanced user interface - notebook
 #include <wx/config.h>             // wxConfig base header
 #include <wx/filedlg.h>            // wxFileDialog base header
+#include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/propgrid/advprops.h>  // wxPropertyGrid Advanced Properties (font, colour, etc.)
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
@@ -1218,7 +1219,22 @@ void PropGridPanel::OnEventGridExpand(wxPropertyGridEvent& event)
 void PropGridPanel::OnPropertyModified(CustomEvent& event)
 {
     if (m_isPropChangeSuspended)
+    {
+        // If the property was modified in the property grid, then we are receiving this event after the node in the property
+        // has already been changed. We don't need to process it since we already saw it, but we can use the oppoprtunity to
+        // do some additional processing, such as notifying the user that the Mockup can't display the property change.
+
+        if (event.GetNodeProperty()->GetPropName() == "border")
+        {
+            auto info = wxGetFrame().GetPropInfoBar();
+            info->Dismiss();
+            if (event.GetNodeProperty()->as_string() == "wxBORDER_RAISED")
+            {
+                info->ShowMessage("The Mockup panel is not able to show a mockup of the raised border.", wxICON_INFORMATION);
+            }
+        }
         return;
+    }
 
     auto prop = event.GetNodeProperty();
     auto grid_property = m_prop_grid->GetPropertyByLabel(prop->GetPropName());

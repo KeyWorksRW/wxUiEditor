@@ -626,17 +626,17 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
 
     auto& frame = wxGetFrame();
 
-    if (name == "wxDialog" || name == "PanelForm" || name == "wxPanel")
+    if (name == "wxDialog" || name == "PanelForm" || name == "wxPanel" || name == "wxPopupTransientWindow")
     {
         auto child_node = new_node->CreateChildNode("VerticalBoxSizer");
         if (child_node)
         {
-            if (auto prop = new_node->get_prop_ptr(txt_orientation); prop)
+            if (auto prop = child_node->get_prop_ptr(txt_orientation); prop)
             {
                 prop->set_value("wxVERTICAL");
                 frame.FirePropChangeEvent(prop);
             }
-            if (auto prop = new_node->get_prop_ptr(txt_var_name); prop)
+            if (auto prop = child_node->get_prop_ptr(txt_var_name); prop)
             {
                 child_node->ModifyProperty(prop, "parent_sizer");
                 if (child_node->FixDuplicateName())

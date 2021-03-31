@@ -42,7 +42,6 @@ protected:
     // Class member variables
 
     wxBitmapComboBox* m_bmpComboBox;
-    wxButton* m_btn2;
     wxButton* m_btn;
     wxCheckBox* m_checkBox2;
     wxCheckBox* m_checkBox;
@@ -85,6 +84,7 @@ protected:
     virtual void OnFirstBtn(wxCommandEvent& event) { event.Skip(); }
     virtual void OnListBox(wxCommandEvent& event) { event.Skip(); }
     virtual void OnListChecked(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPopupBtn(wxCommandEvent& event) { event.Skip(); }
     virtual void OnProcessEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRadio(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRadioBox(wxCommandEvent& event) { event.Skip(); }

@@ -14,7 +14,6 @@ MyPanelBase::MyPanelBase(wxWindow* parent, wxWindowID id,
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxPanel(parent, id, pos, size, style)
 {
-
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
@@ -41,5 +40,4 @@ MyPanelBase::MyPanelBase(wxWindow* parent, wxWindowID id,
     m_splitter->SplitVertically(panel, m_panel2);
 
     SetSizerAndFit(parent_sizer);
-
 }

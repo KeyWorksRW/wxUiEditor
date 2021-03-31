@@ -26,12 +26,14 @@ Options:
 Files:
     mainapp.cpp
 
-    ui/mainframe.cpp      # Main window
+    ui/mainframe.cpp       # Main window
     ui/mainframe_base.cpp  # wxUiEditor generated file
     ui/commonctrls.cpp
     ui/commonctrls_base.cpp
     ui/other_ctrls.cpp
     ui/other_ctrls_base.cpp
+    ui/popupwin.cpp
+    ui/popupwin_base.cpp
     ui/ribbondlg.cpp
     ui/ribbondlg_base.cpp
     ui/wizard_base.cpp

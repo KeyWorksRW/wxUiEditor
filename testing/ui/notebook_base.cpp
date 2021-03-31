@@ -27,7 +27,6 @@ NotebookBase::NotebookBase(wxWindow* parent, wxWindowID id, const wxString& titl
     SetSizeHints(wxSize(600, 600));
 
     SetMinSize(wxSize(600, 600));
-
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_notebook = new wxNotebook(this, wxID_ANY);

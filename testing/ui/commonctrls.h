@@ -9,12 +9,16 @@
 
 #include "commonctrls_base.h"
 
+class PopupWin;
+
 class CommonCtrls : public CommonCtrlsBase
 {
 public:
     CommonCtrls(wxWindow* parent = nullptr);
+    ~CommonCtrls();
 
 protected:
+    void OnPopupBtn(wxCommandEvent& event) override;
     void OnListBox(wxCommandEvent& event) override;
     void OnSlider(wxCommandEvent& event) override;
     void OnRadioBox(wxCommandEvent& event) override;
@@ -26,4 +30,7 @@ protected:
     void OnFirstBtn(wxCommandEvent& event) override;
     void OnCheckBox(wxCommandEvent& event) override;
     void OnProcessEnter(wxCommandEvent& event) override;
+
+private:
+    PopupWin* m_popup_win { nullptr };
 };

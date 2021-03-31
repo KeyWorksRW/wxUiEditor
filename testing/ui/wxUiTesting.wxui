@@ -34,7 +34,7 @@
         </node>
         <node class="wxBoxSizer" var_name="box_sizer2" flags="wxEXPAND">
           <node class="wxButton" label="First btn" wxEVT_BUTTON="OnFirstBtn" />
-          <node class="wxButton" label="Second btn" var_name="m_btn2" />
+          <node class="wxButton" class_access="none" label="Popup" var_name="btn2" wxEVT_BUTTON="OnPopupBtn" />
           <node class="wxRadioButton" label="First radio" style="wxRB_GROUP" alignment="wxALIGN_CENTER" wxEVT_RADIOBUTTON="OnRadio" />
           <node class="wxRadioButton" label="Second radio" var_name="m_radioBtn2" alignment="wxALIGN_CENTER" wxEVT_RADIOBUTTON="OnRadio" />
           <node class="wxCheckBox" label="Checkbox" var_name="m_checkBox2" alignment="wxALIGN_CENTER" wxEVT_CHECKBOX="OnCheckBox" />
@@ -269,6 +269,11 @@
             </node>
           </node>
         </node>
+      </node>
+    </node>
+    <node class="wxPopupTransientWindow" base_file="popupwin_base" border="wxBORDER_RAISED" class_name="PopupWinBase" derived_class_name="PopupWin" derived_file="popupwin">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+        <node class="wxStaticText" label="This is a wxPopupTransientWindow set to use a raised border around it. Note that the default is to not have a border at all.&#10;&#10;Click outside this window to dismiss it." wrap="250" />
       </node>
     </node>
   </node>

@@ -140,7 +140,11 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         src_includes.insert("#include <wx/persist/toplevel.h>");
     }
 
-    m_artProvider = false;
+    m_artProvider = form_node->prop_as_string("icon").is_sameprefix("Art");
+    if (!m_artProvider && form_node->prop_as_string("icon").is_sameprefix("XPM"))
+    {
+        src_includes.insert("#include <wx/icon.h>");
+    }
     CheckForArtProvider(form_node);
     if (m_artProvider)
     {
@@ -1124,9 +1128,9 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
     }
 }
 
-void BaseCodeGenerator::GenPngLoadFunction(Node* class_node)
+void BaseCodeGenerator::GenPngLoadFunction(Node* form_node)
 {
-    if (FindHdrString(class_node))
+    if (form_node->prop_as_string("icon").is_sameprefix("Header;") || FindHdrString(form_node))
     {
         ttlib::textfile function;
         function.ReadString(txt_GetImgFromHdrFunction);

@@ -1067,96 +1067,16 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 if (!selected_node)
                     return;
 
-                // Ultimately, a wizard will be used to set the four properties needed for top level form
-                // generation. For now, if a form class name ends with "Base" then we'll use that to fill in the
-                // derived classname and the base and derived filenames.
-
-                if (selected_node->GetClassName() == "wxDialog")
+                if (selected_node->IsForm())
                 {
                     if (newValue.Right(4) != "Base")
                         return;
 
                     if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
-                        propType && propType->GetValue() == "MyDialog")
+                        propType && propType->GetValue() == "DerivedClass")
                         ReplaceDrvName(newValue, propType);
                     if (auto propType = selected_node->get_prop_ptr("base_file");
-                        propType && propType->GetValue() == "mydialog_base")
-                        ReplaceBaseFile(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("derived_file");
-                        propType && propType->GetValue().empty())
-                        ReplaceDrvFile(newValue, propType);
-                }
-
-                else if (selected_node->GetClassName() == "wxFrame")
-                {
-                    if (newValue.Right(4) != "Base")
-                        return;
-
-                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
-                        propType && propType->GetValue() == "MyFrame")
-                        ReplaceDrvName(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("base_file");
-                        propType && propType->GetValue() == "myframe_base")
-                        ReplaceBaseFile(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("derived_file");
-                        propType && propType->GetValue().empty())
-                        ReplaceDrvFile(newValue, propType);
-                }
-                else if (selected_node->GetClassName() == "PanelForm")
-                {
-                    if (newValue.Right(4) != "Base")
-                        return;
-
-                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
-                        propType && propType->GetValue() == "MyPanel")
-                        ReplaceDrvName(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("base_file");
-                        propType && propType->GetValue() == "mypanel_base")
-                        ReplaceBaseFile(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("derived_file");
-                        propType && propType->GetValue().empty())
-                        ReplaceDrvFile(newValue, propType);
-                }
-                else if (selected_node->GetClassName() == "wxWizard")
-                {
-                    if (newValue.Right(4) != "Base")
-                        return;
-
-                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
-                        propType && propType->GetValue() == "MyWizard")
-                        ReplaceDrvName(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("base_file");
-                        propType && propType->GetValue() == "mywizard_base")
-                        ReplaceBaseFile(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("derived_file");
-                        propType && propType->GetValue().empty())
-                        ReplaceDrvFile(newValue, propType);
-                }
-                else if (selected_node->GetClassName() == "MenuBar")
-                {
-                    if (newValue.Right(4) != "Base")
-                        return;
-
-                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
-                        propType && propType->GetValue() == "MyMenuBar")
-                        ReplaceDrvName(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("base_file");
-                        propType && propType->GetValue() == "mymenubar_base")
-                        ReplaceBaseFile(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("derived_file");
-                        propType && propType->GetValue().empty())
-                        ReplaceDrvFile(newValue, propType);
-                }
-                else if (selected_node->GetClassName() == "ToolBar")
-                {
-                    if (newValue.Right(4) != "Base")
-                        return;
-
-                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
-                        propType && propType->GetValue() == "MyToolBar")
-                        ReplaceDrvName(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("base_file");
-                        propType && propType->GetValue() == "mytoolbar_base")
+                        propType && propType->GetValue() == "filename_base")
                         ReplaceBaseFile(newValue, propType);
                     if (auto propType = selected_node->get_prop_ptr("derived_file");
                         propType && propType->GetValue().empty())
@@ -1604,8 +1524,6 @@ void PropGridPanel::ReplaceDrvFile(const wxString& newValue, NodeProperty* propT
     ttString drvName = newValue;
     if (drvName.contains("Base"))
         drvName.Replace("Base", wxEmptyString);
-    else if (drvName.contains("_wxui"))
-        drvName.Replace("_wxui", wxEmptyString);
     else
         drvName << "_drv";
     drvName.MakeLower();

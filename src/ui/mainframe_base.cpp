@@ -49,8 +49,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 {
     SetSizeHints(wxSize(800, 800));
 
-    SetMinSize(wxSize(800, 800));
-
     m_menubar = new wxMenuBar();
 
     m_menuFile = new wxMenu();

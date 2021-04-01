@@ -19,8 +19,6 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
 {
     SetSizeHints(wxSize(500, 400));
 
-    SetMinSize(wxSize(500, 400));
-
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);

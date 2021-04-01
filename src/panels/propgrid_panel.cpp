@@ -618,7 +618,7 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
 
             m_event_grid->SetPropertyHelpString(id, wxGetTranslation(eventInfo->get_help()));
 
-            if (name == "wxWindow")
+            if (name == "Window Events")
                 m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e7f4e4"));
 
             if (auto it = m_expansion_map.find(eventName); it != m_expansion_map.end())
@@ -642,17 +642,17 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
     for (size_t i = 0; i < catCount; i++)
     {
         auto& nextCat = category.GetCategories()[i];
-        if (nextCat.GetName() == "wxKeyEvent")
+        if (nextCat.GetName() == "Keyboard Events")
         {
             if (node->GetNodeDeclaration()->GetCompFlags().contains("no_key_events"))
                 continue;
         }
-        else if (nextCat.GetName() == "wxMouseEvent")
+        else if (nextCat.GetName() == "Mouse Events")
         {
             if (node->GetNodeDeclaration()->GetCompFlags().contains("no_mouse_events"))
                 continue;
         }
-        else if (nextCat.GetName() == "wxFocusEvent")
+        else if (nextCat.GetName() == "Focus Events")
         {
             if (node->GetNodeDeclaration()->GetCompFlags().contains("no_focus_events"))
                 continue;
@@ -678,6 +678,16 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
                 m_event_grid->Collapse(catId);
             }
         }
+        else
+        {
+            // Keyboard and Mouse events aren't used a lot, but are quite lengthy, so we collapse them by default.
+
+            if (nextCat.getName() == "Keyboard Events" || nextCat.getName() == "Mouse Events")
+            {
+                m_event_grid->Collapse(catId);
+            }
+        }
+
     }
 }
 

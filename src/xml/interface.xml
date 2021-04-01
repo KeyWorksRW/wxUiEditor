@@ -99,7 +99,22 @@
         help="The name of the window. This parameter is used to associate a name with the item, allowing the application user to set Motif resource values for individual windows."/>
     <property name="base_class_name" type="string"
         help="If you have derived a class from a wxWidget class and you want this component to inherit from your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property."/>
-    <category name="wxKeyEvent" type="interface">
+  </compinfo>
+
+  <compinfo class="Window Events" type="interface">
+    <category name="Focus Events" type="interface">
+      <event name="wxEVT_KILL_FOCUS" class="wxFocusEvent"/>
+      <event name="wxEVT_SET_FOCUS" class="wxFocusEvent"/>
+    </category>
+    <category name="General Events" type="interface">
+      <event name="wxEVT_CONTEXT_MENU" class="wxContextMenuEvent"/>
+      <event name="wxEVT_ERASE_BACKGROUND" class="wxEraseEvent"/>
+      <event name="wxEVT_HELP" class="wxHelpEvent"/>
+      <event name="wxEVT_PAINT" class="wxPaintEvent"/>
+      <event name="wxEVT_SIZE" class="wxSizeEvent"/>
+      <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"/>
+    </category>
+    <category name="Keyboard Events" type="interface">
       <event name="wxEVT_CHAR" class="wxKeyEvent"/>
       <event name="wxEVT_CHAR_HOOK" class="wxKeyEvent"
         help="Unlike all the other key events, this event is propagated upwards the window hierarchy which allows intercepting it in the parent window of the focused window to which it is sent initially (if there is no focused window, this event is sent to the wxApp global object). It is also generated before any other key events and so gives the parent window an opportunity to modify the keyboard handling of its children, e.g. it is used internally by wxWidgets in some ports to intercept pressing Esc key in any child of a dialog to close the dialog itself when it's pressed. By default, if this event is handled, i.e. the handler doesn't call wxEvent::Skip(), neither wxEVT_KEY_DOWN nor wxEVT_CHAR events will be generated (although wxEVT_KEY_UP still will be), i.e. it replaces the normal key events. However by calling the special DoAllowNextEvent() method you can handle wxEVT_CHAR_HOOK and still allow normal events generation. This is something that is rarely useful but can be required if you need to prevent a parent wxEVT_CHAR_HOOK handler from running without suppressing the normal key events. Finally notice that this event is not generated when the mouse is captured as it is considered that the window which has the capture should receive all the keyboard events too without allowing its parent wxTopLevelWindow to interfere with their processing."/>
@@ -108,7 +123,7 @@
       <event name="wxEVT_KEY_UP" class="wxKeyEvent"
         help="Generated when any key has been released."/>
     </category>
-    <category name="wxMouseEvent" type="interface">
+    <category name="Mouse Events" type="interface">
       <event name="wxEVT_ENTER_WINDOW" class="wxMouseEvent"/>
       <event name="wxEVT_LEAVE_WINDOW" class="wxMouseEvent"/>
       <event name="wxEVT_LEFT_DCLICK" class="wxMouseEvent"/>
@@ -128,19 +143,6 @@
       <event name="wxEVT_AUX2_UP" class="wxMouseEvent"/>
       <event name="wxEVT_MOTION" class="wxMouseEvent"/>
       <event name="wxEVT_MOUSEWHEEL" class="wxMouseEvent"/>
-    </category>
-    <category name="wxFocusEvent" type="interface">
-      <event name="wxEVT_KILL_FOCUS" class="wxFocusEvent"/>
-      <event name="wxEVT_SET_FOCUS" class="wxFocusEvent"/>
-    </category>
-    <category name="Other Events" type="interface">
-      <event name="wxEVT_CONTEXT_MENU" class="wxContextMenuEvent"/>
-      <event name="wxEVT_ERASE_BACKGROUND" class="wxEraseEvent"/>
-      <event name="wxEVT_HELP" class="wxHelpEvent"/>
-      <event name="wxEVT_PAINT" class="wxPaintEvent"/>
-      <event name="wxEVT_SIZE" class="wxSizeEvent"/>
-      <event name="wxEVT_MOVE" class="wxMoveEvent" help="Generated when a window is moved. Not generated in wxGTK. " />
-      <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"/>
     </category>
   </compinfo>
 

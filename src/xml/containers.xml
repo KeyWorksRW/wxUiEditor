@@ -18,6 +18,7 @@
 
   <compinfo class="wxSplitterWindow" image="wxSplitterWindow" type="splitter">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_splitter</property>
     <property name="class_access" type="option" hidden="1">
@@ -96,6 +97,7 @@
   <compinfo class="wxCollapsiblePane" image="wxCollapsiblePane" type="container">
     <inherits class="Common Events"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_collapsible_pane</property>
     <property name="label" type="string_escapes">collapsible</property>
@@ -117,6 +119,7 @@
 
   <compinfo class="wxChoicebook" image="wxChoicebook" type="choicebook">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_choicebook</property>
     <property name="class_access" type="option">
@@ -141,6 +144,7 @@
 
   <compinfo class="wxListbook" image="wxListbook" type="listbook">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_listbook</property>
     <property name="class_access" type="option">
@@ -173,6 +177,7 @@
 
   <compinfo class="wxNotebook" image="wxNotebook" type="notebook">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_notebook</property>
     <property name="class_access" type="option">
@@ -206,6 +211,7 @@
 
   <compinfo class="wxToolbook" image="wxToolbook" type="notebook">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_toolbook</property>
     <property name="class_access" type="option">
@@ -228,6 +234,7 @@
 
   <compinfo class="wxTreebook" image="wxTreebook" type="notebook">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_treebook</property>
     <property name="class_access" type="option">
@@ -263,6 +270,7 @@
 
   <compinfo class="wxSimplebook" image="wxSimplebook" type="simplebook">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">m_simplebook</property>
     <event name="wxEVT_BOOKCTRL_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
     <event name="wxEVT_BOOKCTRL_PAGE_CHANGING" class="wxBookCtrlEvent"

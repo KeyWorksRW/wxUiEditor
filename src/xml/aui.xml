@@ -13,6 +13,7 @@
 
   <compinfo class="wxAuiNotebook" image="auinotebook" type="auinotebook">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">m_auinotebook</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -70,6 +71,7 @@
 
  <compinfo class="wxAuiToolBar" image="auitoolbar" type="toolbar">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">m_auiToolBar</property>
     <property name="class_access" type="option">
       <option name="none"/>

@@ -3,6 +3,7 @@
 
   <compinfo class="wxMenuBar" image="wxMenuBar" type="menubar">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">m_menubar</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -77,6 +78,7 @@
 
   <compinfo class="wxToolBar" image="wxToolBar" type="toolbar">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_toolBar</property>
     <property name="class_access" type="option">
@@ -154,6 +156,7 @@
 
   <compinfo class="wxStatusBar" image="statusbar" type="statusbar">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">m_statusBar</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -181,6 +184,7 @@
 
   <compinfo class="wxInfoBar" image="infobar" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_infoCtrl</property>
     <property name="show_effect" type="option" help="Set the effects to use when showing the bar.">
@@ -219,6 +223,7 @@
 
   <compinfo class="wxRibbonBar" image="ribbon_bar" type="ribbonbar">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_rbnBar</property>
     <property name="class_access" type="option">
@@ -259,6 +264,7 @@
 
   <compinfo class="wxRibbonPage" image="ribbon_page" type="ribbonpage">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnPage</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -273,6 +279,7 @@
 
   <compinfo class="wxRibbonPanel" image="ribbon_panel" type="ribbonpanel">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnPanel</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -296,6 +303,7 @@
 
   <compinfo class="wxRibbonButtonBar" image="ribbon_buttonbar" type="ribbonbuttonbar">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnBtnBar</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -311,6 +319,7 @@
 
   <compinfo class="ribbonButton" image="ribbon_button" type="ribbonbutton">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="label" type="string_escapes">MyRibbonButton</property>
     <property name="bitmap" type="image" help="ribbonButton bitmap."/>
     <property name="help" type="string_escapes" help="ribbonButton"/>
@@ -331,6 +340,7 @@
 
   <compinfo class="wxRibbonToolBar" image="ribbon_buttonbar" type="ribbontoolbar">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnToolBar</property>
       <property name="class_access" type="option">
       <option name="none"/>
@@ -375,6 +385,7 @@
 
   <compinfo class="wxRibbonGallery" image="ribbon_gallery" type="ribbongallery">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnGallery</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -390,6 +401,7 @@
 
   <compinfo class="ribbonGalleryItem" image="ribbon_gallery_item" type="ribbongalleryitem">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="bitmap" type="image" help="The bitmap to display for the item. Note that all items must have equally sized bitmaps. "/>
   </compinfo>
 

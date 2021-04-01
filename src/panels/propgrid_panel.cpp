@@ -74,6 +74,7 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
     SetSizer(topSizer);
 
     Bind(wxEVT_PG_CHANGED, &PropGridPanel::OnPropertyGridChanged, this, PROPERTY_ID);
+    Bind(wxEVT_PG_CHANGING, &PropGridPanel::OnPropertyGridChanging, this, PROPERTY_ID);
     Bind(wxEVT_PG_ITEM_COLLAPSED, &PropGridPanel::OnPropertyGridExpand, this, PROPERTY_ID);
     Bind(wxEVT_PG_ITEM_EXPANDED, &PropGridPanel::OnPropertyGridExpand, this, PROPERTY_ID);
     Bind(wxEVT_PG_SELECTED, &PropGridPanel::OnPropertyGridItemSelected, this, PROPERTY_ID);
@@ -687,7 +688,65 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
                 m_event_grid->Collapse(catId);
             }
         }
+    }
+}
 
+// Only process property changes that we may need to cancel here.
+void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
+{
+    auto property = event.GetProperty();
+
+    auto it = m_property_map.find(property);
+    if (it == m_property_map.end())
+    {
+        property = property->GetParent();
+        it = m_property_map.find(property);
+    }
+
+    if (it == m_property_map.end())
+        return;
+
+    auto prop = it->second;
+    auto node = prop->GetNode();
+
+    switch (prop->GetType())
+    {
+        case Type::File:
+        {
+            if (prop->GetPropName() == "base_file")
+            {
+                ttString newValue = event.GetPropertyValue().GetString();
+                if (newValue.empty())
+                    return;
+
+                newValue.make_absolute();
+                newValue.make_relative_wx(wxGetApp().GetProjectPath());
+                newValue.backslashestoforward();
+                auto filename = newValue.sub_cstr();
+                auto project = wxGetApp().GetProject();
+                for (size_t child_idx = 0; child_idx < project->GetChildCount(); ++child_idx)
+                {
+                    if (project->GetChild(child_idx) == node)
+                        continue;
+                    if (project->GetChild(child_idx)->prop_as_string("base_file") == filename)
+                    {
+                        appMsgBox(ttlib::cstr() << "The base filename " << filename << " is already in use by "
+                                                << project->GetChild(child_idx)->prop_as_string(txt_class_name));
+                        event.Veto();
+                        return;
+                    }
+                }
+
+                // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
+                // otherwise it will revert back to the original name before the Veto.
+
+                property->SetValueFromString(newValue, 0);
+            }
+        }
+        break;
+
+        default:
+            break;
     }
 }
 
@@ -989,6 +1048,26 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         }
         break;
 
+        case Type::File:
+        {
+            ttString newValue = property->GetValueAsString();
+
+            // The base_file property was already processed in OnPropertyGridChanging so only modify the value if it's a
+            // different property
+            if (prop->GetPropName() != "base_file")
+            {
+                if (newValue.size())
+                {
+                    newValue.make_absolute();
+                    newValue.make_relative_wx(wxGetApp().GetProjectPath());
+                    newValue.backslashestoforward();
+                    property->SetValueFromString(newValue, 0);
+                }
+            }
+            ModifyProperty(prop, newValue);
+            break;
+        }
+
         case Type::Path:
         {
             ttString newValue = property->GetValueAsString();
@@ -1008,19 +1087,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         default:
         {
             ttString newValue = property->GetValueAsString();
-
-            // We don't use a regular case: statement for this because we may need to do some other processing after
-            // we've modified the path.
-            if (prop->GetType() == Type::File)
-            {
-                if (newValue.size())
-                {
-                    newValue.make_absolute();
-                    newValue.make_relative_wx(wxGetApp().GetProjectPath());
-                    newValue.backslashestoforward();
-                    property->SetValueFromString(newValue, 0);
-                }
-            }
 
             if (prop->GetPropName() == txt_var_name)
             {

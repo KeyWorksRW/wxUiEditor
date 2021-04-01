@@ -45,6 +45,7 @@
     <inherits class="Code Generation"/>
     <inherits class="wxTopLevelWindow"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="class_name" type="string" help="The name of the base class.">MyDialogBase</property>
     <property name="title" type="string_escapes" help="The text to display on the dialog's title bar."/>
     <property name="persist" type="bool"
@@ -139,6 +140,7 @@
   <compinfo class="MenuBar" image="wxMenuBar" type="menubar_form">
     <inherits class="Code Generation"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="class_name" type="string" help="The name of the base class.">MyMenuBarBase</property>
     <property name="label" type="string_escapes">MyMenuBar</property>
     <property name="style" type="bitlist">
@@ -149,6 +151,7 @@
   <compinfo class="ToolBar" image="wxToolBar" type="toolbar_form">
     <inherits class="Code Generation"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="class_name" type="string" help="The name of the base class.">MyToolBarBase</property>
     <property name="bitmapsize" type="wxSize" help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels."/>
     <property name="margins" type="wxSize" help="Values to be used as margins for the toolbar."/>
@@ -176,6 +179,7 @@
     <inherits class="Code Generation"/>
     <inherits class="wxTopLevelWindow"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="class_name" type="string" help="The name of the base class.">MyWizardBase</property>
     <property name="title" type="string_escapes" help="The text to display on the Wizard's title bar."/>
     <property name="bitmap" type="image" help="Bitmap to display on the left side of the wizard (default: none)."/>
@@ -216,6 +220,7 @@
 
   <compinfo class="wxWizardPageSimple" image="wxWizardPageSimple" type="wizardpagesimple">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <property name="var_name" type="string">wizPage</property>
     <property name="class_access" type="option">
       <option name="none"/>

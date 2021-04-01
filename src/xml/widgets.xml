@@ -3,6 +3,7 @@
 
   <compinfo class="wxStaticText" image="wxStaticText" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="String Validator"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_staticText</property>
@@ -33,6 +34,7 @@
   <compinfo class="wxTextCtrl" image="wxTextCtrl" type="widget">
     <inherits class="Text Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_textCtrl</property>
     <property name="value" type="string_escapes"/>
@@ -80,6 +82,7 @@
   <compinfo class="wxCheckBox" image="wxCheckBox" type="widget">
     <inherits class="Boolean Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">
       m_checkBox
@@ -97,6 +100,7 @@
 
   <compinfo class="Check3State" image="check3state" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_checkBox</property>
     <property name="label" type="string_escapes">
@@ -121,6 +125,7 @@
   <compinfo class="wxRadioButton" image="wxRadioButton" type="widget">
     <inherits class="Boolean Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_radioBtn</property>
     <property name="label" type="string_escapes">My RadioBtn</property>
@@ -136,6 +141,7 @@
   <compinfo class="wxButton" image="wxButton" type="widget">
     <inherits class="Bitmaps"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="String Validator"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_btn</property>
@@ -166,6 +172,7 @@
 
   <compinfo class="wxCommandLinkButton" image="wxCommandLinkButton" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_btn</property>
     <property name="main_label" type="string_edit">MyButton</property>
@@ -177,6 +184,7 @@
   <compinfo class="wxComboBox" image="wxComboBox" type="widget">
     <inherits class="Choice Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_comboBox</property>
     <property name="choices" type="stringlist" help="Contents of the Combo Box"></property>
@@ -209,6 +217,7 @@
   <compinfo class="wxChoice" image="wxChoice" type="widget">
     <inherits class="Choice Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_choice</property>
     <property name="choices" type="stringlist"
@@ -226,6 +235,7 @@
   <compinfo class="wxListBox" image="wxListBox" type="widget">
     <inherits class="List Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_listBox</property>
     <property name="choices" type="stringlist" help="Contents of the List Box."/>
@@ -254,6 +264,7 @@
 
   <compinfo class="wxSimpleHtmlListBox" image="wxSimpleHtmlListBox" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_html_listbox</property>
     <property name="choices" type="stringlist" help="Contents of the HTML list box."/>
@@ -272,6 +283,7 @@
   <compinfo class="wxCheckListBox" image="wxCheckListBox" type="widget">
     <inherits class="List Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_checkList</property>
     <property name="selection_string" type="string_escapes"
@@ -299,6 +311,7 @@
 
   <compinfo class="wxListView" image="wxListView" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_lstview</property>
     <property name="style" type="bitlist">
@@ -344,6 +357,7 @@
   <compinfo class="wxRadioBox" image="radio_box" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_radioBox</property>
     <property name="label" type="string_escapes">My Radio Box</property>
@@ -369,6 +383,7 @@
 
   <compinfo class="wxStaticBitmap" image="static_bitmap" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">bmp</property>
     <property name="class_access" type="option">
@@ -389,6 +404,7 @@
 
   <compinfo class="wxStaticLine" image="static_line" type="widget" flags="no_win_events">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">static_line</property>
     <property name="class_access" type="option">
@@ -407,6 +423,7 @@
   <compinfo class="wxSlider" image="slider" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_slider</property>
     <property name="position" type="int"
@@ -475,6 +492,7 @@
   <compinfo class="wxGauge" image="gauge" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_gauge</property>
     <property name="position" type="uint" help="Initial position for the gauge.">0</property>
@@ -495,6 +513,7 @@
 
   <compinfo class="wxFilePickerCtrl" image="filePicker" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_filePicker</property>
     <property name="initial_path" type="string_escapes"/>
@@ -521,6 +540,7 @@
 
   <compinfo class="wxDirPickerCtrl" image="dirPicker" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_dirPicker</property>
     <property name="initial_path" type="string_escapes"/>
@@ -542,6 +562,7 @@
 
   <compinfo class="wxFontPickerCtrl" image="fontPicker" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">
       m_fontPicker
@@ -571,6 +592,7 @@
 
   <compinfo class="wxColourPickerCtrl" image="colourPickerIcon" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_colourPicker</property>
     <property name="colour" type="wxColour"/>
@@ -588,6 +610,7 @@
 
   <compinfo class="wxDatePickerCtrl" image="datepicker" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_datePicker</property>
     <property name="style" type="bitlist">
@@ -608,6 +631,7 @@
 
   <compinfo class="wxTimePickerCtrl" image="timepicker" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_timePicker</property>
     <property name="style" type="bitlist">
@@ -621,6 +645,7 @@
   <compinfo class="wxScrollBar" image="scrollbar" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_scrollBar</property>
     <property name="position" help="The position of the scrollbar in scroll units." type="uint">
@@ -655,6 +680,7 @@
   <compinfo class="wxSpinCtrl" image="spin_ctrl" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_spinCtrl</property>
     <property name="min" type="int" help="Minimal value.">0</property>
@@ -679,6 +705,7 @@
 
   <compinfo class="wxSpinCtrlDouble" image="spin_ctrl_double" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_spinCtrlDouble</property>
     <property name="value" type="string_escapes"></property>
@@ -718,6 +745,7 @@
   <compinfo class="wxSpinButton" image="spinbtn" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_spinBtn</property>
     <property name="style" type="bitlist">
@@ -734,6 +762,7 @@
   <compinfo class="wxToggleButton" image="toggle_button" type="widget">
     <inherits class="Bitmaps"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="Boolean Validator"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_toggleBtn</property>
@@ -761,6 +790,7 @@
   <compinfo class="wxBitmapComboBox" image="bmp_combo_box" type="widget">
     <inherits class="Choice Validator"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_bmpComboBox</property>
     <property name="choices" type="stringlist" help="Contents of the Combo Box"></property>
@@ -786,6 +816,7 @@
 
   <compinfo class="wxHyperlinkCtrl" image="hyperlink_ctrl" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_hyperlink</property>
     <property name="label" type="string_escapes"
@@ -818,6 +849,7 @@
 
   <compinfo class="wxSearchCtrl" image="search" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_searchCtrl</property>
     <property name="value" type="string_escapes" help="Initial value"/>
@@ -845,6 +877,7 @@
 
   <compinfo class="wxHtmlWindow" image="htmlwin" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_htmlWin</property>
     <property name="style" type="bitlist">
@@ -901,6 +934,7 @@
 
   <compinfo class="wxStyledTextCtrl" image="scintilla" type="expanded_widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string" >m_scintilla</property>
     <property name="folding" type="bool" help="Enable folding.">1</property>
@@ -972,6 +1006,7 @@
 
   <compinfo class="wxCalendarCtrl" image="calendar" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_calendar</property>
     <property name="style" type="bitlist">
@@ -999,6 +1034,7 @@
 
   <compinfo class="wxGenericDirCtrl" image="genericdir_ctrl" type="expanded_widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_genericDirCtrl</property>
     <property name="defaultfolder" type="string_escapes" help="Initial Directory."/>
@@ -1028,6 +1064,7 @@
 
   <compinfo class="wxFileCtrl" image="wxFileCtrl" type="expanded_widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_fileCtrl</property>
     <property name="initial_folder" type="string_escapes" help="Initial folder."/>
@@ -1064,6 +1101,7 @@
   <compinfo class="wxTreeCtrl" image="tree_ctrl" type="widget">
     <inherits class="wxTreeCtrlBase"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_treeCtrl</property>
     <property name="style" type="bitlist">
@@ -1090,6 +1128,7 @@
 
   <compinfo class="wxGrid" image="grid" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_grid</property>
     <category name="Grid">
@@ -1183,6 +1222,7 @@
 
   <compinfo class="wxTreeListCtrl" image="treelistctrl" type="treelistctrl">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_treeListCtrl</property>
     <property name="style" type="bitlist">
@@ -1234,6 +1274,7 @@
   <compinfo class="wxDataViewCtrl" image="dataviewtree_ctrl" type="dataviewctrl" >
     <inherits class="wxControl"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_dataViewCtrl</property>
     <property name="class_access" type="option">
@@ -1275,6 +1316,7 @@
   <compinfo class="wxDataViewTreeCtrl" image="dataviewtree_ctrl" type="dataviewtreectrl" >
     <inherits class="wxControl"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_dataViewTreeCtrl</property>
     <property name="class_access" type="option">
@@ -1316,6 +1358,7 @@
   <compinfo class="wxDataViewListCtrl" image="dataviewlist_ctrl" type="dataviewlistctrl" >
     <inherits class="wxControl"/>
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_dataViewListCtrl</property>
     <property name="class_access" type="option">
@@ -1457,6 +1500,7 @@
 
   <compinfo class="wxPropertyGrid" image="wxPropertyGrid" type="propgrid">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_propertyGrid</property>
     <property name="class_access" type="option">
@@ -1497,6 +1541,7 @@
 
   <compinfo class="wxPropertyGridManager" image="wxPropertyGridManager" type="propgridman">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_propertyGridManager</property>
     <property name="class_access" type="option">
@@ -1592,6 +1637,7 @@
 
   <compinfo class="wxActivityIndicator" image="wxActivityIndicator" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_indicator</property>
     <property name="class_access" type="option">
@@ -1604,6 +1650,7 @@
 
   <compinfo class="wxBannerWindow" image="wxBannerWindow" type="widget">
     <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">m_banner</property>
     <property name="title" type="string_escapes"

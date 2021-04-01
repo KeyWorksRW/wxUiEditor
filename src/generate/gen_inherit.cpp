@@ -163,24 +163,35 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         code << "Hide();";
     }
 
+    bool allow_minmax = true;
+
+    // The following needs to match GenFormSettings() in gen_common.cpp. If these conditions are met, then GenFormSettings()
+    // will generate SetSizeHints(min, max) so there is no reason to generate SetMinSize()/SetMaxSize()
+    if (node->IsForm() && node->GetClassName() != "PanelForm" && node->GetClassName() != "wxToolBar")
+        allow_minmax = false;
+
     auto size = node->prop_as_wxPoint(txt_minimum_size);
     if (size.x != -1 || size.y != -1)
     {
-        if (code.size())
-            code << "\n    ";
-        if (!node->IsForm())
+        if (allow_minmax)
+        {
+            if (code.size())
+                code << "\n    ";
             code << node->get_node_name() << "->";
-        code << "SetMinSize(wxSize(" << size.x << ", " << size.y << "));";
+            code << "SetMinSize(wxSize(" << size.x << ", " << size.y << "));";
+        }
     }
 
     size = node->prop_as_wxPoint("maximum_size");
     if (size.x != -1 || size.y != -1)
     {
-        if (code.size())
-            code << "\n    ";
-        if (!node->IsForm())
+        if (allow_minmax)
+        {
+            if (code.size())
+                code << "\n    ";
             code << node->get_node_name() << "->";
-        code << "SetMaxSize(wxSize(" << size.x << ", " << size.y << "));";
+            code << "SetMaxSize(wxSize(" << size.x << ", " << size.y << "));";
+        }
     }
 
     if (node->prop_as_string("tooltip").size())

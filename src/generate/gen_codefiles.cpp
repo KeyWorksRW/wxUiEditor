@@ -87,7 +87,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
             {
                 results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
             }
-            else if (retval == 0)
+            else if (retval == result::exists)
             {
                 ++currentFiles;
             }
@@ -105,7 +105,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
             {
                 results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
             }
-            else if (retval == 0)
+            else if (retval == result::exists)
             {
                 ++currentFiles;
             }
@@ -174,6 +174,8 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         header_ext = *extProp;
     }
 
+    size_t currentFiles = 0;
+
     for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
     {
         auto form = project->GetChildPtr(pos);
@@ -187,14 +189,16 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
             path.replace_extension(source_ext);
             if (path.file_exists())
             {
-                results.emplace_back() << path << _tt(" already exists") << '\n';
+                // Count both source and header file
+                currentFiles += 2;
                 continue;
             }
             path.remove_extension();
         }
         else
         {
-            results.emplace_back() << _tt("No filename specified for ") << form->get_value_ptr(txt_var_name)->c_str() << '\n';
+            results.emplace_back() << _tt("No filename specified for ") << form->get_value_ptr(txt_var_name)->c_str()
+                                   << '\n';
             continue;
         }
 
@@ -209,6 +213,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         codegen.SetSrcWriteCode(cpp_cw.get());
 
         auto retval = codegen.GenerateDerivedClass(project.get(), form.get());
+        ASSERT_MSG(retval != result::exists, "this should be impossible since we checked above")
         if (retval == result::fail)
         {
             results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
@@ -216,25 +221,25 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else if (retval == result::exists)
         {
-            results.emplace_back() << path << _tt(" already exists") << '\n';
+            ++currentFiles;
             continue;
         }
         else if (retval == result::ignored)
         {
-            // Completely ignore this file -- either the name is empty, or it hasn't changed from the default "filename"
+            // Completely ignore this file
             continue;
         }
 
         path.replace_extension(header_ext);
         retval = h_cw->WriteFile();
 
-        if (retval < 0)
+        if (retval == result::fail)
         {
             results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
         }
-        else if (retval == 0)
+        else if (retval == result::exists)
         {
-            results.emplace_back() << path << _tt(" is current") << '\n';
+            ++currentFiles;
         }
         else
         {
@@ -243,13 +248,13 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
 
         path.replace_extension(source_ext);
         retval = cpp_cw->WriteFile();
-        if (retval < 0)
+        if (retval == result::fail)
         {
             results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
         }
-        else if (retval == 0)
+        else if (retval == result::exists)
         {
-            results.emplace_back() << path << _tt(" already exists") << '\n';
+            ++currentFiles;
         }
         else
         {
@@ -259,19 +264,29 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
 
     if (results.size())
     {
-        // TODO: [KeyWorks - 07-03-2020] Ultimately this should be put in a dialog with a list control.
         ttlib::cstr msg;
         for (auto& iter: results)
         {
             msg += iter;
         }
+
+        if (currentFiles)
+        {
+            msg << '\n' << _tt("The other ") << currentFiles << " derived files have already been created";
+        }
+
+        appMsgBox(msg, _tt(strIdTitleCodeGeneration), wxOK);
+    }
+    else if (currentFiles)
+    {
+        ttlib::cstr msg;
+        msg << '\n' << _tt("All ") << currentFiles << " derived files have already been created";
         appMsgBox(msg, _tt(strIdTitleCodeGeneration), wxOK);
     }
     else
     {
         appMsgBox(_tt("There were no derived filenames specified -- nothing to generate.\n\nAdd a filename to the "
-                      "derived_filename "
-                      "property to generate a derived file."),
+                      "derived_filename property to generate a derived file."),
                   _tt(strIdTitleCodeGeneration), wxOK);
     }
 }

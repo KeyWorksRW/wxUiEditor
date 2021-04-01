@@ -55,6 +55,8 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
         if (auto base_file = form->get_value_ptr("base_file"); base_file)
         {
             path = *base_file;
+            if (path == "filename_base")
+                return false;
             path.make_absolute();
             path.backslashestoforward();
         }

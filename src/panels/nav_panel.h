@@ -51,7 +51,7 @@ protected:
     void OnExpand(wxCommandEvent& event);
 
     void OnNodeSelected(CustomEvent& event);
-    void OnPropertyModified(CustomEvent& event);
+    void OnNodePropChange(CustomEvent& event);
 
 private:
     MainFrame* m_pMainFrame;

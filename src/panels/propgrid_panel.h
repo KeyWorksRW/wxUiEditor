@@ -65,7 +65,7 @@ protected:
     void OnPropertyGridChanging(wxPropertyGridEvent& event);
     void OnPropertyGridExpand(wxPropertyGridEvent& event);
     void OnPropertyGridItemSelected(wxPropertyGridEvent& event);
-    void OnPropertyModified(CustomEvent& event);
+    void OnNodePropChange(CustomEvent& event);
     void OnReCreateGrid(wxCommandEvent& event);
 
 private:

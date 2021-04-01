@@ -110,7 +110,6 @@
       <event name="wxEVT_CONTEXT_MENU" class="wxContextMenuEvent"/>
       <event name="wxEVT_ERASE_BACKGROUND" class="wxEraseEvent"/>
       <event name="wxEVT_HELP" class="wxHelpEvent"/>
-      <event name="wxEVT_MOVE" class="wxMoveEvent" help="Generated when a window is moved. Not generated in wxGTK. " />
       <event name="wxEVT_PAINT" class="wxPaintEvent"/>
       <event name="wxEVT_SIZE" class="wxSizeEvent"/>
       <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"/>

@@ -29,7 +29,6 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format on
 
-
 int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYPE panel_type)
 {
     ttlib::cstr source_ext(".cpp");
@@ -156,20 +155,19 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             m_source->writeLine();
         }
 
-        prop = project->get_value_ptr(txt_src_preamble);
-        if (prop)
+        if (project->prop_has_value(txt_src_preamble))
         {
-            if (ttlib::cstr preamble = *prop; preamble.size())
-            {
-                preamble.Replace("\\n", "\n", true);
-                preamble.Replace("\\t", "\t", true);
-                if (preamble.back() == '\n')
-                    preamble.erase(preamble.size() - 1, 1);
+            ttlib::cstr code(project->prop_as_string(txt_src_preamble));
 
-                m_source->writeLine();
-                m_source->writeLine(preamble);
-                m_source->writeLine();
-            }
+            // The multi-line editor may have been used in which case there are escaped newlines and tabs -- we convert
+            // those to the actual characters before generating the code. It's common with that editor to have a trailing
+            // EOL -- so we remove that if needed.
+            code.Replace("\\n", "\n", true);
+            code.Replace("\\t", "\t", true);
+            if (code.back() == '\n')
+                code.erase(code.size() - 1, 1);
+            m_source->writeLine(code);
+            m_source->writeLine();
         }
 
         {
@@ -191,20 +189,6 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             m_source->writeLine();
             m_source->writeLine(inc);
             m_source->writeLine();
-            if (auto preamble = project->get_value_ptr(txt_src_preamble); preamble->size())
-            {
-                ttlib::cstr code(*preamble);
-
-                // The multi-line editor may have been used in which case there are escaped newlines and tabs -- we convert
-                // those to the actual characters before generating the code. It's common with that editor to have a trailing
-                // EOL -- so we remove that if needed.
-                code.Replace("\\n", "\n", true);
-                code.Replace("\\t", "\t", true);
-                if (code.back() == '\n')
-                    code.erase(code.size() - 1, 1);
-                m_source->writeLine(code);
-                m_source->writeLine();
-            }
         }
 
         if (namespace_using_name.size())

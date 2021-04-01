@@ -14,7 +14,6 @@ struct IMPORT_NAME_PAIR
 constexpr const IMPORT_NAME_PAIR evt_pair[] = {
 
     { "OnActivate", "wxEVT_ACTIVATE" },
-    { "OnActivateApp", "wxEVT_ACTIVATE_APP" },
 
     { "OnAuiFindManager", "wxEVT_AUI_FIND_MANAGER" },
     { "OnAuiPaneActivated", "wxEVT_AUI_PANE_ACTIVATED" },

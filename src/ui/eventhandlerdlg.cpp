@@ -269,7 +269,6 @@ void EventHandlerDlg::FormatBindText()
 const std::unordered_map<std::string, const char*> s_EventNames = {
 
     { "wxEVT_ACTIVATE", "OnActivate" },
-    { "wxEVT_ACTIVATE_APP", "OnActivateApp" },
     { "wxEVT_AUITOOLBAR_BEGIN_DRAG", "OnAuiToolBarBeginDrag" },
     { "wxEVT_AUITOOLBAR_MIDDLE_CLICK", "OnAuiToolBarMiddleClick" },
     { "wxEVT_AUITOOLBAR_OVERFLOW_CLICK", "OnAuiToolBarOverflowClick" },

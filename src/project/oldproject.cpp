@@ -33,7 +33,6 @@ static bool HandleDownLevelProperty(pugi::xml_node& xml_prop, ttlib::cview prop_
 const std::map<std::string, const char*> g_mapNewEventNames = {
 
     { "OnActivate", "wxEVT_ACTIVATE" },
-    { "OnActivateApp", "wxEVT_ACTIVATE_APP" },
     { "OnAuiPaneActivated", "wxEVT_AUI_PANE_ACTIVATED" },
     { "OnAuiPaneButton", "wxEVT_AUI_PANE_BUTTON" },
     { "OnAuiPaneClose", "wxEVT_AUI_PANE_CLOSE" },

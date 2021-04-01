@@ -2,8 +2,7 @@
 <GeneratorDefitions>
 
   <compinfo class="wxTopLevelWindow" type="interface">
-    <event name="wxEVT_ACTIVATE" class="wxActivateEvent" help=""/>
-    <event name="wxEVT_ACTIVATE_APP" class="wxActivateEvent" help=""/>
+    <event name="wxEVT_ACTIVATE" class="wxActivateEvent" help="An activate event is sent when a window or application is being activated or deactivated."/>
     <event name="wxEVT_CLOSE_WINDOW" class="wxCloseEvent" help=""/>
     <event name="wxEVT_ICONIZE" class="wxIconizeEvent" help="Only available for the wxMSW, wxGTK ports."/>
     <event name="wxEVT_MAXIMIZE" class="wxMaximizeEvent"

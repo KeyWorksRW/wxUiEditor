@@ -83,7 +83,7 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
     Bind(wxEVT_PG_ITEM_EXPANDED, &PropGridPanel::OnEventGridExpand, this, EVENT_ID);
     Bind(wxEVT_PG_SELECTED, &PropGridPanel::OnPropertyGridItemSelected, this, EVENT_ID);
 
-    Bind(EVT_NodePropChange, &PropGridPanel::OnPropertyModified, this);
+    Bind(EVT_NodePropChange, &PropGridPanel::OnNodePropChange, this);
 
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { Create(); });
     Bind(EVT_NodeSelected, [this](CustomEvent&) { Create(); });
@@ -1146,7 +1146,8 @@ void PropGridPanel::OnEventGridExpand(wxPropertyGridEvent& event)
     }
 }
 
-void PropGridPanel::OnPropertyModified(CustomEvent& event)
+// This handles the custom event fired when a node's property is changed.
+void PropGridPanel::OnNodePropChange(CustomEvent& event)
 {
     if (m_isPropChangeSuspended)
     {

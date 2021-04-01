@@ -97,7 +97,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     Bind(wxEVT_TREE_BEGIN_DRAG, &NavigationPanel::OnBeginDrag, this);
     Bind(wxEVT_TREE_END_DRAG, &NavigationPanel::OnEndDrag, this);
 
-    Bind(EVT_NodePropChange, &NavigationPanel::OnPropertyModified, this);
+    Bind(EVT_NodePropChange, &NavigationPanel::OnNodePropChange, this);
     Bind(EVT_NodeSelected, &NavigationPanel::OnNodeSelected, this);
 
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { AddAllNodes(); });
@@ -430,7 +430,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     }
 }
 
-void NavigationPanel::OnPropertyModified(CustomEvent& event)
+void NavigationPanel::OnNodePropChange(CustomEvent& event)
 {
     auto prop = event.GetNodeProperty();
 

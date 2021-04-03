@@ -141,11 +141,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
         id_DebugPreferences);
 
     Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&) {
-            g_pMsgLogging->ShowLogger();
-        },
-        id_ShowLogger);
+        wxEVT_MENU, [](wxCommandEvent&) { g_pMsgLogging->ShowLogger(); }, id_ShowLogger);
 
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif

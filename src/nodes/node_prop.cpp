@@ -53,15 +53,15 @@ int NodeProperty::as_int() const
             return g_NodeCreator.GetConstantAsInt(m_value, 0);
 
         case Type::Bitlist:
-        {
-            int result = 0;
-            ttlib::multistr mstr(m_value, '|');
-            for (auto& iter: mstr)
             {
-                result |= g_NodeCreator.GetConstantAsInt(iter);
+                int result = 0;
+                ttlib::multistr mstr(m_value, '|');
+                for (auto& iter: mstr)
+                {
+                    result |= g_NodeCreator.GetConstantAsInt(iter);
+                }
+                return result;
             }
-            return result;
-        }
 
         default:
             return m_value.atoi();  // this will return 0 if the m_value is an empty string

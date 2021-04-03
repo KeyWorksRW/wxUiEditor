@@ -712,38 +712,38 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
     switch (prop->GetType())
     {
         case Type::File:
-        {
-            if (prop->GetPropName() == "base_file")
             {
-                ttString newValue = event.GetPropertyValue().GetString();
-                if (newValue.empty())
-                    return;
-
-                newValue.make_absolute();
-                newValue.make_relative_wx(wxGetApp().GetProjectPath());
-                newValue.backslashestoforward();
-                auto filename = newValue.sub_cstr();
-                auto project = wxGetApp().GetProject();
-                for (size_t child_idx = 0; child_idx < project->GetChildCount(); ++child_idx)
+                if (prop->GetPropName() == "base_file")
                 {
-                    if (project->GetChild(child_idx) == node)
-                        continue;
-                    if (project->GetChild(child_idx)->prop_as_string("base_file") == filename)
-                    {
-                        appMsgBox(ttlib::cstr() << "The base filename " << filename << " is already in use by "
-                                                << project->GetChild(child_idx)->prop_as_string(txt_class_name));
-                        event.Veto();
+                    ttString newValue = event.GetPropertyValue().GetString();
+                    if (newValue.empty())
                         return;
+
+                    newValue.make_absolute();
+                    newValue.make_relative_wx(wxGetApp().GetProjectPath());
+                    newValue.backslashestoforward();
+                    auto filename = newValue.sub_cstr();
+                    auto project = wxGetApp().GetProject();
+                    for (size_t child_idx = 0; child_idx < project->GetChildCount(); ++child_idx)
+                    {
+                        if (project->GetChild(child_idx) == node)
+                            continue;
+                        if (project->GetChild(child_idx)->prop_as_string("base_file") == filename)
+                        {
+                            appMsgBox(ttlib::cstr() << "The base filename " << filename << " is already in use by "
+                                                    << project->GetChild(child_idx)->prop_as_string(txt_class_name));
+                            event.Veto();
+                            return;
+                        }
                     }
+
+                    // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
+                    // otherwise it will revert back to the original name before the Veto.
+
+                    property->SetValueFromString(newValue, 0);
                 }
-
-                // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
-                // otherwise it will revert back to the original name before the Veto.
-
-                property->SetValueFromString(newValue, 0);
             }
-        }
-        break;
+            break;
 
         default:
             break;
@@ -770,397 +770,397 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     switch (prop->GetType())
     {
         case Type::Float:
-        {
-            double val = m_prop_grid->GetPropertyValueAsDouble(property);
+            {
+                double val = m_prop_grid->GetPropertyValueAsDouble(property);
 
-            modifyProperty(prop, DoubleToStr(val));
-            break;
-        }
+                modifyProperty(prop, DoubleToStr(val));
+                break;
+            }
 
         case Type::String_Edit:
         case Type::ID:
         case Type::Int:
         case Type::Uint:
-        {
-            ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));
-            break;
-        }
+            {
+                ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));
+                break;
+            }
 
         case Type::Option:
         case Type::Edit_option:
-        {
-            wxString value = m_prop_grid->GetPropertyValueAsString(property);
-            ModifyProperty(prop, value);
-            if (prop->GetPropName() == "source_type")
             {
-                Create();
-                return;
-            }
-
-            // Update displayed description for the new selection
-            auto propInfo = prop->GetPropertyInfo();
-
-            wxString helpString = wxString::FromUTF8Unchecked(propInfo->GetDescription());
-
-            for (auto& iter: propInfo->GetOptions())
-            {
-                if (iter.name == value)
+                wxString value = m_prop_grid->GetPropertyValueAsString(property);
+                ModifyProperty(prop, value);
+                if (prop->GetPropName() == "source_type")
                 {
-                    if (iter.help.empty())
-                        helpString = value + ":\n";
-                    else
-                        helpString += "\n\n" + value + ":\n" + iter.help;
-
-                    break;
+                    Create();
+                    return;
                 }
-            }
 
-            wxString localized = wxGetTranslation(helpString);
-            m_prop_grid->SetPropertyHelpString(property, localized);
-            m_prop_grid->SetDescription(property->GetLabel(), localized);
+                // Update displayed description for the new selection
+                auto propInfo = prop->GetPropertyInfo();
 
-            if (auto selected_node = wxGetFrame().GetSelectedNode(); selected_node)
-            {
-                if (prop->GetPropName() == "validator_data_type" && selected_node->GetClassName() == "wxTextCtrl")
+                wxString helpString = wxString::FromUTF8Unchecked(propInfo->GetDescription());
+
+                for (auto& iter: propInfo->GetOptions())
                 {
-                    // You can only use a wxTextValidator if the validator data type is wxString. If it's not a string, the
-                    // program will compile just fine, but the data member will not be read or written to. To prevent that,
-                    // we switch the validator type to match the data type. The downside is that this is two actions, and so
-                    // it takes two calls to Undo to get back to where we were.
-
-                    if (value == "wxString")
+                    if (iter.name == value)
                     {
-                        auto propType = selected_node->get_prop_ptr("validator_type");
-                        if (propType->GetValue() != "wxTextValidator")
+                        if (iter.help.empty())
+                            helpString = value + ":\n";
+                        else
+                            helpString += "\n\n" + value + ":\n" + iter.help;
+
+                        break;
+                    }
+                }
+
+                wxString localized = wxGetTranslation(helpString);
+                m_prop_grid->SetPropertyHelpString(property, localized);
+                m_prop_grid->SetDescription(property->GetLabel(), localized);
+
+                if (auto selected_node = wxGetFrame().GetSelectedNode(); selected_node)
+                {
+                    if (prop->GetPropName() == "validator_data_type" && selected_node->GetClassName() == "wxTextCtrl")
+                    {
+                        // You can only use a wxTextValidator if the validator data type is wxString. If it's not a string,
+                        // the program will compile just fine, but the data member will not be read or written to. To prevent
+                        // that, we switch the validator type to match the data type. The downside is that this is two
+                        // actions, and so it takes two calls to Undo to get back to where we were.
+
+                        if (value == "wxString")
                         {
-                            auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
-                            grid_property->SetValueFromString("wxTextValidator", 0);
-                            modifyProperty(propType, "wxTextValidator");
+                            auto propType = selected_node->get_prop_ptr("validator_type");
+                            if (propType->GetValue() != "wxTextValidator")
+                            {
+                                auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
+                                grid_property->SetValueFromString("wxTextValidator", 0);
+                                modifyProperty(propType, "wxTextValidator");
+                            }
+                        }
+                        else
+                        {
+                            auto propType = selected_node->get_prop_ptr("validator_type");
+                            if (propType->GetValue() == "wxTextValidator")
+                            {
+                                auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
+                                grid_property->SetValueFromString("wxGenericValidator", 0);
+                                modifyProperty(propType, "wxGenericValidator");
+                            }
                         }
                     }
-                    else
+                    else if (prop->GetPropName() == txt_class_access && wxGetApp().IsPjtMemberPrefix())
                     {
-                        auto propType = selected_node->get_prop_ptr("validator_type");
-                        if (propType->GetValue() == "wxTextValidator")
+                        // TODO: [KeyWorks - 08-23-2020] This needs to be a preference
+
+                        // If access is changed to local and the name starts with "m_", then the "m_" will be stripped off.
+                        // Conversely, if the name is changed from local to a class member, a "m_" is added as a prefix (if
+                        // it doesn't already have one).
+                        ttlib::cstr name = node->prop_as_string(txt_var_name);
+                        if (value == "none" && name.is_sameprefix("m_"))
                         {
-                            auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
-                            grid_property->SetValueFromString("wxGenericValidator", 0);
-                            modifyProperty(propType, "wxGenericValidator");
+                            name.erase(0, 2);
+                            auto final_name = node->GetUniqueName(name);
+                            if (final_name.size())
+                                name = final_name;
+                            auto propChange = selected_node->get_prop_ptr(txt_var_name);
+                            auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
+                            grid_property->SetValueFromString(name, 0);
+                            modifyProperty(propChange, name);
+                        }
+                        else if (value != "none" && !name.is_sameprefix("m_"))
+                        {
+                            name.insert(0, "m_");
+                            auto final_name = node->GetUniqueName(name);
+                            if (final_name.size())
+                                name = final_name;
+                            auto propChange = selected_node->get_prop_ptr(txt_var_name);
+                            auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
+                            grid_property->SetValueFromString(name, 0);
+                            modifyProperty(propChange, name);
                         }
                     }
                 }
-                else if (prop->GetPropName() == txt_class_access && wxGetApp().IsPjtMemberPrefix())
-                {
-                    // TODO: [KeyWorks - 08-23-2020] This needs to be a preference
-
-                    // If access is changed to local and the name starts with "m_", then the "m_" will be stripped off.
-                    // Conversely, if the name is changed from local to a class member, a "m_" is added as a prefix (if it
-                    // doesn't already have one).
-                    ttlib::cstr name = node->prop_as_string(txt_var_name);
-                    if (value == "none" && name.is_sameprefix("m_"))
-                    {
-                        name.erase(0, 2);
-                        auto final_name = node->GetUniqueName(name);
-                        if (final_name.size())
-                            name = final_name;
-                        auto propChange = selected_node->get_prop_ptr(txt_var_name);
-                        auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
-                        grid_property->SetValueFromString(name, 0);
-                        modifyProperty(propChange, name);
-                    }
-                    else if (value != "none" && !name.is_sameprefix("m_"))
-                    {
-                        name.insert(0, "m_");
-                        auto final_name = node->GetUniqueName(name);
-                        if (final_name.size())
-                            name = final_name;
-                        auto propChange = selected_node->get_prop_ptr(txt_var_name);
-                        auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
-                        grid_property->SetValueFromString(name, 0);
-                        modifyProperty(propChange, name);
-                    }
-                }
+                break;
             }
-            break;
-        }
 
         case Type::Parent:
-        {
-            // GenerateComposedValue() is the only method that does actually return a value, although the documentation
-            // claims the other methods just call this one, they return an empty value
-            const auto value = property->GenerateComposedValue();
-            ModifyProperty(prop, value);
-            break;
-        }
+            {
+                // GenerateComposedValue() is the only method that does actually return a value, although the documentation
+                // claims the other methods just call this one, they return an empty value
+                const auto value = property->GenerateComposedValue();
+                ModifyProperty(prop, value);
+                break;
+            }
 
         case Type::String_Escapes:
         case Type::String_Edit_Escapes:
-        {
-            auto value = ConvertEscapeSlashes(ttlib::cstr() << m_prop_grid->GetPropertyValueAsString(property).wx_str());
-            modifyProperty(prop, value);
-            break;
-        }
+            {
+                auto value = ConvertEscapeSlashes(ttlib::cstr() << m_prop_grid->GetPropertyValueAsString(property).wx_str());
+                modifyProperty(prop, value);
+                break;
+            }
 
         case Type::Bool:
-        {
-            if (prop->GetPropName() == "aui_managed")
             {
-                auto propobj = prop->GetNode();
-                if (propobj->GetChildCount())
+                if (prop->GetPropName() == "aui_managed")
                 {
-                    wxMessageBox("You have to remove all child widgets first.");
-                    m_prop_grid->SetPropertyValue(property, !m_prop_grid->GetPropertyValueAsBool(property));
+                    auto propobj = prop->GetNode();
+                    if (propobj->GetChildCount())
+                    {
+                        wxMessageBox("You have to remove all child widgets first.");
+                        m_prop_grid->SetPropertyValue(property, !m_prop_grid->GetPropertyValueAsBool(property));
+                    }
+                    else
+                        modifyProperty(prop, m_prop_grid->GetPropertyValueAsBool(property) ? "1" : "0");
                 }
                 else
-                    modifyProperty(prop, m_prop_grid->GetPropertyValueAsBool(property) ? "1" : "0");
-            }
-            else
-            {
-                if (!m_prop_grid->GetPropertyValueAsBool(property))
                 {
-                    if (node->GetClassName() == "wxStdDialogButtonSizer")
+                    if (!m_prop_grid->GetPropertyValueAsBool(property))
                     {
-                        auto def_prop = node->get_prop_ptr("default_button");
-                        if (def_prop->GetValue() == prop->GetPropName())
+                        if (node->GetClassName() == "wxStdDialogButtonSizer")
                         {
-                            m_prop_grid->SetPropertyValue("default_button", "none");
-                            modifyProperty(def_prop, "none");
+                            auto def_prop = node->get_prop_ptr("default_button");
+                            if (def_prop->GetValue() == prop->GetPropName())
+                            {
+                                m_prop_grid->SetPropertyValue("default_button", "none");
+                                modifyProperty(def_prop, "none");
+                            }
+                        }
+                    }
+                    modifyProperty(prop, m_prop_grid->GetPropertyValueAsBool(property) ? "1" : "0");
+                }
+                break;
+            }
+
+        case Type::Bitlist:
+            {
+                ttString value = m_prop_grid->GetPropertyValueAsString(property);
+                value.Replace(" ", "");
+                value.Replace(",", "|");
+                if (prop->GetPropName() == txt_style)
+                {
+                    // Don't allow the user to combine incompatible styles
+                    if (value.contains("wxFLP_OPEN") && value.contains("wxFLP_SAVE"))
+                    {
+                        auto style_prop = node->get_prop_ptr(txt_style);
+                        auto old_value = style_prop->GetValue();
+                        if (old_value.contains("wxFLP_OPEN"))
+                        {
+                            value.Replace("wxFLP_OPEN", "");
+                            value.Replace("wxFLP_FILE_MUST_EXIST", "");
+                            value.Replace("||", "|", true);  // Fix all cases of a doubled pipe
+
+                            // Change the format to what the property grid wants
+                            value.Replace("|", ",");
+                            m_prop_grid->SetPropertyValue(txt_style, value);
+
+                            // Now put it back into the format we use internally
+                            value.Replace(",", "|");
+                        }
+                        else
+                        {
+                            value.Replace("wxFLP_SAVE", "");
+                            value.Replace("wxFLP_OVERWRITE_PROMPT", "");
+                            value.Replace("||", "|", true);  // Fix all cases of a doubled pipe
+
+                            // Change the format to what the property grid wants
+                            value.Replace("|", ",");
+                            m_prop_grid->SetPropertyValue(txt_style, value);
+
+                            // Now put it back into the format we use internally
+                            value.Replace(",", "|");
                         }
                     }
                 }
-                modifyProperty(prop, m_prop_grid->GetPropertyValueAsBool(property) ? "1" : "0");
+
+                ModifyProperty(prop, value);
+                break;
             }
-            break;
-        }
-
-        case Type::Bitlist:
-        {
-            ttString value = m_prop_grid->GetPropertyValueAsString(property);
-            value.Replace(" ", "");
-            value.Replace(",", "|");
-            if (prop->GetPropName() == txt_style)
-            {
-                // Don't allow the user to combine incompatible styles
-                if (value.contains("wxFLP_OPEN") && value.contains("wxFLP_SAVE"))
-                {
-                    auto style_prop = node->get_prop_ptr(txt_style);
-                    auto old_value = style_prop->GetValue();
-                    if (old_value.contains("wxFLP_OPEN"))
-                    {
-                        value.Replace("wxFLP_OPEN", "");
-                        value.Replace("wxFLP_FILE_MUST_EXIST", "");
-                        value.Replace("||", "|", true);  // Fix all cases of a doubled pipe
-
-                        // Change the format to what the property grid wants
-                        value.Replace("|", ",");
-                        m_prop_grid->SetPropertyValue(txt_style, value);
-
-                        // Now put it back into the format we use internally
-                        value.Replace(",", "|");
-                    }
-                    else
-                    {
-                        value.Replace("wxFLP_SAVE", "");
-                        value.Replace("wxFLP_OVERWRITE_PROMPT", "");
-                        value.Replace("||", "|", true);  // Fix all cases of a doubled pipe
-
-                        // Change the format to what the property grid wants
-                        value.Replace("|", ",");
-                        m_prop_grid->SetPropertyValue(txt_style, value);
-
-                        // Now put it back into the format we use internally
-                        value.Replace(",", "|");
-                    }
-                }
-            }
-
-            ModifyProperty(prop, value);
-            break;
-        }
 
         case Type::Wxpoint:
-        {
-            wxPoint point = wxPointRefFromVariant(event.GetPropertyValue());
-            modifyProperty(prop, ttlib::cstr() << point.x << ',' << point.y);
-            break;
-        }
+            {
+                wxPoint point = wxPointRefFromVariant(event.GetPropertyValue());
+                modifyProperty(prop, ttlib::cstr() << point.x << ',' << point.y);
+                break;
+            }
 
         case Type::Wxsize:
-        {
-            wxSize size = wxSizeRefFromVariant(event.GetPropertyValue());
-            modifyProperty(prop, ttlib::cstr().Format("%i,%i", size.GetWidth(), size.GetHeight()));
-            break;
-        }
+            {
+                wxSize size = wxSizeRefFromVariant(event.GetPropertyValue());
+                modifyProperty(prop, ttlib::cstr().Format("%i,%i", size.GetWidth(), size.GetHeight()));
+                break;
+            }
 
         case Type::Wxfont:
-        {
-            wxFont font;
-            font << event.GetPropertyValue();
-            if (font.IsOk())
             {
-                FontProperty font_prop(font);
-                modifyProperty(prop, font_prop.as_string());
+                wxFont font;
+                font << event.GetPropertyValue();
+                if (font.IsOk())
+                {
+                    FontProperty font_prop(font);
+                    modifyProperty(prop, font_prop.as_string());
+                }
+                break;
             }
-            break;
-        }
 
         case Type::Wxcolour:
-        {
-            wxColourPropertyValue colour;
-            colour << event.GetPropertyValue();
-            switch (colour.m_type)
             {
-                    // When we create the property, we convert an empty value to wxSYS_COLOUR_WINDOW, effectively using that
-                    // as the default. An empty string will tell the code generator not to create any special code for
-                    // setting the color, letting wxWidgets use whatever it's default is.
+                wxColourPropertyValue colour;
+                colour << event.GetPropertyValue();
+                switch (colour.m_type)
+                {
+                        // When we create the property, we convert an empty value to wxSYS_COLOUR_WINDOW, effectively using
+                        // that as the default. An empty string will tell the code generator not to create any special code
+                        // for setting the color, letting wxWidgets use whatever it's default is.
 
-                case wxSYS_COLOUR_WINDOW:
-                case wxSYS_COLOUR_MAX:
-                    modifyProperty(prop, "");
-                    break;
+                    case wxSYS_COLOUR_WINDOW:
+                    case wxSYS_COLOUR_MAX:
+                        modifyProperty(prop, "");
+                        break;
 
-                case wxPG_COLOUR_CUSTOM:
-                    modifyProperty(prop, ConvertColourToString(colour.m_colour));
-                    break;
+                    case wxPG_COLOUR_CUSTOM:
+                        modifyProperty(prop, ConvertColourToString(colour.m_colour));
+                        break;
 
-                default:
-                    modifyProperty(prop, ConvertSystemColourToString(colour.m_type));
-                    break;
+                    default:
+                        modifyProperty(prop, ConvertSystemColourToString(colour.m_type));
+                        break;
+                }
+                break;
             }
-            break;
-        }
 
         case Type::Image:
-        {
-            ttlib::cstr value;
-            value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
-
-            // If the image field is empty, then the entire property needs to be cleared
-            ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
-            for (auto& iter: parts)
             {
-                iter.BothTrim();
-            }
+                ttlib::cstr value;
+                value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
 
-            if (parts[IndexImage].empty())
-                value.clear();
-            modifyProperty(prop, value);
-        }
-        break;
+                // If the image field is empty, then the entire property needs to be cleared
+                ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
+                for (auto& iter: parts)
+                {
+                    iter.BothTrim();
+                }
+
+                if (parts[IndexImage].empty())
+                    value.clear();
+                modifyProperty(prop, value);
+            }
+            break;
 
         case Type::File:
-        {
-            ttString newValue = property->GetValueAsString();
-
-            // The base_file property was already processed in OnPropertyGridChanging so only modify the value if it's a
-            // different property
-            if (prop->GetPropName() != "base_file")
             {
-                if (newValue.size())
+                ttString newValue = property->GetValueAsString();
+
+                // The base_file property was already processed in OnPropertyGridChanging so only modify the value if it's a
+                // different property
+                if (prop->GetPropName() != "base_file")
                 {
-                    newValue.make_absolute();
-                    newValue.make_relative_wx(wxGetApp().GetProjectPath());
-                    newValue.backslashestoforward();
-                    property->SetValueFromString(newValue, 0);
+                    if (newValue.size())
+                    {
+                        newValue.make_absolute();
+                        newValue.make_relative_wx(wxGetApp().GetProjectPath());
+                        newValue.backslashestoforward();
+                        property->SetValueFromString(newValue, 0);
+                    }
                 }
+                ModifyProperty(prop, newValue);
+                break;
             }
-            ModifyProperty(prop, newValue);
-            break;
-        }
 
         case Type::Path:
-        {
-            ttString newValue = property->GetValueAsString();
-            newValue.make_absolute();
-            newValue.make_relative_wx(wxGetApp().GetProjectPath());
-            newValue.backslashestoforward();
+            {
+                ttString newValue = property->GetValueAsString();
+                newValue.make_absolute();
+                newValue.make_relative_wx(wxGetApp().GetProjectPath());
+                newValue.backslashestoforward();
 
-            // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
-            // with a backslash. However, ModifyProperty() will save our forward slash version, so even thought the
-            // display isn't correct, it will be stored in the project file correctly.
+                // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
+                // with a backslash. However, ModifyProperty() will save our forward slash version, so even thought the
+                // display isn't correct, it will be stored in the project file correctly.
 
-            property->SetValueFromString(newValue, 0);
-            ModifyProperty(prop, newValue);
-            break;
-        }
+                property->SetValueFromString(newValue, 0);
+                ModifyProperty(prop, newValue);
+                break;
+            }
 
         default:
-        {
-            ttString newValue = property->GetValueAsString();
-
-            if (prop->GetPropName() == txt_var_name)
             {
-                if (newValue.empty())
-                {
-                    // An empty name will generate uncompilable code, so we simply switch it to the default name
-                    auto new_name = prop->GetPropertyInfo()->GetDefaultValue();
-                    auto final_name = node->GetUniqueName(new_name);
-                    newValue = final_name.size() ? final_name : new_name;
+                ttString newValue = property->GetValueAsString();
 
-                    auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
-                    grid_property->SetValueFromString(newValue, 0);
-                }
-            }
-            else if (prop->GetPropName() == txt_choices)
-            {
-#if defined(_WIN32)
-                // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped. Adding
-                // a trailing space prevents this clipping.
-
-                if (m_currentSel->GetClassName() == "wxRadioBox" && newValue.size())
+                if (prop->GetPropName() == txt_var_name)
                 {
-                    size_t result;
-                    for (size_t pos = 0; pos < newValue.size();)
+                    if (newValue.empty())
                     {
-                        result = newValue.find("\" \"", pos);
+                        // An empty name will generate uncompilable code, so we simply switch it to the default name
+                        auto new_name = prop->GetPropertyInfo()->GetDefaultValue();
+                        auto final_name = node->GetUniqueName(new_name);
+                        newValue = final_name.size() ? final_name : new_name;
+
+                        auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
+                        grid_property->SetValueFromString(newValue, 0);
+                    }
+                }
+                else if (prop->GetPropName() == txt_choices)
+                {
+#if defined(_WIN32)
+                    // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped. Adding
+                    // a trailing space prevents this clipping.
+
+                    if (m_currentSel->GetClassName() == "wxRadioBox" && newValue.size())
+                    {
+                        size_t result;
+                        for (size_t pos = 0; pos < newValue.size();)
+                        {
+                            result = newValue.find("\" \"", pos);
+                            if (ttlib::is_found(result))
+                            {
+                                if (newValue.at(result - 1) != ' ')
+                                    newValue.insert(result, ' ');
+                                pos = result + 3;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        result = newValue.find_last_of('"');
                         if (ttlib::is_found(result))
                         {
                             if (newValue.at(result - 1) != ' ')
                                 newValue.insert(result, ' ');
-                            pos = result + 3;
-                        }
-                        else
-                        {
-                            break;
                         }
                     }
-
-                    result = newValue.find_last_of('"');
-                    if (ttlib::is_found(result))
-                    {
-                        if (newValue.at(result - 1) != ' ')
-                            newValue.insert(result, ' ');
-                    }
-                }
 #endif  // _WIN32
-            }
+                }
 
-            ModifyProperty(prop, newValue);
+                ModifyProperty(prop, newValue);
 
-            if (prop->GetPropName() == txt_class_name)
-            {
-                auto selected_node = wxGetFrame().GetSelectedNode();
-                if (!selected_node)
-                    return;
-
-                if (selected_node->IsForm())
+                if (prop->GetPropName() == txt_class_name)
                 {
-                    if (newValue.Right(4) != "Base")
+                    auto selected_node = wxGetFrame().GetSelectedNode();
+                    if (!selected_node)
                         return;
 
-                    if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
-                        propType && propType->GetValue() == "DerivedClass")
-                        ReplaceDrvName(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("base_file");
-                        propType && propType->GetValue() == "filename_base")
-                        ReplaceBaseFile(newValue, propType);
-                    if (auto propType = selected_node->get_prop_ptr("derived_file");
-                        propType && propType->GetValue().empty())
-                        ReplaceDrvFile(newValue, propType);
+                    if (selected_node->IsForm())
+                    {
+                        if (newValue.Right(4) != "Base")
+                            return;
+
+                        if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
+                            propType && propType->GetValue() == "DerivedClass")
+                            ReplaceDrvName(newValue, propType);
+                        if (auto propType = selected_node->get_prop_ptr("base_file");
+                            propType && propType->GetValue() == "filename_base")
+                            ReplaceBaseFile(newValue, propType);
+                        if (auto propType = selected_node->get_prop_ptr("derived_file");
+                            propType && propType->GetValue().empty())
+                            ReplaceDrvFile(newValue, propType);
+                    }
                 }
+                break;
             }
-            break;
-        }
     }
 }
 
@@ -1272,32 +1272,32 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             break;
 
         case Type::Bitlist:
-        {
-            auto value = prop->as_string();
-            value.Replace("|", ", ", true);
-            if (value == "0")
-                value = "";
-            grid_property->SetValueFromString(value, 0);
-        }
-        break;
+            {
+                auto value = prop->as_string();
+                value.Replace("|", ", ", true);
+                if (value == "0")
+                    value = "";
+                grid_property->SetValueFromString(value, 0);
+            }
+            break;
 
         case Type::Wxpoint:
-        {
-            // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
-            auto aux = prop->as_string();
-            aux.Replace(",", ";");
-            grid_property->SetValueFromString(aux, 0);
-        }
-        break;
+            {
+                // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
+                auto aux = prop->as_string();
+                aux.Replace(",", ";");
+                grid_property->SetValueFromString(aux, 0);
+            }
+            break;
 
         case Type::Wxsize:
-        {
-            // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
-            auto aux = prop->as_string();
-            aux.Replace(",", ";");
-            grid_property->SetValueFromString(aux, 0);
-        }
-        break;
+            {
+                // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
+                auto aux = prop->as_string();
+                aux.Replace(",", ";");
+                grid_property->SetValueFromString(aux, 0);
+            }
+            break;
 
         case Type::Wxfont:
             // REVIEW: [KeyWorks - 07-03-2020] Why not just use SetValueFromString like the others? And for that matter,
@@ -1306,33 +1306,33 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             break;
 
         case Type::Wxcolour:
-        {
-            auto value = prop->as_string();
-            if (value.empty())  // Default Colour
             {
-                wxColourPropertyValue def;
-                def.m_type = wxSYS_COLOUR_WINDOW;
-                def.m_colour = ConvertToSystemColour("wxSYS_COLOUR_WINDOW");
-                m_prop_grid->SetPropertyValue(grid_property, def);
-            }
-            else
-            {
-                if (value.find_first_of("wx") == 0)
+                auto value = prop->as_string();
+                if (value.empty())  // Default Colour
                 {
-                    // System Colour
                     wxColourPropertyValue def;
-                    def.m_type = ConvertToSystemColour(value);
-                    def.m_colour = prop->as_color();
+                    def.m_type = wxSYS_COLOUR_WINDOW;
+                    def.m_colour = ConvertToSystemColour("wxSYS_COLOUR_WINDOW");
                     m_prop_grid->SetPropertyValue(grid_property, def);
                 }
                 else
                 {
-                    wxColourPropertyValue def(wxPG_COLOUR_CUSTOM, prop->as_color());
-                    m_prop_grid->SetPropertyValue(grid_property, def);
+                    if (value.find_first_of("wx") == 0)
+                    {
+                        // System Colour
+                        wxColourPropertyValue def;
+                        def.m_type = ConvertToSystemColour(value);
+                        def.m_colour = prop->as_color();
+                        m_prop_grid->SetPropertyValue(grid_property, def);
+                    }
+                    else
+                    {
+                        wxColourPropertyValue def(wxPG_COLOUR_CUSTOM, prop->as_color());
+                        m_prop_grid->SetPropertyValue(grid_property, def);
+                    }
                 }
             }
-        }
-        break;
+            break;
 
         case Type::Image:
             break;

@@ -298,12 +298,10 @@
           <node class="wxMenuItem" class_access="protected:" id="id_warning_msgs" kind="wxITEM_CHECK" label="Warnings" var_name="m_menu_item_warnings" wxEVT_MENU="OnWarnings" />
           <node class="wxMenuItem" class_access="protected:" id="id_event_msgs" kind="wxITEM_CHECK" label="Events" var_name="m_menu_item_events" wxEVT_MENU="OnEvents" />
           <node class="wxMenuItem" class_access="protected:" id="wxID_INFO" kind="wxITEM_CHECK" label="" var_name="m_menu_item_info" wxEVT_MENU="OnInfo" />
-          <node class="separator" var_name="separator_2" />
-          <node class="wxMenuItem" class_access="protected:" id="id_log_msgs" kind="wxITEM_CHECK" label="wxWidgets log messages" var_name="m_menu_item_log" wxEVT_MENU="OnWidgetLog" />
         </node>
       </node>
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
-        <node class="wxTextCtrl" style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL" minimum_size="350,300" flags="wxEXPAND" proportion="1" />
+        <node class="wxTextCtrl" style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL" minimum_size="350,300" border_size="0" flags="wxEXPAND" proportion="1" />
       </node>
     </node>
   </node>

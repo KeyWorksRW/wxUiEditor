@@ -82,6 +82,7 @@ bool App::OnInit()
 
 #if defined(_DEBUG)
     g_pMsgLogging = new MsgLogging();
+    wxLog::SetActiveTarget(g_pMsgLogging);
 #endif
 
     SetVendorName("KeyWorks");
@@ -248,10 +249,6 @@ int App::OnExit()
 
 #endif  // defined(_WIN32) && defined(_DEBUG) && defined(USE_CRT_MEMORY_DUMP)
 
-#if defined(_DEBUG)
-    delete g_pMsgLogging;
-#endif
-
     // Probably not necessary to delete this -- presumably any wxBitmaps that it stores will get freed without calling
     // the dtor, but this ensures we don't leave any operating system resource handles lying around.
     delete m_pjtSettings;
@@ -358,7 +355,7 @@ void App::ShowMsgWindow()
 void App::DbgCurrentTest(wxCommandEvent&)
 {
     appMsgBox("Add code you want to test to App::DbgCurrentTest()", "Debug Testing");
-    MSG_ERROR("No current test in place other than message box.")
+    wxLogMessage("This is a wxWidgets message!");
 }
 
 #endif  // defined(_DEBUG)

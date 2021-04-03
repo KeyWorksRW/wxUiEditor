@@ -100,8 +100,8 @@ void MsgLogging::AddWarningMsg(ttlib::cview msg)
 
         else if (!m_bDestroyed)
         {
-            // Only add the message if the window was already displayed. Otherwise, it will have already added the message
-            // from m_Msgs.
+            // Only add the message if the window was already displayed. Otherwise, it will have already added the
+            // message from m_Msgs.
             m_msgFrame->AddWarningMsg(str.view_stepover());
         }
     }
@@ -131,4 +131,120 @@ void MsgLogging::AddErrorMsg(ttlib::cview msg)
     auto frame = wxGetApp().GetMainFrame();
     if (frame && frame->IsShown())
         frame->SetRightStatusField(str);
+}
+
+void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogRecordInfo& info)
+{
+    if (wxGetApp().isMainFrameClosing())
+        return;
+
+    switch (level)
+    {
+        case wxLOG_Error:
+            {
+                auto& str = m_Msgs.emplace_back("wxError: ");
+                str << msg.wx_str() << '\n';
+
+                if ((wxGetApp().GetPrefs().flags & App::PREFS_MSG_WINDOW) && !m_isFirstShown)
+                {
+                    m_isFirstShown = true;
+                    ShowLogger();
+                }
+
+                else if (!m_bDestroyed)
+                    m_msgFrame->Add_wxErrorMsg(str.view_stepover());
+
+                auto frame = wxGetApp().GetMainFrame();
+                if (frame && frame->IsShown())
+                    frame->SetRightStatusField(str);
+            }
+
+            // Following is for wxLogGui
+            m_bErrors = true;
+            m_aMessages.Add(msg);
+            m_aSeverity.Add((int) level);
+            m_aTimes.Add((long) info.timestamp);
+            m_bHasMessages = true;
+            break;
+
+        case wxLOG_Warning:
+            if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_WARNING)
+            {
+                auto& str = m_Msgs.emplace_back("wxWarning: ");
+                str << msg.wx_str() << '\n';
+
+                if ((wxGetApp().GetPrefs().flags & App::PREFS_MSG_WINDOW) && !m_isFirstShown)
+                {
+                    m_isFirstShown = true;
+                    ShowLogger();
+                }
+
+                else if (!m_bDestroyed)
+                    m_msgFrame->Add_wxWarningMsg(str.view_stepover());
+
+                auto frame = wxGetApp().GetMainFrame();
+                if (frame && frame->IsShown())
+                    frame->SetRightStatusField(str);
+            }
+
+            // Following is for wxLogGui
+            m_bWarnings = true;
+            m_aMessages.Add(msg);
+            m_aSeverity.Add((int) level);
+            m_aTimes.Add((long) info.timestamp);
+            m_bHasMessages = true;
+            break;
+
+        case wxLOG_Info:
+        case wxLOG_Message:
+            if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_INFO)
+            {
+                auto& str = m_Msgs.emplace_back("wxInfo: ");
+                str << msg.wx_str() << '\n';
+
+                if ((wxGetApp().GetPrefs().flags & App::PREFS_MSG_WINDOW) && !m_isFirstShown)
+                {
+                    m_isFirstShown = true;
+                    ShowLogger();
+                }
+
+                else if (!m_bDestroyed)
+                    m_msgFrame->Add_wxInfoMsg(str.view_stepover());
+
+                auto frame = wxGetApp().GetMainFrame();
+                if (frame && frame->IsShown())
+                    frame->SetRightStatusField(str);
+            }
+
+            // Following is for wxLogGui
+            m_aMessages.Add(msg);
+            m_aSeverity.Add(wxLOG_Message);
+            m_aTimes.Add((long) info.timestamp);
+            m_bHasMessages = true;
+            break;
+
+        case wxLOG_Status:
+            {
+                auto frame = wxGetApp().GetMainFrame();
+                if (frame && frame->IsShown())
+                    frame->SetRightStatusField(ttlib::cstr() << msg.wx_str());
+            }
+            break;
+
+        case wxLOG_Debug:
+        case wxLOG_Trace:
+            wxLog::DoLogRecord(level, msg, info);
+            break;
+
+        case wxLOG_FatalError:
+        case wxLOG_Max:
+            // This should never occur...
+            break;
+
+        case wxLOG_Progress:
+        case wxLOG_User:
+            // just ignore those: passing them to the base class would result in asserts from DoLogText() because
+            // DoLogTextAtLevel() would call it as it doesn't know how to handle these levels otherwise
+            break;
+    }
 }

@@ -31,10 +31,31 @@ MsgFrame::MsgFrame(ttlib::cstrVector* pMsgs, bool* pDestroyed, wxWindow* parent)
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
+        if (iter.is_sameprefix("wxError:"))
+        {
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
+            m_textCtrl->AppendText("wxError: ");
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+        }
         else if (iter.is_sameprefix("Warning:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
             m_textCtrl->AppendText("Warning: ");
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+        }
+        else if (iter.is_sameprefix("wxWarning:"))
+        {
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
+            m_textCtrl->AppendText("wxWarning: ");
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+        }
+        else if (iter.is_sameprefix("wxInfo:"))
+        {
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
+            m_textCtrl->AppendText("wxInfo: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
@@ -67,12 +88,44 @@ void MsgFrame::AddWarningMsg(ttlib::cview msg)
     }
 }
 
+void MsgFrame::Add_wxWarningMsg(ttlib::cview msg)
+{
+    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_WARNING)
+    {
+        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
+        m_textCtrl->AppendText("wxWarning: ");
+        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+        m_textCtrl->AppendText(msg.wx_str());
+    }
+}
+
+void MsgFrame::Add_wxInfoMsg(ttlib::cview msg)
+{
+    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_INFO)
+    {
+        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
+        m_textCtrl->AppendText("wxInfo: ");
+        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+        m_textCtrl->AppendText(msg.wx_str());
+    }
+}
+
 void MsgFrame::AddErrorMsg(ttlib::cview msg)
 {
     // Note that we always display error messages
 
     m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
     m_textCtrl->AppendText("Error: ");
+    m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+    m_textCtrl->AppendText(msg.wx_str());
+}
+
+void MsgFrame::Add_wxErrorMsg(ttlib::cview msg)
+{
+    // Note that we always display error messages
+
+    m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
+    m_textCtrl->AppendText("wxError: ");
     m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
     m_textCtrl->AppendText(msg.wx_str());
 }
@@ -180,9 +233,4 @@ void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
     config->SetPath("/preferences");
     config->Write("flags", prefs.flags);
     config->SetPath("/");
-}
-
-void MsgFrame::OnWidgetLog(wxCommandEvent& WXUNUSED(event))
-{
-    // TODO: Implement OnWidgetLog
 }

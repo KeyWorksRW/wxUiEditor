@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <wx/log.h>
+
 #include "../ui/msgframe_base.h"
 
 class MsgFrame : public MsgFrameBase
@@ -14,10 +16,16 @@ class MsgFrame : public MsgFrameBase
 public:
     MsgFrame(ttlib::cstrVector* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
 
+    void AddErrorMsg(ttlib::cview msg);
+    void Add_wxErrorMsg(ttlib::cview msg);
+
+    void AddWarningMsg(ttlib::cview msg);
+    void Add_wxWarningMsg(ttlib::cview msg);
+
     void AddInfoMsg(ttlib::cview msg) { m_textCtrl->AppendText(msg.wx_str()); };
     void AddEventMsg(ttlib::cview msg) { m_textCtrl->AppendText(msg.wx_str()); };
-    void AddWarningMsg(ttlib::cview msg);
-    void AddErrorMsg(ttlib::cview msg);
+
+    void Add_wxInfoMsg(ttlib::cview msg);
 
 protected:
     // Handlers for MsgFrameBase events
@@ -28,7 +36,6 @@ protected:
     void OnWarnings(wxCommandEvent& WXUNUSED(event)) override;
     void OnEvents(wxCommandEvent& WXUNUSED(event)) override;
     void OnInfo(wxCommandEvent& WXUNUSED(event)) override;
-    void OnWidgetLog(wxCommandEvent& WXUNUSED(event)) override;
 
 private:
     ttlib::cstrVector* m_pMsgs;

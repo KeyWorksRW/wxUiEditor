@@ -24,7 +24,6 @@ public:
     {
         id_event_msgs = wxID_HIGHEST + 1,
         id_hide,
-        id_log_msgs,
         id_warning_msgs
     };
 
@@ -34,7 +33,6 @@ protected:
 
     wxMenuItem* m_menu_item_events;
     wxMenuItem* m_menu_item_info;
-    wxMenuItem* m_menu_item_log;
     wxMenuItem* m_menu_item_warnings;
     wxTextCtrl* m_textCtrl;
 
@@ -47,5 +45,4 @@ protected:
     virtual void OnInfo(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveAs(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWarnings(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWidgetLog(wxCommandEvent& event) { event.Skip(); }
 };

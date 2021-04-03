@@ -54,12 +54,6 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_menu_item_info = new wxMenuItem(menu_view, wxID_INFO, wxEmptyString,
     wxEmptyString, wxITEM_CHECK);
     menu_view->Append(m_menu_item_info);
-
-    menu_view->AppendSeparator();
-
-    m_menu_item_log = new wxMenuItem(menu_view, id_log_msgs, wxString::FromUTF8("wxWidgets log messages"),
-    wxEmptyString, wxITEM_CHECK);
-    menu_view->Append(m_menu_item_log);
     menubar->Append(menu_view, wxString::FromUTF8("&View"));
 
 	SetMenuBar(menubar);
@@ -68,7 +62,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL);
     m_textCtrl->SetMinSize(wxSize(350, 300));
-    parent_sizer->Add(m_textCtrl, wxSizerFlags(1).Expand());
+    parent_sizer->Add(m_textCtrl, wxSizerFlags(1).Expand().Border(wxALL, 0));
 
     SetSizerAndFit(parent_sizer);
 
@@ -82,5 +76,4 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MsgFrameBase::OnWarnings, this, id_warning_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnEvents, this, id_event_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnInfo, this, wxID_INFO);
-    Bind(wxEVT_MENU, &MsgFrameBase::OnWidgetLog, this, id_log_msgs);
 }

@@ -81,7 +81,8 @@ bool App::OnInit()
     wxHelpProvider::Set(new wxSimpleHelpProvider);
 
 #if defined(_DEBUG)
-    g_pMsgLogger = new MsgLogger();
+    g_pMsgLogging = new MsgLogging();
+    wxLog::SetActiveTarget(g_pMsgLogging);
 #endif
 
     SetVendorName("KeyWorks");
@@ -144,48 +145,48 @@ int App::OnRun()
                 break;
 
             case CStartup::START_CONVERT:
-            {
-                wxFileDialog dialog(nullptr, "Open Project to Convert", wxEmptyString, wxEmptyString,
-                                    "All Importable Files|*.rc;*.dlg;*.fbp;*.wxs;*.xrc"
-                                    "|Windows Resource File (*.rc)|*.rc;*.dlg"
-                                    "|WxFormBuilder Project File (*.fbp)|*.fbp"
-                                    "|WxSmith File (*.wxs)|*.wxs"
-                                    "|XRC File (*.xrc)|*.xrc||",
-                                    wxFD_OPEN);
+                {
+                    wxFileDialog dialog(nullptr, "Open Project to Convert", wxEmptyString, wxEmptyString,
+                                        "All Importable Files|*.rc;*.dlg;*.fbp;*.wxs;*.xrc"
+                                        "|Windows Resource File (*.rc)|*.rc;*.dlg"
+                                        "|WxFormBuilder Project File (*.fbp)|*.fbp"
+                                        "|WxSmith File (*.wxs)|*.wxs"
+                                        "|XRC File (*.xrc)|*.xrc||",
+                                        wxFD_OPEN);
 
-                if (dialog.ShowModal() == wxID_OK)
-                {
-                    projectFile.utf(dialog.GetPath().wx_str());
+                    if (dialog.ShowModal() == wxID_OK)
+                    {
+                        projectFile.utf(dialog.GetPath().wx_str());
+                    }
+                    else
+                    {
+                        return 1;
+                    }
                 }
-                else
-                {
-                    return 1;
-                }
-            }
-            break;
+                break;
 
             case CStartup::START_OPEN:
-            {
-                // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it would
-                // actually make sense to process it since we can combine all of those resources into our single project
-                // file.
-
-                wxFileDialog dialog(nullptr, _tt(strIdTitleOpenOrImport), wxEmptyString, wxEmptyString,
-                                    "wxUiEditor Project File (*.wxui)|*.wxui"
-                                    "|WxFormBuilder Project File (*.fbp)|*.fbp"
-                                    "|Windows Resource File (*.rc)|*.rc||",
-                                    wxFD_OPEN);
-
-                if (dialog.ShowModal() == wxID_OK)
                 {
-                    projectFile.utf(dialog.GetPath().wx_str());
+                    // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it
+                    // would actually make sense to process it since we can combine all of those resources into our single
+                    // project file.
+
+                    wxFileDialog dialog(nullptr, _tt(strIdTitleOpenOrImport), wxEmptyString, wxEmptyString,
+                                        "wxUiEditor Project File (*.wxui)|*.wxui"
+                                        "|WxFormBuilder Project File (*.fbp)|*.fbp"
+                                        "|Windows Resource File (*.rc)|*.rc||",
+                                        wxFD_OPEN);
+
+                    if (dialog.ShowModal() == wxID_OK)
+                    {
+                        projectFile.utf(dialog.GetPath().wx_str());
+                    }
+                    else
+                    {
+                        return 1;
+                    }
                 }
-                else
-                {
-                    return 1;
-                }
-            }
-            break;
+                break;
 
             case CStartup::START_EMPTY:
             default:
@@ -247,10 +248,6 @@ int App::OnExit()
     m_project.reset();
 
 #endif  // defined(_WIN32) && defined(_DEBUG) && defined(USE_CRT_MEMORY_DUMP)
-
-#if defined(_DEBUG)
-    delete g_pMsgLogger;
-#endif
 
     // Probably not necessary to delete this -- presumably any wxBitmaps that it stores will get freed without calling
     // the dtor, but this ensures we don't leave any operating system resource handles lying around.
@@ -352,12 +349,13 @@ wxImage App::GetImage(ttlib::cstr filename)
 
 void App::ShowMsgWindow()
 {
-    g_pMsgLogger->ShowLogger();
+    g_pMsgLogging->ShowLogger();
 }
 
 void App::DbgCurrentTest(wxCommandEvent&)
 {
     appMsgBox("Add code you want to test to App::DbgCurrentTest()", "Debug Testing");
+    wxLogMessage("This is a wxWidgets message!");
 }
 
 #endif  // defined(_DEBUG)

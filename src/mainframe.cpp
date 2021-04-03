@@ -65,6 +65,7 @@ enum
 
     id_DebugCurrentTest,
     id_DebugPreferences,
+    id_ShowLogger,
 };
 
 MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
@@ -84,6 +85,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 
 #if defined(_DEBUG)
     auto menuDebug = new wxMenu;
+    menuDebug->Append(id_ShowLogger, "Show Log Window", "Show window containing debug messages");
     menuDebug->Append(id_DebugPreferences, "Debug &Settings...", "Settings to use in Debug build");
     menuDebug->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
@@ -137,6 +139,13 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
             dlg.ShowModal();
         },
         id_DebugPreferences);
+
+    Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&) {
+            g_pMsgLogging->ShowLogger();
+        },
+        id_ShowLogger);
 
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
@@ -354,7 +363,7 @@ void MainFrame::OnClose(wxCloseEvent& event)
     m_property_panel->SaveDescBoxHeight();
 
 #if defined(_DEBUG)
-    g_pMsgLogger->CloseLogger();
+    g_pMsgLogging->CloseLogger();
 #endif
 
     event.Skip();

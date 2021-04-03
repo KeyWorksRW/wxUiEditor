@@ -71,23 +71,23 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
 // These messages can be individually enabled/disabled in the Preferences dialog (Debug tab).
 // Note that none of these are displayed in a Release build.
 
-    #include "debugging/msgframe.h"  // Window for displaying MSG_ messages
+    #include "debugging/msg_logging.h"  // MsgLogging -- Message logging class
 
     #define MSG_INFO(msg)                  \
         {                                  \
-            g_pMsgLogger->AddInfoMsg(msg); \
+            g_pMsgLogging->AddInfoMsg(msg); \
         }
     #define MSG_EVENT(msg)                  \
         {                                   \
-            g_pMsgLogger->AddEventMsg(msg); \
+            g_pMsgLogging->AddEventMsg(msg); \
         }
     #define MSG_WARNING(msg)                  \
         {                                     \
-            g_pMsgLogger->AddWarningMsg(msg); \
+            g_pMsgLogging->AddWarningMsg(msg); \
         }
     #define MSG_ERROR(msg)                  \
         {                                   \
-            g_pMsgLogger->AddErrorMsg(msg); \
+            g_pMsgLogging->AddErrorMsg(msg); \
         }
 
 #endif  // defined(NDEBUG)

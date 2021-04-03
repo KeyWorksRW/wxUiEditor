@@ -341,6 +341,28 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 xml_prop = xml_prop.next_sibling("property");
                 continue;
             }
+
+            if (prop_name.is_sameas("bitmapsize"))
+            {
+                if (class_name.contains("book"))
+                {
+                    if (prop = newobject->get_prop_ptr("image_size"); prop)
+                    {
+                        prop->set_value(xml_prop.text().as_cview());
+                        auto size = prop->as_size();
+                        if (size.x != -1 || size.y != -1)
+                        {
+                            if (prop = newobject->get_prop_ptr("display_images"); prop)
+                            {
+                                prop->set_value(true);
+                            }
+                        }
+                        xml_prop = xml_prop.next_sibling("property");
+                        continue;
+                    }
+                }
+            }
+
             // We get here if the object doesn't have a property with the same name as the wxFormBuilder version.
 
             if (auto result = g_PropMap.find(prop_name.c_str()); result != g_PropMap.end())

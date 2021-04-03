@@ -67,6 +67,7 @@ IncludeCategories:
     Priority: 2
   - Regex: '.*'
     Priority: 3
+IndentCaseBlocks : true
 IndentCaseLabels: true
 IndentPPDirectives: BeforeHash
 IndentWidth:     4

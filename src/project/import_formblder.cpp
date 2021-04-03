@@ -341,7 +341,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 xml_prop = xml_prop.next_sibling("property");
                 continue;
             }
-
             // We get here if the object doesn't have a property with the same name as the wxFormBuilder version.
 
             if (auto result = g_PropMap.find(prop_name.c_str()); result != g_PropMap.end())
@@ -656,11 +655,8 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
 
         if (filename.has_extension(".xpm"))
         {
-            // We know where the file is now, but not where it will be relative to the project file we are importing it
-            // into. So, we keep just the filename. If the user sets up the converted_art directory, then the image will
-            // be found.
-            ttlib::cstr value("HDR; ");
-            value << filename.filename() << "; [-1; -1]";
+            ttlib::cstr value("XPM; ");
+            value << filename << "; ; [-1; -1]";
             prop->set_value(value);
         }
         else
@@ -698,17 +694,17 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
                 filename.make_absolute();
             }
 
-            // TODO: [KeyWorks - 12-26-2020] Once all bitmaps have switched to using the image_file interface, then we can
-            // simply set the original_image property and leave it to the user to figure out what to do about it.
-
-            filename.insert(0, "HDR; ");
-            filename << "; [-1; -1]";
-            prop->set_value(filename);
+            ttlib::cstr value("XPM; ; ");
+            value << filename << "; [-1; -1]";
+            prop->set_value(value);
         }
     }
     else if (org_value.contains("Load From Art"))
     {
-        prop->set_value(xml_prop.text().as_cview());
+        ttlib::cstr value(xml_prop.text().as_cview());
+        value.Replace("Load From Art Provider", "Art", false, tt::CASE::either);
+        value << "; [-1; -1]";
+        prop->set_value(value);
     }
 }
 
@@ -1001,7 +997,6 @@ void FormBuilder::ConvertNameSpaceProp(NodeProperty* prop, ttlib::cview org_name
 
 void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
 {
-
     auto flag_value = xml_prop.text().as_cview();
 
     ttlib::cstr border_value;

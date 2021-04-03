@@ -363,6 +363,24 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 }
             }
 
+            if (prop_name.is_sameas("name"))
+            {
+                if (newobject->IsForm())
+                {
+                    prop_name = txt_class_name;
+                }
+                else
+                {
+                    prop_name = txt_var_name;
+                }
+                if (prop = newobject->get_prop_ptr(prop_name); prop)
+                {
+                    prop->set_value(xml_prop.text().as_cview());
+                    xml_prop = xml_prop.next_sibling("property");
+                    continue;
+                }
+            }
+
             // We get here if the object doesn't have a property with the same name as the wxFormBuilder version.
 
             if (auto result = g_PropMap.find(prop_name.c_str()); result != g_PropMap.end())

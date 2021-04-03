@@ -138,10 +138,12 @@ Files:
     ui/ribbonpanel_base.cpp
 
 DebugFiles:
-    debugging/msgframe.cpp      # Stores messages
+    debugging/msgframe.cpp       # Stores messages
+    debugging/msg_logging.cpp    # Message logging class
 
     ui/debugsettings.cpp        # Settings while running the Debug version of wxUiEditor
     ui/debugsettingsBase.cpp
+    ui/msgframe_base.cpp
 
 GZIP:
     xml/aui.xml: xml/aui.hgz

@@ -81,7 +81,7 @@ bool App::OnInit()
     wxHelpProvider::Set(new wxSimpleHelpProvider);
 
 #if defined(_DEBUG)
-    g_pMsgLogger = new MsgLogger();
+    g_pMsgLogging = new MsgLogging();
 #endif
 
     SetVendorName("KeyWorks");
@@ -249,7 +249,7 @@ int App::OnExit()
 #endif  // defined(_WIN32) && defined(_DEBUG) && defined(USE_CRT_MEMORY_DUMP)
 
 #if defined(_DEBUG)
-    delete g_pMsgLogger;
+    delete g_pMsgLogging;
 #endif
 
     // Probably not necessary to delete this -- presumably any wxBitmaps that it stores will get freed without calling
@@ -352,12 +352,13 @@ wxImage App::GetImage(ttlib::cstr filename)
 
 void App::ShowMsgWindow()
 {
-    g_pMsgLogger->ShowLogger();
+    g_pMsgLogging->ShowLogger();
 }
 
 void App::DbgCurrentTest(wxCommandEvent&)
 {
     appMsgBox("Add code you want to test to App::DbgCurrentTest()", "Debug Testing");
+    MSG_ERROR("No current test in place other than message box.")
 }
 
 #endif  // defined(_DEBUG)

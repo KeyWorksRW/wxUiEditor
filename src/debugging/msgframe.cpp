@@ -1,61 +1,90 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Stores messages
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../LICENSE
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "pch.h"
 
+#include <wx/config.h>            // wxConfig base header
 #include <wx/filedlg.h>           // wxFileDialog base header
 #include <wx/persist/toplevel.h>  // persistence support for wxTLW
 
 #include <tttextfile.h>  // textfile -- Classes for reading and writing line-oriented files
 
-#include "msgframe.h"
+#include "msgframe.h"  // auto-generated: ../ui/msgframe_base.h and ../ui/msgframe_base.cpp
 
 #include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame
 #include "uifuncs.h"    // Miscellaneous functions for displaying UI
 
-MsgLogger* g_pMsgLogger { nullptr };
-
-wxBEGIN_EVENT_TABLE(CMsgFrame, wxFrame)
-    EVT_MENU(wxID_SAVE, CMsgFrame::OnSave)
-    EVT_MENU(wxID_CLEAR, CMsgFrame::OnClear)
-
-    EVT_CLOSE(CMsgFrame::OnClose)
-wxEND_EVENT_TABLE()
-
-CMsgFrame::CMsgFrame(ttlib::cstrVector* pMsgs, bool* pDestroyed) : wxFrame(nullptr, wxID_ANY, "wxUiEditor Messages")
+MsgFrame::MsgFrame(ttlib::cstrVector* pMsgs, bool* pDestroyed, wxWindow* parent) :
+    MsgFrameBase(parent), m_pMsgs(pMsgs), m_pDestroyed(pDestroyed)
 {
-    m_pMsgs = pMsgs;
-    m_pDestroyed = pDestroyed;
-
-    m_pTextCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
-                                 wxTE_MULTILINE | wxHSCROLL | wxTE_READONLY | wxTE_RICH);
-
-    auto pMenu = new wxMenu;
-    pMenu->Append(wxID_SAVE, "Save &As...", "Save contents to a file");
-    pMenu->AppendSeparator();
-    pMenu->Append(wxID_CLEAR, "C&lear", "Clear the contents");
-    pMenu->Append(wxID_CLOSE, "&Hide", "Hide this window");
-
-    auto pMenuBar = new wxMenuBar;
-    pMenuBar->Append(pMenu, "&File");
-    SetMenuBar(pMenuBar);
-
-    CreateStatusBar();
-
     for (auto& iter: *m_pMsgs)
     {
-        m_pTextCtrl->AppendText(iter.wx_str());
+        if (iter.is_sameprefix("Error:"))
+        {
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
+            m_textCtrl->AppendText("Error: ");
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+        }
+        else if (iter.is_sameprefix("Warning:"))
+        {
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
+            m_textCtrl->AppendText("Warning: ");
+            m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            m_textCtrl->AppendText(iter.view_stepover().wx_str());
+        }
+        else
+        {
+            m_textCtrl->AppendText(iter.wx_str());
+        }
     }
+
+    auto& prefs = wxGetApp().GetPrefs();
+
+    if ((prefs.flags & App::PREFS_MSG_WARNING))
+        m_menu_item_warnings->Check(true);
+    if ((prefs.flags & App::PREFS_MSG_EVENT))
+        m_menu_item_events->Check(true);
+    if ((prefs.flags & App::PREFS_MSG_INFO))
+        m_menu_item_info->Check(true);
 
     wxPersistentRegisterAndRestore(this, "MsgWindow");
 }
 
-void CMsgFrame::OnSave(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::AddWarningMsg(ttlib::cview msg)
+{
+    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_WARNING)
+    {
+        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
+        m_textCtrl->AppendText("Warning: ");
+        m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+        m_textCtrl->AppendText(msg.wx_str());
+    }
+}
+
+void MsgFrame::AddErrorMsg(ttlib::cview msg)
+{
+    // Note that we always display error messages
+
+    m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
+    m_textCtrl->AppendText("Error: ");
+    m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
+    m_textCtrl->AppendText(msg.wx_str());
+}
+
+void MsgFrame::OnClose(wxCloseEvent& event)
+{
+    *m_pDestroyed = true;  // So that our host will know we've been destroyed
+
+    event.Skip();
+}
+
+void MsgFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
 {
     auto filename = wxSaveFileSelector("Save messages", "txt", wxEmptyString, this);
     if (filename.empty())
@@ -63,10 +92,10 @@ void CMsgFrame::OnSave(wxCommandEvent& WXUNUSED(event))
 
     ttlib::textfile file;
 
-    auto totalLines = m_pTextCtrl->GetNumberOfLines();
+    auto totalLines = m_textCtrl->GetNumberOfLines();
     for (int curLine = 0; curLine < totalLines; ++curLine)
     {
-        file.addEmptyLine().utf(m_pTextCtrl->GetLineText(curLine).wx_str());
+        file.addEmptyLine().utf(m_textCtrl->GetLineText(curLine).wx_str());
     }
 
     if (auto result = file.WriteFile(ttlib::cstr().utf(filename.wx_str())); !result)
@@ -79,152 +108,81 @@ void CMsgFrame::OnSave(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void CMsgFrame::OnClear(wxCommandEvent& WXUNUSED(event))
+void MsgFrame::OnClear(wxCommandEvent& WXUNUSED(event))
 {
-    m_pTextCtrl->Clear();
+    m_textCtrl->Clear();
     m_pMsgs->clear();
 }
 
-void CMsgFrame::AddWarningMsg(ttlib::cview msg)
+void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event))
 {
-    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_WARNING)
+    Hide();
+}
+
+void MsgFrame::OnWarnings(wxCommandEvent& WXUNUSED(event))
+{
+    auto& prefs = wxGetApp().GetPrefs();
+
+    if ((prefs.flags & App::PREFS_MSG_WARNING))
     {
-        m_pTextCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
-        m_pTextCtrl->AppendText("Warning: ");
-        m_pTextCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-        m_pTextCtrl->AppendText(msg.wx_str());
+        prefs.flags &= ~App::PREFS_MSG_WARNING;
+        m_menu_item_warnings->Check(false);
     }
-}
-
-void CMsgFrame::AddErrorMsg(ttlib::cview msg)
-{
-    // Note that we always display error messages
-
-    m_pTextCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
-    m_pTextCtrl->AppendText("Error: ");
-    m_pTextCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
-    m_pTextCtrl->AppendText(msg.wx_str());
-}
-
-void CMsgFrame::OnClose(wxCloseEvent& event)
-{
-    *m_pDestroyed = true;  // So that our host will know we've been destroyed
-
-    event.Skip();
-}
-
-void MsgLogger::ShowLogger()
-{
-    if (m_bDestroyed)
+    else
     {
-        m_msgFrame = new CMsgFrame(&m_Msgs, &m_bDestroyed);
-        m_bDestroyed = false;
+        prefs.flags |= App::PREFS_MSG_WARNING;
+        m_menu_item_warnings->Check(true);
     }
 
-    m_msgFrame->Show();
-    if (wxGetApp().GetMainFrame())
-        wxGetApp().GetMainFrame()->SetFocus();
+    auto config = wxConfig::Get();
+    config->SetPath("/preferences");
+    config->Write("flags", prefs.flags);
+    config->SetPath("/");
 }
 
-void MsgLogger::CloseLogger()
+void MsgFrame::OnEvents(wxCommandEvent& WXUNUSED(event))
 {
-    if (!m_bDestroyed)
-        m_msgFrame->Close(true);
-}
+    auto& prefs = wxGetApp().GetPrefs();
 
-void MsgLogger::AddInfoMsg(ttlib::cview msg)
-{
-    if (wxGetApp().isMainFrameClosing())
-        return;
-
-    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_INFO)
+    if ((prefs.flags & App::PREFS_MSG_EVENT))
     {
-        auto& str = m_Msgs.emplace_back(msg);
-        str << '\n';
-
-        if ((wxGetApp().GetPrefs().flags & App::PREFS_MSG_WINDOW) && !m_isFirstShown)
-        {
-            m_isFirstShown = true;
-            ShowLogger();
-        }
-
-        else if (!m_bDestroyed)
-            m_msgFrame->AddInfoMsg(str);
+        prefs.flags &= ~App::PREFS_MSG_EVENT;
+        m_menu_item_events->Check(false);
+    }
+    else
+    {
+        prefs.flags |= App::PREFS_MSG_EVENT;
+        m_menu_item_events->Check(true);
     }
 
-    auto frame = wxGetApp().GetMainFrame();
-    if (frame && frame->IsShown())
-        frame->SetRightStatusField(msg);
+    auto config = wxConfig::Get();
+    config->SetPath("/preferences");
+    config->Write("flags", prefs.flags);
+    config->SetPath("/");
 }
 
-void MsgLogger::AddEventMsg(ttlib::cview msg)
+void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
 {
-    if (wxGetApp().isMainFrameClosing())
-        return;
+    auto& prefs = wxGetApp().GetPrefs();
 
-    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_EVENT)
+    if ((prefs.flags & App::PREFS_MSG_INFO))
     {
-        auto& str = m_Msgs.emplace_back(msg);
-        str << '\n';
-
-        if ((wxGetApp().GetPrefs().flags & App::PREFS_MSG_WINDOW) && !m_isFirstShown)
-        {
-            m_isFirstShown = true;
-            ShowLogger();
-        }
-
-        else if (!m_bDestroyed)
-            m_msgFrame->AddEventMsg(str);
+        prefs.flags &= ~App::PREFS_MSG_INFO;
+        m_menu_item_info->Check(false);
+    }
+    else
+    {
+        prefs.flags |= App::PREFS_MSG_INFO;
+        m_menu_item_info->Check(true);
     }
 
-    auto frame = wxGetApp().GetMainFrame();
-    if (frame && frame->IsShown())
-        frame->SetRightStatusField(msg);
+    auto config = wxConfig::Get();
+    config->SetPath("/preferences");
+    config->Write("flags", prefs.flags);
+    config->SetPath("/");
 }
 
-void MsgLogger::AddWarningMsg(ttlib::cview msg)
+void MsgFrame::OnWidgetLog(wxCommandEvent& WXUNUSED(event))
 {
-    if (wxGetApp().isMainFrameClosing())
-        return;
-
-    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_WARNING)
-    {
-        auto& str = m_Msgs.emplace_back("Warning: ");
-        str << msg << '\n';
-
-        if ((wxGetApp().GetPrefs().flags & App::PREFS_MSG_WINDOW) && !m_isFirstShown)
-        {
-            m_isFirstShown = true;
-            ShowLogger();
-        }
-
-        else if (!m_bDestroyed)
-            m_msgFrame->AddWarningMsg(str.view_stepover());
-    }
-
-    auto frame = wxGetApp().GetMainFrame();
-    if (frame && frame->IsShown())
-        frame->SetRightStatusField(msg);
-}
-
-void MsgLogger::AddErrorMsg(ttlib::cview msg)
-{
-    if (wxGetApp().isMainFrameClosing())
-        return;
-
-    auto& str = m_Msgs.emplace_back("Error: ");
-    str << msg << '\n';
-
-    if ((wxGetApp().GetPrefs().flags & App::PREFS_MSG_WINDOW) && !m_isFirstShown)
-    {
-        m_isFirstShown = true;
-        ShowLogger();
-    }
-
-    else if (!m_bDestroyed)
-        m_msgFrame->AddErrorMsg(str.view_stepover());
-
-    auto frame = wxGetApp().GetMainFrame();
-    if (frame && frame->IsShown())
-        frame->SetRightStatusField(msg);
+    // TODO: Implement OnWidgetLog
 }

@@ -1,62 +1,36 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Window for displaying MSG_ messages
+// Purpose:   Stores messages
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
-// License:   Apache License (see Apache License)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#include <wx/event.h>
-#include <wx/frame.h>
-#include <wx/log.h>
-#include <wx/textctrl.h>
+#include "../ui/msgframe_base.h"
 
-#include <ttcvector.h>  // cstrVector -- Vector of ttlib::cstr strings
-
-class CMsgFrame : public wxFrame
+class MsgFrame : public MsgFrameBase
 {
 public:
-    CMsgFrame(ttlib::cstrVector* pMsgs, bool* pDestroyed);
+    MsgFrame(ttlib::cstrVector* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
 
-    void OnClose(wxCloseEvent& event);
-
-    void OnSave(wxCommandEvent& event);
-    void OnClear(wxCommandEvent& event);
-    void OnClose(wxCommandEvent& event);
-
-    void AddInfoMsg(ttlib::cview msg) { m_pTextCtrl->AppendText(msg.wx_str()); };
-    void AddEventMsg(ttlib::cview msg) { m_pTextCtrl->AppendText(msg.wx_str()); };
+    void AddInfoMsg(ttlib::cview msg) { m_textCtrl->AppendText(msg.wx_str()); };
+    void AddEventMsg(ttlib::cview msg) { m_textCtrl->AppendText(msg.wx_str()); };
     void AddWarningMsg(ttlib::cview msg);
     void AddErrorMsg(ttlib::cview msg);
 
+protected:
+    // Handlers for MsgFrameBase events
+    void OnClose(wxCloseEvent& WXUNUSED(event)) override;
+    void OnSaveAs(wxCommandEvent& WXUNUSED(event)) override;
+    void OnClear(wxCommandEvent& WXUNUSED(event)) override;
+    void OnHide(wxCommandEvent& WXUNUSED(event)) override;
+    void OnWarnings(wxCommandEvent& WXUNUSED(event)) override;
+    void OnEvents(wxCommandEvent& WXUNUSED(event)) override;
+    void OnInfo(wxCommandEvent& WXUNUSED(event)) override;
+    void OnWidgetLog(wxCommandEvent& WXUNUSED(event)) override;
+
 private:
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_NO_COPY_CLASS(CMsgFrame);
-
-    wxTextCtrl* m_pTextCtrl { nullptr };
-
     ttlib::cstrVector* m_pMsgs;
     bool* m_pDestroyed;
 };
-
-class MsgLogger
-{
-public:
-    void ShowLogger();
-    void CloseLogger();
-
-    void AddInfoMsg(ttlib::cview msg);
-    void AddEventMsg(ttlib::cview msg);
-    void AddWarningMsg(ttlib::cview msg);
-    void AddErrorMsg(ttlib::cview msg);
-
-private:
-    CMsgFrame* m_msgFrame { nullptr };
-    ttlib::cstrVector m_Msgs;
-
-    bool m_bDestroyed { true };
-    bool m_isFirstShown { false };  // If false, and PREFS_MSG_WINDOW is set, then show the window
-};
-
-extern MsgLogger* g_pMsgLogger;

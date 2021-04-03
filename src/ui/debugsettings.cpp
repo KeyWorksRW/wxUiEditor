@@ -28,7 +28,7 @@ void DebugSettings::OnInit(wxInitDialogEvent& event)
 
 void DebugSettings::OnShowNow(wxCommandEvent& WXUNUSED(event))
 {
-    g_pMsgLogger->ShowLogger();
+    g_pMsgLogging->ShowLogger();
 }
 
 void DebugSettings::OnOK(wxCommandEvent& event)

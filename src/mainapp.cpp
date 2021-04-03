@@ -144,48 +144,48 @@ int App::OnRun()
                 break;
 
             case CStartup::START_CONVERT:
-            {
-                wxFileDialog dialog(nullptr, "Open Project to Convert", wxEmptyString, wxEmptyString,
-                                    "All Importable Files|*.rc;*.dlg;*.fbp;*.wxs;*.xrc"
-                                    "|Windows Resource File (*.rc)|*.rc;*.dlg"
-                                    "|WxFormBuilder Project File (*.fbp)|*.fbp"
-                                    "|WxSmith File (*.wxs)|*.wxs"
-                                    "|XRC File (*.xrc)|*.xrc||",
-                                    wxFD_OPEN);
+                {
+                    wxFileDialog dialog(nullptr, "Open Project to Convert", wxEmptyString, wxEmptyString,
+                                        "All Importable Files|*.rc;*.dlg;*.fbp;*.wxs;*.xrc"
+                                        "|Windows Resource File (*.rc)|*.rc;*.dlg"
+                                        "|WxFormBuilder Project File (*.fbp)|*.fbp"
+                                        "|WxSmith File (*.wxs)|*.wxs"
+                                        "|XRC File (*.xrc)|*.xrc||",
+                                        wxFD_OPEN);
 
-                if (dialog.ShowModal() == wxID_OK)
-                {
-                    projectFile.utf(dialog.GetPath().wx_str());
+                    if (dialog.ShowModal() == wxID_OK)
+                    {
+                        projectFile.utf(dialog.GetPath().wx_str());
+                    }
+                    else
+                    {
+                        return 1;
+                    }
                 }
-                else
-                {
-                    return 1;
-                }
-            }
-            break;
+                break;
 
             case CStartup::START_OPEN:
-            {
-                // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it would
-                // actually make sense to process it since we can combine all of those resources into our single project
-                // file.
-
-                wxFileDialog dialog(nullptr, _tt(strIdTitleOpenOrImport), wxEmptyString, wxEmptyString,
-                                    "wxUiEditor Project File (*.wxui)|*.wxui"
-                                    "|WxFormBuilder Project File (*.fbp)|*.fbp"
-                                    "|Windows Resource File (*.rc)|*.rc||",
-                                    wxFD_OPEN);
-
-                if (dialog.ShowModal() == wxID_OK)
                 {
-                    projectFile.utf(dialog.GetPath().wx_str());
+                    // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it
+                    // would actually make sense to process it since we can combine all of those resources into our single
+                    // project file.
+
+                    wxFileDialog dialog(nullptr, _tt(strIdTitleOpenOrImport), wxEmptyString, wxEmptyString,
+                                        "wxUiEditor Project File (*.wxui)|*.wxui"
+                                        "|WxFormBuilder Project File (*.fbp)|*.fbp"
+                                        "|Windows Resource File (*.rc)|*.rc||",
+                                        wxFD_OPEN);
+
+                    if (dialog.ShowModal() == wxID_OK)
+                    {
+                        projectFile.utf(dialog.GetPath().wx_str());
+                    }
+                    else
+                    {
+                        return 1;
+                    }
                 }
-                else
-                {
-                    return 1;
-                }
-            }
-            break;
+                break;
 
             case CStartup::START_EMPTY:
             default:

@@ -12,6 +12,7 @@
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
 #include "../nodes/node_classes.h"  // Forward defintions of Node classes
+#include "cstm_propman.h"           // CustomPropertyManager -- Derived wxPropertyGrid class
 
 using EventMap = std::map<std::string, NodeEvent*>;
 using PropertyMap = std::map<std::string, NodeProperty*>;

@@ -95,6 +95,7 @@ Files:
     nodes/node_prop.cpp         # NodeProperty class
     nodes/node_types.cpp        # Stores node types and allowable child count
 
+    panels/cstm_propgrid.cpp    # Derived wxPropertyGrid class
     panels/code_display.cpp     # Display code in scintilla control
     panels/base_panel.cpp       # Code generation panel
     panels/nav_panel.cpp        # Navigation panel

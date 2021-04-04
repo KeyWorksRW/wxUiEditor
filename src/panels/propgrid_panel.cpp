@@ -59,8 +59,10 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
     m_notebook_parent = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook_parent->SetArtProvider(new wxAuiSimpleTabArt());
 
-    m_prop_grid = new wxPropertyGridManager(m_notebook_parent, PROPERTY_ID, wxDefaultPosition, wxDefaultSize,
-                                            wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
+    m_prop_grid = new CustomPropertyManager;
+    m_prop_grid->Create(m_notebook_parent, PROPERTY_ID, wxDefaultPosition, wxDefaultSize,
+                        wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
+
     m_event_grid = new wxPropertyGridManager(m_notebook_parent, EVENT_ID, wxDefaultPosition, wxDefaultSize,
                                              wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
 
@@ -1624,7 +1626,8 @@ void PropGridPanel::VerifyChangeFile(wxPropertyGridEvent& event, NodeProperty* p
             if (project->GetChild(child_idx)->prop_as_string("base_file") == filename)
             {
                 appMsgBox(ttlib::cstr() << "The base filename " << filename << " is already in use by "
-                                        << project->GetChild(child_idx)->prop_as_string(txt_class_name));
+                                        << project->GetChild(child_idx)->prop_as_string(txt_class_name)
+                                        << "\n\nEither change the name, or press ESC to restore the original name.");
                 m_failure_handled = true;
                 event.Veto();
                 return;

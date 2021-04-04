@@ -12,6 +12,7 @@
 
 #include "mainframe_base.h"
 
+#include "../../src/xpm/wxChoicebook.xpm"
 #include "../../src/xpm/wxListbook.xpm"
 #include "../../src/xpm/wxNotebook.xpm"
 #include "../../src/xpm/wxToolbook.xpm"
@@ -41,6 +42,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     menuDialogs->Append(menuItem3);
 
     auto submenu = new wxMenu();
+
+    auto menu_choicebook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Choicebook"));
+    menu_choicebook->SetBitmap(wxImage(wxChoicebook_xpm));
+    submenu->Append(menu_choicebook);
 
     auto menu_listbook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Listbook"));
     menu_listbook->SetBitmap(wxImage(wxListbook_xpm));
@@ -76,6 +81,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnOtherCtrls, this, menuItem1->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnRibbonDialog, this, menuItem2->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnWizard, this, menuItem3->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnChoicebook, this, menu_choicebook->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnListbook, this, menu_listbook->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnNotebook, this, menu_notebook->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnToolbook, this, menu_toolbook->GetId());

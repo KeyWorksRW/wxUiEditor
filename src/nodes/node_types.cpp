@@ -34,6 +34,7 @@ static const ParentChildInfo lstParentChildren[] = {
     { "bookpage", "sizer", one },
 
     { "choicebook", "bookpage", infinite },
+    { "choicebook", "widget", infinite },
 
     { "container", "gbsizer", one },
     { "container", "menu", one },

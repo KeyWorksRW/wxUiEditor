@@ -299,7 +299,7 @@ size_t Node::GetChildPosition(Node* node)
 {
     size_t pos = 0;
     while (pos < GetChildCount() && m_children[pos].get() != node)
-        pos++;
+        ++pos;
 
     return pos;
 }

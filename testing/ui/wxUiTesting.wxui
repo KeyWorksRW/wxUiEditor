@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <wxUiEditorData data_version="11">
   <node class="Project" converted_art="../art" local_pch_file="pch.h" original_art="../art">
-    <node class="wxFrame" base_file="mainframe_base" class_name="MainFrameBase" derived_class_name="MainFrame" derived_file="mainframe" title="wxUiTesting" size="500,300" window_style="wxTAB_TRAVERSAL">
+    <node class="wxFrame" class_name="MainFrameBase" title="wxUiTesting" base_file="mainframe_base" derived_class_name="MainFrame" derived_file="mainframe" size="500,300" window_style="wxTAB_TRAVERSAL">
       <node class="wxMenuBar" class_access="none" var_name="menubar">
         <node class="wxMenu" class_access="none" label="&amp;Dialogs" var_name="menuDialogs">
           <node class="wxMenuItem" help="Common controls" label="Common Controls..." var_name="menuItem" wxEVT_MENU="OnCommonDialog" />
@@ -9,6 +9,7 @@
           <node class="wxMenuItem" label="Ribbon Dialog" var_name="menuItem2" wxEVT_MENU="OnRibbonDialog" />
           <node class="wxMenuItem" label="Wizard" var_name="menuItem3" wxEVT_MENU="OnWizard" />
           <node class="submenu" label="Book Controls">
+            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxChoicebook.xpm; ; [-1; -1]" label="Choicebook" var_name="menu_choicebook" wxEVT_MENU="OnChoicebook" />
             <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxListbook.xpm; ; [-1; -1]" label="Listbook" var_name="menu_listbook" wxEVT_MENU="OnListbook" />
             <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxNotebook.xpm; ; [-1; -1]" label="Notebook" var_name="menu_notebook" wxEVT_MENU="OnNotebook" />
             <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxToolbook.xpm; ; [-1; -1]" label="Toolbook" var_name="menu_toolbook" wxEVT_MENU="OnToolbook" />
@@ -20,7 +21,7 @@
       </node>
       <node class="wxStatusBar" />
     </node>
-    <node class="wxDialog" base_file="commonctrls_base" class_name="CommonCtrlsBase" derived_class_name="CommonCtrls" derived_file="commonctrls" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="Common controls">
+    <node class="wxDialog" class_name="CommonCtrlsBase" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="Common controls" base_file="commonctrls_base" derived_class_name="CommonCtrls" derived_file="commonctrls">
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
         <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer6" flags="wxEXPAND">
           <node class="wxInfoBar" show_effect="wxSHOW_EFFECT_EXPAND" flags="wxEXPAND" />
@@ -82,7 +83,7 @@
         <node class="wxStdDialogButtonSizer" Help="true" flags="wxEXPAND" />
       </node>
     </node>
-    <node class="wxDialog" base_file="other_ctrls_base" class_name="OtherCtrlsBase" derived_class_name="OtherCtrlsDlg" derived_file="other_ctrls" persist="true" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" minimum_size="-1,-1" size="-1,-1">
+    <node class="wxDialog" class_name="OtherCtrlsBase" persist="true" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="NoteBook Dialog" base_file="other_ctrls_base" derived_class_name="OtherCtrlsDlg" derived_file="other_ctrls" minimum_size="-1,-1" size="-1,-1">
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
         <node class="wxNotebook" image_size="24,24" flags="wxEXPAND" proportion="1">
           <node class="BookPage" bitmap="Art; wxART_FILE_OPEN; wxART_OTHER; [-1; -1]" label="Pickers" window_style="wxBORDER_THEME|wxTAB_TRAVERSAL">
@@ -136,7 +137,7 @@
         </node>
       </node>
     </node>
-    <node class="wxDialog" base_file="ribbondlg_base" class_name="RibbonDlgBase" derived_class_name="RibbonDlg" derived_file="ribbondlg" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="Ribbon Dialog" size="500,300">
+    <node class="wxDialog" class_name="RibbonDlgBase" style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER" title="Ribbon Dialog" base_file="ribbondlg_base" derived_class_name="RibbonDlg" derived_file="ribbondlg" size="500,300">
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
         <node class="wxRibbonBar" style="wxRIBBON_BAR_FLOW_HORIZONTAL|wxRIBBON_BAR_SHOW_PAGE_LABELS" theme="Generic" flags="wxEXPAND" proportion="1">
           <node class="wxRibbonPage" label="First" select="true">
@@ -164,7 +165,7 @@
         </node>
       </node>
     </node>
-    <node class="wxWizard" base_file="wizard_base" class_name="WizardBase" derived_class_name="Wizard" derived_file="wizard" title="Wizard Tests" wxEVT_WIZARD_BEFORE_PAGE_CHANGED="OnBeforeChange">
+    <node class="wxWizard" class_name="WizardBase" title="Wizard Tests" base_file="wizard_base" derived_class_name="Wizard" derived_file="wizard" wxEVT_WIZARD_BEFORE_PAGE_CHANGED="OnBeforeChange">
       <node class="wxWizardPageSimple">
         <node class="wxBoxSizer">
           <node class="wxStaticText" label="This is the first Wizard page" />
@@ -187,7 +188,40 @@
     <node class="ToolBar">
       <node class="tool" label="" />
     </node>
-    <node class="wxDialog" base_file="notebook_base" class_name="NotebookBase" derived_class_name="Notebook" title="Notebook" minimum_size="600,600" size="-1,-1">
+    <node class="wxDialog" class_name="ChoiceBookBase" title="Choicebook" base_file="choicebook_base" derived_class_name="ChoiceBook">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
+        <node class="wxChoicebook" minimum_size="400,400">
+          <node class="wxButton" class_access="none" label="First" var_name="btn" wxEVT_BUTTON="[this](wxCommandEvent&amp;) { m_choicebook->SetSelection(0); }" />
+          <node class="wxButton" class_access="none" label="Last" var_name="btn_2" wxEVT_BUTTON="[this](wxCommandEvent&amp;) { m_choicebook->SetSelection(2); }" />
+          <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_2" flags="wxEXPAND">
+              <node class="wxStaticText" label="This is a sentence in English." />
+              <node class="wxBoxSizer" orientation="wxVERTICAL">
+                <node class="wxStaticText" label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control." var_name="m_staticText_2" wrap="390" flags="wxEXPAND" />
+              </node>
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\french.xpm; ; [-1; -1]" label="Français" var_name="page_2" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer__2">
+              <node class="wxStaticText" label="Ceci est une phrase en français." />
+              <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer_3">
+                <node class="wxStaticText" label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control." var_name="m_staticText__3" wrap="390" flags="wxEXPAND" />
+              </node>
+            </node>
+          </node>
+          <node class="BookPage" bitmap="XPM; ..\art\japanese.xpm; ; [-1; -1]" label="日本語" var_name="page_3" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+            <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_3">
+              <node class="wxStaticText" label="これは日本語の文章です。" />
+              <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer_2">
+                <node class="wxStaticText" label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control." var_name="m_staticText__2" wrap="390" flags="wxEXPAND" />
+              </node>
+            </node>
+          </node>
+        </node>
+        <node class="wxStdDialogButtonSizer" Cancel="false" Close="true" OK="false" default_button="Close" flags="wxEXPAND" />
+      </node>
+    </node>
+    <node class="wxDialog" class_name="NotebookBase" title="Notebook" base_file="notebook_base" derived_class_name="Notebook" minimum_size="-1,-1" size="-1,-1">
       <node class="wxBoxSizer" orientation="wxVERTICAL">
         <node class="wxNotebook" display_images="true" image_size="19,15" minimum_size="400,400" flags="wxEXPAND">
           <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
@@ -206,9 +240,10 @@
             </node>
           </node>
         </node>
+        <node class="wxStdDialogButtonSizer" Cancel="false" Close="true" OK="false" default_button="Close" flags="wxEXPAND" />
       </node>
     </node>
-    <node class="wxDialog" base_file="listbook_base" class_name="ListbookBase" derived_class_name="Listbook" title="Listbook">
+    <node class="wxDialog" class_name="ListbookBase" title="Listbook" base_file="listbook_base" derived_class_name="Listbook">
       <node class="wxBoxSizer" orientation="wxVERTICAL">
         <node class="wxListbook" display_images="true" style="wxLB_LEFT" minimum_size="400,400">
           <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
@@ -227,9 +262,10 @@
             </node>
           </node>
         </node>
+        <node class="wxStdDialogButtonSizer" Cancel="false" Close="true" OK="false" default_button="Close" flags="wxEXPAND" />
       </node>
     </node>
-    <node class="wxDialog" base_file="treebook_base" class_name="TreebookBase" derived_class_name="Treebook" title="Treebook">
+    <node class="wxDialog" class_name="TreebookBase" title="Treebook" base_file="treebook_base" derived_class_name="Treebook">
       <node class="wxBoxSizer" orientation="wxVERTICAL">
         <node class="wxTreebook" display_images="true" minimum_size="400,400">
           <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
@@ -248,9 +284,10 @@
             </node>
           </node>
         </node>
+        <node class="wxStdDialogButtonSizer" Cancel="false" Close="true" OK="false" default_button="Close" flags="wxEXPAND" />
       </node>
     </node>
-    <node class="wxDialog" base_file="toolbook_base" class_name="ToolbookBase" derived_class_name="Toolbook" title="wxToolbook">
+    <node class="wxDialog" class_name="ToolbookBase" title="wxToolbook" base_file="toolbook_base" derived_class_name="Toolbook">
       <node class="wxBoxSizer" orientation="wxVERTICAL">
         <node class="wxToolbook" minimum_size="400,400">
           <node class="BookPage" bitmap="XPM; ..\art\english.xpm; ; [-1; -1]" label="English" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
@@ -269,9 +306,10 @@
             </node>
           </node>
         </node>
+        <node class="wxStdDialogButtonSizer" Cancel="false" Close="true" OK="false" default_button="Close" flags="wxEXPAND" />
       </node>
     </node>
-    <node class="wxPopupTransientWindow" base_file="popupwin_base" border="wxBORDER_RAISED" class_name="PopupWinBase" derived_class_name="PopupWin" derived_file="popupwin">
+    <node class="wxPopupTransientWindow" border="wxBORDER_RAISED" class_name="PopupWinBase" base_file="popupwin_base" derived_class_name="PopupWin" derived_file="popupwin">
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
         <node class="wxStaticText" label="This is a wxPopupTransientWindow set to use a raised border around it. Note that the default is to not have a border at all.&#10;&#10;Click outside this window to dismiss it." wrap="250" />
       </node>

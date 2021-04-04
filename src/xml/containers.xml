@@ -128,9 +128,9 @@
       <option name="public:"/>
       protected:
     </property>
-    <property name="style" type="bitlist">
+    <property name="style" type="option">
       <option name="wxCHB_DEFAULT"
-        help="Choose the default location for the labels depending on the current platform (left everywhere except Mac where it is top)."/>
+        help="Choose the default location for the labels depending on the current platform (but currently it's the same everywhere, namely wxCHB_TOP)."/>
       <option name="wxCHB_TOP" help="Place labels above the page area."/>
       <option name="wxCHB_LEFT" help="Place labels on the left side."/>
       <option name="wxCHB_RIGHT" help="Place labels on the right side."/>

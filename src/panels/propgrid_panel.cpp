@@ -694,6 +694,8 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
 // Only process property changes that we may need to cancel here.
 void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
 {
+    m_failure_handled = false;
+
     auto property = event.GetProperty();
 
     auto it = m_property_map.find(property);
@@ -712,37 +714,7 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
     switch (prop->GetType())
     {
         case Type::File:
-            {
-                if (prop->GetPropName() == "base_file")
-                {
-                    ttString newValue = event.GetPropertyValue().GetString();
-                    if (newValue.empty())
-                        return;
-
-                    newValue.make_absolute();
-                    newValue.make_relative_wx(wxGetApp().GetProjectPath());
-                    newValue.backslashestoforward();
-                    auto filename = newValue.sub_cstr();
-                    auto project = wxGetApp().GetProject();
-                    for (size_t child_idx = 0; child_idx < project->GetChildCount(); ++child_idx)
-                    {
-                        if (project->GetChild(child_idx) == node)
-                            continue;
-                        if (project->GetChild(child_idx)->prop_as_string("base_file") == filename)
-                        {
-                            appMsgBox(ttlib::cstr() << "The base filename " << filename << " is already in use by "
-                                                    << project->GetChild(child_idx)->prop_as_string(txt_class_name));
-                            event.Veto();
-                            return;
-                        }
-                    }
-
-                    // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
-                    // otherwise it will revert back to the original name before the Veto.
-
-                    property->SetValueFromString(newValue, 0);
-                }
-            }
+            VerifyChangeFile(event, prop, node);
             break;
 
         default:
@@ -1630,4 +1602,38 @@ bool PropGridPanel::IsPropAllowed(Node* node, NodeProperty* prop)
     }
 
     return true;
+}
+
+void PropGridPanel::VerifyChangeFile(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
+{
+    if (prop->GetPropName() == "base_file")
+    {
+        ttString newValue = event.GetPropertyValue().GetString();
+        if (newValue.empty())
+            return;
+
+        newValue.make_absolute();
+        newValue.make_relative_wx(wxGetApp().GetProjectPath());
+        newValue.backslashestoforward();
+        auto filename = newValue.sub_cstr();
+        auto project = wxGetApp().GetProject();
+        for (size_t child_idx = 0; child_idx < project->GetChildCount(); ++child_idx)
+        {
+            if (project->GetChild(child_idx) == node)
+                continue;
+            if (project->GetChild(child_idx)->prop_as_string("base_file") == filename)
+            {
+                appMsgBox(ttlib::cstr() << "The base filename " << filename << " is already in use by "
+                                        << project->GetChild(child_idx)->prop_as_string(txt_class_name));
+                m_failure_handled = true;
+                event.Veto();
+                return;
+            }
+        }
+
+        // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
+        // otherwise it will revert back to the original name before the Veto.
+
+        event.GetProperty()->SetValueFromString(newValue, 0);
+    }
 }

@@ -535,8 +535,8 @@ void MainFrame::OnCopy(wxCommandEvent&)
 {
     if (auto win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
     {
-        FAIL_MSG("TODO: need to prevent code gen windows from passing up copy command!")
-        return;  // we don't allow pasting into the code generation windows which are marked as read-only
+        wxStaticCast(win, wxStyledTextCtrl)->Copy();
+        return;
     }
     else if (m_selected_node)
     {
@@ -549,8 +549,8 @@ void MainFrame::OnCut(wxCommandEvent&)
 {
     if (auto win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
     {
-        FAIL_MSG("TODO: need to prevent code gen windows from passing up cut command!")
-        return;  // we don't allow pasting into the code generation windows which are marked as read-only
+        // This is a read-only control, so we don't allow Cut
+        return;
     }
     else
     {
@@ -570,7 +570,7 @@ void MainFrame::OnPaste(wxCommandEvent&)
 {
     if (auto win = wxWindow::FindFocus(); win && win->IsKindOf(wxCLASSINFO(wxStyledTextCtrl)))
     {
-        FAIL_MSG("TODO: need to prevent code gen windows from passing up paste command!")
+        // This is a read-only control, so we don't allow Paste
         return;  // we don't allow pasting into the code generation windows which are marked as read-only
     }
     else if (m_selected_node)

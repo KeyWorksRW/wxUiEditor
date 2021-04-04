@@ -46,7 +46,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
         {
             // Some properties need to be saved with empty values
 
-            if (iter.GetPropName() == txt_label)
+            if (iter.GetPropName() == txt_label || iter.GetPropName() == txt_borders)
             {
                 node.append_attribute(iter.GetPropName().c_str());
             }

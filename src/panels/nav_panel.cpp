@@ -449,6 +449,14 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
             UpdateDisplayName(it->second, it->first);
         }
     }
+    else if (prop->GetPropName() == "id" && prop->GetNode()->GetClassName() == "ribbonTool")
+    {
+        if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
+        {
+            UpdateDisplayName(it->second, it->first);
+        }
+    }
+
     else if (prop->GetPropName() == txt_orientation)
     {
         if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())

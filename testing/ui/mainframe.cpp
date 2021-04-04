@@ -14,6 +14,7 @@
 #include "ribbondlg.h"
 #include "wizard.h"
 
+#include "ui/choicebook_base.h"
 #include "ui/listbook_base.h"
 #include "ui/notebook_base.h"
 #include "ui/toolbook_base.h"
@@ -49,6 +50,12 @@ void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
     // true forces the frame to close
     Close(true);
+}
+
+void MainFrame::OnChoicebook(wxCommandEvent& WXUNUSED(event))
+{
+    ChoiceBookBase dlg(this);
+    dlg.ShowModal();
 }
 
 void MainFrame::OnNotebook(wxCommandEvent& WXUNUSED(event))

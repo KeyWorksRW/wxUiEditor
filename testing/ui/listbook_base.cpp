@@ -7,6 +7,7 @@
 #include "pch.h"
 
 #include <wx/bitmap.h>
+#include <wx/button.h>
 #include <wx/colour.h>
 #include <wx/icon.h>
 #include <wx/image.h>
@@ -74,6 +75,10 @@ ListbookBase::ListbookBase(wxWindow* parent, wxWindowID id, const wxString& titl
     parent_sizer_3->Add(m_staticText, wxSizerFlags().Border(wxALL));
 
     page_3->SetSizerAndFit(parent_sizer_3);
+
+    auto stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
+    stdBtn->GetCancelButton()->SetDefault();
+    box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(box_sizer);
 

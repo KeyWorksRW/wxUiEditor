@@ -28,6 +28,7 @@ Files:
 
     ui/mainframe.cpp       # Main window
     ui/mainframe_base.cpp  # wxUiEditor generated file
+
     ui/commonctrls.cpp
     ui/commonctrls_base.cpp
     ui/other_ctrls.cpp
@@ -41,6 +42,7 @@ Files:
 
     # The following only have a base class, they don't use a derived class
 
+    ui/choicebook_base.cpp
     ui/listbook_base.cpp
     ui/notebook_base.cpp
     ui/toolbook_base.cpp

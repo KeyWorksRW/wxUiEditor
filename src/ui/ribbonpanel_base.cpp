@@ -12,12 +12,8 @@
 #include "ribbonpanel_base.h"
 
 #include "../xpm/book_page.xpm"
-#include "../xpm/button.xpm"
 #include "../xpm/calendar.xpm"
-#include "../xpm/choicebook.xpm"
-#include "../xpm/collpane.xpm"
 #include "../xpm/colourPickerIcon.xpm"
-#include "../xpm/combo_box.xpm"
 #include "../xpm/dataview_ctrl.xpm"
 #include "../xpm/dataviewlist_column.xpm"
 #include "../xpm/datepicker.xpm"
@@ -34,19 +30,11 @@
 #include "../xpm/htmlwin.xpm"
 #include "../xpm/hyperlink_ctrl.xpm"
 #include "../xpm/infobar.xpm"
-#include "../xpm/list_box.xpm"
-#include "../xpm/listbook.xpm"
 #include "../xpm/menu.xpm"
-#include "../xpm/menubar.xpm"
 #include "../xpm/menuitem.xpm"
-#include "../xpm/notebook.xpm"
-#include "../xpm/panel.xpm"
-#include "../xpm/propgrid.xpm"
 #include "../xpm/propgriditem.xpm"
-#include "../xpm/propgridman.xpm"
 #include "../xpm/propgridpage.xpm"
 #include "../xpm/radio_box.xpm"
-#include "../xpm/radio_button.xpm"
 #include "../xpm/ribbon_bar.xpm"
 #include "../xpm/ribbon_button.xpm"
 #include "../xpm/ribbon_buttonbar.xpm"
@@ -55,44 +43,56 @@
 #include "../xpm/ribbon_panel.xpm"
 #include "../xpm/richtextctrl.xpm"
 #include "../xpm/scintilla.xpm"
-#include "../xpm/scrollwin.xpm"
 #include "../xpm/search.xpm"
 #include "../xpm/separator.xpm"
-#include "../xpm/simple_book.xpm"
 #include "../xpm/sizer.xpm"
 #include "../xpm/sizer_horizontal.xpm"
 #include "../xpm/slider.xpm"
 #include "../xpm/spacer.xpm"
 #include "../xpm/spin_ctrl.xpm"
-#include "../xpm/splitter_window.xpm"
 #include "../xpm/static_bitmap.xpm"
 #include "../xpm/static_line.xpm"
-#include "../xpm/static_text.xpm"
 #include "../xpm/statusbar.xpm"
 #include "../xpm/stddialogbuttonsizer.xpm"
 #include "../xpm/submenu.xpm"
 #include "../xpm/text_sizer.xpm"
 #include "../xpm/timepicker.xpm"
 #include "../xpm/tool.xpm"
-#include "../xpm/toolbar.xpm"
 #include "../xpm/toolseparator.xpm"
 #include "../xpm/tree_ctrl.xpm"
 #include "../xpm/treelistctrl.xpm"
 #include "../xpm/treelistctrlcolumn.xpm"
-#include "../xpm/wizpage.xpm"
 #include "../xpm/wrap_sizer.xpm"
 #include "../xpm/wxActivityIndicator.xpm"
 #include "../xpm/wxBannerWindow.xpm"
+#include "../xpm/wxButton.xpm"
 #include "../xpm/wxCheckBox.xpm"
+#include "../xpm/wxChoicebook.xpm"
+#include "../xpm/wxCollapsiblePane.xpm"
+#include "../xpm/wxComboBox.xpm"
 #include "../xpm/wxDialog.xpm"
 #include "../xpm/wxFileCtrl.xpm"
 #include "../xpm/wxFrame.xpm"
+#include "../xpm/wxListBox.xpm"
+#include "../xpm/wxListbook.xpm"
+#include "../xpm/wxMenuBar.xpm"
+#include "../xpm/wxNotebook.xpm"
+#include "../xpm/wxPanel.xpm"
 #include "../xpm/wxPopupTransientWindow.xpm"
+#include "../xpm/wxPropertyGrid.xpm"
+#include "../xpm/wxPropertyGridManager.xpm"
+#include "../xpm/wxRadioButton.xpm"
+#include "../xpm/wxScrolledWindow.xpm"
+#include "../xpm/wxSimplebook.xpm"
+#include "../xpm/wxSplitterWindow.xpm"
 #include "../xpm/wxStaticBoxSizer.xpm"
+#include "../xpm/wxStaticText.xpm"
 #include "../xpm/wxTextCtrl.xpm"
+#include "../xpm/wxToolBar.xpm"
 #include "../xpm/wxToolbook.xpm"
 #include "../xpm/wxTreebook.xpm"
 #include "../xpm/wxWizard.xpm"
+#include "../xpm/wxWizardPageSimple.xpm"
 
 RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 		const wxPoint& pos, const wxSize& size, long style) :
@@ -111,7 +111,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     auto forms_bar_windows = new wxRibbonToolBar(panel_form_windows, wxID_ANY);
     {
         forms_bar_windows->AddTool(NewDialog, wxImage(wxDialog_xpm), wxString::FromUTF8("wxDialog"), wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(NewPanel, wxImage(panel_xpm), wxString::FromUTF8("PanelForm"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(NewPanel, wxImage(wxPanel_xpm), wxString::FromUTF8("PanelForm"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(NewFrame, wxImage(wxFrame_xpm), wxString::FromUTF8("wxFrame"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(NewPopupWin, wxImage(wxPopupTransientWindow_xpm), wxString::FromUTF8("wxPopupTransientWindow"), wxRIBBON_BUTTON_NORMAL);
     }
@@ -124,7 +124,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     auto forms_bar_wizard = new wxRibbonToolBar(panel_wizard, wxID_ANY);
     {
         forms_bar_wizard->AddTool(NewWizard, wxImage(wxWizard_xpm), wxString::FromUTF8("wxWizard"), wxRIBBON_BUTTON_NORMAL);
-        forms_bar_wizard->AddTool(NewWizPage, wxImage(wizpage_xpm), wxString::FromUTF8("WizardPageSimple"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_wizard->AddTool(NewWizPage, wxImage(wxWizardPageSimple_xpm), wxString::FromUTF8("WizardPageSimple"), wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_wizard->Realize();
 
@@ -132,8 +132,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto forms_bar_bars = new wxRibbonToolBar(panel_bars, wxID_ANY);
     {
-        forms_bar_bars->AddTool(NewMenuBar, wxImage(menubar_xpm), wxString::FromUTF8("MenuBar"), wxRIBBON_BUTTON_NORMAL);
-        forms_bar_bars->AddTool(NewToolBar, wxImage(toolbar_xpm), wxString::FromUTF8("ToolBar"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars->AddTool(NewMenuBar, wxImage(wxMenuBar_xpm), wxString::FromUTF8("MenuBar"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars->AddTool(NewToolBar, wxImage(wxToolBar_xpm), wxString::FromUTF8("ToolBar"), wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_bars->Realize();
 
@@ -178,11 +178,11 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto common_bar_controls = new wxRibbonToolBar(panel_common_controls, wxID_ANY);
     {
-        common_bar_controls->AddTool(NewStaticCtrl, wxImage(static_text_xpm), wxString::FromUTF8("wxStaticText"), wxRIBBON_BUTTON_NORMAL);
+        common_bar_controls->AddTool(NewStaticCtrl, wxImage(wxStaticText_xpm), wxString::FromUTF8("wxStaticText"), wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(NewTextCtrl, wxImage(wxTextCtrl_xpm), wxString::FromUTF8("wxTextCtrl"), wxRIBBON_BUTTON_NORMAL);
         common_bar_controls->AddTool(NewCheckbox, wxImage(wxCheckBox_xpm), wxString::FromUTF8("wxCheckBox"), wxRIBBON_BUTTON_DROPDOWN);
-        common_bar_controls->AddTool(NewRadiobtn, wxImage(radio_button_xpm), wxString::FromUTF8("wxRadioButton"), wxRIBBON_BUTTON_NORMAL);
-        common_bar_controls->AddTool(NewButton, wxImage(button_xpm), wxString::FromUTF8("Buttons"), wxRIBBON_BUTTON_DROPDOWN);
+        common_bar_controls->AddTool(NewRadiobtn, wxImage(wxRadioButton_xpm), wxString::FromUTF8("wxRadioButton"), wxRIBBON_BUTTON_NORMAL);
+        common_bar_controls->AddTool(NewButton, wxImage(wxButton_xpm), wxString::FromUTF8("Buttons"), wxRIBBON_BUTTON_DROPDOWN);
         common_bar_controls->AddTool(NewSpin, wxImage(spin_ctrl_xpm), wxString::FromUTF8("Spin controls"), wxRIBBON_BUTTON_DROPDOWN);
     }
     common_bar_controls->Realize();
@@ -193,8 +193,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto common_bar_choices = new wxRibbonToolBar(panel_choices, wxID_ANY);
     {
-        common_bar_choices->AddTool(NewCombobox, wxImage(combo_box_xpm), wxString::FromUTF8("Combos & Choice"), wxRIBBON_BUTTON_DROPDOWN);
-        common_bar_choices->AddTool(NewListbox, wxImage(list_box_xpm), wxString::FromUTF8("Lists"), wxRIBBON_BUTTON_DROPDOWN);
+        common_bar_choices->AddTool(NewCombobox, wxImage(wxComboBox_xpm), wxString::FromUTF8("Combos & Choice"), wxRIBBON_BUTTON_DROPDOWN);
+        common_bar_choices->AddTool(NewListbox, wxImage(wxListBox_xpm), wxString::FromUTF8("Lists"), wxRIBBON_BUTTON_DROPDOWN);
         common_bar_choices->AddTool(NewRadioBox, wxImage(radio_box_xpm), wxString::FromUTF8("wxRadioBox"), wxRIBBON_BUTTON_NORMAL);
     }
     common_bar_choices->Realize();
@@ -233,10 +233,10 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto container_bar_windows = new wxRibbonToolBar(panel_windows, wxID_ANY);
     {
-        container_bar_windows->AddTool(NewPanel, wxImage(panel_xpm), wxString::FromUTF8("wxPanel"), wxRIBBON_BUTTON_NORMAL);
-        container_bar_windows->AddTool(NewSplitter, wxImage(splitter_window_xpm), wxString::FromUTF8("wxSplitterWindow"), wxRIBBON_BUTTON_NORMAL);
-        container_bar_windows->AddTool(NewScrollWin, wxImage(scrollwin_xpm), wxString::FromUTF8("wxScrolledWindow"), wxRIBBON_BUTTON_NORMAL);
-        container_bar_windows->AddTool(NewCollapsible, wxImage(collpane_xpm), wxString::FromUTF8("wxCollapsiblePane"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_windows->AddTool(NewPanel, wxImage(wxPanel_xpm), wxString::FromUTF8("wxPanel"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_windows->AddTool(NewSplitter, wxImage(wxSplitterWindow_xpm), wxString::FromUTF8("wxSplitterWindow"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_windows->AddTool(NewScrollWin, wxImage(wxScrolledWindow_xpm), wxString::FromUTF8("wxScrolledWindow"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_windows->AddTool(NewCollapsible, wxImage(wxCollapsiblePane_xpm), wxString::FromUTF8("wxCollapsiblePane"), wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_windows->Realize();
 
@@ -244,10 +244,10 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto container_bar_books = new wxRibbonToolBar(panel_books, wxID_ANY);
     {
-        container_bar_books->AddTool(NewChoiceBook, wxImage(choicebook_xpm), wxString::FromUTF8("wxChoicebook"), wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(NewListBook, wxImage(listbook_xpm), wxString::FromUTF8("wxListbook"), wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(NewNotebook, wxImage(notebook_xpm), wxString::FromUTF8("wxNotebook"), wxRIBBON_BUTTON_NORMAL);
-        container_bar_books->AddTool(NewSimpleBook, wxImage(simple_book_xpm), wxString::FromUTF8("wxSimplebook"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(NewChoiceBook, wxImage(wxChoicebook_xpm), wxString::FromUTF8("wxChoicebook"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(NewListBook, wxImage(wxListbook_xpm), wxString::FromUTF8("wxListbook"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(NewNotebook, wxImage(wxNotebook_xpm), wxString::FromUTF8("wxNotebook"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_books->AddTool(NewSimpleBook, wxImage(wxSimplebook_xpm), wxString::FromUTF8("wxSimplebook"), wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(NewToolBook, wxImage(wxToolbook_xpm), wxString::FromUTF8("wxToolbook"), wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(NewTreeBook, wxImage(wxTreebook_xpm), wxString::FromUTF8("wxTreebook"), wxRIBBON_BUTTON_NORMAL);
     }
@@ -267,8 +267,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto data_bar_properties = new wxRibbonToolBar(panel_properties, wxID_ANY);
     {
-        data_bar_properties->AddTool(NewPropGrid, wxImage(propgrid_xpm), wxString::FromUTF8("wxPropertyGrid"), wxRIBBON_BUTTON_NORMAL);
-        data_bar_properties->AddTool(NewPropManager, wxImage(propgridman_xpm), wxString::FromUTF8("wxPropertyGridManager"), wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(NewPropGrid, wxImage(wxPropertyGrid_xpm), wxString::FromUTF8("wxPropertyGrid"), wxRIBBON_BUTTON_NORMAL);
+        data_bar_properties->AddTool(NewPropManager, wxImage(wxPropertyGridManager_xpm), wxString::FromUTF8("wxPropertyGridManager"), wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(NewGridPage, wxImage(propgridpage_xpm), wxString::FromUTF8("propGridPage"), wxRIBBON_BUTTON_NORMAL);
         data_bar_properties->AddTool(NewPropItem, wxImage(propgriditem_xpm), wxString::FromUTF8("propGridItem"), wxRIBBON_BUTTON_NORMAL);
     }
@@ -300,7 +300,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto bars_bar_menu = new wxRibbonToolBar(panel_bars_menu, wxID_ANY);
     {
-        bars_bar_menu->AddTool(NewMenuBar, wxImage(menubar_xpm), wxString::FromUTF8("wxMenuBar"), wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(NewMenuBar, wxImage(wxMenuBar_xpm), wxString::FromUTF8("wxMenuBar"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(NewMenu, wxImage(menu_xpm), wxString::FromUTF8("wxMenu"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(NewSubMenu, wxImage(submenu_xpm), wxString::FromUTF8("submenu"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(NewMenuItem, wxImage(menuitem_xpm), wxString::FromUTF8("wxMenuItem"), wxRIBBON_BUTTON_NORMAL);
@@ -312,7 +312,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto bars_bar_tool = new wxRibbonToolBar(panel_bars_tool, wxID_ANY);
     {
-        bars_bar_tool->AddTool(NewToolBar, wxImage(toolbar_xpm), wxString::FromUTF8("wxToolBar"), wxRIBBON_BUTTON_NORMAL);
+        bars_bar_tool->AddTool(NewToolBar, wxImage(wxToolBar_xpm), wxString::FromUTF8("wxToolBar"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(NewTool, wxImage(tool_xpm), wxString::FromUTF8("tool"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(NewToolSeparator, wxImage(toolseparator_xpm), wxString::FromUTF8("toolSeparator"), wxRIBBON_BUTTON_NORMAL);
     }

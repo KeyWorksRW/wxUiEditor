@@ -12,6 +12,7 @@
 #include "pch.h"
 
 #include <wx/bookctrl.h>    // wxBookCtrlBase: common base class for wxList/Tree/Notebook
+#include <wx/choicebk.h>    // wxChoicebook: wxChoice and wxNotebook combination
 #include <wx/collpane.h>    // wxCollapsiblePane
 #include <wx/gbsizer.h>     // wxGridBagSizer:  A sizer that can lay out items in a grid,
 #include <wx/ribbon/bar.h>  // Top-level component of the ribbon-bar-style interface
@@ -202,7 +203,13 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     if (parent && (created_window || created_sizer))
     {
         auto obj_parent = GetNode(parentNode);
-        if (obj_parent && obj_parent->IsSizer())
+        if (obj_parent && obj_parent->GetClassName() == "wxChoicebook" && node->GetNodeType()->get_name() == "widget")
+        {
+            wxStaticCast(parentNode, wxChoicebook)
+                ->GetControlSizer()
+                ->Add(created_window, wxSizerFlags().Expand().Border(wxALL));
+        }
+        else if (obj_parent && obj_parent->IsSizer())
         {
             auto child_obj = GetNode(created_object);
             auto sizer_flags = child_obj->GetSizerFlags();
@@ -346,7 +353,17 @@ void MockupContent::OnNodeSelected(Node* node)
         ASSERT(book);
         if (book)
         {
-            book->SetSelection(parent->GetChildPosition(node));
+            // If this is a wxChoicebook, then some of the children might be a widget rather then a book page
+            size_t sel_pos = 0;
+            for (size_t child = 0; child < parent->GetChildCount(); ++child)
+            {
+                if (parent->GetChildNodePtrs()[child].get() == node)
+                    break;
+                if (parent->GetChildNodePtrs()[child].get()->GetNodeType()->get_name() == "widget")
+                    continue;
+                ++sel_pos;
+            }
+            book->SetSelection(sel_pos);
             m_mockupParent->ClearIgnoreSelection();
         }
         return;

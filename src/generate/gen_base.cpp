@@ -946,6 +946,13 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
             m_source->writeLine(code);
         }
+        else if (node->GetNodeType()->get_name() == "widget" && parent->GetClassName() == "wxChoicebook")
+        {
+            ttlib::cstr code;
+            code << parent->get_node_name() << "->GetControlSizer()->Add(" << node->get_node_name();
+            code << ", wxSizerFlags().Expand().Border(wxALL));";
+            m_source->writeLine(code);
+        }
 
         for (const auto& child: node->GetChildNodePtrs())
         {

@@ -56,7 +56,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
         {
             path = *base_file;
             if (path == "filename_base")
-                return false;
+                continue;
             path.make_absolute();
             path.backslashestoforward();
         }

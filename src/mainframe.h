@@ -49,6 +49,7 @@ public:
     ~MainFrame() override;
 
     MockupParent* GetMockup() { return m_mockupPanel; }
+    PropGridPanel* GetPropPanel() { return m_property_panel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
 

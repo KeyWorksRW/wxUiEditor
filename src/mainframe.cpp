@@ -397,10 +397,27 @@ void MainFrame::ProjectSaved()
 
 void MainFrame::OnNodeSelected(CustomEvent& event)
 {
+    // This event is normally only fired if the current selection has changed. We dismiss any previous infobar message, and
+    // check to see if the current selection has any kind of issu that we should warn the user about.
     m_info_bar->Dismiss();
 
+    auto sel_node = event.GetNode();
+
+    if (sel_node->GetClassName() == "wxToolBar")
+    {
+        if (sel_node->GetParent()->IsSizer())
+        {
+            auto grandparent = sel_node->GetParent()->GetParent();
+            if (grandparent->GetClassName() == "wxFrame" || grandparent->GetClassName() == "wxAuiMDIChildFrame")
+            {
+                // Caution! In wxWidgets 3.1.3 The info bar will wrap the first word if it starts with "If".
+                GetPropInfoBar()->ShowMessage(_tt(strId_tb_in_sizer), wxICON_INFORMATION);
+            }
+        }
+    }
+
     // If a code generation panel is open, then attempt to locate the node's name in that panel
-    FindItemName(event.GetNode());
+    FindItemName(sel_node);
 
     UpdateFrame();
 }

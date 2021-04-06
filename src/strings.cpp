@@ -52,6 +52,8 @@ const std::map<int, const char*> englishStrings = {
     { strIdUndo, "Undo" },
     { strIdRedo, "Redo" },
     { strIdPaste, "Paste" },
+    { strId_tb_in_sizer, "For the toolbar to be owned by the frame window, it should be placed directly under the frame, "
+                         "not under a sizer. Use Cut and Paste to move it." },
 
 };
 

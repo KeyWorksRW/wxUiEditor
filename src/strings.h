@@ -51,4 +51,5 @@ enum
     strIdUndo,                 // "Undo"
     strIdRedo,                 // "Redo"
     strIdPaste,                // "Paste"
+    strId_tb_in_sizer,  // "If you want the toolbar to be owned by the frame window, you should not place it under a sizer."
 };

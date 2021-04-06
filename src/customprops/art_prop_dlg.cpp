@@ -7,14 +7,14 @@
 
 #include "pch.h"
 
-#include <unordered_set>
+#include <set>
 
 #include <wx/artprov.h>   // wxArtProvider class
 #include <wx/imaglist.h>  // wxImageList base header
 
 #include "art_prop_dlg.h"  // auto-generated: ../ui/artpropdlg_base.h and ../ui/artpropdlg_base.cpp
 
-extern std::unordered_set<std::string> set_art_ids;  // defined in pg_image.cpp
+extern std::set<std::string> set_art_ids;  // defined in pg_image.cpp
 
 ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_props) : ArtPropertyDlgBase(parent)
 {
@@ -50,7 +50,6 @@ void ArtBrowserDialog::ChangeClient()
     m_list->DeleteAllItems();
     for (auto& iter: set_art_ids)
     {
-
         auto bmp = wxArtProvider::GetBitmap(iter, wxART_MAKE_CLIENT_ID_FROM_STR(m_client), wxSize(16, 16));
         if (bmp.IsOk())
         {
@@ -74,11 +73,16 @@ void ArtBrowserDialog::OnChooseClient(wxCommandEvent& WXUNUSED(event))
 void ArtBrowserDialog::OnSelectItem(wxListEvent& event)
 {
     m_id = reinterpret_cast<const char*>(event.GetData());
+    if (!m_id)
+        return;
     auto bmp = wxArtProvider::GetBitmap(m_id, wxART_MAKE_CLIENT_ID_FROM_STR(m_client));
-
-    m_canvas->SetSize(bmp.GetWidth(), bmp.GetHeight());
-    m_canvas->SetBitmap(bmp);
-    m_text->SetLabel(ttlib::cstr().Format("Size: %d x %d", bmp.GetWidth(), bmp.GetHeight()));
+    ASSERT(bmp.IsOk());
+    if (bmp.IsOk())
+    {
+        m_canvas->SetSize(bmp.GetWidth(), bmp.GetHeight());
+        m_canvas->SetBitmap(bmp);
+        m_text->SetLabel(ttlib::cstr().Format("Size: %d x %d", bmp.GetWidth(), bmp.GetHeight()));
+    }
     Refresh();
 }
 

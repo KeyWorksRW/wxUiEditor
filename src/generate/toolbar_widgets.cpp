@@ -238,7 +238,9 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->prop_as_string(txt_var_name);
-    if (node->FindParentForm()->GetClassName() == "wxFrame")
+
+    // We don't currently support wxAuiMDIChildFrame, but if we ever do, it also uses CreateToolBar()
+    if (node->GetParent()->GetClassName() == "wxFrame" || node->GetParent()->GetClassName() == "wxAuiMDIChildFrame")
     {
         code << " = CreateToolBar(";
 

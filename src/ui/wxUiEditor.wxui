@@ -231,7 +231,7 @@
       <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer">
         <node class="wxBoxSizer">
           <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer4">
-            <node class="wxListView" style="wxLC_REPORT|wxLC_NO_HEADER|wxLC_SINGLE_SEL" var_name="m_list" size="250,300" window_style="wxBORDER_SUNKEN" border_size="10" borders="wxRIGHT" wxEVT_LIST_ITEM_SELECTED="OnSelectItem" />
+            <node class="wxListView" style="wxLC_REPORT|wxLC_NO_HEADER|wxLC_SINGLE_SEL" var_name="m_list" size="250,400" window_style="wxBORDER_SUNKEN" border_size="10" borders="wxRIGHT" wxEVT_LIST_ITEM_SELECTED="OnSelectItem" />
           </node>
           <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer3" proportion="1">
             <node class="wxStaticText" label="Size: 333x333" var_name="m_text" />

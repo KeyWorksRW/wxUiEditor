@@ -850,9 +850,12 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     if (form_node->prop_as_bool("persist"))
     {
         m_source->writeLine();
-        m_source->writeLine(ttlib::cstr().Format("SetName(%ks);", form_node->get_node_name().c_str()));
-        m_source->writeLine("wxPersistentRegisterAndRestore(this);");
+        ttlib::cstr code("wxPersistentRegisterAndRestore(this, \"");
+        code << form_node->get_node_name() << "\");";
+        m_source->writeLine(code);
     }
+
+    AddPersistCode(form_node);
 
     if (events.size())
     {
@@ -984,7 +987,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 code << "->Initialize(" << node->GetChild(0)->get_node_name() << ");";
                 m_source->writeLine(code);
             }
-            else
+            else if (node->GetChildCount() > 1)
             {
                 if (node->get_prop_ptr("splitmode")->GetValue() == "wxSPLIT_VERTICAL")
                     code << "->SplitVertically(";
@@ -1192,6 +1195,21 @@ void BaseCodeGenerator::CheckForArtProvider(Node* node)
 
         if (child->GetChildCount())
             CheckForArtProvider(child);
+    }
+}
+
+void BaseCodeGenerator::AddPersistCode(Node* node)
+{
+    if (node->prop_has_value("persist_name"))
+    {
+        ttlib::cstr code("wxPersistentRegisterAndRestore(");
+        code << node->get_node_name() << ", \"" << node->prop_as_string("persist_name") << "\");";
+        m_source->writeLine(code);
+    }
+
+    for (size_t i = 0; i < node->GetChildCount(); ++i)
+    {
+        AddPersistCode(node->GetChild(i));
     }
 }
 

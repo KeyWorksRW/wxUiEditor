@@ -45,6 +45,8 @@
         help="Minimum size for the panes. A minimum less than 1 is not allowed in the designer, because the designer prevents un-splitting.">
       0
     </property>
+    <property name="persist_name" type="string"
+      help="If a name is specified, wxPersistenceManager will be used to save/restore the sash position."/>
     <property name="style" type="bitlist">
       <option name="wxSP_3D" help="Draws a 3D effect border and sash."/>
       <option name="wxSP_3DSASH" help="Draws a 3D effect sash (part of default style)."/>
@@ -128,6 +130,8 @@
       <option name="public:"/>
       protected:
     </property>
+    <property name="persist_name" type="string"
+      help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page."/>
     <property name="style" type="option">
       <option name="wxCHB_DEFAULT"
         help="Choose the default location for the labels depending on the current platform (but currently it's the same everywhere, namely wxCHB_TOP)."/>
@@ -161,6 +165,8 @@
         help="All tab images will be scaled to this size.">
       16, 16
     </property>
+    <property name="persist_name" type="string"
+      help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page."/>
     <property name="style" type="bitlist">
       <option name="wxLB_DEFAULT"
         help="Choose the default location for the labels depending on the current platform (left everywhere except Mac where it is top)."/>
@@ -194,6 +200,8 @@
         help="All tab images will be scaled to this size.">
       16, 16
     </property>
+    <property name="persist_name" type="string"
+      help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page."/>
     <property name="style" type="bitlist">
       <option name="wxNB_TOP" help="Place tabs on the top side."/>
       <option name="wxNB_LEFT" help="Place tabs on the left side."/>
@@ -251,6 +259,8 @@
         help="All tab images will be scaled to this size.">
       16, 16
     </property>
+    <property name="persist_name" type="string"
+      help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page and the expand/collapse state of sub pages."/>
     <property name="style" type="bitlist">
       <option name="wxNB_TOP" help="Place tabs on the top side."/>
       <option name="wxNB_LEFT" help="Place tabs on the left side."/>

@@ -111,66 +111,66 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     switch (childCount)
     {
         case 1:
-        {
-            auto subwindow = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
-            if (!subwindow)
             {
-                FAIL_MSG("Child of splitter is not derived from wxWindow class.");
-                return;
-            }
+                auto subwindow = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
+                if (!subwindow)
+                {
+                    FAIL_MSG("Child of splitter is not derived from wxWindow class.");
+                    return;
+                }
 
-            if (firstChild)
-            {
-                splitter->ReplaceWindow(firstChild, subwindow);
-                firstChild->Destroy();
+                if (firstChild)
+                {
+                    splitter->ReplaceWindow(firstChild, subwindow);
+                    firstChild->Destroy();
+                }
+                else
+                {
+                    splitter->Initialize(subwindow);
+                }
+                // splitter->PushEventHandler(new ContainerBarEvtHandler(splitter));
+                break;
             }
-            else
-            {
-                splitter->Initialize(subwindow);
-            }
-            // splitter->PushEventHandler(new ContainerBarEvtHandler(splitter));
-            break;
-        }
         case 2:
-        {
-            auto subwindow0 = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
-            auto subwindow1 = wxDynamicCast(GetMockup()->GetChild(wxobject, 1), wxWindow);
-
-            if (!subwindow0 || !subwindow1)
             {
-                FAIL_MSG("Child of splitter is not derived from wxWindow class.");
-                return;
-            }
+                auto subwindow0 = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
+                auto subwindow1 = wxDynamicCast(GetMockup()->GetChild(wxobject, 1), wxWindow);
 
-            // Get the split mode and sash position
-            node = GetMockup()->GetNode(wxobject);
-            if (!node)
-            {
-                // REVIEW: [KeyWorks - 12-06-2020] If this is actually possible, we should let the user know
-                return;
-            }
+                if (!subwindow0 || !subwindow1)
+                {
+                    FAIL_MSG("Child of splitter is not derived from wxWindow class.");
+                    return;
+                }
 
-            int sashPos = node->prop_as_int("sashpos");
-            int splitmode = node->prop_as_int("splitmode");
+                // Get the split mode and sash position
+                node = GetMockup()->GetNode(wxobject);
+                if (!node)
+                {
+                    // REVIEW: [KeyWorks - 12-06-2020] If this is actually possible, we should let the user know
+                    return;
+                }
 
-            if (firstChild)
-            {
-                splitter->ReplaceWindow(firstChild, subwindow0);
-                firstChild->Destroy();
-            }
+                int sashPos = node->prop_as_int("sashpos");
+                int splitmode = node->prop_as_int("splitmode");
 
-            if (splitmode == wxSPLIT_VERTICAL)
-            {
-                splitter->SplitVertically(subwindow0, subwindow1, sashPos);
-            }
-            else
-            {
-                splitter->SplitHorizontally(subwindow0, subwindow1, sashPos);
-            }
+                if (firstChild)
+                {
+                    splitter->ReplaceWindow(firstChild, subwindow0);
+                    firstChild->Destroy();
+                }
 
-            // splitter->PushEventHandler(new ContainerBarEvtHandler(splitter));
-            break;
-        }
+                if (splitmode == wxSPLIT_VERTICAL)
+                {
+                    splitter->SplitVertically(subwindow0, subwindow1, sashPos);
+                }
+                else
+                {
+                    splitter->SplitHorizontally(subwindow0, subwindow1, sashPos);
+                }
+
+                // splitter->PushEventHandler(new ContainerBarEvtHandler(splitter));
+                break;
+            }
         default:
             return;
     }
@@ -228,6 +228,11 @@ std::optional<ttlib::cstr> SplitterWindowGenerator::GenEvents(NodeEvent* event, 
 bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/splitter.h>", set_src, set_hdr);
+    if (node->prop_has_value("persist_name"))
+    {
+        set_src.insert("#include <wx/persist/splitter.h>");
+    }
+
     return true;
 }
 

@@ -192,6 +192,11 @@ bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
         InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
     }
 
+    if (node->prop_has_value("persist_name"))
+    {
+        set_src.insert("#include <wx/persist/bookctrl.h>");
+    }
+
     return true;
 }
 
@@ -238,7 +243,10 @@ std::optional<ttlib::cstr> ChoicebookGenerator::GenEvents(NodeEvent* event, cons
 bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/choicebk.h>", set_src, set_hdr);
-
+    if (node->prop_has_value("persist_name"))
+    {
+        set_src.insert("#include <wx/persist/bookctrl.h>");
+    }
     return true;
 }
 
@@ -293,6 +301,11 @@ bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     {
         InsertGeneratorInclude(node, "#include <wx/imaglist.h>", set_src, set_hdr);
         InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
+    }
+
+    if (node->prop_has_value("persist_name"))
+    {
+        set_src.insert("#include <wx/persist/bookctrl.h>");
     }
 
     return true;
@@ -425,6 +438,10 @@ std::optional<ttlib::cstr> TreebookGenerator::GenEvents(NodeEvent* event, const 
 bool TreebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/treebook.h>", set_src, set_hdr);
+    if (node->prop_has_value("persist_name"))
+    {
+        set_src.insert("#include <wx/persist/treebook.h>");
+    }
 
     return true;
 }

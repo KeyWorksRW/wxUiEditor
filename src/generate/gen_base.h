@@ -57,6 +57,7 @@ public:
     int GenerateDerivedClass(Node* project, Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
 
 protected:
+    void AddPersistCode(Node* node);
     enum Permission
     {
         Protected,

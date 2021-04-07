@@ -984,7 +984,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 code << "->Initialize(" << node->GetChild(0)->get_node_name() << ");";
                 m_source->writeLine(code);
             }
-            else
+            else if (node->GetChildCount() > 1)
             {
                 if (node->get_prop_ptr("splitmode")->GetValue() == "wxSPLIT_VERTICAL")
                     code << "->SplitVertically(";

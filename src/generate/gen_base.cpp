@@ -850,8 +850,9 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     if (form_node->prop_as_bool("persist"))
     {
         m_source->writeLine();
-        m_source->writeLine(ttlib::cstr().Format("SetName(%ks);", form_node->get_node_name().c_str()));
-        m_source->writeLine("wxPersistentRegisterAndRestore(this);");
+        ttlib::cstr code("wxPersistentRegisterAndRestore(this, \"");
+        code << form_node->get_node_name() << "\");";
+        m_source->writeLine(code);
     }
 
     if (events.size())

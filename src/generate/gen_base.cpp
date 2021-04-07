@@ -855,6 +855,8 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         m_source->writeLine(code);
     }
 
+    AddPersistCode(form_node);
+
     if (events.size())
     {
         m_source->writeLine();
@@ -1193,6 +1195,21 @@ void BaseCodeGenerator::CheckForArtProvider(Node* node)
 
         if (child->GetChildCount())
             CheckForArtProvider(child);
+    }
+}
+
+void BaseCodeGenerator::AddPersistCode(Node* node)
+{
+    if (node->prop_has_value("persist_name"))
+    {
+        ttlib::cstr code("wxPersistentRegisterAndRestore(");
+        code << node->get_node_name() << ", \"" << node->prop_as_string("persist_name") << "\");";
+        m_source->writeLine(code);
+    }
+
+    for (size_t i = 0; i < node->GetChildCount(); ++i)
+    {
+        AddPersistCode(node->GetChild(i));
     }
 }
 

@@ -101,6 +101,10 @@
     </inherits>
     <property name="class_name" type="string" help="The name of the base class.">MyFrameBase</property>
     <property name="title" type="string_escapes" help="The text to display on the frame's title bar."/>
+    <property name="persist" type="bool"
+      help="Use wxPersistentRegisterAndRestore to save/restore the size and position of the window.">
+      0
+    </property>
     <property name="style" type="bitlist">
       <option name="wxDEFAULT_FRAME_STYLE"
         help="Defined as wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN"/>

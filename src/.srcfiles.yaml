@@ -33,6 +33,7 @@ Files:
     appoptions.cpp        # Application-wide options
     bitmaps.cpp           # Map of bitmaps accessed by name
     cstm_event.cpp        # Custom Event handling
+    enum_classes.cpp      # Enumerations for nodes
     frame_status_bar.cpp  # MainFrame status bar functions
     gzip.cpp              # Convert compiled GZIP arrays into original strings/images
     pjtsettings.cpp       # Hold data for currently loaded project

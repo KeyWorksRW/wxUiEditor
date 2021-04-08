@@ -14,14 +14,37 @@
 
 #include "../pugixml/pugixml.hpp"
 
-#include "bitmaps.h"    // Map of bitmaps accessed by name
-#include "node.h"       // Node class
-#include "prop_info.h"  // PropDefinition and PropertyInfo classes
+#include "bitmaps.h"       // Map of bitmaps accessed by name
+#include "enum_classes.h"  // Enumerations for nodes
+#include "node.h"          // Node class
+#include "prop_info.h"     // PropDefinition and PropertyInfo classes
 
 NodeCreator g_NodeCreator;
 
+using namespace NodeEnums;
+
 void NodeCreator::Initialize()
 {
+    for (auto& iter: NodeEnums::map_PropTypes)
+    {
+        NodeEnums::rmap_PropTypes[iter.second] = iter.first;
+    }
+
+    for (auto& iter: NodeEnums::map_PropNames)
+    {
+        NodeEnums::rmap_PropNames[iter.second] = iter.first;
+    }
+
+    for (auto& iter: NodeEnums::map_ClassTypes)
+    {
+        NodeEnums::rmap_ClassTypes[iter.second] = iter.first;
+    }
+
+    for (auto& iter: NodeEnums::map_ClassNames)
+    {
+        NodeEnums::rmap_ClassNames[iter.second] = iter.first;
+    }
+
     m_propTypes["bitlist"] = Type::Bitlist;
     m_propTypes["bool"] = Type::Bool;
     m_propTypes["editoption"] = Type::Edit_option;
@@ -391,7 +414,20 @@ void NodeCreator::ParseCompInfo(pugi::xml_node root)
     while (comp_info)
     {
         auto class_name = comp_info.attribute("class").as_string();
+#if defined(_DEBUG)
+        if (rmap_ClassNames.find(class_name) == rmap_ClassNames.end())
+        {
+            MSG_WARNING(ttlib::cstr("Unrecognized class name -- ") << class_name);
+        }
+#endif  // _DEBUG
+
         auto type = comp_info.attribute("type").as_cview();
+#if defined(_DEBUG)
+        if (rmap_ClassTypes.find(type.c_str()) == rmap_ClassTypes.end())
+        {
+            MSG_WARNING(ttlib::cstr("Unrecognized class type -- ") << type);
+        }
+#endif  // _DEBUG
 
         auto declaration = std::make_shared<NodeDeclaration>(class_name, GetNodeType(type));
         m_node_declarations[class_name] = declaration;
@@ -499,12 +535,27 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
     while (elem_prop)
     {
         auto name = elem_prop.attribute("name").as_string();
+
+#if defined(_DEBUG)
+        if (rmap_PropNames.find(name) == rmap_PropNames.end())
+        {
+            MSG_WARNING(ttlib::cstr("Unrecognized property name -- ") << name);
+        }
+#endif  // _DEBUG
+
         category.AddProperty(name);
 
         auto description = elem_prop.attribute("help").as_cview();
         auto customEditor = elem_prop.attribute("editor").as_cview();
 
         auto prop_type = elem_prop.attribute("type").as_cview();
+#if defined(_DEBUG)
+        if (rmap_PropTypes.find(prop_type.c_str()) == rmap_PropTypes.end())
+        {
+            MSG_WARNING(ttlib::cstr("Unrecognized property type -- ") << prop_type);
+        }
+#endif  // _DEBUG
+
         Type ptype;
         try
         {

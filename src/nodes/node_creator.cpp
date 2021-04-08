@@ -45,33 +45,6 @@ void NodeCreator::Initialize()
         NodeEnums::rmap_ClassNames[iter.second] = iter.first;
     }
 
-    m_propTypes["bitlist"] = Type::Bitlist;
-    m_propTypes["bool"] = Type::Bool;
-    m_propTypes["editoption"] = Type::Edit_option;
-    m_propTypes["file"] = Type::File;
-    m_propTypes["id"] = Type::ID;
-    m_propTypes["image"] = Type::Image;
-    m_propTypes["option"] = Type::Option;
-    m_propTypes["parent"] = Type::Parent;
-    m_propTypes["path"] = Type::Path;
-    m_propTypes["stringlist"] = Type::Stringlist;
-    m_propTypes["uintlist"] = Type::Uintlist;
-    m_propTypes["uintpairlist"] = Type::Uintpairlist;
-    m_propTypes["wxColour"] = Type::Wxcolour;
-    m_propTypes["wxFont"] = Type::Wxfont;
-    m_propTypes["wxPoint"] = Type::Wxpoint;
-    m_propTypes["wxSize"] = Type::Wxsize;
-
-    m_propTypes["float"] = Type::Float;
-    m_propTypes["int"] = Type::Int;
-    m_propTypes["uint"] = Type::Uint;
-
-    m_propTypes["string"] = Type::String;
-    m_propTypes["string_escapes"] = Type::String_Escapes;
-    m_propTypes["string_edit"] = Type::String_Edit;
-    m_propTypes["string_edit_escapes"] = Type::String_Edit_Escapes;
-    m_propTypes["string_edit_single"] = Type::String_Edit_Single;
-
     InitCompTypes();
     InitDeclarations();
 }
@@ -105,7 +78,8 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* declaration)
             auto defaultValue = prop_info->GetDefaultValue();
             if (base > 0)
             {
-                auto defaultValueTemp = declaration->GetBaseClassDefaultPropertyValue(base - 1, prop_info->GetName());
+                auto defaultValueTemp =
+                    declaration->GetBaseClassDefaultPropertyValue(base - 1, prop_info->GetName().c_str());
                 if (!defaultValueTemp.empty())
                 {
                     defaultValue = defaultValueTemp;
@@ -358,17 +332,6 @@ void NodeCreator::InitDeclarations()
     InitGenerators();
 }
 
-Type NodeCreator::ParsePropertyType(ttlib::cview str)
-{
-    if (auto it = m_propTypes.find(str.c_str()); it != m_propTypes.end())
-        return it->second;
-    else
-    {
-        FAIL_MSG(ttlib::cstr() << str << " does not have a known property type.");
-        return Type::None;
-    }
-}
-
 NodeType* NodeCreator::GetNodeType(ttlib::cview name)
 {
     if (auto it = m_component_types.find(name.c_str()); it != m_component_types.end())
@@ -456,8 +419,7 @@ void NodeCreator::ParseCompInfo(pugi::xml_node root)
             declaration->SetImage(GetXPMImage("unknown").Scale(CompImgSize, CompImgSize));
         }
 
-        std::set<Type> types;
-        ParseProperties(comp_info, declaration.get(), declaration->GetCategory(), &types);
+        ParseProperties(comp_info, declaration.get(), declaration->GetCategory());
 
         declaration->ParseEvents(comp_info, declaration->GetCategory());
 
@@ -516,8 +478,7 @@ void NodeCreator::SetupGroup(ttlib::cview name)
     }
 }
 
-void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category,
-                                  std::set<Type>* types)
+void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category)
 {
     auto elem_category = elem_obj.child("category");
     while (elem_category)
@@ -526,7 +487,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         auto& new_cat = category.AddCategory(name);
 
         // Recurse
-        ParseProperties(elem_category, obj_info, new_cat, types);
+        ParseProperties(elem_category, obj_info, new_cat);
 
         elem_category = elem_category.next_sibling("category");
     }
@@ -535,13 +496,15 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
     while (elem_prop)
     {
         auto name = elem_prop.attribute("name").as_string();
-
-#if defined(_DEBUG)
-        if (rmap_PropNames.find(name) == rmap_PropNames.end())
+        NodeEnums::Prop prop_name = Prop::missing_property_name;
+        auto lookup_name = rmap_PropNames.find(name);
+        if (lookup_name == rmap_PropNames.end())
         {
-            MSG_WARNING(ttlib::cstr("Unrecognized property name -- ") << name);
+            MSG_ERROR(ttlib::cstr("Unrecognized property name -- ") << name);
+            elem_prop = elem_prop.next_sibling("property");
+            continue;
         }
-#endif  // _DEBUG
+        prop_name = lookup_name->second;
 
         category.AddProperty(name);
 
@@ -549,25 +512,16 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         auto customEditor = elem_prop.attribute("editor").as_cview();
 
         auto prop_type = elem_prop.attribute("type").as_cview();
-#if defined(_DEBUG)
-        if (rmap_PropTypes.find(prop_type.c_str()) == rmap_PropTypes.end())
-        {
-            MSG_WARNING(ttlib::cstr("Unrecognized property type -- ") << prop_type);
-        }
-#endif  // _DEBUG
 
-        Type ptype;
-        try
+        auto property_type = enum_missing_property_type;
+        auto lookup_type = rmap_PropTypes.find(prop_type.c_str());
+        if (lookup_type == rmap_PropTypes.end())
         {
-            ptype = ParsePropertyType(prop_type);
-        }
-        catch (const std::exception& DBG_PARAM(e))
-        {
-            MSG_ERROR(ttlib::cstr("Error: ")
-                      << e.what() << " while parsing property " << name << "of class " << obj_info->GetClassName());
+            MSG_ERROR(ttlib::cstr("Unrecognized property type -- ") << prop_type);
             elem_prop = elem_prop.next_sibling("property");
             continue;
         }
+        property_type = lookup_type->second;
 
         ttlib::cstr def_value;
         if (auto lastChild = elem_prop.last_child(); lastChild && !lastChild.text().empty())
@@ -577,14 +531,10 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             {
                 def_value.trim(tt::TRIM::both);
             }
-#if defined(_DEBUG)
-            if (def_value.is_sameprefix("auto-"))
-                def_value.erase(0, 5);
-#endif
         }
 
         std::vector<PropDefinition> children;
-        if (ptype == Type::Parent)
+        if (property_type == enum_bool)
         {
             // If the property is a parent, then get the children
             def_value.clear();
@@ -603,7 +553,6 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
                 }
 
                 auto child_type = elem_child.attribute("type").as_cview("wxString");
-                child.m_type = ParsePropertyType(child_type);
 
                 // Note: empty tags don't contain any child
                 std::string child_value;
@@ -627,10 +576,12 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             }
         }
 
-        auto prop_info = std::make_shared<PropertyInfo>(name, ptype, def_value, description, customEditor, children);
+        // auto prop_info = std::make_shared<PropertyInfo>(name, ptype, def_value, description, customEditor, children);
+        auto prop_info =
+            std::make_shared<PropertyInfo>(prop_name, property_type, def_value, description, customEditor, children);
         obj_info->GetPropInfoMap()[name] = prop_info;
 
-        if (ptype == Type::Bitlist || ptype == Type::Option || ptype == Type::Edit_option)
+        if (property_type == enum_bitlist || property_type == enum_option || property_type == enum_editoption)
         {
             auto& opts = prop_info->GetOptions();
             auto elem_opt = elem_prop.child("option");
@@ -669,7 +620,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
                 category.AddProperty(txt_class_access);
                 children.clear();
                 prop_info = std::make_shared<PropertyInfo>(
-                    txt_class_access, Type::Option,
+                    Prop::class_access, enum_option,
                     "protected:", "Determines the type of access your derived class has to this item.", "", children);
                 obj_info->GetPropInfoMap()[txt_class_access] = prop_info;
 

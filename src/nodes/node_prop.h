@@ -9,9 +9,9 @@
 
 #include <map>
 
-#include "node_classes.h"  // Forward defintions of Node classes
-#include "prop_types.h"    // Type -- Property types
 #include "font_prop.h"     // FontProperty class
+#include "node_classes.h"  // Forward defintions of Node classes
+#include "prop_info.h"     // PropertyInfo -- PropDefinition and PropertyInfo classes
 
 class NodeProperty
 {
@@ -72,12 +72,15 @@ public:
 
     const PropertyInfo* GetPropertyInfo() const { return m_info; }
 
-    Type GetType() const;
+    NodeEnums::PropType type() const noexcept { return m_info->type(); }
 
     ttlib::cstr getChildFromParent(const ttlib::cstr& childName) const;
 
     Node* GetNode() { return m_node; }
     const ttlib::cstr& GetPropName() const;
+
+    const char* prop_name_as_string() const noexcept { return m_info->name_as_string(); }
+    NodeEnums::Prop prop_name() const noexcept { return m_info->name(); }
 
     PropertyInfo* GetPropertyInfo() { return m_info; }
 

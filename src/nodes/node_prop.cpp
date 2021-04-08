@@ -22,6 +22,8 @@
 
 #include "node_prop.h"
 
+using namespace NodeEnums;
+
 NodeProperty::NodeProperty(PropertyInfo* info, Node* node) : m_info(info), m_node(node) {}
 
 // The advantage of placing the one-line calls to PropertyInfo (m_info) here is that it reduces the header-file
@@ -33,11 +35,6 @@ bool NodeProperty::IsDefaultValue() const
     return m_value.is_sameas(m_info->GetDefaultValue());
 }
 
-Type NodeProperty::GetType() const
-{
-    return m_info->GetType();
-}
-
 const ttlib::cstr& NodeProperty::GetPropName() const
 {
     return m_info->GetName();
@@ -45,14 +42,14 @@ const ttlib::cstr& NodeProperty::GetPropName() const
 
 int NodeProperty::as_int() const
 {
-    switch (GetType())
+    switch (type())
     {
-        case Type::Edit_option:
-        case Type::Option:
-        case Type::ID:
+        case enum_editoption:
+        case enum_option:
+        case enum_id:
             return g_NodeCreator.GetConstantAsInt(m_value, 0);
 
-        case Type::Bitlist:
+        case enum_bitlist:
             {
                 int result = 0;
                 ttlib::multistr mstr(m_value, '|');
@@ -282,15 +279,15 @@ bool NodeProperty::HasValue()
     if (m_value.empty())
         return false;
 
-    switch (GetType())
+    switch (type())
     {
-        case Type::Wxsize:
+        case enum_wxSize:
             return (as_size() != wxDefaultSize);
 
-        case Type::Wxpoint:
+        case enum_wxPoint:
             return (as_point() != wxDefaultPosition);
 
-        case Type::Image:
+        case enum_image:
             if (auto semicolonIndex = m_value.find_first_of(";"); ttlib::is_found(semicolonIndex))
             {
                 // REVIEW: [KeyWorks - 08-06-2020] This reflects what IsNull() does, but seems suspicious...
@@ -306,7 +303,7 @@ bool NodeProperty::HasValue()
 void NodeProperty::splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& children) const
 {
     children.clear();
-    if (m_info->GetType() != Type::Parent)
+    if (m_info->type() != enum_parent)
     {
         return;
     }
@@ -330,7 +327,7 @@ void NodeProperty::splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& child
 void NodeProperty::SplitParentProperty(std::map<wxString, wxString>* children) const
 {
     children->clear();
-    if (m_info->GetType() != Type::Parent)
+    if (m_info->type() != enum_parent)
     {
         return;
     }

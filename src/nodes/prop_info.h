@@ -1,44 +1,57 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropDefinition and PropertyInfo classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#include "prop_types.h"  // Type -- Property types
+#include "enum_classes.h"  // Enumerations for nodes
 
 struct PropDefinition
 {
-    ttlib::cstr m_name;
     ttlib::cstr m_def_value;
     ttlib::cstr m_help;
-    Type m_type;
+
+    // TODO: these are obsolete and need to be removed
+    ttlib::cstr m_name;
+
+    NodeEnums::PropType m_prop_type;
+    NodeEnums::Prop m_enum_name;
+    const char* m_prop_name;
 };
 
 class PropertyInfo : public PropDefinition
 {
 public:
-    PropertyInfo(ttlib::cview name, Type type, ttlib::cview def_value, ttlib::cview help, ttlib::cview customEditor,
-                 const std::vector<PropDefinition>& children)
+    PropertyInfo(NodeEnums::Prop prop_name, NodeEnums::PropType prop_type, ttlib::cview def_value,
+                 ttlib::cview help, ttlib::cview customEditor, const std::vector<PropDefinition>& children)
     {
-        m_name = name;
-        m_type = type;
         m_def_value = def_value;
         m_help = help;
         m_children = children;
         m_customEditor = customEditor;
+
+        m_prop_type = prop_type;
+        m_enum_name = prop_name;
+        m_prop_name = NodeEnums::map_PropNames[m_enum_name];
+
+        // TODO: This is only here until all callers stop using GetName()
+        m_name = m_prop_name;
     }
 
     const std::vector<PropDefinition>* GetChildren() const noexcept { return &m_children; }
 
+    const char* name_as_string() const noexcept { return m_prop_name; }
+    NodeEnums::Prop name() const noexcept { return m_enum_name; }
+    NodeEnums::PropType type() const noexcept { return m_prop_type; }
+
     const ttlib::cstr& GetName() const noexcept { return m_name; }
+
     const ttlib::cstr& GetDefaultValue() const noexcept { return m_def_value; }
     const ttlib::cstr& GetDescription() const noexcept { return m_help; }
     const ttlib::cstr& GetCustomEditor() const noexcept { return m_customEditor; }
-
-    Type GetType() const noexcept { return m_type; }
 
     // These get used to setup wxPGProperty, so both key and value need to be a wxString
     struct Options

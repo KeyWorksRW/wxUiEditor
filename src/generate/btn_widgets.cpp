@@ -17,6 +17,8 @@
 
 #include "btn_widgets.h"
 
+using namespace NodeEnums;
+
 //////////////////////////////////////////  ButtonGenerator  //////////////////////////////////////////
 
 wxObject* ButtonGenerator::Create(Node* node, wxObject* parent)
@@ -68,7 +70,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     // it does not revert when markup is cleared (at least on Windows where markup controls whether a generic or native
     // version of the button is displayed).
 
-    if (prop->GetPropName() == "label")
+    if (prop->prop_name() == Prop::label)
     {
         auto ctrl = wxStaticCast(widget, wxButton);
         if (node->prop_as_bool("markup"))
@@ -78,7 +80,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
 
         return true;
     }
-    else if (prop->GetPropName() == "markup")
+    else if (prop->prop_name() == Prop::markup)
     {
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
@@ -89,7 +91,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
             return true;
         }
     }
-    else if (prop->GetPropName() == "default")
+    else if (prop->prop_name() == Prop::default)
     {
         // You can change a button to be the default, but you cannot change it back without recreating it.
         if (prop->as_bool())
@@ -253,7 +255,7 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
     // it does not revert when markup is cleared (at least on Windows where markup controls whether a generic or native
     // version of the button is displayed).
 
-    if (prop->GetPropName() == "label")
+    if (prop->prop_name() == Prop::label)
     {
         auto ctrl = wxStaticCast(widget, wxToggleButton);
         if (node->prop_as_bool("markup"))
@@ -263,7 +265,7 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
 
         return true;
     }
-    else if (prop->GetPropName() == "markup")
+    else if (prop->prop_name() == Prop::markup)
     {
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
@@ -274,7 +276,7 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
             return true;
         }
     }
-    else if (prop->GetPropName() == "pressed")
+    else if (prop->prop_name() == Prop::pressed)
     {
         wxStaticCast(widget, wxToggleButton)->SetValue(prop->as_bool());
         return true;

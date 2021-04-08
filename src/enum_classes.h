@@ -14,6 +14,7 @@ namespace NodeEnums
 {
     enum PropType : size_t
     {
+        enum_missing_property_type,
 
         enum_bitlist,
         enum_bitmap,
@@ -45,13 +46,14 @@ namespace NodeEnums
         enum_wxSize,
 
     };
-    extern std::map<size_t, const char*> map_PropTypes;
-    extern std::unordered_map<std::string, size_t> rmap_PropTypes;
+    extern std::map<PropType, const char*> map_PropTypes;
+    extern std::unordered_map<std::string, PropType> rmap_PropTypes;
 
     // We can't use the enum_ prefix like we do above because some prop types and prop names are identical.
 
     enum class Prop : size_t
     {
+        missing_property_name,
 
         Apply,
         BottomDockable,

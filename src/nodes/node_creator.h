@@ -71,10 +71,7 @@ protected:
 
     void ParseCompInfo(pugi::xml_node root);
     void SetupGroup(ttlib::cview file);
-    void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category, std::set<Type>* types);
-
-    // conversion routines
-    Type ParsePropertyType(ttlib::cview str);
+    void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
 
     NodeType* GetNodeType(ttlib::cview name);
 
@@ -88,7 +85,6 @@ private:
     NodeDeclarationMap m_node_declarations;
 
     std::unordered_map<std::string, std::unique_ptr<NodeType>> m_component_types;
-    std::map<std::string, Type> m_propTypes;
 
     std::unordered_set<std::string> m_setOldHostTypes;
 

@@ -11,6 +11,8 @@
 #include "node.h"       // Node class
 #include "prop_info.h"  // PropDefinition and PropertyInfo classes
 
+using namespace NodeEnums;
+
 void Node::CreateDoc(pugi::xml_document& doc)
 {
     auto root = doc.append_child("wxUiEditorData");
@@ -37,7 +39,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
                 continue;
 
             auto attr = node.append_attribute(iter.GetPropName().c_str());
-            if (auto type = iter.GetType(); type == Type::Bool)
+            if (iter.type() == enum_bool)
                 attr.set_value(iter.as_bool());
             else
                 attr.set_value(value.c_str());
@@ -46,9 +48,9 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
         {
             // Some properties need to be saved with empty values
 
-            if (iter.GetPropName() == txt_label || iter.GetPropName() == txt_borders)
+            if (iter.prop_name() == Prop::label || iter.prop_name() == Prop::borders)
             {
-                node.append_attribute(iter.GetPropName().c_str());
+                node.append_attribute(iter.prop_name_as_string());
             }
         }
     }

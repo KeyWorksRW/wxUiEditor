@@ -14,7 +14,7 @@
 
 using namespace NodeEnums;
 
-std::map<size_t, const char*> NodeEnums::map_PropTypes = {
+std::map<PropType, const char*> NodeEnums::map_PropTypes = {
 
     { enum_bitlist, "bitlist" },
     { enum_bitmap, "bitmap" },
@@ -46,7 +46,7 @@ std::map<size_t, const char*> NodeEnums::map_PropTypes = {
     { enum_wxSize, "wxSize" },
 
 };
-std::unordered_map<std::string, size_t> NodeEnums::rmap_PropTypes;
+std::unordered_map<std::string, PropType> NodeEnums::rmap_PropTypes;
 
 std::map<NodeEnums::Prop, const char*> NodeEnums::map_PropNames = {
 

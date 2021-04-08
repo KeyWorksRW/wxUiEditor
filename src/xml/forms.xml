@@ -37,7 +37,7 @@
       <option name="wxHelpControllerHelpProvider" help="Use wxHelpControllerHelpProvider to provide context-sensitive help."/>
       none
     </property>
-    <property name="namespace" type="string"
+    <property name="name_space" type="string"
         help="Namespace to enclose class declarations in. Separate nested namespaces with a double colon (e.g. company::app::subname)"/>
   </compinfo>
 

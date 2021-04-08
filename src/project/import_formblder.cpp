@@ -223,7 +223,7 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 }
                 else if (prop_name.as_cview().is_sameas("namespace") && xml_prop.text().as_cview().size())
                 {
-                    ConvertNameSpaceProp(new_node->get_prop_ptr("namespace"), xml_prop.text().as_cview());
+                    ConvertNameSpaceProp(new_node->get_prop_ptr("name_space"), xml_prop.text().as_cview());
                 }
             }
         }

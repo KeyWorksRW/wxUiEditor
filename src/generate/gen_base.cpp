@@ -206,7 +206,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     GenerateImageIncludes(form_node);
 
     // Make a copy of the string so that we can tweak it
-    auto namespace_prop = project->prop_as_string("namespace");
+    auto namespace_prop = project->prop_as_string("name_space");
     size_t indent = 0;
     ttlib::multistr names;
     if (namespace_prop.size())

@@ -15,9 +15,9 @@
 NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) :
     m_classname(class_name), m_type(type), m_category(class_name)
 {
-    m_class_enum = rmap_ClassNames[class_name.c_str()];
-    m_class_type = rmap_ClassTypes[type->get_name()];
-    m_name = NodeEnums::map_ClassNames[m_class_enum];
+    m_class_enum = rmap_GenNames[class_name.c_str()];
+    m_class_type = rmap_GenTypes[type->get_name()];
+    m_name = GenEnum::map_GenNames[m_class_enum];
 }
 
 PropertyInfo* NodeDeclaration::GetPropertyInfo(size_t idx) const
@@ -146,7 +146,7 @@ void NodeDeclaration::GetBaseClasses(std::vector<NodeDeclaration*>& classes, boo
     }
 }
 
-bool NodeDeclaration::isSubclassOf(ClassName class_name) const
+bool NodeDeclaration::isSubclassOf(GenName class_name) const
 {
     if (class_name == m_class_enum)
     {

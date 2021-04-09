@@ -13,7 +13,7 @@
 #include "node_creator.h"  // NodeCreator class
 
 using namespace child_count;
-using namespace NodeEnums;
+using namespace GenEnum;
 
 struct ParentChildInfo
 {
@@ -173,98 +173,29 @@ static const ParentChildInfo lstParentChildren[] = {
 
 };
 
-static constexpr const char* lstNodeTypes[] = {
-
-    "auinotebook",
-    "bookpage",
-    "choicebook",
-    "container",
-    "dataviewcolumn",
-    "dataviewctrl",
-    "dataviewlistcolumn",
-    "dataviewlistctrl",
-    "dataviewtreectrl",
-    "expanded_widget",
-    "form",
-    "gbsizer",
-    "interface",
-    "listbook",
-    "menu",
-    "menubar",
-    "menubar_form",
-    "menuitem",
-    "nonvisual",
-    "notebook",
-    "project",
-    "propgrid",
-    "propgrid",
-    "propgriditem",
-    "propgridman",
-    "propgridman",
-    "propgridpage",
-    "propgridpage",
-    "ribbonbar",
-    "ribbonbutton",
-    "ribbonbuttonbar",
-    "ribbongallery",
-    "ribbongalleryitem",
-    "ribbonpage",
-    "ribbonpanel",
-    "ribbontool",
-    "ribbontoolbar",
-    "simplebook",
-    "sizer",
-    "splitter",
-    "statusbar",
-    "submenu",
-    "tool",
-    "toolbar",
-    "toolbar_form",
-    "treelistctrl",
-    "treelistctrlcolumn",
-    "widget",
-    "wizard",
-    "wizardpagesimple",
-
-};
-
-// These are types used to convert wxFormBuilder projects
-static constexpr const char* fb_ImportTypes[] = {
-
-    "sizeritem",
-    "gbsizeritem",
-    "splitteritem",
-
-    "oldbookpage",
-
-    // BUGBUG: [KeyWorks - 12-10-2020] This thing still exists and is bogus!
-    // "auinotebookpage",
-
-};
-
 // clang-format on
 
 void NodeCreator::InitCompTypes()
 {
-    for (auto& iter: map_ClassTypes)
+    for (auto& iter: map_GenTypes)
     {
         m_a_node_types[static_cast<size_t>(iter.first)].Create(iter.first);
     }
 
     for (auto& child: lstParentChildren)
     {
-        auto parent_type = GetNodeType(rmap_ClassTypes[child.parent]);
-        parent_type->AddChild(rmap_ClassTypes[child.name], child.max_children);
+        auto parent_type = GetNodeType(rmap_GenTypes[child.parent]);
+        parent_type->AddChild(rmap_GenTypes[child.name], child.max_children);
     }
 }
 
-int_t NodeCreator::GetAllowableChildren(Node* parent, ClassType child_class_type, bool is_aui_parent) const
+int_t NodeCreator::GetAllowableChildren(Node* parent, GenType child_class_type, bool is_aui_parent) const
 {
     return parent->GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_class_type, is_aui_parent);
 }
 
 
-int_t NodeType::GetAllowableChildren(ClassType child_class_type, bool is_aui_parent) const
+int_t NodeType::GetAllowableChildren(GenType child_class_type, bool is_aui_parent) const
 {
     if (auto result = m_map_children.find(child_class_type); result != m_map_children.end())
     {

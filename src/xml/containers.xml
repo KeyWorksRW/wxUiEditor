@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <GeneratorDefitions>
 
-  <compinfo class="wxPanel" image="wxPanel" type="container">
+  <gen class="wxPanel" image="wxPanel" type="container">
     <inherits class="Common Events"/>
     <inherits class="wxWindow">
       <property name="window_style">wxTAB_TRAVERSAL</property>
@@ -14,9 +14,9 @@
       <option name="public:"/>
       none
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxSplitterWindow" image="wxSplitterWindow" type="splitter">
+  <gen class="wxSplitterWindow" image="wxSplitterWindow" type="splitter">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -70,9 +70,9 @@
     <event name="wxEVT_SPLITTER_UNSPLIT" class="wxSplitterEvent" help="The splitter has been just unsplit."/>
     <event name="wxEVT_SPLITTER_DOUBLECLICKED" class="wxSplitterEvent"
         help="The sash was double clicked. The default behaviour is to unsplit the window when this happens (unless the minimum pane size has been set to a value greater than zero)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxScrolledWindow" image="wxScrolledWindow" type="container">
+  <gen class="wxScrolledWindow" image="wxScrolledWindow" type="container">
     <inherits class="wxWindow">
       <property name="window_style">wxHSCROLL | wxVSCROLL</property>
     </inherits>
@@ -94,9 +94,9 @@
     <event name="wxEVT_SCROLLWIN_PAGEDOWN" class="wxScrollWinEvent"/>
     <event name="wxEVT_SCROLLWIN_THUMBTRACK" class="wxScrollWinEvent"/>
     <event name="wxEVT_SCROLLWIN_THUMBRELEASE" class="wxScrollWinEvent"/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxCollapsiblePane" image="wxCollapsiblePane" type="container">
+  <gen class="wxCollapsiblePane" image="wxCollapsiblePane" type="container">
     <inherits class="Common Events"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -117,9 +117,9 @@
       <option name="public:"/>
       protected:
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxChoicebook" image="wxChoicebook" type="choicebook">
+  <gen class="wxChoicebook" image="wxChoicebook" type="choicebook">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -144,9 +144,9 @@
     <event name="wxEVT_CHOICEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
     <event name="wxEVT_CHOICEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
         help="The page selection is about to be changed. This event can be vetoed (using wxNotifyEvent::Veto())."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxListbook" image="wxListbook" type="listbook">
+  <gen class="wxListbook" image="wxListbook" type="listbook">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -179,9 +179,9 @@
     <event name="wxEVT_LISTBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
     <event name="wxEVT_LISTBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
         help="The page selection is about to be changed. This event can be vetoed."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxNotebook" image="wxNotebook" type="notebook">
+  <gen class="wxNotebook" image="wxNotebook" type="notebook">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -215,9 +215,9 @@
     <event name="wxEVT_NOTEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
     <event name="wxEVT_NOTEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
         help="The page selection is about to be changed. This event can be vetoed."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxToolbook" image="wxToolbook" type="notebook">
+  <gen class="wxToolbook" image="wxToolbook" type="notebook">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -238,9 +238,9 @@
     <event name="wxEVT_TOOLBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
     <event name="wxEVT_TOOLBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
         help="The page selection is about to be changed. This event can be vetoed."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxTreebook" image="wxTreebook" type="notebook">
+  <gen class="wxTreebook" image="wxTreebook" type="notebook">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -276,18 +276,18 @@
         help="The page selection is about to be changed. This event can be vetoed."/>
     <event name="wxEVT_TREEBOOK_NODE_COLLAPSED" class="wxBookCtrlEvent" help="Generated when the page node is going to be collapsed."/>
     <event name="wxEVT_TREEBOOK_NODE_EXPANDED" class="wxBookCtrlEvent" help="Generated when the page node is going to be collapsed."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxSimplebook" image="wxSimplebook" type="simplebook">
+  <gen class="wxSimplebook" image="wxSimplebook" type="simplebook">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">m_simplebook</property>
     <event name="wxEVT_BOOKCTRL_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
     <event name="wxEVT_BOOKCTRL_PAGE_CHANGING" class="wxBookCtrlEvent"
         help="The page selection is about to be changed. This event can be vetoed."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="BookPage" image="book_page" type="bookpage">
+  <gen class="BookPage" image="book_page" type="bookpage">
     <inherits class="Common Events"/>
     <inherits class="wxWindow">
       <property name="window_style">wxTAB_TRAVERSAL</property>
@@ -308,13 +308,13 @@
       0
     </property>
     <property name="bitmap" type="image" help="Page Image (not all books use this)"/>
-  </compinfo>
+  </gen>
 
   <!-- wxFormBuilder import only -->
-  <compinfo class="oldbookpage" type="oldbookpage">
+  <gen class="oldbookpage" type="oldbookpage">
     <property name="label" type="string_escapes"/>
     <property name="bitmap" type="image"/>
     <property name="select" type="bool"/>
-  </compinfo>
+  </gen>
 
 </GeneratorDefitions>

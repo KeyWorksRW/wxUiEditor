@@ -26,7 +26,7 @@ void InsertDialog::OnNameText(wxCommandEvent& WXUNUSED(event))
     {
         if (!iter)
         {
-            // This will happen if there is an enumerated value but no compinfo for it
+            // This will happen if there is an enumerated value but no generator for it
             continue;
         }
 

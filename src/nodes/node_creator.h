@@ -18,15 +18,15 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-#include "enum_classes.h"  // Enumerations for nodes
-using namespace NodeEnums;
+#include "gen_enums.h"  // Enumerations for generators
+using namespace GenEnum;
 
 class NodeCategory;
 
 using NodeDeclarationMap =
     std::unordered_map<std::string,
                        std::shared_ptr<NodeDeclaration>>;  // std::map<std::string, std::shared_ptr<NodeDeclaration>>
-using NodeDeclarationArray = std::array<NodeDeclaration*, static_cast<size_t>(ClassName::enum_array_size)>;
+using NodeDeclarationArray = std::array<NodeDeclaration*, gen_name_array_size>;
 
 namespace pugi
 {
@@ -50,7 +50,7 @@ public:
 
     // If you have the class enum value, this is the preferred way to get the Declaration
     // pointer.
-    NodeDeclaration* get_declaration(NodeEnums::ClassName class_enum)
+    NodeDeclaration* get_declaration(GenEnum::GenName class_enum)
     {
         return m_a_declarations[static_cast<size_t>(class_enum)];
     }
@@ -74,7 +74,7 @@ public:
     }
 
     int_t GetAllowableChildren(Node* parent, ttlib::cview child_name, bool is_aui_parent = false) const;
-    int_t GetAllowableChildren(Node* parent, NodeEnums::ClassType child_class_type, bool is_aui_parent = false) const;
+    int_t GetAllowableChildren(Node* parent, GenEnum::GenType child_class_type, bool is_aui_parent = false) const;
 
     const NodeDeclarationArray& GetNodeDeclarationArray() const { return m_a_declarations; }
 
@@ -88,7 +88,7 @@ protected:
     void SetupGroup(ttlib::cview file);
     void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
 
-    NodeType* GetNodeType(NodeEnums::ClassType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
+    NodeType* GetNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
 
     size_t CountChildrenWithSameType(Node* parent, NodeType* type);
 
@@ -97,9 +97,8 @@ protected:
     void AddAllConstants();
 
 private:
-    std::array<NodeDeclaration*, static_cast<size_t>(ClassName::enum_array_size)> m_a_declarations;
-
-    std::array<NodeType, static_cast<size_t>(ClassType::enum_array_size)> m_a_node_types;
+    std::array<NodeDeclaration*, gen_name_array_size> m_a_declarations;
+    std::array<NodeType, gen_type_array_size> m_a_node_types;
 
     std::unordered_set<std::string> m_setOldHostTypes;
 

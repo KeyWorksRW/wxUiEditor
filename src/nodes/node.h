@@ -17,19 +17,19 @@
 
 #include "../pugixml/pugixml.hpp"
 
-#include "enum_classes.h"  // Enumerations for nodes
-#include "font_prop.h"     // FontProperty class
-#include "node_decl.h"     // NodeDeclaration class
-#include "node_event.h"    // NodeEvent and NodeEventInfo classes
-#include "node_prop.h"     // NodeProperty class
-#include "node_types.h"    // NodeType -- Class for storing component types and allowable child count
-#include "prop_names.h"    // Property names
+#include "font_prop.h"   // FontProperty class
+#include "gen_enums.h"   // Enumerations for generators
+#include "node_decl.h"   // NodeDeclaration class
+#include "node_event.h"  // NodeEvent and NodeEventInfo classes
+#include "node_prop.h"   // NodeProperty class
+#include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
+#include "prop_names.h"  // Property names
 
 class Node;
 using NodeSharedPtr = std::shared_ptr<Node>;
 using ChildNodePtrs = std::vector<NodeSharedPtr>;
 
-using namespace NodeEnums;
+using namespace GenEnum;
 
 class Node : public std::enable_shared_from_this<Node>
 {
@@ -55,7 +55,7 @@ public:
     size_t GetEventCount() { return m_events.size(); }
     size_t GetInUseEventCount();
 
-    Node* FindNearAncestor(NodeEnums::ClassType type);
+    Node* FindNearAncestor(GenEnum::GenType type);
     Node* FindParentForm();
 
     bool AddChild(NodeSharedPtr node);
@@ -84,8 +84,8 @@ public:
     bool IsChildAllowed(Node* child);
     bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
 
-    NodeEnums::ClassType ClassType() const { return m_info->class_type(); }
-    NodeEnums::ClassName ClassName() const { return m_info->class_name(); }
+    GenType ClassType() const { return m_info->class_type(); }
+    GenName ClassName() const { return m_info->class_name(); }
 
     bool IsChildType(size_t index, ttlib::cview type);
 
@@ -104,10 +104,10 @@ public:
     }
     bool IsStaticBoxSizer()
     {
-        return (ClassName() == ClassName::wxStaticBoxSizer || ClassName() == ClassName::StaticCheckboxBoxSizer ||
-                ClassName() == ClassName::StaticRadioBtnBoxSizer);
+        return (ClassName() == gen_wxStaticBoxSizer || ClassName() == gen_StaticCheckboxBoxSizer ||
+                ClassName() == gen_StaticRadioBtnBoxSizer);
     }
-    bool IsSpacer() { return (ClassName() == ClassName::spacer); }
+    bool IsSpacer() { return (ClassName() == gen_spacer); }
 
     bool IsSizer() { return (ClassType() == type_sizer || ClassType() == type_gbsizer); }
     bool IsContainer() { return (ClassType() == type_container || GetNodeTypeName().contains("book")); }

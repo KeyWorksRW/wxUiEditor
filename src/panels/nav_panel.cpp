@@ -54,7 +54,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     {
         if (!iter)
         {
-            // This will happen if there is an enumerated value but no compinfo for it
+            // This will happen if there is an enumerated value but no generator for it
             continue;
         }
         auto& comp_name = iter->GetClassName();

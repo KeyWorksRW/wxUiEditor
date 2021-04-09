@@ -15,34 +15,34 @@
 #include "../pugixml/pugixml.hpp"
 
 #include "bitmaps.h"       // Map of bitmaps accessed by name
-#include "enum_classes.h"  // Enumerations for nodes
+#include "gen_enums.h"  // Enumerations for nodes
 #include "node.h"          // Node class
 #include "prop_info.h"     // PropDefinition and PropertyInfo classes
 
 NodeCreator g_NodeCreator;
 
-using namespace NodeEnums;
+using namespace GenEnum;
 
 void NodeCreator::Initialize()
 {
-    for (auto& iter: NodeEnums::map_PropTypes)
+    for (auto& iter: GenEnum::map_PropTypes)
     {
-        NodeEnums::rmap_PropTypes[iter.second] = iter.first;
+        GenEnum::rmap_PropTypes[iter.second] = iter.first;
     }
 
-    for (auto& iter: NodeEnums::map_PropNames)
+    for (auto& iter: GenEnum::map_PropNames)
     {
-        NodeEnums::rmap_PropNames[iter.second] = iter.first;
+        GenEnum::rmap_PropNames[iter.second] = iter.first;
     }
 
-    for (auto& iter: NodeEnums::map_ClassTypes)
+    for (auto& iter: GenEnum::map_GenTypes)
     {
-        NodeEnums::rmap_ClassTypes[iter.second] = iter.first;
+        GenEnum::rmap_GenTypes[iter.second] = iter.first;
     }
 
-    for (auto& iter: NodeEnums::map_ClassNames)
+    for (auto& iter: GenEnum::map_GenNames)
     {
-        NodeEnums::rmap_ClassNames[iter.second] = iter.first;
+        GenEnum::rmap_GenNames[iter.second] = iter.first;
     }
 
     InitCompTypes();
@@ -59,7 +59,7 @@ NodeCreator::~NodeCreator()
 
 NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
 {
-    return m_a_declarations[static_cast<size_t>(rmap_ClassNames[className.c_str()])];
+    return m_a_declarations[static_cast<size_t>(rmap_GenNames[className.c_str()])];
 }
 
 // This will add all properties and events, including any base interface classes such as wxWindow, sizeritem, etc.
@@ -172,7 +172,7 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
     else if (parent->GetNodeTypeName() == "tool")
     {
         auto grand_parent = parent->GetParent();
-        if (grand_parent->GetClassName() == "wxToolBar" && comp_type->get_type() == ClassType::type_menu)
+        if (grand_parent->GetClassName() == "wxToolBar" && comp_type->get_type() == type_menu)
             return NodeSharedPtr();
     }
 
@@ -186,13 +186,13 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
     }
     else if (max_children != child_count::none)
     {
-        if (comp_type == GetNodeType(ClassType::type_sizer))
+        if (comp_type == GetNodeType(type_sizer))
         {
             node = NewNode(declaration);
             if (classname.is_sameas("VerticalBoxSizer"))
                 node->get_prop_ptr(txt_orientation)->set_value("wxVERTICAL");
         }
-        else if (comp_type == GetNodeType(ClassType::type_gbsizer))
+        else if (comp_type == GetNodeType(type_gbsizer))
         {
             node = NewNode(declaration);
         }
@@ -366,34 +366,34 @@ bool NodeCreator::ParseGeneratorFile(ttlib::cview name)
 
 void NodeCreator::ParseCompInfo(pugi::xml_node root)
 {
-    auto comp_info = root.child("compinfo");
-    while (comp_info)
+    auto generator = root.child("gen");
+    while (generator)
     {
-        auto class_name = comp_info.attribute("class").as_string();
+        auto class_name = generator.attribute("class").as_string();
 #if defined(_DEBUG)
-        if (rmap_ClassNames.find(class_name) == rmap_ClassNames.end())
+        if (rmap_GenNames.find(class_name) == rmap_GenNames.end())
         {
             MSG_WARNING(ttlib::cstr("Unrecognized class name -- ") << class_name);
         }
 #endif  // _DEBUG
 
-        auto type = comp_info.attribute("type").as_cview();
+        auto type = generator.attribute("type").as_cview();
 #if defined(_DEBUG)
-        if (rmap_ClassTypes.find(type.c_str()) == rmap_ClassTypes.end())
+        if (rmap_GenTypes.find(type.c_str()) == rmap_GenTypes.end())
         {
             MSG_WARNING(ttlib::cstr("Unrecognized class type -- ") << type);
         }
 #endif  // _DEBUG
 
-        auto declaration = new NodeDeclaration(class_name, GetNodeType(rmap_ClassTypes[type.c_str()]));
+        auto declaration = new NodeDeclaration(class_name, GetNodeType(rmap_GenTypes[type.c_str()]));
         m_a_declarations[declaration->class_index()] = declaration;
 
-        if (auto flags = comp_info.attribute("flags").as_cview(); flags.size())
+        if (auto flags = generator.attribute("flags").as_cview(); flags.size())
         {
             declaration->SetCompFlags(flags);
         }
 
-        auto image_name = comp_info.attribute("image").as_cview();
+        auto image_name = generator.attribute("image").as_cview();
         if (image_name.size())
         {
             auto image = GetXPMImage(image_name);
@@ -412,12 +412,12 @@ void NodeCreator::ParseCompInfo(pugi::xml_node root)
             declaration->SetImage(GetXPMImage("unknown").Scale(CompImgSize, CompImgSize));
         }
 
-        // ParseProperties(comp_info, declaration.get(), declaration->GetCategory());
-        ParseProperties(comp_info, declaration, declaration->GetCategory());
+        // ParseProperties(generator, declaration.get(), declaration->GetCategory());
+        ParseProperties(generator, declaration, declaration->GetCategory());
 
-        declaration->ParseEvents(comp_info, declaration->GetCategory());
+        declaration->ParseEvents(generator, declaration->GetCategory());
 
-        comp_info = comp_info.next_sibling("compinfo");
+        generator = generator.next_sibling("gen");
     }
 }
 
@@ -439,7 +439,7 @@ void NodeCreator::SetupGroup(ttlib::cview name)
         return;
     }
 
-    auto elem_obj = root.child("compinfo");
+    auto elem_obj = root.child("gen");
     while (elem_obj)
     {
         auto class_name = elem_obj.attribute("class").as_cview();
@@ -468,7 +468,7 @@ void NodeCreator::SetupGroup(ttlib::cview name)
             elem_base = elem_base.next_sibling("inherits");
         }
 
-        elem_obj = elem_obj.next_sibling("compinfo");
+        elem_obj = elem_obj.next_sibling("gen");
     }
 }
 
@@ -490,7 +490,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
     while (elem_prop)
     {
         auto name = elem_prop.attribute("name").as_string();
-        NodeEnums::Prop prop_name = Prop::missing_property_name;
+        GenEnum::PropName prop_name;
         auto lookup_name = rmap_PropNames.find(name);
         if (lookup_name == rmap_PropNames.end())
         {
@@ -507,7 +507,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         auto prop_type = elem_prop.attribute("type").as_cview();
 
-        auto property_type = enum_missing_property_type;
+        GenEnum::PropType property_type;
         auto lookup_type = rmap_PropTypes.find(prop_type.c_str());
         if (lookup_type == rmap_PropTypes.end())
         {
@@ -528,7 +528,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         }
 
         std::vector<PropDefinition> children;
-        if (property_type == enum_parent)
+        if (property_type == type_parent)
         {
             // If the property is a parent, then get the children
             def_value.clear();
@@ -578,7 +578,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             std::make_shared<PropertyInfo>(prop_name, property_type, def_value, description, customEditor, children);
         obj_info->GetPropInfoMap()[name] = prop_info;
 
-        if (property_type == enum_bitlist || property_type == enum_option || property_type == enum_editoption)
+        if (property_type == type_bitlist || property_type == type_option || property_type == type_editoption)
         {
             auto& opts = prop_info->GetOptions();
             auto elem_opt = elem_prop.child("option");
@@ -617,7 +617,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
                 category.AddProperty(txt_class_access);
                 children.clear();
                 prop_info = std::make_shared<PropertyInfo>(
-                    Prop::class_access, enum_option,
+                    prop_class_access, type_option,
                     "protected:", "Determines the type of access your derived class has to this item.", "", children);
                 obj_info->GetPropInfoMap()[txt_class_access] = prop_info;
 

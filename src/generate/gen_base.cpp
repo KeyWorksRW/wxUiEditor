@@ -29,7 +29,7 @@
 #include "utils.h"         // Utility functions that work with properties
 #include "write_code.h"    // Write code to Scintilla or file
 
-using namespace NodeEnums;
+using namespace GenEnum;
 
 // clang-format off
 
@@ -535,7 +535,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     {
         if (iter.HasValue())
         {
-            if (iter.type() == enum_wxFont)
+            if (iter.type() == type_wxFont)
             {
                 if (isAddToSrc)
                 {
@@ -546,7 +546,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                     set_hdr.insert("#include <wx/font.h>");
                 }
             }
-            else if (iter.type() == enum_wxColour)
+            else if (iter.type() == type_wxColour)
             {
                 if (isAddToSrc)
                 {
@@ -559,7 +559,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                     set_hdr.insert("#include <wx/settings.h>");  // This is needed for the system colours
                 }
             }
-            else if (iter.type() == enum_image)
+            else if (iter.type() == type_image)
             {
                 // The problem at this point is that we don't know how the bitmap will be used. It could be just a
                 // wxBitmap, or it could be handed to a wxImage for sizing, or it might be handed to
@@ -1032,7 +1032,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
 {
     for (auto& iter: node->get_props_vector())
     {
-        if (iter.type() == enum_id)
+        if (iter.type() == type_id)
         {
             auto& prop_id = iter.GetValue();
             if (!prop_id.is_sameprefix("wxID_"))
@@ -1112,7 +1112,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 {
     for (auto& iter: node->get_props_vector())
     {
-        if (iter.type() == enum_image)
+        if (iter.type() == type_image)
         {
             if (!iter.HasValue())
                 continue;

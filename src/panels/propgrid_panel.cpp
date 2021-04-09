@@ -46,7 +46,7 @@
 
 #include "wx_id_list.cpp"  // wxID_ strings
 
-using namespace NodeEnums;
+using namespace GenEnum;
 
 constexpr auto PROPERTY_ID = wxID_HIGHEST + 1;
 constexpr auto EVENT_ID = PROPERTY_ID + 1;
@@ -217,45 +217,45 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
 
     switch (type)
     {
-        case enum_id:
+        case type_id:
             return new wxStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
-        case enum_int:
+        case type_int:
             return new wxIntProperty(prop->GetPropName(), wxPG_LABEL, prop->as_int());
 
-        case enum_uint:
+        case type_uint:
             return new wxUIntProperty(prop->GetPropName(), wxPG_LABEL, prop->as_int());
 
-        case enum_string_escapes:
+        case type_string_escapes:
             // This first doubles the backslash in escaped characters: \n, \t, \r, and \.
             return new wxStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_escape_text().wx_str());
 
-        case enum_string:
+        case type_string:
             return new wxStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
-        case enum_string_edit_escapes:
+        case type_string_edit_escapes:
             // This includes a button that triggers a small text editor dialog
             // This doubles the backslash in escaped characters: \n, \t, \r, and \.
             return new wxLongStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_escape_text().wx_str());
 
-        case enum_string_edit:
+        case type_string_edit:
             // This includes a button that triggers a small text editor dialog
             return new wxLongStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
-        case enum_string_edit_single:
+        case type_string_edit_single:
             // This includes a button that triggers a small single-line custom text editor dialog
             return new EditStringProperty(prop->GetPropName(), prop);
 
-        case enum_bool:
+        case type_bool:
             return new wxBoolProperty(prop->GetPropName(), wxPG_LABEL, prop->GetValue() == "1");
 
-        case enum_wxPoint:
+        case type_wxPoint:
             return new CustomPointProperty(prop->GetPropName(), prop->as_point());
 
-        case enum_wxSize:
+        case type_wxSize:
             return new CustomSizeProperty(prop->GetPropName(), prop->as_size());
 
-        case enum_wxFont:
+        case type_wxFont:
             if (prop->GetValue().empty())
             {
                 return new wxFontProperty(prop->GetPropName(), wxPG_LABEL);
@@ -265,13 +265,13 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
                 return new wxFontProperty(prop->GetPropName(), wxPG_LABEL, prop->as_font());
             }
 
-        case enum_path:
+        case type_path:
             return new wxDirProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
-        case enum_image:
+        case type_image:
             return new PropertyGrid_Image(prop->GetPropName(), prop);
 
-        case enum_float:
+        case type_float:
             return new wxFloatProperty(prop->GetPropName(), wxPG_LABEL, prop->as_float());
 
         default:
@@ -280,7 +280,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
 
     wxPGProperty* new_pg_property = nullptr;
 
-    if (type == enum_bitlist)
+    if (type == type_bitlist)
     {
         auto propInfo = prop->GetPropertyInfo();
 
@@ -312,7 +312,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             }
         }
     }
-    else if (type == enum_option || type == enum_editoption)
+    else if (type == type_option || type == type_editoption)
     {
         auto propInfo = prop->GetPropertyInfo();
 
@@ -330,7 +330,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             }
         }
 
-        if (type == enum_editoption)
+        if (type == type_editoption)
         {
             new_pg_property = new wxEditEnumProperty(prop->GetPropName(), wxPG_LABEL, constants);
         }
@@ -356,7 +356,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
 
         new_pg_property->SetHelpString(desc);
     }
-    else if (type == enum_wxColour)
+    else if (type == type_wxColour)
     {
         auto value = prop->as_string();
         if (value.empty())  // Default Colour
@@ -380,7 +380,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             }
         }
     }
-    else if (type == enum_file)
+    else if (type == type_file)
     {
         new_pg_property = new wxFileProperty(prop->GetPropName(), wxPG_LABEL, prop->as_string());
         auto& prop_name = prop->GetPropName();
@@ -438,13 +438,13 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().getProjectPath().wx_str());
         }
     }
-    else if (type == enum_stringlist)
+    else if (type == type_stringlist)
     {
         new_pg_property = new wxArrayStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxArrayString());
         wxVariant var_quote("\"");
         new_pg_property->DoSetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
     }
-    else if (type == enum_parent)
+    else if (type == type_parent)
     {
         new_pg_property = new wxStringProperty(prop->GetPropName(), wxPG_LABEL);
         new_pg_property->ChangeFlag(wxPG_PROP_READONLY, true);
@@ -479,10 +479,10 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                 continue;
             auto pg = m_prop_grid->Append(GetProperty(prop));
             auto propType = prop->type();
-            if (propType != enum_option)
+            if (propType != type_option)
             {
                 m_prop_grid->SetPropertyHelpString(pg, propInfo->GetDescription());
-                if (propType == enum_parent)
+                if (propType == type_parent)
                 {
                     wxArrayString values = wxStringTokenize(prop->as_string(), ";", wxTOKEN_RET_EMPTY_ALL);
                     size_t index = 0;
@@ -497,7 +497,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                             value = "";
 
                         wxPGProperty* child = nullptr;
-                        if (it->m_prop_type == enum_bool)
+                        if (it->m_prop_type == type_bool)
                         {
                             // Because the format of a composed wxPGProperty value is stored this needs to be converted
                             // true == "<property name>"
@@ -509,7 +509,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                             //       interpreted as true
                             child = new wxBoolProperty(it->m_name, wxPG_LABEL, value.empty() || value == it->m_name);
                         }
-                        else if (it->m_prop_type == enum_string_escapes)
+                        else if (it->m_prop_type == type_string_escapes)
                         {
                             child = new wxStringProperty(it->m_prop_name, wxPG_LABEL, value);
                         }
@@ -523,14 +523,14 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                         m_prop_grid->SetPropertyHelpString(child, it->m_help);
                     }
                 }
-                else if (propType == enum_id)
+                else if (propType == type_id)
                 {
-                    if (prop->GetPropertyInfo()->name() == Prop::id)
+                    if (prop->GetPropertyInfo()->name() == prop_id)
                     {
                         m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_ids);
                     }
                 }
-                else if (propType == enum_image)
+                else if (propType == type_image)
                 {
                     m_prop_grid->Expand(pg);
                     m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#fff1d2"));
@@ -717,7 +717,7 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
 
     switch (prop->type())
     {
-        case enum_file:
+        case type_file:
             VerifyChangeFile(event, prop, node);
             break;
 
@@ -745,7 +745,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
     switch (prop->type())
     {
-        case enum_float:
+        case type_float:
             {
                 double val = m_prop_grid->GetPropertyValueAsDouble(property);
 
@@ -753,17 +753,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case enum_string_edit:
-        case enum_id:
-        case enum_int:
-        case enum_uint:
+        case type_string_edit:
+        case type_id:
+        case type_int:
+        case type_uint:
             {
                 ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));
                 break;
             }
 
-        case enum_option:
-        case enum_editoption:
+        case type_option:
+        case type_editoption:
             {
                 wxString value = m_prop_grid->GetPropertyValueAsString(property);
                 ModifyProperty(prop, value);
@@ -860,7 +860,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case enum_parent:
+        case type_parent:
             {
                 // REVIEW: [KeyWorks - 04-07-2021] Is this comment still true in 3.1?
 
@@ -871,15 +871,15 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case enum_string_escapes:
-        case enum_string_edit_escapes:
+        case type_string_escapes:
+        case type_string_edit_escapes:
             {
                 auto value = ConvertEscapeSlashes(ttlib::cstr() << m_prop_grid->GetPropertyValueAsString(property).wx_str());
                 modifyProperty(prop, value);
                 break;
             }
 
-        case enum_bool:
+        case type_bool:
             {
                 if (prop->GetPropName() == "aui_managed")
                 {
@@ -911,7 +911,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case enum_bitlist:
+        case type_bitlist:
             {
                 ttString value = m_prop_grid->GetPropertyValueAsString(property);
                 value.Replace(" ", "");
@@ -956,21 +956,21 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case enum_wxPoint:
+        case type_wxPoint:
             {
                 wxPoint point = wxPointRefFromVariant(event.GetPropertyValue());
                 modifyProperty(prop, ttlib::cstr() << point.x << ',' << point.y);
                 break;
             }
 
-        case enum_wxSize:
+        case type_wxSize:
             {
                 wxSize size = wxSizeRefFromVariant(event.GetPropertyValue());
                 modifyProperty(prop, ttlib::cstr().Format("%i,%i", size.GetWidth(), size.GetHeight()));
                 break;
             }
 
-        case enum_wxFont:
+        case type_wxFont:
             {
                 wxFont font;
                 font << event.GetPropertyValue();
@@ -982,7 +982,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case enum_wxColour:
+        case type_wxColour:
             {
                 wxColourPropertyValue colour;
                 colour << event.GetPropertyValue();
@@ -1008,7 +1008,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case enum_image:
+        case type_image:
             {
                 ttlib::cstr value;
                 value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
@@ -1026,7 +1026,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             }
             break;
 
-        case enum_file:
+        case type_file:
             {
                 ttString newValue = property->GetValueAsString();
 
@@ -1046,7 +1046,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case enum_path:
+        case type_path:
             {
                 ttString newValue = property->GetValueAsString();
                 newValue.make_absolute();
@@ -1218,38 +1218,38 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 
     switch (prop->type ())
     {
-        case enum_float:
+        case type_float:
             grid_property->SetValue(WXVARIANT(prop->as_float()));
             break;
 
-        case enum_int:
-        case enum_uint:
+        case type_int:
+        case type_uint:
             grid_property->SetValueFromString(prop->as_string(), 0);
             break;
 
-        case enum_string:
-        case enum_string_edit:
+        case type_string:
+        case type_string_edit:
             grid_property->SetValueFromString(prop->as_string(), 0);
             break;
 
-        case enum_string_edit_escapes:
-        case enum_string_escapes:
+        case type_string_edit_escapes:
+        case type_string_escapes:
             grid_property->SetValueFromString(prop->as_escape_text().wx_str(), 0);
             break;
 
-        case enum_id:
-        case enum_option:
-        case enum_editoption:
-        case enum_parent:
+        case type_id:
+        case type_option:
+        case type_editoption:
+        case type_parent:
             grid_property->SetValueFromString(prop->as_escape_text(), 0);
             break;
 
-        case enum_bool:
+        case type_bool:
             // REVIEW: [KeyWorks - 07-03-2020] Any way to use "true" or "false" to be a bit more standard?
             grid_property->SetValueFromInt(prop->as_string() == "0" ? 0 : 1, 0);
             break;
 
-        case enum_bitlist:
+        case type_bitlist:
             {
                 auto value = prop->as_string();
                 value.Replace("|", ", ", true);
@@ -1259,7 +1259,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             }
             break;
 
-        case enum_wxPoint:
+        case type_wxPoint:
             {
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
                 auto aux = prop->as_string();
@@ -1268,7 +1268,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             }
             break;
 
-        case enum_wxSize:
+        case type_wxSize:
             {
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
                 auto aux = prop->as_string();
@@ -1277,13 +1277,13 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             }
             break;
 
-        case enum_wxFont:
+        case type_wxFont:
             // REVIEW: [KeyWorks - 07-03-2020] Why not just use SetValueFromString like the others? And for that matter,
             // when is this being called?
             grid_property->SetValue(WXVARIANT(prop->as_string()));
             break;
 
-        case enum_wxColour:
+        case type_wxColour:
             {
                 auto value = prop->as_string();
                 if (value.empty())  // Default Colour
@@ -1312,7 +1312,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             }
             break;
 
-        case enum_image:
+        case type_image:
             break;
 
         default:

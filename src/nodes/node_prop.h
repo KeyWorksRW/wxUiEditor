@@ -72,7 +72,7 @@ public:
 
     const PropertyInfo* GetPropertyInfo() const { return m_info; }
 
-    NodeEnums::PropType type() const noexcept { return m_info->type(); }
+    GenEnum::PropType type() const noexcept { return m_info->type(); }
 
     ttlib::cstr getChildFromParent(const ttlib::cstr& childName) const;
 
@@ -80,7 +80,7 @@ public:
     const ttlib::cstr& GetPropName() const;
 
     const char* prop_name_as_string() const noexcept { return m_info->name_as_string(); }
-    NodeEnums::Prop prop_name() const noexcept { return m_info->name(); }
+    GenEnum::PropName prop_name() const noexcept { return m_info->name(); }
 
     PropertyInfo* GetPropertyInfo() { return m_info; }
 

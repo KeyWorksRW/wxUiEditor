@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <GeneratorDefitions>
 
-  <compinfo class="wxStaticText" image="wxStaticText" type="widget">
+  <gen class="wxStaticText" image="wxStaticText" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="String Validator"/>
@@ -29,9 +29,9 @@
       <option name="wxST_ELLIPSIZE_END"
         help="If the label text width exceeds the control width, replace the end of the label with an ellipsis; uses wxControl::Ellipsize."/>
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxTextCtrl" image="wxTextCtrl" type="widget">
+  <gen class="wxTextCtrl" image="wxTextCtrl" type="widget">
     <inherits class="Text Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -77,9 +77,9 @@
         help="Generated when the a mouse event occurred over an URL in the text control (Windows and wxGTK2 only)"/>
     <event name="wxEVT_TEXT_MAXLEN" class="wxCommandEvent"
         help="Generated when the user tries to enter more text into the control than the limit set by SetMaxLength."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxCheckBox" image="wxCheckBox" type="widget">
+  <gen class="wxCheckBox" image="wxCheckBox" type="widget">
     <inherits class="Boolean Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -96,9 +96,9 @@
         help="Aligns the checkbox to the right of the text instead of the left."/>
     </property>
     <event name="wxEVT_CHECKBOX" class="wxCommandEvent" help="Generated when the checkbox is clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="Check3State" image="check3state" type="widget">
+  <gen class="Check3State" image="check3state" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -120,9 +120,9 @@
         help="If selected, the user can set the checkbox to the third state by clicking."/>
     </property>
     <event name="wxEVT_CHECKBOX" class="wxCommandEvent" help="Generated when the checkbox is clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxRadioButton" image="wxRadioButton" type="widget">
+  <gen class="wxRadioButton" image="wxRadioButton" type="widget">
     <inherits class="Boolean Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -136,9 +136,9 @@
         help="Creates a radio button which is not part of any radio button group. When this style is used, no other radio buttons will be turned off automatically then this button is checked."/>
     </property>
     <event name="wxEVT_RADIOBUTTON" class="wxCommandEvent" help="Generated when the radio button is clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxButton" image="wxButton" type="widget">
+  <gen class="wxButton" image="wxButton" type="widget">
     <inherits class="Bitmaps"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -168,9 +168,9 @@
         help="Creates a button without border. This is currently implemented in MSW, GTK2 and OSX/Cocoa and OSX/Carbon ports but in the latter only applies to buttons with bitmaps and using bitmap of one of the standard sizes only, namely 128*128, 48*48, 24*24 or 16*16. In all the other cases wxBORDER_NONE is ignored under OSX/Carbon (these restrictions don't exist in OSX/Cocoa however)."/>
     </property>
     <event name="wxEVT_BUTTON" class="wxCommandEvent" help="Generated when the button is clicked"/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxCommandLinkButton" image="wxCommandLinkButton" type="widget">
+  <gen class="wxCommandLinkButton" image="wxCommandLinkButton" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -179,9 +179,9 @@
     <property name="note" type="string_edit_escapes"/>
     <property name="default_btn" type="bool" help="If true, this will be the default button (it will be depressed when the return key is pressed)">0</property>
     <event name="wxEVT_BUTTON" class="wxCommandEvent" help="Generated when the button is clicked"/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxComboBox" image="wxComboBox" type="widget">
+  <gen class="wxComboBox" image="wxComboBox" type="widget">
     <inherits class="Choice Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -212,9 +212,9 @@
         help="Generated when the list box part of the combo box is shown (drops down). Notice that this event is only supported by Windows, wxGTK with GTK+ 2.10 or later, and wxOSX/Cocoa."/>
     <event name="wxEVT_COMBOBOX_CLOSEUP" class="wxCommandEvent"
         help="Generated when the list box of the combo box closes up. This event is only generated for the same platforms as wxEVT_COMBOBOX_DROPDOWN above. Also note that only Windows and wxOSX/Cocoa support adding or deleting items in this event."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxChoice" image="wxChoice" type="widget">
+  <gen class="wxChoice" image="wxChoice" type="widget">
     <inherits class="Choice Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -230,9 +230,9 @@
       <option name="wxCB_SORT" help="Sorts the entries alphabetically."/>
     </property>
     <event name="wxEVT_CHOICE" class="wxCommandEvent" help="Generated when an item in the list is selected."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxListBox" image="wxListBox" type="widget">
+  <gen class="wxListBox" image="wxListBox" type="widget">
     <inherits class="List Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -260,9 +260,9 @@
     </property>
     <event name="wxEVT_LISTBOX" class="wxCommandEvent" help="Generated when an item in the list is selected."/>
     <event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent" help="Generated when the listbox is double-clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxSimpleHtmlListBox" image="wxSimpleHtmlListBox" type="widget">
+  <gen class="wxSimpleHtmlListBox" image="wxSimpleHtmlListBox" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -278,9 +278,9 @@
     <event name="EVT_HTML_CELL_CLICKED" class="wxHtmlCellEvent" help="A wxHtmlCell was clicked."/>
     <event name="EVT_HTML_CELL_HOVER" class="wxHtmlCellEvent" help="The mouse passed over a wxHtmlCell."/>
     <event name="EVT_HTML_LINK_CLICKED" class="wxHtmlCellEvent" help="A wxHtmlCell which contains a hyperlink was clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxCheckListBox" image="wxCheckListBox" type="widget">
+  <gen class="wxCheckListBox" image="wxCheckListBox" type="widget">
     <inherits class="List Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -307,9 +307,9 @@
     <event name="wxEVT_CHECKLISTBOX" class="wxCommandEvent" help="Generated when an item in the check list box is checked or unchecked."/>
     <event name="wxEVT_LISTBOX" class="wxCommandEvent" help="Generated when an item in the list is selected."/>
     <event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent" help="Generated when the listbox is double-clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxListView" image="wxListView" type="widget">
+  <gen class="wxListView" image="wxListView" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -352,9 +352,9 @@
     <event name="wxEVT_LIST_COL_DRAGGING" class="wxListEvent" help="The divider between columns is being dragged."/>
     <event name="wxEVT_LIST_COL_END_DRAG" class="wxListEvent" help="A column has been resized by the user."/>
     <event name="wxEVT_LIST_CACHE_HINT" class="wxListEvent" help="Prepare cache for a virtual list control."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxRadioBox" image="radio_box" type="widget">
+  <gen class="wxRadioBox" image="radio_box" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -379,9 +379,9 @@
       wxRA_SPECIFY_COLS
     </property>
     <event name="wxEVT_RADIOBOX" class="wxCommandEvent" help="Generated when a radio button in the box is clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxStaticBitmap" image="static_bitmap" type="widget">
+  <gen class="wxStaticBitmap" image="static_bitmap" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -400,9 +400,9 @@
       None
     </property>
     <property name="bitmap" type="image"/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxStaticLine" image="static_line" type="widget" flags="no_win_events">
+  <gen class="wxStaticLine" image="static_line" type="widget" flags="no_win_events">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -418,9 +418,9 @@
       <option name="wxLI_VERTICAL" help="Creates a vertical line."/>
       wxLI_HORIZONTAL
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxSlider" image="slider" type="widget">
+  <gen class="wxSlider" image="slider" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -487,9 +487,9 @@
     <event name="wxEVT_SCROLL_THUMBTRACK" class="wxScrollEvent" help="Generated as the user drags the thumbtrack."/>
     <event name="wxEVT_SCROLL_THUMBRELEASE" class="wxScrollEvent" help=""/>
     <event name="wxEVT_SCROLL_CHANGED" class="wxScrollEvent" help="Generated on Windows only."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxGauge" image="gauge" type="widget">
+  <gen class="wxGauge" image="gauge" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -509,9 +509,9 @@
       <option name="wxGA_PROGRESS"
         help="Display the value of the gauge in the application taskbar button under Windows 7 and later and the dock icon under OS X. Ignored under the other platforms. Requires wxWidgets 3.1 or higher."/>
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxFilePickerCtrl" image="filePicker" type="widget">
+  <gen class="wxFilePickerCtrl" image="filePicker" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -536,9 +536,9 @@
     </property>
     <event name="wxEVT_FILEPICKER_CHANGED" class="wxFileDirPickerEvent"
         help="Generated when the user changes the file selected in the control either using the button or using text control (see wxFLP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, e.g. an existing file path if wxFLP_FILE_MUST_EXIST was given)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxDirPickerCtrl" image="dirPicker" type="widget">
+  <gen class="wxDirPickerCtrl" image="dirPicker" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -558,9 +558,9 @@
     </property>
     <event name="wxEVT_DIRPICKER_CHANGED" class="wxFileDirPickerEvent"
         help="Generated when the user changes the directory selected in the control either using the button or using text control (see wxDIRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, e.g. an existing directory path)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxFontPickerCtrl" image="fontPicker" type="widget">
+  <gen class="wxFontPickerCtrl" image="fontPicker" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -588,9 +588,9 @@
     </property>
     <event name="wxEVT_FONTPICKER_CHANGED" class="wxFontPickerEvent"
         help="Generated when the user changs the font selected in the control either using the button or using text control (see wxFNTP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxColourPickerCtrl" image="colourPickerIcon" type="widget">
+  <gen class="wxColourPickerCtrl" image="colourPickerIcon" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -606,9 +606,9 @@
     </property>
     <event name="wxEVT_COLOURPICKER_CHANGED" class="wxColourPickerEvent"
         help="Generated when the user changes the colour selected in the control either using the button or using text control (see wxCLRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxDatePickerCtrl" image="datepicker" type="widget">
+  <gen class="wxDatePickerCtrl" image="datepicker" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -627,9 +627,9 @@
       wxDP_DEFAULT|wxDP_SHOWCENTURY
     </property>
     <event name="wxEVT_DATE_CHANGED" class="wxDateEvent" help="Generated when the user changes the current selection in the control."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxTimePickerCtrl" image="timepicker" type="widget">
+  <gen class="wxTimePickerCtrl" image="timepicker" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -640,9 +640,9 @@
       wxTP_DEFAULT
     </property>
     <event name="wxEVT_TIME_CHANGED" class="wxDateEvent" help="Generated when the user changes the current selection in the control."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxScrollBar" image="scrollbar" type="widget">
+  <gen class="wxScrollBar" image="scrollbar" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -675,9 +675,9 @@
     <event name="wxEVT_SCROLL_THUMBTRACK" class="wxScrollEvent" help="Generated as the user drags the thumbtrack."/>
     <event name="wxEVT_SCROLL_THUMBRELEASE" class="wxScrollEvent" help=""/>
     <event name="wxEVT_SCROLL_CHANGED" class="wxScrollEvent" help="Generated on Windows only."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxSpinCtrl" image="spin_ctrl" type="widget">
+  <gen class="wxSpinCtrl" image="spin_ctrl" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -701,9 +701,9 @@
         help="Generated whenever the user modifies the text in the edit part of the spin control directly."/>
     <event name="wxEVT_TEXT_ENTER" class="wxCommandEvent"
         help="Generated when enter is pressed in the edit part of the spin control (which must have wxTE_PROCESS_ENTER style for this event to be generated)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxSpinCtrlDouble" image="spin_ctrl_double" type="widget">
+  <gen class="wxSpinCtrlDouble" image="spin_ctrl_double" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -740,9 +740,9 @@
         help="Generated whenever the user modifies the text in the edit part of the spin control directly."/>
     <event name="wxEVT_TEXT_ENTER" class="wxCommandEvent"
         help="Generated when enter is pressed in the edit part of the spin control (which must have wxTE_PROCESS_ENTER style for this event to be generated)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxSpinButton" image="spinbtn" type="widget">
+  <gen class="wxSpinButton" image="spinbtn" type="widget">
     <inherits class="Integer Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -757,9 +757,9 @@
     <event name="wxEVT_SPIN" class="wxSpinEvent" help="Generated whenever an arrow is pressed."/>
     <event name="wxEVT_SPIN_UP" class="wxSpinEvent" help="Generated when left/up arrow is pressed."/>
     <event name="wxEVT_SPIN_DOWN" class="wxSpinEvent" help="Generated when right/down arrow is pressed."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxToggleButton" image="toggle_button" type="widget">
+  <gen class="wxToggleButton" image="toggle_button" type="widget">
     <inherits class="Bitmaps"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -785,9 +785,9 @@
         help="Creates a button without border. This is currently implemented in MSW, GTK2 and OSX/Cocoa and OSX/Carbon ports but in the latter only applies to buttons with bitmaps and using bitmap of one of the standard sizes only, namely 128*128, 48*48, 24*24 or 16*16. In all the other cases wxBORDER_NONE is ignored under OSX/Carbon (these restrictions don't exist in OSX/Cocoa however)."/>
     </property>
     <event name="wxEVT_TOGGLEBUTTON" class="wxCommandEvent" help=""/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxBitmapComboBox" image="bmp_combo_box" type="widget">
+  <gen class="wxBitmapComboBox" image="bmp_combo_box" type="widget">
     <inherits class="Choice Validator"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -812,9 +812,9 @@
         help="Generated when an item in the list is selected. Calling GetValue() to return the new value of the selection."/>
     <event name="wxEVT_TEXT" class="wxCommandEvent" help="Generated when the combobox text changes."/>
     <event name="wxEVT_TEXT_ENTER" class="wxCommandEvent" help="Generated when <RETURN> is pressed in the combobox."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxHyperlinkCtrl" image="hyperlink_ctrl" type="widget">
+  <gen class="wxHyperlinkCtrl" image="hyperlink_ctrl" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -845,9 +845,9 @@
     </property>
     <event name="wxEVT_HYPERLINK" class="wxHyperlinkEvent"
         help="If this event is not handled (or it's skipped; see wxEvent::Skip), then a call to wxLaunchDefaultBrowser is done with the hyperlink's URL."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxSearchCtrl" image="search" type="widget">
+  <gen class="wxSearchCtrl" image="search" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -873,9 +873,9 @@
     <event name="wxEVT_SEARCHCTRL_SEARCH_BTN" class="wxCommandEvent"
         help="Generated when the search button is clicked. Note that this does not initiate a search on its own, you need to perform the appropriate action in your event handler. You may use event.GetString() to retrieve the string to search for in the event handler code."/>
     <event name="wxEVT_SEARCHCTRL_CANCEL_BTN" class="wxCommandEvent" help="Generated when the cancel button is clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxHtmlWindow" image="htmlwin" type="widget">
+  <gen class="wxHtmlWindow" image="htmlwin" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -889,9 +889,9 @@
     <event name="wxEVT_HTML_CELL_CLICKED" class="wxHtmlCellEvent" help=""/>
     <event name="wxEVT_HTML_CELL_HOVER" class="wxHtmlCellEvent" help=""/>
     <event name="wxEVT_HTML_LINK_CLICKED" class="wxHtmlLinkEvent" help=""/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxRichTextCtrl" image="richtextctrl" type="expanded_widget">
+  <gen class="wxRichTextCtrl" image="richtextctrl" type="expanded_widget">
     <inherits class="wxWindow">
       <property name="window_style">wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS</property>
     </inherits>
@@ -930,9 +930,9 @@
         help="Generated when content has been inserted into the control. Valid event functions: GetPosition, GetRange."/>
     <event name="wxEVT_RICHTEXT_CONTENT_DELETED" class="wxCommandEvent"
         help="Generated when content has been deleted from the control. Valid event functions: GetPosition, GetRange."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxStyledTextCtrl" image="scintilla" type="expanded_widget">
+  <gen class="wxStyledTextCtrl" image="scintilla" type="expanded_widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1002,9 +1002,9 @@
     <event name="wxEVT_STC_UPDATEUI" class="wxStyledTextEvent" help="Generated when either the text or styling of the document has changed or the selection range or scroll position has changed."/>
     <event name="wxEVT_STC_USERLISTSELECTION" class="wxStyledTextEvent" help="Generated when the user has selected an item in a user list. "/>
     <event name="wxEVT_STC_ZOOM" class="wxStyledTextEvent" help="Generated when the user zooms the display using the keyboard."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxCalendarCtrl" image="calendar" type="widget">
+  <gen class="wxCalendarCtrl" image="calendar" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1030,9 +1030,9 @@
     <event name="wxEVT_CALENDAR_YEAR_CHANGED" class="wxCalendarEvent" help="The selected year changed."/>
     <event name="EVT_CALENDAR_WEEK_CLICKED" class="wxCalendarEvent" help="User clicked on the week day header (only generic)."/>
     <event name="wxEVT_CALENDAR_WEEK_CLICKED" class="wxCalendarEvent" help="User clicked on the week of the year number (only generic)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxGenericDirCtrl" image="genericdir_ctrl" type="expanded_widget">
+  <gen class="wxGenericDirCtrl" image="genericdir_ctrl" type="expanded_widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1060,9 +1060,9 @@
     <event name="wxEVT_DIRCTRL_SELECTIONCHANGED" class="wxCommandEvent"
         help="Selected directory has changed. Notice that this event is generated even for the changes done by the program itself and not only those done by the user."/>
     <event name="wxEVT_DIRCTRL_FILEACTIVATED" class="wxCommandEvent" help="The user activated a file by double-clicking or pressing Enter."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxFileCtrl" image="wxFileCtrl" type="expanded_widget">
+  <gen class="wxFileCtrl" image="wxFileCtrl" type="expanded_widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1096,9 +1096,9 @@
         help="The current folder of the file control has been changed."/>
     <event name="wxEVT_FILECTRL_FILTERCHANGED" class="wxCommandEvent"
         help="The current file filter of the file control has been changed."/>
-</compinfo>
+</gen>
 
-  <compinfo class="wxTreeCtrl" image="tree_ctrl" type="widget">
+  <gen class="wxTreeCtrl" image="tree_ctrl" type="widget">
     <inherits class="wxTreeCtrlBase"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -1124,9 +1124,9 @@
     <event name="wxEVT_TREE_SET_INFO" class="wxTreeEvent" help="Information is being supplied."/>
     <event name="wxEVT_TREE_ITEM_GETTOOLTIP" class="wxTreeEvent" help="The opportunity to set the item tooltip is being given to the application (call wxTreeEvent::SetToolTip). Windows only."/>
     <event name="wxEVT_TREE_STATE_IMAGE_CLICK" class="wxTreeEvent" help="The state image has been clicked. Windows only."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxGrid" image="grid" type="widget">
+  <gen class="wxGrid" image="grid" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1218,9 +1218,9 @@
     <event name="wxEVT_GRID_ROW_SIZE" class="wxGridSizeEvent" help="The user resized a row by dragging it."/>
     <event name="wxEVT_GRID_RANGE_SELECT" class="wxGridRangeSelectEvent" help="The user selected a group of contiguous cells."/>
     <event name="wxEVT_GRID_EDITOR_CREATED" class="wxGridEditorCreatedEvent" help="The editor for a cell was created."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxTreeListCtrl" image="treelistctrl" type="treelistctrl">
+  <gen class="wxTreeListCtrl" image="treelistctrl" type="treelistctrl">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1241,9 +1241,9 @@
     <event name="wxEVT_TREELIST_ITEM_ACTIVATED" class="wxTreeListEvent" help="Generated when the user double clicks the item or activating it from the keyboard."/>
     <event name="wxEVT_TREELIST_ITEM_CONTEXT_MENU" class="wxTreeListEvent" help=""/>
     <event name="wxEVT_TREELIST_COLUMN_SORTED" class="wxTreeListEvent" help="The event doesn't carry the sort direction, use GetSortColumn() method if you need to know it."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="TreeListCtrlColumn" image="treelistctrlcolumn" type="treelistctrlcolumn">
+  <gen class="TreeListCtrlColumn" image="treelistctrlcolumn" type="treelistctrlcolumn">
     <property name="var_name" type="string_escapes" help="The column label.">Column</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -1269,9 +1269,9 @@
       <option name="wxCOL_HIDDEN" help="Column is not shown at all."/>
       wxCOL_RESIZABLE
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxDataViewCtrl" image="dataviewtree_ctrl" type="dataviewctrl" >
+  <gen class="wxDataViewCtrl" image="dataviewtree_ctrl" type="dataviewctrl" >
     <inherits class="wxControl"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -1311,9 +1311,9 @@
     <event name="wxEVT_DATAVIEW_ITEM_BEGIN_DRAG" class="wxDataViewEvent" help=""/>
     <event name="wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE" class="wxDataViewEvent" help=""/>
     <event name="wxEVT_DATAVIEW_ITEM_DROP" class="wxDataViewEvent" help=""/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxDataViewTreeCtrl" image="dataviewtree_ctrl" type="dataviewtreectrl" >
+  <gen class="wxDataViewTreeCtrl" image="dataviewtree_ctrl" type="dataviewtreectrl" >
     <inherits class="wxControl"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -1353,9 +1353,9 @@
     <event name="wxEVT_DATAVIEW_ITEM_BEGIN_DRAG" class="wxDataViewEvent" help=""/>
     <event name="wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE" class="wxDataViewEvent" help=""/>
     <event name="wxEVT_DATAVIEW_ITEM_DROP" class="wxDataViewEvent" help=""/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxDataViewListCtrl" image="dataviewlist_ctrl" type="dataviewlistctrl" >
+  <gen class="wxDataViewListCtrl" image="dataviewlist_ctrl" type="dataviewlistctrl" >
     <inherits class="wxControl"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -1395,9 +1395,9 @@
     <event name="wxEVT_DATAVIEW_ITEM_BEGIN_DRAG" class="wxDataViewEvent" help=""/>
     <event name="wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE" class="wxDataViewEvent" help=""/>
     <event name="wxEVT_DATAVIEW_ITEM_DROP" class="wxDataViewEvent" help=""/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="dataViewColumn" image="dataviewlist_column" type="dataviewcolumn" >
+  <gen class="dataViewColumn" image="dataviewlist_column" type="dataviewcolumn" >
     <property name="var_name" type="string">m_dataViewColumn</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -1447,9 +1447,9 @@
       <option name="wxELLIPSIZE_MIDDLE" help="Put the ellipsis in the middle of the string, if the string needs ellipsization."/>
       <option name="wxELLIPSIZE_END" help="Put the ellipsis at the end of the string, if the string needs ellipsization."/>
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="dataViewListColumn" image="dataviewlist_column" type="dataviewlistcolumn" >
+  <gen class="dataViewListColumn" image="dataviewlist_column" type="dataviewlistcolumn" >
     <property name="var_name" type="string">m_dataViewListColumn</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -1496,9 +1496,9 @@
       <option name="wxELLIPSIZE_MIDDLE" help="Put the ellipsis in the middle of the string, if the string needs ellipsization."/>
       <option name="wxELLIPSIZE_END" help="Put the ellipsis at the end of the string, if the string needs ellipsization."/>
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxPropertyGrid" image="wxPropertyGrid" type="propgrid">
+  <gen class="wxPropertyGrid" image="wxPropertyGrid" type="propgrid">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1537,9 +1537,9 @@
     </property>
     <event name="wxEVT_PG_CHANGING" class="wxPropertyGridEvent" help="Property value is about to be changed. Use wxPropertyGridEvent::GetValue() to take a peek at the pending value, and wxPropertyGridEvent::Veto() to prevent change from taking place, if necessary."/>
     <event name="wxEVT_PG_CHANGED" class="wxPropertyGridEvent" help="Property value is modified."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxPropertyGridManager" image="wxPropertyGridManager" type="propgridman">
+  <gen class="wxPropertyGridManager" image="wxPropertyGridManager" type="propgridman">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1587,9 +1587,9 @@
     </property>
     <event name="wxEVT_PG_CHANGING" class="wxPropertyGridEvent" help="Property value is about to be changed. Use wxPropertyGridEvent::GetValue() to take a peek at the pending value, and wxPropertyGridEvent::Veto() to prevent change from taking place, if necessary."/>
     <event name="wxEVT_PG_CHANGED" class="wxPropertyGridEvent" help="Property value is modified."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="propGridPage" image="propgridpage" type="propgridpage">
+  <gen class="propGridPage" image="propgridpage" type="propgridpage">
     <property name="var_name" type="string" help="Instance name.">m_propertyGridPage</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -1599,9 +1599,9 @@
     </property>
     <property name="label" type="string_escapes" help="Label shown as a tooltip of the manager's tool button.">Page</property>
     <property name="bitmap" type="image" help="Bitmap shown in the property manager's header."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="propGridItem" image="propgriditem" type="propgriditem">
+  <gen class="propGridItem" image="propgriditem" type="propgriditem">
     <property name="var_name" type="string" help="Instance name and an internal name of the property item.">m_propertyGridItem</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -1633,9 +1633,9 @@
       String
     </property>
     <property name="help" type="string_escapes" help="Property item's name."></property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxActivityIndicator" image="wxActivityIndicator" type="widget">
+  <gen class="wxActivityIndicator" image="wxActivityIndicator" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1646,9 +1646,9 @@
       <option name="public:"/>
       protected:
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxBannerWindow" image="wxBannerWindow" type="widget">
+  <gen class="wxBannerWindow" image="wxBannerWindow" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -1671,6 +1671,6 @@
       <option name="wxRIGHT"/>
       wxTOP
     </property>
-  </compinfo>
+  </gen>
 
 </GeneratorDefitions>

@@ -17,7 +17,7 @@
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 
-using namespace NodeEnums;
+using namespace GenEnum;
 
 // Same as wxGetApp() only this returns a reference to the project node
 Node& wxGetProject()
@@ -112,7 +112,7 @@ NodeEvent* Node::AddNodeEvent(const NodeEventInfo* info)
     return &m_events[m_events.size() - 1];
 }
 
-Node* Node::FindNearAncestor(NodeEnums::ClassType type)
+Node* Node::FindNearAncestor(GenType type)
 {
     Node* result = nullptr;
     auto parent = GetParent();

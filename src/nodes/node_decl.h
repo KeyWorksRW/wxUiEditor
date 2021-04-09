@@ -13,11 +13,11 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-#include "category.h"      // NodeCategory -- Node property categories
-#include "enum_classes.h"  // Enumerations for nodes
-#include "node_types.h"    // NodeType -- Class for storing component types and allowable child count
+#include "category.h"    // NodeCategory -- Node property categories
+#include "gen_enums.h"   // Enumerations for generators
+#include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
 
-using namespace NodeEnums;
+using namespace GenEnum;
 
 using DblStrMap = std::map<std::string, std::string, std::less<>>;
 using PropertyInfoPtr = std::shared_ptr<PropertyInfo>;
@@ -53,10 +53,10 @@ public:
 
     NodeType* GetNodeType() const { return m_type; }
 
-    ClassType class_type() const noexcept { return m_class_type; }
-    ClassName class_name() const noexcept { return m_class_enum; }
+    GenType class_type() const noexcept { return m_class_type; }
+    GenName class_name() const noexcept { return m_class_enum; }
 
-    // Use this if you need the index into an array of ClassName enums.
+    // Use this if you need the index into an array of GenName enums.
     size_t class_index() const noexcept { return static_cast<size_t>(m_class_enum); }
 
     const ttlib::cstr& GetClassName() const { return m_classname; }
@@ -67,7 +67,7 @@ public:
         return m_base.size() - 1;
     }
 
-    bool isSubclassOf(ClassName class_name) const;
+    bool isSubclassOf(GenName class_name) const;
 
     NodeDeclaration* GetBaseClass(size_t idx, bool inherited = true) const;
 
@@ -106,7 +106,7 @@ private:
 
     BaseGenerator* m_component { nullptr };
 
-    ClassName m_class_enum;
-    ClassType m_class_type;
-    const char* m_name;  // this points into map_ClassNames
+    GenName m_class_enum;
+    GenType m_class_type;
+    const char* m_name;  // this points into map_GenNames
 };

@@ -19,7 +19,7 @@
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
 
-using namespace NodeEnums;
+using namespace GenEnum;
 
 // Called to replace properties in older project files
 static bool CheckProperty(pugi::xml_node& xml_prop, Node* node);
@@ -427,7 +427,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
             }
             else if (auto prop = newobject->get_prop_ptr(prop_name); prop)
             {
-                if (prop->type() == enum_bool)
+                if (prop->type() == type_bool)
                     prop->set_value(xml_prop.text().as_bool());
                 else
                     prop->set_value(xml_prop.text().as_cview());

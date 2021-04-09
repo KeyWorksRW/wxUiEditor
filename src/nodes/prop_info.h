@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "enum_classes.h"  // Enumerations for nodes
+#include "gen_enums.h"  // Enumerations for generators
 
 struct PropDefinition
 {
@@ -19,15 +19,15 @@ struct PropDefinition
 
     // BUGBUG: [KeyWorks - 04-09-2021] NodeCreator::ParseProperties does not initialize the following for parent properties
 
-    NodeEnums::PropType m_prop_type;
-    NodeEnums::Prop m_enum_name;
+    GenEnum::PropType m_prop_type;
+    GenEnum::PropName m_enum_name;
     const char* m_prop_name;
 };
 
 class PropertyInfo : public PropDefinition
 {
 public:
-    PropertyInfo(NodeEnums::Prop prop_name, NodeEnums::PropType prop_type, ttlib::cview def_value,
+    PropertyInfo(GenEnum::PropName prop_name, GenEnum::PropType prop_type, ttlib::cview def_value,
                  ttlib::cview help, ttlib::cview customEditor, const std::vector<PropDefinition>& children)
     {
         m_def_value = def_value;
@@ -37,7 +37,7 @@ public:
 
         m_prop_type = prop_type;
         m_enum_name = prop_name;
-        m_prop_name = NodeEnums::map_PropNames[m_enum_name];
+        m_prop_name = GenEnum::map_PropNames[m_enum_name];
 
         // TODO: This is only here until all callers stop using GetName()
         m_name = m_prop_name;
@@ -46,8 +46,8 @@ public:
     const std::vector<PropDefinition>* GetChildren() const noexcept { return &m_children; }
 
     const char* name_as_string() const noexcept { return m_prop_name; }
-    NodeEnums::Prop name() const noexcept { return m_enum_name; }
-    NodeEnums::PropType type() const noexcept { return m_prop_type; }
+    GenEnum::PropName name() const noexcept { return m_enum_name; }
+    GenEnum::PropType type() const noexcept { return m_prop_type; }
 
     const ttlib::cstr& GetName() const noexcept { return m_name; }
 

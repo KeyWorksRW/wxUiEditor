@@ -22,7 +22,7 @@
 
 #include "node_prop.h"
 
-using namespace NodeEnums;
+using namespace GenEnum;
 
 NodeProperty::NodeProperty(PropertyInfo* info, Node* node) : m_info(info), m_node(node) {}
 
@@ -44,12 +44,12 @@ int NodeProperty::as_int() const
 {
     switch (type())
     {
-        case enum_editoption:
-        case enum_option:
-        case enum_id:
+        case type_editoption:
+        case type_option:
+        case type_id:
             return g_NodeCreator.GetConstantAsInt(m_value, 0);
 
-        case enum_bitlist:
+        case type_bitlist:
             {
                 int result = 0;
                 ttlib::multistr mstr(m_value, '|');
@@ -281,13 +281,13 @@ bool NodeProperty::HasValue()
 
     switch (type())
     {
-        case enum_wxSize:
+        case type_wxSize:
             return (as_size() != wxDefaultSize);
 
-        case enum_wxPoint:
+        case type_wxPoint:
             return (as_point() != wxDefaultPosition);
 
-        case enum_image:
+        case type_image:
             if (auto semicolonIndex = m_value.find_first_of(";"); ttlib::is_found(semicolonIndex))
             {
                 // REVIEW: [KeyWorks - 08-06-2020] This reflects what IsNull() does, but seems suspicious...
@@ -303,7 +303,7 @@ bool NodeProperty::HasValue()
 void NodeProperty::splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& children) const
 {
     children.clear();
-    if (m_info->type() != enum_parent)
+    if (m_info->type() != type_parent)
     {
         return;
     }
@@ -327,7 +327,7 @@ void NodeProperty::splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& child
 void NodeProperty::SplitParentProperty(std::map<wxString, wxString>* children) const
 {
     children->clear();
-    if (m_info->type() != enum_parent)
+    if (m_info->type() != type_parent)
     {
         return;
     }

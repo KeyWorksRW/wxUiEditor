@@ -11,7 +11,7 @@
 #include "node.h"       // Node class
 #include "prop_info.h"  // PropDefinition and PropertyInfo classes
 
-using namespace NodeEnums;
+using namespace GenEnum;
 
 void Node::CreateDoc(pugi::xml_document& doc)
 {
@@ -39,7 +39,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
                 continue;
 
             auto attr = node.append_attribute(iter.GetPropName().c_str());
-            if (iter.type() == enum_bool)
+            if (iter.type() == type_bool)
                 attr.set_value(iter.as_bool());
             else
                 attr.set_value(value.c_str());
@@ -48,7 +48,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
         {
             // Some properties need to be saved with empty values
 
-            if (iter.prop_name() == Prop::label || iter.prop_name() == Prop::borders)
+            if (iter.prop_name() == prop_label || iter.prop_name() == prop_borders)
             {
                 node.append_attribute(iter.prop_name_as_string());
             }

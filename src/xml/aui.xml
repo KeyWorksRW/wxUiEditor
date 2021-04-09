@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <GeneratorDefitions>
 
-  <compinfo class="AUI Events" type="interface">
+  <gen class="AUI Events" type="interface">
     <event name="wxEVT_AUI_PANE_BUTTON" class="wxAuiManagerEvent" help=""/>
     <event name="wxEVT_AUI_PANE_CLOSE" class="wxAuiManagerEvent" help=""/>
     <event name="wxEVT_AUI_PANE_MAXIMIZE" class="wxAuiManagerEvent" help=""/>
@@ -9,9 +9,9 @@
     <event name="wxEVT_AUI_PANE_ACTIVATED" class="wxAuiManagerEvent" help=""/>
     <event name="wxEVT_AUI_RENDER" class="wxAuiManagerEvent" help=""/>
     <event name="wxEVT_AUI_FIND_MANAGER" class="wxAuiManagerEvent" help=""/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxAuiNotebook" image="auinotebook" type="auinotebook">
+  <gen class="wxAuiNotebook" image="auinotebook" type="auinotebook">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">m_auinotebook</property>
@@ -61,15 +61,15 @@
     <event name="wxEVT_AUINOTEBOOK_TAB_RIGHT_DOWN" class="wxAuiNotebookEvent" help="The right mouse button is pressed on a tab."/>
     <event name="wxEVT_AUINOTEBOOK_TAB_RIGHT_UP" class="wxAuiNotebookEvent" help="The right mouse button is released on a tab."/>
     <event name="wxEVT_AUINOTEBOOK_BG_DCLICK" class="wxAuiNotebookEvent" help="Double clicked on the tabs background area."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="auinotebookpage" image="auinotebook" type="auinotebookpage">
+  <gen class="auinotebookpage" image="auinotebook" type="auinotebookpage">
     <property name="label" type="string_escapes">a page</property>
     <property name="bitmap" type="image" help="Page Image"/>
     <property name="select" type="bool" help="Select Page when Adding">0</property>
-  </compinfo>
+  </gen>
 
- <compinfo class="wxAuiToolBar" image="auitoolbar" type="toolbar">
+ <gen class="wxAuiToolBar" image="auitoolbar" type="toolbar">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">m_auiToolBar</property>
@@ -107,6 +107,6 @@
       <option name="wxAUI_TB_DEFAULT_STYLE" help="The default is to have no styles."/>
       wxAUI_TB_HORZ_LAYOUT
     </property>
-  </compinfo>
+  </gen>
 
 </GeneratorDefitions>

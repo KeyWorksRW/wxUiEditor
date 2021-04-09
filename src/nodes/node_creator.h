@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <array>
 #include <map>
 #include <set>
 #include <unordered_set>
@@ -16,6 +17,9 @@
 #include "prop_info.h"   // PropDefinition and PropertyInfo classes
 
 #include "node_classes.h"  // Forward defintions of Node classes
+
+#include "enum_classes.h"  // Enumerations for nodes
+using namespace NodeEnums;
 
 class NodeCategory;
 
@@ -41,6 +45,13 @@ public:
     NodeSharedPtr CreateNode(ttlib::cview class_name, Node* parent);
     NodeSharedPtr NewNode(NodeDeclaration* node_info);
 
+    // If you have the class enum value, this is the preferred way to get the Declaration
+    // pointer.
+    NodeDeclaration* get_declaration(NodeEnums::Class class_enum)
+    {
+        return m_a_declarations[static_cast<size_t>(class_enum)];
+    }
+
     NodeDeclaration* GetNodeDeclaration(ttlib::cview class_name);
 
     // This returns the integer value of most wx constants used in various components
@@ -60,6 +71,7 @@ public:
     }
 
     int_t GetAllowableChildren(Node* parent, ttlib::cview child_name, bool is_aui_parent = false) const;
+    int_t GetAllowableChildren(Node* parent, NodeEnums::ClassType child_class_type, bool is_aui_parent = false) const;
 
     const NodeDeclarationMap& GetNodeDeclarationMap() const { return m_node_declarations; }
 
@@ -73,7 +85,7 @@ protected:
     void SetupGroup(ttlib::cview file);
     void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
 
-    NodeType* GetNodeType(ttlib::cview name);
+    NodeType* GetNodeType(NodeEnums::ClassType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
 
     size_t CountChildrenWithSameType(Node* parent, NodeType* type);
 
@@ -82,9 +94,12 @@ protected:
     void AddAllConstants();
 
 private:
+    // REVIEW: [KeyWorks - 04-08-2021] Why are we using a std::shared_ptr to store NodeDeclaration?
     NodeDeclarationMap m_node_declarations;
 
-    std::unordered_map<std::string, std::unique_ptr<NodeType>> m_component_types;
+    std::array<NodeDeclaration*, static_cast<size_t>(NodeEnums::Class::enum_array_size)> m_a_declarations;
+
+    std::array<NodeType, static_cast<size_t>(ClassType::enum_array_size)> m_a_node_types;
 
     std::unordered_set<std::string> m_setOldHostTypes;
 

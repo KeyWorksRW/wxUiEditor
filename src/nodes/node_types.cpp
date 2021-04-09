@@ -13,6 +13,7 @@
 #include "node_creator.h"  // NodeCreator class
 
 using namespace child_count;
+using namespace NodeEnums;
 
 struct ParentChildInfo
 {
@@ -27,8 +28,8 @@ struct ParentChildInfo
 // A child node can only be created if it is listed below as valid for the current parent.
 static const ParentChildInfo lstParentChildren[] = {
 
-    { "auinotebook", "auinotebookpage", infinite },
-    { "auinotebookpage", "container", one },
+    // { "auinotebook", "auinotebookpage", infinite },
+    // { "auinotebookpage", "container", one },
 
     { "bookpage", "gbsizer", one },
     { "bookpage", "sizer", one },
@@ -50,7 +51,6 @@ static const ParentChildInfo lstParentChildren[] = {
     { "form", "dataviewlistctrl", none },
     { "form", "dataviewtreectrl", none },
     { "form", "expanded_widget", none },
-    { "form", "flatnotebook", none },
     { "form", "listbook", none },
     { "form", "nonvisual", infinite },
     { "form", "notebook", none },
@@ -77,7 +77,6 @@ static const ParentChildInfo lstParentChildren[] = {
     { "gbsizer", "dataviewlistctrl", infinite },
     { "gbsizer", "dataviewtreectrl", infinite },
     { "gbsizer", "expanded_widget", infinite },
-    { "gbsizer", "flatnotebook", infinite },
     { "gbsizer", "gbsizer", infinite },
     { "gbsizer", "listbook", infinite },
     { "gbsizer", "notebook", infinite },
@@ -130,7 +129,6 @@ static const ParentChildInfo lstParentChildren[] = {
     { "sizer", "dataviewlistctrl", infinite },
     { "sizer", "dataviewtreectrl", infinite },
     { "sizer", "expanded_widget", infinite },
-    { "sizer", "flatnotebook", infinite },
     { "sizer", "gbsizer", infinite },
     { "sizer", "listbook", infinite },
     { "sizer", "notebook", infinite },
@@ -187,10 +185,8 @@ static constexpr const char* lstNodeTypes[] = {
     "dataviewlistctrl",
     "dataviewtreectrl",
     "expanded_widget",
-    "flatnotebook",
     "form",
     "gbsizer",
-    "image",
     "interface",
     "listbook",
     "menu",
@@ -242,7 +238,7 @@ static constexpr const char* fb_ImportTypes[] = {
     "oldbookpage",
 
     // BUGBUG: [KeyWorks - 12-10-2020] This thing still exists and is bogus!
-    "auinotebookpage",
+    // "auinotebookpage",
 
 };
 
@@ -250,55 +246,41 @@ static constexpr const char* fb_ImportTypes[] = {
 
 void NodeCreator::InitCompTypes()
 {
-    for (auto& name: lstNodeTypes)
+    for (auto& iter: map_ClassTypes)
     {
-        m_component_types[name] = std::make_unique<NodeType>(name);
-    }
-
-    for (auto& name: fb_ImportTypes)
-    {
-        m_setOldHostTypes.emplace(name);
-
-        // REVIEW: [KeyWorks - 12-10-2020] We still need this while auinotebookpage exists...
-        m_component_types[name] = std::make_unique<NodeType>(name);
+        m_a_node_types[static_cast<size_t>(iter.first)].Create(iter.first);
     }
 
     for (auto& child: lstParentChildren)
     {
-        ASSERT(m_component_types.find(child.parent) != m_component_types.end());
-        auto parent_type = m_component_types.find(child.parent)->second.get();
-
-        parent_type->AddChild(child.name, child.max_children);
+        auto parent_type = GetNodeType(rmap_ClassTypes[child.parent]);
+        parent_type->AddChild(rmap_ClassTypes[child.name], child.max_children);
     }
 }
 
-int_t NodeCreator::GetAllowableChildren(Node* parent, ttlib::cview child_type, bool is_aui_parent) const
+int_t NodeCreator::GetAllowableChildren(Node* parent, ClassType child_class_type, bool is_aui_parent) const
 {
-    return parent->GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_type, is_aui_parent);
+    return parent->GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_class_type, is_aui_parent);
 }
 
-void NodeType::AddChild(const char* name, int_t max_children)
-{
-    m_children[name] = std::make_unique<AllowableChildren>(max_children);
-}
 
-int_t NodeType::GetAllowableChildren(ttlib::cview child_name, bool is_aui_parent) const
+int_t NodeType::GetAllowableChildren(ClassType child_class_type, bool is_aui_parent) const
 {
-    if (auto iter = m_children.find(child_name.c_str()); iter != m_children.end())
+    if (auto result = m_map_children.find(child_class_type); result != m_map_children.end())
     {
-        if (is_aui_parent && m_name == "form")
+        if (is_aui_parent && m_class_type == type_form)
         {
             // wxAui forms do not use a top-level sizer
 
-            if (child_name.is_sameas("sizer") || child_name.is_sameas("gbsizer"))
+            if (child_class_type == type_sizer || child_class_type == type_gbsizer)
                 return none;
 
             // Except for the "bar" types which both regular and aui forms only allow one of, all the other types can have
             // multiple children.
-            if (iter->second.get()->max_children == none)
+            if (result->second == none)
                 return infinite;
         }
-        return iter->second.get()->max_children;
+        return result->second;
     }
     return none;
 }

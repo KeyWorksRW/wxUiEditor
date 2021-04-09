@@ -12,9 +12,14 @@
 #include "node.h"       // Contains the user-modifiable node
 #include "prop_info.h"  // PropDefinition and PropertyInfo classes
 
+using namespace NodeEnums;
+
 NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) :
     m_classname(class_name), m_type(type), m_category(class_name)
 {
+    m_class_enum = rmap_ClassNames[class_name.c_str()];
+    m_class_type = rmap_ClassTypes[type->get_name()];
+    m_name = NodeEnums::map_ClassNames[m_class_enum];
 }
 
 PropertyInfo* NodeDeclaration::GetPropertyInfo(size_t idx) const

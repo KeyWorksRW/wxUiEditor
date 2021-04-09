@@ -13,8 +13,9 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-#include "category.h"
-#include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
+#include "category.h"      // NodeCategory -- Node property categories
+#include "enum_classes.h"  // Enumerations for nodes
+#include "node_types.h"    // NodeType -- Class for storing component types and allowable child count
 
 using DblStrMap = std::map<std::string, std::string, std::less<>>;
 using PropertyInfoPtr = std::shared_ptr<PropertyInfo>;
@@ -46,9 +47,15 @@ public:
 
     const std::string& GetBaseClassDefaultPropertyValue(size_t baseIndex, const std::string& propertyName) const;
 
+    // [[deprecated]] const ttlib::cstr& GetNodeTypeName() const { return m_type->get_name(); }
     const ttlib::cstr& GetNodeTypeName() const { return m_type->get_name(); }
 
     NodeType* GetNodeType() const { return m_type; }
+
+    NodeEnums::ClassType class_type() const noexcept { return m_class_type; }
+    // NodeEnums::Class class_enum() const noexcept { return m_class_enum; }
+    size_t class_enum() const noexcept { return static_cast<size_t>(m_class_enum); }
+    const char* class_name() const noexcept { return m_name; }
 
     const ttlib::cstr& GetClassName() const { return m_classname; }
 
@@ -97,4 +104,8 @@ private:
     std::vector<NodeDeclaration*> m_base;  // base classes
 
     BaseGenerator* m_component { nullptr };
+
+    NodeEnums::Class m_class_enum;
+    NodeEnums::ClassType m_class_type;
+    const char* m_name;  // this points into map_ClassNames
 };

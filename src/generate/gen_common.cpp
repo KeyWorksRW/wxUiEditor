@@ -182,7 +182,6 @@ static constexpr const char* ParentTypes[] = {
     "bookpage",
     "choicebook",
     "container",
-    "flatnotebook",
     "listbook",
     "notebook",
     "simplebook",

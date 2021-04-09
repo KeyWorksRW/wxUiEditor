@@ -17,16 +17,19 @@
 
 #include "../pugixml/pugixml.hpp"
 
-#include "font_prop.h"   // FontProperty class
-#include "node_decl.h"   // NodeDeclaration class
-#include "node_event.h"  // NodeEvent and NodeEventInfo classes
-#include "node_prop.h"   // NodeProperty class
-#include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
-#include "prop_names.h"  // Property names
+#include "enum_classes.h"  // Enumerations for nodes
+#include "font_prop.h"     // FontProperty class
+#include "node_decl.h"     // NodeDeclaration class
+#include "node_event.h"    // NodeEvent and NodeEventInfo classes
+#include "node_prop.h"     // NodeProperty class
+#include "node_types.h"    // NodeType -- Class for storing component types and allowable child count
+#include "prop_names.h"    // Property names
 
 class Node;
 using NodeSharedPtr = std::shared_ptr<Node>;
 using ChildNodePtrs = std::vector<NodeSharedPtr>;
+
+using namespace NodeEnums;
 
 class Node : public std::enable_shared_from_this<Node>
 {
@@ -85,20 +88,22 @@ public:
     bool IsChildAllowed(Node* child);
     bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
 
+    ClassType ClassType() const { return m_info->class_type(); }
+
     bool IsChildType(size_t index, ttlib::cview type);
 
-    bool IsWidget() { return (GetNodeTypeName() == "widget"); }
-    bool IsWizard() { return (GetNodeTypeName() == "wizard"); }
-    bool IsMenuBar() { return (GetNodeTypeName() == "menubar_form" || GetNodeTypeName() == "menubar"); }
-    bool IsToolBar() { return (GetNodeTypeName() == "toolbar" || GetNodeTypeName() == "toolbar_form"); }
-    bool IsStatusBar() { return (GetNodeTypeName() == "statusbar"); }
-    bool IsRibbonBar() { return (GetNodeTypeName() == "ribbonbar"); }
+    bool IsWidget() { return (ClassType() == type_widget); }
+    bool IsWizard() { return (ClassType() == type_wizard); }
+    bool IsMenuBar() { return (ClassType() == type_menubar_form || ClassType() == type_menubar); }
+    bool IsToolBar() { return (ClassType() == type_toolbar || ClassType() == type_toolbar_form); }
+    bool IsStatusBar() { return (ClassType() == type_statusbar); }
+    bool IsRibbonBar() { return (ClassType() == type_ribbonbar); }
 
     // This does not include MenuBar, ToolBar, StatusBar or Wizard
     bool IsForm()
     {
-        return (GetNodeTypeName() == "form" || GetNodeTypeName() == "menubar_form" || GetNodeTypeName() == "toolbar_form" ||
-                GetNodeTypeName() == "wizard");
+        return (ClassType() == type_form || ClassType() == type_menubar_form || ClassType() == type_toolbar_form ||
+                ClassType() == type_wizard);
     }
     bool IsStaticBoxSizer()
     {
@@ -107,8 +112,8 @@ public:
     }
     bool IsSpacer() { return (GetClassName() == "spacer"); }
 
-    bool IsSizer() { return (GetNodeTypeName() == "sizer" || GetNodeTypeName() == "gbsizer"); }
-    bool IsContainer() { return (GetNodeTypeName() == "container" || GetNodeTypeName().contains("book")); }
+    bool IsSizer() { return (ClassType() == type_sizer || ClassType() == type_gbsizer); }
+    bool IsContainer() { return (ClassType() == type_container || GetNodeTypeName().contains("book")); }
 
     // Returns true if access property == none or there is no access property
     bool IsLocal();

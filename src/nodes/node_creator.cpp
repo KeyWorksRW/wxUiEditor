@@ -169,11 +169,11 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
     else if (parent->GetNodeTypeName() == "tool")
     {
         auto grand_parent = parent->GetParent();
-        if (grand_parent->GetClassName() == "wxToolBar" && comp_type->get_name() == "menu")
+        if (grand_parent->GetClassName() == "wxToolBar" && comp_type->get_type() == ClassType::type_menu)
             return NodeSharedPtr();
     }
 
-    auto max_children = GetAllowableChildren(parent, comp_type->get_name(), aui);
+    auto max_children = GetAllowableChildren(parent, comp_type->get_type(), aui);
 
     if (max_children == child_count::infinite)
     {
@@ -183,13 +183,13 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
     }
     else if (max_children != child_count::none)
     {
-        if (comp_type == GetNodeType("sizer"))
+        if (comp_type == GetNodeType(ClassType::type_sizer))
         {
             node = NewNode(declaration);
             if (classname.is_sameas("VerticalBoxSizer"))
                 node->get_prop_ptr(txt_orientation)->set_value("wxVERTICAL");
         }
-        else if (comp_type == GetNodeType("gbsizer"))
+        else if (comp_type == GetNodeType(ClassType::type_gbsizer))
         {
             node = NewNode(declaration);
         }
@@ -293,7 +293,7 @@ void NodeCreator::SetDefaultLayoutProperties(Node* node)
         }
         node->get_prop_ptr(txt_borders)->set_value("wxALL");
     }
-    else if (node_type == "notebook" || node_type == "flatnotebook" || node_type == "listbook" ||
+    else if (node_type == "notebook" || node_type == "listbook" ||
              node_type == "simplebook" || node_type == "choicebook" || node_type == "auinotebook" ||
              node_type == "treelistctrl" || node_type == "expanded_widget" || node_type == "container")
     {
@@ -330,16 +330,6 @@ void NodeCreator::InitDeclarations()
     }
 
     InitGenerators();
-}
-
-NodeType* NodeCreator::GetNodeType(ttlib::cview name)
-{
-    if (auto it = m_component_types.find(name.c_str()); it != m_component_types.end())
-        return it->second.get();
-
-    FAIL_MSG(ttlib::cstr("Could not locate ") << name << " component type");
-
-    return nullptr;
 }
 
 int NodeCreator::GetConstantAsInt(const std::string& name, int defValue)
@@ -392,8 +382,22 @@ void NodeCreator::ParseCompInfo(pugi::xml_node root)
         }
 #endif  // _DEBUG
 
-        auto declaration = std::make_shared<NodeDeclaration>(class_name, GetNodeType(type));
+        // REVIEW: [KeyWorks - 04-08-2021] We should be able to create the declaration just using new. That's technically a
+        // memory leak, but there's no advantage to freeing the memory when the program exits, since all of the program's
+        // memory will be released. We take a similar approach when we create component generators.
+
+        // auto declaration = std::make_shared<NodeDeclaration>(class_name, GetNodeType(type));
+
+        auto declaration = std::make_shared<NodeDeclaration>(class_name, GetNodeType(rmap_ClassTypes[type.c_str()]));
+
         m_node_declarations[class_name] = declaration;
+
+        // REVIEW: [KeyWorks - 04-08-2021] While we transition from accessing the declaration via the class name versus the
+        // newer class enumeration value, we store the pointer in two maps. If we can eliminate the above map, then we need
+        // to see if we can't change this to a unique_ptr instead of a shared_ptr. Once created, the declaration is only
+        // accessed via the raw pointer, so there's no point in using a reference-counting pointer.
+
+        m_a_declarations[declaration->class_enum()] = declaration.get();
 
         if (auto flags = comp_info.attribute("flags").as_cview(); flags.size())
         {

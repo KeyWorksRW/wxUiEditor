@@ -7,7 +7,10 @@
 
 #pragma once
 
-#include <unordered_map>
+#include <map>
+
+#include "enum_classes.h"  // Enumerations for nodes
+using namespace NodeEnums;
 
 namespace child_count
 {
@@ -21,27 +24,31 @@ namespace child_count
 class NodeType
 {
 public:
-    NodeType(ttlib::cview name) : m_name(name) {}
+    NodeType() {}
+
+    void Create(ClassType class_type)
+    {
+        m_class_type = class_type;
+        m_name = map_ClassTypes[class_type];
+    }
 
     const ttlib::cstr& get_name() const noexcept { return m_name; }
+    ClassType get_type() const noexcept { return m_class_type; }
 
-    int_t GetAllowableChildren(ttlib::cview child_name, bool is_aui_parent = false) const;
+    int_t GetAllowableChildren(ClassType child_class_type, bool is_aui_parent = false) const;
 
     int_t GetAllowableChildren(NodeType* child_type, bool is_aui_parent = false) const
     {
-        return GetAllowableChildren(child_type->get_name(), is_aui_parent);
+        return GetAllowableChildren(child_type->get_type(), is_aui_parent);
     }
 
-    void AddChild(const char* name, int_t max_children);
+    void AddChild(ClassType class_type, int_t max_children) { m_map_children[class_type] = max_children; }
 
 private:
+    // It's rare, but sometimes we need to check for a partial name such as "book" to match multiple types
     ttlib::cstr m_name;
 
-    struct AllowableChildren
-    {
-        AllowableChildren(int_t max) { max_children = max; }
-        int_t max_children;
-    };
+    ClassType m_class_type;
 
-    std::unordered_map<std::string, std::unique_ptr<AllowableChildren>> m_children;
+    std::map<ClassType, int_t> m_map_children;
 };

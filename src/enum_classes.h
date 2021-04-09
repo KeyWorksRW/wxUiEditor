@@ -308,6 +308,8 @@ namespace NodeEnums
         wrap,
         wrap_flags,
 
+        // This must always be the last item as it is used to calculate the array size needed to store all items
+        enum_array_size,
     };
     extern std::map<NodeEnums::Prop, const char*> map_PropNames;
     extern std::unordered_map<std::string, NodeEnums::Prop> rmap_PropNames;
@@ -315,66 +317,70 @@ namespace NodeEnums
     enum ClassType : size_t
     {
 
-        enum_bookpage,
-        enum_choicebook,
-        enum_container,
-        enum_dataviewcolumn,
-        enum_dataviewctrl,
-        enum_dataviewlistcolumn,
-        enum_dataviewlistctrl,
-        enum_dataviewtreectrl,
-        enum_expanded_widget,
-        enum_form,
-        enum_gbsizer,
-        enum_gbsizeritem,
-        enum_interface,
-        enum_listbook,
-        enum_menu,
-        enum_menubar,
-        enum_menubar_form,
-        enum_menuitem,
-        enum_notebook,
-        enum_oldbookpage,
-        enum_project,
-        enum_propgrid,
-        enum_propgriditem,
-        enum_propgridman,
-        enum_propgridpage,
-        enum_ribbonbar,
-        enum_ribbonbutton,
-        enum_ribbonbuttonbar,
-        enum_ribbongallery,
-        enum_ribbongalleryitem,
-        enum_ribbonpage,
-        enum_ribbonpanel,
-        enum_ribbontool,
-        enum_ribbontoolbar,
-        enum_simplebook,
-        enum_sizer,
-        enum_sizeritem,
-        enum_splitter,
-        enum_splitteritem,
-        enum_statusbar,
-        enum_submenu,
-        enum_tool,
-        enum_toolbar,
-        enum_toolbar_form,
-        enum_treelistctrl,
-        enum_treelistctrlcolumn,
-        enum_widget,
-        enum_wizard,
-        enum_wizardpagesimple,
+        type_auinotebook,
 
+        type_bookpage,
+        type_choicebook,
+        type_container,
+        type_dataviewcolumn,
+        type_dataviewctrl,
+        type_dataviewlistcolumn,
+        type_dataviewlistctrl,
+        type_dataviewtreectrl,
+        type_expanded_widget,
+        type_form,
+        type_gbsizer,
+        type_gbsizeritem,
+        type_interface,
+        type_listbook,
+        type_menu,
+        type_menubar,
+        type_menubar_form,
+        type_menuitem,
+        type_notebook,
+        type_oldbookpage,
+        type_project,
+        type_propgrid,
+        type_propgriditem,
+        type_propgridman,
+        type_propgridpage,
+        type_ribbonbar,
+        type_ribbonbutton,
+        type_ribbonbuttonbar,
+        type_ribbongallery,
+        type_ribbongalleryitem,
+        type_ribbonpage,
+        type_ribbonpanel,
+        type_ribbontool,
+        type_ribbontoolbar,
+        type_simplebook,
+        type_sizer,
+        type_sizeritem,
+        type_splitter,
+        type_splitteritem,
+        type_statusbar,
+        type_submenu,
+        type_tool,
+        type_toolbar,
+        type_toolbar_form,
+        type_treelistctrl,
+        type_treelistctrlcolumn,
+        type_widget,
+        type_wizard,
+        type_wizardpagesimple,
+
+        // This must always be the last item as it is used to calculate the array size needed to store all items
+        enum_array_size,
     };
-    extern std::map<size_t, const char*> map_ClassTypes;
-    extern std::unordered_map<std::string, size_t> rmap_ClassTypes;
+    extern std::map<ClassType, const char*> map_ClassTypes;
+    extern std::unordered_map<std::string, ClassType> rmap_ClassTypes;
 
     // We can't use the enum_ prefix like we do above because some class types and class names are identical.
 
     enum class Class : size_t
     {
 
-        AUI,
+        AUI = 0,
         Bitmaps,
         BookPage,
         Boolean_Validator,
@@ -500,6 +506,9 @@ namespace NodeEnums
         wxWizard,
         wxWizardPageSimple,
         wxWrapSizer,
+
+        // This must always be the last item as it is used to calculate the array size needed to store all items
+        enum_array_size,
 
     };
     extern std::map<NodeEnums::Class, const char*> map_ClassNames;

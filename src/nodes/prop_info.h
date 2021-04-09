@@ -17,6 +17,8 @@ struct PropDefinition
     // TODO: these are obsolete and need to be removed
     ttlib::cstr m_name;
 
+    // BUGBUG: [KeyWorks - 04-09-2021] NodeCreator::ParseProperties does not initialize the following for parent properties
+
     NodeEnums::PropType m_prop_type;
     NodeEnums::Prop m_enum_name;
     const char* m_prop_name;

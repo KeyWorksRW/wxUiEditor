@@ -528,7 +528,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         }
 
         std::vector<PropDefinition> children;
-        if (property_type == enum_bool)
+        if (property_type == enum_parent)
         {
             // If the property is a parent, then get the children
             def_value.clear();
@@ -546,7 +546,10 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
                         child.m_help = "Determines the type of access your derived class has to this item.";
                 }
 
-                auto child_type = elem_child.attribute("type").as_cview("wxString");
+                // BUGBUG: [KeyWorks - 04-09-2021] We're setting child.m_name which but not any of the NodeEnum members.
+
+                // auto child_type = elem_child.attribute("type").as_cview("wxString");
+                // child.m_type = ParsePropertyType(child_type);
 
                 // Note: empty tags don't contain any child
                 std::string child_value;

@@ -26,6 +26,7 @@ class NodeCategory;
 using NodeDeclarationMap =
     std::unordered_map<std::string,
                        std::shared_ptr<NodeDeclaration>>;  // std::map<std::string, std::shared_ptr<NodeDeclaration>>
+using NodeDeclarationArray = std::array<NodeDeclaration*, static_cast<size_t>(ClassName::enum_array_size)>;
 
 namespace pugi
 {
@@ -40,6 +41,8 @@ class NodeCreator
 {
 public:
     NodeCreator() {};
+    ~NodeCreator();
+
     void Initialize();
 
     NodeSharedPtr CreateNode(ttlib::cview class_name, Node* parent);
@@ -47,7 +50,7 @@ public:
 
     // If you have the class enum value, this is the preferred way to get the Declaration
     // pointer.
-    NodeDeclaration* get_declaration(NodeEnums::Class class_enum)
+    NodeDeclaration* get_declaration(NodeEnums::ClassName class_enum)
     {
         return m_a_declarations[static_cast<size_t>(class_enum)];
     }
@@ -73,7 +76,7 @@ public:
     int_t GetAllowableChildren(Node* parent, ttlib::cview child_name, bool is_aui_parent = false) const;
     int_t GetAllowableChildren(Node* parent, NodeEnums::ClassType child_class_type, bool is_aui_parent = false) const;
 
-    const NodeDeclarationMap& GetNodeDeclarationMap() const { return m_node_declarations; }
+    const NodeDeclarationArray& GetNodeDeclarationArray() const { return m_a_declarations; }
 
 protected:
     void InitCompTypes();
@@ -94,10 +97,7 @@ protected:
     void AddAllConstants();
 
 private:
-    // REVIEW: [KeyWorks - 04-08-2021] Why are we using a std::shared_ptr to store NodeDeclaration?
-    NodeDeclarationMap m_node_declarations;
-
-    std::array<NodeDeclaration*, static_cast<size_t>(NodeEnums::Class::enum_array_size)> m_a_declarations;
+    std::array<NodeDeclaration*, static_cast<size_t>(ClassName::enum_array_size)> m_a_declarations;
 
     std::array<NodeType, static_cast<size_t>(ClassType::enum_array_size)> m_a_node_types;
 

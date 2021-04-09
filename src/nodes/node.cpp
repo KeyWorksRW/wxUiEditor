@@ -17,6 +17,8 @@
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 
+using namespace NodeEnums;
+
 // Same as wxGetApp() only this returns a reference to the project node
 Node& wxGetProject()
 {
@@ -110,42 +112,13 @@ NodeEvent* Node::AddNodeEvent(const NodeEventInfo* info)
     return &m_events[m_events.size() - 1];
 }
 
-NodeSharedPtr Node::FindNearAncestorPtr(const std::string& type)
-{
-    NodeSharedPtr result = nullptr;
-    auto parent = GetParentPtr();
-    if (parent)
-    {
-        if (parent->GetNodeTypeName() == type)
-            result = parent;
-        else
-            result = parent->FindNearAncestorPtr(type);
-    }
-
-    return result;
-}
-
-NodeSharedPtr Node::FindParentFormPtr()
-{
-    if (auto retObj = FindNearAncestorPtr("form"); retObj)
-        return retObj;
-    if (auto retObj = FindNearAncestorPtr("menubar_form"); retObj)
-        return retObj;
-    if (auto retObj = FindNearAncestorPtr("toolbar_form"); retObj)
-        return retObj;
-    if (auto retObj = FindNearAncestorPtr("wizard"); retObj)
-        return retObj;
-
-    return nullptr;
-}
-
-Node* Node::FindNearAncestor(const std::string& type)
+Node* Node::FindNearAncestor(NodeEnums::ClassType type)
 {
     Node* result = nullptr;
     auto parent = GetParent();
     if (parent)
     {
-        if (parent->GetNodeTypeName() == type)
+        if (parent->ClassType() == type)
             result = parent;
         else
             result = parent->FindNearAncestor(type);
@@ -154,29 +127,15 @@ Node* Node::FindNearAncestor(const std::string& type)
     return result;
 }
 
-Node* Node::FindNearAncestorByBaseClass(const std::string& type)
-{
-    auto parent = GetParent();
-    while (parent)
-    {
-        if (parent->GetNodeDeclaration()->IsSubclassOf(type))
-            return parent;
-
-        parent = parent->GetParent();
-    }
-
-    return parent;
-}
-
 Node* Node::FindParentForm()
 {
-    if (auto retObj = FindNearAncestor("form"); retObj)
+    if (auto retObj = FindNearAncestor(type_form); retObj)
         return retObj;
-    if (auto retObj = FindNearAncestor("menubar_form"); retObj)
+    if (auto retObj = FindNearAncestor(type_menubar_form); retObj)
         return retObj;
-    if (auto retObj = FindNearAncestor("toolbar_form"); retObj)
+    if (auto retObj = FindNearAncestor(type_toolbar_form); retObj)
         return retObj;
-    if (auto retObj = FindNearAncestor("wizard"); retObj)
+    if (auto retObj = FindNearAncestor(type_wizard); retObj)
         return retObj;
 
     return nullptr;

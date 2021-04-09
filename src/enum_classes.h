@@ -377,10 +377,11 @@ namespace NodeEnums
 
     // We can't use the enum_ prefix like we do above because some class types and class names are identical.
 
-    enum class Class : size_t
+    enum class ClassName : size_t
     {
 
         AUI = 0,
+
         Bitmaps,
         BookPage,
         Boolean_Validator,
@@ -423,6 +424,7 @@ namespace NodeEnums
         tool,
         toolSeparator,
         wxActivityIndicator,
+        wxAuiMDIChildFrame,
         wxBannerWindow,
         wxBitmapComboBox,
         wxBoxSizer,
@@ -511,7 +513,7 @@ namespace NodeEnums
         enum_array_size,
 
     };
-    extern std::map<NodeEnums::Class, const char*> map_ClassNames;
-    extern std::unordered_map<std::string, NodeEnums::Class> rmap_ClassNames;
+    extern std::map<NodeEnums::ClassName, const char*> map_ClassNames;
+    extern std::unordered_map<std::string, NodeEnums::ClassName> rmap_ClassNames;
 
 };  // namespace NodeEnums

@@ -29,6 +29,7 @@
 #include "auto_freeze.h"   // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "bitmaps.h"       // Map of bitmaps accessed by name
 #include "cstm_event.h"    // CustomEvent -- Custom Event class
+#include "enum_classes.h"  // Enumerations for nodes
 #include "gen_base.h"      // Generate Base class
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
@@ -56,6 +57,8 @@
 #include "../pugixml/pugixml.hpp"
 
 #include "xpm/logo64.xpm"
+
+using namespace NodeEnums;
 
 bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck);
 
@@ -403,12 +406,12 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
 
     auto sel_node = event.GetNode();
 
-    if (sel_node->GetClassName() == "wxToolBar")
+    if (sel_node->ClassName() == ClassName::wxToolBar)
     {
         if (sel_node->GetParent()->IsSizer())
         {
             auto grandparent = sel_node->GetParent()->GetParent();
-            if (grandparent->GetClassName() == "wxFrame" || grandparent->GetClassName() == "wxAuiMDIChildFrame")
+            if (grandparent->ClassName() == ClassName::wxFrame || grandparent->ClassName() == ClassName::wxAuiMDIChildFrame)
             {
                 // Caution! In wxWidgets 3.1.3 The info bar will wrap the first word if it starts with "If".
                 GetPropInfoBar()->ShowMessage(_tt(strId_tb_in_sizer), wxICON_INFORMATION);
@@ -1263,7 +1266,7 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
 
 Node* MainFrame::FindChildSizerItem(Node* node)
 {
-    if (node->GetNodeDeclaration()->IsSubclassOf("sizer_dimension"))
+    if (node->GetNodeDeclaration()->isSubclassOf(ClassName::sizer_dimension))
         return node;
     else
     {

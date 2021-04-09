@@ -12,8 +12,6 @@
 #include "node.h"       // Contains the user-modifiable node
 #include "prop_info.h"  // PropDefinition and PropertyInfo classes
 
-using namespace NodeEnums;
-
 NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) :
     m_classname(class_name), m_type(type), m_category(class_name)
 {
@@ -118,7 +116,7 @@ size_t NodeDeclaration::GetBaseClassCount(bool inherited) const
     {
         std::vector<NodeDeclaration*> classes;
 
-        // Do the first loop here to avoid recursion is we're only one deep
+        // Do the first loop here to avoid recursion if we're only one deep
         for (auto& iter: m_base)
         {
             classes.push_back(iter);
@@ -148,38 +146,19 @@ void NodeDeclaration::GetBaseClasses(std::vector<NodeDeclaration*>& classes, boo
     }
 }
 
-bool NodeDeclaration::IsSubclassOf(const std::string& classname) const
+bool NodeDeclaration::isSubclassOf(ClassName class_name) const
 {
-    if (m_classname == classname)
+    if (class_name == m_class_enum)
     {
         return true;
     }
     else
     {
-        // Calling GetBaseClassCount() is exepensive, so do it once and store the result
-        auto base_classes = GetBaseClassCount();
-        for (size_t i = 0; i < base_classes; ++i)
+        std::vector<NodeDeclaration*> classes;
+        GetBaseClasses(classes);
+        for (auto& iter: classes)
         {
-            if (GetBaseClass(i)->IsSubclassOf(classname))
-                return true;
-        }
-    }
-    return false;
-}
-
-bool NodeDeclaration::isSubclassOf(ttlib::cview classname) const
-{
-    if (m_classname.is_sameas(classname))
-    {
-        return true;
-    }
-    else
-    {
-        // Calling GetBaseClassCount() is exepensive, so do it once and store the result
-        auto base_classes = GetBaseClassCount();
-        for (size_t i = 0; i < base_classes; ++i)
-        {
-            if (GetBaseClass(i)->isSubclassOf(classname))
+            if (iter->isSubclassOf(class_name))
                 return true;
         }
     }

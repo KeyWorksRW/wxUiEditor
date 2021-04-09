@@ -49,14 +49,17 @@ void NodeCreator::Initialize()
     InitDeclarations();
 }
 
+NodeCreator::~NodeCreator()
+{
+    for (auto& iter: m_a_declarations)
+    {
+        delete iter;
+    }
+}
+
 NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
 {
-    if (auto it = m_node_declarations.find(className.c_str()); it != m_node_declarations.end())
-    {
-        return it->second.get();
-    }
-
-    return nullptr;
+    return m_a_declarations[static_cast<size_t>(rmap_ClassNames[className.c_str()])];
 }
 
 // This will add all properties and events, including any base interface classes such as wxWindow, sizeritem, etc.
@@ -293,9 +296,9 @@ void NodeCreator::SetDefaultLayoutProperties(Node* node)
         }
         node->get_prop_ptr(txt_borders)->set_value("wxALL");
     }
-    else if (node_type == "notebook" || node_type == "listbook" ||
-             node_type == "simplebook" || node_type == "choicebook" || node_type == "auinotebook" ||
-             node_type == "treelistctrl" || node_type == "expanded_widget" || node_type == "container")
+    else if (node_type == "notebook" || node_type == "listbook" || node_type == "simplebook" || node_type == "choicebook" ||
+             node_type == "auinotebook" || node_type == "treelistctrl" || node_type == "expanded_widget" ||
+             node_type == "container")
     {
         if (proportion)
         {
@@ -382,22 +385,8 @@ void NodeCreator::ParseCompInfo(pugi::xml_node root)
         }
 #endif  // _DEBUG
 
-        // REVIEW: [KeyWorks - 04-08-2021] We should be able to create the declaration just using new. That's technically a
-        // memory leak, but there's no advantage to freeing the memory when the program exits, since all of the program's
-        // memory will be released. We take a similar approach when we create component generators.
-
-        // auto declaration = std::make_shared<NodeDeclaration>(class_name, GetNodeType(type));
-
-        auto declaration = std::make_shared<NodeDeclaration>(class_name, GetNodeType(rmap_ClassTypes[type.c_str()]));
-
-        m_node_declarations[class_name] = declaration;
-
-        // REVIEW: [KeyWorks - 04-08-2021] While we transition from accessing the declaration via the class name versus the
-        // newer class enumeration value, we store the pointer in two maps. If we can eliminate the above map, then we need
-        // to see if we can't change this to a unique_ptr instead of a shared_ptr. Once created, the declaration is only
-        // accessed via the raw pointer, so there's no point in using a reference-counting pointer.
-
-        m_a_declarations[declaration->class_enum()] = declaration.get();
+        auto declaration = new NodeDeclaration(class_name, GetNodeType(rmap_ClassTypes[type.c_str()]));
+        m_a_declarations[declaration->class_index()] = declaration;
 
         if (auto flags = comp_info.attribute("flags").as_cview(); flags.size())
         {
@@ -423,7 +412,8 @@ void NodeCreator::ParseCompInfo(pugi::xml_node root)
             declaration->SetImage(GetXPMImage("unknown").Scale(CompImgSize, CompImgSize));
         }
 
-        ParseProperties(comp_info, declaration.get(), declaration->GetCategory());
+        // ParseProperties(comp_info, declaration.get(), declaration->GetCategory());
+        ParseProperties(comp_info, declaration, declaration->GetCategory());
 
         declaration->ParseEvents(comp_info, declaration->GetCategory());
 

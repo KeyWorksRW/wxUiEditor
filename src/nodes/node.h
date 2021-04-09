@@ -55,11 +55,7 @@ public:
     size_t GetEventCount() { return m_events.size(); }
     size_t GetInUseEventCount();
 
-    NodeSharedPtr FindNearAncestorPtr(const std::string& type);
-    NodeSharedPtr FindParentFormPtr();
-
-    Node* FindNearAncestor(const std::string& type);
-    Node* FindNearAncestorByBaseClass(const std::string& type);
+    Node* FindNearAncestor(NodeEnums::ClassType type);
     Node* FindParentForm();
 
     bool AddChild(NodeSharedPtr node);
@@ -88,7 +84,8 @@ public:
     bool IsChildAllowed(Node* child);
     bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
 
-    ClassType ClassType() const { return m_info->class_type(); }
+    NodeEnums::ClassType ClassType() const { return m_info->class_type(); }
+    NodeEnums::ClassName ClassName() const { return m_info->class_name(); }
 
     bool IsChildType(size_t index, ttlib::cview type);
 
@@ -107,10 +104,10 @@ public:
     }
     bool IsStaticBoxSizer()
     {
-        return (GetClassName() == "wxStaticBoxSizer" || GetClassName() == "StaticCheckboxBoxSizer" ||
-                GetClassName() == "StaticRadioBtnBoxSizer");
+        return (ClassName() == ClassName::wxStaticBoxSizer || ClassName() == ClassName::StaticCheckboxBoxSizer ||
+                ClassName() == ClassName::StaticRadioBtnBoxSizer);
     }
-    bool IsSpacer() { return (GetClassName() == "spacer"); }
+    bool IsSpacer() { return (ClassName() == ClassName::spacer); }
 
     bool IsSizer() { return (ClassType() == type_sizer || ClassType() == type_gbsizer); }
     bool IsContainer() { return (ClassType() == type_container || GetNodeTypeName().contains("book")); }

@@ -22,20 +22,25 @@ void InsertDialog::OnNameText(wxCommandEvent& WXUNUSED(event))
 {
     ttlib::cstr name = m_text_name->GetValue().utf8_str().data();
     m_listBox->Clear();
-    auto node_map = g_NodeCreator.GetNodeDeclarationMap();
-    for (auto& iter: node_map)
+    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
     {
+        if (!iter)
+        {
+            // This will happen if there is an enumerated value but no compinfo for it
+            continue;
+        }
+
 #if !defined(_DEBUG)
         // In a DEBUG build, we show all components, including the abstract ones -- including some that are only used for
         // importing a wxFormBuilder project and won't work in our own projects. So don't be surprised if something shows up
         // in the list that doesn't work!
 
-        if (!iter.second->GetClassName().is_sameprefix("wx"))
+        if (!iter->GetClassName().is_sameprefix("wx"))
             continue;
 #endif  // not defined(_DEBUG)
 
-        if (iter.second->GetClassName().contains(name, tt::CASE::either))
-            m_listBox->AppendString(iter.second->GetClassName().wx_str());
+        if (iter->GetClassName().contains(name, tt::CASE::either))
+            m_listBox->AppendString(iter->GetClassName().wx_str());
     }
 
     if (m_listBox->GetCount() > 0)

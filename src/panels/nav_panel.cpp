@@ -50,10 +50,15 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     int index = 0;
     m_iconList = new wxImageList(CompImgSize, CompImgSize);
 
-    for (auto& iter: g_NodeCreator.GetNodeDeclarationMap())
+    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
     {
-        auto& comp_name = iter.second.get()->GetClassName();
-        m_iconList->Add(iter.second.get()->GetImage());
+        if (!iter)
+        {
+            // This will happen if there is an enumerated value but no compinfo for it
+            continue;
+        }
+        auto& comp_name = iter->GetClassName();
+        m_iconList->Add(iter->GetImage());
         m_iconIdx[comp_name] = index++;
     }
 

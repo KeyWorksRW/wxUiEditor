@@ -150,7 +150,7 @@
         help="This can be used to apply fonts or colours to different parts of the label.">
       0
     </property>
-    <property name="default" type="bool">0</property>
+    <property name="default_btn" type="bool" help="Set the button to be the default item in its top-level window">0</property>
     <property name="auth_needed" type="bool"
         help="Sets whether an authentication needed symbol should be displayed on the button. This method doesn't do anything if the platform is not Windows Vista or newer.">
       0
@@ -177,7 +177,7 @@
     <property name="var_name" type="string">m_btn</property>
     <property name="main_label" type="string_edit">MyButton</property>
     <property name="note" type="string_edit_escapes"/>
-    <property name="default" type="bool" help="If true, this will be the default button (it will be depressed when the return key is pressed)">0</property>
+    <property name="default_btn" type="bool" help="If true, this will be the default button (it will be depressed when the return key is pressed)">0</property>
     <event name="wxEVT_BUTTON" class="wxCommandEvent" help="Generated when the button is clicked"/>
   </compinfo>
 

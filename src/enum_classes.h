@@ -120,7 +120,7 @@ namespace NodeEnums
         context_menu,
         converted_art,
         current,
-        default,
+        default_btn,
         default_button,
         default_pane,
         defaultfilter,

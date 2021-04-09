@@ -115,7 +115,7 @@ std::map<NodeEnums::Prop, const char*> NodeEnums::map_PropNames = {
     { Prop::context_menu, "context_menu" },
     { Prop::converted_art, "converted_art" },
     { Prop::current, "current" },
-    { Prop::default, "default" },
+    { Prop::default_btn, "default_btn" },
     { Prop::default_button, "default_button" },
     { Prop::default_pane, "default_pane" },
     { Prop::defaultfilter, "defaultfilter" },

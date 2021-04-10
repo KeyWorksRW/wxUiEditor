@@ -9,15 +9,21 @@
 
 #include "node_decl.h"
 
-#include "node.h"       // Contains the user-modifiable node
-#include "prop_info.h"  // PropDefinition and PropertyInfo classes
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "node.h"            // Contains the user-modifiable node
+#include "prop_info.h"       // PropDefinition and PropertyInfo classes
 
 NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) :
     m_classname(class_name), m_type(type), m_category(class_name)
 {
-    m_class_enum = rmap_GenNames[class_name.c_str()];
-    m_class_type = rmap_GenTypes[type->get_name()];
-    m_name = GenEnum::map_GenNames[m_class_enum];
+    m_gen_name = rmap_GenNames[class_name.c_str()];
+    m_gen_type = rmap_GenTypes[type->get_name()];
+    m_name = GenEnum::map_GenNames[m_gen_name];
+}
+
+NodeDeclaration::~NodeDeclaration()
+{
+    delete m_generator;
 }
 
 PropertyInfo* NodeDeclaration::GetPropertyInfo(size_t idx) const
@@ -146,9 +152,9 @@ void NodeDeclaration::GetBaseClasses(std::vector<NodeDeclaration*>& classes, boo
     }
 }
 
-bool NodeDeclaration::isSubclassOf(GenName class_name) const
+bool NodeDeclaration::isSubclassOf(GenName gen_name) const
 {
-    if (class_name == m_class_enum)
+    if (gen_name == m_gen_name)
     {
         return true;
     }
@@ -158,7 +164,7 @@ bool NodeDeclaration::isSubclassOf(GenName class_name) const
         GetBaseClasses(classes);
         for (auto& iter: classes)
         {
-            if (iter->isSubclassOf(class_name))
+            if (iter->isSubclassOf(gen_name))
                 return true;
         }
     }

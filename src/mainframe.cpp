@@ -406,12 +406,12 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
 
     auto sel_node = event.GetNode();
 
-    if (sel_node->ClassName() == gen_wxToolBar)
+    if (sel_node->isGen(gen_wxToolBar))
     {
         if (sel_node->GetParent()->IsSizer())
         {
             auto grandparent = sel_node->GetParent()->GetParent();
-            if (grandparent->ClassName() == gen_wxFrame || grandparent->ClassName() == gen_wxAuiMDIChildFrame)
+            if (grandparent->isGen(gen_wxFrame) || grandparent->isGen(gen_wxAuiMDIChildFrame))
             {
                 // Caution! In wxWidgets 3.1.3 The info bar will wrap the first word if it starts with "If".
                 GetPropInfoBar()->ShowMessage(_tt(strId_tb_in_sizer), wxICON_INFORMATION);

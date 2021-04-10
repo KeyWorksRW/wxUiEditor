@@ -84,33 +84,34 @@ public:
     bool IsChildAllowed(Node* child);
     bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
 
-    GenType ClassType() const { return m_info->class_type(); }
-    GenName ClassName() const { return m_info->class_name(); }
+    GenType gen_type() const { return m_info->gen_type(); }
+    GenName gen_name() const { return m_info->gen_name(); }
+
+    bool isType(GenType type) const noexcept { return (type == m_info->gen_type()); }
+    bool isGen(GenName name) const noexcept { return (name == m_info->gen_name()); }
 
     bool IsChildType(size_t index, ttlib::cview type);
 
-    bool IsWidget() { return (ClassType() == type_widget); }
-    bool IsWizard() { return (ClassType() == type_wizard); }
-    bool IsMenuBar() { return (ClassType() == type_menubar_form || ClassType() == type_menubar); }
-    bool IsToolBar() { return (ClassType() == type_toolbar || ClassType() == type_toolbar_form); }
-    bool IsStatusBar() { return (ClassType() == type_statusbar); }
-    bool IsRibbonBar() { return (ClassType() == type_ribbonbar); }
+    bool IsWidget() { return isType(type_widget); }
+    bool IsWizard() { return isType(type_wizard); }
+    bool IsMenuBar() { return (isType(type_menubar_form) || isType(type_menubar)); }
+    bool IsToolBar() { return (isType(type_toolbar) || isType(type_toolbar_form)); }
+    bool IsStatusBar() { return isType(type_statusbar); }
+    bool IsRibbonBar() { return isType(type_ribbonbar); }
 
     // This does not include MenuBar, ToolBar, StatusBar or Wizard
     bool IsForm()
     {
-        return (ClassType() == type_form || ClassType() == type_menubar_form || ClassType() == type_toolbar_form ||
-                ClassType() == type_wizard);
+        return (isType(type_form) || isType(type_menubar_form) || isType(type_toolbar_form) || isType(type_wizard));
     }
     bool IsStaticBoxSizer()
     {
-        return (ClassName() == gen_wxStaticBoxSizer || ClassName() == gen_StaticCheckboxBoxSizer ||
-                ClassName() == gen_StaticRadioBtnBoxSizer);
+        return (isGen(gen_wxStaticBoxSizer) || isGen(gen_StaticCheckboxBoxSizer) || isGen(gen_StaticRadioBtnBoxSizer));
     }
-    bool IsSpacer() { return (ClassName() == gen_spacer); }
+    bool IsSpacer() { return isGen(gen_spacer); }
 
-    bool IsSizer() { return (ClassType() == type_sizer || ClassType() == type_gbsizer); }
-    bool IsContainer() { return (ClassType() == type_container || GetNodeTypeName().contains("book")); }
+    bool IsSizer() { return (isType(type_sizer) || isType(type_gbsizer)); }
+    bool IsContainer() { return (isType(type_container) || GetNodeTypeName().contains("book")); }
 
     // Returns true if access property == none or there is no access property
     bool IsLocal();

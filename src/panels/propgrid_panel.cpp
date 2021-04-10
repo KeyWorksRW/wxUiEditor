@@ -649,17 +649,17 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
         auto& nextCat = category.GetCategories()[i];
         if (nextCat.GetName() == "Keyboard Events")
         {
-            if (node->GetNodeDeclaration()->GetCompFlags().contains("no_key_events"))
+            if (node->GetNodeDeclaration()->GetGeneratorFlags().contains("no_key_events"))
                 continue;
         }
         else if (nextCat.GetName() == "Mouse Events")
         {
-            if (node->GetNodeDeclaration()->GetCompFlags().contains("no_mouse_events"))
+            if (node->GetNodeDeclaration()->GetGeneratorFlags().contains("no_mouse_events"))
                 continue;
         }
         else if (nextCat.GetName() == "Focus Events")
         {
-            if (node->GetNodeDeclaration()->GetCompFlags().contains("no_focus_events"))
+            if (node->GetNodeDeclaration()->GetGeneratorFlags().contains("no_focus_events"))
                 continue;
         }
 
@@ -1529,7 +1529,7 @@ void PropGridPanel::CreateEventCategory(const ttlib::cstr& name, Node* node, Nod
 
     if (category.GetName() == "wxWindow")
     {
-        if (node->GetNodeDeclaration()->GetCompFlags().contains("no_win_events"))
+        if (node->GetNodeDeclaration()->GetGeneratorFlags().contains("no_win_events"))
             return;
     }
 

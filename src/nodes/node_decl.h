@@ -32,6 +32,7 @@ class NodeDeclaration
 {
 public:
     NodeDeclaration(ttlib::cview class_name, NodeType* type);
+    ~NodeDeclaration();
 
     NodeCategory& GetCategory() { return m_category; }
 
@@ -53,11 +54,8 @@ public:
 
     NodeType* GetNodeType() const { return m_type; }
 
-    GenType class_type() const noexcept { return m_class_type; }
-    GenName class_name() const noexcept { return m_class_enum; }
-
-    // Use this if you need the index into an array of GenName enums.
-    size_t class_index() const noexcept { return static_cast<size_t>(m_class_enum); }
+    GenType gen_type() const noexcept { return m_gen_type; }
+    GenName gen_name() const noexcept { return m_gen_name; }
 
     const ttlib::cstr& GetClassName() const { return m_classname; }
 
@@ -79,14 +77,13 @@ public:
     void SetImage(wxImage image) { m_image = image; }
     wxImage GetImage() const { return m_image; }
 
-    void SetGenerator(BaseGenerator* component) { m_component = component; }
-    BaseGenerator* GetGenerator() const { return m_component; }
+    void SetGenerator(BaseGenerator* generator) { m_generator = generator; }
+    BaseGenerator* GetGenerator() const { return m_generator; }
 
     void ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category);
 
-    // Get internal component flags string (multiple flags seperated by a ';')
-    const ttlib::cstr& GetCompFlags() { return m_internal_flags; }
-    void SetCompFlags(ttlib::cview flags) { m_internal_flags = flags; }
+    const ttlib::cstr& GetGeneratorFlags() { return m_internal_flags; }
+    void SetGeneratorFlags(ttlib::cview flags) { m_internal_flags = flags; }
 
 private:
     ttlib::cstr m_classname;
@@ -104,9 +101,9 @@ private:
 
     std::vector<NodeDeclaration*> m_base;  // base classes
 
-    BaseGenerator* m_component { nullptr };
+    BaseGenerator* m_generator { nullptr };
 
-    GenName m_class_enum;
-    GenType m_class_type;
+    GenName m_gen_name;
+    GenType m_gen_type;
     const char* m_name;  // this points into map_GenNames
 };

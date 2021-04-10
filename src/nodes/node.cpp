@@ -118,7 +118,7 @@ Node* Node::FindNearAncestor(GenType type)
     auto parent = GetParent();
     if (parent)
     {
-        if (parent->ClassType() == type)
+        if (parent->isType(type))
             result = parent;
         else
             result = parent->FindNearAncestor(type);

@@ -89,10 +89,6 @@
 
 using namespace GenEnum;
 
-// Note that classes are created via new but never deleted. Technically, that's a memory leak, but it doesn't really
-// matter because they are only created when the application is started, and need to exist until the program exits.
-// There's no real advantage to deleting each class during exit since the OS will free that memory automatically.
-
 #define SET_GENERATOR(gen_name, generator) get_declaration(gen_name)->SetGenerator(new generator());
 
 void NodeCreator::InitGenerators()

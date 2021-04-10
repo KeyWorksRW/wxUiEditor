@@ -872,7 +872,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
 void BaseCodeGenerator::GenConstruction(Node* node)
 {
-    auto& type = node->GetNodeTypeName();
+    auto type = node->gen_type();
     auto declaration = node->GetNodeDeclaration();
 
     if (auto generator = declaration->GetGenerator(); generator)
@@ -887,7 +887,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
         GenSettings(node);
 
-        if (type == "ribbontoolbar")
+        if (type == type_ribbontoolbar)
         {
             m_source->writeLine("{");
             m_source->Indent();
@@ -980,7 +980,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 m_source->writeLine(code);
             }
         }
-        else if (type == "splitter")
+        else if (type == type_splitter)
         {
             ttlib::cstr code(node->get_node_name());
 
@@ -1007,9 +1007,9 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 }
             }
         }
-        else if (type == "menubar" || type == "menu" || type == "submenu" || type == "toolbar" || type == "tool" ||
-                 type == "listbook" || type == "simplebook" || type == "notebook" || type == "auinotebook" ||
-                 type == "treelistctrl")
+        else if (type == type_menubar || type == type_menu || type == type_submenu || type == type_toolbar ||
+                 type == type_tool || type == type_listbook || type == type_simplebook || type == type_notebook ||
+                 type == type_auinotebook || type == type_treelistctrl)
         {
             if (auto result = generator->GenCode("after_addchild", node); result)
             {

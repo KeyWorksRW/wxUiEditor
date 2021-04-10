@@ -23,9 +23,6 @@ using namespace GenEnum;
 
 class NodeCategory;
 
-using NodeDeclarationMap =
-    std::unordered_map<std::string,
-                       std::shared_ptr<NodeDeclaration>>;  // std::map<std::string, std::shared_ptr<NodeDeclaration>>
 using NodeDeclarationArray = std::array<NodeDeclaration*, gen_name_array_size>;
 
 namespace pugi
@@ -33,8 +30,6 @@ namespace pugi
     class xml_document;
     class xml_node;
 }  // namespace pugi
-
-bool LoadInternalXmlDocFile(ttlib::cview file, pugi::xml_document& doc);
 
 // Contains definitions of all components
 class NodeCreator

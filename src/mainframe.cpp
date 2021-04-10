@@ -870,11 +870,15 @@ Node* MainFrame::GetSelectedForm()
     if (!m_selected_node)
         return nullptr;
 
-    if ((m_selected_node->GetNodeTypeName() == "form") || (m_selected_node->GetNodeTypeName() == "wizard") ||
-        (m_selected_node->GetNodeTypeName() == "menubar_form") || (m_selected_node->GetNodeTypeName() == "toolbar_form"))
+    if (m_selected_node->isType(type_form) || m_selected_node->isType(type_wizard) ||
+        m_selected_node->isType(type_menubar_form) || m_selected_node->isType(type_toolbar_form))
+    {
         return m_selected_node.get();
+    }
     else
+    {
         return m_selected_node->FindParentForm();
+    }
 }
 
 bool MainFrame::SelectNode(Node* node, bool force, bool notify)
@@ -1237,7 +1241,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 
 void MainFrame::RemoveNode(Node* node, bool isCutMode)
 {
-    ASSERT(node->GetNodeTypeName() != "project");
+    ASSERT(node->isType(type_project));
     ASSERT(node->GetParentPtr());
 
     auto parent = node->GetParent();

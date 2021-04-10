@@ -124,7 +124,7 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
         return NewNode(declaration);
 
     bool aui = false;
-    if (parent->GetNodeTypeName() == "form")
+    if (parent->isType(type_form))
     {
         aui = parent->prop_as_int("aui_managed") != 0;
     }
@@ -135,15 +135,15 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
     if (comp_type->isType(type_statusbar) || comp_type->isType(type_menubar) || comp_type->isType(type_ribbonbar) ||
         comp_type->isType(type_toolbar))
     {
-        if (parent->GetNodeTypeName() == "form" && parent->GetClassName() != "wxFrame")
+        if (parent->isType(type_form) && !parent->isGen(gen_wxFrame))
         {
             return NodeSharedPtr();
         }
     }
-    else if (parent->GetNodeTypeName() == "tool")
+    else if (parent->isType(type_tool))
     {
         auto grand_parent = parent->GetParent();
-        if (grand_parent->GetClassName() == "wxToolBar" && comp_type->isType(type_menu))
+        if (grand_parent->isGen(gen_wxToolBar) && comp_type->isType(type_menu))
             return NodeSharedPtr();
     }
 

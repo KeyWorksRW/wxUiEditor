@@ -511,7 +511,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                         }
                         else if (it->m_prop_type == type_string_escapes)
                         {
-                            child = new wxStringProperty(it->m_prop_name, wxPG_LABEL, value);
+                            child = new wxStringProperty(it->name_str(), wxPG_LABEL, value);
                         }
                         else
                         {
@@ -525,7 +525,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                 }
                 else if (propType == type_id)
                 {
-                    if (prop->GetPropertyInfo()->name() == prop_id)
+                    if (prop->GetPropertyInfo()->isProp(prop_id))
                     {
                         m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_ids);
                     }

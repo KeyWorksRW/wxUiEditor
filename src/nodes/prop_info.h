@@ -8,27 +8,34 @@
 #pragma once
 
 #include "gen_enums.h"  // Enumerations for generators
+using namespace GenEnum;
 
 struct PropDefinition
 {
     ttlib::cstr m_def_value;
     ttlib::cstr m_help;
 
-    // TODO: these are obsolete and need to be removed
+    // TODO: this is obsolete and need to be removed -- m_name_str points to a const char*
     ttlib::cstr m_name;
 
     // BUGBUG: [KeyWorks - 04-09-2021] NodeCreator::ParseProperties does not initialize the following for parent properties
 
+    const char* name_str() const noexcept { return m_name_str; }
+    GenEnum::PropName get_name() const noexcept { return m_name_enum; }
+    GenEnum::PropType get_type() const noexcept { return m_prop_type; }
+    bool isType(GenEnum::PropType type) { return (type == m_prop_type); }
+    bool isProp(GenEnum::PropName name) { return (name == m_name_enum); }
+
     GenEnum::PropType m_prop_type;
-    GenEnum::PropName m_enum_name;
-    const char* m_prop_name;
+    GenEnum::PropName m_name_enum;  // enumeration value for the name
+    const char* m_name_str;         // const char* pointer to the name
 };
 
 class PropertyInfo : public PropDefinition
 {
 public:
-    PropertyInfo(GenEnum::PropName prop_name, GenEnum::PropType prop_type, ttlib::cview def_value,
-                 ttlib::cview help, ttlib::cview customEditor, const std::vector<PropDefinition>& children)
+    PropertyInfo(GenEnum::PropName prop_name, GenEnum::PropType prop_type, ttlib::cview def_value, ttlib::cview help,
+                 ttlib::cview customEditor, const std::vector<PropDefinition>& children)
     {
         m_def_value = def_value;
         m_help = help;
@@ -36,18 +43,14 @@ public:
         m_customEditor = customEditor;
 
         m_prop_type = prop_type;
-        m_enum_name = prop_name;
-        m_prop_name = GenEnum::map_PropNames[m_enum_name];
+        m_name_enum = prop_name;
+        m_name_str = GenEnum::map_PropNames[m_name_enum];
 
         // TODO: This is only here until all callers stop using GetName()
-        m_name = m_prop_name;
+        m_name = m_name_str;
     }
 
     const std::vector<PropDefinition>* GetChildren() const noexcept { return &m_children; }
-
-    const char* name_as_string() const noexcept { return m_prop_name; }
-    GenEnum::PropName name() const noexcept { return m_enum_name; }
-    GenEnum::PropType type() const noexcept { return m_prop_type; }
 
     const ttlib::cstr& GetName() const noexcept { return m_name; }
 

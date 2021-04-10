@@ -303,7 +303,7 @@ bool NodeProperty::HasValue()
 void NodeProperty::splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& children) const
 {
     children.clear();
-    if (m_info->type() != type_parent)
+    if (m_info->isType(type_parent))
     {
         return;
     }
@@ -327,7 +327,7 @@ void NodeProperty::splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& child
 void NodeProperty::SplitParentProperty(std::map<wxString, wxString>* children) const
 {
     children->clear();
-    if (m_info->type() != type_parent)
+    if (m_info->isType(type_parent))
     {
         return;
     }

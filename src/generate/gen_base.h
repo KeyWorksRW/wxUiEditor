@@ -45,6 +45,7 @@ class BaseCodeGenerator
 {
 public:
     BaseCodeGenerator();
+    virtual ~BaseCodeGenerator() {};
 
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }

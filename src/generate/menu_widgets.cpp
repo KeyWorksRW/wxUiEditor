@@ -74,7 +74,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 
     for (auto& menu_item: menu_node->GetChildNodePtrs())
     {
-        if (menu_item->GetNodeTypeName() == "submenu")
+        if (menu_item->isType(type_submenu))
         {
             auto result = MakeSubMenu(menu_item.get());
             auto item = sub_menu->AppendSubMenu(result, menu_item->GetPropertyAsString(txt_label));

@@ -18,6 +18,8 @@
 
 #include "../pugixml/pugixml.hpp"
 
+bool LoadInternalXmlDocFile(ttlib::cview file, pugi::xml_document& doc);
+
 using namespace child_count;
 using namespace GenEnum;
 

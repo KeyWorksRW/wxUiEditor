@@ -93,6 +93,7 @@ Files:
     nodes/node.cpp              # Contains user-modifiable node
     nodes/node_creator.cpp      # Class used to create nodes
     nodes/node_decl.cpp         # Contains the declarations for a node (properties, events, etc.)
+    nodes/node_init.cpp         # Initialize NodeCreator class
     nodes/node_prop.cpp         # NodeProperty class
     nodes/node_types.cpp        # Stores node types and allowable child count
 

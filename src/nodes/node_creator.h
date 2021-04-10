@@ -79,13 +79,7 @@ public:
     const NodeDeclarationArray& GetNodeDeclarationArray() const { return m_a_declarations; }
 
 protected:
-    void InitCompTypes();
-    void InitDeclarations();
-
-    bool ParseGeneratorFile(ttlib::cview file);
-
-    void ParseCompInfo(pugi::xml_node root);
-    void SetupGroup(ttlib::cview file);
+    void ParseGeneratorFile(ttlib::cview file);
     void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
 
     NodeType* GetNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }

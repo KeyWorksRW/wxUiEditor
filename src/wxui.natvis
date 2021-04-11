@@ -4,30 +4,26 @@
 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
     <!-- wxUiEditor visualizers -->
-    <Type Name="NodeInfo">
-        <DisplayString>{m_classname,s}, {m_type->m_name,s}</DisplayString>
+    <Type Name="NodeDeclaration">
+        <DisplayString>{m_name,s}, {m_gen_type}</DisplayString>
     </Type>
 
     <Type Name="Node">
-        <DisplayString>class:{m_info->m_classname,s} type:{m_info->m_type->m_name,s}</DisplayString>
+        <DisplayString>class:{m_declaration->m_name,s} type:{m_declaration->m_gen_type}</DisplayString>
     </Type>
 
-    <Type Name="ComponentType">
+    <Type Name="NodeType">
         <DisplayString>{m_name,s}</DisplayString>
     </Type>
 
-    <Type Name="WidgetGroup">
-        <DisplayString>{m_name,s}</DisplayString>
-    </Type>
-
-    <Type Name="PropertyInfo">
-        <DisplayString>{m_name,s}: defval:{m_def_value,s}</DisplayString>
+    <Type Name="PropDeclaration">
+        <DisplayString>{m_name_str,s}: defval:{m_def_value,s}</DisplayString>
     </Type>
 
     <Type Name="NodeProperty">
-        <DisplayString>{m_info->m_name,s} = {m_value,s}</DisplayString>
+        <DisplayString>{m_declaration->m_name,s} = {m_value,s8}</DisplayString>
         <Expand>
-          <Item Name="info">m_info</Item>
+          <Item Name="decl">m_declaration</Item>
           <Item Name="owner">m_node</Item>
         </Expand>
     </Type>
@@ -35,7 +31,7 @@
     <Type Name="NodeCategory">
         <DisplayString>{m_name,su}</DisplayString>
         <Expand>
-          <Item Name="properties">m_properties</Item>
+          <Item Name="properties">m_prop_names</Item>
           <Item Name="events">m_events</Item>
           <Item Name="categories">m_categories</Item>
         </Expand>
@@ -49,14 +45,10 @@
         <DisplayString>{m_info->m_name,s} class:{m_node->m_info->m_classname,s}</DisplayString>
     </Type>
 
-    <Type Name="TemplateParser">
-        <DisplayString>{m_obj} {m_out,s}</DisplayString>
-    </Type>
-
     <Type Name="std::shared_ptr&lt;Node&gt;">
         <!-- <SmartPointer Usage="Minimal">_Ptr</SmartPointer> -->
         <DisplayString Condition="_Rep == 0">nullptr</DisplayString>
-        <DisplayString Condition="_Rep != 0">class:{_Ptr->m_info->m_classname,s} type:{_Ptr->m_info->m_type->m_name,s}</DisplayString>
+        <DisplayString Condition="_Rep != 0">class:{_Ptr->m_declaration->m_name,s} type:{_Ptr->m_declaration->m_gen_type,s}</DisplayString>
         <Expand>
           <Item Condition="_Rep != 0" Name="properties">_Ptr->m_properties</Item>
           <Item Condition="_Rep != 0" Name="events">_Ptr->m_events</Item>

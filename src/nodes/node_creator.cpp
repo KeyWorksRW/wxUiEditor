@@ -14,7 +14,7 @@
 
 #include "gen_enums.h"  // Enumerations for nodes
 #include "node.h"       // Node class
-#include "prop_info.h"  // PropDefinition and PropertyInfo classes
+#include "prop_decl.h"  // PropChildDeclaration and PropDeclaration classes
 
 NodeCreator g_NodeCreator;
 
@@ -46,21 +46,21 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* declaration)
     {
         for (size_t index = 0; index < class_info->GetPropertyCount(); ++index)
         {
-            auto prop_info = class_info->GetPropertyInfo(index);
+            auto prop_declaration = class_info->GetPropDeclaration(index);
 
             // Set the default value, either from the property info, or an override from this class
-            auto defaultValue = prop_info->GetDefaultValue();
+            auto defaultValue = prop_declaration->GetDefaultValue();
             if (base > 0)
             {
                 auto defaultValueTemp =
-                    declaration->GetBaseClassDefaultPropertyValue(base - 1, prop_info->GetName().c_str());
+                    declaration->GetBaseClassDefaultPropertyValue(base - 1, prop_declaration->GetName().c_str());
                 if (!defaultValueTemp.empty())
                 {
                     defaultValue = defaultValueTemp;
                 }
             }
 
-            auto prop = node->AddNodeProperty(prop_info);
+            auto prop = node->AddNodeProperty(prop_declaration);
             prop->set_value(defaultValue);
         }
 

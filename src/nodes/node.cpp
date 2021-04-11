@@ -26,7 +26,7 @@ Node& wxGetProject()
     return *wxGetApp().GetProjectPtr().get();
 }
 
-Node::Node(NodeDeclaration* info) : m_info(info) {}
+Node::Node(NodeDeclaration* declaration) : m_declaration(declaration) {}
 
 Node::~Node()
 {
@@ -53,6 +53,14 @@ Node::~Node()
         }
     }
 #endif
+}
+
+NodeProperty* Node::get_prop_ptr(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return &m_properties[result->second];
+    else
+        return nullptr;
 }
 
 NodeProperty* Node::get_prop_ptr(ttlib::cview name)
@@ -98,10 +106,11 @@ size_t Node::GetInUseEventCount()
     return count;
 }
 
-NodeProperty* Node::AddNodeProperty(PropertyInfo* info)
+NodeProperty* Node::AddNodeProperty(PropDeclaration* declaration)
 {
-    auto& prop = m_properties.emplace_back(info, this);
-    m_prop_map[prop.prop_name_as_string()] = (m_properties.size() - 1);
+    auto& prop = m_properties.emplace_back(declaration, this);
+    m_prop_map[prop.name_str()] = (m_properties.size() - 1);
+    m_prop_indices[prop.get_name()] = (m_properties.size() - 1);
     return &m_properties[m_properties.size() - 1];
 }
 
@@ -282,6 +291,18 @@ bool Node::IsLocal()
 {
     auto value = get_value_ptr(txt_class_access);
     return (value && *value == "none");
+}
+
+bool Node::HasValue(PropName name)
+{
+    auto prop = get_prop_ptr(name);
+    return (prop && prop->HasValue());
+}
+
+bool Node::prop_as_bool(PropName name)
+{
+    auto prop = get_prop_ptr(name);
+    return (prop && prop->as_bool());
 }
 
 bool Node::HasValue(ttlib::cview name)

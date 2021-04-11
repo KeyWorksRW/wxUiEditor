@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   PropDefinition and PropertyInfo classes
+// Purpose:   PropChildDeclaration and PropDeclaration classes
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -10,7 +10,7 @@
 #include "gen_enums.h"  // Enumerations for generators
 using namespace GenEnum;
 
-struct PropDefinition
+struct PropChildDeclaration
 {
     ttlib::cstr m_def_value;
     ttlib::cstr m_help;
@@ -21,21 +21,22 @@ struct PropDefinition
     // BUGBUG: [KeyWorks - 04-09-2021] NodeCreator::ParseProperties does not initialize the following for parent properties
 
     const char* name_str() const noexcept { return m_name_str; }
-    GenEnum::PropName get_name() const noexcept { return m_name_enum; }
-    GenEnum::PropType get_type() const noexcept { return m_prop_type; }
-    bool isType(GenEnum::PropType type) { return (type == m_prop_type); }
-    bool isProp(GenEnum::PropName name) { return (name == m_name_enum); }
+    PropName get_name() const noexcept { return m_name_enum; }
+    PropType get_type() const noexcept { return m_prop_type; }
+
+    bool isType(PropType type) const noexcept { return (type == m_prop_type); }
+    bool isProp(PropName name) const noexcept { return (name == m_name_enum); }
 
     GenEnum::PropType m_prop_type;
     GenEnum::PropName m_name_enum;  // enumeration value for the name
     const char* m_name_str;         // const char* pointer to the name
 };
 
-class PropertyInfo : public PropDefinition
+class PropDeclaration : public PropChildDeclaration
 {
 public:
-    PropertyInfo(GenEnum::PropName prop_name, GenEnum::PropType prop_type, ttlib::cview def_value, ttlib::cview help,
-                 ttlib::cview customEditor, const std::vector<PropDefinition>& children)
+    PropDeclaration(GenEnum::PropName prop_name, GenEnum::PropType prop_type, ttlib::cview def_value, ttlib::cview help,
+                 ttlib::cview customEditor, const std::vector<PropChildDeclaration>& children)
     {
         m_def_value = def_value;
         m_help = help;
@@ -50,7 +51,7 @@ public:
         m_name = m_name_str;
     }
 
-    const std::vector<PropDefinition>* GetChildren() const noexcept { return &m_children; }
+    const std::vector<PropChildDeclaration>* GetChildren() const noexcept { return &m_children; }
 
     const ttlib::cstr& GetName() const noexcept { return m_name; }
 
@@ -73,5 +74,5 @@ private:
     // This gets used to setup wxPGProperty, so both key and value need to be a wxString
     std::vector<Options> m_options;
 
-    std::vector<PropDefinition> m_children;  // Only used for parent properties
+    std::vector<PropChildDeclaration> m_children;  // Only used for parent properties
 };

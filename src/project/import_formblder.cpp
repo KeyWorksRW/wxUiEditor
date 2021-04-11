@@ -462,7 +462,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     {
         for (auto& iter: sizeritem->get_props_vector())
         {
-            auto prop = newobject->AddNodeProperty(iter.GetPropertyInfo());
+            auto prop = newobject->AddNodeProperty(iter.GetPropDeclaration());
             prop->set_value(iter.as_string());
         }
         parent->AddChild(newobject);

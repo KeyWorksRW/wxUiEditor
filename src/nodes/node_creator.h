@@ -14,7 +14,7 @@
 
 #include "node_decl.h"   // NodeDeclaration class
 #include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
-#include "prop_info.h"   // PropDefinition and PropertyInfo classes
+#include "prop_decl.h"   // PropChildDeclaration and PropDeclaration classes
 
 #include "node_classes.h"  // Forward defintions of Node classes
 

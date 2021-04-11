@@ -14,7 +14,7 @@
 #include "gen_enums.h"   // Enumerations for nodes
 #include "node.h"        // Node class
 #include "node_types.h"  // NodeType -- Class for storing node types and allowable child count
-#include "prop_info.h"   // PropDefinition and PropertyInfo classes
+#include "prop_decl.h"   // PropChildDeclaration and PropDeclaration classes
 
 #include "../pugixml/pugixml.hpp"
 
@@ -351,7 +351,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         }
         prop_name = lookup_name->second;
 
-        category.AddProperty(name);
+        category.AddProperty(prop_name);
 
         auto description = elem_prop.attribute("help").as_cview();
         auto customEditor = elem_prop.attribute("editor").as_cview();
@@ -378,7 +378,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             }
         }
 
-        std::vector<PropDefinition> children;
+        std::vector<PropChildDeclaration> children;
         if (property_type == type_parent)
         {
             // If the property is a parent, then get the children
@@ -386,7 +386,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             auto elem_child = elem_prop.child("child");
             while (elem_child)
             {
-                PropDefinition child;
+                PropChildDeclaration child;
 
                 child.m_name = elem_child.attribute("name").as_string();
                 child.m_help = elem_child.attribute("help").as_string();
@@ -424,9 +424,9 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             }
         }
 
-        // auto prop_info = std::make_shared<PropertyInfo>(name, ptype, def_value, description, customEditor, children);
+        // auto prop_info = std::make_shared<PropDeclaration>(name, ptype, def_value, description, customEditor, children);
         auto prop_info =
-            std::make_shared<PropertyInfo>(prop_name, property_type, def_value, description, customEditor, children);
+            std::make_shared<PropDeclaration>(prop_name, property_type, def_value, description, customEditor, children);
         obj_info->GetPropInfoMap()[name] = prop_info;
 
         if (property_type == type_bitlist || property_type == type_option || property_type == type_editoption)
@@ -465,9 +465,9 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             if (auto type = elem_prop.parent().attribute("type").as_cview();
                 type.is_sameas("widget") || type.is_sameas("expanded_widget"))
             {
-                category.AddProperty(txt_class_access);
+                category.AddProperty(prop_class_access);
                 children.clear();
-                prop_info = std::make_shared<PropertyInfo>(
+                prop_info = std::make_shared<PropDeclaration>(
                     prop_class_access, type_option,
                     "protected:", "Determines the type of access your derived class has to this item.", "", children);
                 obj_info->GetPropInfoMap()[txt_class_access] = prop_info;

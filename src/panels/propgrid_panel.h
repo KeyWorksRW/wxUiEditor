@@ -8,14 +8,18 @@
 #pragma once
 
 #include <map>
+#include <set>
 
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
 #include "../nodes/node_classes.h"  // Forward defintions of Node classes
 #include "cstm_propman.h"           // CustomPropertyManager -- Derived wxPropertyGrid class
+#include "gen_enums.h"              // Enumerations for generators
 
-using EventMap = std::map<std::string, NodeEvent*>;
-using PropertyMap = std::map<std::string, NodeProperty*>;
+using namespace GenEnum;
+
+using PropNameSet = std::set<PropName>;
+using EventSet = std::set<std::string>;
 
 class CustomEvent;
 class MainFrame;
@@ -38,12 +42,12 @@ protected:
     // Called to determine if a property should be displayed or not
     bool IsPropAllowed(Node* node, NodeProperty* prop);
 
-    void CreatePropCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* obj_info, PropertyMap& itemMap);
-    void CreateEventCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* obj_info, EventMap& itemMap);
-    void CreateLayoutCategory(Node* node, PropertyMap& itemMap);
+    void CreatePropCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* obj_info, PropNameSet& prop_set);
+    void CreateEventCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* obj_info, EventSet& event_set);
+    void CreateLayoutCategory(Node* node);
 
-    void AddEvents(const ttlib::cstr& name, Node* node, NodeCategory& category, EventMap& map);
-    void AddProperties(const ttlib::cstr& name, Node* node, NodeCategory& category, PropertyMap& map);
+    void AddEvents(const ttlib::cstr& name, Node* node, NodeCategory& category, EventSet& event_set);
+    void AddProperties(const ttlib::cstr& name, Node* node, NodeCategory& category, PropNameSet& prop_set);
 
     void ReplaceDrvName(const wxString& formName, NodeProperty* propType);
     void ReplaceBaseFile(const wxString& formName, NodeProperty* propType);

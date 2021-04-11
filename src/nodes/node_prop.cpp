@@ -24,20 +24,20 @@
 
 using namespace GenEnum;
 
-NodeProperty::NodeProperty(PropertyInfo* info, Node* node) : m_info(info), m_node(node) {}
+NodeProperty::NodeProperty(PropDeclaration* info, Node* node) : m_declaration(info), m_node(node) {}
 
-// The advantage of placing the one-line calls to PropertyInfo (m_info) here is that it reduces the header-file
-// dependency for other modeuls that need NodeProperty, and it allows for changes to PropertyInfo that don't require
-// recompiling every module that included prop_info.h.
+// The advantage of placing the one-line calls to PropDeclaration (m_declaration) here is that it reduces the header-file
+// dependency for other modeuls that need NodeProperty, and it allows for changes to PropDeclaration that don't require
+// recompiling every module that included prop_decl.h.
 
 bool NodeProperty::IsDefaultValue() const
 {
-    return m_value.is_sameas(m_info->GetDefaultValue());
+    return m_value.is_sameas(m_declaration->GetDefaultValue());
 }
 
 const ttlib::cstr& NodeProperty::GetPropName() const
 {
-    return m_info->GetName();
+    return m_declaration->GetName();
 }
 
 int NodeProperty::as_int() const
@@ -303,12 +303,12 @@ bool NodeProperty::HasValue()
 void NodeProperty::splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& children) const
 {
     children.clear();
-    if (m_info->isType(type_parent))
+    if (m_declaration->isType(type_parent))
     {
         return;
     }
 
-    auto myChildren = m_info->GetChildren();
+    auto myChildren = m_declaration->GetChildren();
     auto child_iter = myChildren->begin();
 
     ttlib::multistr list(m_value, ';');
@@ -327,12 +327,12 @@ void NodeProperty::splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& child
 void NodeProperty::SplitParentProperty(std::map<wxString, wxString>* children) const
 {
     children->clear();
-    if (m_info->isType(type_parent))
+    if (m_declaration->isType(type_parent))
     {
         return;
     }
 
-    auto myChildren = m_info->GetChildren();
+    auto myChildren = m_declaration->GetChildren();
     auto iter = myChildren->begin();
 
     wxStringTokenizer tkz(m_value.wx_str(), ";", wxTOKEN_RET_EMPTY_ALL);

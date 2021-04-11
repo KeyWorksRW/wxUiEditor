@@ -20,8 +20,8 @@
 using namespace GenEnum;
 
 using DblStrMap = std::map<std::string, std::string, std::less<>>;
-using PropertyInfoPtr = std::shared_ptr<PropertyInfo>;
-using PropertyInfoMap = std::map<std::string, PropertyInfoPtr>;
+using PropDeclarationPtr = std::shared_ptr<PropDeclaration>;
+using PropDeclarationMap = std::map<std::string, PropDeclarationPtr>;
 
 namespace pugi
 {
@@ -39,12 +39,12 @@ public:
     size_t GetPropertyCount() const { return m_properties.size(); }
     size_t GetEventCount() const { return m_events.size(); }
 
-    PropertyInfo* GetPropertyInfo(size_t idx) const;
+    PropDeclaration* GetPropDeclaration(size_t idx) const;
 
     NodeEventInfo* GetEventInfo(ttlib::cview name);
     const NodeEventInfo* GetEventInfo(size_t idx) const;
 
-    PropertyInfoMap& GetPropInfoMap() { return m_properties; }
+    PropDeclarationMap& GetPropInfoMap() { return m_properties; }
 
     void AddBaseClassDefaultPropertyValue(size_t baseIndex, ttlib::cview propertyName, ttlib::cview defaultValue);
 
@@ -95,7 +95,7 @@ private:
 
     NodeCategory m_category;
 
-    PropertyInfoMap m_properties;  // std::map<std::string, PropertyInfoPtr>
+    PropDeclarationMap m_properties;  // std::map<std::string, PropDeclarationPtr>
     std::map<std::string, std::unique_ptr<NodeEventInfo>> m_events;
     std::map<size_t, DblStrMap> m_baseClassDefaultPropertyValues;
 

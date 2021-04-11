@@ -170,7 +170,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     {
         for (auto& iter: sizeritem->get_props_vector())
         {
-            auto prop = new_node->AddNodeProperty(iter.GetPropertyInfo());
+            auto prop = new_node->AddNodeProperty(iter.GetPropDeclaration());
             prop->set_value(iter.as_string());
         }
         parent->AddChild(new_node);

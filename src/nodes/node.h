@@ -34,10 +34,10 @@ using namespace GenEnum;
 class Node : public std::enable_shared_from_this<Node>
 {
 public:
-    Node(NodeDeclaration* info);
+    Node(NodeDeclaration* declaration);
     ~Node();
 
-    const ttlib::cstr& GetClassName() const { return m_info->GetClassName(); }
+    const ttlib::cstr& GetClassName() const { return m_declaration->GetClassName(); }
 
     NodeSharedPtr GetParentPtr() { return m_parent; }
     Node* GetParent() { return m_parent.get(); }
@@ -47,6 +47,8 @@ public:
 
     NodeProperty* get_prop_ptr(ttlib::cview name);
     ttlib::cstr* get_value_ptr(ttlib::cview name);
+
+    NodeProperty* get_prop_ptr(PropName name);
 
     NodeEvent* GetEvent(ttlib::cview name);
     NodeEvent* GetEvent(size_t index);
@@ -84,11 +86,11 @@ public:
     bool IsChildAllowed(Node* child);
     bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
 
-    GenType gen_type() const { return m_info->gen_type(); }
-    GenName gen_name() const { return m_info->gen_name(); }
+    GenType gen_type() const { return m_declaration->gen_type(); }
+    GenName gen_name() const { return m_declaration->gen_name(); }
 
-    bool isType(GenType type) const noexcept { return (type == m_info->gen_type()); }
-    bool isGen(GenName name) const noexcept { return (name == m_info->gen_name()); }
+    bool isType(GenType type) const noexcept { return (type == m_declaration->gen_type()); }
+    bool isGen(GenName name) const noexcept { return (name == m_declaration->gen_name()); }
 
     bool IsChildType(size_t index, ttlib::cview type);
 
@@ -116,9 +118,9 @@ public:
     // Returns true if access property == none or there is no access property
     bool IsLocal();
 
-    const ttlib::cstr& GetNodeTypeName() { return m_info->GetNodeTypeName(); }
-    NodeType* GetNodeType() { return m_info->GetNodeType(); }
-    BaseGenerator* GetGenerator() const { return m_info->GetGenerator(); }
+    const ttlib::cstr& GetNodeTypeName() { return m_declaration->GetNodeTypeName(); }
+    NodeType* GetNodeType() { return m_declaration->GetNodeType(); }
+    BaseGenerator* GetGenerator() const { return m_declaration->GetGenerator(); }
 
     // Returns the value of the property "var_name" or "class_name"
     const ttlib::cstr& get_node_name();
@@ -129,7 +131,13 @@ public:
     // Finds the parent form and returns the value of the it's property "class_name"
     const ttlib::cstr& get_form_name();
 
-    NodeDeclaration* GetNodeDeclaration() { return m_info; }
+    NodeDeclaration* GetNodeDeclaration() { return m_declaration; }
+
+    // Returns true if the property exists, has a value (!= wxDefaultSize, !=
+    // wxDefaultPosition, or non-sepcified bitmap)
+    bool HasValue(PropName name);
+
+    bool prop_as_bool(PropName name);
 
     bool HasValue(ttlib::cview name);
 
@@ -138,6 +146,7 @@ public:
     bool prop_has_value(ttlib::cview name);
 
     bool prop_as_bool(ttlib::cview name);
+
     int prop_as_int(ttlib::cview name);
 
     wxColour prop_as_wxColour(ttlib::cview name);
@@ -162,7 +171,7 @@ public:
 
     std::vector<NodeProperty>& get_props_vector() { return m_properties; }
 
-    NodeProperty* AddNodeProperty(PropertyInfo* info);
+    NodeProperty* AddNodeProperty(PropDeclaration* info);
     NodeEvent* AddNodeEvent(const NodeEventInfo* info);
     void CreateDoc(pugi::xml_document& doc);
 
@@ -210,15 +219,18 @@ private:
     // only the value of the property or event is changed.
 
     // The vector makes it possible to iterate through the properties in the order they were created in the XML file. The
-    // unordered map gives us a fast lookup into the vector.
+    // map gives us a fast lookup into the vector.
     std::vector<NodeProperty> m_properties;
+    std::map<PropName, size_t> m_prop_indices;
+
+    // TODO: [KeyWorks - 04-10-2021] Obsolete, remove after everyone stops using strings for lookup
     std::unordered_map<std::string, size_t> m_prop_map;
 
     std::vector<NodeEvent> m_events;
     std::unordered_map<std::string, size_t> m_event_map;
 
     ChildNodePtrs m_children;
-    NodeDeclaration* m_info;
+    NodeDeclaration* m_declaration;
 };
 
 // Same as wxGetApp() only this returns a reference to the project node

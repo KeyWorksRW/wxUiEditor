@@ -9,7 +9,7 @@
 
 #include "mainapp.h"    // App -- Main application class
 #include "node.h"       // Node class
-#include "prop_info.h"  // PropDefinition and PropertyInfo classes
+#include "prop_decl.h"  // PropChildDeclaration and PropDeclaration classes
 
 using namespace GenEnum;
 
@@ -32,13 +32,13 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
         auto& value = iter.as_string();
         if (value.size())
         {
-            auto info = iter.GetPropertyInfo();
+            auto info = iter.GetPropDeclaration();
 
             // If the value hasn't changed from the default, don't save it
             if (info->GetDefaultValue() == value)
                 continue;
 
-            auto attr = node.append_attribute(iter.GetPropName().c_str());
+            auto attr = node.append_attribute(iter.name_str());
             if (iter.type() == type_bool)
                 attr.set_value(iter.as_bool());
             else
@@ -48,9 +48,9 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
         {
             // Some properties need to be saved with empty values
 
-            if (iter.prop_name() == prop_label || iter.prop_name() == prop_borders)
+            if (iter.isProp(prop_label) || iter.isProp(prop_borders))
             {
-                node.append_attribute(iter.prop_name_as_string());
+                node.append_attribute(iter.name_str());
             }
         }
     }

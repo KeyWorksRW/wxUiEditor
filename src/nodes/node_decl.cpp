@@ -11,7 +11,7 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "node.h"            // Contains the user-modifiable node
-#include "prop_info.h"       // PropDefinition and PropertyInfo classes
+#include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
 NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) :
     m_classname(class_name), m_type(type), m_category(class_name)
@@ -26,7 +26,7 @@ NodeDeclaration::~NodeDeclaration()
     delete m_generator;
 }
 
-PropertyInfo* NodeDeclaration::GetPropertyInfo(size_t idx) const
+PropDeclaration* NodeDeclaration::GetPropDeclaration(size_t idx) const
 {
     ASSERT(idx < m_properties.size());
 

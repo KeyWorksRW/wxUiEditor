@@ -32,7 +32,7 @@
 #include "node.h"         // Node class
 #include "node_decl.h"    // NodeDeclaration class
 #include "node_prop.h"    // NodeProperty -- NodeProperty class
-#include "prop_info.h"    // PropDefinition and PropertyInfo classes
+#include "prop_decl.h"    // PropChildDeclaration and PropDeclaration classes
 #include "uifuncs.h"      // Miscellaneous functions for displaying UI
 #include "utils.h"        // Utility functions that work with properties
 
@@ -143,11 +143,15 @@ void PropGridPanel::Create()
         auto declaration = node->GetNodeDeclaration();
         if (declaration)
         {
-            PropertyMap propMap, dummyPropMap;
-            EventMap eventMap, dummyEventMap;
+            // These sets are used to prevent trying to add a duplicate property or event to the property grid. In Debug
+            // builds, attempting to do so will generate an assert message telling you the name of the duplicate and the node
+            // declaration it occurs in. In release builds, only the first instance will be displayed.
 
-            CreatePropCategory(declaration->GetClassName(), node, declaration, propMap);
-            CreateEventCategory(declaration->GetClassName(), node, declaration, eventMap);
+            PropNameSet prop_set;
+            EventSet event_set;
+
+            CreatePropCategory(declaration->GetClassName(), node, declaration, prop_set);
+            CreateEventCategory(declaration->GetClassName(), node, declaration, event_set);
 
             // Calling GetBaseClassCount() is exepensive, so do it once and store the result
             auto num_base_classes = declaration->GetBaseClassCount();
@@ -156,13 +160,13 @@ void PropGridPanel::Create()
                 auto info_base = declaration->GetBaseClass(i);
                 if (info_base->GetClassName() == "sizer_child")
                     continue;
-                CreatePropCategory(info_base->GetClassName(), node, info_base, propMap);
-                CreateEventCategory(info_base->GetClassName(), node, info_base, eventMap);
+                CreatePropCategory(info_base->GetClassName(), node, info_base, prop_set);
+                CreateEventCategory(info_base->GetClassName(), node, info_base, event_set);
             }
 
             if (node->GetParent() && node->GetParent()->IsSizer() && !node->IsSpacer())
             {
-                CreateLayoutCategory(node, propMap);
+                CreateLayoutCategory(node);
             }
 
             if (m_prop_grid->GetPageCount() > 0)
@@ -282,7 +286,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
 
     if (type == type_bitlist)
     {
-        auto propInfo = prop->GetPropertyInfo();
+        auto propInfo = prop->GetPropDeclaration();
 
         wxPGChoices bit_flags;
         int index = 0;
@@ -314,7 +318,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
     }
     else if (type == type_option || type == type_editoption)
     {
-        auto propInfo = prop->GetPropertyInfo();
+        auto propInfo = prop->GetPropDeclaration();
 
         auto value = prop->as_wxString();
         const wxString* pHelp = nullptr;
@@ -459,21 +463,23 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
     return new_pg_property;
 }
 
-void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCategory& category, PropertyMap& properties)
+void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCategory& category, PropNameSet& prop_set)
 {
-    size_t propCount = category.GetPropertyCount();
+    size_t propCount = category.GetPropNameCount();
     for (size_t i = 0; i < propCount; i++)
     {
-        auto propName = category.GetPropertyName(i);
-        auto prop = node->get_prop_ptr(propName);
+        auto prop_name = category.GetPropName(i);
+        auto prop = node->get_prop_ptr(prop_name);
 
         if (!prop)
             continue;
 
-        auto propInfo = prop->GetPropertyInfo();
+        auto propInfo = prop->GetPropDeclaration();
 
-        // we do not want to duplicate inherited properties
-        if (properties.find(propName) == properties.end())
+        ASSERT_MSG(prop_set.find(prop_name) == prop_set.end(), ttlib::cstr("The property ")
+                                                                   << map_PropNames[prop_name]
+                                                                   << " appears more than once in " << node->GetClassName());
+        if (prop_set.find(prop_name) == prop_set.end())
         {
             if (!IsPropAllowed(node, prop))
                 continue;
@@ -525,7 +531,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                 }
                 else if (propType == type_id)
                 {
-                    if (prop->GetPropertyInfo()->isProp(prop_id))
+                    if (prop->GetPropDeclaration()->isProp(prop_id))
                     {
                         m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_ids);
                     }
@@ -554,10 +560,10 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                 m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#e7f4e4"));
 
             // Automatically collapse properties that are rarely used
-            if (propName == "unchecked_bitmap")
+            if (prop_name == prop_unchecked_bitmap)
                 m_prop_grid->Collapse(pg);
 
-            if (auto it = m_expansion_map.find(propName); it != m_expansion_map.end())
+            if (auto it = m_expansion_map.find(map_PropNames[prop_name]); it != m_expansion_map.end())
             {
                 if (it->second)
                 {
@@ -569,14 +575,14 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                 }
             }
 
-            properties[propName] = prop;
+            prop_set.emplace(prop_name);
             m_property_map[pg] = prop;
         }
     }
 
     for (auto& nextCat: category.GetCategories())
     {
-        if (!nextCat.GetCategoryCount() && !nextCat.GetPropertyCount())
+        if (!nextCat.GetCategoryCount() && !nextCat.GetPropNameCount())
         {
             continue;
         }
@@ -584,7 +590,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
         wxPGProperty* catId =
             m_prop_grid->AppendIn(GetCategoryDisplayName(category.GetName()), new wxPropertyCategory(nextCat.GetName()));
 
-        AddProperties(name, node, nextCat, properties);
+        AddProperties(name, node, nextCat, prop_set);
 
         if (auto it = m_expansion_map.find(nextCat.getName()); it != m_expansion_map.end())
         {
@@ -600,7 +606,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
     }
 }
 
-void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory& category, EventMap& events)
+void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory& category, EventSet& event_set)
 {
     auto& eventList = category.GetEvents();
     for (auto& eventName: eventList)
@@ -612,8 +618,9 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
 
         auto eventInfo = event->GetEventInfo();
 
-        // We do not want to duplicate inherited events
-        if (events.find(eventName) == events.end())
+        ASSERT_MSG(event_set.find(eventName) == event_set.end(), ttlib::cstr("Encountered a duplicate event in ")
+                                                                     << node->GetClassName());
+        if (event_set.find(eventName) == event_set.end())
         {
             // auto grid_property = new wxLongStringProperty(eventInfo->get_name(), wxPG_LABEL,
             // CreateEscapedText(event->get_value()).wx_str());
@@ -638,7 +645,7 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
                 }
             }
 
-            events[eventName] = event;
+            event_set.emplace(eventName);
             m_event_map[id] = event;
         }
     }
@@ -670,7 +677,7 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
         wxPGProperty* catId =
             m_event_grid->AppendIn(GetCategoryDisplayName(category.GetName()), new wxPropertyCategory(nextCat.GetName()));
 
-        AddEvents(name, node, nextCat, events);
+        AddEvents(name, node, nextCat, event_set);
 
         if (auto it = m_expansion_map.find(nextCat.getName()); it != m_expansion_map.end())
         {
@@ -774,7 +781,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 }
 
                 // Update displayed description for the new selection
-                auto propInfo = prop->GetPropertyInfo();
+                auto propInfo = prop->GetPropDeclaration();
 
                 wxString helpString = wxString::FromUTF8Unchecked(propInfo->GetDescription());
 
@@ -1071,7 +1078,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (newValue.empty())
                     {
                         // An empty name will generate uncompilable code, so we simply switch it to the default name
-                        auto new_name = prop->GetPropertyInfo()->GetDefaultValue();
+                        auto new_name = prop->GetPropDeclaration()->GetDefaultValue();
                         auto final_name = node->GetUniqueName(new_name);
                         newValue = final_name.size() ? final_name : new_name;
 
@@ -1216,7 +1223,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
     if (!grid_property)
         return;
 
-    switch (prop->type ())
+    switch (prop->type())
     {
         case type_float:
             grid_property->SetValue(WXVARIANT(prop->as_float()));
@@ -1404,18 +1411,18 @@ wxString PropGridPanel::GetCategoryDisplayName(const wxString& original)
 }
 
 void PropGridPanel::CreatePropCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* declaration,
-                                       PropertyMap& itemMap)
+                                       PropNameSet& prop_set)
 {
     auto& category = declaration->GetCategory();
 
-    if (!category.GetCategoryCount() && !category.GetPropertyCount())
+    if (!category.GetCategoryCount() && !category.GetPropNameCount())
         return;
 
     m_prop_grid->AddPage();
 
     auto id = m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
 
-    AddProperties(name, node, category, itemMap);
+    AddProperties(name, node, category, prop_set);
 
     // Collapse categories that aren't likely to be used with the current object
     if (name == "AUI")
@@ -1451,25 +1458,25 @@ void PropGridPanel::CreatePropCategory(const ttlib::cstr& name, Node* node, Node
     }
 }
 
-static constexpr auto lstLayoutProps = {
+static constexpr std::initializer_list<PropName> lst_LayoutProps = {
 
-    txt_alignment, txt_borders, txt_border_size, txt_flags
-
-};
-
-static constexpr auto lstGridBagProps = {
-
-    txt_row, txt_column, txt_rowspan, txt_colspan
+    prop_alignment, prop_borders, prop_border_size, prop_flags
 
 };
 
-void PropGridPanel::CreateLayoutCategory(Node* node, PropertyMap& itemMap)
+static constexpr std::initializer_list<PropName> lst_GridBagProps = {
+
+    prop_row, prop_column, prop_rowspan, prop_colspan
+
+};
+
+void PropGridPanel::CreateLayoutCategory(Node* node)
 {
     m_prop_grid->AddPage();
 
     auto id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
 
-    for (auto& iter: lstLayoutProps)
+    for (auto iter: lst_LayoutProps)
     {
         auto prop = node->get_prop_ptr(iter);
         if (!prop)
@@ -1477,29 +1484,27 @@ void PropGridPanel::CreateLayoutCategory(Node* node, PropertyMap& itemMap)
 
         auto id_prop = m_prop_grid->Append(GetProperty(prop));
 
-        auto propInfo = prop->GetPropertyInfo();
+        auto propInfo = prop->GetPropDeclaration();
         m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
 
-        itemMap[iter] = prop;
         m_property_map[id_prop] = prop;
     }
 
-    if (node->GetParent()->GetClassName() != "wxGridBagSizer")
+    if (!node->GetParent()->isGen(gen_wxGridBagSizer))
     {
         if (auto prop = node->get_prop_ptr(txt_proportion); prop)
         {
             auto id_prop = m_prop_grid->Append(GetProperty(prop));
 
-            auto propInfo = prop->GetPropertyInfo();
+            auto propInfo = prop->GetPropDeclaration();
             m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
 
-            itemMap[txt_proportion] = prop;
             m_property_map[id_prop] = prop;
         }
     }
     else
     {
-        for (auto& iter: lstGridBagProps)
+        for (auto iter: lst_GridBagProps)
         {
             auto prop = node->get_prop_ptr(iter);
             if (!prop)
@@ -1507,10 +1512,9 @@ void PropGridPanel::CreateLayoutCategory(Node* node, PropertyMap& itemMap)
 
             auto id_prop = m_prop_grid->Append(GetProperty(prop));
 
-            auto propInfo = prop->GetPropertyInfo();
+            auto propInfo = prop->GetPropDeclaration();
             m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
 
-            itemMap[iter] = prop;
             m_property_map[id_prop] = prop;
         }
     }
@@ -1520,7 +1524,8 @@ void PropGridPanel::CreateLayoutCategory(Node* node, PropertyMap& itemMap)
     m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
 }
 
-void PropGridPanel::CreateEventCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* declaration, EventMap& itemMap)
+void PropGridPanel::CreateEventCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* declaration,
+                                        EventSet& event_set)
 {
     auto& category = declaration->GetCategory();
 
@@ -1537,7 +1542,7 @@ void PropGridPanel::CreateEventCategory(const ttlib::cstr& name, Node* node, Nod
 
     auto id = m_event_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
 
-    AddEvents(name, node, category, itemMap);
+    AddEvents(name, node, category, event_set);
 
     if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
         it != m_expansion_map.end())
@@ -1587,25 +1592,11 @@ void PropGridPanel::ReplaceDrvFile(const wxString& newValue, NodeProperty* propT
     ModifyProperty(propType, drvName);
 }
 
-bool PropGridPanel::IsPropAllowed(Node* node, NodeProperty* prop)
+bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)
 {
-    if (prop->GetPropName() == "original_image" || prop->GetPropName() == "auto_convert" ||
-        prop->GetPropName() == "convert_type")
-    {
-        return (node->get_value_ptr("source_type")->is_sameas("Header"));
-    }
-    else if (prop->GetPropName() == "art_provider_id" || prop->GetPropName() == "art_client")
-    {
-        return (node->get_value_ptr("source_type")->is_sameas("Art Provider"));
-    }
-    else if (prop->GetPropName() == "alpha_to_mask")
-    {
-        return (!node->get_value_ptr("source_type")->is_sameas("XPM"));
-    }
-    else if (prop->GetPropName() == "source_image")
-    {
-        return (!node->get_value_ptr("source_type")->is_sameas("Art Provider"));
-    }
+    // TODO: [KeyWorks - 04-10-2021] The original properties that were ignored were replaced, so this is now just a
+    // placeholder. It is called, so if needed, this would be where properties could be disabled, presumably based on the
+    // parent.
 
     return true;
 }

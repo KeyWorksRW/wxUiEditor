@@ -199,9 +199,10 @@ bool Node::IsChildAllowed(Node* child)
     auto child_type = child->GetNodeType();
     int_t max_children;
 
-    if (GetNodeTypeName() == "form")
+    if (isType(type_form))
     {
-        max_children = GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_type, prop_as_bool("aui_managed"));
+        // max_children = GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_type, prop_as_bool(prop_aui));
+        max_children = GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_type, false);
     }
     else
         max_children = GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_type);
@@ -295,14 +296,106 @@ bool Node::IsLocal()
 
 bool Node::HasValue(PropName name)
 {
-    auto prop = get_prop_ptr(name);
-    return (prop && prop->HasValue());
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].HasValue();
+    else
+        return false;
 }
 
 bool Node::prop_as_bool(PropName name)
 {
-    auto prop = get_prop_ptr(name);
-    return (prop && prop->as_bool());
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_bool();
+    else
+        return false;
+}
+
+int Node::prop_as_int(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_int();
+    else
+        return 0;
+}
+
+wxColour Node::prop_as_wxColour(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_color();
+    else
+        return wxColour();
+}
+
+wxFont Node::prop_as_font(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_font();
+    else
+        return *wxNORMAL_FONT;
+}
+
+wxPoint Node::prop_as_wxPoint(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_point();
+    else
+        return wxDefaultPosition;
+}
+
+wxSize Node::prop_as_wxSize(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_size();
+    else
+        return wxDefaultSize;
+}
+
+wxBitmap Node::prop_as_wxBitmap(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_bitmap();
+    else
+        return wxNullBitmap;
+}
+
+wxArrayString Node::prop_as_wxArrayString(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_wxArrayString();
+    else
+        return wxArrayString();
+}
+
+FontProperty Node::prop_as_font_prop(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_font_prop();
+    else
+        return FontProperty(wxNORMAL_FONT);
+}
+
+double Node::prop_as_double(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_float();
+    else
+        return 0;
+}
+
+wxString Node::prop_as_wxString(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_wxString();
+    else
+        return wxString();
+}
+
+const ttlib::cstr& Node::prop_as_string(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].get_value();
+    else
+        return tt_empty_cstr;
 }
 
 bool Node::HasValue(ttlib::cview name)
@@ -373,9 +466,9 @@ const ttlib::cstr& Node::prop_as_string(ttlib::cview name)
 
 const ttlib::cstr& Node::get_node_name()
 {
-    if (auto it = m_prop_map.find(txt_var_name); it != m_prop_map.end())
+    if (auto it = m_prop_indices.find(prop_var_name); it != m_prop_indices.end())
         return m_properties[it->second].get_value();
-    else if (it = m_prop_map.find(txt_class_name); it != m_prop_map.end())
+    else if (it = m_prop_indices.find(prop_class_name); it != m_prop_indices.end())
         return m_properties[it->second].get_value();
     else
         return tt_empty_cstr;

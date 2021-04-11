@@ -23,6 +23,8 @@
 #include "import_wxsmith.h"    // WxSmith -- Import a wxSmith file
 #include "oldproject.h"        // Load older version of wxUiEditor project
 
+using namespace GenEnum;
+
 bool App::LoadProject(const ttString& file)
 {
     delete m_pjtSettings;
@@ -299,7 +301,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
         if (auto prop = new_node->get_prop_ptr(iter.name()); prop)
         {
-            if (prop->GetType() == Type::Bool)
+            if (prop->type() == type_bool)
                 prop->set_value(iter.as_bool());
             else
                 prop->set_value(iter.value());

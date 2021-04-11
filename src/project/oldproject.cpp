@@ -19,6 +19,8 @@
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
 
+using namespace GenEnum;
+
 // Called to replace properties in older project files
 static bool CheckProperty(pugi::xml_node& xml_prop, Node* node);
 
@@ -425,7 +427,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
             }
             else if (auto prop = newobject->get_prop_ptr(prop_name); prop)
             {
-                if (prop->GetType() == Type::Bool)
+                if (prop->type() == type_bool)
                     prop->set_value(xml_prop.text().as_bool());
                 else
                     prop->set_value(xml_prop.text().as_cview());
@@ -510,9 +512,9 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
     {
         for (auto& iter: sizeritem->get_props_vector())
         {
-            if (iter.as_string() != iter.GetPropertyInfo()->GetDefaultValue())
+            if (iter.as_string() != iter.GetPropDeclaration()->GetDefaultValue())
             {
-                auto prop_value = newobject->get_value_ptr(iter.GetPropertyInfo()->GetName());
+                auto prop_value = newobject->get_value_ptr(iter.GetPropDeclaration()->GetName());
                 if (prop_value)
                     *prop_value = iter.as_string();
             }

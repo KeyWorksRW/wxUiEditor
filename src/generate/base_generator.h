@@ -29,6 +29,7 @@ class BaseGenerator
 {
 public:
     BaseGenerator() {}
+    virtual ~BaseGenerator() {}
 
     MockupParent* GetMockup();
 

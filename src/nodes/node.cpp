@@ -17,6 +17,8 @@
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 
+using namespace GenEnum;
+
 // Same as wxGetApp() only this returns a reference to the project node
 Node& wxGetProject()
 {
@@ -24,7 +26,7 @@ Node& wxGetProject()
     return *wxGetApp().GetProjectPtr().get();
 }
 
-Node::Node(NodeDeclaration* info) : m_info(info) {}
+Node::Node(NodeDeclaration* declaration) : m_declaration(declaration) {}
 
 Node::~Node()
 {
@@ -51,6 +53,14 @@ Node::~Node()
         }
     }
 #endif
+}
+
+NodeProperty* Node::get_prop_ptr(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return &m_properties[result->second];
+    else
+        return nullptr;
 }
 
 NodeProperty* Node::get_prop_ptr(ttlib::cview name)
@@ -96,10 +106,11 @@ size_t Node::GetInUseEventCount()
     return count;
 }
 
-NodeProperty* Node::AddNodeProperty(PropertyInfo* info)
+NodeProperty* Node::AddNodeProperty(PropDeclaration* declaration)
 {
-    auto& prop = m_properties.emplace_back(info, this);
-    m_prop_map[prop.GetPropName()] = (m_properties.size() - 1);
+    auto& prop = m_properties.emplace_back(declaration, this);
+    m_prop_map[prop.name_str()] = (m_properties.size() - 1);
+    m_prop_indices[prop.get_name()] = (m_properties.size() - 1);
     return &m_properties[m_properties.size() - 1];
 }
 
@@ -110,42 +121,13 @@ NodeEvent* Node::AddNodeEvent(const NodeEventInfo* info)
     return &m_events[m_events.size() - 1];
 }
 
-NodeSharedPtr Node::FindNearAncestorPtr(const std::string& type)
-{
-    NodeSharedPtr result = nullptr;
-    auto parent = GetParentPtr();
-    if (parent)
-    {
-        if (parent->GetNodeTypeName() == type)
-            result = parent;
-        else
-            result = parent->FindNearAncestorPtr(type);
-    }
-
-    return result;
-}
-
-NodeSharedPtr Node::FindParentFormPtr()
-{
-    if (auto retObj = FindNearAncestorPtr("form"); retObj)
-        return retObj;
-    if (auto retObj = FindNearAncestorPtr("menubar_form"); retObj)
-        return retObj;
-    if (auto retObj = FindNearAncestorPtr("toolbar_form"); retObj)
-        return retObj;
-    if (auto retObj = FindNearAncestorPtr("wizard"); retObj)
-        return retObj;
-
-    return nullptr;
-}
-
-Node* Node::FindNearAncestor(const std::string& type)
+Node* Node::FindNearAncestor(GenType type)
 {
     Node* result = nullptr;
     auto parent = GetParent();
     if (parent)
     {
-        if (parent->GetNodeTypeName() == type)
+        if (parent->isType(type))
             result = parent;
         else
             result = parent->FindNearAncestor(type);
@@ -154,29 +136,15 @@ Node* Node::FindNearAncestor(const std::string& type)
     return result;
 }
 
-Node* Node::FindNearAncestorByBaseClass(const std::string& type)
-{
-    auto parent = GetParent();
-    while (parent)
-    {
-        if (parent->GetNodeDeclaration()->IsSubclassOf(type))
-            return parent;
-
-        parent = parent->GetParent();
-    }
-
-    return parent;
-}
-
 Node* Node::FindParentForm()
 {
-    if (auto retObj = FindNearAncestor("form"); retObj)
+    if (auto retObj = FindNearAncestor(type_form); retObj)
         return retObj;
-    if (auto retObj = FindNearAncestor("menubar_form"); retObj)
+    if (auto retObj = FindNearAncestor(type_menubar_form); retObj)
         return retObj;
-    if (auto retObj = FindNearAncestor("toolbar_form"); retObj)
+    if (auto retObj = FindNearAncestor(type_toolbar_form); retObj)
         return retObj;
-    if (auto retObj = FindNearAncestor("wizard"); retObj)
+    if (auto retObj = FindNearAncestor(type_wizard); retObj)
         return retObj;
 
     return nullptr;
@@ -323,6 +291,18 @@ bool Node::IsLocal()
 {
     auto value = get_value_ptr(txt_class_access);
     return (value && *value == "none");
+}
+
+bool Node::HasValue(PropName name)
+{
+    auto prop = get_prop_ptr(name);
+    return (prop && prop->HasValue());
+}
+
+bool Node::prop_as_bool(PropName name)
+{
+    auto prop = get_prop_ptr(name);
+    return (prop && prop->as_bool());
 }
 
 bool Node::HasValue(ttlib::cview name)

@@ -161,6 +161,5 @@ OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent, wxWindowID id, const wxString& 
 
     Centre(wxBOTH);
 
-    SetName("OtherCtrlsBase");
-    wxPersistentRegisterAndRestore(this);
+    wxPersistentRegisterAndRestore(this, "OtherCtrlsBase");
 }

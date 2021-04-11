@@ -10,6 +10,10 @@
 #include <stdexcept>
 #include <vector>
 
+#include "gen_enums.h"  // Enumerations for generators
+
+using namespace GenEnum;
+
 class NodeCategory
 {
 public:
@@ -18,12 +22,12 @@ public:
     const wxString& GetName() { return m_name; }
     ttlib::cstr getName() { return ttlib::cstr(m_name.wx_str()); }
 
-    void AddProperty(const std::string& name) { m_properties.emplace_back(name); }
+    void AddProperty(PropName name) { m_prop_names.emplace_back(name); }
 
-    const std::string& GetPropertyName(size_t index)
+    PropName GetPropName(size_t index)
     {
-        ASSERT(index < m_properties.size());
-        return m_properties.at(index);
+        ASSERT(index < m_prop_names.size());
+        return m_prop_names.at(index);
     }
 
     void AddEvent(const std::string& name) { m_events.emplace_back(name); }
@@ -37,18 +41,17 @@ public:
     NodeCategory& AddCategory(ttlib::cview name) { return m_categories.emplace_back(name); }
     std::vector<NodeCategory>& GetCategories() { return m_categories; }
 
-    size_t GetPropertyCount() const { return m_properties.size(); }
+    size_t GetPropNameCount() const { return m_prop_names.size(); }
     size_t GetEventCount() const { return m_events.size(); }
     size_t GetCategoryCount() const { return m_categories.size(); }
 
-    std::vector<std::string>& GetProperties() { return m_properties; }
     std::vector<std::string>& GetEvents() { return m_events; }
 
 private:
     // This has to be wxString instead of std::string because wxPropertyCategory and wxPropertyGridInterface require it
     wxString m_name;
 
-    std::vector<std::string> m_properties;
+    std::vector<PropName> m_prop_names;
     std::vector<std::string> m_events;
     std::vector<NodeCategory> m_categories;
 };

@@ -17,6 +17,8 @@
 
 #include "btn_widgets.h"
 
+using namespace GenEnum;
+
 //////////////////////////////////////////  ButtonGenerator  //////////////////////////////////////////
 
 wxObject* ButtonGenerator::Create(Node* node, wxObject* parent)
@@ -30,13 +32,13 @@ wxObject* ButtonGenerator::Create(Node* node, wxObject* parent)
     else
         widget->SetLabel(node->prop_as_wxString(txt_label));
 
-    if (node->prop_as_bool("default"))
+    if (node->prop_as_bool("default_btn"))
         widget->SetDefault();
 
     if (node->prop_as_bool("auth_needed"))
         widget->SetAuthNeeded();
 
-    if (node->HasValue("bitmap"))
+    if (node->HasValue(prop_bitmap))
         widget->SetBitmap(node->prop_as_wxBitmap("bitmap"));
 
     if (node->HasValue("disabled_bmp"))
@@ -68,7 +70,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     // it does not revert when markup is cleared (at least on Windows where markup controls whether a generic or native
     // version of the button is displayed).
 
-    if (prop->GetPropName() == "label")
+    if (prop->isProp(prop_label))
     {
         auto ctrl = wxStaticCast(widget, wxButton);
         if (node->prop_as_bool("markup"))
@@ -78,7 +80,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
 
         return true;
     }
-    else if (prop->GetPropName() == "markup")
+    else if (prop->isProp(prop_markup))
     {
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
@@ -89,7 +91,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
             return true;
         }
     }
-    else if (prop->GetPropName() == "default")
+    else if (prop->isProp(prop_default_btn))
     {
         // You can change a button to be the default, but you cannot change it back without recreating it.
         if (prop->as_bool())
@@ -144,7 +146,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
              << ");";
     }
 
-    if (node->prop_as_bool("default"))
+    if (node->prop_as_bool("default_btn"))
     {
         if (code.size())
             code << '\n';
@@ -253,7 +255,7 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
     // it does not revert when markup is cleared (at least on Windows where markup controls whether a generic or native
     // version of the button is displayed).
 
-    if (prop->GetPropName() == "label")
+    if (prop->isProp(prop_label))
     {
         auto ctrl = wxStaticCast(widget, wxToggleButton);
         if (node->prop_as_bool("markup"))
@@ -263,7 +265,7 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
 
         return true;
     }
-    else if (prop->GetPropName() == "markup")
+    else if (prop->isProp(prop_markup))
     {
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
@@ -274,7 +276,7 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
             return true;
         }
     }
-    else if (prop->GetPropName() == "pressed")
+    else if (prop->isProp(prop_pressed))
     {
         wxStaticCast(widget, wxToggleButton)->SetValue(prop->as_bool());
         return true;
@@ -401,6 +403,8 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxCommandLinkButton(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+
+    // BUGBUG: [KeyWorks - 04-09-2021] Need to support default_btn property
 
     if (node->HasValue("main_label"))
     {

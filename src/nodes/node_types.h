@@ -1,13 +1,16 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Class for storing node types and allowable child count
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#include <unordered_map>
+#include <map>
+
+#include "gen_enums.h"  // Enumerations for generators
+using namespace GenEnum;
 
 namespace child_count
 {
@@ -21,27 +24,32 @@ namespace child_count
 class NodeType
 {
 public:
-    NodeType(ttlib::cview name) : m_name(name) {}
+    NodeType() {}
+
+    void Create(GenType gen_type)
+    {
+        m_gen_type = gen_type;
+        m_name = map_GenTypes[gen_type];
+    }
 
     const ttlib::cstr& get_name() const noexcept { return m_name; }
+    GenType gen_type() const noexcept { return m_gen_type; }
+    bool isType(GenType type) const noexcept { return (type == m_gen_type); }
 
-    int_t GetAllowableChildren(ttlib::cview child_name, bool is_aui_parent = false) const;
+    int_t GetAllowableChildren(GenType child_gen_type, bool is_aui_parent = false) const;
 
     int_t GetAllowableChildren(NodeType* child_type, bool is_aui_parent = false) const
     {
-        return GetAllowableChildren(child_type->get_name(), is_aui_parent);
+        return GetAllowableChildren(child_type->gen_type(), is_aui_parent);
     }
 
-    void AddChild(const char* name, int_t max_children);
+    void AddChild(GenType gen_type, int_t max_children) { m_map_children[gen_type] = max_children; }
 
 private:
+    // It's rare, but sometimes we need to check for a partial name such as "book" to match multiple types
     ttlib::cstr m_name;
 
-    struct AllowableChildren
-    {
-        AllowableChildren(int_t max) { max_children = max; }
-        int_t max_children;
-    };
+    GenType m_gen_type;
 
-    std::unordered_map<std::string, std::unique_ptr<AllowableChildren>> m_children;
+    std::map<GenType, int_t> m_map_children;
 };

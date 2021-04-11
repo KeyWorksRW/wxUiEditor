@@ -183,7 +183,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     wxWindow* new_wxparent = (created_window ? created_window : parent);
 
-    if (node->GetClassName() == "wxCollapsiblePane")
+    if (node->isGen(gen_wxCollapsiblePane))
     {
         auto collpane = wxStaticCast(created_object, wxCollapsiblePane);
         new_wxparent = collpane->GetPane();
@@ -194,7 +194,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         CreateChildren(child.get(), new_wxparent, created_object);
     }
 
-    if (node->GetParent()->GetNodeTypeName() == "wizard")
+    if (node->GetParent()->isType(type_wizard))
     {
         m_wizard->AddPage(wxStaticCast(created_window, wxPanel));
         return;
@@ -203,7 +203,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     if (parent && (created_window || created_sizer))
     {
         auto obj_parent = GetNode(parentNode);
-        if (obj_parent && obj_parent->GetClassName() == "wxChoicebook" && node->GetNodeType()->get_name() == "widget")
+        if (obj_parent && obj_parent->isGen(gen_wxChoicebook) && node->isType(type_widget))
         {
             wxStaticCast(parentNode, wxChoicebook)
                 ->GetControlSizer()
@@ -213,7 +213,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         {
             auto child_obj = GetNode(created_object);
             auto sizer_flags = child_obj->GetSizerFlags();
-            if (obj_parent->GetClassName() == "wxGridBagSizer")
+            if (obj_parent->isGen(gen_wxGridBagSizer))
             {
                 auto sizer = wxStaticCast(parentNode, wxGridBagSizer);
                 wxGBPosition position(child_obj->prop_as_int(txt_row), child_obj->prop_as_int(txt_column));

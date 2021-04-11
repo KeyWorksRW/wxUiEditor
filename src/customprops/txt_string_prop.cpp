@@ -24,8 +24,7 @@ class EditStringDialog : public EditStringDialogBase
 public:
     EditStringDialog(wxWindow* parent, NodeProperty* prop) : EditStringDialogBase(parent)
     {
-        ttlib::cstr title = prop->GetPropName() + " property editor";
-        SetTitle(title.wx_str());
+        SetTitle(ttlib::cstr() << prop->name_str() << " property editor");
         m_value = prop->as_wxString();
     };
 };

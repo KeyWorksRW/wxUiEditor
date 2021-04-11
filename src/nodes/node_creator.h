@@ -7,21 +7,23 @@
 
 #pragma once
 
+#include <array>
 #include <map>
 #include <set>
 #include <unordered_set>
 
 #include "node_decl.h"   // NodeDeclaration class
 #include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
-#include "prop_info.h"   // PropDefinition and PropertyInfo classes
+#include "prop_decl.h"   // PropChildDeclaration and PropDeclaration classes
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
+#include "gen_enums.h"  // Enumerations for generators
+using namespace GenEnum;
+
 class NodeCategory;
 
-using NodeDeclarationMap =
-    std::unordered_map<std::string,
-                       std::shared_ptr<NodeDeclaration>>;  // std::map<std::string, std::shared_ptr<NodeDeclaration>>
+using NodeDeclarationArray = std::array<NodeDeclaration*, gen_name_array_size>;
 
 namespace pugi
 {
@@ -29,17 +31,24 @@ namespace pugi
     class xml_node;
 }  // namespace pugi
 
-bool LoadInternalXmlDocFile(ttlib::cview file, pugi::xml_document& doc);
-
 // Contains definitions of all components
 class NodeCreator
 {
 public:
     NodeCreator() {};
+    ~NodeCreator();
+
     void Initialize();
 
     NodeSharedPtr CreateNode(ttlib::cview class_name, Node* parent);
     NodeSharedPtr NewNode(NodeDeclaration* node_info);
+
+    // If you have the class enum value, this is the preferred way to get the Declaration
+    // pointer.
+    NodeDeclaration* get_declaration(GenEnum::GenName class_enum)
+    {
+        return m_a_declarations[static_cast<size_t>(class_enum)];
+    }
 
     NodeDeclaration* GetNodeDeclaration(ttlib::cview class_name);
 
@@ -60,23 +69,15 @@ public:
     }
 
     int_t GetAllowableChildren(Node* parent, ttlib::cview child_name, bool is_aui_parent = false) const;
+    int_t GetAllowableChildren(Node* parent, GenEnum::GenType child_class_type, bool is_aui_parent = false) const;
 
-    const NodeDeclarationMap& GetNodeDeclarationMap() const { return m_node_declarations; }
+    const NodeDeclarationArray& GetNodeDeclarationArray() const { return m_a_declarations; }
 
 protected:
-    void InitCompTypes();
-    void InitDeclarations();
+    void ParseGeneratorFile(ttlib::cview file);
+    void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
 
-    bool ParseGeneratorFile(ttlib::cview file);
-
-    void ParseCompInfo(pugi::xml_node root);
-    void SetupGroup(ttlib::cview file);
-    void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category, std::set<Type>* types);
-
-    // conversion routines
-    Type ParsePropertyType(ttlib::cview str);
-
-    NodeType* GetNodeType(ttlib::cview name);
+    NodeType* GetNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
 
     size_t CountChildrenWithSameType(Node* parent, NodeType* type);
 
@@ -85,10 +86,8 @@ protected:
     void AddAllConstants();
 
 private:
-    NodeDeclarationMap m_node_declarations;
-
-    std::unordered_map<std::string, std::unique_ptr<NodeType>> m_component_types;
-    std::map<std::string, Type> m_propTypes;
+    std::array<NodeDeclaration*, gen_name_array_size> m_a_declarations;
+    std::array<NodeType, gen_type_array_size> m_a_node_types;
 
     std::unordered_set<std::string> m_setOldHostTypes;
 

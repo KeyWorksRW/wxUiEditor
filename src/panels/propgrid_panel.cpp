@@ -32,7 +32,7 @@
 #include "node.h"         // Node class
 #include "node_decl.h"    // NodeDeclaration class
 #include "node_prop.h"    // NodeProperty -- NodeProperty class
-#include "prop_info.h"    // PropDefinition and PropertyInfo classes
+#include "prop_decl.h"    // PropChildDeclaration and PropDeclaration classes
 #include "uifuncs.h"      // Miscellaneous functions for displaying UI
 #include "utils.h"        // Utility functions that work with properties
 
@@ -45,6 +45,8 @@
 #include "../customprops/txt_string_prop.h"  // EditStringProperty -- dialog for editing single-line strings
 
 #include "wx_id_list.cpp"  // wxID_ strings
+
+using namespace GenEnum;
 
 constexpr auto PROPERTY_ID = wxID_HIGHEST + 1;
 constexpr auto EVENT_ID = PROPERTY_ID + 1;
@@ -141,11 +143,15 @@ void PropGridPanel::Create()
         auto declaration = node->GetNodeDeclaration();
         if (declaration)
         {
-            PropertyMap propMap, dummyPropMap;
-            EventMap eventMap, dummyEventMap;
+            // These sets are used to prevent trying to add a duplicate property or event to the property grid. In Debug
+            // builds, attempting to do so will generate an assert message telling you the name of the duplicate and the node
+            // declaration it occurs in. In release builds, only the first instance will be displayed.
 
-            CreatePropCategory(declaration->GetClassName(), node, declaration, propMap);
-            CreateEventCategory(declaration->GetClassName(), node, declaration, eventMap);
+            PropNameSet prop_set;
+            EventSet event_set;
+
+            CreatePropCategory(declaration->GetClassName(), node, declaration, prop_set);
+            CreateEventCategory(declaration->GetClassName(), node, declaration, event_set);
 
             // Calling GetBaseClassCount() is exepensive, so do it once and store the result
             auto num_base_classes = declaration->GetBaseClassCount();
@@ -154,13 +160,13 @@ void PropGridPanel::Create()
                 auto info_base = declaration->GetBaseClass(i);
                 if (info_base->GetClassName() == "sizer_child")
                     continue;
-                CreatePropCategory(info_base->GetClassName(), node, info_base, propMap);
-                CreateEventCategory(info_base->GetClassName(), node, info_base, eventMap);
+                CreatePropCategory(info_base->GetClassName(), node, info_base, prop_set);
+                CreateEventCategory(info_base->GetClassName(), node, info_base, event_set);
             }
 
             if (node->GetParent() && node->GetParent()->IsSizer() && !node->IsSpacer())
             {
-                CreateLayoutCategory(node, propMap);
+                CreateLayoutCategory(node);
             }
 
             if (m_prop_grid->GetPageCount() > 0)
@@ -208,52 +214,52 @@ int PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flag
 
 wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
 {
-    auto type = prop->GetType();
+    auto type = prop->type();
 
     // Note that prop->as_string() does NOT do a UTF16 conversion on Windows unless you call wx_str().
     // prop->as_wxString() automatically calls wx_str().
 
     switch (type)
     {
-        case Type::ID:
+        case type_id:
             return new wxStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
-        case Type::Int:
+        case type_int:
             return new wxIntProperty(prop->GetPropName(), wxPG_LABEL, prop->as_int());
 
-        case Type::Uint:
+        case type_uint:
             return new wxUIntProperty(prop->GetPropName(), wxPG_LABEL, prop->as_int());
 
-        case Type::String_Escapes:
+        case type_string_escapes:
             // This first doubles the backslash in escaped characters: \n, \t, \r, and \.
             return new wxStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_escape_text().wx_str());
 
-        case Type::String:
+        case type_string:
             return new wxStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
-        case Type::String_Edit_Escapes:
+        case type_string_edit_escapes:
             // This includes a button that triggers a small text editor dialog
             // This doubles the backslash in escaped characters: \n, \t, \r, and \.
             return new wxLongStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_escape_text().wx_str());
 
-        case Type::String_Edit:
+        case type_string_edit:
             // This includes a button that triggers a small text editor dialog
             return new wxLongStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
-        case Type::String_Edit_Single:
+        case type_string_edit_single:
             // This includes a button that triggers a small single-line custom text editor dialog
             return new EditStringProperty(prop->GetPropName(), prop);
 
-        case Type::Bool:
+        case type_bool:
             return new wxBoolProperty(prop->GetPropName(), wxPG_LABEL, prop->GetValue() == "1");
 
-        case Type::Wxpoint:
+        case type_wxPoint:
             return new CustomPointProperty(prop->GetPropName(), prop->as_point());
 
-        case Type::Wxsize:
+        case type_wxSize:
             return new CustomSizeProperty(prop->GetPropName(), prop->as_size());
 
-        case Type::Wxfont:
+        case type_wxFont:
             if (prop->GetValue().empty())
             {
                 return new wxFontProperty(prop->GetPropName(), wxPG_LABEL);
@@ -263,13 +269,13 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
                 return new wxFontProperty(prop->GetPropName(), wxPG_LABEL, prop->as_font());
             }
 
-        case Type::Path:
+        case type_path:
             return new wxDirProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxString());
 
-        case Type::Image:
+        case type_image:
             return new PropertyGrid_Image(prop->GetPropName(), prop);
 
-        case Type::Float:
+        case type_float:
             return new wxFloatProperty(prop->GetPropName(), wxPG_LABEL, prop->as_float());
 
         default:
@@ -278,9 +284,9 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
 
     wxPGProperty* new_pg_property = nullptr;
 
-    if (type == Type::Bitlist)
+    if (type == type_bitlist)
     {
-        auto propInfo = prop->GetPropertyInfo();
+        auto propInfo = prop->GetPropDeclaration();
 
         wxPGChoices bit_flags;
         int index = 0;
@@ -310,9 +316,9 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             }
         }
     }
-    else if (type == Type::Option || type == Type::Edit_option)
+    else if (type == type_option || type == type_editoption)
     {
-        auto propInfo = prop->GetPropertyInfo();
+        auto propInfo = prop->GetPropDeclaration();
 
         auto value = prop->as_wxString();
         const wxString* pHelp = nullptr;
@@ -328,7 +334,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             }
         }
 
-        if (type == Type::Edit_option)
+        if (type == type_editoption)
         {
             new_pg_property = new wxEditEnumProperty(prop->GetPropName(), wxPG_LABEL, constants);
         }
@@ -354,7 +360,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
 
         new_pg_property->SetHelpString(desc);
     }
-    else if (type == Type::Wxcolour)
+    else if (type == type_wxColour)
     {
         auto value = prop->as_string();
         if (value.empty())  // Default Colour
@@ -378,7 +384,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             }
         }
     }
-    else if (type == Type::File)
+    else if (type == type_file)
     {
         new_pg_property = new wxFileProperty(prop->GetPropName(), wxPG_LABEL, prop->as_string());
         auto& prop_name = prop->GetPropName();
@@ -436,13 +442,13 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().getProjectPath().wx_str());
         }
     }
-    else if (type == Type::Stringlist)
+    else if (type == type_stringlist)
     {
         new_pg_property = new wxArrayStringProperty(prop->GetPropName(), wxPG_LABEL, prop->as_wxArrayString());
         wxVariant var_quote("\"");
         new_pg_property->DoSetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
     }
-    else if (type == Type::Parent)
+    else if (type == type_parent)
     {
         new_pg_property = new wxStringProperty(prop->GetPropName(), wxPG_LABEL);
         new_pg_property->ChangeFlag(wxPG_PROP_READONLY, true);
@@ -457,30 +463,32 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
     return new_pg_property;
 }
 
-void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCategory& category, PropertyMap& properties)
+void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCategory& category, PropNameSet& prop_set)
 {
-    size_t propCount = category.GetPropertyCount();
+    size_t propCount = category.GetPropNameCount();
     for (size_t i = 0; i < propCount; i++)
     {
-        auto propName = category.GetPropertyName(i);
-        auto prop = node->get_prop_ptr(propName);
+        auto prop_name = category.GetPropName(i);
+        auto prop = node->get_prop_ptr(prop_name);
 
         if (!prop)
             continue;
 
-        auto propInfo = prop->GetPropertyInfo();
+        auto propInfo = prop->GetPropDeclaration();
 
-        // we do not want to duplicate inherited properties
-        if (properties.find(propName) == properties.end())
+        ASSERT_MSG(prop_set.find(prop_name) == prop_set.end(), ttlib::cstr("The property ")
+                                                                   << map_PropNames[prop_name]
+                                                                   << " appears more than once in " << node->GetClassName());
+        if (prop_set.find(prop_name) == prop_set.end())
         {
             if (!IsPropAllowed(node, prop))
                 continue;
             auto pg = m_prop_grid->Append(GetProperty(prop));
-            auto propType = prop->GetType();
-            if (propType != Type::Option)
+            auto propType = prop->type();
+            if (propType != type_option)
             {
                 m_prop_grid->SetPropertyHelpString(pg, propInfo->GetDescription());
-                if (propType == Type::Parent)
+                if (propType == type_parent)
                 {
                     wxArrayString values = wxStringTokenize(prop->as_string(), ";", wxTOKEN_RET_EMPTY_ALL);
                     size_t index = 0;
@@ -495,7 +503,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                             value = "";
 
                         wxPGProperty* child = nullptr;
-                        if (Type::Bool == it->m_type)
+                        if (it->m_prop_type == type_bool)
                         {
                             // Because the format of a composed wxPGProperty value is stored this needs to be converted
                             // true == "<property name>"
@@ -507,9 +515,9 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                             //       interpreted as true
                             child = new wxBoolProperty(it->m_name, wxPG_LABEL, value.empty() || value == it->m_name);
                         }
-                        else if (Type::String_Escapes == it->m_type)
+                        else if (it->m_prop_type == type_string_escapes)
                         {
-                            child = new wxStringProperty(it->m_name, wxPG_LABEL, value);
+                            child = new wxStringProperty(it->name_str(), wxPG_LABEL, value);
                         }
                         else
                         {
@@ -521,14 +529,14 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                         m_prop_grid->SetPropertyHelpString(child, it->m_help);
                     }
                 }
-                else if (propType == Type::ID)
+                else if (propType == type_id)
                 {
-                    if (prop->GetPropertyInfo()->GetName() == "id")
+                    if (prop->GetPropDeclaration()->isProp(prop_id))
                     {
                         m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_ids);
                     }
                 }
-                else if (propType == Type::Image)
+                else if (propType == type_image)
                 {
                     m_prop_grid->Expand(pg);
                     m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#fff1d2"));
@@ -552,10 +560,10 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                 m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#e7f4e4"));
 
             // Automatically collapse properties that are rarely used
-            if (propName == "unchecked_bitmap")
+            if (prop_name == prop_unchecked_bitmap)
                 m_prop_grid->Collapse(pg);
 
-            if (auto it = m_expansion_map.find(propName); it != m_expansion_map.end())
+            if (auto it = m_expansion_map.find(map_PropNames[prop_name]); it != m_expansion_map.end())
             {
                 if (it->second)
                 {
@@ -567,14 +575,14 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                 }
             }
 
-            properties[propName] = prop;
+            prop_set.emplace(prop_name);
             m_property_map[pg] = prop;
         }
     }
 
     for (auto& nextCat: category.GetCategories())
     {
-        if (!nextCat.GetCategoryCount() && !nextCat.GetPropertyCount())
+        if (!nextCat.GetCategoryCount() && !nextCat.GetPropNameCount())
         {
             continue;
         }
@@ -582,7 +590,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
         wxPGProperty* catId =
             m_prop_grid->AppendIn(GetCategoryDisplayName(category.GetName()), new wxPropertyCategory(nextCat.GetName()));
 
-        AddProperties(name, node, nextCat, properties);
+        AddProperties(name, node, nextCat, prop_set);
 
         if (auto it = m_expansion_map.find(nextCat.getName()); it != m_expansion_map.end())
         {
@@ -598,7 +606,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
     }
 }
 
-void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory& category, EventMap& events)
+void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory& category, EventSet& event_set)
 {
     auto& eventList = category.GetEvents();
     for (auto& eventName: eventList)
@@ -610,8 +618,9 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
 
         auto eventInfo = event->GetEventInfo();
 
-        // We do not want to duplicate inherited events
-        if (events.find(eventName) == events.end())
+        ASSERT_MSG(event_set.find(eventName) == event_set.end(), ttlib::cstr("Encountered a duplicate event in ")
+                                                                     << node->GetClassName());
+        if (event_set.find(eventName) == event_set.end())
         {
             // auto grid_property = new wxLongStringProperty(eventInfo->get_name(), wxPG_LABEL,
             // CreateEscapedText(event->get_value()).wx_str());
@@ -636,7 +645,7 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
                 }
             }
 
-            events[eventName] = event;
+            event_set.emplace(eventName);
             m_event_map[id] = event;
         }
     }
@@ -647,17 +656,17 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
         auto& nextCat = category.GetCategories()[i];
         if (nextCat.GetName() == "Keyboard Events")
         {
-            if (node->GetNodeDeclaration()->GetCompFlags().contains("no_key_events"))
+            if (node->GetNodeDeclaration()->GetGeneratorFlags().contains("no_key_events"))
                 continue;
         }
         else if (nextCat.GetName() == "Mouse Events")
         {
-            if (node->GetNodeDeclaration()->GetCompFlags().contains("no_mouse_events"))
+            if (node->GetNodeDeclaration()->GetGeneratorFlags().contains("no_mouse_events"))
                 continue;
         }
         else if (nextCat.GetName() == "Focus Events")
         {
-            if (node->GetNodeDeclaration()->GetCompFlags().contains("no_focus_events"))
+            if (node->GetNodeDeclaration()->GetGeneratorFlags().contains("no_focus_events"))
                 continue;
         }
 
@@ -668,7 +677,7 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
         wxPGProperty* catId =
             m_event_grid->AppendIn(GetCategoryDisplayName(category.GetName()), new wxPropertyCategory(nextCat.GetName()));
 
-        AddEvents(name, node, nextCat, events);
+        AddEvents(name, node, nextCat, event_set);
 
         if (auto it = m_expansion_map.find(nextCat.getName()); it != m_expansion_map.end())
         {
@@ -713,9 +722,9 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
     auto prop = it->second;
     auto node = prop->GetNode();
 
-    switch (prop->GetType())
+    switch (prop->type())
     {
-        case Type::File:
+        case type_file:
             VerifyChangeFile(event, prop, node);
             break;
 
@@ -741,9 +750,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     auto prop = it->second;
     auto node = prop->GetNode();
 
-    switch (prop->GetType())
+    switch (prop->type())
     {
-        case Type::Float:
+        case type_float:
             {
                 double val = m_prop_grid->GetPropertyValueAsDouble(property);
 
@@ -751,17 +760,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case Type::String_Edit:
-        case Type::ID:
-        case Type::Int:
-        case Type::Uint:
+        case type_string_edit:
+        case type_id:
+        case type_int:
+        case type_uint:
             {
                 ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));
                 break;
             }
 
-        case Type::Option:
-        case Type::Edit_option:
+        case type_option:
+        case type_editoption:
             {
                 wxString value = m_prop_grid->GetPropertyValueAsString(property);
                 ModifyProperty(prop, value);
@@ -772,7 +781,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 }
 
                 // Update displayed description for the new selection
-                auto propInfo = prop->GetPropertyInfo();
+                auto propInfo = prop->GetPropDeclaration();
 
                 wxString helpString = wxString::FromUTF8Unchecked(propInfo->GetDescription());
 
@@ -858,8 +867,10 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case Type::Parent:
+        case type_parent:
             {
+                // REVIEW: [KeyWorks - 04-07-2021] Is this comment still true in 3.1?
+
                 // GenerateComposedValue() is the only method that does actually return a value, although the documentation
                 // claims the other methods just call this one, they return an empty value
                 const auto value = property->GenerateComposedValue();
@@ -867,15 +878,15 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case Type::String_Escapes:
-        case Type::String_Edit_Escapes:
+        case type_string_escapes:
+        case type_string_edit_escapes:
             {
                 auto value = ConvertEscapeSlashes(ttlib::cstr() << m_prop_grid->GetPropertyValueAsString(property).wx_str());
                 modifyProperty(prop, value);
                 break;
             }
 
-        case Type::Bool:
+        case type_bool:
             {
                 if (prop->GetPropName() == "aui_managed")
                 {
@@ -907,7 +918,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case Type::Bitlist:
+        case type_bitlist:
             {
                 ttString value = m_prop_grid->GetPropertyValueAsString(property);
                 value.Replace(" ", "");
@@ -952,21 +963,21 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case Type::Wxpoint:
+        case type_wxPoint:
             {
                 wxPoint point = wxPointRefFromVariant(event.GetPropertyValue());
                 modifyProperty(prop, ttlib::cstr() << point.x << ',' << point.y);
                 break;
             }
 
-        case Type::Wxsize:
+        case type_wxSize:
             {
                 wxSize size = wxSizeRefFromVariant(event.GetPropertyValue());
                 modifyProperty(prop, ttlib::cstr().Format("%i,%i", size.GetWidth(), size.GetHeight()));
                 break;
             }
 
-        case Type::Wxfont:
+        case type_wxFont:
             {
                 wxFont font;
                 font << event.GetPropertyValue();
@@ -978,7 +989,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case Type::Wxcolour:
+        case type_wxColour:
             {
                 wxColourPropertyValue colour;
                 colour << event.GetPropertyValue();
@@ -1004,7 +1015,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case Type::Image:
+        case type_image:
             {
                 ttlib::cstr value;
                 value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
@@ -1022,7 +1033,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             }
             break;
 
-        case Type::File:
+        case type_file:
             {
                 ttString newValue = property->GetValueAsString();
 
@@ -1042,7 +1053,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case Type::Path:
+        case type_path:
             {
                 ttString newValue = property->GetValueAsString();
                 newValue.make_absolute();
@@ -1067,7 +1078,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (newValue.empty())
                     {
                         // An empty name will generate uncompilable code, so we simply switch it to the default name
-                        auto new_name = prop->GetPropertyInfo()->GetDefaultValue();
+                        auto new_name = prop->GetPropDeclaration()->GetDefaultValue();
                         auto final_name = node->GetUniqueName(new_name);
                         newValue = final_name.size() ? final_name : new_name;
 
@@ -1212,40 +1223,40 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
     if (!grid_property)
         return;
 
-    switch (prop->GetType())
+    switch (prop->type())
     {
-        case Type::Float:
+        case type_float:
             grid_property->SetValue(WXVARIANT(prop->as_float()));
             break;
 
-        case Type::Int:
-        case Type::Uint:
+        case type_int:
+        case type_uint:
             grid_property->SetValueFromString(prop->as_string(), 0);
             break;
 
-        case Type::String:
-        case Type::String_Edit:
+        case type_string:
+        case type_string_edit:
             grid_property->SetValueFromString(prop->as_string(), 0);
             break;
 
-        case Type::String_Edit_Escapes:
-        case Type::String_Escapes:
+        case type_string_edit_escapes:
+        case type_string_escapes:
             grid_property->SetValueFromString(prop->as_escape_text().wx_str(), 0);
             break;
 
-        case Type::ID:
-        case Type::Option:
-        case Type::Edit_option:
-        case Type::Parent:
+        case type_id:
+        case type_option:
+        case type_editoption:
+        case type_parent:
             grid_property->SetValueFromString(prop->as_escape_text(), 0);
             break;
 
-        case Type::Bool:
+        case type_bool:
             // REVIEW: [KeyWorks - 07-03-2020] Any way to use "true" or "false" to be a bit more standard?
             grid_property->SetValueFromInt(prop->as_string() == "0" ? 0 : 1, 0);
             break;
 
-        case Type::Bitlist:
+        case type_bitlist:
             {
                 auto value = prop->as_string();
                 value.Replace("|", ", ", true);
@@ -1255,7 +1266,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             }
             break;
 
-        case Type::Wxpoint:
+        case type_wxPoint:
             {
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
                 auto aux = prop->as_string();
@@ -1264,7 +1275,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             }
             break;
 
-        case Type::Wxsize:
+        case type_wxSize:
             {
                 // m_prop_grid->SetPropertyValue( grid_property, prop->GetValue() );
                 auto aux = prop->as_string();
@@ -1273,13 +1284,13 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             }
             break;
 
-        case Type::Wxfont:
+        case type_wxFont:
             // REVIEW: [KeyWorks - 07-03-2020] Why not just use SetValueFromString like the others? And for that matter,
             // when is this being called?
             grid_property->SetValue(WXVARIANT(prop->as_string()));
             break;
 
-        case Type::Wxcolour:
+        case type_wxColour:
             {
                 auto value = prop->as_string();
                 if (value.empty())  // Default Colour
@@ -1308,7 +1319,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             }
             break;
 
-        case Type::Image:
+        case type_image:
             break;
 
         default:
@@ -1400,18 +1411,18 @@ wxString PropGridPanel::GetCategoryDisplayName(const wxString& original)
 }
 
 void PropGridPanel::CreatePropCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* declaration,
-                                       PropertyMap& itemMap)
+                                       PropNameSet& prop_set)
 {
     auto& category = declaration->GetCategory();
 
-    if (!category.GetCategoryCount() && !category.GetPropertyCount())
+    if (!category.GetCategoryCount() && !category.GetPropNameCount())
         return;
 
     m_prop_grid->AddPage();
 
     auto id = m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
 
-    AddProperties(name, node, category, itemMap);
+    AddProperties(name, node, category, prop_set);
 
     // Collapse categories that aren't likely to be used with the current object
     if (name == "AUI")
@@ -1447,25 +1458,25 @@ void PropGridPanel::CreatePropCategory(const ttlib::cstr& name, Node* node, Node
     }
 }
 
-static constexpr auto lstLayoutProps = {
+static constexpr std::initializer_list<PropName> lst_LayoutProps = {
 
-    txt_alignment, txt_borders, txt_border_size, txt_flags
-
-};
-
-static constexpr auto lstGridBagProps = {
-
-    txt_row, txt_column, txt_rowspan, txt_colspan
+    prop_alignment, prop_borders, prop_border_size, prop_flags
 
 };
 
-void PropGridPanel::CreateLayoutCategory(Node* node, PropertyMap& itemMap)
+static constexpr std::initializer_list<PropName> lst_GridBagProps = {
+
+    prop_row, prop_column, prop_rowspan, prop_colspan
+
+};
+
+void PropGridPanel::CreateLayoutCategory(Node* node)
 {
     m_prop_grid->AddPage();
 
     auto id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
 
-    for (auto& iter: lstLayoutProps)
+    for (auto iter: lst_LayoutProps)
     {
         auto prop = node->get_prop_ptr(iter);
         if (!prop)
@@ -1473,29 +1484,27 @@ void PropGridPanel::CreateLayoutCategory(Node* node, PropertyMap& itemMap)
 
         auto id_prop = m_prop_grid->Append(GetProperty(prop));
 
-        auto propInfo = prop->GetPropertyInfo();
+        auto propInfo = prop->GetPropDeclaration();
         m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
 
-        itemMap[iter] = prop;
         m_property_map[id_prop] = prop;
     }
 
-    if (node->GetParent()->GetClassName() != "wxGridBagSizer")
+    if (!node->GetParent()->isGen(gen_wxGridBagSizer))
     {
         if (auto prop = node->get_prop_ptr(txt_proportion); prop)
         {
             auto id_prop = m_prop_grid->Append(GetProperty(prop));
 
-            auto propInfo = prop->GetPropertyInfo();
+            auto propInfo = prop->GetPropDeclaration();
             m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
 
-            itemMap[txt_proportion] = prop;
             m_property_map[id_prop] = prop;
         }
     }
     else
     {
-        for (auto& iter: lstGridBagProps)
+        for (auto iter: lst_GridBagProps)
         {
             auto prop = node->get_prop_ptr(iter);
             if (!prop)
@@ -1503,10 +1512,9 @@ void PropGridPanel::CreateLayoutCategory(Node* node, PropertyMap& itemMap)
 
             auto id_prop = m_prop_grid->Append(GetProperty(prop));
 
-            auto propInfo = prop->GetPropertyInfo();
+            auto propInfo = prop->GetPropDeclaration();
             m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
 
-            itemMap[iter] = prop;
             m_property_map[id_prop] = prop;
         }
     }
@@ -1516,7 +1524,8 @@ void PropGridPanel::CreateLayoutCategory(Node* node, PropertyMap& itemMap)
     m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
 }
 
-void PropGridPanel::CreateEventCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* declaration, EventMap& itemMap)
+void PropGridPanel::CreateEventCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* declaration,
+                                        EventSet& event_set)
 {
     auto& category = declaration->GetCategory();
 
@@ -1525,7 +1534,7 @@ void PropGridPanel::CreateEventCategory(const ttlib::cstr& name, Node* node, Nod
 
     if (category.GetName() == "wxWindow")
     {
-        if (node->GetNodeDeclaration()->GetCompFlags().contains("no_win_events"))
+        if (node->GetNodeDeclaration()->GetGeneratorFlags().contains("no_win_events"))
             return;
     }
 
@@ -1533,7 +1542,7 @@ void PropGridPanel::CreateEventCategory(const ttlib::cstr& name, Node* node, Nod
 
     auto id = m_event_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
 
-    AddEvents(name, node, category, itemMap);
+    AddEvents(name, node, category, event_set);
 
     if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());
         it != m_expansion_map.end())
@@ -1583,25 +1592,11 @@ void PropGridPanel::ReplaceDrvFile(const wxString& newValue, NodeProperty* propT
     ModifyProperty(propType, drvName);
 }
 
-bool PropGridPanel::IsPropAllowed(Node* node, NodeProperty* prop)
+bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)
 {
-    if (prop->GetPropName() == "original_image" || prop->GetPropName() == "auto_convert" ||
-        prop->GetPropName() == "convert_type")
-    {
-        return (node->get_value_ptr("source_type")->is_sameas("Header"));
-    }
-    else if (prop->GetPropName() == "art_provider_id" || prop->GetPropName() == "art_client")
-    {
-        return (node->get_value_ptr("source_type")->is_sameas("Art Provider"));
-    }
-    else if (prop->GetPropName() == "alpha_to_mask")
-    {
-        return (!node->get_value_ptr("source_type")->is_sameas("XPM"));
-    }
-    else if (prop->GetPropName() == "source_image")
-    {
-        return (!node->get_value_ptr("source_type")->is_sameas("Art Provider"));
-    }
+    // TODO: [KeyWorks - 04-10-2021] The original properties that were ignored were replaced, so this is now just a
+    // placeholder. It is called, so if needed, this would be where properties could be disabled, presumably based on the
+    // parent.
 
     return true;
 }

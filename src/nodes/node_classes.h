@@ -19,6 +19,6 @@ class NodeProperty;
 class BaseGenerator;
 class NodeCreator;
 class NodeCategory;
-class PropertyInfo;
+class PropDeclaration;
 
 using NodeSharedPtr = std::shared_ptr<Node>;

@@ -9,15 +9,24 @@
 
 #include "node_decl.h"
 
-#include "node.h"       // Contains the user-modifiable node
-#include "prop_info.h"  // PropDefinition and PropertyInfo classes
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "node.h"            // Contains the user-modifiable node
+#include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
 NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) :
     m_classname(class_name), m_type(type), m_category(class_name)
 {
+    m_gen_name = rmap_GenNames[class_name.c_str()];
+    m_gen_type = rmap_GenTypes[type->get_name()];
+    m_name = GenEnum::map_GenNames[m_gen_name];
 }
 
-PropertyInfo* NodeDeclaration::GetPropertyInfo(size_t idx) const
+NodeDeclaration::~NodeDeclaration()
+{
+    delete m_generator;
+}
+
+PropDeclaration* NodeDeclaration::GetPropDeclaration(size_t idx) const
 {
     ASSERT(idx < m_properties.size());
 
@@ -113,7 +122,7 @@ size_t NodeDeclaration::GetBaseClassCount(bool inherited) const
     {
         std::vector<NodeDeclaration*> classes;
 
-        // Do the first loop here to avoid recursion is we're only one deep
+        // Do the first loop here to avoid recursion if we're only one deep
         for (auto& iter: m_base)
         {
             classes.push_back(iter);
@@ -143,38 +152,19 @@ void NodeDeclaration::GetBaseClasses(std::vector<NodeDeclaration*>& classes, boo
     }
 }
 
-bool NodeDeclaration::IsSubclassOf(const std::string& classname) const
+bool NodeDeclaration::isSubclassOf(GenName gen_name) const
 {
-    if (m_classname == classname)
+    if (gen_name == m_gen_name)
     {
         return true;
     }
     else
     {
-        // Calling GetBaseClassCount() is exepensive, so do it once and store the result
-        auto base_classes = GetBaseClassCount();
-        for (size_t i = 0; i < base_classes; ++i)
+        std::vector<NodeDeclaration*> classes;
+        GetBaseClasses(classes);
+        for (auto& iter: classes)
         {
-            if (GetBaseClass(i)->IsSubclassOf(classname))
-                return true;
-        }
-    }
-    return false;
-}
-
-bool NodeDeclaration::isSubclassOf(ttlib::cview classname) const
-{
-    if (m_classname.is_sameas(classname))
-    {
-        return true;
-    }
-    else
-    {
-        // Calling GetBaseClassCount() is exepensive, so do it once and store the result
-        auto base_classes = GetBaseClassCount();
-        for (size_t i = 0; i < base_classes; ++i)
-        {
-            if (GetBaseClass(i)->isSubclassOf(classname))
+            if (iter->isSubclassOf(gen_name))
                 return true;
         }
     }

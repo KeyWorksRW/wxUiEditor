@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <GeneratorDefitions>
 
-  <compinfo class="wxMenuBar" image="wxMenuBar" type="menubar">
+  <gen class="wxMenuBar" image="wxMenuBar" type="menubar">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">m_menubar</property>
@@ -14,9 +14,9 @@
     <property name="style" type="bitlist">
       <option name="wxMB_DOCKABLE" help="Allows the menu bar to be detached (wxGTK only)."/>
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxMenu" image="menu" type="menu">
+  <gen class="wxMenu" image="menu" type="menu">
     <property name="var_name" type="string">m_menu</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -25,9 +25,9 @@
       protected:
     </property>
     <property name="label" type="string_escapes">MyMenu</property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="submenu" image="submenu" type="submenu">
+  <gen class="submenu" image="submenu" type="submenu">
     <property name="var_name" type="string">submenu</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -37,9 +37,9 @@
     </property>
     <property name="label" type="string_escapes">MySubMenu</property>
     <property name="bitmap" type="image" help="Bitmap for the submenu item."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxMenuItem" image="menuitem" type="menuitem">
+  <gen class="wxMenuItem" image="menuitem" type="menuitem">
     <property name="var_name" type="string">menu_item</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -70,13 +70,13 @@
     </property>
     <event name="wxEVT_MENU" class="wxCommandEvent" help=""/>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="separator" image="separator" type="menuitem">
+  <gen class="separator" image="separator" type="menuitem">
     <property name="var_name" type="string">separator</property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxToolBar" image="wxToolBar" type="toolbar">
+  <gen class="wxToolBar" image="wxToolBar" type="toolbar">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -114,9 +114,9 @@
       <option name="wxTB_RIGHT" help="Align the toolbar at the right side of parent window."/>
       wxTB_HORIZONTAL
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="tool" image="tool" type="tool">
+  <gen class="tool" image="tool" type="tool">
     <property name="var_name" type="string">tool</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -149,12 +149,12 @@
     <event name="wxEVT_AUITOOLBAR_RIGHT_CLICK" class="wxAuiToolBarEvent" help=""/>
     <event name="wxEVT_AUITOOLBAR_MIDDLE_CLICK" class="wxAuiToolBarEvent" help=""/>
     <event name="wxEVT_AUITOOLBAR_BEGIN_DRAG" class="wxAuiToolBarEvent" help=""/>
-  </compinfo>
+  </gen>
 
-	<compinfo class="toolSeparator" image="toolseparator" type="tool">
-  </compinfo>
+	<gen class="toolSeparator" image="toolseparator" type="tool">
+  </gen>
 
-  <compinfo class="wxStatusBar" image="statusbar" type="statusbar">
+  <gen class="wxStatusBar" image="statusbar" type="statusbar">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">m_statusBar</property>
@@ -180,9 +180,9 @@
         help="The default style: includes wxSTB_SIZEGRIP | wxSTB_SHOW_TIPS | wxSTB_ELLIPSIZE_END | wxFULL_REPAINT_ON_RESIZE"/>
       wxSTB_DEFAULT_STYLE
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxInfoBar" image="infobar" type="widget">
+  <gen class="wxInfoBar" image="infobar" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -219,9 +219,9 @@
         help="Set the duration of the animation (in milliseconds) used when showing or hiding the bar.">
       500
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxRibbonBar" image="ribbon_bar" type="ribbonbar">
+  <gen class="wxRibbonBar" image="ribbon_bar" type="ribbonbar">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -260,9 +260,9 @@
     <event name="wxEVT_RIBBONBAR_TAB_LEFT_DCLICK" class="wxRibbonBarEvent" help="Triggered when the left mouse button is double clicked on a tab."/>
     <event name="wxEVT_RIBBONBAR_TOGGLED" class="wxRibbonBarEvent" help="Triggered when the button triggering the ribbon bar is clicked."/>
     <event name="wxEVT_RIBBONBAR_HELP_CLICKED" class="wxRibbonBarEvent" help="Triggered when the help button is clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxRibbonPage" image="ribbon_page" type="ribbonpage">
+  <gen class="wxRibbonPage" image="ribbon_page" type="ribbonpage">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnPage</property>
@@ -275,9 +275,9 @@
     <property name="label" type="string_escapes">MyRibbonPage</property>
     <property name="bitmap" type="image" help="wxRibbonPage bitmap."/>
     <property name="select" type="bool" help="Select this ribbon page when adding.">0</property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxRibbonPanel" image="ribbon_panel" type="ribbonpanel">
+  <gen class="wxRibbonPanel" image="ribbon_panel" type="ribbonpanel">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnPanel</property>
@@ -299,9 +299,9 @@
       wxRIBBON_PANEL_DEFAULT_STYLE
     </property>
     <event name="wxEVT_RIBBONPANEL_EXTBUTTON_ACTIVATED" class="wxRibbonPanelEvent" help="Triggered when the user activate the panel extension button."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxRibbonButtonBar" image="ribbon_buttonbar" type="ribbonbuttonbar">
+  <gen class="wxRibbonButtonBar" image="ribbon_buttonbar" type="ribbonbuttonbar">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnBtnBar</property>
@@ -315,9 +315,9 @@
         help="Triggered when the normal (non-dropdown) region of a tool on the tool bar is clicked."/>
     <event name="wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
         help="Triggered when the dropdown region of a tool on the tool bar is clicked. wxRibbonToolBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown tools should be doing)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="ribbonButton" image="ribbon_button" type="ribbonbutton">
+  <gen class="ribbonButton" image="ribbon_button" type="ribbonbutton">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="label" type="string_escapes">MyRibbonButton</property>
@@ -336,9 +336,9 @@
         help="Triggered when the normal (non-dropdown) region of a button on the button bar is clicked."/>
     <event name="wxEVT_RIBBONBUTTON_DROPDOWN_CLICKED" class="wxRibbonButtonBarEvent"
         help="Triggered when the dropdown region of a button on the button bar is clicked. wxRibbonButtonBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown buttons should be doing)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxRibbonToolBar" image="ribbon_buttonbar" type="ribbontoolbar">
+  <gen class="wxRibbonToolBar" image="ribbon_buttonbar" type="ribbontoolbar">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnToolBar</property>
@@ -360,9 +360,9 @@
         help="Triggered when the normal (non-dropdown) region of a tool on the tool bar is clicked."/>
     <event name="wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
         help="Triggered when the dropdown region of a tool on the tool bar is clicked. wxRibbonToolBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown tools should be doing)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="ribbonTool" image="ribbon_button" type="ribbontool">
+  <gen class="ribbonTool" image="ribbon_button" type="ribbontool">
     <property name="id" type="id"
          help="ID of the tool (used for event callbacks).">
     </property>
@@ -381,9 +381,9 @@
         help="Triggered when the normal (non-dropdown) region of a tool on the tool bar is clicked."/>
     <event name="wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
         help="Triggered when the dropdown region of a tool on the tool bar is clicked. wxRibbonToolBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown tools should be doing)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxRibbonGallery" image="ribbon_gallery" type="ribbongallery">
+  <gen class="wxRibbonGallery" image="ribbon_gallery" type="ribbongallery">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">rbnGallery</property>
@@ -397,12 +397,12 @@
     <event name="wxEVT_RIBBONGALLERY_CLICKED" class="wxRibbonGalleryEvent" help="Similar to EVT_RIBBONGALLERY_SELECTED but triggered every time a gallery item is clicked, even if it is already selected."/>
     <event name="wxEVT_RIBBONGALLERY_HOVER_CHANGED" class="wxRibbonGalleryEvent" help="Triggered when the item being hovered over by the user changes. The item in the event will be the new item being hovered, or NULL if there is no longer an item being hovered."/>
     <event name="wxEVT_BUTTON" class="wxCommandEvent" help="Triggered when the extension button of the gallery is pressed."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="ribbonGalleryItem" image="ribbon_gallery_item" type="ribbongalleryitem">
+  <gen class="ribbonGalleryItem" image="ribbon_gallery_item" type="ribbongalleryitem">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="bitmap" type="image" help="The bitmap to display for the item. Note that all items must have equally sized bitmaps. "/>
-  </compinfo>
+  </gen>
 
 </GeneratorDefitions>

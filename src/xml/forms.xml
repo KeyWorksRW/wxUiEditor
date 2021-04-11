@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <GeneratorDefitions>
 
-  <compinfo class="Project" type="project" image="project" >
+  <gen class="Project" type="project" image="project" >
     <property name="source_ext" type="option" hidden="1">
       <option name=".cpp"/>
       <option name=".cc"/>
@@ -37,11 +37,11 @@
       <option name="wxHelpControllerHelpProvider" help="Use wxHelpControllerHelpProvider to provide context-sensitive help."/>
       none
     </property>
-    <property name="namespace" type="string"
+    <property name="name_space" type="string"
         help="Namespace to enclose class declarations in. Separate nested namespaces with a double colon (e.g. company::app::subname)"/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxDialog" image="wxDialog" type="form">
+  <gen class="wxDialog" image="wxDialog" type="form">
     <inherits class="Code Generation"/>
     <inherits class="wxTopLevelWindow"/>
     <inherits class="wxWindow"/>
@@ -80,9 +80,9 @@
     </property>
     <property name="icon" type="image" help="Specifies the image to display in the title bar of the dialog."/>
     <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent" help="Generated when the dialog is being initialized."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="PanelForm" image="wxPanel" type="form">
+  <gen class="PanelForm" image="wxPanel" type="form">
     <inherits class="Code Generation"/>
     <inherits class="wxWindow">
       <property name="window_style">wxTAB_TRAVERSAL</property>
@@ -90,9 +90,9 @@
     </inherits>
     <property name="class_name" type="string" help="The name of the base class.">MyPanelBase</property>
     <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent" help="generated when the panel is being initialised."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxFrame" image="wxFrame" type="form">
+  <gen class="wxFrame" image="wxFrame" type="form">
     <inherits class="Code Generation"/>
     <inherits class="wxTopLevelWindow"/>
     <inherits class="wxWindow">
@@ -139,9 +139,9 @@
       <option name="wxBOTH"/>
       wxBOTH
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="MenuBar" image="wxMenuBar" type="menubar_form">
+  <gen class="MenuBar" image="wxMenuBar" type="menubar_form">
     <inherits class="Code Generation"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -150,9 +150,9 @@
     <property name="style" type="bitlist">
       <option name="wxMB_DOCKABLE" help="Allows the menu bar to be detached (wxGTK only)."/>
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="ToolBar" image="wxToolBar" type="toolbar_form">
+  <gen class="ToolBar" image="wxToolBar" type="toolbar_form">
     <inherits class="Code Generation"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
@@ -177,9 +177,9 @@
       <option name="wxTB_HORZ_TEXT" help="Combination of wxTB_HORZ_LAYOUT and wxTB_TEXT."/>
       wxTB_HORIZONTAL
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxWizard" image="wxWizard" type="wizard">
+  <gen class="wxWizard" image="wxWizard" type="wizard">
     <inherits class="Code Generation"/>
     <inherits class="wxTopLevelWindow"/>
     <inherits class="wxWindow"/>
@@ -220,9 +220,9 @@
     <event name="wxEVT_WIZARD_CANCEL" class="wxWizardEvent" help="The user attempted to cancel the wizard (this event may be vetoed)."/>
     <event name="wxEVT_WIZARD_HELP" class="wxWizardEvent" help="Generated when the help button is pressed. "/>
     <event name="wxEVT_WIZARD_FINISHED" class="wxWizardEvent" help="Generated when the finish button is pressed."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxWizardPageSimple" image="wxWizardPageSimple" type="wizardpagesimple">
+  <gen class="wxWizardPageSimple" image="wxWizardPageSimple" type="wizardpagesimple">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">wizPage</property>
@@ -233,9 +233,9 @@
       none
     </property>
     <property name="bitmap" type="image" help="Page-specific bitmap (default: none)."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxPopupTransientWindow" image="wxPopupTransientWindow" type="form">
+  <gen class="wxPopupTransientWindow" image="wxPopupTransientWindow" type="form">
     <inherits class="Code Generation"/>
     <property name="class_name" type="string" help="The name of the base class.">MyPopupBase</property>
     <property name="border" type="option" help="Specifies the type of border to use for the window.">
@@ -243,6 +243,6 @@
       <option name="wxBORDER_RAISED" help="Displays a raised border."/>
       wxBORDER_NONE
     </property>
-  </compinfo>
+  </gen>
 
 </GeneratorDefitions>

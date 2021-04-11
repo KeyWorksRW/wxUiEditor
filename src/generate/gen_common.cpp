@@ -176,20 +176,20 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
 // clang-format off
 
 // List of valid component parent types
-static constexpr const char* ParentTypes[] = {
+static constexpr GenType GenParentTypes[] = {
 
-    "auinotebook",
-    "bookpage",
-    "choicebook",
-    "container",
-    "flatnotebook",
-    "listbook",
-    "notebook",
-    "simplebook",
-    "splitter",
-    "wizardpagesimple",
+    type_auinotebook,
+    type_bookpage,
+    type_choicebook,
+    type_container,
+    type_listbook,
+    type_notebook,
+    type_simplebook,
+    type_splitter,
+    type_wizardpagesimple,
 
 };
+
 // clang-format on
 
 ttlib::cstr GetParentName(Node* node)
@@ -210,12 +210,12 @@ ttlib::cstr GetParentName(Node* node)
             return ttlib::cstr("this");
         }
 
-        for (auto& iter: ParentTypes)
+        for (auto iter: GenParentTypes)
         {
-            if (parent->GetNodeTypeName() == iter)
+            if (parent->isType(iter))
             {
                 ttlib::cstr name = parent->get_node_name();
-                if (parent->GetClassName() == "wxCollapsiblePane")
+                if (parent->isGen(gen_wxCollapsiblePane))
                 {
                     name << "->GetPane()";
                 }

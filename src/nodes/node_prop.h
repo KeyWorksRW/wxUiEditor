@@ -9,14 +9,14 @@
 
 #include <map>
 
-#include "node_classes.h"  // Forward defintions of Node classes
-#include "prop_types.h"    // Type -- Property types
 #include "font_prop.h"     // FontProperty class
+#include "node_classes.h"  // Forward defintions of Node classes
+#include "prop_decl.h"     // PropDeclaration -- PropChildDeclaration and PropDeclaration classes
 
 class NodeProperty
 {
 public:
-    NodeProperty(PropertyInfo* info, Node* node);
+    NodeProperty(PropDeclaration* declaration, Node* node);
 
     void set_value(int integer) { m_value = ttlib::itoa(integer); };
     void set_value(double val);
@@ -70,21 +70,27 @@ public:
     void splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& children) const;
     void SplitParentProperty(std::map<wxString, wxString>* children) const;
 
-    const PropertyInfo* GetPropertyInfo() const { return m_info; }
+    const PropDeclaration* GetPropDeclaration() const { return m_declaration; }
 
-    Type GetType() const;
 
     ttlib::cstr getChildFromParent(const ttlib::cstr& childName) const;
 
     Node* GetNode() { return m_node; }
     const ttlib::cstr& GetPropName() const;
 
-    PropertyInfo* GetPropertyInfo() { return m_info; }
+    bool isProp(PropName name) const noexcept { return m_declaration->isProp(name); }
+    bool isType(PropType type) const noexcept { return m_declaration->isType(type); }
+
+    PropType type() const noexcept { return m_declaration->get_type(); }
+    const char* name_str() const noexcept { return m_declaration->name_str(); }
+    PropName get_name() const noexcept { return m_declaration->get_name(); }
+
+    PropDeclaration* GetPropDeclaration() { return m_declaration; }
 
     auto& GetValue() { return m_value; }
 
 private:
-    PropertyInfo* m_info;
+    PropDeclaration* m_declaration;
     Node* m_node;  // node this property is a child of
     ttlib::cstr m_value;
 };

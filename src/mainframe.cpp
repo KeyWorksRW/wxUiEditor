@@ -30,6 +30,7 @@
 #include "bitmaps.h"       // Map of bitmaps accessed by name
 #include "cstm_event.h"    // CustomEvent -- Custom Event class
 #include "gen_base.h"      // Generate Base class
+#include "gen_enums.h"     // Enumerations for generators
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 #include "node_prop.h"     // NodeProperty -- NodeProperty class
@@ -56,6 +57,8 @@
 #include "../pugixml/pugixml.hpp"
 
 #include "xpm/logo64.xpm"
+
+using namespace GenEnum;
 
 bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck);
 
@@ -403,12 +406,12 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
 
     auto sel_node = event.GetNode();
 
-    if (sel_node->GetClassName() == "wxToolBar")
+    if (sel_node->isGen(gen_wxToolBar))
     {
         if (sel_node->GetParent()->IsSizer())
         {
             auto grandparent = sel_node->GetParent()->GetParent();
-            if (grandparent->GetClassName() == "wxFrame" || grandparent->GetClassName() == "wxAuiMDIChildFrame")
+            if (grandparent->isGen(gen_wxFrame) || grandparent->isGen(gen_wxAuiMDIChildFrame))
             {
                 // Caution! In wxWidgets 3.1.3 The info bar will wrap the first word if it starts with "If".
                 GetPropInfoBar()->ShowMessage(_tt(strId_tb_in_sizer), wxICON_INFORMATION);
@@ -867,11 +870,15 @@ Node* MainFrame::GetSelectedForm()
     if (!m_selected_node)
         return nullptr;
 
-    if ((m_selected_node->GetNodeTypeName() == "form") || (m_selected_node->GetNodeTypeName() == "wizard") ||
-        (m_selected_node->GetNodeTypeName() == "menubar_form") || (m_selected_node->GetNodeTypeName() == "toolbar_form"))
+    if (m_selected_node->isType(type_form) || m_selected_node->isType(type_wizard) ||
+        m_selected_node->isType(type_menubar_form) || m_selected_node->isType(type_toolbar_form))
+    {
         return m_selected_node.get();
+    }
     else
+    {
         return m_selected_node->FindParentForm();
+    }
 }
 
 bool MainFrame::SelectNode(Node* node, bool force, bool notify)
@@ -1234,7 +1241,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 
 void MainFrame::RemoveNode(Node* node, bool isCutMode)
 {
-    ASSERT(node->GetNodeTypeName() != "project");
+    ASSERT(node->isType(type_project));
     ASSERT(node->GetParentPtr());
 
     auto parent = node->GetParent();
@@ -1263,7 +1270,7 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
 
 Node* MainFrame::FindChildSizerItem(Node* node)
 {
-    if (node->GetNodeDeclaration()->IsSubclassOf("sizer_dimension"))
+    if (node->GetNodeDeclaration()->isSubclassOf(gen_sizer_dimension))
         return node;
     else
     {

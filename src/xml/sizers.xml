@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <GeneratorDefitions>
-  <compinfo class="sizer_dimension" type="interface">
+  <gen class="sizer_dimension" type="interface">
     <property name="minimum_size" type="wxSize"
         help="Normally, the sizer will calculate its minimal size based purely on how much space its children need. If the minimal size is > 0, 'GetMinSize' will return either the minimal size as requested by its children or the minimal size set here, depending on which is bigger."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="sizeritem_settings" type="interface">
+  <gen class="sizeritem_settings" type="interface">
     <property name="alignment" type="bitlist">
       <option name="wxALIGN_LEFT"
         help="Align the item to the left of the space allotted to it by the sizer, adjusted for the border if any."/>
@@ -39,25 +39,25 @@
       <option name="wxRESERVE_SPACE_EVEN_IF_HIDDEN"
         help="Normally wxSizers don't allocate space for hidden windows or other items. This flag overrides this behaviour so that sufficient space is allocated for the window even if it isn't visible. This makes it possible to dynamically show and hide controls without resizing the parent window."/>
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="sizeritem" type="sizeritem">
+  <gen class="sizeritem" type="sizeritem">
     <inherits class="sizeritem_settings"/>
     <property name="proportion" type="uint">0</property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="gbsizeritem" type="gbsizeritem">
+  <gen class="gbsizeritem" type="gbsizeritem">
     <inherits class="sizeritem_settings"/>
     <property name="row" type="int">0</property>
     <property name="column" type="int">0</property>
     <property name="rowspan" type="int">1</property>
     <property name="colspan" type="int">1</property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="splitteritem" type="splitteritem">
-  </compinfo>
+  <gen class="splitteritem" type="splitteritem">
+  </gen>
 
-  <compinfo class="wxBoxSizer" image="sizer_horizontal" type="sizer">
+  <gen class="wxBoxSizer" image="sizer_horizontal" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">box_sizer</property>
@@ -72,9 +72,9 @@
       <option name="wxHORIZONTAL" help="Align items horizontally"/>
       wxHORIZONTAL
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="VerticalBoxSizer" image="sizer" type="sizer">
+  <gen class="VerticalBoxSizer" image="sizer" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">box_sizer</property>
@@ -89,9 +89,9 @@
       <option name="wxHORIZONTAL" help="Align items horizontally"/>
       wxVERTICAL
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxStaticBoxSizer" image="wxStaticBoxSizer" type="sizer">
+  <gen class="wxStaticBoxSizer" image="wxStaticBoxSizer" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">static_box</property>
@@ -117,9 +117,9 @@
       0
     </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="StaticCheckboxBoxSizer" image="wxStaticCheckBoxSizer" type="sizer">
+  <gen class="StaticCheckboxBoxSizer" image="wxStaticCheckBoxSizer" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">static_box</property>
@@ -154,9 +154,9 @@
     </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
     <event name="wxEVT_CHECKBOX" class="wxCommandEvent" help="Generated when the checkbox is clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="StaticRadioBtnBoxSizer" image="wxStaticRadioBtnSizer" type="sizer">
+  <gen class="StaticRadioBtnBoxSizer" image="wxStaticRadioBtnSizer" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">static_box</property>
@@ -187,9 +187,9 @@
     </property>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
     <event name="wxEVT_RADIOBUTTON" class="wxCommandEvent" help="Generated when the radio button is clicked."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxWrapSizer" image="wrap_sizer" type="sizer">
+  <gen class="wxWrapSizer" image="wrap_sizer" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">wrap_sizer</property>
@@ -209,9 +209,9 @@
       <option name="wxREMOVE_LEADING_SPACES" help="Removes any spacer elements from the beginning of a row"/>
       wxEXTEND_LAST_ON_EACH_LINE|wxREMOVE_LEADING_SPACES
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxGridSizer" image="grid_sizer" type="sizer">
+  <gen class="wxGridSizer" image="grid_sizer" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">grid_sizer</property>
@@ -237,9 +237,9 @@
         help="The horizontal gap (in pixels) between cells in the sizer.">
       0
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="flexgridsizerbase" image="flex_grid_sizer" type="interface">
+  <gen class="flexgridsizerbase" image="flex_grid_sizer" type="interface">
     <property name="vgap" type="uint"
         help="The vertical gap (in pixels) between the cells in the sizer.">
       0
@@ -268,9 +268,9 @@
         help="Sizer equally stretches all columns or rows in the non flexible direction, whether they are growable or not in the flexible direction."/>
       wxFLEX_GROWMODE_SPECIFIED
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxFlexGridSizer" image="flex_grid_sizer" type="sizer">
+  <gen class="wxFlexGridSizer" image="flex_grid_sizer" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="flexgridsizerbase"/>
     <inherits class="sizer_child"/>
@@ -289,9 +289,9 @@
         help="Number of Columns">
       2
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxGridBagSizer" image="grid_bag_sizer" type="gbsizer">
+  <gen class="wxGridBagSizer" image="grid_bag_sizer" type="gbsizer">
     <inherits class="sizer_dimension"/>
     <inherits class="flexgridsizerbase"/>
     <inherits class="sizer_child"/>
@@ -304,9 +304,9 @@
     </property>
     <property name="empty_cell_size" type="wxSize"
         help="The size used for cells in the grid with no item."/>
-  </compinfo>
+  </gen>
 
-  <compinfo class="wxStdDialogButtonSizer" image="stddialogbuttonsizer" type="widget">
+  <gen class="wxStdDialogButtonSizer" image="stddialogbuttonsizer" type="widget">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
     <inherits class="Update Events"/>
@@ -362,9 +362,9 @@
       <event name="HelpButton" class="wxUpdateUIEvent" help="Process a wxEVT_UPDATE_UI for the Help button."/>
       <event name="ContextHelpButton" class="wxEVT_BUTTON" help="Process a wxEVT_UPDATE_UI for the ContextHelp button."/>
     </category>
-  </compinfo>
+  </gen>
 
-  <compinfo class="TextSizer" image="text_sizer" type="widget">
+  <gen class="TextSizer" image="text_sizer" type="widget">
     <inherits class="sizer_child"/>
     <property name="var_name" type="string">sizer_text</property>
     <property name="class_access" type="option">
@@ -381,9 +381,9 @@
         help="Specifies the text's maximum width (this argument is available since version 3.1.1, previous versions always behaved as if the maximal width of -1 was specified).">
       -1
     </property>
-  </compinfo>
+  </gen>
 
-  <compinfo class="spacer" image="spacer" type="widget">
+  <gen class="spacer" image="spacer" type="widget">
       <inherits class="sizer_child"/>
     <property name="width" type="uint"
         help="The width of the spacer. Ignored if proportion is non-zero or the sizer is aligned vertically.">
@@ -402,6 +402,6 @@
       0
     </property>
 
-  </compinfo>
+  </gen>
 
 </GeneratorDefitions>

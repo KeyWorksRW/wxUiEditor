@@ -85,7 +85,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
     ttlib::cstr namespace_using_name;
 
     // Make a copy of the string so that we can tweak it
-    if (auto namespace_prop = project->prop_as_string("namespace"); namespace_prop.size())
+    if (auto namespace_prop = project->prop_as_string("name_space"); namespace_prop.size())
     {
         // ttlib::multistr works with a single char, not a string.
         namespace_prop.Replace("::", ":");

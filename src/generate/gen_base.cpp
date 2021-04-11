@@ -29,6 +29,8 @@
 #include "utils.h"         // Utility functions that work with properties
 #include "write_code.h"    // Write code to Scintilla or file
 
+using namespace GenEnum;
+
 // clang-format off
 
 inline constexpr const auto txt_GetImgFromHdrFunction = R"===(
@@ -206,7 +208,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     GenerateImageIncludes(form_node);
 
     // Make a copy of the string so that we can tweak it
-    auto namespace_prop = project->prop_as_string("namespace");
+    auto namespace_prop = project->prop_as_string("name_space");
     size_t indent = 0;
     ttlib::multistr names;
     if (namespace_prop.size())
@@ -533,7 +535,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     {
         if (iter.HasValue())
         {
-            if (iter.GetType() == Type::Wxfont)
+            if (iter.type() == type_wxFont)
             {
                 if (isAddToSrc)
                 {
@@ -544,7 +546,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                     set_hdr.insert("#include <wx/font.h>");
                 }
             }
-            else if (iter.GetType() == Type::Wxcolour)
+            else if (iter.type() == type_wxColour)
             {
                 if (isAddToSrc)
                 {
@@ -557,7 +559,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                     set_hdr.insert("#include <wx/settings.h>");  // This is needed for the system colours
                 }
             }
-            else if (iter.GetType() == Type::Image)
+            else if (iter.type() == type_image)
             {
                 // The problem at this point is that we don't know how the bitmap will be used. It could be just a
                 // wxBitmap, or it could be handed to a wxImage for sizing, or it might be handed to
@@ -870,7 +872,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
 void BaseCodeGenerator::GenConstruction(Node* node)
 {
-    auto& type = node->GetNodeTypeName();
+    auto type = node->gen_type();
     auto declaration = node->GetNodeDeclaration();
 
     if (auto generator = declaration->GetGenerator(); generator)
@@ -885,7 +887,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
         GenSettings(node);
 
-        if (type == "ribbontoolbar")
+        if (type == type_ribbontoolbar)
         {
             m_source->writeLine("{");
             m_source->Indent();
@@ -978,7 +980,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 m_source->writeLine(code);
             }
         }
-        else if (type == "splitter")
+        else if (type == type_splitter)
         {
             ttlib::cstr code(node->get_node_name());
 
@@ -1005,9 +1007,9 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 }
             }
         }
-        else if (type == "menubar" || type == "menu" || type == "submenu" || type == "toolbar" || type == "tool" ||
-                 type == "listbook" || type == "simplebook" || type == "notebook" || type == "auinotebook" ||
-                 type == "treelistctrl")
+        else if (type == type_menubar || type == type_menu || type == type_submenu || type == type_toolbar ||
+                 type == type_tool || type == type_listbook || type == type_simplebook || type == type_notebook ||
+                 type == type_auinotebook || type == type_treelistctrl)
         {
             if (auto result = generator->GenCode("after_addchild", node); result)
             {
@@ -1030,7 +1032,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
 {
     for (auto& iter: node->get_props_vector())
     {
-        if (iter.GetType() == Type::ID)
+        if (iter.type() == type_id)
         {
             auto& prop_id = iter.GetValue();
             if (!prop_id.is_sameprefix("wxID_"))
@@ -1110,7 +1112,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 {
     for (auto& iter: node->get_props_vector())
     {
-        if (iter.GetType() == Type::Image)
+        if (iter.type() == type_image)
         {
             if (!iter.HasValue())
                 continue;

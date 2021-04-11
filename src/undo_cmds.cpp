@@ -36,38 +36,38 @@ void InsertNodeAction::Change()
         {
             for (size_t pos = 0; pos < m_parent->GetChildCount(); ++pos)
             {
-                auto child_row = m_parent->GetChild(pos)->prop_as_int(txt_row);
+                auto child_row = m_parent->GetChild(pos)->prop_as_int(prop_row);
                 if (child_row > row)
                     row = child_row;
             }
 
             m_parent->AddChild(m_node);
-            m_node->get_prop_ptr(txt_row)->set_value(row + 1);
+            m_node->get_prop_ptr(prop_row)->set_value(row + 1);
         }
         else
         {
             if (m_pos > 0)
             {
                 // This assumes the children are in row order, which is not necessarily the case
-                row = m_parent->GetChild(m_pos - 1)->prop_as_int(txt_row);
+                row = m_parent->GetChild(m_pos - 1)->prop_as_int(prop_row);
             }
             auto col = -1;
             for (size_t pos = 0; pos < m_parent->GetChildCount(); ++pos)
             {
-                if (m_parent->GetChild(pos)->prop_as_int(txt_row) == row)
+                if (m_parent->GetChild(pos)->prop_as_int(prop_row) == row)
                 {
-                    auto child_col = m_parent->GetChild(pos)->prop_as_int(txt_column);
+                    auto child_col = m_parent->GetChild(pos)->prop_as_int(prop_column);
                     if (child_col > col)
                     {
-                        auto col_span = m_parent->GetChild(pos)->prop_as_int(txt_colspan);
+                        auto col_span = m_parent->GetChild(pos)->prop_as_int(prop_colspan);
                         col = child_col + (col_span - 1);
                     }
                 }
             }
             if (row == -1)
                 ++row;
-            m_node->get_prop_ptr(txt_row)->set_value(row);
-            m_node->get_prop_ptr(txt_column)->set_value(col + 1);
+            m_node->get_prop_ptr(prop_row)->set_value(row);
+            m_node->get_prop_ptr(prop_column)->set_value(col + 1);
 
             m_parent->AddChild(m_node);
             m_parent->ChangeChildPosition(m_node, m_pos);
@@ -211,8 +211,8 @@ ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
     m_revert_parent = node->GetParentPtr();
 
     m_revert_position = m_revert_parent->GetChildPosition(node);
-    m_revert_row = node->prop_as_int(txt_row);
-    m_revert_col = node->prop_as_int(txt_column);
+    m_revert_row = node->prop_as_int(prop_row);
+    m_revert_col = node->prop_as_int(prop_column);
 }
 
 void ChangeParentAction::Change()
@@ -235,9 +235,9 @@ void ChangeParentAction::Revert()
     m_node->SetParent(m_revert_parent);
     m_revert_parent->AddChild(m_node);
     m_revert_parent->ChangeChildPosition(m_node, m_revert_position);
-    if (auto prop = m_node->get_prop_ptr(txt_row); prop)
+    if (auto prop = m_node->get_prop_ptr(prop_row); prop)
         prop->set_value(m_revert_row);
-    if (auto prop = m_node->get_prop_ptr(txt_column); prop)
+    if (auto prop = m_node->get_prop_ptr(prop_column); prop)
         prop->set_value(m_revert_col);
 }
 

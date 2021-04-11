@@ -112,7 +112,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxButton(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
     if (label.size() && !node->prop_as_bool(prop_markup))
     {
         code << GenerateQuotedString(label);

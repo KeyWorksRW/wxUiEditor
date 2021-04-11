@@ -19,10 +19,10 @@
 wxObject* CheckBoxGenerator::Create(Node* node, wxObject* parent)
 {
     long style_value = 0;
-    if (node->prop_as_string(txt_style).contains("wxALIGN_RIGHT"))
+    if (node->prop_as_string(prop_style).contains("wxALIGN_RIGHT"))
         style_value |= wxALIGN_RIGHT;
 
-    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label),
+    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                  node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
                                  style_value | node->prop_as_int("window_style"));
 
@@ -38,7 +38,7 @@ bool CheckBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
 {
     if (prop->GetPropName() == "label")
     {
-        wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(txt_label));
+        wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(prop_label));
         return true;
     }
     else if (prop->GetPropName() == "checked")
@@ -58,7 +58,7 @@ std::optional<ttlib::cstr> CheckBoxGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxCheckBox(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
     if (label.size())
     {
         code << GenerateQuotedString(label);
@@ -98,9 +98,9 @@ bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* Check3StateGenerator::Create(Node* node, wxObject* parent)
 {
-    long style_value = wxCHK_3STATE | node->prop_as_int(txt_style) | node->prop_as_int("window_style");
+    long style_value = wxCHK_3STATE | node->prop_as_int(prop_style) | node->prop_as_int("window_style");
 
-    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(txt_label),
+    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                  node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), style_value);
 
     auto& state = node->prop_as_string("initial_state");
@@ -120,7 +120,7 @@ bool Check3StateGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePr
 {
     if (prop->GetPropName() == "label")
     {
-        wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(txt_label));
+        wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(prop_label));
         return true;
     }
     else if (prop->GetPropName() == "initial_state")
@@ -146,7 +146,7 @@ std::optional<ttlib::cstr> Check3StateGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxCheckBox(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
     if (label.size())
     {
         code << GenerateQuotedString(label);
@@ -162,7 +162,7 @@ std::optional<ttlib::cstr> Check3StateGenerator::GenConstruction(Node* node)
     GenSize(node, code);
     code << ", ";
     code << "wxCHK_3STATE";
-    auto& style = node->prop_as_string(txt_style);
+    auto& style = node->prop_as_string(prop_style);
     if (style.size())
         code << '|' << style;
     auto& win_style = node->prop_as_string("window_style");

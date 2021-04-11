@@ -22,7 +22,7 @@ wxObject* ListViewGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                       node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+                       node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
 #if 0
 // REVIEW: [KeyWorks - 12-13-2020] This is the original code, but we should be able to do much better by making it possible for the user

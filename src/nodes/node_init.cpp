@@ -393,7 +393,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
                 if (child.m_help.empty())
                 {
-                    if (child.m_name == txt_class_access)
+                    if (child.isProp(prop_class_access))
                         child.m_help = "Determines the type of access your derived class has to this item.";
                 }
 

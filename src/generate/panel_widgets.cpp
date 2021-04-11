@@ -23,8 +23,8 @@
 wxObject* PanelGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(txt_pos), node->prop_as_wxSize(txt_size),
-                    node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+        new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                    node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -54,9 +54,9 @@ std::optional<ttlib::cstr> PanelGenerator::GenConstruction(Node* node)
 
 wxObject* CollapsiblePaneGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txt_label),
-                                        node->prop_as_wxPoint(txt_pos), node->prop_as_wxSize(txt_size),
-                                        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+    auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                        node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
     if (GetMockup()->IsShowingHidden())
         widget->Collapse(false);
@@ -91,7 +91,7 @@ std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxCollapsiblePane(";
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
     if (label.size())
     {
         code << GenerateQuotedString(label);

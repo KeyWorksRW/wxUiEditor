@@ -34,15 +34,15 @@ NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
 }
 
 // This will add all properties and events, including any base interface classes such as wxWindow, sizeritem, etc.
-NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* declaration)
+NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
 {
-    auto node = std::make_shared<Node>(declaration);
+    auto node = std::make_shared<Node>(node_decl);
 
     // Calling GetBaseClassCount() is expensive, so do it once and store the result
-    auto node_info_base_count = declaration->GetBaseClassCount();
+    auto node_info_base_count = node_decl->GetBaseClassCount();
 
     size_t base = 0;
-    for (auto class_info = declaration; class_info; class_info = declaration->GetBaseClass(base++))
+    for (auto class_info = node_decl; class_info; class_info = node_decl->GetBaseClass(base++))
     {
         for (size_t index = 0; index < class_info->GetPropertyCount(); ++index)
         {
@@ -53,7 +53,7 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* declaration)
             if (base > 0)
             {
                 auto defaultValueTemp =
-                    declaration->GetBaseClassDefaultPropertyValue(base - 1, prop_declaration->GetName().c_str());
+                    node_decl->GetBaseClassDefaultPropertyValue(base - 1, prop_declaration->GetName().c_str());
                 if (!defaultValueTemp.empty())
                 {
                     defaultValue = defaultValueTemp;
@@ -102,34 +102,28 @@ size_t NodeCreator::CountChildrenWithSameType(Node* parent, NodeType* type)
 NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
 {
     NodeSharedPtr node;
-    NodeDeclaration* declaration;
+    NodeDeclaration* node_decl;
 
     // This is a way for a ribbon panel button to indicate a wxBoxSizer with vertical orientation
     if (classname.is_sameas("VerticalBoxSizer"))
-        declaration = GetNodeDeclaration("wxBoxSizer");
+        node_decl = GetNodeDeclaration("wxBoxSizer");
     else
-        declaration = GetNodeDeclaration(classname);
+        node_decl = GetNodeDeclaration(classname);
 
-    if (!declaration)
+    if (!node_decl)
     {
         FAIL_MSG(ttlib::cstr() << "No component definition for " << classname);
         throw std::runtime_error("Internal error: missing component definition");
     }
 
     if (!parent)
-        return NewNode(declaration);
+        return NewNode(node_decl);
 
     // This happens when importing wxFormBuilder and old wxUiEditor projects
     if (IsOldHostType(classname))
-        return NewNode(declaration);
+        return NewNode(node_decl);
 
-    bool aui = false;
-    if (parent->isType(type_form))
-    {
-        aui = parent->prop_as_int("aui_managed") != 0;
-    }
-
-    auto comp_type = declaration->GetNodeType();
+    auto comp_type = node_decl->GetNodeType();
 
     // Check for widgets which can ONLY have a frame for a parent.
     if (comp_type->isType(type_statusbar) || comp_type->isType(type_menubar) || comp_type->isType(type_ribbonbar) ||
@@ -147,33 +141,42 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
             return NodeSharedPtr();
     }
 
+    // Currently we don't support aui, but once we do we'll need to pass the paren't current setting to GetAllowableChildren
+    bool aui = false;
+
     auto max_children = GetAllowableChildren(parent, comp_type->gen_type(), aui);
 
     if (max_children == child_count::infinite)
     {
-        node = NewNode(declaration);
+        node = NewNode(node_decl);
         if (classname.is_sameas("VerticalBoxSizer"))
-            node->get_prop_ptr(txt_orientation)->set_value("wxVERTICAL");
+        {
+            node->prop_set_value(prop_orientation, "wxVERTICAL");
+        }
     }
     else if (max_children != child_count::none)
     {
         if (comp_type == GetNodeType(type_sizer))
         {
-            node = NewNode(declaration);
+            node = NewNode(node_decl);
             if (classname.is_sameas("VerticalBoxSizer"))
-                node->get_prop_ptr(txt_orientation)->set_value("wxVERTICAL");
+            {
+                node->prop_set_value(prop_orientation, "wxVERTICAL");
+            }
         }
         else if (comp_type == GetNodeType(type_gbsizer))
         {
-            node = NewNode(declaration);
+            node = NewNode(node_decl);
         }
         else
         {
             auto count = CountChildrenWithSameType(parent, comp_type);
+            // REVIEW: [KeyWorks - 04-11-2021] Does this actually happen? And if it does, we need to let the user know. Note
+            // that once aui is supported, this may start happening since aui typically allows one non-sizer child.
             ASSERT_MSG(count < (size_t) max_children,
                        "Parent allows one of this child type, a second of the same type is not allowed");
             if (count < (size_t) max_children)
-                node = NewNode(declaration);
+                node = NewNode(node_decl);
         }
     }
     else
@@ -227,56 +230,39 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
 // node should call this to setup default sizer settings.
 void NodeCreator::SetDefaultLayoutProperties(Node* node)
 {
-    auto declaration = node->GetNodeDeclaration();
+    auto node_decl = node->GetNodeDeclaration();
 
     // Caution: Do NOT place spaces around the | that combines flags. Other parts of the codebase rely on there being no
     // spaces...
 
-    if (declaration->GetClassName() == "wxStdDialogButtonSizer")
+    if (node_decl->isGen(gen_wxStdDialogButtonSizer) || node_decl->isGen(gen_wxStaticLine))
     {
-        node->get_prop_ptr(txt_borders)->set_value("wxALL");
-        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
+        node->prop_set_value(prop_borders, "wxALL");
+        node->prop_set_value(prop_flags, "wxEXPAND");
         return;
     }
 
-    auto node_type = node->GetNodeTypeName();
-    auto proportion = node->get_prop_ptr(txt_proportion);
-
-    if (declaration->GetClassName() == "wxStaticLine" || declaration->GetClassName() == "wxStdDialogButtonSizer")
+    if (node->IsSizer() || node->isType(type_splitter) || node_decl->isGen(gen_spacer))
     {
-        node->get_prop_ptr(txt_borders)->set_value("wxALL");
-        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
+        node->prop_set_value(prop_proportion, "1");
+        node->prop_set_value(prop_flags, "wxEXPAND");
     }
-    else if (node->IsSizer() || node_type == "splitter" || declaration->GetClassName() == "spacer")
+    else if (node_decl->isGen(gen_wxToolBar))
     {
-        if (proportion)
-        {
-            proportion->set_value("1");
-        }
-        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
+        node->prop_set_value(prop_flags, "wxEXPAND");
     }
-    else if (declaration->GetClassName() == "wxToolBar")
+    else if (node->isType(type_widget) || node->isType(type_statusbar))
     {
-        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
+        node->prop_set_value(prop_proportion, "0");
+        node->prop_set_value(prop_borders, "wxALL");
     }
-    else if (node_type == "widget" || node_type == "statusbar")
+    else if (node->isType(type_notebook) || node->isType(type_listbook) || node->isType(type_simplebook) ||
+             node->isType(type_choicebook) || node->isType(type_auinotebook) || node->isType(type_treelistctrl) ||
+             node->isType(type_expanded_widget) || node->isType(type_container))
     {
-        if (proportion)
-        {
-            proportion->set_value("0");
-        }
-        node->get_prop_ptr(txt_borders)->set_value("wxALL");
-    }
-    else if (node_type == "notebook" || node_type == "listbook" || node_type == "simplebook" || node_type == "choicebook" ||
-             node_type == "auinotebook" || node_type == "treelistctrl" || node_type == "expanded_widget" ||
-             node_type == "container")
-    {
-        if (proportion)
-        {
-            proportion->set_value("1");
-        }
-        node->get_prop_ptr(txt_borders)->set_value("wxALL");
-        node->get_prop_ptr(txt_flags)->set_value("wxEXPAND");
+        node->prop_set_value(prop_proportion, "1");
+        node->prop_set_value(prop_borders, "wxALL");
+        node->prop_set_value(prop_flags, "wxEXPAND");
     }
 }
 

@@ -30,7 +30,7 @@ wxObject* MenuBarBase::Create(Node* node, wxObject* parent)
 
     for (auto& iter: node->GetChildNodePtrs())
     {
-        auto label = new wxStaticText(panel, wxID_ANY, iter->prop_as_wxString(txt_label));
+        auto label = new wxStaticText(panel, wxID_ANY, iter->prop_as_wxString(prop_label));
         sizer->Add(label, wxSizerFlags().Border(wxALL));
         label->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
     }
@@ -52,7 +52,7 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     Node* menu_node = nullptr;
     for (size_t pos_menu = 0; pos_menu < m_node_menubar->GetChildCount(); ++pos_menu)
     {
-        if (m_node_menubar->GetChild(pos_menu)->prop_as_string(txt_label) == text)
+        if (m_node_menubar->GetChild(pos_menu)->prop_as_string(prop_label) == text)
         {
             menu_node = m_node_menubar->GetChild(pos_menu);
             break;
@@ -77,7 +77,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
         if (menu_item->isType(type_submenu))
         {
             auto result = MakeSubMenu(menu_item.get());
-            auto item = sub_menu->AppendSubMenu(result, menu_item->GetPropertyAsString(txt_label));
+            auto item = sub_menu->AppendSubMenu(result, menu_item->prop_as_wxString(prop_label));
             if (menu_item->HasValue("bitmap"))
                 item->SetBitmap(menu_item->prop_as_wxBitmap("bitmap"));
         }
@@ -87,7 +87,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
         }
         else
         {
-            auto menu_label = menu_item->prop_as_string(txt_label);
+            auto menu_label = menu_item->prop_as_string(prop_label);
             auto shortcut = menu_item->prop_as_string("shortcut");
             if (shortcut.size())
             {
@@ -190,7 +190,7 @@ std::optional<ttlib::cstr> MenuBarFormGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    code << node->prop_as_string(txt_class_name) << "::" << node->prop_as_string(txt_class_name);
+    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(long style) : wxMenuBar(style)\n{";
 
     return code;
@@ -210,9 +210,9 @@ std::optional<ttlib::cstr> MenuBarFormGenerator::GenCode(const std::string& cmd,
     else if (cmd == "base")
     {
         code << "public ";
-        if (node->HasValue(txt_base_class_name))
+        if (node->HasValue(prop_base_class_name))
         {
-            code << node->prop_as_string(txt_base_class_name);
+            code << node->prop_as_string(prop_base_class_name);
         }
         else
         {
@@ -271,13 +271,13 @@ std::optional<ttlib::cstr> MenuGenerator::GenCode(const std::string& cmd, Node* 
         if (parent_type->get_name() == "menubar")
         {
             code << "    " << node->get_parent_name() << "->Append(" << node->get_node_name() << ", ";
-            code << GenerateQuotedString(node->prop_as_string(txt_label)) << ");";
+            code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
         }
         else if (parent_type->get_name() == "menubar_form")
         {
             code << "    "
                  << "Append(" << node->get_node_name() << ", ";
-            code << GenerateQuotedString(node->prop_as_string(txt_label)) << ");";
+            code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
         }
         else
         {
@@ -343,7 +343,7 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenCode(const std::string& cmd, Nod
     if (cmd == "after_addchild")
     {
         code << "    " << node->get_parent_name() << "->AppendSubMenu(" << node->get_node_name() << ", ";
-        code << GenerateQuotedString(node->prop_as_string(txt_label)) << ");";
+        code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
     }
     else
     {
@@ -383,7 +383,7 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
 
     code << node->get_node_name() << " = new wxMenuItem(" << node->get_parent_name() << ", " << node->prop_as_string("id")
          << ", ";
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
     if (label.size())
     {
         code << GenerateQuotedString(label);

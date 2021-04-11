@@ -170,7 +170,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->IsForm() && node->GetClassName() != "PanelForm" && node->GetClassName() != "wxToolBar")
         allow_minmax = false;
 
-    auto size = node->prop_as_wxPoint(txt_minimum_size);
+    auto size = node->prop_as_wxPoint(prop_minimum_size);
     if (size.x != -1 || size.y != -1)
     {
         if (allow_minmax)

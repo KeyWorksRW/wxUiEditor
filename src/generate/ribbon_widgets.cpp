@@ -23,7 +23,7 @@ wxObject* RibbonBarGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                        node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+                        node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
     if (node->prop_as_string("theme") == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
@@ -100,7 +100,7 @@ bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 wxObject* RibbonPageGenerator::Create(Node* node, wxObject* parent)
 {
     auto bmp = node->HasValue("bitmap") ? node->prop_as_wxBitmap("bitmap") : wxNullBitmap;
-    auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->GetPropertyAsString(txt_label), bmp, 0);
+    auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->prop_as_wxString(prop_label), bmp, 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -116,7 +116,7 @@ std::optional<ttlib::cstr> RibbonPageGenerator::GenConstruction(Node* node)
     code << node->get_parent_name() << ", " << node->prop_as_string("id");
     code << ", ";
 
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
     if (label.size())
         code << GenerateQuotedString(label);
     else
@@ -158,9 +158,9 @@ bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 wxObject* RibbonPanelGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->GetPropertyAsString(txt_label),
+        new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->prop_as_wxString(prop_label),
                           node->prop_as_wxBitmap("bitmap"), node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                          node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+                          node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -176,7 +176,7 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
     code << node->get_parent_name() << ", " << node->prop_as_string("id");
     code << ", ";
 
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
     if (label.size())
         code << GenerateQuotedString(label);
     else
@@ -244,7 +244,7 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
         if (!bmp.IsOk())
             bmp = GetXPMImage("default");
 
-        btn_bar->AddButton(wxID_ANY, childObj->GetPropertyAsString(txt_label), bmp, childObj->GetPropertyAsString("help"),
+        btn_bar->AddButton(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, childObj->GetPropertyAsString("help"),
                            (wxRibbonButtonKind) childObj->prop_as_int("kind"));
     }
 }
@@ -282,7 +282,7 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenConstruction(Node* node)
 
     code << node->get_parent_name() << "->AddButton(" << node->prop_as_string("id") << ", ";
 
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
     if (label.size())
         code << GenerateQuotedString(label);
     else

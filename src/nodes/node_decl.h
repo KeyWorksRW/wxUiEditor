@@ -57,6 +57,9 @@ public:
     GenType gen_type() const noexcept { return m_gen_type; }
     GenName gen_name() const noexcept { return m_gen_name; }
 
+    bool isType(GenType type) const noexcept { return (type == m_gen_type); }
+    bool isGen(GenName name) const noexcept { return (name == m_gen_name); }
+
     const ttlib::cstr& GetClassName() const { return m_classname; }
 
     size_t AddBaseClass(NodeDeclaration* base)

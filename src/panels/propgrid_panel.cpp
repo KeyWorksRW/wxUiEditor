@@ -832,22 +832,22 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                             }
                         }
                     }
-                    else if (prop->GetPropName() == txt_class_access && wxGetApp().IsPjtMemberPrefix())
+                    else if (prop->isProp(prop_class_access) && wxGetApp().IsPjtMemberPrefix())
                     {
                         // TODO: [KeyWorks - 08-23-2020] This needs to be a preference
 
                         // If access is changed to local and the name starts with "m_", then the "m_" will be stripped off.
                         // Conversely, if the name is changed from local to a class member, a "m_" is added as a prefix (if
                         // it doesn't already have one).
-                        ttlib::cstr name = node->prop_as_string(txt_var_name);
+                        ttlib::cstr name = node->prop_as_string(prop_var_name);
                         if (value == "none" && name.is_sameprefix("m_"))
                         {
                             name.erase(0, 2);
                             auto final_name = node->GetUniqueName(name);
                             if (final_name.size())
                                 name = final_name;
-                            auto propChange = selected_node->get_prop_ptr(txt_var_name);
-                            auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
+                            auto propChange = selected_node->get_prop_ptr(prop_var_name);
+                            auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
                             grid_property->SetValueFromString(name, 0);
                             modifyProperty(propChange, name);
                         }
@@ -857,8 +857,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                             auto final_name = node->GetUniqueName(name);
                             if (final_name.size())
                                 name = final_name;
-                            auto propChange = selected_node->get_prop_ptr(txt_var_name);
-                            auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
+                            auto propChange = selected_node->get_prop_ptr(prop_var_name);
+                            auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
                             grid_property->SetValueFromString(name, 0);
                             modifyProperty(propChange, name);
                         }
@@ -923,12 +923,12 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 ttString value = m_prop_grid->GetPropertyValueAsString(property);
                 value.Replace(" ", "");
                 value.Replace(",", "|");
-                if (prop->GetPropName() == txt_style)
+                if (prop->isProp(prop_style))
                 {
                     // Don't allow the user to combine incompatible styles
                     if (value.contains("wxFLP_OPEN") && value.contains("wxFLP_SAVE"))
                     {
-                        auto style_prop = node->get_prop_ptr(txt_style);
+                        auto style_prop = node->get_prop_ptr(prop_style);
                         auto old_value = style_prop->GetValue();
                         if (old_value.contains("wxFLP_OPEN"))
                         {
@@ -938,7 +938,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                             // Change the format to what the property grid wants
                             value.Replace("|", ",");
-                            m_prop_grid->SetPropertyValue(txt_style, value);
+                            m_prop_grid->SetPropertyValue("style", value);
 
                             // Now put it back into the format we use internally
                             value.Replace(",", "|");
@@ -951,7 +951,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                             // Change the format to what the property grid wants
                             value.Replace("|", ",");
-                            m_prop_grid->SetPropertyValue(txt_style, value);
+                            m_prop_grid->SetPropertyValue("style", value);
 
                             // Now put it back into the format we use internally
                             value.Replace(",", "|");
@@ -1073,7 +1073,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             {
                 ttString newValue = property->GetValueAsString();
 
-                if (prop->GetPropName() == txt_var_name)
+                if (prop->isProp(prop_var_name))
                 {
                     if (newValue.empty())
                     {
@@ -1082,11 +1082,11 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         auto final_name = node->GetUniqueName(new_name);
                         newValue = final_name.size() ? final_name : new_name;
 
-                        auto grid_property = m_prop_grid->GetPropertyByLabel(txt_var_name);
+                        auto grid_property = m_prop_grid->GetPropertyByLabel("var_name");
                         grid_property->SetValueFromString(newValue, 0);
                     }
                 }
-                else if (prop->GetPropName() == txt_choices)
+                else if (prop->isProp(prop_choices))
                 {
 #if defined(_WIN32)
                     // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped. Adding
@@ -1122,7 +1122,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                 ModifyProperty(prop, newValue);
 
-                if (prop->GetPropName() == txt_class_name)
+                if (prop->isProp(prop_class_name))
                 {
                     auto selected_node = wxGetFrame().GetSelectedNode();
                     if (!selected_node)
@@ -1133,7 +1133,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         if (newValue.Right(4) != "Base")
                             return;
 
-                        if (auto propType = selected_node->get_prop_ptr(txt_derived_class_name);
+                        if (auto propType = selected_node->get_prop_ptr(prop_derived_class_name);
                             propType && propType->GetValue() == "DerivedClass")
                             ReplaceDrvName(newValue, propType);
                         if (auto propType = selected_node->get_prop_ptr("base_file");
@@ -1492,7 +1492,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 
     if (!node->GetParent()->isGen(gen_wxGridBagSizer))
     {
-        if (auto prop = node->get_prop_ptr(txt_proportion); prop)
+        if (auto prop = node->get_prop_ptr(prop_proportion); prop)
         {
             auto id_prop = m_prop_grid->Append(GetProperty(prop));
 
@@ -1562,7 +1562,7 @@ void PropGridPanel::ReplaceDrvName(const wxString& newValue, NodeProperty* propT
 {
     wxString drvName = newValue;
     drvName.Replace("Base", wxEmptyString);
-    auto grid_property = m_prop_grid->GetPropertyByLabel(txt_derived_class_name);
+    auto grid_property = m_prop_grid->GetPropertyByLabel("derived_class_name");
     grid_property->SetValueFromString(drvName, 0);
     ModifyProperty(propType, drvName);
 }
@@ -1621,7 +1621,7 @@ void PropGridPanel::VerifyChangeFile(wxPropertyGridEvent& event, NodeProperty* p
             if (project->GetChild(child_idx)->prop_as_string("base_file") == filename)
             {
                 appMsgBox(ttlib::cstr() << "The base filename " << filename << " is already in use by "
-                                        << project->GetChild(child_idx)->prop_as_string(txt_class_name)
+                                        << project->GetChild(child_idx)->prop_as_string(prop_class_name)
                                         << "\n\nEither change the name, or press ESC to restore the original name.");
                 m_failure_handled = true;
                 event.Veto();

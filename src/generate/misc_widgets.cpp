@@ -151,7 +151,7 @@ wxObject* StaticLineGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                         node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+                         node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -166,7 +166,7 @@ std::optional<ttlib::cstr> StaticLineGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxStaticLine(";
     code << GetParentName(node) << ", " << node->prop_as_string("id");
 
-    if (node->prop_as_string(txt_style) != "wxLI_HORIZONTAL")
+    if (node->prop_as_string(prop_style) != "wxLI_HORIZONTAL")
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -206,7 +206,7 @@ bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 wxObject* StatusBarGenerator::Create(Node* node, wxObject* parent)
 {
-    auto org_style = node->prop_as_int(txt_style);
+    auto org_style = node->prop_as_int(prop_style);
     // Don't display the gripper as it can resize our main window rather than just the mockup window
     auto widget = new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY,
                                   (org_style &= ~wxSTB_SIZEGRIP) | node->prop_as_int("window_style"));
@@ -233,7 +233,7 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenConstruction(Node* node)
         GenStyle(node, code);
         code << ", " << node->prop_as_string("window_name");
     }
-    else if (node->prop_as_int(txt_style) != wxSTB_DEFAULT_STYLE || node->prop_as_int("window_style") > 0)
+    else if (node->prop_as_int(prop_style) != wxSTB_DEFAULT_STYLE || node->prop_as_int("window_style") > 0)
     {
         code << node->prop_as_int("fields") << ", " << node->prop_as_string("id");
         GenStyle(node, code);
@@ -354,7 +354,7 @@ wxObject* GaugeGenerator::Create(Node* node, wxObject* parent)
     auto widget =
         new wxGauge(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int("range"), node->prop_as_wxPoint("pos"),
                     node->prop_as_wxSize("size"),
-                    node->prop_as_int("orientation") | node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+                    node->prop_as_int("orientation") | node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
     widget->SetValue(node->prop_as_int("position"));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -428,9 +428,9 @@ bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std
 wxObject* SliderGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(txt_value), node->prop_as_int("minValue"),
+        new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_value), node->prop_as_int("minValue"),
                      node->prop_as_int("maxValue"), node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                     node->prop_as_int("orientation") | node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+                     node->prop_as_int("orientation") | node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
     widget->SetValue(node->prop_as_int("position"));
     if (node->prop_as_int("line_size") > 0)
         widget->SetLineSize(node->prop_as_int("line_size"));
@@ -542,9 +542,9 @@ bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 wxObject* HyperlinkGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString(txt_label),
+        new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                             node->GetPropertyAsString("url"), node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                            node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+                            node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
     if (node->HasValue("hover_color"))
     {
@@ -573,7 +573,7 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenConstruction(Node* node)
 
     code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
 
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
     if (label.size())
     {
         code << GenerateQuotedString(label);

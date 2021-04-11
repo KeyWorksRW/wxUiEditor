@@ -119,10 +119,10 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
             m_header->writeLine((ttlib::cstr&) iter);
         }
 
-        if (form_node->prop_has_value(txt_base_hdr_includes))
+        if (form_node->HasValue(prop_base_hdr_includes))
         {
             m_header->writeLine();
-            ttlib::cstr text = form_node->prop_as_string(txt_base_hdr_includes);
+            ttlib::cstr text = form_node->prop_as_string(prop_base_hdr_includes);
             text.Replace("\\n", "\n", true);
             if (text.back() == '\n')
                 text.erase(text.size() - 1, 1);
@@ -163,9 +163,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     m_source->writeLine();
 
-    if (project->HasValue(txt_src_preamble))
+    if (project->HasValue(prop_src_preamble))
     {
-        ttlib::cstr code = project->prop_as_string(txt_src_preamble);
+        ttlib::cstr code = project->prop_as_string(prop_src_preamble);
 
         // The multi-line editor may have been used in which case there are escaped newlines and tabs -- we convert
         // those to the actual characters before generating the code. It's common with that editor to have a trailing
@@ -178,9 +178,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         m_source->writeLine();
     }
 
-    if (form_node->HasValue(txt_base_src_includes))
+    if (form_node->HasValue(prop_base_src_includes))
     {
-        ttlib::cstr code = form_node->prop_as_string(txt_base_src_includes);
+        ttlib::cstr code = form_node->prop_as_string(prop_base_src_includes);
 
         // The multi-line editor may have been used in which case there are escaped newlines and tabs -- we convert
         // those to the actual characters before generating the code. It's common with that editor to have a trailing
@@ -274,7 +274,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
         return;
     }
 
-    auto propName = node->get_prop_ptr(txt_class_name);
+    auto propName = node->get_prop_ptr(prop_class_name);
     if (!propName)
     {
         FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << node->GetClassName() << " class.");
@@ -336,12 +336,12 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
 void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines)
 {
-    if (auto prop = node->get_value_ptr(txt_class_access); prop)
+    if (auto prop = node->get_prop_ptr(prop_class_access); prop)
     {
-        if (*prop != "none")
+        if (prop->GetValue() != "none")
         {
-            if ((perm == Permission::Public && *prop == "public:") ||
-                (perm == Permission::Protected && *prop == "protected:"))
+            if ((perm == Permission::Public && prop->GetValue() == "public:") ||
+                (perm == Permission::Protected && prop->GetValue() == "protected:"))
             {
                 auto code = GetDeclaration(node);
                 if (code.size())
@@ -352,7 +352,7 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
         if (perm == Permission::Protected)
         {
             // StaticCheckboxBoxSizer and StaticRadioBtnBoxSizer have internal variables
-            if (node->prop_has_value("checkbox_var_name") || node->prop_has_value("radiobtn_var_name"))
+            if (node->HasValue(prop_checkbox_var_name) || node->HasValue(prop_radiobtn_var_name))
             {
                 auto code = GetDeclaration(node);
                 if (code.size())
@@ -430,7 +430,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
             }
             else if (*val_data_type == "int")
             {
-                auto prop = node->get_prop_ptr(txt_value);
+                auto prop = node->get_prop_ptr(prop_value);
                 if (!prop)
                     prop = node->get_prop_ptr("initial");
                 if (!prop)
@@ -446,7 +446,7 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
             }
             else if (*val_data_type == "wxString" || *val_data_type == "wxFileName")
             {
-                auto value = node->get_value_ptr(txt_value);
+                auto value = node->get_value_ptr("value");
                 if (value && value->size())
                 {
                     code << " { " << GenerateQuotedString(*value) << " };";
@@ -627,8 +627,8 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 
     else if (class_name == "StaticCheckboxBoxSizer")
     {
-        if (node->prop_has_value("checkbox_var_name"))
-            code << "wxCheckBox* " << node->prop_as_string("checkbox_var_name") << ';';
+        if (node->HasValue(prop_checkbox_var_name))
+            code << "wxCheckBox* " << node->prop_as_string(prop_checkbox_var_name) << ';';
 
         if (!node->IsLocal())
         {
@@ -639,8 +639,8 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name == "StaticRadioBtnBoxSizer")
     {
-        if (node->prop_has_value("radiobtn_var_name"))
-            code << "wxRadioButton* " << node->prop_as_string("radiobtn_var_name") << ';';
+        if (node->HasValue(prop_radiobtn_var_name))
+            code << "wxRadioButton* " << node->prop_as_string(prop_radiobtn_var_name) << ';';
 
         if (!node->IsLocal())
         {
@@ -692,7 +692,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 
 void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const wxString& classDecoration, const EventVector& events)
 {
-    auto propName = form_node->get_prop_ptr(txt_class_name);
+    auto propName = form_node->get_prop_ptr(prop_class_name);
     if (!propName)
     {
         FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->GetClassName());
@@ -932,15 +932,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
                 if (parent->GetClassName() == "wxGridBagSizer")
                 {
-                    code << "wxGBPosition(" << node->prop_as_string(txt_row) << ", " << node->prop_as_string(txt_column)
+                    code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column)
                          << "), ";
-                    code << "wxGBSpan(" << node->prop_as_string(txt_rowspan) << ", " << node->prop_as_string(txt_colspan)
+                    code << "wxGBSpan(" << node->prop_as_string(prop_rowspan) << ", " << node->prop_as_string(prop_colspan)
                          << "), ";
-                    if (node->prop_as_string(txt_borders).empty())
+                    if (node->prop_as_string(prop_borders).empty())
                         code << "0";
                     else
-                        code << node->prop_as_string(txt_borders);
-                    code << ", " << node->prop_as_string(txt_border_size) << ");";
+                        code << node->prop_as_string(prop_borders);
+                    code << ", " << node->prop_as_string(prop_border_size) << ");";
                     code.Replace(", 0, 0);", ");");
                 }
                 else

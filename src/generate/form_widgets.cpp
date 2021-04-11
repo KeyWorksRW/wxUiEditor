@@ -23,7 +23,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
 
     // This is the code to add to the source file
-    code << node->prop_as_string(txt_class_name) << "::" << node->prop_as_string(txt_class_name);
+    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
     code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
     if (node->prop_as_string("window_name").size())
@@ -65,7 +65,7 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
 
     // This is the code to add to the source file
-    code << node->prop_as_string(txt_class_name) << "::" << node->prop_as_string(txt_class_name);
+    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
     code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
     if (node->prop_as_string("window_name").size())
@@ -110,7 +110,7 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
 
     // This is the code to add to the source file
-    code << node->prop_as_string(txt_class_name) << "::" << node->prop_as_string(txt_class_name);
+    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, int border) : wxPopupTransientWindow(parent, border)\n{";
 
     return code;
@@ -158,7 +158,7 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
 
     // This is the code to add to the source file
-    code << node->prop_as_string(txt_class_name) << "::" << node->prop_as_string(txt_class_name);
+    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id,";
     code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
     if (node->prop_as_string("window_name").size())

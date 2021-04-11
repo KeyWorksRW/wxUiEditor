@@ -290,8 +290,7 @@ bool Node::ChangeChildPosition(NodeSharedPtr node, size_t pos)
 
 bool Node::IsLocal()
 {
-    auto value = get_value_ptr(txt_class_access);
-    return (value && *value == "none");
+    return isPropValue(prop_class_access, "none");
 }
 
 bool Node::HasValue(PropName name)
@@ -300,6 +299,26 @@ bool Node::HasValue(PropName name)
         return m_properties[result->second].HasValue();
     else
         return false;
+}
+
+bool Node::isPropValue(PropName name, ttlib::cview value)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+    {
+        return (m_properties[result->second].GetValue().is_sameas(value));
+    }
+
+    return false;
+}
+
+bool Node::isPropValue(PropName name, bool value)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+    {
+        return (m_properties[result->second].as_bool() == value);
+    }
+
+    return false;
 }
 
 bool Node::prop_as_bool(PropName name)
@@ -534,10 +553,10 @@ wxArrayString Node::prop_as_wxArrayString(ttlib::cview name)
 wxSizerFlags Node::GetSizerFlags()
 {
     wxSizerFlags flags;
-    flags.Proportion(prop_as_int(txt_proportion));
-    auto border_size = prop_as_int(txt_border_size);
+    flags.Proportion(prop_as_int(prop_proportion));
+    auto border_size = prop_as_int(prop_border_size);
     int direction = 0;
-    auto& border_settings = prop_as_string(txt_borders);
+    auto& border_settings = prop_as_string(prop_borders);
     if (border_settings.contains("wxALL"))
     {
         direction = wxALL;
@@ -555,7 +574,7 @@ wxSizerFlags Node::GetSizerFlags()
     }
     flags.Border(direction, border_size);
 
-    if (auto& alignment = prop_as_string(txt_alignment); alignment.size())
+    if (auto& alignment = prop_as_string(prop_alignment); alignment.size())
     {
         if (alignment.contains("wxALIGN_CENTER"))
         {
@@ -581,7 +600,7 @@ wxSizerFlags Node::GetSizerFlags()
         }
     }
 
-    if (auto& prop = prop_as_string(txt_flags); prop.size())
+    if (auto& prop = prop_as_string(prop_flags); prop.size())
     {
         if (prop.contains("wxEXPAND"))
             flags.Expand();
@@ -615,7 +634,7 @@ Node* Node::CreateChildNode(ttlib::cview name)
 
         if (name.is_sameas("BookPage"))
         {
-            if (auto prop = new_node->get_prop_ptr(txt_background_colour); prop)
+            if (auto prop = new_node->get_prop_ptr(prop_background_colour); prop)
             {
                 prop->set_value("wxSYS_COLOUR_BTNFACE");
                 frame.FirePropChangeEvent(prop);
@@ -704,12 +723,12 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
         auto child_node = new_node->CreateChildNode("VerticalBoxSizer");
         if (child_node)
         {
-            if (auto prop = child_node->get_prop_ptr(txt_orientation); prop)
+            if (auto prop = child_node->get_prop_ptr(prop_orientation); prop)
             {
                 prop->set_value("wxVERTICAL");
                 frame.FirePropChangeEvent(prop);
             }
-            if (auto prop = child_node->get_prop_ptr(txt_var_name); prop)
+            if (auto prop = child_node->get_prop_ptr(prop_var_name); prop)
             {
                 child_node->ModifyProperty(prop, "parent_sizer");
                 if (child_node->FixDuplicateName())
@@ -729,12 +748,12 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
         new_node = new_node->CreateChildNode("VerticalBoxSizer");
         if (new_node)
         {
-            if (auto prop = new_node->get_prop_ptr(txt_orientation); prop)
+            if (auto prop = new_node->get_prop_ptr(prop_orientation); prop)
             {
                 prop->set_value("wxVERTICAL");
                 frame.FirePropChangeEvent(prop);
             }
-            if (auto prop = new_node->get_prop_ptr(txt_var_name); prop)
+            if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
             {
                 new_node->ModifyProperty(prop, "parent_sizer");
                 if (new_node->FixDuplicateName())
@@ -749,12 +768,12 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
         new_node = new_node->CreateChildNode("VerticalBoxSizer");
         if (new_node)
         {
-            if (auto prop = new_node->get_prop_ptr(txt_orientation); prop)
+            if (auto prop = new_node->get_prop_ptr(prop_orientation); prop)
             {
                 prop->set_value("wxVERTICAL");
                 frame.FirePropChangeEvent(prop);
             }
-            if (auto prop = new_node->get_prop_ptr(txt_var_name); prop)
+            if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
             {
                 new_node->ModifyProperty(prop, "parent_sizer");
                 if (new_node->FixDuplicateName())
@@ -780,13 +799,13 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
         auto node = new_node->GetParent();
         ASSERT(node);
 
-        if (auto prop = node->get_prop_ptr(txt_borders); prop)
+        if (auto prop = node->get_prop_ptr(prop_borders); prop)
         {
             if (GetAppOptions().get_SizersAllBorders())
                 prop->set_value("wxALL");
         }
 
-        if (auto prop = node->get_prop_ptr(txt_flags); prop)
+        if (auto prop = node->get_prop_ptr(prop_flags); prop)
         {
             if (GetAppOptions().get_SizersExpand())
                 prop->set_value("wxEXPAND");
@@ -794,7 +813,7 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
     }
     else if (name == "wxStdDialogButtonSizer")
     {
-        if (auto prop = new_node->get_prop_ptr(txt_flags); prop)
+        if (auto prop = new_node->get_prop_ptr(prop_flags); prop)
         {
             prop->set_value("wxEXPAND");
             frame.FirePropChangeEvent(prop);
@@ -802,6 +821,16 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
     }
 
     return true;
+}
+
+void Node::ModifyProperty(PropName name, ttlib::cview value)
+{
+    auto prop = get_prop_ptr(name);
+    if (prop && value != prop->as_cview())
+    {
+        wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
+        wxGetFrame().FirePropChangeEvent(prop);
+    }
 }
 
 void Node::ModifyProperty(ttlib::cview name, int value)

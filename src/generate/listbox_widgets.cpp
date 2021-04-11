@@ -22,11 +22,11 @@
 
 wxObject* ListBoxGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                      0, NULL, node->prop_as_int("type") | node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+    auto widget = new wxListBox(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), 0, NULL,
+        node->prop_as_int("type") | node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
-    auto& items = node->prop_as_string(txt_choices);
+    auto& items = node->prop_as_string(prop_choices);
     if (items.size())
     {
         auto array = ConvertToArrayString(items);
@@ -59,7 +59,7 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenConstruction(Node* node)
     code << GetParentName(node) << ", " << node->prop_as_string("id");
 
     if (node->prop_as_string("window_name").empty() && node->prop_as_string("type") == "wxLB_SINGLE" &&
-        node->prop_as_string(txt_style).empty() && node->prop_as_string("window_style").empty())
+        node->prop_as_string(prop_style).empty() && node->prop_as_string("window_style").empty())
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -76,7 +76,7 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenConstruction(Node* node)
         code << ", 0, NULL, ";
 
         auto& type = node->prop_as_string("type");
-        auto& style = node->prop_as_string(txt_style);
+        auto& style = node->prop_as_string(prop_style);
         auto& win_style = node->prop_as_string("window_style");
 
         if (type == "wxLB_SINGLE" && style.empty() && win_style.empty())
@@ -108,9 +108,9 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenSettings(Node* node, size_t& /* 
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(txt_choices).size())
+    if (node->prop_as_string(prop_choices).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(txt_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
         for (auto& iter: array)
         {
             if (code.size())
@@ -155,9 +155,9 @@ wxObject* CheckListBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxCheckListBox(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), 0, NULL,
-        node->prop_as_int("type") | node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+        node->prop_as_int("type") | node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
-    auto& items = node->prop_as_string(txt_choices);
+    auto& items = node->prop_as_string(prop_choices);
     if (items.size())
     {
         auto array = ConvertToArrayString(items);
@@ -190,7 +190,7 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenConstruction(Node* node)
     code << GetParentName(node) << ", " << node->prop_as_string("id");
 
     if (node->prop_as_string("window_name").empty() && node->prop_as_string("type") == "wxLB_SINGLE" &&
-        node->prop_as_string(txt_style).empty() && node->prop_as_string("window_style").empty())
+        node->prop_as_string(prop_style).empty() && node->prop_as_string("window_style").empty())
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -207,7 +207,7 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenConstruction(Node* node)
         code << ", 0, NULL, ";
 
         auto& type = node->prop_as_string("type");
-        auto& style = node->prop_as_string(txt_style);
+        auto& style = node->prop_as_string(prop_style);
         auto& win_style = node->prop_as_string("window_style");
 
         if (type == "wxLB_SINGLE" && style.empty() && win_style.empty())
@@ -239,9 +239,9 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(txt_choices).size())
+    if (node->prop_as_string(prop_choices).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(txt_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
         for (auto& iter: array)
         {
             if (code.size())
@@ -286,9 +286,9 @@ wxObject* HtmlListBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
                                           node->prop_as_wxSize("size"), 0, NULL,
-                                          node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+                                          node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
 
-    auto& items = node->prop_as_string(txt_choices);
+    auto& items = node->prop_as_string(prop_choices);
     if (items.size())
     {
         auto array = ConvertToArrayString(items);
@@ -310,7 +310,7 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
     code << GetParentName(node) << ", " << node->prop_as_string("id");
 
     if (node->prop_as_string("window_name").empty() && node->prop_as_string("type") == "wxLB_SINGLE" &&
-        node->prop_as_string(txt_style).empty() && node->prop_as_string("window_style").empty())
+        node->prop_as_string(prop_style).empty() && node->prop_as_string("window_style").empty())
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -326,7 +326,7 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", 0, NULL, ";
 
-        auto& style = node->prop_as_string(txt_style);
+        auto& style = node->prop_as_string(prop_style);
         auto& win_style = node->prop_as_string("window_style");
 
         if (style.empty() && win_style.empty())
@@ -359,9 +359,9 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenSettings(Node* node, size_t&
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(txt_choices).size())
+    if (node->prop_as_string(prop_choices).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(txt_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
         for (auto& iter: array)
         {
             if (code.size())

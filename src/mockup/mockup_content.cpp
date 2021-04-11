@@ -165,7 +165,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             created_sizer = wxStaticCast(created_object, wxSizer);
         }
 
-        if (auto minsize = node->prop_as_wxSize(txt_minimum_size); minsize != wxDefaultSize)
+        if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
         {
             created_sizer->SetMinSize(minsize);
             created_sizer->Layout();
@@ -216,8 +216,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             if (obj_parent->isGen(gen_wxGridBagSizer))
             {
                 auto sizer = wxStaticCast(parentNode, wxGridBagSizer);
-                wxGBPosition position(child_obj->prop_as_int(txt_row), child_obj->prop_as_int(txt_column));
-                wxGBSpan span(child_obj->prop_as_int(txt_rowspan), child_obj->prop_as_int(txt_colspan));
+                wxGBPosition position(child_obj->prop_as_int(prop_row), child_obj->prop_as_int(prop_column));
+                wxGBSpan span(child_obj->prop_as_int(prop_rowspan), child_obj->prop_as_int(prop_colspan));
 
                 if (created_window)
                     sizer->Add(created_window, position, span, sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
@@ -268,7 +268,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->SetSize(size);
     }
 
-    if (auto minsize = node->prop_as_wxSize(txt_minimum_size); minsize != wxDefaultSize)
+    if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
     {
         window->SetMinSize(minsize);
     }
@@ -298,12 +298,12 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->SetExtraStyle(extra_style->as_int());
     }
 
-    if (auto disabled = node->get_prop_ptr(txt_disabled); disabled && disabled->as_bool())
+    if (node->isPropValue(prop_disabled, true))
     {
         window->Disable();
     }
 
-    if (auto hidden = node->get_prop_ptr(txt_hidden); hidden && hidden->as_bool() && !m_mockupParent->IsShowingHidden())
+    if (node->isPropValue(prop_hidden, true) && !m_mockupParent->IsShowingHidden())
     {
         window->Show(false);
     }

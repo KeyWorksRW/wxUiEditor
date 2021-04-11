@@ -29,7 +29,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
 
     // This is the code to add to the source file
-    code << node->prop_as_string(txt_class_name) << "::" << node->prop_as_string(txt_class_name);
+    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
     code << "\n        const wxBitmap& bitmap, const wxPoint& pos, long style) :";
     code << "\n    wxWizard(parent, id, title, bitmap, pos, style)";
@@ -45,7 +45,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
     if (cmd == "ctor_declare")
     {
         // This is the code to add to the header file
-        code << node->prop_as_string(txt_class_name) << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string("id");
+        code << node->prop_as_string(prop_class_name) << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string("id");
         code << ",\n    const wxString& title = ";
         auto& title = node->prop_as_string("title");
         if (title.size())
@@ -69,7 +69,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
             code << "wxDefaultPosition";
 
         code << ",\n    long style = ";
-        auto& style = node->prop_as_string(txt_style);
+        auto& style = node->prop_as_string(prop_style);
         auto& win_style = node->prop_as_string("window_style");
         if (style.empty() && win_style.empty())
             code << "0";
@@ -98,9 +98,9 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
     else if (cmd == "base")
     {
         code << "public ";
-        if (node->HasValue(txt_base_class_name))
+        if (node->HasValue(prop_base_class_name))
         {
-            code << node->prop_as_string(txt_base_class_name);
+            code << node->prop_as_string(prop_base_class_name);
         }
         else
         {
@@ -114,15 +114,15 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
         {
             if (panes.size() > 1)
             {
-                code << "    " << panes[0]->prop_as_string(txt_var_name) << "->Chain(" << panes[1]->prop_as_string(txt_var_name)
-                     << ")";
+                code << "    " << panes[0]->prop_as_string(prop_var_name) << "->Chain("
+                     << panes[1]->prop_as_string(prop_var_name) << ")";
                 for (size_t pos = 1; pos + 1 < panes.size(); ++pos)
                 {
-                    code << ".Chain(" << panes[pos + 1]->prop_as_string(txt_var_name) << ")";
+                    code << ".Chain(" << panes[pos + 1]->prop_as_string(prop_var_name) << ")";
                 }
                 code << ";\n";
             }
-            code << "    GetPageAreaSizer()->Add(" << panes[0]->prop_as_string(txt_var_name) << ");\n";
+            code << "    GetPageAreaSizer()->Add(" << panes[0]->prop_as_string(prop_var_name) << ");\n";
         }
 
         if (auto& center = node->prop_as_string("center"); center.size() && !center.is_sameas("no"))
@@ -191,7 +191,7 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
 
     if (node->IsLocal())
         code << "auto ";
-    code << node->prop_as_string(txt_var_name) << " = new wxWizardPageSimple(this";
+    code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this";
 
     if (node->HasValue("bitmap"))
     {

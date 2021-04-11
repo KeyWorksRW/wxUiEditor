@@ -137,6 +137,29 @@ public:
     // wxDefaultPosition, or non-sepcified bitmap)
     bool HasValue(PropName name);
 
+    // Returns true only if the property exists and it's value is equal to the parameter
+    // value.
+    bool isPropValue(PropName name, ttlib::cview value);
+
+    // Returns true only if the property exists and it's value is equal to the parameter
+    // value.
+    bool isPropValue(PropName name, bool value);
+
+    // Sets value only if the property exists, returns false if it doesn't exist.
+    template <typename T>
+    bool prop_set_value(PropName name, T value)
+    {
+        if (auto prop = get_prop_ptr(name); prop)
+        {
+            prop->set_value(value);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     bool prop_as_bool(PropName name);
     int prop_as_int(PropName name);
 
@@ -200,6 +223,10 @@ public:
 
     Node* CreateNode(ttlib::cview name);
     bool CreateToolNode(const ttlib::cstr& name);
+
+    // This will modify the property and fire a EVT_NodePropChange event if the property
+    // actually changed
+    void ModifyProperty(PropName name, ttlib::cview value);
 
     // This will modify the property and fire a EVT_NodePropChange event
     void ModifyProperty(ttlib::cview name, ttlib::cview value);

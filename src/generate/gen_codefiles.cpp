@@ -197,8 +197,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else
         {
-            results.emplace_back() << _tt("No filename specified for ") << form->get_value_ptr(txt_var_name)->c_str()
-                                   << '\n';
+            results.emplace_back() << _tt("No filename specified for ") << form->get_value_ptr("var_name")->c_str() << '\n';
             continue;
         }
 

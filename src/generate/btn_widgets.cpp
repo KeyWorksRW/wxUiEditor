@@ -24,40 +24,40 @@ using namespace GenEnum;
 wxObject* ButtonGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                     node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+        new wxButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
+                     node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (node->prop_as_bool("markup"))
-        widget->SetLabelMarkup(node->prop_as_wxString(txt_label));
+    if (node->prop_as_bool(prop_markup))
+        widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
     else
-        widget->SetLabel(node->prop_as_wxString(txt_label));
+        widget->SetLabel(node->prop_as_wxString(prop_label));
 
-    if (node->prop_as_bool("default_btn"))
+    if (node->prop_as_bool(prop_default_btn))
         widget->SetDefault();
 
-    if (node->prop_as_bool("auth_needed"))
+    if (node->prop_as_bool(prop_auth_needed))
         widget->SetAuthNeeded();
 
     if (node->HasValue(prop_bitmap))
-        widget->SetBitmap(node->prop_as_wxBitmap("bitmap"));
+        widget->SetBitmap(node->prop_as_wxBitmap(prop_bitmap));
 
-    if (node->HasValue("disabled_bmp"))
-        widget->SetBitmapDisabled(node->prop_as_wxBitmap("disabled_bmp"));
+    if (node->HasValue(prop_disabled_bmp))
+        widget->SetBitmapDisabled(node->prop_as_wxBitmap(prop_disabled_bmp));
 
-    if (node->HasValue("pressed_bmp"))
-        widget->SetBitmapPressed(node->prop_as_wxBitmap("pressed_bmp"));
+    if (node->HasValue(prop_pressed_bmp))
+        widget->SetBitmapPressed(node->prop_as_wxBitmap(prop_pressed_bmp));
 
-    if (node->HasValue("focus"))
-        widget->SetBitmapFocus(node->prop_as_wxBitmap("focus"));
+    if (node->HasValue(prop_focus))
+        widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus));
 
-    if (node->HasValue("current"))
-        widget->SetBitmapCurrent(node->prop_as_wxBitmap("current"));
+    if (node->HasValue(prop_current))
+        widget->SetBitmapCurrent(node->prop_as_wxBitmap(prop_current));
 
-    if (node->HasValue("position"))
-        widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int("position")));
+    if (node->HasValue(prop_position))
+        widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int(prop_position)));
 
-    if (node->HasValue("margins"))
-        widget->SetBitmapMargins(node->prop_as_wxSize("margins"));
+    if (node->HasValue(prop_margins))
+        widget->SetBitmapMargins(node->prop_as_wxSize(prop_margins));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -73,10 +73,10 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     if (prop->isProp(prop_label))
     {
         auto ctrl = wxStaticCast(widget, wxButton);
-        if (node->prop_as_bool("markup"))
-            ctrl->SetLabelMarkup(node->prop_as_wxString(txt_label));
+        if (node->prop_as_bool(prop_markup))
+            ctrl->SetLabelMarkup(node->prop_as_wxString(prop_label));
         else
-            ctrl->SetLabel(node->prop_as_wxString(txt_label));
+            ctrl->SetLabel(node->prop_as_wxString(prop_label));
 
         return true;
     }
@@ -85,9 +85,9 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
 
-        if (node->prop_as_bool("markup"))
+        if (node->prop_as_bool(prop_markup))
         {
-            wxStaticCast(widget, wxButton)->SetLabelMarkup(node->prop_as_wxString(txt_label));
+            wxStaticCast(widget, wxButton)->SetLabelMarkup(node->prop_as_wxString(prop_label));
             return true;
         }
     }
@@ -110,10 +110,10 @@ std::optional<ttlib::cstr> ButtonGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxButton(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     auto& label = node->prop_as_string(txt_label);
-    if (label.size() && !node->prop_as_bool("markup"))
+    if (label.size() && !node->prop_as_bool(prop_markup))
     {
         code << GenerateQuotedString(label);
     }
@@ -138,15 +138,15 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
 {
     ttlib::cstr code;
 
-    if (node->prop_as_bool("markup"))
+    if (node->prop_as_bool(prop_markup))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txt_label))
+        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(prop_label))
              << ");";
     }
 
-    if (node->prop_as_bool("default_btn"))
+    if (node->prop_as_bool(prop_default_btn))
     {
         if (code.size())
             code << '\n';
@@ -154,48 +154,48 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
         code << node->get_node_name() << "->SetDefault();";
     }
 
-    if (node->prop_as_bool("auth_needed"))
+    if (node->prop_as_bool(prop_auth_needed))
     {
         if (code.size())
             code << '\n';
         code << node->get_node_name() << "->SetAuthNeeded();";
     }
 
-    if (node->HasValue("bitmap"))
+    if (node->HasValue(prop_bitmap))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string("bitmap")) << ");";
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
     }
 
-    if (node->HasValue("disabled_bmp"))
+    if (node->HasValue(prop_disabled_bmp))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmapDisabled(" << GenerateBitmapCode(node->prop_as_string("disabled_bmp"))
+        code << node->get_node_name() << "->SetBitmapDisabled("
+             << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp)) << ");";
+    }
+
+    if (node->HasValue(prop_pressed_bmp))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetBitmapPressed(" << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp))
              << ");";
     }
 
-    if (node->HasValue("pressed_bmp"))
+    if (node->HasValue(prop_focus))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmapPressed(" << GenerateBitmapCode(node->prop_as_string("pressed_bmp"))
-             << ");";
+        code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus)) << ");";
     }
 
-    if (node->HasValue("focus"))
+    if (node->HasValue(prop_current))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string("focus")) << ");";
-    }
-
-    if (node->HasValue("current"))
-    {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->prop_as_string("current"))
+        code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->prop_as_string(prop_current))
              << ");";
     }
 
@@ -212,37 +212,37 @@ bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 
 wxObject* ToggleButtonGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(txt_style) | node->prop_as_int("window_style"));
+    auto widget = new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                     node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (node->prop_as_bool("markup"))
-        widget->SetLabelMarkup(node->prop_as_wxString(txt_label));
+    if (node->prop_as_bool(prop_markup))
+        widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
     else
-        widget->SetLabel(node->prop_as_wxString(txt_label));
+        widget->SetLabel(node->prop_as_wxString(prop_label));
 
-    widget->SetValue((node->prop_as_bool("pressed")));
+    widget->SetValue((node->prop_as_bool(prop_pressed)));
 
-    if (node->HasValue("bitmap"))
-        widget->SetBitmap(node->prop_as_wxBitmap("bitmap"));
+    if (node->HasValue(prop_bitmap))
+        widget->SetBitmap(node->prop_as_wxBitmap(prop_bitmap));
 
-    if (node->HasValue("disabled_bmp"))
-        widget->SetBitmapDisabled(node->prop_as_wxBitmap("disdisabled_bmp"));
+    if (node->HasValue(prop_disabled_bmp))
+        widget->SetBitmapDisabled(node->prop_as_wxBitmap(prop_disabled_bmp));
 
-    if (node->HasValue("pressed_bmp"))
-        widget->SetBitmapPressed(node->prop_as_wxBitmap("pressed_bmp"));
+    if (node->HasValue(prop_pressed_bmp))
+        widget->SetBitmapPressed(node->prop_as_wxBitmap(prop_pressed_bmp));
 
-    if (node->HasValue("focus"))
-        widget->SetBitmapFocus(node->prop_as_wxBitmap("focus"));
+    if (node->HasValue(prop_focus))
+        widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus));
 
-    if (node->HasValue("current"))
-        widget->SetBitmapCurrent(node->prop_as_wxBitmap("current"));
+    if (node->HasValue(prop_current))
+        widget->SetBitmapCurrent(node->prop_as_wxBitmap(prop_current));
 
-    if (node->HasValue("position"))
-        widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int("position")));
+    if (node->HasValue(prop_position))
+        widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int(prop_position)));
 
-    if (node->HasValue("margins"))
-        widget->SetBitmapMargins(node->prop_as_wxSize("margins"));
+    if (node->HasValue(prop_margins))
+        widget->SetBitmapMargins(node->prop_as_wxSize(prop_margins));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -258,10 +258,10 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
     if (prop->isProp(prop_label))
     {
         auto ctrl = wxStaticCast(widget, wxToggleButton);
-        if (node->prop_as_bool("markup"))
-            ctrl->SetLabelMarkup(node->prop_as_wxString(txt_label));
+        if (node->prop_as_bool(prop_markup))
+            ctrl->SetLabelMarkup(node->prop_as_wxString(prop_label));
         else
-            ctrl->SetLabel(node->prop_as_wxString(txt_label));
+            ctrl->SetLabel(node->prop_as_wxString(prop_label));
 
         return true;
     }
@@ -270,9 +270,9 @@ bool ToggleButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeP
         // Turning markup on switches to generic rending of the button. However, you have to recreate it to switch it
         // off and go back to native rendering.
 
-        if (node->prop_as_bool("markup"))
+        if (node->prop_as_bool(prop_markup))
         {
-            wxStaticCast(widget, wxToggleButton)->SetLabelMarkup(node->prop_as_wxString(txt_label));
+            wxStaticCast(widget, wxToggleButton)->SetLabelMarkup(node->prop_as_wxString(prop_label));
             return true;
         }
     }
@@ -291,12 +291,12 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxToggleButton(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    auto& label = node->prop_as_string(txt_label);
+    auto& label = node->prop_as_string(prop_label);
 
     // If markup is true, then the label has to be set in the GenSettings() section
-    if (label.size() && !node->prop_as_bool("markup"))
+    if (label.size() && !node->prop_as_bool(prop_markup))
     {
         code << GenerateQuotedString(label);
     }
@@ -321,56 +321,56 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t
 {
     ttlib::cstr code;
 
-    if (node->prop_as_bool("pressed"))
+    if (node->prop_as_bool(prop_pressed))
     {
         if (code.size())
             code << '\n';
         code << node->get_node_name() << "->SetValue(true)";
     }
 
-    if (node->prop_as_bool("markup"))
+    if (node->prop_as_bool(prop_markup))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(txt_label))
+        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(prop_label))
              << ");";
     }
 
-    if (node->HasValue("bitmap"))
+    if (node->HasValue(prop_bitmap))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string("bitmap")) << ");";
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
     }
 
-    if (node->HasValue("disabled_bmp"))
+    if (node->HasValue(prop_disabled_bmp))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmapDisabled(" << GenerateBitmapCode(node->prop_as_string("disabled_bmp"))
+        code << node->get_node_name() << "->SetBitmapDisabled("
+             << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp)) << ");";
+    }
+
+    if (node->HasValue(prop_pressed_bmp))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetBitmapPressed(" << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp))
              << ");";
     }
 
-    if (node->HasValue("pressed_bmp"))
+    if (node->HasValue(prop_focus))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmapPressed(" << GenerateBitmapCode(node->prop_as_string("pressed_bmp"))
-             << ");";
+        code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus)) << ");";
     }
 
-    if (node->HasValue("focus"))
+    if (node->HasValue(prop_current))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string("focus")) << ");";
-    }
-
-    if (node->HasValue("current"))
-    {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->prop_as_string("current"))
+        code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->prop_as_string(prop_current))
              << ");";
     }
 
@@ -387,9 +387,9 @@ bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* CommandLinkBtnGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString("main_label"),
-                                          node->prop_as_wxString("note"), node->prop_as_wxPoint("pos"),
-                                          node->prop_as_wxSize("size"), node->prop_as_int("window_style"));
+    auto widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_main_label),
+                                          node->prop_as_wxString(prop_note), node->prop_as_wxPoint(prop_pos),
+                                          node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -402,13 +402,13 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxCommandLinkButton(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     // BUGBUG: [KeyWorks - 04-09-2021] Need to support default_btn property
 
-    if (node->HasValue("main_label"))
+    if (node->HasValue(prop_main_label))
     {
-        code << GenerateQuotedString(node->prop_as_string("main_label"));
+        code << GenerateQuotedString(node->prop_as_string(prop_main_label));
     }
     else
     {
@@ -417,9 +417,9 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenConstruction(Node* node)
 
     code << ",\n        ";
 
-    if (node->HasValue("note"))
+    if (node->HasValue(prop_note))
     {
-        code << GenerateQuotedString(node->prop_as_string("note"));
+        code << GenerateQuotedString(node->prop_as_string(prop_note));
     }
     else
     {

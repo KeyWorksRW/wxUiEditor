@@ -138,6 +138,24 @@ public:
     bool HasValue(PropName name);
 
     bool prop_as_bool(PropName name);
+    int prop_as_int(PropName name);
+
+    wxColour prop_as_wxColour(PropName name);
+    wxFont prop_as_font(PropName name);
+    wxPoint prop_as_wxPoint(PropName name);
+    wxSize prop_as_wxSize(PropName name);
+    wxBitmap prop_as_wxBitmap(PropName name);
+    wxArrayString prop_as_wxArrayString(PropName name);
+
+    FontProperty prop_as_font_prop(PropName name);
+    double prop_as_double(PropName name);
+
+    const ttlib::cstr& prop_as_string(PropName name);
+
+    // This will convert the string from UTF8 to UTF16 on Windows
+    wxString prop_as_wxString(PropName name);
+
+    //// Begin old style lookups ///
 
     bool HasValue(ttlib::cview name);
 
@@ -146,7 +164,6 @@ public:
     bool prop_has_value(ttlib::cview name);
 
     bool prop_as_bool(ttlib::cview name);
-
     int prop_as_int(ttlib::cview name);
 
     wxColour prop_as_wxColour(ttlib::cview name);
@@ -164,6 +181,8 @@ public:
 
     const ttlib::cstr& prop_as_string(ttlib::cview name);
     wxString prop_as_wxString(ttlib::cview name) { return GetPropertyAsString(name); }
+
+    //// End old style lookups ///
 
     wxSizerFlags GetSizerFlags();
 

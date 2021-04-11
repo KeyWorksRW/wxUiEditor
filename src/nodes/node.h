@@ -139,7 +139,7 @@ public:
 
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
-    bool isPropValue(PropName name, ttlib::cview value);
+    bool isPropValue(PropName name, const char* value);
 
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
@@ -181,10 +181,6 @@ public:
     //// Begin old style lookups ///
 
     bool HasValue(ttlib::cview name);
-
-    // Returns true if the property exists, has a value (!= wxDefaultSize, !=
-    // wxDefaultPosition, or non-sepcified bitmap)
-    bool prop_has_value(ttlib::cview name);
 
     bool prop_as_bool(ttlib::cview name);
     int prop_as_int(ttlib::cview name);

@@ -301,7 +301,7 @@ bool Node::HasValue(PropName name)
         return false;
 }
 
-bool Node::isPropValue(PropName name, ttlib::cview value)
+bool Node::isPropValue(PropName name, const char* value)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -418,12 +418,6 @@ const ttlib::cstr& Node::prop_as_string(PropName name)
 }
 
 bool Node::HasValue(ttlib::cview name)
-{
-    auto prop = get_prop_ptr(name);
-    return (prop && prop->HasValue());
-}
-
-bool Node::prop_has_value(ttlib::cview name)
 {
     auto prop = get_prop_ptr(name);
     return (prop && prop->HasValue());

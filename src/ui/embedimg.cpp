@@ -36,7 +36,7 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
     m_cwd.assignCwd();
 
     ttString dir;
-    auto dir_property = wxGetApp().GetProject()->prop_as_string("original_art");
+    auto dir_property = wxGetApp().GetProject()->prop_as_string(prop_original_art);
     if (dir_property.size())
         dir = dir_property;
     else
@@ -44,7 +44,7 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
     dir.make_absolute();
     m_fileOriginal->SetInitialDirectory(dir);
 
-    dir_property = wxGetApp().GetProject()->prop_as_string("converted_art");
+    dir_property = wxGetApp().GetProject()->prop_as_string(prop_converted_art);
     if (dir_property.size())
         dir = dir_property;
     else
@@ -177,7 +177,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
         // Now that we have a loaded image, set the output file.
         ttString outFilename;
-        auto dir_property = wxGetApp().GetProject()->prop_as_string("converted_art");
+        auto dir_property = wxGetApp().GetProject()->prop_as_string(prop_converted_art);
         if (dir_property.size())
         {
             outFilename = dir_property;
@@ -189,7 +189,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         }
         if (m_radio_header->GetValue())
         {
-            auto ext_property = wxGetApp().GetProject()->prop_as_string("header_ext");
+            auto ext_property = wxGetApp().GetProject()->prop_as_string(prop_header_ext);
             if (ext_property.empty())
                 ext_property = ".h";
             if (!outFilename.contains("_png"))
@@ -456,7 +456,7 @@ void EmbedImage::OnHeaderOutput(wxCommandEvent& WXUNUSED(event))
     ttString filename = m_fileHeader->GetPath();
     if (filename.size())
     {
-        auto ext_property = wxGetApp().GetProject()->prop_as_string("header_ext");
+        auto ext_property = wxGetApp().GetProject()->prop_as_string(prop_header_ext);
         if (ext_property.empty())
             ext_property = ".h";
         if (!filename.contains("_png"))

@@ -58,7 +58,7 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* GridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
-    auto sizer = new wxGridSizer(node->prop_as_int("rows"), node->prop_as_int("cols"), node->prop_as_int(prop_vgap),
+    auto sizer = new wxGridSizer(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols), node->prop_as_int(prop_vgap),
                                  node->prop_as_int(prop_hgap));
 
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
@@ -72,8 +72,8 @@ std::optional<ttlib::cstr> GridSizerGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxGridSizer(";
-    auto rows = node->prop_as_int("rows");
-    auto cols = node->prop_as_int("cols");
+    auto rows = node->prop_as_int(prop_rows);
+    auto cols = node->prop_as_int(prop_cols);
     auto vgap = node->prop_as_int(prop_vgap);
     auto hgap = node->prop_as_int(prop_hgap);
 
@@ -204,7 +204,7 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
-    if (node->prop_as_bool("disabled"))
+    if (node->prop_as_bool(prop_disabled))
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
@@ -240,7 +240,7 @@ wxObject* StaticCheckboxBoxSizerGenerator::Create(Node* node, wxObject* parent)
 
     m_checkbox = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                 wxDefaultPosition, wxDefaultSize, style_value);
-    if (node->prop_as_bool("checked"))
+    if (node->prop_as_bool(prop_checked))
         m_checkbox->SetValue(true);
 
     auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_checkbox);
@@ -273,8 +273,8 @@ bool StaticCheckboxBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, N
 std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
-    code << node->prop_as_string("checkbox_var_name") << " = new wxCheckBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << node->prop_as_string(prop_checkbox_var_name) << " = new wxCheckBox(";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (node->prop_as_string(prop_label).size())
     {
@@ -312,7 +312,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
     }
 
     code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY, ";
-    code << node->prop_as_string("checkbox_var_name") << "), " << node->prop_as_string(prop_orientation) << ");";
+    code << node->prop_as_string(prop_checkbox_var_name) << "), " << node->prop_as_string(prop_orientation) << ");";
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
@@ -326,7 +326,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
 std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
-    if (node->prop_as_bool("disabled"))
+    if (node->prop_as_bool(prop_disabled))
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
@@ -340,7 +340,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* no
     {
         if (code.size())
             code << "\n    ";
-        code << node->prop_as_string("checkbox_var_name") << "->SetToolTip("
+        code << node->prop_as_string(prop_checkbox_var_name) << "->SetToolTip("
              << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
     }
 
@@ -367,7 +367,7 @@ bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 wxObject* StaticRadioBtnBoxSizerGenerator::Create(Node* node, wxObject* parent)
 {
     m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label));
-    if (node->prop_as_bool("checked"))
+    if (node->prop_as_bool(prop_checked))
         m_radiobtn->SetValue(true);
 
     auto staticbox = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, m_radiobtn);
@@ -400,8 +400,8 @@ bool StaticRadioBtnBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, N
 std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
-    code << node->prop_as_string("radiobtn_var_name") << " = new wxRadioButton(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << node->prop_as_string(prop_radiobtn_var_name) << " = new wxRadioButton(";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (node->prop_as_string(prop_label).size())
     {
@@ -437,7 +437,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     }
 
     code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY, ";
-    code << node->prop_as_string("radiobtn_var_name") << "), " << node->prop_as_string(prop_orientation) << ");";
+    code << node->prop_as_string(prop_radiobtn_var_name) << "), " << node->prop_as_string(prop_orientation) << ");";
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
@@ -451,7 +451,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
 std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
-    if (node->prop_as_bool("disabled"))
+    if (node->prop_as_bool(prop_disabled))
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
@@ -465,7 +465,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenSettings(Node* no
     {
         if (code.size())
             code << "\n    ";
-        code << node->prop_as_string("radiobtn_var_name") << "->SetToolTip("
+        code << node->prop_as_string(prop_radiobtn_var_name) << "->SetToolTip("
              << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
     }
 
@@ -491,7 +491,7 @@ bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 
 wxObject* FlexGridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
 {
-    wxFlexGridSizer* sizer = new wxFlexGridSizer(node->prop_as_int("rows"), node->prop_as_int("cols"),
+    wxFlexGridSizer* sizer = new wxFlexGridSizer(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols),
                                                  node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
 
 #if 0
@@ -520,8 +520,8 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
         code << "auto ";
 
     code << node->get_node_name() << " = new wxFlexGridSizer(";
-    auto rows = node->prop_as_int("rows");
-    auto cols = node->prop_as_int("cols");
+    auto rows = node->prop_as_int(prop_rows);
+    auto cols = node->prop_as_int(prop_cols);
     auto vgap = node->prop_as_int(prop_vgap);
     auto hgap = node->prop_as_int(prop_hgap);
 
@@ -849,20 +849,20 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     code << node->GetParent()->get_node_name();
 
-    if (node->prop_as_int("proportion") != 0)
+    if (node->prop_as_int(prop_proportion) != 0)
     {
         code << "->AddStretchSpacer(" << node->prop_as_string(prop_proportion) << ");";
     }
     else
     {
-        if (node->prop_as_int("width") == node->prop_as_int("height"))
+        if (node->prop_as_int(prop_width) == node->prop_as_int(prop_height))
         {
             code << "->AddSpacer(" << node->prop_as_string(prop_width);
         }
-        else if (node->GetParent()->HasValue("orientation"))
+        else if (node->GetParent()->HasValue(prop_orientation))
         {
             code << "->AddSpacer(";
-            if (node->GetParent()->prop_as_string("orientation") == "wxVERTICAL")
+            if (node->GetParent()->prop_as_string(prop_orientation) == "wxVERTICAL")
             {
                 code << node->prop_as_string(prop_height);
             }
@@ -875,12 +875,12 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
         else
         {
             code << "->Add(" << node->prop_as_string(prop_width);
-            if (node->prop_as_bool("add_default_border"))
+            if (node->prop_as_bool(prop_add_default_border))
                 code << " + wxSizerFlags::GetDefaultBorder()";
             code << ", " << node->prop_as_string(prop_height);
         }
 
-        if (node->prop_as_bool("add_default_border"))
+        if (node->prop_as_bool(prop_add_default_border))
             code << " + wxSizerFlags::GetDefaultBorder()";
 
         code << ");";
@@ -1041,32 +1041,32 @@ wxObject* StdDialogButtonSizerGenerator::Create(Node* node, wxObject* parent)
 
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
 
-    if (node->prop_as_bool("OK"))
+    if (node->prop_as_bool(prop_OK))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_OK));
-    else if (node->prop_as_bool("Yes"))
+    else if (node->prop_as_bool(prop_Yes))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_YES));
-    else if (node->prop_as_bool("Save"))
+    else if (node->prop_as_bool(prop_Save))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_SAVE));
 
-    if (node->prop_as_bool("No"))
+    if (node->prop_as_bool(prop_No))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_NO));
 
-    if (node->prop_as_bool("Cancel"))
+    if (node->prop_as_bool(prop_Cancel))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CANCEL));
-    else if (node->prop_as_bool("Close"))
+    else if (node->prop_as_bool(prop_Close))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CLOSE));
 
-    if (node->prop_as_bool("Apply"))
+    if (node->prop_as_bool(prop_Apply))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_APPLY));
 
-    if (node->prop_as_bool("Help"))
+    if (node->prop_as_bool(prop_Help))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_HELP));
-    else if (node->prop_as_bool("ContextHelp"))
+    else if (node->prop_as_bool(prop_ContextHelp))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CONTEXT_HELP));
 
     sizer->Realize();
 
-    if (node->prop_as_bool("static_line"))
+    if (node->prop_as_bool(prop_static_line))
     {
         auto topsizer = new wxBoxSizer(wxVERTICAL);
         topsizer->Add(new wxStaticLine(wxDynamicCast(parent, wxWindow)), wxSizerFlags().Expand().DoubleBorder(wxBOTTOM));
@@ -1079,7 +1079,7 @@ wxObject* StdDialogButtonSizerGenerator::Create(Node* node, wxObject* parent)
 
 std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* node)
 {
-    auto& def_btn_name = node->prop_as_string("default_button");
+    auto& def_btn_name = node->prop_as_string(prop_default_button);
 
     ttlib::cstr code("    ");
     if (node->IsLocal())
@@ -1091,29 +1091,29 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
     // without hitting assertion errors in debug builds, and in release builds, the Save button is positioned
     // incorrectly. Unfortunately that means we have to add the buttons one at a time if a Save button is specified.
 
-    if (node->FindParentForm()->GetClassName() == "wxDialog" && !node->prop_as_bool("Save") &&
-        !node->prop_as_bool("ContextHelp"))
+    if (node->FindParentForm()->GetClassName() == "wxDialog" && !node->prop_as_bool(prop_Save) &&
+        !node->prop_as_bool(prop_ContextHelp))
     {
         code << node->get_node_name() << " = CreateStdDialogButtonSizer(";
         ttlib::cstr flags;
 
-        if (node->prop_as_bool("OK"))
+        if (node->prop_as_bool(prop_OK))
             AddBitFlag(flags, "wxOK");
-        else if (node->prop_as_bool("Yes"))
+        else if (node->prop_as_bool(prop_Yes))
             AddBitFlag(flags, "wxYES");
 
-        if (node->prop_as_bool("No"))
+        if (node->prop_as_bool(prop_No))
             AddBitFlag(flags, "wxNO");
 
-        if (node->prop_as_bool("Cancel"))
+        if (node->prop_as_bool(prop_Cancel))
             AddBitFlag(flags, "wxCANCEL");
-        else if (node->prop_as_bool("Close"))
+        else if (node->prop_as_bool(prop_Close))
             AddBitFlag(flags, "wxCLOSE");
 
-        if (node->prop_as_bool("Apply"))
+        if (node->prop_as_bool(prop_Apply))
             AddBitFlag(flags, "wxAPPLY");
 
-        if (node->prop_as_bool("Help"))
+        if (node->prop_as_bool(prop_Help))
             AddBitFlag(flags, "wxHELP");
 
         if (def_btn_name != "OK" && def_btn_name != "Yes")
@@ -1140,29 +1140,29 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
     }
 
     // You can only have one of: Ok, Yes, Save
-    if (node->prop_as_bool("OK"))
+    if (node->prop_as_bool(prop_OK))
         code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_OK));";
-    else if (node->prop_as_bool("Yes"))
+    else if (node->prop_as_bool(prop_Yes))
         code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_YES));";
-    else if (node->prop_as_bool("Save"))
+    else if (node->prop_as_bool(prop_Save))
         code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_SAVE));";
 
-    if (node->prop_as_bool("No"))
+    if (node->prop_as_bool(prop_No))
         code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_NO));";
 
     // You can only have one of: Cancel, Close
-    if (node->prop_as_bool("Cancel"))
+    if (node->prop_as_bool(prop_Cancel))
         code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_CANCEL));";
-    else if (node->prop_as_bool("Close"))
+    else if (node->prop_as_bool(prop_Close))
         code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_CLOSE));";
 
-    if (node->prop_as_bool("Apply"))
+    if (node->prop_as_bool(prop_Apply))
         code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_APPLY));";
 
     // You can only have one of: Help, ContextHelp
-    if (node->prop_as_bool("Help"))
+    if (node->prop_as_bool(prop_Help))
         code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_HELP));";
-    else if (node->prop_as_bool("ContextHelp"))
+    else if (node->prop_as_bool(prop_ContextHelp))
         code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_CONTEXT_HELP));";
 
     if (def_btn_name == "OK" || def_btn_name == "Yes" || def_btn_name == "Save")
@@ -1251,7 +1251,7 @@ bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string
 wxObject* TextSizerGenerator::Create(Node* node, wxObject* parent)
 {
     wxTextSizerWrapper wrapper(wxStaticCast(parent, wxWindow));
-    return wrapper.CreateSizer(node->prop_as_wxString("text"), node->prop_as_int("wrap"));
+    return wrapper.CreateSizer(node->prop_as_wxString(prop_text), node->prop_as_int(prop_wrap));
 }
 
 std::optional<ttlib::cstr> TextSizerGenerator::GenConstruction(Node* node)
@@ -1274,7 +1274,7 @@ std::optional<ttlib::cstr> TextSizerGenerator::GenConstruction(Node* node)
         code << " = wxTextSizerWrapper(" << parent->get_node_name() << ").CreateSizer(";
     }
 
-    code << GenerateQuotedString(node->prop_as_string("text")) << ", " << node->prop_as_string(prop_width) << ");";
+    code << GenerateQuotedString(node->prop_as_string(prop_text)) << ", " << node->prop_as_string(prop_width) << ");";
 
     return code;
 }

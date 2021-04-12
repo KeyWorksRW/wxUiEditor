@@ -240,20 +240,20 @@ void EventHandlerDlg::FormatBindText()
     else if (m_event->GetNode()->GetClassName() == "wxMenuItem" || m_event->GetNode()->GetClassName() == "tool")
     {
         code << "Bind(" << handler << comma;
-        if (m_event->GetNode()->prop_as_string("id") != "wxID_ANY")
-            code << m_event->GetNode()->prop_as_string("id") << ");";
+        if (m_event->GetNode()->prop_as_string(prop_id) != "wxID_ANY")
+            code << m_event->GetNode()->prop_as_string(prop_id) << ");";
         else
             code << m_event->GetNode()->get_node_name() << "->GetId());";
     }
     else if (m_event->GetNode()->GetClassName() == "ribbonTool")
     {
-        if (m_event->GetNode()->prop_as_string("id").empty())
+        if (m_event->GetNode()->prop_as_string(prop_id).empty())
         {
             code << "Bind(" << handler << comma << "wxID_ANY);";
         }
         else
         {
-            code << "Bind(" << handler << comma << m_event->GetNode()->prop_as_string("id") << ");";
+            code << "Bind(" << handler << comma << m_event->GetNode()->prop_as_string(prop_id) << ");";
         }
     }
     else

@@ -72,7 +72,7 @@ std::optional<ttlib::cstr> GenInheritSettings(Node* node)
         auto validator_type = node->get_value_ptr("validator_type");
         if (validator_type && validator_type->is_sameas("wxTextValidator"))
         {
-            code << node->get_node_name() << "->SetValidator(wxTextValidator(" << node->prop_as_string("validator_style")
+            code << node->get_node_name() << "->SetValidator(wxTextValidator(" << node->prop_as_string(prop_validator_style)
                  << ", &" << *var_name << "));";
         }
         else
@@ -86,11 +86,11 @@ std::optional<ttlib::cstr> GenInheritSettings(Node* node)
     return {};
 }
 
-static void AddPropIfUsed(ttlib::cview prop_name, ttlib::cview func_name, Node* node, ttlib::cstr& code)
+static void AddPropIfUsed(PropName prop_name, ttlib::cview func_name, Node* node, ttlib::cstr& code)
 {
-    if (prop_name.is_sameas("background_colour"))
+    if (prop_name == prop_background_colour)
     {
-        auto& color = node->prop_as_string("background_colour");
+        auto& color = node->prop_as_string(prop_background_colour);
         if (color.size())
         {
             if (code.size())
@@ -107,9 +107,9 @@ static void AddPropIfUsed(ttlib::cview prop_name, ttlib::cview func_name, Node* 
             }
         }
     }
-    else if (prop_name.is_sameas("foreground_colour"))
+    else if (prop_name == prop_foreground_colour)
     {
-        auto& color = node->prop_as_string("foreground_colour");
+        auto& color = node->prop_as_string(prop_foreground_colour);
         if (color.size())
         {
             if (code.size())
@@ -138,14 +138,14 @@ static void AddPropIfUsed(ttlib::cview prop_name, ttlib::cview func_name, Node* 
 
 void GenerateWindowSettings(Node* node, ttlib::cstr& code)
 {
-    AddPropIfUsed("window_extra_style", "SetExtraStyle(", node, code);
-    AddPropIfUsed("font", "SetFont(", node, code);
-    AddPropIfUsed("foreground_colour", "SetForegroundColour(", node, code);
-    AddPropIfUsed("background_colour", "SetBackgroundColour(", node, code);
+    AddPropIfUsed(prop_window_extra_style, "SetExtraStyle(", node, code);
+    AddPropIfUsed(prop_font, "SetFont(", node, code);
+    AddPropIfUsed(prop_foreground_colour, "SetForegroundColour(", node, code);
+    AddPropIfUsed(prop_background_colour, "SetBackgroundColour(", node, code);
 
     // Note that \t is added after the \n in case the caller needs to keep indents
 
-    if (node->prop_as_bool("disabled"))
+    if (node->prop_as_bool(prop_disabled))
     {
         if (code.size())
             code << "\n    ";
@@ -154,7 +154,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         code << "Enable(false);";
     }
 
-    if (node->prop_as_bool("hidden"))
+    if (node->prop_as_bool(prop_hidden))
     {
         if (code.size())
             code << "\n    ";
@@ -182,7 +182,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         }
     }
 
-    size = node->prop_as_wxPoint("maximum_size");
+    size = node->prop_as_wxPoint(prop_maximum_size);
     if (size.x != -1 || size.y != -1)
     {
         if (allow_minmax)
@@ -194,21 +194,21 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         }
     }
 
-    if (node->prop_as_string("tooltip").size())
+    if (node->prop_as_string(prop_tooltip).size())
     {
         if (code.size())
             code << "\n    ";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
-        code << "SetToolTip(" << GenerateQuotedString(node->prop_as_string("tooltip")) << ");";
+        code << "SetToolTip(" << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
     }
 
-    if (node->prop_as_string("context_help").size())
+    if (node->prop_as_string(prop_context_help).size())
     {
         if (code.size())
             code << "\n    ";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
-        code << "SetHelpText(" << GenerateQuotedString(node->prop_as_string("context_help")) << ");";
+        code << "SetHelpText(" << GenerateQuotedString(node->prop_as_string(prop_context_help)) << ");";
     }
 }

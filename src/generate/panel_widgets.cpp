@@ -24,7 +24,7 @@ wxObject* PanelGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
         new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                    node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+                    node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -43,7 +43,7 @@ std::optional<ttlib::cstr> PanelGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxPanel(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);
 
@@ -56,12 +56,12 @@ wxObject* CollapsiblePaneGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                         node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                                        node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+                                        node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     if (GetMockup()->IsShowingHidden())
         widget->Collapse(false);
     else
-        widget->Collapse(node->prop_as_bool("collapsed"));
+        widget->Collapse(node->prop_as_bool(prop_collapsed));
 
     widget->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, &CollapsiblePaneGenerator::OnCollapse, this);
 
@@ -89,7 +89,7 @@ std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxCollapsiblePane(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     auto& label = node->prop_as_string(prop_label);
     if (label.size())
@@ -110,7 +110,7 @@ std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenSettings(Node* node, siz
 {
     ttlib::cstr code;
 
-    if (node->prop_as_bool("collapsed"))
+    if (node->prop_as_bool(prop_collapsed))
     {
         if (code.size())
             code << "\n";

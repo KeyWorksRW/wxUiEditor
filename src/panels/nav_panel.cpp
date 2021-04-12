@@ -351,7 +351,7 @@ void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
     }
     else if (node->GetClassName() == "ribbonTool")
     {
-        text = node->prop_as_string("id");
+        text = node->prop_as_string(prop_id);
     }
 
     if (text.empty() && node->GetClassName() == "Project")

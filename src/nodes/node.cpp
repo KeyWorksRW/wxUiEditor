@@ -301,7 +301,7 @@ bool Node::HasValue(PropName name)
         return false;
 }
 
-bool Node::isPropValue(PropName name, ttlib::cview value)
+bool Node::isPropValue(PropName name, const char* value)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -417,72 +417,6 @@ const ttlib::cstr& Node::prop_as_string(PropName name)
         return tt_empty_cstr;
 }
 
-bool Node::HasValue(ttlib::cview name)
-{
-    auto prop = get_prop_ptr(name);
-    return (prop && prop->HasValue());
-}
-
-bool Node::prop_has_value(ttlib::cview name)
-{
-    auto prop = get_prop_ptr(name);
-    return (prop && prop->HasValue());
-}
-
-bool Node::prop_as_bool(ttlib::cview name)
-{
-    auto prop = get_prop_ptr(name);
-    return (prop && prop->as_bool());
-}
-
-int Node::prop_as_int(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_int();
-    else
-        return 0;
-}
-
-FontProperty Node::prop_as_font_prop(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_font_prop();
-    else
-        return FontProperty(wxNORMAL_FONT);
-}
-
-wxFont Node::prop_as_font(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_font();
-    else
-        return *wxNORMAL_FONT;
-}
-
-wxColour Node::prop_as_wxColour(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_color();
-    else
-        return wxColour();
-}
-
-wxString Node::GetPropertyAsString(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_wxString();
-    else
-        return wxString();
-}
-
-const ttlib::cstr& Node::prop_as_string(ttlib::cview name)
-{
-    if (auto it = m_prop_map.find(name.c_str()); it != m_prop_map.end())
-        return m_properties[it->second].get_value();
-    else
-        return tt_empty_cstr;
-}
-
 const ttlib::cstr& Node::get_node_name()
 {
     if (auto it = m_prop_indices.find(prop_var_name); it != m_prop_indices.end())
@@ -508,46 +442,6 @@ const ttlib::cstr& Node::get_form_name()
         return form->get_node_name();
     }
     return tt_empty_cstr;
-}
-
-wxPoint Node::prop_as_wxPoint(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_point();
-    else
-        return wxDefaultPosition;
-}
-
-wxSize Node::prop_as_wxSize(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_size();
-    else
-        return wxDefaultSize;
-}
-
-wxBitmap Node::prop_as_wxBitmap(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_bitmap();
-    else
-        return wxNullBitmap;
-}
-
-double Node::GetPropertyAsFloat(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_float();
-    else
-        return 0;
-}
-
-wxArrayString Node::prop_as_wxArrayString(ttlib::cview name)
-{
-    if (auto prop = get_prop_ptr(name); prop)
-        return prop->as_wxArrayString();
-    else
-        return wxArrayString();
 }
 
 wxSizerFlags Node::GetSizerFlags()

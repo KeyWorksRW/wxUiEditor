@@ -118,7 +118,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
         {
             MSG_ERROR(e.what());
             appMsgBox(ttlib::cstr("An internal error occurred generating code files for ")
-                          << form->prop_as_string("base_file"),
+                          << form->prop_as_string(prop_base_file),
                       _tt("Code generation"));
             continue;
         }

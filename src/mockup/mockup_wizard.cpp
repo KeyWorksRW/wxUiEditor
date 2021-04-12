@@ -22,9 +22,9 @@ MockupWizard::MockupWizard(wxWindow* parent, Node* node) : wxPanel(parent)
     m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
     // m_top_sizer->SetMinSize(wxSize(270, 270));
 
-    if (node->HasValue("bitmap"))
+    if (node->HasValue(prop_bitmap))
     {
-        auto bitmap = node->prop_as_wxBitmap("bitmap");
+        auto bitmap = node->prop_as_wxBitmap(prop_bitmap);
         if (bitmap.IsOk())
         {
             auto stat_bmp = new wxStaticBitmap(this, wxID_ANY, bitmap);
@@ -51,7 +51,7 @@ MockupWizard::MockupWizard(wxWindow* parent, Node* node) : wxPanel(parent)
 
     auto buttonRow = new wxBoxSizer(wxHORIZONTAL);
 
-    if (node->prop_as_int("extra_style") & wxWIZARD_EX_HELPBUTTON)
+    if (node->prop_as_int(prop_extra_style) & wxWIZARD_EX_HELPBUTTON)
     {
         auto btn_help = new wxButton(this, wxID_HELP, "&Help");
         buttonRow->Add(btn_help, wxSizerFlags().Border());

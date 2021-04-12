@@ -145,7 +145,7 @@ void MockupParent::CreateContent()
 
     if (m_form->GetClassName() == "wxFrame" || m_form->GetClassName() == "wxDialog" || m_form->GetClassName() == "wxWizard")
     {
-        m_text_title->SetLabel(m_form->prop_as_wxString("title"));
+        m_text_title->SetLabel(m_form->prop_as_wxString(prop_title));
         m_panelTitleBar->Show();
     }
     else

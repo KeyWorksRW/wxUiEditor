@@ -139,7 +139,7 @@ public:
 
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
-    bool isPropValue(PropName name, ttlib::cview value);
+    bool isPropValue(PropName name, const char* value);
 
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
@@ -177,35 +177,6 @@ public:
 
     // This will convert the string from UTF8 to UTF16 on Windows
     wxString prop_as_wxString(PropName name);
-
-    //// Begin old style lookups ///
-
-    bool HasValue(ttlib::cview name);
-
-    // Returns true if the property exists, has a value (!= wxDefaultSize, !=
-    // wxDefaultPosition, or non-sepcified bitmap)
-    bool prop_has_value(ttlib::cview name);
-
-    bool prop_as_bool(ttlib::cview name);
-    int prop_as_int(ttlib::cview name);
-
-    wxColour prop_as_wxColour(ttlib::cview name);
-    wxFont prop_as_font(ttlib::cview name);
-    wxPoint prop_as_wxPoint(ttlib::cview name);
-    wxSize prop_as_wxSize(ttlib::cview name);
-    wxBitmap prop_as_wxBitmap(ttlib::cview name);
-    wxArrayString prop_as_wxArrayString(ttlib::cview name);
-
-    FontProperty prop_as_font_prop(ttlib::cview name);
-    double GetPropertyAsFloat(ttlib::cview name);
-
-    // This will convert the string from UTF8 to UTF16 on Windows
-    wxString GetPropertyAsString(ttlib::cview name);
-
-    const ttlib::cstr& prop_as_string(ttlib::cview name);
-    wxString prop_as_wxString(ttlib::cview name) { return GetPropertyAsString(name); }
-
-    //// End old style lookups ///
 
     wxSizerFlags GetSizerFlags();
 

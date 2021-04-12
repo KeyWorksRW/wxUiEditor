@@ -20,17 +20,17 @@
 
 wxObject* StaticTextGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                         node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
+                                   node->prop_as_wxSize(prop_size),
+                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (node->prop_as_bool("markup"))
+    if (node->prop_as_bool(prop_markup))
         widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
     else
         widget->SetLabel(node->prop_as_wxString(prop_label));
 
-    if (node->prop_as_int("wrap") > 0)
-        widget->Wrap(node->prop_as_int("wrap"));
+    if (node->prop_as_int(prop_wrap) > 0)
+        widget->Wrap(node->prop_as_int(prop_wrap));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -45,13 +45,13 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
         // it to it's original state before wrapping again.
 
         auto ctrl = wxStaticCast(widget, wxStaticText);
-        if (node->prop_as_bool("markup"))
+        if (node->prop_as_bool(prop_markup))
             ctrl->SetLabelMarkup(node->prop_as_wxString(prop_label));
         else
             ctrl->SetLabel(node->prop_as_wxString(prop_label));
 
-        if (node->prop_as_int("wrap") > 0)
-            ctrl->Wrap(node->prop_as_int("wrap"));
+        if (node->prop_as_int(prop_wrap) > 0)
+            ctrl->Wrap(node->prop_as_int(prop_wrap));
 
         return true;
     }
@@ -66,11 +66,11 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxStaticText(";
 
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     // If the label is going to be set via SetLabelMarkup(), then there is no reason to initialize it here and then
     // replace it on the next line of code (which will be the call to SetLabelMarkUp())
-    if (node->prop_as_bool("markup"))
+    if (node->prop_as_bool(prop_markup))
     {
         code << "wxEmptyString";
     }
@@ -100,7 +100,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenEvents(NodeEvent* event, cons
 std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
-    if (node->prop_as_bool("markup"))
+    if (node->prop_as_bool(prop_markup))
     {
         if (code.size())
             code << '\n';
@@ -109,11 +109,11 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& 
     }
 
     // Note that wrap MUST be called after the text is set, otherwise it will be ignored.
-    if (node->prop_as_int("wrap") > 0)
+    if (node->prop_as_int(prop_wrap) > 0)
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->Wrap(" << node->prop_as_string("wrap") << ");";
+        code << node->get_node_name() << "->Wrap(" << node->prop_as_string(prop_wrap) << ");";
     }
     return code;
 }
@@ -121,7 +121,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& 
 bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/stattext.h>", set_src, set_hdr);
-    if (node->prop_as_string("validator_variable").size())
+    if (node->prop_as_string(prop_validator_variable).size())
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
 
     return true;
@@ -132,10 +132,10 @@ bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 wxObject* TextCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
-                                 node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                 node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    widget->SetMaxLength(node->prop_as_int("maxlength"));
+    widget->SetMaxLength(node->prop_as_int(prop_maxlength));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -160,13 +160,13 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxTextCtrl(";
 
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     if (node->prop_as_string(prop_value).size())
         code << GenerateQuotedString(node->prop_as_string(prop_value));
     else
         code << "wxEmptyString";
 
-    if (node->prop_as_string("window_name").empty())
+    if (node->prop_as_string(prop_window_name).empty())
         GeneratePosSizeFlags(node, code);
     else
     {
@@ -180,7 +180,7 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", ";
         GenStyle(node, code);
-        code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
         code << ");";
     }
 
@@ -190,20 +190,20 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> TextCtrlGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
-    if (node->prop_as_bool("maxlength"))
+    if (node->prop_as_bool(prop_maxlength))
     {
         if (code.size())
             code << '\n';
         if (node->prop_as_string(prop_style).contains("wxTE_MULTILINE"))
         {
             code << "#if !defined(__WXGTK__))\n\t";
-            code << node->get_node_name() << "->SetMaxLength(" << node->prop_as_string("maxlength") << ");\n";
+            code << node->get_node_name() << "->SetMaxLength(" << node->prop_as_string(prop_maxlength) << ");\n";
             code << "#endif";
             auto_indent = false;
         }
         else
         {
-            code << node->get_node_name() << "->SetMaxLength(" << node->prop_as_string("maxlength") << ");";
+            code << node->get_node_name() << "->SetMaxLength(" << node->prop_as_string(prop_maxlength) << ");";
         }
     }
     return code;
@@ -217,9 +217,9 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenEvents(NodeEvent* event, const 
 bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/textctrl.h>", set_src, set_hdr);
-    if (node->prop_as_string("validator_variable").size())
+    if (node->prop_as_string(prop_validator_variable).size())
     {
-        if (node->prop_as_string("validator_type") == "wxGenericValidator")
+        if (node->prop_as_string(prop_validator_type) == "wxGenericValidator")
             InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
         else
             InsertGeneratorInclude(node, "#include <wx/valtext.h>", set_src, set_hdr);
@@ -232,9 +232,9 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* RichTextCtrlGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                     node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -248,10 +248,10 @@ std::optional<ttlib::cstr> RichTextCtrlGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxRichTextCtrl(";
 
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     code << "wxEmptyString";
 
-    if (node->prop_as_string("window_name").empty())
+    if (node->prop_as_string(prop_window_name).empty())
         GeneratePosSizeFlags(node, code);
     else
     {
@@ -264,7 +264,7 @@ std::optional<ttlib::cstr> RichTextCtrlGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", ";
         GenStyle(node, code);
-        code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
         code << ");";
     }
 
@@ -286,9 +286,9 @@ bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* HtmlWindowGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                         node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                   node->prop_as_wxSize(prop_size),
+                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->SetPage("<b>wxHtmlWindow</b><br/><br/>This is a dummy page.</body></html>");
 
@@ -304,7 +304,7 @@ std::optional<ttlib::cstr> HtmlWindowGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxHtmlWindow(";
 
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);
     code.Replace(", wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO)", ")");
@@ -329,11 +329,11 @@ wxObject* StyledTextGenerator::Create(Node* node, wxObject* parent)
 {
     // REVIEW: [KeyWorks - 12-10-2020] This is the original code which needs to be replaced as part of issue #512
 
-    auto scintilla = new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                                          node->prop_as_wxSize("size"), node->prop_as_int("window_style"),
+    auto scintilla = new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                          node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style),
                                           node->prop_as_wxString(prop_var_name));
 
-    if (node->prop_as_int("line_numbers") != 0)
+    if (node->prop_as_int(prop_line_numbers) != 0)
     {
         scintilla->SetMarginType(0, wxSTC_MARGIN_NUMBER);
         scintilla->SetMarginWidth(0, scintilla->TextWidth(wxSTC_STYLE_LINENUMBER, "_99999"));
@@ -343,7 +343,7 @@ wxObject* StyledTextGenerator::Create(Node* node, wxObject* parent)
         scintilla->SetMarginWidth(0, 0);
     }
 
-    if (node->prop_as_int("folding") != 0)
+    if (node->prop_as_int(prop_folding) != 0)
     {
         scintilla->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
         scintilla->SetMarginMask(1, wxSTC_MASK_FOLDERS);
@@ -357,18 +357,18 @@ wxObject* StyledTextGenerator::Create(Node* node, wxObject* parent)
     {
         scintilla->SetMarginWidth(1, 0);
     }
-    scintilla->SetIndentationGuides(node->prop_as_int("indentation_guides"));
-    scintilla->SetUseTabs((node->prop_as_int("use_tabs")));
-    scintilla->SetTabWidth(node->prop_as_int("tab_width"));
-    scintilla->SetTabIndents((node->prop_as_int("tab_indents")));
-    scintilla->SetBackSpaceUnIndents((node->prop_as_int("backspace_unindents")));
-    scintilla->SetIndent(node->prop_as_int("tab_width"));
-    scintilla->SetViewEOL((node->prop_as_int("view_eol")));
-    scintilla->SetViewWhiteSpace(node->prop_as_int("view_whitespace"));
+    scintilla->SetIndentationGuides(node->prop_as_int(prop_indentation_guides));
+    scintilla->SetUseTabs((node->prop_as_int(prop_use_tabs)));
+    scintilla->SetTabWidth(node->prop_as_int(prop_tab_width));
+    scintilla->SetTabIndents((node->prop_as_int(prop_tab_indents)));
+    scintilla->SetBackSpaceUnIndents((node->prop_as_int(prop_backspace_unindents)));
+    scintilla->SetIndent(node->prop_as_int(prop_tab_width));
+    scintilla->SetViewEOL((node->prop_as_int(prop_view_eol)));
+    scintilla->SetViewWhiteSpace(node->prop_as_int(prop_view_whitespace));
 
-    if (node->GetPropertyAsString("font").size())
+    if (node->HasValue(prop_font))
     {
-        scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, node->prop_as_font("font"));
+        scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, node->prop_as_font(prop_font));
     }
 
 #if 0
@@ -409,7 +409,7 @@ wxObject* StyledTextGenerator::Create(Node* node, wxObject* parent)
 							   typename union unsigned using virtual void volatile wchar_t \
 							   while");
 
-    if (!node->GetPropertyAsString("font").size())
+    if (!node->HasValue(prop_font))
     {
         scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
     }
@@ -457,7 +457,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxStyledTextCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);
 
@@ -473,7 +473,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     auto_indent = false;
     code << "\t{";
 
-    if (node->prop_as_bool("folding"))
+    if (node->prop_as_bool(prop_folding))
     {
         code << "\n\t\t" << node->get_node_name() << "->SetProperty(\"fold\", \"1\");";
 
@@ -487,7 +487,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     }
 
     // Default is true, so only set if false
-    if (!node->prop_as_bool("line_numbers"))
+    if (!node->prop_as_bool(prop_line_numbers))
     {
         code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(0, 0);";
     }
@@ -499,36 +499,36 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     }
 
     // BUGBUG: [KeyWorks - 12-10-2020] Indentation is not a boolean -- there are 4 possible values
-    if (!node->prop_as_bool("indentation_guides"))
+    if (!node->prop_as_bool(prop_indentation_guides))
         code << "\n\t\t" << node->get_node_name() << "->SetIndentationGuides(0);";
 
     // Default is true, so only set if false
-    if (!node->prop_as_bool("use_tabs"))
+    if (!node->prop_as_bool(prop_use_tabs))
     {
         code << "\n\t\t" << node->get_node_name() << "->SetUseTabs(false);";
 
-        if (node->prop_as_int("tab_width") != 8)
-            code << "\n\t\t" << node->get_node_name() << "->SetTabWidth(" << node->prop_as_string("tab_width") << ");";
+        if (node->prop_as_int(prop_tab_width) != 8)
+            code << "\n\t\t" << node->get_node_name() << "->SetTabWidth(" << node->prop_as_string(prop_tab_width) << ");";
     }
 
     // Default is true, so only set if false
-    if (!node->prop_as_bool("tab_indents"))
+    if (!node->prop_as_bool(prop_tab_indents))
         code << "\n\t\t" << node->get_node_name() << "->SetTabIndents(false);";
 
     // Default is false, so only set if true
-    if (node->prop_as_bool("backspace_unindents"))
+    if (node->prop_as_bool(prop_backspace_unindents))
         code << "\n\t\t" << node->get_node_name() << "->SetBackSpaceUnIndents(true);";
 
     // Default is false, so only set if true
-    if (node->prop_as_bool("view_eol"))
+    if (node->prop_as_bool(prop_view_eol))
         code << "\n\t\t" << node->get_node_name() << "->SetViewEOL(true);";
 
     // Default is false, so only set if true
-    if (node->prop_as_bool("view_whitespace"))
+    if (node->prop_as_bool(prop_view_whitespace))
         code << "\n\t\t" << node->get_node_name() << "->SetViewWhiteSpace(true);";
 
     // Default is false, so only set if true
-    if (node->prop_as_bool("read_only"))
+    if (node->prop_as_bool(prop_read_only))
         code << "\n\t\t" << node->get_node_name() << "->SetReadOnly(true);";
 
     ttlib::cstr win_settings;

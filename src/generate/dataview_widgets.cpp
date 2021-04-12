@@ -32,9 +32,9 @@ public:
 
 wxObject* DataViewCtrl::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxDataViewCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxDataViewCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                     node->prop_as_wxSize(prop_size),
+                                     node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     wxObjectDataPtr<DataViewModel> model;
     model = new DataViewModel;
@@ -56,70 +56,70 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */)
         auto childObj = node->GetChild(i);
         if (childObj->GetClassName() == "dataViewColumn")
         {
-            if (childObj->GetPropertyAsString("type") == "Text")
+            if (childObj->prop_as_string(prop_type) == "Text")
             {
                 auto* col = list->AppendTextColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int("model_column"),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int("align")), childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->GetPropertyAsString("type") == "Toggle")
+            else if (childObj->prop_as_string(prop_type) == "Toggle")
             {
                 auto* col = list->AppendToggleColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int("model_column"),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int("align")), childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->GetPropertyAsString("type") == "Progress")
+            else if (childObj->prop_as_string(prop_type) == "Progress")
             {
                 auto* col = list->AppendProgressColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int("model_column"),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int("align")), childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->GetPropertyAsString("type") == "IconText")
+            else if (childObj->prop_as_string(prop_type) == "IconText")
             {
                 auto* col = list->AppendIconTextColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int("model_column"),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int("align")), childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->GetPropertyAsString("type") == "Date")
+            else if (childObj->prop_as_string(prop_type) == "Date")
             {
                 auto* col = list->AppendDateColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int("model_column"),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int("align")), childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->GetPropertyAsString("type") == "Bitmap")
+            else if (childObj->prop_as_string(prop_type) == "Bitmap")
             {
                 auto* col = list->AppendBitmapColumn(
-                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int("model_column"),
-                    static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")), childObj->prop_as_int(prop_width),
-                    static_cast<wxAlignment>(childObj->prop_as_int("align")), childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label), childObj->prop_as_int(prop_model_column),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
         }
@@ -132,7 +132,7 @@ std::optional<ttlib::cstr> DataViewCtrl::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxDataViewCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, true);
 
     return code;
@@ -153,9 +153,9 @@ bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::
 
 wxObject* DataViewListCtrl::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxDataViewListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                                         node->prop_as_wxSize("size"),
-                                         node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxDataViewListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                         node->prop_as_wxSize(prop_size),
+                                         node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -173,48 +173,48 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
         auto childObj = node->GetChild(i);
         if (childObj->GetClassName() == "dataViewListColumn")
         {
-            if (childObj->GetPropertyAsString("type") == "Text")
+            if (childObj->prop_as_string(prop_type) == "Text")
             {
                 auto col = list->AppendTextColumn(
-                    childObj->prop_as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")),
-                    childObj->prop_as_int(prop_width), static_cast<wxAlignment>(childObj->prop_as_int("align")),
-                    childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->GetPropertyAsString("type") == "Toggle")
+            else if (childObj->prop_as_string(prop_type) == "Toggle")
             {
                 auto col = list->AppendToggleColumn(
-                    childObj->prop_as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")),
-                    childObj->prop_as_int(prop_width), static_cast<wxAlignment>(childObj->prop_as_int("align")),
-                    childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->GetPropertyAsString("type") == "Progress")
+            else if (childObj->prop_as_string(prop_type) == "Progress")
             {
                 auto col = list->AppendProgressColumn(
-                    childObj->prop_as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")),
-                    childObj->prop_as_int(prop_width), static_cast<wxAlignment>(childObj->prop_as_int("align")),
-                    childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
-            else if (childObj->GetPropertyAsString("type") == "IconText")
+            else if (childObj->prop_as_string(prop_type) == "IconText")
             {
                 auto col = list->AppendIconTextColumn(
-                    childObj->prop_as_wxString(prop_label), static_cast<wxDataViewCellMode>(childObj->prop_as_int("mode")),
-                    childObj->prop_as_int(prop_width), static_cast<wxAlignment>(childObj->prop_as_int("align")),
-                    childObj->prop_as_int(prop_flags));
-                if (childObj->HasValue("ellipsize"))
+                    childObj->prop_as_wxString(prop_label),
+                    static_cast<wxDataViewCellMode>(childObj->prop_as_int(prop_mode)), childObj->prop_as_int(prop_width),
+                    static_cast<wxAlignment>(childObj->prop_as_int(prop_align)), childObj->prop_as_int(prop_flags));
+                if (childObj->HasValue(prop_ellipsize))
                 {
-                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int("ellipsize")));
+                    col->GetRenderer()->EnableEllipsize(static_cast<wxEllipsizeMode>(childObj->prop_as_int(prop_ellipsize)));
                 }
             }
         }
@@ -227,7 +227,7 @@ std::optional<ttlib::cstr> DataViewListCtrl::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxDataViewListCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, true);
 
     return code;
@@ -248,9 +248,9 @@ bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 wxObject* DataViewTreeCtrl::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxDataViewTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                                         node->prop_as_wxSize("size"),
-                                         node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxDataViewTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                         node->prop_as_wxSize(prop_size),
+                                         node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -263,7 +263,7 @@ std::optional<ttlib::cstr> DataViewTreeCtrl::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxDataViewTreeCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, true);
 
     return code;
@@ -288,22 +288,22 @@ std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
-    code << node->prop_as_string("type") << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
+    code << node->prop_as_string(prop_type) << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
          << ",\n            ";
 
-    code << node->prop_as_string("model_column") << ", " << node->prop_as_string("mode") << ", ";
+    code << node->prop_as_string(prop_model_column) << ", " << node->prop_as_string(prop_mode) << ", ";
     code << node->prop_as_string(prop_width) << ", ";
 
     // BUGBUG: [KeyWorks - 12-14-2020] Currently the user is allowed to combine multiple alignment types such as right and
     // left which is invalid.
 
-    code << "static_cast<wxAlignment>(" << node->prop_as_string("align") << "), ";
+    code << "static_cast<wxAlignment>(" << node->prop_as_string(prop_align) << "), ";
     code << node->prop_as_string(prop_flags) << ");";
 
-    if (node->HasValue("ellipsize"))
+    if (node->HasValue(prop_ellipsize))
     {
-        code << "\n    " << node->get_node_name() << "->GetRenderer()->EnableEllipsize(" << node->prop_as_string("ellipsize")
-             << ");";
+        code << "\n    " << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
+             << node->prop_as_string(prop_ellipsize) << ");";
     }
 
     return code;
@@ -317,20 +317,20 @@ std::optional<ttlib::cstr> DataViewListColumn::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
-    code << node->prop_as_string("type") << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
+    code << node->prop_as_string(prop_type) << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
          << ",\n            ";
-    code << node->prop_as_string("mode") << ", " << node->prop_as_string(prop_width) << ", ";
+    code << node->prop_as_string(prop_mode) << ", " << node->prop_as_string(prop_width) << ", ";
 
     // BUGBUG: [KeyWorks - 12-14-2020] Currently the user is allowed to combine multiple alignment types such as right and
     // left which is invalid.
 
-    code << "static_cast<wxAlignment>(" << node->prop_as_string("align") << "), ";
+    code << "static_cast<wxAlignment>(" << node->prop_as_string(prop_align) << "), ";
     code << node->prop_as_string(prop_flags) << ");";
 
-    if (node->HasValue("ellipsize"))
+    if (node->HasValue(prop_ellipsize))
     {
-        code << "\n    " << node->get_node_name() << "->GetRenderer()->EnableEllipsize(" << node->prop_as_string("ellipsize")
-             << ");";
+        code << "\n    " << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
+             << node->prop_as_string(prop_ellipsize) << ");";
     }
 
     return code;

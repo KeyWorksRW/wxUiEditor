@@ -2,7 +2,7 @@
 // Purpose:   Derived wxStringProperty class for handling wxImage files or art
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../LICENSE
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "pch.h"
@@ -34,9 +34,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("Header"))
     {
         ttlib::cwd cwd(true);
-        if (wxGetApp().GetProjectPtr()->HasValue("converted_art"))
+        if (wxGetApp().GetProject()->HasValue(prop_converted_art))
         {
-            ttlib::ChangeDir(wxGetApp().GetProjectPtr()->prop_as_string("converted_art"));
+            ttlib::ChangeDir(wxGetApp().GetProjectPtr()->prop_as_string(prop_converted_art));
             cwd.assignCwd();
         }
 

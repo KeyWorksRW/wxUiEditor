@@ -52,7 +52,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code);
 ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description);
 
 // Converts color text into code.
-ttlib::cstr GenerateColorCode(Node* node, ttlib::cview prop_name);
+ttlib::cstr GenerateColorCode(Node* node, PropName prop_name);
 
 ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name);
 

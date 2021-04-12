@@ -52,12 +52,12 @@ wxObject* ComboBoxGenerator::Create(Node* node, wxObject* parent)
 
 bool ComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "selection_string")
+    if (prop->isProp(prop_selection_string))
     {
         wxStaticCast(widget, wxComboBox)->SetStringSelection(prop->as_wxString());
         return true;
     }
-    else if (prop->GetPropName() == "selection_int")
+    else if (prop->isProp(prop_selection_int))
     {
         wxStaticCast(widget, wxComboBox)->SetSelection(prop->as_int());
         return true;
@@ -183,12 +183,12 @@ wxObject* ChoiceGenerator::Create(Node* node, wxObject* parent)
 
 bool ChoiceGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "selection_string")
+    if (prop->isProp(prop_selection_string))
     {
         wxStaticCast(widget, wxChoice)->SetStringSelection(prop->as_wxString());
         return true;
     }
-    else if (prop->GetPropName() == "selection_int")
+    else if (prop->isProp(prop_selection_int))
     {
         wxStaticCast(widget, wxChoice)->SetSelection(prop->as_int());
         return true;
@@ -310,12 +310,12 @@ wxObject* BitmapComboBoxGenerator::Create(Node* node, wxObject* parent)
 
 bool BitmapComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "selection_string")
+    if (prop->isProp(prop_selection_string))
     {
         wxStaticCast(widget, wxBitmapComboBox)->SetStringSelection(prop->as_wxString());
         return true;
     }
-    else if (prop->GetPropName() == "selection_int")
+    else if (prop->isProp(prop_selection_int))
     {
         wxStaticCast(widget, wxBitmapComboBox)->SetSelection(prop->as_int());
         return true;

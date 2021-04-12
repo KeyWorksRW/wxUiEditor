@@ -53,7 +53,8 @@ public:
 
     const std::vector<PropChildDeclaration>* GetChildren() const noexcept { return &m_children; }
 
-    const ttlib::cstr& GetName() const noexcept { return m_name; }
+    // Returns a char pointer to the name. Use get_name() if you want the enum value.
+    ttlib::cview DeclName() const noexcept { return ttlib::cview(m_name_str); }
 
     const ttlib::cstr& GetDefaultValue() const noexcept { return m_def_value; }
     const ttlib::cstr& GetDescription() const noexcept { return m_help; }

@@ -514,7 +514,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
         {
             if (iter.as_string() != iter.GetPropDeclaration()->GetDefaultValue())
             {
-                auto prop_value = newobject->get_value_ptr(iter.GetPropDeclaration()->GetName());
+                auto prop_value = newobject->get_value_ptr(iter.DeclName());
                 if (prop_value)
                     *prop_value = iter.as_string();
             }

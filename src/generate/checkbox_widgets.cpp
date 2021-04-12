@@ -36,12 +36,12 @@ wxObject* CheckBoxGenerator::Create(Node* node, wxObject* parent)
 
 bool CheckBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "label")
+    if (prop->isProp(prop_label))
     {
         wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(prop_label));
         return true;
     }
-    else if (prop->GetPropName() == "checked")
+    else if (prop->isProp(prop_checked))
     {
         wxStaticCast(widget, wxCheckBox)->SetValue(prop->as_bool());
         return true;
@@ -118,12 +118,12 @@ wxObject* Check3StateGenerator::Create(Node* node, wxObject* parent)
 
 bool Check3StateGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "label")
+    if (prop->isProp(prop_label))
     {
         wxStaticCast(widget, wxCheckBox)->SetLabel(node->prop_as_wxString(prop_label));
         return true;
     }
-    else if (prop->GetPropName() == "initial_state")
+    else if (prop->isProp(prop_initial_state))
     {
         auto& state = prop->as_string();
         if (state == "wxCHK_UNCHECKED")

@@ -451,7 +451,7 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
             UpdateDisplayName(it->second, it->first);
         }
     }
-    else if (prop->GetPropName() == "id" && prop->GetNode()->isGen(gen_ribbonTool))
+    else if (prop->isProp(prop_id) && prop->GetNode()->isGen(gen_ribbonTool))
     {
         if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
         {

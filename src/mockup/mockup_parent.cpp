@@ -335,53 +335,50 @@ wxObject* MockupParent::GetParentNode(wxObject* wxobject)
 
 // These properties do not affect the component's display in the Mockup window, so changes to them are ignored.
 
-static const auto NonUiProps = {
+static const PropName NonUiProps[] = {
 
-    "base_class_name",
-    "base_file",
-    "class_access",
-    "colour",
-    "context_help",
-    "defaultfilter",
-    "defaultfolder",
-    "derived_class_name",
-    "derived_file",
-    "digits",
-    "filter",
-    "forward_declare",
-    "get_function",
-    "header",
-    "hover_color",
-    "id",
-    "inc",
-    "initial",
-    "max",
-    "max_point_size",
-    "maxlength",
-    "message",
-    "min",
-    "normal_color",
-    "pagesize",
-    "period",
-    "persist",
-    "range",
-    "select",
-    "selection",
-    "set_function",
-    "show_hidden",
-    "thumbsize",
-    "tooltip",
-    "url",
-    "validator_data_type",
-    "validator_style",
-    "validator_type",
-    "validator_variable",
-    "var_name",
-    "radiobtn_var_name",
-    "checkbox_var_name",
-    "visited_color",
-    "wildcard",
-    "window_name",
+    prop_base_class_name,
+    prop_base_file,
+    prop_class_access,
+    prop_colour,
+    prop_context_help,
+    prop_defaultfilter,
+    prop_defaultfolder,
+    prop_derived_class_name,
+    prop_derived_file,
+    prop_digits,
+    prop_filter,
+    prop_get_function,
+    prop_hover_color,
+    prop_id,
+    prop_inc,
+    prop_initial,
+    prop_max,
+    prop_max_point_size,
+    prop_maxlength,
+    prop_message,
+    prop_min,
+    prop_normal_color,
+    prop_pagesize,
+    prop_persist,
+    prop_range,
+    prop_select,
+    prop_selection,
+    prop_set_function,
+    prop_show_hidden,
+    prop_thumbsize,
+    prop_tooltip,
+    prop_url,
+    prop_validator_data_type,
+    prop_validator_style,
+    prop_validator_type,
+    prop_validator_variable,
+    prop_var_name,
+    prop_radiobtn_var_name,
+    prop_checkbox_var_name,
+    prop_visited_color,
+    prop_wildcard,
+    prop_window_name,
 
 };
 
@@ -390,7 +387,6 @@ static const auto NonUiProps = {
 void MockupParent::OnNodePropModified(CustomEvent& event)
 {
     auto prop = event.GetNodeProperty();
-    auto& prop_name = prop->GetPropName();
 
     if (prop->isProp(prop_tooltip))
     {
@@ -408,9 +404,9 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
         return;
     }
 
-    for (auto& iter: NonUiProps)
+    for (auto iter: NonUiProps)
     {
-        if (prop_name == iter)
+        if (prop->isProp(iter))
             return;
     }
 

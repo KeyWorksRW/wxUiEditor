@@ -35,11 +35,6 @@ bool NodeProperty::IsDefaultValue() const
     return m_value.is_sameas(m_declaration->GetDefaultValue());
 }
 
-const ttlib::cstr& NodeProperty::GetPropName() const
-{
-    return m_declaration->GetName();
-}
-
 int NodeProperty::as_int() const
 {
     switch (type())

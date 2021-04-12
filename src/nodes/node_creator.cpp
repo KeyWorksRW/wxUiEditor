@@ -53,7 +53,7 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
             if (base > 0)
             {
                 auto defaultValueTemp =
-                    node_decl->GetBaseClassDefaultPropertyValue(base - 1, prop_declaration->GetName().c_str());
+                    node_decl->GetBaseClassDefaultPropertyValue(base - 1, prop_declaration->DeclName().c_str());
                 if (!defaultValueTemp.empty())
                 {
                     defaultValue = defaultValueTemp;
@@ -199,7 +199,7 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
 
     for (auto& iter: node->get_props_vector())
     {
-        auto copyProp = copyObj->get_prop_ptr(iter.GetPropName());
+        auto copyProp = copyObj->get_prop_ptr(iter.get_name());
         ASSERT(copyProp);
 
         copyProp->set_value(iter.as_string());

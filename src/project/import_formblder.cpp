@@ -255,7 +255,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     {
         class_name = "wxButton";
     }
-    else if (class_name.is_sameas("wxPanel") && parent->GetClassName().contains("book"))
+    else if (class_name.is_sameas("wxPanel") && parent->DeclName().contains("book"))
     {
         class_name = "BookPage";
     }
@@ -415,7 +415,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             if (auto result = m_mapEventNames.find(event_name.c_str()); result != m_mapEventNames.end())
             {
                 event_name = result->second;
-                if (event_name.is_sameas("wxEVT_MENU") && newobject->GetClassName() == "tool")
+                if (event_name.is_sameas("wxEVT_MENU") && newobject->isGen(gen_tool))
                     event_name = "wxEVT_TOOL";
             }
             else
@@ -451,10 +451,10 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     }
 
     auto child = xml_obj.child("object");
-    if (g_NodeCreator.IsOldHostType(newobject->GetClassName()))
+    if (g_NodeCreator.IsOldHostType(newobject->DeclName()))
     {
         newobject = CreateFbpNode(child, parent, newobject.get());
-        if (newobject->GetClassName() == "wxStdDialogButtonSizer")
+        if (newobject->isGen(gen_wxStdDialogButtonSizer))
             newobject->get_prop_ptr("static_line")->set_value(false);
         child = child.next_sibling("object");
     }
@@ -480,7 +480,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         child = child.next_sibling("object");
     }
 
-    if (newobject->GetClassName() == "wxDialog" && m_baseFile.size())
+    if (newobject->isGen(gen_wxDialog) && m_baseFile.size())
     {
         if (auto prop = newobject->get_prop_ptr("base_file"); prop)
         {
@@ -899,7 +899,7 @@ void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object,
 
 void FormBuilder::ProcessStyle(pugi::xml_node& xml_prop, Node* object, NodeProperty* prop)
 {
-    if (object->GetClassName() == "wxListBox" || object->GetClassName() == "wxCheckListBox")
+    if (object->isGen(gen_wxListBox) || object->isGen(gen_wxCheckListBox))
     {
         // A list box selection type can only be single, multiple, or extended, so wxUiEditor stores this setting in a
         // type property so that the user can only choose one.
@@ -934,7 +934,7 @@ void FormBuilder::ProcessStyle(pugi::xml_node& xml_prop, Node* object, NodePrope
         }
         prop->set_value(style);
     }
-    else if (object->GetClassName() == "wxRadioBox")
+    else if (object->isGen(gen_wxRadioBox))
     {
         ttlib::cstr style(xml_prop.text().as_string());
         // It's a bug to specifiy both styles, we fix that here
@@ -947,7 +947,7 @@ void FormBuilder::ProcessStyle(pugi::xml_node& xml_prop, Node* object, NodePrope
             prop->set_value(style);
         }
     }
-    else if (object->GetClassName() == "wxGauge")
+    else if (object->isGen(gen_wxGauge))
     {
         // A list box selection type can only be single, multiple, or extended, so wxUiEditor stores this setting in a
         // type property so that the user can only choose one.
@@ -980,7 +980,7 @@ void FormBuilder::ProcessStyle(pugi::xml_node& xml_prop, Node* object, NodePrope
         }
         prop->set_value(style);
     }
-    else if (object->GetClassName() == "wxSlider")
+    else if (object->isGen(gen_wxSlider))
     {
         // A list box selection type can only be single, multiple, or extended, so wxUiEditor stores this setting in a
         // type property so that the user can only choose one.

@@ -42,12 +42,12 @@ protected:
     // Called to determine if a property should be displayed or not
     bool IsPropAllowed(Node* node, NodeProperty* prop);
 
-    void CreatePropCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* obj_info, PropNameSet& prop_set);
-    void CreateEventCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* obj_info, EventSet& event_set);
+    void CreatePropCategory(ttlib::cview name, Node* node, NodeDeclaration* obj_info, PropNameSet& prop_set);
+    void CreateEventCategory(ttlib::cview name, Node* node, NodeDeclaration* obj_info, EventSet& event_set);
     void CreateLayoutCategory(Node* node);
 
-    void AddEvents(const ttlib::cstr& name, Node* node, NodeCategory& category, EventSet& event_set);
-    void AddProperties(const ttlib::cstr& name, Node* node, NodeCategory& category, PropNameSet& prop_set);
+    void AddEvents(ttlib::cview name, Node* node, NodeCategory& category, EventSet& event_set);
+    void AddProperties(ttlib::cview name, Node* node, NodeCategory& category, PropNameSet& prop_set);
 
     void ReplaceDrvName(const wxString& formName, NodeProperty* propType);
     void ReplaceBaseFile(const wxString& formName, NodeProperty* propType);

@@ -64,7 +64,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     {
         class_name = "wxButton";
     }
-    else if (class_name.is_sameas("wxPanel") && parent->GetClassName().contains("book"))
+    else if (class_name.is_sameas("wxPanel") && parent->DeclName().contains("book"))
     {
         class_name = "BookPage";
     }
@@ -83,7 +83,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     auto new_node = g_NodeCreator.CreateNode(class_name, parent);
     while (!new_node)
     {
-        if (parent->GetClassName() == "Project")
+        if (parent->isGen(gen_Project))
         {
             if (class_name == "wxPanel")
             {
@@ -116,7 +116,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
             prop->set_value(new_name);
     }
 
-    if (new_node->GetClassName() == "wxStdDialogButtonSizer")
+    if (new_node->isGen(gen_wxStdDialogButtonSizer))
     {
         parent->AddChild(new_node);
         new_node->SetParent(parent->GetSharedPtr());
@@ -154,7 +154,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     }
 
     auto child = xml_obj.child("object");
-    if (g_NodeCreator.IsOldHostType(new_node->GetClassName()))
+    if (g_NodeCreator.IsOldHostType(new_node->DeclName()))
     {
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get(), parent);
@@ -162,7 +162,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
         // ASSERT(new_node);
         if (!new_node)
             return NodeSharedPtr();
-        if (new_node->GetClassName() == "wxStdDialogButtonSizer")
+        if (new_node->isGen(gen_wxStdDialogButtonSizer))
             new_node->get_prop_ptr("static_line")->set_value(false);
         child = child.next_sibling("object");
     }
@@ -330,7 +330,7 @@ void WxSmith::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node*
             node->prop_set_value(prop_border_size, iter.text().as_string());
         }
         else if (iter.cname().is_sameas("flag") &&
-                 (node->GetClassName() == "sizeritem" || node->GetClassName() == "gbsizeritem"))
+                 (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem)))
         {
             HandleSizerItemProperty(iter, node, parent);
         }

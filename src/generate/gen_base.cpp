@@ -277,7 +277,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
     auto propName = node->get_prop_ptr(prop_class_name);
     if (!propName)
     {
-        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << node->GetClassName() << " class.");
+        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << node->DeclName() << " class.");
         return;
     }
 
@@ -593,8 +593,8 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 {
     ttlib::cstr code;
 
-    ttlib::cstr class_name = node->GetClassName();
-    if (ttlib::is_sameprefix(class_name, "wx"))
+    ttlib::cstr class_name(node->DeclName());
+    if (class_name.is_sameprefix("wx"))
     {
         code << class_name << "* " << node->get_node_name() << ';';
         if (class_name == "wxStdDialogButtonSizer")
@@ -668,7 +668,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name == "tool")
     {
-        class_name = node->GetParent()->GetClassName();
+        class_name = node->GetParent()->DeclName();
         if (class_name == "wxAuiToolBar")
         {
             code << "wxAuiToolBarItem* " << node->get_node_name() << ';';
@@ -695,7 +695,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const wxString& cla
     auto propName = form_node->get_prop_ptr(prop_class_name);
     if (!propName)
     {
-        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->GetClassName());
+        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->DeclName());
         return;
     }
 
@@ -915,11 +915,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             }
 
             // Code for spacer's is handled by the component's GenConstruction() call
-            if (node->GetClassName() != "spacer")
+            if (!node->isGen(gen_spacer))
             {
-                if (node->GetClassName() == "wxStdDialogButtonSizer")
+                if (node->isGen(gen_wxStdDialogButtonSizer))
                 {
-                    if (node->FindParentForm()->GetClassName() == "wxDialog" && node->prop_as_bool(prop_static_line))
+                    if (node->FindParentForm()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
                         code << node->GetParent()->get_node_name() << "->Add(CreateSeparatedSizer(" << node->get_node_name()
                              << "), ";
                     else
@@ -930,7 +930,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                     code << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
                 }
 
-                if (parent->GetClassName() == "wxGridBagSizer")
+                if (parent->isGen(gen_wxGridBagSizer))
                 {
                     code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column)
                          << "), ";
@@ -951,7 +951,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
             m_source->writeLine(code);
         }
-        else if (node->GetNodeType()->get_name() == "widget" && parent->GetClassName() == "wxChoicebook")
+        else if (node->GetNodeType()->get_name() == "widget" && parent->isGen(gen_wxChoicebook))
         {
             ttlib::cstr code;
             code << parent->get_node_name() << "->GetControlSizer()->Add(" << node->get_node_name();
@@ -1022,7 +1022,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     // A wxRibbonBar needs to be realized after all children have been created
 
-    if (node->GetClassName() == "wxRibbonBar")
+    if (node->isGen(gen_wxRibbonBar))
     {
         m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->Realize();");
     }

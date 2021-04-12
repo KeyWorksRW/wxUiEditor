@@ -201,8 +201,7 @@ ttlib::cstr GetParentName(Node* node)
         {
             if (parent->IsStaticBoxSizer())
             {
-                ttlib::cstr name = parent->get_node_name() + "->GetStaticBox()";
-                return name;
+                return (ttlib::cstr() << parent->get_node_name() << "->GetStaticBox()");
             }
         }
         if (parent->IsForm())
@@ -225,7 +224,7 @@ ttlib::cstr GetParentName(Node* node)
         parent = parent->GetParent();
     }
 
-    ASSERT_MSG(parent, node->get_node_name() + " has no parent!");
+    ASSERT_MSG(parent, ttlib::cstr() << node->get_node_name() << " has no parent!");
     return ttlib::cstr("internal error");
 }
 
@@ -443,7 +442,7 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
         code << "->Bind(" << handler << (is_lambda ? "\n    );" : ");");
     }
 
-    else if (node->GetClassName() == "wxMenuItem" || node->GetClassName() == "tool")
+    else if (node->isGen(gen_wxMenuItem) || node->isGen(gen_tool))
     {
         code << "Bind(" << handler << comma;
         if (event->GetNode()->prop_as_string(prop_id) != "wxID_ANY")
@@ -451,7 +450,7 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
         else
             code << event->GetNode()->get_node_name() << "->GetId());";
     }
-    else if (event->GetNode()->GetClassName() == "ribbonTool")
+    else if (event->GetNode()->isGen(gen_ribbonTool))
     {
         if (event->GetNode()->prop_as_string(prop_id).empty())
         {
@@ -767,7 +766,7 @@ ttlib::cstr GenFormSettings(Node* node)
 {
     ttlib::cstr code;
 
-    if (node->GetClassName() != "PanelForm" && node->GetClassName() != "wxToolBar")
+    if (!node->isGen(gen_PanelForm) && !node->isGen(gen_wxToolBar))
     {
         auto min_size = node->prop_as_wxSize(prop_minimum_size);
         auto max_size = node->prop_as_wxSize(prop_maximum_size);

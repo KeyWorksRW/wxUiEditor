@@ -60,7 +60,7 @@ public:
     bool isType(GenType type) const noexcept { return (type == m_gen_type); }
     bool isGen(GenName name) const noexcept { return (name == m_gen_name); }
 
-    const ttlib::cstr& GetClassName() const { return m_classname; }
+    ttlib::cview DeclName() const noexcept { return ttlib::cview(m_name); }
 
     size_t AddBaseClass(NodeDeclaration* base)
     {
@@ -89,7 +89,6 @@ public:
     void SetGeneratorFlags(ttlib::cview flags) { m_internal_flags = flags; }
 
 private:
-    ttlib::cstr m_classname;
     ttlib::cstr m_internal_flags;
 
     wxImage m_image;  // The node's image, primarily used in the navigation pane

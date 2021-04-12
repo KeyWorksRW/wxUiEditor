@@ -237,7 +237,7 @@ void EventHandlerDlg::FormatBindText()
     {
         code << "Bind(" << handler << (is_lambda ? "\n    );" : ");");
     }
-    else if (m_event->GetNode()->GetClassName() == "wxMenuItem" || m_event->GetNode()->GetClassName() == "tool")
+    else if (m_event->GetNode()->isGen(gen_wxMenuItem) || m_event->GetNode()->isGen(gen_tool))
     {
         code << "Bind(" << handler << comma;
         if (m_event->GetNode()->prop_as_string(prop_id) != "wxID_ANY")
@@ -245,7 +245,7 @@ void EventHandlerDlg::FormatBindText()
         else
             code << m_event->GetNode()->get_node_name() << "->GetId());";
     }
-    else if (m_event->GetNode()->GetClassName() == "ribbonTool")
+    else if (m_event->GetNode()->isGen(gen_ribbonTool))
     {
         if (m_event->GetNode()->prop_as_string(prop_id).empty())
         {

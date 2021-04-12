@@ -89,7 +89,7 @@
 
 using namespace GenEnum;
 
-#define SET_GENERATOR(gen_name, generator) get_declaration(gen_name)->SetGenerator(new generator());
+#define SET_GENERATOR(name, generator) get_declaration(name)->SetGenerator(new generator());
 
 void NodeCreator::InitGenerators()
 {

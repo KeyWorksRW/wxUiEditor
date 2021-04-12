@@ -17,30 +17,30 @@
 #include "utils.h"         // Utility functions that work with properties
 
 // clang-format off
-static const auto lstBarClasses = {
+static const auto lstBarGenerators = {
 
-    "wxStatusBar",
-    "wxMenuBar",
-    "wxToolBar",
+    gen_wxStatusBar,
+    gen_wxMenuBar,
+    gen_wxToolBar,
 
-    "MenuBar",  // form version of wxMenuBar
-    "ToolBar",  // form version of wxToolBar
+    gen_MenuBar,  // form version of wxMenuBar
+    gen_ToolBar,  // form version of wxToolBar
 
-    "wxRibbonBar",
-    "wxRibbonPage",
-    "wxRibbonToolBar",
-    "ribbonTool",
+    gen_wxRibbonBar,
+    gen_wxRibbonPage,
+    gen_wxRibbonToolBar,
+    gen_ribbonTool,
 
 };
 
-static const auto lstContainerClasses = {
+static const auto lstContainerGenerators = {
 
-    "BookPage",
-    "PanelForm",
-    "wxDialog",
-    "wxPanel",
-    "wxPopupTransientWindow",
-    "wxWizardPageSimple",
+    gen_BookPage,
+    gen_PanelForm,
+    gen_wxDialog,
+    gen_wxPanel,
+    gen_wxPopupTransientWindow,
+    gen_wxWizardPageSimple,
 
 };
 // clang-format on
@@ -53,42 +53,41 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         return;  // theoretically impossible, but don't crash if it happens
     }
 
-    for (auto& iter: lstBarClasses)
+    for (auto& iter: lstBarGenerators)
     {
-        if (node->GetClassName() == iter)
+        if (node->isGen(iter))
         {
             CreateBarMenu(node);
             return;
         }
     }
 
-    for (auto& iter: lstContainerClasses)
+    for (auto& iter: lstContainerGenerators)
     {
-        if (node->GetClassName() == iter)
+        if (node->isGen(iter))
         {
             CreateContainerMenu(node);
             return;
         }
     }
 
-    if (node->IsContainer() && node->GetClassName().contains("book"))
+    if (node->IsContainer() && node->DeclName().contains("book"))
     {
         CreateBookMenu(node);
         return;
     }
 
-    if (node->GetNodeTypeName() == "project")
+    if (node->isType(type_project))
     {
         CreateProjectMenu(node);
         return;
     }
-    else if (ttlib::is_sameprefix(node->GetClassName(), "wxMenu") || node->GetClassName() == "separator" ||
-             node->GetClassName() == "submenu")
+    else if (node->DeclName().is_sameprefix("wxMenu") || node->isGen(gen_separator) || node->isGen(gen_submenu))
     {
         CreateMenuMenu(node);
         return;
     }
-    else if (node->GetClassName() == "wxWizard")
+    else if (node->isGen(gen_wxWizard))
     {
         CreateWizardMenu(node);
         return;
@@ -107,7 +106,7 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
     if (wxGetFrame().GetClipboard())
     {
         ttlib::cstr menu_text = _tt(strIdPaste);
-        menu_text << ' ' << wxGetFrame().GetClipboard()->GetClassName();
+        menu_text << ' ' << wxGetFrame().GetClipboard()->DeclName();
         menu_text << "\tCtrl+V";
 
         Append(MenuPASTE, menu_text);
@@ -201,7 +200,7 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
 
     AppendSubMenu(sub_menu, "&Move into new sizer");
 
-    if (ttlib::contains(node->GetClassName(), "book"))
+    if (node->DeclName().contains("book"))
     {
         AppendSeparator();
         Append(MenuADD_PAGE, "Add page");
@@ -341,11 +340,11 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             break;
 
         case MenuADD_PAGE:
-            if (m_node->GetClassName() == "BookPage")
+            if (m_node->isGen(gen_BookPage))
             {
                 m_node->GetParent()->CreateToolNode("BookPage");
             }
-            if (m_node->GetClassName() == "wxWizardPageSimple")
+            if (m_node->isGen(gen_wxWizardPageSimple))
             {
                 m_node->GetParent()->CreateToolNode("wxWizardPageSimple");
             }
@@ -425,7 +424,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
     auto new_sizer = g_NodeCreator.CreateNode(widget, parent);
     if (new_sizer)
     {
-        auto multi_cmd = std::make_shared<MultiAction>(ttlib::cstr() << "new sizer for " << node->GetClassName());
+        auto multi_cmd = std::make_shared<MultiAction>(ttlib::cstr() << "new sizer for " << node->DeclName());
 
         auto reparent_cmd = std::make_shared<ChangeParentAction>(node, new_sizer.get());
         multi_cmd->Add(reparent_cmd);
@@ -623,7 +622,7 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
         if (clipboard->IsForm() || clipboard->IsContainer() || (clipboard->IsSizer() && node->GetChildCount() == 0))
         {
             ttString menu_text = _ttwx(strIdPaste);
-            menu_text << ' ' << wxGetFrame().GetClipboard()->GetClassName();
+            menu_text << ' ' << wxGetFrame().GetClipboard()->DeclName();
             menu_text << "\tCtrl+V";
 
             Append(MenuPASTE, menu_text);
@@ -641,7 +640,7 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
 
-    if (node->GetClassName() == "BookPage")
+    if (node->isGen(gen_BookPage))
     {
         if (!node->GetChildCount())
         {
@@ -680,14 +679,14 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
         sub_menu->Append(MenuNEW_SIBLING_GRID_SIZER, "wxGridSizer");
         sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
         sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
-        if (node->GetClassName() == "wxDialog")
+        if (node->isGen(gen_wxDialog))
         {
             sub_menu->AppendSeparator();
             sub_menu->Append(MenuNEW_SIBLING_STD_DIALG_BTNS, "wxStdDialogButtonSizer");
         }
         AppendSubMenu(sub_menu, "&Add new sizer");
 
-        if (node->GetClassName() == "wxWizardPageSimple")
+        if (node->isGen(gen_wxWizardPageSimple))
         {
             Append(MenuADD_PAGE, "Add Page\tCtrl+P");
             Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, MenuADD_PAGE);
@@ -702,7 +701,7 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
         Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_STD_DIALG_BTNS);
     }
 
-    else if (node->GetClassName() == "wxWizardPageSimple")
+    else if (node->isGen(gen_wxWizardPageSimple))
     {
         sub_menu = new wxMenu;
         sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
@@ -733,7 +732,7 @@ void NavPopupMenu::CreateTopSizerMenu(Node* node)
     if (wxGetFrame().GetClipboard())
     {
         ttlib::cstr menu_text = _tt(strIdPaste);
-        menu_text << ' ' << wxGetFrame().GetClipboard()->GetClassName();
+        menu_text << ' ' << wxGetFrame().GetClipboard()->DeclName();
         menu_text << "\tCtrl+V";
 
         Append(MenuPASTE, menu_text);
@@ -759,7 +758,7 @@ void NavPopupMenu::CreateTopSizerMenu(Node* node)
     sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
     sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
 
-    if (node->GetParent()->GetClassName() == "wxDialog")
+    if (node->GetParent()->isGen(gen_wxDialog))
     {
         sub_menu->AppendSeparator();
         sub_menu->Append(MenuNEW_SIBLING_STD_DIALG_BTNS, "wxStdDialogButtonSizer");
@@ -778,7 +777,7 @@ void NavPopupMenu::CreateMenuMenu(Node* node)
     if (wxGetFrame().GetClipboard())
     {
         ttlib::cstr menu_text = _tt(strIdPaste);
-        menu_text << ' ' << wxGetFrame().GetClipboard()->GetClassName();
+        menu_text << ' ' << wxGetFrame().GetClipboard()->DeclName();
         menu_text << "\tCtrl+V";
 
         Append(MenuPASTE, menu_text);
@@ -839,30 +838,30 @@ void NavPopupMenu::CreateBarMenu(Node* node)
     Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
     Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
 
-    if (node->GetClassName() == "wxMenuBar" || node->GetClassName() == "MenuBar")
+    if (node->isGen(gen_wxMenuBar) || node->isGen(gen_MenuBar))
     {
         AppendSeparator();
         Append(MenuADD_MENU, "Add Menu\tCtrl+M");
     }
-    else if (node->GetClassName() == "wxRibbonBar")
+    else if (node->isGen(gen_wxRibbonBar))
     {
         AppendSeparator();
         m_tool_name = "wxRibbonPage";
         Append(MenuNEW_ITEM, "Add Page");
     }
-    else if (node->GetClassName() == "wxRibbonPage")
+    else if (node->isGen(gen_wxRibbonPage))
     {
         AppendSeparator();
         m_tool_name = "wxRibbonPanel";
         Append(MenuNEW_ITEM, "Add Panel");
     }
-    else if (node->GetClassName() == "wxRibbonToolBar")
+    else if (node->isGen(gen_wxRibbonToolBar))
     {
         AppendSeparator();
         m_tool_name = "ribbonTool";
         Append(MenuNEW_ITEM, "Add Tool");
     }
-    else if (node->GetClassName() == "ribbonTool")
+    else if (node->isGen(gen_ribbonTool))
     {
         m_child = node->GetParent();
         AppendSeparator();
@@ -874,7 +873,7 @@ void NavPopupMenu::CreateBarMenu(Node* node)
     Enable(MenuMOVE_UP, wxGetFrame().MoveNode(node, MoveDirection::Down, true));
 
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
-    if (node->GetClassName() == "wxMenuBar" || node->GetClassName() == "MenuBar")
+    if (node->isGen(gen_wxMenuBar) || node->isGen(gen_MenuBar))
     {
         Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuADD_MENU);
     }

@@ -92,8 +92,9 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
 
     catch (const std::exception& e)
     {
-        appMsgBox(_tt("Problem parsing ") + m_RcFilename + _tt(" at around line ") + ttlib::itoa(m_curline + 1) + "\n\n" +
-                      e.what(),
+        appMsgBox(ttlib::cstr() << _tt("Problem parsing ") << m_RcFilename << _tt(" at around line ")
+                                << ttlib::itoa(m_curline << 1) << "\n\n"
+                                << e.what(),
                   "RC Parser");
         return false;
     }
@@ -126,8 +127,8 @@ void WinResource::ParseDialog()
     }
     catch (const std::exception& e)
     {
-        appMsgBox(_tt("Problem parsing ") + m_RcFilename + _tt(" at around line ") + ttlib::itoa(m_curline + 1) + "\n\n" +
-                      e.what(),
+        appMsgBox(ttlib::cstr() << _tt("Problem parsing ") + m_RcFilename + _tt(" at around line ") +
+                                       ttlib::itoa(m_curline + 1) + "\n\n" + e.what(),
                   "RC Parser");
     }
 }

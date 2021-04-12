@@ -91,7 +91,7 @@ size_t NodeCreator::CountChildrenWithSameType(Node* parent, NodeType* type)
 
 /*
 
-    * This will return NULL if the parent doesn't allow this child type, or the parent already has the maximum number of
+    * This will return nullptr if the parent doesn't allow this child type, or the parent already has the maximum number of
     * children allowed. E.g., containers can only have one child, splitters can only have two, and sizers can have an
     * unlimited number.
 

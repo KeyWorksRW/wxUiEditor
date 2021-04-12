@@ -25,7 +25,7 @@ void Node::CreateDoc(pugi::xml_document& doc)
 
 void Node::AddNodeToDoc(pugi::xml_node& node)
 {
-    node.append_attribute("class") = GetClassName().c_str();
+    node.append_attribute("class") = DeclName().c_str();
 
     for (auto& iter: m_properties)
     {

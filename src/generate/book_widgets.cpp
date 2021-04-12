@@ -540,7 +540,7 @@ static void AddBookImageList(Node* node, wxObject* widget)
 
 static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
 {
-    if (node->prop_as_bool(prop_display_images) || node->GetClassName() == "wxToolbook")
+    if (node->prop_as_bool(prop_display_images) || node->isGen(gen_wxToolbook))
     {
         bool has_bitmaps = false;
         for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)

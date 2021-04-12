@@ -150,18 +150,18 @@ void PropGridPanel::Create()
             PropNameSet prop_set;
             EventSet event_set;
 
-            CreatePropCategory(declaration->GetClassName(), node, declaration, prop_set);
-            CreateEventCategory(declaration->GetClassName(), node, declaration, event_set);
+            CreatePropCategory(declaration->DeclName(), node, declaration, prop_set);
+            CreateEventCategory(declaration->DeclName(), node, declaration, event_set);
 
             // Calling GetBaseClassCount() is exepensive, so do it once and store the result
             auto num_base_classes = declaration->GetBaseClassCount();
             for (size_t i = 0; i < num_base_classes; i++)
             {
                 auto info_base = declaration->GetBaseClass(i);
-                if (info_base->GetClassName() == "sizer_child")
+                if (info_base->isGen(gen_sizer_child))
                     continue;
-                CreatePropCategory(info_base->GetClassName(), node, info_base, prop_set);
-                CreateEventCategory(info_base->GetClassName(), node, info_base, event_set);
+                CreatePropCategory(info_base->DeclName(), node, info_base, prop_set);
+                CreateEventCategory(info_base->DeclName(), node, info_base, event_set);
             }
 
             if (node->GetParent() && node->GetParent()->IsSizer() && !node->IsSpacer())
@@ -463,7 +463,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
     return new_pg_property;
 }
 
-void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCategory& category, PropNameSet& prop_set)
+void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& category, PropNameSet& prop_set)
 {
     size_t propCount = category.GetPropNameCount();
     for (size_t i = 0; i < propCount; i++)
@@ -478,7 +478,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
 
         ASSERT_MSG(prop_set.find(prop_name) == prop_set.end(), ttlib::cstr("The property ")
                                                                    << map_PropNames[prop_name]
-                                                                   << " appears more than once in " << node->GetClassName());
+                                                                   << " appears more than once in " << node->DeclName());
         if (prop_set.find(prop_name) == prop_set.end())
         {
             if (!IsPropAllowed(node, prop))
@@ -556,7 +556,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
                 }
             }
 
-            if (name == "wxWindow")
+            if (name.is_sameas("wxWindow"))
                 m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#e7f4e4"));
 
             // Automatically collapse properties that are rarely used
@@ -606,7 +606,7 @@ void PropGridPanel::AddProperties(const ttlib::cstr& name, Node* node, NodeCateg
     }
 }
 
-void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory& category, EventSet& event_set)
+void PropGridPanel::AddEvents(ttlib::cview name, Node* node, NodeCategory& category, EventSet& event_set)
 {
     auto& eventList = category.GetEvents();
     for (auto& eventName: eventList)
@@ -619,7 +619,7 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
         auto eventInfo = event->GetEventInfo();
 
         ASSERT_MSG(event_set.find(eventName) == event_set.end(), ttlib::cstr("Encountered a duplicate event in ")
-                                                                     << node->GetClassName());
+                                                                     << node->DeclName());
         if (event_set.find(eventName) == event_set.end())
         {
             // auto grid_property = new wxLongStringProperty(eventInfo->get_name(), wxPG_LABEL,
@@ -630,7 +630,7 @@ void PropGridPanel::AddEvents(const ttlib::cstr& name, Node* node, NodeCategory&
 
             m_event_grid->SetPropertyHelpString(id, wxGetTranslation(eventInfo->get_help()));
 
-            if (name == "Window Events")
+            if (name.is_sameas("Window Events"))
                 m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e7f4e4"));
 
             if (auto it = m_expansion_map.find(eventName); it != m_expansion_map.end())
@@ -804,7 +804,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                 if (auto selected_node = wxGetFrame().GetSelectedNode(); selected_node)
                 {
-                    if (prop->GetPropName() == "validator_data_type" && selected_node->GetClassName() == "wxTextCtrl")
+                    if (prop->isProp(prop_validator_data_type) && selected_node->isGen(gen_wxTextCtrl))
                     {
                         // You can only use a wxTextValidator if the validator data type is wxString. If it's not a string,
                         // the program will compile just fine, but the data member will not be read or written to. To prevent
@@ -903,7 +903,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 {
                     if (!m_prop_grid->GetPropertyValueAsBool(property))
                     {
-                        if (node->GetClassName() == "wxStdDialogButtonSizer")
+                        if (node->isGen(gen_wxStdDialogButtonSizer))
                         {
                             auto def_prop = node->get_prop_ptr("default_button");
                             if (def_prop->GetValue() == prop->GetPropName())
@@ -1092,7 +1092,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped. Adding
                     // a trailing space prevents this clipping.
 
-                    if (m_currentSel->GetClassName() == "wxRadioBox" && newValue.size())
+                    if (m_currentSel->isGen(gen_wxRadioBox) && newValue.size())
                     {
                         size_t result;
                         for (size_t pos = 0; pos < newValue.size();)
@@ -1410,7 +1410,7 @@ wxString PropGridPanel::GetCategoryDisplayName(const wxString& original)
     return category_name;
 }
 
-void PropGridPanel::CreatePropCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* declaration,
+void PropGridPanel::CreatePropCategory(ttlib::cview name, Node* node, NodeDeclaration* declaration,
                                        PropNameSet& prop_set)
 {
     auto& category = declaration->GetCategory();
@@ -1425,12 +1425,12 @@ void PropGridPanel::CreatePropCategory(const ttlib::cstr& name, Node* node, Node
     AddProperties(name, node, category, prop_set);
 
     // Collapse categories that aren't likely to be used with the current object
-    if (name == "AUI")
+    if (name.is_sameas("AUI"))
     {
         // TODO: [KeyWorks - 07-25-2020] Need to see if parent is using AUI, and if so, don't collapse this
         m_prop_grid->Collapse(id);
     }
-    else if (name == "Bitmaps")
+    else if (name.is_sameas("Bitmaps"))
     {
         m_prop_grid->Collapse(id);
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#dce4ef"));
@@ -1440,7 +1440,7 @@ void PropGridPanel::CreatePropCategory(const ttlib::cstr& name, Node* node, Node
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
 
         // It's going to be rare to want a validator for these classes, so collapse the validator for them
-        if (node->GetClassName() == "wxButton" || node->GetClassName() == "wxStaticText")
+        if (node->isGen(gen_wxButton) || node->isGen(gen_wxStaticText))
             m_prop_grid->Collapse(id);
     }
 
@@ -1524,7 +1524,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
     m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
 }
 
-void PropGridPanel::CreateEventCategory(const ttlib::cstr& name, Node* node, NodeDeclaration* declaration,
+void PropGridPanel::CreateEventCategory(ttlib::cview name, Node* node, NodeDeclaration* declaration,
                                         EventSet& event_set)
 {
     auto& category = declaration->GetCategory();

@@ -24,7 +24,7 @@ public:
     unsigned int GetChildren(const wxDataViewItem&, wxDataViewItemArray& /*children*/) const override { return 0; }
     unsigned int GetColumnCount() const override { return 0; }
     wxString GetColumnType(unsigned int /*col*/) const override { return wxVariant("Dummy").GetType(); }
-    wxDataViewItem GetParent(const wxDataViewItem&) const override { return wxDataViewItem(NULL); }
+    wxDataViewItem GetParent(const wxDataViewItem&) const override { return wxDataViewItem(nullptr); }
     bool IsContainer(const wxDataViewItem&) const override { return false; }
     void GetValue(wxVariant&, const wxDataViewItem&, unsigned int /*col*/) const override {}
     bool SetValue(const wxVariant&, const wxDataViewItem&, unsigned int /*col*/) override { return true; }
@@ -54,7 +54,7 @@ void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */)
     for (size_t i = 0; i < count; ++i)
     {
         auto childObj = node->GetChild(i);
-        if (childObj->GetClassName() == "dataViewColumn")
+        if (childObj->isGen(gen_dataViewColumn))
         {
             if (childObj->prop_as_string(prop_type) == "Text")
             {
@@ -171,7 +171,7 @@ void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent *
     for (size_t i = 0; i < count; ++i)
     {
         auto childObj = node->GetChild(i);
-        if (childObj->GetClassName() == "dataViewListColumn")
+        if (childObj->isGen(gen_dataViewListColumn))
         {
             if (childObj->prop_as_string(prop_type) == "Text")
             {

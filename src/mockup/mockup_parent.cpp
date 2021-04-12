@@ -125,11 +125,11 @@ void MockupParent::CreateContent()
     {
         m_panelContent->SetBackgroundColour(ConvertToColour(background->GetValue()));
     }
-    else if (m_form->GetClassName() == "wxFrame")
+    else if (m_form->isGen(gen_wxFrame))
     {
         m_panelContent->SetOwnBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
     }
-    else if (m_form->GetClassName() == "wxPopupTransientWindow")
+    else if (m_form->isGen(gen_wxPopupTransientWindow))
     {
         m_panelContent->SetOwnBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     }
@@ -143,7 +143,7 @@ void MockupParent::CreateContent()
 #endif
     }
 
-    if (m_form->GetClassName() == "wxFrame" || m_form->GetClassName() == "wxDialog" || m_form->GetClassName() == "wxWizard")
+    if (m_form->isGen(gen_wxFrame) || m_form->isGen(gen_wxDialog) || m_form->isGen(gen_wxWizard))
     {
         m_text_title->SetLabel(m_form->prop_as_wxString(prop_title));
         m_panelTitleBar->Show();
@@ -159,13 +159,13 @@ void MockupParent::CreateContent()
     auto maxSize = m_form->prop_as_wxSize(prop_maximum_size);
     m_MockupWindow->SetMaxSize(maxSize);
 
-    if (m_form->GetClassName() == "wxWizard")
+    if (m_form->isGen(gen_wxWizard))
         m_panelContent->CreateWizard();
 
     m_panelContent->CreateAllGenerators();
 
     auto org_size = m_form->prop_as_wxSize(prop_size);
-    if (m_IsMagnifyWindow && !(m_form->GetClassName() == "ToolBar" || m_form->GetClassName() == "MenuBar"))
+    if (m_IsMagnifyWindow && !(m_form->isGen(gen_ToolBar) || m_form->isGen(gen_MenuBar)))
     {
         org_size.IncTo(m_size_magnified);
     }
@@ -240,7 +240,7 @@ void MockupParent::MagnifyWindow(bool show)
 {
     m_IsMagnifyWindow = show;
 
-    if (m_form->GetClassName() == "ToolBar" || m_form->GetClassName() == "MenuBar")
+    if (m_form->isGen(gen_ToolBar) || m_form->isGen(gen_MenuBar))
         return;
 
     auto cur_size = m_MockupWindow->GetSize();
@@ -447,7 +447,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
                 new_size.y += size_title.y;
             }
 
-            if (m_IsMagnifyWindow && !(m_form->GetClassName() == "ToolBar" || m_form->GetClassName() == "MenuBar"))
+            if (m_IsMagnifyWindow && !(m_form->isGen(gen_ToolBar) || m_form->isGen(gen_MenuBar)))
             {
                 new_size.IncTo(m_size_magnified);
             }

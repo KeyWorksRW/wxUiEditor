@@ -57,7 +57,7 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
     {
         auto childObj = node->GetChild(i);
         auto child = GetMockup()->GetChild(wxobject, i);
-        if ("tool" == childObj->GetClassName())
+        if (childObj->isGen(gen_tool))
         {
             auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
@@ -206,7 +206,7 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
     {
         auto childObj = node->GetChild(i);
         auto child = GetMockup()->GetChild(wxobject, i);
-        if ("tool" == childObj->GetClassName())
+        if (childObj->isGen(gen_tool))
         {
             auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
@@ -216,14 +216,14 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
                              (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
                              wxEmptyString, child);
         }
-        else if ("toolSeparator" == childObj->GetClassName())
+        else if (childObj->isGen(gen_toolSeparator))
         {
             toolbar->AddSeparator();
         }
         else
         {
-            wxControl* control = wxDynamicCast(child, wxControl);
-            if (NULL != control)
+            auto control = wxDynamicCast(child, wxControl);
+            if (control)
             {
                 toolbar->AddControl(control);
             }
@@ -239,8 +239,7 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->prop_as_string(prop_var_name);
 
-    // We don't currently support wxAuiMDIChildFrame, but if we ever do, it also uses CreateToolBar()
-    if (node->GetParent()->GetClassName() == "wxFrame" || node->GetParent()->GetClassName() == "wxAuiMDIChildFrame")
+    if (node->GetParent()->isGen(gen_wxFrame))
     {
         code << " = CreateToolBar(";
 
@@ -363,14 +362,14 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
     // If the user doesn't want access, then we have no use for the return value.
     if (node->IsLocal())
     {
-        if (node->GetParent()->GetClassName().is_sameas("wxToolBar"))
+        if (node->GetParent()->isGen(gen_wxToolBar))
             code << node->get_parent_name() << "->AddTool(" << node->prop_as_string(prop_id) << ", ";
         else
             code << "AddTool(" << node->prop_as_string(prop_id) << ", ";
     }
     else
     {
-        if (node->GetParent()->GetClassName().is_sameas("wxToolBar"))
+        if (node->GetParent()->isGen(gen_wxToolBar))
             code << node->get_node_name() << " = " << node->get_parent_name() << "->AddTool("
                  << node->prop_as_string(prop_id) << ", ";
         else
@@ -442,7 +441,7 @@ std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    if (node->GetParent()->GetClassName().is_sameas("wxToolBar"))
+    if (node->GetParent()->isGen(gen_wxToolBar))
 
         code << node->get_parent_name() << "->AddSeparator();";
     else

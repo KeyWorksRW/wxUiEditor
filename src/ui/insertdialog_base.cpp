@@ -31,7 +31,7 @@ InsertDialogBase::InsertDialogBase(wxWindow* parent, wxWindowID id, const wxStri
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_listBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 300), 0, NULL, wxLB_SINGLE|wxLB_SORT);
+    m_listBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 300), 0, nullptr, wxLB_SINGLE|wxLB_SORT);
     box_sizer_3->Add(m_listBox, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

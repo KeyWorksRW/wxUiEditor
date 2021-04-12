@@ -386,7 +386,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
     {
         class_name = "gbsizeritem";
     }
-    else if (class_name.is_sameas("wxPanel") && parent->GetClassName().contains("book"))
+    else if (class_name.is_sameas("wxPanel") && parent->DeclName().contains("book"))
     {
         class_name = "BookPage";
     }
@@ -503,7 +503,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
     }
 
     auto child = xml_obj.child("object");
-    if (g_NodeCreator.IsOldHostType(newobject->GetClassName()))
+    if (g_NodeCreator.IsOldHostType(newobject->DeclName()))
     {
         newobject = CreateOldProjectNode(child, parent, newobject.get());
         child = child.next_sibling("object");
@@ -539,7 +539,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
 
 static bool CheckProperty(pugi::xml_node& xml_prop, Node* node)
 {
-    if (node->GetClassName() == "wxCheckBox")
+    if (node->isGen(gen_wxCheckBox))
     {
         return ProcessCheckBox(xml_prop, node);
     }

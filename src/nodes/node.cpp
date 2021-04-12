@@ -579,7 +579,7 @@ Node* Node::CreateChildNode(ttlib::cview name)
         }
         else
         {
-            appMsgBox(ttlib::cstr() << "You cannot add " << name << " as a child of " << GetClassName());
+            appMsgBox(ttlib::cstr() << "You cannot add " << name << " as a child of " << DeclName());
             return nullptr;
         }
     }

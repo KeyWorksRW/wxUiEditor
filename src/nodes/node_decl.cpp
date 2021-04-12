@@ -14,7 +14,7 @@
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
 NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) :
-    m_classname(class_name), m_type(type), m_category(class_name)
+    m_type(type), m_category(class_name)
 {
     m_gen_name = rmap_GenNames[class_name.c_str()];
     m_gen_type = rmap_GenTypes[type->get_name()];

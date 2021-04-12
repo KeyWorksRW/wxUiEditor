@@ -199,7 +199,7 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent, wxWindowID id, const wxString
     m_staticText12 = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Slider:"));
     box_sizer5->Add(m_staticText12, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_slider = new wxSlider(this, wxID_ANY, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL);
+    m_slider = new wxSlider(this, wxID_ANY, 50, 0, 100);
     m_slider->SetValue(50);
     box_sizer5->Add(m_slider, wxSizerFlags().Border(wxALL));
 

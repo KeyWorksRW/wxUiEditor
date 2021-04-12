@@ -26,11 +26,11 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenConstruction(Node* node)
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
     code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
         code << ", const wxString& name";
     code << ") :";
     code << "\n\twxDialog(parent, id, title, pos, size, style";
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
         code << ", name";
     code << ")\n{";
 
@@ -68,11 +68,11 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
     code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
         code << ", const wxString& name";
     code << ") :";
     code << "\n\twxFrame(parent, id, title, pos, size, style";
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
         code << ", name";
     code << ")\n{";
 
@@ -97,8 +97,8 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenSettings(Node* node, size_t& /
 bool FrameFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/frame.h>", set_src, set_hdr);
-    if (node->prop_as_bool("aui_managed"))
-        InsertGeneratorInclude(node, "#include <wx/aui/aui.h>", set_src, set_hdr);
+    // if (node->prop_as_bool("aui_managed"))
+    // InsertGeneratorInclude(node, "#include <wx/aui/aui.h>", set_src, set_hdr);
 
     return true;
 }
@@ -122,7 +122,7 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenCode(const std::string& cmd, No
 
     if (cmd == "ctor_declare")
     {
-        code << node->get_node_name() << "(wxWindow* parent, int border_flag = " << node->prop_as_string("border");
+        code << node->get_node_name() << "(wxWindow* parent, int border_flag = " << node->prop_as_string(prop_border);
         code << ");";
         return code;
     }
@@ -130,7 +130,6 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenCode(const std::string& cmd, No
     {
         return {};
     }
-
 
     return GenFormCode(cmd, node, "wxPopupTransientWindow");
 }
@@ -161,11 +160,11 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenConstruction(Node* node)
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id,";
     code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
         code << ", const wxString& name";
     code << ") :";
     code << "\n\twxPanel(parent, id, pos, size, style";
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
         code << ", name";
     code << ")\n{";
 
@@ -190,8 +189,8 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenSettings(Node* node, size_t& /
 bool PanelFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
-    if (node->prop_as_bool("aui_managed"))
-        InsertGeneratorInclude(node, "#include <wx/aui/aui.h>", set_src, set_hdr);
+    // if (node->prop_as_bool("aui_managed"))
+    // InsertGeneratorInclude(node, "#include <wx/aui/aui.h>", set_src, set_hdr);
 
     return true;
 }

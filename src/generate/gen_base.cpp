@@ -72,16 +72,16 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     m_source->writeLine(txt_CommentBlock);
 
     ttlib::cstr file;
-    if (auto base_file = form_node->get_value_ptr("base_file"); base_file)
+    if (auto& base_file = form_node->prop_as_string(prop_base_file); base_file.size())
     {
         ttSaveCwd cwd;
         ttlib::ChangeDir(wxGetApp().getProjectPath());
-        file = *base_file;
+        file = base_file;
         file.make_relative(wxGetApp().getProjectPath());
         file.backslashestoforward();
         file.remove_extension();
 
-        m_baseFullPath = *base_file;
+        m_baseFullPath = base_file;
         m_baseFullPath.make_absolute();
         m_baseFullPath.remove_filename();
     }
@@ -91,9 +91,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     std::set<std::string> src_includes;
     std::set<std::string> hdr_includes;
-    if (project->prop_as_string("help_provider") != "none")
+    if (project->prop_as_string(prop_help_provider) != "none")
         src_includes.insert("#include <wx/cshelp.h>");
-    if (project->prop_as_bool("internationalize"))
+    if (project->prop_as_bool(prop_internationalize))
         hdr_includes.insert("#include <wx/intl.h>");
 
     // This will almost always be needed, and it in turn includes a bunch of other files like string.h which are also
@@ -130,20 +130,20 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         }
     }
 
-    if (project->prop_has_value("local_pch_file"))
+    if (project->HasValue(prop_local_pch_file))
     {
-        m_source->writeLine(ttlib::cstr() << "#include \"" << project->prop_as_string("local_pch_file") << '"');
+        m_source->writeLine(ttlib::cstr() << "#include \"" << project->prop_as_string(prop_local_pch_file) << '"');
         m_source->writeLine();
     }
 
-    if (form_node->prop_as_bool("persist"))
+    if (form_node->prop_as_bool(prop_persist))
     {
         src_includes.insert("#include <wx/persist.h>");
         src_includes.insert("#include <wx/persist/toplevel.h>");
     }
 
-    m_artProvider = form_node->prop_as_string("icon").is_sameprefix("Art");
-    if (!m_artProvider && form_node->prop_as_string("icon").is_sameprefix("XPM"))
+    m_artProvider = form_node->prop_as_string(prop_icon).is_sameprefix("Art");
+    if (!m_artProvider && form_node->prop_as_string(prop_icon).is_sameprefix("XPM"))
     {
         src_includes.insert("#include <wx/icon.h>");
     }
@@ -195,9 +195,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     ttlib::cstr header_ext(".h");
 
-    if (auto extProp = project->get_value_ptr("header_ext"); extProp)
+    if (auto& hdr_extension = project->prop_as_string(prop_header_ext); hdr_extension.size())
     {
-        header_ext = *extProp;
+        header_ext = hdr_extension;
     }
 
     file.replace_extension(header_ext);
@@ -208,7 +208,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     GenerateImageIncludes(form_node);
 
     // Make a copy of the string so that we can tweak it
-    auto namespace_prop = project->prop_as_string("name_space");
+    ttlib::cstr namespace_prop = project->prop_as_string(prop_name_space);
     size_t indent = 0;
     ttlib::multistr names;
     if (namespace_prop.size())
@@ -389,7 +389,7 @@ void BaseCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::stri
 
 void BaseCodeGenerator::GenValidatorFunctions(Node* node)
 {
-    if (node->HasValue("validator_variable"))
+    if (node->HasValue(prop_validator_variable))
     {
         auto result = GenGetSetCode(node);
         if (result)
@@ -407,34 +407,34 @@ void BaseCodeGenerator::GenValidatorFunctions(Node* node)
 
 void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node* node, std::set<std::string>& code_lines)
 {
-    if (auto var_name = node->get_value_ptr("validator_variable"); var_name && var_name->size())
+    if (auto& var_name = node->prop_as_string(prop_validator_variable); var_name.size())
     {
         // All validators must have a validator_data_type property, so we don't check if it exists.
-        if (auto val_data_type = node->get_value_ptr("validator_data_type"); val_data_type->size())
+        if (auto& val_data_type = node->prop_as_string(prop_validator_data_type); val_data_type.size())
         {
             ttlib::cstr code;
 
-            code << *val_data_type << ' ' << *var_name;
+            code << val_data_type << ' ' << var_name;
 
-            if (*val_data_type == "bool")
+            if (val_data_type == "bool")
             {
-                auto prop = node->get_prop_ptr("checked");
+                auto prop = node->get_prop_ptr(prop_checked);
                 bool bState = (prop && prop->as_bool());
                 if (!prop)
                 {
-                    prop = node->get_prop_ptr("initial_state");
+                    prop = node->get_prop_ptr(prop_initial_state);
                     if (prop && prop->as_string() == "wxCHK_CHECKED")
                         bState = true;
                 }
                 code << " { " << (bState ? "true" : "false") << " };";
             }
-            else if (*val_data_type == "int")
+            else if (val_data_type == "int")
             {
                 auto prop = node->get_prop_ptr(prop_value);
                 if (!prop)
-                    prop = node->get_prop_ptr("initial");
+                    prop = node->get_prop_ptr(prop_initial);
                 if (!prop)
-                    prop = node->get_prop_ptr("selection");
+                    prop = node->get_prop_ptr(prop_selection);
                 if (prop && prop->as_string().size())
                 {
                     code << " { " << prop->as_string() << " };";
@@ -444,12 +444,12 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
                     code << ';';
                 }
             }
-            else if (*val_data_type == "wxString" || *val_data_type == "wxFileName")
+            else if (val_data_type == "wxString" || val_data_type == "wxFileName")
             {
-                auto value = node->get_value_ptr("value");
-                if (value && value->size())
+                auto& value = node->prop_as_string(prop_value);
+                if (value.size())
                 {
-                    code << " { " << GenerateQuotedString(*value) << " };";
+                    code << " { " << GenerateQuotedString(value) << " };";
                 }
                 else
                 {
@@ -513,7 +513,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
 
     auto generator = node->GetNodeDeclaration()->GetGenerator();
     generator->GetIncludes(node, set_src, set_hdr);
-    if (node->prop_has_value("validator_variable"))
+    if (node->HasValue(prop_validator_variable))
     {
         auto var_name = node->get_value_ptr("validator_variable");
         if (var_name && var_name->size())
@@ -599,27 +599,27 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         code << class_name << "* " << node->get_node_name() << ';';
         if (class_name == "wxStdDialogButtonSizer")
         {
-            if (node->prop_as_bool("OK"))
+            if (node->prop_as_bool(prop_OK))
                 code << "\n    wxButton* " << node->get_node_name() << "OK;";
-            if (node->prop_as_bool("Yes"))
+            if (node->prop_as_bool(prop_Yes))
                 code << "\n    wxButton* " << node->get_node_name() << "Yes;";
-            if (node->prop_as_bool("Save"))
+            if (node->prop_as_bool(prop_Save))
                 code << "\n    wxButton* " << node->get_node_name() << "Save;";
-            if (node->prop_as_bool("Apply"))
+            if (node->prop_as_bool(prop_Apply))
                 code << "\n    wxButton* " << node->get_node_name() << "Apply;";
-            if (node->prop_as_bool("No"))
+            if (node->prop_as_bool(prop_No))
                 code << "\n    wxButton* " << node->get_node_name() << "No;";
-            if (node->prop_as_bool("Cancel"))
+            if (node->prop_as_bool(prop_Cancel))
                 code << "\n    wxButton* " << node->get_node_name() << "Cancel;";
-            if (node->prop_as_bool("Help"))
+            if (node->prop_as_bool(prop_Help))
                 code << "\n    wxButton* " << node->get_node_name() << "Help;";
-            if (node->prop_as_bool("ContextHelp"))
+            if (node->prop_as_bool(prop_ContextHelp))
                 code << "\n    wxButton* " << node->get_node_name() << "ContextHelp;";
         }
         else if (class_name == "wxStaticBitmap")
         {
             // If scaling was specified, then we need to switch to wxGenericStaticBitmap in order to support it.
-            if (node->prop_as_string("scale_mode") != "None")
+            if (node->prop_as_string(prop_scale_mode) != "None")
                 code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
         }
         return code;
@@ -849,7 +849,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         }
     }
 
-    if (form_node->prop_as_bool("persist"))
+    if (form_node->prop_as_bool(prop_persist))
     {
         m_source->writeLine();
         ttlib::cstr code("wxPersistentRegisterAndRestore(this, \"");
@@ -919,7 +919,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             {
                 if (node->GetClassName() == "wxStdDialogButtonSizer")
                 {
-                    if (node->FindParentForm()->GetClassName() == "wxDialog" && node->prop_as_bool("static_line"))
+                    if (node->FindParentForm()->GetClassName() == "wxDialog" && node->prop_as_bool(prop_static_line))
                         code << node->GetParent()->get_node_name() << "->Add(CreateSeparatedSizer(" << node->get_node_name()
                              << "), ";
                     else
@@ -1002,7 +1002,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 if (auto sash_pos = node->get_prop_ptr("sashpos")->as_int(); sash_pos != 0 && sash_pos != -1)
                 {
                     code = node->get_node_name();
-                    code << "->SetSashPosition(" << node->prop_as_string("sashpos") << ");";
+                    code << "->SetSashPosition(" << node->prop_as_string(prop_sashpos) << ");";
                     m_source->writeLine(code);
                 }
             }
@@ -1142,7 +1142,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 
 void BaseCodeGenerator::GenPngLoadFunction(Node* form_node)
 {
-    if (form_node->prop_as_string("icon").is_sameprefix("Header;") || FindHdrString(form_node))
+    if (form_node->prop_as_string(prop_icon).is_sameprefix("Header;") || FindHdrString(form_node))
     {
         ttlib::textfile function;
         function.ReadString(txt_GetImgFromHdrFunction);
@@ -1158,7 +1158,7 @@ bool BaseCodeGenerator::FindHdrString(Node* node)
     for (size_t i = 0; i < node->GetChildCount(); i++)
     {
         auto child = node->GetChild(i);
-        auto description = child->prop_as_string("bitmap");
+        auto description = child->prop_as_string(prop_bitmap);
         if (description.size())
         {
             ttlib::multistr parts(description, BMP_PROP_SEPARATOR);
@@ -1188,7 +1188,7 @@ void BaseCodeGenerator::CheckForArtProvider(Node* node)
     for (size_t i = 0; i < node->GetChildCount(); i++)
     {
         auto child = node->GetChild(i);
-        auto description = child->prop_as_string("bitmap");
+        auto description = child->prop_as_string(prop_bitmap);
         if (description.is_sameprefix("Art"))
         {
             m_artProvider = true;
@@ -1202,10 +1202,10 @@ void BaseCodeGenerator::CheckForArtProvider(Node* node)
 
 void BaseCodeGenerator::AddPersistCode(Node* node)
 {
-    if (node->prop_has_value("persist_name"))
+    if (node->HasValue(prop_persist_name))
     {
         ttlib::cstr code("wxPersistentRegisterAndRestore(");
-        code << node->get_node_name() << ", \"" << node->prop_as_string("persist_name") << "\");";
+        code << node->get_node_name() << ", \"" << node->prop_as_string(prop_persist_name) << "\");";
         m_source->writeLine(code);
     }
 

@@ -21,9 +21,9 @@
 
 wxObject* TreeCtrlGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                       node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                 node->prop_as_wxSize(prop_size),
+                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
 #if 0
 // REVIEW: [KeyWorks - 12-13-2020] This is the original code.
@@ -53,7 +53,7 @@ std::optional<ttlib::cstr> TreeCtrlGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxTreeCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, true, "wxTR_DEFAULT_STYLE", "wxTR_DEFAULT_STYLE");
 
     code.Replace(", wxID_ANY);", ");");
@@ -76,9 +76,9 @@ bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* TreeListViewGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxTreeListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxTreeListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                     node->prop_as_wxSize(prop_size),
+                                     node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -91,7 +91,7 @@ std::optional<ttlib::cstr> TreeListViewGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxTreeListCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, true, "wxTL_DEFAULT_STYLE", "wxTL_DEFAULT_STYLE");
 
     return code;
@@ -126,7 +126,7 @@ std::optional<ttlib::cstr> TreeListCtrlColumnGenerator::GenConstruction(Node* no
     ttlib::cstr code;
     code << node->get_parent_name() << "->AppendColumn(" << GenerateQuotedString(node->get_node_name()) << ", ";
     code << node->prop_as_string(prop_width) << ", " << node->prop_as_string(prop_alignment) << ", "
-         << node->prop_as_string("flag");
+         << node->prop_as_string(prop_flag);
     code << ")";
 
     return code;

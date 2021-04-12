@@ -1618,7 +1618,7 @@ void PropGridPanel::VerifyChangeFile(wxPropertyGridEvent& event, NodeProperty* p
         {
             if (project->GetChild(child_idx) == node)
                 continue;
-            if (project->GetChild(child_idx)->prop_as_string("base_file") == filename)
+            if (project->GetChild(child_idx)->prop_as_string(prop_base_file) == filename)
             {
                 appMsgBox(ttlib::cstr() << "The base filename " << filename << " is already in use by "
                                         << project->GetChild(child_idx)->prop_as_string(prop_class_name)

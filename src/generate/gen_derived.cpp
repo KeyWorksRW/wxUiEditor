@@ -85,7 +85,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
     ttlib::cstr namespace_using_name;
 
     // Make a copy of the string so that we can tweak it
-    if (auto namespace_prop = project->prop_as_string("name_space"); namespace_prop.size())
+    if (auto namespace_prop = project->prop_as_string(prop_name_space); namespace_prop.size())
     {
         // ttlib::multistr works with a single char, not a string.
         namespace_prop.Replace("::", ":");
@@ -225,7 +225,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             if (generatedHandlers.find(event->get_value()) == generatedHandlers.end())
             {
                 ttlib::cstr prototype;
-                if (event->GetEventInfo()->get_name() == "OnInitDialog" || form->prop_as_bool("persist"))
+                if (event->GetEventInfo()->get_name() == "OnInitDialog" || form->prop_as_bool(prop_persist))
                 {
                     // OnInitDialog needs to call event.Skip() in order to initialize validators and update the UI
                     prototype.Format("%s(%s& event)", event->get_value().c_str(),
@@ -272,7 +272,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
 
                         m_source->writeLine("}");
 
-                        if (form->prop_as_bool("persist"))
+                        if (form->prop_as_bool(prop_persist))
                         {
                             m_source->writeLine();
                             m_source->writeLine("event.Skip();  // This must be called for wxPersistenceManager to work");

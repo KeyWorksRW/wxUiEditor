@@ -111,7 +111,7 @@ void PropertyGrid_Image::RefreshChildren()
             }
             else
             {
-                auto art_dir = wxGetApp().GetProjectPtr()->prop_as_string("converted_art");
+                auto art_dir = wxGetApp().GetProject()->prop_as_string(prop_converted_art);
                 if (art_dir.empty())
                     art_dir = "./";
                 wxDir dir;

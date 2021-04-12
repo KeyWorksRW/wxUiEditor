@@ -23,9 +23,9 @@
 
 wxObject* CalendarCtrlGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
+                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                     node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -38,7 +38,7 @@ std::optional<ttlib::cstr> CalendarCtrlGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxCalendarCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", wxDefaultDateTime";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
     GeneratePosSizeFlags(node, code, false, "wxCAL_SHOW_HOLIDAYS", "wxCAL_SHOW_HOLIDAYS");
 
     code.Replace(", wxDefaultDateTime);", ");");
@@ -62,18 +62,18 @@ bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 wxObject* FileCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     wxString wild;
-    if (node->HasValue("wildcard"))
-        wild = node->prop_as_wxString("wildcard");
+    if (node->HasValue(prop_wildcard))
+        wild = node->prop_as_wxString(prop_wildcard);
     else
         wild = wxFileSelectorDefaultWildcardStr;
 
-    auto widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString("initial_folder"),
-                                 node->prop_as_wxString("initial_filename"), wild,
-                                 node->prop_as_int(prop_style) | node->prop_as_int("window_style"),
-                                 node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"));
+    auto widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_folder),
+                                 node->prop_as_wxString(prop_initial_filename), wild,
+                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style),
+                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size));
 
     if (!(node->prop_as_int(prop_style) & wxFC_NOSHOWHIDDEN))
-        widget->ShowHidden(node->prop_as_bool("show_hidden"));
+        widget->ShowHidden(node->prop_as_bool(prop_show_hidden));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -87,22 +87,22 @@ std::optional<ttlib::cstr> FileCtrlGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxFileCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    if (node->HasValue("initial_folder"))
-        code << GenerateQuotedString(node->prop_as_string("initial_folder"));
+    if (node->HasValue(prop_initial_folder))
+        code << GenerateQuotedString(node->prop_as_string(prop_initial_folder));
     else
         code << "wxEmptyString";
     code << ", ";
 
-    if (node->HasValue("initial_filename"))
-        code << GenerateQuotedString(node->prop_as_string("initial_filename"));
+    if (node->HasValue(prop_initial_filename))
+        code << GenerateQuotedString(node->prop_as_string(prop_initial_filename));
     else
         code << "wxEmptyString";
     code << ", ";
 
-    if (node->HasValue("wildcard"))
-        code << GenerateQuotedString(node->prop_as_string("wildcard"));
+    if (node->HasValue(prop_wildcard))
+        code << GenerateQuotedString(node->prop_as_string(prop_wildcard));
     else
         code << "wxFileSelectorDefaultWildcardStr";
     code << ", ";
@@ -114,13 +114,13 @@ std::optional<ttlib::cstr> FileCtrlGenerator::GenConstruction(Node* node)
     code << ", ";
     GenSize(node, code);
     code << ", ";
-    if (node->HasValue("window_name"))
+    if (node->HasValue(prop_window_name))
     {
-        code << ", " << node->prop_as_string("window_name");
+        code << ", " << node->prop_as_string(prop_window_name);
     }
     code << ");";
 
-    if (node->prop_as_bool("show_hidden"))
+    if (node->prop_as_bool(prop_show_hidden))
     {
         code << "\n    " << node->get_node_name() << "->ShowHidden(true);";
     }
@@ -143,12 +143,12 @@ bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* GenericDirCtrlGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxGenericDirCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->GetPropertyAsString("defaultfolder"),
-                                       node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                       node->prop_as_int(prop_style) | node->prop_as_int("window_style"),
-                                       node->GetPropertyAsString("filter"), node->prop_as_int("defaultfilter"));
+    auto widget = new wxGenericDirCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_defaultfolder),
+                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                       node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style),
+                                       node->prop_as_wxString(prop_filter), node->prop_as_int(prop_defaultfilter));
 
-    widget->ShowHidden(node->prop_as_bool("show_hidden"));
+    widget->ShowHidden(node->prop_as_bool(prop_show_hidden));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -162,13 +162,13 @@ std::optional<ttlib::cstr> GenericDirCtrlGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxGenericDirCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
-    if (node->HasValue("defaultfolder"))
-        code << GenerateQuotedString(node->prop_as_string("defaultfolder"));
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    if (node->HasValue(prop_defaultfolder))
+        code << GenerateQuotedString(node->prop_as_string(prop_defaultfolder));
     else
         code << "wxDirDialogDefaultFolderStr";
 
-    if (!node->HasValue("filter") && node->prop_as_int("defaultfilter") == 0 && !node->HasValue("window_name"))
+    if (!node->HasValue(prop_filter) && node->prop_as_int(prop_defaultfilter) == 0 && !node->HasValue(prop_window_name))
     {
         GeneratePosSizeFlags(node, code, false, "wxDIRCTRL_DEFAULT_STYLE", "wxDIRCTRL_DEFAULT_STYLE");
     }
@@ -180,16 +180,16 @@ std::optional<ttlib::cstr> GenericDirCtrlGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", ";
         GenStyle(node, code);
-        code << ", " << GenerateQuotedString(node->prop_as_string("filter")) << ", "
-             << node->prop_as_string("defaultfilter");
-        if (node->HasValue("window_name"))
+        code << ", " << GenerateQuotedString(node->prop_as_string(prop_filter)) << ", "
+             << node->prop_as_string(prop_defaultfilter);
+        if (node->HasValue(prop_window_name))
         {
-            code << ", " << node->prop_as_string("window_name");
+            code << ", " << node->prop_as_string(prop_window_name);
         }
         code << ");";
     }
 
-    if (node->prop_as_bool("show_hidden"))
+    if (node->prop_as_bool(prop_show_hidden))
     {
         code << "\n\t" << node->get_node_name() << "->ShowHidden(true);";
     }
@@ -213,17 +213,17 @@ bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 wxObject* SearchCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
-                                   node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                   node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+                                   node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (node->HasValue("search_button"))
+    if (node->HasValue(prop_search_button))
     {
-        widget->ShowSearchButton(node->prop_as_bool("search_button"));
+        widget->ShowSearchButton(node->prop_as_bool(prop_search_button));
     }
 
-    if (node->HasValue("cancel_button"))
+    if (node->HasValue(prop_cancel_button))
     {
-        widget->ShowCancelButton(node->prop_as_bool("cancel_button"));
+        widget->ShowCancelButton(node->prop_as_bool(prop_cancel_button));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -237,7 +237,7 @@ std::optional<ttlib::cstr> SearchCtrlGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxSearchCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (node->HasValue(prop_value))
         code << GenerateQuotedString(node->prop_as_string(prop_value));
@@ -255,14 +255,14 @@ std::optional<ttlib::cstr> SearchCtrlGenerator::GenSettings(Node* node, size_t& 
 {
     ttlib::cstr code;
 
-    if (node->prop_as_bool("search_button"))
+    if (node->prop_as_bool(prop_search_button))
     {
         if (code.size())
             code << "\n\t";
         code << node->get_node_name() << "->ShowSearchButton(true);";
     }
 
-    if (node->prop_as_bool("cancel_button"))
+    if (node->prop_as_bool(prop_cancel_button))
     {
         if (code.size())
             code << "\n\t";

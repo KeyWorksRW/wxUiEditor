@@ -24,87 +24,87 @@
 
 wxObject* GridGenerator::Create(Node* node, wxObject* parent)
 {
-    auto grid = new wxGrid(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int("window_style"));
+    auto grid = new wxGrid(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                           node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
 
-    grid->CreateGrid(node->prop_as_int("rows"), node->prop_as_int("cols"));
+    grid->CreateGrid(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols));
 
-    grid->EnableDragColMove(node->prop_as_int("drag_col_move") != 0);
-    grid->EnableDragColSize(node->prop_as_int("drag_col_size") != 0);
-    grid->EnableDragGridSize(node->prop_as_int("drag_grid_size") != 0);
-    grid->EnableDragRowSize(node->prop_as_int("drag_row_size") != 0);
-    grid->EnableEditing(node->prop_as_int("editing") != 0);
-    grid->EnableGridLines(node->prop_as_int("grid_lines") != 0);
-    if (node->HasValue("grid_line_color"))
+    grid->EnableDragColMove(node->prop_as_int(prop_drag_col_move) != 0);
+    grid->EnableDragColSize(node->prop_as_int(prop_drag_col_size) != 0);
+    grid->EnableDragGridSize(node->prop_as_int(prop_drag_grid_size) != 0);
+    grid->EnableDragRowSize(node->prop_as_int(prop_drag_row_size) != 0);
+    grid->EnableEditing(node->prop_as_int(prop_editing) != 0);
+    grid->EnableGridLines(node->prop_as_int(prop_grid_lines) != 0);
+    if (node->HasValue(prop_grid_line_color))
     {
-        grid->SetGridLineColour(node->prop_as_wxColour("grid_line_color"));
+        grid->SetGridLineColour(node->prop_as_wxColour(prop_grid_line_color));
     }
-    grid->SetMargins(node->prop_as_int("margin_width"), node->prop_as_int("margin_height"));
+    grid->SetMargins(node->prop_as_int(prop_margin_width), node->prop_as_int(prop_margin_height));
 
     // Label Properties
-    grid->SetColLabelAlignment(node->prop_as_int("col_label_horiz_alignment"),
-                               node->prop_as_int("col_label_vert_alignment"));
-    grid->SetColLabelSize(node->prop_as_int("col_label_size"));
+    grid->SetColLabelAlignment(node->prop_as_int(prop_col_label_horiz_alignment),
+                               node->prop_as_int(prop_col_label_vert_alignment));
+    grid->SetColLabelSize(node->prop_as_int(prop_col_label_size));
 
-    wxArrayString columnLabels = node->prop_as_wxArrayString("col_label_values");
+    wxArrayString columnLabels = node->prop_as_wxArrayString(prop_col_label_values);
     for (int i = 0; i < (int) columnLabels.size() && i < grid->GetNumberCols(); ++i)
     {
         grid->SetColLabelValue(i, columnLabels[i]);
     }
 
 #if 0
-    wxArrayInt columnSizes = node->prop_as_wxArrayInt("column_sizes");
+    wxArrayInt columnSizes = node->prop_as_wxArrayInt(prop_column_sizes);
     for (int i = 0; i < (int) columnSizes.size() && i < grid->GetNumberCols(); ++i)
     {
         grid->SetColSize(i, columnSizes[i]);
     }
 #endif
 
-    grid->SetRowLabelAlignment(node->prop_as_int("row_label_horiz_alignment"),
-                               node->prop_as_int("row_label_vert_alignment"));
-    grid->SetRowLabelSize(node->prop_as_int("row_label_size"));
+    grid->SetRowLabelAlignment(node->prop_as_int(prop_row_label_horiz_alignment),
+                               node->prop_as_int(prop_row_label_vert_alignment));
+    grid->SetRowLabelSize(node->prop_as_int(prop_row_label_size));
 
-    wxArrayString rowLabels = node->prop_as_wxArrayString("row_label_values");
+    wxArrayString rowLabels = node->prop_as_wxArrayString(prop_row_label_values);
     for (int i = 0; i < (int) rowLabels.size() && i < grid->GetNumberRows(); ++i)
     {
         grid->SetRowLabelValue(i, rowLabels[i]);
     }
 
 #if 0
-    wxArrayInt rowSizes = node->prop_as_wxArrayInt("row_sizes");
+    wxArrayInt rowSizes = node->prop_as_wxArrayInt(prop_row_sizes);
     for (int i = 0; i < (int) rowSizes.size() && i < grid->GetNumberRows(); ++i)
     {
         grid->SetRowSize(i, rowSizes[i]);
     }
 #endif
 
-    if (node->HasValue("label_bg"))
+    if (node->HasValue(prop_label_bg))
     {
-        grid->SetLabelBackgroundColour(node->prop_as_wxColour("label_bg"));
+        grid->SetLabelBackgroundColour(node->prop_as_wxColour(prop_label_bg));
     }
-    if (node->HasValue("label_text"))
+    if (node->HasValue(prop_label_text))
     {
-        grid->SetLabelTextColour(node->prop_as_wxColour("label_text"));
+        grid->SetLabelTextColour(node->prop_as_wxColour(prop_label_text));
     }
-    if (node->HasValue("label_font"))
+    if (node->HasValue(prop_label_font))
     {
-        grid->SetLabelFont(node->prop_as_font("label_font"));
+        grid->SetLabelFont(node->prop_as_font(prop_label_font));
     }
 
     // Default Cell Properties
-    grid->SetDefaultCellAlignment(node->prop_as_int("cell_horiz_alignment"), node->prop_as_int("cell_vert_alignment"));
+    grid->SetDefaultCellAlignment(node->prop_as_int(prop_cell_horiz_alignment), node->prop_as_int(prop_cell_vert_alignment));
 
-    if (node->HasValue("cell_bg"))
+    if (node->HasValue(prop_cell_bg))
     {
-        grid->SetDefaultCellBackgroundColour(node->prop_as_wxColour("cell_bg"));
+        grid->SetDefaultCellBackgroundColour(node->prop_as_wxColour(prop_cell_bg));
     }
-    if (node->HasValue("cell_text"))
+    if (node->HasValue(prop_cell_text))
     {
-        grid->SetDefaultCellTextColour(node->prop_as_wxColour("cell_text"));
+        grid->SetDefaultCellTextColour(node->prop_as_wxColour(prop_cell_text));
     }
-    if (node->HasValue("cell_font"))
+    if (node->HasValue(prop_cell_font))
     {
-        grid->SetDefaultCellFont(node->prop_as_font("cell_font"));
+        grid->SetDefaultCellFont(node->prop_as_font(prop_cell_font));
     }
 
     // Example Cell Values
@@ -116,11 +116,11 @@ wxObject* GridGenerator::Create(Node* node, wxObject* parent)
         }
     }
 
-    if (node->prop_as_int("autosize_rows") != 0)
+    if (node->prop_as_int(prop_autosize_rows) != 0)
     {
         grid->AutoSizeRows();
     }
-    if (node->prop_as_int("autosize_cols") != 0)
+    if (node->prop_as_int(prop_autosize_cols) != 0)
     {
         grid->AutoSizeColumns();
     }
@@ -136,7 +136,7 @@ std::optional<ttlib::cstr> GridGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxGrid(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, " wxWANTS_CHARS", " wxWANTS_CHARS");
 
     return code;
@@ -149,100 +149,102 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
     auto_indent = false;
     code << "    {";
 
-    code << "\n        " << node->get_node_name() << "->CreateGrid(" << node->prop_as_string("rows") << ", "
-         << node->prop_as_string("cols") << ");";
-    code << "\n        " << node->get_node_name() << "->EnableEditing(" << (node->prop_as_bool("editing") ? "true" : "false")
-         << ");";
+    code << "\n        " << node->get_node_name() << "->CreateGrid(" << node->prop_as_string(prop_rows) << ", "
+         << node->prop_as_string(prop_cols) << ");";
+    code << "\n        " << node->get_node_name() << "->EnableEditing("
+         << (node->prop_as_bool(prop_editing) ? "true" : "false") << ");";
     code << "\n        " << node->get_node_name() << "->EnableGridLines("
-         << (node->prop_as_bool("grid_lines") ? "true" : "false") << ");";
+         << (node->prop_as_bool(prop_grid_lines) ? "true" : "false") << ");";
     code << "\n        " << node->get_node_name() << "->EnableDragGridSize("
-         << (node->prop_as_bool("drag_grid_size") ? "true" : "false") << ");";
+         << (node->prop_as_bool(prop_drag_grid_size) ? "true" : "false") << ");";
 
-    if (node->HasValue("grid_line_color"))
-        code << "\n        " << node->get_node_name() << "->SetGridLineColour(" << GenerateColorCode(node, "grid_line_color")
-             << ");";
-    code << "\n        " << node->get_node_name() << "->SetMargins(" << node->prop_as_string("margin_width") << ", "
-         << node->prop_as_string("margin_height") << ");";
+    if (node->HasValue(prop_grid_line_color))
+        code << "\n        " << node->get_node_name() << "->SetGridLineColour("
+             << GenerateColorCode(node, prop_grid_line_color) << ");";
+    code << "\n        " << node->get_node_name() << "->SetMargins(" << node->prop_as_string(prop_margin_width) << ", "
+         << node->prop_as_string(prop_margin_height) << ");";
 
     code << '\n';
 
-    if (node->HasValue("column_sizes"))
+    if (node->HasValue(prop_column_sizes))
     {
-        ttlib::multistr sizes(node->prop_as_string("column_sizes"), ',');
+        ttlib::multistr sizes(node->prop_as_string(prop_column_sizes), ',');
         for (size_t pos = 0; pos < sizes.size(); ++pos)
         {
             code << "\n        " << node->get_node_name() << "->SetColSize(" << pos << ", " << sizes[pos] << ");";
         }
     }
 
-    if (node->prop_as_bool("autosize_cols"))
+    if (node->prop_as_bool(prop_autosize_cols))
         code << "\n        " << node->get_node_name() << "->AutoSizeColumns();";
     code << "\n        " << node->get_node_name() << "->EnableDragColMove("
-         << (node->prop_as_bool("drag_col_move") ? "true" : "false") << ");";
+         << (node->prop_as_bool(prop_drag_col_move) ? "true" : "false") << ");";
     code << "\n        " << node->get_node_name() << "->EnableDragColSize("
-         << (node->prop_as_bool("drag_col_size") ? "true" : "false") << ");";
-    code << "\n        " << node->get_node_name() << "->SetColLabelSize(" << node->prop_as_string("col_label_size") << ");";
-    code << "\n        " << node->get_node_name() << "->SetColLabelAlignment("
-         << node->prop_as_string("col_label_horiz_alignment") << ", " << node->prop_as_string("col_label_vert_alignment")
+         << (node->prop_as_bool(prop_drag_col_size) ? "true" : "false") << ");";
+    code << "\n        " << node->get_node_name() << "->SetColLabelSize(" << node->prop_as_string(prop_col_label_size)
          << ");";
+    code << "\n        " << node->get_node_name() << "->SetColLabelAlignment("
+         << node->prop_as_string(prop_col_label_horiz_alignment) << ", "
+         << node->prop_as_string(prop_col_label_vert_alignment) << ");";
 
-    if (node->HasValue("col_label_values"))
+    if (node->HasValue(prop_col_label_values))
     {
         // TODO: [KeyWorks - 12-14-2020] This needs to be reworked
     }
 
     code << '\n';
 
-    if (node->HasValue("row_sizes"))
+    if (node->HasValue(prop_row_sizes))
     {
-        ttlib::multistr sizes(node->prop_as_string("row_sizes"), ',');
+        ttlib::multistr sizes(node->prop_as_string(prop_row_sizes), ',');
         for (size_t pos = 0; pos < sizes.size(); ++pos)
         {
             code << "\n        " << node->get_node_name() << "->SetRowSize(" << pos << ", " << sizes[pos] << ");";
         }
     }
-    if (node->prop_as_bool("autosize_rows"))
+    if (node->prop_as_bool(prop_autosize_rows))
         code << "\n        " << node->get_node_name() << "->AutoSizeRows();";
     code << "\n        " << node->get_node_name() << "->EnableDragRowSize("
-         << (node->prop_as_bool("row_label_size") ? "true" : "false") << ");";
+         << (node->prop_as_bool(prop_row_label_size) ? "true" : "false") << ");";
     code << "\n        " << node->get_node_name() << "->SetRowLabelAlignment("
-         << node->prop_as_string("row_label_horiz_alignment") << ", " << node->prop_as_string("row_label_vert_alignment")
-         << ");";
+         << node->prop_as_string(prop_row_label_horiz_alignment) << ", "
+         << node->prop_as_string(prop_row_label_vert_alignment) << ");";
 
-    if (node->HasValue("row_label_values"))
+    if (node->HasValue(prop_row_label_values))
     {
         // TODO: [KeyWorks - 12-14-2020] This needs to be reworked
     }
 
-    if (node->HasValue("label_bg"))
-        code << "\n        " << node->get_node_name() << "->SetLabelBackgroundColour(" << GenerateColorCode(node, "label_bg")
-             << ");";
+    if (node->HasValue(prop_label_bg))
+        code << "\n        " << node->get_node_name() << "->SetLabelBackgroundColour("
+             << GenerateColorCode(node, prop_label_bg) << ");";
 
         // TODO: [KeyWorks - 02-27-2021] GenerateFontCode() was removed because it was obsolete and broken. It needs to be
         // replaced, but it should be part of an entire wxGrid overhaul.
 
 #if 0
-    if (node->HasValue("label_font"))
+    if (node->HasValue(prop_label_font))
         code << "\n        " << node->get_node_name() << "->SetLabelFont(" << GenerateFontCode(node, "label_font") << ");";
 #endif
-    if (node->HasValue("label_text"))
-        code << "\n        " << node->get_node_name() << "->SetLabelTextColour(" << GenerateColorCode(node, "label_text")
+    if (node->HasValue(prop_label_text))
+        code << "\n        " << node->get_node_name() << "->SetLabelTextColour(" << GenerateColorCode(node, prop_label_text)
              << ");";
 
-    if (node->HasValue("cell_bg"))
+    if (node->HasValue(prop_cell_bg))
         code << "\n        " << node->get_node_name() << "->SetDefaultCellBackgroundColour("
-             << GenerateColorCode(node, "cell_bg") << ");";
+             << GenerateColorCode(node, prop_cell_bg) << ");";
 #if 0
-    if (node->HasValue("cell_font"))
+    if (node->HasValue(prop_cell_font))
         code << "\n        " << node->get_node_name() << "->SetDefaultCellFont(" << GenerateFontCode(node, "cell_font")
              << ");";
 #endif
-    if (node->HasValue("cell_font"))
-        code << "\n        " << node->get_node_name() << "->SetDefaultCellFont(" << GenerateColorCode(node, "cell_font")
+    if (node->HasValue(prop_cell_font))
+        code << "\n        " << node->get_node_name() << "->SetDefaultCellFont(" << GenerateColorCode(node, prop_cell_font)
              << ");";
 
     code << "\n        " << node->get_node_name() << "->SetDefaultCellAlignment("
-         << node->prop_as_string("cell_horiz_alignment") << ", " << node->prop_as_string("cell_vert_alignment") << ");";
+         << node->prop_as_string(prop_cell_horiz_alignment) << ", " << node->prop_as_string(prop_cell_vert_alignment)
+         << ");";
 
     code << "\n    }";
 
@@ -265,13 +267,13 @@ bool GridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 
 wxObject* PropertyGridGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxPropertyGrid(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                           node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxPropertyGrid(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                     node->prop_as_wxSize(prop_size),
+                                     node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (!node->GetPropertyAsString("extra_style").empty())
+    if (node->HasValue(prop_extra_style))
     {
-        widget->SetExtraStyle(node->prop_as_int("extra_style"));
+        widget->SetExtraStyle(node->prop_as_int(prop_extra_style));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -289,7 +291,7 @@ void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
         auto childObj = node->GetChild(i);
         if (childObj->GetClassName() == "propGridItem")
         {
-            if (childObj->prop_as_string("type") == "Category")
+            if (childObj->prop_as_string(prop_type) == "Category")
             {
                 pg->Append(
                     new wxPropertyCategory(childObj->prop_as_wxString(prop_label), childObj->prop_as_wxString(prop_label)));
@@ -297,16 +299,16 @@ void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
             else
             {
                 wxPGProperty* prop = wxDynamicCast(
-                    wxCreateDynamicObject("wx" + (childObj->GetPropertyAsString("type")) + "Property"), wxPGProperty);
+                    wxCreateDynamicObject("wx" + (childObj->prop_as_string(prop_type)) + "Property"), wxPGProperty);
                 if (prop)
                 {
                     prop->SetLabel(childObj->prop_as_wxString(prop_label));
                     prop->SetName(childObj->prop_as_wxString(prop_label));
                     pg->Append(prop);
 
-                    if (childObj->GetPropertyAsString("help") != wxEmptyString)
+                    if (childObj->HasValue(prop_help))
                     {
-                        pg->SetPropertyHelpString(prop, childObj->GetPropertyAsString("help"));
+                        pg->SetPropertyHelpString(prop, childObj->prop_as_wxString(prop_help));
                     }
                 }
             }
@@ -320,13 +322,13 @@ std::optional<ttlib::cstr> PropertyGridGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxPropertyGrid(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxPG_DEFAULT_STYLE", "wxPG_DEFAULT_STYLE");
 
     code.Replace(", wxID_ANY);", ");");
 
-    if (node->HasValue("extra_style"))
-        code << "\n    " << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string("extra_style") << ")";
+    if (node->HasValue(prop_extra_style))
+        code << "\n    " << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ")";
 
     return code;
 }
@@ -340,7 +342,7 @@ bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 {
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
 
-    if (node->prop_as_bool("include_advanced"))
+    if (node->prop_as_bool(prop_include_advanced))
         InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
     return true;
 }
@@ -349,16 +351,17 @@ bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* PropertyGridManagerGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxPropertyGridManager(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                                            node->prop_as_wxSize("size"),
-                                            node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxPropertyGridManager(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                            node->prop_as_wxSize(prop_size),
+                                            node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (!node->GetPropertyAsString("extra_style").empty())
+    if (node->HasValue(prop_extra_style))
     {
-        widget->SetExtraStyle(node->prop_as_int("extra_style"));
+        widget->SetExtraStyle(node->prop_as_int(prop_extra_style));
     }
 
-    widget->ShowHeader(node->prop_as_int("show_header") != 0);
+    // BUGBUG: [KeyWorks - 04-11-2021] There is no "show_header" property
+    // widget->ShowHeader(node->prop_as_int(prop_show_header) != 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -377,14 +380,14 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
         if (childObj->GetClassName() == "propGridPage")
         {
             wxPropertyGridPage* page =
-                pgm->AddPage(childObj->prop_as_wxString(prop_label), childObj->prop_as_wxBitmap("bitmap"));
+                pgm->AddPage(childObj->prop_as_wxString(prop_label), childObj->prop_as_wxBitmap(prop_bitmap));
 
             for (size_t j = 0; j < childObj->GetChildCount(); ++j)
             {
                 auto innerChildObj = childObj->GetChild(j);
                 if (innerChildObj->GetClassName() == "propGridItem")
                 {
-                    if (innerChildObj->GetPropertyAsString("type") == "Category")
+                    if (innerChildObj->prop_as_string(prop_type) == "Category")
                     {
                         page->Append(new wxPropertyCategory(innerChildObj->prop_as_wxString(prop_label),
                                                             innerChildObj->prop_as_wxString(prop_label)));
@@ -392,7 +395,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
                     else
                     {
                         wxPGProperty* prop = wxDynamicCast(
-                            wxCreateDynamicObject("wx" + (innerChildObj->GetPropertyAsString("type")) + "Property"),
+                            wxCreateDynamicObject("wx" + (innerChildObj->prop_as_string(prop_type)) + "Property"),
                             wxPGProperty);
                         if (prop)
                         {
@@ -400,9 +403,9 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
                             prop->SetName(innerChildObj->prop_as_wxString(prop_label));
                             page->Append(prop);
 
-                            if (innerChildObj->GetPropertyAsString("help") != wxEmptyString)
+                            if (innerChildObj->HasValue(prop_help))
                             {
-                                page->SetPropertyHelpString(prop, innerChildObj->GetPropertyAsString("help"));
+                                page->SetPropertyHelpString(prop, innerChildObj->prop_as_wxString(prop_help));
                             }
                         }
                     }
@@ -425,13 +428,13 @@ std::optional<ttlib::cstr> PropertyGridManagerGenerator::GenConstruction(Node* n
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxPropertyGridManager(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxPGMAN_DEFAULT_STYLE", "wxPGMAN_DEFAULT_STYLE");
 
     code.Replace(", wxID_ANY);", ");");
 
-    if (node->HasValue("extra_style"))
-        code << "\n    " << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string("extra_style") << ")";
+    if (node->HasValue(prop_extra_style))
+        code << "\n    " << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ")";
 
     return code;
 }
@@ -446,7 +449,7 @@ bool PropertyGridManagerGenerator::GetIncludes(Node* node, std::set<std::string>
     InsertGeneratorInclude(node, "#include <wx/propgrid/propgrid.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/propgrid/manager.h>", set_src, set_hdr);
 
-    if (node->prop_as_bool("include_advanced"))
+    if (node->prop_as_bool(prop_include_advanced))
         InsertGeneratorInclude(node, "#include <wx/propgrid/advprops.h>", set_src, set_hdr);
     return true;
 }
@@ -461,7 +464,7 @@ std::optional<ttlib::cstr> PropertyGridItemGenerator::GenConstruction(Node* node
         code << "auto ";
     code << node->get_node_name() << " = " << node->get_parent_name();
 
-    if (node->prop_as_string("type") == "Category")
+    if (node->prop_as_string(prop_type) == "Category")
     {
         code << "->Append(new wxPropertyCategory(";
         code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
@@ -469,9 +472,9 @@ std::optional<ttlib::cstr> PropertyGridItemGenerator::GenConstruction(Node* node
     }
     else
     {
-        code << "->Append(new wx" << node->prop_as_string("type") << "Property(";
+        code << "->Append(new wx" << node->prop_as_string(prop_type) << "Property(";
         code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-             << GenerateQuotedString(node->prop_as_string("help")) << ");";
+             << GenerateQuotedString(node->prop_as_string(prop_help)) << ");";
     }
 
     return code;
@@ -487,7 +490,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
         code << "auto ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
     code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-         << GenerateBitmapCode(node->prop_as_string("bitmap")) << ");";
+         << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
 
     return code;
 }

@@ -21,15 +21,15 @@
 
 wxObject* RibbonBarGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                        node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                  node->prop_as_wxSize(prop_size),
+                                  node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (node->prop_as_string("theme") == "Default")
+    if (node->prop_as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
-    else if (node->prop_as_string("theme") == "Generic")
+    else if (node->prop_as_string(prop_theme) == "Generic")
         widget->SetArtProvider(new wxRibbonAUIArtProvider);
-    else if (node->prop_as_string("theme") == "MSW")
+    else if (node->prop_as_string(prop_theme) == "MSW")
         widget->SetArtProvider(new wxRibbonMSWArtProvider);
 
     widget->Bind(wxEVT_RIBBONBAR_PAGE_CHANGED, &RibbonBarGenerator::OnPageChanged, this);
@@ -59,7 +59,7 @@ std::optional<ttlib::cstr> RibbonBarGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxRibbonBar(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code, false, "wxRIBBON_BAR_DEFAULT_STYLE", "wxRIBBON_BAR_DEFAULT_STYLE");
 
@@ -70,7 +70,7 @@ std::optional<ttlib::cstr> RibbonBarGenerator::GenSettings(Node* node, size_t& /
 {
     ttlib::cstr code;
 
-    auto& theme = node->prop_as_string("theme");
+    auto& theme = node->prop_as_string(prop_theme);
     if (theme.is_sameas("Default"))
         code << node->get_node_name() << "->SetArtProvider(new wxRibbonDefaultArtProvider);";
     else if (theme.is_sameas("Generic"))
@@ -99,7 +99,7 @@ bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 wxObject* RibbonPageGenerator::Create(Node* node, wxObject* parent)
 {
-    auto bmp = node->HasValue("bitmap") ? node->prop_as_wxBitmap("bitmap") : wxNullBitmap;
+    auto bmp = node->HasValue(prop_bitmap) ? node->prop_as_wxBitmap(prop_bitmap) : wxNullBitmap;
     auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->prop_as_wxString(prop_label), bmp, 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -113,7 +113,7 @@ std::optional<ttlib::cstr> RibbonPageGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxRibbonPage(";
-    code << node->get_parent_name() << ", " << node->prop_as_string("id");
+    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
     code << ", ";
 
     auto& label = node->prop_as_string(prop_label);
@@ -122,9 +122,9 @@ std::optional<ttlib::cstr> RibbonPageGenerator::GenConstruction(Node* node)
     else
         code << "wxEmptyString";
 
-    if (node->prop_as_string("bitmap").size())
+    if (node->prop_as_string(prop_bitmap).size())
     {
-        code << ", " << GenerateBitmapCode(node->prop_as_string("bitmap"));
+        code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
     }
     code << ");";
 
@@ -135,7 +135,7 @@ std::optional<ttlib::cstr> RibbonPageGenerator::GenSettings(Node* node, size_t& 
 {
     ttlib::cstr code;
 
-    if (node->prop_as_bool("select"))
+    if (node->prop_as_bool(prop_select))
         code << node->get_parent_name() << "->SetActivePage(" << node->get_node_name() << ");";
 
     return code;
@@ -157,10 +157,10 @@ bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 wxObject* RibbonPanelGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->prop_as_wxString(prop_label),
-                          node->prop_as_wxBitmap("bitmap"), node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                          node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->prop_as_wxString(prop_label),
+                                    node->prop_as_wxBitmap(prop_bitmap), node->prop_as_wxPoint(prop_pos),
+                                    node->prop_as_wxSize(prop_size),
+                                    node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -173,7 +173,7 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxRibbonPanel(";
-    code << node->get_parent_name() << ", " << node->prop_as_string("id");
+    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
     code << ", ";
 
     auto& label = node->prop_as_string(prop_label);
@@ -182,7 +182,7 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
     else
         code << "wxEmptyString";
 
-    if (node->prop_as_string("bitmap").size())
+    if (node->prop_as_string(prop_bitmap).size())
     {
         if (label.size())
         {
@@ -193,7 +193,7 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
             code << ", ";
         }
 
-        code << GenerateBitmapCode(node->prop_as_string("bitmap"));
+        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
     }
     else
         code << ", wxNullBitmap";
@@ -222,8 +222,8 @@ bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 wxObject* RibbonButtonBarGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonButtonBar((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint("pos"),
-                                        node->prop_as_wxSize("size"), 0);
+    auto widget = new wxRibbonButtonBar((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                        node->prop_as_wxSize(prop_size), 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -240,12 +240,12 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
     {
         auto childObj = node->GetChild(i);
 
-        auto bmp = childObj->prop_as_wxBitmap("bitmap");
+        auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
         if (!bmp.IsOk())
             bmp = GetXPMImage("default");
 
-        btn_bar->AddButton(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, childObj->GetPropertyAsString("help"),
-                           (wxRibbonButtonKind) childObj->prop_as_int("kind"));
+        btn_bar->AddButton(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, childObj->prop_as_wxString(prop_help),
+                           (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
     }
 }
 
@@ -255,7 +255,7 @@ std::optional<ttlib::cstr> RibbonButtonBarGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxRibbonButtonBar(";
-    code << node->get_parent_name() << ", " << node->prop_as_string("id");
+    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code, false);
 
@@ -280,7 +280,7 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    code << node->get_parent_name() << "->AddButton(" << node->prop_as_string("id") << ", ";
+    code << node->get_parent_name() << "->AddButton(" << node->prop_as_string(prop_id) << ", ";
 
     auto& label = node->prop_as_string(prop_label);
     if (label.size())
@@ -288,19 +288,19 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenConstruction(Node* node)
     else
         code << "wxEmptyString";
 
-    if (node->prop_as_string("bitmap").size())
-        code << ", " << GenerateBitmapCode(node->prop_as_string("bitmap"));
+    if (node->prop_as_string(prop_bitmap).size())
+        code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
     else
         code << ", wxNullBitmap";
 
     code << ", ";
-    auto& help = node->prop_as_string("help");
+    auto& help = node->prop_as_string(prop_help);
     if (help.size())
         code << GenerateQuotedString(help);
     else
         code << "wxEmptyString";
 
-    code << ", " << node->prop_as_string("kind") << ");";
+    code << ", " << node->prop_as_string(prop_kind) << ");";
 
     return code;
 }
@@ -314,12 +314,12 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenEvents(NodeEvent* event, co
 
 wxObject* RibbonToolBarGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxRibbonToolBar((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"));
-    if (node->prop_as_int("min_rows") != 1 || node->prop_as_string("max_rows") != "-1")
+    auto widget = new wxRibbonToolBar((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                      node->prop_as_wxSize(prop_size));
+    if (node->prop_as_int(prop_min_rows) != 1 || node->prop_as_string(prop_max_rows) != "-1")
     {
-        auto min_rows = node->prop_as_int("min_rows");
-        auto max_rows = node->prop_as_int("max_rows");
+        auto min_rows = node->prop_as_int(prop_min_rows);
+        auto max_rows = node->prop_as_int(prop_max_rows);
         if (max_rows < min_rows)
             max_rows = min_rows;
         widget->SetRows(min_rows, max_rows);
@@ -338,11 +338,11 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
     {
         auto childObj = node->GetChild(i);
 
-        auto bmp = childObj->prop_as_wxBitmap("bitmap");
+        auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
         if (!bmp.IsOk())
             bmp = GetXPMImage("default");
-        btn_bar->AddTool(wxID_ANY, bmp, childObj->GetPropertyAsString("help"),
-                         (wxRibbonButtonKind) childObj->prop_as_int("kind"));
+        btn_bar->AddTool(wxID_ANY, bmp, childObj->prop_as_wxString(prop_help),
+                         (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
     }
     btn_bar->Realize();
 }
@@ -353,7 +353,7 @@ std::optional<ttlib::cstr> RibbonToolBarGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxRibbonToolBar(";
-    code << node->get_parent_name() << ", " << node->prop_as_string("id");
+    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code, false);
 
@@ -364,8 +364,8 @@ std::optional<ttlib::cstr> RibbonToolBarGenerator::GenSettings(Node* node, size_
 {
     ttlib::cstr code;
 
-    auto min_rows = node->prop_as_int("min_rows");
-    auto max_rows = node->prop_as_int("max_rows");
+    auto min_rows = node->prop_as_int(prop_min_rows);
+    auto max_rows = node->prop_as_int(prop_max_rows);
     if (min_rows != 1 || max_rows != -1)
     {
         if (max_rows < min_rows)
@@ -404,25 +404,25 @@ std::optional<ttlib::cstr> RibbonToolGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
 
     code << node->get_parent_name() << "->AddTool(";
-    if (node->prop_as_string("id").size())
-        code << node->prop_as_string("id");
+    if (node->prop_as_string(prop_id).size())
+        code << node->prop_as_string(prop_id);
     else
         code << "wxID_ANY";
     code << ", ";
 
-    if (node->prop_as_string("bitmap").size())
-        code << GenerateBitmapCode(node->prop_as_string("bitmap"));
+    if (node->prop_as_string(prop_bitmap).size())
+        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
     else
         code << "wxNullBitmap";
 
     code << ", ";
-    auto& help = node->prop_as_string("help");
+    auto& help = node->prop_as_string(prop_help);
     if (help.size())
         code << GenerateQuotedString(help);
     else
         code << "wxEmptyString";
 
-    code << ", " << node->prop_as_string("kind") << ");";
+    code << ", " << node->prop_as_string(prop_kind) << ");";
 
     return code;
 }
@@ -436,8 +436,8 @@ std::optional<ttlib::cstr> RibbonToolGenerator::GenEvents(NodeEvent* event, cons
 
 wxObject* RibbonGalleryGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint("pos"),
-                                      node->prop_as_wxSize("size"), 0);
+    auto widget = new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                      node->prop_as_wxSize(prop_size), 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -455,7 +455,7 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
         auto childObj = node->GetChild(i);
         if (childObj->GetClassName() == "ribbonGalleryItem")
         {
-            auto bmp = childObj->prop_as_wxBitmap("bitmap");
+            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetXPMImage("default");
 
@@ -470,7 +470,7 @@ std::optional<ttlib::cstr> RibbonGalleryGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxRibbonGallery(";
-    code << node->get_parent_name() << ", " << node->prop_as_string("id");
+    code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code, false);
 
@@ -497,8 +497,8 @@ std::optional<ttlib::cstr> RibbonGalleryItemGenerator::GenConstruction(Node* nod
 
     code << node->get_parent_name() << "->Append(";
 
-    if (node->prop_as_string("bitmap").size())
-        code << GenerateBitmapCode(node->prop_as_string("bitmap"));
+    if (node->prop_as_string(prop_bitmap).size())
+        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
     else
         code << "wxNullBitmap";
 

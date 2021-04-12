@@ -20,9 +20,9 @@
 
 wxObject* ListViewGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                       node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                 node->prop_as_wxSize(prop_size),
+                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
 #if 0
 // REVIEW: [KeyWorks - 12-13-2020] This is the original code, but we should be able to do much better by making it possible for the user
@@ -67,7 +67,7 @@ std::optional<ttlib::cstr> ListViewGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxListView(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxLC_ICON", "wxLC_ICON");
 
     return code;

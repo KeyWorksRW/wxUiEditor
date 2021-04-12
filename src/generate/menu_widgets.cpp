@@ -78,8 +78,8 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
         {
             auto result = MakeSubMenu(menu_item.get());
             auto item = sub_menu->AppendSubMenu(result, menu_item->prop_as_wxString(prop_label));
-            if (menu_item->HasValue("bitmap"))
-                item->SetBitmap(menu_item->prop_as_wxBitmap("bitmap"));
+            if (menu_item->HasValue(prop_bitmap))
+                item->SetBitmap(menu_item->prop_as_wxBitmap(prop_bitmap));
         }
         else if (menu_item->GetClassName() == "separator")
         {
@@ -88,7 +88,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
         else
         {
             auto menu_label = menu_item->prop_as_string(prop_label);
-            auto shortcut = menu_item->prop_as_string("shortcut");
+            auto shortcut = menu_item->prop_as_string(prop_shortcut);
             if (shortcut.size())
             {
                 menu_label << "    " << shortcut;
@@ -98,43 +98,44 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             // label and bitmap.
 
             int id = wxID_ANY;
-            if (menu_item->prop_as_string("id") != "wxID_ANY" && menu_item->prop_as_string("id").is_sameprefix("wxID_"))
-                id = g_NodeCreator.GetConstantAsInt(menu_item->prop_as_string("id"), wxID_ANY);
+            if (menu_item->prop_as_string(prop_id) != "wxID_ANY" &&
+                menu_item->prop_as_string(prop_id).is_sameprefix("wxID_"))
+                id = g_NodeCreator.GetConstantAsInt(menu_item->prop_as_string(prop_id), wxID_ANY);
 
-            auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->prop_as_wxString("help"),
-                                       (wxItemKind) menu_item->prop_as_int("kind"));
+            auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->prop_as_wxString(prop_help),
+                                       (wxItemKind) menu_item->prop_as_int(prop_kind));
 
-            if (menu_item->HasValue("bitmap"))
+            if (menu_item->HasValue(prop_bitmap))
             {
                 wxBitmap unchecked = wxNullBitmap;
-                if (menu_item->HasValue("unchecked_bitmap"))
+                if (menu_item->HasValue(prop_unchecked_bitmap))
                 {
-                    unchecked = menu_item->prop_as_wxBitmap("unchecked_bitmap");
+                    unchecked = menu_item->prop_as_wxBitmap(prop_unchecked_bitmap);
                 }
 #ifdef __WXMSW__
-                item->SetBitmaps(menu_item->prop_as_wxBitmap("bitmap"), unchecked);
+                item->SetBitmaps(menu_item->prop_as_wxBitmap(prop_bitmap), unchecked);
 #else
-                item->SetBitmap(menu_item->GetPropertyAsBitmap("bitmap"));
+                item->SetBitmap(menu_item->GetPropertyAsBitmap(prop_bitmap));
 #endif
             }
 #ifdef __WXMSW__
             else
             {
-                if (menu_item->HasValue("unchecked_bitmap"))
+                if (menu_item->HasValue(prop_unchecked_bitmap))
                 {
-                    item->SetBitmaps(wxNullBitmap, menu_item->prop_as_wxBitmap("unchecked_bitmap"));
+                    item->SetBitmaps(wxNullBitmap, menu_item->prop_as_wxBitmap(prop_unchecked_bitmap));
                 }
             }
 #endif
 
             sub_menu->Append(item);
 
-            if (item->GetKind() == wxITEM_CHECK && menu_item->prop_as_bool("checked"))
+            if (item->GetKind() == wxITEM_CHECK && menu_item->prop_as_bool(prop_checked))
             {
                 item->Check(true);
             }
 
-            if (menu_item->prop_as_bool("disabled"))
+            if (menu_item->prop_as_bool(prop_disabled))
                 item->Enable(false);
         }
     }
@@ -282,7 +283,7 @@ std::optional<ttlib::cstr> MenuGenerator::GenCode(const std::string& cmd, Node* 
         else
         {
             // The parent can disable generation of Bind by shutting of the context menu
-            if (!node->GetParent()->prop_as_bool("context_menu"))
+            if (!node->GetParent()->prop_as_bool(prop_context_menu))
             {
                 return {};
             }
@@ -357,10 +358,10 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* 
 {
     ttlib::cstr code;
 
-    if (node->HasValue("bitmap"))
+    if (node->HasValue(prop_bitmap))
     {
-        code << "    " << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string("bitmap"))
-             << ");";
+        code << "    " << node->get_node_name() << "Item->SetBitmap("
+             << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
     }
 
     return code;
@@ -381,7 +382,7 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
 
-    code << node->get_node_name() << " = new wxMenuItem(" << node->get_parent_name() << ", " << node->prop_as_string("id")
+    code << node->get_node_name() << " = new wxMenuItem(" << node->get_parent_name() << ", " << node->prop_as_string(prop_id)
          << ", ";
     auto& label = node->prop_as_string(prop_label);
     if (label.size())
@@ -392,9 +393,9 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
         // clearly lays out how to do this as part of the actual string. Removing this means the wxFormBuilder import needs
         // to merge it into the main label.
 
-        if (node->HasValue("shortcut"))
+        if (node->HasValue(prop_shortcut))
         {
-            code << " + '\\t' + \"" << node->prop_as_string("shortcut") << '\"';
+            code << " + '\\t' + \"" << node->prop_as_string(prop_shortcut) << '\"';
         }
     }
     else
@@ -402,10 +403,10 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
         code << "wxEmptyString";
     }
 
-    if (node->HasValue("help") || node->prop_as_string("kind") != "wxITEM_NORMAL")
+    if (node->HasValue(prop_help) || node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
     {
-        code << ",\n            " << GenerateQuotedString(node->prop_as_string("help")) << ", "
-             << node->prop_as_string("kind");
+        code << ",\n            " << GenerateQuotedString(node->prop_as_string(prop_help)) << ", "
+             << node->prop_as_string(prop_kind);
     }
 
     code << ");";
@@ -417,17 +418,18 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /*
 {
     ttlib::cstr code;
 
-    if (node->HasValue("bitmap"))
+    if (node->HasValue(prop_bitmap))
     {
-        if (node->HasValue("unchecked_bitmap"))
+        if (node->HasValue(prop_unchecked_bitmap))
         {
-            code << "    " << node->get_node_name() << "->SetBitmaps(" << GenerateBitmapCode(node->prop_as_string("bitmap"));
-            code << ", " << GenerateBitmapCode(node->prop_as_string("unchecked_bitmap")) << ");";
+            code << "    " << node->get_node_name() << "->SetBitmaps("
+                 << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+            code << ", " << GenerateBitmapCode(node->prop_as_string(prop_unchecked_bitmap)) << ");";
         }
         else
         {
-            code << "    " << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string("bitmap"))
-                 << ");";
+            code << "    " << node->get_node_name() << "->SetBitmap("
+                 << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
         }
     }
 
@@ -435,8 +437,8 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /*
         code << '\n';
     code << "    " << node->get_parent_name() << "->Append(" << node->get_node_name() << ");";
 
-    if ((node->prop_as_string("kind") == "wxITEM_CHECK" || node->prop_as_string("kind") == "wxITEM_RADIO") &&
-        node->prop_as_bool("checked"))
+    if ((node->prop_as_string(prop_kind) == "wxITEM_CHECK" || node->prop_as_string(prop_kind) == "wxITEM_RADIO") &&
+        node->prop_as_bool(prop_checked))
     {
         if (code.size())
             code << '\n';

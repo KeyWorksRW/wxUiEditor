@@ -21,20 +21,20 @@
 wxObject* ToolBarFormGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxToolBar(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-        node->prop_as_int(prop_style) | node->prop_as_int("window_style") | wxTB_NOALIGN | wxTB_NODIVIDER | wxNO_BORDER);
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+        node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style) | wxTB_NOALIGN | wxTB_NODIVIDER | wxNO_BORDER);
 
-    if (node->HasValue("bitmapsize"))
-        widget->SetToolBitmapSize(node->prop_as_wxSize("bitmapsize"));
-    if (node->HasValue("margins"))
+    if (node->HasValue(prop_bitmapsize))
+        widget->SetToolBitmapSize(node->prop_as_wxSize(prop_bitmapsize));
+    if (node->HasValue(prop_margins))
     {
-        wxSize margins(node->prop_as_wxSize("margins"));
+        wxSize margins(node->prop_as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->HasValue("packing"))
-        widget->SetToolPacking(node->prop_as_int("packing"));
-    if (node->HasValue("separation"))
-        widget->SetToolSeparation(node->prop_as_int("separation"));
+    if (node->HasValue(prop_packing))
+        widget->SetToolPacking(node->prop_as_int(prop_packing));
+    if (node->HasValue(prop_separation))
+        widget->SetToolSeparation(node->prop_as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &ToolBarFormGenerator::OnTool, this);
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -59,22 +59,22 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         auto child = GetMockup()->GetChild(wxobject, i);
         if ("tool" == childObj->GetClassName())
         {
-            auto bmp = childObj->prop_as_wxBitmap("bitmap");
+            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetXPMImage("default");
 
             toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
-                             (wxItemKind) childObj->prop_as_int("kind"), childObj->GetPropertyAsString("help"),
+                             (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
                              wxEmptyString, child);
         }
-        else if ("toolSeparator" == childObj->GetClassName())
+        else if (childObj->isGen(gen_toolSeparator))
         {
             toolbar->AddSeparator();
         }
         else
         {
             wxControl* control = wxDynamicCast(child, wxControl);
-            if (NULL != control)
+            if (control)
             {
                 toolbar->AddControl(control);
             }
@@ -90,11 +90,11 @@ std::optional<ttlib::cstr> ToolBarFormGenerator::GenConstruction(Node* node)
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, ";
     code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style";
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
         code << ", const wxString& name";
     code << ") :";
     code << "\n\twxToolBar(parent, id, pos, size, style";
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
         code << ", name";
     code << ")\n{";
 
@@ -109,32 +109,32 @@ std::optional<ttlib::cstr> ToolBarFormGenerator::GenCode(const std::string& cmd,
 std::optional<ttlib::cstr> ToolBarFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     auto code = GenFormSettings(node);
-    if (node->HasValue("bitmapsize"))
+    if (node->HasValue(prop_bitmapsize))
     {
         if (code.size())
             code << '\n';
-        code << "SetToolBitmapSize(" << node->prop_as_string("bitmapsize") << ");";
+        code << "SetToolBitmapSize(" << node->prop_as_string(prop_bitmapsize) << ");";
     }
 
-    if (node->prop_as_int("separation") != 5)
+    if (node->prop_as_int(prop_separation) != 5)
     {
         if (code.size())
             code << '\n';
-        code << "SetToolSeparation(" << node->prop_as_string("separation") << ");";
+        code << "SetToolSeparation(" << node->prop_as_string(prop_separation) << ");";
     }
 
-    if (node->HasValue("margins"))
+    if (node->HasValue(prop_margins))
     {
         if (code.size())
             code << '\n';
-        code << "SetMargins(" << node->prop_as_string("margins") << ");";
+        code << "SetMargins(" << node->prop_as_string(prop_margins) << ");";
     }
 
-    if (node->prop_as_int("packing") != 1)
+    if (node->prop_as_int(prop_packing) != 1)
     {
         if (code.size())
             code << '\n';
-        code << "SetToolPacking(" << node->prop_as_string("packing") << ");";
+        code << "SetToolPacking(" << node->prop_as_string(prop_packing) << ");";
     }
 
     return code;
@@ -169,21 +169,21 @@ void ToolBarFormGenerator::OnTool(wxCommandEvent& event)
 
 wxObject* ToolBarGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                      node->prop_as_int(prop_style) | node->prop_as_int("window_style") | wxTB_NODIVIDER | wxNO_BORDER);
+    auto widget = new wxToolBar(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+        node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style) | wxTB_NODIVIDER | wxNO_BORDER);
 
-    if (node->HasValue("bitmapsize"))
-        widget->SetToolBitmapSize(node->prop_as_wxSize("bitmapsize"));
-    if (node->HasValue("margins"))
+    if (node->HasValue(prop_bitmapsize))
+        widget->SetToolBitmapSize(node->prop_as_wxSize(prop_bitmapsize));
+    if (node->HasValue(prop_margins))
     {
-        wxSize margins(node->prop_as_wxSize("margins"));
+        wxSize margins(node->prop_as_wxSize(prop_margins));
         widget->SetMargins(margins.GetWidth(), margins.GetHeight());
     }
-    if (node->HasValue("packing"))
-        widget->SetToolPacking(node->prop_as_int("packing"));
-    if (node->HasValue("separation"))
-        widget->SetToolSeparation(node->prop_as_int("separation"));
+    if (node->HasValue(prop_packing))
+        widget->SetToolPacking(node->prop_as_int(prop_packing));
+    if (node->HasValue(prop_separation))
+        widget->SetToolSeparation(node->prop_as_int(prop_separation));
 
     widget->Bind(wxEVT_TOOL, &ToolBarGenerator::OnTool, this);
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -208,12 +208,12 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
         auto child = GetMockup()->GetChild(wxobject, i);
         if ("tool" == childObj->GetClassName())
         {
-            auto bmp = childObj->prop_as_wxBitmap("bitmap");
+            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetXPMImage("default");
 
             toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
-                             (wxItemKind) childObj->prop_as_int("kind"), childObj->GetPropertyAsString("help"),
+                             (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
                              wxEmptyString, child);
         }
         else if ("toolSeparator" == childObj->GetClassName())
@@ -244,10 +244,10 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
     {
         code << " = CreateToolBar(";
 
-        auto& id = node->prop_as_string("id");
-        auto& window_name = node->prop_as_string("window_name");
+        auto& id = node->prop_as_string(prop_id);
+        auto& window_name = node->prop_as_string(prop_window_name);
         auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string("window_style");
+        auto& win_style = node->prop_as_string(prop_window_style);
 
         if (window_name.size())
         {
@@ -268,7 +268,7 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
     }
     else
     {
-        code << " = new wxToolBar(" << GetParentName(node) << ", " << node->prop_as_string("id");
+        code << " = new wxToolBar(" << GetParentName(node) << ", " << node->prop_as_string(prop_id);
         GeneratePosSizeFlags(node, code, false, "", "wxTB_HORIZONTAL");
     }
 
@@ -293,32 +293,32 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenCode(const std::string& cmd, Nod
 std::optional<ttlib::cstr> ToolBarGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     auto code = GenFormSettings(node);
-    if (node->HasValue("bitmapsize"))
+    if (node->HasValue(prop_bitmapsize))
     {
         if (code.size())
             code << '\n';
-        code << "SetToolBitmapSize(" << node->prop_as_string("bitmapsize") << ");";
+        code << "SetToolBitmapSize(" << node->prop_as_string(prop_bitmapsize) << ");";
     }
 
-    if (node->prop_as_int("separation") != 5)
+    if (node->prop_as_int(prop_separation) != 5)
     {
         if (code.size())
             code << '\n';
-        code << "SetToolSeparation(" << node->prop_as_string("separation") << ");";
+        code << "SetToolSeparation(" << node->prop_as_string(prop_separation) << ");";
     }
 
-    if (node->HasValue("margins"))
+    if (node->HasValue(prop_margins))
     {
         if (code.size())
             code << '\n';
-        code << "SetMargins(" << node->prop_as_string("margins") << ");";
+        code << "SetMargins(" << node->prop_as_string(prop_margins) << ");";
     }
 
-    if (node->prop_as_int("packing") != 1)
+    if (node->prop_as_int(prop_packing) != 1)
     {
         if (code.size())
             code << '\n';
-        code << "SetToolPacking(" << node->prop_as_string("packing") << ");";
+        code << "SetToolPacking(" << node->prop_as_string(prop_packing) << ");";
     }
 
     return code;
@@ -353,7 +353,7 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     code << '\t';
 
-    if (node->prop_as_string("id") == "wxID_ANY" && node->GetInUseEventCount())
+    if (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount())
     {
         if (node->IsLocal())
             code << "auto ";
@@ -364,17 +364,17 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
     {
         if (node->GetParent()->GetClassName().is_sameas("wxToolBar"))
-            code << node->get_parent_name() << "->AddTool(" << node->prop_as_string("id") << ", ";
+            code << node->get_parent_name() << "->AddTool(" << node->prop_as_string(prop_id) << ", ";
         else
-            code << "AddTool(" << node->prop_as_string("id") << ", ";
+            code << "AddTool(" << node->prop_as_string(prop_id) << ", ";
     }
     else
     {
         if (node->GetParent()->GetClassName().is_sameas("wxToolBar"))
-            code << node->get_node_name() << " = " << node->get_parent_name() << "->AddTool(" << node->prop_as_string("id")
-                 << ", ";
+            code << node->get_node_name() << " = " << node->get_parent_name() << "->AddTool("
+                 << node->prop_as_string(prop_id) << ", ";
         else
-            code << node->get_node_name() << " = AddTool(" << node->prop_as_string("id") << ", ";
+            code << node->get_node_name() << " = AddTool(" << node->prop_as_string(prop_id) << ", ";
     }
 
     auto& label = node->prop_as_string(prop_label);
@@ -387,32 +387,32 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
         code << "wxEmptyString";
     }
 
-    code << ", " << GenerateBitmapCode(node->prop_as_string("bitmap"));
+    code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
 
-    if (!node->HasValue(prop_tooltip) && !node->HasValue("statusbar"))
+    if (!node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
     {
-        if (node->prop_as_string("kind") != "wxITEM_NORMAL")
+        if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
         {
-            code << ", wxEmptyString, " << node->prop_as_string("kind");
+            code << ", wxEmptyString, " << node->prop_as_string(prop_kind);
         }
 
         code << ");";
         return code;
     }
 
-    if (node->HasValue(prop_tooltip) && !node->HasValue("statusbar"))
+    if (node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
     {
         code << ",\n\t\t\t" << GenerateQuotedString(node->prop_as_string(prop_tooltip));
-        if (node->prop_as_string("kind") != "wxITEM_NORMAL")
+        if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
         {
-            code << ", " << node->prop_as_string("kind");
+            code << ", " << node->prop_as_string(prop_kind);
         }
     }
 
-    else if (node->HasValue("statusbar"))
+    else if (node->HasValue(prop_statusbar))
     {
         code << ", wxNullBitmap, ";
-        code << node->prop_as_string("kind") << ", \n\t\t\t";
+        code << node->prop_as_string(prop_kind) << ", \n\t\t\t";
 
         if (node->HasValue(prop_tooltip))
         {
@@ -423,7 +423,7 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
             code << "wxEmptyString";
         }
 
-        code << ", " << GenerateQuotedString(node->prop_as_string("statusbar"));
+        code << ", " << GenerateQuotedString(node->prop_as_string(prop_statusbar));
     }
 
     code << ");";

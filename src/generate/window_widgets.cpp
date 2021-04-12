@@ -64,19 +64,19 @@ private:
 wxObject* SplitterWindowGenerator::Create(Node* node, wxObject* parent)
 {
     auto splitter = new wxCustomSplitterWindow(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-        (node->prop_as_int(prop_style) | node->prop_as_int("window_style")) & ~wxSP_PERMIT_UNSPLIT);
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+        (node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style)) & ~wxSP_PERMIT_UNSPLIT);
 
-    if (node->HasValue("sashgravity"))
+    if (node->HasValue(prop_sashgravity))
     {
-        auto gravity = node->GetPropertyAsFloat("sashgravity");
+        auto gravity = node->prop_as_double(prop_sashgravity);
         gravity = (gravity < 0.0 ? 0.0 : gravity);
         gravity = (gravity > 1.0 ? 1.0 : gravity);
         splitter->SetSashGravity(gravity);
     }
-    if (node->HasValue("min_pane_size"))
+    if (node->HasValue(prop_min_pane_size))
     {
-        int minPaneSize = node->prop_as_int("min_pane_size");
+        int minPaneSize = node->prop_as_int(prop_min_pane_size);
         splitter->SetCustomMinPaneSize(minPaneSize);
         minPaneSize = (minPaneSize < 1 ? 1 : minPaneSize);
         splitter->SetMinimumPaneSize(minPaneSize);
@@ -150,8 +150,8 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                     return;
                 }
 
-                int sashPos = node->prop_as_int("sashpos");
-                int splitmode = node->prop_as_int("splitmode");
+                int sashPos = node->prop_as_int(prop_sashpos);
+                int splitmode = node->prop_as_int(prop_splitmode);
 
                 if (firstChild)
                 {
@@ -182,7 +182,7 @@ std::optional<ttlib::cstr> SplitterWindowGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxSplitterWindow(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);
 
@@ -193,28 +193,28 @@ std::optional<ttlib::cstr> SplitterWindowGenerator::GenSettings(Node* node, size
 {
     ttlib::cstr code;
 
-    if (node->HasValue("sashgravity") && node->prop_as_string("sashgravity") != "0")
+    if (node->HasValue(prop_sashgravity) && node->prop_as_string(prop_sashgravity) != "0")
     {
         if (code.size())
             code << "\n";
 
-        code << node->get_node_name() << "->SetSashGravity(" << node->prop_as_string("sashgravity") << ");";
+        code << node->get_node_name() << "->SetSashGravity(" << node->prop_as_string(prop_sashgravity) << ");";
     }
 
-    if (node->HasValue("sashsize") && node->prop_as_string("sashsize") != "-1")
+    if (node->HasValue(prop_sashsize) && node->prop_as_string(prop_sashsize) != "-1")
     {
         if (code.size())
             code << "\n";
 
-        code << node->get_node_name() << "->SetSashSize(" << node->prop_as_string("sashsize") << ");";
+        code << node->get_node_name() << "->SetSashSize(" << node->prop_as_string(prop_sashsize) << ");";
     }
 
-    if (node->HasValue("min_pane_size") && node->prop_as_string("min_pane_size") != "0")
+    if (node->HasValue(prop_min_pane_size) && node->prop_as_string(prop_min_pane_size) != "0")
     {
         if (code.size())
             code << "\n";
 
-        code << node->get_node_name() << "->SetMinimumPaneSize(" << node->prop_as_string("min_pane_size") << ");";
+        code << node->get_node_name() << "->SetMinimumPaneSize(" << node->prop_as_string(prop_min_pane_size) << ");";
     }
 
     return code;
@@ -228,7 +228,7 @@ std::optional<ttlib::cstr> SplitterWindowGenerator::GenEvents(NodeEvent* event, 
 bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/splitter.h>", set_src, set_hdr);
-    if (node->prop_has_value("persist_name"))
+    if (node->HasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/splitter.h>");
     }
@@ -240,10 +240,10 @@ bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 wxObject* ScrolledWindowGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxScrolled<wxPanel>(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                                          node->prop_as_wxSize("size"),
-                                          node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
-    widget->SetScrollRate(node->prop_as_int("scroll_rate_x"), node->prop_as_int("scroll_rate_y"));
+    auto widget = new wxScrolled<wxPanel>(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                          node->prop_as_wxSize(prop_size),
+                                          node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+    widget->SetScrollRate(node->prop_as_int(prop_scroll_rate_x), node->prop_as_int(prop_scroll_rate_y));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -257,7 +257,7 @@ std::optional<ttlib::cstr> ScrolledWindowGenerator::GenConstruction(Node* node)
         code << "auto ";
 
     code << node->get_node_name() << " = new wxScrolled<wxPanel>(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);
 
@@ -268,13 +268,13 @@ std::optional<ttlib::cstr> ScrolledWindowGenerator::GenSettings(Node* node, size
 {
     ttlib::cstr code;
 
-    if (node->HasValue("scroll_rate_x") || node->HasValue("scroll_rate_y"))
+    if (node->HasValue(prop_scroll_rate_x) || node->HasValue(prop_scroll_rate_y))
     {
         if (code.size())
             code << "\n";
 
-        code << node->get_node_name() << "->SetScrollRate(" << node->prop_as_string("scroll_rate_x") << ", "
-             << node->prop_as_string("scroll_rate_y") << ");";
+        code << node->get_node_name() << "->SetScrollRate(" << node->prop_as_string(prop_scroll_rate_x) << ", "
+             << node->prop_as_string(prop_scroll_rate_y) << ");";
     }
 
     return code;

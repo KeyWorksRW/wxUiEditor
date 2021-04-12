@@ -20,10 +20,10 @@
 wxObject* RadioButtonGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                    node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                    node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+                                    node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                    node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (node->prop_as_bool("checked"))
+    if (node->prop_as_bool(prop_checked))
         widget->SetValue(true);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -53,14 +53,14 @@ std::optional<ttlib::cstr> RadioButtonGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxRadioButton(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (node->prop_as_string(prop_label).size())
         code << GenerateQuotedString(node->prop_as_string(prop_label));
     else
         code << "wxEmptyString";
 
-    if (node->prop_as_string("window_name").empty())
+    if (node->prop_as_string(prop_window_name).empty())
         GeneratePosSizeFlags(node, code);
     else
     {
@@ -74,7 +74,7 @@ std::optional<ttlib::cstr> RadioButtonGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", ";
         GenStyle(node, code);
-        code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
         code << ");";
     }
 
@@ -86,9 +86,9 @@ std::optional<ttlib::cstr> RadioButtonGenerator::GenSettings(Node* node, size_t&
     ttlib::cstr code;
 
     // If a validator has been specified, then the variable will be initialized with the selection variable.
-    if (node->prop_as_string("validator_variable").empty())
+    if (node->prop_as_string(prop_validator_variable).empty())
     {
-        if (node->prop_as_bool("checked"))
+        if (node->prop_as_bool(prop_checked))
         {
             code << node->get_node_name() << "->SetValue(true);";
         }
@@ -105,7 +105,7 @@ std::optional<ttlib::cstr> RadioButtonGenerator::GenEvents(NodeEvent* event, con
 bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/radiobut.h>", set_src, set_hdr);
-    if (node->prop_as_string("validator_variable").size())
+    if (node->prop_as_string(prop_validator_variable).size())
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
 
     return true;
@@ -122,11 +122,11 @@ wxObject* RadioBoxGenerator::Create(Node* node, wxObject* parent)
     }
 
     auto widget = new wxRadioBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                 node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), choices,
-                                 node->prop_as_int("majorDimension"),
-                                 node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), choices,
+                                 node->prop_as_int(prop_majorDimension),
+                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (int selection = node->prop_as_int("selection"); static_cast<size_t>(selection) < choices.Count())
+    if (int selection = node->prop_as_int(prop_selection); static_cast<size_t>(selection) < choices.Count())
     {
         widget->SetSelection(selection);
     }
@@ -178,7 +178,7 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxRadioBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     auto& label = node->prop_as_string(prop_label);
     if (label.size())
@@ -198,23 +198,23 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
     code << ", " << array.size() << ", " << choice_name;
 
     bool isDimSet = false;
-    if (node->prop_as_int("majorDimension") > 0)
+    if (node->prop_as_int(prop_majorDimension) > 0)
     {
-        code << ", " << node->prop_as_string("majorDimension");
+        code << ", " << node->prop_as_string(prop_majorDimension);
         isDimSet = true;
     }
 
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
     {
         code << ", ";
         if (!isDimSet)
             code << "0, ";
         GenStyle(node, code);
-        code << ", wxDefaultValidator, " << node->prop_as_string("window_name") << ");";
+        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name) << ");";
     }
     else
     {
-        if (node->prop_as_string("window_style").size() || node->prop_as_string(prop_style) != "wxRA_SPECIFY_COLS")
+        if (node->prop_as_string(prop_window_style).size() || node->prop_as_string(prop_style) != "wxRA_SPECIFY_COLS")
         {
             code << ", ";
             if (!isDimSet)
@@ -237,9 +237,9 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenSettings(Node* node, size_t& /*
     ttlib::cstr code;
 
     // If a validator has been specified, then the variable will be initialized with the selection variable.
-    if (node->prop_as_string("validator_variable").empty())
+    if (node->prop_as_string(prop_validator_variable).empty())
     {
-        auto sel = node->prop_as_int("selection");
+        auto sel = node->prop_as_int(prop_selection);
         if (sel > 0)
         {
             code << node->get_node_name() << "->SetSelection(" << sel << ");";
@@ -252,7 +252,7 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenSettings(Node* node, size_t& /*
 bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/radiobox.h>", set_src, set_hdr);
-    if (node->prop_as_string("validator_variable").size())
+    if (node->prop_as_string(prop_validator_variable).size())
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
 
     return true;

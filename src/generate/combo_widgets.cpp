@@ -71,14 +71,14 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxComboBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     // We don't add any strings until after the constructor, so if an initial selection string is specified, we set it
     // after all strings have been appended.
     code << "wxEmptyString";
 
-    if (node->prop_as_string("window_name").empty() && node->prop_as_string(prop_style).empty() &&
-        node->prop_as_string("window_style").empty())
+    if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_style).empty() &&
+        node->prop_as_string(prop_window_style).empty())
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -94,9 +94,9 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", 0, NULL, ";
         GenStyle(node, code);
-        if (node->prop_as_string("window_name").size())
+        if (node->prop_as_string(prop_window_name).size())
         {
-            code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+            code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
         }
         code << ");";
     }
@@ -118,19 +118,19 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenSettings(Node* node, size_t& /*
             code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
         }
 
-        if (node->prop_as_string("selection_string").size())
+        if (node->prop_as_string(prop_selection_string).size())
         {
             code << "\n";
             code << node->get_node_name() << "->SetStringSelection("
-                 << GenerateQuotedString(node->prop_as_string("selection_string")) << ");";
+                 << GenerateQuotedString(node->prop_as_string(prop_selection_string)) << ");";
         }
         else
         {
-            int sel = node->prop_as_int("selection_int");
+            int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < static_cast<int>(array.size()))
             {
                 code << "\n";
-                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string("selection_int") << ");";
+                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
             }
         }
     }
@@ -155,7 +155,7 @@ wxObject* ChoiceGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxChoice(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                node->prop_as_wxSize(prop_size), 0, NULL,
-                               node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+                               node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& items = node->prop_as_string(prop_choices);
     if (items.size())
@@ -164,13 +164,13 @@ wxObject* ChoiceGenerator::Create(Node* node, wxObject* parent)
         for (auto& iter: array)
             widget->Append(iter);
 
-        if (node->prop_as_string("selection_string").size())
+        if (node->prop_as_string(prop_selection_string).size())
         {
-            widget->SetStringSelection(node->prop_as_string("selection_string"));
+            widget->SetStringSelection(node->prop_as_string(prop_selection_string));
         }
         else
         {
-            int sel = node->prop_as_int("selection_int");
+            int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < static_cast<int>(array.size()))
                 widget->SetSelection(sel);
         }
@@ -202,10 +202,10 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxChoice(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
-    if (node->prop_as_string("window_name").empty() && node->prop_as_string(prop_style).empty() &&
-        node->prop_as_string("window_style").empty())
+    if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_style).empty() &&
+        node->prop_as_string(prop_window_style).empty())
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -221,9 +221,9 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", 0, NULL, ";
         GenStyle(node, code);
-        if (node->prop_as_string("window_name").size())
+        if (node->prop_as_string(prop_window_name).size())
         {
-            code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+            code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
         }
         code << ");";
     }
@@ -245,19 +245,19 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenSettings(Node* node, size_t& /* a
             code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
         }
 
-        if (node->prop_as_string("selection_string").size())
+        if (node->prop_as_string(prop_selection_string).size())
         {
             code << "\n";
             code << node->get_node_name() << "->SetStringSelection("
-                 << GenerateQuotedString(node->prop_as_string("selection_string")) << ");";
+                 << GenerateQuotedString(node->prop_as_string(prop_selection_string)) << ");";
         }
         else
         {
-            int sel = node->prop_as_int("selection_int");
+            int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < static_cast<int>(array.size()))
             {
                 code << "\n";
-                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string("selection_int") << ");";
+                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
             }
         }
     }
@@ -281,8 +281,8 @@ bool ChoiceGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 wxObject* BitmapComboBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
-                                       node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), 0, NULL,
-                                       node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, NULL,
+                                       node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& choices = node->prop_as_string(prop_choices);
     if (choices.size())
@@ -291,13 +291,13 @@ wxObject* BitmapComboBoxGenerator::Create(Node* node, wxObject* parent)
         for (auto& iter: array)
             widget->Append(iter);
 
-        if (node->prop_as_string("selection_string").size())
+        if (node->prop_as_string(prop_selection_string).size())
         {
-            widget->SetStringSelection(node->prop_as_string("selection_string"));
+            widget->SetStringSelection(node->prop_as_string(prop_selection_string));
         }
         else
         {
-            int sel = node->prop_as_int("selection_int");
+            int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < static_cast<int>(array.size()))
                 widget->SetSelection(sel);
         }
@@ -329,14 +329,14 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxBitmapComboBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     // We don't add any strings until after the constructor, so if an initial selection string is specified, we set it
     // after all strings have been appended.
     code << "wxEmptyString";
 
-    if (node->prop_as_string("window_name").empty() && node->prop_as_string(prop_style).empty() &&
-        node->prop_as_string("window_style").empty())
+    if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_style).empty() &&
+        node->prop_as_string(prop_window_style).empty())
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -352,9 +352,9 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", 0, NULL, ";
         GenStyle(node, code);
-        if (node->prop_as_string("window_name").size())
+        if (node->prop_as_string(prop_window_name).size())
         {
-            code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+            code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
         }
         code << ");";
     }
@@ -378,19 +378,19 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenSettings(Node* node, size
             code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
         }
 
-        if (node->prop_as_string("selection_string").size())
+        if (node->prop_as_string(prop_selection_string).size())
         {
             code << "\n";
             code << node->get_node_name() << "->SetStringSelection("
-                 << GenerateQuotedString(node->prop_as_string("selection_string")) << ");";
+                 << GenerateQuotedString(node->prop_as_string(prop_selection_string)) << ");";
         }
         else
         {
-            int sel = node->prop_as_int("selection_int");
+            int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < static_cast<int>(array.size()))
             {
                 code << "\n";
-                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string("selection_int") << ");";
+                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
             }
         }
     }

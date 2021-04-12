@@ -115,15 +115,15 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     {
         if (node->IsSpacer() && parentNode)
         {
-            if (node->prop_as_int("proportion") != 0)
+            if (node->prop_as_int(prop_proportion) != 0)
             {
-                wxStaticCast(parentNode, wxSizer)->AddStretchSpacer(node->prop_as_int("proportion"));
+                wxStaticCast(parentNode, wxSizer)->AddStretchSpacer(node->prop_as_int(prop_proportion));
             }
             else
             {
-                auto width = node->prop_as_int("width");
-                auto height = node->prop_as_int("height");
-                if (node->prop_as_bool("add_default_border"))
+                auto width = node->prop_as_int(prop_width);
+                auto height = node->prop_as_int(prop_height);
+                if (node->prop_as_bool(prop_add_default_border))
                 {
                     width += wxSizerFlags::GetDefaultBorder();
                     height += wxSizerFlags::GetDefaultBorder();
@@ -263,7 +263,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
 void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
 {
-    if (auto size = node->prop_as_wxSize("size"); size != wxDefaultSize)
+    if (auto size = node->prop_as_wxSize(prop_size); size != wxDefaultSize)
     {
         window->SetSize(size);
     }
@@ -273,27 +273,27 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->SetMinSize(minsize);
     }
 
-    if (auto maxsize = node->prop_as_wxSize("maximum_size"); maxsize != wxDefaultSize)
+    if (auto maxsize = node->prop_as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
     {
         window->SetMaxSize(maxsize);
     }
 
-    if (auto font = node->get_prop_ptr("font"); font && font->HasValue())
+    if (node->HasValue(prop_font))
     {
-        window->SetFont(node->prop_as_font("font"));
+        window->SetFont(node->prop_as_font(prop_font));
     }
 
-    if (auto fg_colour = node->get_prop_ptr("foreground_colour"); fg_colour && fg_colour->HasValue())
+    if (auto fg_colour = node->get_prop_ptr(prop_foreground_colour); fg_colour && fg_colour->HasValue())
     {
         window->SetForegroundColour(ConvertToColour(fg_colour->GetValue()));
     }
 
-    if (auto bg_colour = node->get_prop_ptr("background_colour"); bg_colour && bg_colour->HasValue())
+    if (auto bg_colour = node->get_prop_ptr(prop_background_colour); bg_colour && bg_colour->HasValue())
     {
         window->SetBackgroundColour(ConvertToColour(bg_colour->GetValue()));
     }
 
-    if (auto extra_style = node->get_prop_ptr("window_extra_style"); extra_style && extra_style->as_int() != 0)
+    if (auto extra_style = node->get_prop_ptr(prop_window_extra_style); extra_style && extra_style->as_int() != 0)
     {
         window->SetExtraStyle(extra_style->as_int());
     }
@@ -308,7 +308,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->Show(false);
     }
 
-    if (auto tooltip = node->get_prop_ptr("tooltip"); tooltip && tooltip->as_string().size())
+    if (auto tooltip = node->get_prop_ptr(prop_tooltip); tooltip && tooltip->as_string().size())
     {
         window->SetToolTip(tooltip->as_wxString());
     }

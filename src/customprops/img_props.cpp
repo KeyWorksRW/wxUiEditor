@@ -2,7 +2,7 @@
 // Purpose:   Handles property grid image properties
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../LICENSE
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "pch.h"
@@ -54,9 +54,9 @@ ttlib::cstr ImageProperties::CombineValues()
 
     if (type.size() && type != "Art")
     {
-        if (!image.file_exists() && wxGetApp().GetProjectPtr()->HasValue("converted_art"))
+        if (!image.file_exists() && wxGetApp().GetProject()->HasValue(prop_converted_art))
         {
-            ttlib::cstr path = wxGetApp().GetProjectPtr()->prop_as_string("converted_art");
+            auto path = wxGetApp().GetProject()->prop_as_string(prop_converted_art);
             path.append_filename(image);
             path.make_relative(wxGetApp().getProjectPath());
             if (path.file_exists())
@@ -65,7 +65,7 @@ ttlib::cstr ImageProperties::CombineValues()
             }
         }
     }
-    
+
     ttlib::cstr value;
     value << type << ';' << image << ';' << convert << ";[" << size.x << ',' << size.y << "]";
     return value;

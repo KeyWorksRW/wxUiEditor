@@ -23,10 +23,10 @@ wxObject* CheckBoxGenerator::Create(Node* node, wxObject* parent)
         style_value |= wxALIGN_RIGHT;
 
     auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                 node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                 style_value | node->prop_as_int("window_style"));
+                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                 style_value | node->prop_as_int(prop_window_style));
 
-    if (node->prop_as_bool("checked"))
+    if (node->prop_as_bool(prop_checked))
         widget->SetValue(true);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -56,7 +56,7 @@ std::optional<ttlib::cstr> CheckBoxGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxCheckBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     auto& label = node->prop_as_string(prop_label);
     if (label.size())
@@ -82,7 +82,7 @@ std::optional<ttlib::cstr> CheckBoxGenerator::GenSettings(Node* node, size_t& /*
 {
     ttlib::cstr code;
 
-    if (node->prop_as_bool("checked"))
+    if (node->prop_as_bool(prop_checked))
         code << node->get_node_name() << "->SetValue(true);";
 
     return code;
@@ -98,12 +98,12 @@ bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* Check3StateGenerator::Create(Node* node, wxObject* parent)
 {
-    long style_value = wxCHK_3STATE | node->prop_as_int(prop_style) | node->prop_as_int("window_style");
+    long style_value = wxCHK_3STATE | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style);
 
     auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                 node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), style_value);
+                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), style_value);
 
-    auto& state = node->prop_as_string("initial_state");
+    auto& state = node->prop_as_string(prop_initial_state);
     if (state == "wxCHK_UNCHECKED")
         widget->Set3StateValue(wxCHK_UNCHECKED);
     else if (state == "wxCHK_CHECKED")
@@ -144,7 +144,7 @@ std::optional<ttlib::cstr> Check3StateGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxCheckBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     auto& label = node->prop_as_string(prop_label);
     if (label.size())
@@ -165,13 +165,13 @@ std::optional<ttlib::cstr> Check3StateGenerator::GenConstruction(Node* node)
     auto& style = node->prop_as_string(prop_style);
     if (style.size())
         code << '|' << style;
-    auto& win_style = node->prop_as_string("window_style");
+    auto& win_style = node->prop_as_string(prop_window_style);
     if (win_style.size())
         code << '|' << win_style;
-    auto& win_name = node->prop_as_string("window_name");
+    auto& win_name = node->prop_as_string(prop_window_name);
     if (win_name.size())
     {
-        code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
     }
     code << ");";
 
@@ -187,7 +187,7 @@ std::optional<ttlib::cstr> Check3StateGenerator::GenSettings(Node* node, size_t&
 {
     ttlib::cstr code;
 
-    auto& state = node->prop_as_string("initial_state");
+    auto& state = node->prop_as_string(prop_initial_state);
     if (state == "wxCHK_CHECKED")
     {
         code << node->get_node_name() << "->Set3StateValue(wxCHK_CHECKED);";

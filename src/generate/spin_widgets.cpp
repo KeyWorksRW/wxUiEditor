@@ -22,9 +22,9 @@
 wxObject* SpinCtrlGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint("pos"),
-                       node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"),
-                       node->prop_as_int("min"), node->prop_as_int("max"), node->prop_as_int("initial"));
+        new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
+                       node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style),
+                       node->prop_as_int(prop_min), node->prop_as_int(prop_max), node->prop_as_int(prop_initial));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -37,17 +37,17 @@ std::optional<ttlib::cstr> SpinCtrlGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxSpinCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", wxEmptyString, ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxEmptyString, ";
     GenPos(node, code);
     code << ", ";
     GenSize(node, code);
     code << ", ";
     GenStyle(node, code);
-    code << ", " << node->prop_as_string("min") << ", " << node->prop_as_string("max") << ", "
-         << node->prop_as_string("initial");
-    if (node->HasValue("window_name"))
+    code << ", " << node->prop_as_string(prop_min) << ", " << node->prop_as_string(prop_max) << ", "
+         << node->prop_as_string(prop_initial);
+    if (node->HasValue(prop_window_name))
     {
-        code << ", " << node->prop_as_string("window_name");
+        code << ", " << node->prop_as_string(prop_window_name);
     }
 
     code << ");";
@@ -79,12 +79,12 @@ bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* SpinCtrlDoubleGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
-                                       node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                       node->prop_as_int(prop_style) | node->prop_as_int("window_style"),
-                                       node->GetPropertyAsFloat("min"), node->GetPropertyAsFloat("max"),
-                                       node->GetPropertyAsFloat("initial"), node->GetPropertyAsFloat("inc"));
+                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                       node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style),
+                                       node->prop_as_double(prop_min), node->prop_as_double(prop_max),
+                                       node->prop_as_double(prop_initial), node->prop_as_double(prop_inc));
 
-    widget->SetDigits(node->prop_as_int("digits"));
+    widget->SetDigits(node->prop_as_int(prop_digits));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -97,18 +97,18 @@ std::optional<ttlib::cstr> SpinCtrlDoubleGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxSpinCtrlDouble(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", wxEmptyString, ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxEmptyString, ";
 
     GenPos(node, code);
     code << ", ";
     GenSize(node, code);
     code << ", ";
     GenStyle(node, code);
-    code << ", " << node->prop_as_string("min") << ", " << node->prop_as_string("max") << ", "
-         << node->prop_as_string("initial") << ", " << node->prop_as_string("inc");
-    if (node->HasValue("window_name"))
+    code << ", " << node->prop_as_string(prop_min) << ", " << node->prop_as_string(prop_max) << ", "
+         << node->prop_as_string(prop_initial) << ", " << node->prop_as_string(prop_inc);
+    if (node->HasValue(prop_window_name))
     {
-        code << ", " << node->prop_as_string("window_name");
+        code << ", " << node->prop_as_string(prop_window_name);
     }
 
     code << ");";
@@ -129,7 +129,7 @@ std::optional<ttlib::cstr> SpinCtrlDoubleGenerator::GenSettings(Node* node, size
     ttlib::cstr code;
 
     // REVIEW: [KeyWorks - 12-09-2020] What is the default behaviour if this isn't set?
-    code << node->get_node_name() << "->SetDigits(" << node->prop_as_string("digits") << ");";
+    code << node->get_node_name() << "->SetDigits(" << node->prop_as_string(prop_digits) << ");";
 
     return code;
 }
@@ -149,9 +149,9 @@ bool SpinCtrlDoubleGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 wxObject* SpinButtonGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                         node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                   node->prop_as_wxSize(prop_size),
+                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -164,7 +164,7 @@ std::optional<ttlib::cstr> SpinButtonGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxSpinButton(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxSP_VERTICAL", "wxSP_VERTICAL");
 
     code.Replace(", wxID_ANY);", ");");
@@ -187,12 +187,12 @@ bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 wxObject* ScrollBarGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxScrollBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                        node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxScrollBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                  node->prop_as_wxSize(prop_size),
+                                  node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    widget->SetScrollbar(node->prop_as_int("position"), node->prop_as_int("thumbsize"), node->prop_as_int("range"),
-                         node->prop_as_int("pagesize"));
+    widget->SetScrollbar(node->prop_as_int(prop_position), node->prop_as_int(prop_thumbsize), node->prop_as_int(prop_range),
+                         node->prop_as_int(prop_pagesize));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -206,12 +206,12 @@ std::optional<ttlib::cstr> ScrollBarGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxScrollBar(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code);
 
-    code << "\n\t" << node->get_node_name() << "->SetScrollbar(" << node->prop_as_string("position");
-    code << ", " << node->prop_as_string("thumbsize") << ", " << node->prop_as_string("range");
-    code << ", " << node->prop_as_string("pagesize") << ");";
+    code << "\n\t" << node->get_node_name() << "->SetScrollbar(" << node->prop_as_string(prop_position);
+    code << ", " << node->prop_as_string(prop_thumbsize) << ", " << node->prop_as_string(prop_range);
+    code << ", " << node->prop_as_string(prop_pagesize) << ");";
 
     return code;
 }

@@ -45,9 +45,10 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
     if (cmd == "ctor_declare")
     {
         // This is the code to add to the header file
-        code << node->prop_as_string(prop_class_name) << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string("id");
+        code << node->prop_as_string(prop_class_name)
+             << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
         code << ",\n    const wxString& title = ";
-        auto& title = node->prop_as_string("title");
+        auto& title = node->prop_as_string(prop_title);
         if (title.size())
         {
             code << GenerateQuotedString(title) << ",\n    ";
@@ -62,7 +63,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
         code << "const wxBitmap& bitmap = wxNullBitmap, ";
 
         code << "const wxPoint& pos = ";
-        auto point = node->prop_as_wxPoint("pos");
+        auto point = node->prop_as_wxPoint(prop_pos);
         if (point.x != -1 || point.y != -1)
             code << "wxPoint(" << point.x << ", " << point.y << ")";
         else
@@ -70,7 +71,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
 
         code << ",\n    long style = ";
         auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string("window_style");
+        auto& win_style = node->prop_as_string(prop_window_style);
         if (style.empty() && win_style.empty())
             code << "0";
         else
@@ -125,7 +126,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
             code << "    GetPageAreaSizer()->Add(" << panes[0]->prop_as_string(prop_var_name) << ");\n";
         }
 
-        if (auto& center = node->prop_as_string("center"); center.size() && !center.is_sameas("no"))
+        if (auto& center = node->prop_as_string(prop_center); center.size() && !center.is_sameas("no"))
         {
             code << "    Center(" << center << ");";
         }
@@ -193,12 +194,12 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this";
 
-    if (node->HasValue("bitmap"))
+    if (node->HasValue(prop_bitmap))
     {
         code << ", nullptr, nullptr, ";
         // TODO: [KeyWorks - 11-08-2020] Add bitmap here
 
-        if (node->HasValue("bitmap"))
+        if (node->HasValue(prop_bitmap))
         {
             code << "wxNullBitmap";
         }

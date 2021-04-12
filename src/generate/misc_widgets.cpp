@@ -30,8 +30,8 @@
 
 wxObject* ActivityIndicatorGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                                          node->prop_as_wxSize("size"), node->prop_as_int("window_style"));
+    auto widget = new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                          node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -44,7 +44,7 @@ std::optional<ttlib::cstr> ActivityIndicatorGenerator::GenConstruction(Node* nod
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxActivityIndicator(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);
 
@@ -62,21 +62,21 @@ bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& 
 wxObject* BannerWindowGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxBannerWindow(wxStaticCast(parent, wxWindow),
-                                     (wxDirection) g_NodeCreator.GetConstantAsInt(node->prop_as_string("direction")));
+                                     (wxDirection) g_NodeCreator.GetConstantAsInt(node->prop_as_string(prop_direction)));
 
-    if (node->HasValue("bitmap"))
+    if (node->HasValue(prop_bitmap))
     {
-        widget->SetBitmap(node->prop_as_wxBitmap("bitmap"));
+        widget->SetBitmap(node->prop_as_wxBitmap(prop_bitmap));
     }
 
-    else if (node->HasValue("start_colour") && node->HasValue("end_colour"))
+    else if (node->HasValue(prop_start_colour) && node->HasValue(prop_end_colour))
     {
-        widget->SetGradient(node->prop_as_wxColour("start_colour"), node->prop_as_wxColour("end_colour"));
+        widget->SetGradient(node->prop_as_wxColour(prop_start_colour), node->prop_as_wxColour(prop_end_colour));
     }
 
-    if (node->HasValue("title") || node->HasValue("message"))
+    if (node->HasValue(prop_title) || node->HasValue(prop_message))
     {
-        widget->SetText(node->prop_as_wxString("title"), node->prop_as_wxString("message"));
+        widget->SetText(node->prop_as_wxString(prop_title), node->prop_as_wxString(prop_message));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -90,7 +90,7 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxBannerWindow(";
-    code << GetParentName(node) << ", " << node->prop_as_string("direction") << ");";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_direction) << ");";
 
     return code;
 }
@@ -98,13 +98,13 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
-    if (node->HasValue("bitmap"))
+    if (node->HasValue(prop_bitmap))
     {
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string("bitmap")) << ");";
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
     }
-    else if (node->HasValue("start_colour") && node->HasValue("end_colour"))
+    else if (node->HasValue(prop_start_colour) && node->HasValue(prop_end_colour))
     {
-        auto& start_colour = node->prop_as_string("start_colour");
+        auto& start_colour = node->prop_as_string(prop_start_colour);
         code << node->get_node_name() << "->SetGradient(";
         if (start_colour.contains("wx"))
             code << "wxSystemSettings::GetColour(" << start_colour << ")";
@@ -116,7 +116,7 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
 
         code << ",\n    ";
 
-        auto& end_colour = node->prop_as_string("end_colour");
+        auto& end_colour = node->prop_as_string(prop_end_colour);
         if (end_colour.contains("wx"))
             code << "wxSystemSettings::GetColour(" << end_colour << "));";
         else
@@ -127,12 +127,12 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
         auto_indent = indent::auto_keep_whitespace;
     }
 
-    if (node->HasValue("title") || node->HasValue("message"))
+    if (node->HasValue(prop_title) || node->HasValue(prop_message))
     {
         if (code.size())
             code << "\n";
-        code << node->get_node_name() << "->SetText(" << GenerateQuotedString(node->prop_as_string("title")) << ",\n    ";
-        code << GenerateQuotedString(node->prop_as_string("message")) << ");";
+        code << node->get_node_name() << "->SetText(" << GenerateQuotedString(node->prop_as_string(prop_title)) << ",\n    ";
+        code << GenerateQuotedString(node->prop_as_string(prop_message)) << ");";
         auto_indent = indent::auto_keep_whitespace;
     }
 
@@ -149,9 +149,9 @@ bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* StaticLineGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                         node->prop_as_wxSize("size"), node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                   node->prop_as_wxSize(prop_size),
+                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -164,7 +164,7 @@ std::optional<ttlib::cstr> StaticLineGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxStaticLine(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     if (node->prop_as_string(prop_style) != "wxLI_HORIZONTAL")
     {
@@ -172,10 +172,10 @@ std::optional<ttlib::cstr> StaticLineGenerator::GenConstruction(Node* node)
     }
     else
     {
-        auto pos = node->prop_as_wxPoint("pos");
-        auto size = node->prop_as_wxPoint("size");
-        auto& win_name = node->prop_as_string("window_name");
-        auto& win_style = node->prop_as_string("window_style");
+        auto pos = node->prop_as_wxPoint(prop_pos);
+        auto size = node->prop_as_wxPoint(prop_size);
+        auto& win_name = node->prop_as_string(prop_window_name);
+        auto& win_style = node->prop_as_string(prop_window_style);
 
         if (win_name.empty() && win_style.empty() && size.x == -1 && size.y == -1 && pos.x == -1 && pos.y == -1)
         {
@@ -209,8 +209,8 @@ wxObject* StatusBarGenerator::Create(Node* node, wxObject* parent)
     auto org_style = node->prop_as_int(prop_style);
     // Don't display the gripper as it can resize our main window rather than just the mockup window
     auto widget = new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                  (org_style &= ~wxSTB_SIZEGRIP) | node->prop_as_int("window_style"));
-    widget->SetFieldsCount(node->prop_as_int("fields"));
+                                  (org_style &= ~wxSTB_SIZEGRIP) | node->prop_as_int(prop_window_style));
+    widget->SetFieldsCount(node->prop_as_int(prop_fields));
 
     if (org_style & wxSTB_SIZEGRIP)
         widget->SetStatusText("gripper not displayed in Mock Up");
@@ -227,24 +227,24 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = CreateStatusBar(";
 
-    if (node->prop_as_string("window_name").size())
+    if (node->prop_as_string(prop_window_name).size())
     {
-        code << node->prop_as_int("fields") << ", " << node->prop_as_string("id");
+        code << node->prop_as_int(prop_fields) << ", " << node->prop_as_string(prop_id);
         GenStyle(node, code);
-        code << ", " << node->prop_as_string("window_name");
+        code << ", " << node->prop_as_string(prop_window_name);
     }
-    else if (node->prop_as_int(prop_style) != wxSTB_DEFAULT_STYLE || node->prop_as_int("window_style") > 0)
+    else if (node->prop_as_int(prop_style) != wxSTB_DEFAULT_STYLE || node->prop_as_int(prop_window_style) > 0)
     {
-        code << node->prop_as_int("fields") << ", " << node->prop_as_string("id");
+        code << node->prop_as_int(prop_fields) << ", " << node->prop_as_string(prop_id);
         GenStyle(node, code);
     }
-    else if (node->prop_as_string("id") != "wxID_ANY")
+    else if (node->prop_as_string(prop_id) != "wxID_ANY")
     {
-        code << node->prop_as_int("fields") << ", " << node->prop_as_string("id");
+        code << node->prop_as_int(prop_fields) << ", " << node->prop_as_string(prop_id);
     }
-    else if (node->prop_as_int("fields") > 1)
+    else if (node->prop_as_int(prop_fields) > 1)
     {
-        code << node->prop_as_int("fields");
+        code << node->prop_as_int(prop_fields);
     }
 
     code << ");";
@@ -267,10 +267,10 @@ bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 wxObject* StaticBitmapGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxBitmap("bitmap"),
-                                            node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                                            node->prop_as_int("window_style"));
-    if (auto value = node->prop_as_string("scale_mode"); value != "None")
+    auto widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxBitmap(prop_bitmap),
+                                            node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                                            node->prop_as_int(prop_window_style));
+    if (auto value = node->prop_as_string(prop_scale_mode); value != "None")
     {
         if (value == "Fill")
             widget->SetScaleMode(wxStaticBitmap::Scale_Fill);
@@ -291,24 +291,24 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
 
-    bool use_generic_version = (node->prop_as_string("scale_mode") != "None");
+    bool use_generic_version = (node->prop_as_string(prop_scale_mode) != "None");
     if (use_generic_version)
         code << node->get_node_name() << " = new wxGenericStaticBitmap(";
     else
         code << node->get_node_name() << " = new wxStaticBitmap(";
 
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
-    if (node->HasValue("bitmap"))
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    if (node->HasValue(prop_bitmap))
     {
         if (use_generic_version)
         {
             // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
-            code << GenerateBitmapCode(node->prop_as_string("bitmap"));
+            code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
         }
         else
         {
             // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
-            code << "wxBitmap(" << GenerateBitmapCode(node->prop_as_string("bitmap")) << ")";
+            code << "wxBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ")";
         }
     }
     else
@@ -323,12 +323,13 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
 
 std::optional<ttlib::cstr> StaticBitmapGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
-    if (node->prop_as_string("scale_mode") == "None")
+    if (node->prop_as_string(prop_scale_mode) == "None")
         return {};
 
     ttlib::cstr code;
 
-    code << node->get_node_name() << "->SetScaleMode(wxStaticBitmap::Scale_" << node->prop_as_string("scale_mode") << ");";
+    code << node->get_node_name() << "->SetScaleMode(wxStaticBitmap::Scale_" << node->prop_as_string(prop_scale_mode)
+         << ");";
 
     return code;
 }
@@ -340,7 +341,7 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenEvents(NodeEvent* event, co
 
 bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
-    if (node->prop_as_string("scale_mode") != "None")
+    if (node->prop_as_string(prop_scale_mode) != "None")
         InsertGeneratorInclude(node, "#include <wx/generic/statbmpg.h>", set_src, set_hdr);
     else
         InsertGeneratorInclude(node, "#include <wx/statbmp.h>", set_src, set_hdr);
@@ -351,11 +352,11 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* GaugeGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxGauge(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int("range"), node->prop_as_wxPoint("pos"),
-                    node->prop_as_wxSize("size"),
-                    node->prop_as_int("orientation") | node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
-    widget->SetValue(node->prop_as_int("position"));
+    auto widget = new wxGauge(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_range),
+                              node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+                              node->prop_as_int(prop_orientation) | node->prop_as_int(prop_style) |
+                                  node->prop_as_int(prop_window_style));
+    widget->SetValue(node->prop_as_int(prop_position));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -379,9 +380,9 @@ std::optional<ttlib::cstr> GaugeGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxGauge(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", " << node->prop_as_string("range");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", " << node->prop_as_string(prop_range);
 
-    auto& win_name = node->prop_as_string("window_name");
+    auto& win_name = node->prop_as_string(prop_window_name);
     if (win_name.size())
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
@@ -402,9 +403,9 @@ std::optional<ttlib::cstr> GaugeGenerator::GenSettings(Node* node, size_t& /* au
     ttlib::cstr code;
 
     // If a validator has been specified, then the variable will be initialized in the header file.
-    if (node->prop_as_string("validator_variable").empty())
+    if (node->prop_as_string(prop_validator_variable).empty())
     {
-        code << node->get_node_name() << "->SetValue(" << node->prop_as_string("position") << ");";
+        code << node->get_node_name() << "->SetValue(" << node->prop_as_string(prop_position) << ");";
     }
 
     return code;
@@ -418,7 +419,7 @@ std::optional<ttlib::cstr> GaugeGenerator::GenEvents(NodeEvent* event, const std
 bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/gauge.h>", set_src, set_hdr);
-    if (node->prop_as_string("validator_variable").size())
+    if (node->prop_as_string(prop_validator_variable).size())
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
     return true;
 }
@@ -427,20 +428,20 @@ bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std
 
 wxObject* SliderGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_value), node->prop_as_int("minValue"),
-                     node->prop_as_int("maxValue"), node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                     node->prop_as_int("orientation") | node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
-    widget->SetValue(node->prop_as_int("position"));
-    if (node->prop_as_int("line_size") > 0)
-        widget->SetLineSize(node->prop_as_int("line_size"));
-    if (node->prop_as_int("page_size") > 0)
-        widget->SetPageSize(node->prop_as_int("page_size"));
+    auto widget = new wxSlider(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_value), node->prop_as_int(prop_minValue),
+        node->prop_as_int(prop_maxValue), node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+        node->prop_as_int(prop_orientation) | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+    widget->SetValue(node->prop_as_int(prop_position));
+    if (node->prop_as_int(prop_line_size) > 0)
+        widget->SetLineSize(node->prop_as_int(prop_line_size));
+    if (node->prop_as_int(prop_page_size) > 0)
+        widget->SetPageSize(node->prop_as_int(prop_page_size));
 #if defined(_WIN32)
-    if (node->prop_as_int("tick_frequency") > 0)
-        widget->SetTickFreq(node->prop_as_int("tick_frequency"));
-    if (node->prop_as_int("thumb_length") > 0)
-        widget->SetThumbLength(node->prop_as_int("thumb_length"));
+    if (node->prop_as_int(prop_tick_frequency) > 0)
+        widget->SetTickFreq(node->prop_as_int(prop_tick_frequency));
+    if (node->prop_as_int(prop_thumb_length) > 0)
+        widget->SetThumbLength(node->prop_as_int(prop_thumb_length));
 #endif  // _WIN32
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -465,10 +466,10 @@ std::optional<ttlib::cstr> SliderGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxSlider(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", " << node->prop_as_string("position");
-    code << ", " << node->prop_as_string("minValue") << ", " << node->prop_as_string("maxValue");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", " << node->prop_as_string(prop_position);
+    code << ", " << node->prop_as_string(prop_minValue) << ", " << node->prop_as_string(prop_maxValue);
 
-    auto& win_name = node->prop_as_string("window_name");
+    auto& win_name = node->prop_as_string(prop_window_name);
     if (win_name.size())
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
@@ -479,7 +480,7 @@ std::optional<ttlib::cstr> SliderGenerator::GenConstruction(Node* node)
         code << ", ";
     }
 
-    GeneratePosSizeFlags(node, code, true, "orientation", "wxGA_HORIZONTAL");
+    GeneratePosSizeFlags(node, code, true, "orientation", "wxSL_HORIZONTAL");
 
     return code;
 }
@@ -494,37 +495,37 @@ std::optional<ttlib::cstr> SliderGenerator::GenSettings(Node* node, size_t& /* a
     ttlib::cstr code;
 
     // If a validator has been specified, then the variable will be initialized in the header file.
-    if (node->prop_as_string("validator_variable").empty())
+    if (node->prop_as_string(prop_validator_variable).empty())
     {
-        code << node->get_node_name() << "->SetValue(" << node->prop_as_string("position") << ");";
+        code << node->get_node_name() << "->SetValue(" << node->prop_as_string(prop_position) << ");";
     }
 
-    if (node->prop_as_int("line_size") > 0)
+    if (node->prop_as_int(prop_line_size) > 0)
     {
         if (code.size())
             code << "\n";
-        code << node->get_node_name() << "->SetLineSize(" << node->prop_as_string("line_size") << ");";
+        code << node->get_node_name() << "->SetLineSize(" << node->prop_as_string(prop_line_size) << ");";
     }
 
-    if (node->prop_as_int("page_size") > 0)
+    if (node->prop_as_int(prop_page_size) > 0)
     {
         if (code.size())
             code << "\n";
-        code << node->get_node_name() << "->SetPageSize(" << node->prop_as_string("page_size") << ");";
+        code << node->get_node_name() << "->SetPageSize(" << node->prop_as_string(prop_page_size) << ");";
     }
 
-    if (node->prop_as_int("tick_frequency") > 0)
+    if (node->prop_as_int(prop_tick_frequency) > 0)
     {
         if (code.size())
             code << "\n";
-        code << node->get_node_name() << "->SetTickFreq(" << node->prop_as_string("tick_frequency") << ");";
+        code << node->get_node_name() << "->SetTickFreq(" << node->prop_as_string(prop_tick_frequency) << ");";
     }
 
-    if (node->prop_as_int("thumb_length") > 0)
+    if (node->prop_as_int(prop_thumb_length) > 0)
     {
         if (code.size())
             code << "\n";
-        code << node->get_node_name() << "->SetThumbLength(" << node->prop_as_string("thumb_length") << ");";
+        code << node->get_node_name() << "->SetThumbLength(" << node->prop_as_string(prop_thumb_length) << ");";
     }
     return code;
 }
@@ -532,7 +533,7 @@ std::optional<ttlib::cstr> SliderGenerator::GenSettings(Node* node, size_t& /* a
 bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/slider.h>", set_src, set_hdr);
-    if (node->prop_as_string("validator_variable").size())
+    if (node->prop_as_string(prop_validator_variable).size())
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
     return true;
 }
@@ -541,22 +542,22 @@ bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 
 wxObject* HyperlinkGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                            node->GetPropertyAsString("url"), node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"),
-                            node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+                                      node->prop_as_wxString(prop_url), node->prop_as_wxPoint(prop_pos),
+                                      node->prop_as_wxSize(prop_size),
+                                      node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
-    if (node->HasValue("hover_color"))
+    if (node->HasValue(prop_hover_color))
     {
-        widget->SetHoverColour(node->prop_as_wxColour("hover_color"));
+        widget->SetHoverColour(node->prop_as_wxColour(prop_hover_color));
     }
-    if (node->HasValue("normal_color"))
+    if (node->HasValue(prop_normal_color))
     {
-        widget->SetNormalColour(node->prop_as_wxColour("normal_color"));
+        widget->SetNormalColour(node->prop_as_wxColour(prop_normal_color));
     }
-    if (node->HasValue("visited_color"))
+    if (node->HasValue(prop_visited_color))
     {
-        widget->SetVisitedColour(node->prop_as_wxColour("visited_color"));
+        widget->SetVisitedColour(node->prop_as_wxColour(prop_visited_color));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -571,7 +572,7 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxHyperlinkCtrl(";
 
-    code << GetParentName(node) << ", " << node->prop_as_string("id") << ", ";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     auto& label = node->prop_as_string(prop_label);
     if (label.size())
@@ -583,7 +584,7 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenConstruction(Node* node)
         code << "wxEmptyString";
     }
     code << ", ";
-    auto& url = node->prop_as_string("url");
+    auto& url = node->prop_as_string(prop_url);
     if (url.size())
     {
         code << GenerateQuotedString(url);
@@ -601,12 +602,12 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
-    if (node->HasValue("hover_color"))
+    if (node->HasValue(prop_hover_color))
     {
         if (code.size())
             code << '\n';
         code << node->get_node_name() << "->SetHoverColour(";
-        auto& clr = node->prop_as_string("hover_color");
+        auto& clr = node->prop_as_string(prop_hover_color);
         if (clr.contains("wx"))
             code << "wxSystemSettings::GetColour(" << clr << ");";
         else
@@ -616,12 +617,12 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /
         }
     }
 
-    if (node->HasValue("normal_color"))
+    if (node->HasValue(prop_normal_color))
     {
         if (code.size())
             code << '\n';
         code << node->get_node_name() << "->SetHoverColour(";
-        auto& clr = node->prop_as_string("normal_color");
+        auto& clr = node->prop_as_string(prop_normal_color);
         if (clr.contains("wx"))
             code << "wxSystemSettings::GetColour(" << clr << ");";
         else
@@ -631,12 +632,12 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /
         }
     }
 
-    if (node->HasValue("visited_color"))
+    if (node->HasValue(prop_visited_color))
     {
         if (code.size())
             code << '\n';
         code << node->get_node_name() << "->SetHoverColour(";
-        auto& clr = node->prop_as_string("visited_color");
+        auto& clr = node->prop_as_string(prop_visited_color);
         if (clr.contains("wx"))
             code << "wxSystemSettings::GetColour(" << clr << ");";
         else
@@ -670,9 +671,9 @@ wxObject* InfoBarGenerator::Create(Node* node, wxObject* parent)
 
     m_infobar->ShowMessage("Message ...", wxICON_INFORMATION);
 
-    m_infobar->SetShowHideEffects((wxShowEffect) node->prop_as_int("show_effect"),
-                                  (wxShowEffect) node->prop_as_int("hide_effect"));
-    m_infobar->SetEffectDuration(node->prop_as_int("duration"));
+    m_infobar->SetShowHideEffects((wxShowEffect) node->prop_as_int(prop_show_effect),
+                                  (wxShowEffect) node->prop_as_int(prop_hide_effect));
+    m_infobar->SetEffectDuration(node->prop_as_int(prop_duration));
 
     m_infobar->Bind(wxEVT_BUTTON, &InfoBarGenerator::OnButton, this);
     m_infobar->Bind(wxEVT_TIMER, &InfoBarGenerator::OnTimer, this);
@@ -695,12 +696,12 @@ std::optional<ttlib::cstr> InfoBarGenerator::GenSettings(Node* node, size_t& /* 
 {
     ttlib::cstr code;
 
-    code << '\t' << node->get_node_name() << "->SetShowHideEffects(" << node->prop_as_string("show_effect") << ", "
-         << node->prop_as_string("hide_effect") << ");";
+    code << '\t' << node->get_node_name() << "->SetShowHideEffects(" << node->prop_as_string(prop_show_effect) << ", "
+         << node->prop_as_string(prop_hide_effect) << ");";
 
-    if (node->prop_as_int("duration") != 500)
+    if (node->prop_as_int(prop_duration) != 500)
     {
-        code << "\n\t" << node->get_node_name() << "->SetEffectDuration(" << node->prop_as_string("duration") << ");";
+        code << "\n\t" << node->get_node_name() << "->SetEffectDuration(" << node->prop_as_string(prop_duration) << ");";
     }
 
     return code;

@@ -165,7 +165,7 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
     else
     {
         auto str_with_escapes = ConvertToCodeString(str);
-        if (wxGetApp().GetProject()->prop_as_bool("internationalize"))
+        if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
             code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
         else
             code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
@@ -231,7 +231,7 @@ ttlib::cstr GetParentName(Node* node)
 
 void GenPos(Node* node, ttlib::cstr& code)
 {
-    auto point = node->prop_as_wxPoint("pos");
+    auto point = node->prop_as_wxPoint(prop_pos);
     if (point.x != -1 || point.y != -1)
         code << "wxPoint(" << point.x << ", " << point.y << ")";
     else
@@ -240,7 +240,7 @@ void GenPos(Node* node, ttlib::cstr& code)
 
 void GenSize(Node* node, ttlib::cstr& code)
 {
-    auto size = node->prop_as_wxPoint("size");
+    auto size = node->prop_as_wxPoint(prop_size);
     if (size.x != -1 || size.y != -1)
         code << "wxSize(" << size.x << ", " << size.y << ")";
     else
@@ -250,15 +250,15 @@ void GenSize(Node* node, ttlib::cstr& code)
 void GenStyle(Node* node, ttlib::cstr& code, ttlib::cview extra_style, ttlib::cview extra_def_value)
 {
     auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string("window_style");
+    auto& win_style = node->prop_as_string(prop_window_style);
 
     if (style.empty() && win_style.empty() && extra_style.empty())
         code << "0";
     else
     {
-        if (extra_style.size() && node->prop_as_string(extra_style) != extra_def_value)
+        if (extra_style.size() && node->prop_as_string(prop_extra_style) != extra_def_value)
         {
-            code << node->prop_as_string(extra_style);
+            code << node->prop_as_string(prop_extra_style);
             if (style.size())
             {
                 if (style.size())
@@ -293,11 +293,11 @@ void GenStyle(Node* node, ttlib::cstr& code, ttlib::cview extra_style, ttlib::cv
 void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator, ttlib::cview extra_style,
                           ttlib::cview extra_def_value)
 {
-    auto pos = node->prop_as_wxPoint("pos");
-    auto size = node->prop_as_wxPoint("size");
+    auto pos = node->prop_as_wxPoint(prop_pos);
+    auto size = node->prop_as_wxPoint(prop_size);
     auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string("window_style");
-    auto& win_name = node->prop_as_string("window_name");
+    auto& win_style = node->prop_as_string(prop_window_style);
+    auto& win_name = node->prop_as_string(prop_window_name);
 
     if (win_name.size())
     {
@@ -314,13 +314,13 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         GenStyle(node, code, extra_style, extra_def_value);
         if (uses_def_validator)
             code << ", wxDefaultValidator";
-        code << ", " << node->prop_as_string("window_name") << ");";
+        code << ", " << node->prop_as_string(prop_window_name) << ");";
         return;
     }
 
     ttlib::cstr all_styles;
     if (extra_style.size())
-        all_styles << node->prop_as_string(extra_style);
+        all_styles << node->prop_as_string(prop_extra_style);
     if (style.size())
     {
         if (all_styles.size())
@@ -430,11 +430,11 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
     {
         if (event->get_name() == "wxEVT_CHECKBOX")
         {
-            code << node->prop_as_string("checkbox_var_name");
+            code << node->prop_as_string(prop_checkbox_var_name);
         }
         else if (event->get_name() == "wxEVT_RADIOBUTTON")
         {
-            code << node->prop_as_string("radiobtn_var_name");
+            code << node->prop_as_string(prop_radiobtn_var_name);
         }
         else
         {
@@ -446,21 +446,21 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
     else if (node->GetClassName() == "wxMenuItem" || node->GetClassName() == "tool")
     {
         code << "Bind(" << handler << comma;
-        if (event->GetNode()->prop_as_string("id") != "wxID_ANY")
-            code << event->GetNode()->prop_as_string("id") << ");";
+        if (event->GetNode()->prop_as_string(prop_id) != "wxID_ANY")
+            code << event->GetNode()->prop_as_string(prop_id) << ");";
         else
             code << event->GetNode()->get_node_name() << "->GetId());";
     }
     else if (event->GetNode()->GetClassName() == "ribbonTool")
     {
-        if (event->GetNode()->prop_as_string("id").empty())
+        if (event->GetNode()->prop_as_string(prop_id).empty())
         {
             code << "// **WARNING** -- tool id not specified, event handler may never be called\n    ";
             code << "Bind(" << handler << comma << "wxID_ANY);";
         }
         else
         {
-            code << "Bind(" << handler << comma << event->GetNode()->prop_as_string("id") << ");";
+            code << "Bind(" << handler << comma << event->GetNode()->prop_as_string(prop_id) << ");";
         }
     }
     else if (event->GetNode()->IsForm())
@@ -651,11 +651,11 @@ ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& c
     if (cmd == "ctor_declare")
     {
         // This is the code to add to the header file
-        code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string("id");
+        code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
         if (class_name != "wxPanel" && class_name != "wxToolBar")
         {
             code << ",\n    const wxString& title = ";
-            auto& title = node->prop_as_string("title");
+            auto& title = node->prop_as_string(prop_title);
             if (title.size())
             {
                 code << GenerateQuotedString(title) << ",\n    ";
@@ -670,14 +670,14 @@ ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& c
             code << ", ";
         }
         code << "const wxPoint& pos = ";
-        auto point = node->prop_as_wxPoint("pos");
+        auto point = node->prop_as_wxPoint(prop_pos);
         if (point.x != -1 || point.y != -1)
             code << "wxPoint(" << point.x << ", " << point.y << ")";
         else
             code << "wxDefaultPosition";
 
         code << ", const wxSize& size = ";
-        auto size = node->prop_as_wxPoint("size");
+        auto size = node->prop_as_wxPoint(prop_size);
         if (size.x != -1 || size.y != -1)
             code << "wxSize(" << size.x << ", " << size.y << ")";
         else
@@ -685,7 +685,7 @@ ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& c
 
         code << ",\n    long style = ";
         auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string("window_style");
+        auto& win_style = node->prop_as_string(prop_window_style);
         if (style.empty() && win_style.empty())
             code << "0";
         else
@@ -704,14 +704,14 @@ ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& c
             }
         }
 
-        if (node->prop_as_string("window_name").size())
+        if (node->prop_as_string(prop_window_name).size())
         {
-            code << ", const wxString& name = " << node->prop_as_string("window_name");
+            code << ", const wxString& name = " << node->prop_as_string(prop_window_name);
         }
 
         code << ");\n\n";
-        if (class_name != "wxDialog" && node->prop_as_bool("aui_managed"))
-            code << "    wxAuiManager m_mgr;";
+        // if (class_name != "wxDialog" && node->prop_as_bool("aui_managed"))
+        // code << "    wxAuiManager m_mgr;";
     }
     else if (cmd == "base")
     {
@@ -727,8 +727,8 @@ ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& c
     }
     else if (cmd == "dtor")
     {
-        if (class_name != "wxDialog" && node->prop_as_bool("aui_managed"))
-            code << "    m_mgr.UnInit();";
+        // if (class_name != "wxDialog" && node->prop_as_bool("aui_managed"))
+        // code << "    m_mgr.UnInit();";
     }
     else if (cmd == "after_addchild")
     {
@@ -740,17 +740,19 @@ ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& c
         }
         else
         {
-            auto& center = node->prop_as_string("center");
+            auto& center = node->prop_as_string(prop_center);
             if (center.size() && !center.is_sameas("no"))
             {
                 code << "    Centre(" << center << ");";
             }
+#if 0
             if (class_name != "wxDialog" && node->prop_as_bool("aui_managed"))
             {
                 if (code.size())
                     code << "\n";
                 code << "    m_mgr.Update();";
             }
+#endif
         }
     }
     else
@@ -768,7 +770,7 @@ ttlib::cstr GenFormSettings(Node* node)
     if (node->GetClassName() != "PanelForm" && node->GetClassName() != "wxToolBar")
     {
         auto min_size = node->prop_as_wxSize(prop_minimum_size);
-        auto max_size = node->prop_as_wxSize("maximum_size");
+        auto max_size = node->prop_as_wxSize(prop_maximum_size);
 
         if (min_size.x == -1 && min_size.y == -1 && max_size.x == -1 && max_size.y == -1)
             code << "SetSizeHints(wxDefaultSize);";
@@ -786,11 +788,11 @@ ttlib::cstr GenFormSettings(Node* node)
             code << ");";
         }
 
-        if (node->prop_has_value("icon"))
+        if (node->HasValue(prop_icon))
         {
             if (code.size())
                 code << '\n';
-            auto image_code = GenerateBitmapCode(node->prop_as_string("icon"));
+            auto image_code = GenerateBitmapCode(node->prop_as_string(prop_icon));
             if (!image_code.contains(".Scale") && image_code.is_sameprefix("wxImage("))
             {
                 code << "SetIcon(wxIcon(" << image_code.subview(sizeof("wxImage")) << ");";
@@ -798,19 +800,19 @@ ttlib::cstr GenFormSettings(Node* node)
             else
             {
                 code << "wxIcon icon;\n";
-                code << "icon.CopyFromBitmap(" << GenerateBitmapCode(node->prop_as_string("icon")) << ");\n";
+                code << "icon.CopyFromBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_icon)) << ");\n";
                 code << "SetIcon(wxIcon(icon));";
             }
         }
     }
 
-    if (node->prop_as_string("window_extra_style").size())
-        code << "\nSetExtraStyle(GetExtraStyle() | " << node->prop_as_string("window_extra_style") << ");";
+    if (node->prop_as_string(prop_window_extra_style).size())
+        code << "\nSetExtraStyle(GetExtraStyle() | " << node->prop_as_string(prop_window_extra_style) << ");";
 
-    if (node->prop_as_string("font").size())
+    if (node->prop_as_string(prop_font).size())
     {
         code << "\nSetFont(wxFont(";
-        auto fontprop = node->prop_as_font_prop("font");
+        auto fontprop = node->prop_as_font_prop(prop_font);
         wxFont font = fontprop.GetFont();
         auto pointSize = fontprop.GetPointSize();
 
@@ -827,7 +829,7 @@ ttlib::cstr GenFormSettings(Node* node)
         code << ");";
     }
 
-    auto& fg_clr = node->prop_as_string("foreground_colour");
+    auto& fg_clr = node->prop_as_string(prop_foreground_colour);
     if (fg_clr.size())
     {
         code << "\nSetForegroundColour(";
@@ -840,7 +842,7 @@ ttlib::cstr GenFormSettings(Node* node)
         }
     }
 
-    auto& bg_clr = node->prop_as_string("background_colour");
+    auto& bg_clr = node->prop_as_string(prop_background_colour);
     if (bg_clr.size())
     {
         code << "\nSetBackgroundColour(";
@@ -853,16 +855,16 @@ ttlib::cstr GenFormSettings(Node* node)
         }
     }
 
-    if (node->prop_as_bool("disabled"))
+    if (node->prop_as_bool(prop_disabled))
         code << "\nDisable();";
 
-    if (node->prop_as_bool("hidden"))
+    if (node->prop_as_bool(prop_hidden))
         code << "\nHide();";
 
     return code;
 }
 
-ttlib::cstr GenerateColorCode(Node* node, ttlib::cview prop_name)
+ttlib::cstr GenerateColorCode(Node* node, PropName prop_name)
 {
     ttlib::cstr code;
     auto& clr = node->prop_as_string(prop_name);

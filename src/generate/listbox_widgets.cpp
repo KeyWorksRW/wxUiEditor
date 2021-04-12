@@ -23,8 +23,8 @@
 wxObject* ListBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxListBox(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), 0, NULL,
-        node->prop_as_int("type") | node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, NULL,
+        node->prop_as_int(prop_type) | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& items = node->prop_as_string(prop_choices);
     if (items.size())
@@ -33,13 +33,13 @@ wxObject* ListBoxGenerator::Create(Node* node, wxObject* parent)
         for (auto& iter: array)
             widget->Append(wxString::FromUTF8(iter));
 
-        if (node->prop_as_string("selection_string").size())
+        if (node->prop_as_string(prop_selection_string).size())
         {
-            widget->SetStringSelection(wxString::FromUTF8(node->prop_as_string("selection_string")));
+            widget->SetStringSelection(wxString::FromUTF8(node->prop_as_string(prop_selection_string)));
         }
         else
         {
-            int sel = node->prop_as_int("selection_int");
+            int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < static_cast<int>(array.size()))
                 widget->SetSelection(sel);
         }
@@ -56,10 +56,10 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxListBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
-    if (node->prop_as_string("window_name").empty() && node->prop_as_string("type") == "wxLB_SINGLE" &&
-        node->prop_as_string(prop_style).empty() && node->prop_as_string("window_style").empty())
+    if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_type) == "wxLB_SINGLE" &&
+        node->prop_as_string(prop_style).empty() && node->prop_as_string(prop_window_style).empty())
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -75,9 +75,9 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", 0, NULL, ";
 
-        auto& type = node->prop_as_string("type");
+        auto& type = node->prop_as_string(prop_type);
         auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string("window_style");
+        auto& win_style = node->prop_as_string(prop_window_style);
 
         if (type == "wxLB_SINGLE" && style.empty() && win_style.empty())
             code << "0";
@@ -94,9 +94,9 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenConstruction(Node* node)
             }
         }
 
-        if (node->prop_as_string("window_name").size())
+        if (node->prop_as_string(prop_window_name).size())
         {
-            code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+            code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
         }
         code << ");";
     }
@@ -118,19 +118,19 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenSettings(Node* node, size_t& /* 
             code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
         }
 
-        if (node->prop_as_string("selection_string").size())
+        if (node->prop_as_string(prop_selection_string).size())
         {
             code << "\n";
             code << node->get_node_name() << "->SetStringSelection("
-                 << GenerateQuotedString(node->prop_as_string("selection_string")) << ");";
+                 << GenerateQuotedString(node->prop_as_string(prop_selection_string)) << ");";
         }
         else
         {
-            int sel = node->prop_as_int("selection_int");
+            int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < static_cast<int>(array.size()))
             {
                 code << "\n";
-                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string("selection_int") << ");";
+                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
             }
         }
     }
@@ -154,8 +154,8 @@ bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 wxObject* CheckListBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxCheckListBox(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"), node->prop_as_wxSize("size"), 0, NULL,
-        node->prop_as_int("type") | node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, NULL,
+        node->prop_as_int(prop_type) | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& items = node->prop_as_string(prop_choices);
     if (items.size())
@@ -164,13 +164,13 @@ wxObject* CheckListBoxGenerator::Create(Node* node, wxObject* parent)
         for (auto& iter: array)
             widget->Append(wxString::FromUTF8(iter));
 
-        if (node->prop_as_string("selection_string").size())
+        if (node->prop_as_string(prop_selection_string).size())
         {
-            widget->SetStringSelection(wxString::FromUTF8(node->prop_as_string("selection_string")));
+            widget->SetStringSelection(wxString::FromUTF8(node->prop_as_string(prop_selection_string)));
         }
         else
         {
-            int sel = node->prop_as_int("selection_int");
+            int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < static_cast<int>(array.size()))
                 widget->SetSelection(sel);
         }
@@ -187,10 +187,10 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxCheckListBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
-    if (node->prop_as_string("window_name").empty() && node->prop_as_string("type") == "wxLB_SINGLE" &&
-        node->prop_as_string(prop_style).empty() && node->prop_as_string("window_style").empty())
+    if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_type) == "wxLB_SINGLE" &&
+        node->prop_as_string(prop_style).empty() && node->prop_as_string(prop_window_style).empty())
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -206,9 +206,9 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenConstruction(Node* node)
         GenSize(node, code);
         code << ", 0, NULL, ";
 
-        auto& type = node->prop_as_string("type");
+        auto& type = node->prop_as_string(prop_type);
         auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string("window_style");
+        auto& win_style = node->prop_as_string(prop_window_style);
 
         if (type == "wxLB_SINGLE" && style.empty() && win_style.empty())
             code << "0";
@@ -225,9 +225,9 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenConstruction(Node* node)
             }
         }
 
-        if (node->prop_as_string("window_name").size())
+        if (node->prop_as_string(prop_window_name).size())
         {
-            code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+            code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
         }
         code << ");";
     }
@@ -249,19 +249,19 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
             code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
         }
 
-        if (node->prop_as_string("selection_string").size())
+        if (node->prop_as_string(prop_selection_string).size())
         {
             code << "\n";
             code << node->get_node_name() << "->SetStringSelection("
-                 << GenerateQuotedString(node->prop_as_string("selection_string")) << ");";
+                 << GenerateQuotedString(node->prop_as_string(prop_selection_string)) << ");";
         }
         else
         {
-            int sel = node->prop_as_int("selection_int");
+            int sel = node->prop_as_int(prop_selection_int);
             if (sel > -1 && sel < static_cast<int>(array.size()))
             {
                 code << "\n";
-                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string("selection_int") << ");";
+                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
             }
         }
     }
@@ -284,9 +284,9 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* HtmlListBoxGenerator::Create(Node* node, wxObject* parent)
 {
-    auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint("pos"),
-                                          node->prop_as_wxSize("size"), 0, NULL,
-                                          node->prop_as_int(prop_style) | node->prop_as_int("window_style"));
+    auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                          node->prop_as_wxSize(prop_size), 0, NULL,
+                                          node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& items = node->prop_as_string(prop_choices);
     if (items.size())
@@ -307,10 +307,10 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxSimpleHtmlListBox(";
-    code << GetParentName(node) << ", " << node->prop_as_string("id");
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
-    if (node->prop_as_string("window_name").empty() && node->prop_as_string("type") == "wxLB_SINGLE" &&
-        node->prop_as_string(prop_style).empty() && node->prop_as_string("window_style").empty())
+    if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_type) == "wxLB_SINGLE" &&
+        node->prop_as_string(prop_style).empty() && node->prop_as_string(prop_window_style).empty())
     {
         GeneratePosSizeFlags(node, code);
     }
@@ -327,7 +327,7 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
         code << ", 0, NULL, ";
 
         auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string("window_style");
+        auto& win_style = node->prop_as_string(prop_window_style);
 
         if (style.empty() && win_style.empty())
             code << "0";
@@ -345,9 +345,9 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
             }
         }
 
-        if (node->prop_as_string("window_name").size())
+        if (node->prop_as_string(prop_window_name).size())
         {
-            code << ", wxDefaultValidator, " << node->prop_as_string("window_name");
+            code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
         }
         code << ");";
     }

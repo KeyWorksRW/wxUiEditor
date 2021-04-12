@@ -67,13 +67,7 @@ public:
     // returns false if the default value is used.
     bool HasValue();
 
-    void splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& children) const;
-    void SplitParentProperty(std::map<wxString, wxString>* children) const;
-
     const PropDeclaration* GetPropDeclaration() const { return m_declaration; }
-
-
-    ttlib::cstr getChildFromParent(const ttlib::cstr& childName) const;
 
     Node* GetNode() { return m_node; }
 

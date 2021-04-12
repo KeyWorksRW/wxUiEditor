@@ -512,7 +512,7 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
                             //       interprets a missing value as true and currently no project file update
                             //       adds this value if it is missing, here a missing value also needs to be
                             //       interpreted as true
-                            child = new wxBoolProperty(it->m_name, wxPG_LABEL, value.empty() || value == it->m_name);
+                            child = new wxBoolProperty(it->name_str(), wxPG_LABEL, value.empty() || value == it->name_str());
                         }
                         else if (it->m_prop_type == type_string_escapes)
                         {
@@ -520,7 +520,7 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
                         }
                         else
                         {
-                            FAIL_MSG(ttlib::cstr("Invalid Child NodeProperty Type: ") << it->m_name);
+                            FAIL_MSG(ttlib::cstr("Invalid Child NodeProperty Type: ") << it->name_str());
                             throw std::runtime_error("Internal error");
                         }
 

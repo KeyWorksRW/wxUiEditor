@@ -109,7 +109,7 @@ size_t Node::GetInUseEventCount()
 NodeProperty* Node::AddNodeProperty(PropDeclaration* declaration)
 {
     auto& prop = m_properties.emplace_back(declaration, this);
-    m_prop_map[prop.name_str()] = (m_properties.size() - 1);
+    m_prop_map[prop.DeclName().c_str()] = (m_properties.size() - 1);
     m_prop_indices[prop.get_name()] = (m_properties.size() - 1);
     return &m_properties[m_properties.size() - 1];
 }

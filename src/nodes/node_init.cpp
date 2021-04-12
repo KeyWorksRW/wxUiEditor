@@ -388,9 +388,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             {
                 PropChildDeclaration child;
 
-                child.m_name = elem_child.attribute("name").as_string();
                 child.m_help = elem_child.attribute("help").as_string();
-
                 if (child.m_help.empty())
                 {
                     if (child.isProp(prop_class_access))

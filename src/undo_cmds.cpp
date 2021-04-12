@@ -130,7 +130,7 @@ void RemoveNodeAction::Revert()
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview value) : m_property(prop)
 {
-    SetUndoString(ttlib::cstr() << "change " << prop->name_str());
+    SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
 
     m_change_value << value;
     m_revert_value = prop->GetValue();
@@ -138,7 +138,7 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview valu
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_property(prop)
 {
-    SetUndoString(ttlib::cstr() << "change " << prop->name_str());
+    SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
 
     m_change_value << value;
     m_revert_value = prop->GetValue();

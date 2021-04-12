@@ -38,7 +38,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
             if (info->GetDefaultValue() == value)
                 continue;
 
-            auto attr = node.append_attribute(iter.name_str());
+            auto attr = node.append_attribute(iter.DeclName());
             if (iter.type() == type_bool)
                 attr.set_value(iter.as_bool());
             else
@@ -50,7 +50,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
 
             if (iter.isProp(prop_label) || iter.isProp(prop_borders))
             {
-                node.append_attribute(iter.name_str());
+                node.append_attribute(iter.DeclName());
             }
         }
     }

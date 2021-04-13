@@ -4,7 +4,7 @@ This Windows GUI tool is used to create and maintain [wxWidgets](https://docs.wx
 
 The following project files can be imported:
 
-- **wxFormBuilder**
+- **wxFormBuilder** (Click [here](docs/import_formbuilder.md) for more informaiont)
 - **wxSmith**
 - **XRC**
 

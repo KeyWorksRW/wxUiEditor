@@ -167,10 +167,6 @@
   </gen>
 
   <gen class="Bitmaps" type="interface">
-    <property name="markup" type="bool"
-        help="This can be used to apply fonts or colours to different parts of the label when supported by the current platform. If markup is not supported by the platform, any formatting will be removed leaving just the text.">
-      0
-    </property>
     <property name="bitmap" type="image"
         help="This is the bitmap shown in the default state, it must be always valid while all the other bitmaps are optional and don't have to be set."/>
     <property name="disabled_bmp" type="image"

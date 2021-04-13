@@ -473,15 +473,12 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
         if (!prop)
             continue;
 
-        auto propInfo = prop->GetPropDeclaration();
-
-        ASSERT_MSG(prop_set.find(prop_name) == prop_set.end(), ttlib::cstr("The property ")
-                                                                   << map_PropNames[prop_name]
-                                                                   << " appears more than once in " << node->DeclName());
         if (prop_set.find(prop_name) == prop_set.end())
         {
             if (!IsPropAllowed(node, prop))
                 continue;
+                
+            auto propInfo = prop->GetPropDeclaration();
             auto pg = m_prop_grid->Append(GetProperty(prop));
             auto propType = prop->type();
             if (propType != type_option)
@@ -576,6 +573,11 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
 
             prop_set.emplace(prop_name);
             m_property_map[pg] = prop;
+        }
+        else
+        {
+            MSG_WARNING(ttlib::cstr("The property ")
+                        << map_PropNames[prop_name] << " appears more than once in " << node->DeclName());
         }
     }
 

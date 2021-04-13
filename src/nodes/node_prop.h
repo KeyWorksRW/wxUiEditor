@@ -85,6 +85,9 @@ public:
 
     auto& GetValue() { return m_value; }
 
+    // Currently only called in debug builds, but available for release builds should we need it
+    size_t GetPropSize() const { return sizeof(*this) + (m_value.size() + 1); }
+
 private:
     PropDeclaration* m_declaration;
     Node* m_node;  // node this property is a child of

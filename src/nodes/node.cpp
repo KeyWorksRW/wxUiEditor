@@ -896,3 +896,30 @@ int_t Node::FindInsertionPos(Node* child)
     }
     return -1;
 }
+
+size_t Node::GetNodeSize()
+{
+    auto size = sizeof(*this);
+    // Add the size of all the node pointers, but not the size of the individual children
+    size += (m_children.size() * sizeof(void*));
+
+    for (auto& iter: m_properties)
+    {
+        size += iter.GetPropSize();
+    }
+
+    for (auto& iter: m_events)
+    {
+        size += iter.GetEventSize();
+    }
+
+    // Add the size of our maps
+
+    size += (m_prop_indices.size() * (sizeof(size_t) * 2));
+    size += (m_event_map.size() * (sizeof(std::string) + sizeof(size_t)));
+
+    // Hopefully, this map will get removed at some point
+    size += (m_prop_map.size() * (sizeof(std::string) + sizeof(size_t)));
+
+    return size;
+}

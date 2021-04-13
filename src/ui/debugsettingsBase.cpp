@@ -59,8 +59,7 @@ DebugSettingsBase::DebugSettingsBase(wxWindow* parent, wxWindowID id, const wxSt
 
     Centre(wxBOTH);
 
-    SetName("DebugSettingsBase");
-    wxPersistentRegisterAndRestore(this);
+    wxPersistentRegisterAndRestore(this, "DebugSettingsBase");
 
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &DebugSettingsBase::OnInit, this);

@@ -39,6 +39,9 @@ public:
     Node* GetNode() { return m_node; }
     const NodeEventInfo* GetEventInfo() const { return m_info; }
 
+    // Currently only called in debug builds, but available for release builds should we need it
+    size_t GetEventSize() { return sizeof(*this) + (m_value.size() + 1); }
+
 private:
     const NodeEventInfo* m_info;
     Node* m_node;

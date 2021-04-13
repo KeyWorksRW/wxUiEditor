@@ -1,6 +1,12 @@
-# wxUiEditor
+# ![logo](src/art_src/logo64.png) wxUiEditor
 
-This tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.).
+This Windows GUI tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.), generating C++ output code. Minimal requirement for compiling output files is a c++11 compliant compiler and **wxWidgets** 3.0 (version 3.1 needed for full functionality).
+
+The following project files can be imported:
+
+- **wxFormBuilder**
+- **wxSmith**
+- **XRC**
 
 ## Cloning
 

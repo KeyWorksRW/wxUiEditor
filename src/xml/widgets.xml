@@ -1646,6 +1646,13 @@
       <option name="public:"/>
       protected:
     </property>
+    <property name="variant" type="option">
+      <option name="normal" help="Normal size"/>
+      <option name="small" help="About 25% smaller than normal."/>
+      <option name="mini" help="About 33% smaller than normal."/>
+      <option name="large" help="About 35% larger than normal."/>
+      normal
+    </property>
   </gen>
 
   <gen class="wxBannerWindow" image="wxBannerWindow" type="widget">

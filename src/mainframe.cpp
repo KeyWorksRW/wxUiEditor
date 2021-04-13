@@ -1242,8 +1242,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 
 void MainFrame::RemoveNode(Node* node, bool isCutMode)
 {
-    ASSERT(node->isType(type_project));
-    ASSERT(node->GetParentPtr());
+    ASSERT_MSG(!node->isType(type_project), "Don't call RemoveNode to remove the entire project.");
+    ASSERT_MSG(node->GetParent(), "The node being removed has no parent -- that should be impossible.");
 
     auto parent = node->GetParent();
     if (!parent)

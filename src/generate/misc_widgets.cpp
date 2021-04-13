@@ -32,8 +32,18 @@ wxObject* ActivityIndicatorGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                           node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
+    if (!node->isPropValue(prop_variant, "normal"))
+    {
+        if (node->isPropValue(prop_variant, "small"))
+            widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+        else if (node->isPropValue(prop_variant, "mini"))
+            widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+        else
+            widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+    widget->Start();
 
     return widget;
 }
@@ -47,6 +57,18 @@ std::optional<ttlib::cstr> ActivityIndicatorGenerator::GenConstruction(Node* nod
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);
+
+    if (!node->isPropValue(prop_variant, "normal"))
+    {
+        code << "\n    " << node->get_node_name() << "->SetWindowVariant(";
+
+        if (node->isPropValue(prop_variant, "small"))
+            code << "wxWINDOW_VARIANT_SMALL);";
+        else if (node->isPropValue(prop_variant, "mini"))
+            code << "wxWINDOW_VARIANT_MINI);";
+        else
+            code << "wxWINDOW_VARIANT_LARGE);";
+    }
 
     return code;
 }

@@ -538,14 +538,14 @@ void MainFrame::UpdateFrame()
     if (m_clipboard)
     {
         menu_text = _ttwx(strIdPaste);
-        menu_text << ' ' << m_clipboard->GetClassName();
+        menu_text << ' ' << m_clipboard->DeclName();
         menu_text << "\tCtrl+V";
         m_menuEdit->FindChildItem(wxID_PASTE)->SetItemLabel(menu_text);
     }
 
     bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == _ttwx(strIdMockupTabTitle));
     m_menuEdit->Enable(wxID_FIND, !isMockup);
-    m_menuEdit->Enable(id_insert_widget, m_selected_node && m_selected_node->GetClassName() != "Project");
+    m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->isGen(gen_Project));
 
     UpdateMoveMenu();
     UpdateLayoutTools();
@@ -850,17 +850,17 @@ void MainFrame::UpdateMoveMenu()
 
 void MainFrame::FindItemName(Node* node)
 {
-    if (auto value = node->get_value_ptr("var_name"); value && value->size())
+    if (auto& value = node->prop_as_string(prop_var_name); value.size())
     {
-        m_generatedPanel->FindItemName(*value);
+        m_generatedPanel->FindItemName(value);
         return;
     }
 
-    if (node->GetClassName().is_sameprefix("ribbon"))
+    if (node->DeclName().is_sameprefix("ribbon"))
     {
-        if (auto value = node->get_value_ptr("id"); value && value->size())
+        if (auto& value = node->prop_as_string(prop_id); value.size())
         {
-            m_generatedPanel->FindItemName(*value);
+            m_generatedPanel->FindItemName(value);
         }
     }
 }
@@ -912,7 +912,7 @@ void MainFrame::CreateToolNode(const ttlib::cstr& name)
 
     if (!m_selected_node->CreateToolNode(name))
     {
-        appMsgBox(ttlib::cstr() << "Unable to create " << name << " as a child of " << m_selected_node->GetClassName());
+        appMsgBox(ttlib::cstr() << "Unable to create " << name << " as a child of " << m_selected_node->DeclName());
     }
 }
 
@@ -934,7 +934,8 @@ void MainFrame::PasteNode(Node* parent)
         parent = m_selected_node.get();
     }
 
-    ttlib::cstr undo_str = "paste " + m_clipboard->GetClassName();
+    ttlib::cstr undo_str("paste ");
+    undo_str << m_clipboard->DeclName();
     auto new_node = g_NodeCreator.MakeCopy(m_clipboard);
 
     if (!parent->IsChildAllowed(new_node))
@@ -942,8 +943,8 @@ void MainFrame::PasteNode(Node* parent)
         auto grandparent = parent->GetParent();
         if (!grandparent || !grandparent->IsChildAllowed(new_node))
         {
-            appMsgBox(ttlib::cstr() << _tt("You cannot paste ") << new_node->GetClassName() << _tt(" into ")
-                                    << parent->GetClassName());
+            appMsgBox(ttlib::cstr() << _tt("You cannot paste ") << new_node->DeclName() << _tt(" into ")
+                                    << parent->DeclName());
             return;
         }
         parent = grandparent;
@@ -964,7 +965,8 @@ void MainFrame::DuplicateNode(Node* node)
     auto parent = node->GetParent();
     ASSERT(parent);
 
-    ttlib::cstr undo_str = "duplicate " + node->GetClassName();
+    ttlib::cstr undo_str("duplicate ");
+    undo_str << node->DeclName();
     auto pos = parent->FindInsertionPos(m_selected_node);
     auto new_node = g_NodeCreator.MakeCopy(node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
@@ -976,7 +978,7 @@ void MainFrame::DuplicateNode(Node* node)
 
 bool MainFrame::CanCopyNode()
 {
-    return (m_selected_node.get() && m_selected_node->GetClassName() != "Project");
+    return (m_selected_node.get() && !m_selected_node->isGen(gen_Project));
 }
 
 bool MainFrame::CanPasteNode()
@@ -1144,8 +1146,7 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
     auto sizer = m_selected_node->GetParent();
     if (sizer)
     {
-        auto parentName = sizer->GetClassName();
-        if (parentName == "wxBoxSizer" || m_selected_node->IsStaticBoxSizer())
+        if (sizer->isGen(gen_wxBoxSizer) || m_selected_node->IsStaticBoxSizer())
         {
             auto propOrient = sizer->get_prop_ptr(prop_orientation);
             if (propOrient)
@@ -1160,7 +1161,7 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
 bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 {
     auto parent = node->GetParent();
-    ASSERT(parent || node->GetClassName() == "Project");
+    ASSERT(parent || node->isGen(gen_Project));
     if (!parent)
         return false;
 
@@ -1233,7 +1234,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             SelectNode(node, true);
             return true;
         }
-        appMsgBox(node->GetClassName() + _tt(" cannot be moved down any lower."), _tt(strIdMoveTitle));
+        appMsgBox(node->DeclName() + _tt(" cannot be moved down any lower."), _tt(strIdMoveTitle));
     }
 
     return false;
@@ -1254,12 +1255,14 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
 
     if (isCutMode)
     {
-        ttlib::cstr undo_str = "cut " + node->GetClassName();
+        ttlib::cstr undo_str;
+        undo_str << "cut " << node->DeclName();
         PushUndoAction(std::make_shared<RemoveNodeAction>(node_copy, undo_str, true));
     }
     else
     {
-        ttlib::cstr undo_str = "delete " + node->GetClassName();
+        ttlib::cstr undo_str;
+        undo_str << "delete " << node->DeclName();
         PushUndoAction(std::make_shared<RemoveNodeAction>(node_copy, undo_str));
     }
 

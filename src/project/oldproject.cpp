@@ -386,7 +386,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
     {
         class_name = "gbsizeritem";
     }
-    else if (class_name.is_sameas("wxPanel") && parent->GetClassName().contains("book"))
+    else if (class_name.is_sameas("wxPanel") && parent->DeclName().contains("book"))
     {
         class_name = "BookPage";
     }
@@ -503,7 +503,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
     }
 
     auto child = xml_obj.child("object");
-    if (g_NodeCreator.IsOldHostType(newobject->GetClassName()))
+    if (g_NodeCreator.IsOldHostType(newobject->DeclName()))
     {
         newobject = CreateOldProjectNode(child, parent, newobject.get());
         child = child.next_sibling("object");
@@ -514,7 +514,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
         {
             if (iter.as_string() != iter.GetPropDeclaration()->GetDefaultValue())
             {
-                auto prop_value = newobject->get_value_ptr(iter.GetPropDeclaration()->GetName());
+                auto prop_value = newobject->get_value_ptr(iter.DeclName());
                 if (prop_value)
                     *prop_value = iter.as_string();
             }
@@ -539,7 +539,7 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
 
 static bool CheckProperty(pugi::xml_node& xml_prop, Node* node)
 {
-    if (node->GetClassName() == "wxCheckBox")
+    if (node->isGen(gen_wxCheckBox))
     {
         return ProcessCheckBox(xml_prop, node);
     }
@@ -562,7 +562,7 @@ static bool ProcessCheckBox(pugi::xml_node& xml_prop, Node* node)
                 continue;  // this is the default, so ignore it
             else if (iter.is_sameas("wxCHK_3STATE"))
             {
-                auto prop = node->get_prop_ptr("type");
+                auto prop = node->get_prop_ptr(prop_type);
                 prop->set_value("wxCHK_3STATE");
             }
             else
@@ -763,14 +763,14 @@ static bool HandleDownLevelProperty(pugi::xml_node& xml_prop, ttlib::cview prop_
 
     if (prop_name.is_sameas("value") && class_name.is_sameas("wxComboBox"))
     {
-        auto prop = node->get_prop_ptr("selection_string");
+        auto prop = node->get_prop_ptr(prop_selection_string);
         prop->set_value(xml_prop.text().as_cview());
 
         return true;
     }
     else if (prop_name.is_sameas("selection") && (class_name.is_sameas("wxComboBox") || class_name.is_sameas("wxChoice")))
     {
-        auto prop = node->get_prop_ptr("selection_int");
+        auto prop = node->get_prop_ptr(prop_selection_int);
         prop->set_value(xml_prop.text().as_cview());
 
         return true;

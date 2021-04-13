@@ -15,27 +15,27 @@
 
 std::optional<ttlib::cstr> GenGetSetCode(Node* node)
 {
-    auto get_name = node->get_value_ptr("get_function");
-    auto set_name = node->get_value_ptr("set_function");
-    if (!get_name && !set_name)
+    auto& get_name = node->prop_as_string(prop_get_function);
+    auto& set_name = node->prop_as_string(prop_set_function);
+    if (get_name.empty() && set_name.empty())
         return {};
 
-    auto var_name = node->get_value_ptr("validator_variable");
-    if (var_name && var_name->size())
+
+    if (auto& var_name = node->prop_as_string(prop_validator_variable); var_name.size())
     {
-        auto val_data_type = node->get_value_ptr("validator_data_type");
-        if (val_data_type->empty())
+        auto& val_data_type = node->prop_as_string(prop_validator_data_type);
+        if (val_data_type.empty())
             return {};
         ttlib::cstr code;
-        if (*val_data_type == "wxString" || *val_data_type == "wxFileName" || *val_data_type == "wxArrayInt")
+        if (val_data_type == "wxString" || val_data_type == "wxFileName" || val_data_type == "wxArrayInt")
         {
-            if (get_name && get_name->size())
-                code << "\tconst " << *val_data_type << "& " << *get_name << "() const { return " << *var_name << "; }";
-            if (set_name && set_name->size())
+            if (get_name.size())
+                code << "\tconst " << val_data_type << "& " << get_name << "() const { return " << var_name << "; }";
+            if (set_name.size())
             {
                 if (code.size())
                     code << "\n";
-                code << "\tvoid " << *set_name << "(const " << *val_data_type << "& value) { " << *var_name << " = value; }";
+                code << "\tvoid " << set_name << "(const " << val_data_type << "& value) { " << var_name << " = value; }";
             }
             if (code.empty())
                 return {};
@@ -43,13 +43,13 @@ std::optional<ttlib::cstr> GenGetSetCode(Node* node)
         }
         else
         {
-            if (get_name && get_name->size())
-                code << '\t' << *val_data_type << ' ' << *get_name << "() const { return " << *var_name << "; }";
-            if (set_name && set_name->size())
+            if (get_name.size())
+                code << '\t' << val_data_type << ' ' << get_name << "() const { return " << var_name << "; }";
+            if (set_name.size())
             {
                 if (code.size())
                     code << "\n";
-                code << "\tvoid " << *set_name << "(" << *val_data_type << " value) { " << *var_name << " = value; }";
+                code << "\tvoid " << set_name << "(" << val_data_type << " value) { " << var_name << " = value; }";
             }
             if (code.empty())
                 return {};
@@ -62,22 +62,22 @@ std::optional<ttlib::cstr> GenGetSetCode(Node* node)
 
 std::optional<ttlib::cstr> GenInheritSettings(Node* node)
 {
-    if (auto var_name = node->get_value_ptr("validator_variable"); var_name && var_name->size())
+    if (auto& var_name = node->prop_as_string(prop_validator_variable); var_name.size())
     {
-        auto val_data_type = node->get_value_ptr("validator_data_type");
-        if (val_data_type->empty())
+        auto& val_data_type = node->prop_as_string(prop_validator_data_type);
+        if (val_data_type.empty())
             return {};
 
         ttlib::cstr code;
-        auto validator_type = node->get_value_ptr("validator_type");
-        if (validator_type && validator_type->is_sameas("wxTextValidator"))
+        auto& validator_type = node->prop_as_string(prop_validator_type);
+        if (validator_type.is_sameas("wxTextValidator"))
         {
             code << node->get_node_name() << "->SetValidator(wxTextValidator(" << node->prop_as_string(prop_validator_style)
-                 << ", &" << *var_name << "));";
+                 << ", &" << var_name << "));";
         }
         else
         {
-            code << node->get_node_name() << "->SetValidator(wxGenericValidator(&" << *var_name << "));";
+            code << node->get_node_name() << "->SetValidator(wxGenericValidator(&" << var_name << "));";
         }
 
         return code;
@@ -167,7 +167,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
 
     // The following needs to match GenFormSettings() in gen_common.cpp. If these conditions are met, then GenFormSettings()
     // will generate SetSizeHints(min, max) so there is no reason to generate SetMinSize()/SetMaxSize()
-    if (node->IsForm() && node->GetClassName() != "PanelForm" && node->GetClassName() != "wxToolBar")
+    if (node->IsForm() && !node->isGen(gen_PanelForm) && !node->isGen(gen_wxToolBar))
         allow_minmax = false;
 
     auto size = node->prop_as_wxPoint(prop_minimum_size);

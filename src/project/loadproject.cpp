@@ -206,7 +206,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
         {
             if (new_node->IsForm())
             {
-                if (auto prop = new_node->get_prop_ptr("class_name"); prop)
+                if (auto prop = new_node->get_prop_ptr(prop_class_name); prop)
                 {
                     prop->set_value(iter.value());
                     continue;
@@ -214,7 +214,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
             }
             else
             {
-                if (auto prop = new_node->get_prop_ptr("var_name"); prop)
+                if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
                 {
                     prop->set_value(iter.value());
                     continue;
@@ -265,7 +265,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
         // Convert old HDR; style bitmap to new image style
         else if (iter.cname().is_sameas("bitmap") && iter.cvalue().contains("HDR;"))
         {
-            if (auto prop = new_node->get_prop_ptr("bitmap"); prop)
+            if (auto prop = new_node->get_prop_ptr(prop_bitmap); prop)
             {
                 ttlib::cstr new_value = iter.value();
                 new_value.Replace("HDR;", "XPM;");
@@ -281,7 +281,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
         {
             if (class_name.is_sameas("wxFilePickerCtrl") || class_name.is_sameas("wxDirPickerCtrl"))
             {
-                if (auto prop = new_node->get_prop_ptr("initial_path"); prop)
+                if (auto prop = new_node->get_prop_ptr(prop_initial_path); prop)
                 {
                     prop->set_value(iter.value());
                     continue;
@@ -289,7 +289,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
             }
             else if (class_name.is_sameas("wxFontPickerCtrl"))
             {
-                if (auto prop = new_node->get_prop_ptr("initial_font"); prop)
+                if (auto prop = new_node->get_prop_ptr(prop_initial_font); prop)
                 {
                     prop->set_value(iter.value());
                     continue;
@@ -446,7 +446,7 @@ bool App::NewProject()
     m_pjtSettings->SetProjectFile(file);
     m_pjtSettings->SetProjectPath(file);
 
-    m_project = g_NodeCreator.CreateNode("Project", nullptr);
+    m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
 
     auto& file_list = dlg.GetFileList();
     if (file_list.size())

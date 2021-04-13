@@ -39,7 +39,7 @@ wxObject* StaticTextGenerator::Create(Node* node, wxObject* parent)
 
 bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "wrap" || prop->GetPropName() == "label" || prop->GetPropName() == "markup")
+    if (prop->isProp(prop_wrap) || prop->isProp(prop_label) || prop->isProp(prop_markup))
     {
         // If the text was wrapped previously, then it already has \n characters inserted in it, so we need to restore
         // it to it's original state before wrapping again.
@@ -144,7 +144,7 @@ wxObject* TextCtrlGenerator::Create(Node* node, wxObject* parent)
 
 bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "value")
+    if (prop->isProp(prop_value))
     {
         wxStaticCast(widget, wxTextCtrl)->SetValue(prop->GetValue().wx_str());
         return true;

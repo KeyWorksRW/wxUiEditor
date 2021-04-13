@@ -37,13 +37,17 @@ public:
     Node(NodeDeclaration* declaration);
     ~Node();
 
-    const ttlib::cstr& GetClassName() const { return m_declaration->GetClassName(); }
+    // Returns a char pointer to the name. Use get_name() if you want the enum value.
+    ttlib::cview DeclName() const noexcept { return m_declaration->DeclName(); }
 
     NodeSharedPtr GetParentPtr() { return m_parent; }
     Node* GetParent() { return m_parent.get(); }
 
     void SetParent(NodeSharedPtr parent) { m_parent = parent; }
     void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
+
+
+    // Using PropName is preferred, but not always possible when importing wxFormBuilder and wxSmith projects
 
     NodeProperty* get_prop_ptr(ttlib::cview name);
     ttlib::cstr* get_value_ptr(ttlib::cview name);
@@ -87,6 +91,8 @@ public:
     bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
 
     GenType gen_type() const { return m_declaration->gen_type(); }
+
+    // Returns the enum value for the name. Use DeclName() to get a char pointer.
     GenName gen_name() const { return m_declaration->gen_name(); }
 
     bool isType(GenType type) const noexcept { return (type == m_declaration->gen_type()); }

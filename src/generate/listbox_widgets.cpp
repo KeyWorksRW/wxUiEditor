@@ -23,7 +23,7 @@
 wxObject* ListBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxListBox(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, NULL,
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, nullptr,
         node->prop_as_int(prop_type) | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& items = node->prop_as_string(prop_choices);
@@ -73,7 +73,7 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenConstruction(Node* node)
         GenPos(node, code);
         code << ", ";
         GenSize(node, code);
-        code << ", 0, NULL, ";
+        code << ", 0, nullptr, ";
 
         auto& type = node->prop_as_string(prop_type);
         auto& style = node->prop_as_string(prop_style);
@@ -154,7 +154,7 @@ bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 wxObject* CheckListBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxCheckListBox(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, NULL,
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, nullptr,
         node->prop_as_int(prop_type) | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& items = node->prop_as_string(prop_choices);
@@ -204,7 +204,7 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenConstruction(Node* node)
         GenPos(node, code);
         code << ", ";
         GenSize(node, code);
-        code << ", 0, NULL, ";
+        code << ", 0, nullptr, ";
 
         auto& type = node->prop_as_string(prop_type);
         auto& style = node->prop_as_string(prop_style);
@@ -285,7 +285,7 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 wxObject* HtmlListBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                          node->prop_as_wxSize(prop_size), 0, NULL,
+                                          node->prop_as_wxSize(prop_size), 0, nullptr,
                                           node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& items = node->prop_as_string(prop_choices);
@@ -324,7 +324,7 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
         GenPos(node, code);
         code << ", ";
         GenSize(node, code);
-        code << ", 0, NULL, ";
+        code << ", 0, nullptr, ";
 
         auto& style = node->prop_as_string(prop_style);
         auto& win_style = node->prop_as_string(prop_window_style);

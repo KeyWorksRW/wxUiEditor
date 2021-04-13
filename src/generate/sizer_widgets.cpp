@@ -162,7 +162,7 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
 
-    std::string parent_name("this");
+    ttlib::cstr parent_name("this");
     if (!node->GetParent()->IsForm())
     {
         auto parent = node->GetParent();
@@ -173,9 +173,10 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
                 parent_name = parent->get_node_name();
                 break;
             }
-            else if (parent->GetClassName() == "wxStaticBoxSizer")
+            else if (parent->isGen(gen_wxStaticBoxSizer))
             {
-                parent_name = parent->get_node_name() + "->GetStaticBox()";
+                parent_name.clear();
+                parent_name << parent->get_node_name() << "->GetStaticBox()";
                 break;
             }
             parent = parent->GetParent();
@@ -291,7 +292,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
     if (node->IsLocal())
         code << "auto ";
 
-    std::string parent_name("this");
+    ttlib::cstr parent_name("this");
     if (!node->GetParent()->IsForm())
     {
         auto parent = node->GetParent();
@@ -302,9 +303,10 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
                 parent_name = parent->get_node_name();
                 break;
             }
-            else if (parent->GetClassName() == "wxStaticBoxSizer")
+            else if (parent->isGen(gen_wxStaticBoxSizer))
             {
-                parent_name = parent->get_node_name() + "->GetStaticBox()";
+                parent_name.clear();
+                parent_name << parent->get_node_name() << "->GetStaticBox()";
                 break;
             }
             parent = parent->GetParent();
@@ -416,7 +418,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     if (node->IsLocal())
         code << "auto ";
 
-    std::string parent_name("this");
+    ttlib::cstr parent_name("this");
     if (!node->GetParent()->IsForm())
     {
         auto parent = node->GetParent();
@@ -427,9 +429,10 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
                 parent_name = parent->get_node_name();
                 break;
             }
-            else if (parent->GetClassName() == "wxStaticBoxSizer")
+            else if (parent->isGen(gen_wxStaticBoxSizer))
             {
-                parent_name = parent->get_node_name() + "->GetStaticBox()";
+                parent_name.clear();
+                parent_name << parent->get_node_name() << "->GetStaticBox()";
                 break;
             }
             parent = parent->GetParent();
@@ -816,7 +819,7 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
 {
     auto sizer_flags = sizeritem->GetSizerFlags();
 
-    if (sizeritem->GetClassName() == "spacer")
+    if (sizeritem->isGen(gen_spacer))
     {
         return new wxGBSizerItem(sizeritem->prop_as_int(prop_width), sizeritem->prop_as_int(prop_height), position, span,
                                  sizer_flags.GetFlags(), sizer_flags.GetBorderInPixels());
@@ -838,7 +841,7 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
     {
         FAIL_MSG(
             "The GBSizerItem component's child is not a wxWindow or a wxSizer or a Spacer - this should not be possible!");
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -890,7 +893,7 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
     // massiver overhaul (see #65), this entire section has been commented out until we can incorporate it into the
     // wxGridBagSizer overhaul.
 #if 0
-    if (node->GetParent()->GetClassName() == "wxGridBagSizer")
+    if (node->GetParent()->isGen(gen_wxGridBagSizer))
     {
         code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column) << "), ";
 
@@ -1091,7 +1094,7 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
     // without hitting assertion errors in debug builds, and in release builds, the Save button is positioned
     // incorrectly. Unfortunately that means we have to add the buttons one at a time if a Save button is specified.
 
-    if (node->FindParentForm()->GetClassName() == "wxDialog" && !node->prop_as_bool(prop_Save) &&
+    if (node->FindParentForm()->isGen(gen_wxDialog) && !node->prop_as_bool(prop_Save) &&
         !node->prop_as_bool(prop_ContextHelp))
     {
         code << node->get_node_name() << " = CreateStdDialogButtonSizer(";
@@ -1265,7 +1268,7 @@ std::optional<ttlib::cstr> TextSizerGenerator::GenConstruction(Node* node)
     while (parent->IsSizer())
         parent = parent->GetParent();
 
-    if (parent->GetClassName() == "wxDialog")
+    if (parent->isGen(gen_wxDialog))
     {
         code << " = CreateTextSizer(";
     }
@@ -1285,7 +1288,7 @@ bool TextSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     while (parent->IsSizer())
         parent = parent->GetParent();
 
-    if (parent->GetClassName() == "wxDialog")
+    if (parent->isGen(gen_wxDialog))
         InsertGeneratorInclude(node, "#include <wx/dialog.h>", set_src, set_hdr);
     else
         InsertGeneratorInclude(node, "#include <wx/textwrapper.h>", set_src, set_hdr);

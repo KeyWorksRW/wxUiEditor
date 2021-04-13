@@ -27,7 +27,7 @@ void InsertNodeAction::Change()
 {
     m_node->SetParent(m_parent);
 
-    if (m_parent->GetClassName() == "wxGridBagSizer" && m_parent->GetChildCount() > 0)
+    if (m_parent->isGen(gen_wxGridBagSizer) && m_parent->GetChildCount() > 0)
     {
         // This is a child of a wxGridBagSizer, so if m_pos is -1, then add as a new row. If m_pos >= 0, then add as a column
 
@@ -130,7 +130,7 @@ void RemoveNodeAction::Revert()
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview value) : m_property(prop)
 {
-    SetUndoString(ttlib::cstr() << "change " << prop->name_str());
+    SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
 
     m_change_value << value;
     m_revert_value = prop->GetValue();
@@ -138,7 +138,7 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview valu
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_property(prop)
 {
-    SetUndoString(ttlib::cstr() << "change " << prop->name_str());
+    SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
 
     m_change_value << value;
     m_revert_value = prop->GetValue();
@@ -158,8 +158,7 @@ void ModifyPropertyAction::Revert()
 
 ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event)
 {
-    ttlib::cstr undo_str = "change " + event->get_name() + " handler";
-    SetUndoString(undo_str);
+    SetUndoString(ttlib::cstr() << "change " << event->get_name() << " handler");
 
     m_change_value << value;
     m_revert_value = event->get_value();
@@ -179,8 +178,7 @@ void ModifyEventAction::Revert()
 
 ChangePositionAction::ChangePositionAction(Node* node, size_t position)
 {
-    ttlib::cstr undo_str = "change " + node->GetClassName() + " position";
-    SetUndoString(undo_str);
+    SetUndoString(ttlib::cstr() << "change " << node->DeclName() << " position");
 
     m_node = node->GetSharedPtr();
     m_parent = node->GetParentPtr();
@@ -203,8 +201,7 @@ void ChangePositionAction::Revert()
 
 ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
 {
-    ttlib::cstr undo_str = "change " + node->GetClassName() + " parent";
-    SetUndoString(undo_str);
+    SetUndoString(ttlib::cstr() << "change " << node->DeclName() << " parent");
 
     m_node = node->GetSharedPtr();
     m_change_parent = parent->GetSharedPtr();

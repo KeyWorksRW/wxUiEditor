@@ -109,7 +109,6 @@ wxImage ProjectSettings::GetImage(const ttlib::cstr& filename)
     {
         auto id = path;
         id.erase_from(BMP_PROP_SEPARATOR);
-        // auto bmp = wxArtProvider::GetBitmap(id, client + "_C");
         auto bmp = wxArtProvider::GetBitmap(id, client);
         if (bmp.IsOk())
         {

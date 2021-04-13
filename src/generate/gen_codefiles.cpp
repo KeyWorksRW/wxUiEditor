@@ -37,14 +37,14 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
 
-    if (auto extProp = project->get_value_ptr("source_ext"); extProp)
+    if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
     {
-        source_ext = *extProp;
+        source_ext = extProp;
     }
 
-    if (auto extProp = project->get_value_ptr("header_ext"); extProp)
+    if (auto& extProp = project->prop_as_string(prop_header_ext); extProp.size())
     {
-        header_ext = *extProp;
+        header_ext = extProp;
     }
 
     size_t currentFiles = 0;
@@ -52,9 +52,9 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
     for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
     {
         auto form = project->GetChild(pos);
-        if (auto base_file = form->get_value_ptr("base_file"); base_file)
+        if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
         {
-            path = *base_file;
+            path = base_file;
             if (path == "filename_base")
                 continue;
             path.make_absolute();
@@ -62,7 +62,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
         }
         else
         {
-            results.emplace_back() << _tt("No filename specified for ") << *form->get_value_ptr(txt_class_name) << '\n';
+            results.emplace_back() << _tt("No filename specified for ") << form->prop_as_string(prop_class_name) << '\n';
         }
 
         try
@@ -164,14 +164,14 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
 
-    if (auto extProp = project->get_value_ptr("source_ext"); extProp)
+    if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
     {
-        source_ext = *extProp;
+        source_ext = extProp;
     }
 
-    if (auto extProp = project->get_value_ptr("header_ext"); extProp)
+    if (auto extProp = project->prop_as_string(prop_header_ext); extProp.size())
     {
-        header_ext = *extProp;
+        header_ext = extProp;
     }
 
     size_t currentFiles = 0;
@@ -179,9 +179,9 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
     for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
     {
         auto form = project->GetChildPtr(pos);
-        if (auto file = form->get_value_ptr("derived_file"); file)
+        if (auto& file = form->prop_as_string(prop_derived_file); file.size())
         {
-            path = *file;
+            path = file;
             if (path.empty())
                 continue;
             path.make_relative(wxGetApp().getProjectPath());
@@ -197,7 +197,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else
         {
-            results.emplace_back() << _tt("No filename specified for ") << form->get_value_ptr("var_name")->c_str() << '\n';
+            results.emplace_back() << _tt("No filename specified for ") << form->prop_as_string(prop_var_name) << '\n';
             continue;
         }
 

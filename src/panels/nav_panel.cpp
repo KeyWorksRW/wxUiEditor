@@ -57,9 +57,8 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
             // This will happen if there is an enumerated value but no generator for it
             continue;
         }
-        auto& comp_name = iter->GetClassName();
         m_iconList->Add(iter->GetImage());
-        m_iconIdx[comp_name] = index++;
+        m_iconIdx[iter->gen_name()] = index++;
     }
 
     m_tree_ctrl->AssignImageList(m_iconList);
@@ -255,7 +254,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
 
     if (nextSizer)
     {
-        if (nextSizer->GetClassName() == "wxStdDialogButtonSizer")
+        if (nextSizer->isGen(gen_wxStdDialogButtonSizer))
         {
             appMsgBox("You cannot move a control into a wxStdDialogBtnSizer", _tt(strIdMoveTitle));
             return;
@@ -305,18 +304,16 @@ void NavigationPanel::AddChildNodes(Node* node, wxTreeItemId& parent, bool is_ro
 
 int NavigationPanel::GetImageIndex(Node* node)
 {
-    const char* name = node->GetNodeDeclaration()->GetClassName().c_str();
-    if (ttlib::is_sameas(name, "VerticalBoxSizer"))
+    auto name = node->gen_name();
+    if (node->isGen(gen_VerticalBoxSizer))
     {
-        auto& prop = node->prop_as_string(prop_orientation);
-        if (prop != "wxVERTICAL")
-            name = "wxBoxSizer";
+        if (!node->isPropValue(prop_orientation, "wxVERTICAL"))
+            name = gen_wxBoxSizer;
     }
-    else if (ttlib::is_sameas(name, "wxBoxSizer"))
+    else if (node->isGen(gen_wxBoxSizer))
     {
-        auto& prop = node->prop_as_string(prop_orientation);
-        if (prop != "wxHORIZONTAL")
-            name = "VerticalBoxSizer";
+        if (!node->isPropValue(prop_orientation, "wxHORIZONTAL"))
+            name = gen_VerticalBoxSizer;
     }
 
     if (auto it = m_iconIdx.find(name); it != m_iconIdx.end())
@@ -349,12 +346,12 @@ void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
     {
         text = prop->get_value();
     }
-    else if (node->GetClassName() == "ribbonTool")
+    else if (node->isGen(gen_ribbonTool))
     {
         text = node->prop_as_string(prop_id);
     }
 
-    if (text.empty() && node->GetClassName() == "Project")
+    if (text.empty() && node->isGen(gen_Project))
     {
         text << _tt(strIdProjectName) << wxGetApp().getProjectFileName().filename();
     }
@@ -362,7 +359,7 @@ void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
     // If there is no name then add the class name in parenthesis.
     else if (text.empty())
     {
-        text += " (" + node->GetClassName() + ")";
+        text << " (" << node->DeclName() << ")";
     }
 
     m_tree_ctrl->SetItemText(id, text.wx_str());
@@ -431,7 +428,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     else
     {
         FAIL_MSG(ttlib::cstr("There is no tree item associated with this object.\n\tClass: ")
-                 << node->GetClassName() << "\n\tName: " << node->prop_as_string(prop_var_name).wx_str());
+                 << node->DeclName() << "\n\tName: " << node->prop_as_string(prop_var_name).wx_str());
     }
 }
 
@@ -441,8 +438,8 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
 
     if (prop->isProp(prop_var_name) || prop->isProp(prop_label) || prop->isProp(prop_class_name))
     {
-        auto& class_name = prop->GetNode()->GetClassName();
-        if (ttlib::contains(class_name, "bookpage"))
+        auto class_name = prop->GetNode()->DeclName();
+        if (class_name.contains("bookpage"))
         {
             if (auto it = m_node_tree_map.find(prop->GetNode()->GetChild(0)); it != m_node_tree_map.end())
             {
@@ -454,7 +451,7 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
             UpdateDisplayName(it->second, it->first);
         }
     }
-    else if (prop->GetPropName() == "id" && prop->GetNode()->GetClassName() == "ribbonTool")
+    else if (prop->isProp(prop_id) && prop->GetNode()->isGen(gen_ribbonTool))
     {
         if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
         {
@@ -466,8 +463,7 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
     {
         if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
         {
-            auto& class_name = it->first->GetNodeDeclaration()->GetClassName();
-            if (class_name == "VerticalBoxSizer" || class_name == "wxBoxSizer")
+            if (it->first->isGen(gen_VerticalBoxSizer) || it->first->isGen(gen_wxBoxSizer))
             {
                 auto image_index = GetImageIndex(it->first);
                 m_tree_ctrl->SetItemImage(it->second, image_index);

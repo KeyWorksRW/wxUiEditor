@@ -45,7 +45,7 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_staticOriginal = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Original:"));
     flex_grid_sizer->Add(m_staticOriginal, wxSizerFlags().Center().Border(wxALL));
 
-    m_fileOriginal = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
+    m_fileOriginal = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr,
     wxString::FromUTF8("Select file(s)\", \"All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||"), wxDefaultPosition, wxSize(300, -1),
     wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
     flex_grid_sizer->Add(m_fileOriginal, wxSizerFlags().Expand().Border(wxALL));
@@ -53,7 +53,7 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_staticHeader = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("O&utput:"));
     flex_grid_sizer->Add(m_staticHeader, wxSizerFlags().Center().Border(wxALL));
 
-    m_fileHeader = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
+    m_fileHeader = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr,
     wxString::FromUTF8("Header files|*.h;*.hh;*.hxx;*.hpp||"), wxDefaultPosition, wxDefaultSize,
     wxFLP_SAVE|wxFLP_USE_TEXTCTRL);
     flex_grid_sizer->Add(m_fileHeader, wxSizerFlags().Expand().Border(wxALL));
@@ -98,7 +98,7 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_staticMask = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Mask:"));
     box_sizer3->Add(m_staticMask, wxSizerFlags().Border(wxALL));
 
-    m_comboMask = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(150, -1), 0, NULL, wxCB_READONLY);
+    m_comboMask = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
     box_sizer3->Add(m_comboMask, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_staticRGB = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("RGB"));

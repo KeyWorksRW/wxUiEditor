@@ -20,7 +20,7 @@
 wxObject* ComboBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
-                                 node->prop_as_wxSize(prop_size), 0, NULL,
+                                 node->prop_as_wxSize(prop_size), 0, nullptr,
                                  node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& choices = node->prop_as_string(prop_choices);
@@ -52,12 +52,12 @@ wxObject* ComboBoxGenerator::Create(Node* node, wxObject* parent)
 
 bool ComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "selection_string")
+    if (prop->isProp(prop_selection_string))
     {
         wxStaticCast(widget, wxComboBox)->SetStringSelection(prop->as_wxString());
         return true;
     }
-    else if (prop->GetPropName() == "selection_int")
+    else if (prop->isProp(prop_selection_int))
     {
         wxStaticCast(widget, wxComboBox)->SetSelection(prop->as_int());
         return true;
@@ -92,7 +92,7 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenConstruction(Node* node)
         GenPos(node, code);
         code << ", ";
         GenSize(node, code);
-        code << ", 0, NULL, ";
+        code << ", 0, nullptr, ";
         GenStyle(node, code);
         if (node->prop_as_string(prop_window_name).size())
         {
@@ -154,7 +154,7 @@ bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* ChoiceGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxChoice(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                               node->prop_as_wxSize(prop_size), 0, NULL,
+                               node->prop_as_wxSize(prop_size), 0, nullptr,
                                node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& items = node->prop_as_string(prop_choices);
@@ -183,12 +183,12 @@ wxObject* ChoiceGenerator::Create(Node* node, wxObject* parent)
 
 bool ChoiceGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "selection_string")
+    if (prop->isProp(prop_selection_string))
     {
         wxStaticCast(widget, wxChoice)->SetStringSelection(prop->as_wxString());
         return true;
     }
-    else if (prop->GetPropName() == "selection_int")
+    else if (prop->isProp(prop_selection_int))
     {
         wxStaticCast(widget, wxChoice)->SetSelection(prop->as_int());
         return true;
@@ -219,7 +219,7 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenConstruction(Node* node)
         GenPos(node, code);
         code << ", ";
         GenSize(node, code);
-        code << ", 0, NULL, ";
+        code << ", 0, nullptr, ";
         GenStyle(node, code);
         if (node->prop_as_string(prop_window_name).size())
         {
@@ -281,7 +281,7 @@ bool ChoiceGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 wxObject* BitmapComboBoxGenerator::Create(Node* node, wxObject* parent)
 {
     auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
-                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, NULL,
+                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, nullptr,
                                        node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     auto& choices = node->prop_as_string(prop_choices);
@@ -310,12 +310,12 @@ wxObject* BitmapComboBoxGenerator::Create(Node* node, wxObject* parent)
 
 bool BitmapComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "selection_string")
+    if (prop->isProp(prop_selection_string))
     {
         wxStaticCast(widget, wxBitmapComboBox)->SetStringSelection(prop->as_wxString());
         return true;
     }
-    else if (prop->GetPropName() == "selection_int")
+    else if (prop->isProp(prop_selection_int))
     {
         wxStaticCast(widget, wxBitmapComboBox)->SetSelection(prop->as_int());
         return true;
@@ -350,7 +350,7 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenConstruction(Node* node)
         GenPos(node, code);
         code << ", ";
         GenSize(node, code);
-        code << ", 0, NULL, ";
+        code << ", 0, nullptr, ";
         GenStyle(node, code);
         if (node->prop_as_string(prop_window_name).size())
         {

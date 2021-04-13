@@ -15,9 +15,6 @@ struct PropChildDeclaration
     ttlib::cstr m_def_value;
     ttlib::cstr m_help;
 
-    // TODO: this is obsolete and need to be removed -- m_name_str points to a const char*
-    ttlib::cstr m_name;
-
     // BUGBUG: [KeyWorks - 04-09-2021] NodeCreator::ParseProperties does not initialize the following for parent properties
 
     const char* name_str() const noexcept { return m_name_str; }
@@ -46,14 +43,12 @@ public:
         m_prop_type = prop_type;
         m_name_enum = prop_name;
         m_name_str = GenEnum::map_PropNames[m_name_enum];
-
-        // TODO: This is only here until all callers stop using GetName()
-        m_name = m_name_str;
     }
 
     const std::vector<PropChildDeclaration>* GetChildren() const noexcept { return &m_children; }
 
-    const ttlib::cstr& GetName() const noexcept { return m_name; }
+    // Returns a char pointer to the name. Use get_name() if you want the enum value.
+    ttlib::cview DeclName() const noexcept { return ttlib::cview(m_name_str); }
 
     const ttlib::cstr& GetDefaultValue() const noexcept { return m_def_value; }
     const ttlib::cstr& GetDescription() const noexcept { return m_help; }

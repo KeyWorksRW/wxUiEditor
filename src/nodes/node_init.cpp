@@ -174,6 +174,17 @@ static const ParentChild lstParentChild[] = {
 
 };
 
+// These are types used to convert wxFormBuilder projects
+static constexpr const char* fb_ImportTypes[] = {
+
+    "sizeritem",
+    "gbsizeritem",
+    "splitteritem",
+
+    "oldbookpage",
+
+};
+
 void NodeCreator::Initialize()
 {
     for (auto& iter: GenEnum::map_PropTypes)
@@ -215,6 +226,11 @@ void NodeCreator::Initialize()
     ParseGeneratorFile("widgets");
 
     InitGenerators();
+
+    for (auto& iter: fb_ImportTypes)
+    {
+        m_setOldHostTypes.emplace(iter);
+    }
 }
 
 void NodeCreator::ParseGeneratorFile(ttlib::cview name)
@@ -388,9 +404,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             {
                 PropChildDeclaration child;
 
-                child.m_name = elem_child.attribute("name").as_string();
                 child.m_help = elem_child.attribute("help").as_string();
-
                 if (child.m_help.empty())
                 {
                     if (child.isProp(prop_class_access))

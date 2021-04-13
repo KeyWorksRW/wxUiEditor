@@ -14,7 +14,10 @@
 #include <wx/treectrl.h>  // wxTreeCtrl base header
 #include <wx/window.h>    // wxWindowBase class - the interface of wxWindow
 
+#include "gen_enums.h"     // Enumerations for generators
 #include "node_classes.h"  // Forward defintions of Node classes
+
+using namespace GenEnum;
 
 class CustomEvent;
 class MainFrame;
@@ -65,7 +68,7 @@ private:
 
     wxImageList* m_iconList;
 
-    std::unordered_map<std::string, int> m_iconIdx;
+    std::map<GenName, int> m_iconIdx;
 
     wxTreeCtrl* m_tree_ctrl;
 

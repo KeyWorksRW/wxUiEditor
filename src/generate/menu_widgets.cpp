@@ -81,7 +81,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             if (menu_item->HasValue(prop_bitmap))
                 item->SetBitmap(menu_item->prop_as_wxBitmap(prop_bitmap));
         }
-        else if (menu_item->GetClassName() == "separator")
+        else if (menu_item->isGen(gen_separator))
         {
             sub_menu->AppendSeparator();
         }

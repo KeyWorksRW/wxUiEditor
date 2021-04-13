@@ -67,16 +67,12 @@ public:
     // returns false if the default value is used.
     bool HasValue();
 
-    void splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& children) const;
-    void SplitParentProperty(std::map<wxString, wxString>* children) const;
-
     const PropDeclaration* GetPropDeclaration() const { return m_declaration; }
 
-
-    ttlib::cstr getChildFromParent(const ttlib::cstr& childName) const;
-
     Node* GetNode() { return m_node; }
-    const ttlib::cstr& GetPropName() const;
+
+    // Returns a char pointer to the name. Use get_name() if you want the enum value.
+    ttlib::cview DeclName() const noexcept { return m_declaration->DeclName(); }
 
     bool isProp(PropName name) const noexcept { return m_declaration->isProp(name); }
     bool isType(PropType type) const noexcept { return m_declaration->isType(type); }

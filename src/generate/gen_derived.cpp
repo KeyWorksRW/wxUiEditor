@@ -34,20 +34,20 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
 
-    if (auto extProp = project->get_value_ptr("source_ext"); extProp)
+    if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
     {
-        source_ext = *extProp;
+        source_ext = extProp;
     }
 
-    if (auto extProp = project->get_value_ptr("header_ext"); extProp)
+    if (auto& extProp = project->prop_as_string(prop_header_ext); extProp.size())
     {
-        header_ext = *extProp;
+        header_ext = extProp;
     }
 
     ttlib::cstr derived_file;
-    if (auto file_prop = form->get_value_ptr("derived_file"); file_prop)
+    if (auto& file_prop = form->prop_as_string(prop_derived_file); file_prop.size())
     {
-        derived_file = *file_prop;
+        derived_file = file_prop;
         if ((derived_file.empty() || derived_file.is_sameas("filename")) && panel_type == NOT_PANEL)
             return result::ignored;
         derived_file.make_relative(wxGetApp().getProjectPath());
@@ -70,9 +70,9 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
     derived_file.remove_extension();
 
     ttlib::cstr baseFile;
-    if (auto file = form->get_value_ptr("base_file"); file)
+    if (auto& file = form->prop_as_string(prop_base_file); file.size())
     {
-        baseFile = *file;
+        baseFile = file;
         baseFile.replace_extension(header_ext);
         ttlib::cstr root(derived_file);
         root.remove_filename();
@@ -144,11 +144,11 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
 
     if (panel_type != HDR_PANEL)
     {
-        auto prop = project->get_value_ptr("local_pch_file");
-        if (prop)
+
+        if (auto prop = project->prop_as_string(prop_local_pch_file); prop.size())
         {
             ttlib::cstr pch("#include ");
-            pch << "\"" << *prop << "\"";
+            pch << "\"" << prop << "\"";
 
             m_source->writeLine();
             m_source->writeLine(pch);

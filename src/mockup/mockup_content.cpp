@@ -57,7 +57,7 @@ void MockupContent::RemoveNodes()
 void MockupContent::CreateAllGenerators()
 {
     auto form = m_mockupParent->GetSelectedForm();
-    if (form->GetClassName() == "MenuBar" || form->GetClassName() == "ToolBar")
+    if (form->isGen(gen_MenuBar) || form->isGen(gen_ToolBar))
     {
         m_parent_sizer = new wxBoxSizer(wxVERTICAL);
         CreateChildren(form, this, this, m_parent_sizer);
@@ -65,7 +65,7 @@ void MockupContent::CreateAllGenerators()
         return;
     }
 
-    if (form->GetClassName() == "wxFrame")
+    if (form->isGen(gen_wxFrame))
         m_parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     for (size_t i = 0; i < form->GetChildCount(); i++)
@@ -106,7 +106,7 @@ void MockupContent::CreateAllGenerators()
 void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer)
 {
     auto comp = node->GetGenerator();
-    ASSERT_MSG(comp, ttlib::cstr() << "Missing component for " << node->GetClassName());
+    ASSERT_MSG(comp, ttlib::cstr() << "Missing component for " << node->DeclName());
     if (!comp)
         return;
 
@@ -137,7 +137,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     wxWindow* created_window = nullptr;
     wxSizer* created_sizer = nullptr;
 
-    if (node->GetClassName() == "wxMenuBar" || node->GetClassName() == "MenuBar")
+    if (node->isGen(gen_wxMenuBar) || node->isGen(gen_MenuBar))
     {
         // Store the wxObject/Node pair both ways
         m_obj_node_pair[created_object] = node;
@@ -152,7 +152,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         // We don't create any children because the only thing visible is the mock menu
         return;
     }
-    else if (node->IsSizer() || node->GetClassName() == "wxStdDialogButtonSizer" || node->GetClassName() == "TextSizer")
+    else if (node->IsSizer() || node->isGen(gen_wxStdDialogButtonSizer) || node->isGen(gen_TextSizer))
     {
         if (node->IsStaticBoxSizer())
         {
@@ -338,15 +338,15 @@ wxObject* MockupContent::Get_wxObject(Node* node)
 
 void MockupContent::OnNodeSelected(Node* node)
 {
-    if (m_wizard && node->GetClassName() == "wxWizardPageSimple")
+    if (m_wizard && node->isGen(gen_wxWizardPageSimple))
     {
         auto parent = node->GetParent();
-        ASSERT(parent->GetClassName() == "wxWizard");
+        ASSERT(parent->isGen(gen_wxWizard));
         m_wizard->SetSelection(parent->GetChildPosition(node));
         return;
     }
 
-    else if (node->GetClassName() == "BookPage")
+    else if (node->isGen(gen_BookPage))
     {
         auto parent = node->GetParent();
         auto book = wxStaticCast(Get_wxObject(parent), wxBookCtrlBase);
@@ -369,10 +369,10 @@ void MockupContent::OnNodeSelected(Node* node)
         return;
     }
 
-    else if (node->GetClassName() == "wxRibbonPage")
+    else if (node->isGen(gen_wxRibbonPage))
     {
         auto parent = node->GetParent();
-        ASSERT(parent->GetClassName() == "wxRibbonBar");
+        ASSERT(parent->isGen(gen_wxRibbonBar));
 
         auto bar = wxStaticCast(Get_wxObject(parent), wxRibbonBar);
         auto page = wxStaticCast(Get_wxObject(node), wxRibbonPage);
@@ -380,10 +380,10 @@ void MockupContent::OnNodeSelected(Node* node)
 
         return;
     }
-    else if (node->GetClassName() == "wxRibbonPanel")
+    else if (node->isGen(gen_wxRibbonPanel))
     {
         auto parent = node->GetParent();
-        ASSERT(parent->GetClassName() == "wxRibbonPage");
+        ASSERT(parent->isGen(gen_wxRibbonPage));
 
         auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
         auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
@@ -391,10 +391,10 @@ void MockupContent::OnNodeSelected(Node* node)
 
         return;
     }
-    else if (node->GetClassName() == "wxRibbonButtonBar" || node->GetClassName() == "wxRibbonToolBar")
+    else if (node->isGen(gen_wxRibbonButtonBar) || node->isGen(gen_wxRibbonToolBar))
     {
         auto parent = node->GetParent()->GetParent();
-        ASSERT(parent->GetClassName() == "wxRibbonPage");
+        ASSERT(parent->isGen(gen_wxRibbonPage));
 
         auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
         auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
@@ -402,10 +402,10 @@ void MockupContent::OnNodeSelected(Node* node)
 
         return;
     }
-    else if (node->GetClassName() == "ribbonButton" || node->GetClassName() == "ribbonTool")
+    else if (node->isGen(gen_ribbonButton) || node->isGen(gen_ribbonTool))
     {
         auto parent = node->GetParent()->GetParent()->GetParent();
-        ASSERT(parent->GetClassName() == "wxRibbonPage");
+        ASSERT(parent->isGen(gen_wxRibbonPage));
 
         auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
         auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);

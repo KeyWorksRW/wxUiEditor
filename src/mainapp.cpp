@@ -215,7 +215,7 @@ int App::OnRun()
         }
 
         auto answer =
-            appMsgBox(_tt(strIdCannotLoadProjectFile) + projectFile + "\n\nDo you want to create an empty project?",
+            appMsgBox(ttlib::cstr() << _tt(strIdCannotLoadProjectFile) << projectFile << "\n\nDo you want to create an empty project?",
                       _tt(strIdTitleLoadProject), wxYES_NO);
         if (answer != wxYES)
         {

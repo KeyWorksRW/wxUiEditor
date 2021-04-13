@@ -289,7 +289,7 @@ void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
     for (size_t i = 0; i < count; ++i)
     {
         auto childObj = node->GetChild(i);
-        if (childObj->GetClassName() == "propGridItem")
+        if (childObj->isGen(gen_propGridItem))
         {
             if (childObj->prop_as_string(prop_type) == "Category")
             {
@@ -377,7 +377,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
     for (size_t i = 0; i < count; ++i)
     {
         auto childObj = node->GetChild(i);
-        if (childObj->GetClassName() == "propGridPage")
+        if (childObj->isGen(gen_propGridPage))
         {
             wxPropertyGridPage* page =
                 pgm->AddPage(childObj->prop_as_wxString(prop_label), childObj->prop_as_wxBitmap(prop_bitmap));
@@ -385,7 +385,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
             for (size_t j = 0; j < childObj->GetChildCount(); ++j)
             {
                 auto innerChildObj = childObj->GetChild(j);
-                if (innerChildObj->GetClassName() == "propGridItem")
+                if (innerChildObj->isGen(gen_propGridItem))
                 {
                     if (innerChildObj->prop_as_string(prop_type) == "Category")
                     {

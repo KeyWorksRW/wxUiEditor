@@ -33,12 +33,12 @@ wxObject* RadioButtonGenerator::Create(Node* node, wxObject* parent)
 
 bool RadioButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "label")
+    if (prop->isProp(prop_label))
     {
         wxStaticCast(widget, wxRadioButton)->SetLabel(node->prop_as_wxString(prop_label));
         return true;
     }
-    else if (prop->GetPropName() == "checked")
+    else if (prop->isProp(prop_checked))
     {
         wxStaticCast(widget, wxRadioButton)->SetValue(prop->as_bool());
         return true;
@@ -139,12 +139,12 @@ wxObject* RadioBoxGenerator::Create(Node* node, wxObject* parent)
 
 bool RadioBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "label")
+    if (prop->isProp(prop_label))
     {
         wxStaticCast(widget, wxRadioBox)->SetLabel(node->prop_as_wxString(prop_label));
         return true;
     }
-    else if (prop->GetPropName() == "selection")
+    else if (prop->isProp(prop_selection))
     {
         wxStaticCast(widget, wxRadioBox)->SetSelection(prop->as_int());
         return true;

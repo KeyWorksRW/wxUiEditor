@@ -35,12 +35,12 @@ void InsertDialog::OnNameText(wxCommandEvent& WXUNUSED(event))
         // importing a wxFormBuilder project and won't work in our own projects. So don't be surprised if something shows up
         // in the list that doesn't work!
 
-        if (!iter->GetClassName().is_sameprefix("wx"))
+        if (!iter->DeclName().is_sameprefix("wx"))
             continue;
 #endif  // not defined(_DEBUG)
 
-        if (iter->GetClassName().contains(name, tt::CASE::either))
-            m_listBox->AppendString(iter->GetClassName().wx_str());
+        if (iter->DeclName().contains(name, tt::CASE::either))
+            m_listBox->AppendString(iter->DeclName().wx_str());
     }
 
     if (m_listBox->GetCount() > 0)

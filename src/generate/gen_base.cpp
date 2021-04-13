@@ -277,7 +277,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
     auto propName = node->get_prop_ptr(prop_class_name);
     if (!propName)
     {
-        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << node->GetClassName() << " class.");
+        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << node->DeclName() << " class.");
         return;
     }
 
@@ -508,22 +508,20 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     // If the component is set for local access only, then add the header file to the source set. Once all processing is
     // done, if this header was also used by a component with non-local access, then it will be removed from the source
     // set.
-    if (auto prop = node->get_value_ptr(txt_class_access); prop && *prop == "none")
+    if (node->isPropValue(prop_class_access, "none"))
         isAddToSrc = true;
 
     auto generator = node->GetNodeDeclaration()->GetGenerator();
     generator->GetIncludes(node, set_src, set_hdr);
     if (node->HasValue(prop_validator_variable))
     {
-        auto var_name = node->get_value_ptr("validator_variable");
-        if (var_name && var_name->size())
+        auto& var_name = node->prop_as_string(prop_validator_variable);
+        if (var_name.size())
         {
             set_hdr.insert("#include <wx/valgen.h>");
-            auto validator_type = node->get_value_ptr("validator_type");
-            if (validator_type && validator_type->is_sameas("wxTextValidator"))
+            if (node->isPropValue(prop_validator_data_type, "wxTextValidator"))
                 set_hdr.insert("#include <wx/valtext.h>");
-            auto val_data_type = node->get_value_ptr("validator_data_type");
-            if (val_data_type && *val_data_type == "wxArrayInt")
+            if (node->isPropValue(prop_validator_data_type, "wxArrayInt"))
                 set_hdr.insert("#include <wx/dynarray.h>");
         }
     }
@@ -593,8 +591,8 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 {
     ttlib::cstr code;
 
-    ttlib::cstr class_name = node->GetClassName();
-    if (ttlib::is_sameprefix(class_name, "wx"))
+    ttlib::cstr class_name(node->DeclName());
+    if (class_name.is_sameprefix("wx"))
     {
         code << class_name << "* " << node->get_node_name() << ';';
         if (class_name == "wxStdDialogButtonSizer")
@@ -668,7 +666,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name == "tool")
     {
-        class_name = node->GetParent()->GetClassName();
+        class_name = node->GetParent()->DeclName();
         if (class_name == "wxAuiToolBar")
         {
             code << "wxAuiToolBarItem* " << node->get_node_name() << ';';
@@ -695,7 +693,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const wxString& cla
     auto propName = form_node->get_prop_ptr(prop_class_name);
     if (!propName)
     {
-        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->GetClassName());
+        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->DeclName());
         return;
     }
 
@@ -826,7 +824,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         }
     }
 
-    if (form_node->get_prop_ptr("window_extra_style"))
+    if (form_node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
         GenerateWindowSettings(form_node, code);
@@ -915,11 +913,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             }
 
             // Code for spacer's is handled by the component's GenConstruction() call
-            if (node->GetClassName() != "spacer")
+            if (!node->isGen(gen_spacer))
             {
-                if (node->GetClassName() == "wxStdDialogButtonSizer")
+                if (node->isGen(gen_wxStdDialogButtonSizer))
                 {
-                    if (node->FindParentForm()->GetClassName() == "wxDialog" && node->prop_as_bool(prop_static_line))
+                    if (node->FindParentForm()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
                         code << node->GetParent()->get_node_name() << "->Add(CreateSeparatedSizer(" << node->get_node_name()
                              << "), ";
                     else
@@ -930,7 +928,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                     code << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
                 }
 
-                if (parent->GetClassName() == "wxGridBagSizer")
+                if (parent->isGen(gen_wxGridBagSizer))
                 {
                     code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column)
                          << "), ";
@@ -951,7 +949,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
             m_source->writeLine(code);
         }
-        else if (node->GetNodeType()->get_name() == "widget" && parent->GetClassName() == "wxChoicebook")
+        else if (node->GetNodeType()->get_name() == "widget" && parent->isGen(gen_wxChoicebook))
         {
             ttlib::cstr code;
             code << parent->get_node_name() << "->GetControlSizer()->Add(" << node->get_node_name();
@@ -991,7 +989,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             }
             else if (node->GetChildCount() > 1)
             {
-                if (node->get_prop_ptr("splitmode")->GetValue() == "wxSPLIT_VERTICAL")
+                if (node->get_prop_ptr(prop_splitmode)->GetValue() == "wxSPLIT_VERTICAL")
                     code << "->SplitVertically(";
                 else
                     code << "->SplitHorizontally(";
@@ -999,7 +997,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 code << node->GetChild(0)->get_node_name() << ", " << node->GetChild(1)->get_node_name() << ");";
                 m_source->writeLine(code);
 
-                if (auto sash_pos = node->get_prop_ptr("sashpos")->as_int(); sash_pos != 0 && sash_pos != -1)
+                if (auto sash_pos = node->get_prop_ptr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
                 {
                     code = node->get_node_name();
                     code << "->SetSashPosition(" << node->prop_as_string(prop_sashpos) << ");";
@@ -1022,7 +1020,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     // A wxRibbonBar needs to be realized after all children have been created
 
-    if (node->GetClassName() == "wxRibbonBar")
+    if (node->isGen(gen_wxRibbonBar))
     {
         m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->Realize();");
     }
@@ -1076,7 +1074,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
     // If the node has a window_extra_style property, then generate any possible validator settings as
     // well as any window settings.
 
-    if (node->get_prop_ptr("window_extra_style"))
+    if (node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
         if (auto result = GenInheritSettings(node); result)

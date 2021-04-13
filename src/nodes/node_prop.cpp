@@ -35,11 +35,6 @@ bool NodeProperty::IsDefaultValue() const
     return m_value.is_sameas(m_declaration->GetDefaultValue());
 }
 
-const ttlib::cstr& NodeProperty::GetPropName() const
-{
-    return m_declaration->GetName();
-}
-
 int NodeProperty::as_int() const
 {
     switch (type())
@@ -297,71 +292,5 @@ bool NodeProperty::HasValue()
 
         default:
             return true;
-    }
-}
-
-void NodeProperty::splitParentProperty(std::map<ttlib::cstr, ttlib::cstr>& children) const
-{
-    children.clear();
-    if (m_declaration->isType(type_parent))
-    {
-        return;
-    }
-
-    auto myChildren = m_declaration->GetChildren();
-    auto child_iter = myChildren->begin();
-
-    ttlib::multistr list(m_value, ';');
-    for (auto& iter: list)
-    {
-        if (child_iter == myChildren->end())
-        {
-            return;
-        }
-        iter.trim(tt::TRIM::both);
-        children[child_iter->m_name] = iter;
-        ++child_iter;
-    }
-}
-
-void NodeProperty::SplitParentProperty(std::map<wxString, wxString>* children) const
-{
-    children->clear();
-    if (m_declaration->isType(type_parent))
-    {
-        return;
-    }
-
-    auto myChildren = m_declaration->GetChildren();
-    auto iter = myChildren->begin();
-
-    wxStringTokenizer tkz(m_value.wx_str(), ";", wxTOKEN_RET_EMPTY_ALL);
-    while (tkz.HasMoreTokens())
-    {
-        if (myChildren->end() == iter)
-        {
-            return;
-        }
-        wxString child = tkz.GetNextToken();
-        child.Trim(false);
-        child.Trim(true);
-        children->insert(std::map<wxString, wxString>::value_type(iter->m_name, child));
-        ++iter;
-    }
-}
-
-ttlib::cstr NodeProperty::getChildFromParent(const ttlib::cstr& childName) const
-{
-    std::map<ttlib::cstr, ttlib::cstr> children;
-    splitParentProperty(children);
-
-    auto child = children.find(childName);
-    if (child == children.end())
-    {
-        return ttlib::cstr();
-    }
-    else
-    {
-        return child->second;
     }
 }

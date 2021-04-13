@@ -30,7 +30,7 @@ NodeCreator::~NodeCreator()
 
 NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
 {
-    return m_a_declarations[static_cast<size_t>(rmap_GenNames[className.c_str()])];
+    return m_a_declarations[rmap_GenNames[className.c_str()]];
 }
 
 // This will add all properties and events, including any base interface classes such as wxWindow, sizeritem, etc.
@@ -53,7 +53,7 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
             if (base > 0)
             {
                 auto defaultValueTemp =
-                    node_decl->GetBaseClassDefaultPropertyValue(base - 1, prop_declaration->GetName().c_str());
+                    node_decl->GetBaseClassDefaultPropertyValue(base - 1, prop_declaration->DeclName().c_str());
                 if (!defaultValueTemp.empty())
                 {
                     defaultValue = defaultValueTemp;
@@ -91,7 +91,7 @@ size_t NodeCreator::CountChildrenWithSameType(Node* parent, NodeType* type)
 
 /*
 
-    * This will return NULL if the parent doesn't allow this child type, or the parent already has the maximum number of
+    * This will return nullptr if the parent doesn't allow this child type, or the parent already has the maximum number of
     * children allowed. E.g., containers can only have one child, splitters can only have two, and sizers can have an
     * unlimited number.
 
@@ -99,35 +99,28 @@ size_t NodeCreator::CountChildrenWithSameType(Node* parent, NodeType* type)
 
 // The parent parameter is used to determine if the parent allows this type of child, and if so how many of those
 // children are allowed.
-NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
+NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
 {
     NodeSharedPtr node;
     NodeDeclaration* node_decl;
 
     // This is a way for a ribbon panel button to indicate a wxBoxSizer with vertical orientation
-    if (classname.is_sameas("VerticalBoxSizer"))
-        node_decl = GetNodeDeclaration("wxBoxSizer");
+    if (name == gen_VerticalBoxSizer)
+        node_decl = m_a_declarations[gen_wxBoxSizer];
     else
-        node_decl = GetNodeDeclaration(classname);
-
-    if (!node_decl)
-    {
-        FAIL_MSG(ttlib::cstr() << "No component definition for " << classname);
-        throw std::runtime_error("Internal error: missing component definition");
-    }
+        node_decl = m_a_declarations[name];
 
     if (!parent)
         return NewNode(node_decl);
 
-    // This happens when importing wxFormBuilder and old wxUiEditor projects
-    if (IsOldHostType(classname))
+    // This happens when importing wxFormBuilder projects
+    if (IsOldHostType(node_decl->DeclName()))
         return NewNode(node_decl);
 
-    auto comp_type = node_decl->GetNodeType();
 
     // Check for widgets which can ONLY have a frame for a parent.
-    if (comp_type->isType(type_statusbar) || comp_type->isType(type_menubar) || comp_type->isType(type_ribbonbar) ||
-        comp_type->isType(type_toolbar))
+    if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) || node_decl->isType(type_ribbonbar) ||
+        node_decl->isType(type_toolbar))
     {
         if (parent->isType(type_form) && !parent->isGen(gen_wxFrame))
         {
@@ -137,40 +130,40 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
     else if (parent->isType(type_tool))
     {
         auto grand_parent = parent->GetParent();
-        if (grand_parent->isGen(gen_wxToolBar) && comp_type->isType(type_menu))
+        if (grand_parent->isGen(gen_wxToolBar) && node_decl->isType(type_menu))
             return NodeSharedPtr();
     }
 
     // Currently we don't support aui, but once we do we'll need to pass the paren't current setting to GetAllowableChildren
     bool aui = false;
 
-    auto max_children = GetAllowableChildren(parent, comp_type->gen_type(), aui);
+    auto max_children = GetAllowableChildren(parent, node_decl->gen_type(), aui);
 
     if (max_children == child_count::infinite)
     {
         node = NewNode(node_decl);
-        if (classname.is_sameas("VerticalBoxSizer"))
+        if (name == gen_VerticalBoxSizer)
         {
             node->prop_set_value(prop_orientation, "wxVERTICAL");
         }
     }
     else if (max_children != child_count::none)
     {
-        if (comp_type == GetNodeType(type_sizer))
+        if (node_decl->isType(type_sizer))
         {
             node = NewNode(node_decl);
-            if (classname.is_sameas("VerticalBoxSizer"))
+            if (name == gen_VerticalBoxSizer)
             {
                 node->prop_set_value(prop_orientation, "wxVERTICAL");
             }
         }
-        else if (comp_type == GetNodeType(type_gbsizer))
+        else if (node_decl->isType(type_gbsizer))
         {
             node = NewNode(node_decl);
         }
         else
         {
-            auto count = CountChildrenWithSameType(parent, comp_type);
+            auto count = CountChildrenWithSameType(parent, node_decl->GetNodeType());
             // REVIEW: [KeyWorks - 04-11-2021] Does this actually happen? And if it does, we need to let the user know. Note
             // that once aui is supported, this may start happening since aui typically allows one non-sizer child.
             ASSERT_MSG(count < (size_t) max_children,
@@ -188,6 +181,19 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview classname, Node* parent)
     return node;
 }
 
+// Called when the GenName isn't availalble
+NodeSharedPtr NodeCreator::CreateNode(ttlib::cview name, Node* parent)
+{
+    auto result = rmap_GenNames.find(name.c_str());
+    if (result == rmap_GenNames.end())
+    {
+        FAIL_MSG(ttlib::cstr() << "No component definition for " << name);
+        throw std::runtime_error("Internal error: missing component definition");
+    }
+
+    return CreateNode(result->second, parent);
+}
+
 NodeSharedPtr NodeCreator::MakeCopy(Node* node)
 {
     ASSERT(node);
@@ -199,7 +205,7 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
 
     for (auto& iter: node->get_props_vector())
     {
-        auto copyProp = copyObj->get_prop_ptr(iter.GetPropName());
+        auto copyProp = copyObj->get_prop_ptr(iter.get_name());
         ASSERT(copyProp);
 
         copyProp->set_value(iter.as_string());

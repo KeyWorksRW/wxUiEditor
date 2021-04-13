@@ -169,7 +169,7 @@ std::vector<Node*> WizardFormGenerator::GetChildPanes(Node* parent)
     for (size_t pos = 0; pos < parent->GetChildCount(); ++pos)
     {
         auto child = parent->GetChild(pos);
-        if (child->GetClassName() == "wxWizardPageSimple")
+        if (child->isGen(gen_wxWizardPageSimple))
         {
             panes.emplace_back(child);
         }

@@ -453,7 +453,7 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
     for (size_t i = 0; i < count; ++i)
     {
         auto childObj = node->GetChild(i);
-        if (childObj->GetClassName() == "ribbonGalleryItem")
+        if (childObj->isGen(gen_ribbonGalleryItem))
         {
             auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())

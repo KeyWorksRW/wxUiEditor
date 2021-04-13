@@ -365,7 +365,7 @@ wxObject* GaugeGenerator::Create(Node* node, wxObject* parent)
 
 bool GaugeGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "position")
+    if (prop->isProp(prop_position))
     {
         wxStaticCast(widget, wxGauge)->SetValue(prop->as_int());
         return true;
@@ -451,7 +451,7 @@ wxObject* SliderGenerator::Create(Node* node, wxObject* parent)
 
 bool SliderGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
 {
-    if (prop->GetPropName() == "position")
+    if (prop->isProp(prop_position))
     {
         wxStaticCast(widget, wxSlider)->SetValue(prop->as_int());
         return true;

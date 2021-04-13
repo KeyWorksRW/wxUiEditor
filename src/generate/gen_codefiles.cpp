@@ -197,7 +197,6 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else
         {
-            results.emplace_back() << _tt("No filename specified for ") << form->prop_as_string(prop_var_name) << '\n';
             continue;
         }
 

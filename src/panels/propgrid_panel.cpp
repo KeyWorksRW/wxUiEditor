@@ -817,7 +817,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         }
                         else
                         {
-                            auto propType = selected_node->get_prop_ptr("validator_type");
+                            auto propType = selected_node->get_prop_ptr(prop_validator_type);
                             if (propType->GetValue() == "wxTextValidator")
                             {
                                 auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
@@ -1116,10 +1116,10 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         if (auto propType = selected_node->get_prop_ptr(prop_derived_class_name);
                             propType && propType->GetValue() == "DerivedClass")
                             ReplaceDrvName(newValue, propType);
-                        if (auto propType = selected_node->get_prop_ptr("base_file");
+                        if (auto propType = selected_node->get_prop_ptr(prop_base_file);
                             propType && propType->GetValue() == "filename_base")
                             ReplaceBaseFile(newValue, propType);
-                        if (auto propType = selected_node->get_prop_ptr("derived_file");
+                        if (auto propType = selected_node->get_prop_ptr(prop_derived_file);
                             propType && propType->GetValue().empty())
                             ReplaceDrvFile(newValue, propType);
                     }

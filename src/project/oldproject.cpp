@@ -562,7 +562,7 @@ static bool ProcessCheckBox(pugi::xml_node& xml_prop, Node* node)
                 continue;  // this is the default, so ignore it
             else if (iter.is_sameas("wxCHK_3STATE"))
             {
-                auto prop = node->get_prop_ptr("type");
+                auto prop = node->get_prop_ptr(prop_type);
                 prop->set_value("wxCHK_3STATE");
             }
             else
@@ -763,14 +763,14 @@ static bool HandleDownLevelProperty(pugi::xml_node& xml_prop, ttlib::cview prop_
 
     if (prop_name.is_sameas("value") && class_name.is_sameas("wxComboBox"))
     {
-        auto prop = node->get_prop_ptr("selection_string");
+        auto prop = node->get_prop_ptr(prop_selection_string);
         prop->set_value(xml_prop.text().as_cview());
 
         return true;
     }
     else if (prop_name.is_sameas("selection") && (class_name.is_sameas("wxComboBox") || class_name.is_sameas("wxChoice")))
     {
-        auto prop = node->get_prop_ptr("selection_int");
+        auto prop = node->get_prop_ptr(prop_selection_int);
         prop->set_value(xml_prop.text().as_cview());
 
         return true;

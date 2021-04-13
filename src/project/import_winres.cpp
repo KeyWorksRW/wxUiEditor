@@ -154,11 +154,11 @@ void WinResource::FormToNode(rcForm& form)
 {
     if (form.m_Styles.contains("wxDEFAULT_DIALOG_STYLE"))
     {
-        auto dlg_node = g_NodeCreator.CreateNode("Dialog", m_project);
+        auto dlg_node = g_NodeCreator.CreateNode(gen_wxDialog, m_project);
         m_project->AddChild(dlg_node);
         dlg_node->SetParent(m_project->GetSharedPtr());
 
-        auto parent_sizer = g_NodeCreator.CreateNode("wxBoxSizer", dlg_node.get());
+        auto parent_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, dlg_node.get());
         dlg_node->AddChild(parent_sizer);
         parent_sizer->SetParent(dlg_node);
         parent_sizer->get_prop_ptr(prop_orientation)->set_value("wxVERTICAL");
@@ -169,30 +169,30 @@ void WinResource::FormToNode(rcForm& form)
         }
         if (form.m_Title.size())
         {
-            dlg_node->get_prop_ptr("title")->set_value(form.m_WinExStyles);
+            dlg_node->prop_set_value(prop_title, form.m_WinExStyles);
         }
         if (form.m_Center.size() && form.m_Center.is_sameas("wxBOTH"))
         {
-            dlg_node->get_prop_ptr("center")->set_value(form.m_Center);
+            dlg_node->prop_set_value(prop_center, form.m_Center);
         }
 
         if (form.m_Styles.size())
         {
-            dlg_node->get_prop_ptr(prop_style)->set_value(form.m_Styles);
+            dlg_node->prop_set_value(prop_style, form.m_Styles);
         }
         if (form.m_ExStyles.size())
         {
-            dlg_node->get_prop_ptr("extra_style")->set_value(form.m_ExStyles);
+            dlg_node->prop_set_value(prop_extra_style, form.m_ExStyles);
         }
         if (form.m_WinStyles.size())
         {
-            dlg_node->get_prop_ptr("window_style")->set_value(form.m_WinStyles);
+            dlg_node->prop_set_value(prop_window_style, form.m_WinStyles);
         }
         if (form.m_WinExStyles.size())
         {
-            dlg_node->get_prop_ptr("window_extra_style")->set_value(form.m_WinExStyles);
+            dlg_node->prop_set_value(prop_window_extra_style, form.m_WinExStyles);
         }
 
-        dlg_node->get_prop_ptr("size")->set_value(ttlib::cstr() << form.m_rc.right << ',' << form.m_rc.bottom);
+        dlg_node->prop_set_value(prop_size, ttlib::cstr() << form.m_rc.right << ',' << form.m_rc.bottom);
     }
 }

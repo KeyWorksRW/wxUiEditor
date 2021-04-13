@@ -508,22 +508,20 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     // If the component is set for local access only, then add the header file to the source set. Once all processing is
     // done, if this header was also used by a component with non-local access, then it will be removed from the source
     // set.
-    if (auto prop = node->get_value_ptr(txt_class_access); prop && *prop == "none")
+    if (node->isPropValue(prop_class_access, "none"))
         isAddToSrc = true;
 
     auto generator = node->GetNodeDeclaration()->GetGenerator();
     generator->GetIncludes(node, set_src, set_hdr);
     if (node->HasValue(prop_validator_variable))
     {
-        auto var_name = node->get_value_ptr("validator_variable");
-        if (var_name && var_name->size())
+        auto& var_name = node->prop_as_string(prop_validator_variable);
+        if (var_name.size())
         {
             set_hdr.insert("#include <wx/valgen.h>");
-            auto validator_type = node->get_value_ptr("validator_type");
-            if (validator_type && validator_type->is_sameas("wxTextValidator"))
+            if (node->isPropValue(prop_validator_data_type, "wxTextValidator"))
                 set_hdr.insert("#include <wx/valtext.h>");
-            auto val_data_type = node->get_value_ptr("validator_data_type");
-            if (val_data_type && *val_data_type == "wxArrayInt")
+            if (node->isPropValue(prop_validator_data_type, "wxArrayInt"))
                 set_hdr.insert("#include <wx/dynarray.h>");
         }
     }
@@ -826,7 +824,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         }
     }
 
-    if (form_node->get_prop_ptr("window_extra_style"))
+    if (form_node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
         GenerateWindowSettings(form_node, code);
@@ -991,7 +989,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             }
             else if (node->GetChildCount() > 1)
             {
-                if (node->get_prop_ptr("splitmode")->GetValue() == "wxSPLIT_VERTICAL")
+                if (node->get_prop_ptr(prop_splitmode)->GetValue() == "wxSPLIT_VERTICAL")
                     code << "->SplitVertically(";
                 else
                     code << "->SplitHorizontally(";
@@ -999,7 +997,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 code << node->GetChild(0)->get_node_name() << ", " << node->GetChild(1)->get_node_name() << ");";
                 m_source->writeLine(code);
 
-                if (auto sash_pos = node->get_prop_ptr("sashpos")->as_int(); sash_pos != 0 && sash_pos != -1)
+                if (auto sash_pos = node->get_prop_ptr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
                 {
                     code = node->get_node_name();
                     code << "->SetSashPosition(" << node->prop_as_string(prop_sashpos) << ");";
@@ -1076,7 +1074,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
     // If the node has a window_extra_style property, then generate any possible validator settings as
     // well as any window settings.
 
-    if (node->get_prop_ptr("window_extra_style"))
+    if (node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
         if (auto result = GenInheritSettings(node); result)

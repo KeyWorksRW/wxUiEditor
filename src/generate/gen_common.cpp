@@ -145,7 +145,7 @@ ttlib::cstr GenerateSizerFlags(Node* node)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr)
 {
-    if (auto value = node->get_value_ptr(txt_class_access); value && *value == "none")
+    if (node->isPropValue(prop_class_access, "none"))
     {
         set_src.insert(include);
     }

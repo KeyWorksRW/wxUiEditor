@@ -46,6 +46,9 @@ public:
     void SetParent(NodeSharedPtr parent) { m_parent = parent; }
     void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
 
+
+    // Using PropName is preferred, but not always possible when importing wxFormBuilder and wxSmith projects
+
     NodeProperty* get_prop_ptr(ttlib::cview name);
     ttlib::cstr* get_value_ptr(ttlib::cview name);
 

@@ -40,14 +40,15 @@ public:
 
     void Initialize();
 
-    NodeSharedPtr CreateNode(ttlib::cview class_name, Node* parent);
+    NodeSharedPtr CreateNode(ttlib::cview name, Node* parent);
+    NodeSharedPtr CreateNode(GenName name, Node* parent);
     NodeSharedPtr NewNode(NodeDeclaration* node_info);
 
     // If you have the class enum value, this is the preferred way to get the Declaration
     // pointer.
     NodeDeclaration* get_declaration(GenEnum::GenName class_enum)
     {
-        return m_a_declarations[static_cast<size_t>(class_enum)];
+        return m_a_declarations[class_enum];
     }
 
     NodeDeclaration* GetNodeDeclaration(ttlib::cview class_name);

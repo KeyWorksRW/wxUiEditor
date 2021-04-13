@@ -545,7 +545,7 @@ Node* Node::CreateChildNode(ttlib::cview name)
     // then assume the parent is wxRibbonToolBar and retry with "ribbonTool"
     else if (name.is_sameas("ribbonButton"))
     {
-        new_node = g_NodeCreator.CreateNode("ribbonTool", this);
+        new_node = g_NodeCreator.CreateNode(gen_ribbonTool, this);
         if (new_node)
         {
             ttlib::cstr undo_str = "insert ribbon tool";
@@ -802,7 +802,7 @@ ttlib::cstr Node::GetUniqueName(const ttlib::cstr& proposed_name)
 
 bool Node::FixDuplicateName(bool is_validator)
 {
-    auto name = get_value_ptr(is_validator ? "validator_variable" : txt_var_name);
+    auto name = get_value_ptr(is_validator ? "validator_variable" : "var_name");
     if (!name || name->empty())
         return false;
 
@@ -861,20 +861,20 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
         }
 
         // Check for StaticCheckboxBoxSizer checkbox variable
-        if (auto name = get_value_ptr("checkbox_var_name"); name && name->size())
+        if (auto& name = prop_as_string(prop_checkbox_var_name); name.size())
         {
-            name_set.emplace(*name);
+            name_set.emplace(name);
         }
 
         // Check for StaticRadioBtnBoxSizer radiobtn variable
-        if (auto name = get_value_ptr("radiobtn_var_name"); name && name->size())
+        if (auto& name = prop_as_string(prop_radiobtn_var_name); name.size())
         {
-            name_set.emplace(*name);
+            name_set.emplace(name);
         }
 
-        if (auto name = get_value_ptr("validator_variable"); name && name->size())
+        if (auto& name = prop_as_string(prop_validator_variable); name.size())
         {
-            name_set.emplace(*name);
+            name_set.emplace(name);
         }
     }
 

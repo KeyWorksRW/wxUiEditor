@@ -850,17 +850,17 @@ void MainFrame::UpdateMoveMenu()
 
 void MainFrame::FindItemName(Node* node)
 {
-    if (auto value = node->get_value_ptr("var_name"); value && value->size())
+    if (auto& value = node->prop_as_string(prop_var_name); value.size())
     {
-        m_generatedPanel->FindItemName(*value);
+        m_generatedPanel->FindItemName(value);
         return;
     }
 
     if (node->DeclName().is_sameprefix("ribbon"))
     {
-        if (auto value = node->get_value_ptr("id"); value && value->size())
+        if (auto& value = node->prop_as_string(prop_id); value.size())
         {
-            m_generatedPanel->FindItemName(*value);
+            m_generatedPanel->FindItemName(value);
         }
     }
 }

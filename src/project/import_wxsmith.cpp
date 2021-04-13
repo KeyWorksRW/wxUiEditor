@@ -37,7 +37,7 @@ bool WxSmith::Import(const ttString& filename)
         return false;
     }
 
-    auto project = g_NodeCreator.CreateNode("Project", nullptr);
+    auto project = g_NodeCreator.CreateNode(gen_Project, nullptr);
     for (auto& iter: root.children())
     {
         CreateXrcNode(iter, project.get());
@@ -108,7 +108,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
         return NodeSharedPtr();
     }
 
-    if (auto prop = new_node->get_prop_ptr("var_name"); prop)
+    if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
     {
         auto original = prop->as_string();
         auto new_name = parent->GetUniqueName(prop->as_string());
@@ -129,27 +129,27 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
             {
                 auto id = btn_id.attribute("name").as_cview();
                 if (id.is_sameas("wxID_OK"))
-                    new_node->get_prop_ptr("OK")->set_value("1");
+                    new_node->get_prop_ptr(prop_OK)->set_value("1");
                 else if (id.is_sameas("wxID_YES"))
-                    new_node->get_prop_ptr("Yes")->set_value("1");
+                    new_node->get_prop_ptr(prop_Yes)->set_value("1");
                 else if (id.is_sameas("wxID_SAVE"))
-                    new_node->get_prop_ptr("Save")->set_value("1");
+                    new_node->get_prop_ptr(prop_Save)->set_value("1");
                 else if (id.is_sameas("wxID_APPLY"))
-                    new_node->get_prop_ptr("Apply")->set_value("1");
+                    new_node->get_prop_ptr(prop_Apply)->set_value("1");
                 else if (id.is_sameas("wxID_NO"))
-                    new_node->get_prop_ptr("No")->set_value("1");
+                    new_node->get_prop_ptr(prop_No)->set_value("1");
                 else if (id.is_sameas("wxID_CANCEL"))
-                    new_node->get_prop_ptr("Cancel")->set_value("1");
+                    new_node->get_prop_ptr(prop_Cancel)->set_value("1");
                 else if (id.is_sameas("wxID_CLOSE"))
-                    new_node->get_prop_ptr("Close")->set_value("1");
+                    new_node->get_prop_ptr(prop_Close)->set_value("1");
                 else if (id.is_sameas("wxID_HELP"))
-                    new_node->get_prop_ptr("Help")->set_value("1");
+                    new_node->get_prop_ptr(prop_Help)->set_value("1");
                 else if (id.is_sameas("wxID_CONTEXT_HELP"))
-                    new_node->get_prop_ptr("ContextHelp")->set_value("1");
+                    new_node->get_prop_ptr(prop_ContextHelp)->set_value("1");
             }
         }
 
-        new_node->get_prop_ptr("alignment")->set_value("wxALIGN_RIGHT");
+        new_node->get_prop_ptr(prop_alignment)->set_value("wxALIGN_RIGHT");
         return new_node;
     }
 
@@ -163,7 +163,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
         if (!new_node)
             return NodeSharedPtr();
         if (new_node->isGen(gen_wxStdDialogButtonSizer))
-            new_node->get_prop_ptr("static_line")->set_value(false);
+            new_node->get_prop_ptr(prop_static_line)->set_value(false);
         child = child.next_sibling("object");
     }
     else if (sizeritem)
@@ -205,19 +205,19 @@ void WxSmith::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
         {
             if (new_node->IsForm())
             {
-                if (auto prop = new_node->get_prop_ptr("class_name"); prop)
+                if (auto prop = new_node->get_prop_ptr(prop_class_name); prop)
                 {
                     prop->set_value(iter.value());
                 }
             }
             else if (iter.as_cview().is_sameprefix("wxID_"))
             {
-                auto prop = new_node->get_prop_ptr("id");
+                auto prop = new_node->get_prop_ptr(prop_id);
                 if (prop)
                 {
                     prop->set_value(iter.value());
                 }
-                else if (prop = new_node->get_prop_ptr("var_name"); prop)
+                else if (prop = new_node->get_prop_ptr(prop_var_name); prop)
                 {
                     prop->set_value(iter.value());
                 }
@@ -228,14 +228,14 @@ void WxSmith::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
                 // In a wxSmith file, name is the ID and variable is the var_name
                 if (!xml_obj.attribute("variable").empty())
                 {
-                    if (auto prop = new_node->get_prop_ptr("id"); prop)
+                    if (auto prop = new_node->get_prop_ptr(prop_id); prop)
                     {
                         prop->set_value(iter.value());
                     }
                     continue;
                 }
 
-                if (auto prop = new_node->get_prop_ptr("var_name"); prop)
+                if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
                 {
                     ttlib::cstr org_name(iter.value());
                     auto new_name = new_node->GetUniqueName(org_name);
@@ -245,7 +245,7 @@ void WxSmith::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
         }
         else if (iter.cname().is_sameas("variable"))
         {
-            if (auto prop = new_node->get_prop_ptr("var_name"); prop)
+            if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
             {
                 ttlib::cstr org_name(iter.value());
                 auto new_name = new_node->GetUniqueName(org_name);
@@ -288,10 +288,9 @@ void WxSmith::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node*
             if (ttlib::is_found(pos))
             {
                 label[pos] = 0;
-                if (auto prop_shortcut = node->get_prop_ptr("shortcut"); prop_shortcut)
-                    prop_shortcut->set_value(label.subview(pos + 2));
+                node->prop_set_value(prop_shortcut, label.subview(pos + 2));
             }
-            if (auto prop = node->get_prop_ptr("label"); prop)
+            if (auto prop = node->get_prop_ptr(prop_label); prop)
             {
                 prop->set_value(label);
             }
@@ -299,7 +298,7 @@ void WxSmith::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node*
         }
         else if (iter.cname().is_sameas("option"))
         {
-            if (auto prop = node->get_prop_ptr("proportion"); prop)
+            if (auto prop = node->get_prop_ptr(prop_proportion); prop)
             {
                 prop->set_value(iter.text().as_string());
                 continue;
@@ -319,7 +318,7 @@ void WxSmith::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node*
 
         if (iter.cname().is_sameas("orient"))
         {
-            prop = node->get_prop_ptr("orientation");
+            prop = node->get_prop_ptr(prop_orientation);
             if (prop)
             {
                 prop->set_value(iter.text().as_string());
@@ -351,7 +350,7 @@ void WxSmith::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
             bitmap << xml_obj.attribute("stock_client").value();
         bitmap << "; [-1; -1]";
 
-        if (auto prop = node->get_prop_ptr("bitmap"); prop)
+        if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
         {
             prop->set_value(bitmap);
         }

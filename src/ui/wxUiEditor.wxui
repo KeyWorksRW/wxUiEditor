@@ -286,7 +286,17 @@
         <node class="wxStdDialogButtonSizer" class_access="protected:" var_name="m_stdBtn" flags="wxEXPAND" OKButtonClicked="OnOK" />
       </node>
     </node>
-    <node class="wxFrame" class_name="MsgFrameBase" title="wxUiEditor Messages" base_file="msgframe_base" derived_class_name="MsgFrame" derived_file="msgframe" size="-1,-1" window_style="wxTAB_TRAVERSAL" wxEVT_CLOSE_WINDOW="OnClose">
+    <node class="wxDialog" class_name="NodeInfoBase" title="Node Information" base_file="..\debugging\nodeinfo_base" derived_class_name="NodeInfo" derived_file="../debugging/nodeinfo">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer" flags="wxEXPAND">
+        <node class="wxStaticBoxSizer" label="Memory Usage" flags="wxEXPAND">
+          <node class="wxStaticText" label="Project:" var_name="m_txt_project" />
+          <node class="wxStaticText" label="Selection:" var_name="m_txt_selection" />
+          <node class="wxStaticText" label="Clipboard:" var_name="m_txt_clipboard" />
+        </node>
+        <node class="wxStdDialogButtonSizer" Cancel="false" Close="true" OK="false" default_button="Close" flags="wxEXPAND" />
+      </node>
+    </node>
+    <node class="wxFrame" class_name="MsgFrameBase" title="wxUiEditor Messages" base_file="msgframe_base" derived_class_name="MsgFrame" derived_file="../debugging/msgframe" size="-1,-1" window_style="wxTAB_TRAVERSAL" wxEVT_CLOSE_WINDOW="OnClose">
       <node class="wxMenuBar" class_access="none" var_name="menubar">
         <node class="wxMenu" class_access="none" label="&amp;File" var_name="menu_file">
           <node class="wxMenuItem" bitmap="Art; wxART_FILE_SAVE_AS; wxART_MENU; [-1; -1]" id="wxID_SAVEAS" label="" var_name="menu_item_saveas" wxEVT_MENU="OnSaveAs" />

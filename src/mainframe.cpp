@@ -49,7 +49,8 @@
 #include "ui/insertdialog.h"     // InsertDialog -- Dialog to lookup and insert a widget
 
 #if defined(_DEBUG)
-    #include "ui/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
+    #include "debugging/nodeinfo.h"  // NodeInfo -- Node memory usage dialog
+    #include "ui/debugsettings.h"    // DebugSettings -- Settings while running the Debug version of wxUiEditor
 #endif
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
@@ -69,6 +70,7 @@ enum
     id_DebugCurrentTest,
     id_DebugPreferences,
     id_ShowLogger,
+    id_NodeMemory,
 };
 
 MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
@@ -89,6 +91,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 #if defined(_DEBUG)
     auto menuDebug = new wxMenu;
     menuDebug->Append(id_ShowLogger, "Show Log Window", "Show window containing debug messages");
+    menuDebug->Append(id_NodeMemory, "Node Information...", "Show node memory usage");
     menuDebug->Append(id_DebugPreferences, "Debug &Settings...", "Settings to use in Debug build");
     menuDebug->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
@@ -142,6 +145,14 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
             dlg.ShowModal();
         },
         id_DebugPreferences);
+
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&) {
+            NodeInfo dlg(this);
+            dlg.ShowModal();
+        },
+        id_NodeMemory);
 
     Bind(
         wxEVT_MENU, [](wxCommandEvent&) { g_pMsgLogging->ShowLogger(); }, id_ShowLogger);

@@ -74,6 +74,8 @@ void NewProjectDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
         dir.GetAllFiles(".", &files, "*.fbp");
     else if (m_radioBtnSmith->GetValue())
         dir.GetAllFiles(".", &files, "*.wxs");
+    else if (m_radioBtnGlade->GetValue())
+        dir.GetAllFiles(".", &files, "*.wxg");
     else if (m_radioBtnXrc->GetValue())
         dir.GetAllFiles(".", &files, "*.xrc");
     else if (m_radioBtnWinRes->GetValue())
@@ -130,6 +132,18 @@ void NewProjectDlg::OnXRC(wxCommandEvent& WXUNUSED(event))
     wxDir dir;
     wxArrayString files;
     dir.GetAllFiles(".", &files, "*.xrc");
+
+    if (files.size())
+        m_checkListProjects->InsertItems(files, 0);
+}
+
+void NewProjectDlg::OnWxGlade(wxCommandEvent& WXUNUSED(event))
+{
+    m_checkListProjects->Clear();
+
+    wxDir dir;
+    wxArrayString files;
+    dir.GetAllFiles(".", &files, "*.wxg");
 
     if (files.size())
         m_checkListProjects->InsertItems(files, 0);

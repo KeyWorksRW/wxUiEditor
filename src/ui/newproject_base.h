@@ -33,6 +33,7 @@ protected:
     wxCheckBox* m_checkBoxEmptyProject;
     wxCheckListBox* m_checkListProjects;
     wxRadioButton* m_radioBtnFormBuilder;
+    wxRadioButton* m_radioBtnGlade;
     wxRadioButton* m_radioBtnSmith;
     wxRadioButton* m_radioBtnWinRes;
     wxRadioButton* m_radioBtnXrc;
@@ -53,6 +54,7 @@ protected:
     virtual void OnSelectAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelectNone(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWindowsResource(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnWxGlade(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWxSmith(wxCommandEvent& event) { event.Skip(); }
     virtual void OnXRC(wxCommandEvent& event) { event.Skip(); }
 };

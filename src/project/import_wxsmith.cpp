@@ -60,9 +60,13 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     if (class_name.empty())
         return NodeSharedPtr();
 
+    bool isBitmapButton { false };
+
+    // A wxBitmapButton is a regular button with no label and a bitmap
     if (class_name == "wxBitmapButton")
     {
         class_name = "wxButton";
+        isBitmapButton = true;
     }
     else if (class_name.is_sameas("wxPanel") && parent->DeclName().contains("book"))
     {
@@ -106,6 +110,12 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
         }
 
         return NodeSharedPtr();
+    }
+
+    if (isBitmapButton)
+    {
+        new_node->prop_set_value(prop_label, "");
+        isBitmapButton = false;
     }
 
     if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
@@ -328,8 +338,7 @@ void WxSmith::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node*
         {
             node->prop_set_value(prop_border_size, iter.text().as_string());
         }
-        else if (iter.cname().is_sameas("flag") &&
-                 (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem)))
+        else if (iter.cname().is_sameas("flag") && (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem)))
         {
             HandleSizerItemProperty(iter, node, parent);
         }
@@ -353,6 +362,23 @@ void WxSmith::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
         if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
         {
             prop->set_value(bitmap);
+        }
+    }
+    else
+    {
+        auto file = xml_obj.child_as_cstr();
+        if (file.contains(".xpm", tt::CASE::either))
+        {
+            ttlib::cstr bitmap("XPM; ");
+            bitmap << file;
+            bitmap << "; ; [-1; -1]";
+
+            if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
+            {
+                prop->set_value(bitmap);
+                if (node->isGen(gen_wxButton))
+                    node->prop_set_value(prop_markup, true);
+            }
         }
     }
 }

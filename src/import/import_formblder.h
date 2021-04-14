@@ -29,8 +29,6 @@ public:
 
 protected:
     void ConvertNameSpaceProp(NodeProperty* prop, ttlib::cview org_names);
-    // Call when the style name is the same, but may need additional processing
-    void ProcessStyle(pugi::xml_node& xml_prop, Node* object, NodeProperty* prop);
 
     // Called when a property is unknown and has a value set.
     void ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_name, ttlib::cview class_name, Node* newobject);

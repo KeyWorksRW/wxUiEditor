@@ -25,8 +25,15 @@ public:
 
 protected:
     std::optional<pugi::xml_document> LoadDocFile(const ttString& file);
+    std::optional<GenName> ConvertToGenName(const ttlib::cstr& object_name, Node* parent);
 
     void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent = nullptr);
+    void ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop);
+    void ProcessAttributes(const pugi::xml_node& xml_obj, Node* node);
+    void ProcessContent(const pugi::xml_node& xml_obj, Node* node);
+    void ProcessBitmap(const pugi::xml_node& xml_obj, Node* node);
+    void ProcessHandler(const pugi::xml_node& xml_obj, Node* node);
+    void ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent = nullptr);
 
     pugi::xml_document m_docOut;
     ttString m_importProjectFile;

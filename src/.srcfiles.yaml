@@ -86,6 +86,13 @@ Files:
     generate/window_widgets.cpp    # Splitter and Scroll generation classes
     generate/wizard_form.cpp       # Wizard form class
 
+    import/import_formblder.cpp    # Import a wxFormBuider project
+    import/import_winres.cpp       # Import a Windows resource file
+    import/import_wxsmith.cpp      # Process XRC files
+    import/import_xml.cpp          # Base class for XML importing
+    import/winres/winres_ctrl.cpp  # Process Windows Resource control data
+    import/winres/winres_form.cpp  # Process a Windows Resource form (usually a dialog)
+
     mockup/mockup_parent.cpp    # Top-level MockUp Parent window
     mockup/mockup_content.cpp   # Mockup of a form's contents
     mockup/mockup_wizard.cpp    # Emulate a wxWizard
@@ -105,14 +112,9 @@ Files:
     panels/propgrid_panel.cpp   # Property panel
     panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar
 
-    project/import_formblder.cpp  # Import a wxFormBuider project
-    project/import_winres.cpp     # Import a Windows resource file
-    project/import_wxsmith.cpp    # Process XRC files
     project/loadproject.cpp       # Load wxUiEditor project
     project/oldproject.cpp        # Load older version of wxUiEditor project
     project/saveproject.cpp       # Save a wxUiEditor project file
-    project/winres_ctrl.cpp       # Process Windows Resource control data
-    project/winres_form.cpp       # Process a Windows Resource form (usually a dialog)
 
     utils/font_prop.cpp         # FontProperty class
     utils/loadxml.cpp           # Load internal xml files

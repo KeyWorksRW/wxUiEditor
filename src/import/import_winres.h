@@ -11,7 +11,7 @@
 #include <tttextfile.h>
 
 #include "import_interface.h"  // ImportInterface -- Import interface
-#include "winres_form.h"       // rcForm -- Process a Windows Resource form  (usually a dialog)
+#include "winres/winres_form.h"       // rcForm -- Process a Windows Resource form  (usually a dialog)
 
 class NodeCreator;
 class Node;

@@ -13,21 +13,19 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-#include "import_interface.h"
+#include "import_xml.h"        // ImportXML -- Base class for XML importing
 
 class wxImage;
 
 using ImportNameMap = std::unordered_map<std::string, const char*>;
 
-class FormBuilder : public ImportInterface
+class FormBuilder : public ImportXML
 {
 public:
     FormBuilder();
     ~FormBuilder() {};
 
     bool Import(const ttString& filename) override;
-
-    pugi::xml_document& GetDocument() override { return m_docOut; }
 
 protected:
     void ConvertNameSpaceProp(NodeProperty* prop, ttlib::cview org_names);
@@ -44,7 +42,6 @@ protected:
 
 private:
     Node* m_project;
-    pugi::xml_document m_docOut;
 
     ImportNameMap m_mapEventNames;
 

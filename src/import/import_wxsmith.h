@@ -9,15 +9,14 @@
 
 #include "node_classes.h"
 
-#include "import_interface.h"  // ImportInterface -- Import interface
+#include "import_xml.h"        // ImportXML -- Base class for XML importing
 
-class WxSmith : public ImportInterface
+class WxSmith : public ImportXML
 {
 public:
     WxSmith();
 
     bool Import(const ttString& filename) override;
-    pugi::xml_document& GetDocument() override { return m_docOut; }
 
 protected:
     void ProcessContent(const pugi::xml_node& xml_obj, Node* node);
@@ -29,5 +28,4 @@ protected:
     NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
 
 private:
-    pugi::xml_document m_docOut;
 };

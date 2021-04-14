@@ -367,23 +367,23 @@ bool App::ImportProject(ttString& file)
     if (file.has_extension(".fbp"))
     {
         FormBuilder fb;
-        return Import(fb, file);
+        return fb.Import(file);
     }
     else if (file.has_extension(".rc") || file.has_extension(".dlg"))
     {
         WinResource winres;
-        return Import(winres, file);
+        return winres.Import(file);
     }
     else if (file.has_extension(".wxs") || file.has_extension(".xrc"))
     {
         WxSmith smith;
-        return Import(smith, file);
+        return smith.Import(file);
     }
 
     return false;
 }
 
-bool App::Import(ImportInterface& import, ttString& file, bool append)
+bool App::Import(ImportXML& import, ttString& file, bool append)
 {
     if (import.Import(file))
     {

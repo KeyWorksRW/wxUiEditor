@@ -438,10 +438,6 @@
         help="Maximum slider position.">
       100
     </property>
-    <property name="maxValue" type="int"
-        help="Maximum slider position.">
-      100
-    </property>
     <property name="line_size" type="int"
         help="If >0, sets the number of steps the slider moves when the user moves up or down a line.">
       0

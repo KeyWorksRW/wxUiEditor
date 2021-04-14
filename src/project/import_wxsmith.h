@@ -20,6 +20,7 @@ public:
     pugi::xml_document& GetDocument() override { return m_docOut; }
 
 protected:
+    void ProcessContent(const pugi::xml_node& xml_obj, Node* node);
     void ProcessAttributes(const pugi::xml_node& xml_obj, Node* node);
     void ProcessBitmap(const pugi::xml_node& xml_obj, Node* node);
     void ProcessHandler(const pugi::xml_node& xml_obj, Node* node);

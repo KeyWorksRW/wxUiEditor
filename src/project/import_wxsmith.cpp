@@ -281,6 +281,11 @@ void WxSmith::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node*
             ProcessBitmap(iter, node);
             continue;
         }
+        else if (iter.cname().is_sameas("content"))
+        {
+            ProcessContent(iter, node);
+            continue;
+        }
         else if (iter.cname().is_sameas("value"))
         {
             auto escaped = ConvertEscapeSlashes(iter.text().as_string());
@@ -347,6 +352,25 @@ void WxSmith::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node*
             ProcessHandler(iter, node);
         }
     }
+}
+
+void WxSmith::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
+{
+    ttlib::cstr choices;
+    for (auto& iter: xml_obj.children())
+    {
+        if (iter.cname().is_sameas("item"))
+        {
+            auto child = iter.child_as_cstr();
+            child.Replace("\"", "\\\"", true);
+            if (choices.size())
+                choices << " ";
+            choices << '\"' << child << '\"';
+        }
+    }
+
+    if (choices.size())
+        node->prop_set_value(prop_choices, choices);
 }
 
 void WxSmith::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)

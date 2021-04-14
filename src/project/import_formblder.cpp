@@ -1113,7 +1113,7 @@ void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* p
 
     if (flag_value.contains("wxALIGN_CENTER") || flag_value.contains("wxALIGN_CENTRE"))
     {
-        if (flag_value.contains("wxALIGN_CENTER_VERTICAL") && flag_value.contains("wxALIGN_CENTRE_VERTICAL"))
+        if (flag_value.contains("wxALIGN_CENTER_VERTICAL") || flag_value.contains("wxALIGN_CENTRE_VERTICAL"))
         {
             if (align_value.size())
                 align_value << '|';

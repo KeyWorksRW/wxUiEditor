@@ -118,19 +118,15 @@ FormBuilder::FormBuilder()
     }
 }
 
-bool FormBuilder::Import(const ttString& filename)
+bool FormBuilder::Import(const ttString& filename, bool write_doc)
 {
-    pugi::xml_document doc;
-
-    if (auto result = doc.load_file(filename.wx_str()); !result)
+    auto result = LoadDocFile(filename);
+    if (!result)
     {
-        appMsgBox(_ttc(strIdCantOpen) << filename.wx_str() << "\n\n" << result.description(), _tt(strIdImportFormBuilder));
         return false;
     }
+    auto root = result.value().first_child();
 
-    m_importProjectFile = filename;
-
-    auto root = doc.first_child();
     if (!ttlib::is_sameas(root.name(), "wxFormBuilder_Project", tt::CASE::either))
     {
         appMsgBox(filename.wx_str() + _ttc(" is not a wxFormBuilder file"), _tt(strIdImportFormBuilder));
@@ -146,35 +142,24 @@ bool FormBuilder::Import(const ttString& filename)
         }
     }
 
+    // Using a try block means that if at any point it becomes obvious the formbuilder file is invalid and we cannot recover,
+    // then we can throw an error and give a standard response about an invalid file.
+
     try
     {
         auto object = root.child("object");
         if (!object)
         {
-            FAIL_MSG("Project does not have a root \"object\" node.")
+            FAIL_MSG("formbuilder project file does not have a root \"object\" node.")
             throw std::runtime_error("Invalid project file");
         }
 
-        auto class_name = object.attribute("class").as_cview();
-        if (class_name.empty())
-        {
-            FAIL_MSG("Object does not have a class attribute.")
-            throw std::runtime_error("Invalid project file");
-        }
+        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
 
-        auto newobject = g_NodeCreator.CreateNode(class_name, nullptr);
-        if (!newobject)
-            throw std::runtime_error("Invalid project file -- object could not be created!");
+        CreateProjectNode(object, m_project.get());
 
-        m_project = newobject.get();
-        CreateProjectNode(object, m_project);
-
-        // REVIEW: [KeyWorks - 10-24-2020] This writes the project to memory as an XML file. That gives the caller the
-        // most choices about what to do with it since the caller might not want to import all of the objects, or it
-        // might not want to import them in the same order. However, it's a bit inefficient since we've created all the
-        // objects to destroy them and recreate them.
-
-        m_project->CreateDoc(m_docOut);
+        if (write_doc)
+            m_project->CreateDoc(m_docOut);
     }
 
     catch (const std::exception& DBG_PARAM(e))
@@ -1034,157 +1019,4 @@ void FormBuilder::ConvertNameSpaceProp(NodeProperty* prop, ttlib::cview org_name
     }
 
     prop->set_value(names);
-}
-
-void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
-{
-    auto flag_value = xml_prop.text().as_cview();
-
-    ttlib::cstr border_value;
-    if (flag_value.contains("wxALL"))
-        border_value = "wxALL";
-    else
-    {
-        if (flag_value.contains("wxLEFT"))
-        {
-            if (border_value.size())
-                border_value << '|';
-            border_value << "wxLEFT";
-        }
-        if (flag_value.contains("wxRIGHT"))
-        {
-            if (border_value.size())
-                border_value << '|';
-            border_value << "wxRIGHT";
-        }
-        if (flag_value.contains("wxTOP"))
-        {
-            if (border_value.size())
-                border_value << '|';
-            border_value << "wxTOP";
-        }
-        if (flag_value.contains("wxBOTTOM"))
-        {
-            if (border_value.size())
-                border_value << '|';
-            border_value << "wxBOTTOM";
-        }
-    }
-
-    if (border_value.size())
-    {
-        node->prop_set_value(prop_borders, border_value);
-    }
-
-    bool is_VerticalSizer = false;
-    bool is_HorizontalSizer = false;
-
-    if (parent && parent->IsSizer())
-    {
-        if (parent->prop_as_string(prop_orientation).contains("wxVERTICAL"))
-            is_VerticalSizer = true;
-        if (parent->prop_as_string(prop_orientation).contains("wxHORIZONTAL"))
-            is_HorizontalSizer = true;
-    }
-
-    ttlib::cstr align_value;
-    if (flag_value.contains("wxALIGN_LEFT") && !is_HorizontalSizer)
-    {
-        align_value << "wxALIGN_LEFT";
-    }
-    if (flag_value.contains("wxALIGN_TOP") && !is_VerticalSizer)
-    {
-        if (align_value.size())
-            align_value << '|';
-        align_value << "wxALIGN_TOP";
-    }
-    if (flag_value.contains("wxALIGN_RIGHT") && !is_HorizontalSizer)
-    {
-        if (align_value.size())
-            align_value << '|';
-        align_value << "wxALIGN_RIGHT";
-    }
-    if (flag_value.contains("wxALIGN_BOTTOM") && !is_VerticalSizer)
-    {
-        if (align_value.size())
-            align_value << '|';
-        align_value << "wxALIGN_BOTTOM";
-    }
-
-    if (flag_value.contains("wxALIGN_CENTER") || flag_value.contains("wxALIGN_CENTRE"))
-    {
-        if (flag_value.contains("wxALIGN_CENTER_VERTICAL") || flag_value.contains("wxALIGN_CENTRE_VERTICAL"))
-        {
-            if (align_value.size())
-                align_value << '|';
-            align_value << "wxALIGN_CENTER_VERTICAL";
-        }
-        else if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") || flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
-        {
-            if (align_value.size())
-                align_value << '|';
-            align_value << "wxALIGN_CENTER_HORIZONTAL";
-        }
-        if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") || flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
-        {
-            if (align_value.size())
-                align_value << '|';
-            align_value << "wxALIGN_CENTER_HORIZONTAL";
-        }
-
-        // Because we use contains(), all we know is that a CENTER flag was used, but not which one.
-        // If we get here and no CENTER flag has been added, then assume that "wxALIGN_CENTER" or
-        // "wxALIGN_CENTRE" was specified.
-
-        if (!align_value.contains("wxALIGN_CENTER"))
-        {
-            if (align_value.size())
-                align_value << '|';
-            align_value << "wxALIGN_CENTER";
-        }
-    }
-    if (align_value.size())
-    {
-        auto prop = node->get_prop_ptr(prop_alignment);
-        prop->set_value(align_value);
-    }
-
-    ttlib::cstr flags_value;
-    if (flag_value.contains("wxEXPAND") || flag_value.contains("wxGROW"))
-    {
-        // Only add the flag if the expansion will happen in at least one of the directions.
-
-        if (!(flag_value.contains("wxALIGN_BOTTOM") || flag_value.contains("wxALIGN_CENTER_VERTICAL")) &&
-            !(flag_value.contains("wxALIGN_RIGHT") || flag_value.contains("wxALIGN_CENTER_HORIZONTAL")))
-            flags_value << "wxEXPAND";
-    }
-    if (flag_value.contains("wxSHAPED"))
-    {
-        if (flags_value.size())
-            flags_value << '|';
-        flags_value << "wxSHAPED";
-    }
-    if (flag_value.contains("wxFIXED_MINSIZE"))
-    {
-        if (flags_value.size())
-            flags_value << '|';
-        flags_value << "wxFIXED_MINSIZE";
-    }
-    if (flag_value.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
-    {
-        if (flags_value.size())
-            flags_value << '|';
-        flags_value << "wxRESERVE_SPACE_EVEN_IF_HIDDEN";
-    }
-    if (flag_value.contains("wxTILE"))
-    {
-        if (flags_value.size())
-            flags_value << '|';
-        flags_value << "wxSHAPED|wxFIXED_MINSIZE";
-    }
-    if (flags_value.size())
-    {
-        auto prop = node->get_prop_ptr(prop_flags);
-        prop->set_value(flags_value);
-    }
 }

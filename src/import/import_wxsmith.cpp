@@ -19,17 +19,15 @@
 
 WxSmith::WxSmith() {}
 
-bool WxSmith::Import(const ttString& filename)
+bool WxSmith::Import(const ttString& filename, bool write_doc)
 {
-    pugi::xml_document doc;
-
-    if (auto result = doc.load_file(filename.wx_str()); !result)
+    auto result = LoadDocFile(filename);
+    if (!result)
     {
-        appMsgBox(_ttc(strIdCantOpen) << filename.wx_str() << "\n\n" << result.description(), _tt(stdImportFile));
         return false;
     }
+    auto root = result.value().first_child();
 
-    auto root = doc.first_child();
     if (!ttlib::is_sameas(root.name(), "wxsmith", tt::CASE::either) &&
         !ttlib::is_sameas(root.name(), "resource", tt::CASE::either))
     {
@@ -37,19 +35,33 @@ bool WxSmith::Import(const ttString& filename)
         return false;
     }
 
-    auto project = g_NodeCreator.CreateNode(gen_Project, nullptr);
-    for (auto& iter: root.children())
+    // Using a try block means that if at any point it becomes obvious the project file is invalid and we cannot recover,
+    // then we can throw an error and give a standard response about an invalid file.
+
+    try
     {
-        CreateXrcNode(iter, project.get());
+        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+        for (auto& iter: root.children())
+        {
+            CreateXrcNode(iter, m_project.get());
+        }
+
+        if (!m_project->GetChildCount())
+        {
+            appMsgBox(filename.wx_str() + _ttc(" does not contain any top level forms."), _tt("Import"));
+            return false;
+        }
+
+        if (write_doc)
+            m_project->CreateDoc(m_docOut);
     }
 
-    if (!project->GetChildCount())
+    catch (const std::exception& DBG_PARAM(e))
     {
-        appMsgBox(filename.wx_str() + _ttc(" does not contain any top level forms."), _tt("Import"));
+        MSG_ERROR(e.what());
+        appMsgBox(ttlib::cstr("This project file is invalid and cannot be loaded: ") << filename.wx_str(), "Import Project");
         return false;
     }
-
-    project->CreateDoc(m_docOut);
 
     return true;
 }

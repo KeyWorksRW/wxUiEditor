@@ -18,7 +18,7 @@ namespace pugi
 
 class MainFrame;
 class ProjectSettings;
-class ImportInterface;
+class ImportXML;
 
 // Current version of wxUiEditor project files
 constexpr const auto curWxuiMajorVer = 1;
@@ -99,7 +99,7 @@ public:
 
 protected:
     bool OnInit() override;
-    bool Import(ImportInterface& import, ttString& file, bool append = false);
+    bool Import(ImportXML& import, ttString& file, bool append = false);
 
 #if wxUSE_ON_FATAL_EXCEPTION && wxUSE_STACKWALKER
     void OnFatalException() override;

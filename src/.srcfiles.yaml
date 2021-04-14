@@ -88,6 +88,7 @@ Files:
 
     import/import_formblder.cpp    # Import a wxFormBuider project
     import/import_winres.cpp       # Import a Windows resource file
+    import/import_wxglade.cpp      # Import a Import a wxGlade file
     import/import_wxsmith.cpp      # Process XRC files
     import/import_xml.cpp          # Base class for XML importing
     import/winres/winres_ctrl.cpp  # Process Windows Resource control data

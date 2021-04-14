@@ -383,7 +383,7 @@ bool App::ImportProject(ttString& file)
     return false;
 }
 
-bool App::Import(ImportInterface& import, ttString& file, bool append)
+bool App::Import(ImportXML& import, ttString& file, bool append)
 {
     if (import.Import(file))
     {

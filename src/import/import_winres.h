@@ -10,19 +10,18 @@
 #include <ttcvector.h>
 #include <tttextfile.h>
 
-#include "import_interface.h"  // ImportInterface -- Import interface
 #include "winres/winres_form.h"       // rcForm -- Process a Windows Resource form  (usually a dialog)
+#include "import_xml.h"        // ImportXML -- Base class for XML importing
 
 class NodeCreator;
 class Node;
 
-class WinResource : public ImportInterface
+class WinResource : public ImportXML
 {
 public:
     WinResource();
 
-    bool Import(const ttString& filename) override;
-    pugi::xml_document& GetDocument() override { return m_docOut; }
+    bool Import(const ttString& filename, bool write_doc) override;
 
     bool ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& m_dialogs);
     void InsertDialogs(std::vector<ttlib::cstr>& dialogs);

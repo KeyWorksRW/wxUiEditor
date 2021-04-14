@@ -452,11 +452,15 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
         new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL);
         new_pg_property->ChangeFlag(wxPG_PROP_READONLY, true);
     }
+    else if (type == type_uintlist || type == type_uintpairlist)
+    {
+        new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL);
+    }
     else  // Unknown property
     {
         new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string());
         new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING, wxVariant(true, "true"));
-        MSG_ERROR(ttlib::cstr("NodeProperty type Unknown: ") << prop->DeclName());
+        MSG_ERROR(ttlib::cstr("NodeProperty type is unsupported: ") << map_PropTypes[type]);
     }
 
     return new_pg_property;
@@ -477,7 +481,7 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
         {
             if (!IsPropAllowed(node, prop))
                 continue;
-                
+
             auto propInfo = prop->GetPropDeclaration();
             auto pg = m_prop_grid->Append(GetProperty(prop));
             auto propType = prop->type();

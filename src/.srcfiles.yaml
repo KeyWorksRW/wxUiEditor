@@ -86,6 +86,8 @@ Files:
     generate/window_widgets.cpp    # Splitter and Scroll generation classes
     generate/wizard_form.cpp       # Wizard form class
 
+    import/import_xml.cpp
+
     mockup/mockup_parent.cpp    # Top-level MockUp Parent window
     mockup/mockup_content.cpp   # Mockup of a form's contents
     mockup/mockup_wizard.cpp    # Emulate a wxWizard

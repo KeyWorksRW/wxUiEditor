@@ -232,8 +232,10 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
     return copyObj;
 }
 
-// TODO: [KeyWorks - 11-21-2020] Once a new node is created and placed in it's heirachy, the code that created the
-// node should call this to setup default sizer settings.
+// TODO: [KeyWorks - 04-13-2021] This function isn't being called, and mostly duplicates the code in Node::CreateToolNode. This should
+// become the preferred method, but first we need to merge in the code from CreateToolNode() since that is up to date and does things like
+// call FirePropChangeEvent.
+
 void NodeCreator::SetDefaultLayoutProperties(Node* node)
 {
     auto node_decl = node->GetNodeDeclaration();

@@ -705,7 +705,7 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
                 prop->set_value("wxEXPAND");
         }
     }
-    else if (name == "wxStdDialogButtonSizer")
+    else if (name == "wxStdDialogButtonSizer" || name == "wxStaticLine")
     {
         if (auto prop = new_node->get_prop_ptr(prop_flags); prop)
         {

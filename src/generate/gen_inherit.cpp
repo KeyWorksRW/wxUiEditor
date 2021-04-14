@@ -194,6 +194,20 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         }
     }
 
+    if (!node->IsForm() && !node->isPropValue(prop_variant, "normal"))
+    {
+        if (code.size())
+            code << "\n    ";
+        code << node->get_node_name() << "->SetWindowVariant(";
+
+        if (node->isPropValue(prop_variant, "small"))
+            code << "wxWINDOW_VARIANT_SMALL);";
+        else if (node->isPropValue(prop_variant, "mini"))
+            code << "wxWINDOW_VARIANT_MINI);";
+        else
+            code << "wxWINDOW_VARIANT_LARGE);";
+    }
+
     if (node->prop_as_string(prop_tooltip).size())
     {
         if (code.size())

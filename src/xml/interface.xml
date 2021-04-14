@@ -35,6 +35,13 @@
         help="Sets the minimum size of the window, to indicate to the sizer layout mechanism that this is the minimum required size."/>
     <property name="maximum_size" type="wxSize"
         help="Sets the maximum size of the window, to indicate to the sizer layout mechanism that this is the maximum allowable size."/>
+    <property name="variant" type="option">
+      <option name="normal" help="Normal size"/>
+      <option name="small" help="About 25% smaller than normal."/>
+      <option name="mini" help="About 33% smaller than normal."/>
+      <option name="large" help="About 35% larger than normal."/>
+      normal
+    </property>
     <property name="window_style" type="bitlist">
       <option name="wxBORDER_DEFAULT" help="The window class will decide the kind of border to show, if any."/>
       <option name="wxBORDER_SIMPLE" help="Displays a thin border around the window. wxSIMPLE_BORDER is the old name for this style."/>

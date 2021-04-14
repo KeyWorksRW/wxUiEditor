@@ -16,7 +16,7 @@ class WxSmith : public ImportXML
 public:
     WxSmith();
 
-    bool Import(const ttString& filename) override;
+    bool Import(const ttString& filename, bool write_doc = true) override;
 
 protected:
     void ProcessContent(const pugi::xml_node& xml_obj, Node* node);

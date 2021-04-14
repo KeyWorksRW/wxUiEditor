@@ -118,19 +118,15 @@ FormBuilder::FormBuilder()
     }
 }
 
-bool FormBuilder::Import(const ttString& filename)
+bool FormBuilder::Import(const ttString& filename, bool write_doc)
 {
-    pugi::xml_document doc;
-
-    if (auto result = doc.load_file(filename.wx_str()); !result)
+    auto result = LoadDocFile(filename);
+    if (!result)
     {
-        appMsgBox(_ttc(strIdCantOpen) << filename.wx_str() << "\n\n" << result.description(), _tt(strIdImportFormBuilder));
         return false;
     }
+    auto root = result.value().first_child();
 
-    m_importProjectFile = filename;
-
-    auto root = doc.first_child();
     if (!ttlib::is_sameas(root.name(), "wxFormBuilder_Project", tt::CASE::either))
     {
         appMsgBox(filename.wx_str() + _ttc(" is not a wxFormBuilder file"), _tt(strIdImportFormBuilder));
@@ -146,35 +142,24 @@ bool FormBuilder::Import(const ttString& filename)
         }
     }
 
+    // Using a try block means that if at any point it becomes obvious the formbuilder file is invalid and we cannot recover,
+    // then we can throw an error and give a standard response about an invalid file.
+
     try
     {
         auto object = root.child("object");
         if (!object)
         {
-            FAIL_MSG("Project does not have a root \"object\" node.")
+            FAIL_MSG("formbuilder project file does not have a root \"object\" node.")
             throw std::runtime_error("Invalid project file");
         }
 
-        auto class_name = object.attribute("class").as_cview();
-        if (class_name.empty())
-        {
-            FAIL_MSG("Object does not have a class attribute.")
-            throw std::runtime_error("Invalid project file");
-        }
+        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
 
-        auto newobject = g_NodeCreator.CreateNode(class_name, nullptr);
-        if (!newobject)
-            throw std::runtime_error("Invalid project file -- object could not be created!");
+        CreateProjectNode(object, m_project.get());
 
-        m_project = newobject.get();
-        CreateProjectNode(object, m_project);
-
-        // REVIEW: [KeyWorks - 10-24-2020] This writes the project to memory as an XML file. That gives the caller the
-        // most choices about what to do with it since the caller might not want to import all of the objects, or it
-        // might not want to import them in the same order. However, it's a bit inefficient since we've created all the
-        // objects to destroy them and recreate them.
-
-        m_project->CreateDoc(m_docOut);
+        if (write_doc)
+            m_project->CreateDoc(m_docOut);
     }
 
     catch (const std::exception& DBG_PARAM(e))

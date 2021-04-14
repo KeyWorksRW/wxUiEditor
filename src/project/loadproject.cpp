@@ -367,17 +367,17 @@ bool App::ImportProject(ttString& file)
     if (file.has_extension(".fbp"))
     {
         FormBuilder fb;
-        return fb.Import(file);
+        return Import(fb, file);
     }
     else if (file.has_extension(".rc") || file.has_extension(".dlg"))
     {
         WinResource winres;
-        return winres.Import(file);
+        return Import(winres, file);
     }
     else if (file.has_extension(".wxs") || file.has_extension(".xrc"))
     {
         WxSmith smith;
-        return smith.Import(file);
+        return Import(smith, file);
     }
 
     return false;

@@ -9,7 +9,23 @@
 
 #include "import_xml.h"
 
-#include "node.h"  // Node class
+#include "node.h"     // Node class
+#include "uifuncs.h"  // Miscellaneous functions for displaying UI
+
+std::optional<pugi::xml_document> ImportXML::LoadDocFile(const ttString& file)
+{
+    pugi::xml_document doc;
+
+    if (auto result = doc.load_file(file.wx_str()); !result)
+    {
+        appMsgBox(_ttc(strIdCantOpen) << file.wx_str() << "\n\n" << result.description(), _tt(strIdImportFormBuilder));
+        return {};
+    }
+
+    m_importProjectFile = file;
+
+    return doc;
+}
 
 void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
 {

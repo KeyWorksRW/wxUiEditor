@@ -21,7 +21,7 @@ class WinResource : public ImportXML
 public:
     WinResource();
 
-    bool Import(const ttString& filename) override;
+    bool Import(const ttString& filename, bool write_doc) override;
 
     bool ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& m_dialogs);
     void InsertDialogs(std::vector<ttlib::cstr>& dialogs);

@@ -18,7 +18,7 @@
 
 WinResource::WinResource() {}
 
-bool WinResource::Import(const ttString& /* filename */)
+bool WinResource::Import(const ttString& /* filename */, bool /* write_doc */)
 {
     return false;
 }

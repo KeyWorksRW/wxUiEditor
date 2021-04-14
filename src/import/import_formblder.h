@@ -13,7 +13,7 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-#include "import_xml.h"        // ImportXML -- Base class for XML importing
+#include "import_xml.h"  // ImportXML -- Base class for XML importing
 
 class wxImage;
 
@@ -25,7 +25,7 @@ public:
     FormBuilder();
     ~FormBuilder() {};
 
-    bool Import(const ttString& filename) override;
+    bool Import(const ttString& filename, bool write_doc = true) override;
 
 protected:
     void ConvertNameSpaceProp(NodeProperty* prop, ttlib::cview org_names);
@@ -41,11 +41,7 @@ protected:
     void CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node);
 
 private:
-    Node* m_project;
-
     ImportNameMap m_mapEventNames;
-
-    ttString m_importProjectFile;
 
     ttlib::cstr m_embedPath;
     ttlib::cstr m_eventGeneration;

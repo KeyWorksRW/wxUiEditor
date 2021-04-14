@@ -278,6 +278,16 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->SetMaxSize(maxsize);
     }
 
+    if (!node->isPropValue(prop_variant, "normal"))
+    {
+        if (node->isPropValue(prop_variant, "small"))
+            window->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+        else if (node->isPropValue(prop_variant, "mini"))
+            window->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+        else
+            window->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+    }
+
     if (node->HasValue(prop_font))
     {
         window->SetFont(node->prop_as_font(prop_font));

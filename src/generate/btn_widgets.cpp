@@ -59,6 +59,16 @@ wxObject* ButtonGenerator::Create(Node* node, wxObject* parent)
     if (node->HasValue(prop_margins))
         widget->SetBitmapMargins(node->prop_as_wxSize(prop_margins));
 
+    if (!node->isPropValue(prop_variant, "normal"))
+    {
+        if (node->isPropValue(prop_variant, "small"))
+            widget->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+        else if (node->isPropValue(prop_variant, "mini"))
+            widget->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+        else
+            widget->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
+    }
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;

@@ -17,11 +17,11 @@
 #include "pjtsettings.h"            // ProjectSettings -- Hold data for currently loaded project
 #include "uifuncs.h"                // Miscellaneous functions for displaying UI
 
-#include "../ui/newproject.h"  // NewProjectDlg -- Dialog to create a new project
-#include "import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
-#include "import_winres.h"     // WinResource -- Parse a Windows resource file
-#include "import_wxsmith.h"    // WxSmith -- Import a wxSmith file
-#include "oldproject.h"        // Load older version of wxUiEditor project
+#include "../import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
+#include "../import/import_winres.h"     // WinResource -- Parse a Windows resource file
+#include "../import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
+#include "../ui/newproject.h"            // NewProjectDlg -- Dialog to create a new project
+#include "oldproject.h"                  // Load older version of wxUiEditor project
 
 using namespace GenEnum;
 

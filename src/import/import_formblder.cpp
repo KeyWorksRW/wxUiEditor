@@ -23,7 +23,7 @@
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
 
-#include "form_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs
+#include "import_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs
 
 // clang-format off
 constexpr const IMPORT_NAME_PAIR prop_pair[] = {

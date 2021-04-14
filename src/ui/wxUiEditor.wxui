@@ -170,12 +170,13 @@
         <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer3" flags="wxEXPAND">
           <node class="wxCheckBox" checked="true" label="&amp;Empty project" var_name="m_checkBoxEmptyProject" wxEVT_CHECKBOX="OnEmptyProject" />
         </node>
-        <node class="wxStaticBoxSizer" class_access="protected:" label="Import Project(s)/File(s)" var_name="m_import_staticbox">
-          <node class="wxGridBagSizer" var_name="grid_bag_sizer_2" flags="wxEXPAND">
-            <node class="wxRadioButton" label="Import wx&amp;FormBuilder Project(s)" var_name="m_radioBtnFormBuilder" wxEVT_RADIOBUTTON="OnFormBuilder" />
-            <node class="wxRadioButton" label="Import wx&amp;Smith Project(s)" var_name="m_radioBtnSmith" column="1" wxEVT_RADIOBUTTON="OnWxSmith" />
+        <node class="wxStaticBoxSizer" class_access="protected:" label="Import Project(s)/File(s)" var_name="m_import_staticbox" flags="wxEXPAND">
+          <node class="wxFlexGridSizer">
+            <node class="wxRadioButton" label="Import wx&amp;FormBuilder Project(s)" style="wxRB_GROUP" var_name="m_radioBtnFormBuilder" wxEVT_RADIOBUTTON="OnFormBuilder" />
             <node class="wxRadioButton" label="Import &amp;Windows Resource" var_name="m_radioBtnWinRes" row="1" wxEVT_RADIOBUTTON="OnWindowsResource" />
             <node class="wxRadioButton" label="Import &amp;XRC File(s)" var_name="m_radioBtnXrc" column="1" row="1" wxEVT_RADIOBUTTON="OnXRC" />
+            <node class="wxRadioButton" label="Import wx&amp;Smith Project(s)" var_name="m_radioBtnSmith" column="1" wxEVT_RADIOBUTTON="OnWxSmith" />
+            <node class="wxRadioButton" label="Import wx&amp;Glade Project(s)" var_name="m_radioBtnGlade" column="1" wxEVT_RADIOBUTTON="OnWxGlade" />
           </node>
           <node class="wxBoxSizer" var_name="box_sizer6" flags="wxEXPAND">
             <node class="wxStaticText" label="&amp;Files:" var_name="m_staticFiles" alignment="wxALIGN_CENTER" borders="wxLEFT|wxRIGHT|wxTOP" />

@@ -6,8 +6,6 @@
 
 #include "pch.h"
 
-#include <wx/gbsizer.h>
-
 #include "newproject_base.h"
 
 NewProjectBase::NewProjectBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -26,22 +24,26 @@ NewProjectBase::NewProjectBase(wxWindow* parent, wxWindowID id, const wxString& 
     box_sizer3->Add(m_checkBoxEmptyProject, wxSizerFlags().Border(wxALL));
 
     m_import_staticbox = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("Import Project(s)/File(s)"));
-    parent_sizer->Add(m_import_staticbox, wxSizerFlags().Border(wxALL));
+    parent_sizer->Add(m_import_staticbox, wxSizerFlags().Expand().Border(wxALL));
 
-    auto grid_bag_sizer_2 = new wxGridBagSizer();
-    m_import_staticbox->Add(grid_bag_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+    auto flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
+    m_import_staticbox->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));
 
-    m_radioBtnFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Import wx&FormBuilder Project(s)"));
-    grid_bag_sizer_2->Add(m_radioBtnFormBuilder, wxGBPosition(0, 0), wxGBSpan(1, 1), wxALL, 5);
-
-    m_radioBtnSmith = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Import wx&Smith Project(s)"));
-    grid_bag_sizer_2->Add(m_radioBtnSmith, wxGBPosition(0, 1), wxGBSpan(1, 1), wxALL, 5);
+    m_radioBtnFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Import wx&FormBuilder Project(s)"), wxDefaultPosition, wxDefaultSize,
+    wxRB_GROUP);
+    flex_grid_sizer->Add(m_radioBtnFormBuilder, wxSizerFlags().Border(wxALL));
 
     m_radioBtnWinRes = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Import &Windows Resource"));
-    grid_bag_sizer_2->Add(m_radioBtnWinRes, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
+    flex_grid_sizer->Add(m_radioBtnWinRes, wxSizerFlags().Border(wxALL));
 
     m_radioBtnXrc = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Import &XRC File(s)"));
-    grid_bag_sizer_2->Add(m_radioBtnXrc, wxGBPosition(1, 1), wxGBSpan(1, 1), wxALL, 5);
+    flex_grid_sizer->Add(m_radioBtnXrc, wxSizerFlags().Border(wxALL));
+
+    m_radioBtnSmith = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Import wx&Smith Project(s)"));
+    flex_grid_sizer->Add(m_radioBtnSmith, wxSizerFlags().Border(wxALL));
+
+    m_radioBtnGlade = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Import wx&Glade Project(s)"));
+    flex_grid_sizer->Add(m_radioBtnGlade, wxSizerFlags().Border(wxALL));
 
     auto box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
     m_import_staticbox->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));
@@ -80,9 +82,10 @@ NewProjectBase::NewProjectBase(wxWindow* parent, wxWindowID id, const wxString& 
     Bind(wxEVT_INIT_DIALOG, &NewProjectBase::OnInitDialog, this);
     m_checkBoxEmptyProject->Bind(wxEVT_CHECKBOX, &NewProjectBase::OnEmptyProject, this);
     m_radioBtnFormBuilder->Bind(wxEVT_RADIOBUTTON, &NewProjectBase::OnFormBuilder, this);
-    m_radioBtnSmith->Bind(wxEVT_RADIOBUTTON, &NewProjectBase::OnWxSmith, this);
     m_radioBtnWinRes->Bind(wxEVT_RADIOBUTTON, &NewProjectBase::OnWindowsResource, this);
     m_radioBtnXrc->Bind(wxEVT_RADIOBUTTON, &NewProjectBase::OnXRC, this);
+    m_radioBtnSmith->Bind(wxEVT_RADIOBUTTON, &NewProjectBase::OnWxSmith, this);
+    m_radioBtnGlade->Bind(wxEVT_RADIOBUTTON, &NewProjectBase::OnWxGlade, this);
     m_btnAddFile->Bind(wxEVT_BUTTON, &NewProjectBase::OnDirectory, this);
     m_checkListProjects->Bind(wxEVT_CHECKLISTBOX, &NewProjectBase::OnCheckFiles, this);
     btn_2->Bind(wxEVT_BUTTON, &NewProjectBase::OnSelectAll, this);

@@ -19,6 +19,7 @@
 
 #include "../import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
 #include "../import/import_winres.h"     // WinResource -- Parse a Windows resource file
+#include "../import/import_wxglade.h"    // WxGlade -- Import a wxGlade file
 #include "../import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
 #include "../ui/newproject.h"            // NewProjectDlg -- Dialog to create a new project
 #include "oldproject.h"                  // Load older version of wxUiEditor project
@@ -379,6 +380,11 @@ bool App::ImportProject(ttString& file)
         WxSmith smith;
         return Import(smith, file);
     }
+    else if (file.has_extension(".wxg"))
+    {
+        WxGlade glade;
+        return Import(glade, file);
+    }
 
     return false;
 }
@@ -464,6 +470,11 @@ bool App::NewProject()
                 {
                     WxSmith smith;
                     Import(smith, iter, true);
+                }
+                else if (iter.has_extension(".wxg"))
+                {
+                    WxGlade glade;
+                    Import(glade, iter, true);
                 }
                 else if (iter.has_extension(".rc") || iter.has_extension(".dlg"))
                 {

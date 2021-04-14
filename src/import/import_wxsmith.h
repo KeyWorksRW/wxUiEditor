@@ -19,11 +19,6 @@ public:
     bool Import(const ttString& filename, bool write_doc = true) override;
 
 protected:
-    void ProcessContent(const pugi::xml_node& xml_obj, Node* node);
-    void ProcessAttributes(const pugi::xml_node& xml_obj, Node* node);
-    void ProcessBitmap(const pugi::xml_node& xml_obj, Node* node);
-    void ProcessHandler(const pugi::xml_node& xml_obj, Node* node);
-    void ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent = nullptr);
 
     NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
 

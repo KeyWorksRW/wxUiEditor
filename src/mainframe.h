@@ -11,10 +11,13 @@
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/filehistory.h>  // wxFileHistory class
 
+#include "gen_enums.h"   // Enumerations for generators
 #include "mainapp.h"     // App class
 #include "undo_stack.h"  // UndoAction -- Maintain a undo and redo stack
 
 #include "ui/mainframe_base.h"
+
+using namespace GenEnum;
 
 class CustomEvent;
 class BasePanel;
@@ -122,6 +125,7 @@ public:
     // If there is a selection, this will create a new child node with special handling for
     // specific components.
     void CreateToolNode(const ttlib::cstr& name);
+    void CreateToolNode(GenName name);
 
     wxFileHistory& GetFileHistory() { return m_FileHistory; }
 

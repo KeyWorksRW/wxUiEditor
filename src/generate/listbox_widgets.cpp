@@ -341,7 +341,7 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenConstruction(Node* node)
     }
     else
     {
-        code << type;
+        code << ", " << type;
         if (style.size())
         {
             code << '|' << style;

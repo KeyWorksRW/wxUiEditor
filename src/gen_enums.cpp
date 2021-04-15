@@ -115,7 +115,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_context_menu, "context_menu" },
     { prop_converted_art, "converted_art" },
     { prop_current, "current" },
-    { prop_default_btn, "default_btn" },
+    { prop_default, "default" },
     { prop_default_button, "default_button" },
     { prop_default_pane, "default_pane" },
     { prop_defaultfilter, "defaultfilter" },

@@ -32,7 +32,7 @@ wxObject* ButtonGenerator::Create(Node* node, wxObject* parent)
     else
         widget->SetLabel(node->prop_as_wxString(prop_label));
 
-    if (node->prop_as_bool(prop_default_btn))
+    if (node->prop_as_bool(prop_default))
         widget->SetDefault();
 
     if (node->prop_as_bool(prop_auth_needed))
@@ -101,7 +101,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
             return true;
         }
     }
-    else if (prop->isProp(prop_default_btn))
+    else if (prop->isProp(prop_default))
     {
         // You can change a button to be the default, but you cannot change it back without recreating it.
         if (prop->as_bool())
@@ -156,7 +156,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
              << ");";
     }
 
-    if (node->prop_as_bool(prop_default_btn))
+    if (node->prop_as_bool(prop_default))
     {
         if (code.size())
             code << '\n';
@@ -414,7 +414,7 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxCommandLinkButton(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    // BUGBUG: [KeyWorks - 04-09-2021] Need to support default_btn property
+    // BUGBUG: [KeyWorks - 04-09-2021] Need to support default property
 
     if (node->HasValue(prop_main_label))
     {

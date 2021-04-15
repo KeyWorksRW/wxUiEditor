@@ -115,7 +115,7 @@ namespace GenEnum
         prop_context_menu,
         prop_converted_art,
         prop_current,
-        prop_default_btn,
+        prop_default,
         prop_default_button,
         prop_default_pane,
         prop_defaultfilter,

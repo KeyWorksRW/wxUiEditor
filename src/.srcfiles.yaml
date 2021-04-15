@@ -302,6 +302,7 @@ XPM:
     art_src/wxPropertyGrid.png: xpm/wxPropertyGrid.xpm
     art_src/wxPropertyGridManager.png: xpm/wxPropertyGridManager.xpm
     art_src/wxRadioButton.png: xpm/wxRadioButton.xpm
+    art_src/wxRearrangeCtrl.png: xpm/wxRearrangeCtrl.xpm
     art_src/wxScrolledWindow.png: xpm/wxScrolledWindow.xpm
     art_src/wxSimpleHtmlListBox.png: xpm/wxSimpleHtmlListBox.xpm
     art_src/wxSimplebook.png: xpm/wxSimplebook.xpm

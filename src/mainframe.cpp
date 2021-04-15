@@ -913,6 +913,20 @@ bool MainFrame::SelectNode(Node* node, bool force, bool notify)
     return true;
 }
 
+void MainFrame::CreateToolNode(GenName name)
+{
+    if (!m_selected_node)
+    {
+        appMsgBox("You need to select something first in order to properly place this widget.");
+        return;
+    }
+
+    if (!m_selected_node->CreateToolNode(name))
+    {
+        appMsgBox(ttlib::cstr() << "Unable to create " << name << " as a child of " << m_selected_node->DeclName());
+    }
+}
+
 void MainFrame::CreateToolNode(const ttlib::cstr& name)
 {
     if (!m_selected_node)

@@ -309,6 +309,35 @@
     <event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent" help="Generated when the listbox is double-clicked."/>
   </gen>
 
+  <gen class="wxRearrangeCtrl" image="wxRearrangeCtrl" type="widget">
+    <inherits class="List Validator"/>
+    <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
+    <inherits class="sizer_child"/>
+    <property name="var_name" type="string">m_rearrange</property>
+    <property name="selection_string" type="string_escapes"
+        help="Selects the item with the specified string in the control. Note that this is case-insensitive, i.e. the string is compared with all the elements of the control case-insensitively and the first matching entry is selected, even if it doesn't have exactly the same case as this string and there is an exact match afterwards."></property>
+    <property name="selection_int" type="int" help="Sets the selection to the value unless it is -1. Ignored if the selection_string property contains a value.">-1</property>
+    <property name="choices" type="stringlist" help="List of default values."/>
+    <property name="type" type="option">
+      <option name="wxLB_SINGLE" help="Single-selection list."/>
+      <option name="wxLB_MULTIPLE"
+        help="Multiple-selection list: the user can toggle multiple items on and off. This is the same as wxLB_EXTENDED in wxGTK2 port."/>
+      <option name="wxLB_EXTENDED"
+        help="Extended-selection list: the user can extend the selection by using SHIFT or CTRL keys together with the cursor movement keys or the mouse."/>
+      wxLB_SINGLE
+    </property>
+    <property name="style" type="bitlist">
+      <option name="wxLB_HSCROLL" help="Create a horizontal scrollbar if contents are too wide (Windows only)."/>
+      <option name="wxLB_ALWAYS_SB" help="Always show a vertical scrollbar."/>
+      <option name="wxLB_NEEDED_SB" help="Only create a vertical scrollbar if needed."/>
+      <option name="wxLB_NO_SB" help="Don't create a vertical scrollbar (Windows only)."/>
+      <option name="wxLB_SORT" help="The listbox contents are sorted in alphabetical order."/></property>
+    <event name="wxEVT_CHECKLISTBOX" class="wxCommandEvent" help="Generated when an item in the check list box is checked or unchecked."/>
+    <event name="wxEVT_LISTBOX" class="wxCommandEvent" help="Generated when an item in the list is selected."/>
+    <event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent" help="Generated when the listbox is double-clicked."/>
+  </gen>
+
   <gen class="wxListView" image="wxListView" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>

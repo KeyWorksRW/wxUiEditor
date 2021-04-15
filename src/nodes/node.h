@@ -46,7 +46,6 @@ public:
     void SetParent(NodeSharedPtr parent) { m_parent = parent; }
     void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
 
-
     // Using PropName is preferred, but not always possible when importing wxFormBuilder and wxSmith projects
 
     NodeProperty* get_prop_ptr(ttlib::cview name);
@@ -200,6 +199,7 @@ public:
 
     Node* CreateNode(ttlib::cview name);
     bool CreateToolNode(const ttlib::cstr& name);
+    bool CreateToolNode(GenName name);
 
     // This will modify the property and fire a EVT_NodePropChange event if the property
     // actually changed

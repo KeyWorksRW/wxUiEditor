@@ -467,6 +467,7 @@ namespace GenEnum
         gen_wxPropertyGridManager,
         gen_wxRadioBox,
         gen_wxRadioButton,
+        gen_wxRearrangeCtrl,
         gen_wxRibbonBar,
         gen_wxRibbonButtonBar,
         gen_wxRibbonGallery,

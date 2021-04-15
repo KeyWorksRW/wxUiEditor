@@ -604,6 +604,14 @@ Node* Node::CreateNode(ttlib::cview name)
     return cur_selection->CreateChildNode(name);
 }
 
+bool Node::CreateToolNode(GenName name)
+{
+    // TODO: [KeyWorks - 04-15-2021] Currently we convert the name into a string and call CreateToolNode with that string.
+    // Ultimately, we should reverse that and convert the string into a GenName and make this the primary function.
+
+    return CreateToolNode(map_GenNames[name]);
+}
+
 bool Node::CreateToolNode(const ttlib::cstr& name)
 {
     auto new_node = CreateChildNode(name);

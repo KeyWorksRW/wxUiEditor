@@ -454,6 +454,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxPropertyGridManager, "wxPropertyGridManager" },
     { gen_wxRadioBox, "wxRadioBox" },
     { gen_wxRadioButton, "wxRadioButton" },
+    { gen_wxRearrangeCtrl, "wxRearrangeCtrl" },
     { gen_wxRibbonBar, "wxRibbonBar" },
     { gen_wxRibbonButtonBar, "wxRibbonButtonBar" },
     { gen_wxRibbonGallery, "wxRibbonGallery" },

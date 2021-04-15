@@ -139,6 +139,7 @@
 #include "xpm/wxPropertyGrid.xpm"
 #include "xpm/wxPropertyGridManager.xpm"
 #include "xpm/wxRadioButton.xpm"
+#include "xpm/wxRearrangeCtrl.xpm"
 #include "xpm/wxScrolledWindow.xpm"
 #include "xpm/wxSimpleHtmlListBox.xpm"
 #include "xpm/wxSimplebook.xpm"
@@ -239,6 +240,7 @@ static const std::unordered_map<std::string, const char**> map_xpm_strings = {
     { "propgridpage", propgridpage_xpm },
     { "radio_box", radio_box_xpm },
     { "wxRadioButton", wxRadioButton_xpm },
+    { "wxRearrangeCtrl", wxRearrangeCtrl_xpm },
     { "ribbon_bar", ribbon_bar_xpm },
     { "ribbon_button", ribbon_button_xpm },
     { "ribbon_button_dropdown", ribbon_button_dropdown_xpm },

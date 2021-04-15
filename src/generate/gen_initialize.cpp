@@ -38,6 +38,7 @@
 #include <wx/panel.h>                  // Base header for wxPanel
 #include <wx/popupwin.h>               // wxPopupWindow interface declaration
 #include <wx/propgrid/manager.h>       // wxPropertyGridManager
+#include <wx/rearrangectrl.h>          // various controls for rearranging the items interactively
 #include <wx/ribbon/buttonbar.h>       // Ribbon control similar to a tool bar
 #include <wx/ribbon/gallery.h>         // Ribbon control which displays a gallery of items to choose from
 #include <wx/ribbon/toolbar.h>         // Ribbon-style tool bar
@@ -121,6 +122,7 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_wxTreebook, TreebookGenerator)
     SET_GENERATOR(gen_wxPanel, PanelGenerator)
     SET_GENERATOR(gen_wxRadioBox, RadioBoxGenerator)
+    SET_GENERATOR(gen_wxRearrangeCtrl, RearrangeCtrlGenerator)
     SET_GENERATOR(gen_wxRadioButton, RadioButtonGenerator)
     SET_GENERATOR(gen_wxRichTextCtrl, RichTextCtrlGenerator)
     SET_GENERATOR(gen_wxScrollBar, ScrollBarGenerator)

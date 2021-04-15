@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Displays node creation tools in a wxRibbonBar
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +16,7 @@
 
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node_creator.h"  // NodeCreator class
+#include "gen_enums.h"     // Enumerations for generators
 
 // The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch
 // that to a default size here.
@@ -90,6 +91,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
             menu.Append(MenuListBox, "Insert wxListBox");
             menu.Append(MenuCheckListBox, "Insert wxCheckListBox");
             menu.Append(MenuListView, "Insert wxListView");
+            menu.Append(gen_wxRearrangeCtrl, "Insert wxRearrangeCtrl");
             menu.Append(MenuHtmlListBox, "Insert wxSimpleHtmlListBox");
             break;
 
@@ -196,6 +198,10 @@ void RibbonPanel::OnMenuEvent(wxCommandEvent& event)
 
         case MenuCheckListBox:
             wxGetFrame().CreateToolNode("wxCheckListBox");
+            break;
+
+        case gen_wxRearrangeCtrl:
+            wxGetFrame().CreateToolNode(gen_wxRearrangeCtrl);
             break;
 
         case MenuListView:

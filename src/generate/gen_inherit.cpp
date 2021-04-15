@@ -77,7 +77,10 @@ std::optional<ttlib::cstr> GenInheritSettings(Node* node)
         }
         else
         {
-            code << node->get_node_name() << "->SetValidator(wxGenericValidator(&" << var_name << "));";
+            code << node->get_node_name();
+            if (node->isGen(gen_wxRearrangeCtrl))
+                code << "->GetList()";
+            code << "->SetValidator(wxGenericValidator(&" << var_name << "));";
         }
 
         return code;

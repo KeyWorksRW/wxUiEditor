@@ -7,7 +7,7 @@
 
 #include "pch.h"
 
-#include "import_WxGlade.h"
+#include "import_wxglade.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 #include "mainapp.h"         // App -- Main application class

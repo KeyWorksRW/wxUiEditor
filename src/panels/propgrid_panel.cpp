@@ -55,7 +55,7 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
 {
     for (auto& iter: set_wx_ids)
     {
-        m_astr_wx_ids.emplace_back(iter);
+        m_astr_wx_ids.Add(iter);
     }
 
     m_notebook_parent = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);

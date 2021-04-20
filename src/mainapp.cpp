@@ -147,10 +147,11 @@ int App::OnRun()
             case CStartup::START_CONVERT:
                 {
                     wxFileDialog dialog(nullptr, "Open Project to Convert", wxEmptyString, wxEmptyString,
-                                        "All Importable Files|*.rc;*.dlg;*.fbp;*.wxs;*.xrc"
+                                        "All Importable Files|*.rc;*.dlg;*.fbp;*.wxg;*.wxs;*.xrc"
                                         "|Windows Resource File (*.rc)|*.rc;*.dlg"
-                                        "|WxFormBuilder Project File (*.fbp)|*.fbp"
-                                        "|WxSmith File (*.wxs)|*.wxs"
+                                        "|wxFormBuilder Project File (*.fbp)|*.fbp"
+                                        "|wxGlade File (*.wxg)|*.wxg"
+                                        "|wxSmith File (*.wxs)|*.wxs"
                                         "|XRC File (*.xrc)|*.xrc||",
                                         wxFD_OPEN);
 
@@ -173,7 +174,10 @@ int App::OnRun()
 
                     wxFileDialog dialog(nullptr, _tt(strIdTitleOpenOrImport), wxEmptyString, wxEmptyString,
                                         "wxUiEditor Project File (*.wxui)|*.wxui"
-                                        "|WxFormBuilder Project File (*.fbp)|*.fbp"
+                                        "|wxFormBuilder Project File (*.fbp)|*.fbp"
+                                        "|wxGlade File (*.wxg)|*.wxg"
+                                        "|wxSmith File (*.wxs)|*.wxs"
+                                        "|XRC File (*.xrc)|*.xrc"
                                         "|Windows Resource File (*.rc)|*.rc||",
                                         wxFD_OPEN);
 

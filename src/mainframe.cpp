@@ -212,6 +212,11 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
             appMsgBox("You cannot save the project as a wxFormBuilder project file", _tt(strIdTitleSaveAs));
             return;
         }
+        else if (filename.extension().is_sameas(".wxg", tt::CASE::either))
+        {
+            appMsgBox("You cannot save the project as a wxGlade file", _tt(strIdTitleSaveAs));
+            return;
+        }
         else if (filename.extension().is_sameas(".wxs", tt::CASE::either))
         {
             appMsgBox("You cannot save the project as a wxSmith file", _tt(strIdTitleSaveAs));
@@ -256,8 +261,11 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
     wxFileDialog dialog(this, _tt(strIdTitleOpenOrImport), wxEmptyString, wxEmptyString,
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue"
+                        "|Windows Resource File (*.rc)|*.rc"
                         "|WxFormBuilder Project File (*.fbp)|*.fbp"
-                        "|Windows Resource File (*.rc)|*.rc",
+                        "|wxGlade File (*.wxg)|*.wxg"
+                        "|wxSmith File (*.wxs)|*.wxs"
+                        "|XRC File (*.xrc)|*.xrc||",
                         wxFD_OPEN);
 
     if (dialog.ShowModal() == wxID_OK)

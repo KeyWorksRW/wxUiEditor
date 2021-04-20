@@ -73,8 +73,21 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
 
     bool isBitmapButton = (object_name == "wxBitmapButton");
     auto result = ConvertToGenName(object_name, parent);
-    if (!result)
+    while (!result)
     {
+        // If we don't recognize the class, then try the base= attribute
+        auto base = xml_obj.attribute("base").as_cview();
+        if (base.is_sameas("EditFrame"))
+        {
+            result = ConvertToGenName("wxFrame", parent);
+            if (result)
+                break;
+        }
+
+        // This appears to be a placeholder to reserve a spot. We just ignore it.
+        if (object_name == "sizerslot")
+            return NodeSharedPtr();
+
         MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
         return NodeSharedPtr();
     }

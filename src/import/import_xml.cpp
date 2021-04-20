@@ -441,7 +441,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         }
         else if (iter.cname().is_sameas("label"))
         {
-            ttlib::cstr label = iter.text().as_string();
+            ttlib::cstr label = ConvertEscapeSlashes(iter.text().as_string());
             label.Replace("_", "&");
             auto pos = label.find("\\t");
             if (ttlib::is_found(pos))

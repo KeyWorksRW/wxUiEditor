@@ -108,6 +108,7 @@ END
 
 #endif    // !_MAC
 
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "wxUiEditor.exe.manifest"
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////

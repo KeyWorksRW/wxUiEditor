@@ -267,55 +267,71 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxImage(undo_xpm));
+    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxImage(undo_xpm),
+    wxString::FromUTF8("Undo"));
 
-    m_toolbar->AddTool(wxID_REDO, wxEmptyString, wxImage(redo_xpm));
+    m_toolbar->AddTool(wxID_REDO, wxEmptyString, wxImage(redo_xpm),
+    wxString::FromUTF8("Redo"));
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxImage(cut_xpm));
+    m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxImage(cut_xpm),
+    wxString::FromUTF8("Cut"));
 
-    m_toolbar->AddTool(wxID_COPY, wxEmptyString, wxImage(copy_xpm));
+    m_toolbar->AddTool(wxID_COPY, wxEmptyString, wxImage(copy_xpm),
+    wxString::FromUTF8("Copy"));
 
-    m_toolbar->AddTool(wxID_PASTE, wxEmptyString, wxImage(paste_xpm));
+    m_toolbar->AddTool(wxID_PASTE, wxEmptyString, wxImage(paste_xpm),
+    wxString::FromUTF8("Paste"));
 
     m_toolbar->AddTool(wxID_DELETE, wxEmptyString, wxImage(delete_xpm),
     wxString::FromUTF8("Delete selected object without using clipboard."));
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, wxImage(alignleft_xpm), wxEmptyString, wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, wxImage(alignleft_xpm),
+    wxString::FromUTF8("Align left"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString, wxImage(aligncenter_xpm), wxEmptyString, wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString, wxImage(aligncenter_xpm),
+    wxString::FromUTF8("Center horizontally"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignRight, wxEmptyString, wxImage(alignright_xpm), wxEmptyString, wxITEM_CHECK);
-
-    m_toolbar->AddSeparator();
-
-    m_toolbar->AddTool(id_AlignTop, wxEmptyString, wxImage(aligntop_xpm), wxEmptyString, wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, wxImage(alignvertcenter_xpm), wxEmptyString, wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_AlignBottom, wxEmptyString, wxImage(alignbottom_xpm), wxEmptyString, wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignRight, wxEmptyString, wxImage(alignright_xpm),
+    wxString::FromUTF8("Align right"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, wxImage(left_xpm), wxEmptyString, wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignTop, wxEmptyString, wxImage(aligntop_xpm),
+    wxString::FromUTF8("Align top"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderRight, wxEmptyString, wxImage(right_xpm), wxEmptyString, wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, wxImage(alignvertcenter_xpm),
+    wxString::FromUTF8("Center vertically"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderTop, wxEmptyString, wxImage(top_xpm), wxEmptyString, wxITEM_CHECK);
-
-    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, wxImage(bottom_xpm), wxEmptyString, wxITEM_CHECK);
+    m_toolbar->AddTool(id_AlignBottom, wxEmptyString, wxImage(alignbottom_xpm),
+    wxString::FromUTF8("Align bottom"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_Expand, wxEmptyString, wxImage(expand_xpm), wxEmptyString, wxITEM_CHECK);
+    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, wxImage(left_xpm),
+    wxString::FromUTF8("Left border"), wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_BorderRight, wxEmptyString, wxImage(right_xpm),
+    wxString::FromUTF8("Right border"), wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_BorderTop, wxEmptyString, wxImage(top_xpm),
+    wxString::FromUTF8("Top border"), wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, wxImage(bottom_xpm),
+    wxString::FromUTF8("Bottom border"), wxITEM_CHECK);
+
+    m_toolbar->AddSeparator();
+
+    m_toolbar->AddTool(id_Expand, wxEmptyString, wxImage(expand_xpm),
+    wxString::FromUTF8("Expand to fill the space"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
     m_toolbar->AddTool(id_ShowHidden, wxEmptyString, wxImage(hidden_xpm),
-    wxString::FromUTF8("Show hidden controls in Mockup panel\\n"), wxITEM_CHECK);
+    wxString::FromUTF8("Show hidden controls in Mockup panel"), wxITEM_CHECK);
 
     m_toolbar->AddTool(id_Magnify, wxEmptyString, wxImage(magnify_xpm),
     wxString::FromUTF8("Magnify the size of the Mockup window"), wxITEM_CHECK);

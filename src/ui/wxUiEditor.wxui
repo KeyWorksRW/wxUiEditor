@@ -70,30 +70,30 @@
         <node class="tool" bitmap="XPM; ..\xpm\save.xpm; ; [-1; -1]" id="id_SaveProject" label="Save" tooltip="Save current project" var_name="tool3" />
         <node class="tool" bitmap="XPM; ..\xpm\generate.xpm; ; [-1; -1]" id="id_GenerateCode" label="" tooltip="Generate base class code" var_name="Generate" wxEVT_TOOL="OnGenerateCode" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\undo.xpm; ; [-1; -1]" id="wxID_UNDO" label="" var_name="Undo" />
-        <node class="tool" bitmap="XPM; ..\xpm\redo.xpm; ; [-1; -1]" id="wxID_REDO" label="" var_name="Redo" />
+        <node class="tool" bitmap="XPM; ..\xpm\undo.xpm; ; [-1; -1]" id="wxID_UNDO" label="" tooltip="Undo" var_name="Undo" />
+        <node class="tool" bitmap="XPM; ..\xpm\redo.xpm; ; [-1; -1]" id="wxID_REDO" label="" tooltip="Redo" var_name="Redo" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\cut.xpm; ; [-1; -1]" id="wxID_CUT" label="" var_name="Cut" />
-        <node class="tool" bitmap="XPM; ..\xpm\copy.xpm; ; [-1; -1]" id="wxID_COPY" label="" var_name="Copy" />
-        <node class="tool" bitmap="XPM; ..\xpm\paste.xpm; ; [-1; -1]" id="wxID_PASTE" label="" var_name="Paste" />
+        <node class="tool" bitmap="XPM; ..\xpm\cut.xpm; ; [-1; -1]" id="wxID_CUT" label="" tooltip="Cut" var_name="Cut" />
+        <node class="tool" bitmap="XPM; ..\xpm\copy.xpm; ; [-1; -1]" id="wxID_COPY" label="" tooltip="Copy" var_name="Copy" />
+        <node class="tool" bitmap="XPM; ..\xpm\paste.xpm; ; [-1; -1]" id="wxID_PASTE" label="" tooltip="Paste" var_name="Paste" />
         <node class="tool" bitmap="XPM; ..\xpm\delete.xpm; ; [-1; -1]" id="wxID_DELETE" label="" tooltip="Delete selected object without using clipboard." var_name="Delete" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\alignleft.xpm; ; [-1; -1]" id="id_AlignLeft" kind="wxITEM_CHECK" label="" var_name="AlignLeft" />
-        <node class="tool" bitmap="XPM; ..\xpm\aligncenter.xpm; ; [-1; -1]" id="id_AlignCenterHorizontal" kind="wxITEM_CHECK" label="" var_name="AlignCenterH" />
-        <node class="tool" bitmap="XPM; ..\xpm\alignright.xpm; ; [-1; -1]" id="id_AlignRight" kind="wxITEM_CHECK" label="" var_name="AlignRight" />
+        <node class="tool" bitmap="XPM; ..\xpm\alignleft.xpm; ; [-1; -1]" id="id_AlignLeft" kind="wxITEM_CHECK" label="" tooltip="Align left" var_name="AlignLeft" />
+        <node class="tool" bitmap="XPM; ..\xpm\aligncenter.xpm; ; [-1; -1]" id="id_AlignCenterHorizontal" kind="wxITEM_CHECK" label="" tooltip="Center horizontally" var_name="AlignCenterH" />
+        <node class="tool" bitmap="XPM; ..\xpm\alignright.xpm; ; [-1; -1]" id="id_AlignRight" kind="wxITEM_CHECK" label="" tooltip="Align right" var_name="AlignRight" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\aligntop.xpm; ; [-1; -1]" id="id_AlignTop" kind="wxITEM_CHECK" label="" var_name="AlignTop" />
-        <node class="tool" bitmap="XPM; ..\xpm\alignvertcenter.xpm; ; [-1; -1]" id="id_AlignCenterVertical" kind="wxITEM_CHECK" label="" var_name="AlignCenterV" />
-        <node class="tool" bitmap="XPM; ..\xpm\alignbottom.xpm; ; [-1; -1]" id="id_AlignBottom" kind="wxITEM_CHECK" label="" var_name="AlignBottom" />
+        <node class="tool" bitmap="XPM; ..\xpm\aligntop.xpm; ; [-1; -1]" id="id_AlignTop" kind="wxITEM_CHECK" label="" tooltip="Align top" var_name="AlignTop" />
+        <node class="tool" bitmap="XPM; ..\xpm\alignvertcenter.xpm; ; [-1; -1]" id="id_AlignCenterVertical" kind="wxITEM_CHECK" label="" tooltip="Center vertically" var_name="AlignCenterV" />
+        <node class="tool" bitmap="XPM; ..\xpm\alignbottom.xpm; ; [-1; -1]" id="id_AlignBottom" kind="wxITEM_CHECK" label="" tooltip="Align bottom" var_name="AlignBottom" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\left.xpm; ; [-1; -1]" id="id_BorderLeft" kind="wxITEM_CHECK" label="" var_name="BorderLeft" />
-        <node class="tool" bitmap="XPM; ..\xpm\right.xpm; ; [-1; -1]" id="id_BorderRight" kind="wxITEM_CHECK" label="" var_name="BorderRight" />
-        <node class="tool" bitmap="XPM; ..\xpm\top.xpm; ; [-1; -1]" id="id_BorderTop" kind="wxITEM_CHECK" label="" var_name="BorderTop" />
-        <node class="tool" bitmap="XPM; ..\xpm\bottom.xpm; ; [-1; -1]" id="id_BorderBottom" kind="wxITEM_CHECK" label="" var_name="BorderBottom" />
+        <node class="tool" bitmap="XPM; ..\xpm\left.xpm; ; [-1; -1]" id="id_BorderLeft" kind="wxITEM_CHECK" label="" tooltip="Left border" var_name="BorderLeft" />
+        <node class="tool" bitmap="XPM; ..\xpm\right.xpm; ; [-1; -1]" id="id_BorderRight" kind="wxITEM_CHECK" label="" tooltip="Right border" var_name="BorderRight" />
+        <node class="tool" bitmap="XPM; ..\xpm\top.xpm; ; [-1; -1]" id="id_BorderTop" kind="wxITEM_CHECK" label="" tooltip="Top border" var_name="BorderTop" />
+        <node class="tool" bitmap="XPM; ..\xpm\bottom.xpm; ; [-1; -1]" id="id_BorderBottom" kind="wxITEM_CHECK" label="" tooltip="Bottom border" var_name="BorderBottom" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\expand.xpm; ; [-1; -1]" id="id_Expand" kind="wxITEM_CHECK" label="" var_name="Expand" />
+        <node class="tool" bitmap="XPM; ..\xpm\expand.xpm; ; [-1; -1]" id="id_Expand" kind="wxITEM_CHECK" label="" tooltip="Expand to fill the space" var_name="Expand" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\hidden.xpm; ; [-1; -1]" id="id_ShowHidden" kind="wxITEM_CHECK" label="" tooltip="Show hidden controls in Mockup panel\n" var_name="Spy" />
+        <node class="tool" bitmap="XPM; ..\xpm\hidden.xpm; ; [-1; -1]" id="id_ShowHidden" kind="wxITEM_CHECK" label="" tooltip="Show hidden controls in Mockup panel" var_name="Spy" />
         <node class="tool" bitmap="XPM; ..\xpm\magnify.xpm; ; [-1; -1]" id="id_Magnify" kind="wxITEM_CHECK" label="" tooltip="Magnify the size of the Mockup window" var_name="Magnify" />
       </node>
     </node>

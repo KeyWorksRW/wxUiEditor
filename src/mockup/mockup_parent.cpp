@@ -396,7 +396,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
             {
                 node->GetGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
             }
-            else if (auto window = wxStaticCast(Get_wxObject(node), wxWindow); window)
+            else if (auto window = wxDynamicCast(Get_wxObject(node), wxWindow); window)
             {
                 window->SetToolTip(prop->as_wxString());
             }

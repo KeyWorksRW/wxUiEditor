@@ -562,7 +562,13 @@ void MainFrame::UpdateFrame()
     menu_text << "\tCtrl+Y";
     m_menuEdit->FindChildItem(wxID_REDO)->SetItemLabel(menu_text);
 
-    if (m_clipboard)
+    if (isClipboardDataAvailable())
+    {
+        menu_text = _ttwx(strIdPaste);
+        menu_text << "\tCtrl+V";
+        m_menuEdit->FindChildItem(wxID_PASTE)->SetItemLabel(menu_text);
+    }
+    else if (m_clipboard)
     {
         menu_text = _ttwx(strIdPaste);
         menu_text << ' ' << m_clipboard->DeclName();
@@ -587,7 +593,7 @@ void MainFrame::OnCopy(wxCommandEvent&)
     }
     else if (m_selected_node)
     {
-        m_clipboard = g_NodeCreator.MakeCopy(m_selected_node);
+        CopyNode(m_selected_node.get());
         UpdateFrame();
     }
 }
@@ -1058,7 +1064,7 @@ bool MainFrame::CanCopyNode()
 
 bool MainFrame::CanPasteNode()
 {
-    return (m_selected_node.get() && m_clipboard.get());
+    return (m_selected_node.get() && (m_clipboard.get() || isClipboardDataAvailable()));
 }
 
 void MainFrame::Undo()

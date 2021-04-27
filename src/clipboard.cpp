@@ -12,9 +12,10 @@
 #include "import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
 #include "import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
 
-#include "mainframe.h"  // Main window frame
-#include "node.h"       // Node class
-#include "uifuncs.h"    // Miscellaneous functions for displaying UI
+#include "mainframe.h"     // Main window frame
+#include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "uifuncs.h"       // Miscellaneous functions for displaying UI
 
 #include "../../pugixml/pugixml.hpp"
 
@@ -67,6 +68,10 @@ NodeSharedPtr GetClipboardNode()
             auto child = root.first_child();
             WxSmith smith;
             return smith.CreateXrcNode(child, nullptr);
+        }
+        else if (wxTheClipboard->IsSupported(wxDataFormat(txt_OurClipboardFormat)))
+        {
+            return g_NodeCreator.CreateNode(root);
         }
     }
 

@@ -240,7 +240,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     {
         class_name = "wxButton";
     }
-    else if (class_name.is_sameas("wxPanel") && parent->DeclName().contains("book"))
+    else if (class_name.is_sameas("wxPanel") && (parent && parent->DeclName().contains("book")))
     {
         class_name = "BookPage";
     }
@@ -455,8 +455,11 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             auto prop = newobject->AddNodeProperty(iter.GetPropDeclaration());
             prop->set_value(iter.as_string());
         }
-        parent->AddChild(newobject);
-        newobject->SetParent(parent->GetSharedPtr());
+        if (parent)
+        {
+            parent->AddChild(newobject);
+            newobject->SetParent(parent->GetSharedPtr());
+        }
     }
     else if (parent)
     {
@@ -811,7 +814,7 @@ void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object,
         align_value << "wxALIGN_BOTTOM";
     }
 
-    if (flag_value.contains("wxALIGN_CENTER") || flag_value.contains("wxALIGN_CENTRE"))
+    if (parent && (flag_value.contains("wxALIGN_CENTER") || flag_value.contains("wxALIGN_CENTRE")))
     {
         // wxFormBuilder allows the user to add alignment flags that conflict with a
         // parent's orientation flags. We check for that here, and only add the flag if it

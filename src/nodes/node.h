@@ -234,7 +234,6 @@ public:
     // Currently only called in debug builds, but available for release builds should we need it
     size_t GetNodeSize();
 
-protected:
     // This writes XML files in the 1.1 layout using attributes for properties
     void AddNodeToDoc(pugi::xml_node& object);
 

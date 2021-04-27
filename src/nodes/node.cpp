@@ -196,6 +196,7 @@ bool Node::AddChild(size_t idx, Node* node)
 
 bool Node::IsChildAllowed(Node* child)
 {
+    ASSERT(child);
     auto child_type = child->GetNodeType();
     int_t max_children;
 

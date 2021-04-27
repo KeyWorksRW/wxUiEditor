@@ -270,6 +270,8 @@ private:
     // If true, the entire project was imported, and a Save As must be done before a Save is
     // allowed.
     bool m_isImported { false };
+
+    bool m_has_clipboard_data { false };
 };
 
 // Same as wxGetApp() only this returns a reference to the frame window

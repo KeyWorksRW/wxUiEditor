@@ -496,7 +496,7 @@ bool App::NewProject()
     return true;
 }
 
-void App::ImportWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dialogs)
+void App::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dialogs)
 {
     WinResource winres;
     if (winres.ImportRc(rc_file, dialogs))
@@ -507,7 +507,7 @@ void App::ImportWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dia
     }
 }
 
-void App::ImportFormBuilder(wxArrayString& files)
+void App::AppendFormBuilder(wxArrayString& files)
 {
     for (size_t pos = 0; pos < files.size(); ++pos)
     {
@@ -522,6 +522,97 @@ void App::ImportFormBuilder(wxArrayString& files)
             {
                 appMsgBox(ttlib::cstr("The project file ") << files[pos].wx_str() << " is invalid and cannot be opened.",
                           "Import wxFormBuilder project");
+                return;
+            }
+
+            auto form = project.child("node");
+            while (form)
+            {
+                g_NodeCreator.CreateNode(form, m_project.get());
+                form = form.next_sibling("node");
+            }
+        }
+    }
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SetModified();
+}
+
+void App::AppendGlade(wxArrayString& files)
+{
+    for (size_t pos = 0; pos < files.size(); ++pos)
+    {
+        WxGlade glade;
+
+        if (glade.Import(files[pos]))
+        {
+            auto& doc = glade.GetDocument();
+            auto root = doc.first_child();
+            auto project = root.child("node");
+            if (!project || project.attribute("class").as_cstr() != "Project")
+            {
+                appMsgBox(ttlib::cstr("The project file ") << files[pos].wx_str() << " is invalid and cannot be opened.",
+                          "Import wxGlade project");
+                return;
+            }
+
+            auto form = project.child("node");
+            while (form)
+            {
+                g_NodeCreator.CreateNode(form, m_project.get());
+                form = form.next_sibling("node");
+            }
+        }
+    }
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SetModified();
+}
+
+void App::AppendSmith(wxArrayString& files)
+{
+    for (size_t pos = 0; pos < files.size(); ++pos)
+    {
+        WxSmith smith;
+
+        if (smith.Import(files[pos]))
+        {
+            auto& doc = smith.GetDocument();
+            auto root = doc.first_child();
+            auto project = root.child("node");
+            if (!project || project.attribute("class").as_cstr() != "Project")
+            {
+                appMsgBox(ttlib::cstr("The project file ") << files[pos].wx_str() << " is invalid and cannot be opened.",
+                          "Import wxSmith project");
+                return;
+            }
+
+            auto form = project.child("node");
+            while (form)
+            {
+                g_NodeCreator.CreateNode(form, m_project.get());
+                form = form.next_sibling("node");
+            }
+        }
+    }
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SetModified();
+}
+
+void App::AppendXRC(wxArrayString& files)
+{
+    for (size_t pos = 0; pos < files.size(); ++pos)
+    {
+        // wxSmith files are a superset of XRC files, so we use the wxSmith class to process both
+        WxSmith smith;
+
+        if (smith.Import(files[pos]))
+        {
+            auto& doc = smith.GetDocument();
+            auto root = doc.first_child();
+            auto project = root.child("node");
+            if (!project || project.attribute("class").as_cstr() != "Project")
+            {
+                appMsgBox(ttlib::cstr("The project file ") << files[pos].wx_str() << " is invalid and cannot be opened.",
+                          "Import XRC project");
                 return;
             }
 

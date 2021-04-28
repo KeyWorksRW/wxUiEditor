@@ -29,8 +29,11 @@ class App : public wxApp
 public:
     App();
 
-    void ImportFormBuilder(wxArrayString& files);
-    void ImportWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& m_dialogs);
+    void AppendFormBuilder(wxArrayString& files);
+    void AppendGlade(wxArrayString& files);
+    void AppendSmith(wxArrayString& files);
+    void AppendXRC(wxArrayString& files);
+    void AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& m_dialogs);
 
     bool LoadProject(const ttString& file);
     bool NewProject();

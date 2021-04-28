@@ -29,6 +29,9 @@ public:
         id_AlignRight,
         id_AlignTop,
         id_AppendFormBuilder,
+        id_AppendGlade,
+        id_AppendSmith,
+        id_AppendXRC,
         id_BorderBottom,
         id_BorderLeft,
         id_BorderRight,
@@ -66,6 +69,10 @@ protected:
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAppendFormBuilder(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAppendGlade(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAppendSmith(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAppendXRC(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChangeAlignment(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChangeBorder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
@@ -76,7 +83,6 @@ protected:
     virtual void OnFindDialog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenInhertedClass(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenerateCode(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnImportFormBuilder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInsertWidget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOpenProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOptionsDlg(wxCommandEvent& event) { event.Skip(); }

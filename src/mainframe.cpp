@@ -288,7 +288,7 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
     };
 }
 
-void MainFrame::OnImportFormBuilder(wxCommandEvent&)
+void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 {
     ttSaveCwd cwd;
     wxFileDialog dlg(this, _tt(strIdTitleOpenOrImport), cwd, wxEmptyString, "WxFormBuilder Project File (*.fbp)|*.fbp||",
@@ -297,7 +297,46 @@ void MainFrame::OnImportFormBuilder(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        wxGetApp().ImportFormBuilder(files);
+        wxGetApp().AppendFormBuilder(files);
+    }
+}
+
+void MainFrame::OnAppendGlade(wxCommandEvent&)
+{
+    ttSaveCwd cwd;
+    wxFileDialog dlg(this, _tt(strIdTitleOpenOrImport), cwd, wxEmptyString, "wxGlade Project File (*.wxg)|*.wxg||",
+                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        wxArrayString files;
+        dlg.GetPaths(files);
+        wxGetApp().AppendGlade(files);
+    }
+}
+
+void MainFrame::OnAppendSmith(wxCommandEvent&)
+{
+    ttSaveCwd cwd;
+    wxFileDialog dlg(this, _tt(strIdTitleOpenOrImport), cwd, wxEmptyString, "wxSmith File (*.wxs)|*.wxs||",
+                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        wxArrayString files;
+        dlg.GetPaths(files);
+        wxGetApp().AppendSmith(files);
+    }
+}
+
+void MainFrame::OnAppendXRC(wxCommandEvent&)
+{
+    ttSaveCwd cwd;
+    wxFileDialog dlg(this, _tt(strIdTitleOpenOrImport), cwd, wxEmptyString, "XRC File (*.xrc)|*.xrc||",
+                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        wxArrayString files;
+        dlg.GetPaths(files);
+        wxGetApp().AppendXRC(files);
     }
 }
 
@@ -306,7 +345,7 @@ void MainFrame::OnImportWindowsResource(wxCommandEvent&)
     ImportWinResDlg dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
-        wxGetApp().ImportWinRes(dlg.GetRcFilename(), dlg.GetDlgNames());
+        wxGetApp().AppendWinRes(dlg.GetRcFilename(), dlg.GetDlgNames());
     }
 }
 

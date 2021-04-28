@@ -81,9 +81,21 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto submenu = new wxMenu();
 
-    auto menu_item3 = new wxMenuItem(submenu, id_AppendFormBuilder, wxString::FromUTF8("wxFormBuilder Project..."),
+    auto menu_item_1 = new wxMenuItem(submenu, id_AppendFormBuilder, wxString::FromUTF8("wxFormBuilder Project..."),
     wxString::FromUTF8("Append wxFormBuilder project into current project"), wxITEM_NORMAL);
-    submenu->Append(menu_item3);
+    submenu->Append(menu_item_1);
+
+    auto menu_item_2 = new wxMenuItem(submenu, id_AppendGlade, wxString::FromUTF8("wxGlade Project..."),
+    wxString::FromUTF8("Append wxGlade project into current project"), wxITEM_NORMAL);
+    submenu->Append(menu_item_2);
+
+    auto menu_item_3 = new wxMenuItem(submenu, id_AppendSmith, wxString::FromUTF8("wxSmith Project..."),
+    wxString::FromUTF8("Append wxSmith project into current project"), wxITEM_NORMAL);
+    submenu->Append(menu_item_3);
+
+    auto menu_item_4 = new wxMenuItem(submenu, id_AppendXRC, wxString::FromUTF8("XRC Project..."),
+    wxString::FromUTF8("Append XRC project into current project"), wxITEM_NORMAL);
+    submenu->Append(menu_item_4);
     m_menuFile->AppendSubMenu(submenu, wxString::FromUTF8("&Append"));
 
     m_menuFile->AppendSeparator();
@@ -351,7 +363,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().IsModified()); },
         id_SaveProject);
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
-    Bind(wxEVT_MENU, &MainFrameBase::OnImportFormBuilder, this, id_AppendFormBuilder);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendXRC, this, id_AppendXRC);
     Bind(wxEVT_MENU, &MainFrameBase::OnOptionsDlg, this, id_OptionsDlg);
     Bind(wxEVT_MENU,
         [](wxCommandEvent&) { wxGetFrame().Undo(); },

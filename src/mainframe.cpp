@@ -562,20 +562,6 @@ void MainFrame::UpdateFrame()
     menu_text << "\tCtrl+Y";
     m_menuEdit->FindChildItem(wxID_REDO)->SetItemLabel(menu_text);
 
-    if (isClipboardDataAvailable())
-    {
-        menu_text = _ttwx(strIdPaste);
-        menu_text << "\tCtrl+V";
-        m_menuEdit->FindChildItem(wxID_PASTE)->SetItemLabel(menu_text);
-    }
-    else if (m_clipboard)
-    {
-        menu_text = _ttwx(strIdPaste);
-        menu_text << ' ' << m_clipboard->DeclName();
-        menu_text << "\tCtrl+V";
-        m_menuEdit->FindChildItem(wxID_PASTE)->SetItemLabel(menu_text);
-    }
-
     bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == _ttwx(strIdMockupTabTitle));
     m_menuEdit->Enable(wxID_FIND, !isMockup);
     m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->isGen(gen_Project));

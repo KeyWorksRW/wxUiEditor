@@ -152,6 +152,7 @@ namespace GenEnum
         prop_folding,
         prop_font,
         prop_foreground_colour,
+        prop_generate_ids,
         prop_get_function,
         prop_grid_line_color,
         prop_grid_lines,

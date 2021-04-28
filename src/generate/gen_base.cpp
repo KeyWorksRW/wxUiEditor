@@ -771,6 +771,9 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const wxString& cla
 
 void BaseCodeGenerator::GenEnumIds(Node* class_node)
 {
+    if (!class_node->prop_as_bool(prop_generate_ids))
+        return;
+
     std::set<std::string> set_ids;
     CollectIDs(class_node, set_ids);
     if (set_ids.empty())

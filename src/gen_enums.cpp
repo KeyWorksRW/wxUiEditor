@@ -152,6 +152,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_folding, "folding" },
     { prop_font, "font" },
     { prop_foreground_colour, "foreground_colour" },
+    { prop_generate_ids, "generate_ids" },
     { prop_get_function, "get_function" },
     { prop_grid_line_color, "grid_line_color" },
     { prop_grid_lines, "grid_lines" },

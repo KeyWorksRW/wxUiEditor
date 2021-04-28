@@ -26,6 +26,7 @@ public:
     ~FormBuilder() {};
 
     bool Import(const ttString& filename, bool write_doc = true) override;
+    NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
     void ConvertNameSpaceProp(NodeProperty* prop, ttlib::cview org_names);
@@ -35,7 +36,6 @@ protected:
 
     void ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object, Node* parent, NodeProperty* prop);
     void BitmapProperty(pugi::xml_node& xml_obj, NodeProperty* prop);
-    NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
     void CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node);
 
 private:

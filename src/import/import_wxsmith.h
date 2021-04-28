@@ -9,7 +9,7 @@
 
 #include "node_classes.h"
 
-#include "import_xml.h"        // ImportXML -- Base class for XML importing
+#include "import_xml.h"  // ImportXML -- Base class for XML importing
 
 class WxSmith : public ImportXML
 {
@@ -17,10 +17,5 @@ public:
     WxSmith();
 
     bool Import(const ttString& filename, bool write_doc = true) override;
-
-protected:
-
     NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
-
-private:
 };

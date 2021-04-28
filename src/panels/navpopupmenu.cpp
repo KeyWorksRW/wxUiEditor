@@ -103,22 +103,7 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
 
     Append(MenuCUT, "Cut\tCtrl+X");
     Append(MenuCOPY, "Copy\tCtrl+C");
-    if (wxGetFrame().GetClipboard())
-    {
-        ttlib::cstr menu_text = _tt(strIdPaste);
-        menu_text << ' ' << wxGetFrame().GetClipboard()->DeclName();
-        menu_text << "\tCtrl+V";
-
-        Append(MenuPASTE, menu_text);
-    }
-    else
-    {
-        // There's nothing to paste, but we want to let the user know they could have pasted something, so we add the menu
-        // item and disable it.
-
-        auto item = Append(MenuPASTE, "Paste\tCtrl+V");
-        item->Enable(false);
-    }
+    Append(MenuPASTE, "Paste\tCtrl+V");
 
     Append(MenuDELETE, "Delete\tCtrl+D");
     Append(MenuDUPLICATE, "Duplicate");
@@ -621,11 +606,7 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
 
         if (clipboard->IsForm() || clipboard->IsContainer() || (clipboard->IsSizer() && node->GetChildCount() == 0))
         {
-            ttString menu_text = _ttwx(strIdPaste);
-            menu_text << ' ' << wxGetFrame().GetClipboard()->DeclName();
-            menu_text << "\tCtrl+V";
-
-            Append(MenuPASTE, menu_text);
+            Append(MenuPASTE, "Paste\tCtrl+V");
         }
     }
 
@@ -729,22 +710,7 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
 
 void NavPopupMenu::CreateTopSizerMenu(Node* node)
 {
-    if (wxGetFrame().GetClipboard())
-    {
-        ttlib::cstr menu_text = _tt(strIdPaste);
-        menu_text << ' ' << wxGetFrame().GetClipboard()->DeclName();
-        menu_text << "\tCtrl+V";
-
-        Append(MenuPASTE, menu_text);
-    }
-    else
-    {
-        // There's nothing to paste, but we want to let the user know they could have pasted something, so we add the menu
-        // item and disable it.
-
-        auto item = Append(MenuPASTE, "Paste\tCtrl+V");
-        item->Enable(false);
-    }
+    Append(MenuPASTE, "Paste\tCtrl+V");
     AppendSeparator();
 
     // Many of the OnAddNew commands add to a child, so we need to "fake" the child to ourselves
@@ -774,22 +740,7 @@ void NavPopupMenu::CreateMenuMenu(Node* node)
 {
     Append(MenuCUT, "Cut\tCtrl+X");
     Append(MenuCOPY, "Copy\tCtrl+C");
-    if (wxGetFrame().GetClipboard())
-    {
-        ttlib::cstr menu_text = _tt(strIdPaste);
-        menu_text << ' ' << wxGetFrame().GetClipboard()->DeclName();
-        menu_text << "\tCtrl+V";
-
-        Append(MenuPASTE, menu_text);
-    }
-    else
-    {
-        // There's nothing to paste, but we want to let the user know they could have pasted something, so we add the menu
-        // item and disable it.
-
-        auto item = Append(MenuPASTE, "Paste\tCtrl+V");
-        item->Enable(false);
-    }
+    Append(MenuPASTE, "Paste\tCtrl+V");
     Append(MenuDELETE, "Delete\tCtrl+D");
 
     AppendSeparator();

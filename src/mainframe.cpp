@@ -7,7 +7,10 @@
 
 #include "pch.h"
 
+#include <sstream>
+
 #include <wx/aboutdlg.h>          // declaration of wxAboutDialog class
+#include <wx/clipbrd.h>           // wxClipboad class and clipboard functions
 #include <wx/config.h>            // wxConfig base header
 #include <wx/filedlg.h>           // wxFileDialog base header
 #include <wx/frame.h>             // wxFrame class interface
@@ -28,6 +31,7 @@
 
 #include "auto_freeze.h"   // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "bitmaps.h"       // Map of bitmaps accessed by name
+#include "clipboard.h"     // wxUiEditorData -- Handles reading and writing OS clipboard data
 #include "cstm_event.h"    // CustomEvent -- Custom Event class
 #include "gen_base.h"      // Generate Base class
 #include "gen_enums.h"     // Enumerations for generators
@@ -380,6 +384,10 @@ void MainFrame::OnClose(wxCloseEvent& event)
     m_FileHistory.Save(*config);
     m_property_panel->SaveDescBoxHeight();
 
+    // If we have clipboard data, ensure it persists after we exit
+    if (m_has_clipboard_data)
+        wxTheClipboard->Flush();
+
 #if defined(_DEBUG)
     g_pMsgLogging->CloseLogger();
 #endif
@@ -554,14 +562,6 @@ void MainFrame::UpdateFrame()
     menu_text << "\tCtrl+Y";
     m_menuEdit->FindChildItem(wxID_REDO)->SetItemLabel(menu_text);
 
-    if (m_clipboard)
-    {
-        menu_text = _ttwx(strIdPaste);
-        menu_text << ' ' << m_clipboard->DeclName();
-        menu_text << "\tCtrl+V";
-        m_menuEdit->FindChildItem(wxID_PASTE)->SetItemLabel(menu_text);
-    }
-
     bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == _ttwx(strIdMockupTabTitle));
     m_menuEdit->Enable(wxID_FIND, !isMockup);
     m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->isGen(gen_Project));
@@ -579,7 +579,7 @@ void MainFrame::OnCopy(wxCommandEvent&)
     }
     else if (m_selected_node)
     {
-        m_clipboard = g_NodeCreator.MakeCopy(m_selected_node);
+        CopyNode(m_selected_node.get());
         UpdateFrame();
     }
 }
@@ -953,11 +953,50 @@ void MainFrame::CopyNode(Node* node)
 {
     ASSERT(node);
     m_clipboard = g_NodeCreator.MakeCopy(node);
+    if (m_clipboard)
+    {
+        SmartClipboard clip;
+        if (clip.IsOpened())
+        {
+            pugi::xml_document doc;
+            auto clip_node = doc.append_child("node");
+            m_clipboard->AddNodeToDoc(clip_node);
+            auto u8_data = new wxUtf8DataObject();
+            std::stringstream strm;
+            doc.save(strm);
+
+            // Skip over the XML header
+            auto begin = strm.str().find("<node");
+            if (ttlib::is_found(begin))
+            {
+                u8_data->GetText() = strm.str().c_str() + begin;
+                auto hash_data = new wxUEDataObject();
+
+                m_clip_hash = 0;
+                m_clipboard->CalcNodeHash(m_clip_hash);
+                hash_data->GetHash() = m_clip_hash;
+
+                wxDataObjectComposite* data = new wxDataObjectComposite();
+                data->Add(u8_data, true);
+                data->Add(hash_data, false);
+                wxTheClipboard->SetData(data);
+            }
+        }
+    }
 }
 
 void MainFrame::PasteNode(Node* parent)
 {
-    ASSERT(m_clipboard);
+    if (auto result = isClipboardDataAvailable(); result)
+    {
+        auto new_node = GetClipboardNode();
+        if (new_node)
+        {
+            m_clipboard = new_node;
+        }
+    }
+
+    ASSERT_MSG(m_clipboard, "m_clipboard is null and clipboard is empty -- PasteNode should not have been enabled!");
 
     if (!parent)
     {
@@ -1016,7 +1055,7 @@ bool MainFrame::CanCopyNode()
 
 bool MainFrame::CanPasteNode()
 {
-    return (m_selected_node.get() && m_clipboard.get());
+    return (m_selected_node.get() && (m_clipboard.get() || isClipboardDataAvailable()));
 }
 
 void MainFrame::Undo()

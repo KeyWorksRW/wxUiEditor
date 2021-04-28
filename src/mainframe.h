@@ -90,6 +90,7 @@ public:
     Node* GetSelectedForm();
 
     Node* GetClipboard() { return (m_clipboard ? m_clipboard.get() : nullptr); }
+    size_t GetClipHash() { return (m_clipboard ? m_clip_hash : 0); }
 
     // Node will not be selected if it already is selected, unless force == true.
     // Returns true if selection changed, false if already selected or selection removed.
@@ -263,6 +264,7 @@ private:
     NodeSharedPtr m_selected_node { nullptr };
 
     NodeSharedPtr m_clipboard;
+    size_t m_clip_hash;  // generated clipboard hash
 
     bool m_isProject_generated { false };
     bool m_isProject_modified { false };
@@ -270,6 +272,8 @@ private:
     // If true, the entire project was imported, and a Save As must be done before a Save is
     // allowed.
     bool m_isImported { false };
+
+    bool m_has_clipboard_data { false };
 };
 
 // Same as wxGetApp() only this returns a reference to the frame window

@@ -32,6 +32,7 @@ Files:
 
     appoptions.cpp        # Application-wide options
     bitmaps.cpp           # Map of bitmaps accessed by name
+    clipboard.cpp
     cstm_event.cpp        # Custom Event handling
     gen_enums.cpp         # Enumerations for generators
     frame_status_bar.cpp  # MainFrame status bar functions

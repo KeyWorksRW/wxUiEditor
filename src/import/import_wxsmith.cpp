@@ -74,7 +74,8 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
 
     bool isBitmapButton = (object_name == "wxBitmapButton");
     auto result = ConvertToGenName(object_name, parent);
-    if (!result) {
+    if (!result)
+    {
         MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
         return NodeSharedPtr();
     }
@@ -83,7 +84,16 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
     while (!new_node)
     {
-        MSG_INFO(ttlib::cstr() << "Unable to create " << map_GenNames[gen_name] << " as a child of " << parent->DeclName());
+        // parent will be null if pasting from the clipboard
+        if (parent)
+        {
+            MSG_INFO(ttlib::cstr() << "Unable to create " << map_GenNames[gen_name] << " as a child of "
+                                   << parent->DeclName());
+        }
+        else
+        {
+            MSG_INFO(ttlib::cstr() << "Unable to create " << map_GenNames[gen_name]);
+        }
         return NodeSharedPtr();
     }
 
@@ -93,18 +103,24 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
         isBitmapButton = false;
     }
 
-    if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
+    if (parent)
     {
-        auto original = prop->as_string();
-        auto new_name = parent->GetUniqueName(prop->as_string());
-        if (new_name.size() && new_name != prop->as_string())
-            prop->set_value(new_name);
+        if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
+        {
+            auto original = prop->as_string();
+            auto new_name = parent->GetUniqueName(prop->as_string());
+            if (new_name.size() && new_name != prop->as_string())
+                prop->set_value(new_name);
+        }
     }
 
     if (new_node->isGen(gen_wxStdDialogButtonSizer))
     {
-        parent->AddChild(new_node);
-        new_node->SetParent(parent->GetSharedPtr());
+        if (parent)
+        {
+            parent->AddChild(new_node);
+            new_node->SetParent(parent->GetSharedPtr());
+        }
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
 
@@ -158,8 +174,11 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
             auto prop = new_node->AddNodeProperty(iter.GetPropDeclaration());
             prop->set_value(iter.as_string());
         }
-        parent->AddChild(new_node);
-        new_node->SetParent(parent->GetSharedPtr());
+        if (parent)
+        {
+            parent->AddChild(new_node);
+            new_node->SetParent(parent->GetSharedPtr());
+        }
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
     }

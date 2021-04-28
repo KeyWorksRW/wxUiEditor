@@ -44,7 +44,6 @@ NodeSharedPtr GetClipboardNode()
 
             wxUEDataObject data;
             wxTheClipboard->GetData(data);
-            auto clip_hash = wxGetFrame().GetClipHash();
             if (wxGetFrame().GetClipHash() == data.GetHash())
                 return {};
         }

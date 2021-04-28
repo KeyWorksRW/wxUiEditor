@@ -18,6 +18,7 @@
 #include "import_formblder.h"
 
 #include "mainapp.h"       // App -- Main application class
+#include "mainframe.h"     // Main window frame
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
@@ -240,9 +241,22 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     {
         class_name = "wxButton";
     }
-    else if (class_name.is_sameas("wxPanel") && (parent && parent->DeclName().contains("book")))
+    else if (class_name.is_sameas("wxPanel"))
     {
-        class_name = "BookPage";
+        if (!parent)
+        {
+            auto owner = wxGetFrame().GetSelectedNode();
+            while (owner->gen_type() == type_sizer)
+                owner = owner->GetParent();
+            if (owner->DeclName().contains("book"))
+            {
+                class_name = "BookPage";
+            }
+        }
+        else if (parent->DeclName().contains("book"))
+        {
+            class_name = "BookPage";
+        }
     }
     else if (class_name.contains("bookpage"))
     {

@@ -9,9 +9,11 @@
 
 #include "import_xml.h"
 
-#include "node.h"     // Node class
-#include "uifuncs.h"  // Miscellaneous functions for displaying UI
-#include "utils.h"    // Utility functions that work with properties
+#include "mainapp.h"    // App -- Main application class
+#include "mainframe.h"  // Main window frame
+#include "node.h"       // Node class
+#include "uifuncs.h"    // Miscellaneous functions for displaying UI
+#include "utils.h"      // Utility functions that work with properties
 
 std::optional<pugi::xml_document> ImportXML::LoadDocFile(const ttString& file)
 {
@@ -302,7 +304,21 @@ std::optional<GenName> ImportXML::ConvertToGenName(const ttlib::cstr& object_nam
     }
     else if (object_name.is_sameas("wxPanel"))
     {
-        if (parent->DeclName().contains("book"))
+        if (!parent)
+        {
+            auto owner = wxGetFrame().GetSelectedNode();
+            while (owner->gen_type() == type_sizer)
+                owner = owner->GetParent();
+            if (owner->DeclName().contains("book"))
+            {
+                return gen_BookPage;
+            }
+            else
+            {
+                return gen_PanelForm;
+            }
+        }
+        else if (parent->DeclName().contains("book"))
             return gen_BookPage;
         else if (parent->isGen(gen_Project))
             return gen_PanelForm;
@@ -323,15 +339,15 @@ std::optional<GenName> ImportXML::ConvertToGenName(const ttlib::cstr& object_nam
     {
         return gen_wxDialog;
     }
-    else if (object_name.contains("Wizard") && parent->isGen(gen_Project))
+    else if (object_name.contains("Wizard") && parent && parent->isGen(gen_Project))
     {
         return gen_wxWizard;
     }
-    else if (object_name.contains("wxMenuBar") && parent->isGen(gen_Project))
+    else if (object_name.contains("wxMenuBar") && parent && parent->isGen(gen_Project))
     {
         return gen_MenuBar;
     }
-    else if (object_name.contains("wxToolBar") && parent->isGen(gen_Project))
+    else if (object_name.contains("wxToolBar") && parent && parent->isGen(gen_Project))
     {
         return gen_ToolBar;
     }
@@ -339,7 +355,7 @@ std::optional<GenName> ImportXML::ConvertToGenName(const ttlib::cstr& object_nam
     {
         return gen_wxFrame;
     }
-    else if (object_name.contains("Panel") && parent->isGen(gen_Project))
+    else if (object_name.contains("Panel") && parent && parent->isGen(gen_Project))
     {
         return gen_PanelForm;
     }

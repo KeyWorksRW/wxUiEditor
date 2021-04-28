@@ -190,7 +190,10 @@ protected:
     void OnEmbedImageConverter(wxCommandEvent& event) override;
     void OnGenInhertedClass(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
-    void OnImportFormBuilder(wxCommandEvent& event) override;
+    void OnAppendFormBuilder(wxCommandEvent& event) override;
+    void OnAppendGlade(wxCommandEvent& event) override;
+    void OnAppendSmith(wxCommandEvent& event) override;
+    void OnAppendXRC(wxCommandEvent& event) override;
     void OnImportWindowsResource(wxCommandEvent& event);
     void OnNewProject(wxCommandEvent& event);
     void OnOpenProject(wxCommandEvent& event) override;

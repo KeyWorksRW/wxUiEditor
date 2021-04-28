@@ -12,7 +12,10 @@
           <node class="wxMenuItem" help="Save current project to a different filename" id="id_SaveProjectAs" label="Save &amp;As...&#09;Ctrl-Shift+S" var_name="menu_item2" wxEVT_MENU="OnSaveAsProject" />
           <node class="separator" var_name="separator2" />
           <node class="submenu" label="&amp;Append">
-            <node class="wxMenuItem" help="Append wxFormBuilder project into current project" id="id_AppendFormBuilder" label="wxFormBuilder Project..." var_name="menu_item3" wxEVT_MENU="OnImportFormBuilder" />
+            <node class="wxMenuItem" help="Append wxFormBuilder project into current project" id="id_AppendFormBuilder" label="wxFormBuilder Project..." var_name="menu_item_1" wxEVT_MENU="OnAppendFormBuilder" />
+            <node class="wxMenuItem" help="Append wxGlade project into current project" id="id_AppendGlade" label="wxGlade Project..." var_name="menu_item_2" wxEVT_MENU="OnAppendGlade" />
+            <node class="wxMenuItem" help="Append wxSmith project into current project" id="id_AppendSmith" label="wxSmith Project..." var_name="menu_item_3" wxEVT_MENU="OnAppendSmith" />
+            <node class="wxMenuItem" help="Append XRC project into current project" id="id_AppendXRC" label="XRC Project..." var_name="menu_item_4" wxEVT_MENU="OnAppendXRC" />
           </node>
           <node class="separator" var_name="separator3" />
           <node class="wxMenuItem" help="Code generation options" id="id_OptionsDlg" label="&amp;Options..." var_name="menu_preferences" wxEVT_MENU="OnOptionsDlg" />

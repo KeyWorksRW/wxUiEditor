@@ -14,9 +14,9 @@
 
 #include "ribbon_tools.h"  // auto-generated: ../ui/ribbonpanel_base.h and ../ui/ribbonpanel_base.cpp
 
+#include "gen_enums.h"     // Enumerations for generators
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node_creator.h"  // NodeCreator class
-#include "gen_enums.h"     // Enumerations for generators
 
 // The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch
 // that to a default size here.
@@ -29,47 +29,6 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
         wxGetFrame().CreateToolNode(ttlib::cstr() << name.wx_str());
 }
 
-// clang-format off
-enum
-{
-
-    MenuComboNormal,
-    MenuComboChoice,
-    MenuComboBitmap,
-
-    MenuListBox,
-    MenuCheckListBox,
-    MenuListView,
-    MenuHtmlListBox,
-
-    MenuButton,
-    MenuToggleButton,
-    MenuStdDialogButton,
-    MenuCmdLinkButton,
-
-    MenuSpin,
-    MenuSpinDbl,
-    MenuSpinBtn,
-
-    MenuStaticBox,
-    MenuStaticCheckboxBox,
-    MenuStaticRadioBtnBox,
-
-    MenuDataCtrl,
-    MenuDataTreeCtrl,
-    MenuDataListCtrl,
-
-    MenuRibbonBtn,
-    MenuRibbonTool,
-    MenuRibbonGallery,
-    MenuRibbonSizer,
-
-    MenuCheckBoxNormal,
-    MenuCheck3State,
-
-};
-// clang-format on
-
 void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
 {
     wxMenu menu;
@@ -77,54 +36,53 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
     switch (event.GetId())
     {
         case NewCheckbox:
-            menu.Append(MenuCheckBoxNormal, "Insert wxCheckBox");
-            menu.Append(MenuCheck3State, "Insert 3-state wxCheckBox");
+            menu.Append(gen_wxCheckBox, "Insert wxCheckBox");
+            menu.Append(gen_Check3State, "Insert 3-state wxCheckBox");
             break;
 
         case NewCombobox:
-            menu.Append(MenuComboNormal, "Insert wxComboBox");
-            menu.Append(MenuComboChoice, "Insert wxChoice");
-            menu.Append(MenuComboBitmap, "Insert wxBitmapComboBox");
+            menu.Append(gen_wxComboBox, "Insert wxComboBox");
+            menu.Append(gen_wxChoice, "Insert wxChoice");
+            menu.Append(gen_wxBitmapComboBox, "Insert wxBitmapComboBox");
             break;
 
         case NewListbox:
-            menu.Append(MenuListBox, "Insert wxListBox");
-            menu.Append(MenuCheckListBox, "Insert wxCheckListBox");
-            menu.Append(MenuListView, "Insert wxListView");
+            menu.Append(gen_wxListBox, "Insert wxListBox");
+            menu.Append(gen_wxCheckListBox, "Insert wxCheckListBox");
+            menu.Append(gen_wxListView, "Insert wxListView");
             menu.Append(gen_wxRearrangeCtrl, "Insert wxRearrangeCtrl");
-            menu.Append(MenuHtmlListBox, "Insert wxSimpleHtmlListBox");
+            menu.Append(gen_wxSimpleHtmlListBox, "Insert wxSimpleHtmlListBox");
             break;
 
         case NewButton:
-            menu.Append(MenuButton, "Insert wxButton");
-            menu.Append(MenuToggleButton, "Insert wxToggleButton");
-            menu.Append(MenuStdDialogButton, "Insert wxStdDialogButtonSizer");
-            menu.Append(MenuCmdLinkButton, "Insert wxCommandLinkButton");
+            menu.Append(gen_wxButton, "Insert wxButton");
+            menu.Append(gen_wxToggleButton, "Insert wxToggleButton");
+            menu.Append(gen_wxStdDialogButtonSizer, "Insert wxStdDialogButtonSizer");
+            menu.Append(gen_wxCommandLinkButton, "Insert wxCommandLinkButton");
             break;
 
         case NewSpin:
-            menu.Append(MenuSpin, "Insert wxSpinCtrl");
-            menu.Append(MenuSpinDbl, "Insert wxSpinCtrlDouble");
-            menu.Append(MenuSpinBtn, "Insert wxSpinButton");
+            menu.Append(gen_wxSpinCtrl, "Insert wxSpinCtrl");
+            menu.Append(gen_wxSpinCtrlDouble, "Insert wxSpinCtrlDouble");
+            menu.Append(gen_wxSpinButton, "Insert wxSpinButton");
             break;
 
         case NewDataCtrl:
-            menu.Append(MenuDataCtrl, "Insert wxDataViewCtrl");
-            menu.Append(MenuDataTreeCtrl, "Insert wxDataViewTreeCtrl");
-            menu.Append(MenuDataListCtrl, "Insert wxDataViewListCtrl");
+            menu.Append(gen_wxDataViewCtrl, "Insert wxDataViewCtrl");
+            menu.Append(gen_wxDataViewTreeCtrl, "Insert wxDataViewTreeCtrl");
+            menu.Append(gen_wxDataViewListCtrl, "Insert wxDataViewListCtrl");
             break;
 
         case NewRibbonType:
-            menu.Append(MenuRibbonBtn, "Insert wxRibbonButtonBar");
-            menu.Append(MenuRibbonTool, "Insert wxRibbonToolBar");
-            menu.Append(MenuRibbonGallery, "Insert wxRibbonGallery");
-            menu.Append(MenuRibbonSizer, "Insert wxBoxSizer");
+            menu.Append(gen_wxRibbonButtonBar, "Insert wxRibbonButtonBar");
+            menu.Append(gen_wxRibbonToolBar, "Insert wxRibbonToolBar");
+            menu.Append(gen_wxRibbonGallery, "Insert wxRibbonGallery");
             break;
 
         case NewStaticSizer:
-            menu.Append(MenuStaticBox, "Insert wxStaticBoxSizer");
-            menu.Append(MenuStaticCheckboxBox, "Insert CheckBox wxStaticBoxSizer");
-            menu.Append(MenuStaticRadioBtnBox, "Insert RadioButton wxStaticBoxSizer");
+            menu.Append(gen_wxStaticBoxSizer, "Insert wxStaticBoxSizer");
+            menu.Append(gen_StaticCheckboxBoxSizer, "Insert CheckBox wxStaticBoxSizer");
+            menu.Append(gen_StaticRadioBtnBoxSizer, "Insert RadioButton wxStaticBoxSizer");
             break;
 
         default:
@@ -138,117 +96,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
 
 void RibbonPanel::OnMenuEvent(wxCommandEvent& event)
 {
-    switch (event.GetId())
-    {
-        case MenuCheckBoxNormal:
-            wxGetFrame().CreateToolNode("wxCheckBox");
-            break;
+    ASSERT_MSG(static_cast<GenName>(event.GetId()) < gen_name_array_size, "Invalide gen_ id!")
 
-        case MenuCheck3State:
-            wxGetFrame().CreateToolNode("Check3State");
-            break;
-
-        case MenuRibbonBtn:
-            wxGetFrame().CreateToolNode("wxRibbonButtonBar");
-            break;
-
-        case MenuRibbonTool:
-            wxGetFrame().CreateToolNode("wxRibbonToolBar");
-            break;
-
-        case MenuRibbonGallery:
-            wxGetFrame().CreateToolNode("wxRibbonGallery");
-            break;
-
-        case MenuRibbonSizer:
-            wxGetFrame().CreateToolNode("wxBoxSizer");
-            break;
-
-        case MenuDataCtrl:
-            wxGetFrame().CreateToolNode("wxDataViewCtrl");
-            break;
-
-        case MenuDataTreeCtrl:
-            wxGetFrame().CreateToolNode("wxDataViewTreeCtrl");
-            break;
-
-        case MenuDataListCtrl:
-            wxGetFrame().CreateToolNode("wxDataViewListCtrl");
-            break;
-
-        case MenuComboNormal:
-            wxGetFrame().CreateToolNode("wxComboBox");
-            break;
-
-        case MenuComboChoice:
-            wxGetFrame().CreateToolNode("wxChoice");
-            break;
-
-        case MenuComboBitmap:
-            wxGetFrame().CreateToolNode("wxBitmapComboBox");
-            break;
-
-        case MenuListBox:
-            wxGetFrame().CreateToolNode("wxListBox");
-            break;
-
-        case MenuHtmlListBox:
-            wxGetFrame().CreateToolNode("wxSimpleHtmlListBox");
-            break;
-
-        case MenuCheckListBox:
-            wxGetFrame().CreateToolNode("wxCheckListBox");
-            break;
-
-        case gen_wxRearrangeCtrl:
-            wxGetFrame().CreateToolNode(gen_wxRearrangeCtrl);
-            break;
-
-        case MenuListView:
-            wxGetFrame().CreateToolNode("wxListView");
-            break;
-
-        case MenuButton:
-            wxGetFrame().CreateToolNode("wxButton");
-            break;
-
-        case MenuCmdLinkButton:
-            wxGetFrame().CreateToolNode("wxCommandLinkButton");
-            break;
-
-        case MenuToggleButton:
-            wxGetFrame().CreateToolNode("wxToggleButton");
-            break;
-
-        case MenuStdDialogButton:
-            wxGetFrame().CreateToolNode("wxStdDialogButtonSizer");
-            break;
-
-        case MenuSpin:
-            wxGetFrame().CreateToolNode("wxSpinCtrl");
-            break;
-
-        case MenuSpinDbl:
-            wxGetFrame().CreateToolNode("wxSpinCtrlDouble");
-            break;
-
-        case MenuSpinBtn:
-            wxGetFrame().CreateToolNode("wxSpinButton");
-            break;
-
-        case MenuStaticBox:
-            wxGetFrame().CreateToolNode("wxStaticBoxSizer");
-            break;
-
-        case MenuStaticCheckboxBox:
-            wxGetFrame().CreateToolNode("StaticCheckboxBoxSizer");
-            break;
-
-        case MenuStaticRadioBtnBox:
-            wxGetFrame().CreateToolNode("StaticRadioBtnBoxSizer");
-            break;
-
-        default:
-            break;
-    }
+    wxGetFrame().CreateToolNode(static_cast<GenName>(event.GetId()));
 }

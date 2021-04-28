@@ -18,15 +18,28 @@
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node_creator.h"  // NodeCreator class
 
-// The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch
-// that to a default size here.
+#include "../ui/ribbon_ids.h"
+
+// The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch that
+// to a default size here.
 RibbonPanel::RibbonPanel(wxWindow* parent) : RibbonPanelBase(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize) {}
 
 void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 {
-    auto name = event.GetBar()->GetToolHelpString(event.GetId());
-    if (name.size())
-        wxGetFrame().CreateToolNode(ttlib::cstr() << name.wx_str());
+    size_t id = event.GetId();
+    if (id < gen_name_array_size)
+    {
+        wxGetFrame().CreateToolNode(static_cast<GenName>(event.GetId()));
+    }
+    else
+    {
+        FAIL_MSG("This will only happen if the tool is a) not a dropdown, or b) doesn't have a valid gen_ id.");
+
+        // For release build, we'll at least attempt to create it in case the help string specifies a widget.
+        auto name = event.GetBar()->GetToolHelpString(event.GetId());
+        if (name.size())
+            wxGetFrame().CreateToolNode(ttlib::cstr() << name.wx_str());
+    }
 }
 
 void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
@@ -96,7 +109,7 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
 
 void RibbonPanel::OnMenuEvent(wxCommandEvent& event)
 {
-    ASSERT_MSG(static_cast<GenName>(event.GetId()) < gen_name_array_size, "Invalide gen_ id!")
+    ASSERT_MSG(static_cast<GenName>(event.GetId()) < gen_name_array_size, "Invalid gen_ id!")
 
     wxGetFrame().CreateToolNode(static_cast<GenName>(event.GetId()));
 }

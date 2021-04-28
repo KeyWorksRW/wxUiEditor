@@ -984,10 +984,15 @@ void MainFrame::CopyNode(Node* node)
             if (ttlib::is_found(begin))
             {
                 u8_data->GetText() = strm.str().c_str() + begin;
+                auto hash_data = new wxUEDataObject();
+
+                m_clip_hash = 0;
+                m_clipboard->CalcNodeHash(m_clip_hash);
+                hash_data->GetHash() = m_clip_hash;
 
                 wxDataObjectComposite* data = new wxDataObjectComposite();
                 data->Add(u8_data, true);
-                data->Add(new wxUEDataObject());
+                data->Add(hash_data, false);
                 wxTheClipboard->SetData(data);
             }
         }

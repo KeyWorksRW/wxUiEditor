@@ -932,3 +932,26 @@ size_t Node::GetNodeSize()
 
     return size;
 }
+
+// Create a hash of the node name and all property values of the node, and recursively call all children
+void Node::CalcNodeHash(size_t& hash)
+{
+    // djb2 hash algorithm
+
+    if (hash == 0)
+        hash = 5381;
+
+    for (auto iter: get_node_name())
+        hash = ((hash << 5) + hash) ^ iter;
+
+    for (auto prop: m_properties)
+    {
+        for (auto char_iter: prop.as_string())
+            hash = ((hash << 5) + hash) ^ char_iter;
+    }
+
+    for (auto child: m_children)
+    {
+        child->CalcNodeHash(hash);
+    }
+}

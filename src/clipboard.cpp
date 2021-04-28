@@ -36,6 +36,19 @@ NodeSharedPtr GetClipboardNode()
     SmartClipboard clip;
     if (clip.IsOpened())
     {
+        if (wxTheClipboard->IsSupported(wxDataFormat(txt_OurClipboardFormat)))
+        {
+            // Start by getting the stored hash number and comparing it with our internal clipboard hash number. If they are
+            // the same, then assume nothing has changed and avoid the memory allocation and parsing and simply use the
+            // internal clipboard.
+
+            wxUEDataObject data;
+            wxTheClipboard->GetData(data);
+            auto clip_hash = wxGetFrame().GetClipHash();
+            if (wxGetFrame().GetClipHash() == data.GetHash())
+                return {};
+        }
+
         pugi::xml_document doc;
         pugi::xml_parse_result result;
 
@@ -57,7 +70,11 @@ NodeSharedPtr GetClipboardNode()
 
         auto root = doc.first_child();
 
-        if (wxTheClipboard->IsSupported(wxDataFormat("wxFormBuilderDataFormat")))
+        if (wxTheClipboard->IsSupported(wxDataFormat(txt_OurClipboardFormat)))
+        {
+            return g_NodeCreator.CreateNode(root);
+        }
+        else if (wxTheClipboard->IsSupported(wxDataFormat("wxFormBuilderDataFormat")))
         {
             FormBuilder fb;
             return fb.CreateFbpNode(root, nullptr);
@@ -68,10 +85,6 @@ NodeSharedPtr GetClipboardNode()
             auto child = root.first_child();
             WxSmith smith;
             return smith.CreateXrcNode(child, nullptr);
-        }
-        else if (wxTheClipboard->IsSupported(wxDataFormat(txt_OurClipboardFormat)))
-        {
-            return g_NodeCreator.CreateNode(root);
         }
     }
 

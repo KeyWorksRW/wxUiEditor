@@ -39,12 +39,25 @@ class wxUEDataObject : public wxDataObjectSimple
 public:
     wxUEDataObject() : wxDataObjectSimple(wxDataFormat(txt_OurClipboardFormat)) {}
 
-    size_t GetDataSize() const override { return sizeof("wxUiEditor"); }
-    bool GetDataHere(void* buf) const override
+    bool SetData(size_t len, const void* buf) override
     {
-        memcpy(buf, "wxUiEditor", sizeof("wxUiEditor"));
+        if (len == sizeof(size_t))
+            memcpy(&m_hash, buf, len);
         return true;
     }
+
+    size_t GetDataSize() const override { return sizeof(size_t); }
+    bool GetDataHere(void* buf) const override
+    {
+        memcpy(buf, &m_hash, sizeof(size_t));
+        return true;
+    }
+
+    // Note that this ia *not* a const return, so you can modify it if needed
+    size_t& GetHash() { return m_hash; }
+
+private:
+    size_t m_hash { 0 };
 };
 
 // Header-only class that automatically closes the clipboard in the destructor

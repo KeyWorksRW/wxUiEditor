@@ -349,50 +349,8 @@ namespace ttlib
             return *this;
         }
 
-        /////////////////////////////// wxWidgets-only section ///////////////////////
-        //                                                                          //
-        // The following functions require wxWidgets and ttlibwx.lib.               //
-        //                                                                          //
-        //////////////////////////////////////////////////////////////////////////////
-
-#if defined(_WX_DEFS_H_)
-
         cstr& assign_wx(const wxString& str);
         cstr& append_wx(const wxString& str);
-
-#endif
-
-        //////////////////////////////// Windows-only section ////////////////////////
-        //                                                                          //
-        // The following functions can only be used when compiling for Windows.     //
-        //                                                                          //
-        //////////////////////////////////////////////////////////////////////////////
-
-#if defined(_WIN32)
-
-        /// All text functions will call the Wide version of the Windows API and convert the UTF16 string to UTF8.
-        /// If the call fails, cstr will be empty.
-
-        cstr(HWND hwnd) : bs() { GetWndText(hwnd); };
-
-        cstr& GetWndText(HWND hwnd);
-
-        /// If sel == tt::npos (default) then the current selection will be used.
-        cstr& GetListBoxText(HWND hwndCtrl, size_t sel = tt::npos);
-
-        /// If sel == tt::npos (default) then the current selection will be used.
-        cstr& GetComboLBText(HWND hwndCtrl, size_t sel = tt::npos);
-
-        /// The default is to load from the current executable using the current locale. Call
-        /// ttlib::SetLangInfo() first if you need to load from a different module, or to use
-        /// a different language.
-        cstr& LoadStringEx(WORD idString)
-        {
-            ttlib::LoadStringEx(*this, idString);
-            return *this;
-        };
-
-#endif
     };  // end cstr class
 
 }  // namespace ttlib

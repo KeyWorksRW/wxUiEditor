@@ -190,21 +190,6 @@ public:
     /// Replace first (or all) occurrences of substring with another one
     size_t replace_view(std::string_view oldtext, std::string_view newtext, bool replace_all = tt::REPLACE::once);
 
-#if defined(_WIN32)
-
-    /// Load and assign a string from a Windows resource.
-    ///
-    /// The default is to load from the current executable using the current locale. Call
-    /// ttlib::SetLangInfo() first if you need to load from a different module, or to use
-    /// a different language.
-    ttString& LoadStringEx(WORD idString)
-    {
-        ttlib::LoadStringEx(*this, idString);
-        return *this;
-    };
-
-#endif  // _WIN32
-
     bool is_found(size_t pos) const { return (pos != npos); }
 
     ///////////////////// filename functions ///////////////////////////

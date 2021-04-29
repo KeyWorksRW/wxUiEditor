@@ -170,7 +170,7 @@ public:
         UpdateFrame();
     }
 
-    void SetImportedFlag() { m_isImported = true; }
+    void SetImportedFlag(bool imported = true) { m_isImported = imported; }
 
     wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 

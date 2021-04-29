@@ -243,10 +243,10 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
         if (doc.save_file(filename.sub_cstr().c_str(), "  "))
         {
             m_isProject_modified = false;
+            m_isImported = false;
             m_FileHistory.AddFileToHistory(filename);
             wxGetApp().GetProjectSettings()->SetProjectFile(filename);
             wxGetApp().GetProjectSettings()->SetProjectPath(filename);
-            m_isImported = false;
             ProjectSaved();
             FireProjectLoadedEvent();
         }

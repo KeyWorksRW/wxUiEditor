@@ -98,6 +98,7 @@ bool App::LoadProject(const ttString& file)
     m_pjtSettings->SetProjectFile(file);
     m_pjtSettings->SetProjectPath(file);
 
+    wxGetFrame().SetImportedFlag(false);
     wxGetFrame().FireProjectLoadedEvent();
 
     if (m_isProject_updated)
@@ -425,7 +426,7 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
         m_pjtSettings->SetProjectFile(file);
         m_pjtSettings->SetProjectPath(file);
 
-        wxGetFrame().SetImportedFlag();
+        wxGetFrame().SetImportedFlag(true);
         wxGetFrame().FireProjectLoadedEvent();
         wxGetFrame().SetModified();
 

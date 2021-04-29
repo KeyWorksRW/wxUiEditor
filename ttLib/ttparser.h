@@ -37,12 +37,6 @@
 #include <string_view>
 #include <vector>
 
-#if defined(_WIN32)
-    #include <ttdebug.h>
-#else
-    #include <cassert>
-#endif
-
 #include <ttcstr.h>     // cstr -- Classes for handling zero-terminated char strings.
 #include <ttcvector.h>  // cstrVector -- Vector of ttlib::cstr strings
 

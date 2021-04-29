@@ -36,10 +36,6 @@
 #include <ttcview.h>  // ttlib::cview -- string_view functionality on a zero-terminated char string.
 #include <ttstr.h>    // ttString -- wxString with ttlib::cstr equivalent functions
 
-#if defined(_WIN32)
-    #include <ttdebug.h>  // assertion handling
-#endif
-
 #if !defined(int_t)
 
 // signed integer type with width determined by platform
@@ -101,6 +97,8 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
 #else  // Debug build only
 
     #if defined(_WIN32) && !defined(NONWIN_TEST)
+
+bool ttAssertionMsg(const char* filename, const char* function, int line, const char* cond, const std::string& msg);
 
     // Unlike the wxASSERT macros, these will provide an Abort button allowing you to immediately terminate the
     // application. The assertion information is easier to read, but does not provide a call stack or the ability to

@@ -602,14 +602,12 @@
       100
     </property>
     <property name="style" type="bitlist">
-      <option name="wxFNTP_DEFAULT_STYLE"
-        help="The default style: wxFNTP_FONTDESC_AS_LABEL | wxFNTP_USEFONT_FOR_LABEL."/>
       <option name="wxFNTP_USE_TEXTCTRL"
         help="Creates a text control to the left of the picker button which is completely managed by the wxFontPickerCtrl and which can be used by the user to specify a font (see SetSelectedFont). The text control is automatically synchronized with button's value. Use functions defined in wxPickerBase to modify the text control."/>
       <option name="wxFNTP_FONTDESC_AS_LABEL"
         help="Keeps the label of the button updated with the fontface name and the font size. E.g. choosing &quot;Times New Roman bold, italic with size 10&quot; from the fontdialog, will update the label (overwriting any previous label) with the &quot;Times New Roman, 10&quot; text."/>
       <option name="wxFNTP_USEFONT_FOR_LABEL" help="Uses the currently selected font to draw the label of the button."/>
-      wxFNTP_DEFAULT_STYLE
+      wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL
     </property>
     <event name="wxEVT_FONTPICKER_CHANGED" class="wxFontPickerEvent"
         help="Generated when the user changs the font selected in the control either using the button or using text control (see wxFNTP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable)."/>

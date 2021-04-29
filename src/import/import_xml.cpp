@@ -7,6 +7,8 @@
 
 #include "pch.h"
 
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+
 #include "import_xml.h"
 
 #include "mainapp.h"    // App -- Main application class
@@ -288,6 +290,14 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
                 style.Replace("wxSL_VERTICAL", "");
         }
         prop->set_value(style);
+    }
+    else if (node->isGen(gen_wxFontPickerCtrl))
+    {
+        ttlib::cstr style(xml_prop.text().as_string());
+        if (style.contains("wxFNTP_DEFAULT_STYLE"))
+        {
+            node->prop_set_value(prop_style, "wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL");
+        }
     }
 
     else

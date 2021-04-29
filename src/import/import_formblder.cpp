@@ -279,6 +279,19 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         class_name = "PanelForm";
     }
 
+    if (class_name.is_sameas("wxCheckBox"))
+    {
+        for (auto& iter: xml_obj.children())
+        {
+            if (iter.attribute("name").as_cview().is_sameas("style"))
+            {
+                if (iter.text().as_cview().contains("wxCHK_3STATE"))
+                    class_name = "Check3State";
+                break;
+            }
+        }
+    }
+
     auto newobject = g_NodeCreator.CreateNode(class_name, parent);
     if (!newobject)
     {

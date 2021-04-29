@@ -81,6 +81,19 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     }
     auto gen_name = result.value();
 
+    if (gen_name == gen_wxCheckBox)
+    {
+        for (auto& iter: xml_obj.children())
+        {
+            if (iter.cname().is_sameas("style"))
+            {
+                if (iter.text().as_cview().contains("wxCHK_3STATE"))
+                    gen_name = gen_Check3State;
+                break;
+            }
+        }
+    }
+
     auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
     while (!new_node)
     {

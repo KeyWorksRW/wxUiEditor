@@ -20,9 +20,7 @@ Options:
     TargetDir:   ../bin       # target directory
     Natvis:      wxui.natvis  # MSVC Debug visualizer
 
-    IncDirs:     ./;nodes;generate;utils;customprops;../../ttLib/include
-
-    BuildLibs:   ../../ttLib/src/wxsrc  # Libraries to build first and then link to
+    IncDirs:     ./;nodes;generate;utils;customprops;../ttLib
 
 Files:
     wxUiEditor.rc         # Windows resources
@@ -144,6 +142,15 @@ Files:
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp
 
+    ../ttLib/ttcstr.cpp
+    ../ttLib/ttcview.cpp
+    ../ttLib/ttmultistr.cpp
+    ../ttLib/ttparser.cpp
+    ../ttLib/ttstr.cpp
+    ../ttLib/ttlibspace.cpp
+    ../ttLib/ttstrings.cpp
+    ../ttLib/tttextfile.cpp
+
 DebugFiles:
     debugging/msg_logging.cpp    # Message logging class
     debugging/msgframe.cpp       # Stores messages
@@ -153,6 +160,8 @@ DebugFiles:
     ui/debugsettings.cpp        # Settings while running the Debug version of wxUiEditor
     ui/debugsettingsBase.cpp
     ui/msgframe_base.cpp
+
+    ../ttLib/ttdebug.cpp
 
 GZIP:
     xml/aui.xml: xml/aui.hgz

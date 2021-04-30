@@ -15,12 +15,6 @@ constexpr const int TOOL_SIZE = 22;
 
 void InitializeIcons();
 
-// Converts a png file stored in a unsigned char array into a wxImage. This only works on
-// images created by the EmbedImage class or by bin2c.
-//
-// Call image.isOk() to verify that the image was loaded.
-wxImage convertPngHeader(ttlib::cview filename);
-
 // Converts an image stored as an unsigned char array in a header file. It's designed to read
 // header files created by wxUiEditor -- any other generated header file might or might not
 // work.

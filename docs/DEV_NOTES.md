@@ -30,7 +30,7 @@ Strings can potentially be localized whenever you use the `_tt()`, `_ttv()`, `_t
 
 ### Debugging macros
 
-The `ASSERT...` and `FAIL...` macros are the preferred macros for debug checks. They work on all platforms, but the message box is slightly different on Windows and non-Windows platforms. On Windows, the ASSERT dialog will contain an Abort button allowing you to immediately terminate the program even if you aren't running it under a debugger (this is not available with the wxASSERT macros).
+The `ASSERT...` and `FAIL...` macros are the preferred macros for debug checks. They work on all platforms, but the message box is slightly different on Windows and non-Windows platforms.
 
 The `THROW()` macro will generate an assertion message in debug builds. The same message will be available in the `catch` statement in release builds so that you can optionally display it to the user.
 

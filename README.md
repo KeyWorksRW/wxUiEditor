@@ -2,26 +2,12 @@
 
 This Windows GUI tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.), generating C++ output code. Minimal requirement for compiling output files is a c++11 compliant compiler and **wxWidgets** 3.0 (version 3.1 needed for full functionality).
 
-The following project files can be imported:
+In addition to creating new projects, the following project types can be imported:
 
-- **wxFormBuilder** (Click [here](docs/import_formbuilder.md) for more informaiont)
+- **wxFormBuilder** (Click [here](docs/import_formbuilder.md) for more information)
+- **wxGlade**
 - **wxSmith**
 - **XRC**
-
-## Cloning
-
-To clone this repository, use:
-
-```
-git clone --recurse-submodules https://github.com/KeyWorksRW/wxUiEditor
-```
-
-If you already cloned the repository without using the --recurse command, then enter:
-
-```
-	git submodule init
-	git submodule update
-```
 
 ## Building
 
@@ -35,7 +21,7 @@ In addition you will need to have the following in your $PATH:
   - [CLANG](https://clang.llvm.org/) (version 9 or higher)
   - MSVC
 - Either `nmake.exe` (Microsoft) or `mingw32-make.exe`
-- wxWidgets headers and libraries version 3.1.0 or higher. Debug builds expect a dll version in your `LIB` environment paths, release builds expect a static library version.
+- wxWidgets headers and libraries version 3.1.5 or higher. Debug builds expect a dll version in your `LIB` environment paths, release builds expect a static library version.
 
 If you are building on Windows, you will need to start one of the Visual Studio command shells, preferably one that builds 64-bit targets. From within that shell, you can use the following commands to build **wxUiEditor.exe**:
 

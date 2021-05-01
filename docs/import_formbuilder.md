@@ -2,13 +2,13 @@
 
 **wxUiEditor** can import **wxFormBuilder** project files. Because **wxUiEditor** generates source code for each top level form, you can import multiple **wxFormBuilder** into a single **wxUiEditor** file. Note that you may need to make some changes after a project is imported due to the differences in the way forms and widgets are handled.
 
-**wxUiEditor** projects are roughly 90% smaller than a **wxFormBuilder** project. Only data needed to construct your UI gets saved.
+Note that **wxUiEditor** projects are roughly 90% smaller than a **wxFormBuilder** project due to optimization in what gets written to the project file.
 
 ## Images
 
-When you import a **wxFormBuilder** project, **wxUiEditor** will `#include` XPM files in the generated source code. All other external images are first converted into a compressed PNG header file and a `#include` will be added to the generated source code. If you set the project's `converted_art` property before importing, then the PNG header files will be placed in this location. Otherwise, they will be created in the same directory as the **wxUiEditor** project file. Note that you can re-generate these files at any time using the "Create Embedded Image" command under the **Tools** menu. This command also allows you to convert to/from XPM and PNG header files.
+When you import a **wxFormBuilder** project, **wxUiEditor** will `#include` XPM files in the generated source code. All other external images are first converted into a compressed PNG header file and a `#include` will be added to the generated source code. If you set the project's `converted_art` property before importing, then the PNG header files will be placed in this location. Otherwise, they will be created in the same directory as the **wxUiEditor** project file. Note that you can re-generate these files at any time using the "Convert Image" command under the **Tools** menu. This command also allows you to convert to/from XPM and data array header files.
 
-**wxUiEditor** does not support generating code that loads images from a Windows resource file (since this is non-portable). You can either set the image in your derived code, or use the "Create Embedded Image" command under the **Tools** menu to convert it into an XPM or PNG header file.
+**wxUiEditor** does not support generating code that loads images from a Windows resource file (since this is non-portable). You can either set the image in your derived code, or use the "Convert Image" command under the **Tools** menu to convert it into an XPM or data array header file.
 
 ## Code Generation
 

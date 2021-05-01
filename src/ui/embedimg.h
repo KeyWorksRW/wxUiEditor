@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Convert image to Header (.h) or XPM (.xpm) file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,8 +17,11 @@ public:
     EmbedImage(wxWindow* parent = nullptr);
 
 protected:
+    void AdjustOutputFilename();
+
     // Handlers for EmbedImageBase events.
 
+    void OnCheckPngConversion(wxCommandEvent& event) override;
     void OnConvert(wxCommandEvent& event) override;
     void OnConvertAlpha(wxCommandEvent& event) override;
     void OnForceMask(wxCommandEvent& event) override;
@@ -44,4 +47,6 @@ private:
     ttString m_lastOutputFile;
     wxImage m_curImage;
     wxImage m_orgImage;
+
+    ttString m_original_type;  // mime string specifying the original image type
 };

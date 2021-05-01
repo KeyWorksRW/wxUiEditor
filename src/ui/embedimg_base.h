@@ -32,8 +32,9 @@ protected:
     wxButton* m_btnClose;
     wxButton* m_btnConvert;
     wxCheckBox* m_ConvertAlphaChannel;
-    wxCheckBox* m_UseMask;
-    wxCheckBox* m_check_constexpr;
+    wxCheckBox* m_ForceMask;
+    wxCheckBox* m_check_c17;
+    wxCheckBox* m_check_make_png;
     wxComboBox* m_comboMask;
     wxFilePickerCtrl* m_fileHeader;
     wxFilePickerCtrl* m_fileOriginal;
@@ -44,7 +45,6 @@ protected:
     wxStaticText* m_staticDescription;
     wxStaticText* m_staticDimensions;
     wxStaticText* m_staticHeader;
-    wxStaticText* m_staticMask;
     wxStaticText* m_staticOriginal;
     wxStaticText* m_staticOutput;
     wxStaticText* m_staticRGB;
@@ -53,6 +53,7 @@ protected:
 
     // Virtual event handlers -- override them in your derived class
 
+    virtual void OnCheckPngConversion(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConvert(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConvertAlpha(wxCommandEvent& event) { event.Skip(); }
     virtual void OnForceMask(wxCommandEvent& event) { event.Skip(); }

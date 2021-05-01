@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Convert image to Header (.h) or XPM (.xpm) file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,18 +10,20 @@
 #include <filesystem>
 #include <fstream>
 
-#include <wx/artprov.h>
-#include <wx/mstream.h>
+#include <wx/artprov.h>   // wxArtProvider class
+#include <wx/mstream.h>   // Memory stream classes
+#include <wx/wfstream.h>  // File stream classes
 
-#include <tttextfile.h>  // textfile -- Classes for reading and writing line-oriented files
+#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
 #include "embedimg.h"  // auto-generated: embedimg_base.h and embedimg_base.cpp
 
-#include "bitmaps.h"    // Map of bitmaps accessed by name
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
-#include "uifuncs.h"    // Miscellaneous functions for displaying UI
-#include "utils.h"      // Utility functions that work with properties
+#include "auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
+#include "bitmaps.h"      // Map of bitmaps accessed by name
+#include "mainframe.h"    // MainFrame -- Main window frame
+#include "node.h"         // Node class
+#include "uifuncs.h"      // Miscellaneous functions for displaying UI
+#include "utils.h"        // Utility functions that work with properties
 
 #include "../xpm/empty.xpm"
 
@@ -111,14 +113,52 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
             m_radio_header->Disable();
             m_radio_XPM->SetValue(true);
         }
+        else
+        {
+            appMsgBox(ttlib::cstr() << "Unrecognized file format in " << m_fileOriginal->GetTextCtrlValue().wx_str(),
+                      "Header Image");
+        }
     }
 
-    if (!isImageLoaded)
+    else
     {
         m_radio_header->Enable();
+        m_original_type.clear();
+
+        // We need to know what the original file type is because if we convert it to a header, then XPM and BMP files will
+        // be converted to PNG before saving.
+
+        wxFFileInputStream stream(m_fileOriginal->GetTextCtrlValue());
+        if (stream.IsOk())
+        {
+            wxBufferedInputStream bstream(stream);
+
+            wxImageHandler* handler;
+            auto& list = wxImage::GetHandlers();
+            for (auto node = list.GetFirst(); node; node = node->GetNext())
+            {
+                handler = (wxImageHandler*) node->GetData();
+                if (handler->CanRead(stream))
+                {
+                    m_original_type = handler->GetMimeType();
+
+                    if (handler->LoadFile(&m_orgImage, stream))
+                    {
+                        isImageLoaded = true;
+                        break;
+                    }
+                    else
+                    {
+                        appMsgBox(ttlib::cstr() << "Unable to read " << m_fileOriginal->GetTextCtrlValue().wx_str(),
+                                  "Input Image");
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    if (isImageLoaded || m_orgImage.LoadFile(m_fileOriginal->GetTextCtrlValue()))
+    if (isImageLoaded)
     {
         m_curImage = m_orgImage.Copy();
         m_ConvertAlphaChannel->Enable(m_curImage.HasAlpha());
@@ -128,7 +168,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
             m_curImage.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
         }
 
-        if (m_UseMask->GetValue())
+        if (m_ForceMask->GetValue())
         {
             auto transparency = m_comboMask->GetStringSelection();
             if (transparency != "none" && transparency != "custom")
@@ -154,7 +194,8 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
                     m_comboMask->SetStringSelection("custom");
             }
 
-            m_staticRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
+            m_staticRGB->SetLabelText(
+                wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
             m_staticRGB->Show();
         }
         else
@@ -168,9 +209,13 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         m_staticOriginal->Show();
 
         wxString text;
-        text << _ttwx(strIdSize) << m_curImage.GetWidth() << " x " << m_curImage.GetHeight();
+        text << "Size: " << m_curImage.GetWidth() << " x " << m_curImage.GetHeight();
         if (hasAlphaChannel)
             text << (m_ConvertAlphaChannel->GetValue() ? " (had alpha channel)" : " (has alpha channel)");
+
+#if defined(_DEBUG)
+        text << "  " << m_original_type;
+#endif  // _DEBUG
 
         m_staticDimensions->SetLabelText(text);
         m_staticDimensions->Show();
@@ -240,7 +285,7 @@ void EmbedImage::OnMask(wxCommandEvent& WXUNUSED(event))
     if (m_fileHeader->GetPath().size() && m_fileOriginal->GetPath().size())
         m_btnConvert->Enable();
 
-    if (!m_UseMask->GetValue())
+    if (!m_ForceMask->GetValue())
     {
         m_staticRGB->Hide();
         return;
@@ -296,12 +341,15 @@ void EmbedImage::ImgageInHeaderOut()
 
     size_t original_size = std::filesystem::file_size(std::filesystem::path(in_filename.wx_str()));
 
-    // Maximize compression
     m_curImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, 9);
+    // Maximize compression
     m_curImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
 
     wxMemoryOutputStream save_stream;
-    m_curImage.SaveFile(save_stream, wxBITMAP_TYPE_PNG);
+    if (m_check_make_png->GetValue())
+        m_curImage.SaveFile(save_stream, wxBITMAP_TYPE_PNG);
+    else
+        m_curImage.SaveFile(save_stream, m_original_type);
     auto read_stream = save_stream.GetOutputStreamBuffer();
 
     ttString out_name = m_fileHeader->GetPath();
@@ -311,11 +359,12 @@ void EmbedImage::ImgageInHeaderOut()
     string_name.Replace(".", "_", true);
 
     ttlib::textfile file;
-    if (m_check_constexpr->GetValue())
+    if (m_check_c17->GetValue())
         file.addEmptyLine().Format("inline constexpr const unsigned char %s[%zu] = {", string_name.filename().c_str(),
                                    read_stream->GetBufferSize());
     else
-        file.addEmptyLine().Format("static const unsigned char %s[%zu] = {", string_name.filename().c_str(), read_stream->GetBufferSize());
+        file.addEmptyLine().Format("static const unsigned char %s[%zu] = {", string_name.filename().c_str(),
+                                   read_stream->GetBufferSize());
 
     read_stream->Seek(0, wxFromStart);
 
@@ -342,7 +391,8 @@ void EmbedImage::ImgageInHeaderOut()
 
     if (out_name.empty())
     {
-        m_staticSize->SetLabelText(ttlib::cstr().Format("Original size: %kzu -- Output size if saved: %kzu", original_size, buf_size));
+        m_staticSize->SetLabelText(
+            ttlib::cstr().Format("Original size: %kzu -- Output size if saved: %kzu", original_size, buf_size));
         m_staticSize->Show();
     }
     else
@@ -351,7 +401,8 @@ void EmbedImage::ImgageInHeaderOut()
         {
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
-            m_staticSize->SetLabelText(ttlib::cstr().Format("Original size: %kzu -- Output size: %kzu", original_size, buf_size));
+            m_staticSize->SetLabelText(
+                ttlib::cstr().Format("Original size: %kzu -- Output size: %kzu", original_size, buf_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
@@ -397,7 +448,8 @@ void EmbedImage::ImageInXpmOut()
             size_t output_size = std::filesystem::file_size(std::filesystem::path(out_name.wx_str()));
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
-            m_staticSize->SetLabelText(ttlib::cstr().Format("Original size: %kzu -- XPM size: %kzu", original_size, output_size));
+            m_staticSize->SetLabelText(
+                ttlib::cstr().Format("Original size: %kzu -- XPM size: %kzu", original_size, output_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
@@ -453,23 +505,7 @@ wxColor EmbedImage::GetTransparencyColor()
 
 void EmbedImage::OnHeaderOutput(wxCommandEvent& WXUNUSED(event))
 {
-    ttString filename = m_fileHeader->GetPath();
-    if (filename.size())
-    {
-        auto ext_property = wxGetApp().GetProject()->prop_as_string(prop_header_ext);
-        if (ext_property.empty())
-            ext_property = ".h";
-        if (!filename.contains("_png"))
-        {
-            filename.remove_extension();
-            filename << "_png" << ext_property;
-        }
-        else
-        {
-            filename.replace_extension_wx(ext_property);
-        }
-        m_fileHeader->SetPath(filename);
-    }
+    AdjustOutputFilename();
 
     if (m_fileOriginal->GetPath() != m_lastInputFile)
     {
@@ -543,9 +579,10 @@ void EmbedImage::OnConvertAlpha(wxCommandEvent& event)
                     m_comboMask->SetStringSelection("custom");
             }
 
-            if (!m_UseMask->GetValue())
+            if (!m_ForceMask->GetValue())
             {
-                m_staticRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
+                m_staticRGB->SetLabelText(
+                    wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
                 m_staticRGB->Show();
 
                 m_bmpOriginal->SetBitmap(m_curImage);  // GetTransparencyColor() may have changed m_curImage
@@ -578,7 +615,7 @@ void EmbedImage::OnForceMask(wxCommandEvent& event)
     if (m_fileHeader->GetPath().size() && m_fileOriginal->GetPath().size())
         m_btnConvert->Enable();
 
-    if (m_UseMask->GetValue())
+    if (m_ForceMask->GetValue())
     {
         ttString transparency = m_comboMask->GetStringSelection();
         if (transparency == "none")
@@ -665,7 +702,8 @@ void EmbedImage::SetOutputBitmap()
         return;
     }
 
-    if (out_file.has_extension(".h") || out_file.has_extension(".hpp") || out_file.has_extension(".hh") || out_file.has_extension(".hxx"))
+    if (out_file.has_extension(".h") || out_file.has_extension(".hpp") || out_file.has_extension(".hh") ||
+        out_file.has_extension(".hxx"))
     {
         auto image = GetHeaderImage(out_file.sub_cstr());
         if (image.IsOk())
@@ -695,5 +733,54 @@ void EmbedImage::SetOutputBitmap()
     {
         m_bmpOutput->Hide();
         m_staticOutput->Hide();
+    }
+}
+
+void EmbedImage::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
+{
+    if (!m_radio_header->GetValue())
+        return;
+
+    AdjustOutputFilename();
+}
+
+void EmbedImage::AdjustOutputFilename()
+{
+    ttString filename = m_fileHeader->GetPath();
+    if (filename.size())
+    {
+        auto ext_property = wxGetApp().GetProject()->prop_as_string(prop_header_ext);
+        if (ext_property.empty())
+            ext_property = ".h";
+
+        filename.Replace("_png.", ".");
+
+        ttString suffix(m_original_type);
+        suffix.Replace("image/", "_");
+        suffix.Replace("x-", "");  // if something like x-bmp, just use bmp
+
+        m_check_make_png->Enable(!suffix.is_sameas("_ani") && !suffix.is_sameas("_gif"));
+
+        if (m_check_make_png->GetValue())
+        {
+            if (!filename.contains("_png") && !suffix.is_sameas("_ani") && !suffix.is_sameas("_gif"))
+            {
+                if (filename.contains_wx(suffix))
+                    suffix = "_png";
+                else
+                    suffix << "_png";
+            }
+        }
+
+        if (!filename.contains_wx(suffix))
+        {
+            filename.remove_extension();
+            filename << suffix << ext_property;
+        }
+        else
+        {
+            filename.replace_extension_wx(ext_property);
+        }
+        m_fileHeader->SetPath(filename);
     }
 }

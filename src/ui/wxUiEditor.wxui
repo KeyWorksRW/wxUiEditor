@@ -117,20 +117,20 @@
         </node>
         <node class="wxStaticBoxSizer" label="Output Type">
           <node class="wxFlexGridSizer" var_name="flex_grid_sizer_2">
-            <node class="wxRadioButton" checked="true" label="&amp;XPM" style="wxRB_GROUP" var_name="m_radio_XPM" tooltip="Convert the original image into an XPM file." borders="wxLEFT|wxRIGHT" wxEVT_RADIOBUTTON="OnXpmOutput" />
-            <node class="wxRadioButton" label="&amp;Header" var_name="m_radio_header" tooltip="Convert the original into a PNG file and save it as a header file that can be #included." borders="wxLEFT|wxRIGHT" wxEVT_RADIOBUTTON="OnHeaderOutput" />
+            <node class="wxRadioButton" checked="true" label="&amp;Header" style="wxRB_GROUP" var_name="m_radio_header" tooltip="Convert the original into a PNG file and save it as a header file that can be #included." borders="wxLEFT|wxRIGHT" wxEVT_RADIOBUTTON="OnHeaderOutput" />
+            <node class="wxRadioButton" label="&amp;XPM" var_name="m_radio_XPM" tooltip="Convert the original image into an XPM file." borders="wxLEFT|wxRIGHT" wxEVT_RADIOBUTTON="OnXpmOutput" />
+            <node class="wxStaticBoxSizer" label="Settings" var_name="hdr_static_box">
+              <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer_2" flags="wxEXPAND">
+                <node class="wxCheckBox" label="C++1&amp;7 encoding" var_name="m_check_c17" tooltip="If checked, this will prefix the array with &quot;inline constexpr&quot; instead of &quot;static&quot;." borders="wxTOP|wxRIGHT|wxLEFT" />
+                <node class="wxCheckBox" checked="true" label="Convert to PNG" var_name="m_check_make_png" tooltip="If checked, image will be converted to PNG before being saved." wxEVT_CHECKBOX="OnCheckPngConversion" />
+              </node>
+            </node>
             <node class="wxStaticBoxSizer" label="Settings" var_name="mask_static_box">
               <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer7" flags="wxEXPAND">
                 <node class="wxCheckBox" checked="true" label="&amp;Alpha Channel to Mask" var_name="m_ConvertAlphaChannel" tooltip="Check this to replace any alpha channel with a mask." borders="wxLEFT|wxRIGHT|wxTOP" flags="wxEXPAND" wxEVT_CHECKBOX="OnConvertAlpha" />
                 <node class="wxCheckBox" label="&amp;Force Mask" var_name="m_ForceMask" tooltip="Check this to override any mask specified in the original image file." borders="wxLEFT|wxRIGHT|wxTOP" wxEVT_CHECKBOX="OnForceMask" />
                 <node class="wxComboBox" style="wxCB_READONLY" var_name="m_comboMask" size="150,-1" alignment="wxALIGN_LEFT" borders="wxLEFT|wxRIGHT|wxBOTTOM" wxEVT_COMBOBOX="OnMask" />
                 <node class="wxStaticText" label="RGB" var_name="m_staticRGB" hidden="true" />
-              </node>
-            </node>
-            <node class="wxStaticBoxSizer" label="Settings" var_name="hdr_static_box">
-              <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer_2" flags="wxEXPAND">
-                <node class="wxCheckBox" label="C++1&amp;7 encoding" var_name="m_check_c17" tooltip="If checked, this will prefix the array with &quot;inline constexpr&quot; instead of &quot;static&quot;." borders="wxTOP|wxRIGHT|wxLEFT" />
-                <node class="wxCheckBox" checked="true" label="Convert to PNG" var_name="m_check_make_png" tooltip="If checked, image will be converted to PNG before being saved." wxEVT_CHECKBOX="OnCheckPngConversion" />
               </node>
             </node>
           </node>

@@ -63,15 +63,30 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     auto flex_grid_sizer_2 = new wxFlexGridSizer(2, 0, 0);
     static_box->Add(flex_grid_sizer_2, wxSizerFlags().Border(wxALL));
 
-    m_radio_XPM = new wxRadioButton(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&XPM"), wxDefaultPosition, wxDefaultSize,
+    m_radio_header = new wxRadioButton(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Header"), wxDefaultPosition, wxDefaultSize,
     wxRB_GROUP);
-    m_radio_XPM->SetValue(true);
+    m_radio_header->SetValue(true);
+    m_radio_header->SetToolTip(wxString::FromUTF8("Convert the original into a PNG file and save it as a header file that can be #included."));
+    flex_grid_sizer_2->Add(m_radio_header, wxSizerFlags().Border(wxLEFT|wxRIGHT, wxSizerFlags::GetDefaultBorder()));
+
+    m_radio_XPM = new wxRadioButton(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&XPM"));
     m_radio_XPM->SetToolTip(wxString::FromUTF8("Convert the original image into an XPM file."));
     flex_grid_sizer_2->Add(m_radio_XPM, wxSizerFlags().Border(wxLEFT|wxRIGHT, wxSizerFlags::GetDefaultBorder()));
 
-    m_radio_header = new wxRadioButton(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Header"));
-    m_radio_header->SetToolTip(wxString::FromUTF8("Convert the original into a PNG file and save it as a header file that can be #included."));
-    flex_grid_sizer_2->Add(m_radio_header, wxSizerFlags().Border(wxLEFT|wxRIGHT, wxSizerFlags::GetDefaultBorder()));
+    auto hdr_static_box = new wxStaticBoxSizer(wxVERTICAL, static_box->GetStaticBox(), wxString::FromUTF8("Settings"));
+    flex_grid_sizer_2->Add(hdr_static_box, wxSizerFlags().Border(wxALL));
+
+    auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
+    hdr_static_box->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+
+    m_check_c17 = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("C++1&7 encoding"));
+    m_check_c17->SetToolTip(wxString::FromUTF8("If checked, this will prefix the array with \"inline constexpr\" instead of \"static\"."));
+    box_sizer_2->Add(m_check_c17, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    m_check_make_png = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Convert to PNG"));
+    m_check_make_png->SetValue(true);
+    m_check_make_png->SetToolTip(wxString::FromUTF8("If checked, image will be converted to PNG before being saved."));
+    box_sizer_2->Add(m_check_make_png, wxSizerFlags().Border(wxALL));
 
     auto mask_static_box = new wxStaticBoxSizer(wxVERTICAL, static_box->GetStaticBox(), wxString::FromUTF8("Settings"));
     flex_grid_sizer_2->Add(mask_static_box, wxSizerFlags().Border(wxALL));
@@ -94,21 +109,6 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_staticRGB = new wxStaticText(mask_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("RGB"));
     m_staticRGB->Hide();
     box_sizer7->Add(m_staticRGB, wxSizerFlags().Border(wxALL));
-
-    auto hdr_static_box = new wxStaticBoxSizer(wxVERTICAL, static_box->GetStaticBox(), wxString::FromUTF8("Settings"));
-    flex_grid_sizer_2->Add(hdr_static_box, wxSizerFlags().Border(wxALL));
-
-    auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
-    hdr_static_box->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
-
-    m_check_c17 = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("C++1&7 encoding"));
-    m_check_c17->SetToolTip(wxString::FromUTF8("If checked, this will prefix the array with \"inline constexpr\" instead of \"static\"."));
-    box_sizer_2->Add(m_check_c17, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
-
-    m_check_make_png = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Convert to PNG"));
-    m_check_make_png->SetValue(true);
-    m_check_make_png->SetToolTip(wxString::FromUTF8("If checked, image will be converted to PNG before being saved."));
-    box_sizer_2->Add(m_check_make_png, wxSizerFlags().Border(wxALL));
 
     auto box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));
@@ -163,11 +163,11 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     // Event handlers
     m_fileOriginal->Bind(wxEVT_FILEPICKER_CHANGED, &EmbedImageBase::OnInputChange, this);
     m_fileHeader->Bind(wxEVT_FILEPICKER_CHANGED, &EmbedImageBase::OnOutputChange, this);
-    m_radio_XPM->Bind(wxEVT_RADIOBUTTON, &EmbedImageBase::OnXpmOutput, this);
     m_radio_header->Bind(wxEVT_RADIOBUTTON, &EmbedImageBase::OnHeaderOutput, this);
+    m_radio_XPM->Bind(wxEVT_RADIOBUTTON, &EmbedImageBase::OnXpmOutput, this);
+    m_check_make_png->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnCheckPngConversion, this);
     m_ConvertAlphaChannel->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnConvertAlpha, this);
     m_ForceMask->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnForceMask, this);
     m_comboMask->Bind(wxEVT_COMBOBOX, &EmbedImageBase::OnMask, this);
-    m_check_make_png->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnCheckPngConversion, this);
     m_btnConvert->Bind(wxEVT_BUTTON, &EmbedImageBase::OnConvert, this);
 }

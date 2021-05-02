@@ -54,7 +54,7 @@ wxImage GetHeaderImage(ttlib::cview filename)
     buf_ptr = strchr(buf_ptr, '{');
     if (!buf_ptr)
     {
-        FAIL_MSG(ttlib::cstr() << filename << " does contain and opening brace");
+        FAIL_MSG(ttlib::cstr() << filename << " doesn't contain an opening brace");
         return image;
     }
 

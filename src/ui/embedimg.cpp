@@ -27,6 +27,30 @@
 
 #include "../xpm/empty.xpm"
 
+// Any mime type in the following list with NOT be converted to PNG even if m_check_make_png is set to true
+
+// clang-format off
+static constexpr const char* lst_no_png_conversion[] = {
+
+    "image/x-ani",
+    "image/x-cur",
+    "image/gif",
+    "image/x-ico",
+    "image/jpeg",
+
+};
+// clang-format on
+
+bool isConvertibleMime(const ttString& suffix)
+{
+    for (auto& iter: lst_no_png_conversion)
+    {
+        if (suffix.is_sameas(iter))
+            return false;
+    }
+    return true;
+}
+
 void MainFrame::OnEmbedImageConverter(wxCommandEvent& WXUNUSED(event))
 {
     EmbedImage dlg(this);
@@ -145,6 +169,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
                     if (handler->LoadFile(&m_orgImage, stream))
                     {
                         isImageLoaded = true;
+                        m_check_make_png->Show(isConvertibleMime(m_original_type));
                         break;
                     }
                     else
@@ -341,15 +366,19 @@ void EmbedImage::ImgageInHeaderOut()
 
     size_t original_size = std::filesystem::file_size(std::filesystem::path(in_filename.wx_str()));
 
-    m_curImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, 9);
-    // Maximize compression
-    m_curImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
-
     wxMemoryOutputStream save_stream;
-    if (m_check_make_png->GetValue())
+    if (m_check_make_png->GetValue() && isConvertibleMime(m_original_type))
+    {
+        // Maximize compression
+        m_curImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, 9);
+        m_curImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
         m_curImage.SaveFile(save_stream, wxBITMAP_TYPE_PNG);
+    }
     else
+    {
         m_curImage.SaveFile(save_stream, m_original_type);
+    }
+
     auto read_stream = save_stream.GetOutputStreamBuffer();
 
     ttString out_name = m_fileHeader->GetPath();
@@ -753,17 +782,14 @@ void EmbedImage::AdjustOutputFilename()
         if (ext_property.empty())
             ext_property = ".h";
 
-        filename.Replace("_png.", ".");
-
         ttString suffix(m_original_type);
         suffix.Replace("image/", "_");
         suffix.Replace("x-", "");  // if something like x-bmp, just use bmp
 
-        m_check_make_png->Enable(!suffix.is_sameas("_ani") && !suffix.is_sameas("_gif"));
-
-        if (m_check_make_png->GetValue())
+        if (m_check_make_png->GetValue() && isConvertibleMime(m_original_type))
         {
-            if (!filename.contains("_png") && !suffix.is_sameas("_ani") && !suffix.is_sameas("_gif"))
+            filename.remove_extension();
+            if (!filename.contains("_png") && !suffix.is_sameas_wx("_png"))
             {
                 if (filename.contains_wx(suffix))
                     suffix = "_png";

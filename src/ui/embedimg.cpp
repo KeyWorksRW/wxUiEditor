@@ -10,8 +10,9 @@
 #include <filesystem>
 #include <fstream>
 
-#include <wx/artprov.h>   // wxArtProvider class
-#include <wx/mstream.h>   // Memory stream classes
+#include <wx/artprov.h>  // wxArtProvider class
+#include <wx/mstream.h>  // Memory stream classes
+#include <wx/utils.h>
 #include <wx/wfstream.h>  // File stream classes
 
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
@@ -129,7 +130,11 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     bool isImageLoaded { false };
     if (file.has_extension(".h") || file.has_extension(".hpp") || file.has_extension(".hh") || file.has_extension(".hxx"))
     {
-        m_orgImage = GetHeaderImage(file.sub_cstr());
+        {
+            wxBusyCursor wait;
+            m_orgImage = GetHeaderImage(file.sub_cstr());
+        }
+
         if (m_orgImage.IsOk())
         {
             isImageLoaded = true;
@@ -734,7 +739,9 @@ void EmbedImage::SetOutputBitmap()
     if (out_file.has_extension(".h") || out_file.has_extension(".hpp") || out_file.has_extension(".hh") ||
         out_file.has_extension(".hxx"))
     {
+        wxBusyCursor wait;
         auto image = GetHeaderImage(out_file.sub_cstr());
+
         if (image.IsOk())
         {
             m_bmpOutput->SetBitmap(image);

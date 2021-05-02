@@ -81,33 +81,48 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
 
     m_btnClose->SetLabel(_tt("Close"));
 
-    m_comboMask->Append("none");
-    m_comboMask->Append("custom");
+    m_comboXpmMask->Append("none");
+    m_comboXpmMask->Append("custom");
 
-    m_comboMask->Append("Black");
-    m_comboMask->Append("Dark Green");
-    m_comboMask->Append("Dark Grey");
-    m_comboMask->Append("Dark Slate Grey");
-    m_comboMask->Append("Dim Grey");
-    m_comboMask->Append("Grey");
-    m_comboMask->Append("Light Grey");
-    m_comboMask->Append("Grey94");
-    m_comboMask->Append("Magenta");
-    m_comboMask->Append("White");
+    m_comboXpmMask->Append("Black");
+    m_comboXpmMask->Append("Dark Green");
+    m_comboXpmMask->Append("Dark Grey");
+    m_comboXpmMask->Append("Dark Slate Grey");
+    m_comboXpmMask->Append("Dim Grey");
+    m_comboXpmMask->Append("Grey");
+    m_comboXpmMask->Append("Light Grey");
+    m_comboXpmMask->Append("Grey94");
+    m_comboXpmMask->Append("Magenta");
+    m_comboXpmMask->Append("White");
 
-    m_comboMask->Append("upper left");
-    m_comboMask->Append("lower left");
-    m_comboMask->Append("upper right");
-    m_comboMask->Append("lower right");
+    m_comboXpmMask->Append("upper left");
+    m_comboXpmMask->Append("lower left");
+    m_comboXpmMask->Append("upper right");
+    m_comboXpmMask->Append("lower right");
 
-    m_comboMask->SetStringSelection("none");
+    m_comboXpmMask->SetStringSelection("none");
+
+    for (unsigned int index = 0; index < m_comboXpmMask->GetCount(); ++index)
+    {
+        m_comboHdrMask->Append(m_comboXpmMask->GetString(index));
+    }
+    m_comboHdrMask->SetStringSelection("none");
 
     m_staticSave->SetLabelText(wxEmptyString);
     m_staticSize->SetLabelText(wxEmptyString);
     m_staticDimensions->SetLabelText(wxEmptyString);
 
+    // Disable conversion button until both input and out filenames have been set
     m_btnConvert->Disable();
+
+    // Disable controls that require a valid input image
     m_ConvertAlphaChannel->Disable();
+    m_comboHdrMask->Disable();
+    m_ForceHdrMask->Disable();
+    m_comboXpmMask->Disable();
+    m_ForceXpmMask->Disable();
+
+    // m_fileOriginal->GetTextCtrl()->SetEditable(false);
 
     Fit();
 }
@@ -115,6 +130,10 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
 void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 {
     ttString file = m_fileOriginal->GetTextCtrlValue();
+
+    if (!file.file_exists())
+        return;
+
     file.make_relative_wx(m_cwd);
     file.backslashestoforward();
     m_fileOriginal->SetPath(file);
@@ -127,41 +146,42 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     m_bmpOriginal->Hide();
     m_staticOriginal->Hide();
 
+    m_orginal_size = 0;
+
     bool isImageLoaded { false };
     if (file.has_extension(".h") || file.has_extension(".hpp") || file.has_extension(".hh") || file.has_extension(".hxx"))
     {
         {
             wxBusyCursor wait;
-            m_orgImage = GetHeaderImage(file.sub_cstr());
+            m_orgImage = GetHeaderImage(file.sub_cstr(), &m_orginal_size, &m_mime_type);
         }
 
         if (m_orgImage.IsOk())
         {
             isImageLoaded = true;
-            m_radio_header->SetValue(false);
-            m_radio_header->Disable();
-            m_radio_XPM->SetValue(true);
+
+            // Note that we allow header to header conversion. That makes converting wxFormBuilder headers, and the options
+            // png conversion and c++17.
         }
         else
         {
             appMsgBox(ttlib::cstr() << "Unrecognized file format in " << m_fileOriginal->GetTextCtrlValue().wx_str(),
                       "Header Image");
+            m_fileOriginal->SetPath(wxEmptyString);
         }
     }
 
     else
     {
         m_radio_header->Enable();
-        m_original_type.clear();
+        m_mime_type.clear();
 
-        // We need to know what the original file type is because if we convert it to a header, then XPM and BMP files will
-        // be converted to PNG before saving.
+        // We need to know what the original file type is because if we convert it to a header, then some file formats can be
+        // converted to PNG before saving.
 
         wxFFileInputStream stream(m_fileOriginal->GetTextCtrlValue());
         if (stream.IsOk())
         {
-            wxBufferedInputStream bstream(stream);
-
             wxImageHandler* handler;
             auto& list = wxImage::GetHandlers();
             for (auto node = list.GetFirst(); node; node = node->GetNext())
@@ -169,12 +189,13 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
                 handler = (wxImageHandler*) node->GetData();
                 if (handler->CanRead(stream))
                 {
-                    m_original_type = handler->GetMimeType();
+                    m_mime_type = handler->GetMimeType();
 
                     if (handler->LoadFile(&m_orgImage, stream))
                     {
+                        m_orginal_size = stream.GetSize();
                         isImageLoaded = true;
-                        m_check_make_png->Show(isConvertibleMime(m_original_type));
+                        m_check_make_png->Show(isConvertibleMime(m_mime_type));
                         break;
                     }
                     else
@@ -186,68 +207,117 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
                 }
             }
         }
+
+        if (!isImageLoaded)
+        {
+            appMsgBox(ttlib::cstr() << "The file format in " << m_fileOriginal->GetTextCtrlValue().wx_str()
+                                    << " is unsupported",
+                      "Input Image");
+            m_fileOriginal->SetPath(wxEmptyString);
+        }
     }
 
     if (isImageLoaded)
     {
-        m_curImage = m_orgImage.Copy();
-        m_ConvertAlphaChannel->Enable(m_curImage.HasAlpha());
-        bool hasAlphaChannel = m_curImage.HasAlpha();
+        m_hdrImage = m_orgImage.Copy();
+        m_xpmImage = m_orgImage.Copy();
+
+        m_comboHdrMask->Enable();
+        m_ForceHdrMask->Enable();
+        m_comboXpmMask->Enable();
+        m_ForceXpmMask->Enable();
+
+        m_ConvertAlphaChannel->Enable(m_xpmImage.HasAlpha());
+        bool hasAlphaChannel = m_xpmImage.HasAlpha();
         if (hasAlphaChannel && m_ConvertAlphaChannel->GetValue())
         {
-            m_curImage.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
+            m_xpmImage.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
         }
 
-        if (m_ForceMask->GetValue())
+        if (m_ForceXpmMask->GetValue())
         {
-            auto transparency = m_comboMask->GetStringSelection();
+            auto transparency = m_comboXpmMask->GetStringSelection();
             if (transparency != "none" && transparency != "custom")
             {
                 wxColor rgb(transparency);
-                m_curImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+                m_xpmImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
             }
         }
 
-        if (m_curImage.HasMask())
+        if (m_ForceHdrMask->GetValue())
         {
-            wxColor clr = { m_curImage.GetMaskRed(), m_curImage.GetMaskGreen(), m_curImage.GetMaskBlue() };
+            auto transparency = m_comboHdrMask->GetStringSelection();
+            if (transparency != "none" && transparency != "custom")
+            {
+                wxColor rgb(transparency);
+                m_hdrImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+            }
+        }
+
+        if (m_xpmImage.HasMask())
+        {
+            wxColor clr = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
             auto name = wxTheColourDatabase->FindName(clr);
             if (name.empty())
             {
-                m_comboMask->SetStringSelection("custom");
+                m_comboXpmMask->SetStringSelection("custom");
             }
             else
             {
-                if (m_comboMask->FindString(name) >= 0)
-                    m_comboMask->SetStringSelection(name);
+                if (m_comboXpmMask->FindString(name) >= 0)
+                {
+                    m_comboXpmMask->SetStringSelection(name);
+                }
                 else
-                    m_comboMask->SetStringSelection("custom");
+                {
+                    m_comboXpmMask->SetStringSelection("custom");
+                }
             }
 
-            m_staticRGB->SetLabelText(
+            m_staticXpmRGB->SetLabelText(
                 wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
-            m_staticRGB->Show();
+            m_staticXpmRGB->Show();
         }
         else
         {
-            m_comboMask->SetStringSelection("none");
-            m_staticRGB->Hide();
+            m_comboXpmMask->SetStringSelection("none");
+            m_staticXpmRGB->Hide();
         }
 
-        m_bmpOriginal->SetBitmap(m_curImage);
+        if (m_hdrImage.HasMask())
+        {
+            wxColor clr = { m_hdrImage.GetMaskRed(), m_hdrImage.GetMaskGreen(), m_hdrImage.GetMaskBlue() };
+            auto name = wxTheColourDatabase->FindName(clr);
+            if (name.empty())
+            {
+                m_comboHdrMask->SetStringSelection("custom");
+            }
+            else
+            {
+                if (m_comboHdrMask->FindString(name) >= 0)
+                {
+                    m_comboHdrMask->SetStringSelection(name);
+                }
+                else
+                {
+                    m_comboHdrMask->SetStringSelection("custom");
+                }
+            }
+
+            m_staticHdrRGB->SetLabelText(
+                wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
+            m_staticHdrRGB->Show();
+        }
+        else
+        {
+            m_comboHdrMask->SetStringSelection("none");
+            m_staticHdrRGB->Hide();
+        }
+
+        m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
         m_bmpOriginal->Show();
         m_staticOriginal->Show();
-
-        wxString text;
-        text << "Size: " << m_curImage.GetWidth() << " x " << m_curImage.GetHeight();
-        if (hasAlphaChannel)
-            text << (m_ConvertAlphaChannel->GetValue() ? " (had alpha channel)" : " (has alpha channel)");
-
-#if defined(_DEBUG)
-        text << "  " << m_original_type;
-#endif  // _DEBUG
-
-        m_staticDimensions->SetLabelText(text);
+        SetSizeLabel();
         m_staticDimensions->Show();
 
         // Now that we have a loaded image, set the output file.
@@ -262,39 +332,36 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         {
             outFilename = file.filename();
         }
+
         if (m_radio_header->GetValue())
         {
-            auto ext_property = wxGetApp().GetProject()->prop_as_string(prop_header_ext);
-            if (ext_property.empty())
-                ext_property = ".h";
-            if (!outFilename.contains("_png"))
-            {
-                outFilename.remove_extension();
-                outFilename << "_png" << ext_property;
-            }
-            else
-            {
-                outFilename.replace_extension_wx(ext_property);
-            }
+            m_fileHeader->SetPath(outFilename);
+            AdjustOutputFilename();
         }
         else
         {
             outFilename.replace_extension(".xpm");
+            m_fileHeader->SetPath(outFilename);
         }
-        m_fileHeader->SetPath(outFilename);
         m_btnConvert->Enable();
         SetOutputBitmap();
     }
     else
     {
-        m_curImage.Destroy();
+        m_hdrImage.Destroy();
+        m_xpmImage.Destroy();
         m_orgImage.Destroy();
         m_bmpOriginal->SetBitmap(wxImage(empty_xpm));
 
         // If the input file is invalid, don't allow an output value
         m_fileHeader->SetPath(wxEmptyString);
         m_btnConvert->Disable();
+
         m_ConvertAlphaChannel->Disable();
+        m_comboHdrMask->Disable();
+        m_ForceHdrMask->Disable();
+        m_comboXpmMask->Disable();
+        m_ForceXpmMask->Disable();
     }
 
     if (m_fileOriginal->GetPath() != m_lastInputFile)
@@ -310,22 +377,35 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     Fit();
 }
 
-void EmbedImage::OnMask(wxCommandEvent& WXUNUSED(event))
+void EmbedImage::OnXpmMask(wxCommandEvent& WXUNUSED(event))
 {
-    if (m_fileHeader->GetPath().size() && m_fileOriginal->GetPath().size())
-        m_btnConvert->Enable();
-
-    if (!m_ForceMask->GetValue())
+    if (!m_ForceXpmMask->GetValue())
     {
-        m_staticRGB->Hide();
+        m_staticXpmRGB->Hide();
         return;
     }
 
-    auto rgb = GetTransparencyColor();
-    m_staticRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
-    m_staticRGB->Show();
+    auto rgb = GetXpmTransparencyColor();
+    m_staticXpmRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
+    m_staticXpmRGB->Show();
 
-    m_bmpOriginal->SetBitmap(m_curImage);  // GetTransparencyColor() may have changed m_curImage
+    m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
+    Layout();
+}
+
+void EmbedImage::OnHdrMask(wxCommandEvent& WXUNUSED(event))
+{
+    if (!m_ForceHdrMask->GetValue())
+    {
+        m_staticHdrRGB->Hide();
+        return;
+    }
+
+    auto rgb = GetHdrTransparencyColor();
+    m_staticHdrRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
+    m_staticHdrRGB->Show();
+
+    m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
     Layout();
 }
 
@@ -337,16 +417,6 @@ void EmbedImage::OnConvert(wxCommandEvent& WXUNUSED(event))
         ImageInXpmOut();
 
     SetOutputBitmap();
-}
-
-inline bool is_printable(unsigned char ch)
-{
-    return (ch > 31 && ch < 128);
-}
-
-inline bool is_numeric(unsigned char ch)
-{
-    return (ch >= '0' && ch <= '9');
 }
 
 void EmbedImage::ImgageInHeaderOut()
@@ -363,25 +433,23 @@ void EmbedImage::ImgageInHeaderOut()
         return;
     }
 
-    if (!m_curImage.IsOk())
+    if (!m_orgImage.IsOk())
     {
         appMsgBox(ttlib::cstr() << _tt(strIdCantOpen) << in_filename.wx_str());
         return;
     }
 
-    size_t original_size = std::filesystem::file_size(std::filesystem::path(in_filename.wx_str()));
-
     wxMemoryOutputStream save_stream;
-    if (m_check_make_png->GetValue() && isConvertibleMime(m_original_type))
+    if (m_check_make_png->GetValue() && isConvertibleMime(m_mime_type))
     {
         // Maximize compression
-        m_curImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, 9);
-        m_curImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
-        m_curImage.SaveFile(save_stream, wxBITMAP_TYPE_PNG);
+        m_hdrImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, 9);
+        m_hdrImage.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
+        m_hdrImage.SaveFile(save_stream, wxBITMAP_TYPE_PNG);
     }
     else
     {
-        m_curImage.SaveFile(save_stream, m_original_type);
+        m_hdrImage.SaveFile(save_stream, m_mime_type);
     }
 
     auto read_stream = save_stream.GetOutputStreamBuffer();
@@ -426,7 +494,7 @@ void EmbedImage::ImgageInHeaderOut()
     if (out_name.empty())
     {
         m_staticSize->SetLabelText(
-            ttlib::cstr().Format("Original size: %kzu -- Output size if saved: %kzu", original_size, buf_size));
+            ttlib::cstr().Format("Original size: %kzu -- Output size if saved: %kzu", m_orginal_size, buf_size));
         m_staticSize->Show();
     }
     else
@@ -436,7 +504,7 @@ void EmbedImage::ImgageInHeaderOut()
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
             m_staticSize->SetLabelText(
-                ttlib::cstr().Format("Original size: %kzu -- Output size: %kzu", original_size, buf_size));
+                ttlib::cstr().Format("Original size: %kzu -- Output size: %kzu", m_orginal_size, buf_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
@@ -464,26 +532,24 @@ void EmbedImage::ImageInXpmOut()
         return;
     }
 
-    if (!m_curImage.IsOk())
+    if (!m_xpmImage.IsOk())
     {
         appMsgBox(ttlib::cstr() << _tt(strIdCantOpen) << in_filename.wx_str());
         return;
     }
-
-    size_t original_size = std::filesystem::file_size(std::filesystem::path(in_filename.wx_str()));
 
     ttString out_name = m_fileHeader->GetPath();
     if (out_name.size())
     {
         out_name.replace_extension(".xpm");
 
-        if (m_curImage.SaveFile(out_name, wxBITMAP_TYPE_XPM))
+        if (m_xpmImage.SaveFile(out_name, wxBITMAP_TYPE_XPM))
         {
             size_t output_size = std::filesystem::file_size(std::filesystem::path(out_name.wx_str()));
             m_staticSave->SetLabelText(wxString() << out_name << " saved.");
             m_staticSave->Show();
             m_staticSize->SetLabelText(
-                ttlib::cstr().Format("Original size: %kzu -- XPM size: %kzu", original_size, output_size));
+                ttlib::cstr().Format("Original size: %kzu -- XPM size: %kzu", m_orginal_size, output_size));
             m_staticSize->Show();
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
@@ -492,53 +558,106 @@ void EmbedImage::ImageInXpmOut()
     }
 }
 
-wxColor EmbedImage::GetTransparencyColor()
+wxColor EmbedImage::GetXpmTransparencyColor()
 {
     wxColor rgb { 0, 0, 0 };
-    ttString transparency = m_comboMask->GetStringSelection();
+    ttString transparency = m_comboXpmMask->GetStringSelection();
     if (transparency == "none" || transparency == "custom")
     {
-        rgb = { m_curImage.GetMaskRed(), m_curImage.GetMaskGreen(), m_curImage.GetMaskBlue() };
+        rgb = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
         return rgb;
     }
 
     if (transparency == "upper left")
     {
-        auto pBits = m_curImage.GetData();
+        auto pBits = m_xpmImage.GetData();
         rgb = { pBits[0], pBits[1], pBits[2] };
-        m_curImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+        m_xpmImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
     }
     else if (transparency == "lower left")
     {
-        auto pBits = m_curImage.GetData();
-        pBits += (((m_curImage.GetHeight() - 1) * m_curImage.GetWidth()) * 3);
+        auto pBits = m_xpmImage.GetData();
+        pBits += (((m_xpmImage.GetHeight() - 1) * m_xpmImage.GetWidth()) * 3);
         rgb = { pBits[0], pBits[1], pBits[2] };
-        m_curImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+        m_xpmImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
     }
     else if (transparency == "upper right")
     {
-        auto pBits = m_curImage.GetData();
-        pBits += (((m_curImage.GetWidth()) * 3) - 3);
+        auto pBits = m_xpmImage.GetData();
+        pBits += (((m_xpmImage.GetWidth()) * 3) - 3);
         rgb = { pBits[0], pBits[1], pBits[2] };
-        m_curImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+        m_xpmImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
     }
     else if (transparency == "lower right")
     {
-        auto pBits = m_curImage.GetData();
-        pBits += (((m_curImage.GetHeight()) * (m_curImage.GetWidth()) * 3) - 3);
+        auto pBits = m_xpmImage.GetData();
+        pBits += (((m_xpmImage.GetHeight()) * (m_xpmImage.GetWidth()) * 3) - 3);
         rgb = { pBits[0], pBits[1], pBits[2] };
-        m_curImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+        m_xpmImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
     }
     else
     {
         rgb = transparency;
-        m_curImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+        m_xpmImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+    }
+    return rgb;
+}
+
+wxColor EmbedImage::GetHdrTransparencyColor()
+{
+    wxColor rgb { 0, 0, 0 };
+    ttString transparency = m_comboXpmMask->GetStringSelection();
+    if (transparency == "none" || transparency == "custom")
+    {
+        rgb = { m_hdrImage.GetMaskRed(), m_hdrImage.GetMaskGreen(), m_hdrImage.GetMaskBlue() };
+        return rgb;
+    }
+
+    if (transparency == "upper left")
+    {
+        auto pBits = m_hdrImage.GetData();
+        rgb = { pBits[0], pBits[1], pBits[2] };
+        m_hdrImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+    }
+    else if (transparency == "lower left")
+    {
+        auto pBits = m_hdrImage.GetData();
+        pBits += (((m_hdrImage.GetHeight() - 1) * m_hdrImage.GetWidth()) * 3);
+        rgb = { pBits[0], pBits[1], pBits[2] };
+        m_hdrImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+    }
+    else if (transparency == "upper right")
+    {
+        auto pBits = m_hdrImage.GetData();
+        pBits += (((m_hdrImage.GetWidth()) * 3) - 3);
+        rgb = { pBits[0], pBits[1], pBits[2] };
+        m_hdrImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+    }
+    else if (transparency == "lower right")
+    {
+        auto pBits = m_hdrImage.GetData();
+        pBits += (((m_hdrImage.GetHeight()) * (m_hdrImage.GetWidth()) * 3) - 3);
+        rgb = { pBits[0], pBits[1], pBits[2] };
+        m_hdrImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+    }
+    else
+    {
+        rgb = transparency;
+        m_hdrImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
     }
     return rgb;
 }
 
 void EmbedImage::OnHeaderOutput(wxCommandEvent& WXUNUSED(event))
 {
+    if (!m_orgImage.IsOk())
+        return;
+
+    m_comboXpmMask->Disable();
+    m_ForceXpmMask->Disable();
+    m_comboHdrMask->Enable();
+    m_ForceHdrMask->Enable();
+
     AdjustOutputFilename();
 
     if (m_fileOriginal->GetPath() != m_lastInputFile)
@@ -548,11 +667,21 @@ void EmbedImage::OnHeaderOutput(wxCommandEvent& WXUNUSED(event))
             m_btnConvert->Enable();
     }
 
+    SetSizeLabel();
+    m_bmpOriginal->SetBitmap(m_hdrImage);
     SetOutputBitmap();
 }
 
 void EmbedImage::OnXpmOutput(wxCommandEvent& WXUNUSED(event))
 {
+    if (!m_orgImage.IsOk())
+        return;
+
+    m_comboHdrMask->Disable();
+    m_ForceHdrMask->Disable();
+    m_comboXpmMask->Enable();
+    m_ForceXpmMask->Enable();
+
     ttString filename = m_fileHeader->GetPath();
     if (filename.size())
     {
@@ -568,6 +697,8 @@ void EmbedImage::OnXpmOutput(wxCommandEvent& WXUNUSED(event))
             m_btnConvert->Enable();
     }
 
+    SetSizeLabel();
+    m_bmpOriginal->SetBitmap(m_xpmImage);
     SetOutputBitmap();
 }
 
@@ -576,82 +707,69 @@ void EmbedImage::OnConvertAlpha(wxCommandEvent& event)
     if (m_fileHeader->GetPath().size() && m_fileOriginal->GetPath().size())
         m_btnConvert->Enable();
 
-    if (!m_orgImage.IsOk())
+    if (!m_orgImage.IsOk() || !m_xpmImage.IsOk())
     {
-        m_staticDimensions->Show();
+        m_staticDimensions->Hide();
         return;  // means the user hasn't supplied an input filename yet
     }
 
-    if (m_curImage.IsOk())
-    {
-        wxString text;
-        text << _ttwx(strIdSize) << m_curImage.GetWidth() << " x " << m_curImage.GetHeight();
-        if (m_curImage.HasAlpha())
-            text << (m_ConvertAlphaChannel->GetValue() ? " (had alpha channel)" : " (has alpha channel)");
-
-        m_staticDimensions->SetLabelText(text);
-        m_staticDimensions->Show();
-    }
+    SetSizeLabel();
+    m_staticDimensions->Show();
 
     if (m_ConvertAlphaChannel->GetValue())
     {
-        m_curImage.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
+        m_xpmImage.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
 
-        if (m_curImage.HasMask())
+        if (m_xpmImage.HasMask())
         {
-            wxColor clr = { m_curImage.GetMaskRed(), m_curImage.GetMaskGreen(), m_curImage.GetMaskBlue() };
+            wxColor clr = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
             auto name = wxTheColourDatabase->FindName(clr);
             if (name.empty())
             {
-                m_comboMask->SetStringSelection("custom");
+                m_comboXpmMask->SetStringSelection("custom");
             }
             else
             {
-                if (m_comboMask->FindString(name) >= 0)
-                    m_comboMask->SetStringSelection(name);
+                if (m_comboXpmMask->FindString(name) >= 0)
+                    m_comboXpmMask->SetStringSelection(name);
                 else
-                    m_comboMask->SetStringSelection("custom");
+                    m_comboXpmMask->SetStringSelection("custom");
             }
 
-            if (!m_ForceMask->GetValue())
+            if (!m_ForceXpmMask->GetValue())
             {
-                m_staticRGB->SetLabelText(
+                m_staticXpmRGB->SetLabelText(
                     wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
-                m_staticRGB->Show();
+                m_staticXpmRGB->Show();
 
-                m_bmpOriginal->SetBitmap(m_curImage);  // GetTransparencyColor() may have changed m_curImage
+                m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
                 Layout();
                 return;
             }
         }
-        OnMask(event);
+        OnXpmMask(event);
     }
     else
     {
-        m_curImage = m_orgImage.Copy();
+        m_xpmImage = m_orgImage.Copy();
 
-        wxString text;
-        text << _ttwx(strIdSize) << m_curImage.GetWidth() << " x " << m_curImage.GetHeight();
-        if (m_curImage.HasAlpha())
-            text << (m_ConvertAlphaChannel->GetValue() ? " (had alpha channel)" : " (has alpha channel)");
-
-        m_staticDimensions->SetLabelText(text);
+        SetSizeLabel();
         m_staticDimensions->Show();
 
-        OnMask(event);
+        OnXpmMask(event);
     }
 
-    m_bmpOriginal->SetBitmap(m_curImage);
+    m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
 }
 
-void EmbedImage::OnForceMask(wxCommandEvent& event)
+void EmbedImage::OnForceXpmMask(wxCommandEvent& event)
 {
-    if (m_fileHeader->GetPath().size() && m_fileOriginal->GetPath().size())
-        m_btnConvert->Enable();
+    if (!m_orgImage.IsOk())
+        return;
 
-    if (m_ForceMask->GetValue())
+    if (m_ForceXpmMask->GetValue())
     {
-        ttString transparency = m_comboMask->GetStringSelection();
+        ttString transparency = m_comboXpmMask->GetStringSelection();
         if (transparency == "none")
         {
             // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is being forced, check the
@@ -659,35 +777,35 @@ void EmbedImage::OnForceMask(wxCommandEvent& event)
 
             for (;;)
             {
-                auto pBits = m_curImage.GetData();
+                auto pBits = m_xpmImage.GetData();
                 // check upper left for Magenta
                 if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
                 {
-                    m_comboMask->SetStringSelection("Magenta");
+                    m_comboXpmMask->SetStringSelection("Magenta");
                     break;
                 }
 
                 // check lower left
-                pBits += (((m_curImage.GetHeight() - 1) * m_curImage.GetWidth()) * 3);
+                pBits += (((m_xpmImage.GetHeight() - 1) * m_xpmImage.GetWidth()) * 3);
                 if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
                 {
-                    m_comboMask->SetStringSelection("Magenta");
+                    m_comboXpmMask->SetStringSelection("Magenta");
                     break;
                 }
 
                 // check upper right
-                pBits = m_curImage.GetData() + (((m_curImage.GetWidth()) * 3) - 3);
+                pBits = m_xpmImage.GetData() + (((m_xpmImage.GetWidth()) * 3) - 3);
                 if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
                 {
-                    m_comboMask->SetStringSelection("Magenta");
+                    m_comboXpmMask->SetStringSelection("Magenta");
                     break;
                 }
 
                 // check upper right
-                pBits = m_curImage.GetData() + (((m_curImage.GetHeight()) * (m_curImage.GetWidth()) * 3) - 3);
+                pBits = m_xpmImage.GetData() + (((m_xpmImage.GetHeight()) * (m_xpmImage.GetWidth()) * 3) - 3);
                 if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
                 {
-                    m_comboMask->SetStringSelection("Magenta");
+                    m_comboXpmMask->SetStringSelection("Magenta");
                     break;
                 }
 
@@ -695,14 +813,89 @@ void EmbedImage::OnForceMask(wxCommandEvent& event)
             }
         }
 
-        OnMask(event);
+        OnXpmMask(event);
         return;
     }
     else
     {
-        m_curImage = m_orgImage.Copy();
+        m_xpmImage = m_orgImage.Copy();
 
-        m_bmpOriginal->SetBitmap(m_curImage);
+        m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
+    }
+}
+
+void EmbedImage::OnForceHdrMask(wxCommandEvent& event)
+{
+    if (!m_orgImage.IsOk())
+        return;
+
+    if (m_ForceHdrMask->GetValue())
+    {
+        if (m_hdrImage.HasAlpha())
+        {
+            m_hdrImage.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
+        }
+
+        ttString transparency = m_comboHdrMask->GetStringSelection();
+        if (transparency == "none")
+        {
+            // Magenta is rarely used in graphics making it ideal as a mask color. If a mask is being forced, check the
+            // four corner pixels, and if any of them are Magenta then set the mask to Magenta.
+
+            for (;;)
+            {
+                auto pBits = m_hdrImage.GetData();
+                // check upper left for Magenta
+                if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
+                {
+                    m_comboHdrMask->SetStringSelection("Magenta");
+                    break;
+                }
+
+                // check lower left
+                pBits += (((m_hdrImage.GetHeight() - 1) * m_hdrImage.GetWidth()) * 3);
+                if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
+                {
+                    m_comboHdrMask->SetStringSelection("Magenta");
+                    break;
+                }
+
+                // check upper right
+                pBits = m_hdrImage.GetData() + (((m_hdrImage.GetWidth()) * 3) - 3);
+                if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
+                {
+                    m_comboHdrMask->SetStringSelection("Magenta");
+                    break;
+                }
+
+                // check upper right
+                pBits = m_hdrImage.GetData() + (((m_hdrImage.GetHeight()) * (m_hdrImage.GetWidth()) * 3) - 3);
+                if (pBits[0] == 255 && pBits[1] == 0 && pBits[2] == 255)
+                {
+                    m_comboHdrMask->SetStringSelection("Magenta");
+                    break;
+                }
+
+                break;
+            }
+        }
+
+        // transparency may have changed if we found magenta
+        transparency = m_comboHdrMask->GetStringSelection();
+        if (transparency != "none" && transparency != "custom")
+        {
+            wxColor rgb(transparency);
+            m_hdrImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
+        }
+
+        OnHdrMask(event);
+        return;
+    }
+    else
+    {
+        m_hdrImage = m_orgImage.Copy();
+
+        m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
     }
 }
 
@@ -789,11 +982,11 @@ void EmbedImage::AdjustOutputFilename()
         if (ext_property.empty())
             ext_property = ".h";
 
-        ttString suffix(m_original_type);
+        ttString suffix(m_mime_type);
         suffix.Replace("image/", "_");
         suffix.Replace("x-", "");  // if something like x-bmp, just use bmp
 
-        if (m_check_make_png->GetValue() && isConvertibleMime(m_original_type))
+        if (m_check_make_png->GetValue() && isConvertibleMime(m_mime_type))
         {
             filename.remove_extension();
             if (!filename.contains("_png") && !suffix.is_sameas_wx("_png"))
@@ -816,4 +1009,26 @@ void EmbedImage::AdjustOutputFilename()
         }
         m_fileHeader->SetPath(filename);
     }
+}
+
+void EmbedImage::SetSizeLabel()
+{
+    wxString size_label;
+    size_label << "Size: " << m_xpmImage.GetWidth() << " x " << m_xpmImage.GetHeight();
+
+    // Add the mime type
+    size_label << "  Type: " << m_mime_type;
+
+    if (m_radio_XPM->GetValue())
+    {
+        if (m_orgImage.HasAlpha() && m_ConvertAlphaChannel->GetValue())
+            size_label << " (had alpha channel)";
+    }
+    else
+    {
+        if (m_hdrImage.HasAlpha())
+            size_label << " (has alpha channel)";
+    }
+
+    m_staticDimensions->SetLabelText(size_label);
 }

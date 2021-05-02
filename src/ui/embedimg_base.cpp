@@ -79,14 +79,30 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
     hdr_static_box->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
-    m_check_c17 = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("C++1&7 encoding"));
-    m_check_c17->SetToolTip(wxString::FromUTF8("If checked, this will prefix the array with \"inline constexpr\" instead of \"static\"."));
-    box_sizer_2->Add(m_check_c17, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
-
     m_check_make_png = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Convert to PNG"));
     m_check_make_png->SetValue(true);
     m_check_make_png->SetToolTip(wxString::FromUTF8("If checked, image will be converted to PNG before being saved."));
     box_sizer_2->Add(m_check_make_png, wxSizerFlags().Border(wxALL));
+
+    m_check_c17 = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("C++1&7 encoding"));
+    m_check_c17->SetToolTip(wxString::FromUTF8("If checked, this will prefix the array with \"inline constexpr\" instead of \"static\"."));
+    box_sizer_2->Add(m_check_c17, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    m_ForceHdrMask = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Force Mask"));
+    m_ForceHdrMask->SetToolTip(wxString::FromUTF8("Check this to override any mask specified in the original image file."));
+    box_sizer_2->Add(m_ForceHdrMask, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_2->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
+
+    box_sizer_3->AddSpacer(10);
+
+    m_comboHdrMask = new wxComboBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
+    box_sizer_3->Add(m_comboHdrMask, wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+
+    m_staticHdrRGB = new wxStaticText(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("RGB"));
+    m_staticHdrRGB->Hide();
+    box_sizer_2->Add(m_staticHdrRGB, wxSizerFlags().Border(wxALL));
 
     auto mask_static_box = new wxStaticBoxSizer(wxVERTICAL, static_box->GetStaticBox(), wxString::FromUTF8("Settings"));
     flex_grid_sizer_2->Add(mask_static_box, wxSizerFlags().Border(wxALL));
@@ -99,16 +115,21 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_ConvertAlphaChannel->SetToolTip(wxString::FromUTF8("Check this to replace any alpha channel with a mask."));
     box_sizer7->Add(m_ConvertAlphaChannel, wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_ForceMask = new wxCheckBox(mask_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Force Mask"));
-    m_ForceMask->SetToolTip(wxString::FromUTF8("Check this to override any mask specified in the original image file."));
-    box_sizer7->Add(m_ForceMask, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+    m_ForceXpmMask = new wxCheckBox(mask_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Force Mask"));
+    m_ForceXpmMask->SetToolTip(wxString::FromUTF8("Check this to override any mask specified in the original image file."));
+    box_sizer7->Add(m_ForceXpmMask, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboMask = new wxComboBox(mask_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
-    box_sizer7->Add(m_comboMask, wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+    auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer7->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
-    m_staticRGB = new wxStaticText(mask_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("RGB"));
-    m_staticRGB->Hide();
-    box_sizer7->Add(m_staticRGB, wxSizerFlags().Border(wxALL));
+    box_sizer_4->AddSpacer(10);
+
+    m_comboXpmMask = new wxComboBox(mask_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
+    box_sizer_4->Add(m_comboXpmMask, wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
+
+    m_staticXpmRGB = new wxStaticText(mask_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("RGB"));
+    m_staticXpmRGB->Hide();
+    box_sizer7->Add(m_staticXpmRGB, wxSizerFlags().Border(wxALL));
 
     auto box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));
@@ -166,8 +187,10 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_radio_header->Bind(wxEVT_RADIOBUTTON, &EmbedImageBase::OnHeaderOutput, this);
     m_radio_XPM->Bind(wxEVT_RADIOBUTTON, &EmbedImageBase::OnXpmOutput, this);
     m_check_make_png->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnCheckPngConversion, this);
+    m_ForceHdrMask->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnForceHdrMask, this);
+    m_comboHdrMask->Bind(wxEVT_COMBOBOX, &EmbedImageBase::OnHdrMask, this);
     m_ConvertAlphaChannel->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnConvertAlpha, this);
-    m_ForceMask->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnForceMask, this);
-    m_comboMask->Bind(wxEVT_COMBOBOX, &EmbedImageBase::OnMask, this);
+    m_ForceXpmMask->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnForceXpmMask, this);
+    m_comboXpmMask->Bind(wxEVT_COMBOBOX, &EmbedImageBase::OnXpmMask, this);
     m_btnConvert->Bind(wxEVT_BUTTON, &EmbedImageBase::OnConvert, this);
 }

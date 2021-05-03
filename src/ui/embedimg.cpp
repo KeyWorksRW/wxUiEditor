@@ -77,7 +77,7 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
     else
         dir = "./";
     dir.make_absolute();
-    m_fileHeader->SetInitialDirectory(dir);
+    m_fileOutput->SetInitialDirectory(dir);
 
     m_btnClose->SetLabel(_tt("Close"));
 
@@ -335,13 +335,13 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
         if (m_radio_header->GetValue())
         {
-            m_fileHeader->SetPath(outFilename);
+            m_fileOutput->SetPath(outFilename);
             AdjustOutputFilename();
         }
         else
         {
             outFilename.replace_extension(".xpm");
-            m_fileHeader->SetPath(outFilename);
+            m_fileOutput->SetPath(outFilename);
         }
         m_btnConvert->Enable();
         SetOutputBitmap();
@@ -354,7 +354,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         m_bmpOriginal->SetBitmap(wxImage(empty_xpm));
 
         // If the input file is invalid, don't allow an output value
-        m_fileHeader->SetPath(wxEmptyString);
+        m_fileOutput->SetPath(wxEmptyString);
         m_btnConvert->Disable();
 
         m_ConvertAlphaChannel->Disable();
@@ -367,7 +367,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     if (m_fileOriginal->GetPath() != m_lastInputFile)
     {
         m_lastInputFile.clear();
-        if (m_fileHeader->GetPath().size() && m_fileHeader->GetPath() != m_lastOutputFile)
+        if (m_fileOutput->GetPath().size() && m_fileOutput->GetPath() != m_lastOutputFile)
             m_btnConvert->Enable();
     }
 
@@ -454,7 +454,7 @@ void EmbedImage::ImgageInHeaderOut()
 
     auto read_stream = save_stream.GetOutputStreamBuffer();
 
-    ttString out_name = m_fileHeader->GetPath();
+    ttString out_name = m_fileOutput->GetPath();
     ttlib::cstr string_name = out_name.sub_cstr();
 
     string_name.remove_extension();
@@ -538,7 +538,7 @@ void EmbedImage::ImageInXpmOut()
         return;
     }
 
-    ttString out_name = m_fileHeader->GetPath();
+    ttString out_name = m_fileOutput->GetPath();
     if (out_name.size())
     {
         out_name.replace_extension(".xpm");
@@ -659,13 +659,7 @@ void EmbedImage::OnHeaderOutput(wxCommandEvent& WXUNUSED(event))
     m_ForceHdrMask->Enable();
 
     AdjustOutputFilename();
-
-    if (m_fileOriginal->GetPath() != m_lastInputFile)
-    {
-        m_lastInputFile.clear();
-        if (m_fileHeader->GetPath().size() && m_fileHeader->GetPath() != m_lastOutputFile)
-            m_btnConvert->Enable();
-    }
+    EnableConvertButton();
 
     SetSizeLabel();
     m_bmpOriginal->SetBitmap(m_hdrImage);
@@ -682,20 +676,15 @@ void EmbedImage::OnXpmOutput(wxCommandEvent& WXUNUSED(event))
     m_comboXpmMask->Enable();
     m_ForceXpmMask->Enable();
 
-    ttString filename = m_fileHeader->GetPath();
+    ttString filename = m_fileOutput->GetPath();
     if (filename.size())
     {
         filename.replace_extension_wx(wxT("xpm"));
         filename.Replace("_png.", ".");
-        m_fileHeader->SetPath(filename);
+        m_fileOutput->SetPath(filename);
     }
 
-    if (m_fileOriginal->GetPath() != m_lastInputFile)
-    {
-        m_lastInputFile.clear();
-        if (m_fileHeader->GetPath().size() && m_fileHeader->GetPath() != m_lastOutputFile)
-            m_btnConvert->Enable();
-    }
+    EnableConvertButton();
 
     SetSizeLabel();
     m_bmpOriginal->SetBitmap(m_xpmImage);
@@ -704,7 +693,7 @@ void EmbedImage::OnXpmOutput(wxCommandEvent& WXUNUSED(event))
 
 void EmbedImage::OnConvertAlpha(wxCommandEvent& event)
 {
-    if (m_fileHeader->GetPath().size() && m_fileOriginal->GetPath().size())
+    if (m_fileOutput->GetPath().size() && m_fileOriginal->GetPath().size())
         m_btnConvert->Enable();
 
     if (!m_orgImage.IsOk() || !m_xpmImage.IsOk())
@@ -814,13 +803,17 @@ void EmbedImage::OnForceXpmMask(wxCommandEvent& event)
         }
 
         OnXpmMask(event);
-        return;
     }
     else
     {
         m_xpmImage = m_orgImage.Copy();
 
         m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
+    }
+
+    if (m_radio_XPM->GetValue())
+    {
+        EnableConvertButton();
     }
 }
 
@@ -889,6 +882,10 @@ void EmbedImage::OnForceHdrMask(wxCommandEvent& event)
         }
 
         OnHdrMask(event);
+        if (!m_radio_header->GetValue())
+            return;
+
+        EnableConvertButton();
         return;
     }
     else
@@ -897,6 +894,11 @@ void EmbedImage::OnForceHdrMask(wxCommandEvent& event)
 
         m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
     }
+
+    if (m_radio_header->GetValue())
+    {
+        EnableConvertButton();
+    }
 }
 
 void EmbedImage::OnOutputChange(wxFileDirPickerEvent& WXUNUSED(event))
@@ -904,9 +906,9 @@ void EmbedImage::OnOutputChange(wxFileDirPickerEvent& WXUNUSED(event))
     if (m_fileOriginal->GetPath() != m_lastInputFile)
     {
         m_lastInputFile.clear();
-        if (m_fileHeader->GetPath().size() && m_fileHeader->GetPath() != m_lastOutputFile)
+        if (m_fileOutput->GetPath().size() && m_fileOutput->GetPath() != m_lastOutputFile)
         {
-            m_btnConvert->Enable();
+            EnableConvertButton();
             SetOutputBitmap();
         }
     }
@@ -921,7 +923,7 @@ void EmbedImage::SetOutputBitmap()
         return;
     }
 
-    ttString out_file = m_fileHeader->GetPath();
+    ttString out_file = m_fileOutput->GetPath();
     if (out_file.empty() || !out_file.file_exists())
     {
         m_bmpOutput->Hide();
@@ -967,15 +969,24 @@ void EmbedImage::SetOutputBitmap()
 
 void EmbedImage::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
 {
-    if (!m_radio_header->GetValue())
-        return;
+    if (m_radio_header->GetValue())
+    {
+        EnableConvertButton();
+        AdjustOutputFilename();
+    }
+}
 
-    AdjustOutputFilename();
+void EmbedImage::OnC17Encoding(wxCommandEvent& WXUNUSED(event))
+{
+    if (m_radio_header->GetValue())
+    {
+        EnableConvertButton();
+    }
 }
 
 void EmbedImage::AdjustOutputFilename()
 {
-    ttString filename = m_fileHeader->GetPath();
+    ttString filename = m_fileOutput->GetPath();
     if (filename.size())
     {
         auto ext_property = wxGetApp().GetProject()->prop_as_string(prop_header_ext);
@@ -1007,7 +1018,7 @@ void EmbedImage::AdjustOutputFilename()
         {
             filename.replace_extension_wx(ext_property);
         }
-        m_fileHeader->SetPath(filename);
+        m_fileOutput->SetPath(filename);
     }
 }
 
@@ -1031,4 +1042,19 @@ void EmbedImage::SetSizeLabel()
     }
 
     m_staticDimensions->SetLabelText(size_label);
+}
+
+void EmbedImage::EnableConvertButton()
+{
+    if (m_lastOutputFile.size())
+    {
+        m_lastOutputFile.clear();
+        m_staticSave->SetLabelText(wxEmptyString);
+        m_staticSize->SetLabelText(wxEmptyString);
+        m_staticSave->Hide();
+        m_staticSize->Hide();
+        if (m_orgImage.IsOk() && m_fileOriginal->GetPath().size() && m_fileOutput->GetPath().size())
+            m_btnConvert->Enable();
+        Fit();
+    }
 }

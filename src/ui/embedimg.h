@@ -17,20 +17,23 @@ public:
     EmbedImage(wxWindow* parent = nullptr);
 
 protected:
+    // Call this to re-enable the convert button
+    void EnableConvertButton();
     void SetSizeLabel();
-    void OnForceHdrMask(wxCommandEvent& event) override;
-    void OnHdrMask(wxCommandEvent& event) override;
     void AdjustOutputFilename();
 
     // Handlers for EmbedImageBase events.
 
+    void OnC17Encoding(wxCommandEvent& event) override;
     void OnCheckPngConversion(wxCommandEvent& event) override;
     void OnConvert(wxCommandEvent& event) override;
     void OnConvertAlpha(wxCommandEvent& event) override;
+    void OnForceHdrMask(wxCommandEvent& event) override;
     void OnForceXpmMask(wxCommandEvent& event) override;
+    void OnHdrMask(wxCommandEvent& event) override;
     void OnInputChange(wxFileDirPickerEvent& event) override;
-    void OnXpmMask(wxCommandEvent& event) override;
     void OnOutputChange(wxFileDirPickerEvent& event) override;
+    void OnXpmMask(wxCommandEvent& event) override;
 
     void OnHeaderOutput(wxCommandEvent& event) override;
     void OnXpmOutput(wxCommandEvent& event) override;

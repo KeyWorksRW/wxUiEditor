@@ -38,8 +38,8 @@ protected:
     wxCheckBox* m_check_make_png;
     wxComboBox* m_comboHdrMask;
     wxComboBox* m_comboXpmMask;
-    wxFilePickerCtrl* m_fileHeader;
     wxFilePickerCtrl* m_fileOriginal;
+    wxFilePickerCtrl* m_fileOutput;
     wxRadioButton* m_radio_XPM;
     wxRadioButton* m_radio_header;
     wxStaticBitmap* m_bmpOriginal;
@@ -56,6 +56,7 @@ protected:
 
     // Virtual event handlers -- override them in your derived class
 
+    virtual void OnC17Encoding(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckPngConversion(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConvert(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConvertAlpha(wxCommandEvent& event) { event.Skip(); }

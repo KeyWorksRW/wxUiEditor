@@ -29,8 +29,8 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
 
     auto box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_staticDescription = new wxStaticText(collapsiblePane->GetPane(), wxID_ANY, wxString::FromUTF8("This dialog can be used to convert an image into a file that can be #included into a source file. The original image can be any file format that wxWidgets supports.\n\nIf Header is chosen, XPM and BMP files will be converted to PNG before saving. All other formats will be saved in their original format."));
-    m_staticDescription->Wrap(360);
+    m_staticDescription = new wxStaticText(collapsiblePane->GetPane(), wxID_ANY, wxString::FromUTF8("This dialog can be used to convert an image into a file that can be #included into a source file. The original image can be any file format that wxWidgets supports.\n\nThe C++17 option is used to prevent duplicates in your executable even if the file is included in more than one place. However, it requires a C++17 or later compiler."));
+    m_staticDescription->Wrap(400);
     box_sizer2->Add(m_staticDescription, wxSizerFlags().Border(wxALL));
 
     collapsiblePane->GetPane()->SetSizerAndFit(box_sizer2);
@@ -52,10 +52,10 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_staticHeader = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("O&utput:"));
     flex_grid_sizer->Add(m_staticHeader, wxSizerFlags().Center().Border(wxALL));
 
-    m_fileHeader = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
+    m_fileOutput = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
     wxString::FromUTF8("Header files|*.h;*.hh;*.hxx;*.hpp||"), wxDefaultPosition, wxDefaultSize,
     wxFLP_SAVE|wxFLP_USE_TEXTCTRL);
-    flex_grid_sizer->Add(m_fileHeader, wxSizerFlags().Expand().Border(wxALL));
+    flex_grid_sizer->Add(m_fileOutput, wxSizerFlags().Expand().Border(wxALL));
 
     auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("Output Type"));
     parent_sizer->Add(static_box, wxSizerFlags().Border(wxALL));
@@ -183,10 +183,11 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
 
     // Event handlers
     m_fileOriginal->Bind(wxEVT_FILEPICKER_CHANGED, &EmbedImageBase::OnInputChange, this);
-    m_fileHeader->Bind(wxEVT_FILEPICKER_CHANGED, &EmbedImageBase::OnOutputChange, this);
+    m_fileOutput->Bind(wxEVT_FILEPICKER_CHANGED, &EmbedImageBase::OnOutputChange, this);
     m_radio_header->Bind(wxEVT_RADIOBUTTON, &EmbedImageBase::OnHeaderOutput, this);
     m_radio_XPM->Bind(wxEVT_RADIOBUTTON, &EmbedImageBase::OnXpmOutput, this);
     m_check_make_png->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnCheckPngConversion, this);
+    m_check_c17->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnC17Encoding, this);
     m_ForceHdrMask->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnForceHdrMask, this);
     m_comboHdrMask->Bind(wxEVT_COMBOBOX, &EmbedImageBase::OnHdrMask, this);
     m_ConvertAlphaChannel->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnConvertAlpha, this);

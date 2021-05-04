@@ -5,6 +5,11 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// There are several controls in this dialog that are hidden or displayed based on user interaction. Because of that, there
+// are times when just calling Layout() is insufficient -- so to play it safe, whenever the dialog's size may need to be
+// changed, both Fit() and Layout() are called. That's still not 100% accurate, but it's close enough that the user isn't
+// likely to notice the extra spacing that sometimes occurs.
+
 #include "pch.h"
 
 #include <filesystem>
@@ -115,16 +120,8 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
     // Disable conversion button until both input and out filenames have been set
     m_btnConvert->Disable();
 
-    // Disable controls that require a valid input image
-    m_ConvertAlphaChannel->Disable();
-    m_comboHdrMask->Disable();
-    m_ForceHdrMask->Disable();
-    m_comboXpmMask->Disable();
-    m_ForceXpmMask->Disable();
-
-    // m_fileOriginal->GetTextCtrl()->SetEditable(false);
-
     Fit();
+    Layout();
 }
 
 void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
@@ -173,7 +170,6 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
     else
     {
-        m_radio_header->Enable();
         m_mime_type.clear();
 
         // We need to know what the original file type is because if we convert it to a header, then some file formats can be
@@ -276,12 +272,11 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
             m_staticXpmRGB->SetLabelText(
                 wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
-            m_staticXpmRGB->Show();
         }
         else
         {
             m_comboXpmMask->SetStringSelection("none");
-            m_staticXpmRGB->Hide();
+            m_staticXpmRGB->SetLabelText("0 0 0");
         }
 
         if (m_hdrImage.HasMask())
@@ -306,15 +301,14 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
             m_staticHdrRGB->SetLabelText(
                 wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
-            m_staticHdrRGB->Show();
         }
         else
         {
             m_comboHdrMask->SetStringSelection("none");
-            m_staticHdrRGB->Hide();
+            m_staticHdrRGB->SetLabelText("0 0 0");
         }
 
-        m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
+        m_bmpOriginal->SetBitmap(IsHeaderPage() ? m_hdrImage : m_xpmImage);
         m_bmpOriginal->Show();
         m_staticOriginal->Show();
         SetSizeLabel();
@@ -333,7 +327,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
             outFilename = file.filename();
         }
 
-        if (m_radio_header->GetValue())
+        if (IsHeaderPage())
         {
             m_fileOutput->SetPath(outFilename);
             AdjustOutputFilename();
@@ -375,45 +369,52 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     // the image got loaded or not, so we simply resize the entire dialog.
 
     Fit();
-}
-
-void EmbedImage::OnXpmMask(wxCommandEvent& WXUNUSED(event))
-{
-    if (!m_ForceXpmMask->GetValue())
-    {
-        m_staticXpmRGB->Hide();
-        return;
-    }
-
-    auto rgb = GetXpmTransparencyColor();
-    m_staticXpmRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
-    m_staticXpmRGB->Show();
-
-    m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
     Layout();
 }
 
-void EmbedImage::OnHdrMask(wxCommandEvent& WXUNUSED(event))
+void EmbedImage::OnComboXpmMask(wxCommandEvent& WXUNUSED(event))
+{
+    if (!m_ForceXpmMask->GetValue())
+    {
+        m_staticXpmRGB->SetLabelText("0 0 0");
+    }
+    else
+    {
+        auto rgb = GetXpmTransparencyColor();  // this will set the mask in m_xpmImage
+        m_staticXpmRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
+    }
+
+    m_bmpOriginal->SetBitmap(m_xpmImage);
+    EnableConvertButton();
+
+    Fit();
+    Layout();
+}
+
+void EmbedImage::OnComboHdrMask(wxCommandEvent& WXUNUSED(event))
 {
     if (!m_ForceHdrMask->GetValue())
     {
-        m_staticHdrRGB->Hide();
-        return;
+        m_staticHdrRGB->SetLabelText("0 0 0");
+    }
+    else
+    {
+        auto rgb = GetHdrTransparencyColor();  // this will set the mask in m_hdrImage
+        m_staticHdrRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
     }
 
-    auto rgb = GetHdrTransparencyColor();
-    m_staticHdrRGB->SetLabelText(wxString().Format("%3d %3d %3d", (int) rgb.Red(), (int) rgb.Green(), (int) rgb.Blue()));
-    m_staticHdrRGB->Show();
+    m_bmpOriginal->SetBitmap(m_hdrImage);
+    EnableConvertButton();
 
-    m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
+    Fit();
     Layout();
 }
 
 void EmbedImage::OnConvert(wxCommandEvent& WXUNUSED(event))
 {
-    if (m_radio_header->GetValue())
+    if (IsHeaderPage())
         ImgageInHeaderOut();
-    else if (m_radio_XPM->GetValue())
+    else
         ImageInXpmOut();
 
     SetOutputBitmap();
@@ -439,6 +440,7 @@ void EmbedImage::ImgageInHeaderOut()
         return;
     }
 
+    wxBusyCursor wait;
     wxMemoryOutputStream save_stream;
     if (m_check_make_png->GetValue() && isConvertibleMime(m_mime_type))
     {
@@ -515,7 +517,6 @@ void EmbedImage::ImgageInHeaderOut()
             m_staticSave->Show();
         }
     }
-    GetSizer()->Fit(this);
 }
 
 void EmbedImage::ImageInXpmOut()
@@ -554,7 +555,6 @@ void EmbedImage::ImageInXpmOut()
             m_lastOutputFile = out_name;
             m_btnConvert->Disable();
         }
-        GetSizer()->Fit(this);
     }
 }
 
@@ -606,7 +606,7 @@ wxColor EmbedImage::GetXpmTransparencyColor()
 wxColor EmbedImage::GetHdrTransparencyColor()
 {
     wxColor rgb { 0, 0, 0 };
-    ttString transparency = m_comboXpmMask->GetStringSelection();
+    ttString transparency = m_comboHdrMask->GetStringSelection();
     if (transparency == "none" || transparency == "custom")
     {
         rgb = { m_hdrImage.GetMaskRed(), m_hdrImage.GetMaskGreen(), m_hdrImage.GetMaskBlue() };
@@ -648,49 +648,35 @@ wxColor EmbedImage::GetHdrTransparencyColor()
     return rgb;
 }
 
-void EmbedImage::OnHeaderOutput(wxCommandEvent& WXUNUSED(event))
+void EmbedImage::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
 {
     if (!m_orgImage.IsOk())
         return;
 
-    m_comboXpmMask->Disable();
-    m_ForceXpmMask->Disable();
-    m_comboHdrMask->Enable();
-    m_ForceHdrMask->Enable();
-
-    AdjustOutputFilename();
-    EnableConvertButton();
-
-    SetSizeLabel();
-    m_bmpOriginal->SetBitmap(m_hdrImage);
-    SetOutputBitmap();
-}
-
-void EmbedImage::OnXpmOutput(wxCommandEvent& WXUNUSED(event))
-{
-    if (!m_orgImage.IsOk())
-        return;
-
-    m_comboHdrMask->Disable();
-    m_ForceHdrMask->Disable();
-    m_comboXpmMask->Enable();
-    m_ForceXpmMask->Enable();
-
-    ttString filename = m_fileOutput->GetPath();
-    if (filename.size())
+    if (IsHeaderPage())
     {
-        filename.replace_extension_wx(wxT("xpm"));
-        filename.Replace("_png.", ".");
-        m_fileOutput->SetPath(filename);
+        AdjustOutputFilename();
+        m_bmpOriginal->SetBitmap(m_hdrImage);
+    }
+    else
+    {
+        ttString filename = m_fileOutput->GetPath();
+        if (filename.size())
+        {
+            filename.Replace("_png", "");
+            filename.Replace("_xpm", "");
+            filename.replace_extension_wx(wxT("xpm"));
+            m_fileOutput->SetPath(filename);
+        }
+        m_bmpOriginal->SetBitmap(m_xpmImage);
     }
 
     EnableConvertButton();
-
     SetSizeLabel();
-    m_bmpOriginal->SetBitmap(m_xpmImage);
     SetOutputBitmap();
 }
 
+// This is only used for XPM output
 void EmbedImage::OnConvertAlpha(wxCommandEvent& event)
 {
     if (m_fileOutput->GetPath().size() && m_fileOriginal->GetPath().size())
@@ -729,14 +715,14 @@ void EmbedImage::OnConvertAlpha(wxCommandEvent& event)
             {
                 m_staticXpmRGB->SetLabelText(
                     wxString().Format("%3d %3d %3d", (int) clr.Red(), (int) clr.Green(), (int) clr.Blue()));
-                m_staticXpmRGB->Show();
 
-                m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
+                m_bmpOriginal->SetBitmap(IsHeaderPage() ? m_hdrImage : m_xpmImage);
+                Fit();
                 Layout();
                 return;
             }
         }
-        OnXpmMask(event);
+        OnComboXpmMask(event);
     }
     else
     {
@@ -745,10 +731,14 @@ void EmbedImage::OnConvertAlpha(wxCommandEvent& event)
         SetSizeLabel();
         m_staticDimensions->Show();
 
-        OnXpmMask(event);
+        OnComboXpmMask(event);
     }
 
-    m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
+    if (IsXpmPage())
+    {
+        m_bmpOriginal->SetBitmap(m_xpmImage);
+        EnableConvertButton();
+    }
 }
 
 void EmbedImage::OnForceXpmMask(wxCommandEvent& event)
@@ -802,18 +792,12 @@ void EmbedImage::OnForceXpmMask(wxCommandEvent& event)
             }
         }
 
-        OnXpmMask(event);
+        OnComboXpmMask(event);
     }
     else
     {
         m_xpmImage = m_orgImage.Copy();
-
-        m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
-    }
-
-    if (m_radio_XPM->GetValue())
-    {
-        EnableConvertButton();
+        OnComboXpmMask(event);
     }
 }
 
@@ -872,32 +856,12 @@ void EmbedImage::OnForceHdrMask(wxCommandEvent& event)
                 break;
             }
         }
-
-        // transparency may have changed if we found magenta
-        transparency = m_comboHdrMask->GetStringSelection();
-        if (transparency != "none" && transparency != "custom")
-        {
-            wxColor rgb(transparency);
-            m_hdrImage.SetMaskColour(rgb.Red(), rgb.Green(), rgb.Blue());
-        }
-
-        OnHdrMask(event);
-        if (!m_radio_header->GetValue())
-            return;
-
-        EnableConvertButton();
-        return;
+        OnComboHdrMask(event);
     }
     else
     {
         m_hdrImage = m_orgImage.Copy();
-
-        m_bmpOriginal->SetBitmap(m_radio_header->GetValue() ? m_hdrImage : m_xpmImage);
-    }
-
-    if (m_radio_header->GetValue())
-    {
-        EnableConvertButton();
+        OnComboHdrMask(event);
     }
 }
 
@@ -931,45 +895,47 @@ void EmbedImage::SetOutputBitmap()
         return;
     }
 
+    wxBusyCursor wait;
+    wxImage image;
+
     if (out_file.has_extension(".h") || out_file.has_extension(".hpp") || out_file.has_extension(".hh") ||
         out_file.has_extension(".hxx"))
     {
-        wxBusyCursor wait;
-        auto image = GetHeaderImage(out_file.sub_cstr());
+        image = GetHeaderImage(out_file.sub_cstr());
+    }
+    else
+    {
+        image.LoadFile(out_file);
 
-        if (image.IsOk())
+#if defined(_DEBUG)
+        auto has_mask = m_xpmImage.HasMask();
+        wxColor rgb;
+        if (has_mask)
         {
-            m_bmpOutput->SetBitmap(image);
-            m_bmpOutput->Show();
-            m_staticOutput->Show();
-            return;
+            rgb = { m_xpmImage.GetMaskRed(), m_xpmImage.GetMaskGreen(), m_xpmImage.GetMaskBlue() };
         }
-        else
-        {
-            m_bmpOutput->Hide();
-            m_staticOutput->Hide();
-            return;
-        }
+#endif  // _DEBUG
     }
 
-    wxImage image;
-    if (image.LoadFile(out_file))
+    if (image.IsOk())
     {
         m_bmpOutput->SetBitmap(image);
         m_bmpOutput->Show();
         m_staticOutput->Show();
-        Layout();
     }
     else
     {
         m_bmpOutput->Hide();
         m_staticOutput->Hide();
     }
+
+    Fit();
+    Layout();
 }
 
 void EmbedImage::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
 {
-    if (m_radio_header->GetValue())
+    if (IsHeaderPage())
     {
         EnableConvertButton();
         AdjustOutputFilename();
@@ -978,7 +944,7 @@ void EmbedImage::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
 
 void EmbedImage::OnC17Encoding(wxCommandEvent& WXUNUSED(event))
 {
-    if (m_radio_header->GetValue())
+    if (IsHeaderPage())
     {
         EnableConvertButton();
     }
@@ -1030,7 +996,7 @@ void EmbedImage::SetSizeLabel()
     // Add the mime type
     size_label << "  Type: " << m_mime_type;
 
-    if (m_radio_XPM->GetValue())
+    if (IsXpmPage())
     {
         if (m_orgImage.HasAlpha() && m_ConvertAlphaChannel->GetValue())
             size_label << " (had alpha channel)";
@@ -1056,5 +1022,6 @@ void EmbedImage::EnableConvertButton()
         if (m_orgImage.IsOk() && m_fileOriginal->GetPath().size() && m_fileOutput->GetPath().size())
             m_btnConvert->Enable();
         Fit();
+        Layout();
     }
 }

@@ -8,12 +8,12 @@
 
 #include <wx/button.h>
 #include <wx/checkbox.h>
+#include <wx/choicebk.h>
 #include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/filepicker.h>
 #include <wx/gdicmn.h>
-#include <wx/radiobut.h>
 #include <wx/statbmp.h>
 #include <wx/stattext.h>
 
@@ -36,12 +36,11 @@ protected:
     wxCheckBox* m_ForceXpmMask;
     wxCheckBox* m_check_c17;
     wxCheckBox* m_check_make_png;
+    wxChoicebook* m_choicebook;
     wxComboBox* m_comboHdrMask;
     wxComboBox* m_comboXpmMask;
     wxFilePickerCtrl* m_fileOriginal;
     wxFilePickerCtrl* m_fileOutput;
-    wxRadioButton* m_radio_XPM;
-    wxRadioButton* m_radio_header;
     wxStaticBitmap* m_bmpOriginal;
     wxStaticBitmap* m_bmpOutput;
     wxStaticText* m_staticDescription;
@@ -58,14 +57,13 @@ protected:
 
     virtual void OnC17Encoding(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckPngConversion(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnComboHdrMask(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnComboXpmMask(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConvert(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConvertAlpha(wxCommandEvent& event) { event.Skip(); }
     virtual void OnForceHdrMask(wxCommandEvent& event) { event.Skip(); }
     virtual void OnForceXpmMask(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnHdrMask(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnHeaderOutput(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInputChange(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnOutputChange(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnXpmMask(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnXpmOutput(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
 };

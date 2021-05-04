@@ -17,6 +17,9 @@ public:
     EmbedImage(wxWindow* parent = nullptr);
 
 protected:
+    bool IsHeaderPage() { return (m_choicebook->GetChoiceCtrl()->GetSelection() != 1); };
+    bool IsXpmPage() { return (m_choicebook->GetChoiceCtrl()->GetSelection() == 1); };
+
     // Call this to re-enable the convert button
     void EnableConvertButton();
     void SetSizeLabel();
@@ -30,13 +33,15 @@ protected:
     void OnConvertAlpha(wxCommandEvent& event) override;
     void OnForceHdrMask(wxCommandEvent& event) override;
     void OnForceXpmMask(wxCommandEvent& event) override;
-    void OnHdrMask(wxCommandEvent& event) override;
     void OnInputChange(wxFileDirPickerEvent& event) override;
     void OnOutputChange(wxFileDirPickerEvent& event) override;
-    void OnXpmMask(wxCommandEvent& event) override;
+    void OnPageChanged(wxBookCtrlEvent& event) override;
 
-    void OnHeaderOutput(wxCommandEvent& event) override;
-    void OnXpmOutput(wxCommandEvent& event) override;
+    // if force is set, this will update src bitmap display and re-enable Convert btn
+    void OnComboHdrMask(wxCommandEvent& event) override;
+
+    // if force is set, this will update src bitmap display and re-enable Convert btn
+    void OnComboXpmMask(wxCommandEvent& event) override;
 
     void ImgageInHeaderOut();
     void ImageInXpmOut();
@@ -45,8 +50,11 @@ protected:
 
     // If current transparency is anything other than "none" or "custom" then this will set the
     // mask color in the image to the specified color.
-    wxColor GetXpmTransparencyColor();
     wxColor GetHdrTransparencyColor();
+
+    // If current transparency is anything other than "none" or "custom" then this will set the
+    // mask color in the image to the specified color.
+    wxColor GetXpmTransparencyColor();
 
 private:
     ttString m_cwd;

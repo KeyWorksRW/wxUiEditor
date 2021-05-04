@@ -105,52 +105,64 @@
         <node class="wxBoxSizer" borders="wxLEFT|wxRIGHT|wxTOP" flags="wxEXPAND">
           <node class="wxCollapsiblePane" class_access="none" collapsed="true" label="Dialog Description" var_name="collapsiblePane" borders="wxLEFT|wxRIGHT|wxTOP" flags="wxEXPAND" proportion="1">
             <node class="wxBoxSizer" var_name="box_sizer2">
-              <node class="wxStaticText" label="This dialog can be used to convert an image into a file that can be #included into a source file. The original image can be any file format that wxWidgets supports.&#10;&#10;The C++17 option is used to prevent duplicates in your executable even if the file is included in more than one place. However, it requires a C++17 or later compiler." var_name="m_staticDescription" wrap="400" />
+              <node class="wxStaticText" label="This dialog can be used to convert an image into a file that can be #included into a source file. The original image can be any file format that wxWidgets supports.&#10;&#10;The header output type is an array containing the image data in whatever format you choose. While the disk file size might be larger than an XPM file, the size in your executable will typically be quite a bit smaller." var_name="m_staticDescription" wrap="400" />
             </node>
           </node>
         </node>
         <node class="wxFlexGridSizer" growablecols="1" flags="wxEXPAND">
-          <node class="wxStaticText" label="&amp;Original:" var_name="m_staticOriginal" alignment="wxALIGN_CENTER" />
+          <node class="wxStaticText" label="&amp;Source:" var_name="m_staticOriginal" alignment="wxALIGN_CENTER" />
           <node class="wxFilePickerCtrl" var_name="m_fileOriginal" wildcard="Select file(s)&quot;, &quot;All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||" size="300,-1" flags="wxEXPAND" wxEVT_FILEPICKER_CHANGED="OnInputChange" />
           <node class="wxStaticText" label="O&amp;utput:" var_name="m_staticHeader" alignment="wxALIGN_CENTER" />
           <node class="wxFilePickerCtrl" style="wxFLP_SAVE|wxFLP_USE_TEXTCTRL" var_name="m_fileOutput" wildcard="Header files|*.h;*.hh;*.hxx;*.hpp||" flags="wxEXPAND" wxEVT_FILEPICKER_CHANGED="OnOutputChange" />
         </node>
         <node class="wxStaticBoxSizer" label="Output Type">
-          <node class="wxFlexGridSizer" var_name="flex_grid_sizer_2">
-            <node class="wxRadioButton" checked="true" label="&amp;Header" style="wxRB_GROUP" var_name="m_radio_header" tooltip="Convert the original into a PNG file and save it as a header file that can be #included." borders="wxLEFT|wxRIGHT" wxEVT_RADIOBUTTON="OnHeaderOutput" />
-            <node class="wxRadioButton" label="&amp;XPM" var_name="m_radio_XPM" tooltip="Convert the original image into an XPM file." borders="wxLEFT|wxRIGHT" wxEVT_RADIOBUTTON="OnXpmOutput" />
-            <node class="wxStaticBoxSizer" label="Settings" var_name="hdr_static_box">
-              <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer_2" flags="wxEXPAND">
-                <node class="wxCheckBox" checked="true" label="Convert to PNG" var_name="m_check_make_png" tooltip="If checked, image will be converted to PNG before being saved." wxEVT_CHECKBOX="OnCheckPngConversion" />
-                <node class="wxCheckBox" label="C++1&amp;7 encoding" var_name="m_check_c17" tooltip="If checked, this will prefix the array with &quot;inline constexpr&quot; instead of &quot;static&quot;." borders="wxTOP|wxRIGHT|wxLEFT" wxEVT_CHECKBOX="OnC17Encoding" />
-                <node class="wxCheckBox" label="&amp;Force Mask" var_name="m_ForceHdrMask" tooltip="Check this to override any mask specified in the original image file." borders="wxLEFT|wxRIGHT|wxTOP" wxEVT_CHECKBOX="OnForceHdrMask" />
-                <node class="wxBoxSizer" var_name="box_sizer_3">
-                  <node class="spacer" width="10" />
-                  <node class="wxComboBox" style="wxCB_READONLY" var_name="m_comboHdrMask" size="150,-1" alignment="wxALIGN_LEFT" borders="wxLEFT|wxRIGHT|wxBOTTOM" wxEVT_COMBOBOX="OnHdrMask" />
+          <node class="wxChoicebook" style="wxCHB_LEFT" wxEVT_CHOICEBOOK_PAGE_CHANGED="OnPageChanged">
+            <node class="BookPage" label="Header" var_name="header_page" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+              <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_2">
+                <node class="wxStaticBoxSizer" label="Settings" var_name="hdr_static_box">
+                  <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer_2" flags="wxEXPAND">
+                    <node class="wxCheckBox" checked="true" label="Convert to &amp;PNG" var_name="m_check_make_png" tooltip="If checked, image will be converted to PNG before being saved." wxEVT_CHECKBOX="OnCheckPngConversion" />
+                    <node class="wxCheckBox" label="C++1&amp;7 &amp;encoding" var_name="m_check_c17" tooltip="If checked, this will prefix the array with &quot;inline constexpr&quot; instead of &quot;static&quot;." wxEVT_CHECKBOX="OnC17Encoding" />
+                    <node class="wxCheckBox" label="&amp;Force Mask" var_name="m_ForceHdrMask" tooltip="Check this to override any mask specified in the original image file." wxEVT_CHECKBOX="OnForceHdrMask" />
+                    <node class="wxBoxSizer" var_name="box_sizer_3">
+                      <node class="spacer" width="10" />
+                      <node class="wxComboBox" style="wxCB_READONLY" var_name="m_comboHdrMask" size="150,-1" alignment="wxALIGN_LEFT" borders="wxLEFT|wxRIGHT|wxBOTTOM" wxEVT_COMBOBOX="OnComboHdrMask" />
+                    </node>
+                    <node class="wxBoxSizer" var_name="box_sizer_5" borders="wxRIGHT|wxLEFT">
+                      <node class="spacer" width="10" />
+                      <node class="wxStaticText" label="0 0 0" var_name="m_staticHdrRGB" borders="wxRIGHT|wxLEFT" />
+                    </node>
+                  </node>
                 </node>
-                <node class="wxStaticText" label="RGB" var_name="m_staticHdrRGB" hidden="true" />
               </node>
             </node>
-            <node class="wxStaticBoxSizer" label="Settings" var_name="mask_static_box">
-              <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer7" flags="wxEXPAND">
-                <node class="wxCheckBox" checked="true" label="&amp;Alpha Channel to Mask" var_name="m_ConvertAlphaChannel" tooltip="Check this to replace any alpha channel with a mask." borders="wxLEFT|wxRIGHT|wxTOP" flags="wxEXPAND" wxEVT_CHECKBOX="OnConvertAlpha" />
-                <node class="wxCheckBox" label="&amp;Force Mask" var_name="m_ForceXpmMask" tooltip="Check this to override any mask specified in the original image file." borders="wxLEFT|wxRIGHT|wxTOP" wxEVT_CHECKBOX="OnForceXpmMask" />
-                <node class="wxBoxSizer" var_name="box_sizer_4">
-                  <node class="spacer" width="10" />
-                  <node class="wxComboBox" style="wxCB_READONLY" var_name="m_comboXpmMask" size="150,-1" alignment="wxALIGN_LEFT" borders="wxLEFT|wxRIGHT|wxBOTTOM" wxEVT_COMBOBOX="OnXpmMask" />
+            <node class="BookPage" label="XPM" var_name="xpm_page" background_colour="wxSYS_COLOUR_BTNFACE" window_style="wxTAB_TRAVERSAL">
+              <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer_3">
+                <node class="wxStaticBoxSizer" label="Settings" var_name="mask_static_box">
+                  <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer7" flags="wxEXPAND">
+                    <node class="wxCheckBox" checked="true" label="&amp;Alpha Channel to Mask" var_name="m_ConvertAlphaChannel" tooltip="Check this to replace any alpha channel with a mask." flags="wxEXPAND" wxEVT_CHECKBOX="OnConvertAlpha" />
+                    <node class="wxCheckBox" label="&amp;Force Mask" var_name="m_ForceXpmMask" tooltip="Check this to override any mask specified in the original image file." wxEVT_CHECKBOX="OnForceXpmMask" />
+                    <node class="wxBoxSizer" var_name="box_sizer_4">
+                      <node class="spacer" width="10" />
+                      <node class="wxComboBox" style="wxCB_READONLY" var_name="m_comboXpmMask" size="150,-1" alignment="wxALIGN_LEFT" borders="wxLEFT|wxRIGHT|wxBOTTOM" wxEVT_COMBOBOX="OnComboXpmMask" />
+                    </node>
+                    <node class="wxBoxSizer" var_name="box_sizer_6" borders="wxRIGHT|wxLEFT">
+                      <node class="spacer" width="10" />
+                      <node class="wxStaticText" label="0 0 0" var_name="m_staticXpmRGB" borders="wxRIGHT|wxLEFT" />
+                    </node>
+                  </node>
                 </node>
-                <node class="wxStaticText" label="RGB" var_name="m_staticXpmRGB" hidden="true" />
               </node>
             </node>
           </node>
         </node>
-        <node class="wxBoxSizer" var_name="box_sizer6" flags="wxEXPAND">
-          <node class="wxStaticText" label="16 x 16" var_name="m_staticDimensions" hidden="true" alignment="wxALIGN_CENTER" proportion="1" />
+        <node class="wxBoxSizer" var_name="box_sizer6" borders="wxTOP|wxRIGHT|wxLEFT" flags="wxEXPAND">
+          <node class="wxStaticText" label="16 x 16" var_name="m_staticDimensions" hidden="true" alignment="wxALIGN_CENTER" borders="wxTOP|wxRIGHT|wxLEFT" proportion="1" />
         </node>
         <node class="wxGridSizer" var_name="grid_sizer2" flags="wxEXPAND" proportion="1">
-          <node class="wxStaticText" label="Original" var_name="m_staticOriginal" hidden="true" alignment="wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_HORIZONTAL" borders="wxLEFT|wxRIGHT|wxTOP" />
+          <node class="wxStaticText" label="Source" var_name="m_staticOriginal" hidden="true" alignment="wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_HORIZONTAL" borders="wxLEFT|wxRIGHT|wxTOP" />
           <node class="wxStaticText" label="Current" var_name="m_staticOutput" hidden="true" alignment="wxALIGN_CENTER" borders="wxLEFT|wxRIGHT|wxTOP" />
-          <node class="wxStaticBitmap" class_access="protected:" var_name="m_bmpOriginal" hidden="true" alignment="wxALIGN_CENTER" border_size="10" />
+          <node class="wxStaticBitmap" class_access="protected:" var_name="m_bmpOriginal" hidden="true" alignment="wxALIGN_CENTER" />
           <node class="wxStaticBitmap" class_access="protected:" var_name="m_bmpOutput" hidden="true" alignment="wxALIGN_CENTER" />
         </node>
         <node class="wxFlexGridSizer" cols="1" rows="2" var_name="flex_grid_sizer2" flags="wxEXPAND">

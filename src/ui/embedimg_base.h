@@ -8,12 +8,12 @@
 
 #include <wx/button.h>
 #include <wx/checkbox.h>
+#include <wx/choicebk.h>
 #include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/filepicker.h>
 #include <wx/gdicmn.h>
-#include <wx/radiobut.h>
 #include <wx/statbmp.h>
 #include <wx/stattext.h>
 
@@ -32,34 +32,38 @@ protected:
     wxButton* m_btnClose;
     wxButton* m_btnConvert;
     wxCheckBox* m_ConvertAlphaChannel;
-    wxCheckBox* m_ForceMask;
+    wxCheckBox* m_ForceHdrMask;
+    wxCheckBox* m_ForceXpmMask;
     wxCheckBox* m_check_c17;
     wxCheckBox* m_check_make_png;
-    wxComboBox* m_comboMask;
-    wxFilePickerCtrl* m_fileHeader;
+    wxChoicebook* m_choicebook;
+    wxComboBox* m_comboHdrMask;
+    wxComboBox* m_comboXpmMask;
     wxFilePickerCtrl* m_fileOriginal;
-    wxRadioButton* m_radio_XPM;
-    wxRadioButton* m_radio_header;
+    wxFilePickerCtrl* m_fileOutput;
     wxStaticBitmap* m_bmpOriginal;
     wxStaticBitmap* m_bmpOutput;
     wxStaticText* m_staticDescription;
     wxStaticText* m_staticDimensions;
+    wxStaticText* m_staticHdrRGB;
     wxStaticText* m_staticHeader;
     wxStaticText* m_staticOriginal;
     wxStaticText* m_staticOutput;
-    wxStaticText* m_staticRGB;
     wxStaticText* m_staticSave;
     wxStaticText* m_staticSize;
+    wxStaticText* m_staticXpmRGB;
 
     // Virtual event handlers -- override them in your derived class
 
+    virtual void OnC17Encoding(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckPngConversion(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnComboHdrMask(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnComboXpmMask(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConvert(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConvertAlpha(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnForceMask(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnHeaderOutput(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnForceHdrMask(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnForceXpmMask(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInputChange(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnMask(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOutputChange(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnXpmOutput(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
 };

@@ -18,7 +18,7 @@ void InitializeIcons();
 // Converts an image stored as an unsigned char array in a header file. It's designed to read
 // header files created by wxUiEditor -- any other generated header file might or might not
 // work.
-wxImage GetHeaderImage(ttlib::cview filename);
+wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size = nullptr, ttString* p_mime_type = nullptr);
 
 // Returns wxImage(default.xpm) if string cannot be found. Default.xpm is a question mark.
 wxImage GetXPMImage(ttlib::cview name);

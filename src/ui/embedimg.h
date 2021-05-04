@@ -17,20 +17,31 @@ public:
     EmbedImage(wxWindow* parent = nullptr);
 
 protected:
+    bool IsHeaderPage() { return (m_choicebook->GetChoiceCtrl()->GetSelection() != 1); };
+    bool IsXpmPage() { return (m_choicebook->GetChoiceCtrl()->GetSelection() == 1); };
+
+    // Call this to re-enable the convert button
+    void EnableConvertButton();
+    void SetSizeLabel();
     void AdjustOutputFilename();
 
     // Handlers for EmbedImageBase events.
 
+    void OnC17Encoding(wxCommandEvent& event) override;
     void OnCheckPngConversion(wxCommandEvent& event) override;
     void OnConvert(wxCommandEvent& event) override;
     void OnConvertAlpha(wxCommandEvent& event) override;
-    void OnForceMask(wxCommandEvent& event) override;
+    void OnForceHdrMask(wxCommandEvent& event) override;
+    void OnForceXpmMask(wxCommandEvent& event) override;
     void OnInputChange(wxFileDirPickerEvent& event) override;
-    void OnMask(wxCommandEvent& event) override;
     void OnOutputChange(wxFileDirPickerEvent& event) override;
+    void OnPageChanged(wxBookCtrlEvent& event) override;
 
-    void OnHeaderOutput(wxCommandEvent& event) override;
-    void OnXpmOutput(wxCommandEvent& event) override;
+    // if force is set, this will update src bitmap display and re-enable Convert btn
+    void OnComboHdrMask(wxCommandEvent& event) override;
+
+    // if force is set, this will update src bitmap display and re-enable Convert btn
+    void OnComboXpmMask(wxCommandEvent& event) override;
 
     void ImgageInHeaderOut();
     void ImageInXpmOut();
@@ -39,14 +50,21 @@ protected:
 
     // If current transparency is anything other than "none" or "custom" then this will set the
     // mask color in the image to the specified color.
-    wxColor GetTransparencyColor();
+    wxColor GetHdrTransparencyColor();
+
+    // If current transparency is anything other than "none" or "custom" then this will set the
+    // mask color in the image to the specified color.
+    wxColor GetXpmTransparencyColor();
 
 private:
     ttString m_cwd;
     ttString m_lastInputFile;
     ttString m_lastOutputFile;
-    wxImage m_curImage;
+    wxImage m_xpmImage;
+    wxImage m_hdrImage;
     wxImage m_orgImage;
 
-    ttString m_original_type;  // mime string specifying the original image type
+    size_t m_orginal_size;
+
+    ttString m_mime_type;  // mime string specifying the original image type
 };

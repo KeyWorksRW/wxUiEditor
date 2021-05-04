@@ -16,7 +16,7 @@
 
 #include "bitmaps.h"
 
-wxImage GetHeaderImage(ttlib::cview filename)
+wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString* p_mime_type)
 {
     wxImage image;
 
@@ -54,7 +54,7 @@ wxImage GetHeaderImage(ttlib::cview filename)
     buf_ptr = strchr(buf_ptr, '{');
     if (!buf_ptr)
     {
-        FAIL_MSG(ttlib::cstr() << filename << " does contain and opening brace");
+        FAIL_MSG(ttlib::cstr() << filename << " doesn't contain an opening brace");
         return image;
     }
 
@@ -121,8 +121,26 @@ wxImage GetHeaderImage(ttlib::cview filename)
         ++buf_ptr;
     } while (*buf_ptr);
 
-    wxMemoryInputStream strm(image_buffer.get(), actual_size);
-    image.LoadFile(strm);
+    wxMemoryInputStream stream(image_buffer.get(), actual_size);
+
+    wxImageHandler* handler;
+    auto& list = wxImage::GetHandlers();
+    for (auto node = list.GetFirst(); node; node = node->GetNext())
+    {
+        handler = (wxImageHandler*) node->GetData();
+        if (handler->CanRead(stream))
+        {
+            if (handler->LoadFile(&image, stream))
+            {
+                if (p_original_size)
+                    *p_original_size = actual_size;
+                if (p_mime_type)
+                    *p_mime_type = handler->GetMimeType();
+
+                return image;
+            }
+        }
+    }
 
     return image;
 }

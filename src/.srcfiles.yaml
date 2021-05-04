@@ -172,21 +172,39 @@ GZIP:
     xml/sizers.xml: xml/sizers.hgz
     xml/widgets.xml: xml/widgets.hgz
 
+PNG:
+    art_src/alignbottom.png: xpm/alignbottom_png.hxx
+    art_src/aligncenter.png: xpm/aligncenter_png.hxx
+    art_src/alignleft.png: xpm/alignleft_png.hxx
+    art_src/alignright.png: xpm/alignright_png.hxx
+    art_src/aligntop.png: xpm/aligntop_png.hxx
+    art_src/alignvertcenter.png: xpm/alignvertcenter_png.hxx
+
+    art_src/nav_movedown.png: xpm/nav_movedown_png.hxx
+    art_src/nav_moveleft.png: xpm/nav_moveleft_png.hxx
+    art_src/nav_moveright.png: xpm/nav_moveright_png.hxx
+    art_src/nav_moveup.png: xpm/nav_moveup_png.hxx
+    art_src/save.png: xpm/save_png.hxx
+
+
 XPM:
     art_src/nav_coll_expand.png: xpm/nav_coll_expand.xpm
     art_src/nav_collapse.png: xpm/nav_collapse.xpm
     art_src/nav_expand.png: xpm/nav_expand.xpm
-    art_src/nav_movedown.png: xpm/nav_movedown.xpm
-    art_src/nav_moveleft.png: xpm/nav_moveleft.xpm
-    art_src/nav_moveright.png: xpm/nav_moveright.xpm
-    art_src/nav_moveup.png: xpm/nav_moveup.xpm
+    art_src/save.png: xpm/save.xpm
 
-    art_src/alignbottom.png: xpm/alignbottom.xpm
-    art_src/aligncenter.png: xpm/aligncenter.xpm
-    art_src/alignleft.png: xpm/alignleft.xpm
-    art_src/alignright.png: xpm/alignright.xpm
-    art_src/aligntop.png: xpm/aligntop.xpm
-    art_src/alignvertcenter.png: xpm/alignvertcenter.xpm
+    # art_src/nav_movedown.png: xpm/nav_movedown.xpm
+    # art_src/nav_moveleft.png: xpm/nav_moveleft.xpm
+    # art_src/nav_moveright.png: xpm/nav_moveright.xpm
+    # art_src/nav_moveup.png: xpm/nav_moveup.xpm
+
+    # art_src/alignbottom.png: xpm/alignbottom.xpm
+    # art_src/aligncenter.png: xpm/aligncenter.xpm
+    # art_src/alignleft.png: xpm/alignleft.xpm
+    # art_src/alignright.png: xpm/alignright.xpm
+    # art_src/aligntop.png: xpm/aligntop.xpm
+    # art_src/alignvertcenter.png: xpm/alignvertcenter.xpm
+
     art_src/auinotebook.png: xpm/auinotebook.xpm
     art_src/auitoolbar.png: xpm/auitoolbar.xpm
     art_src/bitmap_button.png: xpm/bitmap_button.xpm
@@ -258,7 +276,6 @@ XPM:
     art_src/ribbon_panel.png: xpm/ribbon_panel.xpm
     art_src/richtextctrl.png: xpm/richtextctrl.xpm
     art_src/right.png: xpm/right.xpm
-    art_src/save.png: xpm/save.xpm
     art_src/scintilla.png: xpm/scintilla.xpm
     art_src/scrollbar.png: xpm/scrollbar.xpm
     art_src/search.png: xpm/search.xpm

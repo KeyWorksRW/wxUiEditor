@@ -48,7 +48,6 @@ public:
         id_NewProject,
         id_OpenProject,
         id_OptionsDlg,
-        id_SaveProject,
         id_SaveProjectAs,
         id_ShowHidden,
         id_insert_widget

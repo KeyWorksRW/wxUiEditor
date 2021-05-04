@@ -16,6 +16,11 @@
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"         // Utility functions that work with properties
 
+#include "../xpm/nav_movedown_png.hxx"
+#include "../xpm/nav_moveleft_png.hxx"
+#include "../xpm/nav_moveright_png.hxx"
+#include "../xpm/nav_moveup_png.hxx"
+
 // clang-format off
 static const auto lstBarGenerators = {
 
@@ -110,10 +115,14 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
     AppendSeparator();
 
     auto sub_menu = new wxMenu;
-    sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
-    sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
-    sub_menu->Append(MenuMOVE_LEFT, "Left\tAlt+Left", "Moves selected item left");
-    sub_menu->Append(MenuMOVE_RIGHT, "Right\tAlt+Right", "Moves selected item right");
+    auto menuItem = sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
+    menuItem->SetBitmap(LoadPngHdrImage(nav_moveup_png, sizeof(nav_moveup_png)));
+    menuItem = sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
+    menuItem->SetBitmap(LoadPngHdrImage(nav_movedown_png, sizeof(nav_movedown_png)));
+    menuItem = sub_menu->Append(MenuMOVE_LEFT, "Left\tAlt+Left", "Moves selected item left");
+    menuItem->SetBitmap(LoadPngHdrImage(nav_moveleft_png, sizeof(nav_moveleft_png)));
+    menuItem = sub_menu->Append(MenuMOVE_RIGHT, "Right\tAlt+Right", "Moves selected item right");
+    menuItem->SetBitmap(LoadPngHdrImage(nav_moveright_png, sizeof(nav_moveright_png)));
     AppendSubMenu(sub_menu, "Move");
 
     sub_menu = new wxMenu;

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Contains various images handling functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -93,10 +93,15 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
     unsigned char* ptr_out_buf = image_buffer.get();
 
+    // TODO: [KeyWorks - 05-04-2021] Issue #191 is going to be harder to implement if we use the regular code for parsing
+    // wxFormBuilder files since they use hex digits and spaces. It should be safe to assume that if no array size was
+    // specified, then it's a wxFormBuilder file and we should process it differently.
+
     do
     {
         if (ttlib::is_digit(*buf_ptr))
         {
+            // TODO: [KeyWorks - 05-04-2021] The needs a complete rewrite -- see issue #191
             ptr_out_buf[actual_size] = static_cast<unsigned char>(ttlib::atoi(buf_ptr));
 
             if (++actual_size > image_buffer_size)

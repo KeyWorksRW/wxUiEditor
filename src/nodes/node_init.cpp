@@ -9,7 +9,7 @@
 
 #include "node_creator.h"
 
-#include "bitmaps.h"     // Map of bitmaps accessed by name
+#include "bitmaps.h"     // Contains various images handling functions
 #include "gen_enums.h"   // Enumerations for generators
 #include "gen_enums.h"   // Enumerations for nodes
 #include "node.h"        // Node class

@@ -14,7 +14,7 @@
 
 #include <unordered_map>
 
-#include "bitmaps.h"  // Map of bitmaps accessed by name
+#include "bitmaps.h"  // Contains various images handling functions
 
 // default.xpm -- 16x16, transparent with double question marks
 // unkown.xpm  -- 32x32, transparent with double question marks

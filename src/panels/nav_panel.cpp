@@ -14,7 +14,7 @@
 
 #include "nav_panel.h"
 
-#include "bitmaps.h"       // Map of bitmaps accessed by name
+#include "bitmaps.h"       // Contains various images handling functions
 #include "cstm_event.h"    // CustomEvent -- Custom Event class
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "navpopupmenu.h"  // NavPopupMenu -- Context-menu for an item

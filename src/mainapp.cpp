@@ -17,6 +17,7 @@
 #include "mainapp.h"
 
 #include "appoptions.h"    // AppOptions -- Application-wide options
+#include "bitmaps.h"       // Contains various images handling functions
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node.h"          // Node -- Node class
 #include "node_creator.h"  // NodeCreator class
@@ -218,9 +219,9 @@ int App::OnRun()
             return wxApp::OnRun();
         }
 
-        auto answer =
-            appMsgBox(ttlib::cstr() << _tt(strIdCannotLoadProjectFile) << projectFile << "\n\nDo you want to create an empty project?",
-                      _tt(strIdTitleLoadProject), wxYES_NO);
+        auto answer = appMsgBox(ttlib::cstr() << _tt(strIdCannotLoadProjectFile) << projectFile
+                                              << "\n\nDo you want to create an empty project?",
+                                _tt(strIdTitleLoadProject), wxYES_NO);
         if (answer != wxYES)
         {
             m_frame->Close();
@@ -258,6 +259,14 @@ int App::OnExit()
     delete m_pjtSettings;
 
     return wxApp::OnExit();
+}
+
+wxImage App::GetImage(const ttlib::cstr& description)
+{
+    if (description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") || description.is_sameprefix("Art;"))
+        return m_pjtSettings->GetPropertyBitmap(description);
+    else
+        return GetXPMImage("unknown");
 }
 
 #if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
@@ -338,16 +347,6 @@ void App::OnFatalException()
 }
 
 #endif
-
-wxImage App::GetImage(ttlib::cstr filename)
-{
-    if (filename.is_sameprefix("XPM") || filename.is_sameprefix("Header") || filename.is_sameprefix("Art;"))
-        return m_pjtSettings->GetPropertyBitmap(filename);
-    else if (filename.is_sameprefix("HDR"))
-        return m_pjtSettings->GetHdrImage(filename);
-    else
-        return m_pjtSettings->GetImage(filename);
-}
 
 #if defined(_DEBUG)
 

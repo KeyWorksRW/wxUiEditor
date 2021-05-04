@@ -51,7 +51,7 @@ public:
     ttString GetProjectFileName();
     ttString GetProjectPath();
 
-    wxImage GetImage(ttlib::cstr filename);
+    wxImage GetImage(const ttlib::cstr& description);
 
     ProjectSettings* GetProjectSettings() { return m_pjtSettings; };
 

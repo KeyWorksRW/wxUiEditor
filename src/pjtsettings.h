@@ -29,12 +29,9 @@ public:
     ttlib::cstr& getProjectPath() { return m_projectPath; }
     ttString GetProjectPath() { return ttString() << m_projectPath.wx_str(); }
 
+    // This takes the full bitmap property description and uses that to determine the image
+    // to load. The image is cached for as long as the project is open.
     wxImage GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled = true);
-
-    wxImage GetImage(const ttlib::cstr& file);
-
-    // Get image from HDR source file property
-    wxImage GetHdrImage(const ttlib::cstr& description);
 
 private:
     ttlib::cstr m_projectFile;

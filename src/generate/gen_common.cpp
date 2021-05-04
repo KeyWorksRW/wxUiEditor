@@ -608,7 +608,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
                 auto scale_size = ConvertToSize(parts[IndexSize]);
                 if (scale_size.x != -1 || scale_size.y != -1)
                 {
-                    auto bmp = wxGetApp().GetImage(parts[IndexImage]);
+                    auto bmp = wxGetApp().GetImage(description);
                     auto original_size = bmp.GetSize();
                     if (scale_size.x != -1)
                         original_size.x = scale_size.x;

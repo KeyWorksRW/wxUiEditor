@@ -32,6 +32,7 @@
 #include "../xpm/nav_moveright_png.hxx"
 #include "../xpm/nav_moveup_png.hxx"
 #include "../xpm/right.xpm"
+#include "../xpm/save_png.hxx"
 #include "../xpm/top.xpm"
 
 #include <wx/mstream.h>  // Memory stream classes
@@ -72,7 +73,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item = new wxMenuItem(m_menuFile, wxID_SAVE, wxString::FromUTF8("&Save\tCtrl+S"),
     wxString::FromUTF8("Save current project"), wxITEM_NORMAL);
-    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_MENU));
+    menu_item->SetBitmap(GetImgFromHdr(save_png, sizeof(save_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuFile->Append(menu_item);
 
     auto menu_item2 = new wxMenuItem(m_menuFile, id_SaveProjectAs, wxString::FromUTF8("Save &As...\tCtrl-Shift+S"),
@@ -275,7 +276,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_toolbar->AddTool(id_OpenProject, wxString::FromUTF8("Open"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR),
     wxString::FromUTF8("Open Project (Ctrl+O)"));
 
-    m_toolbar->AddTool(wxID_SAVE, wxString::FromUTF8("Save"), wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_TOOLBAR),
+    m_toolbar->AddTool(wxID_SAVE, wxString::FromUTF8("Save"), GetImgFromHdr(save_png, sizeof(save_png)),
     wxString::FromUTF8("Save current project"));
 
     m_toolbar->AddTool(id_GenerateCode, wxEmptyString, wxImage(generate_xpm),

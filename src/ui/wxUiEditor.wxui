@@ -8,7 +8,7 @@
           <node class="wxMenuItem" bitmap="Art; wxART_FILE_OPEN; wxART_MENU; [-1; -1]" help="Open a project" id="id_OpenProject" label="&amp;Open Project...&#09;Ctrl+O" var_name="menuItem2" wxEVT_MENU="OnOpenProject" />
           <node class="submenu" class_access="protected:" label="Open &amp;Recent" var_name="m_submenu_recent" />
           <node class="separator" />
-          <node class="wxMenuItem" bitmap="Art; wxART_FILE_SAVE; wxART_MENU; [-1; -1]" help="Save current project" id="wxID_SAVE" label="&amp;Save&#09;Ctrl+S" wxEVT_MENU="OnSaveProject" wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event) { event.Enable(wxGetFrame().IsModified()); }" />
+          <node class="wxMenuItem" bitmap="Header; ..\xpm\save_png.hxx; ; [16; 16]" help="Save current project" id="wxID_SAVE" label="&amp;Save&#09;Ctrl+S" wxEVT_MENU="OnSaveProject" wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event) { event.Enable(wxGetFrame().IsModified()); }" />
           <node class="wxMenuItem" bitmap="Art; wxART_FILE_SAVE_AS; wxART_MENU; [-1; -1]" help="Save current project to a different filename" id="id_SaveProjectAs" label="Save &amp;As...&#09;Ctrl-Shift+S" var_name="menu_item2" wxEVT_MENU="OnSaveAsProject" />
           <node class="separator" var_name="separator2" />
           <node class="submenu" label="&amp;Append">
@@ -70,7 +70,7 @@
       <node class="wxToolBar" style="wxTB_FLAT|wxTB_HORIZONTAL" var_name="m_toolbar">
         <node class="tool" bitmap="Art; wxART_NEW; wxART_TOOLBAR; [-1; -1]" id="id_NewProject" label="New" tooltip="New Project (Ctrl+N)" />
         <node class="tool" bitmap="Art; wxART_FILE_OPEN; wxART_TOOLBAR; [-1; -1]" id="id_OpenProject" label="Open" tooltip="Open Project (Ctrl+O)" var_name="tool2" />
-        <node class="tool" bitmap="Art; wxART_FILE_SAVE; wxART_TOOLBAR; [-1; -1]" id="wxID_SAVE" label="Save" tooltip="Save current project" var_name="tool3" />
+        <node class="tool" bitmap="Header; ..\xpm\save_png.hxx; ; [-1; -1]" id="wxID_SAVE" label="Save" tooltip="Save current project" var_name="tool3" />
         <node class="tool" bitmap="XPM; ..\xpm\generate.xpm; ; [-1; -1]" id="id_GenerateCode" label="" tooltip="Generate base class code" var_name="Generate" wxEVT_TOOL="OnGenerateCode" />
         <node class="toolSeparator" />
         <node class="tool" bitmap="Art; wxART_UNDO; wxART_TOOLBAR; [-1; -1]" id="wxID_UNDO" label="" tooltip="Undo" var_name="Undo" />

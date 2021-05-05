@@ -9,17 +9,13 @@
 
 #include "navpopupmenu.h"  // NavPopupMenu
 
+#include "bitmaps.h"       // Contains various images handling functions
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"         // Utility functions that work with properties
-
-#include "../xpm/nav_movedown_png.hxx"
-#include "../xpm/nav_moveleft_png.hxx"
-#include "../xpm/nav_moveright_png.hxx"
-#include "../xpm/nav_moveup_png.hxx"
 
 // clang-format off
 static const auto lstBarGenerators = {
@@ -106,6 +102,7 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         return;
     }
 
+    wxMenuItem* menu_item;
     Append(MenuCUT, "Cut\tCtrl+X");
     Append(MenuCOPY, "Copy\tCtrl+C");
     Append(MenuPASTE, "Paste\tCtrl+V");
@@ -115,14 +112,14 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
     AppendSeparator();
 
     auto sub_menu = new wxMenu;
-    auto menuItem = sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
-    menuItem->SetBitmap(LoadPngHdrImage(nav_moveup_png, sizeof(nav_moveup_png)));
-    menuItem = sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
-    menuItem->SetBitmap(LoadPngHdrImage(nav_movedown_png, sizeof(nav_movedown_png)));
-    menuItem = sub_menu->Append(MenuMOVE_LEFT, "Left\tAlt+Left", "Moves selected item left");
-    menuItem->SetBitmap(LoadPngHdrImage(nav_moveleft_png, sizeof(nav_moveleft_png)));
-    menuItem = sub_menu->Append(MenuMOVE_RIGHT, "Right\tAlt+Right", "Moves selected item right");
-    menuItem->SetBitmap(LoadPngHdrImage(nav_moveright_png, sizeof(nav_moveright_png)));
+    menu_item = sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
+    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
+    menu_item = sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
+    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
+    menu_item = sub_menu->Append(MenuMOVE_LEFT, "Left\tAlt+Left", "Moves selected item left");
+    menu_item->SetBitmap(GetInternalImage("nav_moveleft"));
+    menu_item = sub_menu->Append(MenuMOVE_RIGHT, "Right\tAlt+Right", "Moves selected item right");
+    menu_item->SetBitmap(GetInternalImage("nav_moveright"));
     AppendSubMenu(sub_menu, "Move");
 
     sub_menu = new wxMenu;
@@ -147,24 +144,34 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
             Append(MenuNEW_SIBLING_SPACER, "Add spacer");
 #endif
         sub_menu = new wxMenu;
-        sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-        sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
-        sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
-        sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
-        sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
-        sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
+        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
+        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
 
         AppendSubMenu(sub_menu, "Add child sizer");
 
         sub_menu = new wxMenu;
-        sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
-        sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
-        sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
-        sub_menu->Append(MenuNEW_SIBLING_GRID_SIZER, "wxGridSizer");
-        sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
-        sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
+        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_GRID_SIZER, "wxGridSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
+        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
 
         AppendSubMenu(sub_menu, "Add sibling sizer");
     }
@@ -173,24 +180,35 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         Append(MenuNEW_CHILD_SPACER, "Add spacer");
 
         sub_menu = new wxMenu;
-        sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-        sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
-        sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
-        sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
-        sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
-        sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
+        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
+        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
 
         AppendSubMenu(sub_menu, "Add sizer");
     }
 
     sub_menu = new wxMenu;
-    sub_menu->Append(MenuNEW_PARENT_BOX_SIZER, "wxBoxSizer");
-    sub_menu->Append(MenuNEW_PARENT_STATIC_SIZER, "wxStaticBoxSizer");
-    sub_menu->Append(MenuNEW_PARENT_WRAP_SIZER, "wxWrapSizer");
-    sub_menu->Append(MenuNEW_PARENT_GRID_SIZER, "wxGridSizer");
-    sub_menu->Append(MenuNEW_PARENT_FLEX_GRID_SIZER, "wxFlexGridSizer");
-    sub_menu->Append(MenuNEW_PARENT_GRIDBAG_SIZER, "wxGridBagSizer");
+    menu_item = sub_menu->Append(MenuNEW_PARENT_BOX_SIZER, "wxBoxSizer");
+    menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+    menu_item = sub_menu->Append(MenuNEW_PARENT_STATIC_SIZER, "wxStaticBoxSizer");
+    menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+    menu_item = sub_menu->Append(MenuNEW_PARENT_WRAP_SIZER, "wxWrapSizer");
+    menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+    menu_item = sub_menu->Append(MenuNEW_PARENT_GRID_SIZER, "wxGridSizer");
+    menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+    menu_item = sub_menu->Append(MenuNEW_PARENT_FLEX_GRID_SIZER, "wxFlexGridSizer");
+    menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+    menu_item = sub_menu->Append(MenuNEW_PARENT_GRIDBAG_SIZER, "wxGridBagSizer");
+    menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
 
     AppendSubMenu(sub_menu, "&Move into new sizer");
 
@@ -623,8 +641,11 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
     AppendSeparator();
 
     auto sub_menu = new wxMenu;
-    sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
-    sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
+    wxMenuItem* menu_item;
+    menu_item = sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
+    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
+    menu_item = sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
+    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
     AppendSubMenu(sub_menu, "Move");
 
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
@@ -635,12 +656,18 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
         if (!node->GetChildCount())
         {
             sub_menu = new wxMenu;
-            sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-            sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
-            sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
-            sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
-            sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
-            sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+            menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
+            menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+            menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
+            menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+            menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
+            menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+            menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
+            menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+            menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
+            menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+            menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+            menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
             AppendSubMenu(sub_menu, "Add sizer");
         }
         Append(MenuADD_PAGE, "Add Page\tCtrl+P");
@@ -663,16 +690,23 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
 
         AppendSeparator();
         sub_menu = new wxMenu;
-        sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
-        sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
-        sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
-        sub_menu->Append(MenuNEW_SIBLING_GRID_SIZER, "wxGridSizer");
-        sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
+        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_GRID_SIZER, "wxGridSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
+        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
         if (node->isGen(gen_wxDialog))
         {
             sub_menu->AppendSeparator();
-            sub_menu->Append(MenuNEW_SIBLING_STD_DIALG_BTNS, "wxStdDialogButtonSizer");
+            menu_item = sub_menu->Append(MenuNEW_SIBLING_STD_DIALG_BTNS, "wxStdDialogButtonSizer");
+            menu_item->SetBitmap(GetInternalImage("stddialogbuttonsizer"));
         }
         AppendSubMenu(sub_menu, "&Add new sizer");
 
@@ -694,12 +728,18 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
     else if (node->isGen(gen_wxWizardPageSimple))
     {
         sub_menu = new wxMenu;
-        sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-        sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
-        sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
-        sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
-        sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
+        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
+        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
         AppendSubMenu(sub_menu, "Add sizer");
 
         Append(MenuADD_PAGE, "Add Page\tCtrl+P");
@@ -726,17 +766,25 @@ void NavPopupMenu::CreateTopSizerMenu(Node* node)
     m_child = node;
 
     auto sub_menu = new wxMenu;
-    sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
-    sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
-    sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
-    sub_menu->Append(MenuNEW_SIBLING_GRID_SIZER, "wxGridSizer");
-    sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
-    sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
+    wxMenuItem* menu_item;
+    menu_item = sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
+    menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+    menu_item = sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
+    menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+    menu_item = sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
+    menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+    menu_item = sub_menu->Append(MenuNEW_SIBLING_GRID_SIZER, "wxGridSizer");
+    menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+    menu_item = sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
+    menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+    menu_item = sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
+    menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
 
     if (node->GetParent()->isGen(gen_wxDialog))
     {
         sub_menu->AppendSeparator();
-        sub_menu->Append(MenuNEW_SIBLING_STD_DIALG_BTNS, "wxStdDialogButtonSizer");
+        menu_item = sub_menu->Append(MenuNEW_SIBLING_STD_DIALG_BTNS, "wxStdDialogButtonSizer");
+        menu_item->SetBitmap(GetInternalImage("stddialogbuttonsizer"));
     }
     AppendSubMenu(sub_menu, "&Add new sizer");
 
@@ -747,14 +795,18 @@ void NavPopupMenu::CreateTopSizerMenu(Node* node)
 
 void NavPopupMenu::CreateMenuMenu(Node* node)
 {
+    wxMenuItem* menu_item;
+
     Append(MenuCUT, "Cut\tCtrl+X");
     Append(MenuCOPY, "Copy\tCtrl+C");
     Append(MenuPASTE, "Paste\tCtrl+V");
     Append(MenuDELETE, "Delete\tCtrl+D");
 
     AppendSeparator();
-    Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
-    Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
+    menu_item = Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
+    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
+    menu_item = Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
+    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
 
     AppendSeparator();
     Append(MenuADD_MENUITEM, "Add Menu &Item\tCtrl+I");
@@ -770,7 +822,7 @@ void NavPopupMenu::CreateMenuMenu(Node* node)
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&) {
-            wxGetFrame().CreateToolNode("wxMenuItem");
+            wxGetFrame().CreateToolNode("wxmenu_item");
             ;
             ;
         },

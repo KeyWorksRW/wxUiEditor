@@ -6,9 +6,12 @@
 
 #pragma once
 
+#include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/menu.h>
 #include <wx/textctrl.h>
 

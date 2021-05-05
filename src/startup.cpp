@@ -56,9 +56,7 @@ private:
 
 CStartup::CStartup() : wxDialog(nullptr, wxID_ANY, txtAppname, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-    wxIcon appIcon;
-    appIcon.CopyFromBitmap(GetXPMImage("logo32"));
-    SetIcon(appIcon);
+    SetIcon(GetIconImage("logo32"));
 
     auto sizer = new wxBoxSizer(wxVERTICAL);
     auto htmlWindow = new CStartupHtmlWindow(this);

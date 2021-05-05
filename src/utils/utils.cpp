@@ -2,7 +2,7 @@
 // Purpose:   Utility functions that work with properties
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../LICENSE
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "pch.h"
@@ -10,6 +10,7 @@
 #include <array>
 #include <charconv>
 
+#include <wx/gdicmn.h>   // Common GDI classes, types and declarations
 #include <wx/mstream.h>  // Memory stream classes
 
 #include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
@@ -251,7 +252,7 @@ ttlib::cstr ConvertSystemColourToString(long colour)
 
 wxSystemColour ConvertToSystemColour(ttlib::cview value)
 {
-// clang-format off
+    // clang-format off
     #define IS_SYSCOLOUR(name) if (value.is_sameas(#name)) return name;
     #define ELSE_IS_SYSCOLOUR(name) else if (value.is_sameas(#name)) return name;
 
@@ -499,11 +500,3 @@ ttlib::cstr ConvertToCodeString(ttlib::cview text)
     }
     return result;
 }
-
-wxImage LoadPngHdrImage(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxImage image;
-    image.LoadFile(strm);
-    return image;
-};

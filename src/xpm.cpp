@@ -15,289 +15,328 @@
 #include <unordered_map>
 
 #include "bitmaps.h"  // Contains various images handling functions
+#include "utils.h"    // Utility functions that work with properties
 
-// default.xpm -- 16x16, transparent with double question marks
-// unkown.xpm  -- 32x32, transparent with double question marks
+#include "art_headers/default_png.hxx"
+#include "art_headers/unknown_png.hxx"
 
-#include "xpm/nav_coll_expand.xpm"
-#include "xpm/nav_collapse.xpm"
-#include "xpm/nav_expand.xpm"
-#include "xpm/nav_movedown.xpm"
-#include "xpm/nav_moveleft.xpm"
-#include "xpm/nav_moveright.xpm"
-#include "xpm/nav_moveup.xpm"
+#include "art_headers/nav_coll_expand_png.hxx"
+#include "art_headers/nav_collapse_png.hxx"
+#include "art_headers/nav_expand_png.hxx"
+#include "art_headers/nav_movedown_png.hxx"
+#include "art_headers/nav_moveleft_png.hxx"
+#include "art_headers/nav_moveright_png.hxx"
+#include "art_headers/nav_moveup_png.hxx"
 
-#include "xpm/auinotebook.xpm"
-#include "xpm/auitoolbar.xpm"
-#include "xpm/bitmap_button.xpm"
-#include "xpm/bitmap_toggle_button.xpm"
-#include "xpm/bmp_combo_box.xpm"
-#include "xpm/book_page.xpm"
-#include "xpm/bottom.xpm"
-#include "xpm/calendar.xpm"
-#include "xpm/check3state.xpm"
-#include "xpm/colourPickerIcon.xpm"
-#include "xpm/dataview_ctrl.xpm"
-#include "xpm/dataviewlist_column.xpm"
-#include "xpm/dataviewlist_ctrl.xpm"
-#include "xpm/dataviewtree_ctrl.xpm"
-#include "xpm/datepicker.xpm"
-#include "xpm/default.xpm"
-#include "xpm/dirPicker.xpm"
-#include "xpm/doc_mdi_parent_frame.xpm"
-#include "xpm/doc_parent_frame.xpm"
-#include "xpm/document.xpm"
-#include "xpm/filePicker.xpm"
-#include "xpm/flex_grid_sizer.xpm"
-#include "xpm/fontPicker.xpm"
-#include "xpm/gauge.xpm"
-#include "xpm/generate.xpm"
-#include "xpm/genericdir_ctrl.xpm"
-#include "xpm/grid.xpm"
-#include "xpm/grid_bag_sizer.xpm"
-#include "xpm/grid_sizer.xpm"
-#include "xpm/hidden.xpm"
-#include "xpm/htmlwin.xpm"
-#include "xpm/hyperlink_ctrl.xpm"
-#include "xpm/infobar.xpm"
-#include "xpm/left.xpm"
-#include "xpm/wxActivityIndicator.xpm"
-#include "xpm/wxBannerWindow.xpm"
-#include "xpm/wxButton.xpm"
-#include "xpm/wxCheckBox.xpm"
-#include "xpm/wxCheckListBox.xpm"
-#include "xpm/wxChoice.xpm"
-#include "xpm/wxChoicebook.xpm"
-#include "xpm/wxCollapsiblePane.xpm"
-#include "xpm/wxComboBox.xpm"
-#include "xpm/wxCommandLinkButton.xpm"
-#include "xpm/wxDialog.xpm"
-#include "xpm/wxFileCtrl.xpm"
-#include "xpm/wxFrame.xpm"
-#include "xpm/wxPopupTransientWindow.xpm"
-#include "xpm/wxListBox.xpm"
-#include "xpm/wxListView.xpm"
-#include "xpm/wxListbook.xpm"
+#include "art_headers/flex_grid_sizer_png.hxx"
+#include "art_headers/grid_bag_sizer_png.hxx"
+#include "art_headers/grid_sizer_png.hxx"
+#include "art_headers/sizer_horizontal_png.hxx"
+#include "art_headers/sizer_png.hxx"
+#include "art_headers/slider_png.hxx"
+#include "art_headers/spacer_png.hxx"
+#include "art_headers/stddialogbuttonsizer_png.hxx"
+#include "art_headers/text_sizer_png.hxx"
+#include "art_headers/wrap_sizer_png.hxx"
+#include "art_headers/wxStaticBoxSizer_png.hxx"
+#include "art_headers/wxStaticCheckBoxSizer_png.hxx"
+#include "art_headers/wxStaticRadioBtnSizer_png.hxx"
+
+#include "art_headers/auinotebook_png.hxx"
+#include "art_headers/auitoolbar_png.hxx"
+#include "art_headers/bitmap_button_png.hxx"
+#include "art_headers/bitmap_toggle_button_png.hxx"
+#include "art_headers/bmp_combo_box_png.hxx"
+#include "art_headers/book_page_png.hxx"
+#include "art_headers/calendar_png.hxx"
+#include "art_headers/check3state_png.hxx"
+#include "art_headers/colourPickerIcon_png.hxx"
+#include "art_headers/dataview_ctrl_png.hxx"
+#include "art_headers/dataviewlist_column_png.hxx"
+#include "art_headers/dataviewlist_ctrl_png.hxx"
+#include "art_headers/dataviewtree_ctrl_png.hxx"
+#include "art_headers/datepicker_png.hxx"
+#include "art_headers/dirPicker_png.hxx"
+#include "art_headers/doc_mdi_parent_frame_png.hxx"
+#include "art_headers/doc_parent_frame_png.hxx"
+#include "art_headers/document_png.hxx"
+#include "art_headers/empty_png.hxx"
+#include "art_headers/filePicker_png.hxx"
+#include "art_headers/fontPicker_png.hxx"
+#include "art_headers/gauge_png.hxx"
+#include "art_headers/genericdir_ctrl_png.hxx"
+#include "art_headers/grid_png.hxx"
+#include "art_headers/htmlwin_png.hxx"
+#include "art_headers/hyperlink_ctrl_png.hxx"
+#include "art_headers/infobar_png.hxx"
+#include "art_headers/menu_png.hxx"
+#include "art_headers/menuitem_png.hxx"
+#include "art_headers/moveColLeft_png.hxx"
+#include "art_headers/moveColRight_png.hxx"
+#include "art_headers/moveRowDown_png.hxx"
+#include "art_headers/moveRowUp_png.hxx"
+#include "art_headers/project_png.hxx"
+#include "art_headers/propgriditem_png.hxx"
+#include "art_headers/propgridpage_png.hxx"
+#include "art_headers/radio_box_png.hxx"
+#include "art_headers/ribbon_bar_png.hxx"
+#include "art_headers/ribbon_button_dropdown_png.hxx"
+#include "art_headers/ribbon_button_hybrid_png.hxx"
+#include "art_headers/ribbon_button_png.hxx"
+#include "art_headers/ribbon_button_toggle_png.hxx"
+#include "art_headers/ribbon_buttonbar_png.hxx"
+#include "art_headers/ribbon_gallery_item_png.hxx"
+#include "art_headers/ribbon_gallery_png.hxx"
+#include "art_headers/ribbon_page_png.hxx"
+#include "art_headers/ribbon_panel_png.hxx"
+#include "art_headers/richtextctrl_png.hxx"
+#include "art_headers/scintilla_png.hxx"
+#include "art_headers/scrollbar_png.hxx"
+#include "art_headers/search_png.hxx"
+#include "art_headers/separator_png.hxx"
+#include "art_headers/spin_ctrl_double_png.hxx"
+#include "art_headers/spin_ctrl_png.hxx"
+#include "art_headers/spinbtn_png.hxx"
+#include "art_headers/static_bitmap_png.hxx"
+#include "art_headers/static_line_png.hxx"
+#include "art_headers/statusbar_png.hxx"
+#include "art_headers/submenu_png.hxx"
+#include "art_headers/timepicker_png.hxx"
+#include "art_headers/timer_png.hxx"
+#include "art_headers/title_close_png.hxx"
+#include "art_headers/toggle_button_png.hxx"
+#include "art_headers/tool_png.hxx"
+#include "art_headers/toolseparator_png.hxx"
+#include "art_headers/tree_ctrl_png.hxx"
+#include "art_headers/treelistctrl_png.hxx"
+#include "art_headers/treelistctrlcolumn_png.hxx"
+#include "art_headers/wxActivityIndicator_png.hxx"
+#include "art_headers/wxBannerWindow_png.hxx"
+#include "art_headers/wxButton_png.hxx"
+#include "art_headers/wxCheckBox_png.hxx"
+#include "art_headers/wxCheckListBox_png.hxx"
+#include "art_headers/wxChoice_png.hxx"
+#include "art_headers/wxChoicebook_png.hxx"
+#include "art_headers/wxCollapsiblePane_png.hxx"
+#include "art_headers/wxComboBox_png.hxx"
+#include "art_headers/wxCommandLinkButton_png.hxx"
+#include "art_headers/wxDialog_png.hxx"
+#include "art_headers/wxFileCtrl_png.hxx"
+#include "art_headers/wxFrame_png.hxx"
+#include "art_headers/wxListBox_png.hxx"
+#include "art_headers/wxListView_png.hxx"
+#include "art_headers/wxListbook_png.hxx"
+#include "art_headers/wxMenuBar_png.hxx"
+#include "art_headers/wxNotebook_png.hxx"
+#include "art_headers/wxPanel_png.hxx"
+#include "art_headers/wxPopupTransientWindow_png.hxx"
+#include "art_headers/wxPropertyGridManager_png.hxx"
+#include "art_headers/wxPropertyGrid_png.hxx"
+#include "art_headers/wxRadioButton_png.hxx"
+#include "art_headers/wxRearrangeCtrl_png.hxx"
+#include "art_headers/wxScrolledWindow_png.hxx"
+#include "art_headers/wxSimpleHtmlListBox_png.hxx"
+#include "art_headers/wxSimplebook_png.hxx"
+#include "art_headers/wxSplitterWindow_png.hxx"
+#include "art_headers/wxStaticText_png.hxx"
+#include "art_headers/wxTextCtrl_png.hxx"
+#include "art_headers/wxToolBar_png.hxx"
+#include "art_headers/wxToolbook_png.hxx"
+#include "art_headers/wxTreebook_png.hxx"
+#include "art_headers/wxWizardPageSimple_png.hxx"
+#include "art_headers/wxWizard_png.hxx"
+
 #if defined(_DEBUG)
-    #include "xpm/debug_16.xpm"
-    #include "xpm/debug_32.xpm"
+    #include "art_headers/debug_16_png.hxx"
+    #include "art_headers/debug_32_png.hxx"
 #else
-    #include "xpm/logo16.xpm"
-    #include "xpm/logo32.xpm"
+    #include "art_headers/logo16_png.hxx"
+    #include "art_headers/logo32_png.hxx"
 #endif  // _DEBUG
-#include "xpm/menu.xpm"
-#include "xpm/menuitem.xpm"
-#include "xpm/moveColLeft.xpm"
-#include "xpm/moveColRight.xpm"
-#include "xpm/moveRowDown.xpm"
-#include "xpm/moveRowUp.xpm"
-#include "xpm/project.xpm"
-#include "xpm/propgriditem.xpm"
-#include "xpm/propgridpage.xpm"
-#include "xpm/radio_box.xpm"
-#include "xpm/ribbon_bar.xpm"
-#include "xpm/ribbon_button.xpm"
-#include "xpm/ribbon_button_dropdown.xpm"
-#include "xpm/ribbon_button_hybrid.xpm"
-#include "xpm/ribbon_button_toggle.xpm"
-#include "xpm/ribbon_buttonbar.xpm"
-#include "xpm/ribbon_gallery.xpm"
-#include "xpm/ribbon_gallery_item.xpm"
-#include "xpm/ribbon_page.xpm"
-#include "xpm/ribbon_panel.xpm"
-#include "xpm/richtextctrl.xpm"
-#include "xpm/scintilla.xpm"
-#include "xpm/scrollbar.xpm"
-#include "xpm/search.xpm"
-#include "xpm/separator.xpm"
-#include "xpm/sizer.xpm"
-#include "xpm/sizer_horizontal.xpm"
-#include "xpm/slider.xpm"
-#include "xpm/spacer.xpm"
-#include "xpm/spin_ctrl.xpm"
-#include "xpm/spin_ctrl_double.xpm"
-#include "xpm/spinbtn.xpm"
-#include "xpm/static_bitmap.xpm"
-#include "xpm/static_line.xpm"
-#include "xpm/statusbar.xpm"
-#include "xpm/stddialogbuttonsizer.xpm"
-#include "xpm/submenu.xpm"
-#include "xpm/text_sizer.xpm"
-#include "xpm/timepicker.xpm"
-#include "xpm/timer.xpm"
-#include "xpm/toggle_button.xpm"
-#include "xpm/tool.xpm"
-#include "xpm/toolseparator.xpm"
-#include "xpm/tree_ctrl.xpm"
-#include "xpm/treelistctrl.xpm"
-#include "xpm/treelistctrlcolumn.xpm"
-#include "xpm/unknown.xpm"
-#include "xpm/wrap_sizer.xpm"
-#include "xpm/wxMenuBar.xpm"
-#include "xpm/wxNotebook.xpm"
-#include "xpm/wxPanel.xpm"
-#include "xpm/wxPropertyGrid.xpm"
-#include "xpm/wxPropertyGridManager.xpm"
-#include "xpm/wxRadioButton.xpm"
-#include "xpm/wxRearrangeCtrl.xpm"
-#include "xpm/wxScrolledWindow.xpm"
-#include "xpm/wxSimpleHtmlListBox.xpm"
-#include "xpm/wxSimplebook.xpm"
-#include "xpm/wxSplitterWindow.xpm"
-#include "xpm/wxStaticBoxSizer.xpm"
-#include "xpm/wxStaticCheckBoxSizer.xpm"
-#include "xpm/wxStaticRadioBtnSizer.xpm"
-#include "xpm/wxStaticText.xpm"
-#include "xpm/wxTextCtrl.xpm"
-#include "xpm/wxToolBar.xpm"
-#include "xpm/wxToolbook.xpm"
-#include "xpm/wxTreebook.xpm"
-#include "xpm/wxWizard.xpm"
-#include "xpm/wxWizardPageSimple.xpm"
 
-static const std::unordered_map<std::string, const char**> map_xpm_strings = {
-    { "nav_coll_expand", nav_coll_expand_xpm },
-    { "nav_collapse", nav_collapse_xpm },
-    { "nav_expand", nav_expand_xpm },
-    { "nav_movedown", nav_movedown_xpm },
-    { "nav_moveleft", nav_moveleft_xpm },
-    { "nav_moveright", nav_moveright_xpm },
-    { "nav_moveup", nav_moveup_xpm },
+struct ImageMap
+{
+    const char* name;
+    const unsigned char* data;
+    size_t size_data;
+};
 
-    { "auinotebook", auinotebook_xpm },
-    { "auitoolbar", auitoolbar_xpm },
-    { "bitmap_button", bitmap_button_xpm },
-    { "bitmap_toggle_button", bitmap_toggle_button_xpm },
-    { "bmp_combo_box", bmp_combo_box_xpm },
-    { "book_page", book_page_xpm },
-    { "bottom", bottom_xpm },
-    { "wxActivityIndicator", wxActivityIndicator_xpm },
-    { "wxBannerWindow", wxBannerWindow_xpm },
-    { "wxButton", wxButton_xpm },
-    { "wxCommandLinkButton", wxCommandLinkButton_xpm },
-    { "wxFileCtrl", wxFileCtrl_xpm },
-    { "calendar", calendar_xpm },
-    { "wxCheckBox", wxCheckBox_xpm },
-    { "check3state", check3state_xpm },
-    { "wxCheckListBox", wxCheckListBox_xpm },
-    { "wxChoice", wxChoice_xpm },
-    { "wxChoicebook", wxChoicebook_xpm },
-    { "wxCollapsiblePane", wxCollapsiblePane_xpm },
-    { "colourPickerIcon", colourPickerIcon_xpm },
-    { "wxComboBox", wxComboBox_xpm },
-    { "dataview_ctrl", dataview_ctrl_xpm },
-    { "dataviewlist_column", dataviewlist_column_xpm },
-    { "dataviewlist_ctrl", dataviewlist_ctrl_xpm },
-    { "dataviewtree_ctrl", dataviewtree_ctrl_xpm },
-    { "datepicker", datepicker_xpm },
-    { "default", default_xpm },
-    { "wxDialog", wxDialog_xpm },
-    { "dirPicker", dirPicker_xpm },
-    { "doc_mdi_parent_frame", doc_mdi_parent_frame_xpm },
-    { "doc_parent_frame", doc_parent_frame_xpm },
-    { "document", document_xpm },
-    { "filePicker", filePicker_xpm },
-    { "flex_grid_sizer", flex_grid_sizer_xpm },
-    { "fontPicker", fontPicker_xpm },
-    { "wxFrame", wxFrame_xpm },
-    { "wxPopupTransientWindow", wxPopupTransientWindow_xpm },
-    { "gauge", gauge_xpm },
-    { "generate", generate_xpm },
-    { "genericdir_ctrl", genericdir_ctrl_xpm },
-    { "grid", grid_xpm },
-    { "grid_bag_sizer", grid_bag_sizer_xpm },
-    { "grid_sizer", grid_sizer_xpm },
-    { "hidden", hidden_xpm },
-    { "htmlwin", htmlwin_xpm },
-    { "hyperlink_ctrl", hyperlink_ctrl_xpm },
-    { "infobar", infobar_xpm },
-    { "left", left_xpm },
-    { "wxListBox", wxListBox_xpm },
-    { "wxListView", wxListView_xpm },
-    { "wxListbook", wxListbook_xpm },
+// Images that may be accessed more than once (typically for popup menus) should be at the front for fastest access. The rest
+// are typically only loaded during application startup, and never accessed again.
+
+static const ImageMap png_headers[] = {
+
+    { "unknown", unknown_png, sizeof(unknown_png) },
+    { "default", default_png, sizeof(default_png) },
+
+    { "nav_movedown", nav_movedown_png, sizeof(nav_movedown_png) },
+    { "nav_moveleft", nav_moveleft_png, sizeof(nav_moveleft_png) },
+    { "nav_moveright", nav_moveright_png, sizeof(nav_moveright_png) },
+    { "nav_moveup", nav_moveup_png, sizeof(nav_moveup_png) },
+
+    { "nav_coll_expand", nav_coll_expand_png, sizeof(nav_coll_expand_png) },
+    { "nav_collapse", nav_collapse_png, sizeof(nav_collapse_png) },
+    { "nav_expand", nav_expand_png, sizeof(nav_expand_png) },
+
+    { "flex_grid_sizer", flex_grid_sizer_png, sizeof(flex_grid_sizer_png) },
+    { "grid_bag_sizer", grid_bag_sizer_png, sizeof(grid_bag_sizer_png) },
+    { "grid_sizer", grid_sizer_png, sizeof(grid_sizer_png) },
+    { "sizer", sizer_png, sizeof(sizer_png) },
+    { "sizer_horizontal", sizer_horizontal_png, sizeof(sizer_horizontal_png) },
+    { "slider", slider_png, sizeof(slider_png) },
+    { "spacer", spacer_png, sizeof(spacer_png) },
+    { "stddialogbuttonsizer", stddialogbuttonsizer_png, sizeof(stddialogbuttonsizer_png) },
+    { "text_sizer", text_sizer_png, sizeof(text_sizer_png) },
+    { "wrap_sizer", wrap_sizer_png, sizeof(wrap_sizer_png) },
+    { "wxStaticBoxSizer", wxStaticBoxSizer_png, sizeof(wxStaticBoxSizer_png) },
+    { "wxStaticCheckBoxSizer", wxStaticCheckBoxSizer_png, sizeof(wxStaticCheckBoxSizer_png) },
+    { "wxStaticRadioBtnSizer", wxStaticRadioBtnSizer_png, sizeof(wxStaticRadioBtnSizer_png) },
+
+    { "auinotebook", auinotebook_png, sizeof(auinotebook_png) },
+    { "auitoolbar", auitoolbar_png, sizeof(auitoolbar_png) },
+    { "bitmap_button", bitmap_button_png, sizeof(bitmap_button_png) },
+    { "bitmap_toggle_button", bitmap_toggle_button_png, sizeof(bitmap_toggle_button_png) },
+    { "bmp_combo_box", bmp_combo_box_png, sizeof(bmp_combo_box_png) },
+    { "book_page", book_page_png, sizeof(book_page_png) },
+    { "calendar", calendar_png, sizeof(calendar_png) },
+    { "check3state", check3state_png, sizeof(check3state_png) },
+    { "colourPickerIcon", colourPickerIcon_png, sizeof(colourPickerIcon_png) },
+    { "dataview_ctrl", dataview_ctrl_png, sizeof(dataview_ctrl_png) },
+    { "dataviewlist_column", dataviewlist_column_png, sizeof(dataviewlist_column_png) },
+    { "dataviewlist_ctrl", dataviewlist_ctrl_png, sizeof(dataviewlist_ctrl_png) },
+    { "dataviewtree_ctrl", dataviewtree_ctrl_png, sizeof(dataviewtree_ctrl_png) },
+    { "datepicker", datepicker_png, sizeof(datepicker_png) },
+    { "default", default_png, sizeof(default_png) },
+    { "dirPicker", dirPicker_png, sizeof(dirPicker_png) },
+    { "doc_mdi_parent_frame", doc_mdi_parent_frame_png, sizeof(doc_mdi_parent_frame_png) },
+    { "doc_parent_frame", doc_parent_frame_png, sizeof(doc_parent_frame_png) },
+    { "document", document_png, sizeof(document_png) },
+    { "filePicker", filePicker_png, sizeof(filePicker_png) },
+    { "fontPicker", fontPicker_png, sizeof(fontPicker_png) },
+    { "gauge", gauge_png, sizeof(gauge_png) },
+    { "genericdir_ctrl", genericdir_ctrl_png, sizeof(genericdir_ctrl_png) },
+    { "grid", grid_png, sizeof(grid_png) },
+    { "htmlwin", htmlwin_png, sizeof(htmlwin_png) },
+    { "hyperlink_ctrl", hyperlink_ctrl_png, sizeof(hyperlink_ctrl_png) },
+    { "infobar", infobar_png, sizeof(infobar_png) },
+    { "menu", menu_png, sizeof(menu_png) },
+    { "menuitem", menuitem_png, sizeof(menuitem_png) },
+    { "moveColLeft", moveColLeft_png, sizeof(moveColLeft_png) },
+    { "moveColRight", moveColRight_png, sizeof(moveColRight_png) },
+    { "moveRowDown", moveRowDown_png, sizeof(moveRowDown_png) },
+    { "moveRowUp", moveRowUp_png, sizeof(moveRowUp_png) },
+    { "project", project_png, sizeof(project_png) },
+    { "propgriditem", propgriditem_png, sizeof(propgriditem_png) },
+    { "propgridpage", propgridpage_png, sizeof(propgridpage_png) },
+    { "radio_box", radio_box_png, sizeof(radio_box_png) },
+    { "ribbon_bar", ribbon_bar_png, sizeof(ribbon_bar_png) },
+    { "ribbon_button", ribbon_button_png, sizeof(ribbon_button_png) },
+    { "ribbon_button_dropdown", ribbon_button_dropdown_png, sizeof(ribbon_button_dropdown_png) },
+    { "ribbon_button_hybrid", ribbon_button_hybrid_png, sizeof(ribbon_button_hybrid_png) },
+    { "ribbon_button_toggle", ribbon_button_toggle_png, sizeof(ribbon_button_toggle_png) },
+    { "ribbon_buttonbar", ribbon_buttonbar_png, sizeof(ribbon_buttonbar_png) },
+    { "ribbon_gallery", ribbon_gallery_png, sizeof(ribbon_gallery_png) },
+    { "ribbon_gallery_item", ribbon_gallery_item_png, sizeof(ribbon_gallery_item_png) },
+    { "ribbon_page", ribbon_page_png, sizeof(ribbon_page_png) },
+    { "ribbon_panel", ribbon_panel_png, sizeof(ribbon_panel_png) },
+    { "richtextctrl", richtextctrl_png, sizeof(richtextctrl_png) },
+    { "scintilla", scintilla_png, sizeof(scintilla_png) },
+    { "scrollbar", scrollbar_png, sizeof(scrollbar_png) },
+    { "search", search_png, sizeof(search_png) },
+    { "separator", separator_png, sizeof(separator_png) },
+    { "spin_ctrl", spin_ctrl_png, sizeof(spin_ctrl_png) },
+    { "spin_ctrl_double", spin_ctrl_double_png, sizeof(spin_ctrl_double_png) },
+    { "spinbtn", spinbtn_png, sizeof(spinbtn_png) },
+    { "static_bitmap", static_bitmap_png, sizeof(static_bitmap_png) },
+    { "static_line", static_line_png, sizeof(static_line_png) },
+    { "statusbar", statusbar_png, sizeof(statusbar_png) },
+    { "submenu", submenu_png, sizeof(submenu_png) },
+    { "timepicker", timepicker_png, sizeof(timepicker_png) },
+    { "timer", timer_png, sizeof(timer_png) },
+    { "toggle_button", toggle_button_png, sizeof(toggle_button_png) },
+    { "tool", tool_png, sizeof(tool_png) },
+    { "toolseparator", toolseparator_png, sizeof(toolseparator_png) },
+    { "tree_ctrl", tree_ctrl_png, sizeof(tree_ctrl_png) },
+    { "treelistctrl", treelistctrl_png, sizeof(treelistctrl_png) },
+    { "treelistctrlcolumn", treelistctrlcolumn_png, sizeof(treelistctrlcolumn_png) },
+    { "wxActivityIndicator", wxActivityIndicator_png, sizeof(wxActivityIndicator_png) },
+    { "wxBannerWindow", wxBannerWindow_png, sizeof(wxBannerWindow_png) },
+    { "wxButton", wxButton_png, sizeof(wxButton_png) },
+    { "wxCheckBox", wxCheckBox_png, sizeof(wxCheckBox_png) },
+    { "wxCheckListBox", wxCheckListBox_png, sizeof(wxCheckListBox_png) },
+    { "wxChoice", wxChoice_png, sizeof(wxChoice_png) },
+    { "wxChoicebook", wxChoicebook_png, sizeof(wxChoicebook_png) },
+    { "wxCollapsiblePane", wxCollapsiblePane_png, sizeof(wxCollapsiblePane_png) },
+    { "wxComboBox", wxComboBox_png, sizeof(wxComboBox_png) },
+    { "wxCommandLinkButton", wxCommandLinkButton_png, sizeof(wxCommandLinkButton_png) },
+    { "wxDialog", wxDialog_png, sizeof(wxDialog_png) },
+    { "wxFileCtrl", wxFileCtrl_png, sizeof(wxFileCtrl_png) },
+    { "wxFrame", wxFrame_png, sizeof(wxFrame_png) },
+    { "wxListBox", wxListBox_png, sizeof(wxListBox_png) },
+    { "wxListView", wxListView_png, sizeof(wxListView_png) },
+    { "wxListbook", wxListbook_png, sizeof(wxListbook_png) },
+    { "wxMenuBar", wxMenuBar_png, sizeof(wxMenuBar_png) },
+    { "wxNotebook", wxNotebook_png, sizeof(wxNotebook_png) },
+    { "wxPanel", wxPanel_png, sizeof(wxPanel_png) },
+    { "wxPopupTransientWindow", wxPopupTransientWindow_png, sizeof(wxPopupTransientWindow_png) },
+    { "wxPropertyGrid", wxPropertyGrid_png, sizeof(wxPropertyGrid_png) },
+    { "wxPropertyGridManager", wxPropertyGridManager_png, sizeof(wxPropertyGridManager_png) },
+    { "wxRadioButton", wxRadioButton_png, sizeof(wxRadioButton_png) },
+    { "wxRearrangeCtrl", wxRearrangeCtrl_png, sizeof(wxRearrangeCtrl_png) },
+    { "wxScrolledWindow", wxScrolledWindow_png, sizeof(wxScrolledWindow_png) },
+    { "wxSimpleHtmlListBox", wxSimpleHtmlListBox_png, sizeof(wxSimpleHtmlListBox_png) },
+    { "wxSimplebook", wxSimplebook_png, sizeof(wxSimplebook_png) },
+    { "wxSplitterWindow", wxSplitterWindow_png, sizeof(wxSplitterWindow_png) },
+    { "wxStaticText", wxStaticText_png, sizeof(wxStaticText_png) },
+    { "wxTextCtrl", wxTextCtrl_png, sizeof(wxTextCtrl_png) },
+    { "wxToolBar", wxToolBar_png, sizeof(wxToolBar_png) },
+    { "wxToolbook", wxToolbook_png, sizeof(wxToolbook_png) },
+    { "wxTreebook", wxTreebook_png, sizeof(wxTreebook_png) },
+    { "wxWizard", wxWizard_png, sizeof(wxWizard_png) },
+    { "wxWizardPageSimple", wxWizardPageSimple_png, sizeof(wxWizardPageSimple_png) },
+
+// A different Icon is used for debug builds so that it is easier to identify that a debug build is being run.
+
 #if defined(_DEBUG)
-    { "logo16", debug_16_xpm },
-    { "logo32", debug_32_xpm },
+    { "logo16", debug_16_png, sizeof(debug_16_png) },
+    { "logo32", debug_32_png, sizeof(debug_32_png) }
 #else
-    { "logo16", logo16_xpm },
-    { "logo32", logo32_xpm },
-#endif  // _DEBUG
-    { "menu", menu_xpm },
-    { "wxMenuBar", wxMenuBar_xpm },
-    { "menuitem", menuitem_xpm },
-    { "moveColLeft", moveColLeft_xpm },
-    { "moveColRight", moveColRight_xpm },
-    { "moveRowDown", moveRowDown_xpm },
-    { "moveRowUp", moveRowUp_xpm },
-    { "wxNotebook", wxNotebook_xpm },
-    { "wxTreebook", wxTreebook_xpm },
-    { "wxToolbook", wxToolbook_xpm },
-    { "wxPanel", wxPanel_xpm },
-    { "project", project_xpm },
-    { "wxPropertyGrid", wxPropertyGrid_xpm },
-    { "propgriditem", propgriditem_xpm },
-    { "wxPropertyGridManager", wxPropertyGridManager_xpm },
-    { "propgridpage", propgridpage_xpm },
-    { "radio_box", radio_box_xpm },
-    { "wxRadioButton", wxRadioButton_xpm },
-    { "wxRearrangeCtrl", wxRearrangeCtrl_xpm },
-    { "ribbon_bar", ribbon_bar_xpm },
-    { "ribbon_button", ribbon_button_xpm },
-    { "ribbon_button_dropdown", ribbon_button_dropdown_xpm },
-    { "ribbon_button_hybrid", ribbon_button_hybrid_xpm },
-    { "ribbon_button_toggle", ribbon_button_toggle_xpm },
-    { "ribbon_buttonbar", ribbon_buttonbar_xpm },
-    { "ribbon_gallery", ribbon_gallery_xpm },
-    { "ribbon_gallery_item", ribbon_gallery_item_xpm },
-    { "ribbon_page", ribbon_page_xpm },
-    { "ribbon_panel", ribbon_panel_xpm },
-    { "richtextctrl", richtextctrl_xpm },
-    { "scintilla", scintilla_xpm },
-    { "scrollbar", scrollbar_xpm },
-    { "wxScrolledWindow", wxScrolledWindow_xpm },
-    { "search", search_xpm },
-    { "separator", separator_xpm },
-    { "wxSimplebook", wxSimplebook_xpm },
-    { "wxSimpleHtmlListBox", wxSimpleHtmlListBox_xpm },
-    { "sizer", sizer_xpm },
-    { "sizer_horizontal", sizer_horizontal_xpm },
-    { "slider", slider_xpm },
-    { "spacer", spacer_xpm },
-    { "spin_ctrl", spin_ctrl_xpm },
-    { "spin_ctrl_double", spin_ctrl_double_xpm },
-    { "spinbtn", spinbtn_xpm },
-    { "wxSplitterWindow", wxSplitterWindow_xpm },
-    { "static_bitmap", static_bitmap_xpm },
-    { "static_line", static_line_xpm },
-    { "wxStaticText", wxStaticText_xpm },
-    { "wxStaticBoxSizer", wxStaticBoxSizer_xpm },
-    { "wxStaticCheckBoxSizer", wxStaticCheckBoxSizer_xpm },
-    { "wxStaticRadioBtnSizer", wxStaticRadioBtnSizer_xpm },
-    { "statusbar", statusbar_xpm },
-    { "stddialogbuttonsizer", stddialogbuttonsizer_xpm },
-    { "submenu", submenu_xpm },
-    { "wxTextCtrl", wxTextCtrl_xpm },
-    { "text_sizer", text_sizer_xpm },
-    { "timepicker", timepicker_xpm },
-    { "timer", timer_xpm },
-    { "toggle_button", toggle_button_xpm },
-    { "tool", tool_xpm },
-    { "wxToolBar", wxToolBar_xpm },
-    { "toolseparator", toolseparator_xpm },
-    { "tree_ctrl", tree_ctrl_xpm },
-    { "treelistctrl", treelistctrl_xpm },
-    { "treelistctrlcolumn", treelistctrlcolumn_xpm },
-    { "unknown", unknown_xpm },
-    { "wxWizard", wxWizard_xpm },
-    { "wxWizardPageSimple", wxWizardPageSimple_xpm },
-    { "wrap_sizer", wrap_sizer_xpm },
+    { "logo16", logo16_png, sizeof(logo16_png) },
+    { "logo32", logo32_png, sizeof(logo32_png) }
+#endif
 
 };
 
-wxImage GetXPMImage(ttlib::cview name)
+wxImage GetInternalImage(ttlib::cview name)
 {
-    if (auto result = map_xpm_strings.find(name.c_str()); result != map_xpm_strings.end())
-        return wxImage(result->second);
-    else
-        return wxImage(map_xpm_strings.find("default")->second);
+    for (auto& iter: png_headers)
+    {
+        if (name.is_sameas(iter.name))
+        {
+            return LoadHeaderImage(iter.data, iter.size_data);
+        }
+    }
+
+    // If all else fails, return a default 16x16 image
+    return LoadHeaderImage(default_png, sizeof(default_png));
+}
+
+wxIcon GetIconImage(ttlib::cview name)
+{
+    for (auto& iter: png_headers)
+    {
+        if (name.is_sameas(iter.name))
+        {
+            auto image = LoadHeaderImage(iter.data, iter.size_data);
+            image.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
+            wxIcon icon;
+            icon.CopyFromBitmap(image);
+            return icon;
+        }
+    }
+
+    auto image = GetInternalImage(name);
+    wxIcon icon;
+    icon.CopyFromBitmap(image);
+    return icon;
 }

@@ -37,7 +37,7 @@
 #include "node.h"            // Node class
 #include "utils.h"           // Utility functions that work with properties
 
-#include "../xpm/title_close.xpm"
+#include "../art_headers/title_close_png.hxx"
 
 MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPanel>(parent)
 {
@@ -59,7 +59,8 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     auto title_sizer = new wxBoxSizer(wxHORIZONTAL);
     m_text_title = new wxStaticText(m_panelTitleBar, wxID_ANY, wxEmptyString);
     title_sizer->Add(m_text_title, wxSizerFlags(1).Center().Border(wxALL, 5));
-    auto bmp = new wxStaticBitmap(m_panelTitleBar, wxID_ANY, wxBitmap(wxImage(title_close_xpm)));
+    auto bmp =
+        new wxStaticBitmap(m_panelTitleBar, wxID_ANY, wxBitmap(LoadHeaderImage(title_close_png, sizeof(title_close_png))));
     title_sizer->Add(bmp, wxSizerFlags().Border(0, 0));
 
     m_panelTitleBar->SetSizerAndFit(title_sizer);

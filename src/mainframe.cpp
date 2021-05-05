@@ -61,7 +61,7 @@
 
 #include "../pugixml/pugixml.hpp"
 
-#include "xpm/logo64.xpm"
+#include "art_headers/logo64_png.hxx"
 
 using namespace GenEnum;
 
@@ -81,13 +81,8 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 {
     wxIconBundle bundle;
 
-    wxIcon ico16;
-    ico16.CopyFromBitmap(GetXPMImage("logo16"));
-    bundle.AddIcon(ico16);
-
-    wxIcon ico32;
-    ico32.CopyFromBitmap(GetXPMImage("logo32"));
-    bundle.AddIcon(ico32);
+    bundle.AddIcon(GetIconImage("logo16"));
+    bundle.AddIcon(GetIconImage("logo32"));
     SetIcons(bundle);
 
     SetTitle("wxUiEditor");
@@ -405,7 +400,9 @@ void MainFrame::OnAbout(wxCommandEvent&)
     aboutInfo.AddDeveloper("Ralph Walden");
 
     wxIcon icon;
-    icon.CopyFromBitmap(wxImage(logo64_xpm));
+    auto image = LoadHeaderImage(logo64_png, sizeof(logo64_png));
+    image.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
+    icon.CopyFromBitmap(image);
     aboutInfo.SetIcon(icon);
 
     wxAboutBox(aboutInfo);

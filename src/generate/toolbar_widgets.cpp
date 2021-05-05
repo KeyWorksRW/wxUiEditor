@@ -61,7 +61,7 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         {
             auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
-                bmp = GetXPMImage("default");
+                bmp = GetInternalImage("default");
 
             toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
                              (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
@@ -210,7 +210,7 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
         {
             auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
-                bmp = GetXPMImage("default");
+                bmp = GetInternalImage("default");
 
             toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
                              (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),

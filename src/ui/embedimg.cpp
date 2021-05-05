@@ -31,7 +31,7 @@
 #include "uifuncs.h"      // Miscellaneous functions for displaying UI
 #include "utils.h"        // Utility functions that work with properties
 
-#include "../xpm/empty.xpm"
+#include "../art_headers/empty_png.hxx"
 
 // Any mime type in the following list with NOT be converted to PNG even if m_check_make_png is set to true
 
@@ -345,7 +345,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         m_hdrImage.Destroy();
         m_xpmImage.Destroy();
         m_orgImage.Destroy();
-        m_bmpOriginal->SetBitmap(wxImage(empty_xpm));
+        m_bmpOriginal->SetBitmap(LoadHeaderImage(empty_png, sizeof(empty_png)));
 
         // If the input file is invalid, don't allow an output value
         m_fileOutput->SetPath(wxEmptyString);

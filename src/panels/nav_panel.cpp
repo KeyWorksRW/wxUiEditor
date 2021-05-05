@@ -64,24 +64,24 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     m_tree_ctrl->AssignImageList(m_iconList);
 
     auto toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER);
-    toolbar->AddTool(id_NavCollExpand, wxEmptyString, GetXPMImage("nav_coll_expand"), wxNullBitmap, wxITEM_NORMAL,
+    toolbar->AddTool(id_NavCollExpand, wxEmptyString, GetInternalImage("nav_coll_expand"), wxNullBitmap, wxITEM_NORMAL,
                      "Collapse siblings, expand children",
                      "Expand selected item, collapse all other items at the same level");
-    toolbar->AddTool(id_NavExpand, wxEmptyString, GetXPMImage("nav_expand"), wxNullBitmap, wxITEM_NORMAL,
+    toolbar->AddTool(id_NavExpand, wxEmptyString, GetInternalImage("nav_expand"), wxNullBitmap, wxITEM_NORMAL,
                      "Expand all children", "Expand selected item and all of it's sub-items");
-    toolbar->AddTool(id_NavCollapse, wxEmptyString, GetXPMImage("nav_collapse"), wxNullBitmap, wxITEM_NORMAL,
+    toolbar->AddTool(id_NavCollapse, wxEmptyString, GetInternalImage("nav_collapse"), wxNullBitmap, wxITEM_NORMAL,
                      "Collapse all siblings", "Collapse selected item and all items at the same level");
 
     toolbar->AddSeparator();
 
-    toolbar->AddTool(id_NavMoveLeft, "Move Left", GetXPMImage("nav_moveleft"), wxNullBitmap, wxITEM_NORMAL, "Move Left",
+    toolbar->AddTool(id_NavMoveLeft, "Move Left", GetInternalImage("nav_moveleft"), wxNullBitmap, wxITEM_NORMAL, "Move Left",
                      "Move the selected item left");
-    toolbar->AddTool(id_NavMoveUp, "Move Up", GetXPMImage("nav_moveup"), wxNullBitmap, wxITEM_NORMAL, "Move Ip",
+    toolbar->AddTool(id_NavMoveUp, "Move Up", GetInternalImage("nav_moveup"), wxNullBitmap, wxITEM_NORMAL, "Move Ip",
                      "Move the selected item up");
-    toolbar->AddTool(id_NavMoveDown, "Move Down", GetXPMImage("nav_movedown"), wxNullBitmap, wxITEM_NORMAL, "Move Down",
+    toolbar->AddTool(id_NavMoveDown, "Move Down", GetInternalImage("nav_movedown"), wxNullBitmap, wxITEM_NORMAL, "Move Down",
                      "Move the selected item down");
-    toolbar->AddTool(id_NavMoveRight, "Move Right", GetXPMImage("nav_moveright"), wxNullBitmap, wxITEM_NORMAL, "Move Right",
-                     "Move the selected item right");
+    toolbar->AddTool(id_NavMoveRight, "Move Right", GetInternalImage("nav_moveright"), wxNullBitmap, wxITEM_NORMAL,
+                     "Move Right", "Move the selected item right");
 
     toolbar->Realize();
 

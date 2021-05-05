@@ -21,19 +21,20 @@
 #include "../xpm/alignright_png.hxx"
 #include "../xpm/aligntop_png.hxx"
 #include "../xpm/alignvertcenter_png.hxx"
-#include "../xpm/bottom.xpm"
-#include "../xpm/expand.xpm"
-#include "../xpm/generate.xpm"
-#include "../xpm/hidden.xpm"
-#include "../xpm/left.xpm"
-#include "../xpm/magnify.xpm"
+#include "../xpm/bottom_png.hxx"
+#include "../xpm/expand_png.hxx"
+#include "../xpm/generate_png.hxx"
+#include "../xpm/hidden_png.hxx"
+#include "../xpm/left_png.hxx"
+#include "../xpm/magnify_png.hxx"
 #include "../xpm/nav_movedown_png.hxx"
 #include "../xpm/nav_moveleft_png.hxx"
 #include "../xpm/nav_moveright_png.hxx"
 #include "../xpm/nav_moveup_png.hxx"
-#include "../xpm/right.xpm"
+#include "../xpm/new_png.hxx"
+#include "../xpm/right_png.hxx"
 #include "../xpm/save_png.hxx"
-#include "../xpm/top.xpm"
+#include "../xpm/top_png.hxx"
 
 #include <wx/mstream.h>  // Memory stream classes
 
@@ -58,7 +59,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menuItem = new wxMenuItem(m_menuFile, id_NewProject, wxString::FromUTF8("&New Project...\tCtrl+N"),
     wxString::FromUTF8("Create an empty project"), wxITEM_NORMAL);
-    menuItem->SetBitmap(wxArtProvider::GetBitmap(wxART_NEW, wxART_MENU));
+    menuItem->SetBitmap(GetImgFromHdr(new_png, sizeof(new_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuFile->Append(menuItem);
 
     auto menuItem2 = new wxMenuItem(m_menuFile, id_OpenProject, wxString::FromUTF8("&Open Project...\tCtrl+O"),
@@ -221,23 +222,28 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item14 = new wxMenuItem(submenu4, id_BorderLeft, wxString::FromUTF8("&Left"),
     wxString::FromUTF8("Toggle border on the left side of the item"), wxITEM_CHECK);
+    menu_item14->SetBitmap(GetImgFromHdr(left_png, sizeof(left_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item14);
 
     auto menu_item15 = new wxMenuItem(submenu4, id_BorderRight, wxString::FromUTF8("&Right"),
     wxString::FromUTF8("Toggle border on the right side of the item"), wxITEM_CHECK);
+    menu_item15->SetBitmap(GetImgFromHdr(top_png, sizeof(top_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item15);
 
     auto menu_item16 = new wxMenuItem(submenu4, id_BorderTop, wxString::FromUTF8("&Top"),
     wxString::FromUTF8("Toggle border on the top side of the item"), wxITEM_CHECK);
+    menu_item16->SetBitmap(GetImgFromHdr(top_png, sizeof(top_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item16);
 
     auto menu_item17 = new wxMenuItem(submenu4, id_BorderBottom, wxString::FromUTF8("&Bottom"),
     wxString::FromUTF8("Toggle border on the bottom side of the item"), wxITEM_CHECK);
+    menu_item17->SetBitmap(GetImgFromHdr(bottom_png, sizeof(bottom_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item17);
     m_menuEdit->AppendSubMenu(submenu4, wxString::FromUTF8("Borders"));
 
     auto menu_item18 = new wxMenuItem(m_menuEdit, id_Expand, wxString::FromUTF8("&Expand") + '\t' + "Alt+E",
     wxString::FromUTF8("Toggle the wxEXPAND flag"), wxITEM_CHECK);
+    menu_item18->SetBitmap(GetImgFromHdr(expand_png, sizeof(expand_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuEdit->Append(menu_item18);
     m_menubar->Append(m_menuEdit, wxString::FromUTF8("&Edit"));
 
@@ -245,7 +251,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item19 = new wxMenuItem(m_menuTools, id_GenerateCode, wxString::FromUTF8("&Generate Base Code"),
     wxString::FromUTF8("Generates C++ Code for each top level form"), wxITEM_NORMAL);
-    menu_item19->SetBitmap(wxImage(generate_xpm).Scale(16, 16));
+    menu_item19->SetBitmap(GetImgFromHdr(generate_png, sizeof(generate_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuTools->Append(menu_item19);
 
     auto menu_item20 = new wxMenuItem(m_menuTools, id_GenerateDerived, wxString::FromUTF8("Create &Derived Code"),
@@ -270,7 +276,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar = CreateToolBar(wxTB_FLAT|wxTB_HORIZONTAL);
 
-    m_toolbar->AddTool(id_NewProject, wxString::FromUTF8("New"), wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR),
+    m_toolbar->AddTool(id_NewProject, wxString::FromUTF8("New"), GetImgFromHdr(new_png, sizeof(new_png)),
     wxString::FromUTF8("New Project (Ctrl+N)"));
 
     m_toolbar->AddTool(id_OpenProject, wxString::FromUTF8("Open"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR),
@@ -279,7 +285,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_toolbar->AddTool(wxID_SAVE, wxString::FromUTF8("Save"), GetImgFromHdr(save_png, sizeof(save_png)),
     wxString::FromUTF8("Save current project"));
 
-    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, wxImage(generate_xpm),
+    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, GetImgFromHdr(generate_png, sizeof(generate_png)),
     wxString::FromUTF8("Generate base class code"));
 
     m_toolbar->AddSeparator();
@@ -328,29 +334,29 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, wxImage(left_xpm),
+    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, GetImgFromHdr(left_png, sizeof(left_png)),
     wxString::FromUTF8("Left border"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderRight, wxEmptyString, wxImage(right_xpm),
+    m_toolbar->AddTool(id_BorderRight, wxEmptyString, GetImgFromHdr(right_png, sizeof(right_png)),
     wxString::FromUTF8("Right border"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderTop, wxEmptyString, wxImage(top_xpm),
+    m_toolbar->AddTool(id_BorderTop, wxEmptyString, GetImgFromHdr(top_png, sizeof(top_png)),
     wxString::FromUTF8("Top border"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, wxImage(bottom_xpm),
+    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, GetImgFromHdr(bottom_png, sizeof(bottom_png)),
     wxString::FromUTF8("Bottom border"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_Expand, wxEmptyString, wxImage(expand_xpm),
+    m_toolbar->AddTool(id_Expand, wxEmptyString, GetImgFromHdr(expand_png, sizeof(expand_png)),
     wxString::FromUTF8("Expand to fill the space"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_ShowHidden, wxEmptyString, wxImage(hidden_xpm),
+    m_toolbar->AddTool(id_ShowHidden, wxEmptyString, GetImgFromHdr(hidden_png, sizeof(hidden_png)),
     wxString::FromUTF8("Show hidden controls in Mockup panel"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_Magnify, wxEmptyString, wxImage(magnify_xpm),
+    m_toolbar->AddTool(id_Magnify, wxEmptyString, GetImgFromHdr(magnify_png, sizeof(magnify_png)),
     wxString::FromUTF8("Magnify the size of the Mockup window"), wxITEM_CHECK);
 
 	m_toolbar->Realize();

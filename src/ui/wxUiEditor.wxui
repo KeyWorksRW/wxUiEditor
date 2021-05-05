@@ -4,7 +4,7 @@
     <node class="wxFrame" class_name="MainFrameBase" base_file="mainframe_base" base_src_includes="#include &quot;mainframe.h&quot;" derived_class_name="MainFrame" minimum_size="800,800" size="1000,1000" window_style="wxTAB_TRAVERSAL" wxEVT_CLOSE_WINDOW="OnClose">
       <node class="wxMenuBar">
         <node class="wxMenu" label="&amp;File" var_name="m_menuFile">
-          <node class="wxMenuItem" bitmap="Art; wxART_NEW; wxART_MENU; [-1; -1]" help="Create an empty project" id="id_NewProject" label="&amp;New Project...&#09;Ctrl+N" var_name="menuItem" wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetApp().NewProject(); }" />
+          <node class="wxMenuItem" bitmap="Header; ..\xpm\new_png.hxx; ; [16; 16]" help="Create an empty project" id="id_NewProject" label="&amp;New Project...&#09;Ctrl+N" var_name="menuItem" wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetApp().NewProject(); }" />
           <node class="wxMenuItem" bitmap="Art; wxART_FILE_OPEN; wxART_MENU; [-1; -1]" help="Open a project" id="id_OpenProject" label="&amp;Open Project...&#09;Ctrl+O" var_name="menuItem2" wxEVT_MENU="OnOpenProject" />
           <node class="submenu" class_access="protected:" label="Open &amp;Recent" var_name="m_submenu_recent" />
           <node class="separator" />
@@ -50,15 +50,15 @@
             <node class="wxMenuItem" bitmap="Header; ..\xpm\alignbottom_png.hxx; ; [-1; -1]" help="Align selected item to the bottom" id="id_AlignBottom" kind="wxITEM_CHECK" label="&amp;Bottom" shortcut="Alt+Shift+Down" var_name="menu_item13" wxEVT_MENU="OnChangeAlignment" />
           </node>
           <node class="submenu" label="Borders" var_name="submenu4">
-            <node class="wxMenuItem" help="Toggle border on the left side of the item" id="id_BorderLeft" kind="wxITEM_CHECK" label="&amp;Left" var_name="menu_item14" wxEVT_MENU="OnChangeBorder" />
-            <node class="wxMenuItem" help="Toggle border on the right side of the item" id="id_BorderRight" kind="wxITEM_CHECK" label="&amp;Right" var_name="menu_item15" wxEVT_MENU="OnChangeBorder" />
-            <node class="wxMenuItem" help="Toggle border on the top side of the item" id="id_BorderTop" kind="wxITEM_CHECK" label="&amp;Top" var_name="menu_item16" wxEVT_MENU="OnChangeBorder" />
-            <node class="wxMenuItem" help="Toggle border on the bottom side of the item" id="id_BorderBottom" kind="wxITEM_CHECK" label="&amp;Bottom" var_name="menu_item17" wxEVT_MENU="OnChangeBorder" />
+            <node class="wxMenuItem" bitmap="Header; ..\xpm\left_png.hxx; ; [16; 16]" help="Toggle border on the left side of the item" id="id_BorderLeft" kind="wxITEM_CHECK" label="&amp;Left" var_name="menu_item14" wxEVT_MENU="OnChangeBorder" />
+            <node class="wxMenuItem" bitmap="Header; ..\xpm\top_png.hxx; ; [16; 16]" help="Toggle border on the right side of the item" id="id_BorderRight" kind="wxITEM_CHECK" label="&amp;Right" var_name="menu_item15" wxEVT_MENU="OnChangeBorder" />
+            <node class="wxMenuItem" bitmap="Header; ..\xpm\top_png.hxx; ; [16; 16]" help="Toggle border on the top side of the item" id="id_BorderTop" kind="wxITEM_CHECK" label="&amp;Top" var_name="menu_item16" wxEVT_MENU="OnChangeBorder" />
+            <node class="wxMenuItem" bitmap="Header; ..\xpm\bottom_png.hxx; ; [16; 16]" help="Toggle border on the bottom side of the item" id="id_BorderBottom" kind="wxITEM_CHECK" label="&amp;Bottom" var_name="menu_item17" wxEVT_MENU="OnChangeBorder" />
           </node>
-          <node class="wxMenuItem" help="Toggle the wxEXPAND flag" id="id_Expand" kind="wxITEM_CHECK" label="&amp;Expand" shortcut="Alt+E" var_name="menu_item18" wxEVT_MENU="OnToggleExpandLayout" />
+          <node class="wxMenuItem" bitmap="Header; ..\xpm\expand_png.hxx; ; [16; 16]" help="Toggle the wxEXPAND flag" id="id_Expand" kind="wxITEM_CHECK" label="&amp;Expand" shortcut="Alt+E" var_name="menu_item18" wxEVT_MENU="OnToggleExpandLayout" />
         </node>
         <node class="wxMenu" label="&amp;Tools" var_name="m_menuTools">
-          <node class="wxMenuItem" bitmap="XPM; ..\xpm\generate.xpm; ; [16; 16]" help="Generates C++ Code for each top level form" id="id_GenerateCode" label="&amp;Generate Base Code" var_name="menu_item19" wxEVT_MENU="OnGenerateCode" />
+          <node class="wxMenuItem" bitmap="Header; ..\xpm\generate_png.hxx; ; [16; 16]" help="Generates C++ Code for each top level form" id="id_GenerateCode" label="&amp;Generate Base Code" var_name="menu_item19" wxEVT_MENU="OnGenerateCode" />
           <node class="wxMenuItem" help="Creates the files and classes that derive from the generated base classes" id="id_GenerateDerived" label="Create &amp;Derived Code" var_name="menu_item20" wxEVT_MENU="OnGenInhertedClass" />
           <node class="separator" var_name="separator9" />
           <node class="wxMenuItem" help="Convert images into an XPM or PNG header file" id="id_ConvertImage" label="&amp;Convert Image..." var_name="menu_item21" wxEVT_MENU="OnEmbedImageConverter" />
@@ -68,10 +68,10 @@
         </node>
       </node>
       <node class="wxToolBar" style="wxTB_FLAT|wxTB_HORIZONTAL" var_name="m_toolbar">
-        <node class="tool" bitmap="Art; wxART_NEW; wxART_TOOLBAR; [-1; -1]" id="id_NewProject" label="New" tooltip="New Project (Ctrl+N)" />
+        <node class="tool" bitmap="Header; ..\xpm\new_png.hxx; ; [-1; -1]" id="id_NewProject" label="New" tooltip="New Project (Ctrl+N)" />
         <node class="tool" bitmap="Art; wxART_FILE_OPEN; wxART_TOOLBAR; [-1; -1]" id="id_OpenProject" label="Open" tooltip="Open Project (Ctrl+O)" var_name="tool2" />
         <node class="tool" bitmap="Header; ..\xpm\save_png.hxx; ; [-1; -1]" id="wxID_SAVE" label="Save" tooltip="Save current project" var_name="tool3" />
-        <node class="tool" bitmap="XPM; ..\xpm\generate.xpm; ; [-1; -1]" id="id_GenerateCode" label="" tooltip="Generate base class code" var_name="Generate" wxEVT_TOOL="OnGenerateCode" />
+        <node class="tool" bitmap="Header; ..\xpm\generate_png.hxx; ; [-1; -1]" id="id_GenerateCode" label="" tooltip="Generate base class code" var_name="Generate" wxEVT_TOOL="OnGenerateCode" />
         <node class="toolSeparator" />
         <node class="tool" bitmap="Art; wxART_UNDO; wxART_TOOLBAR; [-1; -1]" id="wxID_UNDO" label="" tooltip="Undo" var_name="Undo" />
         <node class="tool" bitmap="Art; wxART_REDO; wxART_TOOLBAR; [-1; -1]" id="wxID_REDO" label="" tooltip="Redo" var_name="Redo" />
@@ -89,15 +89,15 @@
         <node class="tool" bitmap="Header; ..\xpm\alignvertcenter_png.hxx; ; [-1; -1]" id="id_AlignCenterVertical" kind="wxITEM_CHECK" label="" tooltip="Center vertically" var_name="AlignCenterV" />
         <node class="tool" bitmap="Header; ..\xpm\alignbottom_png.hxx; ; [-1; -1]" id="id_AlignBottom" kind="wxITEM_CHECK" label="" tooltip="Align bottom" var_name="AlignBottom" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\left.xpm; ; [-1; -1]" id="id_BorderLeft" kind="wxITEM_CHECK" label="" tooltip="Left border" var_name="BorderLeft" />
-        <node class="tool" bitmap="XPM; ..\xpm\right.xpm; ; [-1; -1]" id="id_BorderRight" kind="wxITEM_CHECK" label="" tooltip="Right border" var_name="BorderRight" />
-        <node class="tool" bitmap="XPM; ..\xpm\top.xpm; ; [-1; -1]" id="id_BorderTop" kind="wxITEM_CHECK" label="" tooltip="Top border" var_name="BorderTop" />
-        <node class="tool" bitmap="XPM; ..\xpm\bottom.xpm; ; [-1; -1]" id="id_BorderBottom" kind="wxITEM_CHECK" label="" tooltip="Bottom border" var_name="BorderBottom" />
+        <node class="tool" bitmap="Header; ..\xpm\left_png.hxx; ; [-1; -1]" id="id_BorderLeft" kind="wxITEM_CHECK" label="" tooltip="Left border" var_name="BorderLeft" />
+        <node class="tool" bitmap="Header; ..\xpm\right_png.hxx; ; [-1; -1]" id="id_BorderRight" kind="wxITEM_CHECK" label="" tooltip="Right border" var_name="BorderRight" />
+        <node class="tool" bitmap="Header; ..\xpm\top_png.hxx; ; [-1; -1]" id="id_BorderTop" kind="wxITEM_CHECK" label="" tooltip="Top border" var_name="BorderTop" />
+        <node class="tool" bitmap="Header; ..\xpm\bottom_png.hxx; ; [-1; -1]" id="id_BorderBottom" kind="wxITEM_CHECK" label="" tooltip="Bottom border" var_name="BorderBottom" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\expand.xpm; ; [-1; -1]" id="id_Expand" kind="wxITEM_CHECK" label="" tooltip="Expand to fill the space" var_name="Expand" />
+        <node class="tool" bitmap="Header; ..\xpm\expand_png.hxx; ; [-1; -1]" id="id_Expand" kind="wxITEM_CHECK" label="" tooltip="Expand to fill the space" var_name="Expand" />
         <node class="toolSeparator" />
-        <node class="tool" bitmap="XPM; ..\xpm\hidden.xpm; ; [-1; -1]" id="id_ShowHidden" kind="wxITEM_CHECK" label="" tooltip="Show hidden controls in Mockup panel" var_name="Spy" />
-        <node class="tool" bitmap="XPM; ..\xpm\magnify.xpm; ; [-1; -1]" id="id_Magnify" kind="wxITEM_CHECK" label="" tooltip="Magnify the size of the Mockup window" var_name="Magnify" />
+        <node class="tool" bitmap="Header; ..\xpm\hidden_png.hxx; ; [-1; -1]" id="id_ShowHidden" kind="wxITEM_CHECK" label="" tooltip="Show hidden controls in Mockup panel" var_name="Spy" />
+        <node class="tool" bitmap="Header; ..\xpm\magnify_png.hxx; ; [-1; -1]" id="id_Magnify" kind="wxITEM_CHECK" label="" tooltip="Magnify the size of the Mockup window" var_name="Magnify" />
       </node>
     </node>
     <node class="wxDialog" class_name="EmbedImageBase" title="Convert Image" base_file="embedimg_base" derived_class_name="EmbedImage" minimum_size="-1,-1" size="-1,-1">

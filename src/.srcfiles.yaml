@@ -179,31 +179,25 @@ PNG:
     art_src/alignright.png: xpm/alignright_png.hxx
     art_src/aligntop.png: xpm/aligntop_png.hxx
     art_src/alignvertcenter.png: xpm/alignvertcenter_png.hxx
-
+    art_src/bottom.png: xpm/bottom_png.hxx
+    art_src/expand.png: xpm/expand_png.hxx
+    art_src/generate.png: xpm/generate_png.hxx
+    art_src/hidden.png: xpm/hidden_png.hxx
+    art_src/left.png: xpm/left_png.hxx
+    art_src/magnify.png: xpm/magnify_png.hxx
     art_src/nav_movedown.png: xpm/nav_movedown_png.hxx
     art_src/nav_moveleft.png: xpm/nav_moveleft_png.hxx
     art_src/nav_moveright.png: xpm/nav_moveright_png.hxx
     art_src/nav_moveup.png: xpm/nav_moveup_png.hxx
+    art_src/new.png: xpm/new_png.hxx
+    art_src/right.png: xpm/right_png.hxx
     art_src/save.png: xpm/save_png.hxx
-
+    art_src/top.png: xpm/top_png.hxx
 
 XPM:
     art_src/nav_coll_expand.png: xpm/nav_coll_expand.xpm
     art_src/nav_collapse.png: xpm/nav_collapse.xpm
     art_src/nav_expand.png: xpm/nav_expand.xpm
-    art_src/save.png: xpm/save.xpm
-
-    # art_src/nav_movedown.png: xpm/nav_movedown.xpm
-    # art_src/nav_moveleft.png: xpm/nav_moveleft.xpm
-    # art_src/nav_moveright.png: xpm/nav_moveright.xpm
-    # art_src/nav_moveup.png: xpm/nav_moveup.xpm
-
-    # art_src/alignbottom.png: xpm/alignbottom.xpm
-    # art_src/aligncenter.png: xpm/aligncenter.xpm
-    # art_src/alignleft.png: xpm/alignleft.xpm
-    # art_src/alignright.png: xpm/alignright.xpm
-    # art_src/aligntop.png: xpm/aligntop.xpm
-    # art_src/alignvertcenter.png: xpm/alignvertcenter.xpm
 
     art_src/auinotebook.png: xpm/auinotebook.xpm
     art_src/auitoolbar.png: xpm/auitoolbar.xpm
@@ -211,12 +205,9 @@ XPM:
     art_src/bitmap_toggle_button.png: xpm/bitmap_toggle_button.xpm
     art_src/bmp_combo_box.png: xpm/bmp_combo_box.xpm
     art_src/book_page.png: xpm/book_page.xpm
-    art_src/bottom.png: xpm/bottom.xpm
     art_src/calendar.png: xpm/calendar.xpm
     art_src/check3state.png: xpm/check3state.xpm
     art_src/colourPickerIcon.png: xpm/colourPickerIcon.xpm
-    art_src/copy.png: xpm/copy.xpm
-    art_src/cut.png: xpm/cut.xpm
     art_src/dataview_ctrl.png: xpm/dataview_ctrl.xpm
     art_src/dataviewlist_column.png: xpm/dataviewlist_column.xpm
     art_src/dataviewlist_ctrl.png: xpm/dataviewlist_ctrl.xpm
@@ -225,45 +216,35 @@ XPM:
     art_src/debug_16.png: xpm/debug_16.xpm
     art_src/debug_32.png: xpm/debug_32.xpm
     art_src/default.png: xpm/default.xpm
-    art_src/delete.png: xpm/delete.xpm
     art_src/dirPicker.png: xpm/dirPicker.xpm
     art_src/doc_mdi_parent_frame.png: xpm/doc_mdi_parent_frame.xpm
     art_src/doc_parent_frame.png: xpm/doc_parent_frame.xpm
     art_src/document.png: xpm/document.xpm
     art_src/empty.png: xpm/empty.xpm
-    art_src/expand.png: xpm/expand.xpm
     art_src/filePicker.png: xpm/filePicker.xpm
     art_src/flex_grid_sizer.png: xpm/flex_grid_sizer.xpm
     art_src/fontPicker.png: xpm/fontPicker.xpm
     art_src/gauge.png: xpm/gauge.xpm
-    art_src/generate.png: xpm/generate.xpm
     art_src/genericdir_ctrl.png: xpm/genericdir_ctrl.xpm
     art_src/grid.png: xpm/grid.xpm
     art_src/grid_bag_sizer.png: xpm/grid_bag_sizer.xpm
     art_src/grid_sizer.png: xpm/grid_sizer.xpm
-    art_src/hidden.png: xpm/hidden.xpm
     art_src/htmlwin.png: xpm/htmlwin.xpm
     art_src/hyperlink_ctrl.png: xpm/hyperlink_ctrl.xpm
     art_src/infobar.png: xpm/infobar.xpm
-    art_src/left.png: xpm/left.xpm
     art_src/logo16.png: xpm/logo16.xpm
     art_src/logo32.png: xpm/logo32.xpm
     art_src/logo64.png: xpm/logo64.xpm
-    art_src/magnify.png: xpm/magnify.xpm
     art_src/menu.png: xpm/menu.xpm
     art_src/menuitem.png: xpm/menuitem.xpm
     art_src/moveColLeft.png: xpm/moveColLeft.xpm
     art_src/moveColRight.png: xpm/moveColRight.xpm
     art_src/moveRowDown.png: xpm/moveRowDown.xpm
     art_src/moveRowUp.png: xpm/moveRowUp.xpm
-    art_src/new.png: xpm/new.xpm
-    art_src/open.png: xpm/open.xpm
-    art_src/paste.png: xpm/paste.xpm
     art_src/project.png: xpm/project.xpm
     art_src/propgriditem.png: xpm/propgriditem.xpm
     art_src/propgridpage.png: xpm/propgridpage.xpm
     art_src/radio_box.png: xpm/radio_box.xpm
-    art_src/redo.png: xpm/redo.xpm
     art_src/ribbon_bar.png: xpm/ribbon_bar.xpm
     art_src/ribbon_button.png: xpm/ribbon_button.xpm
     art_src/ribbon_button_dropdown.png: xpm/ribbon_button_dropdown.xpm
@@ -275,7 +256,6 @@ XPM:
     art_src/ribbon_page.png: xpm/ribbon_page.xpm
     art_src/ribbon_panel.png: xpm/ribbon_panel.xpm
     art_src/richtextctrl.png: xpm/richtextctrl.xpm
-    art_src/right.png: xpm/right.xpm
     art_src/scintilla.png: xpm/scintilla.xpm
     art_src/scrollbar.png: xpm/scrollbar.xpm
     art_src/search.png: xpm/search.xpm
@@ -299,11 +279,9 @@ XPM:
     art_src/toggle_button.png: xpm/toggle_button.xpm
     art_src/tool.png: xpm/tool.xpm
     art_src/toolseparator.png: xpm/toolseparator.xpm
-    art_src/top.png: xpm/top.xpm
     art_src/tree_ctrl.png: xpm/tree_ctrl.xpm
     art_src/treelistctrl.png: xpm/treelistctrl.xpm
     art_src/treelistctrlcolumn.png: xpm/treelistctrlcolumn.xpm
-    art_src/undo.png: xpm/undo.xpm
     art_src/unknown.png: xpm/unknown.xpm
     art_src/wrap_sizer.png: xpm/wrap_sizer.xpm
     art_src/wxActivityIndicator.png: xpm/wxActivityIndicator.xpm

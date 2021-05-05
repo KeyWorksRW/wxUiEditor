@@ -16,6 +16,9 @@
 
 #include "bitmaps.h"
 
+// [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will be called during project
+// loading, and there could be dozens of calls to the same problem file(s).
+
 wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString* p_mime_type)
 {
     wxImage image;
@@ -58,16 +61,19 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
         return image;
     }
 
+    bool isUiditorFile { true };
+
     if (!image_buffer_size)
     {
         // wxFormBuilder doesn't add the size of the image in brackets so we have to parse it without storing the
         // results in order to calculate the size, then parse it again to actually store the data in an image buffer.
+        isUiditorFile = false;
 
         auto save_ptr = buf_ptr;
 
         do
         {
-            if (ttlib::is_digit(*buf_ptr))
+            if (*buf_ptr >= '0' && *buf_ptr <= '9')
             {
                 ++image_buffer_size;
 
@@ -82,50 +88,102 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
                 } while (ttlib::is_digit(*buf_ptr));
 
                 if (!*buf_ptr)
-                    break;  // This will be a corrupted file since it didn't end with a closing '}' character
+                {
+                    FAIL_MSG(ttlib::cstr() << filename << " doesn't contain a closing brace");
+                    return image;
+                }
             }
             ++buf_ptr;
-        } while (*buf_ptr);
+        } while (*buf_ptr != '}' && *buf_ptr);
 
         buf_ptr = save_ptr;
+    }
+
+    // We don't have a reliable way of identifying either wxFormBuilder or wxUiEditor generated graphics header files, so we
+    // start by making certain the image buffer is at least a possible size. It might still be wrong, but we'll fail to find
+    // a handler to load it, so that should be a sufficient way of trying to load some random  header file.
+
+    if (image_buffer_size < 4 || image_buffer_size > in_buf.size() / 2)
+    {
+        FAIL_MSG(ttlib::cstr() << filename << " is not a valid graphics header file");
+        return image;
     }
 
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
     unsigned char* ptr_out_buf = image_buffer.get();
 
-    // TODO: [KeyWorks - 05-04-2021] Issue #191 is going to be harder to implement if we use the regular code for parsing
-    // wxFormBuilder files since they use hex digits and spaces. It should be safe to assume that if no array size was
-    // specified, then it's a wxFormBuilder file and we should process it differently.
-
-    do
+    if (isUiditorFile)
     {
-        if (ttlib::is_digit(*buf_ptr))
+        // This section is for wxUiEditor which uses decimal and no spaces
+        do
         {
-            // TODO: [KeyWorks - 05-04-2021] The needs a complete rewrite -- see issue #191
-            ptr_out_buf[actual_size] = static_cast<unsigned char>(ttlib::atoi(buf_ptr));
-
-            if (++actual_size > image_buffer_size)
+            if (*buf_ptr >= '0' && *buf_ptr <= '9')
             {
-                FAIL_MSG(ttlib::cstr() << filename << " actual image size is larger that the size specified in brackets");
-                return image;
+                unsigned char value = static_cast<unsigned char>(*buf_ptr - '0');
+                for (++buf_ptr; *buf_ptr >= '0' && *buf_ptr <= '9'; ++buf_ptr)
+                {
+                    value = (value * 10) + static_cast<unsigned char>(*buf_ptr - '0');
+                }
+                ptr_out_buf[actual_size] = value;
+
+                if (++actual_size > image_buffer_size)
+                {
+                    FAIL_MSG(ttlib::cstr()
+                             << filename << " actual image size is larger that the size specified in brackets");
+                    return image;
+                }
             }
-
-            // Step over any hex digit
-            if (buf_ptr[0] == '0' && (buf_ptr[1] == 'x' || buf_ptr[1] == 'X'))
-                buf_ptr += 2;
-
-            // Now step over the digit, then fall through and step over the first character following the digit
-            do
+            else
             {
                 ++buf_ptr;
-            } while (ttlib::is_digit(*buf_ptr));
+            }
+        } while (*buf_ptr != '}' && *buf_ptr);
+    }
 
-            if (!*buf_ptr)
-                break;  // This will be a corrupted file since it didn't end with a closing '}' character
-        }
-        ++buf_ptr;
-    } while (*buf_ptr);
+    else
+    {
+        // This section is for wxFormBuilder which uses hexadecimal and a lot of whitespace
+        do
+        {
+            // The format is assumed to be "0x" followed by two hexadcimal digits
 
+            if (*buf_ptr >= '0' && *buf_ptr <= '9')
+            {
+                if (buf_ptr[0] == '0' && (buf_ptr[1] == 'x' || buf_ptr[1] == 'X'))
+                    buf_ptr += 2;
+
+                unsigned char value = 0;
+
+                // Get the high value
+                if (*buf_ptr >= '0' && *buf_ptr <= '9')
+                    value = static_cast<unsigned char>(*buf_ptr - '0') * 16;
+                else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
+                    value = static_cast<unsigned char>((*buf_ptr - 'A') + 10) * 16;
+                else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
+                    value = static_cast<unsigned char>((*buf_ptr - 'a') + 10) * 16;
+
+                ++buf_ptr;
+
+                // Get the low value
+                if (*buf_ptr >= '0' && *buf_ptr <= '9')
+                    value += static_cast<unsigned char>(*buf_ptr - '0');
+                else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
+                    value += static_cast<unsigned char>((*buf_ptr - 'A') + 10);
+                else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
+                    value += static_cast<unsigned char>((*buf_ptr - 'a') + 10);
+
+                ptr_out_buf[actual_size] = value;
+
+                if (++actual_size > image_buffer_size)
+                {
+                    FAIL_MSG(ttlib::cstr()
+                             << filename << " actual image size is larger that the size specified in brackets");
+                    return image;
+                }
+            }
+            ++buf_ptr;
+        } while (*buf_ptr != '}' && *buf_ptr);
+    }
     wxMemoryInputStream stream(image_buffer.get(), actual_size);
 
     wxImageHandler* handler;

@@ -343,7 +343,7 @@ wxObject* ToolbookGenerator::Create(Node* node, wxObject* parent)
         }
         else
         {
-            auto img = GetXPMImage("unknown");
+            auto img = GetInternalImage("unknown");
             ASSERT(img.IsOk());
             img_list->Add(img.Scale(size.x, size.y));
         }

@@ -5,14 +5,16 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+// GetHeaderImage() reads the actual header file and converts that text into binary data and then loads the image.
+
+// LoadHeaderImage() is used to load the image from a #included header file (the compiler already converted it into binary
+// data)
+
 #include "pch.h"
 
 #include <fstream>
-#include <map>
 
 #include <wx/mstream.h>  // Memory stream classes
-
-#include <tttextfile.h>
 
 #include "bitmaps.h"
 
@@ -207,3 +209,20 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
 
     return image;
 }
+
+wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream stream(data, size_data);
+    wxImage image;
+
+    // Images are almost always in PNG format, so check that first. If it fails, then let wxWidgets figure out the format.
+
+    auto handler = wxImage::FindHandler(wxBITMAP_TYPE_PNG);
+    if (handler && handler->CanRead(stream) && handler->LoadFile(&image, stream))
+    {
+        return image;
+    }
+
+    image.LoadFile(stream);
+    return image;
+};

@@ -86,7 +86,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
     if (parts[IndexImage].empty())
     {
-        return GetXPMImage("unknown");
+        return GetInternalImage("unknown");
     }
 
     wxImage image;
@@ -134,7 +134,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
     if (!image.IsOk())
     {
-        return GetXPMImage("unknown");
+        return GetInternalImage("unknown");
     }
 
     // cache it so that we don't need to read it from disk again

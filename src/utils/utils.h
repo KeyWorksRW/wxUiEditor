@@ -64,8 +64,9 @@ std::vector<std::string> ConvertToArrayString(ttlib::cview value);
 // Converts a GZIP unsigned char array into an image.
 wxImage LoadGzipImage(const unsigned char* data, size_t size_data);
 
-// Converts a PNG unsigned char array into an image.
-wxImage LoadPngHdrImage(const unsigned char* data, size_t size_data);
+// Converts an unsigned char array into an image. This is typically use for loading internal
+// #included images
+wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);
 
 // Converts a GZIP unsigned char array into a string.
 std::string LoadGzipString(const unsigned char* data, size_t size_data);

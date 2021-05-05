@@ -242,7 +242,7 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
 
         auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
         if (!bmp.IsOk())
-            bmp = GetXPMImage("default");
+            bmp = GetInternalImage("default");
 
         btn_bar->AddButton(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, childObj->prop_as_wxString(prop_help),
                            (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
@@ -340,7 +340,7 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
 
         auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
         if (!bmp.IsOk())
-            bmp = GetXPMImage("default");
+            bmp = GetInternalImage("default");
         btn_bar->AddTool(wxID_ANY, bmp, childObj->prop_as_wxString(prop_help),
                          (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
     }
@@ -457,7 +457,7 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
         {
             auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
-                bmp = GetXPMImage("default");
+                bmp = GetInternalImage("default");
 
             gallery->Append(bmp, wxID_ANY);
         }

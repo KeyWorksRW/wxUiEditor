@@ -15,10 +15,11 @@
 
 #include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
 
-#include "../xpm/empty.xpm"
+#include "../art_headers/empty_png.hxx"
 
 #include "pg_image.h"
 
+#include "bitmaps.h"      // Contains various images handling functions
 #include "mainapp.h"      // Main application class
 #include "node.h"         // Node -- Node class
 #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
@@ -63,7 +64,8 @@ void PropertyGrid_Image::RefreshChildren()
         {
             Item(IndexImage)->SetLabel("id");
             Item(IndexConvert)->SetLabel("client");
-            Item(IndexConvert)->SetHelpString("Serves as a hint to wxArtProvider that helps it to choose the best looking image.");
+            Item(IndexConvert)
+                ->SetHelpString("Serves as a hint to wxArtProvider that helps it to choose the best looking image.");
         }
         else
         {
@@ -92,7 +94,7 @@ void PropertyGrid_Image::RefreshChildren()
             }
 
             if (!bmp.IsOk())
-                bmp = wxImage(empty_xpm).Scale(15, 15);
+                bmp = LoadHeaderImage(empty_png, sizeof(empty_png)).Scale(15, 15);
 
             Item(IndexImage)->SetValueImage(bmp);
             m_old_image = m_img_props.image;
@@ -148,32 +150,32 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
     switch (childIndex)
     {
         case IndexType:
-        {
-            auto index = childValue.GetLong();
-            if (index >= 0)
             {
-                img_props.type = s_type_names[index];
+                auto index = childValue.GetLong();
+                if (index >= 0)
+                {
+                    img_props.type = s_type_names[index];
 
-                // If the type has changed, then the image and convert properties are no longer valid, so we clear them
-                img_props.image.clear();
-                img_props.convert.clear();
+                    // If the type has changed, then the image and convert properties are no longer valid, so we clear them
+                    img_props.image.clear();
+                    img_props.convert.clear();
+                }
+                break;
             }
-            break;
-        }
 
         case IndexImage:
-        {
-            ttlib::cstr results;
-            results << childValue.GetString().wx_str();
-            auto pos = results.find_first_of('|');
-            if (ttlib::is_found(pos))
             {
-                img_props.convert = results.subview(pos + 1);
-                results.erase(pos);
+                ttlib::cstr results;
+                results << childValue.GetString().wx_str();
+                auto pos = results.find_first_of('|');
+                if (ttlib::is_found(pos))
+                {
+                    img_props.convert = results.subview(pos + 1);
+                    results.erase(pos);
+                }
+                img_props.image = results;
             }
-            img_props.image = results;
-        }
-        break;
+            break;
 
         case IndexConvert:
             img_props.convert = childValue.GetString().utf8_str().data();

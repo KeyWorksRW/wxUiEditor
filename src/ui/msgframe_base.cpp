@@ -7,14 +7,22 @@
 #include "pch.h"
 
 #include <wx/artprov.h>
-#include <wx/bitmap.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/sizer.h>
 
 #include "msgframe_base.h"
 
-#include "../xpm/hidden.xpm"
+#include "../art_headers/hidden_png.hxx"
+
+#include <wx/mstream.h>  // Memory stream classes
+
+// Convert a data header file into a wxImage
+static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxImage image;
+    image.LoadFile(strm);
+    return image;
+};
 
 MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
 		const wxPoint& pos, const wxSize& size, long style) :
@@ -37,7 +45,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     menu_file->Append(menu_item_clear);
 
     auto menu_item_hide = new wxMenuItem(menu_file, id_hide, wxString::FromUTF8("&Hide"));
-    menu_item_hide->SetBitmap(wxImage(hidden_xpm));
+    menu_item_hide->SetBitmap(GetImgFromHdr(hidden_png, sizeof(hidden_png)));
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, wxString::FromUTF8("&File"));
 
@@ -45,14 +53,17 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_menu_item_warnings = new wxMenuItem(menu_view, id_warning_msgs, wxString::FromUTF8("Warnings"),
     wxEmptyString, wxITEM_CHECK);
+    m_menu_item_warnings->SetBitmap(wxArtProvider::GetBitmap(wxART_WARNING, wxART_MENU));
     menu_view->Append(m_menu_item_warnings);
 
     m_menu_item_events = new wxMenuItem(menu_view, id_event_msgs, wxString::FromUTF8("Events"),
     wxEmptyString, wxITEM_CHECK);
+    m_menu_item_events->SetBitmap(wxArtProvider::GetBitmap(wxART_TIP, wxART_MENU));
     menu_view->Append(m_menu_item_events);
 
     m_menu_item_info = new wxMenuItem(menu_view, wxID_INFO, wxEmptyString,
     wxEmptyString, wxITEM_CHECK);
+    m_menu_item_info->SetBitmap(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_MENU));
     menu_view->Append(m_menu_item_info);
     menubar->Append(menu_view, wxString::FromUTF8("&View"));
 

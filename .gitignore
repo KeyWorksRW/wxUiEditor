@@ -13,6 +13,7 @@ archive/
 converted_art/
 tests/
 xpm/
+art_headers/
 
 # Generated files to ignore
 messages.po

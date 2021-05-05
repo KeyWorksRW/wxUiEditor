@@ -266,7 +266,7 @@ wxImage App::GetImage(const ttlib::cstr& description)
     if (description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") || description.is_sameprefix("Art;"))
         return m_pjtSettings->GetPropertyBitmap(description);
     else
-        return GetXPMImage("unknown");
+        return GetInternalImage("unknown");
 }
 
 #if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)

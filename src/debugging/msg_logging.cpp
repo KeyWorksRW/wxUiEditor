@@ -163,6 +163,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             m_bErrors = true;
             m_aMessages.Add(msg);
             m_aSeverity.Add((int) level);
+            m_aTimes.Add((long) (info.timestampMS / 1000));
             m_bHasMessages = true;
             break;
 
@@ -190,6 +191,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             m_bWarnings = true;
             m_aMessages.Add(msg);
             m_aSeverity.Add((int) level);
+            m_aTimes.Add((long) (info.timestampMS / 1000));
             m_bHasMessages = true;
             break;
 

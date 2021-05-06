@@ -39,6 +39,7 @@
 // Various customized wxPGProperty classes
 
 #include "../customprops/evt_string_prop.h"  // EventStringProperty -- dialog for editing event handlers
+#include "../customprops/pg_animation.h"     // PropertyGrid_Animation -- Custom property grid class for animations
 #include "../customprops/pg_image.h"         // PropertyGrid_Image -- Custom property grid class for images
 #include "../customprops/pg_point.h"         // CustomPointProperty -- custom wxPGProperty for handling wxPoint
 #include "../customprops/pg_size.h"          // CustomSizeProperty -- custom wxPGProperty for handling wxSize
@@ -271,6 +272,9 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
 
         case type_path:
             return new wxDirProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_wxString());
+
+        case type_animation:
+            return new PropertyGrid_Animation(prop->DeclName().wx_str(), prop);
 
         case type_image:
             return new PropertyGrid_Image(prop->DeclName().wx_str(), prop);
@@ -536,7 +540,7 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
                         m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_ids);
                     }
                 }
-                else if (propType == type_image)
+                else if (propType == type_image || propType == type_animation)
                 {
                     m_prop_grid->Expand(pg);
                     m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#fff1d2"));
@@ -1001,18 +1005,37 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
-        case type_image:
+        case type_animation:
             {
+                // The main difference between this and type_image is that the image is in field 0 instead of field 1.
                 ttlib::cstr value;
                 value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
 
-                // If the image field is empty, then the entire property needs to be cleared
                 ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
                 for (auto& iter: parts)
                 {
                     iter.BothTrim();
                 }
 
+                // If the image field is empty, then the entire property needs to be cleared
+                if (parts[0].empty())
+                    value.clear();
+                modifyProperty(prop, value);
+            }
+            break;
+
+        case type_image:
+            {
+                ttlib::cstr value;
+                value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
+
+                ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
+                for (auto& iter: parts)
+                {
+                    iter.BothTrim();
+                }
+
+                // If the image field is empty, then the entire property needs to be cleared
                 if (parts[IndexImage].empty())
                     value.clear();
                 modifyProperty(prop, value);
@@ -1305,6 +1328,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             }
             break;
 
+        case type_animation:
         case type_image:
             break;
 

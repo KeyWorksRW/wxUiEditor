@@ -8,6 +8,7 @@
 #include "pch.h"
 
 #include <wx/activityindicator.h>  // wxActivityIndicator declaration.
+#include <wx/animate.h>            // wxAnimation and wxAnimationCtrl
 #include <wx/bannerwindow.h>       // wxBannerWindow class declaration
 #include <wx/event.h>              // Event classes
 #include <wx/gauge.h>              // wxGauge interface
@@ -19,6 +20,9 @@
 #include <wx/statline.h>           // wxStaticLine class interface
 #include <wx/statusbr.h>           // wxStatusBar class interface
 
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+
+#include "bitmaps.h"     // Contains various images handling functions
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
@@ -55,6 +59,46 @@ std::optional<ttlib::cstr> ActivityIndicatorGenerator::GenConstruction(Node* nod
 bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/activityindicator.h>", set_src, set_hdr);
+    return true;
+}
+
+//////////////////////////////////////////  AnimationGenerator  //////////////////////////////////////////
+
+wxObject* AnimationGenerator::Create(Node* node, wxObject* parent)
+{
+    wxAnimation animation;
+    if (node->HasValue(prop_animation))
+    {
+        ttlib::multistr file_names(node->prop_as_string(prop_animation), ';');
+        GetAnimationImage(animation, file_names[0]);
+    }
+    auto widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
+                                      animation.IsOk() ? animation : wxNullAnimation, node->prop_as_wxPoint(prop_pos),
+                                      node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style));
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+    if (animation.IsOk())
+        widget->Play();
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = new wxAnimationCtrl(";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxNullAnimation";
+
+    GeneratePosSizeFlags(node, code);
+
+    return code;
+}
+
+bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
     return true;
 }
 

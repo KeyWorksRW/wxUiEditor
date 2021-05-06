@@ -42,14 +42,19 @@ Files:
     undo_stack.cpp        # Maintain an undo and redo stack
     xpm.cpp               # All xpm files
 
-    customprops/art_prop_dlg.cpp     # Art Property Dialog for image property
-    customprops/evt_string_prop.cpp  # Derived wxStringProperty class for event function
-    customprops/img_props.cpp        # Handles property grid image properties
-    customprops/img_string_prop.cpp  # Derived wxStringProperty class for handling wxImage files or art
-    customprops/pg_image.cpp         # Custom property grid class for images
-    customprops/pg_point.cpp         # Custom wxPGProperty for wxPoint
-    customprops/pg_size.cpp          # Custom wxPGProperty for wxSize
-    customprops/txt_string_prop.cpp  # Derived wxStringProperty class for single-line text
+    customprops/anim_string_prop.cpp  # Derived wxStringProperty class for handling animation files
+    customprops/evt_string_prop.cpp   # Derived wxStringProperty class for event function
+    customprops/img_string_prop.cpp   # Derived wxStringProperty class for handling wxImage files or art
+    customprops/txt_string_prop.cpp   # Derived wxStringProperty class for single-line text
+
+    customprops/art_prop_dlg.cpp      # Art Property Dialog for image property
+    customprops/anim_props.cpp         # Handles property grid image properties
+    customprops/img_props.cpp         # Handles property grid image properties
+
+    customprops/pg_image.cpp          # Custom property grid class for images
+    customprops/pg_animation.cpp      # Custom property grid class for animations
+    customprops/pg_point.cpp          # Custom wxPGProperty for wxPoint
+    customprops/pg_size.cpp           # Custom wxPGProperty for wxSize
 
     generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
     generate/gen_codefiles.cpp     # Generate code files

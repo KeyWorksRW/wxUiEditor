@@ -14,3 +14,19 @@ Declarations which inherit from the **Window Events** base class will have all o
 ## Adding a declaration or property
 
 The files `gen_enums.h` and `gen_enums.cpp` _must_ be updated any time you add a new component or a property, or if you change an existing class name or property type. In a DEBUG build you will get warnings if you forget to update one or more of the enumeration lists and there's a fairly good chance the program will not work correctly or even crash if you try to use a component with the missing enumeration.
+
+## Adding a new generator
+
+- Add the declaration to one of the XML files.
+- Add any the generator class to gen_enums.cpp and gen_enums.h.
+- Add any unique property types to gen_enums.cpp and gen_enums.h.
+- Add the generator class to one of the files in gnerate/ or create a new file
+- Add any required wxWidgets header file to gen_initialize.cpp
+- Add the generator class name to the InitGenerators() in gen_initialize.cpp
+
+While testing, you can use any existing image, and insert the control using the Edit menu's `Insert Widget` command. Once ready for release, then take the following steps:
+
+- Create a new graphic for the class, add conversion to PNG: section of .srcfiles.yaml
+- Add the header file and name matching to xpm.cpp -- the name must match to declaration at the top of this list of todo items
+- Change the name of the bitmap in the XML declaration to match the shortname you specified in xpm.cpp.
+- Add the control to ribbon.wxui. If it's part of a dropdown list of controls, add it to ribbon_tools.

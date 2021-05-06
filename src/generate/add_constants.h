@@ -57,6 +57,10 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxTE_RIGHT)
     ADD_CONSTANT(wxTE_WORDWRAP)
 
+    // wxAnimation
+    ADD_CONSTANT(wxAC_DEFAULT_STYLE)
+    ADD_CONSTANT(wxAC_NO_AUTORESIZE)
+    
     // wxButton
     ADD_CONSTANT(wxBU_LEFT)
     ADD_CONSTANT(wxBU_TOP)

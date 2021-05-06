@@ -16,6 +16,7 @@ using namespace GenEnum;
 
 std::map<PropType, const char*> GenEnum::map_PropTypes = {
 
+    { type_animation, "animation" },
     { type_bitlist, "bitlist" },
     { type_bitmap, "bitmap" },
     { type_bool, "bool" },
@@ -66,6 +67,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_add_default_border, "add_default_border" },
     { prop_align, "align" },
     { prop_alignment, "alignment" },
+    { prop_animation, "animation" },
     { prop_aui_layer, "aui_layer" },
     { prop_aui_name, "aui_name" },
     { prop_aui_position, "aui_position" },
@@ -170,6 +172,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_icon, "icon" },
     { prop_id, "id" },
     { prop_image_size, "image_size" },
+    { prop_inactive_bitmap, "inactive_bitmap" },
     { prop_inc, "inc" },
     { prop_include_advanced, "include_advanced" },
     { prop_indentation_guides, "indentation_guides" },
@@ -409,6 +412,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_tool, "tool" },
     { gen_toolSeparator, "toolSeparator" },
     { gen_wxActivityIndicator, "wxActivityIndicator" },
+    { gen_wxAnimationCtrl, "wxAnimationCtrl" },
     { gen_wxAuiMDIChildFrame, "wxAuiMDIChildFrame" },
     { gen_wxBannerWindow, "wxBannerWindow" },
     { gen_wxBitmapComboBox, "wxBitmapComboBox" },

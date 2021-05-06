@@ -451,7 +451,7 @@ void EmbedImage::ImgageInHeaderOut()
     }
     else
     {
-        if (!m_ForceHdrMask || m_mime_type.is_sameas_wx("image/x-ani"))
+        if (!m_ForceHdrMask->GetValue() || m_mime_type.is_sameas_wx("image/x-ani"))
         {
             wxFFileInputStream stream_in(m_fileOriginal->GetTextCtrlValue());
             if (stream_in.IsOk())

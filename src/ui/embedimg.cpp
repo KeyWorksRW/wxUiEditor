@@ -451,7 +451,18 @@ void EmbedImage::ImgageInHeaderOut()
     }
     else
     {
-        m_hdrImage.SaveFile(save_stream, m_mime_type);
+        if (!m_ForceHdrMask || m_mime_type.is_sameas_wx("image/x-ani"))
+        {
+            wxFFileInputStream stream_in(m_fileOriginal->GetTextCtrlValue());
+            if (stream_in.IsOk())
+            {
+                stream_in.Read(save_stream);
+            }
+        }
+        else
+        {
+            m_hdrImage.SaveFile(save_stream, m_mime_type);
+        }
     }
 
     auto read_stream = save_stream.GetOutputStreamBuffer();

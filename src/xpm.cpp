@@ -14,6 +14,9 @@
 
 #include <unordered_map>
 
+#include <wx/bitmap.h>  // wxBitmap class interface
+#include <wx/icon.h>    // wxIcon base header
+
 #include "bitmaps.h"  // Contains various images handling functions
 #include "utils.h"    // Utility functions that work with properties
 

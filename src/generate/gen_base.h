@@ -88,18 +88,14 @@ protected:
     // Recursive function for generating all include files needed by any nodes in the form
     void GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr);
 
-    // Generates '#include' lines for each image
-    void GenerateImageIncludes(Node* project);
-
     // Generates an enum of all use-defined ids
     void GenEnumIds(Node* class_node);
 
-    // If there are one or more HDR source files that specify a png header file, this will
-    // write the function needed to load them.
-    void GenPngLoadFunction(Node* class_node);
+    // Returns true if there is at least one image data Header file
+    bool FindImageHeader(Node* class_node);
 
-    // Returns true if there is at least one HDR source file that specifies a png header file
-    bool FindHdrString(Node* class_node);
+    // Returns true if there is at least one animation data Header file
+    bool FindAnimationHeader(Node* class_node);
 
     // Generate node construction code
     void GenConstruction(Node* node);

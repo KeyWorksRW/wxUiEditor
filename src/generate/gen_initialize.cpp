@@ -8,6 +8,7 @@
 #include "pch.h"
 
 #include <wx/activityindicator.h>      // wxActivityIndicator declaration.
+#include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
 #include <wx/anybutton.h>              // wxAnyButtonBase class
 #include <wx/aui/auibar.h>             // wxaui: wx advanced user interface - docking window manager
 #include <wx/aui/auibook.h>            // wxaui: wx advanced user interface - notebook
@@ -101,6 +102,7 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_wxBannerWindow, BannerWindowGenerator)
     SET_GENERATOR(gen_wxBitmapComboBox, BitmapComboBoxGenerator)
     SET_GENERATOR(gen_wxActivityIndicator, ActivityIndicatorGenerator)
+    SET_GENERATOR(gen_wxAnimationCtrl, AnimationGenerator)
     SET_GENERATOR(gen_wxButton, ButtonGenerator)
     SET_GENERATOR(gen_wxCheckBox, CheckBoxGenerator)
     SET_GENERATOR(gen_Check3State, Check3StateGenerator)

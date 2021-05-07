@@ -7,6 +7,8 @@
 
 #include "pch.h"
 
+#include <future>
+#include <thread>
 #include <unordered_set>
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
@@ -34,8 +36,6 @@ using namespace GenEnum;
 // clang-format off
 
 inline constexpr const auto txt_GetImgFromHdrFunction = R"===(
-#include <wx/mstream.h>  // Memory stream classes
-
 // Convert a data header file into a wxImage
 static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
 {
@@ -43,6 +43,17 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
     wxImage image;
     image.LoadFile(strm);
     return image;
+};
+)===";
+
+inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
+// Convert a data header file into a wxAnimation
+static wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxAnimation animation;
+    animation.Load(strm);
+    return animation;
 };
 )===";
 
@@ -63,6 +74,12 @@ BaseCodeGenerator::BaseCodeGenerator() {}
 
 void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_TYPE panel_type)
 {
+    EventVector events;
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+
+    auto thrd_need_hdr_func = std::async(&BaseCodeGenerator::FindImageHeader, this, form_node);
+    auto thrd_need_anim_func = std::async(&BaseCodeGenerator::FindAnimationHeader, this, form_node);
+
     m_panel_type = panel_type;
 
     m_header->Clear();
@@ -86,6 +103,11 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         m_baseFullPath.remove_filename();
     }
 
+    // Caution! CollectImageHeaders() needs access to m_baseFullPath, so don't start this thread until it has been set!
+    std::set<std::string> img_include_set;
+    std::thread thrd_collect_img_headers(&BaseCodeGenerator::CollectImageHeaders, this, form_node,
+                                         std::ref(img_include_set));
+
     m_header->writeLine("#pragma once");
     m_header->writeLine();
 
@@ -102,8 +124,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     CollectIncludes(form_node, src_includes, hdr_includes);
 
-    EventVector events;
-    CollectEventHandlers(form_node, events);
+    thrd_get_events.join();
     if (events.size())
     {
         hdr_includes.insert("#include <wx/event.h>");
@@ -143,11 +164,14 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     }
 
     m_artProvider = form_node->prop_as_string(prop_icon).is_sameprefix("Art");
-    if (!m_artProvider && form_node->prop_as_string(prop_icon).is_sameprefix("XPM"))
+    if (!m_artProvider)
     {
-        src_includes.insert("#include <wx/icon.h>");
+        // REVIEW: [KeyWorks - 05-06-2021] What happens if the user specified a Header file?
+        if (form_node->prop_as_string(prop_icon).is_sameprefix("XPM"))
+            src_includes.insert("#include <wx/icon.h>");
+        CheckForArtProvider(form_node);  // Will set m_artProvider to true if Art Provider used
     }
-    CheckForArtProvider(form_node);
+
     if (m_artProvider)
     {
         src_includes.insert("#include <wx/artprov.h>");
@@ -205,7 +229,16 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     m_source->writeLine(ttlib::cstr() << "#include \"" << file.filename() << "\"");
     m_source->writeLine();
 
-    GenerateImageIncludes(form_node);
+    thrd_collect_img_headers.join();
+    if (!img_include_set.empty())
+    {
+        for (auto& iter: img_include_set)
+        {
+            m_source->writeLine(iter.c_str());
+        }
+
+        m_source->writeLine();
+    }
 
     // Make a copy of the string so that we can tweak it
     ttlib::cstr namespace_prop = project->prop_as_string(prop_name_space);
@@ -251,7 +284,34 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     if (m_panel_type != HDR_PANEL)
     {
-        GenPngLoadFunction(form_node);
+        auto need_hdr_func = thrd_need_hdr_func.get();
+        auto need_anim_func = thrd_need_anim_func.get();
+
+        if (need_hdr_func || need_anim_func)
+            m_source->writeLine("\n#include <wx/mstream.h>  // Memory stream classes", indent::none);
+        if (need_anim_func && src_includes.find("#include <wx/animate.h>") == src_includes.end())
+            m_source->writeLine("#include <wx/animate.h>", indent::none);
+
+        if (need_hdr_func)
+        {
+            ttlib::textfile function;
+            function.ReadString(txt_GetImgFromHdrFunction);
+            for (auto& iter: function)
+            {
+                m_source->writeLine(iter, indent::none);
+            }
+        }
+
+        if (need_anim_func)
+        {
+            ttlib::textfile function;
+            function.ReadString(txt_GetAnimFromHdrFunction);
+            for (auto& iter: function)
+            {
+                m_source->writeLine(iter, indent::none);
+            }
+        }
+
         GenerateClassConstructor(form_node, events);
     }
 
@@ -1091,24 +1151,6 @@ void BaseCodeGenerator::GenSettings(Node* node)
     }
 }
 
-void BaseCodeGenerator::GenerateImageIncludes(Node* node)
-{
-    std::set<std::string> include_set;
-    CollectImageHeaders(node, include_set);
-
-    if (include_set.empty())
-    {
-        return;
-    }
-
-    for (auto& iter: include_set)
-    {
-        m_source->writeLine(iter.c_str());
-    }
-
-    m_source->writeLine();
-}
-
 void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& embedset)
 {
     for (auto& iter: node->get_props_vector())
@@ -1131,6 +1173,21 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 continue;
             }
         }
+        else if (iter.type() == type_animation)
+        {
+            if (!iter.HasValue())
+                continue;
+            auto& value = iter.as_string();
+            auto posBegin = value.find_nonspace();
+            auto posEnd = value.find(';', posBegin);
+            ttlib::cstr path = value.substr(posBegin, posEnd - posBegin);
+            path.make_relative(m_baseFullPath);
+            path.backslashestoforward();
+            ttlib::cstr inc;
+            inc << "#include \"" << path << "\"";
+            embedset.insert(inc);
+            continue;
+        }
     }
 
     auto count = node->GetChildCount();
@@ -1141,20 +1198,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
     }
 }
 
-void BaseCodeGenerator::GenPngLoadFunction(Node* form_node)
-{
-    if (form_node->prop_as_string(prop_icon).is_sameprefix("Header;") || FindHdrString(form_node))
-    {
-        ttlib::textfile function;
-        function.ReadString(txt_GetImgFromHdrFunction);
-        for (auto& iter: function)
-        {
-            m_source->writeLine(iter, indent::none);
-        }
-    }
-}
-
-bool BaseCodeGenerator::FindHdrString(Node* node)
+bool BaseCodeGenerator::FindImageHeader(Node* node)
 {
     for (size_t i = 0; i < node->GetChildCount(); i++)
     {
@@ -1176,7 +1220,35 @@ bool BaseCodeGenerator::FindHdrString(Node* node)
         }
         if (child->GetChildCount())
         {
-            auto result = FindHdrString(child);
+            auto result = FindImageHeader(child);
+            if (result)
+                return result;
+        }
+    }
+    return false;
+}
+
+bool BaseCodeGenerator::FindAnimationHeader(Node* node)
+{
+    for (size_t i = 0; i < node->GetChildCount(); i++)
+    {
+        auto child = node->GetChild(i);
+        if (child->HasValue(prop_animation))
+        {
+            ttlib::multistr parts(child->prop_as_string(prop_animation));
+            for (auto& iter: parts)
+            {
+                iter.BothTrim();
+            }
+
+            if (parts[0].size())
+            {
+                return true;
+            }
+        }
+        if (child->GetChildCount())
+        {
+            auto result = FindAnimationHeader(child);
             if (result)
                 return result;
         }

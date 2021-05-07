@@ -282,10 +282,16 @@ bool NodeProperty::HasValue()
         case type_wxPoint:
             return (as_point() != wxDefaultPosition);
 
+        case type_animation:
+            if (auto semicolonIndex = m_value.find_first_of(";"); ttlib::is_found(semicolonIndex))
+            {
+                return (semicolonIndex != 0);
+            }
+            return m_value.size();
+
         case type_image:
             if (auto semicolonIndex = m_value.find_first_of(";"); ttlib::is_found(semicolonIndex))
             {
-                // REVIEW: [KeyWorks - 08-06-2020] This reflects what IsNull() does, but seems suspicious...
                 return (semicolonIndex != 0 && semicolonIndex + 2 < m_value.size());
             }
             return m_value.size();

@@ -186,6 +186,7 @@
                 <node class="ribbonTool" bitmap="Header; ..\art_headers\wxFileCtrl_png.hxx; ; [-1; -1]" help="wxFileCtrl" id="gen_wxFileCtrl" />
                 <node class="ribbonTool" bitmap="Header; ..\art_headers\genericdir_ctrl_png.hxx; ; [-1; -1]" help="wxGenericDirCtrl" id="gen_wxGenericDirCtrl" />
                 <node class="ribbonTool" bitmap="Header; ..\art_headers\wxActivityIndicator_png.hxx; ; [-1; -1]" help="wxActivityIndicator" id="gen_wxActivityIndicator" />
+                <node class="ribbonTool" bitmap="Header; ..\art_headers\wxAnimation_png.hxx; ; [-1; -1]" help="wxAnimationCtrl" id="gen_wxAnimationCtrl" />
                 <node class="ribbonTool" bitmap="Header; ..\art_headers\wxBannerWindow_png.hxx; ; [-1; -1]" help="wxBannerWindow" id="gen_wxBannerWindow" />
               </node>
             </node>

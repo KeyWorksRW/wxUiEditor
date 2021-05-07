@@ -7,9 +7,6 @@
 #include "pch.h"
 
 #include <wx/artprov.h>
-#include <wx/bitmap.h>
-#include <wx/icon.h>
-#include <wx/image.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
 #include <wx/statbox.h>
@@ -17,6 +14,21 @@
 #include <wx/valtext.h>
 
 #include "commonctrls_base.h"
+
+#include "../art/clr_hourglass_gif.hxx"
+#include "../art/empty.xpm"
+
+#include <wx/mstream.h>  // Memory stream classes
+#include <wx/animate.h>
+
+// Convert a data header file into a wxAnimation
+static wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxAnimation animation;
+    animation.Load(strm);
+    return animation;
+};
 
 CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent, wxWindowID id, const wxString& title,
 		const wxPoint& pos, const wxSize& size, long style) :
@@ -193,6 +205,16 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent, wxWindowID id, const wxString
     m_bmpComboBox = new wxBitmapComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
     flex_grid_sizer->Add(m_bmpComboBox, wxSizerFlags().Border(wxALL));
 
+    m_toggleBtn = new wxToggleButton(this, wxID_ANY, wxString::FromUTF8("Play Animation"), wxDefaultPosition, wxDefaultSize,
+    wxBU_EXACTFIT);
+    flex_grid_sizer->Add(m_toggleBtn, wxSizerFlags().Border(wxALL));
+
+    m_animation_ctrl = new wxAnimationCtrl(this, wxID_ANY,
+    GetAnimFromHdr(clr_hourglass_gif, sizeof(clr_hourglass_gif)), wxDefaultPosition, wxDefaultSize,
+    wxAC_DEFAULT_STYLE);
+    m_animation_ctrl->SetInactiveBitmap(wxImage(empty_xpm));
+    flex_grid_sizer->Add(m_animation_ctrl, wxSizerFlags().Border(wxALL));
+
     auto box_sizer5 = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer5, wxSizerFlags().Expand().Border(wxALL));
 
@@ -233,5 +255,8 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent, wxWindowID id, const wxString
     m_listBox2->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);
     m_checkList->Bind(wxEVT_CHECKLISTBOX, &CommonCtrlsBase::OnListChecked, this);
     m_radioBox->Bind(wxEVT_RADIOBOX, &CommonCtrlsBase::OnRadioBox, this);
+    m_toggleBtn->Bind(wxEVT_TOGGLEBUTTON,
+        [this](wxCommandEvent&) { if (m_toggleBtn->GetValue())  m_animation_ctrl->Play();  else  m_animation_ctrl->Stop(); }
+        );
     m_slider->Bind(wxEVT_SLIDER, &CommonCtrlsBase::OnSlider, this);
 }

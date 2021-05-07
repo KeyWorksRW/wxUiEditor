@@ -6,17 +6,7 @@
 
 #include "pch.h"
 
-#include <wx/bitmap.h>
-#include <wx/icon.h>
-#include <wx/image.h>
-
 #include "mainframe_base.h"
-
-#include "../../src/xpm/wxChoicebook.xpm"
-#include "../../src/xpm/wxListbook.xpm"
-#include "../../src/xpm/wxNotebook.xpm"
-#include "../../src/xpm/wxToolbook.xpm"
-#include "../../src/xpm/wxTreebook.xpm"
 
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
 		const wxPoint& pos, const wxSize& size, long style) :
@@ -44,23 +34,18 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     auto submenu = new wxMenu();
 
     auto menu_choicebook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Choicebook"));
-    menu_choicebook->SetBitmap(wxImage(wxChoicebook_xpm));
     submenu->Append(menu_choicebook);
 
     auto menu_listbook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Listbook"));
-    menu_listbook->SetBitmap(wxImage(wxListbook_xpm));
     submenu->Append(menu_listbook);
 
     auto menu_notebook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Notebook"));
-    menu_notebook->SetBitmap(wxImage(wxNotebook_xpm));
     submenu->Append(menu_notebook);
 
     auto menu_toolbook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Toolbook"));
-    menu_toolbook->SetBitmap(wxImage(wxToolbook_xpm));
     submenu->Append(menu_toolbook);
 
     auto menu_treebook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Treebook"));
-    menu_treebook->SetBitmap(wxImage(wxTreebook_xpm));
     submenu->Append(menu_treebook);
     menuDialogs->AppendSubMenu(submenu, wxString::FromUTF8("Book Controls"));
 

@@ -1,0 +1,29 @@
+/* XPM */
+static const char *empty_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"22 22 1 1",
+"  c None",
+/* pixels */
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      ",
+"                      "
+};

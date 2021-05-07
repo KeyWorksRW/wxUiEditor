@@ -15,6 +15,7 @@ namespace GenEnum
     enum PropType : size_t
     {
 
+        type_animation,
         type_bitlist,
         type_bitmap,
         type_bool,
@@ -66,6 +67,7 @@ namespace GenEnum
         prop_add_default_border,
         prop_align,
         prop_alignment,
+        prop_animation,
         prop_aui_layer,
         prop_aui_name,
         prop_aui_position,
@@ -170,6 +172,7 @@ namespace GenEnum
         prop_icon,
         prop_id,
         prop_image_size,
+        prop_inactive_bitmap,
         prop_inc,
         prop_include_advanced,
         prop_indentation_guides,
@@ -422,6 +425,7 @@ namespace GenEnum
         gen_tool,
         gen_toolSeparator,
         gen_wxActivityIndicator,
+        gen_wxAnimationCtrl,
         gen_wxAuiMDIChildFrame,
         gen_wxBannerWindow,
         gen_wxBitmapComboBox,

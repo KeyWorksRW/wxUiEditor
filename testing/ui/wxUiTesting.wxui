@@ -9,11 +9,11 @@
           <node class="wxMenuItem" label="Ribbon Dialog" var_name="menuItem2" wxEVT_MENU="OnRibbonDialog" />
           <node class="wxMenuItem" label="Wizard" var_name="menuItem3" wxEVT_MENU="OnWizard" />
           <node class="submenu" label="Book Controls">
-            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxChoicebook.xpm; ; [-1; -1]" label="Choicebook" var_name="menu_choicebook" wxEVT_MENU="OnChoicebook" />
-            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxListbook.xpm; ; [-1; -1]" label="Listbook" var_name="menu_listbook" wxEVT_MENU="OnListbook" />
-            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxNotebook.xpm; ; [-1; -1]" label="Notebook" var_name="menu_notebook" wxEVT_MENU="OnNotebook" />
-            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxToolbook.xpm; ; [-1; -1]" label="Toolbook" var_name="menu_toolbook" wxEVT_MENU="OnToolbook" />
-            <node class="wxMenuItem" bitmap="XPM; ..\..\src\xpm\wxTreebook.xpm; ; [-1; -1]" label="Treebook" var_name="menu_treebook" wxEVT_MENU="OnTreebook" />
+            <node class="wxMenuItem" label="Choicebook" var_name="menu_choicebook" wxEVT_MENU="OnChoicebook" />
+            <node class="wxMenuItem" label="Listbook" var_name="menu_listbook" wxEVT_MENU="OnListbook" />
+            <node class="wxMenuItem" label="Notebook" var_name="menu_notebook" wxEVT_MENU="OnNotebook" />
+            <node class="wxMenuItem" label="Toolbook" var_name="menu_toolbook" wxEVT_MENU="OnToolbook" />
+            <node class="wxMenuItem" label="Treebook" var_name="menu_treebook" wxEVT_MENU="OnTreebook" />
           </node>
           <node class="separator" />
           <node class="wxMenuItem" id="wxID_EXIT" label="Exit" var_name="menuItem4" wxEVT_MENU="OnQuit" />
@@ -73,6 +73,8 @@
           <node class="wxRadioBox" choices="&quot;Button zero &quot; &quot;Button one &quot; &quot;Button two &quot;" label="Radio Box" selection="1" style="wxRA_SPECIFY_ROWS" validator_variable="m_valRadio" wxEVT_RADIOBOX="OnRadioBox" />
           <node class="wxStaticBitmap" bitmap="Art; wxART_GO_HOME; wxART_OTHER; [-1; -1]" />
           <node class="wxBitmapComboBox" style="wxCB_READONLY" />
+          <node class="wxToggleButton" label="Play Animation" style="wxBU_EXACTFIT" wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;) { if (m_toggleBtn->GetValue())  m_animation_ctrl->Play();  else  m_animation_ctrl->Stop(); }" />
+          <node class="wxAnimationCtrl" animation="..\art\clr_hourglass_gif.hxx; " inactive_bitmap="XPM; ..\art\empty.xpm; ; [-1; -1]" />
         </node>
         <node class="wxBoxSizer" var_name="box_sizer5" flags="wxEXPAND">
           <node class="wxStaticText" label="Slider:" var_name="m_staticText12" alignment="wxALIGN_CENTER" borders="wxLEFT|wxTOP|wxBOTTOM" />

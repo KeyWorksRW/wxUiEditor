@@ -40,7 +40,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
             cwd.assignCwd();
         }
 
-        ttlib::cstr pattern = m_img_props.type.contains("XPM") ? "XPM File (*.xpm)|*.xpm" : "PNG Header|*.h;*.hpp;*.hh;*.hxx";
+        ttlib::cstr pattern = m_img_props.type.contains("XPM") ? "XPM File (*.xpm)|*.xpm" : "Header|*.h;*.hpp;*.hh;*.hxx";
         wxFileDialog dlg(propGrid->GetPanel(), _tt("Open XPM file"), cwd.wx_str(), wxEmptyString, pattern,
                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)

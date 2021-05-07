@@ -1671,6 +1671,26 @@
     </property>
   </gen>
 
+  <gen class="wxAnimationCtrl" image="wxAnimation" type="widget">
+    <inherits class="wxWindow"/>
+    <inherits class="Window Events"/>
+    <inherits class="sizer_child"/>
+    <property name="var_name" type="string">m_animation_ctrl</property>
+    <property name="class_access" type="option">
+      <option name="none"/>
+      <option name="protected:"/>
+      <option name="public:"/>
+      protected:
+    </property>
+    <property name="style" type="bitlist">
+      <option name="wxAC_DEFAULT_STYLE" help="The default style: wxBORDER_NONE."/>
+      <option name="wxAC_NO_AUTORESIZE" help="By default, the control will adjust its size to exactly fit the size of the animation. If this style flag is set, the control will not change its size."/>
+      wxAC_DEFAULT_STYLE
+    </property>
+    <property name="animation" type="animation"/>
+    <property name="inactive_bitmap" type="image"/>
+  </gen>
+
   <gen class="wxBannerWindow" image="wxBannerWindow" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>

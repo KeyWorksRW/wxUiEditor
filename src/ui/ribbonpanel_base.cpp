@@ -69,6 +69,7 @@ using namespace GenEnum;
 #include "../art_headers/treelistctrlcolumn_png.hxx"
 #include "../art_headers/wrap_sizer_png.hxx"
 #include "../art_headers/wxActivityIndicator_png.hxx"
+#include "../art_headers/wxAnimation_png.hxx"
 #include "../art_headers/wxBannerWindow_png.hxx"
 #include "../art_headers/wxButton_png.hxx"
 #include "../art_headers/wxCheckBox_png.hxx"
@@ -378,6 +379,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
         other_bar_ctrls->AddTool(gen_wxFileCtrl, GetImgFromHdr(wxFileCtrl_png, sizeof(wxFileCtrl_png)), wxString::FromUTF8("wxFileCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxGenericDirCtrl, GetImgFromHdr(genericdir_ctrl_png, sizeof(genericdir_ctrl_png)), wxString::FromUTF8("wxGenericDirCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxActivityIndicator, GetImgFromHdr(wxActivityIndicator_png, sizeof(wxActivityIndicator_png)), wxString::FromUTF8("wxActivityIndicator"), wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxAnimationCtrl, GetImgFromHdr(wxAnimation_png, sizeof(wxAnimation_png)), wxString::FromUTF8("wxAnimationCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxBannerWindow, GetImgFromHdr(wxBannerWindow_png, sizeof(wxBannerWindow_png)), wxString::FromUTF8("wxBannerWindow"), wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_ctrls->Realize();

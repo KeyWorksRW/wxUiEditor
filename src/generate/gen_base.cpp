@@ -52,7 +52,7 @@ static wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxAnimation animation;
-    animation.LoadFile(strm);
+    animation.Load(strm);
     return animation;
 };
 )===";

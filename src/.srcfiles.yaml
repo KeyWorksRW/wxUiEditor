@@ -296,6 +296,7 @@ PNG:
     art_src/treelistctrl.png: art_headers/treelistctrl_png.hxx
     art_src/treelistctrlcolumn.png: art_headers/treelistctrlcolumn_png.hxx
     art_src/wxActivityIndicator.png: art_headers/wxActivityIndicator_png.hxx
+    art_src/wxAnimation.png: art_headers/wxAnimation_png.hxx
     art_src/wxBannerWindow.png: art_headers/wxBannerWindow_png.hxx
     art_src/wxButton.png: art_headers/wxButton_png.hxx
     art_src/wxCheckBox.png: art_headers/wxCheckBox_png.hxx

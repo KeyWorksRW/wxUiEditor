@@ -1671,7 +1671,7 @@
     </property>
   </gen>
 
-  <gen class="wxAnimationCtrl" image="wxActivityIndicator" type="widget">
+  <gen class="wxAnimationCtrl" image="wxAnimation" type="widget">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>

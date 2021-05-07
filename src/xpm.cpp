@@ -114,6 +114,7 @@
 #include "art_headers/treelistctrl_png.hxx"
 #include "art_headers/treelistctrlcolumn_png.hxx"
 #include "art_headers/wxActivityIndicator_png.hxx"
+#include "art_headers/wxAnimation_png.hxx"
 #include "art_headers/wxBannerWindow_png.hxx"
 #include "art_headers/wxButton_png.hxx"
 #include "art_headers/wxCheckBox_png.hxx"
@@ -263,6 +264,7 @@ static const ImageMap png_headers[] = {
     { "treelistctrl", treelistctrl_png, sizeof(treelistctrl_png) },
     { "treelistctrlcolumn", treelistctrlcolumn_png, sizeof(treelistctrlcolumn_png) },
     { "wxActivityIndicator", wxActivityIndicator_png, sizeof(wxActivityIndicator_png) },
+    { "wxAnimation", wxAnimation_png, sizeof(wxAnimation_png) },
     { "wxBannerWindow", wxBannerWindow_png, sizeof(wxBannerWindow_png) },
     { "wxButton", wxButton_png, sizeof(wxButton_png) },
     { "wxCheckBox", wxCheckBox_png, sizeof(wxCheckBox_png) },

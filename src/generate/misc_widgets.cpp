@@ -72,9 +72,9 @@ wxObject* AnimationGenerator::Create(Node* node, wxObject* parent)
         ttlib::multistr file_names(node->prop_as_string(prop_animation), ';');
         GetAnimationImage(animation, file_names[0]);
     }
-    auto widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                      animation.IsOk() ? animation : wxNullAnimation, node->prop_as_wxPoint(prop_pos),
-                                      node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style));
+    auto widget =
+        new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation.IsOk() ? animation : wxNullAnimation,
+                            node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     if (animation.IsOk())
@@ -89,9 +89,27 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxAnimationCtrl(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxNullAnimation";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+
+    code << ",\n        ";
+    if (node->HasValue(prop_animation))
+    {
+        ttlib::multistr files(node->prop_as_string(prop_animation), ';');
+        files[0].BothTrim();
+        files[0].remove_extension();
+        code << "GetAnimFromHdr(" << files[0].filename() << ", sizeof(" << files[0].filename() << "))";
+    }
+    else
+    {
+        code << "wxNullAnimation";
+    }
 
     GeneratePosSizeFlags(node, code);
+    if (node->HasValue(prop_inactive_bitmap))
+    {
+        code << "\n    " << node->get_node_name() << "->SetInactiveBitmap(";
+        code << GenerateBitmapCode(node->prop_as_string(prop_inactive_bitmap)) << ");";
+    }
 
     return code;
 }

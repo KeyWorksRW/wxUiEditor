@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <wx/animate.h>
+#include <wx/bitmap.h>
 #include <wx/bmpcbox.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
@@ -16,6 +18,8 @@
 #include <wx/event.h>
 #include <wx/gauge.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/infobar.h>
 #include <wx/listbox.h>
 #include <wx/radiobox.h>
@@ -23,6 +27,7 @@
 #include <wx/slider.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/tglbtn.h>
 
 class CommonCtrlsBase : public wxDialog
 {
@@ -41,6 +46,7 @@ protected:
 
     // Class member variables
 
+    wxAnimationCtrl* m_animation_ctrl;
     wxBitmapComboBox* m_bmpComboBox;
     wxButton* m_btn;
     wxCheckBox* m_checkBox2;
@@ -74,6 +80,7 @@ protected:
     wxStaticText* m_staticText;
     wxTextCtrl* m_textCtrl2;
     wxTextCtrl* m_textCtrl;
+    wxToggleButton* m_toggleBtn;
 
     // Virtual event handlers -- override them in your derived class
 

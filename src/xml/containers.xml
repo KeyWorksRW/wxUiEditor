@@ -97,7 +97,6 @@
   </gen>
 
   <gen class="wxCollapsiblePane" image="wxCollapsiblePane" type="container">
-    <inherits class="Window Events"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>

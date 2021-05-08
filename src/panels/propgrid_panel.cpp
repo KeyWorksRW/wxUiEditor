@@ -161,7 +161,8 @@ void PropGridPanel::Create()
                 auto info_base = declaration->GetBaseClass(i);
                 if (info_base->isGen(gen_sizer_child))
                     continue;
-                CreatePropCategory(info_base->DeclName(), node, info_base, prop_set);
+                if (!info_base->DeclName().is_sameas("Window Events"))
+                    CreatePropCategory(info_base->DeclName(), node, info_base, prop_set);
                 CreateEventCategory(info_base->DeclName(), node, info_base, event_set);
             }
 

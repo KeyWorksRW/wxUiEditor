@@ -16,6 +16,8 @@
 #include "gen_common.h"    // GeneratorLibrary -- Generator classes
 #include "node.h"          // Node class
 
+#include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
+
 #include "panel_widgets.h"
 
 //////////////////////////////////////////  PanelGenerator  //////////////////////////////////////////
@@ -80,7 +82,9 @@ void CollapsiblePaneGenerator::OnCollapse(wxCollapsiblePaneEvent& event)
         }
     }
 
-    event.Skip();
+    auto min_size = wxGetFrame().GetMockup()->GetMockupContent()->GetSizer()->GetMinSize();
+    wxGetFrame().GetMockup()->GetMockupContent()->SetMinClientSize(min_size);
+    wxGetFrame().GetMockup()->Layout();
 }
 
 std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenConstruction(Node* node)

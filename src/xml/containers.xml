@@ -2,7 +2,7 @@
 <GeneratorDefitions>
 
   <gen class="wxPanel" image="wxPanel" type="container">
-    <inherits class="Common Events"/>
+    <inherits class="Window Events"/>
     <inherits class="wxWindow">
       <property name="window_style">wxTAB_TRAVERSAL</property>
     </inherits>
@@ -97,7 +97,7 @@
   </gen>
 
   <gen class="wxCollapsiblePane" image="wxCollapsiblePane" type="container">
-    <inherits class="Common Events"/>
+    <inherits class="Window Events"/>
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <inherits class="sizer_child"/>
@@ -288,7 +288,7 @@
   </gen>
 
   <gen class="BookPage" image="book_page" type="bookpage">
-    <inherits class="Common Events"/>
+    <inherits class="Window Events"/>
     <inherits class="wxWindow">
       <property name="window_style">wxTAB_TRAVERSAL</property>
     </inherits>

@@ -11,6 +11,7 @@
 
 #include <wx/event.h>     // Event classes
 #include <wx/menu.h>      // wxMenu and wxMenuBar classes
+#include <wx/panel.h>     // Base header for wxPanel
 #include <wx/treectrl.h>  // wxTreeCtrl base header
 #include <wx/window.h>    // wxWindowBase class - the interface of wxWindow
 
@@ -29,7 +30,6 @@ public:
     void ChangeExpansion(Node* node, bool include_children, bool expand);
 
 protected:
-
     void AddAllNodes();
     void AddChildNodes(Node* child, wxTreeItemId& parent, bool is_root = false);
     void AddNode(Node* item, Node* parent);

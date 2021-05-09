@@ -134,6 +134,7 @@ Files:
     ui/newproject.cpp           # Dialog to create a new project
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
     ui/newdialog.cpp            # Dialog for creating a new project dialog
+    ui/newframe.cpp
 
 # wxUiEditor generated files
 
@@ -148,6 +149,7 @@ Files:
     ui/newproject_base.cpp
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp
+    ui/newframe_base.cpp
 
     ../ttLib/ttcstr.cpp      # Class for handling zero-terminated char strings.
     ../ttLib/ttcview.cpp     # string_view functionality on a zero-terminated char string.

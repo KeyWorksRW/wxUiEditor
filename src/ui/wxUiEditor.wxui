@@ -366,5 +366,24 @@
         <node class="wxStdDialogButtonSizer" flags="wxEXPAND" />
       </node>
     </node>
+    <node class="wxDialog" class_name="NewFrameBase" title="New wxFrame window" base_file="newframe_base" derived_class_name="NewFrame" derived_file="newframe" wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event) { m_classname->SetFocus();  event.Skip(); }">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" flags="wxEXPAND">
+        <node class="wxBoxSizer" var_name="box_sizer_3">
+          <node class="wxStaticText" class_access="none" label="These are initial values -- all of them can be changed after the window is created." var_name="staticText_3" wrap="300" />
+        </node>
+        <node class="wxBoxSizer" var_name="box_sizer__2" flags="wxEXPAND">
+          <node class="wxStaticText" class_access="none" label="&amp;Base class name:" var_name="staticText" alignment="wxALIGN_CENTER_VERTICAL" />
+          <node class="wxTextCtrl" value="MyFrameBase" var_name="m_classname" validator_variable="m_base_class" proportion="1" />
+        </node>
+        <node class="StaticCheckboxBoxSizer" checkbox_var_name="m_checkBox_mainframe" label="Main Frame Window" border_size="10" flags="wxEXPAND" validator_variable="m_has_mainframe" wxEVT_CHECKBOX="OnCheckMainFrame">
+          <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="box_sizer_2" border_size="10" flags="wxEXPAND">
+            <node class="wxCheckBox" checked="true" label="Add Toolbar" var_name="m_checkBox_toolbar" validator_variable="m_has_toolbar" flags="wxEXPAND" />
+            <node class="wxCheckBox" checked="true" label="Add Menu" var_name="m_checkBox_menu" validator_variable="m_has_menu" flags="wxEXPAND" />
+            <node class="wxCheckBox" checked="true" label="Add Statusbar" var_name="m_checkBox_statusbar" validator_variable="m_has_statusbar" flags="wxEXPAND" />
+          </node>
+        </node>
+        <node class="wxStdDialogButtonSizer" flags="wxEXPAND" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

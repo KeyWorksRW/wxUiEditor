@@ -19,6 +19,7 @@ public:
     NavPopupMenu(Node* node);
 
 protected:
+    void OnCreateNewFrame(wxCommandEvent& event);
     void OnAddNew(wxCommandEvent& event);
     void OnBorders(wxCommandEvent& event);
     void OnCreateNewDialog(wxCommandEvent& event);
@@ -100,7 +101,6 @@ protected:
         MenuADD_WIZARD_PAGE,
 
         MenuPROJECT_ADD_DIALOG,
-        MenuPROJECT_ADD_TABBED_DIALOG,
         MenuPROJECT_ADD_WINDOW,
         MenuPROJECT_ADD_WIZARD,
 

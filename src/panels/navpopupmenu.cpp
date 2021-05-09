@@ -17,7 +17,8 @@
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"         // Utility functions that work with properties
 
-#include "../ui/newdialog.h"  // NewDialog -- Dialog for creating a new project dialog
+#include "newdialog.h"  // NewDialog -- Dialog for creating a new project dialog
+#include "newframe.h"   // NewFrame -- Dialog for creating a new project wxFrame
 
 // clang-format off
 static const auto lstBarGenerators = {
@@ -489,23 +490,7 @@ void NavPopupMenu::CreateProjectMenu(Node* WXUNUSED(node))
     Append(MenuPROJECT_ADD_WIZARD, "Add new wizard");
 
     Bind(wxEVT_MENU, &NavPopupMenu::OnCreateNewDialog, this, MenuPROJECT_ADD_DIALOG);
-
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&) {
-            wxGetFrame().CreateToolNode("wxDialog");
-            wxGetFrame().CreateToolNode("wxNotebook");
-            ;
-        },
-        MenuPROJECT_ADD_TABBED_DIALOG);
-
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&) {
-            wxGetFrame().CreateToolNode("wxFrame");
-            ;
-        },
-        MenuPROJECT_ADD_WINDOW);
+    Bind(wxEVT_MENU, &NavPopupMenu::OnCreateNewFrame, this, MenuPROJECT_ADD_WINDOW);
 
     Bind(
         wxEVT_MENU,
@@ -920,6 +905,15 @@ void NavPopupMenu::CreateBookMenu(Node* /* node */)
 void NavPopupMenu::OnCreateNewDialog(wxCommandEvent& WXUNUSED(event))
 {
     NewDialog dlg;
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        dlg.CreateNode();
+    }
+}
+
+void NavPopupMenu::OnCreateNewFrame(wxCommandEvent& WXUNUSED(event))
+{
+    NewFrame dlg;
     if (dlg.ShowModal() == wxID_OK)
     {
         dlg.CreateNode();

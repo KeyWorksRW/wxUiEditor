@@ -6,7 +6,6 @@
 
 #include "pch.h"
 
-#include <wx/ribbon/page.h>
 #include <wx/ribbon/panel.h>
 
 #include "ribbon_ids.h"
@@ -129,7 +128,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     {
         forms_bar_windows->AddTool(CreateNewDialog, GetImgFromHdr(wxDialog_png, sizeof(wxDialog_png)), wxString::FromUTF8("wxDialog"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(gen_PanelForm, GetImgFromHdr(wxPanel_png, sizeof(wxPanel_png)), wxString::FromUTF8("wxPanel"), wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(gen_wxFrame, GetImgFromHdr(wxFrame_png, sizeof(wxFrame_png)), wxString::FromUTF8("wxFrame"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewFrame, GetImgFromHdr(wxFrame_png, sizeof(wxFrame_png)), wxString::FromUTF8("wxFrame"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(NewPopupWin, GetImgFromHdr(wxPopupTransientWindow_png, sizeof(wxPopupTransientWindow_png)), wxString::FromUTF8("wxPopupTransientWindow"), wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_windows->Realize();
@@ -311,9 +310,9 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     }
     data_bar_dataview->Realize();
 
-    auto page_bars = new wxRibbonPage(m_rbnBar, wxID_ANY, wxString::FromUTF8("Bars"));
+    m_page_bars = new wxRibbonPage(m_rbnBar, wxID_ANY, wxString::FromUTF8("Bars"));
 
-    auto panel_bars_menu = new wxRibbonPanel(page_bars, wxID_ANY, wxString::FromUTF8("Menu"));
+    auto panel_bars_menu = new wxRibbonPanel(m_page_bars, wxID_ANY, wxString::FromUTF8("Menu"));
 
     auto bars_bar_menu = new wxRibbonToolBar(panel_bars_menu, wxID_ANY);
     {
@@ -325,7 +324,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     }
     bars_bar_menu->Realize();
 
-    auto panel_bars_tool = new wxRibbonPanel(page_bars, wxID_ANY, wxString::FromUTF8("Tool"));
+    auto panel_bars_tool = new wxRibbonPanel(m_page_bars, wxID_ANY, wxString::FromUTF8("Tool"));
 
     auto bars_bar_tool = new wxRibbonToolBar(panel_bars_tool, wxID_ANY);
     {
@@ -335,7 +334,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     }
     bars_bar_tool->Realize();
 
-    auto panel_bars_ribbon = new wxRibbonPanel(page_bars, wxID_ANY, wxString::FromUTF8("Ribbon"));
+    auto panel_bars_ribbon = new wxRibbonPanel(m_page_bars, wxID_ANY, wxString::FromUTF8("Ribbon"));
 
     auto bars_bar_ribbon = new wxRibbonToolBar(panel_bars_ribbon, wxID_ANY);
     {
@@ -348,7 +347,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     }
     bars_bar_ribbon->Realize();
 
-    auto panel_bars_rother = new wxRibbonPanel(page_bars, wxID_ANY, wxString::FromUTF8("Other"));
+    auto panel_bars_rother = new wxRibbonPanel(m_page_bars, wxID_ANY, wxString::FromUTF8("Other"));
 
     auto bars_bar_other = new wxRibbonToolBar(panel_bars_rother, wxID_ANY);
     {

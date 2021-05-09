@@ -818,8 +818,8 @@ void MainFrame::CreateSplitters()
     panel_right->SetWindowStyle(wxBORDER_RAISED);
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
-    auto ribbon_panel = new RibbonPanel(panel_right);
-    parent_sizer->Add(ribbon_panel, wxSizerFlags(0).Expand());
+    m_ribbon_panel = new RibbonPanel(panel_right);
+    parent_sizer->Add(m_ribbon_panel, wxSizerFlags(0).Expand());
 
     m_SecondarySplitter = new wxSplitterWindow(panel_right, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
     parent_sizer->Add(m_SecondarySplitter, wxSizerFlags(1).Expand());

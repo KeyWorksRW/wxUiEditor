@@ -21,11 +21,11 @@
 #include <wx/stc/stc.h>           // Scintilla
 #include <wx/toolbar.h>           // wxToolBar interface declaration
 
-#include <ttcvector.h>   // cstrVector -- Vector of ttlib::cstr strings
-#include <ttcwd.h>       // cwd -- Class for storing and optionally restoring the current directory
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+#include "ttcvector.h"   // cstrVector -- Vector of ttlib::cstr strings
+#include "ttcwd.h"       // cwd -- Class for storing and optionally restoring the current directory
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
-// auto-generated: mainframe_base.h and mainframe_base.cpp
+// auto-generated: ui/mainframe_base.h and ui/mainframe_base.cpp
 
 #include "mainframe.h"
 
@@ -49,8 +49,8 @@
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
-#include "ui/importwinresdlg.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
-#include "ui/insertdialog.h"     // InsertDialog -- Dialog to lookup and insert a widget
+#include "importwinresdlg.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
+#include "insertdialog.h"     // InsertDialog -- Dialog to lookup and insert a widget
 
 #if defined(_DEBUG)
     #include "debugging/nodeinfo.h"  // NodeInfo -- Node memory usage dialog

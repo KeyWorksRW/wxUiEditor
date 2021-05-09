@@ -47,14 +47,14 @@ Files:
     customprops/img_string_prop.cpp   # Derived wxStringProperty class for handling wxImage files or art
     customprops/txt_string_prop.cpp   # Derived wxStringProperty class for single-line text
 
-    customprops/art_prop_dlg.cpp      # Art Property Dialog for image property
-    customprops/anim_props.cpp         # Handles property grid image properties
-    customprops/img_props.cpp         # Handles property grid image properties
+    customprops/art_prop_dlg.cpp   # Art Property Dialog for image property
+    customprops/anim_props.cpp     # Handles property grid image properties
+    customprops/img_props.cpp      # Handles property grid image properties
 
-    customprops/pg_image.cpp          # Custom property grid class for images
-    customprops/pg_animation.cpp      # Custom property grid class for animations
-    customprops/pg_point.cpp          # Custom wxPGProperty for wxPoint
-    customprops/pg_size.cpp           # Custom wxPGProperty for wxSize
+    customprops/pg_image.cpp       # Custom property grid class for images
+    customprops/pg_animation.cpp   # Custom property grid class for animations
+    customprops/pg_point.cpp       # Custom wxPGProperty for wxPoint
+    customprops/pg_size.cpp        # Custom wxPGProperty for wxSize
 
     generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
     generate/gen_codefiles.cpp     # Generate code files
@@ -117,9 +117,9 @@ Files:
     panels/propgrid_panel.cpp   # Property panel
     panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar
 
-    project/loadproject.cpp       # Load wxUiEditor project
-    project/oldproject.cpp        # Load older version of wxUiEditor project
-    project/saveproject.cpp       # Save a wxUiEditor project file
+    project/loadproject.cpp     # Load wxUiEditor project
+    project/oldproject.cpp      # Load older version of wxUiEditor project
+    project/saveproject.cpp     # Save a wxUiEditor project file
 
     utils/font_prop.cpp         # FontProperty class
     utils/loadxml.cpp           # Load internal xml files
@@ -130,10 +130,10 @@ Files:
     ui/embedimg.cpp             # Convert image to Header (.h) or XPM (.xpm) file
     ui/eventhandlerdlg.cpp      # Dialog for editing event handlers
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
-    ui/insertdialog.cpp
+    ui/insertdialog.cpp         # Dialog to lookup and insert a widget
     ui/newproject.cpp           # Dialog to create a new project
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
-    ui/newdialog.cpp
+    ui/newdialog.cpp            # Dialog for creating a new project dialog
 
 # wxUiEditor generated files
 
@@ -149,26 +149,26 @@ Files:
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp
 
-    ../ttLib/ttcstr.cpp
-    ../ttLib/ttcview.cpp
-    ../ttLib/ttmultistr.cpp
-    ../ttLib/ttparser.cpp
-    ../ttLib/ttstr.cpp
-    ../ttLib/ttlibspace.cpp
-    ../ttLib/ttstrings.cpp
-    ../ttLib/tttextfile.cpp
+    ../ttLib/ttcstr.cpp      # Class for handling zero-terminated char strings.
+    ../ttLib/ttcview.cpp     # string_view functionality on a zero-terminated char string.
+    ../ttLib/ttmultistr.cpp  # Breaks a single string into multiple strings
+    ../ttLib/ttparser.cpp    # Command line parser
+    ../ttLib/ttstr.cpp       # Enhanced version of wxString
+    ../ttLib/ttlibspace.cpp  # ttlib namespace functions
+    ../ttLib/ttstrings.cpp   # Class for handling zero-terminated char strings.
+    ../ttLib/tttextfile.cpp  # Classes for reading and writing text files.
 
 DebugFiles:
     debugging/msg_logging.cpp    # Message logging class
     debugging/msgframe.cpp       # Stores messages
     debugging/nodeinfo.cpp       # Node memory usage dialog
-    debugging/nodeinfo_base.cpp
+    debugging/nodeinfo_base.cpp  # wxUiEditor generated file
 
-    ui/debugsettings.cpp        # Settings while running the Debug version of wxUiEditor
-    ui/debugsettingsBase.cpp
-    ui/msgframe_base.cpp
+    ui/debugsettings.cpp         # Settings while running the Debug version of wxUiEditor
+    ui/debugsettingsBase.cpp     # wxUiEditor generated file
+    ui/msgframe_base.cpp         # wxUiEditor generated file
 
-    ../ttLib/ttdebug.cpp
+    ../ttLib/ttdebug.cpp         # Various debugging functionality
 
 GZIP:
     xml/aui.xml: xml/aui.hgz

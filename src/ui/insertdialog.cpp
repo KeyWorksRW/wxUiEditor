@@ -16,6 +16,7 @@ InsertDialog::InsertDialog(wxWindow* parent) : InsertDialogBase(parent) {}
 void InsertDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
     m_stdBtn->GetAffirmativeButton()->Disable();
+    m_text_name->SetFocus();
 }
 
 void InsertDialog::OnNameText(wxCommandEvent& WXUNUSED(event))

@@ -20,7 +20,6 @@ std::optional<ttlib::cstr> GenGetSetCode(Node* node)
     if (get_name.empty() && set_name.empty())
         return {};
 
-
     if (auto& var_name = node->prop_as_string(prop_validator_variable); var_name.size())
     {
         auto& val_data_type = node->prop_as_string(prop_validator_data_type);
@@ -77,7 +76,13 @@ std::optional<ttlib::cstr> GenInheritSettings(Node* node)
         }
         else
         {
-            code << node->get_node_name();
+            if (node->isGen(gen_StaticCheckboxBoxSizer))
+                code << node->prop_as_string(prop_checkbox_var_name);
+            else if (node->isGen(gen_StaticRadioBtnBoxSizer))
+                code << node->prop_as_string(prop_radiobtn_var_name);
+            else
+                code << node->get_node_name();
+
             if (node->isGen(gen_wxRearrangeCtrl))
                 code << "->GetList()";
             code << "->SetValidator(wxGenericValidator(&" << var_name << "));";

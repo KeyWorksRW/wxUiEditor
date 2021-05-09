@@ -122,6 +122,7 @@
   <gen class="StaticCheckboxBoxSizer" image="wxStaticCheckBoxSizer" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
+    <inherits class="Boolean Validator"/>
     <property name="var_name" type="string">static_box</property>
     <property name="class_access" type="option">
       <option name="none"/>
@@ -159,6 +160,7 @@
   <gen class="StaticRadioBtnBoxSizer" image="wxStaticRadioBtnSizer" type="sizer">
     <inherits class="sizer_dimension"/>
     <inherits class="sizer_child"/>
+    <inherits class="Boolean Validator"/>
     <property name="var_name" type="string">static_box</property>
     <property name="class_access" type="option">
       <option name="none"/>

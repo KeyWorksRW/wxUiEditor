@@ -16,10 +16,11 @@
 #include <wx/textwrapper.h>  // declaration of wxTextWrapper class
 #include <wx/wrapsizer.h>    // provide wrapping sizer for layout (wxWrapSizer)
 
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
+#include "gen_common.h"   // GeneratorLibrary -- Generator classes
+#include "gen_inherit.h"  // Inherited class code generation
+#include "node.h"         // Node class
 
 #include "sizer_widgets.h"
 
@@ -288,6 +289,11 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
 
     GeneratePosSizeFlags(node, code);
     code << '\n';
+
+    if (auto result = GenInheritSettings(node); result)
+    {
+        code << result.value() << '\n';
+    }
 
     if (node->IsLocal())
         code << "auto ";

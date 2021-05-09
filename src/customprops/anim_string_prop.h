@@ -15,12 +15,9 @@
 class AnimDialogAdapter : public wxPGEditorDialogAdapter
 {
 public:
-    AnimDialogAdapter(AnimationProperties& img_props) : wxPGEditorDialogAdapter(), m_img_props(img_props) {}
+    AnimDialogAdapter() : wxPGEditorDialogAdapter() {}
 
     bool DoShowDialog(wxPropertyGrid* WXUNUSED(propGrid), wxPGProperty* WXUNUSED(property)) override;
-
-private:
-    AnimationProperties& m_img_props;
 };
 
 class AnimStringProperty : public wxStringProperty
@@ -35,7 +32,7 @@ public:
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrlAndButton; }
 
     // Set what happens on button click
-    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new AnimDialogAdapter(m_img_props); }
+    wxPGEditorDialogAdapter* GetEditorDialog() const override { return new AnimDialogAdapter(); }
 
 private:
     AnimationProperties& m_img_props;

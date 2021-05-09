@@ -13,7 +13,7 @@ class NewDialog : public NewDialogBase
 {
 public:
     NewDialog(wxWindow* parent = nullptr);
-    void CreateDlgNode();
+    void CreateNode();
 
 protected:
     // Handlers for NewDialogBase events

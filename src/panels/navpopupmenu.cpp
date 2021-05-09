@@ -922,6 +922,6 @@ void NavPopupMenu::OnCreateNewDialog(wxCommandEvent& WXUNUSED(event))
     NewDialog dlg;
     if (dlg.ShowModal() == wxID_OK)
     {
-        dlg.CreateDlgNode();
+        dlg.CreateNode();
     }
 }

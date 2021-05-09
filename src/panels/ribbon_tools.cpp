@@ -41,7 +41,7 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     NewDialog dlg;
                     if (dlg.ShowModal() == wxID_OK)
                     {
-                        dlg.CreateDlgNode();
+                        dlg.CreateNode();
                     }
                     return;
                 }

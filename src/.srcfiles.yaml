@@ -20,7 +20,7 @@ Options:
     TargetDir:   ../bin       # target directory
     Natvis:      wxui.natvis  # MSVC Debug visualizer
 
-    IncDirs:     ./;nodes;generate;utils;customprops;../ttLib
+    IncDirs:     ./;nodes;generate;utils;customprops;ui;../ttLib
 
 Files:
     wxUiEditor.rc         # Windows resources

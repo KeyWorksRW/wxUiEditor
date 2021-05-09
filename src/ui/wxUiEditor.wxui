@@ -342,5 +342,29 @@
         <node class="wxTextCtrl" style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL" minimum_size="350,300" border_size="0" flags="wxEXPAND" proportion="1" />
       </node>
     </node>
+    <node class="wxDialog" class_name="NewDialogBase" title="New Dialog" base_file="newdialog_base" derived_class_name="NewDialog" derived_file="newdialog" wxEVT_INIT_DIALOG="OnInit">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" var_name="parent_sizer" flags="wxEXPAND">
+        <node class="wxBoxSizer" var_name="box_sizer_3">
+          <node class="wxStaticText" class_access="none" label="These are initial values -- all of them can be changed after the dialog is created." var_name="staticText_3" wrap="300" />
+        </node>
+        <node class="wxBoxSizer" var_name="box_sizer__2" flags="wxEXPAND">
+          <node class="wxStaticText" class_access="none" label="&amp;Title:" var_name="staticText_2" alignment="wxALIGN_CENTER_VERTICAL" />
+          <node class="wxTextCtrl" var_name="m_textCtrl_title" validator_variable="m_title" proportion="1" />
+        </node>
+        <node class="wxBoxSizer" var_name="box_sizer_2" flags="wxEXPAND">
+          <node class="wxStaticText" class_access="none" label="&amp;Base class name:" var_name="staticText" alignment="wxALIGN_CENTER_VERTICAL" />
+          <node class="wxTextCtrl" class_access="none" value="MyDialogBase" var_name="classname" validator_variable="m_base_class" proportion="1" />
+        </node>
+        <node class="wxBoxSizer" orientation="wxVERTICAL">
+          <node class="wxBoxSizer" var_name="box_sizer_4" borders="wxTOP|wxBOTTOM|wxRIGHT">
+            <node class="wxCheckBox" label="Tabbed &amp;Dialog" var_name="m_check_tabs" validator_variable="m_has_tabs" wxEVT_CHECKBOX="[this](wxCommandEvent&amp;) { m_spinCtrlTabs->Enable(m_check_tabs->GetValue()); }" />
+            <node class="wxStaticText" class_access="none" label="Tab&amp;s:" var_name="staticText_4" alignment="wxALIGN_CENTER_VERTICAL" borders="wxTOP|wxBOTTOM|wxLEFT" />
+            <node class="wxSpinCtrl" initial="3" min="1" var_name="m_spinCtrlTabs" validator_variable="m_num_tabs" disabled="true" />
+          </node>
+          <node class="wxCheckBox" checked="true" class_access="none" label="&amp;Standard Buttons" var_name="checkBox_2" validator_variable="m_has_std_btns" />
+        </node>
+        <node class="wxStdDialogButtonSizer" flags="wxEXPAND" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

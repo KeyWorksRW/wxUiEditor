@@ -26,9 +26,9 @@ class NavigationPanel : public wxPanel
 {
 public:
     NavigationPanel(wxWindow* parent, MainFrame* frame);
+    void ChangeExpansion(Node* node, bool include_children, bool expand);
 
 protected:
-    void ChangeExpansion(Node* node, bool include_children, bool expand);
 
     void AddAllNodes();
     void AddChildNodes(Node* child, wxTreeItemId& parent, bool is_root = false);

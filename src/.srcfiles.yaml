@@ -133,6 +133,7 @@ Files:
     ui/insertdialog.cpp
     ui/newproject.cpp           # Dialog to create a new project
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
+    ui/newdialog.cpp
 
 # wxUiEditor generated files
 
@@ -143,6 +144,7 @@ Files:
     ui/importwinres_base.cpp
     ui/insertdialog_base.cpp
     ui/mainframe_base.cpp
+    ui/newdialog_base.cpp
     ui/newproject_base.cpp
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp

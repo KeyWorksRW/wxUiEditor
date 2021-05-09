@@ -53,6 +53,7 @@ public:
 
     MockupParent* GetMockup() { return m_mockupPanel; }
     PropGridPanel* GetPropPanel() { return m_property_panel; }
+    NavigationPanel* GetNavigationPanel() { return m_nav_panel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
 

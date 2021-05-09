@@ -21,6 +21,7 @@ public:
 protected:
     void OnAddNew(wxCommandEvent& event);
     void OnBorders(wxCommandEvent& event);
+    void OnCreateNewDialog(wxCommandEvent& event);
     void OnMenuEvent(wxCommandEvent& event);
     void OnUpdateEvent(wxUpdateUIEvent& event);
 

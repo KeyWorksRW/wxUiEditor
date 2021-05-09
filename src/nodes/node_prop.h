@@ -27,6 +27,7 @@ public:
     void set_value(const char* val) { m_value.assign(val); }
     void set_value(ttlib::cview val) { m_value.assign(val); }
     void set_value(ttlib::cstr val) { m_value.assign(val); }
+    void set_value(std::string val) { m_value.assign(val); }
 
     // Returns a non-const reference allowing you to modify the value
     ttlib::cstr& get_value() { return m_value; }

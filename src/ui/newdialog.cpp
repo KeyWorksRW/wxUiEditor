@@ -9,11 +9,11 @@
 
 #include "newdialog.h"  // auto-generated: newdialog_base.h and newdialog_base.cpp
 
-#include "../nodes/node.h"          // Node class
-#include "../nodes/node_creator.h"  // NodeCreator -- Class used to create nodes
-#include "../panels/nav_panel.h"    // NavigationPanel -- Navigation Panel
-#include "mainframe.h"              // MoveDirection -- Main window frame
-#include "undo_cmds.h"              // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
+#include "mainframe.h"            // MoveDirection -- Main window frame
+#include "node.h"                 // Node class
+#include "node_creator.h"         // NodeCreator -- Class used to create nodes
+#include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 NewDialog::NewDialog(wxWindow* parent) : NewDialogBase(parent) {}
 
@@ -28,38 +28,38 @@ inline void Adopt(NodeSharedPtr parent, NodeSharedPtr child)
     child->SetParent(parent);
 }
 
-void NewDialog::CreateDlgNode()
+void NewDialog::CreateNode()
 {
-    auto dlg_node = g_NodeCreator.CreateNode(gen_wxDialog, nullptr);
-    ASSERT(dlg_node);
+    auto form_node = g_NodeCreator.CreateNode(gen_wxDialog, nullptr);
+    ASSERT(form_node);
 
     if (m_title.size())
     {
-        dlg_node->prop_set_value(prop_title, m_title.utf8_string());
+        form_node->prop_set_value(prop_title, m_title.utf8_string());
     }
 
     if (m_base_class != "MyDialogBase")
     {
-        dlg_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
+        form_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
         if (m_base_class.Right(4) == "Base")
         {
             wxString derived_class = m_base_class;
             derived_class.Replace("Base", wxEmptyString);
-            dlg_node->prop_set_value(prop_derived_class_name, derived_class);
+            form_node->prop_set_value(prop_derived_class_name, derived_class);
 
             ttString base_file = derived_class;
             base_file.MakeLower();
             base_file << "_base";
-            dlg_node->prop_set_value(prop_base_file, base_file);
+            form_node->prop_set_value(prop_base_file, base_file);
 
             base_file.Replace("_base", "");
-            dlg_node->prop_set_value(prop_derived_file, base_file);
+            form_node->prop_set_value(prop_derived_file, base_file);
         }
     }
 
-    auto parent_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, dlg_node.get());
+    auto parent_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, form_node.get());
     ASSERT(parent_sizer);
-    Adopt(dlg_node, parent_sizer);
+    Adopt(form_node, parent_sizer);
 
     if (m_has_tabs)
     {
@@ -102,10 +102,10 @@ void NewDialog::CreateDlgNode()
     wxGetFrame().SelectNode(parent);
 
     auto pos = parent->FindInsertionPos(parent);
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(dlg_node.get(), parent, undo_str, pos));
-    dlg_node->FixPastedNames();
+    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), parent, undo_str, pos));
+    form_node->FixPastedNames();
 
-    wxGetFrame().FireCreatedEvent(dlg_node);
-    wxGetFrame().SelectNode(dlg_node, true, true);
-    wxGetFrame().GetNavigationPanel()->ChangeExpansion(dlg_node.get(), true, true);
+    wxGetFrame().FireCreatedEvent(form_node);
+    wxGetFrame().SelectNode(form_node, true, true);
+    wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);
 }

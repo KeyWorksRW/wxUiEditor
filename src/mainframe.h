@@ -31,6 +31,7 @@ class ueStatusBar;
 class wxInfoBar;
 class wxSplitterWindow;
 class NavigationPanel;
+class RibbonPanel;
 
 enum class MoveDirection
 {
@@ -54,6 +55,7 @@ public:
     MockupParent* GetMockup() { return m_mockupPanel; }
     PropGridPanel* GetPropPanel() { return m_property_panel; }
     NavigationPanel* GetNavigationPanel() { return m_nav_panel; }
+    RibbonPanel* GetRibbonPanel() { return m_ribbon_panel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
 
@@ -234,6 +236,7 @@ private:
     wxAuiNotebook* m_notebook;
     PropGridPanel* m_property_panel;
     NavigationPanel* m_nav_panel;
+    RibbonPanel* m_ribbon_panel;
 
     MockupParent* m_mockupPanel;
 

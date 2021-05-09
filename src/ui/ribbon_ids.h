@@ -13,5 +13,6 @@ enum
     NewRibbonType,
     NewStaticSizer,
     CreateNewDialog,
+    CreateNewFrame,
 
 };

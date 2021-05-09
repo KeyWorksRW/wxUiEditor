@@ -15,6 +15,7 @@
 #include <wx/ribbon/art.h>
 #include <wx/ribbon/bar.h>
 #include <wx/ribbon/control.h>
+#include <wx/ribbon/page.h>
 #include <wx/ribbon/toolbar.h>
 #include <wx/sizer.h>
 
@@ -30,6 +31,7 @@ protected:
 
     wxBoxSizer* parent_sizer;
     wxRibbonBar* m_rbnBar;
+    wxRibbonPage* m_page_bars;
 
     // Virtual event handlers -- override them in your derived class
 

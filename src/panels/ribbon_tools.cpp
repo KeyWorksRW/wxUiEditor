@@ -18,8 +18,9 @@
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node_creator.h"  // NodeCreator class
 
-#include "../ui/newdialog.h"  // NewDialog -- Dialog for creating a new project dialog
-#include "../ui/ribbon_ids.h"
+#include "newdialog.h"  // NewDialog -- Dialog for creating a new project dialog
+#include "newframe.h"   // NewFrame -- Dialog for creating a new project wxFrame
+#include "ribbon_ids.h"
 
 // The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch that
 // to a default size here.
@@ -41,10 +42,22 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     NewDialog dlg;
                     if (dlg.ShowModal() == wxID_OK)
                     {
-                        dlg.CreateDlgNode();
+                        dlg.CreateNode();
                     }
                     return;
                 }
+                break;
+
+            case CreateNewFrame:
+                {
+                    NewFrame dlg;
+                    if (dlg.ShowModal() == wxID_OK)
+                    {
+                        dlg.CreateNode();
+                    }
+                    return;
+                }
+                break;
         }
 
         FAIL_MSG("This will only happen if the tool is a) not a dropdown, or b) doesn't have a valid id.");

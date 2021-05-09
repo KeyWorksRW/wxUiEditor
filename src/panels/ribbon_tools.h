@@ -11,7 +11,7 @@
 #include <wx/ribbon/bar.h>      // Top-level component of the ribbon-bar-style interface
 #include <wx/ribbon/toolbar.h>  // Ribbon-style tool bar
 
-#include "../ui/ribbonpanel_base.h"
+#include "ribbonpanel_base.h"
 
 #include <wx/aui/auibar.h>
 #include <wx/aui/auibook.h>
@@ -21,6 +21,7 @@ class RibbonPanel : public RibbonPanelBase
 {
 public:
     RibbonPanel(wxWindow* parent);
+    void ActivateBarPage() { m_rbnBar->SetActivePage(m_page_bars); }
 
 protected:
     void OnToolClick(wxRibbonToolBarEvent& event) override;

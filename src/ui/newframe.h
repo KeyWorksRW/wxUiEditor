@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Dialog for creating a new project dialog
+// Purpose:   Dialog for creating a new project wxFrame
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -7,15 +7,15 @@
 
 #pragma once
 
-#include "newdialog_base.h"
+#include "newframe_base.h"
 
-class NewDialog : public NewDialogBase
+class NewFrame : public NewFrameBase
 {
 public:
-    NewDialog(wxWindow* parent = nullptr);
+    NewFrame(wxWindow* parent = nullptr);
     void CreateNode();
 
 protected:
-    // Handlers for NewDialogBase events
-    void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
+    // Handlers for NewFrameBase events
+    void OnCheckMainFrame(wxCommandEvent& WXUNUSED(event)) override;
 };

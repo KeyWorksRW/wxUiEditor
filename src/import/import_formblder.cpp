@@ -262,19 +262,19 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     {
         class_name = "oldbookpage";
     }
-    else if (class_name.contains("Dialog"))
+    else if (class_name.is_sameas("Dialog"))
     {
         class_name = "wxDialog";
     }
-    else if (class_name.contains("Wizard"))
+    else if (class_name.is_sameas("Wizard"))
     {
         class_name = "wxWizard";
     }
-    else if (class_name.contains("Frame"))
+    else if (class_name.is_sameas("Frame"))
     {
         class_name = "wxFrame";
     }
-    else if (class_name.contains("Panel"))
+    else if (class_name.is_sameas("Panel"))
     {
         class_name = "PanelForm";
     }

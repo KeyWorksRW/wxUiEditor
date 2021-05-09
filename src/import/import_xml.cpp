@@ -345,7 +345,7 @@ std::optional<GenName> ImportXML::ConvertToGenName(const ttlib::cstr& object_nam
     {
         return gen_wxListView;
     }
-    else if (object_name.contains("Dialog"))
+    else if (object_name.is_sameas("Dialog") || object_name.is_sameas("wxDialog"))
     {
         return gen_wxDialog;
     }
@@ -353,15 +353,15 @@ std::optional<GenName> ImportXML::ConvertToGenName(const ttlib::cstr& object_nam
     {
         return gen_wxWizard;
     }
-    else if (object_name.contains("wxMenuBar") && parent && parent->isGen(gen_Project))
+    else if (object_name.is_sameas("wxMenuBar") && parent && parent->isGen(gen_Project))
     {
         return gen_MenuBar;
     }
-    else if (object_name.contains("wxToolBar") && parent && parent->isGen(gen_Project))
+    else if (object_name.is_sameas("wxToolBar") && parent && parent->isGen(gen_Project))
     {
         return gen_ToolBar;
     }
-    else if (object_name.contains("Frame"))
+    else if (object_name.is_sameas("Frame") || object_name.is_sameas("wxFrame"))
     {
         return gen_wxFrame;
     }

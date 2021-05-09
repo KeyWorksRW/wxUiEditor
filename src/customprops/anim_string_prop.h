@@ -24,7 +24,7 @@ class AnimStringProperty : public wxStringProperty
 {
 public:
     AnimStringProperty(const wxString& label, AnimationProperties& img_props) :
-        wxStringProperty(label, wxPG_LABEL, img_props.image.wx_str()), m_img_props(img_props)
+        wxStringProperty(label, wxPG_LABEL, img_props.image.wx_str())
     {
     }
 
@@ -33,7 +33,4 @@ public:
 
     // Set what happens on button click
     wxPGEditorDialogAdapter* GetEditorDialog() const override { return new AnimDialogAdapter(); }
-
-private:
-    AnimationProperties& m_img_props;
 };

@@ -17,6 +17,8 @@
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"         // Utility functions that work with properties
 
+#include "../ui/newdialog.h"  // NewDialog -- Dialog for creating a new project dialog
+
 // clang-format off
 static const auto lstBarGenerators = {
 
@@ -483,17 +485,10 @@ void NavPopupMenu::OnBorders(wxCommandEvent& event)
 void NavPopupMenu::CreateProjectMenu(Node* WXUNUSED(node))
 {
     Append(MenuPROJECT_ADD_DIALOG, "Add new dialog");
-    Append(MenuPROJECT_ADD_TABBED_DIALOG, "Add new tabbed dialog");
     Append(MenuPROJECT_ADD_WINDOW, "Add new window");
     Append(MenuPROJECT_ADD_WIZARD, "Add new wizard");
 
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&) {
-            wxGetFrame().CreateToolNode("wxDialog");
-            ;
-        },
-        MenuPROJECT_ADD_DIALOG);
+    Bind(wxEVT_MENU, &NavPopupMenu::OnCreateNewDialog, this, MenuPROJECT_ADD_DIALOG);
 
     Bind(
         wxEVT_MENU,
@@ -920,4 +915,13 @@ void NavPopupMenu::CreateBookMenu(Node* /* node */)
     AppendSubMenu(sub_menu, "Borders");
 
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
+}
+
+void NavPopupMenu::OnCreateNewDialog(wxCommandEvent& WXUNUSED(event))
+{
+    NewDialog dlg;
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        dlg.CreateDlgNode();
+    }
 }

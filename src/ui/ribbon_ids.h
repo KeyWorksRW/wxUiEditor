@@ -12,5 +12,6 @@ enum
     NewDataCtrl,
     NewRibbonType,
     NewStaticSizer,
+    CreateNewDialog,
 
 };

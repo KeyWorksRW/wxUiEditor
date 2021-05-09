@@ -7,6 +7,8 @@
 
 #include "pch.h"
 
+#include <thread>
+
 #include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
 
 #include "gen_base.h"
@@ -62,6 +64,9 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
     // If the user cleared the property, change the name to a default value for displaying in the derived panel.
     if (derived_file.empty())
         derived_file = "derived_file";
+
+    EventVector events;
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form, std::ref(events));
 
     derived_file.replace_extension(source_ext);
     if (panel_type == NOT_PANEL && derived_file.file_exists())
@@ -205,10 +210,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         }
     }
 
-    // Do events in both files
-    EventVector events;
-    CollectEventHandlers(form, events);
-
+    thrd_get_events.join();
     if (events.size() > 0)
     {
         m_header->Unindent();
@@ -222,6 +224,11 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         for (size_t i = 0; i < events.size(); i++)
         {
             auto event = events[i];
+
+            // Ignore lambda's and functions in another class
+            if (event->get_value().contains("[") || event->get_value().contains("::"))
+                continue;
+
             if (generatedHandlers.find(event->get_value()) == generatedHandlers.end())
             {
                 ttlib::cstr prototype;

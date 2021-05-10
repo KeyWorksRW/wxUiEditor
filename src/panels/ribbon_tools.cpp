@@ -20,6 +20,7 @@
 
 #include "newdialog.h"  // NewDialog -- Dialog for creating a new project dialog
 #include "newframe.h"   // NewFrame -- Dialog for creating a new project wxFrame
+#include "newribbon.h"  // NewRibbon -- Dialog for creating a new wxRibbonBar
 #include "ribbon_ids.h"
 
 // The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch that
@@ -54,6 +55,20 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     if (dlg.ShowModal() == wxID_OK)
                     {
                         dlg.CreateNode();
+                    }
+                    return;
+                }
+                break;
+
+            case CreateNewRibbon:
+                {
+                    NewRibbon dlg;
+                    if (dlg.IsCreatable())
+                    {
+                        if (dlg.ShowModal() == wxID_OK)
+                        {
+                            dlg.CreateNode();
+                        }
                     }
                     return;
                 }

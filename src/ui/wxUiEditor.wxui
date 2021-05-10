@@ -359,7 +359,7 @@
           <node class="wxBoxSizer" var_name="box_sizer_4" borders="wxTOP|wxBOTTOM|wxRIGHT">
             <node class="wxCheckBox" label="Tabbed &amp;Dialog" var_name="m_check_tabs" validator_variable="m_has_tabs" wxEVT_CHECKBOX="[this](wxCommandEvent&amp;) { m_spinCtrlTabs->Enable(m_check_tabs->GetValue()); }" />
             <node class="wxStaticText" class_access="none" label="Tab&amp;s:" var_name="staticText_4" alignment="wxALIGN_CENTER_VERTICAL" borders="wxTOP|wxBOTTOM|wxLEFT" />
-            <node class="wxSpinCtrl" initial="3" min="1" var_name="m_spinCtrlTabs" validator_variable="m_num_tabs" disabled="true" />
+            <node class="wxSpinCtrl" initial="3" max="7" min="1" var_name="m_spinCtrlTabs" validator_variable="m_num_tabs" disabled="true" />
           </node>
           <node class="wxCheckBox" checked="true" class_access="none" label="&amp;Standard Buttons" var_name="checkBox_2" validator_variable="m_has_std_btns" />
         </node>
@@ -381,6 +381,22 @@
             <node class="wxCheckBox" checked="true" label="Add Menu" var_name="m_checkBox_menu" validator_variable="m_has_menu" flags="wxEXPAND" />
             <node class="wxCheckBox" checked="true" label="Add Statusbar" var_name="m_checkBox_statusbar" validator_variable="m_has_statusbar" flags="wxEXPAND" />
           </node>
+        </node>
+        <node class="wxStdDialogButtonSizer" flags="wxEXPAND" />
+      </node>
+    </node>
+    <node class="wxDialog" class_name="NewRibbonBase" title="New Ribbon Bar" base_file="newribbon_base" derived_class_name="NewRibbon" derived_file="newribbon">
+      <node class="wxBoxSizer" orientation="wxVERTICAL" flags="wxEXPAND">
+        <node class="wxBoxSizer" var_name="box_sizer_3">
+          <node class="wxStaticText" class_access="none" label="These are initial values -- all of them can be changed after the ribbon bar&#10; is created." var_name="staticText_3" wrap="300" />
+        </node>
+        <node class="wxBoxSizer" var_name="box_sizer_2">
+          <node class="wxStaticText" label="&amp;Type:" alignment="wxALIGN_CENTER_VERTICAL" />
+          <node class="wxComboBox" choices="&quot;Tool&quot; &quot;Button&quot; &quot;Gallery&quot;" selection_string="Tool" validator_variable="m_panel_type" />
+        </node>
+        <node class="wxBoxSizer" var_name="box_sizer_4">
+          <node class="wxStaticText" class_access="none" label="&amp;Pages:" var_name="staticText_4" alignment="wxALIGN_CENTER_VERTICAL" borders="wxTOP|wxBOTTOM|wxLEFT" />
+          <node class="wxSpinCtrl" initial="3" max="7" min="1" var_name="m_spinCtrlPages" validator_variable="m_num_pages" disabled="true" />
         </node>
         <node class="wxStdDialogButtonSizer" flags="wxEXPAND" />
       </node>

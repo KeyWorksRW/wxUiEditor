@@ -14,5 +14,6 @@ enum
     NewStaticSizer,
     CreateNewDialog,
     CreateNewFrame,
+    CreateNewRibbon,
 
 };

@@ -338,7 +338,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto bars_bar_ribbon = new wxRibbonToolBar(panel_bars_ribbon, wxID_ANY);
     {
-        bars_bar_ribbon->AddTool(gen_wxRibbonBar, GetImgFromHdr(ribbon_bar_png, sizeof(ribbon_bar_png)), wxString::FromUTF8("wxRibbonBar"), wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(CreateNewRibbon, GetImgFromHdr(ribbon_bar_png, sizeof(ribbon_bar_png)), wxString::FromUTF8("wxRibbonBar"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_wxRibbonPage, GetImgFromHdr(ribbon_page_png, sizeof(ribbon_page_png)), wxString::FromUTF8("wxRibbonPage"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_wxRibbonPanel, GetImgFromHdr(ribbon_panel_png, sizeof(ribbon_panel_png)), wxString::FromUTF8("wxRibbonPanel"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(NewRibbonType, GetImgFromHdr(ribbon_buttonbar_png, sizeof(ribbon_buttonbar_png)), wxString::FromUTF8("Ribbon Bar Type"), wxRIBBON_BUTTON_DROPDOWN);

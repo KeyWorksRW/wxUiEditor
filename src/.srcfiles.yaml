@@ -131,10 +131,11 @@ Files:
     ui/eventhandlerdlg.cpp      # Dialog for editing event handlers
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ui/insertdialog.cpp         # Dialog to lookup and insert a widget
-    ui/newproject.cpp           # Dialog to create a new project
-    ui/optionsdlg.cpp           # Dialog containing special Debugging commands
     ui/newdialog.cpp            # Dialog for creating a new project dialog
-    ui/newframe.cpp
+    ui/newframe.cpp             # Dialog for creating a new project wxFrame
+    ui/newproject.cpp           # Dialog to create a new project
+    ui/newribbon.cpp
+    ui/optionsdlg.cpp           # Dialog containing special Debugging commands
 
 # wxUiEditor generated files
 
@@ -146,10 +147,11 @@ Files:
     ui/insertdialog_base.cpp
     ui/mainframe_base.cpp
     ui/newdialog_base.cpp
+    ui/newframe_base.cpp
     ui/newproject_base.cpp
+    ui/newribbon_base.cpp
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp
-    ui/newframe_base.cpp
 
     ../ttLib/ttcstr.cpp      # Class for handling zero-terminated char strings.
     ../ttLib/ttcview.cpp     # string_view functionality on a zero-terminated char string.

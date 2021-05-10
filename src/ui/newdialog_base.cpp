@@ -63,7 +63,7 @@ NewDialogBase::NewDialogBase(wxWindow* parent, wxWindowID id, const wxString& ti
     box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
-    wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 3);
+    wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 7, 3);
     m_spinCtrlTabs->SetValidator(wxGenericValidator(&m_num_tabs));
     m_spinCtrlTabs->Enable(false);
     box_sizer_4->Add(m_spinCtrlTabs, wxSizerFlags().Border(wxALL));

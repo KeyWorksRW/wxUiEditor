@@ -117,10 +117,8 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
     if (IsOldHostType(node_decl->DeclName()))
         return NewNode(node_decl);
 
-
     // Check for widgets which can ONLY have a frame for a parent.
-    if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) || node_decl->isType(type_ribbonbar) ||
-        node_decl->isType(type_toolbar))
+    if (node_decl->isType(type_statusbar) || node_decl->isType(type_menubar) || node_decl->isType(type_toolbar))
     {
         if (parent->isType(type_form) && !parent->isGen(gen_wxFrame))
         {
@@ -232,9 +230,9 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
     return copyObj;
 }
 
-// TODO: [KeyWorks - 04-13-2021] This function isn't being called, and mostly duplicates the code in Node::CreateToolNode. This should
-// become the preferred method, but first we need to merge in the code from CreateToolNode() since that is up to date and does things like
-// call FirePropChangeEvent.
+// TODO: [KeyWorks - 04-13-2021] This function isn't being called, and mostly duplicates the code in Node::CreateToolNode.
+// This should become the preferred method, but first we need to merge in the code from CreateToolNode() since that is up to
+// date and does things like call FirePropChangeEvent.
 
 void NodeCreator::SetDefaultLayoutProperties(Node* node)
 {

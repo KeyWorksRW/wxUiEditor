@@ -155,7 +155,7 @@
             </node>
             <node class="wxRibbonPanel" label="Ribbon" var_name="panel_bars_ribbon">
               <node class="wxRibbonToolBar" var_name="bars_bar_ribbon" wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick" wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
-                <node class="ribbonTool" bitmap="Header; ..\art_headers\ribbon_bar_png.hxx; ; [-1; -1]" help="wxRibbonBar" id="gen_wxRibbonBar" />
+                <node class="ribbonTool" bitmap="Header; ..\art_headers\ribbon_bar_png.hxx; ; [-1; -1]" help="wxRibbonBar" id="CreateNewRibbon" />
                 <node class="ribbonTool" bitmap="Header; ..\art_headers\ribbon_page_png.hxx; ; [-1; -1]" help="wxRibbonPage" id="gen_wxRibbonPage" />
                 <node class="ribbonTool" bitmap="Header; ..\art_headers\ribbon_panel_png.hxx; ; [-1; -1]" help="wxRibbonPanel" id="gen_wxRibbonPanel" />
                 <node class="ribbonTool" bitmap="Header; ..\art_headers\ribbon_buttonbar_png.hxx; ; [-1; -1]" help="Ribbon Bar Type" id="NewRibbonType" kind="wxRIBBON_BUTTON_DROPDOWN" />

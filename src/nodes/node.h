@@ -60,7 +60,7 @@ public:
     size_t GetEventCount() { return m_events.size(); }
     size_t GetInUseEventCount();
 
-    Node* FindNearAncestor(GenEnum::GenType type);
+    Node* LocateAncestorType(GenEnum::GenType type);
     Node* FindParentForm();
 
     bool AddChild(NodeSharedPtr node);
@@ -220,10 +220,10 @@ public:
     // Both var_name and validator_variable properties are checked
     ttlib::cstr GetUniqueName(const ttlib::cstr& proposed_name);
 
-    bool FixDuplicateName(bool is_validator = false);
-
     // Fix duplicate names in the current node and all of it's children
-    void FixPastedNames();
+    void FixDuplicateNodeNames(Node* form = nullptr);
+
+    bool FixDuplicateName();
 
     // Collects all unique var_name and validator_variable properties in the current form
     void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node);

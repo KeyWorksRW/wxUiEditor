@@ -11,8 +11,7 @@
 
 #include "utils.h"  // Utility functions that work with properties
 
-// #include "../xml/aui.hgz"         // aui_xml_gz[] == xml/aui.xml
-
+#include "../xml/aui.hgz"         // aui_xml_gz[] == xml/aui.xml
 #include "../xml/bars.hgz"        // bars_xml_gz[] == xml/bars.xml
 #include "../xml/containers.hgz"  // containers_xml_gz[] == containers.xml
 #include "../xml/forms.hgz"       // forms_xml_gz[] == xml/forms.xml
@@ -30,8 +29,7 @@ struct GZIP_PAIR
 // clang-format off
 static const GZIP_PAIR gzip_pairs[] = {
 
-    // { "aui", aui_xml_gz, sizeof(aui_xml_gz) },
-
+    { "aui", aui_xml_gz, sizeof(aui_xml_gz) },
     { "bars", bars_xml_gz, sizeof(bars_xml_gz) },
     { "containers", containers_xml_gz, sizeof(containers_xml_gz) },
     { "forms", forms_xml_gz, sizeof(forms_xml_gz) },

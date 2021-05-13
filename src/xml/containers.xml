@@ -38,7 +38,7 @@
       -1
     </property>
     <property name="sashgravity" type="float"
-        help= "Sets the sash gravity. Remarks: Gravity is real factor which controls position of sash while resizing wxSplitterWindow. Gravity tells wxSplitterWindow how much will left/top window grow while resizing.">
+        help= "Sets the sash gravity. Gravity is real factor which controls position of sash while resizing wxSplitterWindow. Gravity tells wxSplitterWindow how much will left/top window grow while resizing.">
       0.0
     </property>
     <property name="min_pane_size" type="uint"

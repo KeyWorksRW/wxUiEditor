@@ -317,8 +317,9 @@ namespace GenEnum
     enum GenType : size_t
     {
 
+        type_aui_tool,
         type_auinotebook,
-
+        type_aui_toolbar,
         type_bookpage,
         type_choicebook,
         type_container,
@@ -383,6 +384,7 @@ namespace GenEnum
 
         gen_AUI = 0,
 
+        gen_AuiToolBar,
         gen_Bitmaps,
         gen_BookPage,
         gen_Boolean_Validator,
@@ -404,6 +406,7 @@ namespace GenEnum
         gen_UserCode,
         gen_VerticalBoxSizer,
         gen_Window_Events,
+        gen_auitool,
         gen_dataViewColumn,
         gen_dataViewListColumn,
         gen_flexgridsizerbase,
@@ -427,6 +430,7 @@ namespace GenEnum
         gen_wxActivityIndicator,
         gen_wxAnimationCtrl,
         gen_wxAuiMDIChildFrame,
+        gen_wxAuiToolBar,
         gen_wxBannerWindow,
         gen_wxBitmapComboBox,
         gen_wxBoxSizer,

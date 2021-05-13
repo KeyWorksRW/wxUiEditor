@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Initialize all generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -177,6 +177,8 @@ void NodeCreator::InitGenerators()
 
     SET_GENERATOR(gen_spacer, SpacerGenerator)
 
+    SET_GENERATOR(gen_wxAuiToolBar, AuiToolBarGenerator)
+    SET_GENERATOR(gen_auitool, AuiToolGenerator)
     SET_GENERATOR(gen_ToolBar, ToolBarFormGenerator)
     SET_GENERATOR(gen_wxToolBar, ToolBarGenerator)
     SET_GENERATOR(gen_tool, ToolGenerator)

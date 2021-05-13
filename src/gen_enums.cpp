@@ -313,7 +313,9 @@ std::unordered_map<std::string, GenEnum::PropName> GenEnum::rmap_PropNames;
 
 std::map<GenType, const char*> GenEnum::map_GenTypes = {
 
+    { type_aui_tool, "aui_tool" },
     { type_auinotebook, "auinotebook" },
+    { type_aui_toolbar, "aui_toolbar" },
     { type_bookpage, "bookpage" },
     { type_choicebook, "choicebook" },
     { type_container, "container" },
@@ -370,6 +372,9 @@ std::unordered_map<std::string, GenType> GenEnum::rmap_GenTypes;
 std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
     { gen_AUI, "AUI" },
+    { gen_AuiToolBar, "AuiToolBar" },
+    { gen_wxAuiToolBar, "wxAuiToolBar" },
+    { gen_auitool, "auitool" },
     { gen_Bitmaps, "Bitmaps" },
     { gen_BookPage, "BookPage" },
     { gen_Boolean_Validator, "Boolean Validator" },

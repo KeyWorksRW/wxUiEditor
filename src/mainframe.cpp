@@ -1003,7 +1003,7 @@ void MainFrame::CopyNode(Node* node)
             m_clipboard->AddNodeToDoc(clip_node);
             auto u8_data = new wxUtf8DataObject();
             std::stringstream strm;
-            doc.save(strm);
+            doc.save(strm, "", pugi::format_raw);
 
             // Skip over the XML header
             auto begin = strm.str().find("<node");

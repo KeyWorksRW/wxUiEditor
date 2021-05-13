@@ -7,7 +7,8 @@
 
 #include "pch.h"
 
-#include <wx/toolbar.h>
+#include <wx/aui/auibar.h>  // wxaui: wx advanced user interface - docking window manager
+#include <wx/toolbar.h>     // wxToolBar interface declaration
 
 #include "bitmaps.h"     // Map of bitmaps accessed by name
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
@@ -15,6 +16,8 @@
 #include "node.h"        // Node class
 
 #include "toolbar_widgets.h"
+
+static ttlib::cstr ConstructTool(Node* node);
 
 //////////////////////////////////////////  ToolBarFormGenerator  //////////////////////////////////////////
 
@@ -349,6 +352,203 @@ void ToolBarGenerator::OnTool(wxCommandEvent& event)
 
 std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
 {
+    return ConstructTool(node);
+}
+
+std::optional<ttlib::cstr> ToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+//////////////////////////////////////////  ToolGenerator  //////////////////////////////////////////
+
+std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+
+    if (node->GetParent()->isGen(gen_wxToolBar))
+
+        code << node->get_parent_name() << "->AddSeparator();";
+    else
+        code << "AddSeparator();";
+
+    return code;
+}
+
+//////////////////////////////////////////  AuiToolBarGenerator  //////////////////////////////////////////
+
+wxObject* AuiToolBarGenerator::Create(Node* node, wxObject* parent)
+{
+    auto widget = new wxAuiToolBar(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+        node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style) | wxTB_NODIVIDER | wxNO_BORDER);
+
+    if (node->HasValue(prop_bitmapsize))
+        widget->SetToolBitmapSize(node->prop_as_wxSize(prop_bitmapsize));
+    if (node->HasValue(prop_margins))
+    {
+        wxSize margins(node->prop_as_wxSize(prop_margins));
+        widget->SetMargins(margins.GetWidth(), margins.GetHeight());
+    }
+    if (node->HasValue(prop_packing))
+        widget->SetToolPacking(node->prop_as_int(prop_packing));
+    if (node->HasValue(prop_separation))
+        widget->SetToolSeparation(node->prop_as_int(prop_separation));
+
+    widget->Bind(wxEVT_TOOL, &AuiToolBarGenerator::OnTool, this);
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+{
+    auto toolbar = wxStaticCast(wxobject, wxAuiToolBar);
+    ASSERT(toolbar);
+    if (!toolbar)
+    {
+        return;
+    }
+
+    auto node = GetMockup()->GetNode(wxobject);
+    auto count = node->GetChildCount();
+    for (size_t i = 0; i < count; ++i)
+    {
+        auto childObj = node->GetChild(i);
+        auto child = GetMockup()->GetChild(wxobject, i);
+        if (childObj->isGen(gen_tool))
+        {
+            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
+            if (!bmp.IsOk())
+                bmp = GetInternalImage("default");
+
+            toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
+                             (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
+                             wxEmptyString, child);
+        }
+        else if (childObj->isGen(gen_toolSeparator))
+        {
+            toolbar->AddSeparator();
+        }
+        else
+        {
+            auto control = wxDynamicCast(child, wxControl);
+            if (control)
+            {
+                toolbar->AddControl(control);
+            }
+        }
+    }
+    toolbar->Realize();
+}
+
+std::optional<ttlib::cstr> AuiToolBarGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->prop_as_string(prop_var_name);
+
+    code << " = new wxAuiToolBar(" << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    GeneratePosSizeFlags(node, code, false, "", "wxAUI_TB_DEFAULT_STYLE");
+
+    return code;
+}
+
+std::optional<ttlib::cstr> AuiToolBarGenerator::GenCode(const std::string& cmd, Node* node)
+{
+    ttlib::cstr code;
+    if (cmd == "after_addchild")
+    {
+        code << '\t' << node->get_node_name() << "->Realize();";
+    }
+    else
+    {
+        return {};
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> AuiToolBarGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    auto code = GenFormSettings(node);
+    if (node->HasValue(prop_bitmapsize))
+    {
+        if (code.size())
+            code << '\n';
+        code << "SetToolBitmapSize(" << node->prop_as_string(prop_bitmapsize) << ");";
+    }
+
+    if (node->prop_as_int(prop_separation) != 5)
+    {
+        if (code.size())
+            code << '\n';
+        code << "SetToolSeparation(" << node->prop_as_string(prop_separation) << ");";
+    }
+
+    if (node->HasValue(prop_margins))
+    {
+        if (code.size())
+            code << '\n';
+        code << "SetMargins(" << node->prop_as_string(prop_margins) << ");";
+    }
+
+    if (node->prop_as_int(prop_packing) != 1)
+    {
+        if (code.size())
+            code << '\n';
+        code << "SetToolPacking(" << node->prop_as_string(prop_packing) << ");";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> AuiToolBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool AuiToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/toolbar.h>", set_src, set_hdr);
+
+    return true;
+}
+
+// REVIEW: [KeyWorks - 05-13-2021] Unlike wxToolBar, you can't store a pointer in a wxAuiToolBar item -- the closest
+// equivalent is m_userdata, but that's a long so it won't work for storing a pointer.
+void AuiToolBarGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
+{
+#if 0
+    auto toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
+
+    auto wxobject = toolbar->GetToolClientData(event.GetToolId());
+    if (wxobject)
+    {
+        wxGetFrame().GetMockup()->SelectNode(wxobject);
+    }
+#endif
+}
+
+//////////////////////////////////////////  AuiToolGenerator  //////////////////////////////////////////
+
+std::optional<ttlib::cstr> AuiToolGenerator::GenConstruction(Node* node)
+{
+    return ConstructTool(node);
+}
+
+std::optional<ttlib::cstr> AuiToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+//////////////////////////////////////////  ConstructTool  //////////////////////////////////////////
+
+// This is called to add a tool to either wxToolBar or wxAuiToolBar
+
+ttlib::cstr ConstructTool(Node* node)
+{
     ttlib::cstr code;
     code << '\t';
 
@@ -369,7 +569,7 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
     }
     else
     {
-        if (node->GetParent()->isGen(gen_wxToolBar))
+        if (node->GetParent()->isGen(gen_wxToolBar) || node->GetParent()->isGen(gen_wxAuiToolBar))
             code << node->get_node_name() << " = " << node->get_parent_name() << "->AddTool("
                  << node->prop_as_string(prop_id) << ", ";
         else
@@ -426,26 +626,6 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
     }
 
     code << ");";
-
-    return code;
-}
-
-std::optional<ttlib::cstr> ToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
-//////////////////////////////////////////  ToolGenerator  //////////////////////////////////////////
-
-std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
-{
-    ttlib::cstr code;
-
-    if (node->GetParent()->isGen(gen_wxToolBar))
-
-        code << node->get_parent_name() << "->AddSeparator();";
-    else
-        code << "AddSeparator();";
 
     return code;
 }

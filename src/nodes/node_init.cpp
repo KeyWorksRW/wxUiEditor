@@ -71,8 +71,10 @@ static const ParentChild lstParentChild[] = {
     { type_form, type_menubar, one },
     { type_form, type_statusbar, one },
     { type_form, type_toolbar, one },
+    { type_form, type_aui_toolbar, one },
 
     { type_gbsizer, type_auinotebook, infinite },
+    { type_gbsizer, type_aui_toolbar, infinite },
     { type_gbsizer, type_choicebook, infinite },
     { type_gbsizer, type_container, infinite },
     { type_gbsizer, type_dataviewctrl, infinite },
@@ -125,6 +127,7 @@ static const ParentChild lstParentChild[] = {
     { type_simplebook, type_bookpage, infinite },
 
     { type_sizer, type_auinotebook, infinite },
+    { type_sizer, type_aui_toolbar, infinite },
     { type_sizer, type_choicebook, infinite },
     { type_sizer, type_container, infinite },
     { type_sizer, type_dataviewctrl, infinite },
@@ -157,6 +160,9 @@ static const ParentChild lstParentChild[] = {
     { type_toolbar_form, type_expanded_widget, infinite },
     { type_toolbar_form, type_tool, infinite },
     { type_toolbar_form, type_widget, infinite },
+
+    { type_aui_toolbar, type_aui_tool, infinite },
+    { type_aui_toolbar, type_widget, infinite },
 
     { type_treelistctrl, type_expanded_widget, infinite },
     { type_treelistctrl, type_menu, one },
@@ -219,6 +225,7 @@ void NodeCreator::Initialize()
 
     ParseGeneratorFile("interface");  // Always process this file first
 
+    ParseGeneratorFile("aui");
     ParseGeneratorFile("bars");
     ParseGeneratorFile("forms");
     ParseGeneratorFile("containers");

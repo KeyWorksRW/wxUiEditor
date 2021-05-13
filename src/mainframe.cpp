@@ -600,7 +600,11 @@ void MainFrame::UpdateFrame()
 
     bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == _ttwx(strIdMockupTabTitle));
     m_menuEdit->Enable(wxID_FIND, !isMockup);
+#if defined(_DEBUG)
+    m_menuEdit->Enable(id_insert_widget, true);
+#else
     m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->isGen(gen_Project));
+#endif  // _DEBUG
 
     UpdateMoveMenu();
     UpdateLayoutTools();

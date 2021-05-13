@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <GeneratorDefitions>
 
+<!-- <gen class="AUI Events" type="interface">
   <gen class="AUI Events" type="interface">
     <event name="wxEVT_AUI_PANE_BUTTON" class="wxAuiManagerEvent" help=""/>
     <event name="wxEVT_AUI_PANE_CLOSE" class="wxAuiManagerEvent" help=""/>
@@ -68,45 +69,88 @@
     <property name="bitmap" type="image" help="Page Image"/>
     <property name="select" type="bool" help="Select Page when Adding">0</property>
   </gen>
+-->
 
- <gen class="wxAuiToolBar" image="auitoolbar" type="toolbar">
+<gen class="wxAuiToolBar" image="auitoolbar" type="aui_toolbar">
     <inherits class="wxWindow"/>
     <inherits class="Window Events"/>
     <property name="var_name" type="string">m_auiToolBar</property>
     <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
-      protected:
-    </property>
-    <property name="bitmapsize" type="wxSize" help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels."/>
-    <property name="margins" type="wxSize" help="Values to be used as margins for the toolbar."/>
-    <property name="packing" type="uint" help="Value used for spacing tools. Remarks: The packing is used for spacing in the vertical direction if the toolbar is horizontal, and for spacing in the horizontal direction if the toolbar is vertical.">1</property>
+        <option name="none"/>
+        <option name="protected:"/>
+        <option name="public:"/>
+      protected:</property>
+    <property name="bitmapsize" type="wxSize"
+        help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels."/>
+    <property name="margins" type="wxSize"
+        help="Values to be used as margins for the toolbar."/>
+    <property name="packing" type="uint"
+        help="Value used for spacing tools. The packing is used for spacing in the vertical direction if the toolbar is horizontal, and for spacing in the horizontal direction if the toolbar is vertical.">1</property>
     <property name="separation" type="uint"
-        help="The default separator size. Remarks: This is the size between each toolbar tool.">
-      5
-    </property>
-    <property name="label_visible" type="bool">0</property>
-    <property name="toolbar_label" type="string">label</property>
-    <property name="use_explicit_ids" type="bool"
-        help="Use user-specified tool IDs instead of automatically assigned ones (needed for old wxAuiToolBar implementation).">
-      0
-    </property>
+        help="The default separator size. This is the size between each toolbar tool.">
+      5</property>
     <property name="style" type="bitlist">
-      <option name="wxAUI_TB_TEXT"/>
-      <option name="wxAUI_TB_NO_TOOLTIPS"/>
-      <option name="wxAUI_TB_NO_AUTORESIZE"/>
-      <option name="wxAUI_TB_GRIPPER"/>
-      <option name="wxAUI_TB_OVERFLOW"/>
-      <option name="wxAUI_TB_VERTICAL"
-        help="Using this style forces the toolbar to be vertical and be only dockable to the left or right sides of the window whereas by default it can be horizontal or vertical and be docked anywhere."/>
-      <option name="wxAUI_TB_HORZ_LAYOUT"/>
-      <option name="wxAUI_TB_HORIZONTAL" help="Analogous to wxAUI_TB_VERTICAL, but forces the toolbar to be horizontal."/>
-      <option name="wxAUI_TB_PLAIN_BACKGROUND" help="Draw a plain background (based on parent) instead of the default gradient background."/>
-      <option name="wxAUI_TB_HORZ_TEXT" help="Equivalent to wxAUI_TB_HORZ_LAYOUT | wxAUI_TB_TEXT"/>
-      <option name="wxAUI_TB_DEFAULT_STYLE" help="The default is to have no styles."/>
-      wxAUI_TB_HORZ_LAYOUT
-    </property>
+        <option name="wxAUI_TB_TEXT"
+            help="Shows the text in the toolbar buttons; by default only icons are shown. "/>
+        <option name="wxAUI_TB_NO_TOOLTIPS"
+            help="Don't show tooltips on wxAuiToolBar items."/>
+        <option name="wxAUI_TB_NO_AUTORESIZE"
+            help="Do not auto-resize the wxAuiToolBar."/>
+        <option name="wxAUI_TB_GRIPPER"
+            help="Shows a gripper on the wxAuiToolBar."/>
+        <option name="wxAUI_TB_OVERFLOW"
+            help="The wxAuiToolBar can contain overflow items."/>
+        <option name="wxAUI_TB_VERTICAL"
+            help="Using this style forces the toolbar to be vertical and be only dockable to the left or right sides of the window whereas by default it can be horizontal or vertical and be docked anywhere."/>
+        <option name="wxAUI_TB_HORZ_LAYOUT"
+            help="Shows the text and the icons alongside, not vertically stacked. This style must be used with wxAUI_TB_TEXT"/>
+        <option name="wxAUI_TB_HORIZONTAL"
+            help="Analogous to wxAUI_TB_VERTICAL, but forces the toolbar to be horizontal, docking to the top or bottom of the window."/>
+        <option name="wxAUI_TB_PLAIN_BACKGROUND"
+            help="Draw a plain background (based on parent) instead of the default gradient background."/>
+        <option name="wxAUI_TB_HORZ_TEXT"
+            help="Shows the text alongside the icons, not vertically stacked."/>
+        <option name="wxAUI_ORIENTATION_MASK "
+            help="Shows the text in the toolbar buttons. By default only icons are shown."/>
+        <option name="wxAUI_TB_DEFAULT_STYLE"
+            help="By default only icons are shown."/>
+        wxAUI_TB_DEFAULT_STYLE</property>
   </gen>
+
+<gen class="auitool" image="tool" type="aui_tool">
+    <property name="var_name" type="string">tool</property>
+    <property name="class_access" type="option">
+        <option name="none"/>
+        <option name="protected:"/>
+        <option name="public:"/>
+      none</property>
+    <property name="label" type="string_escapes"/>
+    <property name="bitmap" type="image" help="The primary tool bitmap."/>
+    <property name="kind" type="option">
+        <option name="wxITEM_NORMAL"
+            help="A normal toolbar button."/>
+        <option name="wxITEM_CHECK"
+            help="A checkable tool (stays pressed after it has been toggled)."/>
+        <option name="wxITEM_DROPDOWN"
+            help="Creates a normal tool button with a dropdown arrow next to it."/>
+        <option name="wxITEM_RADIO"
+        help="A checkable tool which makes part of a radio group of tools each of which is automatically unchecked whenever another button in the group is checked."/>
+      wxITEM_NORMAL</property>
+    <property name="context_menu" type="bool"
+        help="Specifies that a drop-down menu button will appear next to the tool button. Used only with wxAuiToolBar.">0</property>
+    <property name="tooltip" type="string_edit"
+        help="Help string used in the tooltip."/>
+    <property name="statusbar" type="string_edit"
+        help="This string is shown in the statusbar (if any) of the parent frame when the mouse pointer is inside the tool."/>
+    <property name="id" type="id">wxID_ANY</property>
+    <event name="wxEVT_TOOL" class="wxCommandEvent"
+        help="Same as wxEVT_MENU -- generated when the item is chosen in the toolbar or menu (if the same id was added to a menu)."/>
+    <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
+    <event name="wxEVT_AUITOOLBAR_TOOL_DROPDOWN" class="wxAuiToolBarEvent" help=""/>
+    <event name="wxEVT_AUITOOLBAR_OVERFLOW_CLICK" class="wxAuiToolBarEvent" help=""/>
+    <event name="wxEVT_AUITOOLBAR_RIGHT_CLICK" class="wxAuiToolBarEvent" help=""/>
+    <event name="wxEVT_AUITOOLBAR_MIDDLE_CLICK" class="wxAuiToolBarEvent" help=""/>
+    <event name="wxEVT_AUITOOLBAR_BEGIN_DRAG" class="wxAuiToolBarEvent" help=""/>
+</gen>
 
 </GeneratorDefitions>

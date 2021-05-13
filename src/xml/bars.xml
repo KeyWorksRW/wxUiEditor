@@ -52,7 +52,7 @@
       MyMenuItem
     </property>
     <property name="shortcut" type="string_escapes"
-        help="Optional shortcut keyboard shortcut. Remarks: The general syntax is any combination of &quot;CTRL&quot;, &quot;ALT&quot; and &quot;SHIFT&quot; strings (case doesn't matter) separated by either '-' or '+' characters and followed by the accelerator itself. The accelerator may be any alphanumeric character, any function key (from F1 to F12)"/>
+        help="Optional shortcut keyboard shortcut. The general syntax is any combination of &quot;CTRL&quot;, &quot;ALT&quot; and &quot;SHIFT&quot; strings (case doesn't matter) separated by either '-' or '+' characters and followed by the accelerator itself. The accelerator may be any alphanumeric character, any function key (from F1 to F12)"/>
     <property name="help" type="string_edit" help="Optional help string that will be shown on the status bar."/>
     <property name="id" type="id">wxID_ANY</property>
     <property name="bitmap" type="image"
@@ -90,11 +90,11 @@
     <property name="bitmapsize" type="wxSize" help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels."/>
     <property name="margins" type="wxSize" help="Values to be used as margins for the toolbar."/>
     <property name="packing" type="uint"
-        help="Value used for spacing tools. Remarks: The packing is used for spacing in the vertical direction if the toolbar is horizontal, and for spacing in the horizontal direction if the toolbar is vertical.">
+        help="Value used for spacing tools. The packing is used for spacing in the vertical direction if the toolbar is horizontal, and for spacing in the horizontal direction if the toolbar is vertical.">
       1
     </property>
     <property name="separation" type="uint"
-        help="The default separator size. Remarks: This is the size between each toolbar tool.">
+        help="The default separator size. This is the size between each toolbar tool.">
       5
     </property>
     <property name="style" type="bitlist">
@@ -144,11 +144,6 @@
     <event name="wxEVT_TOOL_ENTER" class="wxCommandEvent"
         help="This uses the tools parent ID, the ToolBar, so be sure you set it to something that is not the default. The value of wxCommandEvent::GetSelection is the tool id, or -1 if the mouse cursor has moved off a tool."/>
     <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" help=""/>
-    <event name="wxEVT_AUITOOLBAR_TOOL_DROPDOWN" class="wxAuiToolBarEvent" help=""/>
-    <event name="wxEVT_AUITOOLBAR_OVERFLOW_CLICK" class="wxAuiToolBarEvent" help=""/>
-    <event name="wxEVT_AUITOOLBAR_RIGHT_CLICK" class="wxAuiToolBarEvent" help=""/>
-    <event name="wxEVT_AUITOOLBAR_MIDDLE_CLICK" class="wxAuiToolBarEvent" help=""/>
-    <event name="wxEVT_AUITOOLBAR_BEGIN_DRAG" class="wxAuiToolBarEvent" help=""/>
   </gen>
 
 	<gen class="toolSeparator" image="toolseparator" type="tool">

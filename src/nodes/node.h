@@ -97,8 +97,6 @@ public:
     bool isType(GenType type) const noexcept { return (type == m_declaration->gen_type()); }
     bool isGen(GenName name) const noexcept { return (name == m_declaration->gen_name()); }
 
-    bool IsChildType(size_t index, ttlib::cview type);
-
     bool IsWidget() { return isType(type_widget); }
     bool IsWizard() { return isType(type_wizard); }
     bool IsMenuBar() { return (isType(type_menubar_form) || isType(type_menubar)); }
@@ -118,12 +116,11 @@ public:
     bool IsSpacer() { return isGen(gen_spacer); }
 
     bool IsSizer() { return (isType(type_sizer) || isType(type_gbsizer)); }
-    bool IsContainer() { return (isType(type_container) || GetNodeTypeName().contains("book")); }
+    bool IsContainer() { return (isType(type_container) || ttlib::contains(map_GenTypes[gen_type()], "book")); }
 
     // Returns true if access property == none or there is no access property
     bool IsLocal();
 
-    const ttlib::cstr& GetNodeTypeName() { return m_declaration->GetNodeTypeName(); }
     NodeType* GetNodeType() { return m_declaration->GetNodeType(); }
     BaseGenerator* GetGenerator() const { return m_declaration->GetGenerator(); }
 
@@ -238,6 +235,8 @@ public:
     void AddNodeToDoc(pugi::xml_node& object);
 
     void CalcNodeHash(size_t& hash);
+
+    int_t GetAllowableChildren(GenType child_gen_type) const { return m_declaration->GetAllowableChildren(child_gen_type); }
 
 private:
     NodeSharedPtr m_parent;

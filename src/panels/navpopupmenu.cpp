@@ -140,7 +140,7 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
     AppendSubMenu(sub_menu, "Borders");
 
     AppendSeparator();
-    if (node->GetNodeTypeName() == "sizer")
+    if (node->gen_type() == type_sizer)
     {
 #if 0
 // See TODO comment in OnAddNew below
@@ -236,7 +236,7 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
     // child
     m_child = node->GetParent();
 
-    if (node->GetNodeTypeName() == "sizer")
+    if (node->gen_type() == type_sizer)
     {
         Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_BOX_SIZER);
         Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_STATIC_SIZER);

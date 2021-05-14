@@ -369,7 +369,7 @@ void MockupContent::OnNodeSelected(Node* node)
             {
                 if (parent->GetChildNodePtrs()[child].get() == node)
                     break;
-                if (parent->GetChildNodePtrs()[child].get()->GetNodeType()->get_name() == "widget")
+                if (parent->GetChildNodePtrs()[child].get()->gen_type() == type_widget)
                     continue;
                 ++sel_pos;
             }

@@ -255,8 +255,8 @@ std::optional<ttlib::cstr> MenuGenerator::GenCode(const std::string& cmd, Node* 
 
     if (cmd == "dtor")
     {
-        if (auto parent_type = node->GetParent()->GetNodeType();
-            parent_type->get_name() != "menubar" && parent_type->get_name() != "menubar_form")
+        if (auto parent_type = node->GetParent()->gen_type();
+            parent_type != type_menubar && parent_type != type_menubar_form)
         {
             // REVIEW: [KeyWorks - 12-08-2020] This is only because the constructor is creating the menu via new. What
             // really should happen is that the menu should be in the header file as the actual menu, rather than a
@@ -268,13 +268,13 @@ std::optional<ttlib::cstr> MenuGenerator::GenCode(const std::string& cmd, Node* 
     }
     else if (cmd == "after_addchild")
     {
-        auto parent_type = node->GetParent()->GetNodeType();
-        if (parent_type->get_name() == "menubar")
+        auto parent_type = node->GetParent()->gen_type();
+        if (parent_type == type_menubar)
         {
             code << "    " << node->get_parent_name() << "->Append(" << node->get_node_name() << ", ";
             code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
         }
-        else if (parent_type->get_name() == "menubar_form")
+        else if (parent_type == type_menubar_form)
         {
             code << "    "
                  << "Append(" << node->get_node_name() << ", ";
@@ -288,12 +288,12 @@ std::optional<ttlib::cstr> MenuGenerator::GenCode(const std::string& cmd, Node* 
                 return {};
             }
 
-            if (parent_type->get_name() == "form" || parent_type->get_name() == "wizard")
+            if (parent_type == type_form || parent_type == type_wizard)
             {
                 code << "\tBind(wxEVT_RIGHT_DOWN, &" << node->get_parent_name() << "::" << node->get_parent_name()
                      << "OnContextMenu, this);";
             }
-            else if (parent_type->get_name() == "tool")
+            else if (parent_type == type_tool)
             {
                 // REVIEW: [KeyWorks - 12-08-2020] I have no idea if this actually works since the original template code
                 // used: Connect(#parent $name->GetId(), wxEVT_AUITOOLBAR_TOOL_DROPDOWN...

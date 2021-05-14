@@ -193,16 +193,9 @@ bool Node::AddChild(size_t idx, Node* node)
 bool Node::IsChildAllowed(Node* child)
 {
     ASSERT(child);
-    auto child_type = child->GetNodeType();
-    int_t max_children;
 
-    if (isType(type_form))
-    {
-        // max_children = GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_type, prop_as_bool(prop_aui));
-        max_children = GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_type, false);
-    }
-    else
-        max_children = GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_type);
+    auto child_type = child->gen_type();
+    auto max_children = m_declaration->GetAllowableChildren(child_type);
 
     if (max_children == child_count::none)
         return false;
@@ -210,13 +203,13 @@ bool Node::IsChildAllowed(Node* child)
     if (max_children == child_count::infinite)
         return true;
 
-    // Because m_children containts shared_ptrs, we don't want to use an iteration loop which will get/release the shared
+    // Because m_children contains shared_ptrs, we don't want to use an iteration loop which will get/release the shared
     // ptr. Using an index into the vector lets us access the raw pointer.
 
     int_t children = 0;
     for (size_t i = 0; i < m_children.size() && children <= max_children; ++i)
     {
-        if (GetChild(i)->GetNodeDeclaration()->GetNodeType() == child_type)
+        if (GetChild(i)->gen_type() == child_type)
             ++children;
     }
 
@@ -252,13 +245,6 @@ void Node::RemoveChild(size_t pos)
 
     auto iter = m_children.begin() + pos;
     m_children.erase(iter);
-}
-
-bool Node::IsChildType(size_t index, ttlib::cview type)
-{
-    if (index >= m_children.size())
-        return false;
-    return (m_children[index]->GetNodeTypeName() == type);
 }
 
 size_t Node::GetChildPosition(Node* node)

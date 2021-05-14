@@ -47,52 +47,8 @@ static const ParentChild lstParentChild[] = {
     { type_dataviewctrl, type_dataviewcolumn, infinite },
     { type_dataviewlistctrl, type_dataviewlistcolumn, infinite },
 
-    { type_form, type_auinotebook, none },
-    { type_form, type_choicebook, none },
-    { type_form, type_container, none },
-    { type_form, type_dataviewctrl, none },
-    { type_form, type_dataviewlistctrl, none },
-    { type_form, type_dataviewtreectrl, none },
-    { type_form, type_expanded_widget, none },
-    { type_form, type_listbook, none },
-    { type_form, type_notebook, none },
-    { type_form, type_propgrid, none },
-    { type_form, type_propgridman, none },
-    { type_form, type_ribbonbar, none },
-    { type_form, type_simplebook, none },
-    { type_form, type_splitter, none },
-    { type_form, type_treelistctrl, none },
-    { type_form, type_widget, none },
-
     { type_form, type_sizer, one },
     { type_form, type_gbsizer, one },
-
-    { type_form, type_menu, one },
-    { type_form, type_menubar, one },
-    { type_form, type_statusbar, one },
-    { type_form, type_toolbar, one },
-    { type_form, type_aui_toolbar, one },
-
-    { type_gbsizer, type_auinotebook, infinite },
-    { type_gbsizer, type_aui_toolbar, infinite },
-    { type_gbsizer, type_choicebook, infinite },
-    { type_gbsizer, type_container, infinite },
-    { type_gbsizer, type_dataviewctrl, infinite },
-    { type_gbsizer, type_dataviewlistctrl, infinite },
-    { type_gbsizer, type_dataviewtreectrl, infinite },
-    { type_gbsizer, type_expanded_widget, infinite },
-    { type_gbsizer, type_gbsizer, infinite },
-    { type_gbsizer, type_listbook, infinite },
-    { type_gbsizer, type_notebook, infinite },
-    { type_gbsizer, type_propgrid, infinite },
-    { type_gbsizer, type_propgridman, infinite },
-    { type_gbsizer, type_ribbonbar, infinite },
-    { type_gbsizer, type_simplebook, infinite },
-    { type_gbsizer, type_sizer, infinite },
-    { type_gbsizer, type_splitter, infinite },
-    { type_gbsizer, type_toolbar, infinite },
-    { type_gbsizer, type_treelistctrl, infinite },
-    { type_gbsizer, type_widget, infinite },
 
     { type_listbook, type_bookpage, infinite },
 
@@ -221,6 +177,8 @@ void NodeCreator::Initialize()
     for (auto& iter: lstParentChild)
     {
         GetNodeType(iter.parent)->AddChild(iter.child, iter.max_children);
+        if (iter.parent == type_sizer)
+            GetNodeType(type_gbsizer)->AddChild(iter.child, iter.max_children);
     }
 
     ParseGeneratorFile("interface");  // Always process this file first

@@ -69,9 +69,6 @@ public:
         return (m_setOldHostTypes.find(old_type.c_str()) != m_setOldHostTypes.end());
     }
 
-    int_t GetAllowableChildren(Node* parent, ttlib::cview child_name, bool is_aui_parent = false) const;
-    int_t GetAllowableChildren(Node* parent, GenEnum::GenType child_class_type, bool is_aui_parent = false) const;
-
     const NodeDeclarationArray& GetNodeDeclarationArray() const { return m_a_declarations; }
 
 protected:
@@ -80,7 +77,7 @@ protected:
 
     NodeType* GetNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
 
-    size_t CountChildrenWithSameType(Node* parent, NodeType* type);
+    size_t CountChildrenWithSameType(Node* parent, GenType type);
 
     void SetDefaultLayoutProperties(Node* node);
 

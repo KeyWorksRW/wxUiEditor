@@ -76,13 +76,13 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
     return node;
 }
 
-size_t NodeCreator::CountChildrenWithSameType(Node* parent, NodeType* type)
+size_t NodeCreator::CountChildrenWithSameType(Node* parent, GenType type)
 {
     size_t count = 0;
     size_t numChildren = parent->GetChildCount();
     for (size_t i = 0; i < numChildren; ++i)
     {
-        if (type == parent->GetChild(i)->GetNodeDeclaration()->GetNodeType())
+        if (type == parent->GetChild(i)->gen_type())
             ++count;
     }
 
@@ -132,10 +132,7 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
             return NodeSharedPtr();
     }
 
-    // Currently we don't support aui, but once we do we'll need to pass the paren't current setting to GetAllowableChildren
-    bool aui = false;
-
-    auto max_children = GetAllowableChildren(parent, node_decl->gen_type(), aui);
+    auto max_children = parent->GetAllowableChildren(node_decl->gen_type());
 
     if (max_children == child_count::infinite)
     {
@@ -161,9 +158,8 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
         }
         else
         {
-            auto count = CountChildrenWithSameType(parent, node_decl->GetNodeType());
-            // REVIEW: [KeyWorks - 04-11-2021] Does this actually happen? And if it does, we need to let the user know. Note
-            // that once aui is supported, this may start happening since aui typically allows one non-sizer child.
+            auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
+            // REVIEW: [KeyWorks - 04-11-2021] Does this actually happen?
             ASSERT_MSG(count < (size_t) max_children,
                        "Parent allows one of this child type, a second of the same type is not allowed");
             if (count < (size_t) max_children)
@@ -270,11 +266,6 @@ void NodeCreator::SetDefaultLayoutProperties(Node* node)
         node->prop_set_value(prop_borders, "wxALL");
         node->prop_set_value(prop_flags, "wxEXPAND");
     }
-}
-
-int_t NodeCreator::GetAllowableChildren(Node* parent, GenType child_class_type, bool is_aui_parent) const
-{
-    return parent->GetNodeDeclaration()->GetNodeType()->GetAllowableChildren(child_class_type, is_aui_parent);
 }
 
 int NodeCreator::GetConstantAsInt(const std::string& name, int defValue)

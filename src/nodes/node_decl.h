@@ -50,8 +50,6 @@ public:
 
     const std::string& GetBaseClassDefaultPropertyValue(size_t baseIndex, const std::string& propertyName) const;
 
-    const ttlib::cstr& GetNodeTypeName() const { return m_type->get_name(); }
-
     NodeType* GetNodeType() const { return m_type; }
 
     GenType gen_type() const noexcept { return m_gen_type; }
@@ -87,6 +85,8 @@ public:
 
     const ttlib::cstr& GetGeneratorFlags() { return m_internal_flags; }
     void SetGeneratorFlags(ttlib::cview flags) { m_internal_flags = flags; }
+
+    int_t GetAllowableChildren(GenType child_gen_type) const;
 
 private:
     ttlib::cstr m_internal_flags;

@@ -1012,7 +1012,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
             m_source->writeLine(code);
         }
-        else if (node->GetNodeType()->get_name() == "widget" && parent->isGen(gen_wxChoicebook))
+        else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
         {
             ttlib::cstr code;
             code << parent->get_node_name() << "->GetControlSizer()->Add(" << node->get_node_name();

@@ -1,319 +1,364 @@
 <?xml version="1.0"?>
 <GeneratorDefitions>
 
-  <gen class="wxPanel" image="wxPanel" type="container">
-    <inherits class="Window Events"/>
+<gen class="wxPanel" image="wxPanel" type="container">
+    <inherits class="Window Events" />
     <inherits class="wxWindow">
-      <property name="window_style">wxTAB_TRAVERSAL</property>
+        <property name="window_style">wxTAB_TRAVERSAL</property>
     </inherits>
-    <inherits class="sizer_child"/>
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">panel</property>
-      <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+    <property name="class_access" type="option">
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       none
-    </property>
-  </gen>
+      </property>
+</gen>
 
-  <gen class="wxSplitterWindow" image="wxSplitterWindow" type="splitter">
-    <inherits class="wxWindow"/>
-    <inherits class="Window Events"/>
-    <inherits class="sizer_child"/>
+<gen class="wxSplitterWindow" image="wxSplitterWindow" type="splitter">
+    <inherits class="wxWindow" />
+    <inherits class="Window Events" />
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">m_splitter</property>
-    <property name="class_access" type="option" hidden="1">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+    <property name="class_access" type="option"
+        hidden="1">
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       protected:
-    </property>
+      </property>
     <property name="splitmode" type="option">
-      <option name="wxSPLIT_VERTICAL" help="Specifies a vertical split window."/>
-      <option name="wxSPLIT_HORIZONTAL" help="Specifies a horizontal split window."/>
+        <option name="wxSPLIT_VERTICAL"
+            help="Specifies a vertical split window." />
+        <option name="wxSPLIT_HORIZONTAL"
+            help="Specifies a horizontal split window." />
       wxSPLIT_VERTICAL
-    </property>
-    <property name="sashpos" type="int" help="The initial sash position.">0</property>
+      </property>
+    <property name="sashpos" type="int"
+        help="The initial sash position.">0</property>
     <property name="sashsize" type="int"
         help="Overrides platform metrics if greater than -1">
       -1
-    </property>
+      </property>
     <property name="sashgravity" type="float"
-        help= "Sets the sash gravity. Gravity is real factor which controls position of sash while resizing wxSplitterWindow. Gravity tells wxSplitterWindow how much will left/top window grow while resizing.">
+        help="Sets the sash gravity. Gravity is real factor which controls position of sash while resizing wxSplitterWindow. Gravity tells wxSplitterWindow how much will left/top window grow while resizing.">
       0.0
-    </property>
+      </property>
     <property name="min_pane_size" type="uint"
         help="Minimum size for the panes. A minimum less than 1 is not allowed in the designer, because the designer prevents un-splitting.">
       0
-    </property>
+      </property>
     <property name="persist_name" type="string"
-      help="If a name is specified, wxPersistenceManager will be used to save/restore the sash position."/>
+        help="If a name is specified, wxPersistenceManager will be used to save/restore the sash position." />
     <property name="style" type="bitlist">
-      <option name="wxSP_3D" help="Draws a 3D effect border and sash."/>
-      <option name="wxSP_3DSASH" help="Draws a 3D effect sash (part of default style)."/>
-      <option name="wxSP_3DBORDER" help="Synonym for wxSP_BORDER."/>
-      <option name="wxSP_BORDER" help="Draws a standard border."/>
-      <option name="wxSP_NOBORDER" help="No border (default)."/>
-      <option name="wxSP_NOSASH"
-        help="Sets the sash to be invisible, even when the window is split. This prevents the user to resize the windows."/>
-      <option name="wxSP_THIN_SASH" help="Draws a thin sash."/>
-      <option name="wxSP_NO_XP_THEME"
-        help="Under Windows XP, switches off the attempt to draw the splitter using Windows XP theming, so the borders and sash will take on the pre-XP look."/>
-      <option name="wxSP_PERMIT_UNSPLIT"
-        help="Always allow to unsplit, even with the minimum pane size other than zero. Note: The designer prevents un-splitting."/>
-      <option name="wxSP_LIVE_UPDATE" help="Don't draw XOR line but resize the child windows immediately."/>
+        <option name="wxSP_3D"
+            help="Draws a 3D effect border and sash." />
+        <option name="wxSP_3DSASH"
+            help="Draws a 3D effect sash (part of default style)." />
+        <option name="wxSP_3DBORDER"
+            help="Synonym for wxSP_BORDER." />
+        <option name="wxSP_BORDER"
+            help="Draws a standard border." />
+        <option name="wxSP_NOBORDER"
+            help="No border (default)." />
+        <option name="wxSP_NOSASH"
+            help="Sets the sash to be invisible, even when the window is split. This prevents the user to resize the windows." />
+        <option name="wxSP_THIN_SASH"
+            help="Draws a thin sash." />
+        <option name="wxSP_NO_XP_THEME"
+            help="Under Windows XP, switches off the attempt to draw the splitter using Windows XP theming, so the borders and sash will take on the pre-XP look." />
+        <option name="wxSP_PERMIT_UNSPLIT"
+            help="Always allow to unsplit, even with the minimum pane size other than zero. Note: The designer prevents un-splitting." />
+        <option name="wxSP_LIVE_UPDATE"
+            help="Don't draw XOR line but resize the child windows immediately." />
       wxSP_3D
-    </property>
+      </property>
     <event name="wxEVT_SPLITTER_SASH_POS_CHANGING" class="wxSplitterEvent"
-                help="The sash position is in the process of being changed. May be used to modify the position of the tracking bar to properly reflect the position that would be set if the drag were to be completed at this point."/>
+        help="The sash position is in the process of being changed. May be used to modify the position of the tracking bar to properly reflect the position that would be set if the drag were to be completed at this point." />
     <event name="wxEVT_SPLITTER_SASH_POS_CHANGED" class="wxSplitterEvent"
-        help="The sash position was changed. May be used to modify the sash position before it is set, or to prevent the change from taking place."/>
-    <event name="wxEVT_SPLITTER_UNSPLIT" class="wxSplitterEvent" help="The splitter has been just unsplit."/>
+        help="The sash position was changed. May be used to modify the sash position before it is set, or to prevent the change from taking place." />
+    <event name="wxEVT_SPLITTER_UNSPLIT" class="wxSplitterEvent"
+        help="The splitter has been just unsplit." />
     <event name="wxEVT_SPLITTER_DOUBLECLICKED" class="wxSplitterEvent"
-        help="The sash was double clicked. The default behaviour is to unsplit the window when this happens (unless the minimum pane size has been set to a value greater than zero)."/>
-  </gen>
+        help="The sash was double clicked. The default behaviour is to unsplit the window when this happens (unless the minimum pane size has been set to a value greater than zero)." />
+</gen>
 
-  <gen class="wxScrolledWindow" image="wxScrolledWindow" type="container">
+<gen class="wxScrolledWindow" image="wxScrolledWindow" type="container">
     <inherits class="wxWindow">
-      <property name="window_style">wxHSCROLL | wxVSCROLL</property>
+        <property name="window_style">wxHSCROLL | wxVSCROLL</property>
     </inherits>
-    <inherits class="sizer_child"/>
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">m_scroll_win</property>
     <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       protected:
-    </property>
-    <property name="scroll_rate_x" type="uint" help="Set the horizontal scrolling increment.">5</property>
-    <property name="scroll_rate_y" type="uint" help="Set the vertical scrolling increment.">5</property>
-    <event name="wxEVT_SCROLLWIN_TOP" class="wxScrollWinEvent"/>
-    <event name="wxEVT_SCROLLWIN_BOTTOM" class="wxScrollWinEvent"/>
-    <event name="wxEVT_SCROLLWIN_LINEUP" class="wxScrollWinEvent"/>
-    <event name="wxEVT_SCROLLWIN_LINEDOWN" class="wxScrollWinEvent"/>
-    <event name="wxEVT_SCROLLWIN_PAGEUP" class="wxScrollWinEvent"/>
-    <event name="wxEVT_SCROLLWIN_PAGEDOWN" class="wxScrollWinEvent"/>
-    <event name="wxEVT_SCROLLWIN_THUMBTRACK" class="wxScrollWinEvent"/>
-    <event name="wxEVT_SCROLLWIN_THUMBRELEASE" class="wxScrollWinEvent"/>
-  </gen>
+      </property>
+    <property name="scroll_rate_x" type="uint"
+        help="Set the horizontal scrolling increment.">5</property>
+    <property name="scroll_rate_y" type="uint"
+        help="Set the vertical scrolling increment.">5</property>
+    <event name="wxEVT_SCROLLWIN_TOP" class="wxScrollWinEvent" />
+    <event name="wxEVT_SCROLLWIN_BOTTOM" class="wxScrollWinEvent" />
+    <event name="wxEVT_SCROLLWIN_LINEUP" class="wxScrollWinEvent" />
+    <event name="wxEVT_SCROLLWIN_LINEDOWN" class="wxScrollWinEvent" />
+    <event name="wxEVT_SCROLLWIN_PAGEUP" class="wxScrollWinEvent" />
+    <event name="wxEVT_SCROLLWIN_PAGEDOWN" class="wxScrollWinEvent" />
+    <event name="wxEVT_SCROLLWIN_THUMBTRACK" class="wxScrollWinEvent" />
+    <event name="wxEVT_SCROLLWIN_THUMBRELEASE" class="wxScrollWinEvent" />
+</gen>
 
-  <gen class="wxCollapsiblePane" image="wxCollapsiblePane" type="container">
-    <inherits class="wxWindow"/>
-    <inherits class="Window Events"/>
-    <inherits class="sizer_child"/>
+<gen class="wxCollapsiblePane" image="wxCollapsiblePane" type="container">
+    <inherits class="wxWindow" />
+    <inherits class="Window Events" />
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">m_collapsible_pane</property>
     <property name="label" type="string_escapes">collapsible</property>
     <property name="collapsed" type="bool">0</property>
     <property name="style" type="bitlist">
-      <option name="wxCP_DEFAULT_STYLE" help="The default style. It includes wxTAB_TRAVERSAL and wxBORDER_NONE."/>
-      <option name="wxCP_NO_TLW_RESIZE"
-        help="By default wxCollapsiblePane resizes the top level window containing it when its own size changes. This allows you to implement dialogs containing an optionally shown part. Set this flag to disable the automatic resizing of the parent."/>
+        <option name="wxCP_DEFAULT_STYLE"
+            help="The default style. It includes wxTAB_TRAVERSAL and wxBORDER_NONE." />
+        <option name="wxCP_NO_TLW_RESIZE"
+            help="By default wxCollapsiblePane resizes the top level window containing it when its own size changes. This allows you to implement dialogs containing an optionally shown part. Set this flag to disable the automatic resizing of the parent." />
       wxCP_DEFAULT_STYLE
-    </property>
-    <event name="wxEVT_COLLAPSIBLEPANE_CHANGED" class="wxCollapsiblePaneEvent" help="The user expanded or collapsed the collapsible pane."/>
+      </property>
+    <event name="wxEVT_COLLAPSIBLEPANE_CHANGED" class="wxCollapsiblePaneEvent"
+        help="The user expanded or collapsed the collapsible pane." />
     <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       protected:
-    </property>
-  </gen>
+      </property>
+</gen>
 
-  <gen class="wxChoicebook" image="wxChoicebook" type="choicebook">
-    <inherits class="wxWindow"/>
-    <inherits class="Window Events"/>
-    <inherits class="sizer_child"/>
+<gen class="wxChoicebook" image="wxChoicebook" type="choicebook">
+    <inherits class="wxWindow" />
+    <inherits class="Window Events" />
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">m_choicebook</property>
     <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       protected:
-    </property>
+      </property>
     <property name="persist_name" type="string"
-      help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page."/>
+        help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
     <property name="style" type="option">
-      <option name="wxCHB_DEFAULT"
-        help="Choose the default location for the labels depending on the current platform (but currently it's the same everywhere, namely wxCHB_TOP)."/>
-      <option name="wxCHB_TOP" help="Place labels above the page area."/>
-      <option name="wxCHB_LEFT" help="Place labels on the left side."/>
-      <option name="wxCHB_RIGHT" help="Place labels on the right side."/>
-      <option name="wxCHB_BOTTOM" help="Place labels below the page area."/>
+        <option name="wxCHB_DEFAULT"
+            help="Choose the default location for the labels depending on the current platform (but currently it's the same everywhere, namely wxCHB_TOP)." />
+        <option name="wxCHB_TOP"
+            help="Place labels above the page area." />
+        <option name="wxCHB_LEFT"
+            help="Place labels on the left side." />
+        <option name="wxCHB_RIGHT"
+            help="Place labels on the right side." />
+        <option name="wxCHB_BOTTOM"
+            help="Place labels below the page area." />
       wxCHB_DEFAULT
-    </property>
-    <event name="wxEVT_CHOICEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+      </property>
+    <event name="wxEVT_CHOICEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+        help="The page selection was changed." />
     <event name="wxEVT_CHOICEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
-        help="The page selection is about to be changed. This event can be vetoed (using wxNotifyEvent::Veto())."/>
-  </gen>
+        help="The page selection is about to be changed. This event can be vetoed (using wxNotifyEvent::Veto())." />
+</gen>
 
-  <gen class="wxListbook" image="wxListbook" type="listbook">
-    <inherits class="wxWindow"/>
-    <inherits class="Window Events"/>
-    <inherits class="sizer_child"/>
+<gen class="wxListbook" image="wxListbook" type="listbook">
+    <inherits class="wxWindow" />
+    <inherits class="Window Events" />
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">m_listbook</property>
     <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       protected:
-    </property>
+      </property>
     <property name="display_images" type="bool"
         help="If true, will display an image on the tab in addition to any text.">
       0
-    </property>
+      </property>
     <property name="image_size" type="wxSize"
         help="All tab images will be scaled to this size.">
       16, 16
-    </property>
+      </property>
     <property name="persist_name" type="string"
-      help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page."/>
+        help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
     <property name="style" type="bitlist">
-      <option name="wxLB_DEFAULT"
-        help="Choose the default location for the labels depending on the current platform (left everywhere except Mac where it is top)."/>
-      <option name="wxLB_TOP" help="Place labels above the page area."/>
-      <option name="wxLB_LEFT" help="Place labels on the left side."/>
-      <option name="wxLB_RIGHT" help="Place labels on the right side."/>
-      <option name="wxLB_BOTTOM" help="Place labels below the page area."/>
+        <option name="wxLB_DEFAULT"
+            help="Choose the default location for the labels depending on the current platform (left everywhere except Mac where it is top)." />
+        <option name="wxLB_TOP"
+            help="Place labels above the page area." />
+        <option name="wxLB_LEFT"
+            help="Place labels on the left side." />
+        <option name="wxLB_RIGHT"
+            help="Place labels on the right side." />
+        <option name="wxLB_BOTTOM"
+            help="Place labels below the page area." />
       wxLB_DEFAULT
-    </property>
-    <event name="wxEVT_LISTBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+      </property>
+    <event name="wxEVT_LISTBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+        help="The page selection was changed." />
     <event name="wxEVT_LISTBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
-        help="The page selection is about to be changed. This event can be vetoed."/>
-  </gen>
+        help="The page selection is about to be changed. This event can be vetoed." />
+</gen>
 
-  <gen class="wxNotebook" image="wxNotebook" type="notebook">
-    <inherits class="wxWindow"/>
-    <inherits class="Window Events"/>
-    <inherits class="sizer_child"/>
+<gen class="wxNotebook" image="wxNotebook" type="notebook">
+    <inherits class="wxWindow" />
+    <inherits class="Window Events" />
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">m_notebook</property>
     <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       protected:
-    </property>
+      </property>
     <property name="display_images" type="bool"
         help="If true, will display an image on the tab in addition to any text.">
       0
-    </property>
+      </property>
     <property name="image_size" type="wxSize"
         help="All tab images will be scaled to this size.">
       16, 16
-    </property>
+      </property>
     <property name="persist_name" type="string"
-      help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page."/>
+        help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
     <property name="style" type="bitlist">
-      <option name="wxNB_TOP" help="Place tabs on the top side."/>
-      <option name="wxNB_LEFT" help="Place tabs on the left side."/>
-      <option name="wxNB_RIGHT" help="Place tabs on the right side."/>
-      <option name="wxNB_BOTTOM" help="Place tabs under instead of above the notebook pages."/>
-      <option name="wxNB_FIXEDWIDTH" help="All tabs will have same width. (Windows only)"/>
-      <option name="wxNB_MULTILINE" help="There can be several rows of tabs. (Windows only)"/>
-      <option name="wxNB_NOPAGETHEME"
-        help="Display a solid colour on notebook pages, and not a gradient, which can reduce performance. (Windows only)"/>
-    </property>
-    <event name="wxEVT_NOTEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+        <option name="wxNB_TOP"
+            help="Place tabs on the top side." />
+        <option name="wxNB_LEFT"
+            help="Place tabs on the left side." />
+        <option name="wxNB_RIGHT"
+            help="Place tabs on the right side." />
+        <option name="wxNB_BOTTOM"
+            help="Place tabs under instead of above the notebook pages." />
+        <option name="wxNB_FIXEDWIDTH"
+            help="All tabs will have same width. (Windows only)" />
+        <option name="wxNB_MULTILINE"
+            help="There can be several rows of tabs. (Windows only)" />
+        <option name="wxNB_NOPAGETHEME"
+            help="Display a solid colour on notebook pages, and not a gradient, which can reduce performance. (Windows only)" />
+      </property>
+    <event name="wxEVT_NOTEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+        help="The page selection was changed." />
     <event name="wxEVT_NOTEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
-        help="The page selection is about to be changed. This event can be vetoed."/>
-  </gen>
+        help="The page selection is about to be changed. This event can be vetoed." />
+</gen>
 
-  <gen class="wxToolbook" image="wxToolbook" type="notebook">
-    <inherits class="wxWindow"/>
-    <inherits class="Window Events"/>
-    <inherits class="sizer_child"/>
+<gen class="wxToolbook" image="wxToolbook" type="notebook">
+    <inherits class="wxWindow" />
+    <inherits class="Window Events" />
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">m_toolbook</property>
     <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       protected:
-    </property>
+      </property>
     <property name="image_size" type="wxSize"
         help="All tool images will be scaled to this size.">
       16, 16
-    </property>
+      </property>
     <property name="style" type="bitlist">
-      <option name="wxTBK_HORZ_LAYOUT" help="Shows the text and the icons alongside, not vertically stacked (only implement under Windows and GTK 2 platforms as it relies on wxTB_HORZ_LAYOUT flag support)."/>
-    </property>
-    <event name="wxEVT_TOOLBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+        <option name="wxTBK_HORZ_LAYOUT"
+            help="Shows the text and the icons alongside, not vertically stacked (only implement under Windows and GTK 2 platforms as it relies on wxTB_HORZ_LAYOUT flag support)." />
+      </property>
+    <event name="wxEVT_TOOLBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+        help="The page selection was changed." />
     <event name="wxEVT_TOOLBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
-        help="The page selection is about to be changed. This event can be vetoed."/>
-  </gen>
+        help="The page selection is about to be changed. This event can be vetoed." />
+</gen>
 
-  <gen class="wxTreebook" image="wxTreebook" type="notebook">
-    <inherits class="wxWindow"/>
-    <inherits class="Window Events"/>
-    <inherits class="sizer_child"/>
+<gen class="wxTreebook" image="wxTreebook" type="notebook">
+    <inherits class="wxWindow" />
+    <inherits class="Window Events" />
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">m_treebook</property>
     <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       protected:
-    </property>
+      </property>
     <property name="display_images" type="bool"
         help="If true, will display an image on the tab in addition to any text.">
       0
-    </property>
+      </property>
     <property name="image_size" type="wxSize"
         help="All tab images will be scaled to this size.">
       16, 16
-    </property>
+      </property>
     <property name="persist_name" type="string"
-      help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page and the expand/collapse state of sub pages."/>
+        help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page and the expand/collapse state of sub pages." />
     <property name="style" type="bitlist">
-      <option name="wxNB_TOP" help="Place tabs on the top side."/>
-      <option name="wxNB_LEFT" help="Place tabs on the left side."/>
-      <option name="wxNB_RIGHT" help="Place tabs on the right side."/>
-      <option name="wxNB_BOTTOM" help="Place tabs under instead of above the treebook pages."/>
-      <option name="wxNB_FIXEDWIDTH" help="All tabs will have same width. (Windows only)"/>
-      <option name="wxNB_MULTILINE" help="There can be several rows of tabs. (Windows only)"/>
-      <option name="wxNB_NOPAGETHEME"
-        help="Display a solid colour on treebook pages, and not a gradient, which can reduce performance. (Windows only)"/>
-    </property>
-    <event name="wxEVT_TREEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+        <option name="wxNB_TOP"
+            help="Place tabs on the top side." />
+        <option name="wxNB_LEFT"
+            help="Place tabs on the left side." />
+        <option name="wxNB_RIGHT"
+            help="Place tabs on the right side." />
+        <option name="wxNB_BOTTOM"
+            help="Place tabs under instead of above the treebook pages." />
+        <option name="wxNB_FIXEDWIDTH"
+            help="All tabs will have same width. (Windows only)" />
+        <option name="wxNB_MULTILINE"
+            help="There can be several rows of tabs. (Windows only)" />
+        <option name="wxNB_NOPAGETHEME"
+            help="Display a solid colour on treebook pages, and not a gradient, which can reduce performance. (Windows only)" />
+      </property>
+    <event name="wxEVT_TREEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+        help="The page selection was changed." />
     <event name="wxEVT_TREEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
-        help="The page selection is about to be changed. This event can be vetoed."/>
-    <event name="wxEVT_TREEBOOK_NODE_COLLAPSED" class="wxBookCtrlEvent" help="Generated when the page node is going to be collapsed."/>
-    <event name="wxEVT_TREEBOOK_NODE_EXPANDED" class="wxBookCtrlEvent" help="Generated when the page node is going to be collapsed."/>
-  </gen>
+        help="The page selection is about to be changed. This event can be vetoed." />
+    <event name="wxEVT_TREEBOOK_NODE_COLLAPSED" class="wxBookCtrlEvent"
+        help="Generated when the page node is going to be collapsed." />
+    <event name="wxEVT_TREEBOOK_NODE_EXPANDED" class="wxBookCtrlEvent"
+        help="Generated when the page node is going to be collapsed." />
+</gen>
 
-  <gen class="wxSimplebook" image="wxSimplebook" type="simplebook">
-    <inherits class="wxWindow"/>
-    <inherits class="Window Events"/>
+<gen class="wxSimplebook" image="wxSimplebook" type="simplebook">
+    <inherits class="wxWindow" />
+    <inherits class="Window Events" />
     <property name="var_name" type="string">m_simplebook</property>
-    <event name="wxEVT_BOOKCTRL_PAGE_CHANGED" class="wxBookCtrlEvent" help="The page selection was changed."/>
+    <event name="wxEVT_BOOKCTRL_PAGE_CHANGED" class="wxBookCtrlEvent"
+        help="The page selection was changed." />
     <event name="wxEVT_BOOKCTRL_PAGE_CHANGING" class="wxBookCtrlEvent"
-        help="The page selection is about to be changed. This event can be vetoed."/>
-  </gen>
+        help="The page selection is about to be changed. This event can be vetoed." />
+</gen>
 
-  <gen class="BookPage" image="book_page" type="bookpage">
-    <inherits class="Window Events"/>
+<gen class="BookPage" image="book_page" type="bookpage">
+    <inherits class="Window Events" />
     <inherits class="wxWindow">
-      <property name="window_style">wxTAB_TRAVERSAL</property>
+        <property name="window_style">wxTAB_TRAVERSAL</property>
     </inherits>
-    <inherits class="sizer_child"/>
+    <inherits class="sizer_child" />
     <property name="var_name" type="string">
       page
-    </property>
+      </property>
     <property name="class_access" type="option">
-      <option name="none"/>
-      <option name="protected:"/>
-      <option name="public:"/>
+        <option name="none" />
+        <option name="protected:" />
+        <option name="public:" />
       none
-    </property>
+      </property>
     <property name="label" type="string_escapes">page</property>
     <property name="select" type="bool"
         help="Select Page when Adding">
       0
-    </property>
-    <property name="bitmap" type="image" help="Page Image (not all books use this)"/>
-  </gen>
+      </property>
+    <property name="bitmap" type="image"
+        help="Page Image (not all books use this)" />
+</gen>
+<!-- wxFormBuilder import only -->
 
-  <!-- wxFormBuilder import only -->
-  <gen class="oldbookpage" type="oldbookpage">
-    <property name="label" type="string_escapes"/>
-    <property name="bitmap" type="image"/>
-    <property name="select" type="bool"/>
-  </gen>
-
+<gen class="oldbookpage" type="oldbookpage">
+    <property name="label" type="string_escapes" />
+    <property name="bitmap" type="image" />
+    <property name="select" type="bool" />
+</gen>
 </GeneratorDefitions>

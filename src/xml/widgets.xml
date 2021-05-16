@@ -813,7 +813,7 @@
     <property name="var_name" type="string">m_timePicker</property>
     <property name="style" type="bitlist">
         <option name="wxTP_DEFAULT"
-            help="Creates a control with the style that is best supported for the current platform (currently wxDP_SPIN under Windows and wxDP_DROPDOWN elsewhere)." />
+            help="Currently no special styles are defined for wxTimePickerCtrl." />
       wxTP_DEFAULT
       </property>
     <event name="wxEVT_TIME_CHANGED" class="wxDateEvent"

@@ -1036,7 +1036,11 @@ void MainFrame::PasteNode(Node* parent)
         }
     }
 
-    ASSERT_MSG(m_clipboard, "m_clipboard is null and clipboard is empty -- PasteNode should not have been enabled!");
+    if (!m_clipboard)
+    {
+        appMsgBox("There is nothing in the clipboard that can be pasted!", "Paste Clipboard");
+        return;
+    }
 
     if (!parent)
     {

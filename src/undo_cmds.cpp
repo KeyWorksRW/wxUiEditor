@@ -103,6 +103,9 @@ RemoveNodeAction::RemoveNodeAction(Node* node, const ttlib::cstr& undo_str, bool
 
 void RemoveNodeAction::Change()
 {
+    if (m_AddToClipboard)
+        wxGetFrame().CopyNode(m_node.get());
+
     m_parent->RemoveChild(m_node);
     m_node->SetParent(NodeSharedPtr());
 

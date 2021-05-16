@@ -1375,7 +1375,7 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
     {
         ttlib::cstr undo_str;
         undo_str << "delete " << node->DeclName();
-        PushUndoAction(std::make_shared<RemoveNodeAction>(node_copy, undo_str));
+        PushUndoAction(std::make_shared<RemoveNodeAction>(node_copy, undo_str, false));
     }
 
     FireDeletedEvent(deleted_node);

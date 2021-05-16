@@ -392,10 +392,10 @@
         <option name="public:" />
       none
       </property>
-    <event name="wxEVT_RIBBONTOOLBAR_CLICKED" class="wxRibbonToolBarEvent"
-        help="Triggered when the normal (non-dropdown) region of a tool on the tool bar is clicked." />
-    <event name="wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
-        help="Triggered when the dropdown region of a tool on the tool bar is clicked. wxRibbonToolBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown tools should be doing)." />
+    <event name="EVT_RIBBONBUTTONBAR_CLICKED" class="wxRibbonToolBarEvent"
+        help="Triggered when the normal (non-dropdown) region of a button on the button bar is clicked." />
+    <event name="EVT_RIBBONBUTTONBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
+        help="Triggered when the dropdown region of a button on the button bar is clicked. wxRibbonButtonBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown buttons should be doing)." />
 </gen>
 
 <gen class="ribbonButton" image="ribbon_button" type="ribbonbutton">

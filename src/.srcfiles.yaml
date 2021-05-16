@@ -1,7 +1,5 @@
 # Requires ttBld.exe version 1.7.2 or higher to process -- see https://github.com/KeyWorksRW/ttBld
 
-# This version will automatically be used if ttBld is run on a Windows OS
-
 Options:
     Project:     wxUiEditor   # project name
     Exe_type:    window       # [window | console | lib | dll]

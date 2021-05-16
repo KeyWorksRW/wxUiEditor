@@ -11,7 +11,7 @@ In addition to creating new projects, the following project types can be importe
 
 ## Building
 
-In order to build the project, you must have version 1.7.2 or newer of **ttBld.exe** either in your path or in the `src/` directory. If you don't already have it, you can copy the version appropriate for your platform from `ttBld/win` or `ttBld/unix`.
+In order to build the project, you must have version 1.7.2 or newer of [ttBld.exe](https://github.com/KeyWorksRW/ttBld) either in your path or in the `src/` directory. If you don't already have it, you can copy the version in `ttBld/win`.
 
 In addition you will need to have the following in your $PATH:
 

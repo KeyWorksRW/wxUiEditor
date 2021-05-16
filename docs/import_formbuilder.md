@@ -1,6 +1,6 @@
 # Importing wxFormBUilder projects
 
-**wxUiEditor** can import **wxFormBuilder** project files. Because **wxUiEditor** generates source code for each top level form, you can import multiple **wxFormBuilder** into a single **wxUiEditor** file. Note that you may need to make some changes after a project is imported due to the differences in the way forms and widgets are handled.
+**wxUiEditor** can import **wxFormBuilder** project files. Because **wxUiEditor** generates source code for each top level form, you can import multiple **wxFormBuilder** into a single **wxUiEditor** file. You may need to make some changes after a project is imported due to the differences in the way forms and widgets are handled.
 
 Note that **wxUiEditor** projects are roughly 90% smaller than a **wxFormBuilder** project due to optimization in what gets written to the project file.
 

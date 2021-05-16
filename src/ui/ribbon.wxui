@@ -435,6 +435,21 @@
             var_name="page_data">
             <node
               class="wxRibbonPanel"
+              label="Grid"
+              var_name="panel_misc">
+              <node
+                class="wxRibbonToolBar"
+                var_name="data_bar_grid"
+                wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node
+                  class="ribbonTool"
+                  bitmap="Header; ..\art_headers\grid_png.hxx; ; [-1; -1]"
+                  help="wxGrid"
+                  id="gen_wxGrid" />
+              </node>
+            </node>
+            <node
+              class="wxRibbonPanel"
               label="Properties"
               var_name="panel_properties">
               <node
@@ -666,11 +681,6 @@
                   bitmap="Header; ..\art_headers\scintilla_png.hxx; ; [-1; -1]"
                   help="wxStyledTextCtrl"
                   id="gen_wxStyledTextCtrl" />
-                <node
-                  class="ribbonTool"
-                  bitmap="Header; ..\art_headers\grid_png.hxx; ; [-1; -1]"
-                  help="wxGrid"
-                  id="gen_wxGrid" />
               </node>
             </node>
             <node

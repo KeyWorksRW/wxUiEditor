@@ -60,7 +60,7 @@ void NodeCreator::AddAllConstants()
     // wxAnimation
     ADD_CONSTANT(wxAC_DEFAULT_STYLE)
     ADD_CONSTANT(wxAC_NO_AUTORESIZE)
-    
+
     // wxButton
     ADD_CONSTANT(wxBU_LEFT)
     ADD_CONSTANT(wxBU_TOP)
@@ -284,8 +284,6 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxTR_SINGLE)
     ADD_CONSTANT(wxTR_MULTIPLE)
     ADD_CONSTANT(wxTR_DEFAULT_STYLE)
-
-    // wxGrid
 
     // wxListView
     ADD_CONSTANT(wxLC_LIST)
@@ -612,4 +610,17 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxID_ZOOM_FIT)
     ADD_CONSTANT(wxID_ZOOM_IN)
     ADD_CONSTANT(wxID_ZOOM_OUT)
+
+    // wxGrid
+
+    m_map_constants["wxGridSelectCells"] = wxGrid::wxGridSelectCells;
+    m_map_constants["wxGridSelectRows"] = wxGrid::wxGridSelectRows;
+    m_map_constants["wxGridSelectColumns"] = wxGrid::wxGridSelectColumns;
+    m_map_constants["wxGridSelectRowsOrColumns"] = wxGrid::wxGridSelectRowsOrColumns;
+    m_map_constants["wxGridSelectNone"] = wxGrid::wxGridSelectNone;
+
+    m_map_constants["Tab_Stop"] = wxGrid::Tab_Stop;
+    m_map_constants["Tab_Wrap"] = wxGrid::Tab_Wrap;
+    m_map_constants["Tab_Leave"] = wxGrid::Tab_Leave;
+
 }

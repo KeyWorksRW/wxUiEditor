@@ -279,6 +279,14 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
 
     auto page_data = new wxRibbonPage(m_rbnBar, wxID_ANY, wxString::FromUTF8("Data"));
 
+    auto panel_misc = new wxRibbonPanel(page_data, wxID_ANY, wxString::FromUTF8("Grid"));
+
+    auto data_bar_grid = new wxRibbonToolBar(panel_misc, wxID_ANY);
+    {
+        data_bar_grid->AddTool(gen_wxGrid, GetImgFromHdr(grid_png, sizeof(grid_png)), wxString::FromUTF8("wxGrid"), wxRIBBON_BUTTON_NORMAL);
+    }
+    data_bar_grid->Realize();
+
     auto panel_properties = new wxRibbonPanel(page_data, wxID_ANY, wxString::FromUTF8("Properties"));
 
     auto data_bar_properties = new wxRibbonToolBar(panel_properties, wxID_ANY);
@@ -364,7 +372,6 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     {
         other_bar_editors->AddTool(gen_wxRichTextCtrl, GetImgFromHdr(richtextctrl_png, sizeof(richtextctrl_png)), wxString::FromUTF8("wxRichTextCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_editors->AddTool(gen_wxStyledTextCtrl, GetImgFromHdr(scintilla_png, sizeof(scintilla_png)), wxString::FromUTF8("wxStyledTextCtrl"), wxRIBBON_BUTTON_NORMAL);
-        other_bar_editors->AddTool(gen_wxGrid, GetImgFromHdr(grid_png, sizeof(grid_png)), wxString::FromUTF8("wxGrid"), wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_editors->Realize();
 
@@ -411,6 +418,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     container_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_books->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_page->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    data_bar_grid->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     data_bar_properties->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     data_bar_trees->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     data_bar_dataview->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);

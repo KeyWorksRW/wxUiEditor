@@ -29,6 +29,7 @@
 #include <wx/frame.h>                  // wxFrame class interface
 #include <wx/gauge.h>                  // wxGauge interface
 #include <wx/gbsizer.h>                // wxGridBagSizer:  A sizer that can lay out items in a grid,
+#include <wx/grid.h>                   // wxGrid base header
 #include <wx/html/htmlwin.h>           // wxHtmlWindow class for parsing & displaying HTML
 #include <wx/htmllbox.h>               // wxHtmlListBox is a listbox whose items are wxHtmlCells
 #include <wx/hyperlink.h>              // Hyperlink control

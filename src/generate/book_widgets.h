@@ -9,6 +9,8 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
+class wxBookCtrlEvent;
+
 class BookPageGenerator : public BaseGenerator
 {
 public:

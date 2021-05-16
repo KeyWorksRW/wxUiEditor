@@ -7,59 +7,6 @@
 
 #include "pch.h"
 
-#include <wx/activityindicator.h>      // wxActivityIndicator declaration.
-#include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
-#include <wx/anybutton.h>              // wxAnyButtonBase class
-#include <wx/aui/auibar.h>             // wxaui: wx advanced user interface - docking window manager
-#include <wx/aui/auibook.h>            // wxaui: wx advanced user interface - notebook
-#include <wx/bannerwindow.h>           // wxBannerWindow class declaration
-#include <wx/button.h>                 // wxButtonBase class
-#include <wx/calctrl.h>                // date-picker control
-#include <wx/checkbox.h>               // wxCheckBox class interface
-#include <wx/choicebk.h>               // wxChoicebook: wxChoice and wxNotebook combination
-#include <wx/clrpicker.h>              // wxColourPickerCtrl base header
-#include <wx/collpane.h>               // wxCollapsiblePane
-#include <wx/commandlinkbutton.h>      // wxCommandLinkButtonBase and wxGenericCommandLinkButton classes
-#include <wx/dataview.h>               // wxDataViewCtrl base classes
-#include <wx/datectrl.h>               // implements wxDatePickerCtrl
-#include <wx/dirctrl.h>                // Directory control base header
-#include <wx/filectrl.h>               // Header for wxFileCtrlBase and other common functions used by
-#include <wx/filepicker.h>             // wxFilePickerCtrl, wxDirPickerCtrl base header
-#include <wx/fontpicker.h>             // wxFontPickerCtrl base header
-#include <wx/frame.h>                  // wxFrame class interface
-#include <wx/gauge.h>                  // wxGauge interface
-#include <wx/gbsizer.h>                // wxGridBagSizer:  A sizer that can lay out items in a grid,
-#include <wx/grid.h>                   // wxGrid base header
-#include <wx/html/htmlwin.h>           // wxHtmlWindow class for parsing & displaying HTML
-#include <wx/htmllbox.h>               // wxHtmlListBox is a listbox whose items are wxHtmlCells
-#include <wx/hyperlink.h>              // Hyperlink control
-#include <wx/infobar.h>                // declaration of wxInfoBarBase defining common API of wxInfoBar
-#include <wx/listbook.h>               // wxListbook: wxListView and wxNotebook combination
-#include <wx/listctrl.h>               // wxListView class
-#include <wx/notebook.h>               // wxNotebook interface
-#include <wx/panel.h>                  // Base header for wxPanel
-#include <wx/popupwin.h>               // wxPopupWindow interface declaration
-#include <wx/propgrid/manager.h>       // wxPropertyGridManager
-#include <wx/rearrangectrl.h>          // various controls for rearranging the items interactively
-#include <wx/ribbon/buttonbar.h>       // Ribbon control similar to a tool bar
-#include <wx/ribbon/gallery.h>         // Ribbon control which displays a gallery of items to choose from
-#include <wx/ribbon/toolbar.h>         // Ribbon-style tool bar
-#include <wx/richtext/richtextctrl.h>  // A rich edit control
-#include <wx/slider.h>                 // wxSlider interface
-#include <wx/splitter.h>               // Base header for wxSplitterWindow
-#include <wx/statbmp.h>                // wxStaticBitmap class interface
-#include <wx/stattext.h>               // wxStaticText base header
-#include <wx/statusbr.h>               // wxStatusBar class interface
-#include <wx/stc/stc.h>                // A wxWidgets implementation of Scintilla.
-#include <wx/tglbtn.h>                 // wxToggleButtonBase
-#include <wx/timectrl.h>               // Declaration of wxTimePickerCtrl class.
-#include <wx/toolbar.h>                // wxToolBar interface declaration
-#include <wx/toolbook.h>               // wxToolbook: wxToolBar and wxNotebook combination
-#include <wx/treebook.h>               // wxTreebook: wxNotebook-like control presenting pages in a tree
-#include <wx/treelist.h>               // wxTreeListCtrl class declaration.
-#include <wx/wizard.h>                 // wxWizard class: a GUI control presenting the user with a
-#include <wx/wrapsizer.h>              // provide wrapping sizer for layout (wxWrapSizer)
-
 #include "gen_common.h"    // GeneratorLibrary -- Generator classes
 #include "mainapp.h"       // App -- App class
 #include "node_creator.h"  // NodeCreator
@@ -96,7 +43,6 @@ using namespace GenEnum;
 
 void NodeCreator::InitGenerators()
 {
-    // CREATE_GENERATOR("BookPage", BookPageGenerator)
     SET_GENERATOR(gen_BookPage, BookPageGenerator)
 
     SET_GENERATOR(gen_wxWizardPageSimple, WizardPageGenerator)
@@ -219,9 +165,3 @@ void NodeCreator::InitGenerators()
 
     AddAllConstants();
 }
-
-// We put the list of constants in a separate header file because it's a huge list. It needs to be #included in this
-// source module because this is the module that will #include all the wxWidgets headers that contain the
-// definitions we need.
-
-#include "add_constants.h"

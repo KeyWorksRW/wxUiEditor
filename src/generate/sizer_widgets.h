@@ -11,6 +11,9 @@
 
 class wxGBSizerItem;
 class wxRadioButton;
+class wxCheckBox;
+class wxGBPosition;
+class wxGBSpan;
 
 // This class is needed to get it to display on the Sizers toolbar, but it's not an actual component
 class SpacerGenerator : public BaseGenerator

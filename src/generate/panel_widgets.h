@@ -9,6 +9,8 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
+class wxCollapsiblePaneEvent;
+
 class PanelGenerator : public BaseGenerator
 {
 public:

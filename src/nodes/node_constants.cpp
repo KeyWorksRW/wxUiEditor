@@ -1,4 +1,55 @@
-// This header file gets included in init_components.cpp which has all the necessary #include <wx/....h> header files
+/////////////////////////////////////////////////////////////////////////////
+// Purpose:   Maps wxWidgets constants to their numerical value
+// Author:    Ralph Walden
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
+/////////////////////////////////////////////////////////////////////////////
+
+#include "pch.h"
+
+#include <wx/animate.h>            // wxAnimation and wxAnimationCtrl
+#include <wx/anybutton.h>          // wxAnyButtonBase class
+#include <wx/aui/auibar.h>         // wxaui: wx advanced user interface - docking window manager
+#include <wx/aui/auibook.h>        // wxaui: wx advanced user interface - notebook
+#include <wx/calctrl.h>            // date-picker control
+#include <wx/checkbox.h>           // wxCheckBox class interface
+#include <wx/choicebk.h>           // wxChoicebook: wxChoice and wxNotebook combination
+#include <wx/clrpicker.h>          // wxColourPickerCtrl base header
+#include <wx/collpane.h>           // wxCollapsiblePane
+#include <wx/dataview.h>           // wxDataViewCtrl base classes
+#include <wx/datectrl.h>           // implements wxDatePickerCtrl
+#include <wx/defs.h>               // Declarations/definitions common to all wx source files
+#include <wx/dirctrl.h>            // Directory control base header
+#include <wx/filectrl.h>           // Header for wxFileCtrlBase and other common functions used by
+#include <wx/filepicker.h>         // wxFilePickerCtrl, wxDirPickerCtrl base header
+#include <wx/fontpicker.h>         // wxFontPickerCtrl base header
+#include <wx/frame.h>              // wxFrame class interface
+#include <wx/gauge.h>              // wxGauge interface
+#include <wx/generic/grid.h>       // wxGrid and related classes
+#include <wx/html/htmlwin.h>       // wxHtmlWindow class for parsing & displaying HTML
+#include <wx/htmllbox.h>           // wxHtmlListBox is a listbox whose items are wxHtmlCells
+#include <wx/hyperlink.h>          // Hyperlink control
+#include <wx/listbase.h>           // wxListCtrl class
+#include <wx/listbook.h>           // wxListbook: wxListCtrl and wxNotebook combination
+#include <wx/notebook.h>           // wxNotebook interface
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+#include <wx/ribbon/art.h>         // Art providers for ribbon-bar-style interface
+#include <wx/ribbon/bar.h>         // Top-level component of the ribbon-bar-style interface
+#include <wx/sizer.h>              // provide wxSizer class for layout
+#include <wx/slider.h>             // wxSlider interface
+#include <wx/splitter.h>           // Base header for wxSplitterWindow
+#include <wx/stattext.h>           // wxStaticText base header
+#include <wx/statusbr.h>           // wxStatusBar class interface
+#include <wx/textctrl.h>           // wxTextAttr and wxTextCtrlBase class - the interface of wxTextCtrl
+#include <wx/timectrl.h>           // Declaration of wxTimePickerCtrl class.
+#include <wx/toolbar.h>            // wxToolBar interface declaration
+#include <wx/toplevel.h>           // declares wxTopLevelWindow class, the base class for all
+#include <wx/treebase.h>           // wxTreeCtrl base classes and types
+#include <wx/treelist.h>           // wxTreeListCtrl class declaration.
+#include <wx/wizard.h>             // wxWizard class: a GUI control presenting the user with a
+#include <wx/wrapsizer.h>          // provide wrapping sizer for layout (wxWrapSizer)
+
+#include "node_creator.h"
 
 // ADD_CONSTANT makes it possible to call g_NodeCreator.GetConstantAsInt(name) and have it return it's value (or zero if
 // not defined)
@@ -622,5 +673,4 @@ void NodeCreator::AddAllConstants()
     m_map_constants["Tab_Stop"] = wxGrid::Tab_Stop;
     m_map_constants["Tab_Wrap"] = wxGrid::Tab_Wrap;
     m_map_constants["Tab_Leave"] = wxGrid::Tab_Leave;
-
 }

@@ -101,6 +101,7 @@ Files:
     mockup/mockup_wizard.cpp    # Emulate a wxWizard
 
     nodes/node.cpp              # Contains user-modifiable node
+    nodes/node_constants.cpp    # Maps wxWidgets constants to their numerical value
     nodes/node_creator.cpp      # Class used to create nodes
     nodes/node_decl.cpp         # Contains the declarations for a node (properties, events, etc.)
     nodes/node_init.cpp         # Initialize NodeCreator class

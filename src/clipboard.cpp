@@ -27,6 +27,8 @@ bool isClipboardDataAvailable()
         return true;
     else if (wxTheClipboard->IsSupported(wxDataFormat("wxSmith XML")))
         return true;
+    else if (wxTheClipboard->IsSupported(wxDataFormat("DataObject")) && wxTheClipboard->IsSupported(wxDF_TEXT))
+        return true;
 
     return false;
 }
@@ -78,13 +80,14 @@ NodeSharedPtr GetClipboardNode()
             FormBuilder fb;
             return fb.CreateFbpNode(root, nullptr);
         }
-        else if (wxTheClipboard->IsSupported(wxDataFormat("wxSmith XML")))
+        else if (ttlib::is_sameas(root.name(), "resource", tt::CASE::either))
         {
             // wxSmith encloses the object with "<resource>"
             auto child = root.first_child();
             WxSmith smith;
             return smith.CreateXrcNode(child, nullptr);
         }
+
     }
 
     return {};

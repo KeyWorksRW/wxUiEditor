@@ -971,7 +971,7 @@ void MainFrame::CreateToolNode(GenName name)
 
     if (!m_selected_node->CreateToolNode(name))
     {
-        appMsgBox(ttlib::cstr() << "Unable to create " << name << " as a child of " << m_selected_node->DeclName());
+        appMsgBox(ttlib::cstr() << "Unable to create " << map_GenNames[name] << " as a child of " << m_selected_node->DeclName());
     }
 }
 

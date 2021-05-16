@@ -33,7 +33,7 @@ public:
 
     MockupParent* GetMockup();
 
-    virtual wxObject* Create(Node* /*node*/, wxObject* /*parent*/) { return nullptr; }
+    virtual wxObject* CreateMockup(Node* /*node*/, wxObject* /*parent*/) { return nullptr; }
 
     // Called after all children have been created
     virtual void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/) {}

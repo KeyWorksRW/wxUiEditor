@@ -12,7 +12,7 @@
 class DatePickerCtrlGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -23,7 +23,7 @@ public:
 class TimePickerCtrlGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -34,7 +34,7 @@ public:
 class FilePickerGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -45,7 +45,7 @@ public:
 class DirPickerGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -56,7 +56,7 @@ public:
 class ColourPickerGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -67,7 +67,7 @@ public:
 class FontPickerGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;

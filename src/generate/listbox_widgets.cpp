@@ -21,7 +21,7 @@
 
 //////////////////////////////////////////  ListBoxGenerator  //////////////////////////////////////////
 
-wxObject* ListBoxGenerator::Create(Node* node, wxObject* parent)
+wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxListBox(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0,
@@ -152,7 +152,7 @@ bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 //////////////////////////////////////////  CheckListBoxGenerator  //////////////////////////////////////////
 
-wxObject* CheckListBoxGenerator::Create(Node* node, wxObject* parent)
+wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxCheckListBox(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0,
@@ -283,7 +283,7 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  RearrangeCtrlGenerator  //////////////////////////////////////////
 
-wxObject* RearrangeCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                       node->prop_as_wxSize(prop_size), wxArrayInt(), wxArrayString(),
@@ -409,7 +409,7 @@ bool RearrangeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_
 
 //////////////////////////////////////////  HtmlListBoxGenerator  //////////////////////////////////////////
 
-wxObject* HtmlListBoxGenerator::Create(Node* node, wxObject* parent)
+wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                           node->prop_as_wxSize(prop_size), 0, nullptr,

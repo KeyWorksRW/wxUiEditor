@@ -12,7 +12,7 @@
 class ListViewGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;

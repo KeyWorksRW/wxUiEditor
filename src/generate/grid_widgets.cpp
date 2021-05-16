@@ -22,7 +22,7 @@
 
 //////////////////////////////////////////  GridGenerator  //////////////////////////////////////////
 
-wxObject* GridGenerator::Create(Node* node, wxObject* parent)
+wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto grid = new wxGrid(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                            node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
@@ -303,7 +303,7 @@ bool GridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 
 //////////////////////////////////////////  PropertyGridGenerator  //////////////////////////////////////////
 
-wxObject* PropertyGridGenerator::Create(Node* node, wxObject* parent)
+wxObject* PropertyGridGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxPropertyGrid(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                      node->prop_as_wxSize(prop_size),
@@ -387,7 +387,7 @@ bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  PropertyGridManagerGenerator  //////////////////////////////////////////
 
-wxObject* PropertyGridManagerGenerator::Create(Node* node, wxObject* parent)
+wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxPropertyGridManager(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                             node->prop_as_wxSize(prop_size),

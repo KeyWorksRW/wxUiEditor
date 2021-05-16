@@ -14,7 +14,7 @@ class wxStyledTextEvent;
 class StaticTextGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
@@ -28,7 +28,7 @@ public:
 class TextCtrlGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
@@ -42,7 +42,7 @@ public:
 class RichTextCtrlGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -53,7 +53,7 @@ public:
 class HtmlWindowGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -64,7 +64,7 @@ public:
 class StyledTextGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;

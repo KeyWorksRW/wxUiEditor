@@ -12,7 +12,7 @@
 class SpinCtrlGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -23,7 +23,7 @@ public:
 class SpinCtrlDoubleGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
@@ -35,7 +35,7 @@ public:
 class SpinButtonGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -46,7 +46,7 @@ public:
 class ScrollBarGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;

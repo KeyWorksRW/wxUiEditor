@@ -12,7 +12,7 @@
 class ButtonGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
@@ -25,7 +25,7 @@ public:
 class CommandLinkBtnGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -36,7 +36,7 @@ public:
 class ToggleButtonGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;

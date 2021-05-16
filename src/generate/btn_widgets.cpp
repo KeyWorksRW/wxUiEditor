@@ -21,7 +21,7 @@ using namespace GenEnum;
 
 //////////////////////////////////////////  ButtonGenerator  //////////////////////////////////////////
 
-wxObject* ButtonGenerator::Create(Node* node, wxObject* parent)
+wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
@@ -220,7 +220,7 @@ bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 
 //////////////////////////////////////////  ToggleButtonGenerator  //////////////////////////////////////////
 
-wxObject* ToggleButtonGenerator::Create(Node* node, wxObject* parent)
+wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
                                      node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -395,7 +395,7 @@ bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  CommandLinkBtnGenerator  //////////////////////////////////////////
 
-wxObject* CommandLinkBtnGenerator::Create(Node* node, wxObject* parent)
+wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_main_label),
                                           node->prop_as_wxString(prop_note), node->prop_as_wxPoint(prop_pos),

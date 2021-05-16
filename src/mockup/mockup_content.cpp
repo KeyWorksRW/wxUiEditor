@@ -110,7 +110,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     if (!comp)
         return;
 
-    auto created_object = comp->Create(node, parent);
+    auto created_object = comp->CreateMockup(node, parent);
     if (!created_object)
     {
         if (node->IsSpacer() && parentNode)

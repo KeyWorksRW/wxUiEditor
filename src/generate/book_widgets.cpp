@@ -35,7 +35,7 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node);
 
 //////////////////////////////////////////  BookPageGenerator  //////////////////////////////////////////
 
-wxObject* BookPageGenerator::Create(Node* node, wxObject* parent)
+wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
@@ -141,7 +141,7 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
 
 //////////////////////////////////////////  NotebookGenerator  //////////////////////////////////////////
 
-wxObject* NotebookGenerator::Create(Node* node, wxObject* parent)
+wxObject* NotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                  node->prop_as_wxSize(prop_size),
@@ -202,7 +202,7 @@ bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  ChoicebookGenerator  //////////////////////////////////////////
 
-wxObject* ChoicebookGenerator::Create(Node* node, wxObject* parent)
+wxObject* ChoicebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                    node->prop_as_wxSize(prop_size),
@@ -252,7 +252,7 @@ bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 //////////////////////////////////////////  ListbookGenerator  //////////////////////////////////////////
 
-wxObject* ListbookGenerator::Create(Node* node, wxObject* parent)
+wxObject* ListbookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                  node->prop_as_wxSize(prop_size),
@@ -313,7 +313,7 @@ bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  ToolbookGenerator  //////////////////////////////////////////
 
-wxObject* ToolbookGenerator::Create(Node* node, wxObject* parent)
+wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                  node->prop_as_wxSize(prop_size),
@@ -394,7 +394,7 @@ bool ToolbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  TreebookGenerator  //////////////////////////////////////////
 
-wxObject* TreebookGenerator::Create(Node* node, wxObject* parent)
+wxObject* TreebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTreebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                  node->prop_as_wxSize(prop_size),
@@ -448,7 +448,7 @@ bool TreebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  SimplebookGenerator  //////////////////////////////////////////
 
-wxObject* SimplebookGenerator::Create(Node* node, wxObject* parent)
+wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSimplebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                    node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));

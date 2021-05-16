@@ -12,7 +12,7 @@
 class CheckBoxGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
@@ -25,7 +25,7 @@ public:
 class Check3StateGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;

@@ -12,7 +12,7 @@
 class ToolBarFormGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
     void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
@@ -29,7 +29,7 @@ protected:
 class ToolBarGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
     void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
@@ -61,7 +61,7 @@ public:
 class AuiToolBarGenerator : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
     void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;

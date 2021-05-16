@@ -19,7 +19,7 @@
 
 //////////////////////////////////////////  TreeCtrlGenerator  //////////////////////////////////////////
 
-wxObject* TreeCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* TreeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                  node->prop_as_wxSize(prop_size),
@@ -74,7 +74,7 @@ bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  TreeListViewGenerator  //////////////////////////////////////////
 
-wxObject* TreeListViewGenerator::Create(Node* node, wxObject* parent)
+wxObject* TreeListViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTreeListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                      node->prop_as_wxSize(prop_size),

@@ -13,7 +13,7 @@
 class MenuBarBase : public BaseGenerator
 {
 public:
-    wxObject* Create(Node* node, wxObject* parent) override;
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
 protected:
     wxMenu* MakeSubMenu(Node* node);

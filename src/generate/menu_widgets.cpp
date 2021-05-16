@@ -19,7 +19,7 @@
 
 //////////////////////////////////////////  MenuBarBase  //////////////////////////////////////////
 
-wxObject* MenuBarBase::Create(Node* node, wxObject* parent)
+wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
 {
     // A real wxMenubar requires a frame window, which we don't have in the Mockup panel. Instead, we create a panel
     // with static text for each top level menu. If the user clicks on one of the static text controls, then we locate

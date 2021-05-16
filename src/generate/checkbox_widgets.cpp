@@ -16,7 +16,7 @@
 
 #include "checkbox_widgets.h"
 
-wxObject* CheckBoxGenerator::Create(Node* node, wxObject* parent)
+wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     long style_value = 0;
     if (node->prop_as_string(prop_style).contains("wxALIGN_RIGHT"))
@@ -96,7 +96,7 @@ bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  Check3StateGenerator  //////////////////////////////////////////
 
-wxObject* Check3StateGenerator::Create(Node* node, wxObject* parent)
+wxObject* Check3StateGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     long style_value = wxCHK_3STATE | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style);
 

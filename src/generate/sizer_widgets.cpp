@@ -26,7 +26,7 @@
 
 //////////////////////////////////////////  BoxSizerGenerator  //////////////////////////////////////////
 
-wxObject* BoxSizerGenerator::Create(Node* node, wxObject* /*parent*/)
+wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
 {
     auto sizer = new wxBoxSizer(node->prop_as_int(prop_orientation));
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
@@ -57,7 +57,7 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  GridSizerGenerator  //////////////////////////////////////////
 
-wxObject* GridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
+wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
 {
     auto sizer = new wxGridSizer(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols), node->prop_as_int(prop_vgap),
                                  node->prop_as_int(prop_hgap));
@@ -107,7 +107,7 @@ bool GridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  WrapSizerGenerator  //////////////////////////////////////////
 
-wxObject* WrapSizerGenerator::Create(Node* node, wxObject* /*parent*/)
+wxObject* WrapSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
 {
     auto sizer = new wxWrapSizer(node->prop_as_int(prop_orientation), node->prop_as_int(prop_flags));
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
@@ -142,7 +142,7 @@ bool WrapSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  StaticBoxSizerGenerator  //////////////////////////////////////////
 
-wxObject* StaticBoxSizerGenerator::Create(Node* node, wxObject* parent)
+wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto sizer = new wxStaticBoxSizer(node->prop_as_int(prop_orientation), wxStaticCast(parent, wxWindow),
                                       node->prop_as_wxString(prop_label));
@@ -234,7 +234,7 @@ bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 //////////////////////////////////////////  StaticCheckboxBoxSizerGenerator  //////////////////////////////////////////
 
-wxObject* StaticCheckboxBoxSizerGenerator::Create(Node* node, wxObject* parent)
+wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     long style_value = 0;
     if (node->prop_as_string(prop_style).contains("wxALIGN_RIGHT"))
@@ -372,7 +372,7 @@ bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 
 //////////////////////////////////////////  StaticRadioBtnBoxSizerGenerator  //////////////////////////////////////////
 
-wxObject* StaticRadioBtnBoxSizerGenerator::Create(Node* node, wxObject* parent)
+wxObject* StaticRadioBtnBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     m_radiobtn = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label));
     if (node->prop_as_bool(prop_checked))
@@ -498,7 +498,7 @@ bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 
 //////////////////////////////////////////  FlexGridSizerGenerator  //////////////////////////////////////////
 
-wxObject* FlexGridSizerGenerator::Create(Node* node, wxObject* /*parent*/)
+wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
 {
     wxFlexGridSizer* sizer = new wxFlexGridSizer(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols),
                                                  node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
@@ -625,7 +625,7 @@ bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_
 
 //////////////////////////////////////////  GridBagSizerGenerator  //////////////////////////////////////////
 
-wxObject* GridBagSizerGenerator::Create(Node* node, wxObject* /*parent*/)
+wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
 {
     auto sizer = new wxGridBagSizer(node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
 
@@ -1044,7 +1044,7 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
 
 //////////////////////////////////////////  StdDialogButtonSizerGenerator  //////////////////////////////////////////
 
-wxObject* StdDialogButtonSizerGenerator::Create(Node* node, wxObject* parent)
+wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto sizer = new wxStdDialogButtonSizer();
 
@@ -1257,7 +1257,7 @@ bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string
 
 //////////////////////////////////////////  TextSizerGenerator  //////////////////////////////////////////
 
-wxObject* TextSizerGenerator::Create(Node* node, wxObject* parent)
+wxObject* TextSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxTextSizerWrapper wrapper(wxStaticCast(parent, wxWindow));
     return wrapper.CreateSizer(node->prop_as_wxString(prop_text), node->prop_as_int(prop_wrap));

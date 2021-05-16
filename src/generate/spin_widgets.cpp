@@ -19,7 +19,7 @@
 
 //////////////////////////////////////////  SpinCtrlGenerator  //////////////////////////////////////////
 
-wxObject* SpinCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
@@ -76,7 +76,7 @@ bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  SpinCtrlDoubleGenerator  //////////////////////////////////////////
 
-wxObject* SpinCtrlDoubleGenerator::Create(Node* node, wxObject* parent)
+wxObject* SpinCtrlDoubleGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -147,7 +147,7 @@ bool SpinCtrlDoubleGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 //////////////////////////////////////////  SpinButtonGenerator  //////////////////////////////////////////
 
-wxObject* SpinButtonGenerator::Create(Node* node, wxObject* parent)
+wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                    node->prop_as_wxSize(prop_size),
@@ -185,7 +185,7 @@ bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 //////////////////////////////////////////  ScrollBarGenerator  //////////////////////////////////////////
 
-wxObject* ScrollBarGenerator::Create(Node* node, wxObject* parent)
+wxObject* ScrollBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxScrollBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                   node->prop_as_wxSize(prop_size),

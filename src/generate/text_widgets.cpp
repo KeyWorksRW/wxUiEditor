@@ -18,7 +18,7 @@
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 
-wxObject* StaticTextGenerator::Create(Node* node, wxObject* parent)
+wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
                                    node->prop_as_wxSize(prop_size),
@@ -129,7 +129,7 @@ bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 //////////////////////////////////////////  TextCtrlGenerator  //////////////////////////////////////////
 
-wxObject* TextCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
                                  node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -230,7 +230,7 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  RichTextCtrlGenerator  //////////////////////////////////////////
 
-wxObject* RichTextCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
                                      node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -284,7 +284,7 @@ bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  HtmlWindowGenerator  //////////////////////////////////////////
 
-wxObject* HtmlWindowGenerator::Create(Node* node, wxObject* parent)
+wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                    node->prop_as_wxSize(prop_size),
@@ -325,7 +325,7 @@ bool HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 //////////////////////////////////////////  StyledTextGenerator  //////////////////////////////////////////
 
-wxObject* StyledTextGenerator::Create(Node* node, wxObject* parent)
+wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     // REVIEW: [KeyWorks - 12-10-2020] This is the original code which needs to be replaced as part of issue #512
 

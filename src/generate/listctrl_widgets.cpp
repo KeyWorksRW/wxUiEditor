@@ -18,7 +18,7 @@
 
 //////////////////////////////////////////  ListViewGenerator  //////////////////////////////////////////
 
-wxObject* ListViewGenerator::Create(Node* node, wxObject* parent)
+wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                  node->prop_as_wxSize(prop_size),

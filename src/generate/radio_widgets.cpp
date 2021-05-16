@@ -17,7 +17,7 @@
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
-wxObject* RadioButtonGenerator::Create(Node* node, wxObject* parent)
+wxObject* RadioButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -113,7 +113,7 @@ bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 //////////////////////////////////////////  RadioBoxGenerator  //////////////////////////////////////////
 
-wxObject* RadioBoxGenerator::Create(Node* node, wxObject* parent)
+wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto choices = node->prop_as_wxArrayString(prop_choices);
     if (!choices.Count())

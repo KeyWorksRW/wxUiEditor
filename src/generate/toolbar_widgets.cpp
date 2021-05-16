@@ -21,7 +21,7 @@ static ttlib::cstr ConstructTool(Node* node);
 
 //////////////////////////////////////////  ToolBarFormGenerator  //////////////////////////////////////////
 
-wxObject* ToolBarFormGenerator::Create(Node* node, wxObject* parent)
+wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxToolBar(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -170,7 +170,7 @@ void ToolBarFormGenerator::OnTool(wxCommandEvent& event)
 
 //////////////////////////////////////////  ToolBarGenerator  //////////////////////////////////////////
 
-wxObject* ToolBarGenerator::Create(Node* node, wxObject* parent)
+wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxToolBar(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -377,7 +377,7 @@ std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
 
 //////////////////////////////////////////  AuiToolBarGenerator  //////////////////////////////////////////
 
-wxObject* AuiToolBarGenerator::Create(Node* node, wxObject* parent)
+wxObject* AuiToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxAuiToolBar(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),

@@ -22,7 +22,7 @@
 
 //////////////////////////////////////////  PanelGenerator  //////////////////////////////////////////
 
-wxObject* PanelGenerator::Create(Node* node, wxObject* parent)
+wxObject* PanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
@@ -54,7 +54,7 @@ std::optional<ttlib::cstr> PanelGenerator::GenConstruction(Node* node)
 
 //////////////////////////////////////////  CollapsiblePaneGenerator  //////////////////////////////////////////
 
-wxObject* CollapsiblePaneGenerator::Create(Node* node, wxObject* parent)
+wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                         node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),

@@ -61,7 +61,7 @@ private:
 
 //////////////////////////////////////////  SplitterWindowGenerator  //////////////////////////////////////////
 
-wxObject* SplitterWindowGenerator::Create(Node* node, wxObject* parent)
+wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto splitter = new wxCustomSplitterWindow(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -238,7 +238,7 @@ bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 //////////////////////////////////////////  ScrolledWindowGenerator  //////////////////////////////////////////
 
-wxObject* ScrolledWindowGenerator::Create(Node* node, wxObject* parent)
+wxObject* ScrolledWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxScrolled<wxPanel>(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                           node->prop_as_wxSize(prop_size),

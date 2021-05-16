@@ -30,7 +30,7 @@ public:
     bool SetValue(const wxVariant&, const wxDataViewItem&, unsigned int /*col*/) override { return true; }
 };
 
-wxObject* DataViewCtrl::Create(Node* node, wxObject* parent)
+wxObject* DataViewCtrl::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxDataViewCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                      node->prop_as_wxSize(prop_size),
@@ -151,7 +151,7 @@ bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::
 
 //////////////////////////////////////////  DataViewListCtrl  //////////////////////////////////////////
 
-wxObject* DataViewListCtrl::Create(Node* node, wxObject* parent)
+wxObject* DataViewListCtrl::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxDataViewListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                          node->prop_as_wxSize(prop_size),
@@ -246,7 +246,7 @@ bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 //////////////////////////////////////////  DataViewTreeCtrl  //////////////////////////////////////////
 
-wxObject* DataViewTreeCtrl::Create(Node* node, wxObject* parent)
+wxObject* DataViewTreeCtrl::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxDataViewTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                          node->prop_as_wxSize(prop_size),

@@ -32,7 +32,7 @@
 
 //////////////////////////////////////////  ActivityIndicatorGenerator  //////////////////////////////////////////
 
-wxObject* ActivityIndicatorGenerator::Create(Node* node, wxObject* parent)
+wxObject* ActivityIndicatorGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                           node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
@@ -64,7 +64,7 @@ bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& 
 
 //////////////////////////////////////////  AnimationGenerator  //////////////////////////////////////////
 
-wxObject* AnimationGenerator::Create(Node* node, wxObject* parent)
+wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxAnimation animation;
     if (node->HasValue(prop_animation))
@@ -122,7 +122,7 @@ bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  BannerWindowGenerator  //////////////////////////////////////////
 
-wxObject* BannerWindowGenerator::Create(Node* node, wxObject* parent)
+wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxBannerWindow(wxStaticCast(parent, wxWindow),
                                      (wxDirection) g_NodeCreator.GetConstantAsInt(node->prop_as_string(prop_direction)));
@@ -210,7 +210,7 @@ bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  StaticLineGenerator  //////////////////////////////////////////
 
-wxObject* StaticLineGenerator::Create(Node* node, wxObject* parent)
+wxObject* StaticLineGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                    node->prop_as_wxSize(prop_size),
@@ -267,7 +267,7 @@ bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 //////////////////////////////////////////  StatusBarGenerator  //////////////////////////////////////////
 
-wxObject* StatusBarGenerator::Create(Node* node, wxObject* parent)
+wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto org_style = node->prop_as_int(prop_style);
     // Don't display the gripper as it can resize our main window rather than just the mockup window
@@ -328,7 +328,7 @@ bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  StaticBitmapGenerator  //////////////////////////////////////////
 
-wxObject* StaticBitmapGenerator::Create(Node* node, wxObject* parent)
+wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxBitmap(prop_bitmap),
                                             node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -413,7 +413,7 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  GaugeGenerator  //////////////////////////////////////////
 
-wxObject* GaugeGenerator::Create(Node* node, wxObject* parent)
+wxObject* GaugeGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxGauge(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_range),
                               node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -489,7 +489,7 @@ bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std
 
 //////////////////////////////////////////  SliderGenerator  //////////////////////////////////////////
 
-wxObject* SliderGenerator::Create(Node* node, wxObject* parent)
+wxObject* SliderGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSlider(
         wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_value), node->prop_as_int(prop_minValue),
@@ -603,7 +603,7 @@ bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 
 //////////////////////////////////////////  HyperlinkGenerator  //////////////////////////////////////////
 
-wxObject* HyperlinkGenerator::Create(Node* node, wxObject* parent)
+wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                       node->prop_as_wxString(prop_url), node->prop_as_wxPoint(prop_pos),
@@ -725,7 +725,7 @@ bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  InfoBarGenerator  //////////////////////////////////////////
 
-wxObject* InfoBarGenerator::Create(Node* node, wxObject* parent)
+wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     m_infobar = new wxInfoBar(wxStaticCast(parent, wxWindow));
 

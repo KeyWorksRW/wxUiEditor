@@ -19,7 +19,7 @@
 
 //////////////////////////////////////////  RibbonBarGenerator  //////////////////////////////////////////
 
-wxObject* RibbonBarGenerator::Create(Node* node, wxObject* parent)
+wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                   node->prop_as_wxSize(prop_size),
@@ -97,7 +97,7 @@ bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  RibbonPageGenerator  //////////////////////////////////////////
 
-wxObject* RibbonPageGenerator::Create(Node* node, wxObject* parent)
+wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto bmp = node->HasValue(prop_bitmap) ? node->prop_as_wxBitmap(prop_bitmap) : wxNullBitmap;
     auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->prop_as_wxString(prop_label), bmp, 0);
@@ -155,7 +155,7 @@ bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 //////////////////////////////////////////  RibbonPanelGenerator  //////////////////////////////////////////
 
-wxObject* RibbonPanelGenerator::Create(Node* node, wxObject* parent)
+wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->prop_as_wxString(prop_label),
                                     node->prop_as_wxBitmap(prop_bitmap), node->prop_as_wxPoint(prop_pos),
@@ -220,7 +220,7 @@ bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 //////////////////////////////////////////  RibbonButtonBarGenerator  //////////////////////////////////////////
 
-wxObject* RibbonButtonBarGenerator::Create(Node* node, wxObject* parent)
+wxObject* RibbonButtonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonButtonBar((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                         node->prop_as_wxSize(prop_size), 0);
@@ -312,7 +312,7 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenEvents(NodeEvent* event, co
 
 //////////////////////////////////////////  RibbonToolBarGenerator  //////////////////////////////////////////
 
-wxObject* RibbonToolBarGenerator::Create(Node* node, wxObject* parent)
+wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonToolBar((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                       node->prop_as_wxSize(prop_size));
@@ -434,7 +434,7 @@ std::optional<ttlib::cstr> RibbonToolGenerator::GenEvents(NodeEvent* event, cons
 
 //////////////////////////////////////////  RibbonGalleryGenerator  //////////////////////////////////////////
 
-wxObject* RibbonGalleryGenerator::Create(Node* node, wxObject* parent)
+wxObject* RibbonGalleryGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                       node->prop_as_wxSize(prop_size), 0);

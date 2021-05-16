@@ -21,7 +21,7 @@
 
 //////////////////////////////////////////  CalendarCtrlGenerator  //////////////////////////////////////////
 
-wxObject* CalendarCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
                                      node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -59,7 +59,7 @@ bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  FileCtrlGenerator  //////////////////////////////////////////
 
-wxObject* FileCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxString wild;
     if (node->HasValue(prop_wildcard))
@@ -141,7 +141,7 @@ bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  GenericDirCtrlGenerator  //////////////////////////////////////////
 
-wxObject* GenericDirCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* GenericDirCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxGenericDirCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_defaultfolder),
                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -210,7 +210,7 @@ bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 //////////////////////////////////////////  SearchCtrlGenerator  //////////////////////////////////////////
 
-wxObject* SearchCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
                                    node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),

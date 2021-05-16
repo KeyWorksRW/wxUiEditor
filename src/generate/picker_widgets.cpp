@@ -22,7 +22,7 @@
 
 //////////////////////////////////////////  DatePickerCtrlGenerator  //////////////////////////////////////////
 
-wxObject* DatePickerCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* DatePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -59,7 +59,7 @@ bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 //////////////////////////////////////////  TimePickerCtrlGenerator  //////////////////////////////////////////
 
-wxObject* TimePickerCtrlGenerator::Create(Node* node, wxObject* parent)
+wxObject* TimePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTimePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -96,7 +96,7 @@ bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 //////////////////////////////////////////  FilePickerGenerator  //////////////////////////////////////////
 
-wxObject* FilePickerGenerator::Create(Node* node, wxObject* parent)
+wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxFilePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
                                        node->prop_as_string(prop_message).size() ? node->prop_as_wxString(prop_message) :
@@ -176,7 +176,7 @@ bool FilePickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 //////////////////////////////////////////  DirPickerGenerator  //////////////////////////////////////////
 
-wxObject* DirPickerGenerator::Create(Node* node, wxObject* parent)
+wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxDirPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
                                       node->prop_as_string(prop_message).size() ? node->prop_as_wxString(prop_message) :
@@ -239,7 +239,7 @@ bool DirPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  ColourPickerGenerator  //////////////////////////////////////////
 
-wxObject* ColourPickerGenerator::Create(Node* node, wxObject* parent)
+wxObject* ColourPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxColour(prop_colour),
                                          node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
@@ -279,7 +279,7 @@ bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  FontPickerGenerator  //////////////////////////////////////////
 
-wxObject* FontPickerGenerator::Create(Node* node, wxObject* parent)
+wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_font(prop_initial_font),
                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),

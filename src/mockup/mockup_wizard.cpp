@@ -1,9 +1,12 @@
-//////////////////////////////////////////////////////////////////////////
-// Purpose:   Emulate a wxWizard
+/////////////////////////////////////////////////////////////////////////////
+// Purpose:   Emulate a wxWizard, used for Mockup
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+// A wxWizard derives from wxDialog which makes it unusable as a child of the wxPanel used by our Mockup panel. We emulate
+// the functionality here, use similar methods to what that the real wxWizard uses (see wxWidgets/src/generic/wizard.cpp).
 
 #include "pch.h"
 
@@ -14,72 +17,79 @@
 #include "mockup_wizard.h"
 
 #include "mainframe.h"  // App -- App class
-#include "node.h"     // Node class
+#include "node.h"       // Node class
 
 MockupWizard::MockupWizard(wxWindow* parent, Node* node) : wxPanel(parent)
 {
     m_wizard_node = node;
-    m_top_sizer = new wxBoxSizer(wxHORIZONTAL);
-    // m_top_sizer->SetMinSize(wxSize(270, 270));
+    m_window_sizer = new wxBoxSizer(wxVERTICAL);
 
-    if (node->HasValue(prop_bitmap))
+    m_column_sizer = new wxBoxSizer(wxVERTICAL);
+    m_window_sizer->Add(m_column_sizer, wxSizerFlags(1).Expand());
+    AddBitmapRow(m_column_sizer);
+
+    m_column_sizer->Add(new wxStaticLine(this), wxSizerFlags().Expand().Border());
+    m_column_sizer->Add(0, 5, 0, wxEXPAND);
+
+    AddButtonRow(m_column_sizer);
+
+    SetSizer(m_window_sizer);
+
+    m_btnPrev->Bind(wxEVT_BUTTON, &MockupWizard::OnBackOrNext, this);
+    m_btnNext->Bind(wxEVT_BUTTON, &MockupWizard::OnBackOrNext, this);
+}
+
+void MockupWizard::AddBitmapRow(wxBoxSizer* mainColumn)
+{
+    m_sizerBmpAndPage = new wxBoxSizer(wxHORIZONTAL);
+    mainColumn->Add(m_sizerBmpAndPage, 1, wxEXPAND);
+    mainColumn->Add(0, 5, 0, wxEXPAND);
+
+    if (m_wizard_node->HasValue(prop_bitmap))
     {
-        auto bitmap = node->prop_as_wxBitmap(prop_bitmap);
-        if (bitmap.IsOk())
+        m_bitmap = m_wizard_node->prop_as_wxBitmap(prop_bitmap);
+        if (m_bitmap.IsOk())
         {
-            auto stat_bmp = new wxStaticBitmap(this, wxID_ANY, bitmap);
-            m_top_sizer->Add(stat_bmp, wxSizerFlags().Top());
-            m_top_sizer->Add(wxSizerFlags::GetDefaultBorder(), 0, wxSizerFlags().Expand());
-            m_size_bmp = bitmap.GetSize();
-            m_size_bmp.x += wxSizerFlags::GetDefaultBorder();
+            wxSize bitmapSize(wxDefaultSize);
+            if (m_wizard_node->prop_as_int(prop_bmp_placement) > 0)
+            {
+                bitmapSize.x = m_wizard_node->prop_as_int(prop_bmp_placement);
+            }
+            m_statbmp = new wxStaticBitmap(this, wxID_ANY, m_bitmap, wxDefaultPosition, bitmapSize);
+            m_sizerBmpAndPage->Add(m_statbmp, wxSizerFlags());
+            m_sizerBmpAndPage->Add(5, 0, 0, wxEXPAND);
         }
     }
 
-    m_sizer_wiz_page = new wxBoxSizer(wxVERTICAL);
-    m_top_sizer->Add(m_sizer_wiz_page, wxSizerFlags(1).Expand());
+    m_sizerPage = new wxBoxSizer(wxHORIZONTAL);
+    m_sizerBmpAndPage->Add(m_sizerPage, wxSizerFlags());
+}
 
-    auto sizer_back_next = new wxBoxSizer(wxHORIZONTAL);
+void MockupWizard::AddButtonRow(wxBoxSizer* mainColumn)
+{
+    wxBoxSizer* buttonRow = new wxBoxSizer(wxHORIZONTAL);
 
-    m_btn_back = new wxButton(this, wxID_BACKWARD, "< &Back");
-    m_btn_back->Disable();
-    sizer_back_next->Add(m_btn_back, wxSizerFlags().Bottom().Top());
+    mainColumn->Add(buttonRow, 0, wxALIGN_RIGHT);
 
-    sizer_back_next->Add(wxSizerFlags::GetDefaultBorder() * 2, 0, wxSizerFlags().Expand());
-
-    m_btn_forward = new wxButton(this, wxID_FORWARD, "&Next >");
-    sizer_back_next->Add(m_btn_forward, wxSizerFlags().Bottom().Top());
-
-    auto buttonRow = new wxBoxSizer(wxHORIZONTAL);
-
-    if (node->prop_as_int(prop_extra_style) & wxWIZARD_EX_HELPBUTTON)
+    if (m_wizard_node->prop_as_string(prop_extra_style).contains("wxWIZARD_EX_HELPBUTTON"))
     {
-        auto btn_help = new wxButton(this, wxID_HELP, "&Help");
-        buttonRow->Add(btn_help, wxSizerFlags().Border());
+        buttonRow->Add(new wxButton(this, wxID_HELP, "&Help"), 0, wxALL, 5);
+#ifdef __WXMAC__
+        // Put stretchable space between help button and others
+        buttonRow->Add(0, 0, 1, wxALIGN_CENTRE, 0);
+#endif
     }
 
-    buttonRow->Add(sizer_back_next, wxSizerFlags().Border());
+    m_btnPrev = new wxButton(this, wxID_BACKWARD, "< &Back");
+    m_btnNext = new wxButton(this, wxID_FORWARD, "&Next >");
 
-    auto btn_cancel = new wxButton(this, wxID_CANCEL, "&Cancel");
-    buttonRow->Add(btn_cancel, wxSizerFlags().Border());
+    wxBoxSizer* backNextPair = new wxBoxSizer(wxHORIZONTAL);
+    buttonRow->Add(backNextPair, 0, wxALL, 5);
+    backNextPair->Add(m_btnPrev);
+    backNextPair->Add(10, 0, 0, wxEXPAND);
+    backNextPair->Add(m_btnNext);
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
-    parent_sizer->Add(m_top_sizer, wxSizerFlags(1).Expand());
-
-    parent_sizer->Add(0, wxSizerFlags::GetDefaultBorder(), wxSizerFlags().Expand());
-
-    parent_sizer->Add(new wxStaticLine(this), wxSizerFlags().Expand().Border());
-
-    parent_sizer->Add(0, wxSizerFlags::GetDefaultBorder(), wxSizerFlags().Expand());
-
-    parent_sizer->Add(buttonRow, wxSizerFlags().Right());
-
-    auto border = new wxBoxSizer(wxVERTICAL);
-    border->Add(parent_sizer, wxSizerFlags(1).Expand().Border());
-
-    SetSizerAndFit(border);
-
-    m_btn_back->Bind(wxEVT_BUTTON, &MockupWizard::OnBackOrNext, this);
-    m_btn_forward->Bind(wxEVT_BUTTON, &MockupWizard::OnBackOrNext, this);
+    buttonRow->Add(new wxButton(this, wxID_CANCEL, "&Cancel"), 0, wxALL, 5);
 }
 
 void MockupWizard::SetSelection(size_t pageIndex)
@@ -93,19 +103,30 @@ void MockupWizard::SetSelection(size_t pageIndex)
 
         m_cur_page_index = pageIndex;
 
-        m_btn_back->Enable(hasPrev);
+        m_btnPrev->Enable(hasPrev);
 
         wxString label = hasNext ? "&Next >" : "&Finish";
-        if (label != m_btn_forward->GetLabel())
+        if (label != m_btnNext->GetLabel())
         {
-            m_btn_forward->SetLabel(label);
+            m_btnNext->SetLabel(label);
         }
 
-        m_btn_forward->SetDefault();
+        m_btnNext->SetDefault();
     }
 
     if (old_pageIndex != pageIndex && pageIndex < m_pages.size())
     {
+        wxBitmap bmpPrev = m_pages[old_pageIndex]->GetBitmap();
+
+        auto bmp = m_pages[pageIndex]->GetBitmap();
+        if (!bmp.IsOk())
+            bmp = m_bitmap;
+        if (!bmpPrev.IsOk())
+            bmpPrev = m_bitmap;
+
+        if (!bmp.IsSameAs(bmpPrev))
+            m_statbmp->SetBitmap(bmp);
+
         m_pages[old_pageIndex]->Hide();
         m_pages[pageIndex]->Show();
         m_cur_page_index = pageIndex;
@@ -122,11 +143,23 @@ void MockupWizard::OnBackOrNext(wxCommandEvent& event)
     else if (event.GetId() == wxID_BACKWARD && m_cur_page_index == 0)
         return;
 
+    wxBitmap bmpPrev = m_pages[m_cur_page_index]->GetBitmap();
+
     m_pages[m_cur_page_index]->Hide();
-    if (event.GetEventObject() == m_btn_forward)
+    if (event.GetEventObject() == m_btnNext)
         m_cur_page_index++;
     else
         m_cur_page_index--;
+
+    auto bmp = m_pages[m_cur_page_index]->GetBitmap();
+    if (!bmp.IsOk())
+        bmp = m_bitmap;
+    if (!bmpPrev.IsOk())
+        bmpPrev = m_bitmap;
+
+    if (!bmp.IsSameAs(bmpPrev))
+        m_statbmp->SetBitmap(bmp);
+
     m_pages[m_cur_page_index]->Show();
 
     SetSelection(m_cur_page_index);
@@ -135,9 +168,12 @@ void MockupWizard::OnBackOrNext(wxCommandEvent& event)
     {
         wxGetFrame().SelectNode(m_wizard_node->GetChild(m_cur_page_index), false, true);
     }
+
+    Fit();
+    Layout();
 }
 
-void MockupWizard::AddPage(wxPanel* page)
+void MockupWizard::AddPage(MockupWizardPage* page)
 {
     if (m_cur_page_index == tt::npos)
     {
@@ -148,16 +184,20 @@ void MockupWizard::AddPage(wxPanel* page)
 
     m_pages.emplace_back(page);
 
-    m_sizer_wiz_page->Add(page, wxSizerFlags(1).Expand());
+    m_sizerPage->Add(page, wxSizerFlags(1).Expand());
 
-    // If the page was freshly created, then there will be no sizer
-    auto page_sizer = page->GetSizer();
-    if (page_sizer)
+    if (auto page_sizer = page->GetSizer(); page_sizer)
     {
         auto min_size = page_sizer->GetMinSize();
         min_size.IncBy(m_size_bmp);
 
         m_top_min_size.IncTo(min_size);
-        m_top_sizer->SetMinSize(m_top_min_size);
+        m_window_sizer->SetMinSize(m_top_min_size);
     }
+}
+
+MockupWizardPage::MockupWizardPage(Node* node, wxObject* parent) : wxPanel(wxStaticCast(parent, wxWindow))
+{
+    if (node->HasValue(prop_bitmap))
+        m_bitmap = node->prop_as_wxBitmap(prop_bitmap);
 }

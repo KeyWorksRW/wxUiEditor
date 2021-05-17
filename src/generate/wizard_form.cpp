@@ -17,11 +17,10 @@
 
 #include "wizard_form.h"
 
-wxObject* WizardFormGenerator::CreateMockup(Node* /*node*/, wxObject* parent)
+wxObject* WizardFormGenerator::CreateMockup(Node* /* node */, wxObject* /* parent */)
 {
-    // Note that this is NOT a wxWizard -- this function is used to Mockup the dialog, and for that we use a wxPanel
-    // inside of a wxScroll<wxPanel>.
-    return new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY);
+    FAIL_MSG("Do not call CreateMockup() for wxWizard -- you must use the MockupWizard class instead!");
+    return nullptr;
 }
 
 std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
@@ -180,10 +179,9 @@ std::vector<Node*> WizardFormGenerator::GetChildPanes(Node* parent)
 
 //////////////////////////////////////////  WizardPageGenerator  //////////////////////////////////////////
 
-wxObject* WizardPageGenerator::CreateMockup(Node* /*node*/, wxObject* parent)
+wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    // return new WizardPageSimple(wxStaticCast(parent, wxWindow));
-    return new wxPanel(wxStaticCast(parent, wxWindow));
+    return new MockupWizardPage(node, parent);
 }
 
 std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)

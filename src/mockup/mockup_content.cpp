@@ -196,7 +196,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     if (node->GetParent()->isType(type_wizard))
     {
-        m_wizard->AddPage(wxStaticCast(created_window, wxPanel));
+        m_wizard->AddPage(wxStaticCast(created_window, MockupWizardPage));
         return;
     }
 

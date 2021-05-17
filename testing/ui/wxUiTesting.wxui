@@ -432,6 +432,7 @@
     </node>
     <node
       class="wxWizard"
+      bitmap="Header; ..\art\wiztest_png.h; ; [-1; -1]"
       class_name="WizardBase"
       title="Wizard Tests"
       base_file="wizard_base"
@@ -461,6 +462,7 @@
       </node>
       <node
         class="wxWizardPageSimple"
+        bitmap="Header; ..\art\wiztest2_png.h; ; [-1; -1]"
         var_name="m_wizPage3">
         <node
           class="wxBoxSizer"

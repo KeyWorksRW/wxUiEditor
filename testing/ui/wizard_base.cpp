@@ -8,6 +8,20 @@
 
 #include "wizard_base.h"
 
+#include "../art/wiztest2_png.h"
+#include "../art/wiztest_png.h"
+
+#include <wx/mstream.h>  // Memory stream classes
+
+// Convert a data header file into a wxImage
+static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxImage image;
+    image.LoadFile(strm);
+    return image;
+};
+
 WizardBase::WizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxBitmap& bitmap, const wxPoint& pos, long style) :
     wxWizard(parent, id, title, bitmap, pos, style)
@@ -32,7 +46,7 @@ WizardBase::WizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
 
     m_wizPage2->SetSizerAndFit(box_sizer2);
 
-    auto m_wizPage3 = new wxWizardPageSimple(this);
+    auto m_wizPage3 = new wxWizardPageSimple(this, nullptr, nullptr, wxNullBitmap);
 
     auto box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
 

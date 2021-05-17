@@ -84,6 +84,8 @@ namespace GenEnum
         prop_best_size,
         prop_bitmap,
         prop_bitmapsize,
+        prop_bmp_min_width,
+        prop_bmp_placement,
         prop_border,
         prop_border_size,
         prop_borders,

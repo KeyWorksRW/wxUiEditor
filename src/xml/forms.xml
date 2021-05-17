@@ -235,6 +235,27 @@
         help="The text to display on the Wizard's title bar." />
     <property name="bitmap" type="image"
         help="Bitmap to display on the left side of the wizard (default: none)." />
+    <property name="bmp_placement" type="bitlist">
+        <option name="wxWIZARD_DEFAULT_PLACEMENT"
+            help="The bitmap is placed normally." />
+        <option name="wxWIZARD_VALIGN_TOP"
+            help="The bitmap is vertically aligned at the top." />
+        <option name="wxWIZARD_VALIGN_CENTRE"
+            help="The bitmap is centered vertically." />
+        <option name="wxWIZARD_VALIGN_BOTTOM"
+            help="The bitmap is vertically aligned at the bottom." />
+        <option name="wxWIZARD_HALIGN_LEFT"
+            help="The bitmap is horizontally aligned to the left." />
+        <option name="wxWIZARD_HALIGN_CENTRE"
+            help="The bitmap is horizontally aligned in the center." />
+        <option name="wxWIZARD_HALIGN_RIGHT"
+            help="The bitmap is horizontally aligned to the right." />
+        <option name="wxWIZARD_TILE"
+            help="The bitmap is tiled." />
+      wxWIZARD_DEFAULT_PLACEMENT
+      </property>
+    <property name="bmp_min_width" type="int"
+        help="Sets the minimum width for the bitmap that will be constructed to contain the actual wizard or page bitmap if a non-zero bitmap placement flag has been set. If this is not set when using bitmap placement, the initial layout may be incorrect.">-1</property>
     <property name="style" type="bitlist">
         <option name="wxCAPTION"
             help="Puts a caption on the dialog box." />

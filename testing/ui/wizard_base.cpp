@@ -18,14 +18,18 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
+    if (!image.FindHandler(wxBITMAP_TYPE_PNG))
+        wxImage::AddHandler(new wxPNGHandler);
     image.LoadFile(strm);
     return image;
 };
 
 WizardBase::WizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxBitmap& bitmap, const wxPoint& pos, long style) :
-    wxWizard(parent, id, title, bitmap, pos, style)
+        const wxPoint& pos, long style) : wxWizard()
 {
+    SetExtraStyle(wxWIZARD_EX_HELPBUTTON);
+    SetBorder(15);
+    Create(parent, id, title, GetImgFromHdr(wiztest_png, sizeof(wiztest_png)), pos, style);
     SetSizeHints(wxDefaultSize);
 
     auto wizPage = new wxWizardPageSimple(this);
@@ -41,12 +45,12 @@ WizardBase::WizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_staticText2 = new wxStaticText(m_wizPage2, wxID_ANY, wxString::FromUTF8("This is the second Wizard page"));
+    m_staticText2 = new wxStaticText(m_wizPage2, wxID_ANY, wxString::FromUTF8("This is the second Wizard page which is wider."));
     box_sizer2->Add(m_staticText2, wxSizerFlags().Border(wxALL));
 
     m_wizPage2->SetSizerAndFit(box_sizer2);
 
-    auto m_wizPage3 = new wxWizardPageSimple(this, nullptr, nullptr, wxNullBitmap);
+    auto m_wizPage3 = new wxWizardPageSimple(this, nullptr, nullptr, GetImgFromHdr(wiztest2_png, sizeof(wiztest2_png)));
 
     auto box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
 

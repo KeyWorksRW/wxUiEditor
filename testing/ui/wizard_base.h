@@ -7,10 +7,12 @@
 #pragma once
 
 #include <wx/bitmap.h>
+#include <wx/colour.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/icon.h>
 #include <wx/image.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/wizard.h>
@@ -20,7 +22,7 @@ class WizardBase : public wxWizard
 public:
     WizardBase(wxWindow* parent, wxWindowID id = wxID_ANY,
         const wxString& title = wxString::FromUTF8("Wizard Tests"),
-        const wxBitmap& bitmap = wxNullBitmap, const wxPoint& pos = wxDefaultPosition,
+        const wxPoint& pos = wxDefaultPosition,
         long style = wxDEFAULT_DIALOG_STYLE);
 
     bool Run() { return RunWizard((wxWizardPage*) GetPageAreaSizer()->GetItem((size_t) 0)->GetWindow()); }

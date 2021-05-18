@@ -27,12 +27,21 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    // This is the code to add to the source file
+    // By calling the default wxWizard() constructor, we don't need for the caller to pass in wxNullBitmap which will be
+    // ignored if a the bitmap property for the wizard has been set. Calling Create() instead gives us the opportunity to
+    // first load the image from a header file.
+
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
-    code << "\n        const wxBitmap& bitmap, const wxPoint& pos, long style) :";
-    code << "\n    wxWizard(parent, id, title, bitmap, pos, style)";
+    code << "\n        const wxPoint& pos, long style) : wxWizard()";
     code << "\n{";
+
+    code << "\n    Create(parent, id, title, ";
+    if (node->HasValue(prop_bitmap))
+        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+    else
+        code << "wxNullBitmap";
+    code << ", pos, style);";
 
     return code;
 }
@@ -56,10 +65,6 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
         {
             code << "wxEmptyString,\n    ";
         }
-
-        // TODO: [KeyWorks - 11-08-2020] Need to add bitmap handling here
-
-        code << "const wxBitmap& bitmap = wxNullBitmap, ";
 
         code << "const wxPoint& pos = ";
         auto point = node->prop_as_wxPoint(prop_pos);
@@ -195,12 +200,11 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
     if (node->HasValue(prop_bitmap))
     {
         code << ", nullptr, nullptr, ";
-        // TODO: [KeyWorks - 11-08-2020] Add bitmap here
 
         if (node->HasValue(prop_bitmap))
-        {
+            code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+        else
             code << "wxNullBitmap";
-        }
     }
 
     code << ");";

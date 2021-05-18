@@ -36,6 +36,19 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
     code << "\n        const wxPoint& pos, long style) : wxWizard()";
     code << "\n{";
 
+    if (node->HasValue(prop_extra_style))
+        code << "\n    SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
+    if (node->prop_as_int(prop_border) != 5)
+        code << "\n    SetBorder(" << node->prop_as_string(prop_border) << ");";
+    if (node->prop_as_int(prop_bmp_placement))
+    {
+        code << "\n    SetBitmapPlacement(" << node->prop_as_string(prop_bmp_placement) << ");";
+        if (node->prop_as_int(prop_bmp_min_width) > 0)
+            code << "\n    SetMinimumBitmapWidth(" << node->prop_as_string(prop_bmp_min_width) << ");";
+        if (node->HasValue(prop_bmp_background_colour))
+            code << "\n    SetBitmapBackgroundColour(" << GenerateColorCode(node, prop_bmp_background_colour) << ");";
+    }
+
     code << "\n    Create(parent, id, title, ";
     if (node->HasValue(prop_bitmap))
         code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));

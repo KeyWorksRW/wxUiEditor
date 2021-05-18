@@ -84,6 +84,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_best_size, "best_size" },
     { prop_bitmap, "bitmap" },
     { prop_bitmapsize, "bitmapsize" },
+    { prop_bmp_background_colour, "bmp_background_colour" },
     { prop_bmp_min_width, "bmp_min_width" },
     { prop_bmp_placement, "bmp_placement" },
     { prop_border, "border" },

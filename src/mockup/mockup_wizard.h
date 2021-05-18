@@ -23,6 +23,7 @@ public:
     MockupWizardPage(Node* node, wxObject* parent);
     bool HasBitmap() { return m_bitmap.IsOk(); }
     wxBitmap GetBitmap() { return m_bitmap; }
+    wxBitmap* GetBitmapPtr() { return &m_bitmap; }
 
 private:
     wxBitmap m_bitmap { wxNullBitmap };
@@ -36,17 +37,24 @@ public:
     void AddPage(MockupWizardPage* page);
     size_t GetPageCount() { return m_pages.size(); }
     void SetSelection(size_t pageIndex);
+    wxSize& GetLargetPageSize() { return m_largest_page; }
+
+    // MockupContent needs to call this after all children have been created in order to calculate the largest size needed to
+    // display all children, and to resize any bitmap if bmp_placement has been set.
+    void AllChildrenAdded();
 
 protected:
     void OnBackOrNext(wxCommandEvent& event);
-    void AddBitmapRow(wxBoxSizer* mainColumn);
-    void AddButtonRow(wxBoxSizer* mainColumn);
+    void AddBitmapRow();
+    void AddButtonRow();
+
+    bool ResizeBitmap(wxBitmap& bmp);
 
 private:
-    wxBoxSizer* m_window_sizer;  // Contains both the bitmap and the wizard page
-    wxBoxSizer* m_column_sizer;  // Contains the actual page to the right of any bitmap
+    wxBoxSizer* m_window_sizer;  // Top level sizer for entire window
+    wxBoxSizer* m_column_sizer;  // Contains bitmap row, static line, and buttons
     wxBoxSizer* m_sizerBmpAndPage;
-    wxBoxSizer* m_sizerPage;
+    wxBoxSizer* m_sizerPage { nullptr };
 
     wxButton* m_btnPrev;
     wxButton* m_btnNext;
@@ -55,11 +63,15 @@ private:
 
     Node* m_wizard_node;
 
-    wxSize m_top_min_size { 0, 0 };
+    wxSize m_largest_page { 0, 0 };
+    wxSize m_largest_nonbmp_page { 0, 0 };
 
     wxSize m_size_bmp { 0, 0 };
     wxBitmap m_bitmap { wxNullBitmap };
     wxStaticBitmap* m_statbmp { nullptr };
 
     std::vector<MockupWizardPage*> m_pages;
+
+    int m_bmp_placement;
+    int m_border { 5 };
 };

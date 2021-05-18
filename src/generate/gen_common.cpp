@@ -868,7 +868,7 @@ ttlib::cstr GenerateColorCode(Node* node, PropName prop_name)
     ttlib::cstr code;
     auto& clr = node->prop_as_string(prop_name);
     if (clr.contains("wx"))
-        code << "wxSystemSettings::GetColour(" << clr << "));";
+        code << "wxSystemSettings::GetColour(" << clr << ")";
     else
     {
         wxColour colour = ConvertToColour(clr);

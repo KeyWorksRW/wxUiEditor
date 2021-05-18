@@ -17,23 +17,44 @@
 
 #include "wizard_form.h"
 
-wxObject* WizardFormGenerator::CreateMockup(Node* /*node*/, wxObject* parent)
+wxObject* WizardFormGenerator::CreateMockup(Node* /* node */, wxObject* /* parent */)
 {
-    // Note that this is NOT a wxWizard -- this function is used to Mockup the dialog, and for that we use a wxPanel
-    // inside of a wxScroll<wxPanel>.
-    return new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY);
+    FAIL_MSG("Do not call CreateMockup() for wxWizard -- you must use the MockupWizard class instead!");
+    return nullptr;
 }
 
 std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    // This is the code to add to the source file
+    // By calling the default wxWizard() constructor, we don't need for the caller to pass in wxNullBitmap which will be
+    // ignored if a the bitmap property for the wizard has been set. Calling Create() instead gives us the opportunity to
+    // first load the image from a header file.
+
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
-    code << "\n        const wxBitmap& bitmap, const wxPoint& pos, long style) :";
-    code << "\n    wxWizard(parent, id, title, bitmap, pos, style)";
+    code << "\n        const wxPoint& pos, long style) : wxWizard()";
     code << "\n{";
+
+    if (node->HasValue(prop_extra_style))
+        code << "\n    SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
+    if (node->prop_as_int(prop_border) != 5)
+        code << "\n    SetBorder(" << node->prop_as_string(prop_border) << ");";
+    if (node->prop_as_int(prop_bmp_placement))
+    {
+        code << "\n    SetBitmapPlacement(" << node->prop_as_string(prop_bmp_placement) << ");";
+        if (node->prop_as_int(prop_bmp_min_width) > 0)
+            code << "\n    SetMinimumBitmapWidth(" << node->prop_as_string(prop_bmp_min_width) << ");";
+        if (node->HasValue(prop_bmp_background_colour))
+            code << "\n    SetBitmapBackgroundColour(" << GenerateColorCode(node, prop_bmp_background_colour) << ");";
+    }
+
+    code << "\n    Create(parent, id, title, ";
+    if (node->HasValue(prop_bitmap))
+        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+    else
+        code << "wxNullBitmap";
+    code << ", pos, style);";
 
     return code;
 }
@@ -57,10 +78,6 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
         {
             code << "wxEmptyString,\n    ";
         }
-
-        // TODO: [KeyWorks - 11-08-2020] Need to add bitmap handling here
-
-        code << "const wxBitmap& bitmap = wxNullBitmap, ";
 
         code << "const wxPoint& pos = ";
         auto point = node->prop_as_wxPoint(prop_pos);
@@ -180,10 +197,9 @@ std::vector<Node*> WizardFormGenerator::GetChildPanes(Node* parent)
 
 //////////////////////////////////////////  WizardPageGenerator  //////////////////////////////////////////
 
-wxObject* WizardPageGenerator::CreateMockup(Node* /*node*/, wxObject* parent)
+wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    // return new WizardPageSimple(wxStaticCast(parent, wxWindow));
-    return new wxPanel(wxStaticCast(parent, wxWindow));
+    return new MockupWizardPage(node, parent);
 }
 
 std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
@@ -197,12 +213,11 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
     if (node->HasValue(prop_bitmap))
     {
         code << ", nullptr, nullptr, ";
-        // TODO: [KeyWorks - 11-08-2020] Add bitmap here
 
         if (node->HasValue(prop_bitmap))
-        {
+            code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+        else
             code << "wxNullBitmap";
-        }
     }
 
     code << ");";

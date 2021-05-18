@@ -22,6 +22,7 @@
 
 #include "mockup_content.h"
 
+#include "auto_freeze.h"     // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "mockup_parent.h"   // Top-level MockUp Parent window
@@ -56,6 +57,8 @@ void MockupContent::RemoveNodes()
 // This is called by MockupParent in order to create all child components
 void MockupContent::CreateAllGenerators()
 {
+    AutoFreeze(this);
+
     auto form = m_mockupParent->GetSelectedForm();
     if (form->isGen(gen_MenuBar) || form->isGen(gen_ToolBar))
     {
@@ -85,12 +88,13 @@ void MockupContent::CreateAllGenerators()
 
     if (m_wizard)
     {
+        m_wizard->AllChildrenAdded();
         m_wizard->SetSelection(0);
 
-        // A MockupWizard is added directly as a panel without an intervening sizer, so we need to calculate the size of the
-        // window that we need to display it.
-        auto sizer = m_wizard->GetSizer();
-        if (sizer)
+        // MockupWizard::AllChildrenAdded() will have set it's parent sizer to the largest size needed to display all the
+        // wizard pages, so update our size accordingly.
+
+        if (auto sizer = m_wizard->GetSizer(); sizer)
         {
             auto min_size = sizer->GetMinSize();
             SetMinClientSize(min_size);
@@ -196,7 +200,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     if (node->GetParent()->isType(type_wizard))
     {
-        m_wizard->AddPage(wxStaticCast(created_window, wxPanel));
+        m_wizard->AddPage(wxStaticCast(created_window, MockupWizardPage));
         return;
     }
 

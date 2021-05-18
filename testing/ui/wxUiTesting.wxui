@@ -432,7 +432,12 @@
     </node>
     <node
       class="wxWizard"
+      bitmap="Header; ..\art\wiztest_png.h; ; [-1; -1]"
+      bmp_background_colour="wxSYS_COLOUR_WINDOWTEXT"
+      bmp_min_width="150"
+      border="15"
       class_name="WizardBase"
+      extra_style="wxWIZARD_EX_HELPBUTTON"
       title="Wizard Tests"
       base_file="wizard_base"
       derived_class_name="Wizard"
@@ -455,12 +460,13 @@
           var_name="box_sizer2">
           <node
             class="wxStaticText"
-            label="This is the second Wizard page"
+            label="This is the second Wizard page which is wider."
             var_name="m_staticText2" />
         </node>
       </node>
       <node
         class="wxWizardPageSimple"
+        bitmap="Header; ..\art\wiztest2_png.h; ; [-1; -1]"
         var_name="m_wizPage3">
         <node
           class="wxBoxSizer"

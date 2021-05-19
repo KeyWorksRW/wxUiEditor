@@ -400,6 +400,14 @@ const ttlib::cstr& Node::prop_as_string(PropName name)
         return tt_empty_cstr;
 }
 
+ttlib::cview Node::prop_cview(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_cview();
+    else
+        return tt_empty_cstr.subview();
+}
+
 const ttlib::cstr& Node::get_node_name()
 {
     if (auto it = m_prop_indices.find(prop_var_name); it != m_prop_indices.end())

@@ -173,6 +173,24 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
     return code;
 }
 
+ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
+{
+    ttlib::cstr code;
+    if (!node->HasValue(prop_name))
+    {
+        code << "wxEmptyString";
+    }
+    else
+    {
+        auto str_with_escapes = ConvertToCodeString(node->prop_cview(prop_name));
+        if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
+            code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
+        else
+            code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
+    }
+    return code;
+}
+
 // clang-format off
 
 // List of valid component parent types

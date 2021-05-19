@@ -17,8 +17,6 @@ EditStringDialogBase::EditStringDialogBase(wxWindow* parent, wxWindowID id, cons
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxDialog(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString);

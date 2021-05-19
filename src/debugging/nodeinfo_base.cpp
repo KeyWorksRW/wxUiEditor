@@ -16,8 +16,6 @@ NodeInfoBase::NodeInfoBase(wxWindow* parent, wxWindowID id, const wxString& titl
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxDialog(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("Memory Usage"));

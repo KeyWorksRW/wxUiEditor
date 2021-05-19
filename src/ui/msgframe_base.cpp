@@ -20,6 +20,8 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
+    if (!image.FindHandler(wxBITMAP_TYPE_PNG))
+        wxImage::AddHandler(new wxPNGHandler);
     image.LoadFile(strm);
     return image;
 };
@@ -28,8 +30,6 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxFrame(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto menubar = new wxMenuBar();
 
     auto menu_file = new wxMenu();

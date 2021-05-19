@@ -15,8 +15,6 @@ ArtPropertyDlgBase::ArtPropertyDlgBase(wxWindow* parent, wxWindowID id, const wx
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxDialog(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);

@@ -25,8 +25,6 @@ NotebookBase::NotebookBase(wxWindow* parent, wxWindowID id, const wxString& titl
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxDialog(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_notebook = new wxNotebook(this, wxID_ANY);

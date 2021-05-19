@@ -12,8 +12,6 @@ NewProjectBase::NewProjectBase(wxWindow* parent, wxWindowID id, const wxString& 
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxDialog(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer3 = new wxBoxSizer(wxVERTICAL);

@@ -12,8 +12,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxFrame(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto menubar = new wxMenuBar();
 
     auto menuDialogs = new wxMenu();

@@ -16,8 +16,6 @@ RibbonDlgBase::RibbonDlgBase(wxWindow* parent, wxWindowID id, const wxString& ti
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxDialog(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_rbnBar = new wxRibbonBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRIBBON_BAR_FLOW_HORIZONTAL|wxRIBBON_BAR_SHOW_PAGE_LABELS);

@@ -30,8 +30,6 @@ WizardBase::WizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
     SetExtraStyle(wxWIZARD_EX_HELPBUTTON);
     SetBorder(15);
     Create(parent, id, title, GetImgFromHdr(wiztest_png, sizeof(wiztest_png)), pos, style);
-    SetSizeHints(wxDefaultSize);
-
     auto wizPage = new wxWizardPageSimple(this);
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);

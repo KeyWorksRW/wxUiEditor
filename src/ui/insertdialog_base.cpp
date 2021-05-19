@@ -14,8 +14,6 @@ InsertDialogBase::InsertDialogBase(wxWindow* parent, wxWindowID id, const wxStri
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxDialog(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
     box_sizer->SetMinSize(300, 400);
 

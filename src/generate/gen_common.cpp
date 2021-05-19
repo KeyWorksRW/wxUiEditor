@@ -771,9 +771,7 @@ ttlib::cstr GenFormSettings(Node* node)
         auto min_size = node->prop_as_wxSize(prop_minimum_size);
         auto max_size = node->prop_as_wxSize(prop_maximum_size);
 
-        if (min_size.x == -1 && min_size.y == -1 && max_size.x == -1 && max_size.y == -1)
-            code << "SetSizeHints(wxDefaultSize);";
-        else
+        if (min_size != wxDefaultSize || max_size != wxDefaultSize)
         {
             code << "SetSizeHints(";
             if (min_size.GetX() != -1 || min_size.GetY() != -1)

@@ -19,8 +19,6 @@ NewFrameBase::NewFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 		const wxPoint& pos, const wxSize& size, long style) :
 	wxDialog(parent, id, title, pos, size, style)
 {
-    SetSizeHints(wxDefaultSize);
-
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);

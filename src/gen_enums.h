@@ -400,6 +400,7 @@ namespace GenEnum
         gen_Check3State,
         gen_Choice_Validator,
         gen_Code_Generation,
+        gen_Command_Bitmaps,
         gen_Integer_Validator,
         gen_List_Validator,
         gen_MenuBar,

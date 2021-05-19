@@ -1440,7 +1440,7 @@ void PropGridPanel::CreatePropCategory(ttlib::cview name, Node* node, NodeDeclar
         // TODO: [KeyWorks - 07-25-2020] Need to see if parent is using AUI, and if so, don't collapse this
         m_prop_grid->Collapse(id);
     }
-    else if (name.is_sameas("Bitmaps"))
+    else if (name.is_sameas("Bitmaps") || name.is_sameas("Command Bitmaps"))
     {
         m_prop_grid->Collapse(id);
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#dce4ef"));

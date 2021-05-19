@@ -146,7 +146,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, Nod
 {
     if (prop->isProp(prop_value))
     {
-        wxStaticCast(widget, wxTextCtrl)->SetValue(prop->GetValue().wx_str());
+        wxStaticCast(widget, wxTextCtrl)->SetValue(prop->as_wxString());
         return true;
     }
 

@@ -253,7 +253,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             return new EditStringProperty(prop->DeclName().wx_str(), prop);
 
         case type_bool:
-            return new wxBoolProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->GetValue() == "1");
+            return new wxBoolProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string() == "1");
 
         case type_wxPoint:
             return new CustomPointProperty(prop->DeclName().wx_str(), prop->as_point());
@@ -262,7 +262,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             return new CustomSizeProperty(prop->DeclName().wx_str(), prop->as_size());
 
         case type_wxFont:
-            if (prop->GetValue().empty())
+            if (prop->as_string().empty())
             {
                 return new wxFontProperty(prop->DeclName().wx_str(), wxPG_LABEL);
             }
@@ -819,7 +819,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         if (value == "wxString")
                         {
                             auto propType = selected_node->get_prop_ptr(prop_validator_type);
-                            if (propType->GetValue() != "wxTextValidator")
+                            if (propType->as_string() != "wxTextValidator")
                             {
                                 auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
                                 grid_property->SetValueFromString("wxTextValidator", 0);
@@ -829,7 +829,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         else
                         {
                             auto propType = selected_node->get_prop_ptr(prop_validator_type);
-                            if (propType->GetValue() == "wxTextValidator")
+                            if (propType->as_string() == "wxTextValidator")
                             {
                                 auto grid_property = m_prop_grid->GetPropertyByLabel("validator_type");
                                 grid_property->SetValueFromString("wxGenericValidator", 0);
@@ -898,7 +898,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (node->isGen(gen_wxStdDialogButtonSizer))
                     {
                         auto def_prop = node->get_prop_ptr(prop_default_button);
-                        if (def_prop->GetValue() == prop->DeclName())
+                        if (def_prop->as_string() == prop->DeclName())
                         {
                             m_prop_grid->SetPropertyValue("default_button", "none");
                             modifyProperty(def_prop, "none");
@@ -920,7 +920,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (value.contains("wxFLP_OPEN") && value.contains("wxFLP_SAVE"))
                     {
                         auto style_prop = node->get_prop_ptr(prop_style);
-                        auto old_value = style_prop->GetValue();
+                        auto& old_value = style_prop->as_string();
                         if (old_value.contains("wxFLP_OPEN"))
                         {
                             value.Replace("wxFLP_OPEN", "");
@@ -1144,13 +1144,13 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                             return;
 
                         if (auto propType = selected_node->get_prop_ptr(prop_derived_class_name);
-                            propType && propType->GetValue() == "DerivedClass")
+                            propType && propType->as_string() == "DerivedClass")
                             ReplaceDrvName(newValue, propType);
                         if (auto propType = selected_node->get_prop_ptr(prop_base_file);
-                            propType && propType->GetValue() == "filename_base")
+                            propType && propType->as_string() == "filename_base")
                             ReplaceBaseFile(newValue, propType);
                         if (auto propType = selected_node->get_prop_ptr(prop_derived_file);
-                            propType && propType->GetValue().empty())
+                            propType && propType->as_string().empty())
                             ReplaceDrvFile(newValue, propType);
                     }
                 }
@@ -1500,7 +1500,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
         m_property_map[id_prop] = prop;
     }
 
-    if (!node->GetParent()->isGen(gen_wxGridBagSizer))
+    if (!node->isParent(gen_wxGridBagSizer))
     {
         if (auto prop = node->get_prop_ptr(prop_proportion); prop)
         {

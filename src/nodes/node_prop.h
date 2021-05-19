@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <map>
-
 #include "font_prop.h"     // FontProperty class
 #include "node_classes.h"  // Forward defintions of Node classes
 #include "prop_decl.h"     // PropDeclaration -- PropChildDeclaration and PropDeclaration classes
@@ -35,7 +33,9 @@ public:
     int as_int() const;
     bool as_bool() const { return (as_int() != 0); };
     double as_float() const;
+
     const auto& as_string() const { return m_value; }
+    auto as_cview() const { return ttlib::cview(m_value.c_str(), m_value.length()); }
 
     wxBitmap as_bitmap() const;
     wxColour as_color() const;
@@ -43,8 +43,7 @@ public:
     FontProperty as_font_prop() const;
     wxPoint as_point() const;
     wxSize as_size() const;
-    wxString as_wxString() const { return m_value.wx_str(); }
-    ttlib::cview as_cview() const { return ttlib::cview(m_value.c_str(), m_value.length()); }
+    auto as_wxString() const { return m_value.wx_str(); }
     wxArrayString as_wxArrayString() const;
 
     auto as_vector() const -> std::vector<ttlib::cstr>;
@@ -66,7 +65,7 @@ public:
 
     // Returns false if the property is empty. For size, point, and Bitmap properties,
     // returns false if the default value is used.
-    bool HasValue();
+    bool HasValue() const;
 
     const PropDeclaration* GetPropDeclaration() const { return m_declaration; }
 
@@ -83,8 +82,6 @@ public:
     PropName get_name() const noexcept { return m_declaration->get_name(); }
 
     PropDeclaration* GetPropDeclaration() { return m_declaration; }
-
-    auto& GetValue() { return m_value; }
 
     // Currently only called in debug builds, but available for release builds should we need it
     size_t GetPropSize() const { return sizeof(*this) + (m_value.size() + 1); }

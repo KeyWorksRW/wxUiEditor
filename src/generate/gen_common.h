@@ -80,3 +80,6 @@ void GenStyle(Node* node, ttlib::cstr& code, ttlib::cview extra_style = tt_empty
 
 ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& class_name);
 ttlib::cstr GenFormSettings(Node* node);
+
+// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
+ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);

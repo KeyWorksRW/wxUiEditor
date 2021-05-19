@@ -11,18 +11,21 @@
 #include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
 
 #include "../nodes/node_creator.h"  // NodeCreator class
+#include "gen_enums.h"              // Enumerations for generators
 #include "mainapp.h"                // App -- Main application class
 #include "mainframe.h"              // MainFrame -- Main window frame
 #include "node.h"                   // Node class
 #include "pjtsettings.h"            // ProjectSettings -- Hold data for currently loaded project
 #include "uifuncs.h"                // Miscellaneous functions for displaying UI
 
+using namespace GenEnum;
+
 #include "../import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
-#include "../import/import_winres.h"     // WinResource -- Parse a Windows resource file
-#include "../import/import_wxglade.h"    // WxGlade -- Import a wxGlade file
-#include "../import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
-#include "../ui/newproject.h"            // NewProjectDlg -- Dialog to create a new project
-#include "oldproject.h"                  // Load older version of wxUiEditor project
+#include "../import/import_winres.h"  // WinResource -- Parse a Windows resource file
+#include "../import/import_wxglade.h"  // WxGlade -- Import a wxGlade file
+#include "../import/import_wxsmith.h"  // WxSmith -- Import a wxSmith file
+#include "../ui/newproject.h"  // NewProjectDlg -- Dialog to create a new project
+#include "oldproject.h"  // Load older version of wxUiEditor project
 
 using namespace GenEnum;
 
@@ -301,8 +304,11 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
         /////////////////////////////////// End slightly old project conversion //////////////////////////////////////
 
-        if (auto prop = new_node->get_prop_ptr(iter.name()); prop)
+        NodeProperty* prop = nullptr;
+        if (auto find_prop = rmap_PropNames.find(iter.name()); find_prop != rmap_PropNames.end())
         {
+            prop = new_node->get_prop_ptr(find_prop->second);
+
             if (prop->type() == type_bool)
                 prop->set_value(iter.as_bool());
             else

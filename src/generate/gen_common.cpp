@@ -181,7 +181,7 @@ ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 
     if (node->HasValue(prop_name))
     {
-        auto str_with_escapes = ConvertToCodeString(node->prop_cview(prop_name));
+        auto str_with_escapes = ConvertToCodeString(node->prop_as_string(prop_name));
         if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
             code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
         else
@@ -198,7 +198,7 @@ ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 // clang-format off
 
 // List of valid component parent types
-static constexpr GenType GenParentTypes[] = {
+static constexpr GenType s_GenParentTypes[] = {
 
     type_auinotebook,
     type_bookpage,
@@ -231,7 +231,7 @@ ttlib::cstr GetParentName(Node* node)
             return ttlib::cstr("this");
         }
 
-        for (auto iter: GenParentTypes)
+        for (auto iter: s_GenParentTypes)
         {
             if (parent->isType(iter))
             {
@@ -896,4 +896,42 @@ ttlib::cstr GenerateColorCode(Node* node, PropName prop_name)
     }
 
     return code;
+}
+
+// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string. Used when generating
+// code.
+ttlib::cstr ConvertToCodeString(const ttlib::cstr& text)
+{
+    ttlib::cstr result;
+
+    for (auto c: text)
+    {
+        switch (c)
+        {
+            case '"':
+                result += "\\\"";
+                break;
+
+            case '\\':
+                result += "\\\\";
+                break;
+
+            case '\t':
+                result += "\\t";
+                break;
+
+            case '\n':
+                result += "\\n";
+                break;
+
+            case '\r':
+                result += "\\r";
+                break;
+
+            default:
+                result += c;
+                break;
+        }
+    }
+    return result;
 }

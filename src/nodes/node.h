@@ -40,28 +40,23 @@ public:
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
     ttlib::cview DeclName() const noexcept { return m_declaration->DeclName(); }
 
-    NodeSharedPtr GetParentPtr() { return m_parent; }
-    Node* GetParent() { return m_parent.get(); }
+    NodeSharedPtr GetParentPtr() const noexcept { return m_parent; }
+    Node* GetParent() const noexcept { return m_parent.get(); }
 
     void SetParent(NodeSharedPtr parent) { m_parent = parent; }
     void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
-
-    // Using PropName is preferred, but not always possible when importing wxFormBuilder and wxSmith projects
-
-    NodeProperty* get_prop_ptr(ttlib::cview name);
-    ttlib::cstr* get_value_ptr(ttlib::cview name);
 
     NodeProperty* get_prop_ptr(PropName name);
 
     NodeEvent* GetEvent(ttlib::cview name);
     NodeEvent* GetEvent(size_t index);
 
-    size_t GetPropertyCount() { return m_properties.size(); }
-    size_t GetEventCount() { return m_events.size(); }
-    size_t GetInUseEventCount();
+    size_t GetPropertyCount() const { return m_properties.size(); }
+    size_t GetEventCount() const { return m_events.size(); }
+    size_t GetInUseEventCount() const;
 
-    Node* LocateAncestorType(GenEnum::GenType type);
-    Node* FindParentForm();
+    Node* LocateAncestorType(GenEnum::GenType type) const noexcept;
+    Node* FindParentForm() const noexcept;
 
     bool AddChild(NodeSharedPtr node);
     bool AddChild(Node* node);
@@ -80,9 +75,9 @@ public:
     // Note that this returns a copy rather than a const ref
     NodeSharedPtr GetChildPtr(size_t index) { return m_children.at(index); }
 
-    Node* GetChild(size_t index) { return m_children.at(index).get(); }
+    Node* GetChild(size_t index) const noexcept { return m_children.at(index).get(); }
 
-    size_t GetChildCount() { return m_children.size(); }
+    size_t GetChildCount() const { return m_children.size(); }
 
     ChildNodePtrs& GetChildNodePtrs() { return m_children; }
 
@@ -96,56 +91,63 @@ public:
 
     bool isType(GenType type) const noexcept { return (type == m_declaration->gen_type()); }
     bool isGen(GenName name) const noexcept { return (name == m_declaration->gen_name()); }
+    bool isParent(GenName name) const noexcept
+    {
+        return (GetParent() ? name == GetParent()->m_declaration->gen_name() : false);
+    }
 
-    bool IsWidget() { return isType(type_widget); }
-    bool IsWizard() { return isType(type_wizard); }
-    bool IsMenuBar() { return (isType(type_menubar_form) || isType(type_menubar)); }
-    bool IsToolBar() { return (isType(type_toolbar) || isType(type_toolbar_form)); }
-    bool IsStatusBar() { return isType(type_statusbar); }
-    bool IsRibbonBar() { return isType(type_ribbonbar); }
+    bool IsWidget() const noexcept { return isType(type_widget); }
+    bool IsWizard() const noexcept { return isType(type_wizard); }
+    bool IsMenuBar() const noexcept { return (isType(type_menubar_form) || isType(type_menubar)); }
+    bool IsToolBar() const noexcept { return (isType(type_toolbar) || isType(type_toolbar_form)); }
+    bool IsStatusBar() const noexcept { return isType(type_statusbar); }
+    bool IsRibbonBar() const noexcept { return isType(type_ribbonbar); }
 
     // This does not include MenuBar, ToolBar, StatusBar or Wizard
-    bool IsForm()
+    bool IsForm() const noexcept
     {
         return (isType(type_form) || isType(type_menubar_form) || isType(type_toolbar_form) || isType(type_wizard));
     }
-    bool IsStaticBoxSizer()
+    bool IsStaticBoxSizer() const noexcept
     {
         return (isGen(gen_wxStaticBoxSizer) || isGen(gen_StaticCheckboxBoxSizer) || isGen(gen_StaticRadioBtnBoxSizer));
     }
-    bool IsSpacer() { return isGen(gen_spacer); }
+    bool IsSpacer() const noexcept { return isGen(gen_spacer); }
 
-    bool IsSizer() { return (isType(type_sizer) || isType(type_gbsizer)); }
-    bool IsContainer() { return (isType(type_container) || ttlib::contains(map_GenTypes[gen_type()], "book")); }
+    bool IsSizer() const noexcept { return (isType(type_sizer) || isType(type_gbsizer)); }
+    bool IsContainer() const noexcept
+    {
+        return (isType(type_container) || ttlib::contains(map_GenTypes[gen_type()], "book"));
+    }
 
     // Returns true if access property == none or there is no access property
-    bool IsLocal();
+    bool IsLocal() const noexcept;
 
     NodeType* GetNodeType() { return m_declaration->GetNodeType(); }
     BaseGenerator* GetGenerator() const { return m_declaration->GetGenerator(); }
 
     // Returns the value of the property "var_name" or "class_name"
-    const ttlib::cstr& get_node_name();
+    const ttlib::cstr& get_node_name() const;
 
     // Returns the value of the parent property "var_name" or "class_name"
-    const ttlib::cstr& get_parent_name();
+    const ttlib::cstr& get_parent_name() const;
 
     // Finds the parent form and returns the value of the it's property "class_name"
-    const ttlib::cstr& get_form_name();
+    const ttlib::cstr& get_form_name() const;
 
     NodeDeclaration* GetNodeDeclaration() { return m_declaration; }
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-sepcified bitmap)
-    bool HasValue(PropName name);
+    bool HasValue(PropName name) const;
 
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
-    bool isPropValue(PropName name, const char* value);
+    bool isPropValue(PropName name, const char* value) const noexcept;
 
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
-    bool isPropValue(PropName name, bool value);
+    bool isPropValue(PropName name, bool value) const noexcept;
 
     // Sets value only if the property exists, returns false if it doesn't exist.
     template <typename T>
@@ -162,26 +164,25 @@ public:
         }
     }
 
-    bool prop_as_bool(PropName name);
-    int prop_as_int(PropName name);
+    bool prop_as_bool(PropName name) const;
+    int prop_as_int(PropName name) const;
 
-    wxColour prop_as_wxColour(PropName name);
-    wxFont prop_as_font(PropName name);
-    wxPoint prop_as_wxPoint(PropName name);
-    wxSize prop_as_wxSize(PropName name);
-    wxBitmap prop_as_wxBitmap(PropName name);
-    wxArrayString prop_as_wxArrayString(PropName name);
+    wxColour prop_as_wxColour(PropName name) const;
+    wxFont prop_as_font(PropName name) const;
+    wxPoint prop_as_wxPoint(PropName name) const;
+    wxSize prop_as_wxSize(PropName name) const;
+    wxBitmap prop_as_wxBitmap(PropName name) const;
+    wxArrayString prop_as_wxArrayString(PropName name) const;
 
-    FontProperty prop_as_font_prop(PropName name);
-    double prop_as_double(PropName name);
+    FontProperty prop_as_font_prop(PropName name) const;
+    double prop_as_double(PropName name) const;
 
-    const ttlib::cstr& prop_as_string(PropName name);
-    ttlib::cview prop_cview(PropName name);
+    const ttlib::cstr& prop_as_string(PropName name) const;
 
     // This will convert the string from UTF8 to UTF16 on Windows
-    wxString prop_as_wxString(PropName name);
+    wxString prop_as_wxString(PropName name) const;
 
-    wxSizerFlags GetSizerFlags();
+    wxSizerFlags GetSizerFlags() const;
 
     NodeSharedPtr GetSharedPtr() { return shared_from_this(); }
 
@@ -226,16 +227,16 @@ public:
     // Collects all unique var_name and validator_variable properties in the current form
     void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node);
 
-    int_t FindInsertionPos(Node* child);
-    int_t FindInsertionPos(NodeSharedPtr child) { return FindInsertionPos(child.get()); }
+    int_t FindInsertionPos(Node* child) const;
+    int_t FindInsertionPos(NodeSharedPtr child) const { return FindInsertionPos(child.get()); }
 
     // Currently only called in debug builds, but available for release builds should we need it
-    size_t GetNodeSize();
+    size_t GetNodeSize() const;
 
     // This writes XML files in the 1.1 layout using attributes for properties
     void AddNodeToDoc(pugi::xml_node& object);
 
-    void CalcNodeHash(size_t& hash);
+    void CalcNodeHash(size_t& hash) const;
 
     int_t GetAllowableChildren(GenType child_gen_type) const { return m_declaration->GetAllowableChildren(child_gen_type); }
 
@@ -249,9 +250,6 @@ private:
     // map gives us a fast lookup into the vector.
     std::vector<NodeProperty> m_properties;
     std::map<PropName, size_t> m_prop_indices;
-
-    // TODO: [KeyWorks - 04-10-2021] Obsolete, remove after everyone stops using strings for lookup
-    std::unordered_map<std::string, size_t> m_prop_map;
 
     std::vector<NodeEvent> m_events;
     std::unordered_map<std::string, size_t> m_event_map;

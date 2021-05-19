@@ -136,7 +136,7 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview valu
     SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
 
     m_change_value << value;
-    m_revert_value = prop->GetValue();
+    m_revert_value = prop->as_string();
 }
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_property(prop)
@@ -144,7 +144,7 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_pr
     SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
 
     m_change_value << value;
-    m_revert_value = prop->GetValue();
+    m_revert_value = prop->as_string();
 }
 
 void ModifyPropertyAction::Change()

@@ -13,6 +13,7 @@
 
 #include "mainapp.h"  // App -- Main application class
 
+#include "gen_enums.h"     // Enumerations for generators
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
@@ -425,8 +426,9 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
                 xml_prop = xml_prop.next_sibling("property");
                 continue;
             }
-            else if (auto prop = newobject->get_prop_ptr(prop_name); prop)
+            else if (auto find_prop = rmap_PropNames.find(prop_name.c_str()); find_prop != rmap_PropNames.end())
             {
+                auto prop = newobject->get_prop_ptr(find_prop->second);
                 if (prop->type() == type_bool)
                     prop->set_value(xml_prop.text().as_bool());
                 else
@@ -514,9 +516,9 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
         {
             if (iter.as_string() != iter.GetPropDeclaration()->GetDefaultValue())
             {
-                auto prop_value = newobject->get_value_ptr(iter.DeclName());
+                auto prop_value = newobject->get_prop_ptr(iter.get_name());
                 if (prop_value)
-                    *prop_value = iter.as_string();
+                    prop_value->set_value(iter.as_string());
             }
         }
         parent->AddChild(newobject);

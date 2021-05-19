@@ -122,13 +122,13 @@ std::optional<ttlib::cstr> ButtonGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxButton(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    auto& label = node->prop_as_string(prop_label);
-    if (label.size() && !node->prop_as_bool(prop_markup))
+    if (!node->prop_as_bool(prop_markup))
     {
-        code << GenerateQuotedString(label);
+        code << GenerateQuotedString(node, prop_label);
     }
     else
     {
+        // prop_markup is set, so the actual label will be set in GenSettings()
         code << "wxEmptyString";
     }
 
@@ -303,15 +303,13 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxToggleButton(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    auto& label = node->prop_as_string(prop_label);
-
-    // If markup is true, then the label has to be set in the GenSettings() section
-    if (label.size() && !node->prop_as_bool(prop_markup))
+    if (!node->prop_as_bool(prop_markup))
     {
-        code << GenerateQuotedString(label);
+        code << GenerateQuotedString(node, prop_label);
     }
     else
     {
+        // prop_markup is set, so the actual label will be set in GenSettings()
         code << "wxEmptyString";
     }
 
@@ -401,6 +399,9 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
                                           node->prop_as_wxString(prop_note), node->prop_as_wxPoint(prop_pos),
                                           node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
 
+    if (node->prop_as_bool(prop_default))
+        widget->SetDefault();
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -414,29 +415,24 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxCommandLinkButton(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    // BUGBUG: [KeyWorks - 04-09-2021] Need to support default property
-
-    if (node->HasValue(prop_main_label))
-    {
-        code << GenerateQuotedString(node->prop_as_string(prop_main_label));
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    code << ",\n        ";
-
-    if (node->HasValue(prop_note))
-    {
-        code << GenerateQuotedString(node->prop_as_string(prop_note));
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
+    code << GenerateQuotedString(node, prop_main_label) << ", " << GenerateQuotedString(node, prop_note);
 
     GeneratePosSizeFlags(node, code, true);
+
+    return code;
+}
+
+std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    if (node->prop_as_bool(prop_default))
+    {
+        if (code.size())
+            code << '\n';
+
+        code << node->get_node_name() << "->SetDefault();";
+    }
 
     return code;
 }

@@ -760,7 +760,7 @@ void NavPopupMenu::CreateTopSizerMenu(Node* node)
     menu_item = sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
     menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
 
-    if (node->GetParent()->isGen(gen_wxDialog))
+    if (node->isParent(gen_wxDialog))
     {
         sub_menu->AppendSeparator();
         menu_item = sub_menu->Append(MenuNEW_SIBLING_STD_DIALG_BTNS, "wxStdDialogButtonSizer");

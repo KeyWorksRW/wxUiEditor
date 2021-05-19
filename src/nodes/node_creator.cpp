@@ -268,7 +268,7 @@ void NodeCreator::SetDefaultLayoutProperties(Node* node)
     }
 }
 
-int NodeCreator::GetConstantAsInt(const std::string& name, int defValue)
+int NodeCreator::GetConstantAsInt(const std::string& name, int defValue) const
 {
     if (auto iter = m_map_constants.find(name); iter != m_map_constants.end())
         return iter->second;

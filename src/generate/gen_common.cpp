@@ -158,11 +158,8 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
 {
     ttlib::cstr code;
-    if (str.empty())
-    {
-        code << "wxEmptyString";
-    }
-    else
+
+    if (str.size())
     {
         auto str_with_escapes = ConvertToCodeString(str);
         if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
@@ -170,17 +167,19 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
         else
             code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
     }
+    else
+    {
+        code << "wxEmptyString";
+    }
+
     return code;
 }
 
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
     ttlib::cstr code;
-    if (!node->HasValue(prop_name))
-    {
-        code << "wxEmptyString";
-    }
-    else
+
+    if (node->HasValue(prop_name))
     {
         auto str_with_escapes = ConvertToCodeString(node->prop_cview(prop_name));
         if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
@@ -188,6 +187,11 @@ ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
         else
             code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
     }
+    else
+    {
+        code << "wxEmptyString";
+    }
+
     return code;
 }
 

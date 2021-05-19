@@ -269,7 +269,7 @@ void NodeProperty::set_value(const wxString& value)
     m_value << value.wx_str();
 }
 
-bool NodeProperty::HasValue()
+bool NodeProperty::HasValue() const
 {
     if (m_value.empty())
         return false;

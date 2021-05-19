@@ -54,7 +54,7 @@ public:
     NodeDeclaration* GetNodeDeclaration(ttlib::cview class_name);
 
     // This returns the integer value of most wx constants used in various components
-    int GetConstantAsInt(const std::string& name, int defValue = 0);
+    int GetConstantAsInt(const std::string& name, int defValue = 0) const;
 
     // Only use this with .wxui projects -- it will fail on a .fbp project
     NodeSharedPtr CreateNode(pugi::xml_node& node, Node* parent = nullptr);
@@ -64,7 +64,7 @@ public:
 
     void InitGenerators();
 
-    bool IsOldHostType(ttlib::cview old_type)
+    bool IsOldHostType(ttlib::cview old_type) const
     {
         return (m_setOldHostTypes.find(old_type.c_str()) != m_setOldHostTypes.end());
     }

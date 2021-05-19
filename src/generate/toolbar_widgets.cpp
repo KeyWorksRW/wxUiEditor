@@ -242,7 +242,7 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->prop_as_string(prop_var_name);
 
-    if (node->GetParent()->isGen(gen_wxFrame))
+    if (node->isParent(gen_wxFrame))
     {
         code << " = CreateToolBar(";
 
@@ -366,7 +366,7 @@ std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    if (node->GetParent()->isGen(gen_wxToolBar))
+    if (node->isParent(gen_wxToolBar))
 
         code << node->get_parent_name() << "->AddSeparator();";
     else
@@ -562,14 +562,14 @@ ttlib::cstr ConstructTool(Node* node)
     // If the user doesn't want access, then we have no use for the return value.
     if (node->IsLocal())
     {
-        if (node->GetParent()->isGen(gen_wxToolBar))
+        if (node->isParent(gen_wxToolBar))
             code << node->get_parent_name() << "->AddTool(" << node->prop_as_string(prop_id) << ", ";
         else
             code << "AddTool(" << node->prop_as_string(prop_id) << ", ";
     }
     else
     {
-        if (node->GetParent()->isGen(gen_wxToolBar) || node->GetParent()->isGen(gen_wxAuiToolBar))
+        if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxAuiToolBar))
             code << node->get_node_name() << " = " << node->get_parent_name() << "->AddTool("
                  << node->prop_as_string(prop_id) << ", ";
         else

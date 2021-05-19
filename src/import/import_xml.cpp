@@ -11,11 +11,14 @@
 
 #include "import_xml.h"
 
+#include "gen_enums.h"  // Enumerations for generators
 #include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // Main window frame
 #include "node.h"       // Node class
 #include "uifuncs.h"    // Miscellaneous functions for displaying UI
 #include "utils.h"      // Utility functions that work with properties
+
+using namespace GenEnum;
 
 std::optional<pugi::xml_document> ImportXML::LoadDocFile(const ttString& file)
 {
@@ -459,7 +462,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         else if (iter.cname().is_sameas("value"))
         {
             auto escaped = ConvertEscapeSlashes(iter.text().as_string());
-            if (auto prop = node->get_prop_ptr(iter.cname()); prop)
+            if (auto prop = node->get_prop_ptr(prop_value); prop)
             {
                 prop->set_value(escaped);
             }
@@ -492,7 +495,9 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 
         // Now process names that are identical.
 
-        auto prop = node->get_prop_ptr(iter.cname());
+        NodeProperty* prop = nullptr;
+        if (auto find_prop = rmap_PropNames.find(iter.cname().c_str()); find_prop != rmap_PropNames.end())
+            prop = node->get_prop_ptr(find_prop->second);
         if (prop)
         {
             prop->set_value(iter.text().as_string());

@@ -299,12 +299,12 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
 
     if (auto fg_colour = node->get_prop_ptr(prop_foreground_colour); fg_colour && fg_colour->HasValue())
     {
-        window->SetForegroundColour(ConvertToColour(fg_colour->GetValue()));
+        window->SetForegroundColour(ConvertToColour(fg_colour->as_string()));
     }
 
     if (auto bg_colour = node->get_prop_ptr(prop_background_colour); bg_colour && bg_colour->HasValue())
     {
-        window->SetBackgroundColour(ConvertToColour(bg_colour->GetValue()));
+        window->SetBackgroundColour(ConvertToColour(bg_colour->as_string()));
     }
 
     if (auto extra_style = node->get_prop_ptr(prop_window_extra_style); extra_style && extra_style->as_int() != 0)

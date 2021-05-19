@@ -63,22 +63,6 @@ NodeProperty* Node::get_prop_ptr(PropName name)
         return nullptr;
 }
 
-NodeProperty* Node::get_prop_ptr(ttlib::cview name)
-{
-    if (auto it = m_prop_map.find(name.c_str()); it != m_prop_map.end())
-        return &m_properties[it->second];
-    else
-        return nullptr;
-}
-
-ttlib::cstr* Node::get_value_ptr(ttlib::cview name)
-{
-    if (auto it = m_prop_map.find(name.c_str()); it != m_prop_map.end())
-        return &m_properties[it->second].get_value();
-    else
-        return nullptr;
-}
-
 NodeEvent* Node::GetEvent(ttlib::cview name)
 {
     if (auto it = m_event_map.find(name.c_str()); it != m_event_map.end())
@@ -93,7 +77,7 @@ NodeEvent* Node::GetEvent(size_t index)
     return &m_events[index];
 }
 
-size_t Node::GetInUseEventCount()
+size_t Node::GetInUseEventCount() const
 {
     size_t count = 0;
 
@@ -109,7 +93,6 @@ size_t Node::GetInUseEventCount()
 NodeProperty* Node::AddNodeProperty(PropDeclaration* declaration)
 {
     auto& prop = m_properties.emplace_back(declaration, this);
-    m_prop_map[prop.DeclName().c_str()] = (m_properties.size() - 1);
     m_prop_indices[prop.get_name()] = (m_properties.size() - 1);
     return &m_properties[m_properties.size() - 1];
 }
@@ -121,7 +104,7 @@ NodeEvent* Node::AddNodeEvent(const NodeEventInfo* info)
     return &m_events[m_events.size() - 1];
 }
 
-Node* Node::LocateAncestorType(GenType type)
+Node* Node::LocateAncestorType(GenType type) const noexcept
 {
     auto parent = GetParent();
     while (parent && !parent->isType(type))
@@ -132,7 +115,7 @@ Node* Node::LocateAncestorType(GenType type)
     return parent;
 }
 
-Node* Node::FindParentForm()
+Node* Node::FindParentForm() const noexcept
 {
     if (auto retObj = LocateAncestorType(type_form); retObj)
         return retObj;
@@ -271,12 +254,12 @@ bool Node::ChangeChildPosition(NodeSharedPtr node, size_t pos)
     return true;
 }
 
-bool Node::IsLocal()
+bool Node::IsLocal() const noexcept
 {
     return isPropValue(prop_class_access, "none");
 }
 
-bool Node::HasValue(PropName name)
+bool Node::HasValue(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].HasValue();
@@ -284,17 +267,17 @@ bool Node::HasValue(PropName name)
         return false;
 }
 
-bool Node::isPropValue(PropName name, const char* value)
+bool Node::isPropValue(PropName name, const char* value) const noexcept
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
-        return (m_properties[result->second].GetValue().is_sameas(value));
+        return (m_properties[result->second].as_string().is_sameas(value));
     }
 
     return false;
 }
 
-bool Node::isPropValue(PropName name, bool value)
+bool Node::isPropValue(PropName name, bool value) const noexcept
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
     {
@@ -304,7 +287,7 @@ bool Node::isPropValue(PropName name, bool value)
     return false;
 }
 
-bool Node::prop_as_bool(PropName name)
+bool Node::prop_as_bool(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_bool();
@@ -312,7 +295,7 @@ bool Node::prop_as_bool(PropName name)
         return false;
 }
 
-int Node::prop_as_int(PropName name)
+int Node::prop_as_int(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_int();
@@ -320,7 +303,7 @@ int Node::prop_as_int(PropName name)
         return 0;
 }
 
-wxColour Node::prop_as_wxColour(PropName name)
+wxColour Node::prop_as_wxColour(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_color();
@@ -328,7 +311,7 @@ wxColour Node::prop_as_wxColour(PropName name)
         return wxColour();
 }
 
-wxFont Node::prop_as_font(PropName name)
+wxFont Node::prop_as_font(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_font();
@@ -336,7 +319,7 @@ wxFont Node::prop_as_font(PropName name)
         return *wxNORMAL_FONT;
 }
 
-wxPoint Node::prop_as_wxPoint(PropName name)
+wxPoint Node::prop_as_wxPoint(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_point();
@@ -344,7 +327,7 @@ wxPoint Node::prop_as_wxPoint(PropName name)
         return wxDefaultPosition;
 }
 
-wxSize Node::prop_as_wxSize(PropName name)
+wxSize Node::prop_as_wxSize(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_size();
@@ -352,7 +335,7 @@ wxSize Node::prop_as_wxSize(PropName name)
         return wxDefaultSize;
 }
 
-wxBitmap Node::prop_as_wxBitmap(PropName name)
+wxBitmap Node::prop_as_wxBitmap(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_bitmap();
@@ -360,7 +343,7 @@ wxBitmap Node::prop_as_wxBitmap(PropName name)
         return wxNullBitmap;
 }
 
-wxArrayString Node::prop_as_wxArrayString(PropName name)
+wxArrayString Node::prop_as_wxArrayString(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_wxArrayString();
@@ -368,7 +351,7 @@ wxArrayString Node::prop_as_wxArrayString(PropName name)
         return wxArrayString();
 }
 
-FontProperty Node::prop_as_font_prop(PropName name)
+FontProperty Node::prop_as_font_prop(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_font_prop();
@@ -376,7 +359,7 @@ FontProperty Node::prop_as_font_prop(PropName name)
         return FontProperty(wxNORMAL_FONT);
 }
 
-double Node::prop_as_double(PropName name)
+double Node::prop_as_double(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_float();
@@ -384,7 +367,7 @@ double Node::prop_as_double(PropName name)
         return 0;
 }
 
-wxString Node::prop_as_wxString(PropName name)
+wxString Node::prop_as_wxString(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_wxString();
@@ -392,33 +375,25 @@ wxString Node::prop_as_wxString(PropName name)
         return wxString();
 }
 
-const ttlib::cstr& Node::prop_as_string(PropName name)
+const ttlib::cstr& Node::prop_as_string(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].get_value();
+        return m_properties[result->second].as_string();
     else
         return tt_empty_cstr;
 }
 
-ttlib::cview Node::prop_cview(PropName name)
-{
-    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
-        return m_properties[result->second].as_cview();
-    else
-        return tt_empty_cstr.subview();
-}
-
-const ttlib::cstr& Node::get_node_name()
+const ttlib::cstr& Node::get_node_name() const
 {
     if (auto it = m_prop_indices.find(prop_var_name); it != m_prop_indices.end())
-        return m_properties[it->second].get_value();
+        return m_properties[it->second].as_string();
     else if (it = m_prop_indices.find(prop_class_name); it != m_prop_indices.end())
-        return m_properties[it->second].get_value();
+        return m_properties[it->second].as_string();
     else
         return tt_empty_cstr;
 }
 
-const ttlib::cstr& Node::get_parent_name()
+const ttlib::cstr& Node::get_parent_name() const
 {
     if (m_parent)
         return m_parent->get_node_name();
@@ -426,7 +401,7 @@ const ttlib::cstr& Node::get_parent_name()
     return tt_empty_cstr;
 }
 
-const ttlib::cstr& Node::get_form_name()
+const ttlib::cstr& Node::get_form_name() const
 {
     if (auto form = FindParentForm(); form)
     {
@@ -435,7 +410,7 @@ const ttlib::cstr& Node::get_form_name()
     return tt_empty_cstr;
 }
 
-wxSizerFlags Node::GetSizerFlags()
+wxSizerFlags Node::GetSizerFlags() const
 {
     wxSizerFlags flags;
     flags.Proportion(prop_as_int(prop_proportion));
@@ -728,7 +703,10 @@ void Node::ModifyProperty(PropName name, ttlib::cview value)
 
 void Node::ModifyProperty(ttlib::cview name, int value)
 {
-    auto prop = get_prop_ptr(name);
+    NodeProperty* prop = nullptr;
+    if (auto find_prop = rmap_PropNames.find(name.c_str()); find_prop != rmap_PropNames.end())
+        prop = get_prop_ptr(find_prop->second);
+
     if (prop && value != prop->as_int())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
@@ -738,7 +716,10 @@ void Node::ModifyProperty(ttlib::cview name, int value)
 
 void Node::ModifyProperty(ttlib::cview name, ttlib::cview value)
 {
-    auto prop = get_prop_ptr(name);
+    NodeProperty* prop = nullptr;
+    if (auto find_prop = rmap_PropNames.find(name.c_str()); find_prop != rmap_PropNames.end())
+        prop = get_prop_ptr(find_prop->second);
+
     if (prop && value != prop->as_cview())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
@@ -799,7 +780,7 @@ ttlib::cstr Node::GetUniqueName(const ttlib::cstr& proposed_name)
     return new_name;
 }
 
-static const PropName var_names[] = {
+static const PropName s_var_names[] = {
 
     prop_var_name,
     prop_checkbox_var_name,
@@ -823,7 +804,7 @@ bool Node::FixDuplicateName()
     form->CollectUniqueNames(name_set, this);
 
     bool replaced = false;
-    for (auto& iter: var_names)
+    for (auto& iter: s_var_names)
     {
         if (auto& name = prop_as_string(iter); name.size())
         {
@@ -847,8 +828,8 @@ bool Node::FixDuplicateName()
                     new_name << org_name << '_' << i;
                 }
 
-                auto fix_name = get_value_ptr(map_PropNames[iter]);
-                *fix_name = new_name;
+                auto fix_name = get_prop_ptr(iter);
+                fix_name->set_value(new_name);
                 replaced = true;
             }
         }
@@ -888,7 +869,7 @@ void Node::FixDuplicateNodeNames(Node* form)
     std::unordered_set<std::string> name_set;
     form->CollectUniqueNames(name_set, this);
 
-    for (auto& iter: var_names)
+    for (auto& iter: s_var_names)
     {
         if (auto& name = prop_as_string(iter); name.size())
         {
@@ -912,8 +893,8 @@ void Node::FixDuplicateNodeNames(Node* form)
                     new_name << org_name << '_' << i;
                 }
 
-                auto fix_name = get_value_ptr(map_PropNames[iter]);
-                *fix_name = new_name;
+                auto fix_name = get_prop_ptr(iter);
+                fix_name->set_value(new_name);
             }
         }
     }
@@ -928,7 +909,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
 {
     if (!IsForm() && cur_node != this)
     {
-        for (auto& iter: var_names)
+        for (auto& iter: s_var_names)
         {
             if (auto& name = prop_as_string(iter); name.size())
             {
@@ -943,7 +924,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
     }
 }
 
-int_t Node::FindInsertionPos(Node* child)
+int_t Node::FindInsertionPos(Node* child) const
 {
     if (child)
     {
@@ -956,7 +937,7 @@ int_t Node::FindInsertionPos(Node* child)
     return -1;
 }
 
-size_t Node::GetNodeSize()
+size_t Node::GetNodeSize() const
 {
     auto size = sizeof(*this);
     // Add the size of all the node pointers, but not the size of the individual children
@@ -977,14 +958,11 @@ size_t Node::GetNodeSize()
     size += (m_prop_indices.size() * (sizeof(size_t) * 2));
     size += (m_event_map.size() * (sizeof(std::string) + sizeof(size_t)));
 
-    // Hopefully, this map will get removed at some point
-    size += (m_prop_map.size() * (sizeof(std::string) + sizeof(size_t)));
-
     return size;
 }
 
 // Create a hash of the node name and all property values of the node, and recursively call all children
-void Node::CalcNodeHash(size_t& hash)
+void Node::CalcNodeHash(size_t& hash) const
 {
     // djb2 hash algorithm
 

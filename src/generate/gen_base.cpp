@@ -343,7 +343,7 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
         return;
     }
 
-    auto class_name = propName->GetValue();
+    auto& class_name = propName->as_string();
     if (class_name.empty())
     {
         FAIL_MSG("Node name cannot be null");
@@ -400,10 +400,10 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
 {
     if (auto prop = node->get_prop_ptr(prop_class_access); prop)
     {
-        if (prop->GetValue() != "none")
+        if (prop->as_string() != "none")
         {
-            if ((perm == Permission::Public && prop->GetValue() == "public:") ||
-                (perm == Permission::Protected && prop->GetValue() == "protected:"))
+            if ((perm == Permission::Public && prop->as_string() == "public:") ||
+                (perm == Permission::Protected && prop->as_string() == "protected:"))
             {
                 auto code = GetDeclaration(node);
                 if (code.size())
@@ -759,7 +759,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const wxString& cla
         return;
     }
 
-    auto class_name = propName->GetValue();
+    auto& class_name = propName->as_string();
     if (class_name.empty())
     {
         FAIL_MSG("Node name can not be null");
@@ -1054,7 +1054,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             }
             else if (node->GetChildCount() > 1)
             {
-                if (node->get_prop_ptr(prop_splitmode)->GetValue() == "wxSPLIT_VERTICAL")
+                if (node->prop_as_string(prop_splitmode) == "wxSPLIT_VERTICAL")
                     code << "->SplitVertically(";
                 else
                     code << "->SplitHorizontally(";
@@ -1097,7 +1097,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
     {
         if (iter.type() == type_id)
         {
-            auto& prop_id = iter.GetValue();
+            auto& prop_id = iter.as_string();
             if (!prop_id.is_sameprefix("wxID_"))
                 set_ids.insert(prop_id);
         }

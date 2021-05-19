@@ -107,17 +107,14 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
 
     code << '\n';
     code << GetParentName(node) << "->AddPage(" << node->get_node_name() << ", ";
-    if (node->HasValue(prop_label))
-        code << GenerateQuotedString(node->prop_as_string(prop_label));
-    else
-        code << "wxEmptyString";
+    code << GenerateQuotedString(node, prop_label);
 
     // Default is false, so only add parameter if it is true.
     if (node->prop_as_bool(prop_select))
         code << ", true";
 
     if (node->HasValue(prop_bitmap) &&
-        (node->GetParent()->prop_as_bool(prop_display_images) || node->GetParent()->isGen(gen_wxToolbook)))
+        (node->GetParent()->prop_as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
     {
         auto node_parent = node->GetParent();
         int idx_image = 0;
@@ -297,7 +294,7 @@ bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 {
     InsertGeneratorInclude(node, "#include <wx/listbook.h>", set_src, set_hdr);
     auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size.x != -1 || size.y != -1)
+    if (size != wxDefaultSize)
     {
         InsertGeneratorInclude(node, "#include <wx/imaglist.h>", set_src, set_hdr);
         InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
@@ -322,13 +319,13 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
     // A toolbook always has images, so we can't use AddBookImageList
 
     auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size.x == -1)
+    if (size.GetWidth() == -1)
     {
-        size.x = DEF_TAB_IMG_WIDTH;
+        size.SetWidth(DEF_TAB_IMG_WIDTH);
     }
-    if (size.y == -1)
+    if (size.GetHeight() == -1)
     {
-        size.y = DEF_TAB_IMG_HEIGHT;
+        size.SetHeight(DEF_TAB_IMG_HEIGHT);
     }
 
     auto img_list = new wxImageList(size.x, size.y);

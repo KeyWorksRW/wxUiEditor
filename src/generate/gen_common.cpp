@@ -158,11 +158,8 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
 {
     ttlib::cstr code;
-    if (str.empty())
-    {
-        code << "wxEmptyString";
-    }
-    else
+
+    if (str.size())
     {
         auto str_with_escapes = ConvertToCodeString(str);
         if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
@@ -170,31 +167,38 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
         else
             code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
     }
+    else
+    {
+        code << "wxEmptyString";
+    }
+
     return code;
 }
 
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
     ttlib::cstr code;
-    if (!node->HasValue(prop_name))
+
+    if (node->HasValue(prop_name))
     {
-        code << "wxEmptyString";
-    }
-    else
-    {
-        auto str_with_escapes = ConvertToCodeString(node->prop_cview(prop_name));
+        auto str_with_escapes = ConvertToCodeString(node->prop_as_string(prop_name));
         if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
             code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
         else
             code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
     }
+    else
+    {
+        code << "wxEmptyString";
+    }
+
     return code;
 }
 
 // clang-format off
 
 // List of valid component parent types
-static constexpr GenType GenParentTypes[] = {
+static constexpr GenType s_GenParentTypes[] = {
 
     type_auinotebook,
     type_bookpage,
@@ -227,7 +231,7 @@ ttlib::cstr GetParentName(Node* node)
             return ttlib::cstr("this");
         }
 
-        for (auto iter: GenParentTypes)
+        for (auto iter: s_GenParentTypes)
         {
             if (parent->isType(iter))
             {
@@ -892,4 +896,42 @@ ttlib::cstr GenerateColorCode(Node* node, PropName prop_name)
     }
 
     return code;
+}
+
+// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string. Used when generating
+// code.
+ttlib::cstr ConvertToCodeString(const ttlib::cstr& text)
+{
+    ttlib::cstr result;
+
+    for (auto c: text)
+    {
+        switch (c)
+        {
+            case '"':
+                result += "\\\"";
+                break;
+
+            case '\\':
+                result += "\\\\";
+                break;
+
+            case '\t':
+                result += "\\t";
+                break;
+
+            case '\n':
+                result += "\\n";
+                break;
+
+            case '\r':
+                result += "\\r";
+                break;
+
+            default:
+                result += c;
+                break;
+        }
+    }
+    return result;
 }

@@ -19,6 +19,7 @@
 
 // Common component functions
 
+// Flags are added with no space around '|' character.
 inline void AddBitFlag(ttlib::cstr& strFlags, ttlib::cview flag)
 {
     if (strFlags.size())
@@ -26,14 +27,25 @@ inline void AddBitFlag(ttlib::cstr& strFlags, ttlib::cview flag)
     strFlags << flag;
 }
 
-// Generate wxSizerFlags() function using properties from supplied node
+// Generate wxSizerFlags() function based on prop_proportion, prop_alignment, prop_flags,
+// prop_borders and prop_border_size
 ttlib::cstr GenerateSizerFlags(Node* node);
 
-// If internationalize property is true, returns _("str") otherwise it just returns the string in quotes
+// Places the string in wxString::FromUTF8(), adds C++ escapes around any characters the
+// compiler wouldn't accept as a normal part of a string, and wraps it all in _() if
+// prop_internationalize is true.
+//
+// Will return "wxEmptyString" if prop_name is empty.
 ttlib::cstr GenerateQuotedString(const ttlib::cstr& str);
+
+// Places the string in wxString::FromUTF8(), adds C++ escapes around any characters the
+// compiler wouldn't accept as a normal part of a string, and wraps it all in _() if
+// prop_internationalize is true.
+//
+// Will return "wxEmptyString" if prop_name is empty.
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name);
 
-// Insert a required include file into either src or hdr set (depending on "class_access" property)
+// Insert a required include file into either src or hdr set (depending on prop_class_access)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr);
 
@@ -49,7 +61,9 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
 // Generate any non-default wxWindow settings
 void GenerateWindowSettings(Node* node, ttlib::cstr& code);
 
-// Converts bitmap property into code. Handles both HDR and Art Provider
+// Converts bitmap property into code. Code is set to wxNullBitmap if no bitmap. Art will
+// return either a bitmap or an image if scaling is requested. XPM returns wxImage and HDR
+// returns GetImgFromHdr() (which is a wxImage).
 ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description);
 
 // Converts color text into code.
@@ -66,3 +80,6 @@ void GenStyle(Node* node, ttlib::cstr& code, ttlib::cview extra_style = tt_empty
 
 ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& class_name);
 ttlib::cstr GenFormSettings(Node* node);
+
+// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
+ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);

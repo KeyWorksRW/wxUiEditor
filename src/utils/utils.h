@@ -9,7 +9,7 @@
 
 #include <wx/settings.h>
 
-#include <ttcstr.h>  // cstr -- Classes for handling zero-terminated char strings.
+#include "ttcstr.h"  // ttlib::cstr -- std::string with additional methods
 
 class wxColour;
 class wxImage;
@@ -48,10 +48,6 @@ ttlib::cstr ConvertColourToString(const wxColour& colour);
 ttlib::cstr ConvertSystemColourToString(long colour);
 const char* ConvertFontFamilyToString(wxFontFamily family);
 
-// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
-ttlib::cstr ConvertToCodeString(ttlib::cview text);
-ttlib::cstr ConvertToCodeString(Node* node, size_t prop_name);
-
 // Used to add escapes to a string that will be handed off to a wxWidgets property editor
 ttlib::cstr CreateEscapedText(ttlib::cview str);
 
@@ -66,7 +62,7 @@ std::vector<ttlib::cstr> ConvertToArrayString(ttlib::cview value);
 // Converts a GZIP unsigned char array into an image.
 wxImage LoadGzipImage(const unsigned char* data, size_t size_data);
 
-// Converts an unsigned char array into an image. This is typically use for loading internal
+// Converts an unsigned char array into an image. This is typically used for loading internal
 // #included images
 wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);
 

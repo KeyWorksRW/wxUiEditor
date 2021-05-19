@@ -122,9 +122,9 @@ void MockupParent::CreateContent()
     // Note that we show the form even if it's property has it set to hidden
     m_MockupWindow->Show();
 
-    if (auto background = m_form->get_prop_ptr(prop_background_colour); background && background->GetValue().size())
+    if (auto background = m_form->get_prop_ptr(prop_background_colour); background && background->as_string().size())
     {
-        m_panelContent->SetBackgroundColour(ConvertToColour(background->GetValue()));
+        m_panelContent->SetBackgroundColour(ConvertToColour(background->as_string()));
     }
     else if (m_form->isGen(gen_wxFrame))
     {

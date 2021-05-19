@@ -44,7 +44,7 @@ public:
     wxPoint as_point() const;
     wxSize as_size() const;
     wxString as_wxString() const { return m_value.wx_str(); }
-    ttlib::cview as_cview() const { return m_value.subview(); }
+    ttlib::cview as_cview() const { return ttlib::cview(m_value.c_str(), m_value.length()); }
     wxArrayString as_wxArrayString() const;
 
     auto as_vector() const -> std::vector<ttlib::cstr>;

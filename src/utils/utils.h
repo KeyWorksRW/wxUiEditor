@@ -15,6 +15,7 @@ class wxColour;
 class wxImage;
 class wxPoint;
 class wxSize;
+class Node;
 
 // Used to index fields in a bitmap property
 enum PropIndex
@@ -49,6 +50,7 @@ const char* ConvertFontFamilyToString(wxFontFamily family);
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 ttlib::cstr ConvertToCodeString(ttlib::cview text);
+ttlib::cstr ConvertToCodeString(Node* node, size_t prop_name);
 
 // Used to add escapes to a string that will be handed off to a wxWidgets property editor
 ttlib::cstr CreateEscapedText(ttlib::cview str);
@@ -59,7 +61,7 @@ wxColour ConvertToColour(ttlib::cview value);
 // Replace escape slashes with the actual character. Affects \\, \\n, \\r, and \\t
 ttlib::cstr ConvertEscapeSlashes(ttlib::cview str);
 
-std::vector<std::string> ConvertToArrayString(ttlib::cview value);
+std::vector<ttlib::cstr> ConvertToArrayString(ttlib::cview value);
 
 // Converts a GZIP unsigned char array into an image.
 wxImage LoadGzipImage(const unsigned char* data, size_t size_data);

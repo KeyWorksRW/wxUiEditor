@@ -31,6 +31,7 @@ ttlib::cstr GenerateSizerFlags(Node* node);
 
 // If internationalize property is true, returns _("str") otherwise it just returns the string in quotes
 ttlib::cstr GenerateQuotedString(const ttlib::cstr& str);
+ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name);
 
 // Insert a required include file into either src or hdr set (depending on "class_access" property)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,

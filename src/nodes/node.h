@@ -176,6 +176,7 @@ public:
     double prop_as_double(PropName name);
 
     const ttlib::cstr& prop_as_string(PropName name);
+    ttlib::cview prop_cview(PropName name);
 
     // This will convert the string from UTF8 to UTF16 on Windows
     wxString prop_as_wxString(PropName name);

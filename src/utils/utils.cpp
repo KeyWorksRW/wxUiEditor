@@ -13,8 +13,9 @@
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations
 #include <wx/mstream.h>  // Memory stream classes
 
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
+#include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 #include "utils.h"         // Utility functions that work with properties
 
@@ -444,9 +445,9 @@ ttlib::cstr CreateEscapedText(ttlib::cview str)
     return result;
 }
 
-std::vector<std::string> ConvertToArrayString(ttlib::cview value)
+std::vector<ttlib::cstr> ConvertToArrayString(ttlib::cview value)
 {
-    std::vector<std::string> array;
+    std::vector<ttlib::cstr> array;
     if (value.empty())
         return array;
     ttlib::cstr parse;
@@ -499,4 +500,9 @@ ttlib::cstr ConvertToCodeString(ttlib::cview text)
         }
     }
     return result;
+}
+
+ttlib::cstr ConvertToCodeString(Node* node, GenEnum::PropName prop_name)
+{
+    return ConvertToCodeString(node->prop_cview(prop_name));
 }

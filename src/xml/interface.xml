@@ -200,7 +200,7 @@
 
 <gen class="Bitmaps" type="interface">
     <property name="bitmap" type="image"
-        help="This is the bitmap shown in the default state, it must be always valid while all the other bitmaps are optional and don't have to be set." />
+        help="This is the bitmap shown in the default state. It will also be used for all other bitmaps if they are not explicitly set." />
     <property name="disabled_bmp" type="image"
         help="Bitmap shown when the button is disabled." />
     <property name="pressed_bmp" type="image"
@@ -221,7 +221,21 @@
             help="Positions the bitmap at the bottom" />
       </property>
     <property name="margins" type="wxSize"
-        help="The margins between the bitmap and the text of the button. This is currently only implemented under MSW. If it is not specified, default margin is used around the bitmap." />
+        help="The margins between the bitmap and the text of the button. This is currently only implemented under MSW. If it is not specified, a default margin is used around the bitmap." />
+</gen>
+
+<!-- wxCommandLink needs a special version because position and margins are not used. -->
+<gen class="Command Bitmaps" type="interface">
+    <property name="bitmap" type="image"
+        help="This is the bitmap shown in the default state. It will also be used for all other bitmaps if they are not explicitly set." />
+    <property name="disabled_bmp" type="image"
+        help="Bitmap shown when the button is disabled." />
+    <property name="pressed_bmp" type="image"
+        help="Bitmap shown when the button is pushed (e.g. while the user keeps the mouse button pressed on it)." />
+    <property name="focus" type="image"
+        help="Bitmap shown when the button has keyboard focus but is not pressed." />
+    <property name="current" type="image"
+        help="Bitmap shown when the mouse is over the button (but it is not pressed). Notice that if hover bitmap is not specified but the current platform UI uses hover images for the buttons (such as Windows XP or GTK+), then the focus bitmap is used for hover state as well. This makes it possible to set focus bitmap only to get reasonably good behaviour on all platforms." />
 </gen>
 
 <gen class="AUI" type="interface">

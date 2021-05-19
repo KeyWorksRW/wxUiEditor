@@ -390,6 +390,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_Check3State, "Check3State" },
     { gen_Choice_Validator, "Choice Validator" },
     { gen_Code_Generation, "Code Generation" },
+    { gen_Command_Bitmaps, "Command Bitmaps" },
     { gen_Integer_Validator, "Integer Validator" },
     { gen_List_Validator, "List Validator" },
     { gen_MenuBar, "MenuBar" },

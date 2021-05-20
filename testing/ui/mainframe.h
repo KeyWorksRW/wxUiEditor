@@ -15,6 +15,7 @@ public:
     MainFrame(wxWindow* parent);
 
 protected:
+    void OnMultiTestDialog(wxCommandEvent& event) override;
     void OnChoicebook(wxCommandEvent& event) override;
     void OnCommonDialog(wxCommandEvent& event) override;
     void OnListbook(wxCommandEvent& event) override;

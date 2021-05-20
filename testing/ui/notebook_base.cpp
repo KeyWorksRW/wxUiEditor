@@ -79,6 +79,5 @@ NotebookBase::NotebookBase(wxWindow* parent, wxWindowID id, const wxString& titl
     box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(box_sizer);
-
     Centre(wxBOTH);
 }

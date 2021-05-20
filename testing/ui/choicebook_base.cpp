@@ -96,7 +96,6 @@ ChoiceBookBase::ChoiceBookBase(wxWindow* parent, wxWindowID id, const wxString& 
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 
     // Event handlers

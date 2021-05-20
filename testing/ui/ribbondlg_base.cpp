@@ -33,6 +33,6 @@ RibbonDlgBase::RibbonDlgBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_rbnBar->Realize();
 
     SetSizerAndFit(parent_sizer);
-
+    SetSize(wxSize(500, 300));
     Centre(wxBOTH);
 }

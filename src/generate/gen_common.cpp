@@ -687,14 +687,14 @@ ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node)
             {
                 if (code.size())
                     code << "\n";
-                code << "    Realize();";
+                code << "\tRealize();";
             }
             else
             {
                 auto& center = node->prop_as_string(prop_center);
                 if (center.size() && !center.is_sameas("no"))
                 {
-                    code << "    Centre(" << center << ");";
+                    code << "\tCentre(" << center << ");";
                 }
             }
             break;
@@ -725,6 +725,8 @@ ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node)
             else
                 code << "wxDefaultPosition";
 
+            // BUGBUG: [KeyWorks - 05-20-2021] This doesn't make sense in a wxDialog because the generated code calls SetSize
+            // with this value -- and without that call, SetSizerAndFit() will ignore this setting.
             code << ", const wxSize& size = ";
             auto size = node->prop_as_wxPoint(prop_size);
             if (size.x != -1 || size.y != -1)
@@ -774,6 +776,9 @@ ttlib::cstr GenFormSettings(Node* node)
         auto min_size = node->prop_as_wxSize(prop_minimum_size);
         auto max_size = node->prop_as_wxSize(prop_maximum_size);
 
+#if 0
+// REVIEW: [KeyWorks - 05-20-2021] This is definitely wrong for a wxDialog (see issue #242) -- is it valid for a
+// wxFrame or any other type of form?
         if (min_size != wxDefaultSize || max_size != wxDefaultSize)
         {
             code << "SetSizeHints(";
@@ -787,6 +792,7 @@ ttlib::cstr GenFormSettings(Node* node)
 
             code << ");";
         }
+#endif
 
         if (node->HasValue(prop_icon))
         {

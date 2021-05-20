@@ -1036,7 +1036,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
         if (node->IsSizer())
         {
-            if (!parent->IsSizer())
+            if (!parent->IsSizer() && !parent->isGen(gen_wxDialog))
             {
                 // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
                 // wxPanel.

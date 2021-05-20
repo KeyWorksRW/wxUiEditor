@@ -156,7 +156,6 @@ OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_panel6->SetSizerAndFit(parent_sizer7);
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "OtherCtrlsBase");

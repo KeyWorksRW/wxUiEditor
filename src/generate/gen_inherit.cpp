@@ -173,6 +173,8 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
 
     bool allow_minmax = true;
 
+    // REVIEW: [KeyWorks - 05-20-2021] Because of issue #242, this was shut off for all forms.
+
     // The following needs to match GenFormSettings() in gen_common.cpp. If these conditions are met, then GenFormSettings()
     // will generate SetSizeHints(min, max) so there is no reason to generate SetMinSize()/SetMaxSize()
     if (node->IsForm() && !node->isGen(gen_PanelForm) && !node->isGen(gen_wxToolBar))

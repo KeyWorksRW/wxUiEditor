@@ -44,7 +44,65 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenEvents(NodeEvent* event, cons
 
 std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
-    return GenFormCode(cmd, node);
+    if (cmd == code_after_children)
+    {
+        ttlib::cstr code;
+
+        Node* dlg;
+        if (node->IsForm())
+        {
+            dlg = node;
+            ASSERT_MSG(dlg->GetChildCount(), "Trying to generate code for a dialog with no children.")
+            if (!dlg->GetChildCount())
+                return {};  // empty dialog, so nothing to do
+            ASSERT_MSG(dlg->GetChild(0)->IsSizer(), "Expected first child of a dialog to be a sizer.");
+            if (dlg->GetChild(0)->IsSizer())
+                node = dlg->GetChild(0);
+        }
+        else
+        {
+            dlg = node->FindParentForm();
+        }
+
+        auto min_size = dlg->prop_as_wxSize(prop_minimum_size);
+        auto max_size = dlg->prop_as_wxSize(prop_maximum_size);
+        auto size = dlg->prop_as_wxSize(prop_size);
+
+        if (min_size == wxDefaultSize && max_size == wxDefaultSize)
+        {
+            code << "\tSetSizerAndFit(" << node->get_node_name() << ");";
+        }
+        else
+        {
+            code << "\tSetSizer(" << node->get_node_name() << ");";
+            if (min_size != wxDefaultSize)
+            {
+                code << "\n\tSetMinSize(wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
+            }
+            if (max_size != wxDefaultSize)
+            {
+                code << "\n\tSetMaxSize(wxSize(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
+            }
+            code << "\n\tFit();";
+        }
+
+        if (size != wxDefaultSize)
+        {
+            code << "\n\tSetSize(wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
+        }
+
+        auto& center = dlg->prop_as_string(prop_center);
+        if (center.size() && !center.is_sameas("no"))
+        {
+            code << "\n\tCentre(" << center << ");";
+        }
+
+        return code;
+    }
+    else
+    {
+        return GenFormCode(cmd, node);
+    }
 }
 
 std::optional<ttlib::cstr> DialogFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)

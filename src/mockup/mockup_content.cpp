@@ -256,6 +256,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     else if ((created_sizer && wxDynamicCast(parentNode, wxWindow)) || (!parentNode && created_sizer))
     {
+        // REVIEW: [KeyWorks - 05-20-2021] As per issue #242 this doesn't look right -- leastwise not if size or minimum size
+        // is set.
         parent->SetSizer(created_sizer);
         if (parentNode)
             created_sizer->SetSizeHints(parent);

@@ -23,7 +23,7 @@ class DlgMultiTestBase : public wxDialog
 public:
     DlgMultiTestBase(wxWindow* parent, wxWindowID id = wxID_ANY,
         const wxString& title = wxString::FromUTF8("Widgets Testing"),
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600, 800),
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
 
 protected:

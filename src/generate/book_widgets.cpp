@@ -551,7 +551,7 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
 
         if (has_bitmaps)
         {
-            code.insert(0, "    ");
+            code.insert(0, "\t");
             auto size = node->prop_as_wxSize(prop_bitmapsize);
             if (size.x == -1)
             {
@@ -565,8 +565,8 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
             // Enclose the code in braces to allow using "img_list" and "bmp" as variable names, as well as making the code
             // more readable.
 
-            code << "\n    {";
-            code << "\n        auto img_list = new wxImageList(";
+            code << "\n\t{";
+            code << "\n\t\tauto img_list = new wxImageList(";
             code << size.x << ", " << size.y << ");";
 
             for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
@@ -577,16 +577,16 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
 
                 if (node->GetChild(idx_child)->HasValue(prop_bitmap))
                 {
-                    code << "\n        auto img_" << idx_child << " = ";
+                    code << "\n\t\tauto img_" << idx_child << " = ";
                     code << GenerateBitmapCode(node->GetChild(idx_child)->prop_as_string(prop_bitmap)) << ";";
-                    code << "\n        img_list->Add(img_" << idx_child;
+                    code << "\n\t\timg_list->Add(img_" << idx_child;
                     if (node->GetChild(idx_child)->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
                         code << ".ConvertToImage()";
                     code << ".Scale(" << size.x << ", " << size.y << "));";
                 }
             }
-            code << "\n        " << node->get_node_name() << "->AssignImageList(img_list);";
-            code << "\n    }";
+            code << "\n\t\t" << node->get_node_name() << "->AssignImageList(img_list);";
+            code << "\n\t}";
         }
     }
 }

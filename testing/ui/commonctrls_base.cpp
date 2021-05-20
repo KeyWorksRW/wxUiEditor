@@ -31,8 +31,8 @@ static wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
 };
 
 CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+        const wxPoint& pos, const wxSize& size, long style) :
+    wxDialog(parent, id, title, pos, size, style)
 {
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -187,13 +187,13 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent, wxWindowID id, const wxString
     m_staticText11->Wrap(200);
     flex_grid_sizer->Add(m_staticText11, wxSizerFlags().Border(wxALL));
 
-	wxString radioBox_choices[] = {
-		wxString::FromUTF8("Button zero "),
-		wxString::FromUTF8("Button one "),
-		wxString::FromUTF8("Button two "),
-	};
-	m_radioBox = new wxRadioBox(this, wxID_ANY, wxString::FromUTF8("Radio Box"),
-		wxDefaultPosition, wxDefaultSize, 3, radioBox_choices, 0, wxRA_SPECIFY_ROWS);
+    wxString radioBox_choices[] = {
+        wxString::FromUTF8("Button zero "),
+        wxString::FromUTF8("Button one "),
+        wxString::FromUTF8("Button two "),
+    };
+    m_radioBox = new wxRadioBox(this, wxID_ANY, wxString::FromUTF8("Radio Box"),
+        wxDefaultPosition, wxDefaultSize, 3, radioBox_choices, 0, wxRA_SPECIFY_ROWS);
     m_radioBox->SetValidator(wxGenericValidator(&m_valRadio));
     flex_grid_sizer->Add(m_radioBox, wxSizerFlags().Border(wxALL));
 

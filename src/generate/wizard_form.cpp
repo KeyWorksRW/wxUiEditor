@@ -33,23 +33,23 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
 
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, const wxString& title,";
-    code << "\n        const wxPoint& pos, long style) : wxWizard()";
+    code << "\n\t\tconst wxPoint& pos, long style) : wxWizard()";
     code << "\n{";
 
     if (node->HasValue(prop_extra_style))
-        code << "\n    SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
+        code << "\n\tSetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
     if (node->prop_as_int(prop_border) != 5)
-        code << "\n    SetBorder(" << node->prop_as_string(prop_border) << ");";
+        code << "\n\tSetBorder(" << node->prop_as_string(prop_border) << ");";
     if (node->prop_as_int(prop_bmp_placement))
     {
-        code << "\n    SetBitmapPlacement(" << node->prop_as_string(prop_bmp_placement) << ");";
+        code << "\n\tSetBitmapPlacement(" << node->prop_as_string(prop_bmp_placement) << ");";
         if (node->prop_as_int(prop_bmp_min_width) > 0)
-            code << "\n    SetMinimumBitmapWidth(" << node->prop_as_string(prop_bmp_min_width) << ");";
+            code << "\n\tSetMinimumBitmapWidth(" << node->prop_as_string(prop_bmp_min_width) << ");";
         if (node->HasValue(prop_bmp_background_colour))
-            code << "\n    SetBitmapBackgroundColour(" << GenerateColorCode(node, prop_bmp_background_colour) << ");";
+            code << "\n\tSetBitmapBackgroundColour(" << GenerateColorCode(node, prop_bmp_background_colour) << ");";
     }
 
-    code << "\n    Create(parent, id, title, ";
+    code << "\n\tCreate(parent, id, title, ";
     if (node->HasValue(prop_bitmap))
         code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
     else
@@ -68,11 +68,11 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCo
         // This is the code to add to the header file
         code << node->prop_as_string(prop_class_name)
              << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
-        code << ",\n    const wxString& title = ";
+        code << ",\n\tconst wxString& title = ";
         auto& title = node->prop_as_string(prop_title);
         if (title.size())
         {
-            code << GenerateQuotedString(title) << ",\n    ";
+            code << GenerateQuotedString(title) << ",\n\t";
         }
         else
         {
@@ -86,7 +86,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCo
         else
             code << "wxDefaultPosition";
 
-        code << ",\n    long style = ";
+        code << ",\n\tlong style = ";
         auto& style = node->prop_as_string(prop_style);
         auto& win_style = node->prop_as_string(prop_window_style);
         if (style.empty() && win_style.empty())
@@ -131,7 +131,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCo
         {
             if (panes.size() > 1)
             {
-                code << "    " << panes[0]->prop_as_string(prop_var_name) << "->Chain("
+                code << "\t" << panes[0]->prop_as_string(prop_var_name) << "->Chain("
                      << panes[1]->prop_as_string(prop_var_name) << ")";
                 for (size_t pos = 1; pos + 1 < panes.size(); ++pos)
                 {

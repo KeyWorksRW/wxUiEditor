@@ -102,7 +102,7 @@ static void AddPropIfUsed(PropName prop_name, ttlib::cview func_name, Node* node
         if (color.size())
         {
             if (code.size())
-                code << "\n    ";
+                code << "\n\t";
             if (!node->IsForm())
                 code << node->get_node_name() << "->";
             code << "SetBackgroundColour(";
@@ -121,7 +121,7 @@ static void AddPropIfUsed(PropName prop_name, ttlib::cview func_name, Node* node
         if (color.size())
         {
             if (code.size())
-                code << "\n    ";
+                code << "\n\t";
             if (!node->IsForm())
                 code << node->get_node_name() << "->";
             code << "SetForegroundColour(";
@@ -137,7 +137,7 @@ static void AddPropIfUsed(PropName prop_name, ttlib::cview func_name, Node* node
     else if (node->prop_as_string(prop_name).size())
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << func_name << node->prop_as_string(prop_name) << ");";
@@ -156,7 +156,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_bool(prop_disabled))
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "Enable(false);";
@@ -165,7 +165,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_bool(prop_hidden))
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "Hide();";
@@ -184,7 +184,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         if (allow_minmax)
         {
             if (code.size())
-                code << "\n    ";
+                code << "\n\t";
             code << node->get_node_name() << "->";
             code << "SetMinSize(wxSize(" << size.x << ", " << size.y << "));";
         }
@@ -196,7 +196,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         if (allow_minmax)
         {
             if (code.size())
-                code << "\n    ";
+                code << "\n\t";
             code << node->get_node_name() << "->";
             code << "SetMaxSize(wxSize(" << size.x << ", " << size.y << "));";
         }
@@ -205,7 +205,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (!node->IsForm() && !node->isPropValue(prop_variant, "normal"))
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         code << node->get_node_name() << "->SetWindowVariant(";
 
         if (node->isPropValue(prop_variant, "small"))
@@ -219,7 +219,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_string(prop_tooltip).size())
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "SetToolTip(" << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
@@ -228,7 +228,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_string(prop_context_help).size())
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "SetHelpText(" << GenerateQuotedString(node->prop_as_string(prop_context_help)) << ");";

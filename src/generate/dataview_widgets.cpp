@@ -284,12 +284,12 @@ bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
 {
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
     code << node->prop_as_string(prop_type) << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
-         << ",\n            ";
+         << ",\n\t\t\t";
 
     code << node->prop_as_string(prop_model_column) << ", " << node->prop_as_string(prop_mode) << ", ";
     code << node->prop_as_string(prop_width) << ", ";
@@ -302,7 +302,7 @@ std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
 
     if (node->HasValue(prop_ellipsize))
     {
-        code << "\n    " << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
+        code << "\n\t" << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
              << node->prop_as_string(prop_ellipsize) << ");";
     }
 
@@ -313,12 +313,12 @@ std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
 
 std::optional<ttlib::cstr> DataViewListColumn::GenConstruction(Node* node)
 {
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
     code << node->prop_as_string(prop_type) << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
-         << ",\n            ";
+         << ",\n\t\t\t";
     code << node->prop_as_string(prop_mode) << ", " << node->prop_as_string(prop_width) << ", ";
 
     // BUGBUG: [KeyWorks - 12-14-2020] Currently the user is allowed to combine multiple alignment types such as right and
@@ -329,7 +329,7 @@ std::optional<ttlib::cstr> DataViewListColumn::GenConstruction(Node* node)
 
     if (node->HasValue(prop_ellipsize))
     {
-        code << "\n    " << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
+        code << "\n\t" << node->get_node_name() << "->GetRenderer()->EnableEllipsize("
              << node->prop_as_string(prop_ellipsize) << ");";
     }
 

@@ -91,7 +91,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxAnimationCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
-    code << ",\n        ";
+    code << ",\n\t\t";
     if (node->HasValue(prop_animation))
     {
         ttlib::multistr files(node->prop_as_string(prop_animation), ';');
@@ -107,7 +107,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
     GeneratePosSizeFlags(node, code);
     if (node->HasValue(prop_inactive_bitmap))
     {
-        code << "\n    " << node->get_node_name() << "->SetInactiveBitmap(";
+        code << "\n\t" << node->get_node_name() << "->SetInactiveBitmap(";
         code << GenerateBitmapCode(node->prop_as_string(prop_inactive_bitmap)) << ");";
     }
 
@@ -177,7 +177,7 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
             code << ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
         }
 
-        code << ",\n    ";
+        code << ",\n\t";
 
         auto& end_colour = node->prop_as_string(prop_end_colour);
         if (end_colour.contains("wx"))
@@ -194,7 +194,7 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
     {
         if (code.size())
             code << "\n";
-        code << node->get_node_name() << "->SetText(" << GenerateQuotedString(node->prop_as_string(prop_title)) << ",\n    ";
+        code << node->get_node_name() << "->SetText(" << GenerateQuotedString(node->prop_as_string(prop_title)) << ",\n\t";
         code << GenerateQuotedString(node->prop_as_string(prop_message)) << ");";
         auto_indent = indent::auto_keep_whitespace;
     }

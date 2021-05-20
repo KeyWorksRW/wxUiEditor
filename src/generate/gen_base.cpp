@@ -660,21 +660,21 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         if (class_name == "wxStdDialogButtonSizer")
         {
             if (node->prop_as_bool(prop_OK))
-                code << "\n    wxButton* " << node->get_node_name() << "OK;";
+                code << "\n\twxButton* " << node->get_node_name() << "OK;";
             if (node->prop_as_bool(prop_Yes))
-                code << "\n    wxButton* " << node->get_node_name() << "Yes;";
+                code << "\n\twxButton* " << node->get_node_name() << "Yes;";
             if (node->prop_as_bool(prop_Save))
-                code << "\n    wxButton* " << node->get_node_name() << "Save;";
+                code << "\n\twxButton* " << node->get_node_name() << "Save;";
             if (node->prop_as_bool(prop_Apply))
-                code << "\n    wxButton* " << node->get_node_name() << "Apply;";
+                code << "\n\twxButton* " << node->get_node_name() << "Apply;";
             if (node->prop_as_bool(prop_No))
-                code << "\n    wxButton* " << node->get_node_name() << "No;";
+                code << "\n\twxButton* " << node->get_node_name() << "No;";
             if (node->prop_as_bool(prop_Cancel))
-                code << "\n    wxButton* " << node->get_node_name() << "Cancel;";
+                code << "\n\twxButton* " << node->get_node_name() << "Cancel;";
             if (node->prop_as_bool(prop_Help))
-                code << "\n    wxButton* " << node->get_node_name() << "Help;";
+                code << "\n\twxButton* " << node->get_node_name() << "Help;";
             if (node->prop_as_bool(prop_ContextHelp))
-                code << "\n    wxButton* " << node->get_node_name() << "ContextHelp;";
+                code << "\n\twxButton* " << node->get_node_name() << "ContextHelp;";
         }
         else if (class_name == "wxStaticBitmap")
         {
@@ -693,7 +693,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         if (!node->IsLocal())
         {
             if (code.size())
-                code << "\n    ";
+                code << "\n\t";
             code << "wxStaticBoxSizer* " << node->get_node_name() << ';';
         }
     }
@@ -705,7 +705,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         if (!node->IsLocal())
         {
             if (code.size())
-                code << "\n    ";
+                code << "\n\t";
             code << "wxStaticBoxSizer* " << node->get_node_name() << ';';
         }
     }

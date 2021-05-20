@@ -326,7 +326,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         if (code.size() < 80)
             code << ", ";
         else
-            code << ",\n        ";
+            code << ",\n\t\t";
 
         GenPos(node, code);
         code << ", ";
@@ -401,7 +401,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
             code << ", ";
         else
         {
-            code << ",\n        ";
+            code << ",\n\t\t";
             if (code.is_sameprefix("    "))
                 code.insert(0, 4, ' ');
         }
@@ -429,8 +429,8 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
     {
         handler << event->get_name() << ',' << event->get_value();
         // Put the lambda expression on it's own line
-        handler.Replace("[", "\n    [");
-        comma = ",\n    ";
+        handler.Replace("[", "\n\t[");
+        comma = ",\n\t";
         is_lambda = true;
     }
     else if (event->get_value().contains("::"))
@@ -461,7 +461,7 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
         {
             code << node->get_node_name() << "->GetStaticBox()";
         }
-        code << "->Bind(" << handler << (is_lambda ? "\n    );" : ");");
+        code << "->Bind(" << handler << (is_lambda ? "\n\t);" : ");");
     }
 
     else if (node->isGen(gen_wxMenuItem) || node->isGen(gen_tool))
@@ -486,11 +486,11 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
     }
     else if (event->GetNode()->IsForm())
     {
-        code << "Bind(" << handler << (is_lambda ? "\n    );" : ");");
+        code << "Bind(" << handler << (is_lambda ? "\n\t);" : ");");
     }
     else
     {
-        code << event->GetNode()->get_node_name() << "->Bind(" << handler << (is_lambda ? "\n    );" : ");");
+        code << event->GetNode()->get_node_name() << "->Bind(" << handler << (is_lambda ? "\n\t);" : ");");
     }
 
     return code;
@@ -703,15 +703,15 @@ ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node)
             code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
             if (!node->isGen(gen_wxPanel) && !node->isGen(gen_wxToolBar))
             {
-                code << ",\n    const wxString& title = ";
+                code << ",\n\tconst wxString& title = ";
                 auto& title = node->prop_as_string(prop_title);
                 if (title.size())
                 {
-                    code << GenerateQuotedString(title) << ",\n    ";
+                    code << GenerateQuotedString(title) << ",\n\t";
                 }
                 else
                 {
-                    code << "wxEmptyString,\n    ";
+                    code << "wxEmptyString,\n\t";
                 }
             }
             else
@@ -732,7 +732,7 @@ ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node)
             else
                 code << "wxDefaultSize";
 
-            code << ",\n    long style = ";
+            code << ",\n\tlong style = ";
             auto& style = node->prop_as_string(prop_style);
             auto& win_style = node->prop_as_string(prop_window_style);
             if (style.empty() && win_style.empty())

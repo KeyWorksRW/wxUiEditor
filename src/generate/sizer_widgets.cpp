@@ -43,7 +43,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
     }
 
     return code;
@@ -93,7 +93,7 @@ std::optional<ttlib::cstr> GridSizerGenerator::GenConstruction(Node* node)
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
     }
 
     return code;
@@ -128,7 +128,7 @@ std::optional<ttlib::cstr> WrapSizerGenerator::GenConstruction(Node* node)
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.x != -1 || min_size.y != -1)
     {
-        code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
     }
 
     return code;
@@ -197,7 +197,7 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
     }
 
     return code;
@@ -213,7 +213,7 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenSettings(Node* node, size
     if (node->prop_as_bool(prop_hidden))
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         code << node->get_node_name() << "->GetStaticBox()->Hide();";
     }
 
@@ -325,7 +325,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
     }
 
     return code;
@@ -341,13 +341,13 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* no
     if (node->prop_as_bool(prop_hidden))
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         code << node->get_node_name() << "->GetStaticBox()->Hide();";
     }
     if (node->HasValue(prop_tooltip))
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         code << node->prop_as_string(prop_checkbox_var_name) << "->SetToolTip("
              << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
     }
@@ -451,7 +451,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
     }
 
     return code;
@@ -467,13 +467,13 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenSettings(Node* no
     if (node->prop_as_bool(prop_hidden))
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         code << node->get_node_name() << "->GetStaticBox()->Hide();";
     }
     if (node->HasValue(prop_tooltip))
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         code << node->prop_as_string(prop_radiobtn_var_name) << "->SetToolTip("
              << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
     }
@@ -524,7 +524,7 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
 std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
 {
     // The leading tab is in case we indent in a brace block later on
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
 
@@ -552,7 +552,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
         {
             if (!isExpanded)
             {
-                code << "\n    {";
+                code << "\n\t{";
                 isExpanded = true;
             }
             auto val = iter.atoi();
@@ -561,7 +561,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
             {
                 proportion = ttlib::atoi(ttlib::find_nonspace(iter.c_str() + pos + 1));
             }
-            code << "\n        " << node->get_node_name() << "->AddGrowableCol(" << val;
+            code << "\n\t    " << node->get_node_name() << "->AddGrowableCol(" << val;
             if (proportion > 0)
                 code << ", " << proportion;
             code << ");";
@@ -575,7 +575,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
         {
             if (!isExpanded)
             {
-                code << "\n    {";
+                code << "\n\t{";
                 isExpanded = true;
             }
             auto val = iter.atoi();
@@ -584,7 +584,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
             {
                 proportion = ttlib::atoi(ttlib::find_nonspace(iter.c_str() + pos + 1));
             }
-            code << "\n        " << node->get_node_name() << "->AddGrowableRow(" << val;
+            code << "\n\t    " << node->get_node_name() << "->AddGrowableRow(" << val;
             if (proportion > 0)
                 code << ", " << proportion;
             code << ");";
@@ -595,25 +595,24 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
         if (isExpanded)
-            code << "\n    }";
+            code << "\n\t}";
         return code;
     }
 
-    code << (isExpanded ? "\n        " : "\n    ") << node->get_node_name() << "->SetFlexibleDirection(" << direction
-         << ");";
+    code << (isExpanded ? "\n\t    " : "\n\t") << node->get_node_name() << "->SetFlexibleDirection(" << direction << ");";
 
     auto& non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
         if (isExpanded)
-            code << "\n    }";
+            code << "\n\t}";
         return code;
     }
-    code << (isExpanded ? "\n        " : "\n    ") << node->get_node_name() << "->SetNonFlexibleGrowMode(" << non_flex_growth
+    code << (isExpanded ? "\n\t    " : "\n\t") << node->get_node_name() << "->SetNonFlexibleGrowMode(" << non_flex_growth
          << ");";
 
     if (isExpanded)
-        code << "\n    }";
+        code << "\n\t}";
     return code;
 }
 
@@ -724,7 +723,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
 std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
 {
     // The leading tab is in case we indent in a brace block later on
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
 
@@ -749,7 +748,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
         {
             if (!isExpanded)
             {
-                code << "\n    {";
+                code << "\n\t{";
                 isExpanded = true;
             }
             auto val = iter.atoi();
@@ -758,7 +757,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
             {
                 proportion = ttlib::atoi(ttlib::find_nonspace(iter.c_str() + pos + 1));
             }
-            code << "\n        " << node->get_node_name() << "->AddGrowableCol(" << val;
+            code << "\n\t    " << node->get_node_name() << "->AddGrowableCol(" << val;
             if (proportion > 0)
                 code << ", " << proportion;
             code << ");";
@@ -772,7 +771,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
         {
             if (!isExpanded)
             {
-                code << "\n    {";
+                code << "\n\t{";
                 isExpanded = true;
             }
             auto val = iter.atoi();
@@ -781,7 +780,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
             {
                 proportion = ttlib::atoi(ttlib::find_nonspace(iter.c_str() + pos + 1));
             }
-            code << "\n        " << node->get_node_name() << "->AddGrowableRow(" << val;
+            code << "\n\t    " << node->get_node_name() << "->AddGrowableRow(" << val;
             if (proportion > 0)
                 code << ", " << proportion;
             code << ");";
@@ -792,25 +791,24 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {
         if (isExpanded)
-            code << "\n    }";
+            code << "\n\t}";
         return code;
     }
 
-    code << (isExpanded ? "\n        " : "\n    ") << node->get_node_name() << "->SetFlexibleDirection(" << direction
-         << ");";
+    code << (isExpanded ? "\n\t    " : "\n\t") << node->get_node_name() << "->SetFlexibleDirection(" << direction << ");";
 
     auto non_flex_growth = node->prop_as_string(prop_non_flexible_grow_mode);
     if (non_flex_growth.empty() || non_flex_growth.is_sameas("wxFLEX_GROWMODE_SPECIFIED"))
     {
         if (isExpanded)
-            code << "\n    }";
+            code << "\n\t}";
         return code;
     }
-    code << (isExpanded ? "\n        " : "\n    ") << node->get_node_name() << "->SetNonFlexibleGrowMode(" << non_flex_growth
+    code << (isExpanded ? "\n\t    " : "\n\t") << node->get_node_name() << "->SetNonFlexibleGrowMode(" << non_flex_growth
          << ");";
 
     if (isExpanded)
-        code << "\n    }";
+        code << "\n\t}";
     return code;
 }
 
@@ -1090,7 +1088,7 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
 {
     auto& def_btn_name = node->prop_as_string(prop_default_button);
 
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
 
@@ -1132,9 +1130,9 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
 
         // If wxNO_DEFAULT is specified and a No button is used, then it will be set as the default
         if (def_btn_name == "Close" || def_btn_name == "Cancel")
-            code << "\n    " << node->get_node_name() << "->GetCancelButton()->SetDefault();";
+            code << "\n\t" << node->get_node_name() << "->GetCancelButton()->SetDefault();";
         else if (def_btn_name == "Apply")
-            code << "\n    " << node->get_node_name() << "->GetApplyButton()->SetDefault();";
+            code << "\n\t" << node->get_node_name() << "->GetApplyButton()->SetDefault();";
 
         return code;
     }
@@ -1145,47 +1143,47 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n    " << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
     }
 
     // You can only have one of: Ok, Yes, Save
     if (node->prop_as_bool(prop_OK))
-        code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_OK));";
+        code << "\n\t" << node->get_node_name() << "->AddButton(new wxButton(this, wxID_OK));";
     else if (node->prop_as_bool(prop_Yes))
-        code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_YES));";
+        code << "\n\t" << node->get_node_name() << "->AddButton(new wxButton(this, wxID_YES));";
     else if (node->prop_as_bool(prop_Save))
-        code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_SAVE));";
+        code << "\n\t" << node->get_node_name() << "->AddButton(new wxButton(this, wxID_SAVE));";
 
     if (node->prop_as_bool(prop_No))
-        code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_NO));";
+        code << "\n\t" << node->get_node_name() << "->AddButton(new wxButton(this, wxID_NO));";
 
     // You can only have one of: Cancel, Close
     if (node->prop_as_bool(prop_Cancel))
-        code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_CANCEL));";
+        code << "\n\t" << node->get_node_name() << "->AddButton(new wxButton(this, wxID_CANCEL));";
     else if (node->prop_as_bool(prop_Close))
-        code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_CLOSE));";
+        code << "\n\t" << node->get_node_name() << "->AddButton(new wxButton(this, wxID_CLOSE));";
 
     if (node->prop_as_bool(prop_Apply))
-        code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_APPLY));";
+        code << "\n\t" << node->get_node_name() << "->AddButton(new wxButton(this, wxID_APPLY));";
 
     // You can only have one of: Help, ContextHelp
     if (node->prop_as_bool(prop_Help))
-        code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_HELP));";
+        code << "\n\t" << node->get_node_name() << "->AddButton(new wxButton(this, wxID_HELP));";
     else if (node->prop_as_bool(prop_ContextHelp))
-        code << "\n    " << node->get_node_name() << "->AddButton(new wxButton(this, wxID_CONTEXT_HELP));";
+        code << "\n\t" << node->get_node_name() << "->AddButton(new wxButton(this, wxID_CONTEXT_HELP));";
 
     if (def_btn_name == "OK" || def_btn_name == "Yes" || def_btn_name == "Save")
-        code << "\n    " << node->get_node_name() << "->GetAffirmativeButton()->SetDefault();";
+        code << "\n\t" << node->get_node_name() << "->GetAffirmativeButton()->SetDefault();";
     else if (def_btn_name == "Cancel" || def_btn_name == "Close")
-        code << "\n    " << node->get_node_name() << "->GetCancelButton()->SetDefault();";
+        code << "\n\t" << node->get_node_name() << "->GetCancelButton()->SetDefault();";
     else if (def_btn_name == "Apply")
-        code << "\n    " << node->get_node_name() << "->GetApplyButton()->SetDefault();";
+        code << "\n\t" << node->get_node_name() << "->GetApplyButton()->SetDefault();";
     else if (def_btn_name == "No")
-        code << "\n    " << node->get_node_name() << "->GetNegativeButton()->SetDefault();";
+        code << "\n\t" << node->get_node_name() << "->GetNegativeButton()->SetDefault();";
     else if (def_btn_name == "Help" || def_btn_name == "ContextHelp")
-        code << "\n    " << node->get_node_name() << "->GetHelpButton()->SetDefault();";
+        code << "\n\t" << node->get_node_name() << "->GetHelpButton()->SetDefault();";
 
-    code << "\n    " << node->get_node_name() << "->Realize();\n";
+    code << "\n\t" << node->get_node_name() << "->Realize();\n";
 
     return code;
 }
@@ -1205,8 +1203,8 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenEvents(NodeEvent* e
     {
         handler << event->get_name() << ',' << event->get_value();
         // Put the lambda expression on it's own line
-        handler.Replace("[", "\n        [");
-        comma = ",\n        ";
+        handler.Replace("[", "\n\t\t[");
+        comma = ",\n\t";
         is_lambda = true;
     }
     else if (event->get_value().contains("::"))

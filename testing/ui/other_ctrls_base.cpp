@@ -20,8 +20,8 @@
 #include "other_ctrls_base.h"
 
 OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+        const wxPoint& pos, const wxSize& size, long style) :
+    wxDialog(parent, id, title, pos, size, style)
 {
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -110,17 +110,17 @@ OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent, wxWindowID id, const wxString& 
     auto parent_sizer6 = new wxBoxSizer(wxVERTICAL);
 
     m_scintilla = new wxStyledTextCtrl(m_panel5, wxID_ANY);
-	{
-		m_scintilla->SetProperty("fold", "1");
-		m_scintilla->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
-		m_scintilla->SetMarginMask(1, wxSTC_MASK_FOLDERS);
-		m_scintilla->SetMarginWidth(1, 16);
-		m_scintilla->SetMarginSensitive(1, true);
-		m_scintilla->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
-		m_scintilla->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-		m_scintilla->SetMarginWidth(0, m_scintilla->TextWidth(wxSTC_STYLE_LINENUMBER, "_99999"));
-		m_scintilla->SetBackSpaceUnIndents(true);
-	}
+    {
+        m_scintilla->SetProperty("fold", "1");
+        m_scintilla->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
+        m_scintilla->SetMarginMask(1, wxSTC_MASK_FOLDERS);
+        m_scintilla->SetMarginWidth(1, 16);
+        m_scintilla->SetMarginSensitive(1, true);
+        m_scintilla->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
+        m_scintilla->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+        m_scintilla->SetMarginWidth(0, m_scintilla->TextWidth(wxSTC_STYLE_LINENUMBER, "_99999"));
+        m_scintilla->SetBackSpaceUnIndents(true);
+    }
     parent_sizer6->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_panel5->SetSizerAndFit(parent_sizer6);

@@ -91,7 +91,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             auto shortcut = menu_item->prop_as_string(prop_shortcut);
             if (shortcut.size())
             {
-                menu_label << "    " << shortcut;
+                menu_label << "\t" << shortcut;
             }
 
             // If the user specified a stock ID, then we need to use that id in order to have wxWidgets generate the
@@ -202,7 +202,7 @@ std::optional<ttlib::cstr> MenuBarFormGenerator::GenAdditionalCode(GenEnum::GenC
     if (cmd == code_header)
     {
         // This is the code to add to the header file
-        code << "    " << node->get_node_name() << "(long style = ";
+        code << "\t" << node->get_node_name() << "(long style = ";
         GenStyle(node, code);
         code << ");";
         return code;
@@ -253,12 +253,12 @@ std::optional<ttlib::cstr> MenuGenerator::GenAdditionalCode(GenEnum::GenCodeType
         auto parent_type = node->GetParent()->gen_type();
         if (parent_type == type_menubar)
         {
-            code << "    " << node->get_parent_name() << "->Append(" << node->get_node_name() << ", ";
+            code << "\t" << node->get_parent_name() << "->Append(" << node->get_node_name() << ", ";
             code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
         }
         else if (parent_type == type_menubar_form)
         {
-            code << "    "
+            code << "\t"
                  << "Append(" << node->get_node_name() << ", ";
             code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
         }
@@ -285,7 +285,7 @@ std::optional<ttlib::cstr> MenuGenerator::GenAdditionalCode(GenEnum::GenCodeType
             }
             else
             {
-                code << "    " << node->get_parent_name() << "->Bind(wxEVT_RIGHT_DOWN, &" << node->get_form_name()
+                code << "\t" << node->get_parent_name() << "->Bind(wxEVT_RIGHT_DOWN, &" << node->get_form_name()
                      << "::" << node->get_parent_name() << "OnContextMenu, this);";
             }
         }
@@ -325,7 +325,7 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenAdditionalCode(GenEnum::GenCodeT
 
     if (cmd == code_after_children)
     {
-        code << "    " << node->get_parent_name() << "->AppendSubMenu(" << node->get_node_name() << ", ";
+        code << "\t" << node->get_parent_name() << "->AppendSubMenu(" << node->get_node_name() << ", ";
         code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
     }
     else
@@ -342,8 +342,8 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* 
 
     if (node->HasValue(prop_bitmap))
     {
-        code << "    " << node->get_node_name() << "Item->SetBitmap("
-             << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+        code << "\t" << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+             << ");";
     }
 
     return code;
@@ -360,7 +360,7 @@ bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
 
@@ -387,7 +387,7 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
 
     if (node->HasValue(prop_help) || node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
     {
-        code << ",\n            " << GenerateQuotedString(node->prop_as_string(prop_help)) << ", "
+        code << ",\n\t\t\t" << GenerateQuotedString(node->prop_as_string(prop_help)) << ", "
              << node->prop_as_string(prop_kind);
     }
 
@@ -404,27 +404,27 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /*
     {
         if (node->HasValue(prop_unchecked_bitmap))
         {
-            code << "    " << node->get_node_name() << "->SetBitmaps("
+            code << "\t" << node->get_node_name() << "->SetBitmaps("
                  << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
             code << ", " << GenerateBitmapCode(node->prop_as_string(prop_unchecked_bitmap)) << ");";
         }
         else
         {
-            code << "    " << node->get_node_name() << "->SetBitmap("
-                 << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+            code << "\t" << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+                 << ");";
         }
     }
 
     if (code.size())
         code << '\n';
-    code << "    " << node->get_parent_name() << "->Append(" << node->get_node_name() << ");";
+    code << "\t" << node->get_parent_name() << "->Append(" << node->get_node_name() << ");";
 
     if ((node->prop_as_string(prop_kind) == "wxITEM_CHECK" || node->prop_as_string(prop_kind) == "wxITEM_RADIO") &&
         node->prop_as_bool(prop_checked))
     {
         if (code.size())
             code << '\n';
-        code << "    " << node->get_node_name() << "->Check();";
+        code << "\t" << node->get_node_name() << "->Check();";
     }
 
     return code;

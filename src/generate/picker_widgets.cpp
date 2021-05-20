@@ -113,7 +113,7 @@ wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
 
 std::optional<ttlib::cstr> FilePickerGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxFilePickerCtrl(";
@@ -135,7 +135,7 @@ std::optional<ttlib::cstr> FilePickerGenerator::GenConstruction(Node* node)
         auto& msg = node->prop_as_string(prop_message);
         if (msg.size())
         {
-            code << "\n        " << GenerateQuotedString(msg);
+            code << "\n\t\t" << GenerateQuotedString(msg);
         }
         else
         {
@@ -148,7 +148,7 @@ std::optional<ttlib::cstr> FilePickerGenerator::GenConstruction(Node* node)
         auto& msg = node->prop_as_string(prop_wildcard);
         if (msg.size())
         {
-            code << "\n        " << GenerateQuotedString(msg);
+            code << "\n\t\t" << GenerateQuotedString(msg);
         }
         else
         {
@@ -191,7 +191,7 @@ wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 
 std::optional<ttlib::cstr> DirPickerGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxDirPickerCtrl(";
@@ -213,7 +213,7 @@ std::optional<ttlib::cstr> DirPickerGenerator::GenConstruction(Node* node)
         auto& msg = node->prop_as_string(prop_message);
         if (msg.size())
         {
-            code << "\n        " << GenerateQuotedString(msg);
+            code << "\n\t\t" << GenerateQuotedString(msg);
         }
         else
         {
@@ -307,7 +307,7 @@ std::optional<ttlib::cstr> FontPickerGenerator::GenConstruction(Node* node)
         auto fontprop = node->prop_as_font_prop(prop_initial_font);
         wxFont font = fontprop.GetFont();
 
-        code << "\n        \twxFont(";
+        code << "\n\t\t\twxFont(";
 
         if (fontprop.GetPointSize() <= 0)
             code << "wxNORMAL_FONT->GetPointSize()";
@@ -341,14 +341,14 @@ std::optional<ttlib::cstr> FontPickerGenerator::GenSettings(Node* node, size_t& 
     if (node->prop_as_string(prop_min_point_size) != "0")
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         code << node->get_node_name() << "->SetMinPointSize(" << node->prop_as_string(prop_min_point_size) << ");";
     }
 
     if (node->prop_as_string(prop_max_point_size) != "100")
     {
         if (code.size())
-            code << "\n    ";
+            code << "\n\t";
         code << node->get_node_name() << "->SetMaxPointSize(" << node->prop_as_string(prop_max_point_size) << ");";
     }
 

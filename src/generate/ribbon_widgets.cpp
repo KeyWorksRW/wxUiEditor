@@ -169,7 +169,7 @@ wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 
 std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxRibbonPanel(";
@@ -201,7 +201,7 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
     GeneratePosSizeFlags(node, code, false, "wxRIBBON_PANEL_DEFAULT_STYLE", "wxRIBBON_PANEL_DEFAULT_STYLE");
 
     code.Replace(", wxNullBitmap);", ");");
-    code.Replace(", wxNullBitmap,", ",\n        wxNullBitmap,");
+    code.Replace(", wxNullBitmap,", ",\n\t\twxNullBitmap,");
 
     return code;
 }

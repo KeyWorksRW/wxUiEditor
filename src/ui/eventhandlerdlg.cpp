@@ -197,7 +197,7 @@ void EventHandlerDlg::FormatBindText()
     }
     else
     {
-        handler << m_event->get_name() << ",\n    ";
+        handler << m_event->get_name() << ",\n\t";
         if (m_check_capture_this->GetValue())
             handler << "[this](";
         else
@@ -229,13 +229,13 @@ void EventHandlerDlg::FormatBindText()
 
         handler << ") { " << body << " }";
 
-        comma = ",\n    ";
+        comma = ",\n\t";
         is_lambda = true;
     }
 
     if (m_event->GetNode()->IsForm())
     {
-        code << "Bind(" << handler << (is_lambda ? "\n    );" : ");");
+        code << "Bind(" << handler << (is_lambda ? "\n\t);" : ");");
     }
     else if (m_event->GetNode()->isGen(gen_wxMenuItem) || m_event->GetNode()->isGen(gen_tool))
     {
@@ -258,7 +258,7 @@ void EventHandlerDlg::FormatBindText()
     }
     else
     {
-        code << m_event->GetNode()->get_node_name() << "->Bind(" << handler << (is_lambda ? "\n    );" : ");");
+        code << m_event->GetNode()->get_node_name() << "->Bind(" << handler << (is_lambda ? "\n\t);" : ");");
     }
 
     m_static_bind_text->SetLabel(code.wx_str());

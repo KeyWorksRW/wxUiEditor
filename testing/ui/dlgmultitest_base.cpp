@@ -32,8 +32,8 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
 };
 
 DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+        const wxPoint& pos, const wxSize& size, long style) :
+    wxDialog(parent, id, title, pos, size, style)
 {
     auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
 

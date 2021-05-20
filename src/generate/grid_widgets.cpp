@@ -136,7 +136,7 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 
 std::optional<ttlib::cstr> GridGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxGrid(";
@@ -146,7 +146,7 @@ std::optional<ttlib::cstr> GridGenerator::GenConstruction(Node* node)
     return code;
 }
 
-static constexpr const char* braced_indent = "\n        ";
+static constexpr const char* braced_indent = "\n\t\t";
 
 std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
@@ -284,7 +284,7 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
         }
     }
 
-    code << "\n    }";
+    code << "\n\t}";
 
     return code;
 }
@@ -356,7 +356,7 @@ void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
 
 std::optional<ttlib::cstr> PropertyGridGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxPropertyGrid(";
@@ -366,7 +366,7 @@ std::optional<ttlib::cstr> PropertyGridGenerator::GenConstruction(Node* node)
     code.Replace(", wxID_ANY);", ");");
 
     if (node->HasValue(prop_extra_style))
-        code << "\n    " << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ")";
+        code << "\n\t" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ")";
 
     return code;
 }
@@ -462,7 +462,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
 
 std::optional<ttlib::cstr> PropertyGridManagerGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("    ");
+    ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxPropertyGridManager(";
@@ -472,7 +472,7 @@ std::optional<ttlib::cstr> PropertyGridManagerGenerator::GenConstruction(Node* n
     code.Replace(", wxID_ANY);", ");");
 
     if (node->HasValue(prop_extra_style))
-        code << "\n    " << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ")";
+        code << "\n\t" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ")";
 
     return code;
 }

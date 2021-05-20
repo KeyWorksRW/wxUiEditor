@@ -9,8 +9,8 @@
 #include "mainframe_base.h"
 
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxFrame(parent, id, title, pos, size, style)
+        const wxPoint& pos, const wxSize& size, long style) :
+    wxFrame(parent, id, title, pos, size, style)
 {
     auto menubar = new wxMenuBar();
 
@@ -57,7 +57,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     menuDialogs->Append(menuItem4);
     menubar->Append(menuDialogs, wxString::FromUTF8("&Dialogs"));
 
-	SetMenuBar(menubar);
+    SetMenuBar(menubar);
 
     m_statusBar = CreateStatusBar();
 

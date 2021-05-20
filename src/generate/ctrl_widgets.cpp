@@ -83,7 +83,7 @@ wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 std::optional<ttlib::cstr> FileCtrlGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
-    code << "    ";
+    code << "\t";
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxFileCtrl(";
@@ -109,7 +109,7 @@ std::optional<ttlib::cstr> FileCtrlGenerator::GenConstruction(Node* node)
 
     GenStyle(node, code);
 
-    code << ",\n            ";
+    code << ",\n\t\t\t";
     GenPos(node, code);
     code << ", ";
     GenSize(node, code);
@@ -122,7 +122,7 @@ std::optional<ttlib::cstr> FileCtrlGenerator::GenConstruction(Node* node)
 
     if (node->prop_as_bool(prop_show_hidden))
     {
-        code << "\n    " << node->get_node_name() << "->ShowHidden(true);";
+        code << "\n\t" << node->get_node_name() << "->ShowHidden(true);";
     }
 
     return code;

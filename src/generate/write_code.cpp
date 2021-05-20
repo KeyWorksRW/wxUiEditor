@@ -43,7 +43,28 @@ void WriteCode::WriteCodeLine(ttlib::cview code, size_t indentation)
         m_isLineWriting = true;
     }
 
-    doWrite(code);
+    if (ttlib::is_found(code.find('\t')))
+    {
+        std::string tab_code;
+        tab_code.reserve(code.size() + 16);
+        for (auto ch: code)
+        {
+            if (ch == '\t')
+            {
+                tab_code += "    ";
+            }
+            else
+            {
+                tab_code.push_back(ch);
+            }
+        }
+        doWrite(tab_code);
+    }
+    else
+    {
+        doWrite(code);
+    }
+
     doWrite("\n");
 
     m_IsLastLineBlank = false;
@@ -124,7 +145,27 @@ void WriteCode::write(ttlib::cview code, bool auto_indent)
         m_isLineWriting = true;
     }
 
-    doWrite(code);
+    if (ttlib::is_found(code.find('\t')))
+    {
+        std::string tab_code;
+        tab_code.reserve(code.size() + 16);
+        for (auto ch: code)
+        {
+            if (ch == '\t')
+            {
+                tab_code += "    ";
+            }
+            else
+            {
+                tab_code.push_back(ch);
+            }
+        }
+        doWrite(tab_code);
+    }
+    else
+    {
+        doWrite(code);
+    }
 }
 
 //////////////////////////////////////////// PanelCodeWriter class /////////////////////////////////////////////

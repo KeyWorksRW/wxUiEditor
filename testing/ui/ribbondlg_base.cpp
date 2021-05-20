@@ -13,8 +13,8 @@
 #include "ribbondlg_base.h"
 
 RibbonDlgBase::RibbonDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+        const wxPoint& pos, const wxSize& size, long style) :
+    wxDialog(parent, id, title, pos, size, style)
 {
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 

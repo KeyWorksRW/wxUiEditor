@@ -16,9 +16,13 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menuDialogs = new wxMenu();
 
-    auto menuItem = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Common Controls..."),
+    auto menuItem = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("DlgMulitTest..."),
     wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
     menuDialogs->Append(menuItem);
+
+    auto menuItem_2 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Common Controls..."),
+    wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
+    menuDialogs->Append(menuItem_2);
 
     auto menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Other Controls Dialog..."));
     menuDialogs->Append(menuItem1);
@@ -60,7 +64,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_MENU, &MainFrameBase::OnCommonDialog, this, menuItem->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnMultiTestDialog, this, menuItem->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnCommonDialog, this, menuItem_2->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnOtherCtrls, this, menuItem1->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnRibbonDialog, this, menuItem2->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnWizard, this, menuItem3->GetId());

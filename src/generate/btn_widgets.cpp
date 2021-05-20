@@ -184,7 +184,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapPosition(" << node->prop_as_int(prop_position) << ");";
+            code << node->get_node_name() << "->SetBitmapPosition(" << node->prop_as_string(prop_position) << ");";
         }
 
         if (node->HasValue(prop_margins))

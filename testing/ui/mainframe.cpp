@@ -9,10 +9,11 @@
 
 #include "mainframe.h"  // auto-generated: ui/mainframe_base.h and ui/mainframe_base.cpp
 
-#include "commonctrls.h"
-#include "other_ctrls.h"
-#include "ribbondlg.h"
-#include "wizard.h"
+#include "commonctrls.h"   // CommonCtrls -- Common controls dialog
+#include "dlgmultitest.h"  // DlgMultiTest -- Multiple Tests dialog
+#include "other_ctrls.h"   // OtherCtrlsDlg
+#include "ribbondlg.h"     // RibbonDlg
+#include "wizard.h"        // Wizard
 
 #include "ui/choicebook_base.h"
 #include "ui/listbook_base.h"
@@ -21,6 +22,12 @@
 #include "ui/treebook_base.h"
 
 MainFrame::MainFrame(wxWindow* parent) : MainFrameBase(parent) {}
+
+void MainFrame::OnMultiTestDialog(wxCommandEvent& WXUNUSED(event))
+{
+    DlgMultiTest dlg(this);
+    dlg.ShowModal();
+}
 
 void MainFrame::OnCommonDialog(wxCommandEvent& WXUNUSED(event))
 {

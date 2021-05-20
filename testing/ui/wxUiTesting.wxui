@@ -27,8 +27,14 @@
           <node
             class="wxMenuItem"
             help="Common controls"
-            label="Common Controls..."
+            label="DlgMulitTest..."
             var_name="menuItem"
+            wxEVT_MENU="OnMultiTestDialog" />
+          <node
+            class="wxMenuItem"
+            help="Common controls"
+            label="Common Controls..."
+            var_name="menuItem_2"
             wxEVT_MENU="OnCommonDialog" />
           <node
             class="wxMenuItem"
@@ -1071,6 +1077,164 @@
             </node>
           </node>
         </node>
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="DlgMultiTestBase"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Widgets Testing"
+      base_file="dlgmultitest_base"
+      derived_class_name="DlgMultiTest"
+      derived_file="dlgmultitest"
+      minimum_size="-1,-1"
+      size="-1,-1">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="box_sizer_2">
+        <node
+          class="wxNotebook"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="BookPage"
+            label="Buttons"
+            var_name="page_2"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_3"
+              flags="wxEXPAND">
+              <node
+                class="wxGridBagSizer">
+                <node
+                  class="wxButton"
+                  label="Normal"
+                  tooltip="A normal button" />
+                <node
+                  class="wxButton"
+                  label="&lt;b>&lt;span foreground='red'>Markup&lt;/span>&lt;/b>"
+                  markup="true"
+                  var_name="m_btn_2"
+                  tooltip="Text should be Bold and Red."
+                  column="1" />
+                <node
+                  class="wxButton"
+                  label="Bitmaps"
+                  var_name="m_btn_bitmaps"
+                  bitmap="Header; ..\art\normal_png.h; ; [-1; -1]"
+                  current="Header; ..\art\focus_png.h; ; [-1; -1]"
+                  disabled_bmp="Header; ..\art\disabled_png.h; ; [-1; -1]"
+                  tooltip="Bitmap should change when mouse is over button, or button is disabled."
+                  column="2" />
+                <node
+                  class="wxCheckBox"
+                  class_access="none"
+                  label="Disable"
+                  var_name="disable_bitmaps"
+                  column="2"
+                  row="1"
+                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp; event) { m_btn_bitmaps->Enable(!event.IsChecked()); }" />
+                <node
+                  class="wxButton"
+                  label="Right"
+                  var_name="m_btn_4"
+                  bitmap="Header; ..\art\normal_png.h; ; [-1; -1]"
+                  position="wxRIGHT"
+                  tooltip="Bitmap should be on the right side."
+                  column="3" />
+                <node
+                  class="wxToggleButton"
+                  label="Toggle"
+                  style="wxBU_EXACTFIT"
+                  tooltip="Style set to exact fit, so it should be a bit smaller than usual."
+                  column="4" />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_7">
+                <node
+                  class="wxCommandLinkButton"
+                  main_label="Command"
+                  note="wxCommandLinkButton"
+                  var_name="m_btn_5"
+                  bitmap="Art; wxART_GO_FORWARD; wxART_OTHER; [-1; -1]"
+                  tooltip="The bitmap for this is from Art Provider."
+                  row="1" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Tab 2"
+            var_name="page_3"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_4">
+              <node
+                class="wxStaticText"
+                label="TODO: replace this control with something more useful..."
+                var_name="m_staticText_3"
+                wrap="200" />
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Tab 3"
+            var_name="page_4"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_5">
+              <node
+                class="wxStaticText"
+                label="TODO: replace this control with something more useful..."
+                var_name="m_staticText_4"
+                wrap="200" />
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Tab 4"
+            var_name="page_5"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_6">
+              <node
+                class="wxStaticText"
+                label="TODO: replace this control with something more useful..."
+                var_name="m_staticText_5"
+                wrap="200" />
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Tab 5"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL">
+              <node
+                class="wxStaticText"
+                label="TODO: replace this control with something more useful..."
+                wrap="200" />
+            </node>
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          Cancel="false"
+          Close="true"
+          OK="false"
+          default_button="Close"
+          flags="wxEXPAND" />
       </node>
     </node>
   </node>

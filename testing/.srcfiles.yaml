@@ -24,6 +24,7 @@ Options:
     Natvis:      ../src/wxui.natvis  # MSVC Debug visualizer
 
 Files:
+    wxUiTesting.rc
     mainapp.cpp
 
     ui/mainframe.cpp       # Main window
@@ -31,6 +32,8 @@ Files:
 
     ui/commonctrls.cpp
     ui/commonctrls_base.cpp
+    ui/dlgmultitest.cpp
+    ui/dlgmultitest_base.cpp
     ui/other_ctrls.cpp
     ui/other_ctrls_base.cpp
     ui/popupwin.cpp

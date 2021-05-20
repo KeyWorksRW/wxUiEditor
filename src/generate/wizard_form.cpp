@@ -59,11 +59,11 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     ttlib::cstr code;
 
-    if (cmd == "ctor_declare")
+    if (cmd == code_header)
     {
         // This is the code to add to the header file
         code << node->prop_as_string(prop_class_name)
@@ -113,9 +113,8 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
                 "}\n\n";
     }
 
-    else if (cmd == "base")
+    else if (cmd == code_base_class)
     {
-        code << "public ";
         if (node->HasValue(prop_base_class_name))
         {
             code << node->prop_as_string(prop_base_class_name);
@@ -125,7 +124,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenCode(const std::string& cmd, 
             code << "wxWizard";
         }
     }
-    else if (cmd == "after_addchild")
+    else if (cmd == code_after_children)
     {
         auto panes = GetChildPanes(node);
         if (panes.size())

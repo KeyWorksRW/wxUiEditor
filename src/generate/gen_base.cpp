@@ -282,7 +282,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     }
 
     if (m_panel_type != CPP_PANEL)
-        GenerateClassHeader(form_node, wxEmptyString, events);
+        GenerateClassHeader(form_node, events);
 
     if (m_panel_type != HDR_PANEL)
     {
@@ -750,7 +750,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     return code;
 }
 
-void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const wxString& classDecoration, const EventVector& events)
+void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& events)
 {
     auto propName = form_node->get_prop_ptr(prop_class_name);
     if (!propName)
@@ -772,9 +772,16 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const wxString& cla
     // Clang-format, if enabled would remove the extra blank line, but would not add the missing blank line.
     m_header->writeLine();
 
-    if (auto result = generator->GenCode("base", form_node); result)
+    if (auto result = generator->GenAdditionalCode(code_base_class, form_node); result)
     {
-        m_header->writeLine(ttlib::cstr() << "class " << classDecoration.wx_str() << class_name << " : " << result.value());
+        m_header->writeLine(ttlib::cstr() << "class " << class_name << " : public " << result.value());
+    }
+    else
+    {
+        FAIL_MSG("All form generators need to support code_base_class command to provide the class name to derive from.");
+
+        // The only way this would be valid is if the base class didn't derive from anything.
+        m_header->writeLine(ttlib::cstr() << "class " << class_name);
     }
 
     m_header->writeLine("{");
@@ -792,7 +799,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const wxString& cla
         m_header->writeLine();
     }
 
-    if (auto result = generator->GenCode("ctor_declare", form_node); result)
+    if (auto result = generator->GenAdditionalCode(code_header, form_node); result)
     {
         m_header->writeLine(result.value(), indent::auto_keep_whitespace);
     }
@@ -903,7 +910,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         GenConstruction(form_node->GetChild(i));
     }
 
-    if (auto result = generator->GenCode("after_addchild", form_node); result)
+    if (auto result = generator->GenAdditionalCode(code_after_children, form_node); result)
     {
         if (result.value().size())
         {
@@ -971,7 +978,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         if (parent->IsSizer())
         {
             ttlib::cstr code;
-            if (auto result = generator->GenCode("after_addchild", node); result)
+            if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
             {
                 if (result.value().size())
                     m_source->writeLine(result.value(), indent::none);
@@ -1074,7 +1081,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                  type == type_tool || type == type_listbook || type == type_simplebook || type == type_notebook ||
                  type == type_auinotebook || type == type_treelistctrl)
         {
-            if (auto result = generator->GenCode("after_addchild", node); result)
+            if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
             {
                 if (result.value().size())
                     m_source->writeLine(result.value(), indent::none);

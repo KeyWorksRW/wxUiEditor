@@ -78,7 +78,9 @@ void GenSize(Node* node, ttlib::cstr& code);
 void GenStyle(Node* node, ttlib::cstr& code, ttlib::cview extra_style = tt_empty_cstr,
               ttlib::cview extra_def_value = tt_empty_cstr);
 
-ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& class_name);
+// Version of GenAdditionalCode() specifically for forms
+ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node);
+
 ttlib::cstr GenFormSettings(Node* node);
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.

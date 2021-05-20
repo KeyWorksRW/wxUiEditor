@@ -533,4 +533,4 @@ namespace GenEnum
     extern std::map<GenEnum::GenName, const char*> map_GenNames;
     extern std::unordered_map<std::string, GenEnum::GenName> rmap_GenNames;
 
-};  // namespace GenEnum
+}  // namespace GenEnum

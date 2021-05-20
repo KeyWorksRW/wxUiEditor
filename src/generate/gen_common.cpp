@@ -665,120 +665,101 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     return code;
 }
 
-ttlib::cstr GenFormCode(const std::string& cmd, Node* node, const std::string& class_name)
+ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node)
 {
     ttlib::cstr code;
 
-    if (cmd == "ctor_declare")
+    switch (command)
     {
-        // This is the code to add to the header file
-        code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
-        if (class_name != "wxPanel" && class_name != "wxToolBar")
-        {
-            code << ",\n    const wxString& title = ";
-            auto& title = node->prop_as_string(prop_title);
-            if (title.size())
+        case code_base_class:
+            if (node->HasValue(prop_base_class_name))
             {
-                code << GenerateQuotedString(title) << ",\n    ";
+                code << node->prop_as_string(prop_base_class_name);
             }
             else
             {
-                code << "wxEmptyString,\n    ";
+                code << node->DeclName();
             }
-        }
-        else
-        {
-            code << ", ";
-        }
-        code << "const wxPoint& pos = ";
-        auto point = node->prop_as_wxPoint(prop_pos);
-        if (point.x != -1 || point.y != -1)
-            code << "wxPoint(" << point.x << ", " << point.y << ")";
-        else
-            code << "wxDefaultPosition";
+            break;
 
-        code << ", const wxSize& size = ";
-        auto size = node->prop_as_wxPoint(prop_size);
-        if (size.x != -1 || size.y != -1)
-            code << "wxSize(" << size.x << ", " << size.y << ")";
-        else
-            code << "wxDefaultSize";
-
-        code << ",\n    long style = ";
-        auto& style = node->prop_as_string(prop_style);
-        auto& win_style = node->prop_as_string(prop_window_style);
-        if (style.empty() && win_style.empty())
-            code << "0";
-        else
-        {
-            if (style.size())
-            {
-                code << style;
-                if (win_style.size())
-                {
-                    code << '|' << win_style;
-                }
-            }
-            else if (win_style.size())
-            {
-                code << win_style;
-            }
-        }
-
-        if (node->prop_as_string(prop_window_name).size())
-        {
-            code << ", const wxString& name = " << node->prop_as_string(prop_window_name);
-        }
-
-        code << ");\n\n";
-        // if (class_name != "wxDialog" && node->prop_as_bool("aui_managed"))
-        // code << "    wxAuiManager m_mgr;";
-    }
-    else if (cmd == "base")
-    {
-        code << "public ";
-        if (node->HasValue(prop_base_class_name))
-        {
-            code << node->prop_as_string(prop_base_class_name);
-        }
-        else
-        {
-            code << class_name;
-        }
-    }
-    else if (cmd == "dtor")
-    {
-        // if (class_name != "wxDialog" && node->prop_as_bool("aui_managed"))
-        // code << "    m_mgr.UnInit();";
-    }
-    else if (cmd == "after_addchild")
-    {
-        if (class_name == "wxToolBar")
-        {
-            if (code.size())
-                code << "\n";
-            code << "    Realize();";
-        }
-        else
-        {
-            auto& center = node->prop_as_string(prop_center);
-            if (center.size() && !center.is_sameas("no"))
-            {
-                code << "    Centre(" << center << ");";
-            }
-#if 0
-            if (class_name != "wxDialog" && node->prop_as_bool("aui_managed"))
+        case code_after_children:
+            if (node->isGen(gen_wxToolBar))
             {
                 if (code.size())
                     code << "\n";
-                code << "    m_mgr.Update();";
+                code << "    Realize();";
             }
-#endif
-        }
-    }
-    else
-    {
-        return {};
+            else
+            {
+                auto& center = node->prop_as_string(prop_center);
+                if (center.size() && !center.is_sameas("no"))
+                {
+                    code << "    Centre(" << center << ");";
+                }
+            }
+            break;
+
+        case code_header:
+            code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
+            if (!node->isGen(gen_wxPanel) && !node->isGen(gen_wxToolBar))
+            {
+                code << ",\n    const wxString& title = ";
+                auto& title = node->prop_as_string(prop_title);
+                if (title.size())
+                {
+                    code << GenerateQuotedString(title) << ",\n    ";
+                }
+                else
+                {
+                    code << "wxEmptyString,\n    ";
+                }
+            }
+            else
+            {
+                code << ", ";
+            }
+            code << "const wxPoint& pos = ";
+            auto point = node->prop_as_wxPoint(prop_pos);
+            if (point.x != -1 || point.y != -1)
+                code << "wxPoint(" << point.x << ", " << point.y << ")";
+            else
+                code << "wxDefaultPosition";
+
+            code << ", const wxSize& size = ";
+            auto size = node->prop_as_wxPoint(prop_size);
+            if (size.x != -1 || size.y != -1)
+                code << "wxSize(" << size.x << ", " << size.y << ")";
+            else
+                code << "wxDefaultSize";
+
+            code << ",\n    long style = ";
+            auto& style = node->prop_as_string(prop_style);
+            auto& win_style = node->prop_as_string(prop_window_style);
+            if (style.empty() && win_style.empty())
+                code << "0";
+            else
+            {
+                if (style.size())
+                {
+                    code << style;
+                    if (win_style.size())
+                    {
+                        code << '|' << win_style;
+                    }
+                }
+                else if (win_style.size())
+                {
+                    code << win_style;
+                }
+            }
+
+            if (node->prop_as_string(prop_window_name).size())
+            {
+                code << ", const wxString& name = " << node->prop_as_string(prop_window_name);
+            }
+
+            code << ");\n\n";
+            break;
     }
 
     return code;

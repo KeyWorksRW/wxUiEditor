@@ -104,9 +104,9 @@ std::optional<ttlib::cstr> ToolBarFormGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> ToolBarFormGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> ToolBarFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
-    return GenFormCode(cmd, node, "wxToolBar");
+    return GenFormCode(cmd, node);
 }
 
 std::optional<ttlib::cstr> ToolBarFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
@@ -277,10 +277,10 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> ToolBarGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> ToolBarGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     ttlib::cstr code;
-    if (cmd == "after_addchild")
+    if (cmd == code_after_children)
     {
         code << '\t' << node->get_node_name() << "->Realize();";
     }
@@ -455,10 +455,10 @@ std::optional<ttlib::cstr> AuiToolBarGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> AuiToolBarGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> AuiToolBarGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     ttlib::cstr code;
-    if (cmd == "after_addchild")
+    if (cmd == code_after_children)
     {
         code << '\t' << node->get_node_name() << "->Realize();";
     }

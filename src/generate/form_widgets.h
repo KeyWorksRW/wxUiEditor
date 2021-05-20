@@ -15,7 +15,7 @@ class FrameFormGenerator : public BaseGenerator
 {
 public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenCode(const std::string& cmd, Node* node) override;
+    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
@@ -26,7 +26,7 @@ class PopupWinGenerator : public BaseGenerator
 {
 public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenCode(const std::string& cmd, Node* node) override;
+    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
@@ -37,7 +37,7 @@ class PanelFormGenerator : public BaseGenerator
 {
 public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenCode(const std::string& cmd, Node* node) override;
+    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
@@ -48,7 +48,7 @@ class DialogFormGenerator : public BaseGenerator
 {
 public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenCode(const std::string& cmd, Node* node) override;
+    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 

@@ -427,11 +427,6 @@ void MockupContent::OnNodeSelected(Node* node)
 
         return;
     }
-
-    // If the project is selected, then there will be no component.
-    auto component = node->GetGenerator();
-    if (component && component->OnSelected(node))
-        Refresh();
 }
 
 void MockupContent::SelectNode(wxObject* wxobject)

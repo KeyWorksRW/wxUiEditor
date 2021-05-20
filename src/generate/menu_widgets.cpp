@@ -158,19 +158,17 @@ std::optional<ttlib::cstr> MenuBarGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> MenuBarGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> MenuBarGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     ttlib::cstr code;
-    if (cmd == "after_addchild")
+
+    if (cmd == code_after_children)
     {
         code << "\tSetMenuBar(" << node->get_node_name() << ");";
-    }
-    else
-    {
-        return {};
+        return code;
     }
 
-    return code;
+    return {};
 }
 
 std::optional<ttlib::cstr> MenuBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
@@ -197,20 +195,21 @@ std::optional<ttlib::cstr> MenuBarFormGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> MenuBarFormGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> MenuBarFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     ttlib::cstr code;
 
-    if (cmd == "ctor_declare")
+    if (cmd == code_header)
     {
         // This is the code to add to the header file
         code << "    " << node->get_node_name() << "(long style = ";
         GenStyle(node, code);
         code << ");";
+        return code;
     }
-    else if (cmd == "base")
+
+    else if (cmd == code_base_class)
     {
-        code << "public ";
         if (node->HasValue(prop_base_class_name))
         {
             code << node->prop_as_string(prop_base_class_name);
@@ -219,13 +218,9 @@ std::optional<ttlib::cstr> MenuBarFormGenerator::GenCode(const std::string& cmd,
         {
             code << "wxMenuBar";
         }
+        return code;
     }
-    else
-    {
-        return {};
-    }
-
-    return code;
+    return {};
 }
 
 bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -243,30 +238,17 @@ std::optional<ttlib::cstr> MenuGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
 
-    // REVIEW: [KeyWorks - 12-08-2020] See comment below for "dtor" -- this really shouldn't be here if this is a popup menu
+    // BUGBUG: [KeyWorks - 05-20-2021] This never gets deleted!
     code << node->get_node_name() << " = new wxMenu();";
 
     return code;
 }
 
-std::optional<ttlib::cstr> MenuGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> MenuGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     ttlib::cstr code;
 
-    if (cmd == "dtor")
-    {
-        if (auto parent_type = node->GetParent()->gen_type();
-            parent_type != type_menubar && parent_type != type_menubar_form)
-        {
-            // REVIEW: [KeyWorks - 12-08-2020] This is only because the constructor is creating the menu via new. What
-            // really should happen is that the menu should be in the header file as the actual menu, rather than a
-            // pointer. Then a destructor isn't needed.
-
-            // If the parent isn't a menubar, then it's being used as a popup menu, so we need to delete it.
-            code << "\tdelete " << node->get_node_name() << ';';
-        }
-    }
-    else if (cmd == "after_addchild")
+    if (cmd == code_after_children)
     {
         auto parent_type = node->GetParent()->gen_type();
         if (parent_type == type_menubar)
@@ -337,11 +319,11 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> SubMenuGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> SubMenuGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     ttlib::cstr code;
 
-    if (cmd == "after_addchild")
+    if (cmd == code_after_children)
     {
         code << "    " << node->get_parent_name() << "->AppendSubMenu(" << node->get_node_name() << ", ";
         code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";

@@ -73,7 +73,7 @@ protected:
     void CollectMemberVariables(Node* node, Permission perm, std::set<std::string>& code_lines);
     void CollectValidatorVariables(Node* node, std::set<std::string>& code_lines);
 
-    void GenerateClassHeader(Node* form_node, const wxString& classDecoration, const EventVector& events);
+    void GenerateClassHeader(Node* form_node, const EventVector& events);
     void GenerateClassConstructor(Node* form_node, const EventVector& events);
 
     void GenSrcEventBinding(Node* class_node, const EventVector& events);
@@ -100,6 +100,7 @@ protected:
     // Generate node construction code
     void GenConstruction(Node* node);
 
+    // This allows generators to create calls to a widget after it has been created.
     void GenSettings(Node* node);
 
     void CheckForArtProvider(Node* node);

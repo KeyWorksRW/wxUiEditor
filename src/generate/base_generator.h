@@ -23,8 +23,22 @@ namespace pugi
     class xml_node;
 }
 
+namespace GenEnum
+{
+    enum GenCodeType : size_t
+    {
+        // Generate the name of the base class to use (e.g "wxWizard").
+        code_base_class,
+        // Generate the header declaration
+        code_header,
+        // Generate code after all children of the node have been created.
+        code_after_children,
+    };
+}
+
 using OptionalIncludes = std::optional<std::vector<std::string>>;
 
+// This is the interface class that all generators derive from.
 class BaseGenerator
 {
 public:
@@ -33,20 +47,26 @@ public:
 
     MockupParent* GetMockup();
 
+    // Create an object to use in the Mockup panel (typically a sizer or widget).
     virtual wxObject* CreateMockup(Node* /*node*/, wxObject* /*parent*/) { return nullptr; }
 
     // Called after all children have been created
     virtual void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/) {}
 
-    // Returns true if the Mockup window needs to be refreshed
-    virtual bool OnSelected(Node* /*node*/) { return false; }
-
+    // Generate the code used to construct the object
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
-    virtual std::optional<ttlib::cstr> GenCode(const std::string& /*command*/, Node*) { return {}; }
+
+    // Generate specific additional code
+    virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }
+
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }
 
-    virtual bool GetIncludes(Node*, std::set<std::string>&, std::set<std::string>&) { return false; };
+    // Add any required include files to base source and/or header file
+    virtual bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */)
+    {
+        return false;
+    };
     virtual OptionalIncludes GetEventIncludes(Node*) { return {}; }
 
     // Return true if the widget was changed which will resize and repaint the Mockup window

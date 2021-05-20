@@ -42,9 +42,9 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenEvents(NodeEvent* event, cons
     return GenEventCode(event, class_name);
 }
 
-std::optional<ttlib::cstr> DialogFormGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
-    return GenFormCode(cmd, node, "wxDialog");
+    return GenFormCode(cmd, node);
 }
 
 std::optional<ttlib::cstr> DialogFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
@@ -79,9 +79,9 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> FrameFormGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> FrameFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
-    return GenFormCode(cmd, node, "wxFrame");
+    return GenFormCode(cmd, node);
 }
 
 std::optional<ttlib::cstr> FrameFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
@@ -116,22 +116,20 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> PopupWinGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> PopupWinGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     ttlib::cstr code;
 
-    if (cmd == "ctor_declare")
+    if (cmd == code_header)
     {
         code << node->get_node_name() << "(wxWindow* parent, int border_flag = " << node->prop_as_string(prop_border);
         code << ");";
         return code;
     }
-    else if (cmd == "after_addchild")
-    {
-        return {};
-    }
+    else if (cmd == code_base_class)
+        return GenFormCode(cmd, node);
 
-    return GenFormCode(cmd, node, "wxPopupTransientWindow");
+    return {};
 }
 
 std::optional<ttlib::cstr> PopupWinGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
@@ -171,9 +169,9 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> PanelFormGenerator::GenCode(const std::string& cmd, Node* node)
+std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
-    return GenFormCode(cmd, node, "wxPanel");
+    return GenFormCode(cmd, node);
 }
 
 std::optional<ttlib::cstr> PanelFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

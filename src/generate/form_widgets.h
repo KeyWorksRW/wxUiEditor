@@ -47,7 +47,9 @@ public:
 class DialogFormGenerator : public BaseGenerator
 {
 public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    // Return true if all construction and settings code was written to src_code
+    bool GenConstruction(Node*, WriteCode* src_code) override;
+
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;

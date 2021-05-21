@@ -35,3 +35,13 @@ See [Developer notes](docs/DEV_NOTES.md) for more information about the code.
 All KeyWorks Software code uses the Apache License 2.0 [LICENSE](LICENSE).
 
 The pugixml code uses the MIT [LICENSE](pugixml/LICENSE.md).
+
+## Screen shots
+
+The following is a screen shot of **wxUiEditor** being used to edit one of it's own dialogs:
+
+![image](screenshot.jpg)
+
+The following is a screen shot of the code that wxUiEditor would generate for the same dialog:
+
+![image](code_screenshot.jpg)

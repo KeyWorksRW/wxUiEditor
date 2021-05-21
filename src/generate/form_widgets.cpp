@@ -29,12 +29,31 @@ bool DialogFormGenerator::GenConstruction(Node* node, WriteCode* src_code)
     code << "Create(parent, " << node->prop_as_string(prop_id) << ", ";
     code << GenerateQuotedString(node, prop_title);  // will return wxEmptyString if property is empty
 
-    auto size = node->prop_as_wxPoint(prop_size);
-    if (size == wxDefaultPosition && node->prop_as_string(prop_style) == "wxDEFAULT_DIALOG_STYLE")
+    auto position = node->prop_as_wxPoint(prop_size);
+    if (position == wxDefaultPosition && node->prop_as_string(prop_style) == "wxDEFAULT_DIALOG_STYLE")
     {
         code << ");";
+        src_code->writeLine(code);
     }
-    src_code->writeLine(code);
+    else
+    {
+        code << ", ";
+        if (position != wxDefaultPosition)
+        {
+            code << "wxPoint(" << position.x << ", " << position.y << ")";
+        }
+        else
+        {
+            code << "wxDefaultPosition";
+        }
+        code << ", wxDefaultSize,";
+        src_code->writeLine(code);
+        src_code->Indent();
+        code = node->prop_as_string(prop_style) + ");";
+        src_code->writeLine(code);
+        src_code->Unindent();
+    }
+
     code.clear();
 
     if (node->HasValue(prop_extra_style))

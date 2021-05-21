@@ -35,8 +35,14 @@ bool DialogFormGenerator::GenConstruction(Node* node, WriteCode* src_code)
         code << ");";
     }
     src_code->writeLine(code);
-    src_code->writeLine();
     code.clear();
+
+    if (node->HasValue(prop_extra_style))
+    {
+        code << "SetExtraStyle(GetExtraStyle() | " << node->prop_as_string(prop_extra_style) << ");";
+        src_code->writeLine(code);
+        code.clear();
+    }
 
     if (node->HasValue(prop_icon))
     {
@@ -61,6 +67,7 @@ bool DialogFormGenerator::GenConstruction(Node* node, WriteCode* src_code)
     }
 
     src_code->Unindent();
+    src_code->writeLine();
 
     return true;
 }
@@ -127,6 +134,14 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCo
 
         return code;
     }
+    else if (cmd == code_header)
+    {
+        ttlib::cstr code;
+
+        code << node->get_node_name() << "(wxWindow* parent);\n\n";
+        return code;
+    }
+
     else
     {
         return GenFormCode(cmd, node);

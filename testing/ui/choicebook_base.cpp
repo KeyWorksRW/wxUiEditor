@@ -21,10 +21,10 @@
 #include "../art/french.xpm"
 #include "../art/japanese.xpm"
 
-ChoiceBookBase::ChoiceBookBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style) :
-    wxDialog(parent, id, title, pos, size, style)
+ChoiceBookBase::ChoiceBookBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Choicebook"));
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_choicebook = new wxChoicebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCHB_DEFAULT);

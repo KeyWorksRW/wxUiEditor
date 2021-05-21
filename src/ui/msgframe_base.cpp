@@ -27,8 +27,8 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
 };
 
 MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxFrame(parent, id, title, pos, size, style)
+        const wxPoint& pos, const wxSize& size, long style) :
+    wxFrame(parent, id, title, pos, size, style)
 {
     auto menubar = new wxMenuBar();
 
@@ -67,7 +67,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     menu_view->Append(m_menu_item_info);
     menubar->Append(menu_view, wxString::FromUTF8("&View"));
 
-	SetMenuBar(menubar);
+    SetMenuBar(menubar);
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 

@@ -31,10 +31,11 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
     return image;
 };
 
-DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style) :
-    wxDialog(parent, id, title, pos, size, style)
+DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Widgets Testing"), wxPoint(600, 800), wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+
     auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
     m_notebook = new wxNotebook(this, wxID_ANY);
@@ -137,7 +138,7 @@ DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent, wxWindowID id, const wxStri
     box_sizer_2->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(box_sizer_2);
-    // SetSize(wxSize(600, 800));
+    SetSize(wxSize(600, 800));
     Centre(wxBOTH);
 
     // Event handlers

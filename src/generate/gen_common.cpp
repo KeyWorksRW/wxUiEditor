@@ -261,8 +261,8 @@ void GenPos(Node* node, ttlib::cstr& code)
 
 void GenSize(Node* node, ttlib::cstr& code)
 {
-    auto size = node->prop_as_wxPoint(prop_size);
-    if (size.x != -1 || size.y != -1)
+    auto size = node->prop_as_wxSize(prop_size);
+    if (size != wxDefaultSize)
         code << "wxSize(" << size.x << ", " << size.y << ")";
     else
         code << "wxDefaultSize";
@@ -773,12 +773,8 @@ ttlib::cstr GenFormSettings(Node* node)
 
     if (!node->isGen(gen_PanelForm) && !node->isGen(gen_wxToolBar))
     {
-        auto min_size = node->prop_as_wxSize(prop_minimum_size);
         auto max_size = node->prop_as_wxSize(prop_maximum_size);
-
-#if 0
-// REVIEW: [KeyWorks - 05-20-2021] This is definitely wrong for a wxDialog (see issue #242) -- is it valid for a
-// wxFrame or any other type of form?
+        auto min_size = node->prop_as_wxSize(prop_minimum_size);
         if (min_size != wxDefaultSize || max_size != wxDefaultSize)
         {
             code << "SetSizeHints(";
@@ -792,7 +788,6 @@ ttlib::cstr GenFormSettings(Node* node)
 
             code << ");";
         }
-#endif
 
         if (node->HasValue(prop_icon))
         {

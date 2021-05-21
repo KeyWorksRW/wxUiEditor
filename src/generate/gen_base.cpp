@@ -880,21 +880,29 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
 
-    if (auto result = generator->GenConstruction(form_node); result)
+    if (!generator->GenConstruction(form_node, m_source))
     {
-        m_source->writeLine(result.value(), indent::none);
-    }
-    m_source->Indent();
-
-    size_t auto_indent = indent::auto_no_whitespace;
-    if (auto result = generator->GenSettings(form_node, auto_indent); result)
-    {
-        if (result.value().size())
+        if (auto result = generator->GenConstruction(form_node); result)
         {
-            m_source->writeLine(result.value(), auto_indent);
-            m_source->writeLine();
+            m_source->writeLine(result.value(), indent::none);
+        }
+        m_source->Indent();
+
+        size_t auto_indent = indent::auto_no_whitespace;
+        if (auto result = generator->GenSettings(form_node, auto_indent); result)
+        {
+            if (result.value().size())
+            {
+                m_source->writeLine(result.value(), auto_indent);
+                m_source->writeLine();
+            }
         }
     }
+    else
+    {
+        m_source->Indent();
+    }
+
 
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {

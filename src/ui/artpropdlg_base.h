@@ -17,10 +17,7 @@
 class ArtPropertyDlgBase : public wxDialog
 {
 public:
-    ArtPropertyDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-        const wxString& title = wxString::FromUTF8("Art Provider Image"),
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE);
+    ArtPropertyDlgBase(wxWindow* parent);
 
 protected:
 

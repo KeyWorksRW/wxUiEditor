@@ -21,10 +21,10 @@
 #include "../art/french.xpm"
 #include "../art/japanese.xpm"
 
-ListbookBase::ListbookBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style) :
-    wxDialog(parent, id, title, pos, size, style)
+ListbookBase::ListbookBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Listbook"));
+
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_listbook = new wxListbook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_LEFT);

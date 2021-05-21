@@ -17,10 +17,7 @@
 class InsertDialogBase : public wxDialog
 {
 public:
-    InsertDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-        const wxString& title = wxString::FromUTF8("Insert widget"),
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE);
+    InsertDialogBase(wxWindow* parent);
 
 protected:
 

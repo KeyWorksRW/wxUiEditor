@@ -19,10 +19,11 @@
 
 #include "other_ctrls_base.h"
 
-OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style) :
-    wxDialog(parent, id, title, pos, size, style)
+OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("NoteBook Dialog"), wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_notebook = new wxNotebook(this, wxID_ANY);

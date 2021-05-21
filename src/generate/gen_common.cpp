@@ -261,8 +261,8 @@ void GenPos(Node* node, ttlib::cstr& code)
 
 void GenSize(Node* node, ttlib::cstr& code)
 {
-    auto size = node->prop_as_wxPoint(prop_size);
-    if (size.x != -1 || size.y != -1)
+    auto size = node->prop_as_wxSize(prop_size);
+    if (size != wxDefaultSize)
         code << "wxSize(" << size.x << ", " << size.y << ")";
     else
         code << "wxDefaultSize";

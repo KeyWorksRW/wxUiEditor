@@ -21,10 +21,10 @@
 #include "../art/french.xpm"
 #include "../art/japanese.xpm"
 
-ToolbookBase::ToolbookBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style) :
-    wxDialog(parent, id, title, pos, size, style)
+ToolbookBase::ToolbookBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("wxToolbook"));
+
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_toolbook = new wxToolbook(this, wxID_ANY);

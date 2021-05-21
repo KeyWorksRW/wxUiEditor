@@ -30,10 +30,11 @@ static wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
     return animation;
 };
 
-CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style) :
-    wxDialog(parent, id, title, pos, size, style)
+CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Common controls"), wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer6 = new wxBoxSizer(wxVERTICAL);

@@ -12,10 +12,11 @@
 
 #include "ribbondlg_base.h"
 
-RibbonDlgBase::RibbonDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style) :
-    wxDialog(parent, id, title, pos, size, style)
+RibbonDlgBase::RibbonDlgBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Ribbon Dialog"), wxPoint(500, 300), wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_rbnBar = new wxRibbonBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRIBBON_BAR_FLOW_HORIZONTAL|wxRIBBON_BAR_SHOW_PAGE_LABELS);

@@ -21,10 +21,10 @@
 #include "../art/french.xpm"
 #include "../art/japanese.xpm"
 
-TreebookBase::TreebookBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style) :
-    wxDialog(parent, id, title, pos, size, style)
+TreebookBase::TreebookBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Treebook"));
+
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_treebook = new wxTreebook(this, wxID_ANY);

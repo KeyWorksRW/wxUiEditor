@@ -15,10 +15,7 @@
 class RibbonDlgBase : public wxDialog
 {
 public:
-    RibbonDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-        const wxString& title = wxString::FromUTF8("Ribbon Dialog"),
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
-        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    RibbonDlgBase(wxWindow* parent);
 
 protected:
 

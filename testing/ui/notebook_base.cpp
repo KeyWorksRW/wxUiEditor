@@ -21,10 +21,10 @@
 #include "../art/french.xpm"
 #include "../art/japanese.xpm"
 
-NotebookBase::NotebookBase(wxWindow* parent, wxWindowID id, const wxString& title,
-        const wxPoint& pos, const wxSize& size, long style) :
-    wxDialog(parent, id, title, pos, size, style)
+NotebookBase::NotebookBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Notebook"));
+
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_notebook = new wxNotebook(this, wxID_ANY);

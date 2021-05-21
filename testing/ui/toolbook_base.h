@@ -14,10 +14,7 @@
 class ToolbookBase : public wxDialog
 {
 public:
-    ToolbookBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-        const wxString& title = wxString::FromUTF8("wxToolbook"),
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE);
+    ToolbookBase(wxWindow* parent);
 
 protected:
 

@@ -13,10 +13,11 @@
 
 #include "debugsettingsBase.h"
 
-DebugSettingsBase::DebugSettingsBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+DebugSettingsBase::DebugSettingsBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Debug Settings"), wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("MSG Window Settings"));
@@ -54,7 +55,6 @@ DebugSettingsBase::DebugSettingsBase(wxWindow* parent, wxWindowID id, const wxSt
     parent_sizer->Add(std_button_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "DebugSettingsBase");

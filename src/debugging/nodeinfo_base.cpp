@@ -12,10 +12,10 @@
 
 #include "nodeinfo_base.h"
 
-NodeInfoBase::NodeInfoBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+NodeInfoBase::NodeInfoBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Node Information"));
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("Memory Usage"));
@@ -35,6 +35,5 @@ NodeInfoBase::NodeInfoBase(wxWindow* parent, wxWindowID id, const wxString& titl
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 }

@@ -10,10 +10,10 @@
 
 #include "eventhandlerdlg_base.h"
 
-EventHandlerDlgBase::EventHandlerDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+EventHandlerDlgBase::EventHandlerDlgBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Event Handler"));
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
@@ -50,19 +50,19 @@ EventHandlerDlgBase::EventHandlerDlgBase(wxWindow* parent, wxWindowID id, const 
     m_lambda_box->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_stc = new wxStyledTextCtrl(m_lambda_box->GetStaticBox(), wxID_ANY);
-	{
-		m_stc->SetProperty("fold", "1");
-		m_stc->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
-		m_stc->SetMarginMask(1, wxSTC_MASK_FOLDERS);
-		m_stc->SetMarginWidth(1, 16);
-		m_stc->SetMarginSensitive(1, true);
-		m_stc->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
-		m_stc->SetMarginWidth(0, 0);
-		m_stc->SetUseTabs(false);
-		m_stc->SetTabWidth(4);
-		m_stc->SetBackSpaceUnIndents(true);
-		m_stc->SetMinSize(wxSize(400, -1));
-	}
+    {
+        m_stc->SetProperty("fold", "1");
+        m_stc->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
+        m_stc->SetMarginMask(1, wxSTC_MASK_FOLDERS);
+        m_stc->SetMarginWidth(1, 16);
+        m_stc->SetMarginSensitive(1, true);
+        m_stc->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
+        m_stc->SetMarginWidth(0, 0);
+        m_stc->SetUseTabs(false);
+        m_stc->SetTabWidth(4);
+        m_stc->SetBackSpaceUnIndents(true);
+        m_stc->SetMinSize(wxSize(400, -1));
+    }
     m_stc->SetMinSize(wxSize(400, -1));
     m_lambda_box->Add(m_stc, wxSizerFlags().DoubleBorder(wxALL));
 
@@ -72,7 +72,6 @@ EventHandlerDlgBase::EventHandlerDlgBase(wxWindow* parent, wxWindowID id, const 
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 
     // Event handlers

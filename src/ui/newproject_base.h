@@ -20,10 +20,7 @@
 class NewProjectBase : public wxDialog
 {
 public:
-    NewProjectBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-        const wxString& title = wxString::FromUTF8("New Project"),
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE);
+    NewProjectBase(wxWindow* parent);
 
 protected:
 

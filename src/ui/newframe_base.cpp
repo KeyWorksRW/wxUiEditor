@@ -15,10 +15,10 @@
 
 #include "newframe_base.h"
 
-NewFrameBase::NewFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+NewFrameBase::NewFrameBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("New wxFrame window"));
+
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
@@ -65,7 +65,6 @@ NewFrameBase::NewFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(box_sizer);
-
     Centre(wxBOTH);
 
     // Event handlers

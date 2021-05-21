@@ -12,10 +12,10 @@
 
 #include "newribbon_base.h"
 
-NewRibbonBase::NewRibbonBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+NewRibbonBase::NewRibbonBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("New Ribbon Bar"));
+
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
@@ -35,7 +35,7 @@ NewRibbonBase::NewRibbonBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_comboBox->Append(wxString::FromUTF8("Tool"));
     m_comboBox->Append(wxString::FromUTF8("Button"));
     m_comboBox->Append(wxString::FromUTF8("Gallery"));
-    m_comboBox->SetStringSelection(wxString::FromUTF8("Tool"));
+    m_panel_type = wxString::FromUTF8("Tool");  // set validator variable
     m_comboBox->SetValidator(wxGenericValidator(&m_panel_type));
     box_sizer_2->Add(m_comboBox, wxSizerFlags().Border(wxALL));
 
@@ -55,6 +55,5 @@ NewRibbonBase::NewRibbonBase(wxWindow* parent, wxWindowID id, const wxString& ti
     box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(box_sizer);
-
     Centre(wxBOTH);
 }

@@ -13,10 +13,10 @@
 
 #include "editstringdialog_base.h"
 
-EditStringDialogBase::EditStringDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+EditStringDialogBase::EditStringDialogBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxEmptyString);
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
@@ -30,6 +30,5 @@ EditStringDialogBase::EditStringDialogBase(wxWindow* parent, wxWindowID id, cons
     parent_sizer->AddSpacer(0);
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 }

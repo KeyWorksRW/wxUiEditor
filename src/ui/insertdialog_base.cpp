@@ -10,10 +10,10 @@
 
 #include "insertdialog_base.h"
 
-InsertDialogBase::InsertDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+InsertDialogBase::InsertDialogBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Insert widget"));
+
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
     box_sizer->SetMinSize(300, 400);
 
@@ -36,7 +36,6 @@ InsertDialogBase::InsertDialogBase(wxWindow* parent, wxWindowID id, const wxStri
     box_sizer->Add(CreateSeparatedSizer(m_stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(box_sizer);
-
     Centre(wxBOTH);
 
     // Event handlers

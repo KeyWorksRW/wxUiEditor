@@ -11,10 +11,10 @@
 
 #include "artpropdlg_base.h"
 
-ArtPropertyDlgBase::ArtPropertyDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+ArtPropertyDlgBase::ArtPropertyDlgBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Art Provider Image"));
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -48,7 +48,6 @@ ArtPropertyDlgBase::ArtPropertyDlgBase(wxWindow* parent, wxWindowID id, const wx
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 
     // Event handlers

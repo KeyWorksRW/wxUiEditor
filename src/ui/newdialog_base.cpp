@@ -14,10 +14,10 @@
 
 #include "newdialog_base.h"
 
-NewDialogBase::NewDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+NewDialogBase::NewDialogBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("New Dialog"));
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
@@ -75,7 +75,6 @@ NewDialogBase::NewDialogBase(wxWindow* parent, wxWindowID id, const wxString& ti
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 
     // Event handlers

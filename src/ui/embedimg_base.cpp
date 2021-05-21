@@ -15,10 +15,10 @@
 
 #include "embedimg_base.h"
 
-EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+EmbedImageBase::EmbedImageBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("Convert Image"));
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -194,7 +194,6 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent, wxWindowID id, const wxString& 
     grid_sizer->Add(m_btnClose, wxSizerFlags().Right().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 
     // Event handlers

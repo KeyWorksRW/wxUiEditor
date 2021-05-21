@@ -8,10 +8,10 @@
 
 #include "newproject_base.h"
 
-NewProjectBase::NewProjectBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxDialog(parent, id, title, pos, size, style)
+NewProjectBase::NewProjectBase(wxWindow* parent) : wxDialog()
 {
+    Create(parent, wxID_ANY, wxString::FromUTF8("New Project"));
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer3 = new wxBoxSizer(wxVERTICAL);
@@ -73,7 +73,6 @@ NewProjectBase::NewProjectBase(wxWindow* parent, wxWindowID id, const wxString& 
     parent_sizer->Add(CreateSeparatedSizer(m_stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
-
     Centre(wxBOTH);
 
     // Event handlers

@@ -20,10 +20,7 @@
 class EventHandlerDlgBase : public wxDialog
 {
 public:
-    EventHandlerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-        const wxString& title = wxString::FromUTF8("Event Handler"),
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE);
+    EventHandlerDlgBase(wxWindow* parent);
 
 protected:
 

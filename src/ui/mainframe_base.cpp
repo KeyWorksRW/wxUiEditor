@@ -50,8 +50,8 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
 };
 
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxFrame(parent, id, title, pos, size, style)
+        const wxPoint& pos, const wxSize& size, long style) :
+    wxFrame(parent, id, title, pos, size, style)
 {
     SetSizeHints(wxSize(800, 800));
 
@@ -274,7 +274,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuHelp->Append(menu_help);
     m_menubar->Append(m_menuHelp, wxString::FromUTF8("&Help"));
 
-	SetMenuBar(m_menubar);
+    SetMenuBar(m_menubar);
 
     m_toolbar = CreateToolBar(wxTB_FLAT|wxTB_HORIZONTAL);
 
@@ -361,7 +361,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_toolbar->AddTool(id_Magnify, wxEmptyString, GetImgFromHdr(magnify_png, sizeof(magnify_png)),
     wxString::FromUTF8("Magnify the size of the Mockup window"), wxITEM_CHECK);
 
-	m_toolbar->Realize();
+    m_toolbar->Realize();
 
     Centre(wxBOTH);
 

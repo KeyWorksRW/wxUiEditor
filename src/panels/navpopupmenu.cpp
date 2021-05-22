@@ -7,6 +7,8 @@
 
 #include "pch.h"
 
+#include <wx/artprov.h>
+
 #include "navpopupmenu.h"  // NavPopupMenu
 
 #include "bitmaps.h"       // Contains various images handling functions
@@ -75,7 +77,7 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         }
     }
 
-    if (node->IsContainer() && node->DeclName().contains("book"))
+    if (node->IsContainer() && node->DeclName().contains("book", tt::CASE::either))
     {
         CreateBookMenu(node);
         return;
@@ -86,31 +88,275 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         CreateProjectMenu(node);
         return;
     }
-    else if (node->DeclName().is_sameprefix("wxMenu") || node->isGen(gen_separator) || node->isGen(gen_submenu))
+
+    if (node->DeclName().is_sameprefix("wxMenu") || node->isGen(gen_separator) || node->isGen(gen_submenu))
     {
         CreateMenuMenu(node);
         return;
     }
-    else if (node->isGen(gen_wxWizard))
+
+    if (node->isGen(gen_wxWizard))
     {
         CreateWizardMenu(node);
         return;
     }
 
-    auto parent = node->GetParent();
-
-    if (node->IsSizer() && (parent->IsForm() || parent->IsContainer()))
+    if (node->IsSizer() && (node->GetParent()->IsForm() || node->GetParent()->IsContainer()))
     {
         CreateTopSizerMenu(node);
         return;
     }
 
-    wxMenuItem* menu_item;
-    Append(MenuCUT, "Cut\tCtrl+X");
-    Append(MenuCOPY, "Copy\tCtrl+C");
-    Append(MenuPASTE, "Paste\tCtrl+V");
+    CreateNormalMenu(node);
+}
 
-    Append(MenuDELETE, "Delete\tCtrl+D");
+void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
+{
+    switch (event.GetId())
+    {
+        case MenuNEW_ITEM:
+            if (m_tool_name.size())
+            {
+                if (m_child)
+                    m_child->CreateToolNode(m_tool_name);
+                else
+                    wxGetFrame().CreateToolNode(m_tool_name);
+            }
+            break;
+
+        case wxID_CUT:
+            wxGetFrame().CutNode(m_node);
+            break;
+
+        case wxID_COPY:
+            wxGetFrame().CopyNode(m_node);
+            break;
+
+        case wxID_PASTE:
+            wxGetFrame().PasteNode(m_node);
+            break;
+
+        case MenuDUPLICATE:
+            wxGetFrame().DuplicateNode(m_node);
+            break;
+
+        case wxID_DELETE:
+            wxGetFrame().DeleteNode(m_node);
+            break;
+
+        case MenuMOVE_UP:
+            wxGetFrame().MoveNode(m_node, MoveDirection::Up);
+            break;
+
+        case MenuMOVE_DOWN:
+            wxGetFrame().MoveNode(m_node, MoveDirection::Down);
+            break;
+
+        case MenuMOVE_RIGHT:
+            wxGetFrame().MoveNode(m_node, MoveDirection::Right);
+            break;
+
+        case MenuMOVE_LEFT:
+            wxGetFrame().MoveNode(m_node, MoveDirection::Left);
+            break;
+
+        case MenuNEW_PARENT_BOX_SIZER:
+            CreateSizerParent(m_node, "wxBoxSizer");
+            break;
+
+        case MenuNEW_PARENT_STATIC_SIZER:
+            CreateSizerParent(m_node, "wxStaticBoxSizer");
+            break;
+
+        case MenuNEW_PARENT_WRAP_SIZER:
+            CreateSizerParent(m_node, "wxWrapSizer");
+            break;
+
+        case MenuNEW_PARENT_GRID_SIZER:
+            CreateSizerParent(m_node, "wxGridSizer");
+            break;
+
+        case MenuNEW_PARENT_FLEX_GRID_SIZER:
+            CreateSizerParent(m_node, "wxFlexGridSizer");
+            break;
+
+        case MenuNEW_PARENT_GRIDBAG_SIZER:
+            CreateSizerParent(m_node, "wxGridBagSizer");
+            break;
+
+        case MenuRESET_ID:
+            m_node->ModifyProperty("id", "wxID_ANY");
+            break;
+
+        case MenuRESET_SIZE:
+            m_node->ModifyProperty("size", "-1,-1");
+            break;
+
+        case MenuRESET_MIN_SIZE:
+            m_node->ModifyProperty(prop_minimum_size, "-1,-1");
+            break;
+
+        case MenuRESET_MAX_SIZE:
+            m_node->ModifyProperty("maximum_size", "-1,-1");
+            break;
+
+        case MenuADD_PAGE:
+            if (m_node->isGen(gen_BookPage))
+            {
+                m_node->GetParent()->CreateToolNode("BookPage");
+            }
+            if (m_node->isGen(gen_wxWizardPageSimple))
+            {
+                m_node->GetParent()->CreateToolNode("wxWizardPageSimple");
+            }
+            else
+            {
+                wxGetFrame().CreateToolNode("wxPanel");
+            }
+            break;
+
+        default:
+            break;
+    }
+}
+
+void NavPopupMenu::OnUpdateEvent(wxUpdateUIEvent& event)
+{
+    switch (event.GetId())
+    {
+        case wxID_CUT:
+        case wxID_COPY:
+            // case wxID_DELETE:
+            event.Enable(wxGetFrame().CanCopyNode());
+            break;
+
+        case wxID_PASTE:
+            event.Enable(wxGetFrame().CanPasteNode());
+            break;
+
+        case MenuBORDERS_ALL:
+            event.Check(m_node->prop_as_string(prop_borders).contains("wxALL"));
+            break;
+
+        case MenuBORDERS_NONE:
+            event.Check(m_node->prop_as_string(prop_borders).empty());
+            break;
+
+        case MenuBORDERS_HORIZONTAL:
+            event.Check(m_node->prop_as_string(prop_borders) == "wxLEFT|wxRIGHT" ||
+                        m_node->prop_as_string(prop_borders) == "wxRIGHT|wxLEFT|");
+            break;
+
+        case MenuBORDERS_VERTICAL:
+            event.Check(m_node->prop_as_string(prop_borders) == "wxTOP|wxBOTTOM" ||
+                        m_node->prop_as_string(prop_borders) == "wxBOTTOM|wxTOP|");
+            break;
+
+        case MenuMOVE_UP:
+            Enable(MenuMOVE_UP, wxGetFrame().MoveNode(m_node, MoveDirection::Up, true));
+            break;
+
+        case MenuMOVE_DOWN:
+            Enable(MenuMOVE_DOWN, wxGetFrame().MoveNode(m_node, MoveDirection::Down, true));
+            break;
+
+        case MenuMOVE_LEFT:
+            Enable(MenuMOVE_LEFT, wxGetFrame().MoveNode(m_node, MoveDirection::Left, true));
+            break;
+
+        case MenuMOVE_RIGHT:
+            Enable(MenuMOVE_RIGHT, wxGetFrame().MoveNode(m_node, MoveDirection::Right, true));
+            break;
+    }
+}
+
+void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
+{
+    auto parent = node->GetParent();
+    if (!parent)
+    {
+        // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
+        FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
+        return;
+    }
+
+    auto childPos = parent->GetChildPosition(node);
+
+    while (parent && !parent->IsSizer())
+    {
+        parent = parent->GetParent();
+    }
+
+    if (!parent)
+    {
+        // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
+        FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
+        return;
+    }
+
+    // Avoid the temptation to set new_sizer to the raw pointer so that .get() doesn't have to be called below. Doing so will
+    // result in the reference count being decremented before we are done hooking it up, and you end up crashing (see issue
+    // #93).
+
+    auto new_sizer = g_NodeCreator.CreateNode(widget, parent);
+    if (new_sizer)
+    {
+        auto multi_cmd = std::make_shared<MultiAction>(ttlib::cstr() << "new sizer for " << node->DeclName());
+
+        auto reparent_cmd = std::make_shared<ChangeParentAction>(node, new_sizer.get());
+        multi_cmd->Add(reparent_cmd);
+
+        auto insert_cmd = std::make_shared<InsertNodeAction>(new_sizer.get(), parent, tt_empty_cstr, childPos);
+        multi_cmd->Add(insert_cmd);
+
+        wxGetFrame().PushUndoAction(multi_cmd);
+        new_sizer->FixDuplicateName();
+
+        // REVIEW: [KeyWorks - 03-30-2021] See issue #94 about the problem this causes.
+        wxGetFrame().FireProjectUpdatedEvent();
+
+        wxGetFrame().SelectNode(new_sizer->GetChild(0), true, true);
+    }
+}
+
+void NavPopupMenu::OnBorders(wxCommandEvent& event)
+{
+    ttlib::cstr value;
+
+    switch (event.GetId())
+    {
+        case MenuBORDERS_ALL:
+            value = "wxALL";
+            break;
+
+        case MenuBORDERS_NONE:
+            // It's already cleared, so nothing to do
+            break;
+
+        case MenuBORDERS_HORIZONTAL:
+            value = "wxLEFT|wxRIGHT";
+            break;
+
+        case MenuBORDERS_VERTICAL:
+            value = "wxTOP|wxBOTTOM";
+            break;
+    }
+
+    m_node->ModifyProperty(prop_borders, value);
+}
+
+void NavPopupMenu::CreateNormalMenu(Node* node)
+{
+    wxMenuItem* menu_item;
+    menu_item = Append(wxID_CUT);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU));
+    menu_item = Append(wxID_COPY);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
+    menu_item = Append(wxID_PASTE);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
+
+    menu_item = Append(wxID_DELETE);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
     Append(MenuDUPLICATE, "Duplicate");
     AppendSeparator();
 
@@ -221,8 +467,8 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         Append(MenuADD_PAGE, "Add page");
     }
 
-    Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
+    Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
 
     // Bind() uses the equivalent of a LIFO stack, so we can Bind() to wxID_ANY first, then Bind() to any specific ids as
     // needed
@@ -257,230 +503,6 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
     Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_GRID_SIZER);
     Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_FLEX_GRID_SIZER);
     Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_GRIDBAG_SIZER);
-
-    Enable(MenuMOVE_UP, wxGetFrame().MoveNode(m_node, MoveDirection::Up, true));
-    Enable(MenuMOVE_DOWN, wxGetFrame().MoveNode(m_node, MoveDirection::Down, true));
-    Enable(MenuMOVE_LEFT, wxGetFrame().MoveNode(m_node, MoveDirection::Left, true));
-    Enable(MenuMOVE_RIGHT, wxGetFrame().MoveNode(m_node, MoveDirection::Right, true));
-}
-
-void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
-{
-    switch (event.GetId())
-    {
-        case MenuNEW_ITEM:
-            if (m_tool_name.size())
-            {
-                if (m_child)
-                    m_child->CreateToolNode(m_tool_name);
-                else
-                    wxGetFrame().CreateToolNode(m_tool_name);
-            }
-            break;
-
-        case MenuCUT:
-            wxGetFrame().CutNode(m_node);
-            break;
-
-        case MenuCOPY:
-            wxGetFrame().CopyNode(m_node);
-            break;
-
-        case MenuPASTE:
-            wxGetFrame().PasteNode(m_node);
-            break;
-
-        case MenuDUPLICATE:
-            wxGetFrame().DuplicateNode(m_node);
-            break;
-
-        case MenuDELETE:
-            wxGetFrame().DeleteNode(m_node);
-            break;
-
-        case MenuMOVE_UP:
-            wxGetFrame().MoveNode(m_node, MoveDirection::Up);
-            break;
-
-        case MenuMOVE_DOWN:
-            wxGetFrame().MoveNode(m_node, MoveDirection::Down);
-            break;
-
-        case MenuMOVE_RIGHT:
-            wxGetFrame().MoveNode(m_node, MoveDirection::Right);
-            break;
-
-        case MenuMOVE_LEFT:
-            wxGetFrame().MoveNode(m_node, MoveDirection::Left);
-            break;
-
-        case MenuNEW_PARENT_BOX_SIZER:
-            CreateSizerParent(m_node, "wxBoxSizer");
-            break;
-
-        case MenuNEW_PARENT_STATIC_SIZER:
-            CreateSizerParent(m_node, "wxStaticBoxSizer");
-            break;
-
-        case MenuNEW_PARENT_WRAP_SIZER:
-            CreateSizerParent(m_node, "wxWrapSizer");
-            break;
-
-        case MenuNEW_PARENT_GRID_SIZER:
-            CreateSizerParent(m_node, "wxGridSizer");
-            break;
-
-        case MenuNEW_PARENT_FLEX_GRID_SIZER:
-            CreateSizerParent(m_node, "wxFlexGridSizer");
-            break;
-
-        case MenuNEW_PARENT_GRIDBAG_SIZER:
-            CreateSizerParent(m_node, "wxGridBagSizer");
-            break;
-
-        case MenuRESET_ID:
-            m_node->ModifyProperty("id", "wxID_ANY");
-            break;
-
-        case MenuRESET_SIZE:
-            m_node->ModifyProperty("size", "-1,-1");
-            break;
-
-        case MenuRESET_MIN_SIZE:
-            m_node->ModifyProperty(prop_minimum_size, "-1,-1");
-            break;
-
-        case MenuRESET_MAX_SIZE:
-            m_node->ModifyProperty("maximum_size", "-1,-1");
-            break;
-
-        case MenuADD_PAGE:
-            if (m_node->isGen(gen_BookPage))
-            {
-                m_node->GetParent()->CreateToolNode("BookPage");
-            }
-            if (m_node->isGen(gen_wxWizardPageSimple))
-            {
-                m_node->GetParent()->CreateToolNode("wxWizardPageSimple");
-            }
-            else
-            {
-                wxGetFrame().CreateToolNode("wxPanel");
-            }
-            break;
-
-        default:
-            break;
-    }
-}
-
-void NavPopupMenu::OnUpdateEvent(wxUpdateUIEvent& event)
-{
-    switch (event.GetId())
-    {
-        case MenuCUT:
-        case MenuCOPY:
-        case MenuDELETE:
-            event.Enable(wxGetFrame().CanCopyNode());
-            break;
-
-        case MenuPASTE:
-            event.Enable(wxGetFrame().CanPasteNode());
-            break;
-
-        case MenuBORDERS_ALL:
-            event.Check(m_node->prop_as_string(prop_borders).contains("wxALL"));
-            break;
-
-        case MenuBORDERS_NONE:
-            event.Check(m_node->prop_as_string(prop_borders).empty());
-            break;
-
-        case MenuBORDERS_HORIZONTAL:
-            event.Check(m_node->prop_as_string(prop_borders) == "wxLEFT|wxRIGHT" ||
-                        m_node->prop_as_string(prop_borders) == "wxRIGHT|wxLEFT|");
-            break;
-
-        case MenuBORDERS_VERTICAL:
-            event.Check(m_node->prop_as_string(prop_borders) == "wxTOP|wxBOTTOM" ||
-                        m_node->prop_as_string(prop_borders) == "wxBOTTOM|wxTOP|");
-            break;
-    }
-}
-
-void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
-{
-    auto parent = node->GetParent();
-    if (!parent)
-    {
-        // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
-        FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
-        return;
-    }
-
-    auto childPos = parent->GetChildPosition(node);
-
-    while (parent && !parent->IsSizer())
-    {
-        parent = parent->GetParent();
-    }
-
-    if (!parent)
-    {
-        // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
-        FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
-        return;
-    }
-
-    // Avoid the temptation to set new_sizer to the raw pointer so that .get() doesn't have to be called below. Doing so will
-    // result in the reference count being decremented before we are done hooking it up, and you end up crashing (see issue
-    // #93).
-
-    auto new_sizer = g_NodeCreator.CreateNode(widget, parent);
-    if (new_sizer)
-    {
-        auto multi_cmd = std::make_shared<MultiAction>(ttlib::cstr() << "new sizer for " << node->DeclName());
-
-        auto reparent_cmd = std::make_shared<ChangeParentAction>(node, new_sizer.get());
-        multi_cmd->Add(reparent_cmd);
-
-        auto insert_cmd = std::make_shared<InsertNodeAction>(new_sizer.get(), parent, tt_empty_cstr, childPos);
-        multi_cmd->Add(insert_cmd);
-
-        wxGetFrame().PushUndoAction(multi_cmd);
-        new_sizer->FixDuplicateName();
-
-        // REVIEW: [KeyWorks - 03-30-2021] See issue #94 about the problem this causes.
-        wxGetFrame().FireProjectUpdatedEvent();
-
-        wxGetFrame().SelectNode(new_sizer->GetChild(0), true, true);
-    }
-}
-
-void NavPopupMenu::OnBorders(wxCommandEvent& event)
-{
-    ttlib::cstr value;
-
-    switch (event.GetId())
-    {
-        case MenuBORDERS_ALL:
-            value = "wxALL";
-            break;
-
-        case MenuBORDERS_NONE:
-            // It's already cleared, so nothing to do
-            break;
-
-        case MenuBORDERS_HORIZONTAL:
-            value = "wxLEFT|wxRIGHT";
-            break;
-
-        case MenuBORDERS_VERTICAL:
-            value = "wxTOP|wxBOTTOM";
-            break;
-    }
-
-    m_node->ModifyProperty(prop_borders, value);
 }
 
 void NavPopupMenu::CreateProjectMenu(Node* WXUNUSED(node))
@@ -603,8 +625,12 @@ void NavPopupMenu::OnAddNew(wxCommandEvent& event)
 
 void NavPopupMenu::CreateContainerMenu(Node* node)
 {
-    Append(MenuCUT, "Cut\tCtrl+X");
-    Append(MenuCOPY, "Copy\tCtrl+C");
+    wxMenuItem* menu_item;
+
+    menu_item = Append(wxID_CUT);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU));
+    menu_item = Append(wxID_COPY);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
     if (wxGetFrame().GetClipboard())
     {
         auto clipboard = wxGetFrame().GetClipboard();
@@ -613,15 +639,16 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
 
         if (clipboard->IsForm() || clipboard->IsContainer() || (clipboard->IsSizer() && node->GetChildCount() == 0))
         {
-            Append(MenuPASTE, "Paste\tCtrl+V");
+            menu_item = Append(wxID_PASTE);
+            menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
         }
     }
 
-    Append(MenuDELETE, "Delete\tCtrl+D");
+    menu_item = Append(wxID_DELETE);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
     AppendSeparator();
 
     auto sub_menu = new wxMenu;
-    wxMenuItem* menu_item;
     menu_item = sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
     menu_item->SetBitmap(GetInternalImage("nav_moveup"));
     menu_item = sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
@@ -732,21 +759,20 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
         Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_GRIDBAG_SIZER);
         Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, MenuADD_PAGE);
     }
-
-    Enable(MenuMOVE_UP, wxGetFrame().MoveNode(m_node, MoveDirection::Up, true));
-    Enable(MenuMOVE_DOWN, wxGetFrame().MoveNode(m_node, MoveDirection::Down, true));
 }
 
 void NavPopupMenu::CreateTopSizerMenu(Node* node)
 {
-    Append(MenuPASTE, "Paste\tCtrl+V");
+    wxMenuItem* menu_item;
+
+    menu_item = Append(wxID_PASTE);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
     AppendSeparator();
 
     // Many of the OnAddNew commands add to a child, so we need to "fake" the child to ourselves
     m_child = node;
 
     auto sub_menu = new wxMenu;
-    wxMenuItem* menu_item;
     menu_item = sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
     menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
     menu_item = sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
@@ -769,18 +795,22 @@ void NavPopupMenu::CreateTopSizerMenu(Node* node)
     AppendSubMenu(sub_menu, "&Add new sizer");
 
     Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this);
-    Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, MenuPASTE);
+    Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_PASTE);
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
 }
 
-void NavPopupMenu::CreateMenuMenu(Node* node)
+void NavPopupMenu::CreateMenuMenu(Node* /* node */)
 {
     wxMenuItem* menu_item;
 
-    Append(MenuCUT, "Cut\tCtrl+X");
-    Append(MenuCOPY, "Copy\tCtrl+C");
-    Append(MenuPASTE, "Paste\tCtrl+V");
-    Append(MenuDELETE, "Delete\tCtrl+D");
+    menu_item = Append(wxID_CUT);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU));
+    menu_item = Append(wxID_COPY);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
+    menu_item = Append(wxID_PASTE);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
+    menu_item = Append(wxID_DELETE);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
 
     AppendSeparator();
     menu_item = Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
@@ -795,9 +825,6 @@ void NavPopupMenu::CreateMenuMenu(Node* node)
 
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this);
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
-
-    Enable(MenuMOVE_UP, wxGetFrame().MoveNode(node, MoveDirection::Up, true));
-    Enable(MenuMOVE_UP, wxGetFrame().MoveNode(node, MoveDirection::Down, true));
 
     Bind(
         wxEVT_MENU,
@@ -827,8 +854,19 @@ void NavPopupMenu::CreateMenuMenu(Node* node)
 
 void NavPopupMenu::CreateBarMenu(Node* node)
 {
-    Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
-    Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
+    wxMenuItem* menu_item;
+
+    if (!node->isGen(gen_wxStatusBar))
+    {
+        menu_item = Append(wxID_PASTE);
+        menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
+        AppendSeparator();
+    }
+
+    menu_item = Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
+    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
+    menu_item = Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
+    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
 
     if (node->isGen(gen_wxMenuBar) || node->isGen(gen_MenuBar))
     {
@@ -861,33 +899,48 @@ void NavPopupMenu::CreateBarMenu(Node* node)
         Append(MenuNEW_ITEM, "Add Tool");
     }
 
-    Enable(MenuMOVE_UP, wxGetFrame().MoveNode(node, MoveDirection::Up, true));
-    Enable(MenuMOVE_UP, wxGetFrame().MoveNode(node, MoveDirection::Down, true));
-
+    Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
+
     if (node->isGen(gen_wxMenuBar) || node->isGen(gen_MenuBar))
     {
         Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuADD_MENU);
     }
 }
 
-void NavPopupMenu::CreateWizardMenu(Node* node)
+void NavPopupMenu::CreateWizardMenu(Node* /* node */)
 {
-    Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
-    Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
+    wxMenuItem* menu_item;
+
+    menu_item = Append(wxID_PASTE);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
+    AppendSeparator();
+    menu_item = Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
+    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
+    menu_item = Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
+    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
 
     AppendSeparator();
     m_tool_name = "wxWizardPageSimple";
     Append(MenuNEW_ITEM, "Add Page\tCtrl+P");
 
-    Enable(MenuMOVE_UP, wxGetFrame().MoveNode(node, MoveDirection::Up, true));
-    Enable(MenuMOVE_UP, wxGetFrame().MoveNode(node, MoveDirection::Down, true));
-
+    Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
 }
 
 void NavPopupMenu::CreateBookMenu(Node* /* node */)
 {
+    wxMenuItem* menu_item;
+
+    menu_item = Append(wxID_PASTE);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
+    AppendSeparator();
+    menu_item = Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
+    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
+    menu_item = Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
+    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
+
+    AppendSeparator();
     m_tool_name = "BookPage";
     Append(MenuNEW_ITEM, "Add Page");
     AppendSeparator();
@@ -899,6 +952,7 @@ void NavPopupMenu::CreateBookMenu(Node* /* node */)
     sub_menu->Append(MenuBORDERS_VERTICAL, "Vertical only", "Borders only on top and bottom", wxITEM_CHECK);
     AppendSubMenu(sub_menu, "Borders");
 
+    Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
 }
 

@@ -26,6 +26,7 @@ protected:
     void OnMenuEvent(wxCommandEvent& event);
     void OnUpdateEvent(wxUpdateUIEvent& event);
 
+    void CreateNormalMenu(Node* node);
     void CreateBarMenu(Node* node);
     void CreateBookMenu(Node* node);
     void CreateContainerMenu(Node* node);
@@ -38,11 +39,7 @@ protected:
 
     enum
     {
-        MenuCUT = wxID_HIGHEST + 2000,
-        MenuCOPY,
-        MenuPASTE,
-        MenuDUPLICATE,
-        MenuDELETE,
+        MenuDUPLICATE = wxID_HIGHEST + 2000,
 
         MenuMOVE_UP,
         MenuMOVE_DOWN,

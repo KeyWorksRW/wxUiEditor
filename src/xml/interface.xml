@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <GeneratorDefinitions>
 
+<!--
+    Each interface class can be added to a generator by using <inherits class="name" />. The class name
+    will be used as a Category name.
+ -->
+
 <gen class="wxTopLevelWindow" type="interface">
     <event name="wxEVT_ACTIVATE" class="wxActivateEvent"
         help="An activate event is sent when a window or application is being activated or deactivated." />
@@ -22,11 +27,6 @@
         help="Only available for the wxMSW, wxGTK ports." />
     <event name="wxEVT_IDLE" class="wxIdleEvent"
         help="" />
-</gen>
-
-<gen class="UserCode" type="interface">
-    <property name="enable_user_code" type="bool">0</property>
-    <property name="user_cpp_code" type="string_edit" />
 </gen>
 
 <gen class="wxWindow" type="interface">

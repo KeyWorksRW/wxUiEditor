@@ -40,7 +40,7 @@ static const GZIP_PAIR gzip_pairs[] = {
 };
 // clang-format on
 
-bool LoadInternalXmlDocFile(ttlib::cview file, pugi::xml_document& doc)
+bool LoadInternalXmlDocFile(ttlib::cview file, pugi::xml_document* doc)
 {
     for (auto& iter: gzip_pairs)
     {
@@ -49,7 +49,7 @@ bool LoadInternalXmlDocFile(ttlib::cview file, pugi::xml_document& doc)
             auto str = LoadGzipString(iter.gzip_data, iter.gzip_size);
             if (str.size())
             {
-                if (auto result = doc.load_string(str.c_str()); result)
+                if (auto result = doc->load_string(str.c_str()); result)
                 {
                     return true;
                 }

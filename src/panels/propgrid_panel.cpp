@@ -562,7 +562,7 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
                 }
             }
 
-            if (name.is_sameas("wxWindow"))
+            if (name.is_sameas("wxWindow") || category.GetName() == "Window Settings")
                 m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#e7f4e4"));
 
             // Automatically collapse properties that are rarely used
@@ -649,7 +649,7 @@ void PropGridPanel::AddEvents(ttlib::cview name, Node* node, NodeCategory& categ
 
             m_event_grid->SetPropertyHelpString(id, wxGetTranslation(eventInfo->get_help()));
 
-            if (name.is_sameas("Window Events"))
+            if (name.is_sameas("Window Events") || name.is_sameas("wxTopLevelWindow"))
                 m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e7f4e4"));
 
             if (auto it = m_expansion_map.find(eventName); it != m_expansion_map.end())

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<GeneratorDefitions>
+<GeneratorDefinitions>
 
 <gen class="Project" type="project" image="project">
     <property name="source_ext" type="option"
@@ -93,6 +93,7 @@
       </property>
     <property name="icon" type="image"
         help="Specifies the image to display in the title bar of the dialog." />
+
     <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent"
         help="Generated when the dialog is being initialized." />
 </gen>
@@ -336,4 +337,4 @@
       wxBORDER_NONE
       </property>
 </gen>
-</GeneratorDefitions>
+</GeneratorDefinitions>

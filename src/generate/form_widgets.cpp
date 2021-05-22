@@ -231,7 +231,7 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenConstruction(Node* node)
 
     // This is the code to add to the source file
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
-    code << "(wxWindow* parent, int border) : wxPopupTransientWindow(parent, border)\n{";
+    code << "(wxWindow* parent, int style) : wxPopupTransientWindow(parent, style)\n{";
 
     return code;
 }
@@ -242,7 +242,11 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenAdditionalCode(GenEnum::GenCode
 
     if (cmd == code_header)
     {
-        code << node->get_node_name() << "(wxWindow* parent, int border_flag = " << node->prop_as_string(prop_border);
+        code << node->get_node_name() << "(wxWindow* parent, int style = " << node->prop_as_string(prop_border);
+        if (node->HasValue(prop_style))
+        {
+            code << " | " << node->prop_as_string(prop_style);
+        }
         code << ");";
         return code;
     }
@@ -257,9 +261,68 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenEvents(NodeEvent* event, const 
     return GenEventCode(event, class_name);
 }
 
-std::optional<ttlib::cstr> PopupWinGenerator::GenSettings(Node* /* node */, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> PopupWinGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
-    return {};
+    ttlib::cstr code;
+
+    if (node->prop_as_string(prop_font).size())
+    {
+        code << "SetFont(wxFont(";
+        auto fontprop = node->prop_as_font_prop(prop_font);
+        wxFont font = fontprop.GetFont();
+        auto pointSize = fontprop.GetPointSize();
+
+        if (pointSize <= 0)
+            code << "wxNORMAL_FONT->GetPointSize(), ";
+        else
+            code << pointSize << ", ";
+        code << ConvertFontFamilyToString(fontprop.GetFamily()) << ", " << font.GetStyleString().wx_str();
+        code << ", " << font.GetWeightString().wx_str() << ", " << (fontprop.isUnderlined() ? "true" : "false");
+        if (fontprop.GetFaceName().empty())
+            code << ", wxEmptyString";
+        else
+            code << ", \"" << fontprop.GetFaceName().wx_str() << "\"";
+        code << ");";
+    }
+
+    auto& fg_clr = node->prop_as_string(prop_foreground_colour);
+    if (fg_clr.size())
+    {
+        if (code.size())
+            code << '\n';
+        code << "SetForegroundColour(";
+        if (fg_clr.contains("wx"))
+            code << "wxSystemSettings::GetColour(" << fg_clr << "));";
+        else
+        {
+            wxColour colour = ConvertToColour(fg_clr);
+            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
+        }
+    }
+
+    auto& bg_clr = node->prop_as_string(prop_background_colour);
+    if (bg_clr.size())
+    {
+        if (code.size())
+            code << '\n';
+        code << "SetBackgroundColour(";
+        if (bg_clr.contains("wx"))
+            code << "wxSystemSettings::GetColour(" << bg_clr << "));";
+        else
+        {
+            wxColour colour = ConvertToColour(bg_clr);
+            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
+        }
+    }
+
+    if (code.empty())
+    {
+        return {};
+    }
+    else
+    {
+        return code;
+    }
 }
 
 bool PopupWinGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

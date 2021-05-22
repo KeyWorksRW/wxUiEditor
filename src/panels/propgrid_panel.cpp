@@ -471,7 +471,8 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
     return new_pg_property;
 }
 
-void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& category, PropNameSet& prop_set)
+void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& category, PropNameSet& prop_set,
+                                  bool is_child_cat)
 {
     size_t propCount = category.GetPropNameCount();
     for (size_t i = 0; i < propCount; i++)
@@ -597,10 +598,18 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
             continue;
         }
 
-        wxPGProperty* catId =
-            m_prop_grid->AppendIn(GetCategoryDisplayName(category.GetName()), new wxPropertyCategory(nextCat.GetName()));
+        wxPGProperty* catId;
+        if (is_child_cat)
+        {
+            catId =
+                m_prop_grid->AppendIn(GetCategoryDisplayName(category.GetName()), new wxPropertyCategory(nextCat.GetName()));
+        }
+        else
+        {
+            catId = m_prop_grid->Append(new wxPropertyCategory(nextCat.GetName()));
+        }
 
-        AddProperties(name, node, nextCat, prop_set);
+        AddProperties(name, node, nextCat, prop_set, true);
 
         if (auto it = m_expansion_map.find(nextCat.getName()); it != m_expansion_map.end())
         {

@@ -47,7 +47,8 @@ protected:
     void CreateLayoutCategory(Node* node);
 
     void AddEvents(ttlib::cview name, Node* node, NodeCategory& category, EventSet& event_set);
-    void AddProperties(ttlib::cview name, Node* node, NodeCategory& category, PropNameSet& prop_set);
+    void AddProperties(ttlib::cview name, Node* node, NodeCategory& category, PropNameSet& prop_set,
+                       bool is_child_cat = false);
 
     void ReplaceDrvName(const wxString& formName, NodeProperty* propType);
     void ReplaceBaseFile(const wxString& formName, NodeProperty* propType);

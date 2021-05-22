@@ -18,6 +18,8 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
+#include "../pugixml/pugixml.hpp"
+
 #include "gen_enums.h"  // Enumerations for generators
 using namespace GenEnum;
 
@@ -25,11 +27,6 @@ class NodeCategory;
 
 using NodeDeclarationArray = std::array<NodeDeclaration*, gen_name_array_size>;
 
-namespace pugi
-{
-    class xml_document;
-    class xml_node;
-}  // namespace pugi
 
 // Contains definitions of all components
 class NodeCreator
@@ -90,6 +87,13 @@ private:
     std::unordered_set<std::string> m_setOldHostTypes;
 
     std::unordered_map<std::string, int> m_map_constants;
+
+    // Contains the nodes that m_interfaces maps to -- valid only during Initialize()
+    pugi::xml_document* m_pdoc_interface { nullptr };
+
+    // Contains a map to every interface class -- valid only during Initialize()
+    std::map<std::string, pugi::xml_node> m_interfaces;
+    bool m_is_interface;  // true means an interface file is being processed
 };
 
 extern NodeCreator g_NodeCreator;

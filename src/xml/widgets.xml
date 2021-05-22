@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<GeneratorDefitions>
+<GeneratorDefinitions>
 
 <gen class="wxStaticText" image="wxStaticText" type="widget">
     <inherits class="wxWindow" />
@@ -2341,4 +2341,4 @@
       wxTOP
       </property>
 </gen>
-</GeneratorDefitions>
+</GeneratorDefinitions>

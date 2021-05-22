@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<GeneratorDefitions>
+<GeneratorDefinitions>
 <!-- <gen class="AUI Events" type="interface">
 
   <gen class="AUI Events" type="interface">
@@ -161,4 +161,4 @@
     <event name="wxEVT_AUITOOLBAR_BEGIN_DRAG" class="wxAuiToolBarEvent"
         help="" />
 </gen>
-</GeneratorDefitions>
+</GeneratorDefinitions>

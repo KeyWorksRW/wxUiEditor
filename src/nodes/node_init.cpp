@@ -18,7 +18,7 @@
 
 #include "../pugixml/pugixml.hpp"
 
-bool LoadInternalXmlDocFile(ttlib::cview file, pugi::xml_document& doc);
+bool LoadInternalXmlDocFile(ttlib::cview file, pugi::xml_document* doc);
 
 using namespace child_count;
 using namespace GenEnum;
@@ -181,14 +181,25 @@ void NodeCreator::Initialize()
             GetNodeType(type_gbsizer)->AddChild(iter.child, iter.max_children);
     }
 
-    ParseGeneratorFile("interface");  // Always process this file first
+    {
+        pugi::xml_document doc;
+        m_pdoc_interface = &doc;
 
-    ParseGeneratorFile("aui");
-    ParseGeneratorFile("bars");
-    ParseGeneratorFile("forms");
-    ParseGeneratorFile("containers");
-    ParseGeneratorFile("sizers");
-    ParseGeneratorFile("widgets");
+        // This *MUST* be the first file processed so that m_interfaces is initialized
+        m_is_interface = true;
+        ParseGeneratorFile("interface");
+        m_is_interface = false;
+
+        ParseGeneratorFile("aui");
+        ParseGeneratorFile("bars");
+        ParseGeneratorFile("forms");
+        ParseGeneratorFile("containers");
+        ParseGeneratorFile("sizers");
+        ParseGeneratorFile("widgets");
+
+        m_interfaces.clear();
+        m_pdoc_interface = nullptr;
+    }
 
     InitGenerators();
 
@@ -200,14 +211,32 @@ void NodeCreator::Initialize()
 
 void NodeCreator::ParseGeneratorFile(ttlib::cview name)
 {
+    // All but one of the possible files will use the doc file, so we create it even if it gets ignored because this is an
+    // interface file
     pugi::xml_document doc;
-    if (!LoadInternalXmlDocFile(name, doc))
+    pugi::xml_node root;
+
+    if (m_is_interface)
     {
-        // In _DEBUG builds, an assertion will have already been generated.
-        return;
+        if (!LoadInternalXmlDocFile(name, m_pdoc_interface))
+        {
+            // In _DEBUG builds, an assertion will have already been generated.
+            return;
+        }
+
+        root = m_pdoc_interface->child("GeneratorDefinitions");
+    }
+    else
+    {
+        if (!LoadInternalXmlDocFile(name, &doc))
+        {
+            // In _DEBUG builds, an assertion will have already been generated.
+            return;
+        }
+
+        root = doc.child("GeneratorDefinitions");
     }
 
-    auto root = doc.child("GeneratorDefitions");
     if (!root)
     {
         FAIL_MSG(ttlib::cstr("Cannot locate group in the name ") << name);
@@ -232,6 +261,11 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview name)
             MSG_WARNING(ttlib::cstr("Unrecognized class type -- ") << type);
         }
 #endif  // _DEBUG
+
+        if (m_is_interface)
+        {
+            m_interfaces[class_name] = generator;
+        }
 
         auto declaration = new NodeDeclaration(class_name, GetNodeType(rmap_GenTypes[type.c_str()]));
         m_a_declarations[declaration->gen_name()] = declaration;
@@ -312,8 +346,17 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         auto name = elem_category.attribute("name").as_cview();
         auto& new_cat = category.AddCategory(name);
 
-        // Recurse
-        ParseProperties(elem_category, obj_info, new_cat);
+        if (auto base_name = elem_category.attribute("base_name").value(); *base_name)
+        {
+            if (auto node = m_interfaces.find(base_name); node != m_interfaces.end())
+            {
+                ParseProperties(node->second, obj_info, new_cat);
+            }
+        }
+        else
+        {
+            ParseProperties(elem_category, obj_info, new_cat);
+        }
 
         elem_category = elem_category.next_sibling("category");
     }
@@ -474,11 +517,14 @@ void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& catego
     auto elem_category = elem_obj.child("category");
     while (elem_category)
     {
-        auto name = elem_category.attribute("name").as_cview();
-        auto& new_cat = category.AddCategory(name);
+        // Only create the category if there is at least one event.
+        if (elem_category.child("event"))
+        {
+            auto name = elem_category.attribute("name").as_cview();
+            auto& new_cat = category.AddCategory(name);
 
-        ParseEvents(elem_category, new_cat);
-
+            ParseEvents(elem_category, new_cat);
+        }
         elem_category = elem_category.next_sibling("category");
     }
 

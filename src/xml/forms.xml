@@ -120,7 +120,7 @@
     <inherits class="Code Generation" />
     <inherits class="wxWindow">
         <property name="window_style">wxTAB_TRAVERSAL</property>
-        <property name="size" type="wxSize">500,300</property>
+        <property name="size" type="wxSize" />
     </inherits>
     <property name="class_name" type="string"
         help="The name of the base class.">MyPanelBase</property>

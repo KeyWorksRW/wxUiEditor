@@ -25,7 +25,7 @@
 
 // The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch that
 // to a default size here.
-RibbonPanel::RibbonPanel(wxWindow* parent) : RibbonPanelBase(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize) {}
+RibbonPanel::RibbonPanel(wxWindow* parent) : RibbonPanelBase(parent) {}
 
 void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 {

@@ -106,14 +106,16 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
+    if (!image.FindHandler(wxBITMAP_TYPE_PNG))
+        wxImage::AddHandler(new wxPNGHandler);
     image.LoadFile(strm);
     return image;
 };
 
-RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
-		const wxPoint& pos, const wxSize& size, long style) :
-	wxPanel(parent, id, pos, size, style)
+RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
 {
+    Create(parent, id);
+
     parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_rbnBar = new wxRibbonBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRIBBON_BAR_SHOW_PAGE_LABELS);
@@ -398,6 +400,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id,
     }
     other_bar_html->Realize();
     m_rbnBar->Realize();
+
+    SetSizerAndFit(parent_sizer);
 
     SetSizerAndFit(parent_sizer);
 

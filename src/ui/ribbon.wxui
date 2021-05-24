@@ -13,7 +13,7 @@
       base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
       derived_class_name="RibbonPanel"
       generate_ids="false"
-      size="900,300"
+      size="-1,-1"
       window_style="wxTAB_TRAVERSAL">
       <node
         class="wxBoxSizer"

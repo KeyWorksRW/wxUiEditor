@@ -701,7 +701,7 @@ ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node)
 
         case code_header:
             code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
-            if (!node->isGen(gen_wxPanel) && !node->isGen(gen_wxToolBar))
+            if (!node->isGen(gen_wxPanel) && !node->isGen(gen_wxToolBar) && !node->isGen(gen_PanelForm))
             {
                 code << ",\n\tconst wxString& title = ";
                 auto& title = node->prop_as_string(prop_title);

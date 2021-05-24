@@ -22,8 +22,7 @@
 class RibbonPanelBase : public wxPanel
 {
 public:
-    RibbonPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(900, 300),
-        long style = wxTAB_TRAVERSAL);
+    RibbonPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY);
 
 protected:
 

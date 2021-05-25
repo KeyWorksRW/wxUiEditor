@@ -308,11 +308,13 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
         if (auto find_prop = rmap_PropNames.find(iter.name()); find_prop != rmap_PropNames.end())
         {
             prop = new_node->get_prop_ptr(find_prop->second);
-
-            if (prop->type() == type_bool)
-                prop->set_value(iter.as_bool());
-            else
-                prop->set_value(iter.value());
+            if (prop)
+            {
+                if (prop->type() == type_bool)
+                    prop->set_value(iter.as_bool());
+                else
+                    prop->set_value(iter.value());
+            }
         }
         else
         {

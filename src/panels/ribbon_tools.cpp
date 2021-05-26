@@ -79,8 +79,10 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
         // For release build, we'll at least attempt to create it in case the help string specifies a widget.
         auto name = event.GetBar()->GetToolHelpString(event.GetId());
-        if (name.size())
-            wxGetFrame().CreateToolNode(ttlib::cstr() << name.wx_str());
+        if (auto result = rmap_GenNames.find(name.utf8_string()); result != rmap_GenNames.end())
+        {
+            wxGetFrame().CreateToolNode(result->second);
+        }
     }
 }
 

@@ -128,8 +128,7 @@ public:
 
     // If there is a selection, this will create a new child node with special handling for
     // specific components.
-    void CreateToolNode(const ttlib::cstr& name);
-    void CreateToolNode(GenName name);
+    void CreateToolNode(GenEnum::GenName name);
 
     wxFileHistory& GetFileHistory() { return m_FileHistory; }
 

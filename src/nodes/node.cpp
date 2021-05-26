@@ -475,7 +475,7 @@ wxSizerFlags Node::GetSizerFlags() const
     return flags;
 }
 
-Node* Node::CreateChildNode(ttlib::cview name)
+Node* Node::CreateChildNode(GenName name)
 {
     auto& frame = wxGetFrame();
 
@@ -492,7 +492,7 @@ Node* Node::CreateChildNode(ttlib::cview name)
         // currently exists, if the Windows version of wxUiEditor is used, then ALL versions of the app the user creates will
         // use this background color.
 
-        if (name.is_sameas("BookPage"))
+        if (name == gen_BookPage)
         {
             if (auto prop = new_node->get_prop_ptr(prop_background_colour); prop)
             {
@@ -502,14 +502,15 @@ Node* Node::CreateChildNode(ttlib::cview name)
         }
 #endif  // _WIN32
 
-        ttlib::cstr undo_str = "insert " + name;
+        ttlib::cstr undo_str;
+        undo_str << "insert " << map_GenNames[name];
         frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
         new_node->FixDuplicateName();
     }
 
     // A "ribbonButton" component is used for both wxRibbonButtonBar and wxRibbonToolBar. If creating the node failed,
     // then assume the parent is wxRibbonToolBar and retry with "ribbonTool"
-    else if (name.is_sameas("ribbonButton"))
+    else if (name == gen_ribbonButton)
     {
         new_node = g_NodeCreator.CreateNode(gen_ribbonTool, this);
         if (new_node)
@@ -538,14 +539,15 @@ Node* Node::CreateChildNode(ttlib::cview name)
             if (new_node)
             {
                 auto pos = parent->FindInsertionPos(this);
-                ttlib::cstr undo_str = "insert " + name;
+                ttlib::cstr undo_str;
+                undo_str << "insert " << map_GenNames[name];
                 frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
                 new_node->FixDuplicateName();
             }
         }
         else
         {
-            appMsgBox(ttlib::cstr() << "You cannot add " << name << " as a child of " << DeclName());
+            appMsgBox(ttlib::cstr() << "You cannot add " << map_GenNames[name] << " as a child of " << DeclName());
             return nullptr;
         }
     }
@@ -558,7 +560,7 @@ Node* Node::CreateChildNode(ttlib::cview name)
     return new_node.get();
 }
 
-Node* Node::CreateNode(ttlib::cview name)
+Node* Node::CreateNode(GenName name)
 {
     auto& frame = wxGetFrame();
     auto cur_selection = frame.GetSelectedNode();
@@ -572,23 +574,15 @@ Node* Node::CreateNode(ttlib::cview name)
 
 bool Node::CreateToolNode(GenName name)
 {
-    // TODO: [KeyWorks - 04-15-2021] Currently we convert the name into a string and call CreateToolNode with that string.
-    // Ultimately, we should reverse that and convert the string into a GenName and make this the primary function.
-
-    return CreateToolNode(map_GenNames[name]);
-}
-
-bool Node::CreateToolNode(const ttlib::cstr& name)
-{
     auto new_node = CreateChildNode(name);
     if (!new_node)
         return false;
 
     auto& frame = wxGetFrame();
 
-    if (name == "wxDialog" || name == "PanelForm" || name == "wxPanel" || name == "wxPopupTransientWindow")
+    if (name == gen_wxDialog || name == gen_PanelForm || name == gen_wxPanel || name == gen_wxPopupTransientWindow)
     {
-        auto child_node = new_node->CreateChildNode("VerticalBoxSizer");
+        auto child_node = new_node->CreateChildNode(gen_VerticalBoxSizer);
         if (child_node)
         {
             if (auto prop = child_node->get_prop_ptr(prop_orientation); prop)
@@ -608,12 +602,11 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
             frame.SelectNode(new_node);
         }
     }
-    else if (name == "wxNotebook" || name == "wxSimplebook" || name == "wxChoicebook" || name == "wxListbook" ||
-             name == "wxAuiNotebook")
+    else if (name == gen_wxNotebook || name == gen_wxSimplebook || name == gen_wxChoicebook || name == gen_wxListbook)
     {
-        new_node = new_node->CreateChildNode("BookPage");
+        new_node = new_node->CreateChildNode(gen_BookPage);
 
-        new_node = new_node->CreateChildNode("VerticalBoxSizer");
+        new_node = new_node->CreateChildNode(gen_VerticalBoxSizer);
         if (new_node)
         {
             if (auto prop = new_node->get_prop_ptr(prop_orientation); prop)
@@ -631,9 +624,9 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
             }
         }
     }
-    else if (name == "BookPage")
+    else if (name == gen_BookPage)
     {
-        new_node = new_node->CreateChildNode("VerticalBoxSizer");
+        new_node = new_node->CreateChildNode(gen_VerticalBoxSizer);
         if (new_node)
         {
             if (auto prop = new_node->get_prop_ptr(prop_orientation); prop)
@@ -651,18 +644,28 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
             }
         }
     }
-    else if (name == "wxWizard")
+    else if (name == gen_wxWizard)
     {
-        new_node = new_node->CreateChildNode("wxWizardPageSimple");
-        new_node->CreateChildNode("VerticalBoxSizer");
+        new_node = new_node->CreateChildNode(gen_wxWizardPageSimple);
+        new_node->CreateChildNode(gen_VerticalBoxSizer);
     }
-    else if (name == "wxWizardPageSimple")
+    else if (name == gen_wxWizardPageSimple)
     {
-        new_node->CreateChildNode("VerticalBoxSizer");
+        new_node->CreateChildNode(gen_VerticalBoxSizer);
     }
-    else if (name == "wxBoxSizer" || name == "VerticalBoxSizer" || name == "wxWrapSizer" || name == "wxGridSizer" ||
-             name == "wxFlexGridSizer" || name == "wxGridBagSizer" || name == "wxStaticBoxSizer" ||
-             name == "StaticCheckboxBoxSizer" || name == "StaticRadioBtnBoxSizer")
+    else if (name == gen_wxMenuBar || name == gen_MenuBar)
+    {
+        auto node_menu = new_node->CreateChildNode(gen_wxMenu);
+        if (node_menu)
+            node_menu->CreateChildNode(gen_wxMenuItem);
+    }
+    else if (name == gen_wxToolBar || name == gen_ToolBar)
+    {
+        new_node->CreateChildNode(gen_tool);
+    }
+    else if (name == gen_wxBoxSizer || name == gen_VerticalBoxSizer || name == gen_wxWrapSizer || name == gen_wxGridSizer ||
+             name == gen_wxFlexGridSizer || name == gen_wxGridBagSizer || name == gen_wxStaticBoxSizer ||
+             name == gen_StaticCheckboxBoxSizer || name == gen_StaticRadioBtnBoxSizer)
     {
         auto node = new_node->GetParent();
         ASSERT(node);
@@ -679,7 +682,7 @@ bool Node::CreateToolNode(const ttlib::cstr& name)
                 prop->set_value("wxEXPAND");
         }
     }
-    else if (name == "wxStdDialogButtonSizer" || name == "wxStaticLine")
+    else if (name == gen_wxStdDialogButtonSizer || name == gen_wxStaticLine)
     {
         if (auto prop = new_node->get_prop_ptr(prop_flags); prop)
         {

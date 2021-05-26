@@ -10,6 +10,7 @@
 #include <wx/event.h>  // Event classes
 #include <wx/menu.h>   // wxMenu and wxMenuBar classes
 
+#include "gen_enums.h"     // Enumerations for generators
 #include "node_classes.h"  // Forward defintions of Node classes
 
 // Creates a context-menu for the specified object
@@ -108,5 +109,5 @@ protected:
 private:
     Node* m_node;
     Node* m_child { nullptr };
-    ttlib::cstr m_tool_name;  // used by MenuNEW_ITEM -> wxGetApp().CreateToolNode(m_tool_name);
+    GenEnum::GenName m_tool_name { GenEnum::GenName::gen_name_array_size };  // used by MenuNEW_ITEM -> wxGetApp().CreateToolNode(m_tool_name)
 };

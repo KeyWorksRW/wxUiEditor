@@ -9,6 +9,7 @@
 
 #include <map>
 #include <optional>
+#include <set>
 
 #include <wx/bitmap.h>  // wxBitmap class interface
 
@@ -91,6 +92,9 @@ public:
     }
     std::optional<ttlib::cstr> GetOverRideDefValue(GenEnum::PropName prop_name);
 
+    void HideProperty(GenEnum::PropName prop_name) { m_hide_properties.emplace(prop_name); }
+    bool IsPropHidden(GenEnum::PropName prop_name) { return (m_hide_properties.find(prop_name) != m_hide_properties.end()); }
+
 private:
     ttlib::cstr m_internal_flags;
 
@@ -104,6 +108,7 @@ private:
     std::map<std::string, std::unique_ptr<NodeEventInfo>> m_events;
 
     std::map<GenEnum::PropName, std::string> m_override_def_values;
+    std::set<GenEnum::PropName> m_hide_properties;
 
     std::vector<NodeDeclaration*> m_base;  // base classes
 

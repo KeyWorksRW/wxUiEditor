@@ -483,6 +483,9 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
         if (!prop)
             continue;
 
+        if (node->GetNodeDeclaration()->IsPropHidden(prop_name))
+            continue;
+
         if (prop_set.find(prop_name) == prop_set.end())
         {
             if (!IsPropAllowed(node, prop))

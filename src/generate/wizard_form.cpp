@@ -155,13 +155,9 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCo
     return code;
 }
 
-std::optional<ttlib::cstr> WizardFormGenerator::GenSettings(Node* node, size_t& auto_indent)
+std::optional<ttlib::cstr> WizardFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
-    // Wizard and Dialog settings are identical
-
-    auto comp = g_NodeCreator.GetNodeDeclaration("wxDialog")->GetGenerator();
-    auto result = comp->GenSettings(node, auto_indent);
-    return result.value();
+    return GenFormSettings(node);
 }
 
 std::optional<ttlib::cstr> WizardFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

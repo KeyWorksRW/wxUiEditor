@@ -8,6 +8,8 @@
 #pragma once
 
 #include <map>
+#include <optional>
+#include <set>
 
 #include <wx/bitmap.h>  // wxBitmap class interface
 
@@ -45,10 +47,6 @@ public:
     const NodeEventInfo* GetEventInfo(size_t idx) const;
 
     PropDeclarationMap& GetPropInfoMap() { return m_properties; }
-
-    void AddBaseClassDefaultPropertyValue(size_t baseIndex, ttlib::cview propertyName, ttlib::cview defaultValue);
-
-    const std::string& GetBaseClassDefaultPropertyValue(size_t baseIndex, const std::string& propertyName) const;
 
     NodeType* GetNodeType() const { return m_type; }
 
@@ -88,6 +86,15 @@ public:
 
     int_t GetAllowableChildren(GenType child_gen_type) const;
 
+    void SetOverRideDefValue(GenEnum::PropName prop_name, ttlib::cview new_value)
+    {
+        m_override_def_values[prop_name] = new_value;
+    }
+    std::optional<ttlib::cstr> GetOverRideDefValue(GenEnum::PropName prop_name);
+
+    void HideProperty(GenEnum::PropName prop_name) { m_hide_properties.emplace(prop_name); }
+    bool IsPropHidden(GenEnum::PropName prop_name) { return (m_hide_properties.find(prop_name) != m_hide_properties.end()); }
+
 private:
     ttlib::cstr m_internal_flags;
 
@@ -99,7 +106,9 @@ private:
 
     PropDeclarationMap m_properties;  // std::map<std::string, PropDeclarationPtr>
     std::map<std::string, std::unique_ptr<NodeEventInfo>> m_events;
-    std::map<size_t, DblStrMap> m_baseClassDefaultPropertyValues;
+
+    std::map<GenEnum::PropName, std::string> m_override_def_values;
+    std::set<GenEnum::PropName> m_hide_properties;
 
     std::vector<NodeDeclaration*> m_base;  // base classes
 

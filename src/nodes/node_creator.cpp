@@ -52,12 +52,9 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
             auto defaultValue = prop_declaration->GetDefaultValue();
             if (base > 0)
             {
-                auto defaultValueTemp =
-                    node_decl->GetBaseClassDefaultPropertyValue(base - 1, prop_declaration->DeclName().c_str());
-                if (!defaultValueTemp.empty())
-                {
-                    defaultValue = defaultValueTemp;
-                }
+                auto result = node_decl->GetOverRideDefValue(prop_declaration->get_name());
+                if (result)
+                    defaultValue = result.value();
             }
 
             auto prop = node->AddNodeProperty(prop_declaration);

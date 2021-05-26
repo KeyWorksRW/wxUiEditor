@@ -319,15 +319,34 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview name)
                 auto base_info = GetNodeDeclaration(base_name);
                 if (class_info && base_info)
                 {
-                    size_t baseIndex = class_info->AddBaseClass(base_info);
+                    class_info->AddBaseClass(base_info);
 
                     auto inheritedProperty = elem_base.child("property");
                     while (inheritedProperty)
                     {
-                        auto prop_name = inheritedProperty.attribute("name").as_cview();
-                        auto value = inheritedProperty.text().as_string();
-                        class_info->AddBaseClassDefaultPropertyValue(baseIndex, prop_name, value);
+                        auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_string());
+                        if (lookup_name == rmap_PropNames.end())
+                        {
+                            MSG_ERROR(ttlib::cstr("Unrecognized inherited property name -- ")
+                                      << inheritedProperty.attribute("name").as_string());
+                            continue;
+                        }
+                        class_info->SetOverRideDefValue(lookup_name->second, inheritedProperty.text().as_cview());
                         inheritedProperty = inheritedProperty.next_sibling("property");
+                    }
+
+                    inheritedProperty = elem_base.child("hide");
+                    while (inheritedProperty)
+                    {
+                        auto lookup_name = rmap_PropNames.find(inheritedProperty.attribute("name").as_string());
+                        if (lookup_name == rmap_PropNames.end())
+                        {
+                            MSG_ERROR(ttlib::cstr("Unrecognized inherited property name -- ")
+                                      << inheritedProperty.attribute("name").as_string());
+                            continue;
+                        }
+                        class_info->HideProperty(lookup_name->second);
+                        inheritedProperty = inheritedProperty.next_sibling("hide");
                     }
                 }
                 elem_base = elem_base.next_sibling("inherits");

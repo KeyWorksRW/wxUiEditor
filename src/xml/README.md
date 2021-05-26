@@ -11,6 +11,18 @@ Declarations which inherit from the **Window Events** base class will have all o
 - no_mouse_events: all wxMouseEvent events are hidden
 - no_focus_events: all wxFocusEvent events are hidden
 
+## Limiting inherited properties
+
+When an interface is inherited (`<inherits class=`) you can add child nodes called `<hide name=` where the name specifies the property you do not want inherited. This will typically be used when inheriting from the `wxWindow` interface. For example, to prevent a tooltip property, you could encode the following in the XML file:
+
+```xml
+    <inherits class="wxWindow">
+        <!-- Indicate which properties should not be shown in the Property Panel -->
+        <hide name="tooltip" />
+    </inherits>
+```
+
+
 ## Adding a declaration or property
 
 The files `gen_enums.h` and `gen_enums.cpp` _must_ be updated any time you add a new component or a property, or if you change an existing class name or property type. In a DEBUG build you will get warnings if you forget to update one or more of the enumeration lists and there's a fairly good chance the program will not work correctly or even crash if you try to use a component with the missing enumeration.

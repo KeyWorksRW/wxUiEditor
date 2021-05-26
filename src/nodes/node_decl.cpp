@@ -13,8 +13,7 @@
 #include "node.h"            // Contains the user-modifiable node
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
-NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) :
-    m_type(type), m_category(class_name)
+NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) : m_type(type), m_category(class_name)
 {
     m_gen_name = rmap_GenNames[class_name.c_str()];
     m_gen_type = type->gen_type();
@@ -68,35 +67,6 @@ const NodeEventInfo* NodeDeclaration::GetEventInfo(size_t idx) const
         return it->second.get();
 
     return nullptr;
-}
-
-void NodeDeclaration::AddBaseClassDefaultPropertyValue(size_t baseIndex, ttlib::cview propertyName,
-                                                       ttlib::cview defaultValue)
-{
-    if (auto baseClassMap = m_baseClassDefaultPropertyValues.find(baseIndex);
-        baseClassMap != m_baseClassDefaultPropertyValues.end())
-    {
-        baseClassMap->second[propertyName.c_str()] = defaultValue.c_str();
-    }
-    else
-    {
-        DblStrMap propertyDefaultValues;
-        propertyDefaultValues[propertyName.c_str()] = defaultValue;
-        m_baseClassDefaultPropertyValues[baseIndex] = propertyDefaultValues;
-    }
-}
-
-const std::string& NodeDeclaration::GetBaseClassDefaultPropertyValue(size_t baseIndex, const std::string& propertyName) const
-{
-    if (auto baseClassMap = m_baseClassDefaultPropertyValues.find(baseIndex);
-        baseClassMap != m_baseClassDefaultPropertyValues.end())
-    {
-        if (auto defaultValue = baseClassMap->second.find(propertyName); defaultValue != baseClassMap->second.end())
-        {
-            return defaultValue->second;
-        }
-    }
-    return ttlib::emptystring;
 }
 
 NodeDeclaration* NodeDeclaration::GetBaseClass(size_t idx, bool inherited) const
@@ -180,4 +150,12 @@ int_t NodeDeclaration::GetAllowableChildren(GenType child_gen_type) const
     }
 
     return m_type->GetAllowableChildren(child_gen_type);
+}
+
+std::optional<ttlib::cstr> NodeDeclaration::GetOverRideDefValue(GenEnum::PropName prop_name)
+{
+    if (auto result = m_override_def_values.find(prop_name); result != m_override_def_values.end())
+        return result->second;
+    else
+        return {};
 }

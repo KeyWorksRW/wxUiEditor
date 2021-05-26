@@ -219,6 +219,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_min_size, "min_size" },
     { prop_minimize_button, "minimize_button" },
     { prop_minimum_size, "minimum_size" },
+    { prop_mockup_size, "mockup_size" },
     { prop_mode, "mode" },
     { prop_model_column, "model_column" },
     { prop_moveable, "moveable" },

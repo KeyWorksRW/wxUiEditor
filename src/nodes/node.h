@@ -194,10 +194,14 @@ public:
 
     // This creates an orphaned node -- it is the caller's responsibility to hook it up with
     // a parent.
-    Node* CreateChildNode(ttlib::cview name);
+    Node* CreateChildNode(GenName name);
 
-    Node* CreateNode(ttlib::cview name);
-    bool CreateToolNode(const ttlib::cstr& name);
+    // Gets the current selected node and uses that to call CreateChildNode().
+    Node* CreateNode(GenName name);
+
+    // This is the preferred way to create a new node when requested by the user (tool, menu,
+    // or dialog). Besides creating the node, some nodes will get special processing to
+    // automatically create additional child nodes.
     bool CreateToolNode(GenName name);
 
     // This will modify the property and fire a EVT_NodePropChange event if the property

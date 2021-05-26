@@ -349,7 +349,11 @@ void MainFrame::OnInsertWidget(wxCommandEvent&)
     InsertDialog dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
-        CreateToolNode(dlg.GetWidget());
+        if (auto result = rmap_GenNames.find(dlg.GetWidget()); result != rmap_GenNames.end())
+        {
+            return CreateToolNode(result->second);
+        }
+        FAIL_MSG(ttlib::cstr() << "No property enum type exists for dlg.GetWidget()! This should be impossible...");
     }
 }
 
@@ -971,21 +975,8 @@ void MainFrame::CreateToolNode(GenName name)
 
     if (!m_selected_node->CreateToolNode(name))
     {
-        appMsgBox(ttlib::cstr() << "Unable to create " << map_GenNames[name] << " as a child of " << m_selected_node->DeclName());
-    }
-}
-
-void MainFrame::CreateToolNode(const ttlib::cstr& name)
-{
-    if (!m_selected_node)
-    {
-        appMsgBox("You need to select something first in order to properly place this widget.");
-        return;
-    }
-
-    if (!m_selected_node->CreateToolNode(name))
-    {
-        appMsgBox(ttlib::cstr() << "Unable to create " << name << " as a child of " << m_selected_node->DeclName());
+        appMsgBox(ttlib::cstr() << "Unable to create " << map_GenNames[name] << " as a child of "
+                                << m_selected_node->DeclName());
     }
 }
 

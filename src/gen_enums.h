@@ -219,6 +219,7 @@ namespace GenEnum
         prop_min_size,
         prop_minimize_button,
         prop_minimum_size,
+        prop_mockup_size,
         prop_mode,
         prop_model_column,
         prop_moveable,

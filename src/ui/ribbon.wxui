@@ -9,6 +9,7 @@
     <node
       class="PanelForm"
       class_name="RibbonPanelBase"
+      mockup_size="600,100"
       base_file="ribbonpanel_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
       derived_class_name="RibbonPanel"

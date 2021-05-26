@@ -39,16 +39,11 @@ MockupContent::MockupContent(wxWindow* parent, MockupParent* mockupParent) : wxP
 
 void MockupContent::RemoveNodes()
 {
-    if (m_wizard)
-    {
-        m_wizard->Destroy();
-        m_wizard = nullptr;
-    }
-
     m_obj_node_pair.clear();
     m_node_obj_pair.clear();
 
     DestroyChildren();
+    m_wizard = nullptr;
     SetSizer(nullptr);
 
     m_parent_sizer = nullptr;
@@ -59,52 +54,47 @@ void MockupContent::CreateAllGenerators()
 {
     AutoFreeze(this);
 
+    m_parent_sizer = new wxBoxSizer(wxVERTICAL);
+
     auto form = m_mockupParent->GetSelectedForm();
-    if (form->isGen(gen_MenuBar) || form->isGen(gen_ToolBar))
+
+    if (form->isGen(gen_wxWizard))
     {
-        m_parent_sizer = new wxBoxSizer(wxVERTICAL);
-        CreateChildren(form, this, this, m_parent_sizer);
-        SetSizerAndFit(m_parent_sizer);
-        return;
-    }
-
-    if (form->isGen(gen_wxFrame))
-        m_parent_sizer = new wxBoxSizer(wxVERTICAL);
-
-    for (size_t i = 0; i < form->GetChildCount(); i++)
-    {
-        auto child = form->GetChild(i);
-
-        if (m_wizard)
+        m_wizard = new MockupWizard(this, form);
+        for (size_t i = 0; i < form->GetChildCount(); i++)
         {
+            auto child = form->GetChild(i);
             CreateChildren(child, m_wizard, m_wizard);
         }
 
-        else
-        {
-            CreateChildren(child, this, this, m_parent_sizer);
-        }
-    }
-
-    if (m_wizard)
-    {
         m_wizard->AllChildrenAdded();
         m_wizard->SetSelection(0);
 
-        // MockupWizard::AllChildrenAdded() will have set it's parent sizer to the largest size needed to display all the
-        // wizard pages, so update our size accordingly.
-
-        if (auto sizer = m_wizard->GetSizer(); sizer)
+        m_parent_sizer->Add(m_wizard, wxSizerFlags(1).Expand());
+    }
+    else
+    {
+        if (form->isGen(gen_MenuBar) || form->isGen(gen_ToolBar))
         {
-            auto min_size = sizer->GetMinSize();
-            SetMinClientSize(min_size);
+            // In this case, the form itself is created as a child
+            CreateChildren(form, this, this, m_parent_sizer);
+        }
+        else
+        {
+            for (size_t i = 0; i < form->GetChildCount(); i++)
+            {
+                auto child = form->GetChild(i);
+                CreateChildren(child, this, this, m_parent_sizer);
+            }
         }
     }
-
-    if (m_parent_sizer)
-        SetSizerAndFit(m_parent_sizer);
-    else
-        Layout();
+    SetSizerAndFit(m_parent_sizer);
+    if (m_mockupParent->IsMagnified())
+    {
+        auto cur_size = GetSize();
+        cur_size.IncBy(200);
+        SetSize(cur_size);
+    }
 }
 
 void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer)
@@ -249,21 +239,15 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     if (parent_sizer)
     {
         if (created_window)
-            parent_sizer->Add(created_window, wxSizerFlags().Expand().Border(0));
+            parent_sizer->Add(created_window, wxSizerFlags().Expand());
         else if (created_sizer)
-            parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand().Border(0));
+            parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());
     }
 
     else if ((created_sizer && wxDynamicCast(parentNode, wxWindow)) || (!parentNode && created_sizer))
     {
-        // REVIEW: [KeyWorks - 05-20-2021] As per issue #242 this doesn't look right -- leastwise not if size or minimum size
-        // is set.
         parent->SetSizer(created_sizer);
-        if (parentNode)
-            created_sizer->SetSizeHints(parent);
-
-        parent->SetAutoLayout(true);
-        parent->Layout();
+        parent->Fit();
     }
 }
 
@@ -328,12 +312,6 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
     {
         window->SetToolTip(tooltip->as_wxString());
     }
-}
-
-void MockupContent::CreateWizard()
-{
-    auto form = m_mockupParent->GetSelectedForm();
-    m_wizard = new MockupWizard(this, form);
 }
 
 Node* MockupContent::GetNode(wxObject* wxobject)

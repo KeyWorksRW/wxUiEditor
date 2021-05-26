@@ -25,8 +25,6 @@ public:
 
     void CreateAllGenerators();
 
-    void CreateWizard();
-
     void OnNodeSelected(Node* node);
 
     void RemoveNodes();

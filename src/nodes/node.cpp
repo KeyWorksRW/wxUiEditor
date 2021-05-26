@@ -653,6 +653,16 @@ bool Node::CreateToolNode(GenName name)
     {
         new_node->CreateChildNode(gen_VerticalBoxSizer);
     }
+    else if (name == gen_wxMenuBar || name == gen_MenuBar)
+    {
+        auto node_menu = new_node->CreateChildNode(gen_wxMenu);
+        if (node_menu)
+            node_menu->CreateChildNode(gen_wxMenuItem);
+    }
+    else if (name == gen_wxToolBar || name == gen_ToolBar)
+    {
+        new_node->CreateChildNode(gen_tool);
+    }
     else if (name == gen_wxBoxSizer || name == gen_VerticalBoxSizer || name == gen_wxWrapSizer || name == gen_wxGridSizer ||
              name == gen_wxFlexGridSizer || name == gen_wxGridBagSizer || name == gen_wxStaticBoxSizer ||
              name == gen_StaticCheckboxBoxSizer || name == gen_StaticRadioBtnBoxSizer)

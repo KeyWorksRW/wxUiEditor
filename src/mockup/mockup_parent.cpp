@@ -58,24 +58,22 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
 
     auto title_sizer = new wxBoxSizer(wxHORIZONTAL);
     m_text_title = new wxStaticText(m_panelTitleBar, wxID_ANY, wxEmptyString);
-    title_sizer->Add(m_text_title, wxSizerFlags(1).Center().Border(wxALL, 5));
+    title_sizer->Add(m_text_title, wxSizerFlags(1).Center().Border());
     auto bmp =
         new wxStaticBitmap(m_panelTitleBar, wxID_ANY, wxBitmap(LoadHeaderImage(title_close_png, sizeof(title_close_png))));
-    title_sizer->Add(bmp, wxSizerFlags().Border(0, 0));
+    title_sizer->Add(bmp, wxSizerFlags());
 
     m_panelTitleBar->SetSizerAndFit(title_sizer);
 
     m_panelContent = new MockupContent(m_MockupWindow, this);
 
-    form_sizer->Add(m_panelTitleBar, wxSizerFlags().Expand().Border(wxLEFT | wxRIGHT | wxTOP, 0));
-    form_sizer->Add(m_panelContent, wxSizerFlags(1).Expand().Border(wxALL, 0));
+    form_sizer->Add(m_panelTitleBar, wxSizerFlags().Expand());
+    form_sizer->Add(m_panelContent, wxSizerFlags(1).Expand());
 
     m_MockupWindow->Hide();
 
     m_MockupWindow->SetSizer(form_sizer);
-    // m_MockupWindow->SetAutoLayout(true);
     m_MockupWindow->Layout();
-
     mockup_sizer->Add(m_MockupWindow, wxSizerFlags().Border(wxALL, wxSizerFlags::GetDefaultBorder()));
 
     SetSizerAndFit(mockup_sizer);
@@ -113,18 +111,14 @@ void MockupParent::CreateContent()
         return;
     }
 
-    m_AreNodesCreated = true;  // Set this now to ensure content gets cleared if CreateContent() is called again
-
     AutoFreeze freeze(this);
-
-    m_size_magnified = { 400, 300 };
 
     // Note that we show the form even if it's property has it set to hidden
     m_MockupWindow->Show();
 
-    if (auto background = m_form->get_prop_ptr(prop_background_colour); background && background->as_string().size())
+    if (m_form->HasValue(prop_background_colour))
     {
-        m_panelContent->SetBackgroundColour(ConvertToColour(background->as_string()));
+        m_panelContent->SetBackgroundColour(m_form->prop_as_wxColour(prop_background_colour));
     }
     else if (m_form->isGen(gen_wxFrame))
     {
@@ -154,54 +148,38 @@ void MockupParent::CreateContent()
         m_panelTitleBar->Hide();
     }
 
-    auto minSize = m_form->prop_as_wxSize(prop_minimum_size);
-    m_MockupWindow->SetMinSize(minSize);
-
     auto maxSize = m_form->prop_as_wxSize(prop_maximum_size);
     m_MockupWindow->SetMaxSize(maxSize);
 
-    if (m_form->isGen(gen_wxWizard))
-        m_panelContent->CreateWizard();
-
     m_panelContent->CreateAllGenerators();
+    m_AreNodesCreated = true;
 
-    auto org_size = m_form->prop_as_wxSize(prop_size);
-    if (m_IsMagnifyWindow && !(m_form->isGen(gen_ToolBar) || m_form->isGen(gen_MenuBar)))
-    {
-        org_size.IncTo(m_size_magnified);
-    }
+    auto min_size = m_form->prop_as_wxSize(prop_minimum_size);
+    min_size.IncTo(m_panelContent->GetSize());
 
-    wxSize size_mockup = org_size;
-    if (size_mockup.GetWidth() < minSize.GetWidth() && size_mockup.GetWidth() != wxDefaultCoord)
+    if (m_form->HasValue(prop_size))
     {
-        size_mockup.SetWidth(minSize.GetWidth());
+        min_size.IncTo(m_form->prop_as_wxSize(prop_size));
     }
-    if (size_mockup.GetHeight() < minSize.GetHeight() && size_mockup.GetHeight() != wxDefaultCoord)
+    if (m_form->HasValue(prop_mockup_size))
     {
-        size_mockup.SetHeight(minSize.GetHeight());
-    }
-    if (size_mockup.GetWidth() > maxSize.GetWidth() && maxSize.GetWidth() != wxDefaultCoord)
-    {
-        size_mockup.SetWidth(maxSize.GetWidth());
-    }
-    if (size_mockup.GetHeight() > maxSize.GetHeight() && maxSize.GetHeight() != wxDefaultCoord)
-    {
-        size_mockup.SetHeight(maxSize.GetHeight());
+        min_size.IncTo(m_form->prop_as_wxSize(prop_mockup_size));
     }
 
-    if (org_size != size_mockup)
+    if (m_panelTitleBar->IsShown())
     {
-        // TODO: [KeyWorks - 07-16-2020] We need some way to let the user know about this -- best would be when
-        // the form's size property is modified.
-
-        MSG_WARNING("Invalid size -- it is not between minimum_size and maximum_size");
+        // The title bar should be no wider than the content window.
+        auto size = m_panelTitleBar->GetSize();
+        size.SetWidth(min_size.GetWidth());
+        m_panelTitleBar->SetSize(size);
+        // Until Fit() is called, the height won't be correct.
+        m_panelTitleBar->Fit();
+        size = m_panelTitleBar->GetSize();
+        min_size.y += size.GetHeight();
     }
 
+    m_MockupWindow->SetMinSize(min_size);
     Layout();
-    // Set size after fitting so if only one dimesion is -1, it still fits that dimension
-    m_MockupWindow->SetSize(size_mockup);
-
-    // Enable and Hidden state may have changed, so update state accordingly
 
     if (m_form->isPropValue(prop_disabled, true))
     {
@@ -233,52 +211,13 @@ void MockupParent::OnNodeSelected(CustomEvent& event)
 void MockupParent::ShowHiddenControls(bool show)
 {
     m_ShowHiddenControls = show;
-
     CreateContent();
 }
 
 void MockupParent::MagnifyWindow(bool show)
 {
     m_IsMagnifyWindow = show;
-
-    if (m_form->isGen(gen_ToolBar) || m_form->isGen(gen_MenuBar))
-        return;
-
-    auto cur_size = m_MockupWindow->GetSize();
-    if (m_IsMagnifyWindow && cur_size.y >= m_size_magnified.y && cur_size.x >= m_size_magnified.x)
-    {
-        m_size_magnified = cur_size;
-        m_size_magnified.IncBy(150);
-    }
-
-    Freeze();
-
-    // You have to reset the minimum size to allow the window to shrink
-    m_panelContent->SetMinSize(wxSize(-1, -1));
-    m_panelContent->Fit();
-
-    auto new_size = m_panelContent->GetSize();
-    if (m_panelTitleBar)
-    {
-        auto size_title = m_panelTitleBar->GetSize();
-        new_size.y += size_title.y;
-    }
-
-    if (m_IsMagnifyWindow)
-    {
-        new_size.IncTo(m_size_magnified);
-    }
-
-    // Need to be at least as large as any dimensions the user set.
-    new_size.IncTo(m_form->prop_as_wxSize(prop_size));
-    new_size.IncTo(m_form->prop_as_wxSize(prop_minimum_size));
-
-    new_size.DecToIfSpecified(m_form->prop_as_wxSize(prop_maximum_size));
-
-    m_MockupWindow->SetSize(new_size);
-    m_MockupWindow->Refresh();
-
-    Thaw();
+    CreateContent();
 }
 
 void MockupParent::SelectNode(wxObject* wxobject)

@@ -24,6 +24,7 @@ public:
 
     Node* GetSelectedForm() { return m_form; }
     bool IsShowingHidden() { return m_ShowHiddenControls; }
+    bool IsMagnified() { return m_IsMagnifyWindow; }
     void ShowHiddenControls(bool show);
     void MagnifyWindow(bool show);
     void CreateContent();

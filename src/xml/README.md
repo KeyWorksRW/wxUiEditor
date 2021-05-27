@@ -2,6 +2,10 @@
 
 The XML files in this directory declare every type node that can be created. During the build process, these files are converted into gzip and saved as a `*.hgz` file which is a `unsigned char` array that is added to the program via `#include` statements.
 
+## Inheriting interface classes
+
+A generator can inherit an interface class either by using a `<inherits class=` node, or by creating a `<category` node with a `base_name=` attribute that specifies the class to begin inheriting from. Note that currently if you use `base_name`, you cannot hide the included properties.
+
 ## Limiting events in a declaration
 
 Declarations which inherit from the **Window Events** base class will have all of the normal **wxWindow** event categories (mouse, keyboard, etc.). You can prevent specific categories from displaying in the Property Grid Panel by adding one or more flags to the `gen` object (`flags="no_name_events"`) where _name_ is they category to block). The following flag strings are supported:
@@ -21,7 +25,6 @@ When an interface is inherited (`<inherits class=`) you can add child nodes call
         <hide name="tooltip" />
     </inherits>
 ```
-
 
 ## Adding a declaration or property
 

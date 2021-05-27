@@ -89,7 +89,6 @@ static const ParentChild lstParentChild[] = {
     { type_sizer, type_dataviewctrl, infinite },
     { type_sizer, type_dataviewlistctrl, infinite },
     { type_sizer, type_dataviewtreectrl, infinite },
-    { type_sizer, type_expanded_widget, infinite },
     { type_sizer, type_gbsizer, infinite },
     { type_sizer, type_listbook, infinite },
     { type_sizer, type_notebook, infinite },
@@ -110,21 +109,17 @@ static const ParentChild lstParentChild[] = {
 
     { type_tool, type_menu, one },
 
-    { type_toolbar, type_expanded_widget, infinite },
     { type_toolbar, type_tool, infinite },
     { type_toolbar, type_widget, infinite },
-    { type_toolbar_form, type_expanded_widget, infinite },
     { type_toolbar_form, type_tool, infinite },
     { type_toolbar_form, type_widget, infinite },
 
     { type_aui_toolbar, type_aui_tool, infinite },
     { type_aui_toolbar, type_widget, infinite },
 
-    { type_treelistctrl, type_expanded_widget, infinite },
     { type_treelistctrl, type_menu, one },
     { type_treelistctrl, type_treelistctrlcolumn, infinite },
 
-    { type_widget, type_expanded_widget, one },
     { type_widget, type_menu, one },
 
     { type_wizard, type_menu, one },

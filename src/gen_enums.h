@@ -338,7 +338,6 @@ namespace GenEnum
         type_dataviewlistcolumn,
         type_dataviewlistctrl,
         type_dataviewtreectrl,
-        type_expanded_widget,
         type_form,
         type_gbsizer,
         type_gbsizeritem,

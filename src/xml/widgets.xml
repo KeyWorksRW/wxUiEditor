@@ -1138,7 +1138,7 @@
         help="" />
 </gen>
 
-<gen class="wxRichTextCtrl" image="richtextctrl" type="expanded_widget">
+<gen class="wxRichTextCtrl" image="richtextctrl" type="widget">
     <inherits class="wxWindow">
         <property name="window_style">wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS</property>
     </inherits>
@@ -1182,7 +1182,7 @@
         help="Generated when content has been deleted from the control. Valid event functions: GetPosition, GetRange." />
 </gen>
 
-<gen class="wxStyledTextCtrl" image="scintilla" type="expanded_widget">
+<gen class="wxStyledTextCtrl" image="scintilla" type="widget">
     <inherits class="wxWindow" />
     <inherits class="Window Events" />
     <inherits class="sizer_child" />
@@ -1320,7 +1320,7 @@
         help="User clicked on the week of the year number (only generic)." />
 </gen>
 
-<gen class="wxGenericDirCtrl" image="genericdir_ctrl" type="expanded_widget">
+<gen class="wxGenericDirCtrl" image="genericdir_ctrl" type="widget">
     <inherits class="wxWindow" />
     <inherits class="Window Events" />
     <inherits class="sizer_child" />
@@ -1358,7 +1358,7 @@
         help="The user activated a file by double-clicking or pressing Enter." />
 </gen>
 
-<gen class="wxFileCtrl" image="wxFileCtrl" type="expanded_widget">
+<gen class="wxFileCtrl" image="wxFileCtrl" type="widget">
     <inherits class="wxWindow" />
     <inherits class="Window Events" />
     <inherits class="sizer_child" />

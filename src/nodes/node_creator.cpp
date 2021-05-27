@@ -30,6 +30,10 @@ NodeCreator::~NodeCreator()
 
 NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
 {
+    auto result = rmap_GenNames.find(className.c_str());
+    ASSERT_MSG(result != rmap_GenNames.end(), ttlib::cstr() << "Attempt to get non-existant node declaration for " << className);
+    if (result == rmap_GenNames.end())
+        return nullptr;
     return m_a_declarations[rmap_GenNames[className.c_str()]];
 }
 

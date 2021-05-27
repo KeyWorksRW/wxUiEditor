@@ -1718,7 +1718,6 @@
 </gen>
 
 <gen class="wxDataViewCtrl" image="dataviewtree_ctrl" type="dataviewctrl">
-    <inherits class="wxControl" />
     <inherits class="wxWindow" />
     <inherits class="Window Events" />
     <inherits class="sizer_child" />
@@ -1785,7 +1784,6 @@
 </gen>
 
 <gen class="wxDataViewTreeCtrl" image="dataviewtree_ctrl" type="dataviewtreectrl">
-    <inherits class="wxControl" />
     <inherits class="wxWindow" />
     <inherits class="Window Events" />
     <inherits class="sizer_child" />
@@ -1852,7 +1850,6 @@
 </gen>
 
 <gen class="wxDataViewListCtrl" image="dataviewlist_ctrl" type="dataviewlistctrl">
-    <inherits class="wxControl" />
     <inherits class="wxWindow" />
     <inherits class="Window Events" />
     <inherits class="sizer_child" />

@@ -334,7 +334,6 @@ std::map<GenType, const char*> GenEnum::map_GenTypes = {
     { type_dataviewlistcolumn, "dataviewlistcolumn" },
     { type_dataviewlistctrl, "dataviewlistctrl" },
     { type_dataviewtreectrl, "dataviewtreectrl" },
-    { type_expanded_widget, "expanded_widget" },
     { type_form, "form" },
     { type_gbsizer, "gbsizer" },
     { type_gbsizeritem, "gbsizeritem" },

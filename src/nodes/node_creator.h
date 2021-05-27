@@ -76,8 +76,6 @@ protected:
 
     size_t CountChildrenWithSameType(Node* parent, GenType type);
 
-    void SetDefaultLayoutProperties(Node* node);
-
     void AddAllConstants();
 
 private:

@@ -34,14 +34,18 @@ struct ParentChild
 // A child node can only be created if it is listed below as valid for the current parent.
 static const ParentChild lstParentChild[] = {
 
+    // Books
+
     { type_bookpage, type_gbsizer, one },
     { type_bookpage, type_sizer, one },
 
     { type_choicebook, type_bookpage, infinite },
-    { type_choicebook, type_widget, infinite },
+    { type_choicebook, type_widget, infinite },  // The only book that allows adding a widget
+    { type_listbook, type_bookpage, infinite },
+    { type_notebook, type_bookpage, infinite },
+    { type_simplebook, type_bookpage, infinite },
 
     { type_container, type_gbsizer, one },
-    { type_container, type_menu, one },
     { type_container, type_sizer, one },
 
     { type_dataviewctrl, type_dataviewcolumn, infinite },
@@ -50,24 +54,18 @@ static const ParentChild lstParentChild[] = {
     { type_form, type_sizer, one },
     { type_form, type_gbsizer, one },
 
-    { type_listbook, type_bookpage, infinite },
-
     { type_menu, type_menuitem, infinite },
     { type_menu, type_submenu, infinite },
     { type_menubar, type_menu, infinite },
     { type_menubar_form, type_menu, infinite },
-
-    { type_notebook, type_bookpage, infinite },
 
     { type_project, type_form, infinite },
     { type_project, type_menubar_form, infinite },
     { type_project, type_toolbar_form, infinite },
     { type_project, type_wizard, infinite },
 
-    { type_propgrid, type_menu, one },
     { type_propgrid, type_propgriditem, infinite },
     { type_propgriditem, type_propgridpage, infinite },
-    { type_propgridman, type_menu, one },
     { type_propgridman, type_propgridpage, infinite },
     { type_propgridpage, type_propgriditem, infinite },
 
@@ -80,8 +78,6 @@ static const ParentChild lstParentChild[] = {
     { type_ribbonpanel, type_ribbontoolbar, one },
     { type_ribbontoolbar, type_ribbontool, infinite },
 
-    { type_simplebook, type_bookpage, infinite },
-
     { type_sizer, type_auinotebook, infinite },
     { type_sizer, type_aui_toolbar, infinite },
     { type_sizer, type_choicebook, infinite },
@@ -89,7 +85,6 @@ static const ParentChild lstParentChild[] = {
     { type_sizer, type_dataviewctrl, infinite },
     { type_sizer, type_dataviewlistctrl, infinite },
     { type_sizer, type_dataviewtreectrl, infinite },
-    { type_sizer, type_expanded_widget, infinite },
     { type_sizer, type_gbsizer, infinite },
     { type_sizer, type_listbook, infinite },
     { type_sizer, type_notebook, infinite },
@@ -108,30 +103,19 @@ static const ParentChild lstParentChild[] = {
     { type_submenu, type_menuitem, infinite },
     { type_submenu, type_submenu, infinite },
 
-    { type_tool, type_menu, one },
-
-    { type_toolbar, type_expanded_widget, infinite },
     { type_toolbar, type_tool, infinite },
     { type_toolbar, type_widget, infinite },
-    { type_toolbar_form, type_expanded_widget, infinite },
     { type_toolbar_form, type_tool, infinite },
     { type_toolbar_form, type_widget, infinite },
 
     { type_aui_toolbar, type_aui_tool, infinite },
     { type_aui_toolbar, type_widget, infinite },
 
-    { type_treelistctrl, type_expanded_widget, infinite },
-    { type_treelistctrl, type_menu, one },
     { type_treelistctrl, type_treelistctrlcolumn, infinite },
 
-    { type_widget, type_expanded_widget, one },
-    { type_widget, type_menu, one },
-
-    { type_wizard, type_menu, one },
     { type_wizard, type_wizardpagesimple, infinite },
 
     { type_wizardpagesimple, type_gbsizer, one },
-    { type_wizardpagesimple, type_menu, one },
     { type_wizardpagesimple, type_sizer, one },
 
 };

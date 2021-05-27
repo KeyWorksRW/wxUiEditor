@@ -227,48 +227,6 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
     return copyObj;
 }
 
-// TODO: [KeyWorks - 04-13-2021] This function isn't being called, and mostly duplicates the code in Node::CreateToolNode.
-// This should become the preferred method, but first we need to merge in the code from CreateToolNode() since that is up to
-// date and does things like call FirePropChangeEvent.
-
-void NodeCreator::SetDefaultLayoutProperties(Node* node)
-{
-    auto node_decl = node->GetNodeDeclaration();
-
-    // Caution: Do NOT place spaces around the | that combines flags. Other parts of the codebase rely on there being no
-    // spaces...
-
-    if (node_decl->isGen(gen_wxStdDialogButtonSizer) || node_decl->isGen(gen_wxStaticLine))
-    {
-        node->prop_set_value(prop_borders, "wxALL");
-        node->prop_set_value(prop_flags, "wxEXPAND");
-        return;
-    }
-
-    if (node->IsSizer() || node->isType(type_splitter) || node_decl->isGen(gen_spacer))
-    {
-        node->prop_set_value(prop_proportion, "1");
-        node->prop_set_value(prop_flags, "wxEXPAND");
-    }
-    else if (node_decl->isGen(gen_wxToolBar))
-    {
-        node->prop_set_value(prop_flags, "wxEXPAND");
-    }
-    else if (node->isType(type_widget) || node->isType(type_statusbar))
-    {
-        node->prop_set_value(prop_proportion, "0");
-        node->prop_set_value(prop_borders, "wxALL");
-    }
-    else if (node->isType(type_notebook) || node->isType(type_listbook) || node->isType(type_simplebook) ||
-             node->isType(type_choicebook) || node->isType(type_auinotebook) || node->isType(type_treelistctrl) ||
-             node->isType(type_expanded_widget) || node->isType(type_container))
-    {
-        node->prop_set_value(prop_proportion, "1");
-        node->prop_set_value(prop_borders, "wxALL");
-        node->prop_set_value(prop_flags, "wxEXPAND");
-    }
-}
-
 int NodeCreator::GetConstantAsInt(const std::string& name, int defValue) const
 {
     if (auto iter = m_map_constants.find(name); iter != m_map_constants.end())

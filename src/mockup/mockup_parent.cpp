@@ -361,10 +361,17 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     {
         if (prop->isProp(prop_disabled))
         {
-            if (node->IsStaticBoxSizer())
-                wxStaticCast(Get_wxObject(node), wxStaticBoxSizer)->GetStaticBox()->Enable(!prop->as_bool());
+            auto window = Get_wxObject(node);
+            if (!window)
+            {
+                // For some content such as FormPanel, the selected node doesn't have a window that can be enabled/disabled
+                CreateContent();
+                return;
+            }
+            else if (node->IsStaticBoxSizer())
+                wxStaticCast(window, wxStaticBoxSizer)->GetStaticBox()->Enable(!prop->as_bool());
             else
-                wxStaticCast(Get_wxObject(node), wxControl)->Enable(!prop->as_bool());
+                wxStaticCast(window, wxWindow)->Enable(!prop->as_bool());
             return;
         }
 

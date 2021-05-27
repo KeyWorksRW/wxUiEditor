@@ -341,7 +341,6 @@
 <gen class="wxStdDialogButtonSizer" image="stddialogbuttonsizer" type="widget">
     <inherits class="sizer_dimension" />
     <inherits class="sizer_child" />
-    <inherits class="Update Events" />
     <property name="var_name" type="string">stdBtn</property>
     <property name="class_access" type="option">
         <option name="none" />

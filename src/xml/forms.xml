@@ -117,17 +117,78 @@
 </gen>
 
 <gen class="PanelForm" image="wxPanel" type="form">
-    <inherits class="Code Generation" />
-    <inherits class="wxWindow">
-        <property name="window_style">wxTAB_TRAVERSAL</property>
-        <property name="size" type="wxSize" />
-    </inherits>
     <property name="class_name" type="string"
         help="The name of the base class.">MyPanelBase</property>
     <property name="mockup_size" type="wxSize"
         help="This is the minimum size to display the panel in the Mockup Panel. It does not affect the actual size of the panel in your compiled code.">200, 200</property>
+
+    <!-- We specify the category this way rather than inheriting it so that it appears before the Window Settings category. -->
+    <category name="Code Generation" base_name="Code Generation" />
+
+    <category name="Window Settings">
+        <property name="id" type="id"
+            help="The identifier for the panel.">
+          wxID_ANY
+          </property>
+        <property name="pos" type="wxPoint"
+            help="Window position. The default is (-1, -1) which indicates that wxWidgets should generate a default position for the window." />
+        <property name="size" type="wxSize"
+            help="Sets the panel size. The default is (-1, -1) which indicates that wxWidgets should generate a default size for the panel, large enough to display all visible elements." />
+        <property name="minimum_size" type="wxSize"
+            help="Sets the minimum size of the panel. The default is (-1, -1) which indicates wxWidgets should calculate a minimum size large enough to display all visible elements." />
+        <property name="maximum_size" type="wxSize"
+            help="Sets the maximum size of the panel." />
+        <property name="window_style" type="bitlist">
+            <option name="wxTRANSPARENT_WINDOW"
+                help="The window is transparent, that is, it will not receive paint events. Windows only." />
+            <option name="wxTAB_TRAVERSAL"
+                help="Setting this will cause the tab key to traverse child windows." />
+            <option name="wxWANTS_CHARS"
+                help="Use this to indicate that the window wants to get all char/key events for all keys - even for keys like TAB or ENTER which are usually used for dialog navigation and which wouldn't be generated without this style. If you need to use this style in order to get the arrows or etc., but would still like to have normal keyboard navigation take place, you should call Navigate in response to the key events for Tab and Shift-Tab." />
+            <option name="wxVSCROLL"
+                help="Use this style to enable a vertical scrollbar. Notice that this style cannot be used with native controls which don't support scrollbars nor with top-level windows in most ports." />
+            <option name="wxHSCROLL"
+                help="Use this style to enable a horizontal scrollbar. The same limitations as for wxVSCROLL apply to this style." />
+            <option name="wxCLIP_CHILDREN"
+                help="Use this style to eliminate flicker caused by the background being repainted, then children being painted over them. Windows only." />
+          wxTAB_TRAVERSAL
+          </property>
+        <property name="window_extra_style" type="bitlist">
+            <option name="wxWS_EX_VALIDATE_RECURSIVELY"
+                help="By default, Validate/TransferDataTo/FromWindow() only work on direct children of the window (compatible behaviour). Set this flag to make them recursively descend into all subwindows." />
+            <option name="wxWS_EX_BLOCK_EVENTS"
+                help="wxCommandEvents are propagated upward to the parent window, it's parent window, etc. Setting this flag blocks this propagation at this window, preventing events from being propagated further upwards." />
+            <option name="wxWS_EX_PROCESS_IDLE"
+                help="This window should always process idle events, even if the mode set by wxIdleEvent::SetMode is wxIDLE_PROCESS_SPECIFIED." />
+            <option name="wxWS_EX_PROCESS_UI_UPDATES"
+                help="This window should always process UI update events, even if the mode set by wxUpdateUIEvent::SetMode is   wxUPDATE_UI_PROCESS_SPECIFIED." />
+          </property>
+        <property name="disabled" type="bool"
+            help="Disable the window for user input. Note that when a parent window is disabled, all of its children are disabled as well and they are reenabled again when the parent is.">
+          0
+          </property>
+        <property name="hidden" type="bool"
+            help="Shows or hides the window.">
+          0
+          </property>
+        <property name="background_colour" type="wxColour"
+            help="Sets the background colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
+        <property name="window_name" type="string_escapes"
+            help="Used to associate a name with the window, allowing the application user to set Motif resource values for individual panel boxes." />
+        <property name="base_class_name" type="string"
+            help="If you have derived a class from wxpanel and you want this class to inherit from your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property." />
+      </category>
+
     <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent"
-        help="generated when the panel is being initialised." />
+        help="Generated when the panel is being initialised." />
+    <event name="wxEVT_IDLE" class="wxIdleEvent"
+        help="Generated when the system becomes idle." />
+    <event name="wxEVT_SHOW" class="wxShowEvent"
+        help="Sent when the panel is shown or hidden." />
+    <event name="wxEVT_ERASE_BACKGROUND" class="wxEraseEvent" />
+    <event name="wxEVT_PAINT" class="wxPaintEvent" />
+    <event name="wxEVT_SIZE" class="wxSizeEvent" />
+    <event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent" />
 </gen>
 
 <gen class="wxFrame" image="wxFrame" type="form">

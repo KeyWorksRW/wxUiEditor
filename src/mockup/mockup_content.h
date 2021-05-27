@@ -25,6 +25,7 @@ public:
 
     void CreateAllGenerators();
 
+    // Call this to switch to the correct page in a wizard, book, or ribbon
     void OnNodeSelected(Node* node);
 
     void RemoveNodes();

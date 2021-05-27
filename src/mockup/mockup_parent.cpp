@@ -410,5 +410,6 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     if (!is_updated)
     {
         CreateContent();
+        m_panelContent->OnNodeSelected(wxGetFrame().GetSelectedNode());
     }
 }

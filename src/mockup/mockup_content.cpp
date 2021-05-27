@@ -330,8 +330,49 @@ wxObject* MockupContent::Get_wxObject(Node* node)
         return nullptr;
 }
 
+// clang-format off
+
+// List of classes that will have multiple pages -- we want to select the correct page based
+// on it's children.
+static const GenEnum::GenName lst_select_nodes[] = {
+
+    gen_wxWizardPageSimple,
+    gen_BookPage,
+    gen_wxRibbonPage,
+    gen_wxRibbonPanel,
+    gen_wxRibbonButtonBar,
+    gen_wxRibbonToolBar,
+    gen_ribbonButton,
+    gen_ribbonTool,
+
+};
+// clang-format on
+
 void MockupContent::OnNodeSelected(Node* node)
 {
+    if (node->IsForm())
+        return;
+
+    bool HavePageNode = false;
+    for (;;)
+    {
+        for (auto& iter: lst_select_nodes)
+        {
+            if (node->isGen(iter))
+            {
+                HavePageNode = true;
+                break;
+            }
+        }
+
+        if (HavePageNode)
+            break;
+
+        node = node->GetParent();
+        if (node->IsForm())
+            return;
+    }
+
     if (m_wizard && node->isGen(gen_wxWizardPageSimple))
     {
         auto parent = node->GetParent();

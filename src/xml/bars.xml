@@ -82,6 +82,10 @@
         <property name="var_name" type="string">separator</property>
     </gen>
 
+    <gen class="wxContextMenuEvent" image="menu" type="ctx_menu">
+        <property name="function_name" type="string">MyEventHandker</property>
+    </gen>
+
     <gen class="wxToolBar" image="wxToolBar" type="toolbar">
         <inherits class="wxWindow" />
         <inherits class="Window Events" />

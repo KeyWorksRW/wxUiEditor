@@ -76,9 +76,6 @@ public:
     // Return true if the widget was changed which will resize and repaint the Mockup window
     virtual bool OnPropertyChange(wxObject*, Node*, NodeProperty*) { return false; }
 
-    virtual NodeSharedPtr CreateSmithNode(pugi::xml_node&, Node*) { return NodeSharedPtr(); };
-    virtual NodeSharedPtr CreateXrcNode(pugi::xml_node&, Node*) { return NodeSharedPtr(); };
-
     // Bind wxEVT_LEFT_DOWN to this so that clicking on the widget will select it in the navigation panel
     void OnLeftClick(wxMouseEvent& event);
 };

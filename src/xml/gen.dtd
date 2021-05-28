@@ -15,7 +15,7 @@
 
 <!ELEMENT property ANY>
     <!ATTLIST property name CDATA #REQUIRED>
-    <!ATTLIST property type (animation | bitlist | bitmap | bool | editoption | file | float | id | image | int | option | path | string | string_edit | string_edit_escapes | string_edit_single | string_escapes | stringlist | uint | uintlist | uintpairlist | wxColour | wxFont | wxPoint | wxSize) #REQUIRED>
+    <!ATTLIST property type (animation | bitlist | bitmap | bool | editoption | file | float | id | image | int | option | path | string | string_edit | string_edit_escapes | string_edit_single | string_escapes | stringlist | uint | uintpairlist | wxColour | wxFont | wxPoint | wxSize) #REQUIRED>
     <!ATTLIST property help CDATA #IMPLIED>
 
 <!ELEMENT option ANY>

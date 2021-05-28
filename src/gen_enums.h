@@ -26,7 +26,6 @@ namespace GenEnum
         type_image,
         type_int,
         type_option,
-        type_parent,
         type_path,
         type_string,
         type_string_edit,          // this includes a button that triggers a small text editor dialog
@@ -35,13 +34,9 @@ namespace GenEnum
         type_string_escapes,       // this doubles the backslash in escaped characters: \n, \t, \r, and "\""
         type_stringlist,
         type_uint,
-        type_uintlist,
         type_uintpairlist,
         type_wxColour,
         type_wxFont,
-        type_wxparent,
-        type_wxparent_cp,
-        type_wxparent_sb,
         type_wxPoint,
         type_wxSize,
 

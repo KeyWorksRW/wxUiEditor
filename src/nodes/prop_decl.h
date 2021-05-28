@@ -33,19 +33,16 @@ class PropDeclaration : public PropChildDeclaration
 {
 public:
     PropDeclaration(GenEnum::PropName prop_name, GenEnum::PropType prop_type, ttlib::cview def_value, ttlib::cview help,
-                 ttlib::cview customEditor, const std::vector<PropChildDeclaration>& children)
+                 ttlib::cview customEditor)
     {
         m_def_value = def_value;
         m_help = help;
-        m_children = children;
         m_customEditor = customEditor;
 
         m_prop_type = prop_type;
         m_name_enum = prop_name;
         m_name_str = GenEnum::map_PropNames[m_name_enum];
     }
-
-    const std::vector<PropChildDeclaration>* GetChildren() const noexcept { return &m_children; }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
     ttlib::cview DeclName() const noexcept { return ttlib::cview(m_name_str); }
@@ -68,6 +65,4 @@ private:
 
     // This gets used to setup wxPGProperty, so both key and value need to be a wxString
     std::vector<Options> m_options;
-
-    std::vector<PropChildDeclaration> m_children;  // Only used for parent properties
 };

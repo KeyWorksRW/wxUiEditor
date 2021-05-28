@@ -16,6 +16,8 @@ using namespace GenEnum;
 
 std::map<PropType, const char*> GenEnum::map_PropTypes = {
 
+    // These types need to be listed in xml/gen.dtd
+
     { type_animation, "animation" },
     { type_bitlist, "bitlist" },
     { type_bitmap, "bitmap" },
@@ -27,7 +29,6 @@ std::map<PropType, const char*> GenEnum::map_PropTypes = {
     { type_image, "image" },
     { type_int, "int" },
     { type_option, "option" },
-    { type_parent, "parent" },
     { type_path, "path" },
     { type_string, "string" },
     { type_string_edit, "string_edit" },
@@ -36,13 +37,9 @@ std::map<PropType, const char*> GenEnum::map_PropTypes = {
     { type_string_escapes, "string_escapes" },
     { type_stringlist, "stringlist" },
     { type_uint, "uint" },
-    { type_uintlist, "uintlist" },
     { type_uintpairlist, "uintpairlist" },
     { type_wxColour, "wxColour" },
     { type_wxFont, "wxFont" },
-    { type_wxparent, "wxparent" },
-    { type_wxparent_cp, "wxparent_cp" },
-    { type_wxparent_sb, "wxparent_sb" },
     { type_wxPoint, "wxPoint" },
     { type_wxSize, "wxSize" },
 

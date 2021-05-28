@@ -452,12 +452,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
         wxVariant var_quote("\"");
         new_pg_property->DoSetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
     }
-    else if (type == type_parent)
-    {
-        new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL);
-        new_pg_property->ChangeFlag(wxPG_PROP_READONLY, true);
-    }
-    else if (type == type_uintlist || type == type_uintpairlist)
+    else if (type == type_uintpairlist)
     {
         new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL);
     }
@@ -497,48 +492,7 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
             if (propType != type_option)
             {
                 m_prop_grid->SetPropertyHelpString(pg, propInfo->GetDescription());
-                if (propType == type_parent)
-                {
-                    wxArrayString values = wxStringTokenize(prop->as_string(), ";", wxTOKEN_RET_EMPTY_ALL);
-                    size_t index = 0;
-                    wxString value;
-
-                    auto children = propInfo->GetChildren();
-                    for (auto it = children->begin(); it != children->end(); ++it)
-                    {
-                        if (values.GetCount() > index)
-                            value = values[index++].Trim().Trim(false);
-                        else
-                            value = "";
-
-                        wxPGProperty* child = nullptr;
-                        if (it->m_prop_type == type_bool)
-                        {
-                            // Because the format of a composed wxPGProperty value is stored this needs to be converted
-                            // true == "<property name>"
-                            // false == "Not <property name>"
-                            // TODO: The subclass property is currently the only one using this child type,
-                            //       because the only instance using this property, the c++ code generator,
-                            //       interprets a missing value as true and currently no project file update
-                            //       adds this value if it is missing, here a missing value also needs to be
-                            //       interpreted as true
-                            child = new wxBoolProperty(it->name_str(), wxPG_LABEL, value.empty() || value == it->name_str());
-                        }
-                        else if (it->m_prop_type == type_string_escapes)
-                        {
-                            child = new wxStringProperty(it->name_str(), wxPG_LABEL, value);
-                        }
-                        else
-                        {
-                            FAIL_MSG(ttlib::cstr("Invalid Child NodeProperty Type: ") << it->name_str());
-                            throw std::runtime_error("Internal error");
-                        }
-
-                        pg->AppendChild(child);
-                        m_prop_grid->SetPropertyHelpString(child, it->m_help);
-                    }
-                }
-                else if (propType == type_id)
+                if (propType == type_id)
                 {
                     if (prop->GetPropDeclaration()->isProp(prop_id))
                     {
@@ -881,17 +835,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         }
                     }
                 }
-            }
-            break;
-
-        case type_parent:
-            {
-                // REVIEW: [KeyWorks - 04-07-2021] Is this comment still true in 3.1?
-
-                // GenerateComposedValue() is the only method that does actually return a value, although the documentation
-                // claims the other methods just call this one, they return an empty value
-                const auto value = property->GenerateComposedValue();
-                ModifyProperty(prop, value);
             }
             break;
 
@@ -1269,7 +1212,6 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
         case type_id:
         case type_option:
         case type_editoption:
-        case type_parent:
             grid_property->SetValueFromString(prop->as_escape_text(), 0);
             break;
 

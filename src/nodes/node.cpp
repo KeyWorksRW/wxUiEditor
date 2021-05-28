@@ -690,7 +690,14 @@ bool Node::CreateToolNode(GenName name)
             frame.FirePropChangeEvent(prop);
         }
     }
-
+    else if (name == gen_wxContextMenuEvent)
+    {
+        auto event = new_node->GetParent()->GetEvent("wxEVT_CONTEXT_MENU");
+        if (event)
+        {
+            event->set_value(new_node->prop_as_string(prop_handler_name));
+        }
+    }
     return true;
 }
 

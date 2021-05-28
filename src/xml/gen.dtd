@@ -1,0 +1,34 @@
+<!ELEMENT GeneratorDefinitions ANY>
+
+<!ELEMENT gen ANY>
+    <!ATTLIST gen
+        class CDATA #REQUIRED
+        type CDATA #REQUIRED
+    >
+    <!ATTLIST gen
+        image CDATA #IMPLIED
+        flags CDATA #IMPLIED
+    >
+
+<!ELEMENT inherits ANY>
+    <!ATTLIST inherits class CDATA #REQUIRED>
+
+<!ELEMENT property ANY>
+    <!ATTLIST property name CDATA #REQUIRED>
+    <!ATTLIST property type (animation | bitlist | bitmap | bool | editoption | file | float | id | image | int | option | path | string | string_edit | string_edit_escapes | string_edit_single | string_escapes | stringlist | uint | uintlist | uintpairlist | wxColour | wxFont | wxPoint | wxSize) #REQUIRED>
+    <!ATTLIST property help CDATA #IMPLIED>
+
+<!ELEMENT option ANY>
+    <!ATTLIST option name CDATA #REQUIRED>
+    <!ATTLIST option help CDATA #IMPLIED>
+
+<!ELEMENT event ANY>
+    <!ATTLIST event
+        name CDATA #REQUIRED
+        class CDATA #REQUIRED
+    >
+    <!ATTLIST event help CDATA #IMPLIED>
+
+<!ELEMENT category ANY>
+    <!ATTLIST category name CDATA #REQUIRED>
+    <!ATTLIST category base_name CDATA #IMPLIED>

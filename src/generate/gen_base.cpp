@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Generate Src and Hdr files for Base and Derived Class
+// Purpose:   Generate Src and Hdr files for the Base Class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -377,6 +377,27 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
                 continue;
 
             ttlib::cstr code;
+
+            if (event->GetNode()->IsForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
+            {
+                bool has_handler = false;
+                for (size_t pos_child = 0; pos_child < event->GetNode()->GetChildCount(); pos_child++)
+                {
+                    if (event->GetNode()->GetChild(pos_child)->isGen(gen_wxContextMenuEvent))
+                    {
+                        has_handler = true;
+                        break;
+                    }
+                }
+
+                if (has_handler)
+                {
+                    code << " void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                    code_lines.insert(code);
+                    continue;
+                }
+            }
+
             code << " virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
                  << "& event) { event.Skip(); }";
             code_lines.insert(code);
@@ -903,7 +924,6 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         m_source->Indent();
     }
 
-
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
@@ -915,6 +935,8 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     m_source->SetLastLineBlank();
     for (size_t i = 0; i < form_node->GetChildCount(); i++)
     {
+        if (form_node->GetChild(i)->isGen(gen_wxContextMenuEvent))
+            continue;
         GenConstruction(form_node->GetChild(i));
     }
 

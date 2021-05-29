@@ -188,8 +188,11 @@
         <inherits class="Window Events" />
         <inherits class="sizer_child" />
         <property name="var_name" type="string">m_btn</property>
-        <property name="main_label" type="string_edit">MyButton</property>
-        <property name="note" type="string_edit_escapes" />
+        <property name="main_label" type="string_edit"
+            help="First line of text on the button, typically the label of an action that will be made when the button is pressed.">MyButton</property>
+        <property name="note" type="string_edit_escapes"
+            help="Second line of text describing the action performed when the button is pressed."
+        />
         <property name="default" type="bool"
             help="If true, this will be the default button (it will be depressed when the return key is pressed)">0</property>
         <property name="auth_needed" type="bool"

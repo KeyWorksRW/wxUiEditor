@@ -22,6 +22,7 @@
 #include <wx/image.h>
 #include <wx/infobar.h>
 #include <wx/listbox.h>
+#include <wx/menu.h>
 #include <wx/radiobox.h>
 #include <wx/radiobut.h>
 #include <wx/slider.h>
@@ -93,4 +94,5 @@ protected:
     virtual void OnRadio(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRadioBox(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSlider(wxCommandEvent& event) { event.Skip(); }
+    void OnContextMenu(wxContextMenuEvent& event);
 };

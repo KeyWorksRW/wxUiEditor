@@ -6,14 +6,16 @@
 
 #pragma once
 
+#include <wx/colour.h>
 #include <wx/gdicmn.h>
 #include <wx/popupwin.h>
+#include <wx/settings.h>
 #include <wx/stattext.h>
 
 class PopupWinBase : public wxPopupTransientWindow
 {
 public:
-    PopupWinBase(wxWindow* parent, int border_flag = wxBORDER_RAISED);
+    PopupWinBase(wxWindow* parent, int style = wxBORDER_RAISED);
 protected:
 
     // Class member variables

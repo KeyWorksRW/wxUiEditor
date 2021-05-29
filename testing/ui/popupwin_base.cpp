@@ -10,11 +10,13 @@
 
 #include "popupwin_base.h"
 
-PopupWinBase::PopupWinBase(wxWindow* parent, int border) : wxPopupTransientWindow(parent, border)
+PopupWinBase::PopupWinBase(wxWindow* parent, int style) : wxPopupTransientWindow(parent, style)
 {
+    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("This is a wxPopupTransientWindow set to use a raised border around it. Note that the default is to not have a border at all.\n\nClick outside this window to dismiss it."));
+    m_staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("This is a wxPopupTransientWindow set to use a raised border around it. Note that the default is to not have a border at all.\n\nBTW, right-click anywhere in the dialog to get a popup menu for changing some of the control values.\n\nClick outside this window to dismiss it."));
     m_staticText->Wrap(250);
     parent_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
 

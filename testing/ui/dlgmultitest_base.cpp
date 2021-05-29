@@ -33,7 +33,7 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
 
 DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent) : wxDialog()
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Widgets Testing"), wxPoint(600, 800), wxDefaultSize,
+    Create(parent, wxID_ANY, wxString::FromUTF8("Widgets Testing"), wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
 
     auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);

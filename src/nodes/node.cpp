@@ -697,6 +697,9 @@ bool Node::CreateToolNode(GenName name)
         {
             event->set_value(new_node->prop_as_string(prop_handler_name));
         }
+
+        // Create an initial menu item
+        new_node->CreateChildNode(gen_wxMenuItem);
     }
     return true;
 }

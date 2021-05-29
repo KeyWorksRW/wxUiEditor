@@ -397,26 +397,80 @@
       class_name="RibbonDlgBase"
       derived_class_name="RibbonDlg"
       derived_file="ribbondlg"
-      size="500,300"
+      size="-1,-1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Ribbon Dialog">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
-        var_name="parent_sizer">
+        var_name="parent_sizer"
+        flags="wxEXPAND">
         <node
           class="wxRibbonBar"
-          style="wxRIBBON_BAR_FLOW_HORIZONTAL|wxRIBBON_BAR_SHOW_PAGE_LABELS"
+          style="wxRIBBON_BAR_SHOW_PAGE_LABELS|wxRIBBON_BAR_SHOW_PAGE_ICONS|wxRIBBON_BAR_FLOW_HORIZONTAL"
           theme="Generic"
-          flags="wxEXPAND"
-          proportion="1">
+          flags="wxEXPAND">
           <node
             class="wxRibbonPage"
             label="First"
             select="true">
             <node
               class="wxRibbonPanel"
-              label="First Panel" />
+              bitmap="XPM; ..\art\english.xpm; ; [-1; -1]"
+              label="English">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="first_parent_sizer"
+                flags="wxEXPAND">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  flags="wxEXPAND"
+                  proportion="1">
+                  <node
+                    class="wxStaticText"
+                    label="This is a sentence in English."
+                    wrap="200" />
+                  <node
+                    class="wxButton"
+                    label="Switch"
+                    alignment="wxALIGN_CENTER_HORIZONTAL"
+                    wxEVT_BUTTON="[this](wxCommandEvent&amp;) { m_scintilla->ClearAll();  m_scintilla->AddTextRaw(&quot;This is a sentence in English.&quot;); }" />
+                </node>
+              </node>
+            </node>
+            <node
+              class="wxRibbonPanel"
+              bitmap="XPM; ..\art\french.xpm; ; [-1; -1]"
+              label="French"
+              var_name="rbnPanel_2"
+              background_colour="wxSYS_COLOUR_MENU">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="first_parent_sizer_2"
+                flags="wxEXPAND">
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer_2"
+                  flags="wxEXPAND"
+                  proportion="1">
+                  <node
+                    class="wxStaticText"
+                    label="Ceci est une phrase en français."
+                    var_name="m_staticText_2"
+                    wrap="200" />
+                  <node
+                    class="wxButton"
+                    label="Switch"
+                    var_name="m_btn_2"
+                    alignment="wxALIGN_CENTER_HORIZONTAL"
+                    wxEVT_BUTTON="[this](wxCommandEvent&amp;) { m_scintilla->ClearAll();  m_scintilla->AddTextRaw(&quot;Ceci est une phrase en français.&quot;); }" />
+                </node>
+              </node>
+            </node>
           </node>
           <node
             class="wxRibbonPage"
@@ -424,10 +478,56 @@
             var_name="m_ribbonPage2">
             <node
               class="wxRibbonPanel"
-              label="Second Panel"
-              var_name="m_ribbonPanel2" />
+              label="Button Panel"
+              style="wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_STRETCH"
+              var_name="m_ribbonPanel2">
+              <node
+                class="wxRibbonButtonBar">
+                <node
+                  class="ribbonButton"
+                  bitmap="Art; wxART_GO_FORWARD; wxART_OTHER; [-1; -1]"
+                  label="Forward" />
+                <node
+                  class="ribbonButton"
+                  bitmap="Art; wxART_GO_BACK; wxART_OTHER; [-1; -1]"
+                  label="Backward" />
+              </node>
+            </node>
+          </node>
+          <node
+            class="wxRibbonPage"
+            label="Third"
+            var_name="m_ribbonPage_2">
+            <node
+              class="wxRibbonPanel"
+              label="Tool Panel"
+              var_name="m_ribbonPanel_2">
+              <node
+                class="wxRibbonToolBar">
+                <node
+                  class="ribbonTool"
+                  bitmap="Art; wxART_GOTO_FIRST; wxART_TOOLBAR; [-1; -1]"
+                  id="wxID_FILE1" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Art; wxART_GOTO_LAST; wxART_TOOLBAR; [-1; -1]"
+                  id="wxID_FILE9" />
+              </node>
+            </node>
           </node>
         </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_3"
+          flags="wxEXPAND">
+          <node
+            class="wxStyledTextCtrl"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
       </node>
     </node>
     <node

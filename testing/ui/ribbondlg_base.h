@@ -6,11 +6,19 @@
 
 #pragma once
 
+#include <wx/bitmap.h>
+#include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/ribbon/art.h>
 #include <wx/ribbon/bar.h>
 #include <wx/ribbon/control.h>
+#include <wx/ribbon/toolbar.h>
+#include <wx/stattext.h>
+#include <wx/stc/stc.h>
 
 class RibbonDlgBase : public wxDialog
 {
@@ -21,5 +29,10 @@ protected:
 
     // Class member variables
 
+    wxButton* m_btn;
+    wxButton* m_btn_2;
     wxRibbonBar* m_rbnBar;
+    wxStaticText* m_staticText;
+    wxStaticText* m_staticText_2;
+    wxStyledTextCtrl* m_scintilla;
 };

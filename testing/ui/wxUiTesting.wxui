@@ -95,12 +95,13 @@
     </node>
     <node
       class="wxDialog"
+      base_file="commonctrls_base"
       class_name="CommonCtrlsBase"
+      derived_class_name="CommonCtrls"
+      derived_file="commonctrls"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Common controls"
-      base_file="commonctrls_base"
-      derived_class_name="CommonCtrls"
-      derived_file="commonctrls">
+      wxEVT_CONTEXT_MENU="OnContextMenu">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -342,7 +343,7 @@
             wxEVT_SLIDER="OnSlider" />
           <node
             class="wxStaticText"
-            label="Guage:"
+            label="Gauge:"
             var_name="m_staticText13"
             alignment="wxALIGN_CENTER"
             borders="wxLEFT|wxTOP|wxBOTTOM" />
@@ -355,16 +356,50 @@
           Help="true"
           flags="wxEXPAND" />
       </node>
+      <node
+        class="wxContextMenuEvent">
+        <node
+          class="wxMenuItem"
+          label="Play Animation"
+          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_animation_ctrl->Play(); }" />
+        <node
+          class="wxMenuItem"
+          label="Stop Animation"
+          var_name="menu_item_2"
+          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_animation_ctrl->Stop(); }" />
+        <node
+          class="separator" />
+        <node
+          class="wxMenuItem"
+          label="Set Slider to 25"
+          var_name="menu_item_3"
+          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_slider->SetValue(25); }" />
+        <node
+          class="wxMenuItem"
+          label="Set Slider to 75"
+          var_name="menu_item_4"
+          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_slider->SetValue(75); }" />
+        <node
+          class="wxMenuItem"
+          label="Set Gauge to 25"
+          var_name="menu_item_5"
+          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_gauge->SetValue(25); }" />
+        <node
+          class="wxMenuItem"
+          label="Set Gauge to 75"
+          var_name="menu_item_6"
+          wxEVT_MENU="[this](wxCommandEvent&amp;) { m_gauge->SetValue(75); }" />
+      </node>
     </node>
     <node
       class="wxDialog"
-      class_name="RibbonDlgBase"
-      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-      title="Ribbon Dialog"
       base_file="ribbondlg_base"
+      class_name="RibbonDlgBase"
       derived_class_name="RibbonDlg"
       derived_file="ribbondlg"
-      size="500,300">
+      size="500,300"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Ribbon Dialog">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -397,8 +432,7 @@
     </node>
     <node
       class="PanelForm"
-      size="500,300"
-      window_style="wxTAB_TRAVERSAL">
+      size="500,300">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -497,10 +531,10 @@
     </node>
     <node
       class="wxDialog"
-      class_name="ChoiceBookBase"
-      title="Choicebook"
       base_file="choicebook_base"
-      derived_class_name="ChoiceBook">
+      class_name="ChoiceBookBase"
+      derived_class_name="ChoiceBook"
+      title="Choicebook">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -612,12 +646,12 @@
     </node>
     <node
       class="wxDialog"
-      class_name="NotebookBase"
-      title="Notebook"
       base_file="notebook_base"
+      class_name="NotebookBase"
       derived_class_name="Notebook"
       minimum_size="-1,-1"
-      size="-1,-1">
+      size="-1,-1"
+      title="Notebook">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL">
@@ -686,10 +720,10 @@
     </node>
     <node
       class="wxDialog"
-      class_name="ListbookBase"
-      title="Listbook"
       base_file="listbook_base"
-      derived_class_name="Listbook">
+      class_name="ListbookBase"
+      derived_class_name="Listbook"
+      title="Listbook">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL">
@@ -757,10 +791,10 @@
     </node>
     <node
       class="wxDialog"
-      class_name="TreebookBase"
-      title="Treebook"
       base_file="treebook_base"
-      derived_class_name="Treebook">
+      class_name="TreebookBase"
+      derived_class_name="Treebook"
+      title="Treebook">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL">
@@ -827,10 +861,10 @@
     </node>
     <node
       class="wxDialog"
-      class_name="ToolbookBase"
-      title="wxToolbook"
       base_file="toolbook_base"
-      derived_class_name="Toolbook">
+      class_name="ToolbookBase"
+      derived_class_name="Toolbook"
+      title="wxToolbook">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL">
@@ -896,6 +930,7 @@
     </node>
     <node
       class="wxPopupTransientWindow"
+      background_colour="wxSYS_COLOUR_INFOBK"
       border="wxBORDER_RAISED"
       class_name="PopupWinBase"
       base_file="popupwin_base"
@@ -907,21 +942,21 @@
         var_name="parent_sizer">
         <node
           class="wxStaticText"
-          label="This is a wxPopupTransientWindow set to use a raised border around it. Note that the default is to not have a border at all.&#10;&#10;Click outside this window to dismiss it."
+          label="This is a wxPopupTransientWindow set to use a raised border around it. Note that the default is to not have a border at all.&#10;&#10;BTW, right-click anywhere in the dialog to get a popup menu for changing some of the control values.&#10;&#10;Click outside this window to dismiss it."
           wrap="250" />
       </node>
     </node>
     <node
       class="wxDialog"
-      class_name="OtherCtrlsBase"
-      persist="true"
-      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-      title="NoteBook Dialog"
       base_file="other_ctrls_base"
+      class_name="OtherCtrlsBase"
       derived_class_name="OtherCtrlsDlg"
       derived_file="other_ctrls"
       minimum_size="-1,-1"
-      size="-1,-1">
+      persist="true"
+      size="-1,-1"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="NoteBook Dialog">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -1081,14 +1116,14 @@
     </node>
     <node
       class="wxDialog"
-      class_name="DlgMultiTestBase"
-      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-      title="Widgets Testing"
       base_file="dlgmultitest_base"
+      class_name="DlgMultiTestBase"
       derived_class_name="DlgMultiTest"
       derived_file="dlgmultitest"
       minimum_size="-1,-1"
-      size="600,800">
+      size="-1,-1"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Widgets Testing">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"

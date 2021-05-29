@@ -14,7 +14,7 @@
 
 RibbonDlgBase::RibbonDlgBase(wxWindow* parent) : wxDialog()
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Ribbon Dialog"), wxPoint(500, 300), wxDefaultSize,
+    Create(parent, wxID_ANY, wxString::FromUTF8("Ribbon Dialog"), wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);

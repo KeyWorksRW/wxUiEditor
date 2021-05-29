@@ -1435,6 +1435,7 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
         {
             m_source->writeLine();
             result->Replace("(menu", "(&menu");
+            result->Replace("menu->AppendSeparator(", "menu.AppendSeparator(");
             m_source->writeLine(result.value(), indent::auto_no_whitespace);
         }
         size_t auto_indent = indent::auto_no_whitespace;

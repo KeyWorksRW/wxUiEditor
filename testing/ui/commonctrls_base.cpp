@@ -7,11 +7,13 @@
 #include "pch.h"
 
 #include <wx/artprov.h>
+#include <wx/event.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
 #include <wx/statbox.h>
 #include <wx/valgen.h>
 #include <wx/valtext.h>
+#include <wx/window.h>
 
 #include "commonctrls_base.h"
 
@@ -224,7 +226,7 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent) : wxDialog()
     m_slider->SetValue(50);
     box_sizer5->Add(m_slider, wxSizerFlags().Border(wxALL));
 
-    m_staticText13 = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Guage:"));
+    m_staticText13 = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Gauge:"));
     box_sizer5->Add(m_staticText13, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_gauge = new wxGauge(this, wxID_ANY, 100);
@@ -238,6 +240,7 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent) : wxDialog()
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_CONTEXT_MENU, &CommonCtrlsBase::OnContextMenu, this);
     m_textCtrl->Bind(wxEVT_TEXT_ENTER, &CommonCtrlsBase::OnProcessEnter, this);
     m_checkBox->Bind(wxEVT_CHECKBOX, &CommonCtrlsBase::OnCheckBox, this);
     m_btn->Bind(wxEVT_BUTTON, &CommonCtrlsBase::OnFirstBtn, this);
@@ -257,4 +260,50 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent) : wxDialog()
         [this](wxCommandEvent&) { if (m_toggleBtn->GetValue())  m_animation_ctrl->Play();  else  m_animation_ctrl->Stop(); }
         );
     m_slider->Bind(wxEVT_SLIDER, &CommonCtrlsBase::OnSlider, this);
+}
+
+void CommonCtrlsBase::OnContextMenu(wxContextMenuEvent& event)
+{
+    wxMenu menu;
+
+    auto menu_item = new wxMenuItem(&menu, wxID_ANY, wxString::FromUTF8("Play Animation"));
+    menu.Append(menu_item);
+
+    auto menu_item_2 = new wxMenuItem(&menu, wxID_ANY, wxString::FromUTF8("Stop Animation"));
+    menu.Append(menu_item_2);
+
+    menu.AppendSeparator();
+
+    auto menu_item_3 = new wxMenuItem(&menu, wxID_ANY, wxString::FromUTF8("Set Slider to 25"));
+    menu.Append(menu_item_3);
+
+    auto menu_item_4 = new wxMenuItem(&menu, wxID_ANY, wxString::FromUTF8("Set Slider to 75"));
+    menu.Append(menu_item_4);
+
+    auto menu_item_5 = new wxMenuItem(&menu, wxID_ANY, wxString::FromUTF8("Set Gauge to 25"));
+    menu.Append(menu_item_5);
+
+    auto menu_item_6 = new wxMenuItem(&menu, wxID_ANY, wxString::FromUTF8("Set Gauge to 75"));
+    menu.Append(menu_item_6);
+
+    menu.Bind(wxEVT_MENU,
+        [this](wxCommandEvent&) { m_animation_ctrl->Play(); },
+        menu_item->GetId());
+    menu.Bind(wxEVT_MENU,
+        [this](wxCommandEvent&) { m_animation_ctrl->Stop(); },
+        menu_item_2->GetId());
+    menu.Bind(wxEVT_MENU,
+        [this](wxCommandEvent&) { m_slider->SetValue(25); },
+        menu_item_3->GetId());
+    menu.Bind(wxEVT_MENU,
+        [this](wxCommandEvent&) { m_slider->SetValue(75); },
+        menu_item_4->GetId());
+    menu.Bind(wxEVT_MENU,
+        [this](wxCommandEvent&) { m_gauge->SetValue(25); },
+        menu_item_5->GetId());
+    menu.Bind(wxEVT_MENU,
+        [this](wxCommandEvent&) { m_gauge->SetValue(75); },
+        menu_item_6->GetId());
+
+    wxStaticCast(event.GetEventObject(), wxWindow)->PopupMenu(&menu);
 }

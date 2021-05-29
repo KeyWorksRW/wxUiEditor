@@ -8,14 +8,13 @@
     original_art="../art_src">
     <node
       class="PanelForm"
-      class_name="RibbonPanelBase"
-      mockup_size="600,100"
       base_file="ribbonpanel_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      class_name="RibbonPanelBase"
       derived_class_name="RibbonPanel"
       generate_ids="false"
-      size="-1,-1"
-      window_style="wxTAB_TRAVERSAL">
+      mockup_size="600,100"
+      size="-1,-1">
       <node
         class="wxBoxSizer"
         class_access="protected:"
@@ -58,6 +57,11 @@
                   bitmap="Header; ..\art_headers\wxPopupTransientWindow_png.hxx; ; [-1; -1]"
                   help="wxPopupTransientWindow"
                   id="NewPopupWin" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Header; ..\art_headers\menuitem_png.hxx; ; [-1; -1]"
+                  help="wxPopupTransientWindow"
+                  id="gen_wxContextMenuEvent" />
               </node>
             </node>
             <node

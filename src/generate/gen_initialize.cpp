@@ -106,6 +106,7 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_submenu, SubMenuGenerator)
     SET_GENERATOR(gen_wxMenuItem, MenuItemGenerator)
     SET_GENERATOR(gen_separator, SeparatorGenerator)
+    SET_GENERATOR(gen_wxContextMenuEvent, CtxMenuGenerator)
 
     SET_GENERATOR(gen_wxDataViewCtrl, DataViewCtrl)
     SET_GENERATOR(gen_wxDataViewListCtrl, DataViewListCtrl)

@@ -82,6 +82,11 @@
         <property name="var_name" type="string">separator</property>
     </gen>
 
+    <gen class="wxContextMenuEvent" image="menu" type="ctx_menu">
+        <property name="handler_name" type="string"
+            help="This is the handler name that will be used in the parent's wxEVT_CONTEXT_MENU. If you change this name, it will automatically be changed in the parent as well.">OnContextMenu</property>
+    </gen>
+
     <gen class="wxToolBar" image="wxToolBar" type="toolbar">
         <inherits class="wxWindow" />
         <inherits class="Window Events" />

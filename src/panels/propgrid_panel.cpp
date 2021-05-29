@@ -1109,8 +1109,17 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                             ReplaceDrvFile(newValue, propType);
                     }
                 }
-                break;
             }
+            break;
+    }
+
+    if (node->isGen(gen_wxContextMenuEvent))
+    {
+        auto event_prop = node->GetParent()->GetEvent("wxEVT_CONTEXT_MENU");
+        if (event_prop)
+        {
+            event_prop->set_value(node->prop_as_string(prop_handler_name));
+        }
     }
 }
 

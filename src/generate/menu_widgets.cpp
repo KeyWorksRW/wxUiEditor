@@ -459,3 +459,14 @@ bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
     return true;
 }
+
+//////////////////////////////////////////  CtxMenuGenerator  //////////////////////////////////////////
+
+bool CtxMenuGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */)
+{
+    set_src.insert("#include <wx/event.h>");
+    set_src.insert("#include <wx/menu.h>");
+    set_src.insert("#include <wx/window.h>");
+
+    return true;
+}

@@ -359,7 +359,19 @@ void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
     // If there is no name then add the class name in parenthesis.
     else if (text.empty())
     {
-        text << " (" << node->DeclName() << ")";
+        if (node->isGen(gen_wxContextMenuEvent))
+        {
+            text = node->prop_as_string(prop_handler_name);
+            if (text.size() > MaxLabelLength)
+            {
+                text.erase(MaxLabelLength);
+                text << "...";
+            }
+        }
+        else
+        {
+            text << " (" << node->DeclName() << ")";
+        }
     }
 
     m_tree_ctrl->SetItemText(id, text.wx_str());
@@ -468,6 +480,13 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
                 auto image_index = GetImageIndex(it->first);
                 m_tree_ctrl->SetItemImage(it->second, image_index);
             }
+        }
+    }
+    else if (prop->isProp(prop_handler_name))
+    {
+        if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
+        {
+            UpdateDisplayName(it->second, it->first);
         }
     }
 }

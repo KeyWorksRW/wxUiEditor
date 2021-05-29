@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Generate Src and Hdr files for Base and Derived Class
+// Purpose:   Generate Src and Hdr files for the Base Class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -77,6 +77,7 @@ BaseCodeGenerator::BaseCodeGenerator() {}
 void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_TYPE panel_type)
 {
     EventVector events;
+    m_CtxMenuEvents.clear();
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
 
     auto thrd_need_hdr_func = std::async(&BaseCodeGenerator::FindImageHeader, this, form_node);
@@ -127,7 +128,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     CollectIncludes(form_node, src_includes, hdr_includes);
 
     thrd_get_events.join();
-    if (events.size())
+    if (events.size() || m_CtxMenuEvents.size())
     {
         hdr_includes.insert("#include <wx/event.h>");
     }
@@ -365,18 +366,61 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
 
 void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 {
-    if (events.size() > 0)
+    if (events.size() || m_CtxMenuEvents.size())
     {
         std::set<ttlib::cstr> code_lines;
-        for (size_t i = 0; i < events.size(); i++)
+
+        for (size_t idx_events = 0; idx_events < events.size(); ++idx_events)
         {
-            auto& event = events[i];
+            auto& event = events[idx_events];
 
             // Ignore lambda's and functions in another class
             if (event->get_value().contains("[") || event->get_value().contains("::"))
                 continue;
 
             ttlib::cstr code;
+
+            // If the form has a wxContextMenuEvent node, then the handler for the form's wxEVT_CONTEXT_MENU is a method of
+            // the base class and is not virtual.
+
+            if (event->GetNode()->IsForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
+            {
+                bool has_handler = false;
+                for (size_t pos_child = 0; pos_child < event->GetNode()->GetChildCount(); pos_child++)
+                {
+                    if (event->GetNode()->GetChild(pos_child)->isGen(gen_wxContextMenuEvent))
+                    {
+                        has_handler = true;
+                        break;
+                    }
+                }
+
+                if (has_handler)
+                {
+                    code << " void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                    code_lines.insert(code);
+                    continue;
+                }
+            }
+
+            code << " virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
+                 << "& event) { event.Skip(); }";
+            code_lines.insert(code);
+        }
+
+        // Unlike the above code, there shouldn't be any wxEVT_CONTEXT_MENU events since m_CtxMenuEvents should only contain
+        // menu items events.
+
+        for (size_t idx_events = 0; idx_events < m_CtxMenuEvents.size(); ++idx_events)
+        {
+            auto& event = m_CtxMenuEvents[idx_events];
+
+            // Ignore lambda's and functions in another class
+            if (event->get_value().contains("[") || event->get_value().contains("::"))
+                continue;
+
+            ttlib::cstr code;
+
             code << " virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
                  << "& event) { event.Skip(); }";
             code_lines.insert(code);
@@ -390,7 +434,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
             for (auto& iter: code_lines)
             {
-                m_header->writeLine((ttlib::cstr&) (iter));
+                m_header->writeLine(iter.subview());
             }
         }
     }
@@ -903,7 +947,6 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         m_source->Indent();
     }
 
-
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
@@ -915,6 +958,8 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     m_source->SetLastLineBlank();
     for (size_t i = 0; i < form_node->GetChildCount(); i++)
     {
+        if (form_node->GetChild(i)->isGen(gen_wxContextMenuEvent))
+            continue;
         GenConstruction(form_node->GetChild(i));
     }
 
@@ -946,6 +991,19 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
     m_source->Unindent();
     m_source->writeLine("}");
+
+    Node* node_ctx_menu = nullptr;
+    for (size_t pos_child = 0; pos_child < form_node->GetChildCount(); pos_child++)
+    {
+        if (form_node->GetChild(pos_child)->isGen(gen_wxContextMenuEvent))
+        {
+            node_ctx_menu = form_node->GetChild(pos_child);
+            break;
+        }
+    }
+
+    if (node_ctx_menu)
+        GenContextMenuHandler(form_node, node_ctx_menu);
 }
 
 void BaseCodeGenerator::GenConstruction(Node* node)
@@ -1126,7 +1184,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
 
 void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
 {
-    for (size_t i = 0; i < node->GetEventCount(); i++)
+    for (size_t i = 0; i < node->GetEventCount(); ++i)
     {
         auto event = node->GetEvent(i);
         if (!event->get_value().empty())
@@ -1136,6 +1194,14 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
     for (size_t i = 0; i < node->GetChildCount(); ++i)
     {
         auto child = node->GetChild(i);
+        if (child->isGen(gen_wxContextMenuEvent))
+        {
+            for (size_t ctx_child_pos = 0; ctx_child_pos < child->GetChildCount(); ++ctx_child_pos)
+            {
+                CollectEventHandlers(child->GetChild(ctx_child_pos), m_CtxMenuEvents);
+            }
+            continue;
+        }
         CollectEventHandlers(child, events);
     }
 }
@@ -1313,4 +1379,92 @@ void BaseCodeGenerator::WriteSetLines(WriteCode* out, std::set<std::string>& cod
         out->writeLine(iter);
     }
     code_lines.clear();
+}
+
+void BaseCodeGenerator::GenContextMenuHandler(Node* form_node, Node* node_ctx_menu)
+{
+    m_source->writeLine();
+
+    m_source->writeLine(ttlib::cstr() << "void " << form_node->get_node_name()
+                                      << "::" << node_ctx_menu->prop_as_string(prop_handler_name)
+                                      << "(wxContextMenuEvent& event)\n{");
+
+    m_source->Indent();
+    m_source->writeLine("wxMenu menu;");
+
+    // All of the constructors are expecting a wxMenu parent -- so we need to temporarily create one
+    auto node_menu = g_NodeCreator.NewNode(g_NodeCreator.GetNodeDeclaration("wxMenu"));
+    node_menu->prop_set_value(prop_var_name, "menu");
+
+    for (size_t pos_child = 0; pos_child < node_ctx_menu->GetChildCount(); ++pos_child)
+    {
+        auto child_node = g_NodeCreator.MakeCopy(node_ctx_menu->GetChildPtr(pos_child));
+        node_menu->AddChild(child_node);
+        child_node->SetParent(node_menu);
+        GenCtxConstruction(child_node.get());
+    }
+    m_source->writeLine();
+
+    for (auto& iter: m_CtxMenuEvents)
+    {
+        if (auto generator = iter->GetNode()->GetNodeDeclaration()->GetGenerator(); generator)
+        {
+            if (auto result = generator->GenEvents(iter, form_node->get_node_name()); result)
+            {
+                m_source->write("menu.");
+                m_source->writeLine(result.value(), result.value().contains("\n") ? indent::auto_keep_whitespace :
+                                                                                    indent::auto_no_whitespace);
+            }
+        }
+    }
+    m_source->writeLine();
+
+    // Using event.GetObject() instead of this means that the handler isn't limited to just the form base class.
+    m_source->writeLine("wxStaticCast(event.GetEventObject(), wxWindow)->PopupMenu(&menu);");
+    m_source->Unindent();
+    m_source->writeLine("}");
+}
+
+void BaseCodeGenerator::GenCtxConstruction(Node* node)
+{
+    auto declaration = node->GetNodeDeclaration();
+
+    if (auto generator = declaration->GetGenerator(); generator)
+    {
+        if (auto result = generator->GenConstruction(node); result)
+        {
+            m_source->writeLine();
+            result->Replace("(menu", "(&menu");
+            m_source->writeLine(result.value(), indent::auto_no_whitespace);
+        }
+        size_t auto_indent = indent::auto_no_whitespace;
+        if (auto result = generator->GenSettings(node, auto_indent); result)
+        {
+            if (result.value().size())
+            {
+                if (result->is_sameprefix("\tmenu->"))
+                    result->Replace("->", ".");
+                m_source->writeLine(result.value(), auto_indent);
+            }
+        }
+
+        for (const auto& child: node->GetChildNodePtrs())
+        {
+            GenCtxConstruction(child.get());
+        }
+
+        if (node->isGen(gen_submenu))
+        {
+            if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
+            {
+                if (result.value().size())
+                {
+                    if (result->is_sameprefix("\tmenu->"))
+                        result->Replace("->", ".");
+                    m_source->writeLine(result.value(), indent::none);
+                }
+            }
+            m_source->writeLine();
+        }
+    }
 }

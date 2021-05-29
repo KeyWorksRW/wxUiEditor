@@ -326,6 +326,9 @@ void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
 {
     ttlib::cstr text;
     auto prop = node->get_prop_ptr(prop_label);
+    if (!prop && node->HasValue(prop_main_label))
+        prop = node->get_prop_ptr(prop_main_label);  // used by wxCommandLinkButton
+
     if (prop && prop->get_value().size())
     {
         text = prop->get_value();

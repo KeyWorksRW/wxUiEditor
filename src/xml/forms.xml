@@ -433,5 +433,7 @@
             help="Sets the foreground colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
         <property name="background_colour" type="wxColour"
             help="Sets the background colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
+        <event name="wxEVT_CONTEXT_MENU" class="wxContextMenuEvent"
+            help="Either provide your own handler function, or add a wxContextMenuEvent to create a popup menu." />
     </gen>
 </GeneratorDefinitions>

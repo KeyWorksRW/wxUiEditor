@@ -47,9 +47,9 @@ void RibbonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*
 
 void RibbonBarGenerator::OnPageChanged(wxRibbonBarEvent& event)
 {
-    auto book = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
-    if (book && event.GetSelection() != wxNOT_FOUND)
-        GetMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    auto bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
+    if (bar)
+        GetMockup()->SelectNode(event.GetPage());
     event.Skip();
 }
 

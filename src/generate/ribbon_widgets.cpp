@@ -186,7 +186,7 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
     {
         if (label.size())
         {
-            code << ",\n\n    ";
+            code << ",\n\t";
         }
         else
         {

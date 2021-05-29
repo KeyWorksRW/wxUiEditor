@@ -57,6 +57,7 @@ public:
     int GenerateDerivedClass(Node* project, Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
 
 protected:
+    void GenCtxConstruction(Node* node);
     void AddPersistCode(Node* node);
     enum Permission
     {
@@ -108,11 +109,15 @@ protected:
     // Write everything in the set and then clear it
     void WriteSetLines(WriteCode* pDest, std::set<std::string>& code_lines);
 
+    // Called after base class is fully constructed
+    void GenContextMenuHandler(Node* form_node, Node* node_ctx_menu);
+
 private:
     WriteCode* m_header;
     WriteCode* m_source;
 
     ttlib::cstr m_baseFullPath;
+    EventVector m_CtxMenuEvents;
 
     PANEL_TYPE m_panel_type { NOT_PANEL };
     bool m_artProvider;

@@ -1108,9 +1108,16 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 // wxPanel.
 
                 ttlib::cstr code;
-                if (GetParentName(node) != "this")
-                    code << GetParentName(node) << "->";
-                code << "SetSizerAndFit(" << node->get_node_name() << ");";
+                if (parent->isGen(gen_wxRibbonPanel))
+                {
+                    code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+                }
+                else
+                {
+                    if (GetParentName(node) != "this")
+                        code << GetParentName(node) << "->";
+                    code << "SetSizerAndFit(" << node->get_node_name() << ");";
+                }
 
                 m_source->writeLine();
                 m_source->writeLine(code);

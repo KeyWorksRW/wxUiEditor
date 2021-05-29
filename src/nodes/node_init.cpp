@@ -99,6 +99,8 @@ static const ParentChild lstParentChild[] = {
     { type_ribbonpanel, type_ribbonbuttonbar, one },
     { type_ribbonpanel, type_ribbongallery, one },
     { type_ribbonpanel, type_ribbontoolbar, one },
+    { type_ribbonpanel, type_sizer, one },
+    { type_ribbonpanel, type_gbsizer, one },
     { type_ribbontoolbar, type_ribbontool, infinite },
 
     // Sizers

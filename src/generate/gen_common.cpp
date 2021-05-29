@@ -206,6 +206,7 @@ static constexpr GenType s_GenParentTypes[] = {
     type_container,
     type_listbook,
     type_notebook,
+    type_ribbonpanel,
     type_simplebook,
     type_splitter,
     type_wizardpagesimple,

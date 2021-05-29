@@ -138,7 +138,6 @@ DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent) : wxDialog()
     box_sizer_2->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(box_sizer_2);
-    SetSize(wxSize(600, 800));
     Centre(wxBOTH);
 
     // Event handlers

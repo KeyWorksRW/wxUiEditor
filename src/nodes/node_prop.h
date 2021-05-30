@@ -23,7 +23,7 @@ public:
     void set_value(const wxPoint& point);
     void set_value(const wxSize& size);
     void set_value(const char* val) { m_value.assign(val); }
-    void set_value(ttlib::cview val) { m_value.assign(val); }
+    void set_value(std::string_view val) { m_value.assign(val); }
     void set_value(ttlib::cstr val) { m_value.assign(val); }
     void set_value(std::string val) { m_value.assign(val); }
 

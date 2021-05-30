@@ -37,7 +37,6 @@ NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
     return m_a_declarations[rmap_GenNames[className.c_str()]];
 }
 
-// This will add all properties and events, including any base interface classes such as wxWindow, sizeritem, etc.
 NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
 {
     auto node = std::make_shared<Node>(node_decl);

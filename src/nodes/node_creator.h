@@ -27,7 +27,6 @@ class NodeCategory;
 
 using NodeDeclarationArray = std::array<NodeDeclaration*, gen_name_array_size>;
 
-
 // Contains definitions of all components
 class NodeCreator
 {
@@ -37,16 +36,21 @@ public:
 
     void Initialize();
 
-    NodeSharedPtr CreateNode(ttlib::cview name, Node* parent);
+    // Only creates the node if the parent allows it as a child
     NodeSharedPtr CreateNode(GenName name, Node* parent);
+
+    // Only creates the node if the parent allows it as a child
+    NodeSharedPtr CreateNode(ttlib::cview name, Node* parent);
+
+    // Creates an orphaned node.
+    NodeSharedPtr NewNode(GenEnum::GenName gen_name) { return NewNode(m_a_declarations[gen_name]); }
+
+    // Creates an orphaned node.
     NodeSharedPtr NewNode(NodeDeclaration* node_info);
 
     // If you have the class enum value, this is the preferred way to get the Declaration
     // pointer.
-    NodeDeclaration* get_declaration(GenEnum::GenName class_enum)
-    {
-        return m_a_declarations[class_enum];
-    }
+    NodeDeclaration* get_declaration(GenEnum::GenName gen_name) { return m_a_declarations[gen_name]; }
 
     NodeDeclaration* GetNodeDeclaration(ttlib::cview class_name);
 
@@ -56,6 +60,7 @@ public:
     // Only use this with .wxui projects -- it will fail on a .fbp project
     NodeSharedPtr CreateNode(pugi::xml_node& node, Node* parent = nullptr);
 
+    // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
     NodeSharedPtr MakeCopy(Node* node);
     NodeSharedPtr MakeCopy(NodeSharedPtr node) { return MakeCopy(node.get()); };
 

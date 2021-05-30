@@ -31,6 +31,7 @@ public:
         id_AppendFormBuilder,
         id_AppendGlade,
         id_AppendSmith,
+        id_AppendWinRes,
         id_AppendXRC,
         id_BorderBottom,
         id_BorderLeft,
@@ -82,6 +83,7 @@ protected:
     virtual void OnFindDialog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenInhertedClass(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenerateCode(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnImportWindowsResource(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInsertWidget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOpenProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOptionsDlg(wxCommandEvent& event) { event.Skip(); }

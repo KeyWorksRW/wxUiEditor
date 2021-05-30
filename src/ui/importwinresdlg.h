@@ -12,7 +12,8 @@
 class ImportWinResDlg : public ImportWinResBase
 {
 public:
-	ImportWinResDlg(wxWindow* parent);
+	ImportWinResDlg(wxWindow* parent, ttString filename = wxEmptyString);
+
 
 	const ttlib::cstr& GetRcFilename() { return m_rcFilename; }
 	std::vector<ttlib::cstr>& GetDlgNames() { return m_dialogs; }

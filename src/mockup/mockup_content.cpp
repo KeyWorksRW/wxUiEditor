@@ -369,7 +369,7 @@ void MockupContent::OnNodeSelected(Node* node)
             break;
 
         node = node->GetParent();
-        if (node->IsForm())
+        if (!node || node->IsForm())
             return;
     }
 

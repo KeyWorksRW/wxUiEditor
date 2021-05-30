@@ -7,19 +7,51 @@
 
 #include "pch.h"
 
-#include <tttextfile.h>  // ttTextFile -- Similar to wxTextFile, but uses UTF8 strings
+#include "tttextfile.h"  // ttTextFile -- Similar to wxTextFile, but uses UTF8 strings
 
 #include "import_winres.h"
 
-#include "mainapp.h"       // App -- App class
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
+#include "../ui/importwinresdlg.h"  // auto-generated: importwinres_base.h and importwinres_base.cpp
+#include "mainapp.h"                // App -- App class
+#include "mainframe.h"              // Main window frame
+#include "node.h"                   // Node class
+#include "node_creator.h"           // NodeCreator class
+#include "uifuncs.h"                // Miscellaneous functions for displaying UI
 
 WinResource::WinResource() {}
 
-bool WinResource::Import(const ttString& /* filename */, bool /* write_doc */)
+bool WinResource::Import(const ttString& filename, bool write_doc)
 {
+    ttlib::cstr file;
+    file.utf(filename.wx_str());
+    ttlib::textfile rc_file;
+    if (!rc_file.ReadFile(file))
+    {
+        appMsgBox(ttlib::cstr() << "Unable to read the file " << file, "Import Windows Resource");
+        return false;
+    }
+
+    std::vector<ttlib::cstr> dialogs;
+    for (auto& iter: rc_file)
+    {
+        if (iter.contains(" DIALOG"))
+        {
+            auto pos_end = iter.find(' ');
+            auto name = iter.substr(0, pos_end);
+            if (ttlib::is_alpha(name[0]))
+            {
+                dialogs.emplace_back(name);
+            }
+        }
+    }
+
+    if (ImportRc(ttlib::cstr() << filename.wx_str(), dialogs))
+    {
+        if (write_doc)
+            m_project->CreateDoc(m_docOut);
+        return true;
+    }
+
     return false;
 }
 
@@ -32,6 +64,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
         return false;
     }
 
+    m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
     m_codepage = 1252;
 
     try
@@ -92,6 +125,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
 
     catch (const std::exception& e)
     {
+        MSG_ERROR(e.what());
         appMsgBox(ttlib::cstr() << _tt("Problem parsing ") << m_RcFilename << _tt(" at around line ")
                                 << ttlib::itoa(m_curline << 1) << "\n\n"
                                 << e.what(),
@@ -111,32 +145,31 @@ void WinResource::ParseDialog()
         auto line = m_file[m_curline].subview();
         auto end = line.find_space();
         if (end == tt::npos)
-            throw std::invalid_argument(_tt("Expected an ID then a DIALOG or DIALOGEX."));
+            throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
 
         auto settings = line.subview(line.find_nonspace(end));
 
         if (!settings.is_sameprefix("DIALOG"))  // verify this is a dialog
-            throw std::invalid_argument(_tt("Expected an ID then a DIALOG or DIALOGEX."));
+            throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
 
         auto pos = ttlib::stepover_pos(settings);
         if (pos == tt::npos)
-            throw std::invalid_argument(_tt("Expected dimensions following DIALOG or DIALOGEX."));
+            throw std::invalid_argument("Expected dimensions following DIALOG or DIALOGEX.");
 
         auto& form = m_forms.emplace_back();
         form.ParseDialog(m_file, m_curline);
     }
     catch (const std::exception& e)
     {
-        appMsgBox(ttlib::cstr() << _tt("Problem parsing ") + m_RcFilename + _tt(" at around line ") +
-                                       ttlib::itoa(m_curline + 1) + "\n\n" + e.what(),
+        MSG_ERROR(e.what());
+        appMsgBox(ttlib::cstr() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
+                                << e.what(),
                   "RC Parser");
     }
 }
 
 void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
 {
-    m_project = wxGetApp().GetProject();
-
     for (auto& dlg_name: dialogs)
     {
         for (auto& dlg: m_forms)
@@ -154,22 +187,22 @@ void WinResource::FormToNode(rcForm& form)
 {
     if (form.m_Styles.contains("wxDEFAULT_DIALOG_STYLE"))
     {
-        auto dlg_node = g_NodeCreator.CreateNode(gen_wxDialog, m_project);
+        auto dlg_node = g_NodeCreator.CreateNode(gen_wxDialog, m_project.get());
         m_project->AddChild(dlg_node);
-        dlg_node->SetParent(m_project->GetSharedPtr());
+        dlg_node->SetParent(m_project);
 
         auto parent_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, dlg_node.get());
         dlg_node->AddChild(parent_sizer);
         parent_sizer->SetParent(dlg_node);
-        parent_sizer->get_prop_ptr(prop_orientation)->set_value("wxVERTICAL");
+        parent_sizer->prop_set_value(prop_orientation, "wxVERTICAL");
 
         if (form.m_Name.size())
         {
-            dlg_node->get_prop_ptr(prop_var_name)->set_value(form.m_Name);
+            dlg_node->prop_set_value(prop_var_name, form.m_Name);
         }
         if (form.m_Title.size())
         {
-            dlg_node->prop_set_value(prop_title, form.m_WinExStyles);
+            dlg_node->prop_set_value(prop_title, form.m_Title);
         }
         if (form.m_Center.size() && form.m_Center.is_sameas("wxBOTH"))
         {

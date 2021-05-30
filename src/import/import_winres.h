@@ -22,7 +22,6 @@ public:
     WinResource();
 
     bool Import(const ttString& filename, bool write_doc) override;
-
     bool ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& m_dialogs);
     void InsertDialogs(std::vector<ttlib::cstr>& dialogs);
 
@@ -35,8 +34,6 @@ private:
     ttlib::cstr m_OutDirectory;
     ttlib::cstr m_outProjectName;
 
-    pugi::xml_document m_docOut;
-
     wxString m_strErrorMsg;
 
     std::string strLanguage;
@@ -44,7 +41,6 @@ private:
     ttlib::textfile m_file;
 
     std::vector<rcForm> m_forms;
-    Node* m_project;
 
     size_t m_curline;
 

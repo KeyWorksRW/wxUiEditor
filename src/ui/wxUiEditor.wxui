@@ -69,6 +69,13 @@
             label="&amp;Append">
             <node
               class="wxMenuItem"
+              help="Append Windows Resource into current project"
+              id="id_AppendWinRes"
+              label="Windows Resource..."
+              var_name="menu_item_5"
+              wxEVT_MENU="OnImportWindowsResource" />
+            <node
+              class="wxMenuItem"
               help="Append wxFormBuilder project into current project"
               id="id_AppendFormBuilder"
               label="wxFormBuilder Project..."
@@ -595,12 +602,12 @@
     </node>
     <node
       class="wxDialog"
-      class_name="EmbedImageBase"
-      title="Convert Image"
       base_file="embedimg_base"
+      class_name="EmbedImageBase"
       derived_class_name="EmbedImage"
       minimum_size="-1,-1"
-      size="-1,-1">
+      size="-1,-1"
+      title="Convert Image">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -887,13 +894,13 @@
     </node>
     <node
       class="wxDialog"
+      base_file="debugsettingsBase"
       class_name="DebugSettingsBase"
+      derived_class_name="DebugSettings"
+      derived_file="debugsettings"
       persist="true"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Debug Settings"
-      base_file="debugsettingsBase"
-      derived_class_name="DebugSettings"
-      derived_file="debugsettings"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -954,10 +961,10 @@
     </node>
     <node
       class="wxDialog"
-      class_name="NewProjectBase"
-      title="New Project"
       base_file="newproject_base"
+      class_name="NewProjectBase"
       derived_class_name="NewProjectDlg"
+      title="New Project"
       wxEVT_INIT_DIALOG="OnInitDialog">
       <node
         class="wxBoxSizer"
@@ -1075,10 +1082,10 @@
     </node>
     <node
       class="wxDialog"
-      class_name="ImportWinResBase"
-      title="Import Windows Resource Dialogs"
       base_file="importwinres_base"
+      class_name="ImportWinResBase"
       derived_class_name="ImportWinResDlg"
+      title="Import Windows Resource Dialogs"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1142,11 +1149,11 @@
     </node>
     <node
       class="wxDialog"
-      class_name="OptionsDlgBase"
-      title="Options"
       base_file="optionsdlg_base"
+      class_name="OptionsDlgBase"
       derived_class_name="OptionsDlg"
       derived_file="optionsdlg"
+      title="Options"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1221,10 +1228,10 @@
     </node>
     <node
       class="wxDialog"
-      class_name="ArtPropertyDlgBase"
-      title="Art Provider Image"
       base_file="artpropdlg_base"
-      derived_class_name="ArtPropertyDlg">
+      class_name="ArtPropertyDlgBase"
+      derived_class_name="ArtPropertyDlg"
+      title="Art Provider Image">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -1282,8 +1289,8 @@
     </node>
     <node
       class="wxDialog"
-      class_name="EditStringDialogBase"
       base_file="editstringdialog_base"
+      class_name="EditStringDialogBase"
       derived_class_name="EditStringDialog">
       <node
         class="wxBoxSizer"
@@ -1306,10 +1313,10 @@
     </node>
     <node
       class="wxDialog"
-      class_name="EventHandlerDlgBase"
-      title="Event Handler"
       base_file="eventhandlerdlg_base"
+      class_name="EventHandlerDlgBase"
       derived_class_name="EventHandlerDlg"
+      title="Event Handler"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1396,12 +1403,12 @@
     </node>
     <node
       class="wxDialog"
-      class_name="InsertDialogBase"
-      title="Insert widget"
       base_file="insertdialog_base"
+      class_name="InsertDialogBase"
       derived_class_name="InsertDialog"
       derived_file="insertdialog"
       minimum_size="-1,-1"
+      title="Insert widget"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1448,11 +1455,11 @@
     </node>
     <node
       class="wxDialog"
-      class_name="NodeInfoBase"
-      title="Node Information"
       base_file="..\debugging\nodeinfo_base"
+      class_name="NodeInfoBase"
       derived_class_name="NodeInfo"
-      derived_file="../debugging/nodeinfo">
+      derived_file="../debugging/nodeinfo"
+      title="Node Information">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -1576,11 +1583,11 @@
     </node>
     <node
       class="wxDialog"
-      class_name="NewDialogBase"
-      title="New Dialog"
       base_file="newdialog_base"
+      class_name="NewDialogBase"
       derived_class_name="NewDialog"
       derived_file="newdialog"
+      title="New Dialog"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1675,11 +1682,11 @@
     </node>
     <node
       class="wxDialog"
-      class_name="NewFrameBase"
-      title="New wxFrame window"
       base_file="newframe_base"
+      class_name="NewFrameBase"
       derived_class_name="NewFrame"
       derived_file="newframe"
+      title="New wxFrame window"
       wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event) { m_classname->SetFocus();  event.Skip(); }">
       <node
         class="wxBoxSizer"
@@ -1756,11 +1763,11 @@
     </node>
     <node
       class="wxDialog"
-      class_name="NewRibbonBase"
-      title="New Ribbon Bar"
       base_file="newribbon_base"
+      class_name="NewRibbonBase"
       derived_class_name="NewRibbon"
-      derived_file="newribbon">
+      derived_file="newribbon"
+      title="New Ribbon Bar">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"

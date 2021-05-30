@@ -88,6 +88,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto submenu = new wxMenu();
 
+    auto menu_item_5 = new wxMenuItem(submenu, id_AppendWinRes, wxString::FromUTF8("Windows Resource..."),
+    wxString::FromUTF8("Append Windows Resource into current project"), wxITEM_NORMAL);
+    submenu->Append(menu_item_5);
+
     auto menu_item_1 = new wxMenuItem(submenu, id_AppendFormBuilder, wxString::FromUTF8("wxFormBuilder Project..."),
     wxString::FromUTF8("Append wxFormBuilder project into current project"), wxITEM_NORMAL);
     submenu->Append(menu_item_1);
@@ -376,6 +380,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().IsModified()); },
         wxID_SAVE);
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
+    Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);

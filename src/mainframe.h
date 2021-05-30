@@ -182,7 +182,12 @@ public:
     void ToggleBorderFlag(Node* node, int border);
 
 protected:
+
     void OnAbout(wxCommandEvent& event) override;
+    void OnAppendFormBuilder(wxCommandEvent& event) override;
+    void OnAppendGlade(wxCommandEvent& event) override;
+    void OnAppendSmith(wxCommandEvent& event) override;
+    void OnAppendXRC(wxCommandEvent& event) override;
     void OnChangeAlignment(wxCommandEvent& event) override;
     void OnChangeBorder(wxCommandEvent& event) override;
     void OnClose(wxCloseEvent& event) override;
@@ -192,11 +197,8 @@ protected:
     void OnEmbedImageConverter(wxCommandEvent& event) override;
     void OnGenInhertedClass(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
-    void OnAppendFormBuilder(wxCommandEvent& event) override;
-    void OnAppendGlade(wxCommandEvent& event) override;
-    void OnAppendSmith(wxCommandEvent& event) override;
-    void OnAppendXRC(wxCommandEvent& event) override;
     void OnImportWindowsResource(wxCommandEvent& event);
+    void OnInsertWidget(wxCommandEvent&) override;
     void OnNewProject(wxCommandEvent& event);
     void OnOpenProject(wxCommandEvent& event) override;
     void OnOpenRecentProject(wxCommandEvent& event);
@@ -205,7 +207,6 @@ protected:
     void OnSaveAsProject(wxCommandEvent& event) override;
     void OnSaveProject(wxCommandEvent& event) override;
     void OnToggleExpandLayout(wxCommandEvent&) override;
-    void OnInsertWidget(wxCommandEvent&) override;
 
     void OnFindDialog(wxCommandEvent& event) override;
     void OnFind(wxFindDialogEvent& event);

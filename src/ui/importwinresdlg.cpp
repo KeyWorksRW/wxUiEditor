@@ -9,29 +9,41 @@
 
 #include <wx/dir.h>
 
-#include <tttextfile.h>  // textfile -- Classes for reading and writing line-oriented files
+#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
 #include "importwinresdlg.h"  // auto-generated: importwinres_base.h and importwinres_base.cpp
 
 #include "mainapp.h"  // App -- App class
 #include "uifuncs.h"  // Miscellaneous functions for displaying UI
 
-ImportWinResDlg::ImportWinResDlg(wxWindow* parent) : ImportWinResBase(parent) {}
+ImportWinResDlg::ImportWinResDlg(wxWindow* parent, ttString filename) : ImportWinResBase(parent)
+{
+    if (filename.size())
+        m_rcFilename.utf(filename.wx_str());
+}
 
 void ImportWinResDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
-    wxDir dir(wxGetCwd());
-    wxString filename;
-    if (dir.GetFirst(&filename, "*.rc"))
+    if (m_rcFilename.empty())
     {
-        m_fileResource->SetPath(filename);
+        wxDir dir(wxGetCwd());
+        wxString filename;
+        if (dir.GetFirst(&filename, "*.rc"))
+        {
+            m_fileResource->SetPath(filename);
+            ReadRcFile();
+        }
+    }
+    else
+    {
+        m_fileResource->SetPath(m_rcFilename.wx_str());
         ReadRcFile();
     }
 }
 
 void ImportWinResDlg::ReadRcFile()
 {
-    m_rcFilename << m_fileResource->GetPath().wx_str();
+    m_rcFilename.utf(m_fileResource->GetPath().wx_str());
     ttlib::textfile rc_file;
     if (!rc_file.ReadFile(m_rcFilename))
     {
@@ -88,5 +100,7 @@ void ImportWinResDlg::OnOk(wxCommandEvent& event)
             name << m_checkListResUI->GetString(pos).wx_str();
         }
     }
+
+    m_rcFilename.utf(m_fileResource->GetTextCtrlValue().wx_str());
     event.Skip();
 }

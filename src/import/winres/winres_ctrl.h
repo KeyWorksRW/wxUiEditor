@@ -7,9 +7,8 @@
 
 #pragma once
 
-#if 0
-    #include "rcData.h"
-#else
+#include "node.h"  // Node class
+
 struct RC_RECT
 {
     int32_t left;
@@ -17,7 +16,6 @@ struct RC_RECT
     int32_t right;
     int32_t bottom;
 };
-#endif
 
 class rcCtrl
 {
@@ -47,6 +45,7 @@ public:
     int m_minHeight;
 
     RC_RECT m_rc { 0, 0, 0, 0 };
+    NodeSharedPtr m_node;
 
     bool m_isMultiLine { false };
     bool m_isDefault { false };

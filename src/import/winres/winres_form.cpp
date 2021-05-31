@@ -66,6 +66,9 @@ void rcForm::ParseDialog(ttlib::textfile& txtfile, size_t& curTxtLine)
         }
     }
     m_node->prop_set_value(prop_id, value);
+#if defined(_DEBUG)
+    m_form_id = value;
+#endif  // _DEBUG
 
     // Note that we can't change the name here or we won't match with the list of names saved from the dialog that got
     // the resource file.
@@ -219,13 +222,11 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
             auto& control = m_ctrls.emplace_back();
             control.ParsePushButton(line);
         }
-#if 0
         else if (line.is_sameprefix("GROUPBOX"))
         {
             auto& control = m_ctrls.emplace_back();
             control.ParseGroupBox(line);
         }
-#endif
     }
 }
 
@@ -290,44 +291,74 @@ void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 
 void rcForm::AddSizersAndChildren()
 {
-    auto parent = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_node.get());
-    m_node->Adopt(parent);
-    m_gridbag = g_NodeCreator.CreateNode(gen_wxGridBagSizer, parent.get());
-    parent->Adopt(m_gridbag);
-
-    // First sort horizontally
+    // First sort all children horizontally
     std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetLeft() < b.GetLeft(); });
 
     // Now sort vertically
     std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetTop() < b.GetTop(); });
 
-    m_row = -1;
+    auto parent = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_node.get());
+    m_node->Adopt(parent);
 
-    m_last_child_top = 0;
+    NodeSharedPtr sizer;
 
     for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
     {
-        auto child_node = m_ctrls[idx_child].GetNode();
-        if (child_node)
+        const auto& child = m_ctrls[idx_child];
+        if (child.GetNode()->isGen(gen_wxStaticBoxSizer))
         {
-            m_gridbag->Adopt(child_node);
+            AddStaticBoxChildren(idx_child);
+            parent->Adopt(child.GetNode());
+            continue;
+        }
 
-            if (!isInRange(m_ctrls[idx_child].GetTop(), m_last_child_top))
+        if (idx_child + 1 >= m_ctrls.size())
+        {
+            // orphaned child, add to form's top level sizer
+            parent->Adopt(child.GetNode());
+            return;
+        }
+
+        if (m_ctrls[idx_child + 1].GetTop() == child.GetTop())
+        {
+            // If there is more than one child with the same top position, then create a horizontal box sizer
+            // and add all children with the same top position.
+            sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, parent.get());
+            parent->Adopt(sizer);
+            sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
+            while (idx_child < m_ctrls.size() && m_ctrls[idx_child].GetTop() == child.GetTop())
             {
-                ++m_row;
-                m_column = 0;
-                m_last_child_top = m_ctrls[idx_child].GetTop();
+                // Note that we add the child we are comparing to first.
+                sizer->Adopt(m_ctrls[idx_child].GetNode());
+                ++idx_child;
             }
-            else
+        }
+        else
+        {
+            sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent.get());
+            parent->Adopt(sizer);
+            sizer->Adopt(child.GetNode());
+
+            if (idx_child + 2 < m_ctrls.size())
             {
-                ++m_column;
+                // If the next two sizers have the same top, then they need to be placed in a horizontal sizer.
+                if (m_ctrls[idx_child + 1].GetTop() == m_ctrls[idx_child + 2].GetTop())
+                    continue;
             }
+            ++idx_child;
 
-            child_node->prop_set_value(prop_row, m_row);
-            child_node->prop_set_value(prop_column, m_column);
-
-            if (child_node->isGen(gen_wxStaticBoxSizer))
-                AddStaticBoxChildren(idx_child);
+            while (idx_child < m_ctrls.size() && m_ctrls[idx_child].GetTop() != m_ctrls[idx_child - 1].GetTop())
+            {
+                // Note that we add the child we are comparing to first.
+                sizer->Adopt(m_ctrls[idx_child].GetNode());
+                if (idx_child + 2 < m_ctrls.size())
+                {
+                    // If the next two sizers have the same top, then they need to be placed in a horizontal sizer.
+                    if (m_ctrls[idx_child + 1].GetTop() == m_ctrls[idx_child + 2].GetTop())
+                        break;
+                }
+                ++idx_child;
+            }
         }
     }
 }

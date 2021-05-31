@@ -53,7 +53,8 @@ private:
     std::vector<rcCtrl> m_ctrls;
     size_t m_form_type;
 
-    int m_row;
-    int m_column;
-    int m_last_child_top;
+#if defined(_DEBUG)
+    // Makes it easier to know exactly which form we're looking at in the debugger
+    ttlib::cstr m_form_id;
+#endif // _DEBUG
 };

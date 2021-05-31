@@ -207,6 +207,7 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
 
         if (line.is_sameprefix("END"))
             break;
+
         if (line.is_sameprefix("LTEXT") || line.is_sameprefix("CTEXT") || line.is_sameprefix("RTEXT"))
         {
             auto& control = m_ctrls.emplace_back();
@@ -226,6 +227,13 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
         {
             auto& control = m_ctrls.emplace_back();
             control.ParseGroupBox(line);
+        }
+        else if (line.is_sameprefix("CONTROL"))
+        {
+            auto& control = m_ctrls.emplace_back();
+            control.ParseControlCtrl(line);
+            if (!control.GetNode())
+                m_ctrls.pop_back();
         }
     }
 }
@@ -269,15 +277,14 @@ void rcForm::GetDimensions(ttlib::cview line)
         throw std::invalid_argument("Expected a numeric dimension value");
     m_rc.bottom = ttlib::atoi(line);
 
-    // The resource file uses dialog coordinates which we need to convert into pixel dimensions. Unfortunately,
-    // the only way to get an exact algorithm is to being running on Windows which has the exact same font
-    // available as is specified for the dialog. The following algorithm assumes 8pt MS Shell Dlg running 1252
-    // codepage.
+    // The resource file uses dialog coordinates which we need to convert into pixel dimensions. We assume that wxWidgets
+    // will be using the default Windows 10 font (Segoe UI, 9pt) so we convert to match (note that this is what
+    // rcCtrl::GetDimensions() does).
 
-    m_rc.left = (m_rc.left * 6) / 4;
-    m_rc.right = (m_rc.right * 6) / 4;
-    m_rc.top = (m_rc.top * 13) / 8;
-    m_rc.bottom = (m_rc.bottom * 13) / 8;
+    m_rc.left = (m_rc.left * 7) / 4;
+    m_rc.right = (m_rc.right * 7) / 4;
+    m_rc.top = (m_rc.top * 15) / 8;
+    m_rc.bottom = (m_rc.bottom * 15) / 8;
 }
 
 void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
@@ -314,6 +321,19 @@ void rcForm::AddSizersAndChildren()
 
         if (idx_child + 1 >= m_ctrls.size())
         {
+            // If last control is a button, we may need to center or right-align it.
+            if (child.GetNode()->isGen(gen_wxButton))
+            {
+                int dlg_margin = (GetWidth() / 2) - child.GetWidth();
+                if (child.GetLeft() > dlg_margin)
+                {
+                    if (child.GetRight() < (GetWidth() - dlg_margin))
+                        child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+                    else
+                        child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                }
+            }
+
             // orphaned child, add to form's top level sizer
             parent->Adopt(child.GetNode());
             return;

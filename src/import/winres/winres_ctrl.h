@@ -22,9 +22,14 @@ class rcCtrl
 public:
     rcCtrl();
 
+    auto GetNode() { return m_node; }
+
     void ParseStaticCtrl(ttlib::cview line);
     void ParseEditCtrl(ttlib::cview line);
     void ParsePushButton(ttlib::cview line);
+
+    auto GetLeft() const { return m_rc.left; }
+    auto GetTop() const { return m_rc.top; }
 
     // These are public so that the WinResource class can easily access them while it converts parse forms into
     // wxUiEditor objects
@@ -45,7 +50,6 @@ public:
     int m_minHeight;
 
     RC_RECT m_rc { 0, 0, 0, 0 };
-    NodeSharedPtr m_node;
 
     bool m_isMultiLine { false };
     bool m_isDefault { false };
@@ -55,6 +59,8 @@ public:
     bool m_isPlaced { false };
 
 protected:
+    void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
+
     void ParseCommonStyles(ttlib::cview line);
     void GetDimensions(ttlib::cview line);
 
@@ -74,4 +80,7 @@ protected:
             m_WinStyles.append("|");
         m_WinStyles.append(style);
     }
+
+private:
+    NodeSharedPtr m_node;
 };

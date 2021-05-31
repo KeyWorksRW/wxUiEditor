@@ -10,6 +10,7 @@
 #include "winres_ctrl.h"
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "utils.h"         // Utility functions that work with properties
 
 rcCtrl::rcCtrl() {}
 
@@ -64,6 +65,25 @@ void rcCtrl::GetDimensions(ttlib::cview line)
     if (line.empty() || !ttlib::is_digit(line[0]))
         throw std::invalid_argument("Expected a numeric dimension value");
     m_rc.bottom = ttlib::atoi(line);
+
+    /*
+
+        On Windows 10, dialogs are supposed to use Segoe UI, 9pt font. However, a lot of dialogs are going to be using
+        "MS Shell Dlg" or "MS Shell Dlg2" using an 8pt size. Those coordinates will end up being wrong when displayed by
+        wxWidgets because wxWidgets follows the Windows 10 guidelines which normally uses a 9pt font.
+
+        The following code converts dialog coordinates into pixels assuming a 9pt font.
+
+        For the most part, these values are simply used to determine which sizer to place the control in. However, it will
+        change things like the wrapping width of a wxStaticText -- it will be larger if the dialog used an 8pt font, smaller
+        if it used a 10pt font.
+
+    */
+
+    m_left = static_cast<int>((static_cast<int64_t>(m_rc.left) * 7 / 4));
+    m_width = static_cast<int>((static_cast<int64_t>(m_rc.right) * 7 / 4));
+    m_top = static_cast<int>((static_cast<int64_t>(m_rc.top) * 15 / 4));
+    m_height = static_cast<int>((static_cast<int64_t>(m_rc.bottom) * 15 / 4));
 }
 
 ttlib::cview rcCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
@@ -107,7 +127,8 @@ void rcCtrl::ParseStaticCtrl(ttlib::cview line)
     {
         ttlib::cstr label;
         line = StepOverQuote(line, label);
-        m_node->prop_set_value(prop_label, label);
+
+        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
     }
     else
     {
@@ -310,7 +331,6 @@ void rcCtrl::ParsePushButton(ttlib::cview line)
             m_node->prop_set_value(prop_id, "wxID_CANCEL");
         else
             m_node->prop_set_value(prop_id, id);
-
     }
     else
     {
@@ -326,6 +346,45 @@ void rcCtrl::ParsePushButton(ttlib::cview line)
     {
         throw std::invalid_argument("Expected edit control ID to be followed with a comma and dimensions.");
     }
+}
+
+void rcCtrl::ParseGroupBox(ttlib::cview line)
+{
+    m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
+
+    line.moveto_nextword();
+    // This should be the label (can be empty but must be quoted).
+    if (line[0] == '"')
+    {
+        ttlib::cstr label;
+        line = StepOverQuote(line, label);
+        m_node->prop_set_value(prop_label, label);
+    }
+
+    // This should be the id (typically IDC_STATIC).
+    if (line[0] == ',')
+    {
+        ttlib::cstr id;
+        line = StepOverComma(line, id);
+        if (!id.is_sameas("IDC_STATIC"))
+            m_node->prop_set_value(prop_id, id);
+    }
+    else
+    {
+        throw std::invalid_argument("Expected GROUPBOX label to be followed with a comma and an ID.");
+    }
+
+    // This should be the dimensions.
+    if (ttlib::is_digit(line[0]) || line[0] == ',')
+    {
+        GetDimensions(line);
+    }
+    else
+    {
+        throw std::invalid_argument("Expected GROUPBOX ID to be followed with a comma and dimensions.");
+    }
+
+    ParseCommonStyles(line);
 }
 
 void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)

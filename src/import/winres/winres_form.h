@@ -37,10 +37,11 @@ public:
     auto GetFormName() { return m_node->prop_as_string(prop_class_name); }
 
 protected:
-    void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
+    void AddStaticBoxChildren(size_t& idx_child);
     void AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine);
-    void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
+    void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
     void GetDimensions(ttlib::cview line);
+    void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
 
     // Returns true if val1 is within range of val2 using a fudge value below and above val2.
     bool isInRange(int32_t val1, int32_t val2) { return (val1 >= (val2 - FudgeAmount) && val1 <= (val2 + FudgeAmount)); }
@@ -51,4 +52,8 @@ private:
     NodeSharedPtr m_gridbag;
     std::vector<rcCtrl> m_ctrls;
     size_t m_form_type;
+
+    int m_row;
+    int m_column;
+    int m_last_child_top;
 };

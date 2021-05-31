@@ -86,7 +86,7 @@ void rcForm::ParseDialog(ttlib::textfile& txtfile, size_t& curTxtLine)
         {
             line.moveto_nextword();
             value.ExtractSubString(line);
-            m_node->prop_set_value(prop_caption, value);
+            m_node->prop_set_value(prop_title, value);
         }
         else if (line.is_sameprefix("FONT"))
         {
@@ -219,6 +219,13 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
             auto& control = m_ctrls.emplace_back();
             control.ParsePushButton(line);
         }
+#if 0
+        else if (line.is_sameprefix("GROUPBOX"))
+        {
+            auto& control = m_ctrls.emplace_back();
+            control.ParseGroupBox(line);
+        }
+#endif
     }
 }
 
@@ -288,30 +295,57 @@ void rcForm::AddSizersAndChildren()
     m_gridbag = g_NodeCreator.CreateNode(gen_wxGridBagSizer, parent.get());
     parent->Adopt(m_gridbag);
 
-    int row = -1;
-    int column = 0;
+    // First sort horizontally
+    std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetLeft() < b.GetLeft(); });
 
-    int32_t top = 0;
+    // Now sort vertically
+    std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetTop() < b.GetTop(); });
 
-    for (auto& iter: m_ctrls)
+    m_row = -1;
+
+    m_last_child_top = 0;
+
+    for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
     {
-        auto child_node = iter.GetNode();
+        auto child_node = m_ctrls[idx_child].GetNode();
         if (child_node)
         {
             m_gridbag->Adopt(child_node);
-            if (!isInRange(iter.GetTop(), top))
+
+            if (!isInRange(m_ctrls[idx_child].GetTop(), m_last_child_top))
             {
-                ++row;
-                column = 0;
-                top = iter.GetTop();
+                ++m_row;
+                m_column = 0;
+                m_last_child_top = m_ctrls[idx_child].GetTop();
             }
             else
             {
-                ++column;
+                ++m_column;
             }
 
-            child_node->prop_set_value(prop_row, row);
-            child_node->prop_set_value(prop_column, column);
+            child_node->prop_set_value(prop_row, m_row);
+            child_node->prop_set_value(prop_column, m_column);
+
+            if (child_node->isGen(gen_wxStaticBoxSizer))
+                AddStaticBoxChildren(idx_child);
         }
     }
+}
+
+void rcForm::AddStaticBoxChildren(size_t& idx_child)
+{
+    const auto& static_box = m_ctrls[idx_child];
+    for (size_t idx_group_child = idx_child + 1; idx_group_child < m_ctrls.size(); ++idx_group_child)
+    {
+        const auto& child_ctrl = m_ctrls[idx_group_child];
+        if (child_ctrl.GetRight() > static_box.GetRight() || child_ctrl.GetTop() > static_box.GetBottom())
+            break;
+        static_box.GetNode()->Adopt(child_ctrl.GetNode());
+
+        // Update to that caller won't process this child.
+        ++idx_child;
+    }
+
+    // TODO: [KeyWorks - 05-31-2021] Depending on the number and position of the children, we may need to change the
+    // orientation as well as spanning more than one column or row.
 }

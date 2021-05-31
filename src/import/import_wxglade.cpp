@@ -129,8 +129,7 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
 
     if (new_node->isGen(gen_wxStdDialogButtonSizer))
     {
-        parent->AddChild(new_node);
-        new_node->SetParent(parent->GetSharedPtr());
+        parent->Adopt(new_node);
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
 
@@ -184,15 +183,13 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
             auto prop = new_node->AddNodeProperty(iter.GetPropDeclaration());
             prop->set_value(iter.as_string());
         }
-        parent->AddChild(new_node);
-        new_node->SetParent(parent->GetSharedPtr());
+        parent->Adopt(new_node);
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
     }
     else if (parent)
     {
-        parent->AddChild(new_node);
-        new_node->SetParent(parent->GetSharedPtr());
+        parent->Adopt(new_node);
 
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());

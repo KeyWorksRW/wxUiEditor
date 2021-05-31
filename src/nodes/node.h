@@ -27,7 +27,6 @@
 
 class Node;
 using NodeSharedPtr = std::shared_ptr<Node>;
-using ChildNodePtrs = std::vector<NodeSharedPtr>;
 
 using namespace GenEnum;
 
@@ -37,8 +36,8 @@ public:
     Node(NodeDeclaration* declaration);
     ~Node();
 
-    // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    ttlib::cview DeclName() const noexcept { return m_declaration->DeclName(); }
+    // Use get_name() if you want the enum value.
+    auto DeclName() const noexcept { return m_declaration->DeclName(); }
 
     NodeSharedPtr GetParentPtr() const noexcept { return m_parent; }
     Node* GetParent() const noexcept { return m_parent.get(); }
@@ -51,12 +50,16 @@ public:
     NodeEvent* GetEvent(ttlib::cview name);
     NodeEvent* GetEvent(size_t index);
 
-    size_t GetPropertyCount() const { return m_properties.size(); }
-    size_t GetEventCount() const { return m_events.size(); }
+    auto GetPropertyCount() const { return m_properties.size(); }
+    auto GetEventCount() const { return m_events.size(); }
     size_t GetInUseEventCount() const;
 
     Node* LocateAncestorType(GenEnum::GenType type) const noexcept;
     Node* FindParentForm() const noexcept;
+
+    // Equivalent to AddChild(child); child->SetParent(this);
+    // Returns false if child is not allowed for this node.
+    bool Adopt(NodeSharedPtr child);
 
     bool AddChild(NodeSharedPtr node);
     bool AddChild(Node* node);
@@ -72,19 +75,16 @@ public:
     void RemoveChild(size_t index);
     void RemoveAllChildren() { m_children.clear(); }
 
-    // Note that this returns a copy rather than a const ref
     NodeSharedPtr GetChildPtr(size_t index) { return m_children.at(index); }
-
     Node* GetChild(size_t index) const noexcept { return m_children.at(index).get(); }
+    auto& GetChildNodePtrs() { return m_children; }
 
-    size_t GetChildCount() const { return m_children.size(); }
-
-    ChildNodePtrs& GetChildNodePtrs() { return m_children; }
+    auto GetChildCount() const { return m_children.size(); }
 
     bool IsChildAllowed(Node* child);
     bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
 
-    GenType gen_type() const { return m_declaration->gen_type(); }
+    auto gen_type() const { return m_declaration->gen_type(); }
 
     // Returns the enum value for the name. Use DeclName() to get a char pointer.
     GenName gen_name() const { return m_declaration->gen_name(); }
@@ -123,8 +123,8 @@ public:
     // Returns true if access property == none or there is no access property
     bool IsLocal() const noexcept;
 
-    NodeType* GetNodeType() { return m_declaration->GetNodeType(); }
-    BaseGenerator* GetGenerator() const { return m_declaration->GetGenerator(); }
+    auto GetNodeType() { return m_declaration->GetNodeType(); }
+    auto GetGenerator() const { return m_declaration->GetGenerator(); }
 
     // Returns the value of the property "var_name" or "class_name"
     const ttlib::cstr& get_node_name() const;
@@ -135,7 +135,7 @@ public:
     // Finds the parent form and returns the value of the it's property "class_name"
     const ttlib::cstr& get_form_name() const;
 
-    NodeDeclaration* GetNodeDeclaration() { return m_declaration; }
+    auto GetNodeDeclaration() { return m_declaration; }
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-sepcified bitmap)
@@ -258,7 +258,7 @@ private:
     std::vector<NodeEvent> m_events;
     std::unordered_map<std::string, size_t> m_event_map;
 
-    ChildNodePtrs m_children;
+    std::vector<NodeSharedPtr> m_children;
     NodeDeclaration* m_declaration;
 };
 

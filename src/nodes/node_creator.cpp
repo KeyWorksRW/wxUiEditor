@@ -219,8 +219,7 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
     {
         auto childCopy = MakeCopy(node->GetChild(i));
         ASSERT(childCopy)
-        copyObj->AddChild(childCopy);
-        childCopy->SetParent(copyObj);
+        copyObj->Adopt(childCopy);
     }
 
     return copyObj;

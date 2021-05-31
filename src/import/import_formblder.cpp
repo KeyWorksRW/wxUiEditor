@@ -484,14 +484,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
         if (parent)
         {
-            parent->AddChild(newobject);
-            newobject->SetParent(parent->GetSharedPtr());
+            parent->Adopt(newobject);
         }
     }
     else if (parent)
     {
-        parent->AddChild(newobject);
-        newobject->SetParent(parent->GetSharedPtr());
+        parent->Adopt(newobject);
     }
 
     while (child)

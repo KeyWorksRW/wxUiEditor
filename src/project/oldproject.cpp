@@ -521,13 +521,11 @@ NodeSharedPtr OldProject::CreateOldProjectNode(pugi::xml_node& xml_obj, Node* pa
                     prop_value->set_value(iter.as_string());
             }
         }
-        parent->AddChild(newobject);
-        newobject->SetParent(parent->GetSharedPtr());
+        parent->Adopt(newobject);
     }
     else if (parent)
     {
-        parent->AddChild(newobject);
-        newobject->SetParent(parent->GetSharedPtr());
+        parent->Adopt(newobject);
     }
 
     while (child)

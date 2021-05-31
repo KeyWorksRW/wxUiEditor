@@ -23,12 +23,6 @@ NewRibbon::NewRibbon(wxWindow* parent) : NewRibbonBase(parent)
     m_panel_type = "Tool";
 }
 
-inline void Adopt(NodeSharedPtr parent, NodeSharedPtr child)
-{
-    parent->AddChild(child);
-    child->SetParent(parent);
-}
-
 void NewRibbon::CreateNode()
 {
     auto bar_node = g_NodeCreator.CreateNode(gen_wxRibbonBar, wxGetFrame().GetSelectedNode());
@@ -42,36 +36,36 @@ void NewRibbon::CreateNode()
     for (int count = 0; count < m_num_pages; ++count)
     {
         auto ribbon_page = g_NodeCreator.CreateNode(gen_wxRibbonPage, bar_node.get());
-        Adopt(bar_node, ribbon_page);
+        bar_node->Adopt(ribbon_page);
         ttlib::cstr label("Page ");
         label << count + 1;
         ribbon_page->prop_set_value(prop_label, label);
 
         auto ribbon_panel = g_NodeCreator.CreateNode(gen_wxRibbonPanel, ribbon_page.get());
-        Adopt(ribbon_page, ribbon_panel);
+        ribbon_page->Adopt(ribbon_panel);
         label << ", panel 1";
         ribbon_panel->prop_set_value(prop_label, label);
 
         if (m_panel_type == "Tool")
         {
             auto tool_bar = g_NodeCreator.CreateNode(gen_wxRibbonToolBar, ribbon_panel.get());
-            Adopt(ribbon_panel, tool_bar);
+            ribbon_panel->Adopt(tool_bar);
             auto tool = g_NodeCreator.CreateNode(gen_ribbonTool, tool_bar.get());
-            Adopt(tool_bar, tool);
+            tool_bar->Adopt(tool);
         }
         else if (m_panel_type == "Button")
         {
             auto button_bar = g_NodeCreator.CreateNode(gen_wxRibbonButtonBar, ribbon_panel.get());
-            Adopt(ribbon_panel, button_bar);
+            ribbon_panel->Adopt(button_bar);
             auto button = g_NodeCreator.CreateNode(gen_ribbonButton, button_bar.get());
-            Adopt(button_bar, button);
+            button_bar->Adopt(button);
         }
         else if (m_panel_type == "Gallery")
         {
             auto gallery_bar = g_NodeCreator.CreateNode(gen_wxRibbonGallery, ribbon_panel.get());
-            Adopt(ribbon_panel, gallery_bar);
+            ribbon_panel->Adopt(gallery_bar);
             auto item = g_NodeCreator.CreateNode(gen_ribbonGalleryItem, gallery_bar.get());
-            Adopt(gallery_bar, item);
+            gallery_bar->Adopt(item);
         }
     }
 

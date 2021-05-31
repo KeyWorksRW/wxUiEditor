@@ -18,12 +18,6 @@
 
 NewFrame::NewFrame(wxWindow* parent) : NewFrameBase(parent) {}
 
-inline void Adopt(NodeSharedPtr parent, NodeSharedPtr child)
-{
-    parent->AddChild(child);
-    child->SetParent(parent);
-}
-
 void NewFrame::OnCheckMainFrame(wxCommandEvent& WXUNUSED(event))
 {
     if (m_checkBox_mainframe->GetValue())
@@ -70,19 +64,19 @@ void NewFrame::CreateNode()
         {
             auto bar = g_NodeCreator.CreateNode(gen_wxToolBar, form_node.get());
             ASSERT(bar);
-            Adopt(form_node, bar);
+            form_node->Adopt(bar);
         }
         if (m_has_menu)
         {
             auto bar = g_NodeCreator.CreateNode(gen_wxMenuBar, form_node.get());
             ASSERT(bar);
-            Adopt(form_node, bar);
+            form_node->Adopt(bar);
         }
         if (m_has_statusbar)
         {
             auto bar = g_NodeCreator.CreateNode(gen_wxStatusBar, form_node.get());
             ASSERT(bar);
-            Adopt(form_node, bar);
+            form_node->Adopt(bar);
         }
     }
 

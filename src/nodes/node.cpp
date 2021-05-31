@@ -129,6 +129,19 @@ Node* Node::FindParentForm() const noexcept
     return nullptr;
 }
 
+bool Node::Adopt(NodeSharedPtr child)
+{
+    ASSERT_MSG(child != GetSharedPtr(), "A node can't adopt itself!");
+    if (IsChildAllowed(child))
+    {
+        m_children.push_back(child);
+        child->SetParent(GetSharedPtr());
+        return true;
+    }
+
+    return false;
+}
+
 bool Node::AddChild(NodeSharedPtr node)
 {
     if (IsChildAllowed(node))

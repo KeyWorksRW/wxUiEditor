@@ -205,8 +205,7 @@ void WinResource::FormToNode(rcForm& form)
         case rcForm::form_dialog:
             {
                 auto node = g_NodeCreator.MakeCopy(form.GetFormNode());
-                m_project->AddChild(node);
-                node->SetParent(m_project);
+                m_project->Adopt(node);
             }
             return;
     }

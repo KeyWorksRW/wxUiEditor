@@ -360,8 +360,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
     if (parent)
     {
-        parent->AddChild(new_node);
-        new_node->SetParent(parent->GetSharedPtr());
+        parent->Adopt(new_node);
     }
 
     for (auto child = xml_obj.child("node"); child; child = child.next_sibling("node"))
@@ -514,8 +513,7 @@ void App::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dia
         for (size_t idx_child = 0; idx_child < project->GetChildCount(); ++idx_child)
         {
             auto new_node = g_NodeCreator.MakeCopy(project->GetChildPtr(idx_child));
-            m_project->AddChild(new_node);
-            new_node->SetParent(m_project);
+            m_project->Adopt(new_node);
         }
 
         wxGetFrame().FireProjectUpdatedEvent();

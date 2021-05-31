@@ -1406,8 +1406,7 @@ void BaseCodeGenerator::GenContextMenuHandler(Node* form_node, Node* node_ctx_me
     for (size_t pos_child = 0; pos_child < node_ctx_menu->GetChildCount(); ++pos_child)
     {
         auto child_node = g_NodeCreator.MakeCopy(node_ctx_menu->GetChildPtr(pos_child));
-        node_menu->AddChild(child_node);
-        child_node->SetParent(node_menu);
+        node_menu->Adopt(child_node);
         GenCtxConstruction(child_node.get());
     }
     m_source->writeLine();

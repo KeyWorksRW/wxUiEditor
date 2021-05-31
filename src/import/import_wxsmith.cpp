@@ -131,8 +131,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     {
         if (parent)
         {
-            parent->AddChild(new_node);
-            new_node->SetParent(parent->GetSharedPtr());
+            parent->Adopt(new_node);
         }
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
@@ -189,16 +188,14 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
         }
         if (parent)
         {
-            parent->AddChild(new_node);
-            new_node->SetParent(parent->GetSharedPtr());
+            parent->Adopt(new_node);
         }
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
     }
     else if (parent)
     {
-        parent->AddChild(new_node);
-        new_node->SetParent(parent->GetSharedPtr());
+        parent->Adopt(new_node);
 
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());

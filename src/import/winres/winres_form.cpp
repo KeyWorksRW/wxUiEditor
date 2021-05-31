@@ -284,11 +284,9 @@ void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 void rcForm::AddSizersAndChildren()
 {
     auto parent = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_node.get());
-    m_node->AddChild(parent);
-    parent->SetParent(m_node);
+    m_node->Adopt(parent);
     m_gridbag = g_NodeCreator.CreateNode(gen_wxGridBagSizer, parent.get());
-    parent->AddChild(m_gridbag);
-    m_gridbag->SetParent(parent);
+    parent->Adopt(m_gridbag);
 
     int row = -1;
     int column = 0;
@@ -300,8 +298,7 @@ void rcForm::AddSizersAndChildren()
         auto child_node = iter.GetNode();
         if (child_node)
         {
-            m_gridbag->AddChild(child_node);
-            child_node->SetParent(m_gridbag);
+            m_gridbag->Adopt(child_node);
             if (!isInRange(iter.GetTop(), top))
             {
                 ++row;

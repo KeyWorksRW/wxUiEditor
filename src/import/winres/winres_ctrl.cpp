@@ -10,6 +10,7 @@
 #include "winres_ctrl.h"
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "utils.h"         // Utility functions that work with properties
 
 rcCtrl::rcCtrl() {}
 
@@ -107,7 +108,8 @@ void rcCtrl::ParseStaticCtrl(ttlib::cview line)
     {
         ttlib::cstr label;
         line = StepOverQuote(line, label);
-        m_node->prop_set_value(prop_label, label);
+
+        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
     }
     else
     {
@@ -290,7 +292,7 @@ void rcCtrl::ParsePushButton(ttlib::cview line)
     {
         ttlib::cstr label;
         line = StepOverQuote(line, label);
-        m_node->prop_set_value(prop_label, label);
+        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
     }
     else
     {
@@ -310,7 +312,6 @@ void rcCtrl::ParsePushButton(ttlib::cview line)
             m_node->prop_set_value(prop_id, "wxID_CANCEL");
         else
             m_node->prop_set_value(prop_id, id);
-
     }
     else
     {

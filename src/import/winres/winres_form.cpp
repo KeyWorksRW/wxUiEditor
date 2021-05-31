@@ -86,7 +86,7 @@ void rcForm::ParseDialog(ttlib::textfile& txtfile, size_t& curTxtLine)
         {
             line.moveto_nextword();
             value.ExtractSubString(line);
-            m_node->prop_set_value(prop_caption, value);
+            m_node->prop_set_value(prop_title, value);
         }
         else if (line.is_sameprefix("FONT"))
         {

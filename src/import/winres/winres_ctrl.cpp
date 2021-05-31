@@ -65,6 +65,25 @@ void rcCtrl::GetDimensions(ttlib::cview line)
     if (line.empty() || !ttlib::is_digit(line[0]))
         throw std::invalid_argument("Expected a numeric dimension value");
     m_rc.bottom = ttlib::atoi(line);
+
+    /*
+
+        On Windows 10, dialogs are supposed to use Segoe UI, 9pt font. However, a lot of dialogs are going to be using
+        "MS Shell Dlg" or "MS Shell Dlg2" using an 8pt size. Those coordinates will end up being wrong when displayed by
+        wxWidgets because wxWidgets follows the Windows 10 guidelines which normally uses a 9pt font.
+
+        The following code converts dialog coordinates into pixels assuming a 9pt font.
+
+        For the most part, these values are simply used to determine which sizer to place the control in. However, it will
+        change things like the wrapping width of a wxStaticText -- it will be larger if the dialog used an 8pt font, smaller
+        if it used a 10pt font.
+
+    */
+
+    m_left = static_cast<int>((static_cast<int64_t>(m_rc.left) * 7 / 4));
+    m_width = static_cast<int>((static_cast<int64_t>(m_rc.right) * 7 / 4));
+    m_top = static_cast<int>((static_cast<int64_t>(m_rc.top) * 15 / 4));
+    m_height = static_cast<int>((static_cast<int64_t>(m_rc.bottom) * 15 / 4));
 }
 
 ttlib::cview rcCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)

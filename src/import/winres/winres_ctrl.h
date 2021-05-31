@@ -33,6 +33,8 @@ public:
 
     auto GetLeft() const { return m_rc.left; }
     auto GetTop() const { return m_rc.top; }
+    auto GetWidth() const { return m_width; }
+    auto GetHeight() const { return m_height; }
 
 protected:
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
@@ -46,6 +48,16 @@ protected:
 private:
     NodeSharedPtr m_node;
 
+    // left position in pixel coordinate
+    int m_left;
+    // top position in pixel coordinate
+    int m_top;
+    // width in pixels
+    int m_width;
+    // heihgt in pixels
+    int m_height;
+
+    // These are in dialog coordinates
     RC_RECT m_rc { 0, 0, 0, 0 };
 
     int m_minHeight;

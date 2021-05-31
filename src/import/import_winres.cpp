@@ -73,6 +73,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
 
     for (size_t idx = 0; idx < m_file.size() - 1; ++idx)
     {
+        m_file[idx].trim();
         if (m_file[idx].size() && (m_file[idx].back() == ',' || m_file[idx].back() == '|'))
         {
             m_file[idx] << m_file[idx + 1].view_nonspace();

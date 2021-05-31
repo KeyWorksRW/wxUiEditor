@@ -13,10 +13,10 @@
 // version
 struct RC_RECT
 {
-    int32_t left;
-    int32_t top;
-    int32_t right;
-    int32_t bottom;
+    int left;
+    int top;
+    int right;
+    int bottom;
 };
 
 class rcCtrl
@@ -26,6 +26,7 @@ public:
 
     auto GetNode() const { return m_node; }
 
+    void ParseControlCtrl(ttlib::cview line);
     void ParseEditCtrl(ttlib::cview line);
     void ParseGroupBox(ttlib::cview line);
     void ParsePushButton(ttlib::cview line);

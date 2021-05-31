@@ -387,6 +387,204 @@ void rcCtrl::ParseGroupBox(ttlib::cview line)
     ParseCommonStyles(line);
 }
 
+void rcCtrl::ParseControlCtrl(ttlib::cview line)
+{
+    line.moveto_nextword();
+    if (line.contains("BS_3STATE") || line.contains("BS_AUTO3STATE"))
+        m_node = g_NodeCreator.NewNode(gen_Check3State);
+    else if (line.contains("BS_CHECKBOX") || line.contains("BS_AUTOCHECKBOX"))
+        m_node = g_NodeCreator.NewNode(gen_wxCheckBox);
+    else if (line.contains("BS_RADIOBUTTON") || line.contains("BS_AUTORADIOBUTTON"))
+        m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
+    else if (line.contains("BS_PUSHBUTTON") || line.contains("BS_DEFPUSHBUTTON"))
+        m_node = g_NodeCreator.NewNode(gen_wxButton);
+    else if (line.contains("BS_COMMANDLINK") || line.contains("BS_DEFCOMMANDLINK"))
+        m_node = g_NodeCreator.NewNode(gen_wxCommandLinkButton);
+    else if (line.contains("BS_PUSHLIKE"))
+        m_node = g_NodeCreator.NewNode(gen_wxToggleButton);
+    else if (line.contains("BS_GROUPBOX"))
+        m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
+    else if (line.contains("CBS_"))
+        m_node = g_NodeCreator.NewNode(gen_wxComboBox);
+    else if (line.contains("ES_"))
+        m_node = g_NodeCreator.NewNode(gen_wxComboBox);
+    else if (line.contains("SS_"))
+        m_node = g_NodeCreator.NewNode(gen_wxStaticText);
+    else if (line.contains("LBS_"))
+        m_node = g_NodeCreator.NewNode(gen_wxListBox);
+    else if (line.contains("SBS_"))
+        m_node = g_NodeCreator.NewNode(gen_wxScrollBar);
+
+    else
+    {
+        // Currently unsupported
+        return;
+    }
+
+    ttlib::cstr value;
+    // This should be the label (can be empty but must be quoted).
+    if (line[0] == '"')
+    {
+        line = StepOverQuote(line, value);
+
+        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(value));
+    }
+    else
+    {
+        throw std::invalid_argument("Expected CONTROL to be followed with quoted label.");
+    }
+
+    // This should be the id
+    if (line[0] == ',')
+    {
+        line = StepOverComma(line, value);
+        if (!value.is_sameas("IDC_STATIC"))
+            m_node->prop_set_value(prop_id, value);
+    }
+    else
+    {
+        throw std::invalid_argument("Expected CONTROL label to be followed with a comma and an ID.");
+    }
+
+    // This should be the class
+    if (line[0] == '"')
+    {
+        line = StepOverQuote(line, value);
+
+        // This could be a system control like "SysTabControl32"
+    }
+    else
+    {
+        throw std::invalid_argument("Expected CONTROL ID to be followed with a quoted class name.");
+    }
+
+    ParseCommonStyles(line);
+
+    // Button styles
+
+    if (line.contains("BS_RIGHT") || line.contains("BS_LEFTTEXT"))
+    {
+        if (m_node->isGen(gen_wxCheckBox) || m_node->isGen(gen_Check3State))
+            AppendStyle(prop_style, "wxALIGN_RIGHT");
+        else
+            AppendStyle(prop_style, "wxBU_RIGHT");
+    }
+    else if (line.contains("BS_TOP"))
+        AppendStyle(prop_style, "wxBU_TOP");
+    else if (line.contains("BS_BOTTOM"))
+        AppendStyle(prop_style, "wxBU_BOTTOM");
+
+    // Combobox styles
+
+    if (line.contains("CBS_SIMPLE"))
+        AppendStyle(prop_style, "wxCB_SIMPLE");
+    else if (line.contains("CBS_DROPDOWN"))
+        AppendStyle(prop_style, "wxCB_DROPDOWN");
+
+    if (line.contains("CBS_SORT"))
+        AppendStyle(prop_style, "wxCB_DROPDOWN");
+    if (line.contains("ES_CENTER"))
+    {
+        AppendStyle(prop_style, "wxTE_CENTER");
+    }
+
+    // Edit control styles
+
+    if (line.contains("ES_RIGHT"))
+    {
+        AppendStyle(prop_style, "wxTE_RIGHT");
+    }
+
+    if (line.contains("ES_MULTILINE"))
+    {
+        AppendStyle(prop_style, "wxTE_MULTILINE");
+    }
+
+    if (line.contains("ES_PASSWORD"))
+    {
+        AppendStyle(prop_style, "wxTE_PASSWORD");
+    }
+
+    if (line.contains("ES_READONLY"))
+    {
+        AppendStyle(prop_style, "wxTE_READONLY");
+    }
+
+    if (line.contains("ES_WANTRETURN"))
+    {
+        AppendStyle(prop_style, "wxTE_PROCESS_ENTER");
+    }
+
+    if (line.contains("ES_NOHIDESEL"))
+    {
+        AppendStyle(prop_style, "wxTE_NOHIDESEL");
+    }
+
+    // Static control styles
+
+    if (line.contains("SS_SUNKEN"))
+    {
+        AppendStyle(prop_window_style, "wxSUNKEN_BORDER");
+    }
+    if (line.contains("SS_SIMPLE"))
+    {
+        AppendStyle(prop_window_style, "wxBORDER_SIMPLE");
+    }
+
+    if (line.contains("SS_BLACKFRAME") || line.contains("SS_BLACKRECT"))
+    {
+        AppendStyle(prop_background_colour, "wxSYS_COLOUR_WINDOWFRAME");
+    }
+    else if (line.contains("SS_GRAYFRAME") || line.contains("SS_GRAYRECT"))
+    {
+        AppendStyle(prop_background_colour, "wxSYS_COLOUR_DESKTOP");
+    }
+    if (line.contains("SS_WHITEFRAME") || line.contains("SS_WHITERECT"))
+    {
+        AppendStyle(prop_background_colour, "wxSYS_COLOUR_WINDOW");
+    }
+
+    if (line.contains("SS_BLACKRECT") || line.contains("SS_GRAYRECT") || line.contains("SS_WHITERECT"))
+    {
+        // These styles are rectagles with no border
+        AppendStyle(prop_window_style, "wxBORDER_NONE");
+    }
+
+    if (line.contains("SS_ENDELLIPSIS"))
+    {
+        AppendStyle(prop_window_style, "wxST_ELLIPSIZE_END");
+    }
+    else if (line.contains("SS_PATHELLIPSIS"))
+    {
+        AppendStyle(prop_window_style, "wxST_ELLIPSIZE_MIDDLE");
+    }
+    else if (line.contains("SS_WORDELLIPSIS"))
+    {
+        AppendStyle(prop_window_style, "wxST_ELLIPSIZE_START");
+    }
+
+    // List box styles
+
+    // TODO: [KeyWorks - 05-31-2021] Add once LISTBOX is supported
+
+    // Scrollbar styles
+
+    // TODO: [KeyWorks - 05-31-2021] Add once SCROLLBAR is supported
+
+    // Step over the style
+    line = StepOverComma(line, value);
+
+    // This should be the dimensions.
+    if (ttlib::is_digit(line[0]) || line[0] == ',')
+    {
+        GetDimensions(line);
+    }
+    else
+    {
+        throw std::invalid_argument("Expected CONTROL style to be followed with a comma and dimensions.");
+    }
+}
+
 void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 {
     ttlib::cstr updated_style = m_node->prop_as_string(prop_name);

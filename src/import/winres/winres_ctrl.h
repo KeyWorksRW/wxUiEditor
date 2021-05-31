@@ -26,13 +26,13 @@ public:
 
     auto GetNode() { return m_node; }
 
-    void ParseStaticCtrl(ttlib::cview line);
     void ParseEditCtrl(ttlib::cview line);
+    void ParseGroupBox(ttlib::cview line);
     void ParsePushButton(ttlib::cview line);
+    void ParseStaticCtrl(ttlib::cview line);
 
     auto GetLeft() const { return m_rc.left; }
     auto GetTop() const { return m_rc.top; }
-
 
 protected:
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);

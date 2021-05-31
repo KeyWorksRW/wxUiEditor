@@ -292,7 +292,7 @@ void rcCtrl::ParsePushButton(ttlib::cview line)
     {
         ttlib::cstr label;
         line = StepOverQuote(line, label);
-        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
+        m_node->prop_set_value(prop_label, label);
     }
     else
     {
@@ -327,6 +327,45 @@ void rcCtrl::ParsePushButton(ttlib::cview line)
     {
         throw std::invalid_argument("Expected edit control ID to be followed with a comma and dimensions.");
     }
+}
+
+void rcCtrl::ParseGroupBox(ttlib::cview line)
+{
+    m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
+
+    line.moveto_nextword();
+    // This should be the label (can be empty but must be quoted).
+    if (line[0] == '"')
+    {
+        ttlib::cstr label;
+        line = StepOverQuote(line, label);
+        m_node->prop_set_value(prop_label, label);
+    }
+
+    // This should be the id (typically IDC_STATIC).
+    if (line[0] == ',')
+    {
+        ttlib::cstr id;
+        line = StepOverComma(line, id);
+        if (!id.is_sameas("IDC_STATIC"))
+            m_node->prop_set_value(prop_id, id);
+    }
+    else
+    {
+        throw std::invalid_argument("Expected GROUPBOX label to be followed with a comma and an ID.");
+    }
+
+    // This should be the dimensions.
+    if (ttlib::is_digit(line[0]) || line[0] == ',')
+    {
+        GetDimensions(line);
+    }
+    else
+    {
+        throw std::invalid_argument("Expected GROUPBOX ID to be followed with a comma and dimensions.");
+    }
+
+    ParseCommonStyles(line);
 }
 
 void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)

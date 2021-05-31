@@ -298,7 +298,7 @@ void rcForm::AddSizersAndChildren()
     for (auto& iter: m_ctrls)
     {
         auto child_node = iter.GetNode();
-        if (child_node && child_node->isGen(gen_wxStaticText))
+        if (child_node)
         {
             m_gridbag->AddChild(child_node);
             child_node->SetParent(m_gridbag);

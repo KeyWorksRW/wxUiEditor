@@ -15,13 +15,15 @@ rcCtrl::rcCtrl() {}
 
 void rcCtrl::ParseCommonStyles(ttlib::cview line)
 {
-    m_isEnabled = !line.contains("WS_DISABLED");
-    m_isHidden = line.contains("NOT WS_VISIBLE");
+    if (line.contains("WS_DISABLED"))
+        m_node->prop_set_value(prop_disabled, true);
+    if (line.contains("NOT WS_VISIBLE"))
+        m_node->prop_set_value(prop_disabled, true);
 
-    if (line.contains("BORDER"))
-    {
-        ParseCommonStyles("wxBORDER_DEFAULT");
-    }
+    if (line.contains("WS_HSCROLL"))
+        AppendStyle(prop_window_style, "wxHSCROLL");
+    if (line.contains("WS_VSCROLL"))
+        AppendStyle(prop_window_style, "wxVSCROLL");
 }
 
 void rcCtrl::GetDimensions(ttlib::cview line)
@@ -99,10 +101,20 @@ void rcCtrl::ParseStaticCtrl(ttlib::cview line)
         m_node->prop_set_value(prop_alignment, "wxALIGN_LEFT");
 
     line.moveto_nextword();
-    if (line.contains("WS_DISABLED"))
-        m_node->prop_set_value(prop_disabled, true);
-    if (line.contains("NOT WS_VISIBLE"))
-        m_node->prop_set_value(prop_hidden, true);
+
+    // This should be the label (can be empty but must be quoted).
+    if (line[0] == '"')
+    {
+        ttlib::cstr label;
+        line = StepOverQuote(line, label);
+        m_node->prop_set_value(prop_label, label);
+    }
+    else
+    {
+        throw std::invalid_argument("Expected static control to be followed with quoted label.");
+    }
+
+    ParseCommonStyles(line);
 
     if (line.contains("SS_SUNKEN"))
     {
@@ -145,21 +157,6 @@ void rcCtrl::ParseStaticCtrl(ttlib::cview line)
         AppendStyle(prop_window_style, "wxST_ELLIPSIZE_START");
     }
 
-    // TODO: [KeyWorks - 05-30-2021] SS_BLACKFRAME, SS_BLACKRECT, SS_GRAYFRAME, SS_GRAYRECT, SS_WHITEFRAME, and SS_WHITERECT
-    // are sometimes used to draw lines or rectangles. In this case we need to honor the height and width
-
-    // This should be the label (can be empty but must be quoted).
-    if (line[0] == '"')
-    {
-        ttlib::cstr label;
-        line = StepOverQuote(line, label);
-        m_node->prop_set_value(prop_label, label);
-    }
-    else
-    {
-        throw std::invalid_argument("Expected static control to be followed with quoted label.");
-    }
-
     // This should be the id (typically IDC_STATIC).
     if (line[0] == ',')
     {
@@ -196,9 +193,10 @@ void rcCtrl::ParseStaticCtrl(ttlib::cview line)
         m_node->prop_set_value(prop_wrap, m_minWidth);
     }
 }
+
 void rcCtrl::ParseEditCtrl(ttlib::cview line)
 {
-    m_Class = "wxTextCtrl";
+    m_node = g_NodeCreator.NewNode(gen_wxTextCtrl);
 
     auto next = ttlib::stepover_pos(line);
     if (next == tt::npos)
@@ -210,7 +208,8 @@ void rcCtrl::ParseEditCtrl(ttlib::cview line)
     while (next < line.size() && line[next] != ',' && !ttlib::is_whitespace(line[next]))
         ++next;
 
-    m_ID.assign(line.substr(start, next - start));
+    ttlib::cstr value = line.substr(start, next - start);
+    m_node->prop_set_value(prop_id, value);
     line.remove_prefix(next);
 
     // This should be the dimensions.
@@ -227,37 +226,37 @@ void rcCtrl::ParseEditCtrl(ttlib::cview line)
 
     if (line.contains("ES_CENTER"))
     {
-        AddStyle("wxTE_CENTER");
+        AppendStyle(prop_style, "wxTE_CENTER");
     }
 
     if (line.contains("ES_RIGHT"))
     {
-        AddStyle("wxTE_RIGHT");
+        AppendStyle(prop_style, "wxTE_RIGHT");
     }
 
     if (line.contains("ES_MULTILINE"))
     {
-        AddStyle("wxTE_MULTILINE");
+        AppendStyle(prop_style, "wxTE_MULTILINE");
     }
 
     if (line.contains("ES_PASSWORD"))
     {
-        AddStyle("wxTE_PASSWORD");
+        AppendStyle(prop_style, "wxTE_PASSWORD");
     }
 
     if (line.contains("ES_READONLY"))
     {
-        AddStyle("wxTE_READONLY");
+        AppendStyle(prop_style, "wxTE_READONLY");
     }
 
     if (line.contains("ES_WANTRETURN"))
     {
-        AddStyle("wxTE_PROCESS_ENTER");
+        AppendStyle(prop_style, "wxTE_PROCESS_ENTER");
     }
 
     if (line.contains("ES_NOHIDESEL"))
     {
-        AddStyle("wxTE_NOHIDESEL");
+        AppendStyle(prop_style, "wxTE_NOHIDESEL");
     }
 
     /*
@@ -268,7 +267,7 @@ void rcCtrl::ParseEditCtrl(ttlib::cview line)
         ES_AUTOHSCROLL
         ES_AUTOVSCROLL
         ES_LOWERCASE
-        ES_NUMBER
+        ES_NUMBER  // a validator filter could be used to sort of get this...
         ES_OEMCONVERT
 
     */
@@ -278,32 +277,40 @@ void rcCtrl::ParseEditCtrl(ttlib::cview line)
 
 void rcCtrl::ParsePushButton(ttlib::cview line)
 {
-    m_Class = "wxButton";
+    m_node = g_NodeCreator.NewNode(gen_wxButton);
 
     if (line.contains("DEFPUSHBUTTON"))
     {
-        m_isDefault = true;
+        m_node->prop_set_value(prop_default, true);
     }
 
     line.moveto_nextword();
     // This should be the label (can be empty but must be quoted).
     if (line[0] == '"')
     {
-        line = StepOverQuote(line, m_Label);
+        ttlib::cstr label;
+        line = StepOverQuote(line, label);
+        m_node->prop_set_value(prop_label, label);
     }
     else
     {
         throw std::invalid_argument("Expected static control to be followed with quoted label.");
     }
 
+    ParseCommonStyles(line);
+
     // This should be the id
     if (line[0] == ',')
     {
-        line = StepOverComma(line, m_ID);
-        if (m_ID == "IDOK")
-            m_ID = "wxID_OK";
-        else if (m_ID == "IDCANCEL")
-            m_ID = "wxID_CANCEL";
+        ttlib::cstr id;
+        line = StepOverComma(line, id);
+        if (id == "IDOK")
+            m_node->prop_set_value(prop_id, "wxID_OK");
+        else if (id == "IDCANCEL")
+            m_node->prop_set_value(prop_id, "wxID_CANCEL");
+        else
+            m_node->prop_set_value(prop_id, id);
+
     }
     else
     {

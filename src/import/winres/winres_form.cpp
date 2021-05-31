@@ -202,29 +202,6 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
         if (line.empty() || line[0] == '/')  // ignore blank lines and comments
             continue;
 
-        // A line ending with a , or | character means it is continued onto the next line.
-        while (line.back() == ',' || line.back() == '|')
-        {
-            std::string_view nextline = {};
-            for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
-            {
-                nextline = ttlib::find_nonspace(txtfile[curTxtLine]);
-                if (!nextline.empty() && nextline[0] != '/')  // ignore blank lines and comments
-                    break;
-            }
-            if (nextline.empty())
-            {
-                throw std::invalid_argument("Control line ends with ',' or '|' but no further lines available.");
-            }
-
-            // At this point, curTxtLine is pointing to the continuation of the control. Change the line so
-            // that it now contains the original line plus the additional line. Continue looping in case
-            // the information continues over several lines.
-            txtfile[curTxtLine].assign(line);
-            txtfile[curTxtLine].append(nextline);
-            line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
-        }
-
         if (line.is_sameprefix("END"))
             break;
         if (line.is_sameprefix("LTEXT") || line.is_sameprefix("CTEXT") || line.is_sameprefix("RTEXT"))
@@ -302,4 +279,42 @@ void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
         updated_style << '|';
     updated_style << style;
     m_node->prop_set_value(prop_name, updated_style);
+}
+
+void rcForm::AddSizersAndChildren()
+{
+    auto parent = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_node.get());
+    m_node->AddChild(parent);
+    parent->SetParent(m_node);
+    m_gridbag = g_NodeCreator.CreateNode(gen_wxGridBagSizer, parent.get());
+    parent->AddChild(m_gridbag);
+    m_gridbag->SetParent(parent);
+
+    int row = -1;
+    int column = 0;
+
+    int32_t top = 0;
+
+    for (auto& iter: m_ctrls)
+    {
+        auto child_node = iter.GetNode();
+        if (child_node && child_node->isGen(gen_wxStaticText))
+        {
+            m_gridbag->AddChild(child_node);
+            child_node->SetParent(m_gridbag);
+            if (!isInRange(iter.GetTop(), top))
+            {
+                ++row;
+                column = 0;
+                top = iter.GetTop();
+            }
+            else
+            {
+                ++column;
+            }
+
+            child_node->prop_set_value(prop_row, row);
+            child_node->prop_set_value(prop_column, column);
+        }
+    }
 }

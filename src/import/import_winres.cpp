@@ -67,6 +67,19 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
     m_codepage = 1252;
 
+    // Resource statements often continue onto the next line. Processing a statement is more straightforward if
+    // everything needed is on a single line, so we combine those lines here. Note that this will make error messages
+    // about parsing problems not be accurate in terms of the line number.
+
+    for (size_t idx = 0; idx < m_file.size() - 1; ++idx)
+    {
+        if (m_file[idx].size() && (m_file[idx].back() == ',' || m_file[idx].back() == '|'))
+        {
+            m_file[idx] << m_file[idx + 1].view_nonspace();
+            m_file.RemoveLine(idx + 1);
+        }
+    }
+
     try
     {
         for (m_curline = 0; m_curline < m_file.size(); ++m_curline)
@@ -185,6 +198,8 @@ void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
 
 void WinResource::FormToNode(rcForm& form)
 {
+    form.AddSizersAndChildren();
+
     switch (form.GetFormType())
     {
         case rcForm::form_dialog:

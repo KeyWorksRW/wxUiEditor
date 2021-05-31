@@ -288,6 +288,10 @@ void rcForm::AddSizersAndChildren()
     m_gridbag = g_NodeCreator.CreateNode(gen_wxGridBagSizer, parent.get());
     parent->Adopt(m_gridbag);
 
+    // First sort horizontally
+    std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetLeft() < b.GetLeft(); });
+
+    // Now sort vertically
     std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetTop() < b.GetTop(); });
 
     int row = -1;
@@ -295,17 +299,18 @@ void rcForm::AddSizersAndChildren()
 
     int32_t top = 0;
 
-    for (auto& iter: m_ctrls)
+    for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
     {
-        auto child_node = iter.GetNode();
+        auto child_node = m_ctrls[idx_child].GetNode();
         if (child_node)
         {
             m_gridbag->Adopt(child_node);
-            if (!isInRange(iter.GetTop(), top))
+
+            if (!isInRange(m_ctrls[idx_child].GetTop(), top))
             {
                 ++row;
                 column = 0;
-                top = iter.GetTop();
+                top = m_ctrls[idx_child].GetTop();
             }
             else
             {

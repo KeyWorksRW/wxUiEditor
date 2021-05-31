@@ -24,15 +24,17 @@ class rcCtrl
 public:
     rcCtrl();
 
-    auto GetNode() { return m_node; }
+    auto GetNode() const { return m_node; }
 
     void ParseEditCtrl(ttlib::cview line);
     void ParseGroupBox(ttlib::cview line);
     void ParsePushButton(ttlib::cview line);
     void ParseStaticCtrl(ttlib::cview line);
 
-    auto GetLeft() const { return m_rc.left; }
-    auto GetTop() const { return m_rc.top; }
+    auto GetLeft() const { return m_left; }
+    auto GetTop() const { return m_top; }
+    auto GetRight() const { return (m_left + m_width); }
+    auto GetBottom() const { return (m_top + m_height); }
     auto GetWidth() const { return m_width; }
     auto GetHeight() const { return m_height; }
 

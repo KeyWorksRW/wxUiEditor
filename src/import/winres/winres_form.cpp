@@ -7,9 +7,12 @@
 
 #include "pch.h"
 
+#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+
 #include "winres_form.h"
 
-#include "uifuncs.h"  // Miscellaneous functions for displaying UI
+#include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "uifuncs.h"       // Miscellaneous functions for displaying UI
 
 rcForm::rcForm() {}
 
@@ -20,13 +23,53 @@ void rcForm::ParseDialog(ttlib::textfile& txtfile, size_t& curTxtLine)
     if (end == tt::npos)
         throw std::invalid_argument(_tt("Expected an ID then a DIALOG or DIALOGEX."));
 
-    // TODO: [KeyWorks - 10-18-2020] While unusual, I think it's possible the dialog is a quoted string instead of an
-    // ID.
-    m_ID = line.substr(0, end);
+    bool isDialog = true;
+
+    for (size_t idx = curTxtLine; idx < txtfile.size(); ++idx)
+    {
+        line = txtfile[curTxtLine].subview(txtfile[idx].find_nonspace());
+        if (line.is_sameprefix("STYLE"))
+        {
+            ttlib::cstr style(txtfile[curTxtLine]);
+
+            // A line ending with a , or | character means it is continued onto the next line.
+            while (style.back() == ',' || style.back() == '|')
+            {
+                std::string_view tmp("");
+                for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
+                {
+                    tmp = ttlib::find_nonspace(txtfile[curTxtLine]);
+                    if (!tmp.empty() && tmp[0] != '/')  // ignore blank lines and comments
+                        break;
+                }
+                style += tmp;
+            }
+
+            // Now that we've gathered up all the styles, check for DS_CONTROL -- if that's set, then we need to create a
+            // PanelForm not a wxDialog.
+            isDialog = style.contains("DS_CONTROL");
+            break;
+        }
+    }
+
+    m_form_type = isDialog ? form_dialog : form_panel;
+    m_node = g_NodeCreator.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
+
+    ttlib::cstr value;  // General purpose string we can use throughout this function
+    value = line.substr(0, end);
+    if (value[0] == '"')
+    {
+        value.erase(0, 1);
+        if (value.back() == '"')
+        {
+            value.erase(value.size() - 1, 1);
+        }
+    }
+    m_node->prop_set_value(prop_id, value);
 
     // Note that we can't change the name here or we won't match with the list of names saved from the dialog that got
     // the resource file.
-    m_Name = line.substr(0, end);
+    m_node->prop_set_value(prop_class_name, line.substr(0, end));
 
     line.remove_prefix(end);
     line.moveto_digit();
@@ -42,7 +85,8 @@ void rcForm::ParseDialog(ttlib::textfile& txtfile, size_t& curTxtLine)
         else if (line.is_sameprefix("CAPTION"))
         {
             line.moveto_nextword();
-            m_Title.ExtractSubString(line);
+            value.ExtractSubString(line);
+            m_node->prop_set_value(prop_caption, value);
         }
         else if (line.is_sameprefix("FONT"))
         {
@@ -80,17 +124,17 @@ void rcForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 
     if (style.contains("DS_CENTER"))
-        m_Center = "wxBOTH";
+        m_node->prop_set_value(prop_center, "wxBOTH");
     if (style.contains("WS_EX_CONTEXTHELP"))
-        m_ExStyles += "wxDIALOG_EX_CONTEXTHELP";
+        m_node->prop_set_value(prop_extra_style, "wxDIALOG_EX_CONTEXTHELP");
 
     ttlib::cstr original_styles(ttlib::stepover(style));
 
     if (original_styles.contains("DS_MODALFRAME"))
     {
-        m_Styles = "wxDEFAULT_DIALOG_STYLE";
-        // It's common for dialogs to duplicate the sytles that DS_MODALFRAM add, so we remove them here to
-        // avoid adding them.
+        m_node->prop_set_value(prop_style, "wxDEFAULT_DIALOG_STYLE");
+        // It's common for dialogs to duplicate the styles that DS_MODALFRAME add, so we remove them here to
+        // avoid adding them later.
         original_styles.Replace("WS_CAPTION", "");
         original_styles.Replace("WS_SYSMENU", "");
         original_styles.Replace("WS_POPUP", "");
@@ -98,57 +142,47 @@ void rcForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
 
     if (original_styles.contains("WS_CAPTION"))
     {
-        if (!m_Styles.empty())
-            m_Styles += "|";
-        m_Styles += "wxCAPTION";
+        AppendStyle(prop_style, "wxCAPTION");
     }
 
-    if (original_styles.find("WS_SYSMENU") != tt::npos)
+    if (original_styles.contains("WS_SYSMENU"))
     {
-        if (!m_Styles.empty())
-            m_Styles += "|";
-        m_Styles += "wxSYSTEM_MENU";
+        AppendStyle(prop_style, "wxSYSTEM_MENU");
     }
 
-    if (original_styles.find("WS_MAXIMIZEBOX") != tt::npos)
+    if (original_styles.contains("WS_MAXIMIZEBOX"))
     {
-        if (!m_Styles.empty())
-            m_Styles += "|";
-        m_Styles += "wxMAXIMIZE_BOX";
+        AppendStyle(prop_style, "wxMAXIMIZE_BOX");
     }
 
-    if (original_styles.find("WS_MINIMIZEBOX") != tt::npos)
+    if (original_styles.contains("WS_MINIMIZEBOX"))
     {
-        if (!m_Styles.empty())
-            m_Styles += "|";
-        m_Styles += "wxMINIMIZE_BOX";
+        AppendStyle(prop_style, "wxMINIMIZE_BOX");
     }
 
     if (original_styles.find("WS_THICKFRAME") != tt::npos || original_styles.find("WS_SIZEBOX") != tt::npos)
     {
-        // There is no thick frame in wxWidgets -- wxBORDER_THEME is at least a double frame
-        if (m_WinStyles.size())
-            m_WinStyles += "|";
-        m_WinStyles += "wxBORDER_THEME";
+        // In spite of what the documentation states (as of 3.1.6) there is no wxTHICK_FRAME. The closest would be
+        // wxBORDER_THEME.
+
+        // wxDialog interface (forms.xml) doesn't support this
+        // AppendStyle(prop_style, "wxBORDER_THEME");
     }
 
     if (original_styles.find("WS_CLIPCHILDREN") != tt::npos)
     {
-        if (!m_WinStyles.empty())
-            m_WinStyles += "|";
-        m_WinStyles += "wxCLIP_CHILDREN";
+        // wxDialog interface (forms.xml) doesn't support this
+        // AppendStyle(prop_style, "wxCLIP_CHILDREN");
     }
 
     if (original_styles.find("WS_CLIPSIBLINGS") != tt::npos)
     {
-        // Not supported
+        // This won't make sense for the dialog we create since we don't allow overlapping children.
     }
 
     if (original_styles.find("WS_POPUP") != tt::npos)
     {
-        if (!m_WinStyles.empty())
-            m_WinStyles += "|";
-        m_WinStyles += "wxPOPUP_WINDOW|wxBORDER_DEFAULT";
+        // There is a wxPOPUP_WINDOW, but does it work with dialogs?
     }
 
     // REVIEW: [KeyWorks - 08-24-2019] Note that we do not convert WS_HSCROLL or WS_VSCROLL.
@@ -156,9 +190,7 @@ void rcForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
 
     if (original_styles.find("WS_EX_TOPMOST") != tt::npos)
     {
-        if (!m_Styles.empty())
-            m_Styles += "|";
-        m_Styles += "wxSTAY_ON_TOP";
+        AppendStyle(prop_style, "WS_EX_TOPMOST");
     }
 }
 
@@ -169,29 +201,6 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
         auto line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
         if (line.empty() || line[0] == '/')  // ignore blank lines and comments
             continue;
-
-        // A line ending with a , or | character means it is continued onto the next line.
-        while (line.back() == ',' || line.back() == '|')
-        {
-            std::string_view nextline = {};
-            for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
-            {
-                nextline = ttlib::find_nonspace(txtfile[curTxtLine]);
-                if (!nextline.empty() && nextline[0] != '/')  // ignore blank lines and comments
-                    break;
-            }
-            if (nextline.empty())
-            {
-                throw std::invalid_argument("Control line ends with ',' or '|' but no further lines available.");
-            }
-
-            // At this point, curTxtLine is pointing to the continuation of the control. Change the line so
-            // that it now contains the original line plus the additional line. Continue looping in case
-            // the information continues over several lines.
-            txtfile[curTxtLine].assign(line);
-            txtfile[curTxtLine].append(nextline);
-            line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
-        }
 
         if (line.is_sameprefix("END"))
             break;
@@ -261,4 +270,51 @@ void rcForm::GetDimensions(ttlib::cview line)
     m_rc.right = (m_rc.right * 6) / 4;
     m_rc.top = (m_rc.top * 13) / 8;
     m_rc.bottom = (m_rc.bottom * 13) / 8;
+}
+
+void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
+{
+    ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
+    if (updated_style.size())
+        updated_style << '|';
+    updated_style << style;
+    m_node->prop_set_value(prop_name, updated_style);
+}
+
+void rcForm::AddSizersAndChildren()
+{
+    auto parent = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_node.get());
+    m_node->AddChild(parent);
+    parent->SetParent(m_node);
+    m_gridbag = g_NodeCreator.CreateNode(gen_wxGridBagSizer, parent.get());
+    parent->AddChild(m_gridbag);
+    m_gridbag->SetParent(parent);
+
+    int row = -1;
+    int column = 0;
+
+    int32_t top = 0;
+
+    for (auto& iter: m_ctrls)
+    {
+        auto child_node = iter.GetNode();
+        if (child_node)
+        {
+            m_gridbag->AddChild(child_node);
+            child_node->SetParent(m_gridbag);
+            if (!isInRange(iter.GetTop(), top))
+            {
+                ++row;
+                column = 0;
+                top = iter.GetTop();
+            }
+            else
+            {
+                ++column;
+            }
+
+            child_node->prop_set_value(prop_row, row);
+            child_node->prop_set_value(prop_column, column);
+        }
+    }
 }

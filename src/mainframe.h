@@ -197,7 +197,7 @@ protected:
     void OnEmbedImageConverter(wxCommandEvent& event) override;
     void OnGenInhertedClass(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
-    void OnImportWindowsResource(wxCommandEvent& event);
+    void OnImportWindowsResource(wxCommandEvent& event) override;
     void OnInsertWidget(wxCommandEvent&) override;
     void OnNewProject(wxCommandEvent& event);
     void OnOpenProject(wxCommandEvent& event) override;

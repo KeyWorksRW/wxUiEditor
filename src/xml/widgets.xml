@@ -59,8 +59,6 @@
                 help="Highlight the URLs and generate the wxTextUrlEvents when mouse events occur over them. This style is only supported for wxTE_RICH Win32 and multi-line wxGTK2 text controls." />
             <option name="wxTE_NOHIDESEL"
                 help="By default, the Windows text control doesn't show the selection when it doesn't have focus - use this style to force it to always show it. This style is ignored under other platforms." />
-            <option name="wxHSCROLL"
-                help="A horizontal scrollbar will be created and used, so that text won't be wrapped. No effect under wxGTK1." />
             <option name="wxTE_NO_VSCROLL"
                 help="For multiline controls only: a vertical scrollbar will never be created. This limits the amount of text which can be entered into the control to what can be displayed in it under MSW but not under GTK2. Currently not implemented for the other platforms." />
             <option name="wxTE_LEFT"

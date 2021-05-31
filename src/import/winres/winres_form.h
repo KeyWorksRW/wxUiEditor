@@ -7,41 +7,48 @@
 
 #pragma once
 
-#include <tttextfile.h>  // ttTextFile -- Similar to wxTextFile, but uses UTF8 strings
+#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
-#include "winres_ctrl.h"
+#include "gen_enums.h"    // Enumerations for generators
+#include "node.h"         // Node class
+#include "winres_ctrl.h"  // rcCtrl -- Process Windows Resource control data
 
+constexpr int32_t FudgeAmount = 3;
+
+// This will either be a wxDialog or a MenuBar
 class rcForm
 {
 public:
     rcForm();
 
+    enum : size_t
+    {
+        form_dialog,
+        form_panel,
+        form_menu,
+    };
+
     void ParseDialog(ttlib::textfile& txtfile, size_t& curTxtLine);
 
-    // These are public so that the WinResource class can easily access them while it converts parse forms into
-    // wxUiEditor objects
-
-    ttlib::cstr m_Name;
-    ttlib::cstr m_Title;
-    ttlib::cstr m_Font;
-    ttlib::cstr m_ID;
-
-    ttlib::cstr m_BaseName;     // Generated filename
-    ttlib::cstr m_DerivedName;  // Derived filename
-
-    ttlib::cstr m_Styles;
-    ttlib::cstr m_ExStyles;
-    ttlib::cstr m_WinStyles;
-    ttlib::cstr m_WinExStyles;
-
-    ttlib::cstr m_Center;  // wxBOTH, wxHORIZONTAL, or wxVERTICAL
-
-    std::vector<rcCtrl> m_ctrls;
-
-    RC_RECT m_rc { 0, 0, 0, 0 };
+    // Call this after
+    void AddSizersAndChildren();
+    size_t GetFormType() const { return m_form_type; }
+    Node* GetFormNode() { return m_node.get(); }
+    auto GetFormName() { return m_node->prop_as_string(prop_class_name); }
 
 protected:
+    void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
     void AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine);
     void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
     void GetDimensions(ttlib::cview line);
+
+    // Returns true if val1 is within range of val2 using a fudge value below and above val2.
+    bool isInRange(int32_t val1, int32_t val2) { return (val1 >= (val2 - FudgeAmount) && val1 <= (val2 + FudgeAmount)); }
+
+private:
+    RC_RECT m_rc { 0, 0, 0, 0 };
+    NodeSharedPtr m_node;
+    NodeSharedPtr m_gridbag;
+    std::vector<rcCtrl> m_ctrls;
+    size_t m_form_type;
 };

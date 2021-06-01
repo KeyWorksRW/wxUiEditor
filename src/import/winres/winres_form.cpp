@@ -315,7 +315,7 @@ void rcForm::AddSizersAndChildren()
         if (child.GetNode()->isGen(gen_wxStaticBoxSizer))
         {
             AddStaticBoxChildren(idx_child);
-            parent->Adopt(child.GetNode());
+            parent->Adopt(child.GetNodePtr());
             continue;
         }
 
@@ -335,7 +335,7 @@ void rcForm::AddSizersAndChildren()
             }
 
             // orphaned child, add to form's top level sizer
-            parent->Adopt(child.GetNode());
+            parent->Adopt(child.GetNodePtr());
             return;
         }
 
@@ -349,7 +349,7 @@ void rcForm::AddSizersAndChildren()
             while (idx_child < m_ctrls.size() && m_ctrls[idx_child].GetTop() == child.GetTop())
             {
                 // Note that we add the child we are comparing to first.
-                sizer->Adopt(m_ctrls[idx_child].GetNode());
+                sizer->Adopt(m_ctrls[idx_child].GetNodePtr());
                 ++idx_child;
             }
         }
@@ -357,7 +357,7 @@ void rcForm::AddSizersAndChildren()
         {
             sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent.get());
             parent->Adopt(sizer);
-            sizer->Adopt(child.GetNode());
+            sizer->Adopt(child.GetNodePtr());
 
             if (idx_child + 2 < m_ctrls.size())
             {
@@ -370,7 +370,7 @@ void rcForm::AddSizersAndChildren()
             while (idx_child < m_ctrls.size() && m_ctrls[idx_child].GetTop() != m_ctrls[idx_child - 1].GetTop())
             {
                 // Note that we add the child we are comparing to first.
-                sizer->Adopt(m_ctrls[idx_child].GetNode());
+                sizer->Adopt(m_ctrls[idx_child].GetNodePtr());
                 if (idx_child + 2 < m_ctrls.size())
                 {
                     // If the next two sizers have the same top, then they need to be placed in a horizontal sizer.
@@ -391,7 +391,7 @@ void rcForm::AddStaticBoxChildren(size_t& idx_child)
         const auto& child_ctrl = m_ctrls[idx_group_child];
         if (child_ctrl.GetRight() > static_box.GetRight() || child_ctrl.GetTop() > static_box.GetBottom())
             break;
-        static_box.GetNode()->Adopt(child_ctrl.GetNode());
+        static_box.GetNode()->Adopt(child_ctrl.GetNodePtr());
 
         // Update to that caller won't process this child.
         ++idx_child;

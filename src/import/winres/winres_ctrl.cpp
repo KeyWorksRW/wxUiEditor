@@ -96,33 +96,39 @@ ttlib::cview rcCtrl::GetID(ttlib::cview line)
 
     if (line.size())
     {
+        ttlib::cstr id;
         if (line[0] == ',')
         {
-            ttlib::cstr id;
             line = StepOverComma(line, id);
-            if (id == "IDOK")
-                m_node->prop_set_value(prop_id, "wxID_OK");
-            else if (id == "IDCANCEL")
-                m_node->prop_set_value(prop_id, "wxID_CANCEL");
-            else if (id == "IDYES")
-                m_node->prop_set_value(prop_id, "wxID_YES");
-            else if (id == "IDNO")
-                m_node->prop_set_value(prop_id, "wxID_NO");
-            else if (id == "IDABORT")
-                m_node->prop_set_value(prop_id, "wxID_ABORT ");
-            else if (id == "IDCLOSE")
-                m_node->prop_set_value(prop_id, "wxID_CLOSE");
-            else if (id == "IDHELP")
-                m_node->prop_set_value(prop_id, "wxID_HELP");
-            else if (id == "IDC_STATIC")
-                m_node->prop_set_value(prop_id, "wxID_ANY");
-            else
-                m_node->prop_set_value(prop_id, id);
         }
         else
         {
-            throw std::invalid_argument("Expected an ID.");
+            auto end = line.find_first_of(',');
+            ASSERT_MSG(ttlib::is_found(end), "Expected a comma after the id");
+            if (!ttlib::is_found(end))
+                end = line.size();
+            id = line.substr(0, end);
+            line.remove_prefix(end < line.size() ? end + 1 : end);
         }
+
+        if (id == "IDOK")
+            m_node->prop_set_value(prop_id, "wxID_OK");
+        else if (id == "IDCANCEL")
+            m_node->prop_set_value(prop_id, "wxID_CANCEL");
+        else if (id == "IDYES")
+            m_node->prop_set_value(prop_id, "wxID_YES");
+        else if (id == "IDNO")
+            m_node->prop_set_value(prop_id, "wxID_NO");
+        else if (id == "IDABORT")
+            m_node->prop_set_value(prop_id, "wxID_ABORT ");
+        else if (id == "IDCLOSE")
+            m_node->prop_set_value(prop_id, "wxID_CLOSE");
+        else if (id == "IDHELP")
+            m_node->prop_set_value(prop_id, "wxID_HELP");
+        else if (id == "IDC_STATIC")
+            m_node->prop_set_value(prop_id, "wxID_ANY");
+        else
+            m_node->prop_set_value(prop_id, id);
     }
     return line;
 }
@@ -177,131 +183,236 @@ void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
     m_node->prop_set_value(prop_name, updated_style);
 }
 
-void rcCtrl::ParseStaticCtrl(ttlib::cview line)
+/*
+
+    A CONTROL directive takes the form:
+
+        CONTROL text, id, class, style, dimensions, extended style
+
+    whereas a regular directive takes the form:
+
+        directive [text], id, dimensions, style, extended style
+
+    To use a single function to process either CONTROL directives or specific directives like CTEXT and LISTBOX, we have to
+    get the text if specified or step over it if not. Once the id has been retrieved, we need to step over the class and
+    style parameters *only* if it's a CONTROL.
+
+*/
+
+void rcCtrl::ParseControlCtrl(ttlib::cview line)
 {
-    // TODO: [KeyWorks - 05-30-2021] If SS_BITMAP is specified then this is a gen_wxStaticBitmap
-    m_node = g_NodeCreator.NewNode(gen_wxStaticText);
+    bool is_control = line.is_sameprefix("CONTROL");
+    bool add_wrap_property = false;
 
-    if (line.is_sameprefix("CTEXT"))
+    if (is_control)
     {
-        // We don't know if this will be in a horizontal or vertical sizer, so we just use wxALIGN_CENTER which works for
-        // either.
-        m_node->prop_set_value(prop_alignment, "wxALIGN_CENTER");
-    }
-    else if (line.is_sameprefix("RTEXT"))
-        m_node->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
-    else
-        m_node->prop_set_value(prop_alignment, "wxALIGN_LEFT");
-
-    line.moveto_nextword();
-
-    line = GetLabel(line);
-
-    ParseCommonStyles(line);
-
-    if (line.contains("SS_SUNKEN"))
-    {
-        AppendStyle(prop_window_style, "wxSUNKEN_BORDER");
-    }
-    if (line.contains("SS_SIMPLE"))
-    {
-        AppendStyle(prop_window_style, "wxBORDER_SIMPLE");
-    }
-
-    if (line.contains("SS_BLACKFRAME") || line.contains("SS_BLACKRECT"))
-    {
-        AppendStyle(prop_background_colour, "wxSYS_COLOUR_WINDOWFRAME");
-    }
-    else if (line.contains("SS_GRAYFRAME") || line.contains("SS_GRAYRECT"))
-    {
-        AppendStyle(prop_background_colour, "wxSYS_COLOUR_DESKTOP");
-    }
-    if (line.contains("SS_WHITEFRAME") || line.contains("SS_WHITERECT"))
-    {
-        AppendStyle(prop_background_colour, "wxSYS_COLOUR_WINDOW");
-    }
-
-    if (line.contains("SS_BLACKRECT") || line.contains("SS_GRAYRECT") || line.contains("SS_WHITERECT"))
-    {
-        // These styles are rectagles with no border
-        AppendStyle(prop_window_style, "wxBORDER_NONE");
-    }
-
-    if (line.contains("SS_ENDELLIPSIS"))
-    {
-        AppendStyle(prop_window_style, "wxST_ELLIPSIZE_END");
-    }
-    else if (line.contains("SS_PATHELLIPSIS"))
-    {
-        AppendStyle(prop_window_style, "wxST_ELLIPSIZE_MIDDLE");
-    }
-    else if (line.contains("SS_WORDELLIPSIS"))
-    {
-        AppendStyle(prop_window_style, "wxST_ELLIPSIZE_START");
-    }
-
-    line = GetID(line);
-
-    // This should be the dimensions.
-    if (line.size() && ttlib::is_digit(line[0]) || line[0] == ',')
-    {
-        GetDimensions(line);
-        if (line.contains("SS_BLACK") || line.contains("SS_GRAYF") || line.contains("SS_WHITE"))
+        line.moveto_nextword();
+        if (line.contains("BS_3STATE") || line.contains("BS_AUTO3STATE"))
+            m_node = g_NodeCreator.NewNode(gen_Check3State);
+        else if (line.contains("BS_CHECKBOX") || line.contains("BS_AUTOCHECKBOX"))
+            m_node = g_NodeCreator.NewNode(gen_wxCheckBox);
+        else if (line.contains("BS_RADIOBUTTON") || line.contains("BS_AUTORADIOBUTTON"))
         {
-            // TODO: [KeyWorks - 05-30-2021] The dimensions are in dialog coordinates which isn't going to match wxWidgets
-            // coordinates
-            m_node->prop_set_value(prop_size, wxSize(m_rc.right, m_rc.bottom));
+            m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
+            if (line.contains("WX_GROUP"))
+                AppendStyle(prop_style, "wxRB_GROUP");
+        }
+        else if (line.contains("BS_PUSHBUTTON"))
+            m_node = g_NodeCreator.NewNode(gen_wxButton);
+        else if (line.contains("BS_DEFPUSHBUTTON"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxButton);
+            m_node->prop_set_value(prop_default, true);
+        }
+        else if (line.contains("BS_COMMANDLINK") || line.contains("BS_DEFCOMMANDLINK"))
+            m_node = g_NodeCreator.NewNode(gen_wxCommandLinkButton);
+        else if (line.contains("BS_PUSHLIKE"))
+            m_node = g_NodeCreator.NewNode(gen_wxToggleButton);
+        else if (line.contains("BS_GROUPBOX"))
+            m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
+        else if (line.contains("CBS_"))
+            m_node = g_NodeCreator.NewNode(gen_wxComboBox);
+        else if (line.contains("ES_"))
+            m_node = g_NodeCreator.NewNode(gen_wxTextCtrl);
+        else if (line.contains("SS_"))
+            m_node = g_NodeCreator.NewNode(gen_wxStaticText);
+        else if (line.contains("LBS_"))
+            m_node = g_NodeCreator.NewNode(gen_wxListBox);
+        else if (line.contains("SBS_"))
+            m_node = g_NodeCreator.NewNode(gen_wxScrollBar);
+
+        else
+        {
+            // TODO: [KeyWorks - 06-01-2021] If we get here, then we need to look at the class specifies to determine type of
+            // control it is.
+
+            return;
         }
     }
     else
     {
-        throw std::invalid_argument("Expected static control ID to be followed with a comma and dimensions.");
+        if (line.is_sameprefix("AUTO3STATE"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_Check3State);
+        }
+        else if (line.is_sameprefix("AUTOCHECKBOX"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxCheckBox);
+        }
+        else if (line.is_sameprefix("AUTORADIOBUTTON"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
+            if (line.contains("WX_GROUP"))
+                AppendStyle(prop_style, "wxRB_GROUP");
+        }
+        else if (line.is_sameprefix("CHECKBOX "))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxCheckBox);
+        }
+        else if (line.is_sameprefix("COMBOBOX"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxComboBox);
+        }
+        else if (line.is_sameprefix("CTEXT"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxStaticText);
+            // We don't know if this will be in a horizontal or vertical sizer, so we just use wxALIGN_CENTER which works for
+            // either.
+            m_node->prop_set_value(prop_alignment, "wxALIGN_CENTER");
+        }
+        else if (line.is_sameprefix("DEFPUSHBUTTON"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxButton);
+            m_node->prop_set_value(prop_default, true);
+        }
+        else if (line.is_sameprefix("EDITTEXT"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxTextCtrl);
+        }
+        else if (line.is_sameprefix("GROUPBOX"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
+        }
+        else if (line.is_sameprefix("LISTBOX"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxListBox);
+        }
+        else if (line.is_sameprefix("LTEXT"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxStaticText);
+            m_node->prop_set_value(prop_alignment, "wxALIGN_LEFT");
+        }
+        else if (line.is_sameprefix("PUSHBUTTON"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxButton);
+        }
+        else if (line.is_sameprefix("RTEXT"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxStaticText);
+            m_node->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+        }
+        else if (line.is_sameprefix("RADIOBUTTON "))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
+            if (line.contains("WX_GROUP"))
+                AppendStyle(prop_style, "wxRB_GROUP");
+        }
+        else if (line.is_sameprefix("SCROLLBAR"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxScrollBar);
+            if (line.contains("SBS_VERT"))
+                m_node->prop_set_value(prop_style, "wxSB_VERTICAL");
+        }
+        else if (line.is_sameprefix("STATE3"))
+        {
+            m_node = g_NodeCreator.NewNode(gen_Check3State);
+        }
+
+        else
+        {
+            // TODO: [KeyWorks - 06-01-2021] We handle all controls that MS documented on 05/31/2018, which as of 6/01/2021
+            // is still the current documentation. So, if we get here the control is unrecognizable.
+
+#if defined(_DEBUG)
+            ttlib::cstr msg("Unrecognized control: ");
+            auto pos = line.find_space();
+            msg << line.subview(0, pos);
+            line.moveto_nextword();
+            msg << ' ' << line;
+            MSG_WARNING(msg);
+#endif  // _DEBUG
+            return;
+        }
+        line.moveto_nextword();
     }
 
-    if (line.contains("SS_EDITCONTROL"))
+    ASSERT_MSG(line.size(), "Unparsable control line.");
+    if (line.empty())
     {
-        // TODO: [KeyWorks - 05-30-2021] The dimensions are in dialog coordinates which isn't going to match wxWidgets
-        // coordinates
-        m_node->prop_set_value(prop_wrap, m_minWidth);
+        m_node.reset();
+        return;
     }
-}
 
-void rcCtrl::ParseEditCtrl(ttlib::cview line)
-{
-    m_node = g_NodeCreator.NewNode(gen_wxTextCtrl);
+    if (line[0] == '"')
+        line = GetLabel(line);
+    line = GetID(line);
 
-    auto next = ttlib::stepover_pos(line);
-    if (next == tt::npos)
+    if (is_control)
     {
-        throw std::invalid_argument("Expected edit control name to be followed by additional information.");
+        ASSERT_MSG(line.size() && line[0] == '"', "CONTROL directive is missing class");
+
+        // This should be the class
+        if (line.size() && line[0] == '"')
+        {
+            ttlib::cstr value;
+            line = StepOverQuote(line, value);
+
+            // This could be a system control like "SysTabControl32"
+        }
+        else
+        {
+            // Without a class, style and dimensions are probably wrong, so just ignore the entire control.
+            m_node.reset();
+            return;
+        }
     }
+    ParseCommonStyles(line);
 
-    auto start = next;
-    while (next < line.size() && line[next] != ',' && !ttlib::is_whitespace(line[next]))
-        ++next;
+    //////////// Button styles ////////////
 
-    ttlib::cstr value = line.substr(start, next - start);
-    m_node->prop_set_value(prop_id, value);
-    line.remove_prefix(next);
-
-    // This should be the dimensions.
-    if (ttlib::is_digit(line[0]) || line[0] == ',')
+    if (line.contains("BS_RIGHT") || line.contains("BS_LEFTTEXT"))
     {
-        GetDimensions(line);
-        m_minWidth = m_rc.right;
-        m_minHeight = m_rc.bottom;
+        if (m_node->isGen(gen_wxCheckBox) || m_node->isGen(gen_Check3State))
+            AppendStyle(prop_style, "wxALIGN_RIGHT");
+        else
+            AppendStyle(prop_style, "wxBU_RIGHT");
     }
-    else
-    {
-        throw std::invalid_argument("Expected edit control ID to be followed with a comma and dimensions.");
-    }
+    else if (line.contains("BS_TOP"))
+        AppendStyle(prop_style, "wxBU_TOP");
+    else if (line.contains("BS_BOTTOM"))
+        AppendStyle(prop_style, "wxBU_BOTTOM");
 
+    //////////// Combobox styles ////////////
+
+    if (line.contains("CBS_SIMPLE"))
+        AppendStyle(prop_style, "wxCB_SIMPLE");
+    else if (line.contains("CBS_DROPDOWN"))
+        AppendStyle(prop_style, "wxCB_DROPDOWN");
+
+    if (line.contains("CBS_SORT"))
+        AppendStyle(prop_style, "wxCB_DROPDOWN");
     if (line.contains("ES_CENTER"))
     {
         AppendStyle(prop_style, "wxTE_CENTER");
     }
 
-    if (line.contains("ES_RIGHT"))
+    //////////// Edit control styles ////////////
+
+    if (line.contains("ES_CENTER"))
+    {
+        AppendStyle(prop_style, "wxTE_CENTER");
+    }
+    else if (line.contains("ES_RIGHT"))
     {
         AppendStyle(prop_style, "wxTE_RIGHT");
     }
@@ -344,171 +455,7 @@ void rcCtrl::ParseEditCtrl(ttlib::cview line)
 
     */
 
-    ParseCommonStyles(line);
-}
-
-void rcCtrl::ParsePushButton(ttlib::cview line)
-{
-    m_node = g_NodeCreator.NewNode(gen_wxButton);
-
-    if (line.contains("DEFPUSHBUTTON"))
-    {
-        m_node->prop_set_value(prop_default, true);
-    }
-
-    line.moveto_nextword();
-
-    line = GetLabel(line);
-
-    ParseCommonStyles(line);
-    line = GetID(line);
-
-    // This should be the dimensions.
-    if (ttlib::is_digit(line[0]) || line[0] == ',')
-    {
-        GetDimensions(line);
-    }
-    else
-    {
-        throw std::invalid_argument("Expected edit control ID to be followed with a comma and dimensions.");
-    }
-}
-
-void rcCtrl::ParseGroupBox(ttlib::cview line)
-{
-    m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
-
-    line.moveto_nextword();
-
-    line = GetLabel(line);
-    line = GetID(line);
-
-    // This should be the dimensions.
-    if (ttlib::is_digit(line[0]) || line[0] == ',')
-    {
-        GetDimensions(line);
-    }
-    else
-    {
-        throw std::invalid_argument("Expected GROUPBOX ID to be followed with a comma and dimensions.");
-    }
-
-    ParseCommonStyles(line);
-}
-
-void rcCtrl::ParseControlCtrl(ttlib::cview line)
-{
-    line.moveto_nextword();
-    if (line.contains("BS_3STATE") || line.contains("BS_AUTO3STATE"))
-        m_node = g_NodeCreator.NewNode(gen_Check3State);
-    else if (line.contains("BS_CHECKBOX") || line.contains("BS_AUTOCHECKBOX"))
-        m_node = g_NodeCreator.NewNode(gen_wxCheckBox);
-    else if (line.contains("BS_RADIOBUTTON") || line.contains("BS_AUTORADIOBUTTON"))
-        m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
-    else if (line.contains("BS_PUSHBUTTON") || line.contains("BS_DEFPUSHBUTTON"))
-        m_node = g_NodeCreator.NewNode(gen_wxButton);
-    else if (line.contains("BS_COMMANDLINK") || line.contains("BS_DEFCOMMANDLINK"))
-        m_node = g_NodeCreator.NewNode(gen_wxCommandLinkButton);
-    else if (line.contains("BS_PUSHLIKE"))
-        m_node = g_NodeCreator.NewNode(gen_wxToggleButton);
-    else if (line.contains("BS_GROUPBOX"))
-        m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
-    else if (line.contains("CBS_"))
-        m_node = g_NodeCreator.NewNode(gen_wxComboBox);
-    else if (line.contains("ES_"))
-        m_node = g_NodeCreator.NewNode(gen_wxComboBox);
-    else if (line.contains("SS_"))
-        m_node = g_NodeCreator.NewNode(gen_wxStaticText);
-    else if (line.contains("LBS_"))
-        m_node = g_NodeCreator.NewNode(gen_wxListBox);
-    else if (line.contains("SBS_"))
-        m_node = g_NodeCreator.NewNode(gen_wxScrollBar);
-
-    else
-    {
-        // Currently unsupported
-        return;
-    }
-
-    line = GetLabel(line);
-    line = GetID(line);
-
-    // This should be the class
-    if (line[0] == '"')
-    {
-        ttlib::cstr value;
-        line = StepOverQuote(line, value);
-
-        // This could be a system control like "SysTabControl32"
-    }
-    else
-    {
-        throw std::invalid_argument("Expected CONTROL ID to be followed with a quoted class name.");
-    }
-
-    ParseCommonStyles(line);
-
-    // Button styles
-
-    if (line.contains("BS_RIGHT") || line.contains("BS_LEFTTEXT"))
-    {
-        if (m_node->isGen(gen_wxCheckBox) || m_node->isGen(gen_Check3State))
-            AppendStyle(prop_style, "wxALIGN_RIGHT");
-        else
-            AppendStyle(prop_style, "wxBU_RIGHT");
-    }
-    else if (line.contains("BS_TOP"))
-        AppendStyle(prop_style, "wxBU_TOP");
-    else if (line.contains("BS_BOTTOM"))
-        AppendStyle(prop_style, "wxBU_BOTTOM");
-
-    // Combobox styles
-
-    if (line.contains("CBS_SIMPLE"))
-        AppendStyle(prop_style, "wxCB_SIMPLE");
-    else if (line.contains("CBS_DROPDOWN"))
-        AppendStyle(prop_style, "wxCB_DROPDOWN");
-
-    if (line.contains("CBS_SORT"))
-        AppendStyle(prop_style, "wxCB_DROPDOWN");
-    if (line.contains("ES_CENTER"))
-    {
-        AppendStyle(prop_style, "wxTE_CENTER");
-    }
-
-    // Edit control styles
-
-    if (line.contains("ES_RIGHT"))
-    {
-        AppendStyle(prop_style, "wxTE_RIGHT");
-    }
-
-    if (line.contains("ES_MULTILINE"))
-    {
-        AppendStyle(prop_style, "wxTE_MULTILINE");
-    }
-
-    if (line.contains("ES_PASSWORD"))
-    {
-        AppendStyle(prop_style, "wxTE_PASSWORD");
-    }
-
-    if (line.contains("ES_READONLY"))
-    {
-        AppendStyle(prop_style, "wxTE_READONLY");
-    }
-
-    if (line.contains("ES_WANTRETURN"))
-    {
-        AppendStyle(prop_style, "wxTE_PROCESS_ENTER");
-    }
-
-    if (line.contains("ES_NOHIDESEL"))
-    {
-        AppendStyle(prop_style, "wxTE_NOHIDESEL");
-    }
-
-    // Static control styles
+    //////////// Static control styles ////////////
 
     if (line.contains("SS_SUNKEN"))
     {
@@ -551,26 +498,59 @@ void rcCtrl::ParseControlCtrl(ttlib::cview line)
         AppendStyle(prop_window_style, "wxST_ELLIPSIZE_START");
     }
 
-    // List box styles
+    if (line.contains("SS_EDITCONTROL"))
+    {
+        add_wrap_property = true;
+    }
 
-    // TODO: [KeyWorks - 05-31-2021] Add once LISTBOX is supported
+    //////////// List box styles ////////////
 
-    // Scrollbar styles
+    if (line.contains("LBS_EXTENDEDSEL"))
+    {
+        m_node->prop_set_value(prop_type, "wxLB_MULTIPLE");
+    }
+    else if (line.contains("LBS_MULTIPLESEL"))
+    {
+        m_node->prop_set_value(prop_type, "wxLB_EXTENDED");
+    }
+    if (line.contains("LBS_SORT") || line.contains("LBS_STANDARD"))
+    {
+        AppendStyle(prop_style, "wxLB_SORT");
+    }
+    if (line.contains("LBS_DISABLENOSCROLL"))
+    {
+        AppendStyle(prop_style, "wxLB_ALWAYS_SB");
+    }
+    if (line.contains("LBS_WANTKEYBOARDINPUT"))
+    {
+        AppendStyle(prop_window_style, "wxWANTS_CHARS");
+    }
 
-    // TODO: [KeyWorks - 05-31-2021] Add once SCROLLBAR is supported
+    //////////// Scrollbar styles ////////////
+
+    if (line.contains("SBS_VERT"))
+        m_node->prop_set_value(prop_style, "wxSB_VERTICAL");
 
     ttlib::cstr value;
 
-    // Step over the style
-    line = StepOverComma(line, value);
+    if (is_control)
+    {
+        // Step over the style
+        line = StepOverComma(line, value);
+    }
+
+    ASSERT_MSG(line.size() && (ttlib::is_digit(line[0]) || line[0] == ','), "Control is missing dimensions!");
+    if (line.empty())
+        return;
 
     // This should be the dimensions.
-    if (ttlib::is_digit(line[0]) || line[0] == ',')
+    if (line.size() && (ttlib::is_digit(line[0]) || line[0] == ','))
     {
         GetDimensions(line);
-    }
-    else
-    {
-        throw std::invalid_argument("Expected CONTROL style to be followed with a comma and dimensions.");
+
+        if (add_wrap_property)
+        {
+            m_node->prop_set_value(prop_wrap, m_width);
+        }
     }
 }

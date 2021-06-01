@@ -28,10 +28,6 @@ public:
     auto GetNodePtr() const { return m_node; }
 
     void ParseControlCtrl(ttlib::cview line);
-    void ParseEditCtrl(ttlib::cview line);
-    void ParseGroupBox(ttlib::cview line);
-    void ParsePushButton(ttlib::cview line);
-    void ParseStaticCtrl(ttlib::cview line);
 
     auto GetLeft() const { return m_left; }
     auto GetTop() const { return m_top; }
@@ -75,7 +71,4 @@ private:
 
     // These are in dialog coordinates
     RC_RECT m_rc { 0, 0, 0, 0 };
-
-    int m_minHeight;
-    int m_minWidth;
 };

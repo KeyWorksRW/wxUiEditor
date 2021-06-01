@@ -208,32 +208,12 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
         if (line.is_sameprefix("END"))
             break;
 
-        if (line.is_sameprefix("LTEXT") || line.is_sameprefix("CTEXT") || line.is_sameprefix("RTEXT"))
+        auto& control = m_ctrls.emplace_back();
+        control.ParseControlCtrl(line);
+        // If the control could not be converted into a node, then remove it from our list
+        if (!control.GetNode())
         {
-            auto& control = m_ctrls.emplace_back();
-            control.ParseStaticCtrl(line);
-        }
-        else if (line.is_sameprefix("EDITTEXT"))
-        {
-            auto& control = m_ctrls.emplace_back();
-            control.ParseEditCtrl(line);
-        }
-        else if (line.is_sameprefix("DEFPUSHBUTTON") || line.is_sameprefix("PUSHBUTTON"))
-        {
-            auto& control = m_ctrls.emplace_back();
-            control.ParsePushButton(line);
-        }
-        else if (line.is_sameprefix("GROUPBOX"))
-        {
-            auto& control = m_ctrls.emplace_back();
-            control.ParseGroupBox(line);
-        }
-        else if (line.is_sameprefix("CONTROL"))
-        {
-            auto& control = m_ctrls.emplace_back();
-            control.ParseControlCtrl(line);
-            if (!control.GetNode())
-                m_ctrls.pop_back();
+            m_ctrls.pop_back();
         }
     }
 }

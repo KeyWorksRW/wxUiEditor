@@ -85,7 +85,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     {
         for (m_curline = 0; m_curline < m_file.size(); ++m_curline)
         {
-            auto curline = m_file[m_curline].subview();
+            auto curline = m_file[m_curline].view_nonspace();
             auto start = curline.find_nonspace();
             if (curline.empty() || curline[start] == '/')  // Ignore blank lines and comments.
                 continue;

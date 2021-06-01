@@ -24,7 +24,8 @@ class rcCtrl
 public:
     rcCtrl();
 
-    auto GetNode() const { return m_node; }
+    auto GetNode() const { return m_node.get(); }
+    auto GetNodePtr() const { return m_node; }
 
     void ParseControlCtrl(ttlib::cview line);
     void ParseEditCtrl(ttlib::cview line);
@@ -42,10 +43,22 @@ public:
 protected:
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
 
+    // Set prop_ to common values (disabled, hidden, scroll, etc.)
     void ParseCommonStyles(ttlib::cview line);
+
+    // Sets m_left, m_top, m_width and m_height in pixel dimensions
     void GetDimensions(ttlib::cview line);
 
+    // This will set prop_id, and return a cview to the position past the id
+    ttlib::cview GetID(ttlib::cview line);
+
+    // This will set prop_label, and return a cview to the position past the id
+    ttlib::cview GetLabel(ttlib::cview line);
+
+    // Returns a view past the closing quote, or an empty view if there was no closing quote
     ttlib::cview StepOverQuote(ttlib::cview line, ttlib::cstr& str);
+
+    // Retrieves any string between commas, returns view past the closing comma
     ttlib::cview StepOverComma(ttlib::cview line, ttlib::cstr& str);
 
 private:

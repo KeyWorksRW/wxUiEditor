@@ -19,7 +19,7 @@ void rcCtrl::ParseCommonStyles(ttlib::cview line)
     if (line.contains("WS_DISABLED"))
         m_node->prop_set_value(prop_disabled, true);
     if (line.contains("NOT WS_VISIBLE"))
-        m_node->prop_set_value(prop_disabled, true);
+        m_node->prop_set_value(prop_hidden, true);
 
     if (line.contains("WS_HSCROLL"))
         AppendStyle(prop_window_style, "wxHSCROLL");
@@ -29,6 +29,10 @@ void rcCtrl::ParseCommonStyles(ttlib::cview line)
 
 void rcCtrl::GetDimensions(ttlib::cview line)
 {
+    ASSERT_MSG(line.size(), "Could not locate control's dimensions");
+    if (line.empty())
+        return;
+
     if (line[0] == ',')
         line.moveto_digit();
 
@@ -86,6 +90,66 @@ void rcCtrl::GetDimensions(ttlib::cview line)
     m_height = static_cast<int>((static_cast<int64_t>(m_rc.bottom) * 15 / 4));
 }
 
+ttlib::cview rcCtrl::GetID(ttlib::cview line)
+{
+    ASSERT_MSG(line.size(), "Could not locate control's id");
+
+    if (line.size())
+    {
+        if (line[0] == ',')
+        {
+            ttlib::cstr id;
+            line = StepOverComma(line, id);
+            if (id == "IDOK")
+                m_node->prop_set_value(prop_id, "wxID_OK");
+            else if (id == "IDCANCEL")
+                m_node->prop_set_value(prop_id, "wxID_CANCEL");
+            else if (id == "IDYES")
+                m_node->prop_set_value(prop_id, "wxID_YES");
+            else if (id == "IDNO")
+                m_node->prop_set_value(prop_id, "wxID_NO");
+            else if (id == "IDABORT")
+                m_node->prop_set_value(prop_id, "wxID_ABORT ");
+            else if (id == "IDCLOSE")
+                m_node->prop_set_value(prop_id, "wxID_CLOSE");
+            else if (id == "IDHELP")
+                m_node->prop_set_value(prop_id, "wxID_HELP");
+            else if (id == "IDC_STATIC")
+                m_node->prop_set_value(prop_id, "wxID_ANY");
+            else
+                m_node->prop_set_value(prop_id, id);
+        }
+        else
+        {
+            throw std::invalid_argument("Expected an ID.");
+        }
+    }
+    return line;
+}
+
+ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
+{
+    ASSERT_MSG(line.size(), "Could not locate control's id");
+
+    if (line.size())
+    {
+        // This should be the label (can be empty but must be quoted).
+        if (line[0] == '"')
+        {
+            ttlib::cstr label;
+            line = StepOverQuote(line, label);
+
+            m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
+        }
+        else
+        {
+            throw std::invalid_argument("Expected a quoted label.");
+        }
+    }
+
+    return line;
+}
+
 ttlib::cview rcCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
 {
     auto pos = str.AssignSubString(line, '"', '"');
@@ -102,6 +166,15 @@ ttlib::cview rcCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
         return ttlib::emptystring;
 
     return line.subview(pos + 1);
+}
+
+void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
+{
+    ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
+    if (updated_style.size())
+        updated_style << '|';
+    updated_style << style;
+    m_node->prop_set_value(prop_name, updated_style);
 }
 
 void rcCtrl::ParseStaticCtrl(ttlib::cview line)
@@ -122,18 +195,7 @@ void rcCtrl::ParseStaticCtrl(ttlib::cview line)
 
     line.moveto_nextword();
 
-    // This should be the label (can be empty but must be quoted).
-    if (line[0] == '"')
-    {
-        ttlib::cstr label;
-        line = StepOverQuote(line, label);
-
-        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
-    }
-    else
-    {
-        throw std::invalid_argument("Expected static control to be followed with quoted label.");
-    }
+    line = GetLabel(line);
 
     ParseCommonStyles(line);
 
@@ -178,21 +240,10 @@ void rcCtrl::ParseStaticCtrl(ttlib::cview line)
         AppendStyle(prop_window_style, "wxST_ELLIPSIZE_START");
     }
 
-    // This should be the id (typically IDC_STATIC).
-    if (line[0] == ',')
-    {
-        ttlib::cstr id;
-        line = StepOverComma(line, id);
-        if (!id.is_sameas("IDC_STATIC"))
-            m_node->prop_set_value(prop_id, id);
-    }
-    else
-    {
-        throw std::invalid_argument("Expected static control label to be followed with a comma and an ID.");
-    }
+    line = GetID(line);
 
     // This should be the dimensions.
-    if (ttlib::is_digit(line[0]) || line[0] == ',')
+    if (line.size() && ttlib::is_digit(line[0]) || line[0] == ',')
     {
         GetDimensions(line);
         if (line.contains("SS_BLACK") || line.contains("SS_GRAYF") || line.contains("SS_WHITE"))
@@ -306,36 +357,11 @@ void rcCtrl::ParsePushButton(ttlib::cview line)
     }
 
     line.moveto_nextword();
-    // This should be the label (can be empty but must be quoted).
-    if (line[0] == '"')
-    {
-        ttlib::cstr label;
-        line = StepOverQuote(line, label);
-        m_node->prop_set_value(prop_label, label);
-    }
-    else
-    {
-        throw std::invalid_argument("Expected static control to be followed with quoted label.");
-    }
+
+    line = GetLabel(line);
 
     ParseCommonStyles(line);
-
-    // This should be the id
-    if (line[0] == ',')
-    {
-        ttlib::cstr id;
-        line = StepOverComma(line, id);
-        if (id == "IDOK")
-            m_node->prop_set_value(prop_id, "wxID_OK");
-        else if (id == "IDCANCEL")
-            m_node->prop_set_value(prop_id, "wxID_CANCEL");
-        else
-            m_node->prop_set_value(prop_id, id);
-    }
-    else
-    {
-        throw std::invalid_argument("Expected static control label to be followed with a comma and an ID.");
-    }
+    line = GetID(line);
 
     // This should be the dimensions.
     if (ttlib::is_digit(line[0]) || line[0] == ',')
@@ -353,26 +379,9 @@ void rcCtrl::ParseGroupBox(ttlib::cview line)
     m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
 
     line.moveto_nextword();
-    // This should be the label (can be empty but must be quoted).
-    if (line[0] == '"')
-    {
-        ttlib::cstr label;
-        line = StepOverQuote(line, label);
-        m_node->prop_set_value(prop_label, label);
-    }
 
-    // This should be the id (typically IDC_STATIC).
-    if (line[0] == ',')
-    {
-        ttlib::cstr id;
-        line = StepOverComma(line, id);
-        if (!id.is_sameas("IDC_STATIC"))
-            m_node->prop_set_value(prop_id, id);
-    }
-    else
-    {
-        throw std::invalid_argument("Expected GROUPBOX label to be followed with a comma and an ID.");
-    }
+    line = GetLabel(line);
+    line = GetID(line);
 
     // This should be the dimensions.
     if (ttlib::is_digit(line[0]) || line[0] == ',')
@@ -421,34 +430,13 @@ void rcCtrl::ParseControlCtrl(ttlib::cview line)
         return;
     }
 
-    ttlib::cstr value;
-    // This should be the label (can be empty but must be quoted).
-    if (line[0] == '"')
-    {
-        line = StepOverQuote(line, value);
-
-        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(value));
-    }
-    else
-    {
-        throw std::invalid_argument("Expected CONTROL to be followed with quoted label.");
-    }
-
-    // This should be the id
-    if (line[0] == ',')
-    {
-        line = StepOverComma(line, value);
-        if (!value.is_sameas("IDC_STATIC"))
-            m_node->prop_set_value(prop_id, value);
-    }
-    else
-    {
-        throw std::invalid_argument("Expected CONTROL label to be followed with a comma and an ID.");
-    }
+    line = GetLabel(line);
+    line = GetID(line);
 
     // This should be the class
     if (line[0] == '"')
     {
+        ttlib::cstr value;
         line = StepOverQuote(line, value);
 
         // This could be a system control like "SysTabControl32"
@@ -571,6 +559,8 @@ void rcCtrl::ParseControlCtrl(ttlib::cview line)
 
     // TODO: [KeyWorks - 05-31-2021] Add once SCROLLBAR is supported
 
+    ttlib::cstr value;
+
     // Step over the style
     line = StepOverComma(line, value);
 
@@ -583,13 +573,4 @@ void rcCtrl::ParseControlCtrl(ttlib::cview line)
     {
         throw std::invalid_argument("Expected CONTROL style to be followed with a comma and dimensions.");
     }
-}
-
-void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
-{
-    ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
-    if (updated_style.size())
-        updated_style << '|';
-    updated_style << style;
-    m_node->prop_set_value(prop_name, updated_style);
 }

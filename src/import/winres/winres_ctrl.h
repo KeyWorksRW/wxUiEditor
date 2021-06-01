@@ -13,10 +13,10 @@
 // version
 struct RC_RECT
 {
-    int32_t left;
-    int32_t top;
-    int32_t right;
-    int32_t bottom;
+    int left;
+    int top;
+    int right;
+    int bottom;
 };
 
 class rcCtrl
@@ -24,12 +24,10 @@ class rcCtrl
 public:
     rcCtrl();
 
-    auto GetNode() const { return m_node; }
+    auto GetNode() const { return m_node.get(); }
+    auto GetNodePtr() const { return m_node; }
 
-    void ParseEditCtrl(ttlib::cview line);
-    void ParseGroupBox(ttlib::cview line);
-    void ParsePushButton(ttlib::cview line);
-    void ParseStaticCtrl(ttlib::cview line);
+    void ParseControlCtrl(ttlib::cview line);
 
     auto GetLeft() const { return m_left; }
     auto GetTop() const { return m_top; }
@@ -41,10 +39,22 @@ public:
 protected:
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
 
+    // Set prop_ to common values (disabled, hidden, scroll, etc.)
     void ParseCommonStyles(ttlib::cview line);
+
+    // Sets m_left, m_top, m_width and m_height in pixel dimensions
     void GetDimensions(ttlib::cview line);
 
+    // This will set prop_id, and return a cview to the position past the id
+    ttlib::cview GetID(ttlib::cview line);
+
+    // This will set prop_label, and return a cview to the position past the id
+    ttlib::cview GetLabel(ttlib::cview line);
+
+    // Returns a view past the closing quote, or an empty view if there was no closing quote
     ttlib::cview StepOverQuote(ttlib::cview line, ttlib::cstr& str);
+
+    // Retrieves any string between commas, returns view past the closing comma
     ttlib::cview StepOverComma(ttlib::cview line, ttlib::cstr& str);
 
 private:
@@ -61,7 +71,4 @@ private:
 
     // These are in dialog coordinates
     RC_RECT m_rc { 0, 0, 0, 0 };
-
-    int m_minHeight;
-    int m_minWidth;
 };

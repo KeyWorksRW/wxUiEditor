@@ -66,6 +66,9 @@ void rcForm::ParseDialog(ttlib::textfile& txtfile, size_t& curTxtLine)
         }
     }
     m_node->prop_set_value(prop_id, value);
+#if defined(_DEBUG)
+    m_form_id = value;
+#endif  // _DEBUG
 
     // Note that we can't change the name here or we won't match with the list of names saved from the dialog that got
     // the resource file.
@@ -204,28 +207,14 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
 
         if (line.is_sameprefix("END"))
             break;
-        if (line.is_sameprefix("LTEXT") || line.is_sameprefix("CTEXT") || line.is_sameprefix("RTEXT"))
+
+        auto& control = m_ctrls.emplace_back();
+        control.ParseControlCtrl(line);
+        // If the control could not be converted into a node, then remove it from our list
+        if (!control.GetNode())
         {
-            auto& control = m_ctrls.emplace_back();
-            control.ParseStaticCtrl(line);
+            m_ctrls.pop_back();
         }
-        else if (line.is_sameprefix("EDITTEXT"))
-        {
-            auto& control = m_ctrls.emplace_back();
-            control.ParseEditCtrl(line);
-        }
-        else if (line.is_sameprefix("DEFPUSHBUTTON") || line.is_sameprefix("PUSHBUTTON"))
-        {
-            auto& control = m_ctrls.emplace_back();
-            control.ParsePushButton(line);
-        }
-#if 0
-        else if (line.is_sameprefix("GROUPBOX"))
-        {
-            auto& control = m_ctrls.emplace_back();
-            control.ParseGroupBox(line);
-        }
-#endif
     }
 }
 
@@ -268,15 +257,14 @@ void rcForm::GetDimensions(ttlib::cview line)
         throw std::invalid_argument("Expected a numeric dimension value");
     m_rc.bottom = ttlib::atoi(line);
 
-    // The resource file uses dialog coordinates which we need to convert into pixel dimensions. Unfortunately,
-    // the only way to get an exact algorithm is to being running on Windows which has the exact same font
-    // available as is specified for the dialog. The following algorithm assumes 8pt MS Shell Dlg running 1252
-    // codepage.
+    // The resource file uses dialog coordinates which we need to convert into pixel dimensions. We assume that wxWidgets
+    // will be using the default Windows 10 font (Segoe UI, 9pt) so we convert to match (note that this is what
+    // rcCtrl::GetDimensions() does).
 
-    m_rc.left = (m_rc.left * 6) / 4;
-    m_rc.right = (m_rc.right * 6) / 4;
-    m_rc.top = (m_rc.top * 13) / 8;
-    m_rc.bottom = (m_rc.bottom * 13) / 8;
+    m_rc.left = (m_rc.left * 7) / 4;
+    m_rc.right = (m_rc.right * 7) / 4;
+    m_rc.top = (m_rc.top * 15) / 8;
+    m_rc.bottom = (m_rc.bottom * 15) / 8;
 }
 
 void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
@@ -290,44 +278,87 @@ void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 
 void rcForm::AddSizersAndChildren()
 {
-    auto parent = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_node.get());
-    m_node->Adopt(parent);
-    m_gridbag = g_NodeCreator.CreateNode(gen_wxGridBagSizer, parent.get());
-    parent->Adopt(m_gridbag);
-
-    // First sort horizontally
+    // First sort all children horizontally
     std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetLeft() < b.GetLeft(); });
 
     // Now sort vertically
     std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetTop() < b.GetTop(); });
 
-    m_row = -1;
+    auto parent = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_node.get());
+    m_node->Adopt(parent);
 
-    m_last_child_top = 0;
+    NodeSharedPtr sizer;
 
     for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
     {
-        auto child_node = m_ctrls[idx_child].GetNode();
-        if (child_node)
+        const auto& child = m_ctrls[idx_child];
+        if (child.GetNode()->isGen(gen_wxStaticBoxSizer))
         {
-            m_gridbag->Adopt(child_node);
+            AddStaticBoxChildren(idx_child);
+            parent->Adopt(child.GetNodePtr());
+            continue;
+        }
 
-            if (!isInRange(m_ctrls[idx_child].GetTop(), m_last_child_top))
+        if (idx_child + 1 >= m_ctrls.size())
+        {
+            // If last control is a button, we may need to center or right-align it.
+            if (child.GetNode()->isGen(gen_wxButton))
             {
-                ++m_row;
-                m_column = 0;
-                m_last_child_top = m_ctrls[idx_child].GetTop();
+                int dlg_margin = (GetWidth() / 2) - child.GetWidth();
+                if (child.GetLeft() > dlg_margin)
+                {
+                    if (child.GetRight() < (GetWidth() - dlg_margin))
+                        child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+                    else
+                        child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                }
             }
-            else
+
+            // orphaned child, add to form's top level sizer
+            parent->Adopt(child.GetNodePtr());
+            return;
+        }
+
+        if (m_ctrls[idx_child + 1].GetTop() == child.GetTop())
+        {
+            // If there is more than one child with the same top position, then create a horizontal box sizer
+            // and add all children with the same top position.
+            sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, parent.get());
+            parent->Adopt(sizer);
+            sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
+            while (idx_child < m_ctrls.size() && m_ctrls[idx_child].GetTop() == child.GetTop())
             {
-                ++m_column;
+                // Note that we add the child we are comparing to first.
+                sizer->Adopt(m_ctrls[idx_child].GetNodePtr());
+                ++idx_child;
             }
+        }
+        else
+        {
+            sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent.get());
+            parent->Adopt(sizer);
+            sizer->Adopt(child.GetNodePtr());
 
-            child_node->prop_set_value(prop_row, m_row);
-            child_node->prop_set_value(prop_column, m_column);
+            if (idx_child + 2 < m_ctrls.size())
+            {
+                // If the next two sizers have the same top, then they need to be placed in a horizontal sizer.
+                if (m_ctrls[idx_child + 1].GetTop() == m_ctrls[idx_child + 2].GetTop())
+                    continue;
+            }
+            ++idx_child;
 
-            if (child_node->isGen(gen_wxStaticBoxSizer))
-                AddStaticBoxChildren(idx_child);
+            while (idx_child < m_ctrls.size() && m_ctrls[idx_child].GetTop() != m_ctrls[idx_child - 1].GetTop())
+            {
+                // Note that we add the child we are comparing to first.
+                sizer->Adopt(m_ctrls[idx_child].GetNodePtr());
+                if (idx_child + 2 < m_ctrls.size())
+                {
+                    // If the next two sizers have the same top, then they need to be placed in a horizontal sizer.
+                    if (m_ctrls[idx_child + 1].GetTop() == m_ctrls[idx_child + 2].GetTop())
+                        break;
+                }
+                ++idx_child;
+            }
         }
     }
 }
@@ -340,7 +371,7 @@ void rcForm::AddStaticBoxChildren(size_t& idx_child)
         const auto& child_ctrl = m_ctrls[idx_group_child];
         if (child_ctrl.GetRight() > static_box.GetRight() || child_ctrl.GetTop() > static_box.GetBottom())
             break;
-        static_box.GetNode()->Adopt(child_ctrl.GetNode());
+        static_box.GetNode()->Adopt(child_ctrl.GetNodePtr());
 
         // Update to that caller won't process this child.
         ++idx_child;

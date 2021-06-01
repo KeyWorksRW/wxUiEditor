@@ -33,8 +33,9 @@ public:
     // Call this after
     void AddSizersAndChildren();
     size_t GetFormType() const { return m_form_type; }
-    Node* GetFormNode() { return m_node.get(); }
-    auto GetFormName() { return m_node->prop_as_string(prop_class_name); }
+    Node* GetFormNode() const { return m_node.get(); }
+    auto GetFormName() const { return m_node->prop_as_string(prop_class_name); }
+    int GetWidth() const { return (m_rc.right - m_rc.left); }
 
 protected:
     void AddStaticBoxChildren(size_t& idx_child);
@@ -53,7 +54,8 @@ private:
     std::vector<rcCtrl> m_ctrls;
     size_t m_form_type;
 
-    int m_row;
-    int m_column;
-    int m_last_child_top;
+#if defined(_DEBUG)
+    // Makes it easier to know exactly which form we're looking at in the debugger
+    ttlib::cstr m_form_id;
+#endif // _DEBUG
 };

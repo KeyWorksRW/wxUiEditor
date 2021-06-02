@@ -16,8 +16,9 @@
 
 rcForm::rcForm() {}
 
-void rcForm::ParseDialog(ttlib::textfile& txtfile, size_t& curTxtLine)
+void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine)
 {
+    m_pWinResource = pWinResource;
     auto line = txtfile[curTxtLine].subview();
     auto end = line.find_space();
     if (end == tt::npos)
@@ -209,7 +210,7 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
             break;
 
         auto& control = m_ctrls.emplace_back();
-        control.ParseControlCtrl(line);
+        control.ParseDirective(m_pWinResource, line);
         // If the control could not be converted into a node, then remove it from our list
         if (!control.GetNode())
         {

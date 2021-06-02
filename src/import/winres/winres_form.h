@@ -13,6 +13,8 @@
 #include "node.h"         // Node class
 #include "winres_ctrl.h"  // rcCtrl -- Process Windows Resource control data
 
+class WinResource;
+
 constexpr int32_t FudgeAmount = 3;
 
 // This will either be a wxDialog or a MenuBar
@@ -28,7 +30,7 @@ public:
         form_menu,
     };
 
-    void ParseDialog(ttlib::textfile& txtfile, size_t& curTxtLine);
+    void ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine);
 
     // Call this after
     void AddSizersAndChildren();
@@ -53,6 +55,7 @@ private:
     NodeSharedPtr m_gridbag;
     std::vector<rcCtrl> m_ctrls;
     size_t m_form_type;
+    WinResource* m_pWinResource;
 
 #if defined(_DEBUG)
     // Makes it easier to know exactly which form we're looking at in the debugger

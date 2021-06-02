@@ -209,39 +209,63 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     if (is_control)
     {
         line.moveto_nextword();
-        if (line.contains("BS_3STATE") || line.contains("BS_AUTO3STATE"))
-            m_node = g_NodeCreator.NewNode(gen_Check3State);
-        else if (line.contains("BS_CHECKBOX") || line.contains("BS_AUTOCHECKBOX"))
-            m_node = g_NodeCreator.NewNode(gen_wxCheckBox);
-        else if (line.contains("BS_RADIOBUTTON") || line.contains("BS_AUTORADIOBUTTON"))
+
+        // Start by looking for one of the predefined system classes (see Remarks section of
+        // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowa).
+
+        if (line.contains("\"Button\"", tt::CASE::either))
         {
-            m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
-            if (line.contains("WX_GROUP"))
-                AppendStyle(prop_style, "wxRB_GROUP");
+            if (line.contains("BS_3STATE") || line.contains("BS_AUTO3STATE"))
+                m_node = g_NodeCreator.NewNode(gen_Check3State);
+            else if (line.contains("BS_CHECKBOX") || line.contains("BS_AUTOCHECKBOX"))
+                m_node = g_NodeCreator.NewNode(gen_wxCheckBox);
+            else if (line.contains("BS_RADIOBUTTON") || line.contains("BS_AUTORADIOBUTTON"))
+            {
+                m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
+                if (line.contains("WX_GROUP"))
+                    AppendStyle(prop_style, "wxRB_GROUP");
+            }
+            else if (line.contains("BS_PUSHBUTTON"))
+                m_node = g_NodeCreator.NewNode(gen_wxButton);
+            else if (line.contains("BS_DEFPUSHBUTTON"))
+            {
+                m_node = g_NodeCreator.NewNode(gen_wxButton);
+                m_node->prop_set_value(prop_default, true);
+            }
+            else if (line.contains("BS_COMMANDLINK") || line.contains("BS_DEFCOMMANDLINK"))
+                m_node = g_NodeCreator.NewNode(gen_wxCommandLinkButton);
+            else if (line.contains("BS_PUSHLIKE"))
+                m_node = g_NodeCreator.NewNode(gen_wxToggleButton);
+            else if (line.contains("BS_GROUPBOX"))
+                m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
         }
-        else if (line.contains("BS_PUSHBUTTON"))
-            m_node = g_NodeCreator.NewNode(gen_wxButton);
-        else if (line.contains("BS_DEFPUSHBUTTON"))
+        else if (line.contains("\"Combobox\""))
         {
-            m_node = g_NodeCreator.NewNode(gen_wxButton);
-            m_node->prop_set_value(prop_default, true);
-        }
-        else if (line.contains("BS_COMMANDLINK") || line.contains("BS_DEFCOMMANDLINK"))
-            m_node = g_NodeCreator.NewNode(gen_wxCommandLinkButton);
-        else if (line.contains("BS_PUSHLIKE"))
-            m_node = g_NodeCreator.NewNode(gen_wxToggleButton);
-        else if (line.contains("BS_GROUPBOX"))
-            m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
-        else if (line.contains("CBS_"))
             m_node = g_NodeCreator.NewNode(gen_wxComboBox);
-        else if (line.contains("ES_"))
+        }
+        else if (line.contains("\"Edit\""))
+        {
             m_node = g_NodeCreator.NewNode(gen_wxTextCtrl);
-        else if (line.contains("SS_"))
-            m_node = g_NodeCreator.NewNode(gen_wxStaticText);
-        else if (line.contains("LBS_"))
+        }
+        else if (line.contains("\"Listbox\""))
+        {
             m_node = g_NodeCreator.NewNode(gen_wxListBox);
-        else if (line.contains("SBS_"))
+        }
+        else if (line.contains("\"RichEdit\"") || line.contains("\"RICHEDIT_CLASS\""))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxRichTextCtrl);
+        }
+        else if (line.contains("\"Scrollbar\""))
+        {
             m_node = g_NodeCreator.NewNode(gen_wxScrollBar);
+        }
+        else if (line.contains("\"Static\""))
+        {
+            if (line.contains("SS_BITMAP") || line.contains("SS_ICON"))
+                m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
+            else
+                m_node = g_NodeCreator.NewNode(gen_wxStaticText);
+        }
 
         else
         {
@@ -357,6 +381,12 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     if (line.empty())
     {
         m_node.reset();
+        return;
+    }
+
+    if (m_node->isGen(gen_wxStaticBitmap))
+    {
+        ParseImageControl(line);
         return;
     }
 
@@ -599,5 +629,94 @@ void rcCtrl::ParseIconControl(ttlib::cview line)
     // to be generated.
     m_node->prop_set_value(prop_bitmap, prop);
     line = GetID(line);
+    GetDimensions(line);
+}
+
+// Similar to ParseIconControl only in this case line is pointing to the id, and the Node
+// has already been created.
+//
+// Works with either SS_BITMAP or SS_ICON.
+void rcCtrl::ParseImageControl(ttlib::cview line)
+{
+    ttlib::cstr image_name;
+
+    // Unlike a normal text parameter, for the ICON directive it might or might not be in quotes.
+    if (line[0] == '"')
+    {
+        line = StepOverQuote(line, image_name);
+    }
+    else
+    {
+        auto pos_comma = line.find(',');
+        ASSERT_MSG(ttlib::is_found(pos_comma), "Expected a comma after the ICON control text")
+        if (!ttlib::is_found(pos_comma))
+            return;
+        image_name = line.subview(0, pos_comma);
+        line.remove_prefix(pos_comma);
+    }
+
+    ttlib::cstr final_name;
+    std::optional<ttlib::cstr> result;
+
+    if (line.contains("SS_ICON"))
+    {
+        result = m_pWinResource->FindIcon(image_name);
+        ASSERT_MSG(result, ttlib::cstr() << "Couldn't locate icon: " << image_name);
+        if (!result)
+            return;
+        final_name = result.value();
+    }
+    else
+    {
+        result = m_pWinResource->FindBitmap(image_name);
+
+        /*
+            Visual Studio (as if version 16.09) won't necessarily use the correct name if and ICON and BITMAP resource
+            both have the same numerical value. The resource compiler will convert the id name to it's value, and get
+            the correct bitmap, but we don't have that capability.
+
+        */
+        ASSERT_MSG(result, ttlib::cstr() << "Couldn't locate image: " << image_name);
+
+        if (result)
+        {
+            final_name = result.value();
+        }
+    }
+
+    if (final_name.size())
+    {
+        final_name.remove_extension();
+        if (line.contains("SS_ICON"))
+            final_name << "_ico.h";
+        else
+            final_name << "_png.h";
+        ttlib::cstr prop;
+        prop << "Header; " << final_name << "; " << result.value() << "; [-1; -1]";
+
+        // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require the
+        // code to be generated.
+        m_node->prop_set_value(prop_bitmap, prop);
+    }
+
+    line = GetID(line);
+
+    ASSERT_MSG(line.size() && line[0] == '"', "CONTROL directive is missing class");
+
+    // This should be the class
+    if (line.size() && line[0] == '"')
+    {
+        auto pos_comma = line.find(',');
+        ASSERT_MSG(ttlib::is_found(pos_comma), "Expected a comma after the CONTROL class name");
+        if (!ttlib::is_found(pos_comma))
+            return;
+        // Now step over the styl
+        pos_comma = line.find(',');
+        ASSERT_MSG(ttlib::is_found(pos_comma), "Expected a comma after the CONTROL style");
+        if (!ttlib::is_found(pos_comma))
+            return;
+        line.remove_prefix(pos_comma);
+    }
+
     GetDimensions(line);
 }

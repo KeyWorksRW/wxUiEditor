@@ -59,6 +59,12 @@ protected:
     // Retrieves any string between commas, returns view past the closing comma
     ttlib::cview StepOverComma(ttlib::cview line, ttlib::cstr& str);
 
+    // Similar to ParseIconControl only in this case line is pointing to the id, and the Node
+    // has already been created.
+    //
+    // Works with either SS_BITMAP or SS_ICON.
+    void ParseImageControl(ttlib::cview line);
+
     // Icon controls require too much special processing to be inside the ParseDirective()
     // function.
     void ParseIconControl(ttlib::cview line);

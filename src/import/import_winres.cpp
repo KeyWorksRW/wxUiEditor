@@ -79,6 +79,29 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
             m_file[idx] << m_file[idx + 1].view_nonspace();
             m_file.RemoveLine(idx + 1);
         }
+        else
+        {
+            if (m_file[idx].contains("ICON") || m_file[idx].contains("BITMAP"))
+            {
+                auto line = m_file[idx].view_nonspace();
+                ttlib::cstr id;
+                if (line[0] == '"')
+                    id.AssignSubString(line);
+                else
+                    id = line.subview(0, line.find_space());
+                line.moveto_nextword();
+                ttlib::cstr type = line.subview(0, line.find_space());
+                if (!type.is_sameas("ICON") && !type.is_sameas("BITMAP"))
+                    continue;  // type must be an exact match at this point.
+                line.moveto_nextword();
+                ttlib::cstr filename;
+                filename.AssignSubString(line);
+                if (type.is_sameas("ICON"))
+                    m_map_icons[id] = filename;
+                else
+                    m_map_bitmaps[id] = filename;
+            }
+        }
     }
 
     try
@@ -171,7 +194,7 @@ void WinResource::ParseDialog()
             throw std::invalid_argument("Expected dimensions following DIALOG or DIALOGEX.");
 
         auto& form = m_forms.emplace_back();
-        form.ParseDialog(m_file, m_curline);
+        form.ParseDialog(this, m_file, m_curline);
     }
     catch (const std::exception& e)
     {
@@ -210,4 +233,20 @@ void WinResource::FormToNode(rcForm& form)
             }
             return;
     }
+}
+
+std::optional<ttlib::cstr> WinResource::FindIcon(const std::string& id)
+{
+    if (auto result = m_map_icons.find(id); result != m_map_icons.end())
+        return result->second;
+    else
+        return {};
+}
+
+std::optional<ttlib::cstr> WinResource::FindBitmap(const std::string& id)
+{
+    if (auto result = m_map_bitmaps.find(id); result != m_map_bitmaps.end())
+        return result->second;
+    else
+        return {};
 }

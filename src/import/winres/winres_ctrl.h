@@ -9,6 +9,8 @@
 
 #include "node.h"  // Node class
 
+class WinResource;
+
 // Same as the Windows RECT structure -- this version declared to provide a cross-platform
 // version
 struct RC_RECT
@@ -27,7 +29,7 @@ public:
     auto GetNode() const { return m_node.get(); }
     auto GetNodePtr() const { return m_node; }
 
-    void ParseControlCtrl(ttlib::cview line);
+    void ParseDirective(WinResource* pWinResource, ttlib::cview line);
 
     auto GetLeft() const { return m_left; }
     auto GetTop() const { return m_top; }
@@ -57,8 +59,13 @@ protected:
     // Retrieves any string between commas, returns view past the closing comma
     ttlib::cview StepOverComma(ttlib::cview line, ttlib::cstr& str);
 
+    // Icon controls require too much special processing to be inside the ParseDirective()
+    // function.
+    void ParseIconControl(ttlib::cview line);
+
 private:
     NodeSharedPtr m_node;
+    WinResource* m_pWinResource;
 
     // left position in pixel coordinate
     int m_left;

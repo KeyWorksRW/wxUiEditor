@@ -9,8 +9,9 @@
 
 #include "winres_ctrl.h"
 
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
-#include "utils.h"         // Utility functions that work with properties
+#include "../import_winres.h"  // WinResource -- Parse a Windows resource file
+#include "node_creator.h"      // NodeCreator -- Class used to create nodes
+#include "utils.h"             // Utility functions that work with properties
 
 rcCtrl::rcCtrl() {}
 
@@ -199,8 +200,9 @@ void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 
 */
 
-void rcCtrl::ParseControlCtrl(ttlib::cview line)
+void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 {
+    m_pWinResource = pWinResource;
     bool is_control = line.is_sameprefix("CONTROL");
     bool add_wrap_property = false;
 
@@ -326,6 +328,11 @@ void rcCtrl::ParseControlCtrl(ttlib::cview line)
         else if (line.is_sameprefix("STATE3"))
         {
             m_node = g_NodeCreator.NewNode(gen_Check3State);
+        }
+        else if (line.is_sameprefix("ICON"))
+        {
+            ParseIconControl(line);
+            return;
         }
 
         else
@@ -553,4 +560,44 @@ void rcCtrl::ParseControlCtrl(ttlib::cview line)
             m_node->prop_set_value(prop_wrap, m_width);
         }
     }
+}
+
+void rcCtrl::ParseIconControl(ttlib::cview line)
+{
+    line.moveto_nextword();
+
+    ttlib::cstr icon_name;
+
+    // Unlike a normal text parameter, for the ICON directive it might or might not be in quotes.
+    if (line[0] == '"')
+    {
+        line = StepOverQuote(line, icon_name);
+    }
+    else
+    {
+        auto pos_comma = line.find(',');
+        ASSERT_MSG(ttlib::is_found(pos_comma), "Expected a comma after the ICON control text")
+        if (!ttlib::is_found(pos_comma))
+            return;
+        icon_name = line.subview(0, pos_comma);
+        line.remove_prefix(pos_comma);
+    }
+
+    auto result = m_pWinResource->FindIcon(icon_name);
+    ASSERT_MSG(result, ttlib::cstr() << "Couldn't locate icon: " << icon_name);
+    if (!result)
+        return;
+
+    m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
+    ttlib::cstr final_name = result.value();
+    final_name.remove_extension();
+    final_name << "_ico.h";
+    ttlib::cstr prop;
+    prop << "Header; " << final_name << "; " << result.value() << "; [-1; -1]";
+
+    // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require the code
+    // to be generated.
+    m_node->prop_set_value(prop_bitmap, prop);
+    line = GetID(line);
+    GetDimensions(line);
 }

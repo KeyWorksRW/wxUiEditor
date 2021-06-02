@@ -8,8 +8,11 @@ In addition to creating new projects, the following project types can be importe
 - **wxGlade**
 - **wxSmith**
 - **XRC**
+- **Windows Resource Dialogs** (Click [here](docs/import_winres.md) for more information)
 
 ## Building
+
+Currently, **wxUiEditor** can only be built on Windows primarily due to the need for **ttBld.exe**. Once that program builds on Unix, the build system for **wxUiEditor** will be updated to support building on Unix.
 
 In order to build the project, you must have version 1.7.2 or newer of [ttBld.exe](https://github.com/KeyWorksRW/ttBld) either in your path or in the `src/` directory. If you don't already have it, you can copy the version in `ttBld/win`.
 

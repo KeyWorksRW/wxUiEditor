@@ -39,6 +39,8 @@ public:
     auto GetHeight() const { return m_height; }
 
 protected:
+    void ParseTrackBarStyles(ttlib::cview line);
+
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
 
     // Set prop_ to common values (disabled, hidden, scroll, etc.)

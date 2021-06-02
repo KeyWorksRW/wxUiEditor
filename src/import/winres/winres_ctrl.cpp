@@ -210,8 +210,8 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     {
         line.moveto_nextword();
 
-        // Start by looking for one of the predefined system classes (see Remarks section of
-        // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowa).
+        // Start by looking for one of the predefined system classes -- see
+        // https://docs.microsoft.com/en-us/windows/win32/controls/individual-control-info
 
         if (line.contains("\"Button\"", tt::CASE::either))
         {
@@ -265,6 +265,10 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
                 m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
             else
                 m_node = g_NodeCreator.NewNode(gen_wxStaticText);
+        }
+        else if (line.contains("\"msctls_trackbar32\""))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxSlider);
         }
 
         else
@@ -415,158 +419,173 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     }
     ParseCommonStyles(line);
 
-    //////////// Button styles ////////////
-
-    if (line.contains("BS_RIGHT") || line.contains("BS_LEFTTEXT"))
+    bool is_style_processed = false;
+    switch (m_node->gen_name())
     {
-        if (m_node->isGen(gen_wxCheckBox) || m_node->isGen(gen_Check3State))
-            AppendStyle(prop_style, "wxALIGN_RIGHT");
-        else
-            AppendStyle(prop_style, "wxBU_RIGHT");
-    }
-    else if (line.contains("BS_TOP"))
-        AppendStyle(prop_style, "wxBU_TOP");
-    else if (line.contains("BS_BOTTOM"))
-        AppendStyle(prop_style, "wxBU_BOTTOM");
+        case gen_wxSlider:
+            ParseTrackBarStyles(line);
+            is_style_processed = true;
+            break;
 
-    //////////// Combobox styles ////////////
-
-    if (line.contains("CBS_SIMPLE"))
-        AppendStyle(prop_style, "wxCB_SIMPLE");
-    else if (line.contains("CBS_DROPDOWN"))
-        AppendStyle(prop_style, "wxCB_DROPDOWN");
-
-    if (line.contains("CBS_SORT"))
-        AppendStyle(prop_style, "wxCB_DROPDOWN");
-    if (line.contains("ES_CENTER"))
-    {
-        AppendStyle(prop_style, "wxTE_CENTER");
+        default:
+            break;
     }
 
-    //////////// Edit control styles ////////////
+    if (!is_style_processed)
+    {
+        //////////// Button styles ////////////
 
-    if (line.contains("ES_CENTER"))
-    {
-        AppendStyle(prop_style, "wxTE_CENTER");
-    }
-    else if (line.contains("ES_RIGHT"))
-    {
-        AppendStyle(prop_style, "wxTE_RIGHT");
-    }
+        if (line.contains("BS_RIGHT") || line.contains("BS_LEFTTEXT"))
+        {
+            if (m_node->isGen(gen_wxCheckBox) || m_node->isGen(gen_Check3State))
+                AppendStyle(prop_style, "wxALIGN_RIGHT");
+            else
+                AppendStyle(prop_style, "wxBU_RIGHT");
+        }
+        else if (line.contains("BS_TOP"))
+            AppendStyle(prop_style, "wxBU_TOP");
+        else if (line.contains("BS_BOTTOM"))
+            AppendStyle(prop_style, "wxBU_BOTTOM");
 
-    if (line.contains("ES_MULTILINE"))
-    {
-        AppendStyle(prop_style, "wxTE_MULTILINE");
-    }
+        //////////// Combobox styles ////////////
 
-    if (line.contains("ES_PASSWORD"))
-    {
-        AppendStyle(prop_style, "wxTE_PASSWORD");
-    }
+        if (line.contains("CBS_SIMPLE"))
+            AppendStyle(prop_style, "wxCB_SIMPLE");
+        else if (line.contains("CBS_DROPDOWN"))
+            AppendStyle(prop_style, "wxCB_DROPDOWN");
 
-    if (line.contains("ES_READONLY"))
-    {
-        AppendStyle(prop_style, "wxTE_READONLY");
-    }
+        if (line.contains("CBS_SORT"))
+            AppendStyle(prop_style, "wxCB_DROPDOWN");
+        if (line.contains("ES_CENTER"))
+        {
+            AppendStyle(prop_style, "wxTE_CENTER");
+        }
 
-    if (line.contains("ES_WANTRETURN"))
-    {
-        AppendStyle(prop_style, "wxTE_PROCESS_ENTER");
-    }
+        //////////// Edit control styles ////////////
 
-    if (line.contains("ES_NOHIDESEL"))
-    {
-        AppendStyle(prop_style, "wxTE_NOHIDESEL");
-    }
+        if (line.contains("ES_CENTER"))
+        {
+            AppendStyle(prop_style, "wxTE_CENTER");
+        }
+        else if (line.contains("ES_RIGHT"))
+        {
+            AppendStyle(prop_style, "wxTE_RIGHT");
+        }
 
-    /*
+        if (line.contains("ES_MULTILINE"))
+        {
+            AppendStyle(prop_style, "wxTE_MULTILINE");
+        }
 
-     REVIEW: [KeyWorks - 10-24-2019] As far as I can tell, version 3.1 and earlier of wxWidgets does not support
-     the following Windows styles:
+        if (line.contains("ES_PASSWORD"))
+        {
+            AppendStyle(prop_style, "wxTE_PASSWORD");
+        }
 
-        ES_AUTOHSCROLL
-        ES_AUTOVSCROLL
-        ES_LOWERCASE
-        ES_NUMBER  // a validator filter could be used to sort of get this...
-        ES_OEMCONVERT
+        if (line.contains("ES_READONLY"))
+        {
+            AppendStyle(prop_style, "wxTE_READONLY");
+        }
 
-    */
+        if (line.contains("ES_WANTRETURN"))
+        {
+            AppendStyle(prop_style, "wxTE_PROCESS_ENTER");
+        }
 
-    //////////// Static control styles ////////////
+        if (line.contains("ES_NOHIDESEL"))
+        {
+            AppendStyle(prop_style, "wxTE_NOHIDESEL");
+        }
 
-    if (line.contains("SS_SUNKEN"))
-    {
-        AppendStyle(prop_window_style, "wxSUNKEN_BORDER");
-    }
-    if (line.contains("SS_SIMPLE"))
-    {
-        AppendStyle(prop_window_style, "wxBORDER_SIMPLE");
-    }
+        /*
 
-    if (line.contains("SS_BLACKFRAME") || line.contains("SS_BLACKRECT"))
-    {
-        AppendStyle(prop_background_colour, "wxSYS_COLOUR_WINDOWFRAME");
-    }
-    else if (line.contains("SS_GRAYFRAME") || line.contains("SS_GRAYRECT"))
-    {
-        AppendStyle(prop_background_colour, "wxSYS_COLOUR_DESKTOP");
-    }
-    if (line.contains("SS_WHITEFRAME") || line.contains("SS_WHITERECT"))
-    {
-        AppendStyle(prop_background_colour, "wxSYS_COLOUR_WINDOW");
-    }
+         REVIEW: [KeyWorks - 10-24-2019] As far as I can tell, version 3.1 and earlier of wxWidgets does not support
+         the following Windows styles:
 
-    if (line.contains("SS_BLACKRECT") || line.contains("SS_GRAYRECT") || line.contains("SS_WHITERECT"))
-    {
-        // These styles are rectagles with no border
-        AppendStyle(prop_window_style, "wxBORDER_NONE");
-    }
+            ES_AUTOHSCROLL
+            ES_AUTOVSCROLL
+            ES_LOWERCASE
+            ES_NUMBER  // a validator filter could be used to sort of get this...
+            ES_OEMCONVERT
 
-    if (line.contains("SS_ENDELLIPSIS"))
-    {
-        AppendStyle(prop_window_style, "wxST_ELLIPSIZE_END");
-    }
-    else if (line.contains("SS_PATHELLIPSIS"))
-    {
-        AppendStyle(prop_window_style, "wxST_ELLIPSIZE_MIDDLE");
-    }
-    else if (line.contains("SS_WORDELLIPSIS"))
-    {
-        AppendStyle(prop_window_style, "wxST_ELLIPSIZE_START");
-    }
+        */
 
-    if (line.contains("SS_EDITCONTROL"))
-    {
-        add_wrap_property = true;
-    }
+        //////////// Static control styles ////////////
 
-    //////////// List box styles ////////////
+        if (line.contains("SS_SUNKEN"))
+        {
+            AppendStyle(prop_window_style, "wxSUNKEN_BORDER");
+        }
+        if (line.contains("SS_SIMPLE"))
+        {
+            AppendStyle(prop_window_style, "wxBORDER_SIMPLE");
+        }
 
-    if (line.contains("LBS_EXTENDEDSEL"))
-    {
-        m_node->prop_set_value(prop_type, "wxLB_MULTIPLE");
-    }
-    else if (line.contains("LBS_MULTIPLESEL"))
-    {
-        m_node->prop_set_value(prop_type, "wxLB_EXTENDED");
-    }
-    if (line.contains("LBS_SORT") || line.contains("LBS_STANDARD"))
-    {
-        AppendStyle(prop_style, "wxLB_SORT");
-    }
-    if (line.contains("LBS_DISABLENOSCROLL"))
-    {
-        AppendStyle(prop_style, "wxLB_ALWAYS_SB");
-    }
-    if (line.contains("LBS_WANTKEYBOARDINPUT"))
-    {
-        AppendStyle(prop_window_style, "wxWANTS_CHARS");
-    }
+        if (line.contains("SS_BLACKFRAME") || line.contains("SS_BLACKRECT"))
+        {
+            AppendStyle(prop_background_colour, "wxSYS_COLOUR_WINDOWFRAME");
+        }
+        else if (line.contains("SS_GRAYFRAME") || line.contains("SS_GRAYRECT"))
+        {
+            AppendStyle(prop_background_colour, "wxSYS_COLOUR_DESKTOP");
+        }
+        if (line.contains("SS_WHITEFRAME") || line.contains("SS_WHITERECT"))
+        {
+            AppendStyle(prop_background_colour, "wxSYS_COLOUR_WINDOW");
+        }
 
-    //////////// Scrollbar styles ////////////
+        if (line.contains("SS_BLACKRECT") || line.contains("SS_GRAYRECT") || line.contains("SS_WHITERECT"))
+        {
+            // These styles are rectagles with no border
+            AppendStyle(prop_window_style, "wxBORDER_NONE");
+        }
 
-    if (line.contains("SBS_VERT"))
-        m_node->prop_set_value(prop_style, "wxSB_VERTICAL");
+        if (line.contains("SS_ENDELLIPSIS"))
+        {
+            AppendStyle(prop_window_style, "wxST_ELLIPSIZE_END");
+        }
+        else if (line.contains("SS_PATHELLIPSIS"))
+        {
+            AppendStyle(prop_window_style, "wxST_ELLIPSIZE_MIDDLE");
+        }
+        else if (line.contains("SS_WORDELLIPSIS"))
+        {
+            AppendStyle(prop_window_style, "wxST_ELLIPSIZE_START");
+        }
+
+        if (line.contains("SS_EDITCONTROL"))
+        {
+            add_wrap_property = true;
+        }
+
+        //////////// List box styles ////////////
+
+        if (line.contains("LBS_EXTENDEDSEL"))
+        {
+            m_node->prop_set_value(prop_type, "wxLB_MULTIPLE");
+        }
+        else if (line.contains("LBS_MULTIPLESEL"))
+        {
+            m_node->prop_set_value(prop_type, "wxLB_EXTENDED");
+        }
+        if (line.contains("LBS_SORT") || line.contains("LBS_STANDARD"))
+        {
+            AppendStyle(prop_style, "wxLB_SORT");
+        }
+        if (line.contains("LBS_DISABLENOSCROLL"))
+        {
+            AppendStyle(prop_style, "wxLB_ALWAYS_SB");
+        }
+        if (line.contains("LBS_WANTKEYBOARDINPUT"))
+        {
+            AppendStyle(prop_window_style, "wxWANTS_CHARS");
+        }
+
+        //////////// Scrollbar styles ////////////
+
+        if (line.contains("SBS_VERT"))
+            m_node->prop_set_value(prop_style, "wxSB_VERTICAL");
+    }
 
     ttlib::cstr value;
 
@@ -719,4 +738,28 @@ void rcCtrl::ParseImageControl(ttlib::cview line)
     }
 
     GetDimensions(line);
+}
+
+void rcCtrl::ParseTrackBarStyles(ttlib::cview line)
+{
+    if (line.contains("TBS_AUTOTICKS"))
+        AppendStyle(prop_style, "wxSL_AUTOTICKS");
+    if (line.contains("TBS_VERT"))
+        m_node->prop_set_value(prop_orientation, "wxSL_VERTICAL");
+    if (line.contains("TBS_HORZ"))
+        m_node->prop_set_value(prop_orientation, "wxSL_HORIZONTAL");
+    if (line.contains("TBS_TOP"))
+        AppendStyle(prop_style, "wxSL_TOP");
+    if (line.contains("TBS_BOTTOM"))
+        AppendStyle(prop_style, "wxSL_BOTTOM");
+    if (line.contains("TBS_LEFT"))
+        AppendStyle(prop_style, "wxSL_LEFT");
+    if (line.contains("TBS_RIGHT"))
+        AppendStyle(prop_style, "wxSL_RIGHT");
+    if (line.contains("TBS_BOTH"))
+        AppendStyle(prop_style, "wxSL_BOTH");
+    if (line.contains("TBS_ENABLESELRANGE"))
+        AppendStyle(prop_style, "wxSL_SELRANGE");
+    if (line.contains("TBS_REVERSED"))
+        AppendStyle(prop_style, "wxSL_INVERSE");
 }

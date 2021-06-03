@@ -200,6 +200,53 @@ void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 
 */
 
+struct ClassGenPair
+{
+    const char* class_name;
+    GenEnum::GenName gen_name;
+};
+
+// clang-format off
+
+// lst_class_gen is used when CONTROL is specified, and the class parameter is used to
+// deterime what generator to create.
+static const ClassGenPair lst_class_gen[] = {
+
+    { "\"ComboBoxEx32\"", gen_wxTextCtrl },
+    { "\"ComboBox\"", gen_wxComboBox },
+    { "\"Edit\"", gen_wxComboBox },
+    { "\"Listbox\"", gen_wxListBox },
+    { "\"RICHEDIT_CLASS\"", gen_wxRichTextCtrl },
+    { "\"RichEdit20A\"", gen_wxRichTextCtrl },
+    { "\"RichEdit\"", gen_wxRichTextCtrl },
+    { "\"Scrollbar\"", gen_wxScrollBar },
+
+    { "\"msctls_trackbar32\"", gen_wxSlider },
+    { "\"msctls_updown32\"", gen_wxSpinCtrl },
+
+    { "\"SysAnimate32\"", gen_wxAnimationCtrl },
+    { "\"SysListView32\"", gen_wxListView },
+    { "\"SysTreeView32\"", gen_wxTreeListCtrl },
+
+};
+
+// lst_name_gen is used when there is a resource directive rather than a CONTROL directive.
+static const ClassGenPair lst_name_gen[] = {
+
+    { "COMBOBOX", gen_wxComboBox },
+    { "AUTO3STATE", gen_Check3State },
+    { "AUTOCHECKBOX", gen_wxCheckBox },
+    { "CHECKBOX", gen_wxCheckBox },
+    { "EDITTEXT", gen_wxTextCtrl },
+    { "GROUPBOX", gen_wxStaticBoxSizer },
+    { "LISTBOX", gen_wxListBox },
+    { "PUSHBUTTON", gen_wxButton },
+    { "STATE3", gen_Check3State },
+
+};
+
+// clang-format on
+
 void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 {
     m_pWinResource = pWinResource;
@@ -210,10 +257,23 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     {
         line.moveto_nextword();
 
+        for (auto& iter: lst_class_gen)
+        {
+            if (line.contains(iter.class_name, tt::CASE::either))
+            {
+                m_node = g_NodeCreator.NewNode(iter.gen_name);
+                break;
+            }
+        }
+
+        if (m_node)
+        {
+            // do nothing, just the start of the following else clauses
+        }
         // Start by looking for one of the predefined system classes -- see
         // https://docs.microsoft.com/en-us/windows/win32/controls/individual-control-info
 
-        if (line.contains("\"Button\"", tt::CASE::either))
+        else if (line.contains("\"Button\"", tt::CASE::either))
         {
             if (line.contains("BS_3STATE") || line.contains("BS_AUTO3STATE"))
                 m_node = g_NodeCreator.NewNode(gen_Check3State);
@@ -239,69 +299,76 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             else if (line.contains("BS_GROUPBOX"))
                 m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
         }
-        else if (line.contains("\"Combobox\""))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxComboBox);
-        }
-        else if (line.contains("\"Edit\""))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxTextCtrl);
-        }
-        else if (line.contains("\"Listbox\""))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxListBox);
-        }
-        else if (line.contains("\"RichEdit\"") || line.contains("\"RICHEDIT_CLASS\""))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxRichTextCtrl);
-        }
-        else if (line.contains("\"Scrollbar\""))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxScrollBar);
-        }
-        else if (line.contains("\"Static\""))
+        else if (line.contains("\"Static\"", tt::CASE::either))
         {
             if (line.contains("SS_BITMAP") || line.contains("SS_ICON"))
                 m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
             else
                 m_node = g_NodeCreator.NewNode(gen_wxStaticText);
         }
-        else if (line.contains("\"msctls_trackbar32\""))
+        else if (line.contains("\"SysDateTimePick32\"", tt::CASE::either))
         {
-            m_node = g_NodeCreator.NewNode(gen_wxSlider);
+            // Visual Studio 16.09 formt:time simply displays "DTS_UPDOWN" to get the time picker.
+            if (line.contains("DTS_UPDOWN") && !line.contains("DTS_SHORTDATECENTURYFORMAT") &&
+                !line.contains("DTS_LONGDATEFORMAT"))
+            {
+                m_node = g_NodeCreator.NewNode(gen_wxTimePickerCtrl);
+            }
+            else if (line.contains("DTS_TIMEFORMAT"))
+            {
+                m_node = g_NodeCreator.NewNode(gen_wxTimePickerCtrl);
+            }
+
+            else
+                m_node = g_NodeCreator.NewNode(gen_wxDatePickerCtrl);
+        }
+        else if (line.contains("\"MfcButton\"", tt::CASE::either))
+        {
+            m_node = g_NodeCreator.NewNode(gen_wxButton);
+        }
+        else if (line.contains("\"SysTabControl32\"", tt::CASE::either))
+        {
+            if (line.contains("TCS_BUTTONS"))
+                m_node = g_NodeCreator.NewNode(gen_wxToolbook);
+            else
+                m_node = g_NodeCreator.NewNode(gen_wxNotebook);
         }
 
         else
         {
-            // TODO: [KeyWorks - 06-01-2021] If we get here, then we need to look at the class specifies to determine type of
-            // control it is.
+#if defined(_DEBUG)
+            ttlib::cstr msg("Unrecognized CONTROL: ");
+            auto pos = line.find_space();
+            msg << line.subview(0, pos);
+            line.moveto_nextword();
+            msg << ' ' << line;
+            MSG_WARNING(msg);
+#endif  // _DEBUG
 
             return;
         }
     }
     else
     {
-        if (line.is_sameprefix("AUTO3STATE"))
+        for (auto& iter: lst_name_gen)
         {
-            m_node = g_NodeCreator.NewNode(gen_Check3State);
+            if (line.is_sameprefix(iter.class_name, tt::CASE::either))
+            {
+                m_node = g_NodeCreator.NewNode(iter.gen_name);
+                break;
+            }
         }
-        else if (line.is_sameprefix("AUTOCHECKBOX"))
+
+        if (m_node)
         {
-            m_node = g_NodeCreator.NewNode(gen_wxCheckBox);
+            // do nothing, just the start of the following else clauses
         }
+
         else if (line.is_sameprefix("AUTORADIOBUTTON"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
             if (line.contains("WX_GROUP"))
                 AppendStyle(prop_style, "wxRB_GROUP");
-        }
-        else if (line.is_sameprefix("CHECKBOX "))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxCheckBox);
-        }
-        else if (line.is_sameprefix("COMBOBOX"))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxComboBox);
         }
         else if (line.is_sameprefix("CTEXT"))
         {
@@ -315,26 +382,10 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             m_node = g_NodeCreator.NewNode(gen_wxButton);
             m_node->prop_set_value(prop_default, true);
         }
-        else if (line.is_sameprefix("EDITTEXT"))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxTextCtrl);
-        }
-        else if (line.is_sameprefix("GROUPBOX"))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
-        }
-        else if (line.is_sameprefix("LISTBOX"))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxListBox);
-        }
         else if (line.is_sameprefix("LTEXT"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxStaticText);
             m_node->prop_set_value(prop_alignment, "wxALIGN_LEFT");
-        }
-        else if (line.is_sameprefix("PUSHBUTTON"))
-        {
-            m_node = g_NodeCreator.NewNode(gen_wxButton);
         }
         else if (line.is_sameprefix("RTEXT"))
         {
@@ -353,10 +404,6 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             if (line.contains("SBS_VERT"))
                 m_node->prop_set_value(prop_style, "wxSB_VERTICAL");
         }
-        else if (line.is_sameprefix("STATE3"))
-        {
-            m_node = g_NodeCreator.NewNode(gen_Check3State);
-        }
         else if (line.is_sameprefix("ICON"))
         {
             ParseIconControl(line);
@@ -369,7 +416,7 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             // is still the current documentation. So, if we get here the control is unrecognizable.
 
 #if defined(_DEBUG)
-            ttlib::cstr msg("Unrecognized control: ");
+            ttlib::cstr msg("Unrecognized resource directive: ");
             auto pos = line.find_space();
             msg << line.subview(0, pos);
             line.moveto_nextword();
@@ -419,11 +466,80 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     }
     ParseCommonStyles(line);
 
-    bool is_style_processed = false;
+    bool is_style_processed = false;  // true means any non-common styles have been processed
+
     switch (m_node->gen_name())
     {
         case gen_wxSlider:
-            ParseTrackBarStyles(line);
+            ParseStyles(line);
+            is_style_processed = true;
+            break;
+
+        case gen_wxAnimationCtrl:
+            // There are no supported styles for an animation control
+            is_style_processed = true;
+            break;
+
+        case gen_wxButton:
+        case gen_Check3State:
+        case gen_wxCheckBox:
+        case gen_wxRadioButton:
+            ParseButtonStyles(line);
+            is_style_processed = true;
+            break;
+
+        case gen_wxComboBox:
+        case gen_wxBitmapComboBox:
+            ParseStyles(line);
+            is_style_processed = true;
+            break;
+
+        case gen_wxListView:
+            ParseListViewStyles(line);
+            is_style_processed = true;
+            break;
+
+        case gen_wxSpinCtrl:
+            ParseStyles(line);
+            if (line.contains("UDS_AUTOBUDDY") && line.contains("UDS_SETBUDDYINT"))
+                m_non_processed_style = "UDS_AUTOBUDDY";
+            is_style_processed = true;
+            break;
+
+        case gen_wxDatePickerCtrl:
+            ParseStyles(line);
+            is_style_processed = true;
+            break;
+
+        case gen_wxTimePickerCtrl:
+            // There are no supported styles for an Time style DateTime control
+            is_style_processed = true;
+            break;
+
+        case gen_wxGauge:
+            if (line.contains("PBS_SMOOTH"))
+                AppendStyle(prop_style, "wxGA_SMOOTH");
+            if (line.contains("PBS_VERTICAL"))
+                m_node->prop_set_value(prop_orientation, "wxCAL_SHOW_WEEK_NUMBERS");
+            is_style_processed = true;
+            break;
+
+        case gen_wxCalendarCtrl:
+            if (line.contains("MCS_WEEKNUMBERS"))
+                AppendStyle(prop_style, "wxGA_SMOOTH");
+            is_style_processed = true;
+            break;
+
+        case gen_wxTreeCtrl:
+            ParseStyles(line);
+            if (!line.contains("TVS_HASLINES"))
+                AppendStyle(prop_style, "wxTR_NO_LINES");
+            is_style_processed = true;
+            break;
+
+        case gen_wxNotebook:
+        case gen_wxToolbook:
+            ParseStyles(line);
             is_style_processed = true;
             break;
 
@@ -433,34 +549,6 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 
     if (!is_style_processed)
     {
-        //////////// Button styles ////////////
-
-        if (line.contains("BS_RIGHT") || line.contains("BS_LEFTTEXT"))
-        {
-            if (m_node->isGen(gen_wxCheckBox) || m_node->isGen(gen_Check3State))
-                AppendStyle(prop_style, "wxALIGN_RIGHT");
-            else
-                AppendStyle(prop_style, "wxBU_RIGHT");
-        }
-        else if (line.contains("BS_TOP"))
-            AppendStyle(prop_style, "wxBU_TOP");
-        else if (line.contains("BS_BOTTOM"))
-            AppendStyle(prop_style, "wxBU_BOTTOM");
-
-        //////////// Combobox styles ////////////
-
-        if (line.contains("CBS_SIMPLE"))
-            AppendStyle(prop_style, "wxCB_SIMPLE");
-        else if (line.contains("CBS_DROPDOWN"))
-            AppendStyle(prop_style, "wxCB_DROPDOWN");
-
-        if (line.contains("CBS_SORT"))
-            AppendStyle(prop_style, "wxCB_DROPDOWN");
-        if (line.contains("ES_CENTER"))
-        {
-            AppendStyle(prop_style, "wxTE_CENTER");
-        }
-
         //////////// Edit control styles ////////////
 
         if (line.contains("ES_CENTER"))
@@ -740,26 +828,139 @@ void rcCtrl::ParseImageControl(ttlib::cview line)
     GetDimensions(line);
 }
 
-void rcCtrl::ParseTrackBarStyles(ttlib::cview line)
+void rcCtrl::ParseButtonStyles(ttlib::cview line)
 {
-    if (line.contains("TBS_AUTOTICKS"))
-        AppendStyle(prop_style, "wxSL_AUTOTICKS");
-    if (line.contains("TBS_VERT"))
-        m_node->prop_set_value(prop_orientation, "wxSL_VERTICAL");
-    if (line.contains("TBS_HORZ"))
-        m_node->prop_set_value(prop_orientation, "wxSL_HORIZONTAL");
-    if (line.contains("TBS_TOP"))
-        AppendStyle(prop_style, "wxSL_TOP");
-    if (line.contains("TBS_BOTTOM"))
-        AppendStyle(prop_style, "wxSL_BOTTOM");
-    if (line.contains("TBS_LEFT"))
-        AppendStyle(prop_style, "wxSL_LEFT");
-    if (line.contains("TBS_RIGHT"))
-        AppendStyle(prop_style, "wxSL_RIGHT");
-    if (line.contains("TBS_BOTH"))
-        AppendStyle(prop_style, "wxSL_BOTH");
-    if (line.contains("TBS_ENABLESELRANGE"))
-        AppendStyle(prop_style, "wxSL_SELRANGE");
-    if (line.contains("TBS_REVERSED"))
-        AppendStyle(prop_style, "wxSL_INVERSE");
+    if (line.contains("BS_RIGHTBUTTON"))
+    {
+        switch (m_node->gen_name())
+        {
+            case gen_wxCheckBox:
+            case gen_Check3State:
+            case gen_wxRadioButton:
+                AppendStyle(prop_style, "wxALIGN_RIGHT");
+                break;
+
+            case gen_wxButton:
+            case gen_wxToggleButton:
+                AppendStyle(prop_style, "wxBU_RIGHT");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    if (m_node->isGen(gen_wxButton) || m_node->isGen(gen_wxToggleButton))
+    {
+        if (line.contains("BS_TOP"))
+            AppendStyle(prop_style, "wxBU_TOP");
+        else if (line.contains("BS_BOTTOM"))
+            AppendStyle(prop_style, "wxBU_BOTTOM");
+        else if (line.contains("BS_LEFT"))
+            AppendStyle(prop_style, "wxBU_LEFT");
+        else if (line.contains("BS_RIGHT"))
+            AppendStyle(prop_style, "wxBU_RIGHT");
+
+        if (line.contains("BS_FLAT"))
+            AppendStyle(prop_window_style, "wxBORDER_NONE");
+    }
+    else
+    {
+        if (line.contains("BS_RIGHT"))
+            // Note that for this to work, the parent sizer must be vertically aligned with the wxEXPAND flag set.
+            m_node->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+
+        // Bottom and top won't have any effect, and left is the default, so ignore the other styles.
+    }
+
+    if (line.contains("WS_EX_STATICEDGE"))
+        AppendStyle(prop_window_style, "wxBORDER_STATIC");
+}
+
+void rcCtrl::ParseListViewStyles(ttlib::cview line)
+{
+    if (line.contains("LVS_ALIGNLEFT"))
+        AppendStyle(prop_style, "wxLC_ALIGN_LEFT");
+    else if (line.contains("LVS_ALIGNTOP"))
+        AppendStyle(prop_style, "wxLC_ALIGN_TOP");
+
+    if (line.contains("LVS_AUTOARRANGE"))
+        AppendStyle(prop_style, "wxLC_AUTOARRANGE");
+    if (line.contains("LVS_EDITLABELS"))
+        AppendStyle(prop_style, "wxLC_EDIT_LABELS");
+    if (line.contains("LVS_ICON"))
+        AppendStyle(prop_style, "wxLC_ICON");
+    if (line.contains("LVS_SMALLICON"))
+        AppendStyle(prop_style, "wxLC_SMALL_ICON");
+    if (line.contains("LVS_LIST"))
+        AppendStyle(prop_style, "wxLC_LIST");
+    if (line.contains("LVS_REPORT"))
+        AppendStyle(prop_style, "wxLC_REPORT");
+    if (line.contains("LVS_NOCOLUMNHEADER"))
+        AppendStyle(prop_style, "wxLC_NO_HEADER");
+    if (line.contains("LVS_SINGLESEL"))
+        AppendStyle(prop_style, "wxLC_SINGLE_SEL");
+    if (line.contains("LVS_SORTASCENDING"))
+        AppendStyle(prop_style, "wxLC_SORT_ASCENDING");
+    if (line.contains("LVS_SORTDESCENDING"))
+        AppendStyle(prop_style, "wxLC_SORT_DESCENDING");
+}
+
+struct StylePair
+{
+    const char* win_style;
+    const char* wx_style;
+};
+
+// clang-format off
+
+// lst_styles maps a window style to a wxWidgets style that is appended to prop_style.
+static const StylePair lst_styles[] = {
+
+    { "CBS_DROPDOWN", "wxCB_DROPDOWN" },
+    { "CBS_DROPDOWNLIST", "wxCB_READONLY" },
+    { "CBS_SIMPLE", "wxCB_SIMPLE" },
+    { "CBS_SORT", "wxCB_SORT" },
+
+    { "DTS_SHORTDATECENTURYFORMAT", "wxDP_SHOWCENTURY" },
+    { "DTS_UPDOWN", "wxDP_SPIN" },
+
+    { "TCS_BOTTOM", "wxNB_BOTTOM" },  // yes, tcs_bottom and tcs_right both put the tabs at the bottom
+    { "TCS_FIXEDWIDTH", "wxNB_FIXEDWIDTH" },
+    { "TCS_MULTILINE", "wxNB_MULTILINE" },
+    { "TCS_RIGHT", "wxNB_BOTTOM" },
+    { "TCS_VERTICAL", "wxNB_RIGHT" },  // this will conflict if wxNB_BOTTOM is set
+
+    { "TVS_EDITLABELS", "wxTR_EDIT_LABELS" },
+    { "TVS_FULLROWSELECT", "wxTR_FULL_ROW_HIGHLIGHT" },
+    { "TVS_HASBUTTONS", "wxTR_HAS_BUTTONS" },
+    { "TVS_LINESATROOT", "wxTR_LINES_AT_ROOT" },
+
+    { "TBS_AUTOTICKS", "wxSL_AUTOTICKS" },
+    { "TBS_BOTH", "wxSL_BOTH" },
+    { "TBS_BOTTOM", "wxSL_BOTTOM" },
+    { "TBS_ENABLESELRANGE", "wxSL_SELRANGE" },
+    { "TBS_HORZ", "wxSL_HORIZONTAL" },
+    { "TBS_LEFT", "wxSL_LEFT" },
+    { "TBS_REVERSED", "wxSL_INVERSE" },
+    { "TBS_RIGHT", "wxSL_RIGHT" },
+    { "TBS_TOP", "wxSL_TOP" },
+    { "TBS_VERT", "wxSL_VERTICAL" },
+
+    { "UDS_ALIGNLEFT", "wxALIGN_LEFT" },
+    { "UDS_ALIGNRIGHT", "wxALIGN_RIGHT" },
+    { "UDS_ARROWKEYS", "wxSP_ARROW_KEYS" },
+    { "UDS_WRAP", "wxSP_WRAP" },
+
+};
+
+// clang-format on
+
+void rcCtrl::ParseStyles(ttlib::cview line)
+{
+    for (auto& iter: lst_styles)
+    {
+        if (line.contains(iter.win_style))
+            AppendStyle(prop_style, iter.wx_style);
+    }
 }

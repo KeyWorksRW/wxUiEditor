@@ -216,6 +216,15 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
         {
             m_ctrls.pop_back();
         }
+        else if (control.GetNode()->isGen(gen_wxSpinCtrl) && control.GetPostProcessStyle().contains("UDS_AUTOBUDDY"))
+        {
+            auto cur_pos = m_ctrls.size() - 1;
+            if (cur_pos > 0 && m_ctrls[cur_pos - 1].GetNode()->isGen(gen_wxTextCtrl))
+            {
+                control.GetNode()->prop_set_value(prop_id, m_ctrls[cur_pos - 1].GetNode()->prop_as_string(prop_id));
+                m_ctrls.erase(m_ctrls.begin() + (cur_pos - 1));
+            }
+        }
     }
 }
 

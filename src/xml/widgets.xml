@@ -141,6 +141,8 @@
                 help="Marks the beginning of a new group of radio buttons." />
             <option name="wxRB_SINGLE"
                 help="Creates a radio button which is not part of any radio button group. When this style is used, no other radio buttons will be turned off automatically then this button is checked." />
+            <option name="wxALIGN_RIGHT"
+                help="Aligns the radio button to the right of the text instead of the left." />
         </property>
         <event name="wxEVT_RADIOBUTTON" class="wxCommandEvent"
             help="Generated when the radio button is clicked." />
@@ -165,7 +167,7 @@
                 help="Aligns the label to the bottom of the button. Windows and GTK+ only." />
             <option name="wxBU_LEFT"
                 help="Left-justifies the label. Windows and GTK+ only." />
-                <option name="wxBU_RIGHT"
+            <option name="wxBU_RIGHT"
                 help="Right-justifies the bitmap label. Windows and GTK+ only." />
             <option name="wxBU_TOP"
                 help="Aligns the label to the top of the button. Windows and GTK+ only." />

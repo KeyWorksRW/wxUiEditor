@@ -38,8 +38,14 @@ public:
     auto GetWidth() const { return m_width; }
     auto GetHeight() const { return m_height; }
 
+    auto GetPostProcessStyle() { return m_non_processed_style; }
+
 protected:
-    void ParseTrackBarStyles(ttlib::cview line);
+    // This will map window styles to wxWidgets styles and append them to prop_style
+    void ParseStyles(ttlib::cview line);
+
+    void ParseListViewStyles(ttlib::cview line);
+    void ParseButtonStyles(ttlib::cview line);
 
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
 
@@ -74,6 +80,9 @@ protected:
 private:
     NodeSharedPtr m_node;
     WinResource* m_pWinResource;
+
+    // Some styles like UDS_AUTOBUDDY have to be post-processed during actual layout.
+    ttlib::cstr m_non_processed_style;
 
     // left position in pixel coordinate
     int m_left;

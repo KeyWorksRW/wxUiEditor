@@ -30,6 +30,8 @@ void rcCtrl::ParseCommonStyles(ttlib::cview line)
 
 void rcCtrl::GetDimensions(ttlib::cview line)
 {
+    line.moveto_nonspace();
+
     if (line.empty())
     {
         MSG_ERROR(ttlib::cstr() << "Missing dimensions :" << m_original_line);
@@ -95,6 +97,8 @@ void rcCtrl::GetDimensions(ttlib::cview line)
 
 ttlib::cview rcCtrl::GetID(ttlib::cview line)
 {
+    line.moveto_nonspace();
+
     if (line.empty())
     {
         MSG_ERROR(ttlib::cstr() << "Missing ID :" << m_original_line);
@@ -105,6 +109,15 @@ ttlib::cview rcCtrl::GetID(ttlib::cview line)
     if (line[0] == ',')
     {
         line = StepOverComma(line, id);
+        id.LeftTrim();
+        if (id.is_sameas("-1"))
+        {
+            id = "wxID_ANY";
+        }
+        else if (ttlib::is_digit(id[0]))
+        {
+            id.insert(0, "id_");
+        }
     }
     else
     {
@@ -137,11 +150,14 @@ ttlib::cview rcCtrl::GetID(ttlib::cview line)
     else
         m_node->prop_set_value(prop_id, id);
 
+    line.moveto_nonspace();
     return line;
 }
 
 ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
 {
+    line.moveto_nonspace();
+
     if (line.empty())
     {
         MSG_ERROR(ttlib::cstr() << "Missing label :" << m_original_line);
@@ -160,6 +176,7 @@ ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
         throw std::invalid_argument("Expected a quoted label.");
     }
 
+    line.moveto_nonspace();
     return line;
 }
 
@@ -178,7 +195,9 @@ ttlib::cview rcCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
     if (pos == std::string::npos)
         return ttlib::emptystring;
 
-    return line.subview(pos + 1);
+    line.remove_prefix(pos + 1);
+    line.moveto_nonspace();
+    return line;
 }
 
 void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
@@ -464,7 +483,9 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     }
 
     if (line[0] == '"')
+    {
         line = GetLabel(line);
+    }
     line = GetID(line);
 
     if (is_control)

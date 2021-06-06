@@ -66,6 +66,10 @@ void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, si
             value.erase(value.size() - 1, 1);
         }
     }
+    else if (ttlib::is_digit(value[0]))
+    {
+        value.insert(0, "id_");
+    }
     m_node->prop_set_value(prop_id, value);
 #if defined(_DEBUG)
     m_form_id = value;
@@ -98,7 +102,7 @@ void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, si
             // TODO: [KeyWorks - 10-18-2020] This needs to be ignored for all "standard" fonts, but might be critical
             // for fonts used for non-English dialogs.
         }
-        else if (line.is_sameprefix("BEGIN"))
+        else if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
         {
             ++curTxtLine;
             ParseControls(txtfile, curTxtLine);
@@ -206,7 +210,7 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
         if (line.empty() || line[0] == '/')  // ignore blank lines and comments
             continue;
 
-        if (line.is_sameprefix("END"))
+        if (line.is_sameprefix("END") || line.is_sameprefix("}"))
             break;
 
         auto& control = m_ctrls.emplace_back();
@@ -218,6 +222,9 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
         }
         else if (control.GetNode()->isGen(gen_wxSpinCtrl) && control.GetPostProcessStyle().contains("UDS_AUTOBUDDY"))
         {
+            // A spin control can specifify that the previous control should be considered a "buddy" that responds to changes
+            // in the spin control. In wxWidgets, a spin control already includes an edit control, so we delete the previous
+            // edit control and use it's id for the spin control.
             auto cur_pos = m_ctrls.size() - 1;
             if (cur_pos > 0 && m_ctrls[cur_pos - 1].GetNode()->isGen(gen_wxTextCtrl))
             {

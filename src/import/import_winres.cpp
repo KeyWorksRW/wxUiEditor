@@ -38,7 +38,8 @@ bool WinResource::Import(const ttString& filename, bool write_doc)
         {
             auto pos_end = iter.find(' ');
             auto name = iter.substr(0, pos_end);
-            if (ttlib::is_alpha(name[0]))
+            // Normally a dialog starts with a alphabetical char, but there a few occasions where a digit is used instead.
+            if (ttlib::is_alnum(name[0]))
             {
                 dialogs.emplace_back(name);
             }

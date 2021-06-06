@@ -84,6 +84,10 @@ private:
     // Some styles like UDS_AUTOBUDDY have to be post-processed during actual layout.
     ttlib::cstr m_non_processed_style;
 
+#if defined(_DEBUG)
+    ttlib::cstr m_original_line;
+#endif  // _DEBUG
+
     // left position in pixel coordinate
     int m_left;
     // top position in pixel coordinate

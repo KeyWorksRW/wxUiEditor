@@ -30,9 +30,11 @@ void rcCtrl::ParseCommonStyles(ttlib::cview line)
 
 void rcCtrl::GetDimensions(ttlib::cview line)
 {
-    ASSERT_MSG(line.size(), "Could not locate control's dimensions");
     if (line.empty())
+    {
+        MSG_ERROR(ttlib::cstr() << "Missing dimensions :" << m_original_line);
         return;
+    }
 
     if (line[0] == ',')
         line.moveto_digit();
@@ -93,65 +95,69 @@ void rcCtrl::GetDimensions(ttlib::cview line)
 
 ttlib::cview rcCtrl::GetID(ttlib::cview line)
 {
-    ASSERT_MSG(line.size(), "Could not locate control's id");
-
-    if (line.size())
+    if (line.empty())
     {
-        ttlib::cstr id;
-        if (line[0] == ',')
-        {
-            line = StepOverComma(line, id);
-        }
-        else
-        {
-            auto end = line.find_first_of(',');
-            ASSERT_MSG(ttlib::is_found(end), "Expected a comma after the id");
-            if (!ttlib::is_found(end))
-                end = line.size();
-            id = line.substr(0, end);
-            line.remove_prefix(end < line.size() ? end + 1 : end);
-        }
-
-        if (id == "IDOK")
-            m_node->prop_set_value(prop_id, "wxID_OK");
-        else if (id == "IDCANCEL")
-            m_node->prop_set_value(prop_id, "wxID_CANCEL");
-        else if (id == "IDYES")
-            m_node->prop_set_value(prop_id, "wxID_YES");
-        else if (id == "IDNO")
-            m_node->prop_set_value(prop_id, "wxID_NO");
-        else if (id == "IDABORT")
-            m_node->prop_set_value(prop_id, "wxID_ABORT ");
-        else if (id == "IDCLOSE")
-            m_node->prop_set_value(prop_id, "wxID_CLOSE");
-        else if (id == "IDHELP")
-            m_node->prop_set_value(prop_id, "wxID_HELP");
-        else if (id == "IDC_STATIC")
-            m_node->prop_set_value(prop_id, "wxID_ANY");
-        else
-            m_node->prop_set_value(prop_id, id);
+        MSG_ERROR(ttlib::cstr() << "Missing ID :" << m_original_line);
+        return line;
     }
+
+    ttlib::cstr id;
+    if (line[0] == ',')
+    {
+        line = StepOverComma(line, id);
+    }
+    else
+    {
+        auto end = line.find_first_of(',');
+        if (!ttlib::is_found(end))
+        {
+            MSG_WARNING(ttlib::cstr() << "Missing comma after ID :" << m_original_line);
+            end = line.size();
+        }
+        id = line.substr(0, end);
+        line.remove_prefix(end < line.size() ? end + 1 : end);
+    }
+
+    if (id == "IDOK")
+        m_node->prop_set_value(prop_id, "wxID_OK");
+    else if (id == "IDCANCEL")
+        m_node->prop_set_value(prop_id, "wxID_CANCEL");
+    else if (id == "IDYES")
+        m_node->prop_set_value(prop_id, "wxID_YES");
+    else if (id == "IDNO")
+        m_node->prop_set_value(prop_id, "wxID_NO");
+    else if (id == "IDABORT")
+        m_node->prop_set_value(prop_id, "wxID_ABORT ");
+    else if (id == "IDCLOSE")
+        m_node->prop_set_value(prop_id, "wxID_CLOSE");
+    else if (id == "IDHELP")
+        m_node->prop_set_value(prop_id, "wxID_HELP");
+    else if (id == "IDC_STATIC")
+        m_node->prop_set_value(prop_id, "wxID_ANY");
+    else
+        m_node->prop_set_value(prop_id, id);
+
     return line;
 }
 
 ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
 {
-    ASSERT_MSG(line.size(), "Could not locate control's id");
-
-    if (line.size())
+    if (line.empty())
     {
-        // This should be the label (can be empty but must be quoted).
-        if (line[0] == '"')
-        {
-            ttlib::cstr label;
-            line = StepOverQuote(line, label);
+        MSG_ERROR(ttlib::cstr() << "Missing label :" << m_original_line);
+        return line;
+    }
+    // This should be the label (can be empty but must be quoted).
+    if (line[0] == '"')
+    {
+        ttlib::cstr label;
+        line = StepOverQuote(line, label);
 
-            m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
-        }
-        else
-        {
-            throw std::invalid_argument("Expected a quoted label.");
-        }
+        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
+    }
+    else
+    {
+        throw std::invalid_argument("Expected a quoted label.");
     }
 
     return line;
@@ -249,6 +255,22 @@ static const ClassGenPair lst_name_gen[] = {
 
 void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 {
+#if defined(_DEBUG)
+    // Create a copy of the original line without the extra spaces that can be used to send to our log window if there are
+    // problems processing it.
+
+    m_original_line.clear();
+    auto temp_view = line.subview();
+
+    // First copy the diretive name without the leading whitespace
+    temp_view.moveto_nonspace();
+    m_original_line.assign(temp_view, temp_view.find_space());
+
+    // Now copy the rest of the line after skipping over all the alignment whitespace used after the directive
+    temp_view.moveto_nextword();
+    m_original_line << ' ' << temp_view;
+#endif  // _DEBUG
+
     m_pWinResource = pWinResource;
     bool is_control = line.is_sameprefix("CONTROL");
     bool add_wrap_property = false;
@@ -428,9 +450,9 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         line.moveto_nextword();
     }
 
-    ASSERT_MSG(line.size(), "Unparsable control line.");
     if (line.empty())
     {
+        MSG_ERROR(ttlib::cstr() << "Unparsable control :" << m_original_line);
         m_node.reset();
         return;
     }
@@ -447,8 +469,6 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 
     if (is_control)
     {
-        ASSERT_MSG(line.size() && line[0] == '"', "CONTROL directive is missing class");
-
         // This should be the class
         if (line.size() && line[0] == '"')
         {
@@ -459,6 +479,7 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         }
         else
         {
+            MSG_ERROR(ttlib::cstr() << "CONTROL missing class :" << m_original_line);
             // Without a class, style and dimensions are probably wrong, so just ignore the entire control.
             m_node.reset();
             return;
@@ -683,9 +704,11 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         line = StepOverComma(line, value);
     }
 
-    ASSERT_MSG(line.size() && (ttlib::is_digit(line[0]) || line[0] == ','), "Control is missing dimensions!");
     if (line.empty())
+    {
+        MSG_ERROR(ttlib::cstr() << "Missing dimensions :" << m_original_line);
         return;
+    }
 
     // This should be the dimensions.
     if (line.size() && (ttlib::is_digit(line[0]) || line[0] == ','))
@@ -696,6 +719,10 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         {
             m_node->prop_set_value(prop_wrap, m_width);
         }
+    }
+    else
+    {
+        MSG_ERROR(ttlib::cstr() << "Missing dimensions :" << m_original_line);
     }
 }
 
@@ -713,17 +740,21 @@ void rcCtrl::ParseIconControl(ttlib::cview line)
     else
     {
         auto pos_comma = line.find(',');
-        ASSERT_MSG(ttlib::is_found(pos_comma), "Expected a comma after the ICON control text")
         if (!ttlib::is_found(pos_comma))
+        {
+            MSG_ERROR(ttlib::cstr() << "Missing comma after control text :" << m_original_line);
             return;
+        }
         icon_name = line.subview(0, pos_comma);
         line.remove_prefix(pos_comma);
     }
 
     auto result = m_pWinResource->FindIcon(icon_name);
-    ASSERT_MSG(result, ttlib::cstr() << "Couldn't locate icon: " << icon_name);
     if (!result)
+    {
+        MSG_ERROR(ttlib::cstr() << "Icon not found :" << m_original_line);
         return;
+    }
 
     m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
     ttlib::cstr final_name = result.value();
@@ -755,9 +786,11 @@ void rcCtrl::ParseImageControl(ttlib::cview line)
     else
     {
         auto pos_comma = line.find(',');
-        ASSERT_MSG(ttlib::is_found(pos_comma), "Expected a comma after the ICON control text")
         if (!ttlib::is_found(pos_comma))
+        {
+            MSG_ERROR(ttlib::cstr() << "Missing comma after control text :" << m_original_line);
             return;
+        }
         image_name = line.subview(0, pos_comma);
         line.remove_prefix(pos_comma);
     }
@@ -768,9 +801,11 @@ void rcCtrl::ParseImageControl(ttlib::cview line)
     if (line.contains("SS_ICON"))
     {
         result = m_pWinResource->FindIcon(image_name);
-        ASSERT_MSG(result, ttlib::cstr() << "Couldn't locate icon: " << image_name);
         if (!result)
+        {
+            MSG_ERROR(ttlib::cstr() << "Image not found :" << m_original_line);
             return;
+        }
         final_name = result.value();
     }
     else
@@ -783,11 +818,14 @@ void rcCtrl::ParseImageControl(ttlib::cview line)
             the correct bitmap, but we don't have that capability.
 
         */
-        ASSERT_MSG(result, ttlib::cstr() << "Couldn't locate image: " << image_name);
 
         if (result)
         {
             final_name = result.value();
+        }
+        else
+        {
+            MSG_ERROR(ttlib::cstr() << "Image not found :" << m_original_line);
         }
     }
 
@@ -808,21 +846,33 @@ void rcCtrl::ParseImageControl(ttlib::cview line)
 
     line = GetID(line);
 
-    ASSERT_MSG(line.size() && line[0] == '"', "CONTROL directive is missing class");
+    if (line.empty())
+    {
+        MSG_ERROR(ttlib::cstr() << "Missing class :" << m_original_line);
+        return;
+    }
 
     // This should be the class
     if (line.size() && line[0] == '"')
     {
         auto pos_comma = line.find(',');
-        ASSERT_MSG(ttlib::is_found(pos_comma), "Expected a comma after the CONTROL class name");
         if (!ttlib::is_found(pos_comma))
+        {
+            MSG_ERROR(ttlib::cstr() << "Missing style after class :" << m_original_line);
             return;
-        // Now step over the styl
+        }
+        // Now step over the style
         pos_comma = line.find(',');
-        ASSERT_MSG(ttlib::is_found(pos_comma), "Expected a comma after the CONTROL style");
         if (!ttlib::is_found(pos_comma))
+        {
+            MSG_ERROR(ttlib::cstr() << "Missing dimension after style :" << m_original_line);
             return;
+        }
         line.remove_prefix(pos_comma);
+    }
+    else
+    {
+        MSG_ERROR(ttlib::cstr() << "Missing class :" << m_original_line);
     }
 
     GetDimensions(line);

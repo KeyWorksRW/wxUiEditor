@@ -283,6 +283,13 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 
     // First copy the diretive name without the leading whitespace
     temp_view.moveto_nonspace();
+    auto pos_space = temp_view.find_space();
+    if (ttlib::is_error(pos_space))
+    {
+        MSG_ERROR(ttlib::cstr() << "Invalid directive: " << line);
+        return;
+    }
+
     m_original_line.assign(temp_view, temp_view.find_space());
 
     // Now copy the rest of the line after skipping over all the alignment whitespace used after the directive

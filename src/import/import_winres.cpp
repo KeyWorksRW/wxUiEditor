@@ -22,31 +22,8 @@ WinResource::WinResource() {}
 
 bool WinResource::Import(const ttString& filename, bool write_doc)
 {
-    ttlib::cstr file;
-    file.utf(filename.wx_str());
-    ttlib::textfile rc_file;
-    if (!rc_file.ReadFile(file))
-    {
-        appMsgBox(ttlib::cstr() << "Unable to read the file " << file, "Import Windows Resource");
-        return false;
-    }
-
-    std::vector<ttlib::cstr> dialogs;
-    for (auto& iter: rc_file)
-    {
-        if (iter.contains(" DIALOG"))
-        {
-            auto pos_end = iter.find(' ');
-            auto name = iter.substr(0, pos_end);
-            // Normally a dialog starts with a alphabetical char, but there a few occasions where a digit is used instead.
-            if (ttlib::is_alnum(name[0]))
-            {
-                dialogs.emplace_back(name);
-            }
-        }
-    }
-
-    if (ImportRc(ttlib::cstr() << filename.wx_str(), dialogs))
+    std::vector<ttlib::cstr> forms;
+    if (ImportRc(ttlib::cstr() << filename.wx_str(), forms))
     {
         if (write_doc)
             m_project->CreateDoc(m_docOut);
@@ -56,13 +33,70 @@ bool WinResource::Import(const ttString& filename, bool write_doc)
     return false;
 }
 
-bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dialogs)
+// clang-format off
+static constexpr const auto lst_ignored_includes = {
+
+    "afxres.h",
+    "windows.h",
+    "winres.h",
+
+};
+// clang-format on
+
+bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& forms)
 {
     m_RcFilename = rc_file;
 
     if (!m_file.ReadFile(m_RcFilename))
     {
         return false;
+    }
+
+    // First step though the file to find all #includes. Local header files get stored to an array to add to forms.
+    // #included resource files get added to the end of m_file.
+
+    for (size_t idx = 0; idx < m_file.size(); ++idx)
+    {
+        if (m_file[idx].contains("#include"))
+        {
+            ttlib::cstr name;
+            auto curline = m_file[idx].view_nonspace();
+            name.ExtractSubString(curline, curline.stepover());
+            if (name.size())
+            {
+                auto ext = name.extension();
+                if (ext.is_sameas(".h"))
+                {
+                    bool ignore_file = false;
+                    for (auto& iter: lst_ignored_includes)
+                    {
+                        if (name.is_sameas(iter))
+                        {
+                            ignore_file = true;
+                            break;
+                        }
+                    }
+                    if (!ignore_file)
+                    {
+                        m_include_lines.emplace(curline);
+                    }
+                }
+                else if (ext.is_sameas(".dlg") || ext.contains(".rc"))
+                {
+                    ttlib::cstr path = m_RcFilename;
+                    path.replace_filename(name);
+
+                    ttlib::viewfile sub_file;
+                    if (sub_file.ReadFile(path))
+                    {
+                        for (auto& iter: sub_file)
+                        {
+                            m_file.emplace_back(iter);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
@@ -75,33 +109,39 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     for (size_t idx = 0; idx < m_file.size() - 1; ++idx)
     {
         m_file[idx].trim();
-        if (m_file[idx].size() && (m_file[idx].back() == ',' || m_file[idx].back() == '|'))
+        while (m_file[idx].size() && (m_file[idx].back() == ',' || m_file[idx].back() == '|'))
         {
             m_file[idx] << m_file[idx + 1].view_nonspace();
+            m_file[idx].trim();
             m_file.RemoveLine(idx + 1);
         }
-        else
+
+        if (m_file[idx].size() > 3 && ttlib::is_found(m_file[idx].find("NOT", m_file[idx].size() - 4)))
         {
-            if (m_file[idx].contains("ICON") || m_file[idx].contains("BITMAP"))
-            {
-                auto line = m_file[idx].view_nonspace();
-                ttlib::cstr id;
-                if (line[0] == '"')
-                    id.AssignSubString(line);
-                else
-                    id = line.subview(0, line.find_space());
-                line.moveto_nextword();
-                ttlib::cstr type = line.subview(0, line.find_space());
-                if (!type.is_sameas("ICON") && !type.is_sameas("BITMAP"))
-                    continue;  // type must be an exact match at this point.
-                line.moveto_nextword();
-                ttlib::cstr filename;
-                filename.AssignSubString(line);
-                if (type.is_sameas("ICON"))
-                    m_map_icons[id] = filename;
-                else
-                    m_map_bitmaps[id] = filename;
-            }
+            m_file[idx] << ' ' << m_file[idx + 1].view_nonspace();
+            m_file[idx].trim();
+            m_file.RemoveLine(idx + 1);
+        }
+
+        if (m_file[idx].contains("ICON") || m_file[idx].contains("BITMAP"))
+        {
+            auto line = m_file[idx].view_nonspace();
+            ttlib::cstr id;
+            if (line[0] == '"')
+                id.AssignSubString(line);
+            else
+                id = line.subview(0, line.find_space());
+            line.moveto_nextword();
+            ttlib::cstr type = line.subview(0, line.find_space());
+            if (!type.is_sameas("ICON") && !type.is_sameas("BITMAP"))
+                continue;  // type must be an exact match at this point.
+            line.moveto_nextword();
+            ttlib::cstr filename;
+            filename.AssignSubString(line);
+            if (type.is_sameas("ICON"))
+                m_map_icons[id] = filename;
+            else
+                m_map_bitmaps[id] = filename;
         }
     }
 
@@ -139,6 +179,44 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                         }
                         continue;
                     }
+                    else
+                    {
+                        // This is a custom #ifdef and since we're not a compiler, we have no way of knowing whether the
+                        // definition being checked is true or not. All we can do is assume the #ifdef is true and parse
+                        // until either a #else of #endif.
+
+                        m_file.RemoveLine(m_curline);
+                        for (auto erase_position = m_curline; erase_position < m_file.size(); ++erase_position)
+                        {
+                            curline = m_file[erase_position].view_nonspace();
+                            if (curline.is_sameprefix("#else"))
+                            {
+                                do
+                                {
+                                    m_file.RemoveLine(erase_position);
+                                    curline = m_file[erase_position].view_nonspace();
+                                    if (curline.is_sameprefix("#endif"))
+                                    {
+                                        break;
+                                    }
+                                } while (erase_position < m_file.size());
+                            }
+                            if (curline.is_sameprefix("#endif"))
+                            {
+                                m_file.RemoveLine(erase_position);
+
+                                while (m_file[erase_position - 1].size() && (m_file[erase_position - 1].back() == ',' ||
+                                                                             m_file[erase_position - 1].back() == '|'))
+                                {
+                                    m_file[erase_position - 1] << m_file[erase_position].view_nonspace();
+                                    m_file[erase_position - 1].trim();
+                                    m_file.RemoveLine(erase_position);
+                                }
+
+                                break;
+                            }
+                        }
+                    }
                 }
                 else if (directive.is_sameprefix("pragma"))
                 {
@@ -151,12 +229,17 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
             }
             else if (curline.contains(" DIALOG"))
             {
-                auto pos_end = curline.find(' ');
-                if (auto result = std::find(dialogs.begin(), dialogs.end(), curline.substr(0, pos_end));
-                    result != dialogs.end())
+                if (forms.size())
                 {
-                    ParseDialog();
+                    auto pos_end = curline.find(' ');
+                    if (auto result = std::find(forms.begin(), forms.end(), curline.substr(0, pos_end));
+                        result == forms.end())
+                    {
+                        // dialog id wasn't in the list, so ignore it
+                        continue;
+                    }
                 }
+                ParseDialog();
             }
         }
     }
@@ -171,7 +254,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
         return false;
     }
 
-    InsertDialogs(dialogs);
+    InsertDialogs(forms);
 
     return true;
 }
@@ -208,15 +291,25 @@ void WinResource::ParseDialog()
 
 void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
 {
-    for (auto& dlg_name: dialogs)
+    if (dialogs.size())
+    {
+        for (auto& dlg_name: dialogs)
+        {
+            for (auto& dlg: m_forms)
+            {
+                if (dlg_name.is_sameas(dlg.GetFormName()))
+                {
+                    FormToNode(dlg);
+                    break;
+                }
+            }
+        }
+    }
+    else
     {
         for (auto& dlg: m_forms)
         {
-            if (dlg_name.is_sameas(dlg.GetFormName()))
-            {
-                FormToNode(dlg);
-                break;
-            }
+            FormToNode(dlg);
         }
     }
 }

@@ -24,11 +24,15 @@ public:
     WinResource();
 
     bool Import(const ttString& filename, bool write_doc) override;
-    bool ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& m_dialogs);
+
+    // If forms is empty, then all forms will be parsed
+    bool ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& forms);
     void InsertDialogs(std::vector<ttlib::cstr>& dialogs);
 
     std::optional<ttlib::cstr> FindIcon(const std::string& id);
     std::optional<ttlib::cstr> FindBitmap(const std::string& id);
+
+    auto& GetIncludeLines() { return m_include_lines; }
 
 protected:
     void FormToNode(rcForm& form);
@@ -46,6 +50,7 @@ private:
     ttlib::textfile m_file;
 
     std::vector<rcForm> m_forms;
+    std::set<ttlib::cstr> m_include_lines;
 
     std::map<std::string, ttlib::cstr> m_map_icons;
     std::map<std::string, ttlib::cstr> m_map_bitmaps;

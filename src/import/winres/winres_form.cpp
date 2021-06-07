@@ -11,8 +11,9 @@
 
 #include "winres_form.h"
 
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
+#include "../import_winres.h"  // WinResource -- Parse a Windows resource file
+#include "node_creator.h"   // NodeCreator -- Class used to create nodes
+#include "uifuncs.h"        // Miscellaneous functions for displaying UI
 
 rcForm::rcForm() {}
 
@@ -28,27 +29,12 @@ void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, si
 
     for (size_t idx = curTxtLine; idx < txtfile.size(); ++idx)
     {
-        line = txtfile[curTxtLine].subview(txtfile[idx].find_nonspace());
+        line = txtfile[idx].subview(txtfile[idx].find_nonspace());
         if (line.is_sameprefix("STYLE"))
         {
-            ttlib::cstr style(txtfile[curTxtLine]);
-
-            // A line ending with a , or | character means it is continued onto the next line.
-            while (style.back() == ',' || style.back() == '|')
-            {
-                std::string_view tmp("");
-                for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
-                {
-                    tmp = ttlib::find_nonspace(txtfile[curTxtLine]);
-                    if (!tmp.empty() && tmp[0] != '/')  // ignore blank lines and comments
-                        break;
-                }
-                style += tmp;
-            }
-
-            // Now that we've gathered up all the styles, check for DS_CONTROL -- if that's set, then we need to create a
-            // PanelForm not a wxDialog.
-            isDialog = style.contains("DS_CONTROL");
+            if (line.contains("DS_CONTROL"))
+                isDialog = false;  // This is a panel dialog, typically used by a wizard
+            line = txtfile[curTxtLine].subview();
             break;
         }
     }
@@ -82,6 +68,19 @@ void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, si
     line.remove_prefix(end);
     line.moveto_digit();
     GetDimensions(line);
+
+    auto lst_includes = pWinResource->GetIncludeLines();
+    if (lst_includes.size())
+    {
+        value.clear();
+        for (auto& iter: lst_includes)
+        {
+            if (value.size())
+                value << '\n';
+            value << iter;
+        }
+        m_node->prop_set_value(prop_base_src_includes, value);
+    }
 
     for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
     {

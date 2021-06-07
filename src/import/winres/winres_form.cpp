@@ -348,6 +348,8 @@ void rcForm::AddSizersAndChildren()
                 sizer->Adopt(m_ctrls[idx_child].GetNodePtr());
                 ++idx_child;
             }
+            // In order to properly step through the loop
+            --idx_child;
         }
         else
         {

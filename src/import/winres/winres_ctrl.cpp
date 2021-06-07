@@ -283,9 +283,9 @@ struct ClassGenPair
 // deterime what generator to create.
 static const ClassGenPair lst_class_gen[] = {
 
-    { "\"ComboBoxEx32\"", gen_wxTextCtrl },
+    { "\"ComboBoxEx32\"", gen_wxComboBox },
     { "\"ComboBox\"", gen_wxComboBox },
-    { "\"Edit\"", gen_wxComboBox },
+    { "\"Edit\"", gen_wxTextCtrl },
     { "\"Listbox\"", gen_wxListBox },
     { "\"RICHEDIT_CLASS\"", gen_wxRichTextCtrl },
     { "\"RichEdit20A\"", gen_wxRichTextCtrl },
@@ -346,6 +346,7 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     m_pWinResource = pWinResource;
     bool is_control = line.is_sameprefix("CONTROL");
     bool add_wrap_property = false;
+    bool add_min_width_property = false;
 
     if (is_control)
     {
@@ -702,6 +703,7 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         if (line.contains("SS_SIMPLE"))
         {
             AppendStyle(prop_window_style, "wxBORDER_SIMPLE");
+            add_min_width_property = true;
         }
 
         if (line.contains("SS_BLACKFRAME") || line.contains("SS_BLACKRECT"))
@@ -792,6 +794,12 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         if (add_wrap_property)
         {
             m_node->prop_set_value(prop_wrap, m_width);
+        }
+
+        if (add_min_width_property || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxComboBox) ||
+            m_node->isGen(gen_wxRichTextCtrl))
+        {
+            m_node->prop_set_value(prop_minimum_size, ttlib::cstr() << m_width << "; -1");
         }
     }
     else

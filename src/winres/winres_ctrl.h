@@ -47,6 +47,7 @@ protected:
     void ParseListViewStyles(ttlib::cview line);
     void ParseButtonStyles(ttlib::cview line);
 
+    void AddSpecialStyles(ttlib::cview line);
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
 
     // Set prop_ to common values (disabled, hidden, scroll, etc.)
@@ -99,4 +100,7 @@ private:
 
     // These are in dialog coordinates
     RC_RECT m_rc { 0, 0, 0, 0 };
+
+    bool m_add_min_width_property;
+    bool m_add_wrap_property;
 };

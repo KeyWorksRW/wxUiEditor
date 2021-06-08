@@ -177,19 +177,19 @@ ttlib::cview rcCtrl::GetID(ttlib::cview line)
         line.remove_prefix(end < line.size() ? end + 1 : end);
     }
 
-    if (id == "IDOK")
+    if (id == "IDOK" || id == "1")
         m_node->prop_set_value(prop_id, "wxID_OK");
-    else if (id == "IDCANCEL")
+    else if (id == "IDCANCEL" || id == "2")
         m_node->prop_set_value(prop_id, "wxID_CANCEL");
-    else if (id == "IDYES")
+    else if (id == "IDYES" || id == "6")
         m_node->prop_set_value(prop_id, "wxID_YES");
-    else if (id == "IDNO")
+    else if (id == "IDNO" || id == "7")
         m_node->prop_set_value(prop_id, "wxID_NO");
-    else if (id == "IDABORT")
+    else if (id == "IDABORT" || id == "3")
         m_node->prop_set_value(prop_id, "wxID_ABORT ");
-    else if (id == "IDCLOSE")
+    else if (id == "IDCLOSE" || id == "8")
         m_node->prop_set_value(prop_id, "wxID_CLOSE");
-    else if (id == "IDHELP")
+    else if (id == "IDHELP" || id == "9" || id == "IDD_HELP")
         m_node->prop_set_value(prop_id, "wxID_HELP");
     else if (id == "IDC_STATIC")
         m_node->prop_set_value(prop_id, "wxID_ANY");
@@ -209,18 +209,26 @@ ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
         MSG_ERROR(ttlib::cstr() << "Missing label :" << m_original_line);
         return line;
     }
-    // This should be the label (can be empty but must be quoted).
+
+    ttlib::cstr label;
+
     if (line[0] == '"')
     {
-        ttlib::cstr label;
         line = StepOverQuote(line, label);
-
-        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
     }
     else
     {
-        throw std::invalid_argument("Expected a quoted label.");
+        auto pos = line.find(',');
+        if (ttlib::is_error(pos))
+        {
+            throw std::invalid_argument("Expected a quoted label.");
+        }
+
+        label.assign(line, pos);
+        line.remove_prefix(pos);
     }
+
+    m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
 
     line.moveto_nonspace();
     return line;
@@ -348,6 +356,12 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     bool add_wrap_property = false;
     bool add_min_width_property = false;
 
+    // CONTROL statement is always followed by a label, but some specific directives like
+    // COMBOBOX do not. It's possible that the label is a #defined value, and therefore
+    // non-quoted so we can't rely on the existance of a quote to know for sure that it is a
+    // label or should be treated as an ID.
+    bool label_required = true;
+
     if (is_control)
     {
         line.moveto_nextword();
@@ -380,8 +394,6 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
                 if (line.contains("WX_GROUP"))
                     AppendStyle(prop_style, "wxRB_GROUP");
             }
-            else if (line.contains("BS_PUSHBUTTON"))
-                m_node = g_NodeCreator.NewNode(gen_wxButton);
             else if (line.contains("BS_DEFPUSHBUTTON"))
             {
                 m_node = g_NodeCreator.NewNode(gen_wxButton);
@@ -393,6 +405,11 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
                 m_node = g_NodeCreator.NewNode(gen_wxToggleButton);
             else if (line.contains("BS_GROUPBOX"))
                 m_node = g_NodeCreator.NewNode(gen_wxStaticBoxSizer);
+            else
+            {
+                // This covers BS_PUSHBUTTON and BS_OWNERDRAW or any unsupported style
+                m_node = g_NodeCreator.NewNode(gen_wxButton);
+            }
         }
         else if (line.contains("\"Static\"", tt::CASE::either))
         {
@@ -445,6 +462,8 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     }
     else
     {
+        ////////// This section handles non-CONTROL statements //////////
+
         for (auto& iter: lst_name_gen)
         {
             if (line.is_sameprefix(iter.class_name, tt::CASE::either))
@@ -456,7 +475,10 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 
         if (m_node)
         {
-            // do nothing, just the start of the following else clauses
+            if (m_node->isGen(gen_wxComboBox) || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxListBox))
+            {
+                label_required = false;
+            }
         }
 
         else if (line.is_sameprefix("AUTORADIOBUTTON"))
@@ -530,13 +552,17 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         return;
     }
 
+    ASSERT_MSG(m_node, "Node not created!");
+    if (!m_node)
+        return;
+
     if (m_node->isGen(gen_wxStaticBitmap))
     {
         ParseImageControl(line);
         return;
     }
 
-    if (line[0] == '"')
+    if (label_required)
     {
         line = GetLabel(line);
     }
@@ -829,25 +855,47 @@ void rcCtrl::ParseIconControl(ttlib::cview line)
         }
         icon_name = line.subview(0, pos_comma);
         line.remove_prefix(pos_comma);
+
+        if (ttlib::is_digit(icon_name[0]))
+        {
+            if (auto icon = map_win_stock_icons.find(ttlib::atoi(icon_name)); icon != map_win_stock_icons.end())
+            {
+                icon_name = icon->second;
+            }
+            else if (auto cursor = map_win_stock_cursors.find(ttlib::atoi(icon_name)); cursor != map_win_stock_cursors.end())
+            {
+                icon_name = cursor->second;
+            }
+        }
     }
 
-    auto result = m_pWinResource->FindIcon(icon_name);
-    if (!result)
+    if (auto stock_image = map_win_wx_stock.find(icon_name); stock_image != map_win_wx_stock.end())
     {
-        MSG_ERROR(ttlib::cstr() << "Icon not found :" << m_original_line);
-        return;
+        ttlib::cstr prop;
+        prop << "Art; " << stock_image->second << "; wxART_TOOLBAR; [-1; -1]";
+        m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
+        m_node->prop_set_value(prop_bitmap, prop);
     }
+    else
+    {
+        auto result = m_pWinResource->FindIcon(icon_name);
+        if (!result)
+        {
+            MSG_ERROR(ttlib::cstr() << "Icon not found :" << m_original_line);
+            return;
+        }
 
-    m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
-    ttlib::cstr final_name = result.value();
-    final_name.remove_extension();
-    final_name << "_ico.h";
-    ttlib::cstr prop;
-    prop << "Header; " << final_name << "; " << result.value() << "; [-1; -1]";
+        m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
+        ttlib::cstr final_name = result.value();
+        final_name.remove_extension();
+        final_name << "_ico.h";
+        ttlib::cstr prop;
+        prop << "Header; " << final_name << "; " << result.value() << "; [-1; -1]";
 
-    // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require the code
-    // to be generated.
-    m_node->prop_set_value(prop_bitmap, prop);
+        // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require the
+        // code to be generated.
+        m_node->prop_set_value(prop_bitmap, prop);
+    }
     line = GetID(line);
     GetDimensions(line);
 }

@@ -281,6 +281,9 @@ void rcForm::GetDimensions(ttlib::cview line)
     m_rc.right = (m_rc.right * 7) / 4;
     m_rc.top = (m_rc.top * 15) / 8;
     m_rc.bottom = (m_rc.bottom * 15) / 8;
+
+    m_width = (m_rc.right - m_rc.left);
+    m_height = (m_rc.bottom - m_rc.top);
 }
 
 void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
@@ -342,6 +345,7 @@ void rcForm::AddSizersAndChildren()
             sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, parent.get());
             parent->Adopt(sizer);
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
+
             while (idx_child < m_ctrls.size() && m_ctrls[idx_child].GetTop() == child.GetTop())
             {
                 // Note that we add the child we are comparing to first.
@@ -350,6 +354,12 @@ void rcForm::AddSizersAndChildren()
             }
             // In order to properly step through the loop
             --idx_child;
+
+            if (m_ctrls[idx_child].GetLeft() + m_ctrls[idx_child].GetWidth() > m_width - 10)
+            {
+                sizer->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+            }
+
         }
         else
         {
@@ -379,6 +389,8 @@ void rcForm::AddSizersAndChildren()
             }
         }
     }
+
+    parent->FixDuplicateNodeNames();
 }
 
 void rcForm::AddStaticBoxChildren(size_t& idx_child)

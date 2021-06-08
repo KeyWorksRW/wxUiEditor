@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include <ttcvector.h>
-#include <tttextfile.h>
+#include "ttcvector.h"
+#include "tttextfile.h"
 
-#include "winres/winres_form.h"       // rcForm -- Process a Windows Resource form  (usually a dialog)
-#include "import_xml.h"        // ImportXML -- Base class for XML importing
+#include "../import/import_xml.h"  // ImportXML -- Base class for XML importing
+#include "winres_form.h"           // rcForm -- Process a Windows Resource form  (usually a dialog)
 
 class NodeCreator;
 class Node;

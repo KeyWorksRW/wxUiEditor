@@ -93,10 +93,6 @@ Files:
     import/import_wxsmith.cpp      # Process XRC files
     import/import_xml.cpp          # Base class for XML importing
 
-    import/import_winres.cpp       # Import a Windows resource file
-    import/winres/winres_ctrl.cpp  # Process Windows Resource control data
-    import/winres/winres_form.cpp  # Process a Windows Resource form (usually a dialog)
-
     mockup/mockup_parent.cpp    # Top-level MockUp Parent window
     mockup/mockup_content.cpp   # Mockup of a form's contents
     mockup/mockup_wizard.cpp    # Emulate a wxWizard
@@ -123,6 +119,14 @@ Files:
     utils/font_prop.cpp         # FontProperty class
     utils/loadxml.cpp           # Load internal xml files
     utils/utils.cpp             # Utility functions that work with properties
+
+    winres/import_winres.cpp    # Import a Windows resource file
+    winres/winres_ctrl.cpp      # Process Windows Resource control data
+    winres/winres_form.cpp      # Process a Windows Resource form (usually a dialog)
+    winres/winres_images.cpp    # rcCtrl class image/icon functions
+    winres/winres_layout.cpp    # rcForm layout code
+    winres/winres_styles.cpp    # rcCtrl style processing functions
+    winres/winres_utils.cpp     # rcCtrl class utility functions
 
     ../pugixml/pugixml.cpp      # XML parser
 

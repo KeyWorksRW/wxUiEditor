@@ -21,11 +21,11 @@
 using namespace GenEnum;
 
 #include "../import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
-#include "../import/import_winres.h"  // WinResource -- Parse a Windows resource file
-#include "../import/import_wxglade.h"  // WxGlade -- Import a wxGlade file
-#include "../import/import_wxsmith.h"  // WxSmith -- Import a wxSmith file
-#include "../ui/newproject.h"  // NewProjectDlg -- Dialog to create a new project
-#include "oldproject.h"  // Load older version of wxUiEditor project
+#include "../import/import_wxglade.h"    // WxGlade -- Import a wxGlade file
+#include "../import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
+#include "../ui/newproject.h"            // NewProjectDlg -- Dialog to create a new project
+#include "../winres/import_winres.h"     // WinResource -- Parse a Windows resource file
+#include "oldproject.h"                  // Load older version of wxUiEditor project
 
 using namespace GenEnum;
 

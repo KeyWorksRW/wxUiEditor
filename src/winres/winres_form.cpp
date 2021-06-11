@@ -292,6 +292,11 @@ ttlib::cstr rcForm::ConvertDialogId(ttlib::cview id)
     {
         value << "id_" << id;
     }
+    else
+    {
+        value = id;
+    }
+
     value.RightTrim();
 
     if (value.is_sameprefix("IDD_"))

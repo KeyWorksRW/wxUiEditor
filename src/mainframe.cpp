@@ -95,6 +95,8 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
     menuDebug->Append(id_DebugPreferences, "Debug &Settings...", "Settings to use in Debug build");
     menuDebug->Append(id_WinResDlg, "Import &Windows Resource...",
                       "Close current project and import a Windows Resource file");
+
+    menuDebug->AppendSeparator();
     menuDebug->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
     m_menubar->Append(menuDebug, "&Debug");

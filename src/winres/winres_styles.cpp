@@ -119,6 +119,9 @@ void rcCtrl::ParseButtonStyles(ttlib::cview line)
 
 void rcCtrl::ParseListViewStyles(ttlib::cview line)
 {
+    // Clear the default style (wxLC_ICON)
+    m_node->prop_set_value(prop_style, "");
+
     if (line.contains("LVS_ALIGNLEFT"))
         AppendStyle(prop_style, "wxLC_ALIGN_LEFT");
     else if (line.contains("LVS_ALIGNTOP"))

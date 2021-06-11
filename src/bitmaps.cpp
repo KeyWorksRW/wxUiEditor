@@ -14,8 +14,8 @@
 
 #include <fstream>
 
+#include <wx/animate.h>  // wxAnimation and wxAnimationCtrl
 #include <wx/mstream.h>  // Memory stream classes
-#include <wx/animate.h>            // wxAnimation and wxAnimationCtrl
 
 #include "bitmaps.h"
 
@@ -28,20 +28,20 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
 
     if (!ttlib::file_exists(filename))
     {
-        FAIL_MSG(ttlib::cstr() << filename << " passed to GetHeaderImage doesn't exist");
+        MSG_ERROR(ttlib::cstr() << filename << " passed to GetHeaderImage doesn't exist");
         return image;
     }
 
     std::ifstream fileOriginal(filename, std::ios::binary | std::ios::in);
     if (!fileOriginal.is_open())
     {
-        FAIL_MSG(ttlib::cstr() << filename << " passed to GetHeaderImage could not be read");
+        MSG_ERROR(ttlib::cstr() << filename << " passed to GetHeaderImage could not be read");
         return image;
     }
     std::string in_buf(std::istreambuf_iterator<char>(fileOriginal), {});
     if (in_buf.size() < 1)
     {
-        FAIL_MSG(ttlib::cstr() << filename << " is empty!");
+        MSG_ERROR(ttlib::cstr() << filename << " is empty!");
         return image;
     }
 
@@ -60,7 +60,7 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
     buf_ptr = strchr(buf_ptr, '{');
     if (!buf_ptr)
     {
-        FAIL_MSG(ttlib::cstr() << filename << " doesn't contain an opening brace");
+        MSG_ERROR(ttlib::cstr() << filename << " doesn't contain an opening brace");
         return image;
     }
 
@@ -108,7 +108,7 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
 
     if (image_buffer_size < 4 || image_buffer_size > in_buf.size() / 2)
     {
-        FAIL_MSG(ttlib::cstr() << filename << " is not a valid graphics header file");
+        MSG_ERROR(ttlib::cstr() << filename << " is not a valid graphics header file");
         return image;
     }
 
@@ -131,8 +131,8 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
 
                 if (++actual_size > image_buffer_size)
                 {
-                    FAIL_MSG(ttlib::cstr()
-                             << filename << " actual image size is larger that the size specified in brackets");
+                    MSG_ERROR(ttlib::cstr()
+                              << filename << " actual image size is larger that the size specified in brackets");
                     return image;
                 }
             }
@@ -179,8 +179,8 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
 
                 if (++actual_size > image_buffer_size)
                 {
-                    FAIL_MSG(ttlib::cstr()
-                             << filename << " actual image size is larger that the size specified in brackets");
+                    MSG_ERROR(ttlib::cstr()
+                              << filename << " actual image size is larger that the size specified in brackets");
                     return image;
                 }
             }
@@ -232,20 +232,20 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
 {
     if (!ttlib::file_exists(filename))
     {
-        FAIL_MSG(ttlib::cstr() << filename << " passed to GetAnimationanimation doesn't exist");
+        MSG_ERROR(ttlib::cstr() << filename << " passed to GetAnimationanimation doesn't exist");
         return animation.IsOk();
     }
 
     std::ifstream fileOriginal(filename, std::ios::binary | std::ios::in);
     if (!fileOriginal.is_open())
     {
-        FAIL_MSG(ttlib::cstr() << filename << " passed to GetAnimationImage could not be read");
+        MSG_ERROR(ttlib::cstr() << filename << " passed to GetAnimationImage could not be read");
         return animation.IsOk();
     }
     std::string in_buf(std::istreambuf_iterator<char>(fileOriginal), {});
     if (in_buf.size() < 1)
     {
-        FAIL_MSG(ttlib::cstr() << filename << " is empty!");
+        MSG_ERROR(ttlib::cstr() << filename << " is empty!");
         return animation.IsOk();
     }
 
@@ -264,7 +264,7 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
     buf_ptr = strchr(buf_ptr, '{');
     if (!buf_ptr)
     {
-        FAIL_MSG(ttlib::cstr() << filename << " doesn't contain an opening brace");
+        MSG_ERROR(ttlib::cstr() << filename << " doesn't contain an opening brace");
         return animation.IsOk();
     }
 
@@ -312,7 +312,7 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
 
     if (image_buffer_size < 4 || image_buffer_size > in_buf.size() / 2)
     {
-        FAIL_MSG(ttlib::cstr() << filename << " is not a valid graphics header file");
+        MSG_ERROR(ttlib::cstr() << filename << " is not a valid graphics header file");
         return animation.IsOk();
     }
 
@@ -335,8 +335,8 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
 
                 if (++actual_size > image_buffer_size)
                 {
-                    FAIL_MSG(ttlib::cstr()
-                             << filename << " actual image size is larger that the size specified in brackets");
+                    MSG_ERROR(ttlib::cstr()
+                              << filename << " actual image size is larger that the size specified in brackets");
                     return animation.IsOk();
                 }
             }
@@ -383,8 +383,8 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
 
                 if (++actual_size > image_buffer_size)
                 {
-                    FAIL_MSG(ttlib::cstr()
-                             << filename << " actual image size is larger that the size specified in brackets");
+                    MSG_ERROR(ttlib::cstr()
+                              << filename << " actual image size is larger that the size specified in brackets");
                     return animation.IsOk();
                 }
             }

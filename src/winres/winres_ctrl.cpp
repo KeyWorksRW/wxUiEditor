@@ -270,6 +270,7 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         else if (line.is_sameprefix("SCROLLBAR"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxScrollBar);
+            label_required = false;
             if (line.contains("SBS_VERT"))
                 m_node->prop_set_value(prop_style, "wxSB_VERTICAL");
         }

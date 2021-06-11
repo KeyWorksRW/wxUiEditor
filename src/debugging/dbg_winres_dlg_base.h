@@ -10,6 +10,7 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listbox.h>
+#include <wx/textctrl.h>
 
 class DbgWinResBase : public wxDialog
 {
@@ -22,6 +23,7 @@ protected:
 
     wxListBox* m_list_files;
     wxListBox* m_list_folders;
+    wxTextCtrl* m_res_file;
 
     // Virtual event handlers -- override them in your derived class
 

@@ -75,6 +75,7 @@ enum
     id_DebugPreferences,
     id_ShowLogger,
     id_NodeMemory,
+    id_WinResDlg
 };
 
 MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
@@ -89,9 +90,11 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 
 #if defined(_DEBUG)
     auto menuDebug = new wxMenu;
-    menuDebug->Append(id_ShowLogger, "Show Log Window", "Show window containing debug messages");
-    menuDebug->Append(id_NodeMemory, "Node Information...", "Show node memory usage");
+    menuDebug->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
+    menuDebug->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
     menuDebug->Append(id_DebugPreferences, "Debug &Settings...", "Settings to use in Debug build");
+    menuDebug->Append(id_WinResDlg, "Import &Windows Resource...",
+                      "Close current project and import a Windows Resource file");
     menuDebug->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
     m_menubar->Append(menuDebug, "&Debug");
@@ -139,7 +142,8 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 #if defined(_DEBUG)
     Bind(
         wxEVT_MENU,
-        [this](wxCommandEvent&) {
+        [this](wxCommandEvent&)
+        {
             DebugSettings dlg(this);
             dlg.ShowModal();
         },
@@ -147,7 +151,8 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 
     Bind(
         wxEVT_MENU,
-        [this](wxCommandEvent&) {
+        [this](wxCommandEvent&)
+        {
             NodeInfo dlg(this);
             dlg.ShowModal();
         },
@@ -156,6 +161,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
     Bind(
         wxEVT_MENU, [](wxCommandEvent&) { g_pMsgLogging->ShowLogger(); }, id_ShowLogger);
 
+    Bind(wxEVT_MENU, &MainFrame::OnDbgImportWinRes, this, id_WinResDlg);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 
@@ -1394,3 +1400,18 @@ Node* MainFrame::FindChildSizerItem(Node* node)
 
     return nullptr;
 }
+
+#if defined(_DEBUG)
+
+    #include "debugging/dbg_winres_dlg.h"
+
+void MainFrame::OnDbgImportWinRes(wxCommandEvent& WXUNUSED(event))
+{
+    DbgWinResDlg dlg(this);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        wxGetApp().ImportProject(dlg.GetFilename());
+    }
+}
+
+#endif  // _DEBUG

@@ -182,7 +182,6 @@ public:
     void ToggleBorderFlag(Node* node, int border);
 
 protected:
-
     void OnAbout(wxCommandEvent& event) override;
     void OnAppendFormBuilder(wxCommandEvent& event) override;
     void OnAppendGlade(wxCommandEvent& event) override;
@@ -193,6 +192,7 @@ protected:
     void OnClose(wxCloseEvent& event) override;
     void OnCopy(wxCommandEvent& event) override;
     void OnCut(wxCommandEvent& event) override;
+    void OnDbgImportWinRes(wxCommandEvent& event);
     void OnDelete(wxCommandEvent& event) override;
     void OnEmbedImageConverter(wxCommandEvent& event) override;
     void OnGenInhertedClass(wxCommandEvent& event) override;

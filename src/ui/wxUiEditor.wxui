@@ -1819,5 +1819,67 @@
           flags="wxEXPAND" />
       </node>
     </node>
+    <node
+      class="wxDialog"
+      base_file="..\debugging\dbg_winres_dlg_base"
+      class_name="DbgWinResBase"
+      derived_class_name="DbgWinResDlg"
+      derived_file="../debugging/dbg_winres_dlg"
+      title="Resource Files"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_3"
+          borders="wxTOP|wxRIGHT|wxLEFT">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Folders:"
+            var_name="staticText"
+            borders="wxTOP|wxRIGHT|wxLEFT" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_2">
+          <node
+            class="wxListBox"
+            var_name="m_list_folders"
+            minimum_size="200,150"
+            wxEVT_LISTBOX="OnSelectFolder" />
+          <node
+            class="wxButton"
+            class_access="none"
+            label="Folder..."
+            var_name="btn"
+            wxEVT_BUTTON="OnFolderBtn" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_4"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Resource Files:"
+            var_name="staticText_2"
+            borders="wxTOP|wxRIGHT|wxLEFT" />
+          <node
+            class="wxListBox"
+            var_name="m_list_files"
+            minimum_size="-1,100"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND"
+          OKButtonClicked="OnAffirmative" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

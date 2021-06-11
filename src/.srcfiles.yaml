@@ -137,7 +137,7 @@ Files:
     ui/newdialog.cpp            # Dialog for creating a new project dialog
     ui/newframe.cpp             # Dialog for creating a new project wxFrame
     ui/newproject.cpp           # Dialog to create a new project
-    ui/newribbon.cpp
+    ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
 
 # wxUiEditor generated files
@@ -170,6 +170,9 @@ DebugFiles:
     debugging/msgframe.cpp       # Stores messages
     debugging/nodeinfo.cpp       # Node memory usage dialog
     debugging/nodeinfo_base.cpp  # wxUiEditor generated file
+
+    debugging/dbg_winres_dlg.cpp       # Convert one or more Windows Resource files
+    debugging/dbg_winres_dlg_base.cpp
 
     ui/debugsettings.cpp         # Settings while running the Debug version of wxUiEditor
     ui/debugsettingsBase.cpp     # wxUiEditor generated file

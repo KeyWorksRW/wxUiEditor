@@ -44,26 +44,11 @@ void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, si
 
     ttlib::cstr value;  // General purpose string we can use throughout this function
     value = line.substr(0, end);
-    if (value[0] == '"')
-    {
-        value.erase(0, 1);
-        if (value.back() == '"')
-        {
-            value.erase(value.size() - 1, 1);
-        }
-    }
-    else if (ttlib::is_digit(value[0]))
-    {
-        value.insert(0, "id_");
-    }
-    m_node->prop_set_value(prop_id, value);
-#if defined(_DEBUG)
-    m_form_id = value;
-#endif  // _DEBUG
+    m_node->prop_set_value(prop_class_name, ConvertDialogId(value));
 
-    // Note that we can't change the name here or we won't match with the list of names saved from the dialog that got
-    // the resource file.
-    m_node->prop_set_value(prop_class_name, line.substr(0, end));
+#if defined(_DEBUG)
+    m_form_id = m_node->prop_as_string(prop_class_name);
+#endif  // _DEBUG
 
     line.remove_prefix(end);
     line.moveto_digit();
@@ -293,4 +278,40 @@ void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
         updated_style << '|';
     updated_style << style;
     m_node->prop_set_value(prop_name, updated_style);
+}
+
+ttlib::cstr rcForm::ConvertDialogId(ttlib::cview id)
+{
+    id.moveto_nonspace();
+    ttlib::cstr value;
+    if (id[0] == '"')
+    {
+        value.AssignSubString(id);
+    }
+    else if (ttlib::is_digit(value[0]))
+    {
+        value << "id_" << id;
+    }
+    value.RightTrim();
+
+    if (value.is_sameprefix("IDD_"))
+        value.erase(0, sizeof("IDD_") - 1);
+
+    if (value.size() > 1 && std::isupper(value[1]))
+    {
+        auto utf8locale = std::locale("en_US.utf8");
+        for (size_t idx = 1; idx < value.size(); ++idx)
+        {
+            if (value[idx] == '_')
+            {
+                value.erase(idx, 1);
+                value[idx] = std::toupper(value[idx], utf8locale);
+            }
+            else
+            {
+                value[idx] = std::tolower(value[idx], utf8locale);
+            }
+        }
+    }
+    return value;
 }

@@ -32,6 +32,10 @@ public:
 
     void ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine);
 
+    // Remove outer quotes, prefix a digit with id_ -- this is how the id gets stored in the
+    // dialog.
+    ttlib::cstr ConvertDialogId(ttlib::cview id);
+
     // Call this after
     void AddSizersAndChildren();
     size_t GetFormType() const { return m_form_type; }

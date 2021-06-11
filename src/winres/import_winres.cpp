@@ -297,7 +297,7 @@ void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
         {
             for (auto& dlg: m_forms)
             {
-                if (dlg_name.is_sameas(dlg.GetFormName()))
+                if (dlg.ConvertDialogId(dlg_name).is_sameas(dlg.GetFormName()))
                 {
                     FormToNode(dlg);
                     break;

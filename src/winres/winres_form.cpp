@@ -293,5 +293,25 @@ ttlib::cstr rcForm::ConvertDialogId(ttlib::cview id)
         value << "id_" << id;
     }
     value.RightTrim();
+
+    if (value.is_sameprefix("IDD_"))
+        value.erase(0, sizeof("IDD_") - 1);
+
+    if (value.size() > 1 && std::isupper(value[1]))
+    {
+        auto utf8locale = std::locale("en_US.utf8");
+        for (size_t idx = 1; idx < value.size(); ++idx)
+        {
+            if (value[idx] == '_')
+            {
+                value.erase(idx, 1);
+                value[idx] = std::toupper(value[idx], utf8locale);
+            }
+            else
+            {
+                value[idx] = std::tolower(value[idx], utf8locale);
+            }
+        }
+    }
     return value;
 }

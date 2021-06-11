@@ -29,9 +29,11 @@ DbgWinResBase::DbgWinResBase(wxWindow* parent) : wxDialog()
 
     m_list_folders = new wxListBox(this, wxID_ANY);
     m_list_folders->SetMinSize(wxSize(200, 150));
+    m_list_folders->SetToolTip(wxString::FromUTF8("This list will be retained between sessions."));
     box_sizer_2->Add(m_list_folders, wxSizerFlags().Border(wxALL));
 
     auto btn = new wxButton(this, wxID_ANY, wxString::FromUTF8("Folder..."));
+    btn->SetToolTip(wxString::FromUTF8("Add a folder to the Folders list."));
     box_sizer_2->Add(btn, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_4 = new wxBoxSizer(wxVERTICAL);
@@ -42,7 +44,12 @@ DbgWinResBase::DbgWinResBase(wxWindow* parent) : wxDialog()
 
     m_list_files = new wxListBox(this, wxID_ANY);
     m_list_files->SetMinSize(wxSize(-1, 100));
+    m_list_files->SetToolTip(wxString::FromUTF8("All the resource files located in all folders underneath the above selected folder."));
     box_sizer_4->Add(m_list_files, wxSizerFlags().Expand().Border(wxALL));
+
+    m_res_file = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    m_res_file->SetToolTip(wxString::FromUTF8("Use this if you need to copy the filename to an editor for previewing."));
+    box_sizer_4->Add(m_res_file, wxSizerFlags().Expand().Border(wxALL));
 
     auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
@@ -54,5 +61,8 @@ DbgWinResBase::DbgWinResBase(wxWindow* parent) : wxDialog()
     Bind(wxEVT_INIT_DIALOG, &DbgWinResBase::OnInit, this);
     m_list_folders->Bind(wxEVT_LISTBOX, &DbgWinResBase::OnSelectFolder, this);
     btn->Bind(wxEVT_BUTTON, &DbgWinResBase::OnFolderBtn, this);
+    m_list_files->Bind(wxEVT_LISTBOX,
+        [this](wxCommandEvent&) { m_res_file->SetValue(m_list_files->GetString(m_list_files->GetSelection())); }
+        );
     Bind(wxEVT_BUTTON, &DbgWinResBase::OnAffirmative, this, wxID_OK);
 }

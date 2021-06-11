@@ -68,6 +68,7 @@ void DbgWinResDlg::OnSelectFolder(wxCommandEvent& WXUNUSED(event))
         if (files.GetCount())
         {
             m_list_files->Select(0);
+            m_res_file->SetValue(m_list_files->GetString(m_list_files->GetSelection()));
         }
     }
 }

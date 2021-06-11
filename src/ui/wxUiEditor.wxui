@@ -1850,12 +1850,14 @@
             class="wxListBox"
             var_name="m_list_folders"
             minimum_size="200,150"
+            tooltip="This list will be retained between sessions."
             wxEVT_LISTBOX="OnSelectFolder" />
           <node
             class="wxButton"
             class_access="none"
             label="Folder..."
             var_name="btn"
+            tooltip="Add a folder to the Folders list."
             wxEVT_BUTTON="OnFolderBtn" />
         </node>
         <node
@@ -1873,6 +1875,13 @@
             class="wxListBox"
             var_name="m_list_files"
             minimum_size="-1,100"
+            tooltip="All the resource files located in all folders underneath the above selected folder."
+            flags="wxEXPAND"
+            wxEVT_LISTBOX="[this](wxCommandEvent&amp;) { m_res_file->SetValue(m_list_files->GetString(m_list_files->GetSelection())); }" />
+          <node
+            class="wxTextCtrl"
+            var_name="m_res_file"
+            tooltip="Use this if you need to copy the filename to an editor for previewing."
             flags="wxEXPAND" />
         </node>
         <node

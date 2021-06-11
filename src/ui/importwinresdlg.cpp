@@ -57,7 +57,7 @@ void ImportWinResDlg::ReadRcFile()
         {
             auto pos_end = iter.find(' ');
             auto name = iter.substr(0, pos_end);
-            if (ttlib::is_alpha(name[0]))
+            if (ttlib::is_alnum(name[0]) || name[0] == '"')
             {
                 auto sel = m_checkListResUI->Append(name);
                 m_checkListResUI->Check(sel);

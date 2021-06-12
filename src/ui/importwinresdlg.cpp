@@ -74,7 +74,7 @@ void ImportWinResDlg::OnResourceFile(wxFileDirPickerEvent& WXUNUSED(event))
 void ImportWinResDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
 {
     auto count = m_checkListResUI->GetCount();
-    for (size_t pos = 0; pos < count; ++pos)
+    for (unsigned int pos = 0; pos < count; ++pos)
     {
         m_checkListResUI->Check(pos);
     }
@@ -83,7 +83,7 @@ void ImportWinResDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
 void ImportWinResDlg::OnClearAll(wxCommandEvent& WXUNUSED(event))
 {
     auto count = m_checkListResUI->GetCount();
-    for (size_t pos = 0; pos < count; ++pos)
+    for (unsigned int pos = 0; pos < count; ++pos)
     {
         m_checkListResUI->Check(pos, false);
     }
@@ -92,7 +92,7 @@ void ImportWinResDlg::OnClearAll(wxCommandEvent& WXUNUSED(event))
 void ImportWinResDlg::OnOk(wxCommandEvent& event)
 {
     auto count = m_checkListResUI->GetCount();
-    for (size_t pos = 0; pos < count; ++pos)
+    for (unsigned int pos = 0; pos < count; ++pos)
     {
         if (m_checkListResUI->IsChecked(pos))
         {

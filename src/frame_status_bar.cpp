@@ -51,7 +51,7 @@ public:
         wxStatusBar::DoUpdateStatusText(number);
     }
 
-    void setText(const ttlib::cstr& txt, size_t pane = 1) { SetStatusText(txt.wx_str(), pane); }
+    void setText(const ttlib::cstr& txt, int pane = 1) { SetStatusText(txt.wx_str(), pane); }
 };
 
 wxStatusBar* MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id, const wxString& name)
@@ -66,7 +66,7 @@ wxStatusBar* MainFrame::OnCreateStatusBar(int number, long style, wxWindowID id,
     return m_statBar;
 }
 
-void MainFrame::setStatusText(const ttlib::cstr& txt, size_t pane)
+void MainFrame::setStatusText(const ttlib::cstr& txt, int pane)
 {
     if (m_statBar)
         m_statBar->setText(txt, pane);

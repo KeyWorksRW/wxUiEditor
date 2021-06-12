@@ -308,7 +308,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
         {
             for (size_t i = 0; i < flagsProp->GetItemCount(); i++)
             {
-                auto id = flagsProp->Item(i);
+                auto id = flagsProp->Item(static_cast<unsigned int>(i));
                 auto& label = id->GetLabel();
                 for (auto& iter: propInfo->GetOptions())
                 {

@@ -33,7 +33,7 @@ void NewProjectDlg::OnOK(wxCommandEvent& event)
 {
     if (!m_checkBoxEmptyProject->IsChecked())
     {
-        for (size_t pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
+        for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
         {
             if (m_checkListProjects->IsChecked(pos))
             {
@@ -151,7 +151,7 @@ void NewProjectDlg::OnWxGlade(wxCommandEvent& WXUNUSED(event))
 
 void NewProjectDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
 {
-    for (size_t pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
+    for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
     {
         m_checkListProjects->Check(pos, true);
     }
@@ -159,7 +159,7 @@ void NewProjectDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
 
 void NewProjectDlg::OnSelectNone(wxCommandEvent& WXUNUSED(event))
 {
-    for (size_t pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
+    for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
     {
         m_checkListProjects->Check(pos, false);
     }

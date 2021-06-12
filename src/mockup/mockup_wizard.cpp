@@ -252,7 +252,7 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
     auto bmp_width = wxMax(bmp.GetScaledWidth(), m_wizard_node->prop_as_int(prop_bmp_min_width));
     auto bmp_height = wxMax(m_largest_nonbmp_page.y, bmp.GetScaledHeight());
 
-    wxBitmap bitmap(bmp_width, bmp_height);
+    wxBitmap bitmap(static_cast<int>(bmp_width), static_cast<int>(bmp_height));
     wxMemoryDC dc;
     dc.SelectObject(bitmap);
     if (m_wizard_node->HasValue(prop_bmp_background_colour))
@@ -263,7 +263,7 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
 
     if (m_bmp_placement & wxWIZARD_TILE)
     {
-        wxWizard::TileBitmap(wxRect(0, 0, bmp_width, bmp_height), dc, bmp);
+        wxWizard::TileBitmap(wxRect(0, 0, static_cast<int>(bmp_width), static_cast<int>(bmp_height)), dc, bmp);
     }
     else
     {
@@ -272,16 +272,16 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
         if (m_bmp_placement & wxWIZARD_HALIGN_LEFT)
             x = 0;
         else if (m_bmp_placement & wxWIZARD_HALIGN_RIGHT)
-            x = bmp_width - bmp.GetScaledWidth();
+            x = static_cast<int>(bmp_width - bmp.GetScaledWidth());
         else
-            x = (bmp_width - bmp.GetScaledWidth()) / 2;
+            x = static_cast<int>((bmp_width - bmp.GetScaledWidth()) / 2);
 
         if (m_bmp_placement & wxWIZARD_VALIGN_TOP)
             y = 0;
         else if (m_bmp_placement & wxWIZARD_VALIGN_BOTTOM)
-            y = bmp_height - bmp.GetScaledHeight();
+            y = static_cast<int>(bmp_height - bmp.GetScaledHeight());
         else
-            y = (bmp_height - bmp.GetScaledHeight()) / 2;
+            y = static_cast<int>((bmp_height - bmp.GetScaledHeight()) / 2);
 
         dc.DrawBitmap(bmp, x, y, true);
         dc.SelectObject(wxNullBitmap);

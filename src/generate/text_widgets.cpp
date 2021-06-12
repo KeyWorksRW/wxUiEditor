@@ -7,11 +7,21 @@
 
 #include "pch.h"
 
+#ifdef _MSC_VER
+    #pragma warning(push)
+
+    #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
+#endif
+
 #include <wx/event.h>                  // Event classes
 #include <wx/html/htmlwin.h>           // wxHtmlWindow class for parsing & displaying HTML
 #include <wx/richtext/richtextctrl.h>  // A rich edit control
 #include <wx/stattext.h>               // wxStaticText base header
 #include <wx/stc/stc.h>                // A wxWidgets implementation of Scintilla.
+
+#ifdef _MSC_VER
+    #pragma warning(pop)
+#endif
 
 #include "text_widgets.h"
 

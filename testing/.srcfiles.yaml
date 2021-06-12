@@ -1,4 +1,4 @@
-# Requires ttBld.exe version 1.4.0 or higher to process -- see https://github.com/KeyWorksRW/ttBld
+# Requires ttBld.exe version 1.8.0 or higher to process -- see https://github.com/KeyWorksRW/ttBld
 
 Options:
     Project:      wxUiTesting  # project name
@@ -11,10 +11,10 @@ Options:
     Crt_dbg:      dll          # [static | dll] type of CRT to link to in debug builds
     Ms_linker:    true         # true means use link.exe even when compiling with clang
 
-    # Note that if your compiler can generate c++20 code, a lot of deprecated warnings will be generated
-    # CFlags_cmn:   -std:c++latest /Zc:__cplusplus /utf-8 # common compiler flags
-    CFlags_cmn:   -std:c++17 /Zc:__cplusplus /utf-8 # common compiler flags
+    CFlags_cmn:   /Zc:__cplusplus /utf-8 # common compiler flags
 
+    msvc_cmn:     -std:c++latest
+    Clang_cmn:    -std:c++17
 
     CFlags_rel:  /DNDEBUG       # static wxWidgets libraries in release build
     CFlags_dbg:  -DWXUSINGDLL   # dll wxWidgets libraries in debug build

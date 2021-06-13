@@ -395,6 +395,19 @@ ttString& ttString::backslashestoforward()
     return *this;
 }
 
+#if defined(_WIN32)
+
+ttString& ttString::forwardslashestoback()
+{
+    for (auto pos = find('/'); pos != wxString::npos; pos = find('/'))
+    {
+        replace(pos, 1, L"\\");
+    }
+    return *this;
+}
+
+#endif  // _WIN32
+
 ttString ttString::extension() const
 {
     if (empty())

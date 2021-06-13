@@ -70,6 +70,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_aui_position, "aui_position" },
     { prop_aui_row, "aui_row" },
     { prop_auth_needed, "auth_needed" },
+    { prop_auto_complete, "auto_complete" },
     { prop_autosize_cols, "autosize_cols" },
     { prop_autosize_rows, "autosize_rows" },
     { prop_background_colour, "background_colour" },

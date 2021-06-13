@@ -76,6 +76,17 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
     dir.make_absolute();
     m_fileOriginal->SetInitialDirectory(dir);
 
+#if defined(_WIN32)
+
+    // Windows auto-complete only works with backslashes even though forward slashes work fine for opening directories and
+    // files, and the directory name *must* end with a backslash.
+    dir.addtrailingslash();
+    dir.forwardslashestoback();
+
+    // By setting the path, the user can start typing and immediately get a drop-down list of matchning filenames.
+    m_fileOriginal->SetPath(dir);
+#endif  // _WIN32
+
     dir_property = wxGetApp().GetProject()->prop_as_string(prop_converted_art);
     if (dir_property.size())
         dir = dir_property;
@@ -131,9 +142,14 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     if (!file.file_exists())
         return;
 
+#if !defined(_WIN32)
+    // Don't do this on Windows! If the full path is specified, the user can press CTRL+BACKSPACE to remove extension or
+    // filename and then continue to use auto-complete. If a relative path is specified, then auto-complete stops working.
+
     file.make_relative_wx(m_cwd);
     file.backslashestoforward();
     m_fileOriginal->SetPath(file);
+#endif  // _WIN32
 
     m_staticSave->SetLabelText(wxEmptyString);
     m_staticSize->SetLabelText(wxEmptyString);

@@ -463,3 +463,22 @@ std::vector<ttlib::cstr> ConvertToArrayString(ttlib::cview value)
 
     return array;
 }
+
+wxArrayString ConvertToWxArrayString(ttlib::cview value)
+{
+    wxArrayString array;
+    if (value.empty())
+        return array;
+    ttlib::cstr parse;
+    auto pos = parse.ExtractSubString(value);
+    array.push_back(parse.wx_str());
+
+    for (auto tmp_value = ttlib::stepover(value.data() + pos); tmp_value.size();
+         tmp_value = ttlib::stepover(tmp_value.data() + pos))
+    {
+        pos = parse.ExtractSubString(tmp_value);
+        array.push_back(parse.wx_str());
+    }
+
+    return array;
+}

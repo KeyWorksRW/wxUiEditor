@@ -27,6 +27,7 @@
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
+#include "utils.h"       // Utility functions that work with properties
 
 wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -147,6 +148,12 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
     widget->SetMaxLength(node->prop_as_int(prop_maxlength));
 
+    if (node->HasValue(prop_auto_complete))
+    {
+        auto array = ConvertToWxArrayString(node->prop_as_string(prop_auto_complete));
+        widget->AutoComplete(array);
+    }
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -215,6 +222,19 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenSettings(Node* node, size_t& au
         {
             code << node->get_node_name() << "->SetMaxLength(" << node->prop_as_string(prop_maxlength) << ");";
         }
+    }
+
+    if (node->HasValue(prop_auto_complete))
+    {
+        auto_indent = false;
+        code << "\t{\n\t\twxArrayString tmp_array;\n";
+        auto array = ConvertToArrayString(node->prop_as_string(prop_auto_complete));
+        for (auto& iter: array)
+        {
+            code << "\t\ttmp_array.push_back(wxString::FromUTF8(\"" << iter << "\"));\n";
+        }
+        code << "\t\t" << node->get_node_name() << "->AutoComplete(tmp_array);\n";
+        code << "\t}";
     }
     return code;
 }

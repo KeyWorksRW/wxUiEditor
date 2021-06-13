@@ -59,6 +59,9 @@ ttlib::cstr ConvertEscapeSlashes(ttlib::cview str);
 
 std::vector<ttlib::cstr> ConvertToArrayString(ttlib::cview value);
 
+// Use ConvertToArrayString() to get a vector, this function to get a wxArrayString
+wxArrayString ConvertToWxArrayString(ttlib::cview value);
+
 // Converts a GZIP unsigned char array into an image.
 wxImage LoadGzipImage(const unsigned char* data, size_t size_data);
 

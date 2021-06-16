@@ -1,0 +1,180 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAINTEST DIALOG DISCARDABLE  0, 0, 286, 180
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Main Dialog Test"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,169,160,50,14
+    LTEXT           "My static text.",IDC_STATIC,6,66,50,13
+    CONTROL         "Check 1",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,84,66,43,10
+    CONTROL         "Check 2",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,144,66,43,10
+    CONTROL         "Check 3",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,84,94,43,10
+    CONTROL         "Check 4",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,144,94,43,10
+    COMBOBOX        IDC_COMBO1,207,66,73,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Cancel",IDCANCEL,230,160,50,14
+    GROUPBOX        "Checks",IDC_STATIC,71,52,126,60
+    LTEXT           "Group box in center with vertically aligned controls on either side.",
+                    IDC_STATIC,6,6,274,13
+END
+
+IDD_MAINDLG DIALOG DISCARDABLE  0, 0, 359, 292
+STYLE DS_NOIDLEMSG | DS_CENTER | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
+CAPTION "DlgWiz"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "Folder:",IDC_STATIC,6,6,22,8
+    EDITTEXT        IDTXT_CUR_DIR,46,6,154,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Class name:",IDC_STATIC,6,30,38,8
+    EDITTEXT        IDEDIT_CLASS,46,27,154,14,ES_AUTOHSCROLL
+    LTEXT           "Filename:",IDC_STATIC,6,55,31,8
+    EDITTEXT        IDEDIT_FILE,46,51,154,14,ES_AUTOHSCROLL
+    GROUPBOX        "Dialog Type",IDC_STATIC,223,79,130,128,WS_GROUP
+    CONTROL         "&ttCDlg",IDRADIO_TYPE_CTTDLG,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,236,97,107,10
+    CONTROL         "C&DialogImpl",IDRADIO_TYPE_CDIALOGIMPL,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,236,113,107,10
+    CONTROL         "Resizable",IDCHECK_RESIZABLE_CDIALOG,"Button",
+                    BS_AUTOCHECKBOX,250,125,84,10
+    CONTROL         "CA&xDialogImpl (ActiveX)",IDRADIO_TYPE_CAXDIALOGIMPL,
+                    "Button",BS_AUTORADIOBUTTON | WS_TABSTOP,236,144,107,10
+    CONTROL         "Resizable",IDCHECK_RESIZABLE_CAXDIALOG,"Button",
+                    BS_AUTOCHECKBOX,250,156,84,10
+    CONTROL         "Event handler",IDCHECK_DISP_EVENT,"Button",
+                    BS_AUTOCHECKBOX,250,168,57,10
+    CONTROL         "C&PropertyPageImpl",IDRADIO_TYPE_PROPERTY,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,236,188,107,10
+    DEFPUSHBUTTON   "Create",IDOK,227,270,60,14
+    PUSHBUTTON      "Cancel",IDCANCEL,293,270,60,14
+    LTEXT           "Resource File:",IDC_STATIC,224,6,87,8
+    COMBOBOX        IDCOMBO_RC_FILES,224,18,130,187,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Dialog ID:",IDC_STATIC,224,43,38,8
+    COMBOBOX        IDCOMBO_DLG_IDS,223,53,130,187,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Members",IDC_STATIC,6,79,195,90
+    LISTBOX         IDLIST_MEMBERS,19,94,114,67,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Add...",IDBTN_ADD,142,94,50,14
+    PUSHBUTTON      "&Edit...",IDBTN_EDIT,142,114,50,14
+    PUSHBUTTON      "&Remove",IDBTN_REMOVE,142,134,50,14
+    CONTROL         "Constructor (in code)",IDCHECK_CONSTRUCTOR,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,14,196,77,10
+    CONTROL         "Destructor",IDCHECK_DESTRUCTOR,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,14,208,77,10
+    CONTROL         "OnBegin",IDCHECK_METHOD_INITIALIZE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,14,223,77,10
+    CONTROL         "OnOK",IDCHECK_METHOD_CLOSE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,14,234,77,10
+    CONTROL         "OnCancel",IDCHECK_METHOD_CANCEL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,14,245,77,10
+    CONTROL         "Center window",IDCHECK_CENTER_WINDOW,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,128,196,59,10
+    CONTROL         "Shaded buttons",IDCHECK_SHADED_BUTTONS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,128,208,63,10
+    CONTROL         "Button icons",IDCHECK_ICONS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,128,220,52,10
+    GROUPBOX        "Methods",IDC_STATIC,6,182,99,80
+    GROUPBOX        "Options",IDC_STATIC,117,182,84,80
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAINTEST, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 280
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 174
+    END
+
+    IDD_MAINDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 353
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 284
+        BOTTOMMARGIN, 255
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -39,7 +39,7 @@ void rcCtrl::GetDimensions(ttlib::cview line)
 
     if (line.empty() || !ttlib::is_digit(line[0]))
         throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.left = ttlib::atoi(line);
+    m_rc.SetLeft(ttlib::atoi(line));
 
     auto pos = line.find_first_of(',');
     if (pos == std::string::npos)
@@ -49,7 +49,7 @@ void rcCtrl::GetDimensions(ttlib::cview line)
     line.moveto_digit();
     if (line.empty() || !ttlib::is_digit(line[0]))
         throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.top = ttlib::atoi(line);
+    m_rc.SetTop(ttlib::atoi(line));
 
     pos = line.find_first_of(',');
     if (pos == std::string::npos)
@@ -59,7 +59,7 @@ void rcCtrl::GetDimensions(ttlib::cview line)
     line.moveto_digit();
     if (line.empty() || !ttlib::is_digit(line[0]))
         throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.right = ttlib::atoi(line);
+    m_rc.SetWidth(ttlib::atoi(line));
 
     pos = line.find_first_of(',');
     if (pos == std::string::npos)
@@ -69,7 +69,7 @@ void rcCtrl::GetDimensions(ttlib::cview line)
     line.moveto_digit();
     if (line.empty() || !ttlib::is_digit(line[0]))
         throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.bottom = ttlib::atoi(line);
+    m_rc.SetHeight(ttlib::atoi(line));
 
     /*
 
@@ -85,10 +85,10 @@ void rcCtrl::GetDimensions(ttlib::cview line)
 
     */
 
-    m_left = static_cast<int>((static_cast<int64_t>(m_rc.left) * 7 / 4));
-    m_width = static_cast<int>((static_cast<int64_t>(m_rc.right) * 7 / 4));
-    m_top = static_cast<int>((static_cast<int64_t>(m_rc.top) * 15 / 4));
-    m_height = static_cast<int>((static_cast<int64_t>(m_rc.bottom) * 15 / 4));
+    m_left = static_cast<int>((static_cast<int64_t>(m_rc.GetLeft()) * 7 / 4));
+    m_width = static_cast<int>((static_cast<int64_t>(m_rc.GetWidth()) * 7 / 4));
+    m_top = static_cast<int>((static_cast<int64_t>(m_rc.GetTop()) * 15 / 4));
+    m_height = static_cast<int>((static_cast<int64_t>(m_rc.GetHeight()) * 15 / 4));
 }
 
 ttlib::cview rcCtrl::GetID(ttlib::cview line)

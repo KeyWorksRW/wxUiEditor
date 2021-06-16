@@ -44,7 +44,21 @@ public:
     int GetWidth() const { return m_width; }
 
 protected:
-    void AddStaticBoxChildren(size_t& idx_child);
+    // Adopts child node and sets child flag to indicate it has been added
+    void Adopt(const NodeSharedPtr& node, rcCtrl& child);
+
+    // Fills in m_group_ctrls with every control within the boundaries of the group box
+    void CollectGroupControls(size_t idx_parent);
+
+    // -1 if no horizontal alignment needed
+    // 0 if box sizer needed
+    // > 0 number of columns required for wxFlexGridSizer
+    int GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* p_static_box);
+
+    // Similar to GridSizerNeeded(), but only processes m_group_ctrls
+    int GroupGridSizerNeeded(size_t idx_start) const;
+
+    void AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box);
     void AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine);
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
     void GetDimensions(ttlib::cview line);
@@ -57,14 +71,17 @@ private:
     RC_RECT m_rc { 0, 0, 0, 0 };
     NodeSharedPtr m_node;
     NodeSharedPtr m_gridbag;
-    std::vector<rcCtrl> m_ctrls;
     size_t m_form_type;
     WinResource* m_pWinResource;
 
-    // width in pixels
-    int m_width;
-    // heihgt in pixels
-    int m_height;
+    std::vector<rcCtrl> m_ctrls;
+
+    // This will contain pointers to every control within a wxStaticBoxSizer. It gets reset
+    // every time a new wxStaticBoxSizer needs to be processed (see CollectGroupControls()).
+    std::vector<rcCtrl*> m_group_ctrls;
+
+    int m_width;   // width in pixels
+    int m_height;  // height in pixels
 
 #if defined(_DEBUG)
     // Makes it easier to know exactly which form we're looking at in the debugger

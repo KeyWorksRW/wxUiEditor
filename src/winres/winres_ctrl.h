@@ -37,8 +37,12 @@ public:
     auto GetBottom() const { return (m_top + m_height); }
     auto GetWidth() const { return m_width; }
     auto GetHeight() const { return m_height; }
+    auto& GetDialogRect() const { return m_rc; }
 
-    auto GetPostProcessStyle() { return m_non_processed_style; }
+    auto GetPostProcessStyle() const { return m_non_processed_style; }
+
+    bool isAdded() const { return m_added; }
+    void setAdded() { m_added = true; }
 
 protected:
     // This will map window styles to wxWidgets styles and append them to prop_style
@@ -99,8 +103,10 @@ private:
     int m_height;
 
     // These are in dialog coordinates
-    RC_RECT m_rc { 0, 0, 0, 0 };
+    wxRect m_rc { 0, 0, 0, 0 };
+    // wxRect m_rect;
 
     bool m_add_min_width_property;
     bool m_add_wrap_property;
+    bool m_added { false };
 };

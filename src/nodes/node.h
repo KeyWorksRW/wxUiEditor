@@ -244,6 +244,13 @@ public:
 
     int_t GetAllowableChildren(GenType child_gen_type) const { return m_declaration->GetAllowableChildren(child_gen_type); }
 
+protected:
+    void PostProcessBook(Node* book_node);
+    void PostProcessPage(Node* page_node);
+
+    // wxPanel only, not FormPanel
+    void PostProcessPanel(Node* panel_node);
+
 private:
     NodeSharedPtr m_parent;
 

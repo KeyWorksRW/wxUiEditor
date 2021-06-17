@@ -229,7 +229,7 @@ void rcForm::GetDimensions(ttlib::cview line)
     m_rc.left = ttlib::atoi(line);
 
     auto pos = line.find_first_of(',');
-    if (pos == std::string::npos)
+    if (!ttlib::is_found(pos))
         throw std::invalid_argument("Expected comma-separated dimensions");
 
     line.remove_prefix(pos);
@@ -239,7 +239,7 @@ void rcForm::GetDimensions(ttlib::cview line)
     m_rc.top = ttlib::atoi(line);
 
     pos = line.find_first_of(',');
-    if (pos == std::string::npos)
+    if (!ttlib::is_found(pos))
         throw std::invalid_argument("Expected comma-separated dimensions");
 
     line.remove_prefix(pos);
@@ -249,7 +249,7 @@ void rcForm::GetDimensions(ttlib::cview line)
     m_rc.right = ttlib::atoi(line);
 
     pos = line.find_first_of(',');
-    if (pos == std::string::npos)
+    if (!ttlib::is_found(pos))
         throw std::invalid_argument("Expected comma-separated dimensions");
 
     line.remove_prefix(pos);

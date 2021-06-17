@@ -42,7 +42,7 @@ void rcCtrl::GetDimensions(ttlib::cview line)
     m_rc.SetLeft(ttlib::atoi(line));
 
     auto pos = line.find_first_of(',');
-    if (pos == std::string::npos)
+    if (!ttlib::is_found(pos))
         throw std::invalid_argument("Expected comma-separated dimensions");
 
     line.remove_prefix(pos);
@@ -52,7 +52,7 @@ void rcCtrl::GetDimensions(ttlib::cview line)
     m_rc.SetTop(ttlib::atoi(line));
 
     pos = line.find_first_of(',');
-    if (pos == std::string::npos)
+    if (!ttlib::is_found(pos))
         throw std::invalid_argument("Expected comma-separated dimensions");
 
     line.remove_prefix(pos);
@@ -62,7 +62,7 @@ void rcCtrl::GetDimensions(ttlib::cview line)
     m_rc.SetWidth(ttlib::atoi(line));
 
     pos = line.find_first_of(',');
-    if (pos == std::string::npos)
+    if (!ttlib::is_found(pos))
         throw std::invalid_argument("Expected comma-separated dimensions");
 
     line.remove_prefix(pos);
@@ -169,7 +169,7 @@ ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
     else
     {
         auto pos = line.find(',');
-        if (ttlib::is_error(pos))
+        if (!ttlib::is_found(pos))
         {
             throw std::invalid_argument("Expected a quoted label.");
         }
@@ -187,7 +187,7 @@ ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
 ttlib::cview rcCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
 {
     auto pos = str.AssignSubString(line, '"', '"');
-    if (pos == std::string::npos || line[pos] != '"')
+    if (!ttlib::is_found(pos) || line[pos] != '"')
         throw std::invalid_argument("Missing closing quote");
 
     return line.subview(pos + 1);
@@ -196,7 +196,7 @@ ttlib::cview rcCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
 ttlib::cview rcCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
 {
     auto pos = str.AssignSubString(line, ',', ',');
-    if (pos == std::string::npos)
+    if (!ttlib::is_found(pos))
         return ttlib::emptystring;
 
     line.remove_prefix(pos + 1);

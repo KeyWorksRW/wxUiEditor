@@ -5,6 +5,7 @@
 #define IDD_MAINTEST                    102
 #define IDD_MAINDLG                     127
 #define IDEDIT_CLASS                    1000
+#define IDC_EDIT1                       1000
 #define IDEDIT_FILE                     1001
 #define IDLIST_MEMBERS                  1004
 #define IDBTN_ADD                       1005
@@ -40,7 +41,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        101
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -73,6 +73,8 @@ BEGIN
     GROUPBOX        "Checks",IDC_STATIC,71,52,126,60
     LTEXT           "Group box in center with vertically aligned controls on either side.",
                     IDC_STATIC,6,6,274,13
+    LTEXT           "MyLabel",IDC_STATIC,6,26,28,8
+    EDITTEXT        IDC_EDIT1,40,24,63,14,ES_AUTOHSCROLL
 END
 
 IDD_MAINDLG DIALOG DISCARDABLE  0, 0, 359, 292
@@ -80,11 +82,11 @@ STYLE DS_NOIDLEMSG | DS_CENTER | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
 CAPTION "DlgWiz"
 FONT 8, "MS Shell Dlg"
 BEGIN
-    LTEXT           "Folder:",IDC_STATIC,6,6,22,8
+    LTEXT           "Folder:",IDC_STATIC,6,8,22,8
     EDITTEXT        IDTXT_CUR_DIR,46,6,154,14,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Class name:",IDC_STATIC,6,30,38,8
+    LTEXT           "Class name:",IDC_STATIC,6,29,38,8
     EDITTEXT        IDEDIT_CLASS,46,27,154,14,ES_AUTOHSCROLL
-    LTEXT           "Filename:",IDC_STATIC,6,55,31,8
+    LTEXT           "Filename:",IDC_STATIC,6,53,31,8
     EDITTEXT        IDEDIT_FILE,46,51,154,14,ES_AUTOHSCROLL
     GROUPBOX        "Dialog Type",IDC_STATIC,223,79,130,128,WS_GROUP
     CONTROL         "&ttCDlg",IDRADIO_TYPE_CTTDLG,"Button",

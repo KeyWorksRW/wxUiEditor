@@ -174,7 +174,8 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
                 parent_name = parent->get_node_name();
                 break;
             }
-            else if (parent->isGen(gen_wxStaticBoxSizer))
+            else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
+                     parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
                 parent_name.clear();
                 parent_name << parent->get_node_name() << "->GetStaticBox()";
@@ -309,7 +310,8 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
                 parent_name = parent->get_node_name();
                 break;
             }
-            else if (parent->isGen(gen_wxStaticBoxSizer))
+            else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
+                     parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
                 parent_name.clear();
                 parent_name << parent->get_node_name() << "->GetStaticBox()";
@@ -435,7 +437,8 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
                 parent_name = parent->get_node_name();
                 break;
             }
-            else if (parent->isGen(gen_wxStaticBoxSizer))
+            else if (parent->isGen(gen_wxStaticBoxSizer) || parent->isGen(gen_StaticCheckboxBoxSizer) ||
+                     parent->isGen(gen_StaticRadioBtnBoxSizer))
             {
                 parent_name.clear();
                 parent_name << parent->get_node_name() << "->GetStaticBox()";

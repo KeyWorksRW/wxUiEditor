@@ -191,7 +191,7 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             auto& child = reinterpret_cast<rcCtrl&>(*m_group_ctrls[idx_child]);
             std::vector<int> positions;
             positions.reserve(total_columns);
-            for (size_t idx = 0; idx < total_columns; ++idx)
+            for (size_t idx = 0; idx < static_cast<size_t>(total_columns); ++idx)
             {
                 if (m_group_ctrls[idx_child + idx]->GetTop() == child.GetTop())
                     positions.emplace_back(m_group_ctrls[idx_child + idx]->GetLeft());

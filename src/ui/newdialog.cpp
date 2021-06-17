@@ -53,6 +53,7 @@ void NewDialog::CreateNode()
 
     auto parent_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, form_node.get());
     ASSERT(parent_sizer);
+    parent_sizer->prop_set_value(prop_var_name, "dlg_sizer");
     form_node->Adopt(parent_sizer);
 
     if (m_has_tabs)
@@ -70,6 +71,7 @@ void NewDialog::CreateNode()
             label << count + 1;
             book_page->prop_set_value(prop_label, label);
             auto page_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, book_page.get());
+            page_sizer->prop_set_value(prop_var_name, ttlib::cstr() << "page_sizer_" << count + 1);
             book_page->Adopt(page_sizer);
             auto static_text = g_NodeCreator.CreateNode(gen_wxStaticText, page_sizer.get());
             page_sizer->Adopt(static_text);

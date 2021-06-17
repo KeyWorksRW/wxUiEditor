@@ -40,7 +40,7 @@ void rcForm::AddSizersAndChildren()
     }
 
     auto parent = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_node.get());
-    parent->prop_set_value(prop_var_name, "parent_sizer");
+    parent->prop_set_value(prop_var_name, "dlg_sizer");
     m_node->Adopt(parent);
 
     for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)

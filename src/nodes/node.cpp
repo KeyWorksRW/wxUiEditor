@@ -629,7 +629,7 @@ bool Node::CreateToolNode(GenName name)
             }
             if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
             {
-                new_node->ModifyProperty(prop, "parent_sizer");
+                new_node->ModifyProperty(prop, "page_sizer");
                 if (new_node->FixDuplicateName())
                 {
                     frame.FirePropChangeEvent(prop);
@@ -649,7 +649,7 @@ bool Node::CreateToolNode(GenName name)
             }
             if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
             {
-                new_node->ModifyProperty(prop, "parent_sizer");
+                new_node->ModifyProperty(prop, "page_sizer");
                 if (new_node->FixDuplicateName())
                 {
                     frame.FirePropChangeEvent(prop);

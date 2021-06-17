@@ -1137,8 +1137,18 @@ void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
     }
 
     auto currentValue = propFlag->as_string();
-    auto value = (isPropFlagSet("wxEXPAND", currentValue) ? ClearPropFlag("wxEXPAND", currentValue) :
-                                                            SetPropFlag("wxEXPAND", currentValue));
+    auto wasExpanded = isPropFlagSet("wxEXPAND", currentValue);
+    auto value = (wasExpanded ? ClearPropFlag("wxEXPAND", currentValue) : SetPropFlag("wxEXPAND", currentValue));
+
+    if (!wasExpanded)
+    {
+        auto alignment = m_selected_node->get_prop_ptr(prop_alignment);
+        if (alignment && isPropFlagSet("wxALIGN_RIGHT", alignment->as_cview()))
+        {
+            auto new_value = ClearPropFlag("wxALIGN_RIGHT", alignment->as_cview());
+            ModifyProperty(alignment, new_value);
+        }
+    }
 
     ModifyProperty(propFlag, value);
 }

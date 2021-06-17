@@ -34,7 +34,7 @@ public:
     // height in pixels
     auto GetHeight() const { return m_pixel_rect.GetHeight(); }
 
-    auto& GetDialogRect() const { return m_du_rect; }
+    auto& GetDialogRect() { return m_du_rect; }
 
     // left position in dialog units
     auto du_left() const { return m_du_rect.GetLeft(); }

@@ -119,7 +119,7 @@ void rcCtrl::ParseIconControl(ttlib::cview line)
         m_node->prop_set_value(prop_bitmap, prop);
     }
     line = GetID(line);
-    GetDimensions(line);
+    ParseDimensions(line, m_du_rect, m_pixel_rect);
 }
 
 // Similar to ParseIconControl only in this case line is pointing to the id, and the Node
@@ -249,5 +249,5 @@ void rcCtrl::ParseImageControl(ttlib::cview line)
         MSG_ERROR(ttlib::cstr() << "Missing class :" << m_original_line);
     }
 
-    GetDimensions(line);
+    ParseDimensions(line, m_du_rect, m_pixel_rect);
 }

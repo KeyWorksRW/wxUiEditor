@@ -11,16 +11,6 @@
 
 class WinResource;
 
-// Same as the Windows RECT structure -- this version declared to provide a cross-platform
-// version
-struct RC_RECT
-{
-    int left;
-    int top;
-    int right;
-    int bottom;
-};
-
 class rcCtrl
 {
 public:
@@ -31,18 +21,36 @@ public:
 
     void ParseDirective(WinResource* pWinResource, ttlib::cview line);
 
-    auto GetLeft() const { return m_left; }
-    auto GetTop() const { return m_top; }
-    auto GetRight() const { return (m_left + m_width); }
-    auto GetBottom() const { return (m_top + m_height); }
-    auto GetWidth() const { return m_width; }
-    auto GetHeight() const { return m_height; }
-    auto& GetDialogRect() const { return m_rc; }
+    // left position in pixels
+    auto GetLeft() const { return m_pixel_rect.GetLeft(); }
+    // top position in pixels
+    auto GetTop() const { return m_pixel_rect.GetTop(); }
+    // right position in pixels
+    auto GetRight() const { return (m_pixel_rect.GetLeft() + m_pixel_rect.GetWidth()); }
+    // bottom position in pixels
+    auto GetBottom() const { return (m_pixel_rect.GetTop() + m_pixel_rect.GetHeight()); }
+    // width in pixels
+    auto GetWidth() const { return m_pixel_rect.GetWidth(); }
+    // height in pixels
+    auto GetHeight() const { return m_pixel_rect.GetHeight(); }
+
+    auto& GetDialogRect() const { return m_du_rect; }
+
+    // left position in dialog units
+    auto du_left() const { return m_du_rect.GetLeft(); }
+    // top position in dialog units
+    auto du_top() const { return m_du_rect.GetTop(); }
+    // width in dialog units
+    auto du_width() const { return m_du_rect.GetWidth(); }
+    // height in dialog units
+    auto du_height() const { return m_du_rect.GetHeight(); }
 
     auto GetPostProcessStyle() const { return m_non_processed_style; }
 
     bool isAdded() const { return m_added; }
     void setAdded() { m_added = true; }
+
+    static bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);
 
 protected:
     // This will map window styles to wxWidgets styles and append them to prop_style
@@ -56,9 +64,6 @@ protected:
 
     // Set prop_ to common values (disabled, hidden, scroll, etc.)
     void ParseCommonStyles(ttlib::cview line);
-
-    // Sets m_left, m_top, m_width and m_height in pixel dimensions
-    void GetDimensions(ttlib::cview line);
 
     // This will set prop_id, and return a cview to the position past the id
     ttlib::cview GetID(ttlib::cview line);
@@ -93,18 +98,14 @@ private:
     ttlib::cstr m_original_line;
 #endif  // _DEBUG
 
-    // left position in pixel coordinate
-    int m_left;
-    // top position in pixel coordinate
-    int m_top;
-    // width in pixels
-    int m_width;
-    // heihgt in pixels
-    int m_height;
+    // Caution -- wxRect is *NOT* the same as a Windows RECT structure. wxRect stores width and height, RECT stores right and
+    // bottom positions.
 
     // These are in dialog coordinates
-    wxRect m_rc { 0, 0, 0, 0 };
-    // wxRect m_rect;
+    wxRect m_du_rect { 0, 0, 0, 0 };
+
+    // These are in pixel coordinates
+    wxRect m_pixel_rect { 0, 0, 0, 0 };
 
     bool m_add_min_width_property;
     bool m_add_wrap_property;

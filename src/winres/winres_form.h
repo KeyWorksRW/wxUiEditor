@@ -41,7 +41,16 @@ public:
     size_t GetFormType() const { return m_form_type; }
     Node* GetFormNode() const { return m_node.get(); }
     auto GetFormName() const { return m_node->prop_as_string(prop_class_name); }
-    int GetWidth() const { return m_width; }
+    int GetWidth() const { return m_pixel_rect.GetWidth(); }
+
+    // left position in dialog units
+    auto du_left() const { return m_du_rect.GetLeft(); }
+    // top position in dialog units
+    auto du_top() const { return m_du_rect.GetTop(); }
+    // width in dialog units
+    auto du_width() const { return m_du_rect.GetWidth(); }
+    // height in dialog units
+    auto du_height() const { return m_du_rect.GetHeight(); }
 
 protected:
     // Adopts child node and sets child flag to indicate it has been added
@@ -61,18 +70,21 @@ protected:
     void AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box);
     void AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine);
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
-    void GetDimensions(ttlib::cview line);
     void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
 
     // Returns true if val1 is within range of val2 using a fudge value below and above val2.
     bool isInRange(int32_t val1, int32_t val2) { return (val1 >= (val2 - FudgeAmount) && val1 <= (val2 + FudgeAmount)); }
 
 private:
-    RC_RECT m_rc { 0, 0, 0, 0 };
+    // These are in dialog coordinates
+    wxRect m_du_rect { 0, 0, 0, 0 };
+
+    // These are in pixels
+    wxRect m_pixel_rect { 0, 0, 0, 0 };
+
     NodeSharedPtr m_node;
-    NodeSharedPtr m_gridbag;
+
     size_t m_form_type;
-    WinResource* m_pWinResource;
 
     std::vector<rcCtrl> m_ctrls;
 
@@ -80,8 +92,7 @@ private:
     // every time a new wxStaticBoxSizer needs to be processed (see CollectGroupControls()).
     std::vector<rcCtrl*> m_group_ctrls;
 
-    int m_width;   // width in pixels
-    int m_height;  // height in pixels
+    WinResource* m_pWinResource;
 
 #if defined(_DEBUG)
     // Makes it easier to know exactly which form we're looking at in the debugger

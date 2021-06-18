@@ -12,7 +12,7 @@
 #include <wx/filedlg.h>  // wxFileDialog base header
 #include <wx/sysopt.h>   // wxSystemOptions
 
-#include <ttparser.h>  // cmd -- Command line parser
+#include "ttparser.h"  // cmd -- Command line parser
 
 #include "mainapp.h"
 

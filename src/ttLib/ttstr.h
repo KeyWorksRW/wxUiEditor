@@ -1,8 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxString with additional methods similar to ttlib::cstr
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../LICENSE
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 // This class is only available in ttLibwx.lib (see src/wxsrc) or in a UNIX build.
@@ -30,8 +30,8 @@
 #include <wx/filefn.h>  // File- and directory-related functions
 #include <wx/string.h>  // wxString class
 
-#include <ttcstr.h>   // cstr -- Classes for handling zero-terminated char strings.
-#include <ttcview.h>  // cview -- string_view functionality on a zero-terminated char string.
+#include "ttcstr.h"   // cstr -- Classes for handling zero-terminated char strings.
+#include "ttcview.h"  // cview -- string_view functionality on a zero-terminated char string.
 
 /// Version of wxString that supports std::string_view and adds most of the same methods as
 /// ttlib::cstr.

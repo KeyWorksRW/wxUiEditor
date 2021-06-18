@@ -11,7 +11,7 @@
 #include <wx/filedlg.h>           // wxFileDialog base header
 #include <wx/persist/toplevel.h>  // persistence support for wxTLW
 
-#include <tttextfile.h>  // textfile -- Classes for reading and writing line-oriented files
+#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
 #include "msgframe.h"  // auto-generated: ../ui/msgframe_base.h and ../ui/msgframe_base.cpp
 

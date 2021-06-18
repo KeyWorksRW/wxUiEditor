@@ -2,7 +2,7 @@
 // Purpose:   Functions accessing translatable strings
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see LICENSE
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -10,8 +10,8 @@
 #include <map>
 #include <string>
 
-#include <ttcstr.h>   // cstr -- Classes for handling zero-terminated char strings.
-#include <ttcview.h>  // cview -- string_view functionality on a zero-terminated char string.
+#include "ttcstr.h"   // cstr -- Classes for handling zero-terminated char strings.
+#include "ttcview.h"  // cview -- string_view functionality on a zero-terminated char string.
 
 /// This needs to be declared and initialized in whatever source file you use to declare all
 /// of your strings

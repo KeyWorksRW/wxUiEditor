@@ -15,8 +15,8 @@
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/filesys.h>   // class for opening files - virtual file system
 
-#include <ttcview.h>     // cview -- string_view functionality on a zero-terminated char string.
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+#include "ttcview.h"     // cview -- string_view functionality on a zero-terminated char string.
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "pjtsettings.h"  // ProjectSettings
 

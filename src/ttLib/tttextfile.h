@@ -2,8 +2,8 @@
 // Name:      tttextfile.h
 // Purpose:   Classes for reading and writing line-oriented files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2019-2020 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../LICENSE
+// Copyright: Copyright (c) 2019-2021 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once

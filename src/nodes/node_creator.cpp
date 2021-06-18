@@ -7,8 +7,8 @@
 
 #include "pch.h"
 
-#include <ttcstr.h>
-#include <ttlibspace.h>
+#include "ttcstr.h"      // cstr -- std::string with additional methods
+#include "ttlibspace.h"  // ttlib namespace functions and declarations
 
 #include "node_creator.h"
 
@@ -31,7 +31,8 @@ NodeCreator::~NodeCreator()
 NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
 {
     auto result = rmap_GenNames.find(className.c_str());
-    ASSERT_MSG(result != rmap_GenNames.end(), ttlib::cstr() << "Attempt to get non-existant node declaration for " << className);
+    ASSERT_MSG(result != rmap_GenNames.end(), ttlib::cstr()
+                                                  << "Attempt to get non-existant node declaration for " << className);
     if (result == rmap_GenNames.end())
         return nullptr;
     return m_a_declarations[rmap_GenNames[className.c_str()]];

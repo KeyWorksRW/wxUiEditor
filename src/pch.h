@@ -61,11 +61,11 @@
 // Without this, a huge number of #included wxWidgets header files will generate the warning
 #pragma warning(disable : 4251)  // needs to have dll-interface to be used by clients of class
 
-#include <ttlibspace.h>  // This must be included before any other ttLib header files
+#include "ttlibspace.h"  // This must be included before any other ttLib header files
 
-#include <ttcstr.h>   // ttlib::cstr -- std::string with additional functions
-#include <ttcview.h>  // ttlib::cview -- string_view functionality on a zero-terminated char string.
-#include <ttstr.h>    // ttString -- wxString with ttlib::cstr equivalent functions
+#include "ttcstr.h"   // ttlib::cstr -- std::string with additional functions
+#include "ttcview.h"  // ttlib::cview -- string_view functionality on a zero-terminated char string.
+#include "ttstr.h"    // ttString -- wxString with ttlib::cstr equivalent functions
 
 #if !defined(int_t)
 

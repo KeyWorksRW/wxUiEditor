@@ -2,8 +2,8 @@
 // Name:      ttmultistr.h
 // Purpose:   Breaks a single string into multiple strings
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2018-2020 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../LICENSE
+// Copyright: Copyright (c) 2018-2021 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once

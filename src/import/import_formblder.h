@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include <ttstr.h>  // ttString -- wxString with additional methods similar to ttlib::cstr
+#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
 
 #include "node_classes.h"  // Forward defintions of Node classes
 

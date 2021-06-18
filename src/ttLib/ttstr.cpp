@@ -1,8 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enhanced version of wxString
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../LICENSE
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "pch.h"
@@ -13,10 +13,10 @@
 
 #include <wx/filename.h>
 
-#include <ttstr.h>
+#include "ttstr.h"
 
-#include <ttcstr.h>   // cstr -- std::string with additional methods
-#include <ttcview.h>  // cview -- string_view functionality on a zero-terminated char string.
+#include "ttcstr.h"   // cstr -- std::string with additional methods
+#include "ttcview.h"  // cview -- string_view functionality on a zero-terminated char string.
 
 ttString::ttString(const ttlib::cstr& str)
 {

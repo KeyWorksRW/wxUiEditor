@@ -9,7 +9,7 @@
 
 #include <thread>
 
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "gen_base.h"
 

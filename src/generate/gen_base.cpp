@@ -13,10 +13,10 @@
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include <ttcvector.h>   // cstrVector -- Vector of ttlib::cstr strings
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
-#include <ttstr.h>       // ttString, ttSaveCwd -- Enhanced version of wxString
-#include <tttextfile.h>  // textfile -- Classes for reading and writing line-oriented files
+#include "ttcvector.h"   // cstrVector -- Vector of ttlib::cstr strings
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+#include "ttstr.h"       // ttString, ttSaveCwd -- Enhanced version of wxString
+#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
 #include "gen_base.h"
 

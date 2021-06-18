@@ -7,7 +7,7 @@
 
 #include "pch.h"
 
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "anim_props.h"  // AnimationProperties
 #include "mainapp.h"     // MoveDirection -- Main application class

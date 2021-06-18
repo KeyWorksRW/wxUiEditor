@@ -137,7 +137,6 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     forms_bar_windows->Realize();
 
     auto panel_wizard = new wxRibbonPanel(page_forms, wxID_ANY, wxString::FromUTF8("Wizard"),
-
     GetImgFromHdr(wxWizard_png, sizeof(wxWizard_png)));
 
     auto forms_bar_wizard = new wxRibbonToolBar(panel_wizard, wxID_ANY);
@@ -329,8 +328,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     {
         bars_bar_menu->AddTool(gen_wxMenuBar, GetImgFromHdr(wxMenuBar_png, sizeof(wxMenuBar_png)), wxString::FromUTF8("wxMenuBar"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(gen_wxMenu, GetImgFromHdr(menu_png, sizeof(menu_png)), wxString::FromUTF8("wxMenu"), wxRIBBON_BUTTON_NORMAL);
-        bars_bar_menu->AddTool(gen_submenu, GetImgFromHdr(submenu_png, sizeof(submenu_png)), wxString::FromUTF8("submenu"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(gen_wxMenuItem, GetImgFromHdr(menuitem_png, sizeof(menuitem_png)), wxString::FromUTF8("wxMenuItem"), wxRIBBON_BUTTON_NORMAL);
+        bars_bar_menu->AddTool(gen_submenu, GetImgFromHdr(submenu_png, sizeof(submenu_png)), wxString::FromUTF8("submenu"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_menu->AddTool(gen_separator, GetImgFromHdr(separator_png, sizeof(separator_png)), wxString::FromUTF8("separator"), wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_menu->Realize();

@@ -48,7 +48,7 @@ void rcForm::AddSizersAndChildren()
 
     for (size_t idx = 1; idx < m_ctrls.size(); ++idx)
     {
-        if (m_ctrls[idx].GetNode()->isGen(gen_wxStaticText) && is_same_top(m_ctrls[idx], m_ctrls[idx - 1]))
+        if (m_ctrls[idx].isGen(gen_wxStaticText) && is_same_top(m_ctrls[idx], m_ctrls[idx - 1]))
         {
             if (m_ctrls[idx - 1].du_left() > m_ctrls[idx].du_left() + m_ctrls[idx].du_width())
             {
@@ -89,26 +89,27 @@ void rcForm::AddSizersAndChildren()
         if (child.isAdded())
             continue;
 
-        if (child.GetNode()->isGen(gen_wxButton) && ProcessStdButton(parent.get(), idx_child))
+        if (child.isGen(gen_wxButton) && ProcessStdButton(parent.get(), idx_child))
             continue;
 
+        // Special handling for last control
         if (idx_child + 1 >= m_ctrls.size())
         {
             // If last control is a button, we may need to center or right-align it.
-            if (child.GetNode()->isGen(gen_wxButton))
+            if (child.isGen(gen_wxButton))
             {
                 int dlg_margin = (du_width() / 2) - child.du_width();
                 if (child.du_left() > dlg_margin)
                 {
                     if (child.du_left() + child.du_width() < (du_width() - dlg_margin))
-                        child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+                        child.prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
                     else
-                        child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                        child.prop_set_value(prop_alignment, "wxALIGN_RIGHT");
                 }
             }
 
-            ASSERT_MSG(!child.GetNode()->isGen(gen_wxStaticBoxSizer), "Ignoring group box with no children")
-            if (!child.GetNode()->isGen(gen_wxStaticBoxSizer))
+            ASSERT_MSG(!child.isGen(gen_wxStaticBoxSizer), "Ignoring group box with no children")
+            if (!child.isGen(gen_wxStaticBoxSizer))
             {
                 // orphaned child, add to form's top level sizer
                 parent->Adopt(child.GetNodePtr());
@@ -116,6 +117,7 @@ void rcForm::AddSizersAndChildren()
             break;
         }
 
+        // Check for a possible row
         if (is_same_top(child, m_ctrls[idx_child + 1]))
         {
             // If there is more than one child with the same top position, then create a horizontal box sizer
@@ -149,6 +151,8 @@ void rcForm::AddSizersAndChildren()
                 sizer->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
             }
         }
+
+        // Add one or more controls vertically
         else
         {
             if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
@@ -207,7 +211,7 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             // REVIEW: [KeyWorks - 06-16-2021] Does this actually happen in a group box?
             int dlg_margin = (box.du_width() / 2) - child.du_width();
             if (child.du_left() + du_width() < (box.du_width() - dlg_margin))
-                child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+                child.prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
             continue;
         }
         else if (result == 0)
@@ -215,7 +219,7 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             // Single row vertical alignment with now horizontal alignment in the next row, so use a horizontal box sizer
             auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, box.GetNode());
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
-            static_box.GetNodePtr()->Adopt(sizer);
+            static_box.GetNode()->Adopt(sizer);
 
             auto& child = reinterpret_cast<rcCtrl&>(*m_group_ctrls[idx_child]);
 
@@ -397,7 +401,7 @@ bool rcForm::ProcessStdButton(Node* parent_sizer, size_t idx_child)
 {
     for (size_t idx = idx_child; idx < m_ctrls.size(); ++idx)
     {
-        if (!m_ctrls[idx].GetNode()->isGen(gen_wxButton))
+        if (!m_ctrls[idx].isGen(gen_wxButton))
             return false;
 
         if (auto result = s_btn_names.find(m_ctrls[idx].GetNode()->prop_as_string(prop_label)); result == s_btn_names.end())

@@ -334,15 +334,22 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
 
     auto node = GetMockup()->GetNode(wxobject);
     size_t count = node->GetChildCount();
-    for (size_t i = 0; i < count; ++i)
+    for (size_t idx = 0; idx < count; ++idx)
     {
-        auto childObj = node->GetChild(i);
+        auto childObj = node->GetChild(idx);
 
-        auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
-        if (!bmp.IsOk())
-            bmp = GetInternalImage("default");
-        btn_bar->AddTool(wxID_ANY, bmp, childObj->prop_as_wxString(prop_help),
-                         (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
+        if (childObj->isGen(gen_ribbonSeparator))
+        {
+            btn_bar->AddSeparator();
+        }
+        else
+        {
+            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
+            if (!bmp.IsOk())
+                bmp = GetInternalImage("default");
+            btn_bar->AddTool(wxID_ANY, bmp, childObj->prop_as_wxString(prop_help),
+                             (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
+        }
     }
     btn_bar->Realize();
 }

@@ -136,6 +136,7 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_wxRibbonPanel, RibbonPanelGenerator)
     SET_GENERATOR(gen_wxRibbonButtonBar, RibbonButtonBarGenerator)
     SET_GENERATOR(gen_wxRibbonToolBar, RibbonToolBarGenerator)
+    SET_GENERATOR(gen_ribbonSeparator, ToolSeparatorGenerator)
     SET_GENERATOR(gen_wxRibbonGallery, RibbonGalleryGenerator)
 
     SET_GENERATOR(gen_ribbonButton, RibbonButtonGenerator)

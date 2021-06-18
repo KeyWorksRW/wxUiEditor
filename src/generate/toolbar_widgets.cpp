@@ -366,11 +366,14 @@ std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    if (node->isParent(gen_wxToolBar))
-
+    if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxRibbonToolBar))
+    {
         code << node->get_parent_name() << "->AddSeparator();";
+    }
     else
+    {
         code << "AddSeparator();";
+    }
 
     return code;
 }

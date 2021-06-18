@@ -638,6 +638,11 @@
                   id="gen_ribbonButton" />
                 <node
                   class="ribbonTool"
+                  bitmap="Header; ..\art_headers\toolseparator_png.hxx; ; [-1; -1]"
+                  help="Tool Separator"
+                  id="gen_ribbonSeparator" />
+                <node
+                  class="ribbonTool"
                   bitmap="Header; ..\art_headers\ribbon_gallery_item_png.hxx; ; [-1; -1]"
                   help="Ribbon Gallery Item"
                   id="gen_ribbonGalleryItem" />

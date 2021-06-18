@@ -424,6 +424,7 @@ namespace GenEnum
         gen_propGridPage,
         gen_ribbonButton,
         gen_ribbonGalleryItem,
+        gen_ribbonSeparator,
         gen_ribbonTool,
         gen_separator,
         gen_sizer_child,

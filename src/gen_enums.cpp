@@ -415,6 +415,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_propGridPage, "propGridPage" },
     { gen_ribbonButton, "ribbonButton" },
     { gen_ribbonGalleryItem, "ribbonGalleryItem" },
+    { gen_ribbonSeparator, "ribbonSeparator" },
     { gen_ribbonTool, "ribbonTool" },
     { gen_separator, "separator" },
     { gen_sizer_child, "sizer_child" },

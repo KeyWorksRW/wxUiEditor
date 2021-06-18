@@ -353,6 +353,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
         bars_bar_ribbon->AddTool(gen_wxRibbonPanel, GetImgFromHdr(ribbon_panel_png, sizeof(ribbon_panel_png)), wxString::FromUTF8("wxRibbonPanel"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(NewRibbonType, GetImgFromHdr(ribbon_buttonbar_png, sizeof(ribbon_buttonbar_png)), wxString::FromUTF8("Ribbon Bar Type"), wxRIBBON_BUTTON_DROPDOWN);
         bars_bar_ribbon->AddTool(gen_ribbonButton, GetImgFromHdr(ribbon_button_png, sizeof(ribbon_button_png)), wxString::FromUTF8("Ribbon Button"), wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(gen_ribbonSeparator, GetImgFromHdr(toolseparator_png, sizeof(toolseparator_png)), wxString::FromUTF8("Tool Separator"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_ribbonGalleryItem, GetImgFromHdr(ribbon_gallery_item_png, sizeof(ribbon_gallery_item_png)), wxString::FromUTF8("Ribbon Gallery Item"), wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_ribbon->Realize();

@@ -158,6 +158,7 @@ Files:
     ui/ribbonpanel_base.cpp
 
     ttLib/ttcstr.cpp             # Class for handling zero-terminated char strings.
+    ttLib/ttcvector.cpp          # Vector class for storing ttlib::cstr strings
     ttLib/ttcview.cpp            # string_view functionality on a zero-terminated char string.
     ttLib/ttmultistr.cpp         # Breaks a single string into multiple strings
     ttLib/ttparser.cpp           # Command line parser

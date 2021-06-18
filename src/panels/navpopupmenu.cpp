@@ -30,6 +30,7 @@ static const auto lstBarGenerators = {
     gen_wxToolBar,
 
     gen_MenuBar,  // form version of wxMenuBar
+    gen_RibbonBar,  // form version of wxRibbonBar
     gen_ToolBar,  // form version of wxToolBar
 
     gen_wxRibbonBar,
@@ -516,7 +517,8 @@ void NavPopupMenu::CreateProjectMenu(Node* WXUNUSED(node))
 
     Bind(
         wxEVT_MENU,
-        [](wxCommandEvent&) {
+        [](wxCommandEvent&)
+        {
             wxGetFrame().CreateToolNode(gen_wxWizard);
             ;
         },
@@ -828,7 +830,8 @@ void NavPopupMenu::CreateMenuMenu(Node* /* node */)
 
     Bind(
         wxEVT_MENU,
-        [](wxCommandEvent&) {
+        [](wxCommandEvent&)
+        {
             wxGetFrame().CreateToolNode(gen_wxMenuItem);
             ;
             ;
@@ -837,7 +840,8 @@ void NavPopupMenu::CreateMenuMenu(Node* /* node */)
 
     Bind(
         wxEVT_MENU,
-        [](wxCommandEvent&) {
+        [](wxCommandEvent&)
+        {
             wxGetFrame().CreateToolNode(gen_submenu);
             ;
         },
@@ -845,7 +849,8 @@ void NavPopupMenu::CreateMenuMenu(Node* /* node */)
 
     Bind(
         wxEVT_MENU,
-        [](wxCommandEvent&) {
+        [](wxCommandEvent&)
+        {
             wxGetFrame().CreateToolNode(gen_separator);
             ;
         },
@@ -873,7 +878,7 @@ void NavPopupMenu::CreateBarMenu(Node* node)
         AppendSeparator();
         Append(MenuADD_MENU, "Add Menu\tCtrl+M");
     }
-    else if (node->isGen(gen_wxRibbonBar))
+    else if (node->isGen(gen_wxRibbonBar) || node->isGen(gen_RibbonBar))
     {
         AppendSeparator();
         m_tool_name = gen_wxRibbonPage;

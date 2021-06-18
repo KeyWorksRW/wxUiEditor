@@ -177,6 +177,9 @@
     </gen>
 
     <gen class="toolSeparator" image="toolseparator" type="tool" />
+
+    <gen class="ribbonSeparator" image="toolseparator" type="ribbontool" />
+
     <gen class="wxStatusBar" image="statusbar" type="statusbar">
         <inherits class="wxWindow" />
         <inherits class="Window Events" />

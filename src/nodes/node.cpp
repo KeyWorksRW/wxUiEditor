@@ -123,6 +123,8 @@ Node* Node::FindParentForm() const noexcept
         return retObj;
     if (auto retObj = LocateAncestorType(type_toolbar_form); retObj)
         return retObj;
+    if (auto retObj = LocateAncestorType(type_ribbonbar_form); retObj)
+        return retObj;
     if (auto retObj = LocateAncestorType(type_wizard); retObj)
         return retObj;
 
@@ -585,7 +587,6 @@ Node* Node::CreateNode(GenName name)
     return cur_selection->CreateChildNode(name);
 }
 
-
 void Node::ModifyProperty(PropName name, ttlib::cview value)
 {
     auto prop = get_prop_ptr(name);
@@ -686,9 +687,11 @@ static const PropName s_var_names[] = {
 
 bool Node::FixDuplicateName()
 {
-    if (isType(type_form) || isType(type_menubar_form) || isType(type_toolbar_form) || isType(type_wizard) ||
-        isType(type_project))
+    if (isType(type_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) || isType(type_toolbar_form) ||
+        isType(type_wizard) || isType(type_project))
+    {
         return false;
+    }
 
     auto form = FindParentForm();
     ASSERT(form);
@@ -737,7 +740,8 @@ void Node::FixDuplicateNodeNames(Node* form)
 {
     if (!form)
     {
-        if (isType(type_form) || isType(type_menubar_form) || isType(type_toolbar_form) || isType(type_wizard))
+        if (isType(type_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) || isType(type_toolbar_form) ||
+            isType(type_wizard))
         {
             for (auto& child: GetChildNodePtrs())
             {

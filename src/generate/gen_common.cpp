@@ -690,6 +690,12 @@ ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node)
                     code << "\n";
                 code << "\tRealize();";
             }
+            else if (node->isGen(gen_RibbonBar))
+            {
+                if (code.size())
+                    code << "\n";
+                code << "\tRealize();";
+            }
             else
             {
                 auto& center = node->prop_as_string(prop_center);

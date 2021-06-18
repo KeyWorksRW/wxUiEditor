@@ -390,7 +390,8 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
                 new_size.y += size_title.y;
             }
 
-            if (m_IsMagnifyWindow && !(m_form->isGen(gen_ToolBar) || m_form->isGen(gen_MenuBar)))
+            if (m_IsMagnifyWindow &&
+                !(m_form->isGen(gen_RibbonBar) || m_form->isGen(gen_ToolBar) || m_form->isGen(gen_MenuBar)))
             {
                 new_size.IncTo(m_size_magnified);
             }

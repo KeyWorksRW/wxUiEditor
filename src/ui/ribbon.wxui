@@ -103,6 +103,11 @@
                   bitmap="Header; ..\art_headers\wxToolBar_png.hxx; ; [-1; -1]"
                   help="wxToolBar"
                   id="gen_ToolBar" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Header; ..\art_headers\ribbon_bar_png.hxx; ; [-1; -1]"
+                  help="wxRibbonBar"
+                  id="gen_RibbonBar" />
               </node>
             </node>
           </node>
@@ -561,14 +566,14 @@
                   id="gen_wxMenu" />
                 <node
                   class="ribbonTool"
-                  bitmap="Header; ..\art_headers\submenu_png.hxx; ; [-1; -1]"
-                  help="submenu"
-                  id="gen_submenu" />
-                <node
-                  class="ribbonTool"
                   bitmap="Header; ..\art_headers\menuitem_png.hxx; ; [-1; -1]"
                   help="wxMenuItem"
                   id="gen_wxMenuItem" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Header; ..\art_headers\submenu_png.hxx; ; [-1; -1]"
+                  help="submenu"
+                  id="gen_submenu" />
                 <node
                   class="ribbonTool"
                   bitmap="Header; ..\art_headers\separator_png.hxx; ; [-1; -1]"
@@ -636,6 +641,11 @@
                   bitmap="Header; ..\art_headers\ribbon_button_png.hxx; ; [-1; -1]"
                   help="Ribbon Button"
                   id="gen_ribbonButton" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Header; ..\art_headers\toolseparator_png.hxx; ; [-1; -1]"
+                  help="Tool Separator"
+                  id="gen_ribbonSeparator" />
                 <node
                   class="ribbonTool"
                   bitmap="Header; ..\art_headers\ribbon_gallery_item_png.hxx; ; [-1; -1]"

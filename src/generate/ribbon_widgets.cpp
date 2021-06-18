@@ -71,6 +71,13 @@ std::optional<ttlib::cstr> RibbonBarFormGenerator::GenConstruction(Node* node)
 
 std::optional<ttlib::cstr> RibbonBarFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
+    if (cmd == code_base_class)
+    {
+        ttlib::cstr code;
+        code << "wxRibbonBar";
+        return code;
+    }
+
     return GenFormCode(cmd, node);
 }
 

@@ -106,6 +106,13 @@ std::optional<ttlib::cstr> ToolBarFormGenerator::GenConstruction(Node* node)
 
 std::optional<ttlib::cstr> ToolBarFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
+    if (cmd == code_base_class)
+    {
+        ttlib::cstr code;
+        code << "wxToolBar";
+        return code;
+    }
+
     return GenFormCode(cmd, node);
 }
 

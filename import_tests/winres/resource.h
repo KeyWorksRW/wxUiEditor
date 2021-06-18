@@ -34,6 +34,24 @@
 #define IDCOMBO_RC_FILES                1043
 #define IDCHECK_RESIZABLE_CDIALOG       1045
 #define IDCHECK_RESIZABLE_CAXDIALOG     1046
+#define IDD_COLUMNEDIT                  2020
+#define IDC_COL_INITNUM_EDIT            2021
+#define IDC_COL_INCREASENUM_EDIT        2022
+#define IDC_COL_TEXT_GRP_STATIC         2023
+#define IDC_COL_DEC_RADIO               2024
+#define IDC_COL_OCT_RADIO               2025
+#define IDC_COL_HEX_RADIO               2026
+#define IDC_COL_BIN_RADIO               2027
+#define IDC_COL_TEXT_RADIO              2028
+#define IDC_COL_NUM_RADIO               2029
+#define IDC_COL_INITNUM_STATIC          2030
+#define IDC_COL_INCRNUM_STATIC          2031
+#define IDC_COL_FORMAT_GRP_STATIC       2032
+#define IDC_COL_NUM_GRP_STATIC          2033
+#define IDC_COL_TEXT_EDIT               2034
+#define IDC_COL_LEADZERO_CHECK          2035
+#define IDC_COL_REPEATNUM_STATIC        2036
+#define IDC_COL_REPEATNUM_EDIT          2037
 
 // Next default values for new objects
 // 

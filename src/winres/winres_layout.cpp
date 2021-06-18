@@ -36,6 +36,9 @@ static bool is_lower_top(const rcCtrl& left, const rcCtrl& right)
 
 void rcForm::AddSizersAndChildren()
 {
+    if (!m_ctrls.size())
+        return;  // empty dialog -- rare, but it does happen
+
     // std::sort(m_ctrls.begin(), m_ctrls.end(), [](rcCtrl a, rcCtrl b) { return a.du_top() < b.du_top(); });
     std::sort(m_ctrls.begin(), m_ctrls.end(), [](rcCtrl a, rcCtrl b) { return is_lower_top(a, b); });
 

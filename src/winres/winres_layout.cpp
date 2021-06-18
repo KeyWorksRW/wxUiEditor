@@ -86,6 +86,9 @@ void rcForm::AddSizersAndChildren()
         if (child.isAdded())
             continue;
 
+        if (child.GetNode()->isGen(gen_wxButton) && ProcessStdButton(parent.get(), idx_child))
+            continue;
+
         if (idx_child + 1 >= m_ctrls.size())
         {
             // If last control is a button, we may need to center or right-align it.
@@ -375,4 +378,55 @@ void rcForm::Adopt(const NodeSharedPtr& node, rcCtrl& child)
 
     node->Adopt(child.GetNodePtr());
     child.setAdded();
+}
+
+// This function tries to determine if standard dialog buttons are being used, in which case we can switch them to
+// wxStdDialogButtonSizer. Unfortunately, we have to rely on English labels to determine the button type -- we can't assume a
+// standard id like IDOK will also have a standard label.
+
+static std::set<std::string> s_btn_names = {
+
+    "OK", "Yes", "Save", "No", "Cancel", "Close"
+
+};
+
+bool rcForm::ProcessStdButton(Node* parent_sizer, size_t idx_child)
+{
+    for (size_t idx = idx_child; idx < m_ctrls.size(); ++idx)
+    {
+        if (!m_ctrls[idx].GetNode()->isGen(gen_wxButton))
+            return false;
+
+        if (auto result = s_btn_names.find(m_ctrls[idx].GetNode()->prop_as_string(prop_label)); result == s_btn_names.end())
+        {
+            return false;
+        }
+    }
+
+    // If we made it here, then all we have left are buttons, and they all have standard labels
+
+    auto sizer = g_NodeCreator.CreateNode(gen_wxStdDialogButtonSizer, parent_sizer);
+    // Clear the default properties
+    sizer->prop_set_value(prop_default_button, "");
+    sizer->prop_set_value(prop_OK, false);
+    sizer->prop_set_value(prop_Cancel, false);
+
+    // Set our own default property
+    sizer->prop_set_value(prop_flags, "wxEXPAND");
+
+    for (size_t idx = idx_child; idx < m_ctrls.size(); ++idx)
+    {
+        auto btn = m_ctrls[idx].GetNode();
+        if (btn->prop_as_bool(prop_default))
+            sizer->prop_set_value(prop_default_button, btn->prop_as_string(prop_label));
+        auto result = rmap_PropNames.find(btn->prop_as_string(prop_label));
+        if (result != rmap_PropNames.end())
+        {
+            sizer->prop_set_value(result->second, true);
+        }
+        m_ctrls[idx].setAdded();
+    }
+
+    parent_sizer->Adopt(sizer);
+    return true;
 }

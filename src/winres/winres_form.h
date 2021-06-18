@@ -53,6 +53,8 @@ public:
     auto du_height() const { return m_du_rect.GetHeight(); }
 
 protected:
+    // Returns true if button was processed, otherwise treat it like a normal button.
+    bool ProcessStdButton(Node* parent_sizer, size_t idx_child);
     // Adopts child node and sets child flag to indicate it has been added
     void Adopt(const NodeSharedPtr& node, rcCtrl& child);
 

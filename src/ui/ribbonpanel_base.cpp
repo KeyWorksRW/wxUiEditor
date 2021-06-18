@@ -152,6 +152,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     {
         forms_bar_bars->AddTool(gen_MenuBar, GetImgFromHdr(wxMenuBar_png, sizeof(wxMenuBar_png)), wxString::FromUTF8("wxMenuBar"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars->AddTool(gen_ToolBar, GetImgFromHdr(wxToolBar_png, sizeof(wxToolBar_png)), wxString::FromUTF8("wxToolBar"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars->AddTool(gen_RibbonBar, GetImgFromHdr(ribbon_bar_png, sizeof(ribbon_bar_png)), wxString::FromUTF8("wxRibbonBar"), wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_bars->Realize();
 

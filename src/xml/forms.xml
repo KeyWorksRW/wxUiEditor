@@ -307,6 +307,65 @@
         </property>
     </gen>
 
+    <gen class="RibbonBar" image="ribbon_bar" type="ribbonbar_form">
+        <inherits class="Code Generation" />
+        <inherits class="wxWindow" />
+        <inherits class="Window Events" />
+        <property name="class_name" type="string"
+            help="The name of the base class.">MyRibbonBarBase</property>
+        <property name="theme" type="option"
+            help="Select the RibbonBar theme.">
+            <option name="Default"
+                help="Use Default theme." />
+            <option name="Generic"
+                help="Use Generic theme." />
+            <option name="MSW"
+                help="Use MSW theme." />
+            Default
+        </property>
+        <property name="style" type="bitlist">
+            <option name="wxRIBBON_BAR_DEFAULT_STYLE"
+                help="Defined as wxRIBBON_BAR_FLOW_HORIZONTAL | wxRIBBON_BAR_SHOW_PAGE_LABELS | wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS | wxRIBBON_BAR_SHOW_TOGGLE_BUTTON | wxRIBBON_BAR_SHOW_HELP_BUTTON." />
+            <option name="wxRIBBON_BAR_FOLDBAR_STYLE"
+                help="Defined as wxRIBBON_BAR_FLOW_VERTICAL | wxRIBBON_BAR_SHOW_PAGE_ICONS | wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS | wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS." />
+            <option name="wxRIBBON_BAR_SHOW_PAGE_LABELS"
+                help="Causes labels to be shown on the tabs in the ribbon bar." />
+            <option name="wxRIBBON_BAR_SHOW_PAGE_ICONS"
+                help="Causes icons to be shown on the tabs in the ribbon bar." />
+            <option name="wxRIBBON_BAR_FLOW_HORIZONTAL"
+                help="Causes panels within pages to stack horizontally." />
+            <option name="wxRIBBON_BAR_FLOW_VERTICAL"
+                help="Causes panels within pages to stack vertically." />
+            <option name="wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS"
+                help="Causes extension buttons to be shown on panels (where the panel has such a button)." />
+            <option name="wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS"
+                help="Causes minimise buttons to be shown on panels (where the panel has such a button)." />
+            <option name="wxRIBBON_BAR_SHOW_TOGGLE_BUTTON"
+                help="Causes a toggle button to appear on the ribbon bar at top-right corner." />
+            <option name="wxRIBBON_BAR_SHOW_HELP_BUTTON"
+                help="Causes a help button to appear on the ribbon bar at the top-right corner." />
+            wxRIBBON_BAR_DEFAULT_STYLE
+        </property>
+        <event name="wxEVT_RIBBONBAR_PAGE_CHANGED" class="wxRibbonBarEvent"
+            help="Triggered after the transition from one page being active to a different page being active." />
+        <event name="wxEVT_RIBBONBAR_PAGE_CHANGING" class="wxRibbonBarEvent"
+            help="Triggered prior to the transition from one page being active to a different page being active, and can veto the change." />
+        <event name="wxEVT_RIBBONBAR_TAB_MIDDLE_DOWN" class="wxRibbonBarEvent"
+            help="Triggered when the middle mouse button is pressed on a tab." />
+        <event name="wxEVT_RIBBONBAR_TAB_MIDDLE_UP" class="wxRibbonBarEvent"
+            help="Triggered when the middle mouse button is released on a tab." />
+        <event name="wxEVT_RIBBONBAR_TAB_RIGHT_DOWN" class="wxRibbonBarEvent"
+            help="Triggered when the right mouse button is pressed on a tab." />
+        <event name="wxEVT_RIBBONBAR_TAB_RIGHT_UP" class="wxRibbonBarEvent"
+            help="Triggered when the right mouse button is released on a tab." />
+        <event name="wxEVT_RIBBONBAR_TAB_LEFT_DCLICK" class="wxRibbonBarEvent"
+            help="Triggered when the left mouse button is double clicked on a tab." />
+        <event name="wxEVT_RIBBONBAR_TOGGLED" class="wxRibbonBarEvent"
+            help="Triggered when the button triggering the ribbon bar is clicked." />
+        <event name="wxEVT_RIBBONBAR_HELP_CLICKED" class="wxRibbonBarEvent"
+            help="Triggered when the help button is clicked." />
+    </gen>
+
     <gen class="wxWizard" image="wxWizard" type="wizard">
         <inherits class="Code Generation" />
         <inherits class="wxTopLevelWindow" />

@@ -942,7 +942,8 @@ Node* MainFrame::GetSelectedForm()
         return nullptr;
 
     if (m_selected_node->isType(type_form) || m_selected_node->isType(type_wizard) ||
-        m_selected_node->isType(type_menubar_form) || m_selected_node->isType(type_toolbar_form))
+        m_selected_node->isType(type_menubar_form) || m_selected_node->isType(type_ribbonbar_form) ||
+        m_selected_node->isType(type_toolbar_form))
     {
         return m_selected_node.get();
     }

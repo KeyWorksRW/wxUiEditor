@@ -17,6 +17,95 @@
 
 #include "ribbon_widgets.h"
 
+//////////////////////////////////////////  RibbonBarFormGenerator  //////////////////////////////////////////
+
+wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
+{
+    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                  node->prop_as_wxSize(prop_size),
+                                  node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+
+    if (node->prop_as_string(prop_theme) == "Default")
+        widget->SetArtProvider(new wxRibbonDefaultArtProvider);
+    else if (node->prop_as_string(prop_theme) == "Generic")
+        widget->SetArtProvider(new wxRibbonAUIArtProvider);
+    else if (node->prop_as_string(prop_theme) == "MSW")
+        widget->SetArtProvider(new wxRibbonMSWArtProvider);
+
+    widget->Bind(wxEVT_RIBBONBAR_PAGE_CHANGED, &RibbonBarFormGenerator::OnPageChanged, this);
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+void RibbonBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+{
+    auto btn_bar = wxStaticCast(wxobject, wxRibbonBar);
+    btn_bar->Realize();
+}
+
+void RibbonBarFormGenerator::OnPageChanged(wxRibbonBarEvent& event)
+{
+    auto bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
+    if (bar)
+        GetMockup()->SelectNode(event.GetPage());
+    event.Skip();
+}
+
+std::optional<ttlib::cstr> RibbonBarFormGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+
+    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
+    code << "(wxWindow* parent, wxWindowID id, ";
+    code << "\n\t\tconst wxPoint& pos, const wxSize& size, long style) :";
+
+    code << "\n\twxRibbonBar(parent, id, pos, size, style";
+    if (node->prop_as_string(prop_window_name).size())
+        code << ", name";
+    code << ")\n{";
+
+    return code;
+}
+
+std::optional<ttlib::cstr> RibbonBarFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+{
+    return GenFormCode(cmd, node);
+}
+
+std::optional<ttlib::cstr> RibbonBarFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    auto& theme = node->prop_as_string(prop_theme);
+    if (theme.is_sameas("Default"))
+        code << "SetArtProvider(new wxRibbonDefaultArtProvider);";
+    else if (theme.is_sameas("Generic"))
+        code << "SetArtProvider(new wxRibbonAUIArtProvider);";
+    else if (theme.is_sameas("MSW"))
+        code << "SetArtProvider(new wxRibbonMSWArtProvider);";
+
+    return code;
+}
+
+std::optional<ttlib::cstr> RibbonBarFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    auto code = GenEventCode(event, class_name);
+    // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
+    code.Replace(ttlib::cstr() << event->GetNode()->prop_as_string(prop_var_name) << "->", "");
+    return code;
+}
+
+bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/ribbon/art.h>", set_src, set_hdr);
+    InsertGeneratorInclude(node, "#include <wx/ribbon/bar.h>", set_src, set_hdr);
+    InsertGeneratorInclude(node, "#include <wx/ribbon/control.h>", set_src, set_hdr);
+
+    return true;
+}
+
 //////////////////////////////////////////  RibbonBarGenerator  //////////////////////////////////////////
 
 wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)

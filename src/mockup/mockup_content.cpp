@@ -74,7 +74,7 @@ void MockupContent::CreateAllGenerators()
     }
     else
     {
-        if (form->isGen(gen_MenuBar) || form->isGen(gen_ToolBar))
+        if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar))
         {
             // In this case, the form itself is created as a child
             CreateChildren(form, this, this, m_parent_sizer);
@@ -407,7 +407,7 @@ void MockupContent::OnNodeSelected(Node* node)
     else if (node->isGen(gen_wxRibbonPage))
     {
         auto parent = node->GetParent();
-        ASSERT(parent->isGen(gen_wxRibbonBar));
+        ASSERT(parent->isGen(gen_wxRibbonBar) || parent->isGen(gen_RibbonBar));
 
         auto bar = wxStaticCast(Get_wxObject(parent), wxRibbonBar);
         auto page = wxStaticCast(Get_wxObject(node), wxRibbonPage);

@@ -62,16 +62,18 @@ static const ParentChild lstParentChild[] = {
 
     // Forms
 
-    { type_form, type_sizer, one },
-    { type_form, type_gbsizer, one },
     { type_form, type_ctx_menu, one },
+    { type_form, type_gbsizer, one },
+    { type_form, type_sizer, one },
     { type_menubar_form, type_menu, infinite },
+    { type_ribbonbar_form, type_ribbonpage, infinite },
     { type_toolbar_form, type_tool, infinite },
     { type_toolbar_form, type_widget, infinite },
     { type_wizard, type_wizardpagesimple, infinite },
 
     { type_project, type_form, infinite },
     { type_project, type_menubar_form, infinite },
+    { type_project, type_ribbonbar_form, infinite },
     { type_project, type_toolbar_form, infinite },
     { type_project, type_wizard, infinite },
 

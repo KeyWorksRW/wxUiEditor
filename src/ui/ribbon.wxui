@@ -103,6 +103,11 @@
                   bitmap="Header; ..\art_headers\wxToolBar_png.hxx; ; [-1; -1]"
                   help="wxToolBar"
                   id="gen_ToolBar" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Header; ..\art_headers\ribbon_bar_png.hxx; ; [-1; -1]"
+                  help="wxRibbonBar"
+                  id="gen_RibbonBar" />
               </node>
             </node>
           </node>

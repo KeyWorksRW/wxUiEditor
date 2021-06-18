@@ -325,8 +325,8 @@ namespace GenEnum
     {
 
         type_aui_tool,
-        type_auinotebook,
         type_aui_toolbar,
+        type_auinotebook,
         type_bookpage,
         type_choicebook,
         type_container,
@@ -353,6 +353,7 @@ namespace GenEnum
         type_propgridman,
         type_propgridpage,
         type_ribbonbar,
+        type_ribbonbar_form,
         type_ribbonbutton,
         type_ribbonbuttonbar,
         type_ribbongallery,
@@ -404,6 +405,7 @@ namespace GenEnum
         gen_MenuBar,
         gen_PanelForm,
         gen_Project,
+        gen_RibbonBar,
         gen_StaticCheckboxBoxSizer,
         gen_StaticRadioBtnBoxSizer,
         gen_String_Validator,

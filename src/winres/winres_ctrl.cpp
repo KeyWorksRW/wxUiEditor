@@ -13,7 +13,7 @@
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
 #include "utils.h"          // Utility functions that work with properties
 
-rcCtrl::rcCtrl() {}
+resCtrl::resCtrl() {}
 
 struct ClassGenPair
 {
@@ -78,7 +78,7 @@ static const ClassGenPair lst_name_gen[] = {
 
 */
 
-void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
+void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 {
 #if defined(_DEBUG)
     // Create a copy of the original line without the extra spaces that can be used to send to our log window if there are
@@ -444,17 +444,21 @@ void rcCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     // This should be the dimensions.
     if (line.size() && (ttlib::is_digit(line[0]) || line[0] == ','))
     {
-        GetDimensions(line);
+        if (!ParseDimensions(line, m_du_rect, m_pixel_rect))
+        {
+            MSG_ERROR(ttlib::cstr() << "Missing dimensions :" << m_original_line);
+            return;
+        }
 
         if (m_add_wrap_property)
         {
-            m_node->prop_set_value(prop_wrap, m_width);
+            m_node->prop_set_value(prop_wrap, m_pixel_rect.GetWidth());
         }
 
         if (m_add_min_width_property || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxComboBox) ||
             m_node->isGen(gen_wxRichTextCtrl))
         {
-            m_node->prop_set_value(prop_minimum_size, ttlib::cstr() << m_width << "; -1");
+            m_node->prop_set_value(prop_minimum_size, ttlib::cstr() << m_pixel_rect.GetWidth() << "; -1");
         }
     }
     else

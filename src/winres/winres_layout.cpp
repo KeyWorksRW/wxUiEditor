@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   rcForm layout code
+// Purpose:   resForm layout code
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -13,19 +13,56 @@
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
-void rcForm::AddSizersAndChildren()
+static bool is_same_top(const resCtrl& left, const resCtrl& right)
 {
-    // First sort all children horizontally
-    // std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetLeft() < b.GetLeft(); });
+    if (left.du_top() == right.du_top())
+        return true;
+    if (left.GetNode()->isGen(gen_wxStaticText))
+    {
+        if (left.du_top() - 1 == right.du_top() || left.du_top() - 2 == right.du_top())
+            return true;
+    }
+    return false;
+}
 
-    // Now sort vertically
-    // std::sort(std::begin(m_ctrls), std::end(m_ctrls), [](rcCtrl a, rcCtrl b) { return a.GetTop() < b.GetTop(); });
-    std::sort(m_ctrls.begin(), m_ctrls.end(), [](rcCtrl a, rcCtrl b) { return a.GetTop() < b.GetTop(); });
+static bool is_lower_top(const resCtrl& left, const resCtrl& right)
+{
+    if (left.du_top() == right.du_top())
+    {
+        return (left.du_left() < right.du_left());
+    }
+    return (left.du_top() < right.du_top());
+}
 
+void resForm::AddSizersAndChildren()
+{
+    if (!m_ctrls.size())
+        return;  // empty dialog -- rare, but it does happen
+
+    // std::sort(m_ctrls.begin(), m_ctrls.end(), [](resCtrl a, resCtrl b) { return a.du_top() < b.du_top(); });
+    std::sort(m_ctrls.begin(), m_ctrls.end(), [](resCtrl a, resCtrl b) { return is_lower_top(a, b); });
+
+    // Sometimes a static text control will be placed to the left of another control such as an edit control, and moved down
+    // a little bit so that it aligns with the control it precedes. When we sorted controls vertically, the static text
+    // control will appear below the control it is supposed to precede.
+
+    for (size_t idx = 1; idx < m_ctrls.size(); ++idx)
+    {
+        if (m_ctrls[idx].isGen(gen_wxStaticText) && is_same_top(m_ctrls[idx], m_ctrls[idx - 1]))
+        {
+            if (m_ctrls[idx - 1].du_left() > m_ctrls[idx].du_left() + m_ctrls[idx].du_width())
+            {
+                std::swap(m_ctrls[idx - 1], m_ctrls[idx]);
+                m_ctrls[idx - 1].GetDialogRect().SetTop(m_ctrls[idx].du_top());
+            }
+        }
+    }
+
+    // Sort horizontally within each top range
     for (size_t begin = 0; begin < m_ctrls.size() - 1; ++begin)
     {
         auto end = begin + 1;
-        while (m_ctrls[end].GetTop() == m_ctrls[begin].GetTop())
+        while (is_same_top(m_ctrls[begin], m_ctrls[end]))
         {
             ++end;
             if (end >= m_ctrls.size())
@@ -35,7 +72,7 @@ void rcForm::AddSizersAndChildren()
         if (end > begin + 1)
         {
             std::sort(m_ctrls.begin() + begin, m_ctrls.begin() + end,
-                      [](rcCtrl a, rcCtrl b) { return a.GetLeft() < b.GetLeft(); });
+                      [](resCtrl a, resCtrl b) { return a.du_left() < b.du_left(); });
         }
     }
 
@@ -52,38 +89,36 @@ void rcForm::AddSizersAndChildren()
         if (child.isAdded())
             continue;
 
-        if (child.GetNode()->isGen(gen_wxStaticBoxSizer))
-        {
-            if (child.GetWidth() > GetWidth() - 30)
-                child.GetNode()->prop_set_value(prop_flags, "wxEXPAND");
-
-            AddStaticBoxChildren(child, idx_child);
-            parent->Adopt(child.GetNodePtr());
-            child.setAdded();
+        if (child.isGen(gen_wxButton) && ProcessStdButton(parent.get(), idx_child))
             continue;
-        }
 
+        // Special handling for last control
         if (idx_child + 1 >= m_ctrls.size())
         {
             // If last control is a button, we may need to center or right-align it.
-            if (child.GetNode()->isGen(gen_wxButton))
+            if (child.isGen(gen_wxButton))
             {
-                int dlg_margin = (GetWidth() / 2) - child.GetWidth();
-                if (child.GetLeft() > dlg_margin)
+                int dlg_margin = (du_width() / 2) - child.du_width();
+                if (child.du_left() > dlg_margin)
                 {
-                    if (child.GetRight() < (GetWidth() - dlg_margin))
-                        child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+                    if (child.du_left() + child.du_width() < (du_width() - dlg_margin))
+                        child.prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
                     else
-                        child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                        child.prop_set_value(prop_alignment, "wxALIGN_RIGHT");
                 }
             }
 
-            // orphaned child, add to form's top level sizer
-            parent->Adopt(child.GetNodePtr());
-            return;
+            ASSERT_MSG(!child.isGen(gen_wxStaticBoxSizer), "Ignoring group box with no children")
+            if (!child.isGen(gen_wxStaticBoxSizer))
+            {
+                // orphaned child, add to form's top level sizer
+                parent->Adopt(child.GetNodePtr());
+            }
+            break;
         }
 
-        if (m_ctrls[idx_child + 1].GetTop() == child.GetTop())
+        // Check for a possible row
+        if (is_same_top(child, m_ctrls[idx_child + 1]))
         {
             // If there is more than one child with the same top position, then create a horizontal box sizer
             // and add all children with the same top position.
@@ -91,10 +126,15 @@ void rcForm::AddSizersAndChildren()
             parent->Adopt(sizer);
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
 
-            while (idx_child < m_ctrls.size() && m_ctrls[idx_child].GetTop() == child.GetTop())
+            while (idx_child < m_ctrls.size() && is_same_top(child, m_ctrls[idx_child]))
             {
                 if (m_ctrls[idx_child].isAdded())
                     break;  // means there was a static box to the right
+
+                if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
+                {
+                    AddStaticBoxChildren(m_ctrls[idx_child], idx_child);
+                }
 
                 // Note that we add the child we are comparing to first.
                 sizer->Adopt(m_ctrls[idx_child].GetNodePtr());
@@ -106,20 +146,29 @@ void rcForm::AddSizersAndChildren()
             // In order to properly step through the loop
             --idx_child;
 
-            if (m_ctrls[idx_child].GetLeft() + m_ctrls[idx_child].GetWidth() > m_width - 10)
+            if (m_ctrls[idx_child].du_left() + m_ctrls[idx_child].du_width() > du_width() - 10)
             {
                 sizer->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
             }
         }
+
+        // Add one or more controls vertically
         else
         {
+            if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
+            {
+                AddStaticBoxChildren(m_ctrls[idx_child], idx_child);
+                Adopt(parent, m_ctrls[idx_child]);
+                continue;
+            }
+
             auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent.get());
             parent->Adopt(sizer);
             sizer->Adopt(child.GetNodePtr());
             if (idx_child == 0)
                 continue;
 
-            while (idx_child < m_ctrls.size() && m_ctrls[idx_child].GetTop() != m_ctrls[idx_child - 1].GetTop())
+            while (idx_child < m_ctrls.size() && !is_same_top(m_ctrls[idx_child - 1], m_ctrls[idx_child]))
             {
                 if (m_ctrls[idx_child].isAdded())
                     break;  // means there was a static box to the right
@@ -129,7 +178,7 @@ void rcForm::AddSizersAndChildren()
                 if (idx_child + 2 < m_ctrls.size())
                 {
                     // If the next two sizers have the same top, then they need to be placed in a horizontal sizer.
-                    if (m_ctrls[idx_child + 1].GetTop() == m_ctrls[idx_child + 2].GetTop())
+                    if (m_ctrls[idx_child + 1].du_top() == m_ctrls[idx_child + 2].du_top())
                         break;
                 }
                 ++idx_child;
@@ -140,8 +189,13 @@ void rcForm::AddSizersAndChildren()
     parent->FixDuplicateNodeNames();
 }
 
-void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
+void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 {
+    if (box.du_width() > du_width() - 30)
+    {
+        box.GetNode()->prop_set_value(prop_flags, "wxEXPAND");
+    }
+
     CollectGroupControls(idx_group_box);
 
     const auto& static_box = m_ctrls[idx_group_box];
@@ -151,13 +205,13 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
         if (result < 0)
         {
             // No vertical alignment with the next control, so just add it normally
-            auto& child = reinterpret_cast<rcCtrl&>(*m_group_ctrls[idx_child]);
+            auto& child = reinterpret_cast<resCtrl&>(*m_group_ctrls[idx_child]);
             Adopt(static_box.GetNodePtr(), child);
 
             // REVIEW: [KeyWorks - 06-16-2021] Does this actually happen in a group box?
-            int dlg_margin = (box.GetWidth() / 2) - child.GetWidth();
-            if (child.GetRight() < (box.GetWidth() - dlg_margin))
-                child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+            int dlg_margin = (box.du_width() / 2) - child.du_width();
+            if (child.du_left() + du_width() < (box.du_width() - dlg_margin))
+                child.prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
             continue;
         }
         else if (result == 0)
@@ -165,11 +219,11 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             // Single row vertical alignment with now horizontal alignment in the next row, so use a horizontal box sizer
             auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, box.GetNode());
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
-            static_box.GetNodePtr()->Adopt(sizer);
+            static_box.GetNode()->Adopt(sizer);
 
-            auto& child = reinterpret_cast<rcCtrl&>(*m_group_ctrls[idx_child]);
+            auto& child = reinterpret_cast<resCtrl&>(*m_group_ctrls[idx_child]);
 
-            while (idx_child < m_group_ctrls.size() && m_group_ctrls[idx_child]->GetTop() == child.GetTop())
+            while (idx_child < m_group_ctrls.size() && m_group_ctrls[idx_child]->du_top() == child.du_top())
             {
                 // Note that we add the child we are comparing to first.
                 Adopt(sizer, *m_group_ctrls[idx_child]);
@@ -188,13 +242,13 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             sizer->prop_set_value(prop_cols, ttlib::itoa(total_columns));
             static_box.GetNodePtr()->Adopt(sizer);
 
-            auto& child = reinterpret_cast<rcCtrl&>(*m_group_ctrls[idx_child]);
+            auto& child = reinterpret_cast<resCtrl&>(*m_group_ctrls[idx_child]);
             std::vector<int> positions;
             positions.reserve(total_columns);
             for (size_t idx = 0; idx < static_cast<size_t>(total_columns); ++idx)
             {
-                if (m_group_ctrls[idx_child + idx]->GetTop() == child.GetTop())
-                    positions.emplace_back(m_group_ctrls[idx_child + idx]->GetLeft());
+                if (m_group_ctrls[idx_child + idx]->du_top() == child.du_top())
+                    positions.emplace_back(m_group_ctrls[idx_child + idx]->du_left());
                 else
                     positions.emplace_back(-1);
             }
@@ -209,9 +263,9 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             {
                 // This covers the case where the previous rows had gaps in the columns
                 if (positions[cur_column] == -1)
-                    positions[cur_column] = m_group_ctrls[idx_child]->GetLeft();
+                    positions[cur_column] = m_group_ctrls[idx_child]->du_left();
 
-                while (m_group_ctrls[idx_child]->GetLeft() > positions[cur_column])
+                while (m_group_ctrls[idx_child]->du_left() > positions[cur_column])
                 {
                     auto spacer = g_NodeCreator.CreateNode(gen_spacer, sizer.get());
                     sizer->Adopt(spacer);
@@ -234,15 +288,15 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
     // orientation as well as spanning more than one column or row.
 }
 
-int rcForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* /* p_static_box */)
+int resForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const resCtrl* /* p_static_box */)
 {
     ASSERT(idx_end < m_ctrls.size());
 
-    if (idx_start + 1 > idx_end || m_ctrls[idx_start + 1].GetTop() != m_ctrls[idx_start].GetTop())
+    if (idx_start + 1 > idx_end || m_ctrls[idx_start + 1].du_top() != m_ctrls[idx_start].du_top())
         return -1;
 
     size_t row_children = 2;
-    while (idx_start + row_children < idx_end && m_ctrls[idx_start + row_children].GetTop() != m_ctrls[idx_start].GetTop())
+    while (idx_start + row_children < idx_end && m_ctrls[idx_start + row_children].du_top() != m_ctrls[idx_start].du_top())
         ++row_children;
 
     size_t idx_next_row = idx_start + row_children;
@@ -251,11 +305,11 @@ int rcForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* /* p
 
     size_t max_columns = row_children;
 
-    while (idx_next_row < idx_end && m_ctrls[idx_next_row + 1].GetTop() != m_ctrls[idx_next_row].GetTop())
+    while (idx_next_row < idx_end && m_ctrls[idx_next_row + 1].du_top() != m_ctrls[idx_next_row].du_top())
     {
         row_children = 2;
         while (idx_next_row + row_children < idx_end &&
-               m_ctrls[idx_next_row + row_children].GetTop() != m_ctrls[idx_next_row].GetTop())
+               m_ctrls[idx_next_row + row_children].du_top() != m_ctrls[idx_next_row].du_top())
             ++row_children;
         if (row_children > max_columns)
             max_columns = row_children;
@@ -268,29 +322,30 @@ int rcForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* /* p
     return static_cast<int>(max_columns);
 }
 
-int rcForm::GroupGridSizerNeeded(size_t idx_start) const
+int resForm::GroupGridSizerNeeded(size_t idx_start) const
 {
-    if (idx_start + 1 >= m_group_ctrls.size() || m_group_ctrls[idx_start + 1]->GetTop() != m_group_ctrls[idx_start]->GetTop())
+    if (idx_start + 1 >= m_group_ctrls.size() ||
+        m_group_ctrls[idx_start + 1]->du_top() != m_group_ctrls[idx_start]->du_top())
         return -1;
 
     size_t row_children = 2;
     while (idx_start + row_children < m_group_ctrls.size() &&
-           m_group_ctrls[idx_start + row_children]->GetTop() == m_group_ctrls[idx_start]->GetTop())
+           m_group_ctrls[idx_start + row_children]->du_top() == m_group_ctrls[idx_start]->du_top())
         ++row_children;
 
     size_t idx_next_row = idx_start + row_children;
     if (idx_next_row + 1 >= m_group_ctrls.size() ||
-        m_group_ctrls[idx_next_row + +1]->GetTop() != m_group_ctrls[idx_next_row]->GetTop())
+        m_group_ctrls[idx_next_row + +1]->du_top() != m_group_ctrls[idx_next_row]->du_top())
         return 0;  // only one aligned row, so a box sizer is needed
 
     size_t max_columns = row_children;
 
     while (idx_next_row + 1 < m_group_ctrls.size() &&
-           m_group_ctrls[idx_next_row + 1]->GetTop() == m_group_ctrls[idx_next_row]->GetTop())
+           m_group_ctrls[idx_next_row + 1]->du_top() == m_group_ctrls[idx_next_row]->du_top())
     {
         row_children = 2;
         while (idx_next_row + row_children < m_group_ctrls.size() &&
-               m_group_ctrls[idx_next_row + row_children]->GetTop() == m_group_ctrls[idx_next_row]->GetTop())
+               m_group_ctrls[idx_next_row + row_children]->du_top() == m_group_ctrls[idx_next_row]->du_top())
             ++row_children;
         if (row_children > max_columns)
             max_columns = row_children;
@@ -301,7 +356,7 @@ int rcForm::GroupGridSizerNeeded(size_t idx_start) const
     return static_cast<int>(max_columns);
 }
 
-void rcForm::CollectGroupControls(size_t idx_parent)
+void resForm::CollectGroupControls(size_t idx_parent)
 {
     m_group_ctrls.clear();
     auto& rc_parent = m_ctrls[idx_parent].GetDialogRect();
@@ -324,10 +379,61 @@ void rcForm::CollectGroupControls(size_t idx_parent)
     }
 }
 
-void rcForm::Adopt(const NodeSharedPtr& node, rcCtrl& child)
+void resForm::Adopt(const NodeSharedPtr& node, resCtrl& child)
 {
     ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
 
     node->Adopt(child.GetNodePtr());
     child.setAdded();
+}
+
+// This function tries to determine if standard dialog buttons are being used, in which case we can switch them to
+// wxStdDialogButtonSizer. Unfortunately, we have to rely on English labels to determine the button type -- we can't assume a
+// standard id like IDOK will also have a standard label.
+
+static std::set<std::string> s_btn_names = {
+
+    "OK", "Yes", "Save", "No", "Cancel", "Close"
+
+};
+
+bool resForm::ProcessStdButton(Node* parent_sizer, size_t idx_child)
+{
+    for (size_t idx = idx_child; idx < m_ctrls.size(); ++idx)
+    {
+        if (!m_ctrls[idx].isGen(gen_wxButton))
+            return false;
+
+        if (auto result = s_btn_names.find(m_ctrls[idx].GetNode()->prop_as_string(prop_label)); result == s_btn_names.end())
+        {
+            return false;
+        }
+    }
+
+    // If we made it here, then all we have left are buttons, and they all have standard labels
+
+    auto sizer = g_NodeCreator.CreateNode(gen_wxStdDialogButtonSizer, parent_sizer);
+    // Clear the default properties
+    sizer->prop_set_value(prop_default_button, "");
+    sizer->prop_set_value(prop_OK, false);
+    sizer->prop_set_value(prop_Cancel, false);
+
+    // Set our own default property
+    sizer->prop_set_value(prop_flags, "wxEXPAND");
+
+    for (size_t idx = idx_child; idx < m_ctrls.size(); ++idx)
+    {
+        auto btn = m_ctrls[idx].GetNode();
+        if (btn->prop_as_bool(prop_default))
+            sizer->prop_set_value(prop_default_button, btn->prop_as_string(prop_label));
+        auto result = rmap_PropNames.find(btn->prop_as_string(prop_label));
+        if (result != rmap_PropNames.end())
+        {
+            sizer->prop_set_value(result->second, true);
+        }
+        m_ctrls[idx].setAdded();
+    }
+
+    parent_sizer->Adopt(sizer);
+    return true;
 }

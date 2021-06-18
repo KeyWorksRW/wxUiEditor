@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   rcCtrl class utility functions
+// Purpose:   resCtrl class utility functions
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -11,7 +11,7 @@
 
 #include "utils.h"  // Utility functions that work with properties
 
-void rcCtrl::ParseCommonStyles(ttlib::cview line)
+void resCtrl::ParseCommonStyles(ttlib::cview line)
 {
     if (line.contains("WS_DISABLED"))
         m_node->prop_set_value(prop_disabled, true);
@@ -24,52 +24,51 @@ void rcCtrl::ParseCommonStyles(ttlib::cview line)
         AppendStyle(prop_window_style, "wxVSCROLL");
 }
 
-void rcCtrl::GetDimensions(ttlib::cview line)
+bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect)
 {
+    duRect = { 0, 0, 0, 0 };
+    pixelRect = { 0, 0, 0, 0 };
     line.moveto_nonspace();
 
     if (line.empty())
-    {
-        MSG_ERROR(ttlib::cstr() << "Missing dimensions :" << m_original_line);
-        return;
-    }
+        return false;
 
     if (line[0] == ',')
         line.moveto_digit();
 
     if (line.empty() || !ttlib::is_digit(line[0]))
-        throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.SetLeft(ttlib::atoi(line));
+        return false;
+    duRect.SetLeft(ttlib::atoi(line));
 
     auto pos = line.find_first_of(',');
     if (!ttlib::is_found(pos))
-        throw std::invalid_argument("Expected comma-separated dimensions");
+        return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
     if (line.empty() || !ttlib::is_digit(line[0]))
-        throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.SetTop(ttlib::atoi(line));
+        return false;
+    duRect.SetTop(ttlib::atoi(line));
 
     pos = line.find_first_of(',');
     if (!ttlib::is_found(pos))
-        throw std::invalid_argument("Expected comma-separated dimensions");
+        return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
     if (line.empty() || !ttlib::is_digit(line[0]))
-        throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.SetWidth(ttlib::atoi(line));
+        return false;
+    duRect.SetWidth(ttlib::atoi(line));
 
     pos = line.find_first_of(',');
     if (!ttlib::is_found(pos))
-        throw std::invalid_argument("Expected comma-separated dimensions");
+        return false;
 
     line.remove_prefix(pos);
     line.moveto_digit();
     if (line.empty() || !ttlib::is_digit(line[0]))
-        throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.SetHeight(ttlib::atoi(line));
+        return false;
+    duRect.SetHeight(ttlib::atoi(line));
 
     /*
 
@@ -80,18 +79,20 @@ void rcCtrl::GetDimensions(ttlib::cview line)
         The following code converts dialog coordinates into pixels assuming a 9pt font.
 
         For the most part, these values are simply used to determine which sizer to place the control in. However, it will
-        change things like the wrapping width of a wxStaticText -- it will be larger if the dialog used an 8pt font, smaller
-        if it used a 10pt font.
+        change things like the wrapping width of a wxStaticText -- our wxWidgets version will be larger than the original if
+        the dialog used an 8pt font, smaller if it used a 10pt font.
 
     */
 
-    m_left = static_cast<int>((static_cast<int64_t>(m_rc.GetLeft()) * 7 / 4));
-    m_width = static_cast<int>((static_cast<int64_t>(m_rc.GetWidth()) * 7 / 4));
-    m_top = static_cast<int>((static_cast<int64_t>(m_rc.GetTop()) * 15 / 4));
-    m_height = static_cast<int>((static_cast<int64_t>(m_rc.GetHeight()) * 15 / 4));
+    pixelRect.SetLeft(static_cast<int>((static_cast<int64_t>(duRect.GetLeft()) * 7 / 4)));
+    pixelRect.SetWidth(static_cast<int>((static_cast<int64_t>(duRect.GetWidth()) * 7 / 4)));
+    pixelRect.SetTop(static_cast<int>((static_cast<int64_t>(duRect.GetTop()) * 15 / 4)));
+    pixelRect.SetHeight(static_cast<int>((static_cast<int64_t>(duRect.GetHeight()) * 15 / 4)));
+
+    return true;
 }
 
-ttlib::cview rcCtrl::GetID(ttlib::cview line)
+ttlib::cview resCtrl::GetID(ttlib::cview line)
 {
     line.moveto_nonspace();
 
@@ -150,7 +151,7 @@ ttlib::cview rcCtrl::GetID(ttlib::cview line)
     return line;
 }
 
-ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
+ttlib::cview resCtrl::GetLabel(ttlib::cview line)
 {
     line.moveto_nonspace();
 
@@ -184,7 +185,7 @@ ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
     return line;
 }
 
-ttlib::cview rcCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
+ttlib::cview resCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
 {
     auto pos = str.AssignSubString(line, '"', '"');
     if (!ttlib::is_found(pos) || line[pos] != '"')
@@ -193,7 +194,7 @@ ttlib::cview rcCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
     return line.subview(pos + 1);
 }
 
-ttlib::cview rcCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
+ttlib::cview resCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
 {
     auto pos = str.AssignSubString(line, ',', ',');
     if (!ttlib::is_found(pos))
@@ -204,7 +205,7 @@ ttlib::cview rcCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
     return line;
 }
 
-void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
+void resCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 {
     ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
     if (updated_style.size())

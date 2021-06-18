@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   rcCtrl class image/icon functions
+// Purpose:   resCtrl class image/icon functions
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -56,7 +56,7 @@ static std::map<std::string, const char*> map_win_wx_stock = {
 
 // clang-format on
 
-void rcCtrl::ParseIconControl(ttlib::cview line)
+void resCtrl::ParseIconControl(ttlib::cview line)
 {
     line.moveto_nextword();
 
@@ -119,14 +119,14 @@ void rcCtrl::ParseIconControl(ttlib::cview line)
         m_node->prop_set_value(prop_bitmap, prop);
     }
     line = GetID(line);
-    GetDimensions(line);
+    ParseDimensions(line, m_du_rect, m_pixel_rect);
 }
 
 // Similar to ParseIconControl only in this case line is pointing to the id, and the Node
 // has already been created.
 //
 // Works with either SS_BITMAP or SS_ICON.
-void rcCtrl::ParseImageControl(ttlib::cview line)
+void resCtrl::ParseImageControl(ttlib::cview line)
 {
     ttlib::cstr image_name;
 
@@ -249,5 +249,5 @@ void rcCtrl::ParseImageControl(ttlib::cview line)
         MSG_ERROR(ttlib::cstr() << "Missing class :" << m_original_line);
     }
 
-    GetDimensions(line);
+    ParseDimensions(line, m_du_rect, m_pixel_rect);
 }

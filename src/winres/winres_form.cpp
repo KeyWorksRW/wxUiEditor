@@ -15,9 +15,9 @@
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
 #include "uifuncs.h"        // Miscellaneous functions for displaying UI
 
-rcForm::rcForm() {}
+resForm::resForm() {}
 
-void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine)
 {
     m_pWinResource = pWinResource;
     auto line = txtfile[curTxtLine].subview();
@@ -52,7 +52,8 @@ void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, si
 
     line.remove_prefix(end);
     line.moveto_digit();
-    GetDimensions(line);
+
+    resCtrl::ParseDimensions(line, m_du_rect, m_pixel_rect);
 
     auto lst_includes = pWinResource->GetIncludeLines();
     if (lst_includes.size())
@@ -97,7 +98,7 @@ void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, si
     // TODO: [KeyWorks - 10-18-2020] The last step will be to figure what to use for the base and derived filenames.
 }
 
-void rcForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
 {
     ttlib::cstr style(txtfile[curTxtLine]);
 
@@ -186,7 +187,7 @@ void rcForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 }
 
-void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
 {
     for (; curTxtLine < txtfile.size(); ++curTxtLine)
     {
@@ -219,59 +220,7 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 }
 
-void rcForm::GetDimensions(ttlib::cview line)
-{
-    if (line[0] == ',')
-        line.moveto_digit();
-
-    if (line.empty() || !ttlib::is_digit(line[0]))
-        throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.left = ttlib::atoi(line);
-
-    auto pos = line.find_first_of(',');
-    if (!ttlib::is_found(pos))
-        throw std::invalid_argument("Expected comma-separated dimensions");
-
-    line.remove_prefix(pos);
-    line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line[0]))
-        throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.top = ttlib::atoi(line);
-
-    pos = line.find_first_of(',');
-    if (!ttlib::is_found(pos))
-        throw std::invalid_argument("Expected comma-separated dimensions");
-
-    line.remove_prefix(pos);
-    line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line[0]))
-        throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.right = ttlib::atoi(line);
-
-    pos = line.find_first_of(',');
-    if (!ttlib::is_found(pos))
-        throw std::invalid_argument("Expected comma-separated dimensions");
-
-    line.remove_prefix(pos);
-    line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line[0]))
-        throw std::invalid_argument("Expected a numeric dimension value");
-    m_rc.bottom = ttlib::atoi(line);
-
-    // The resource file uses dialog coordinates which we need to convert into pixel dimensions. We assume that wxWidgets
-    // will be using the default Windows 10 font (Segoe UI, 9pt) so we convert to match (note that this is what
-    // rcCtrl::GetDimensions() does).
-
-    m_rc.left = (m_rc.left * 7) / 4;
-    m_rc.right = (m_rc.right * 7) / 4;
-    m_rc.top = (m_rc.top * 15) / 8;
-    m_rc.bottom = (m_rc.bottom * 15) / 8;
-
-    m_width = (m_rc.right - m_rc.left);
-    m_height = (m_rc.bottom - m_rc.top);
-}
-
-void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
+void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 {
     ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
     if (updated_style.size())
@@ -280,7 +229,7 @@ void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
     m_node->prop_set_value(prop_name, updated_style);
 }
 
-ttlib::cstr rcForm::ConvertDialogId(ttlib::cview id)
+ttlib::cstr resForm::ConvertDialogId(ttlib::cview id)
 {
     id.moveto_nonspace();
     ttlib::cstr value;

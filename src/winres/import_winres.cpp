@@ -314,13 +314,13 @@ void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
     }
 }
 
-void WinResource::FormToNode(rcForm& form)
+void WinResource::FormToNode(resForm& form)
 {
     form.AddSizersAndChildren();
 
     switch (form.GetFormType())
     {
-        case rcForm::form_dialog:
+        case resForm::form_dialog:
             {
                 auto node = g_NodeCreator.MakeCopy(form.GetFormNode());
                 m_project->Adopt(node);

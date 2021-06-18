@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   rcCtrl style processing functions
+// Purpose:   resCtrl style processing functions
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -59,7 +59,7 @@ static const StylePair lst_styles[] = {
 
 // clang-format on
 
-void rcCtrl::ParseStyles(ttlib::cview line)
+void resCtrl::ParseStyles(ttlib::cview line)
 {
     for (auto& iter: lst_styles)
     {
@@ -68,7 +68,7 @@ void rcCtrl::ParseStyles(ttlib::cview line)
     }
 }
 
-void rcCtrl::ParseButtonStyles(ttlib::cview line)
+void resCtrl::ParseButtonStyles(ttlib::cview line)
 {
     if (line.contains("BS_RIGHTBUTTON"))
     {
@@ -117,7 +117,7 @@ void rcCtrl::ParseButtonStyles(ttlib::cview line)
         AppendStyle(prop_window_style, "wxBORDER_STATIC");
 }
 
-void rcCtrl::ParseListViewStyles(ttlib::cview line)
+void resCtrl::ParseListViewStyles(ttlib::cview line)
 {
     // Clear the default style (wxLC_ICON)
     m_node->prop_set_value(prop_style, "");
@@ -149,7 +149,7 @@ void rcCtrl::ParseListViewStyles(ttlib::cview line)
         AppendStyle(prop_style, "wxLC_SORT_DESCENDING");
 }
 
-void rcCtrl::AddSpecialStyles(ttlib::cview line)
+void resCtrl::AddSpecialStyles(ttlib::cview line)
 {
     //////////// Edit control styles ////////////
 

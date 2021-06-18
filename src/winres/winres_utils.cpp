@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   rcCtrl class utility functions
+// Purpose:   resCtrl class utility functions
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -11,7 +11,7 @@
 
 #include "utils.h"  // Utility functions that work with properties
 
-void rcCtrl::ParseCommonStyles(ttlib::cview line)
+void resCtrl::ParseCommonStyles(ttlib::cview line)
 {
     if (line.contains("WS_DISABLED"))
         m_node->prop_set_value(prop_disabled, true);
@@ -24,7 +24,7 @@ void rcCtrl::ParseCommonStyles(ttlib::cview line)
         AppendStyle(prop_window_style, "wxVSCROLL");
 }
 
-bool rcCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect)
+bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect)
 {
     duRect = { 0, 0, 0, 0 };
     pixelRect = { 0, 0, 0, 0 };
@@ -92,7 +92,7 @@ bool rcCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRec
     return true;
 }
 
-ttlib::cview rcCtrl::GetID(ttlib::cview line)
+ttlib::cview resCtrl::GetID(ttlib::cview line)
 {
     line.moveto_nonspace();
 
@@ -151,7 +151,7 @@ ttlib::cview rcCtrl::GetID(ttlib::cview line)
     return line;
 }
 
-ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
+ttlib::cview resCtrl::GetLabel(ttlib::cview line)
 {
     line.moveto_nonspace();
 
@@ -185,7 +185,7 @@ ttlib::cview rcCtrl::GetLabel(ttlib::cview line)
     return line;
 }
 
-ttlib::cview rcCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
+ttlib::cview resCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
 {
     auto pos = str.AssignSubString(line, '"', '"');
     if (!ttlib::is_found(pos) || line[pos] != '"')
@@ -194,7 +194,7 @@ ttlib::cview rcCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
     return line.subview(pos + 1);
 }
 
-ttlib::cview rcCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
+ttlib::cview resCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
 {
     auto pos = str.AssignSubString(line, ',', ',');
     if (!ttlib::is_found(pos))
@@ -205,7 +205,7 @@ ttlib::cview rcCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
     return line;
 }
 
-void rcCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
+void resCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 {
     ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
     if (updated_style.size())

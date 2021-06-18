@@ -11,10 +11,10 @@
 
 class WinResource;
 
-class rcCtrl
+class resCtrl
 {
 public:
-    rcCtrl();
+    resCtrl();
 
     auto GetNode() const { return m_node.get(); }
     auto GetNodePtr() const { return m_node; }

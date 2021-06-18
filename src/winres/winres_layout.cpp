@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   rcForm layout code
+// Purpose:   resForm layout code
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -13,7 +13,7 @@
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
-static bool is_same_top(const rcCtrl& left, const rcCtrl& right)
+static bool is_same_top(const resCtrl& left, const resCtrl& right)
 {
     if (left.du_top() == right.du_top())
         return true;
@@ -25,7 +25,7 @@ static bool is_same_top(const rcCtrl& left, const rcCtrl& right)
     return false;
 }
 
-static bool is_lower_top(const rcCtrl& left, const rcCtrl& right)
+static bool is_lower_top(const resCtrl& left, const resCtrl& right)
 {
     if (left.du_top() == right.du_top())
     {
@@ -34,13 +34,13 @@ static bool is_lower_top(const rcCtrl& left, const rcCtrl& right)
     return (left.du_top() < right.du_top());
 }
 
-void rcForm::AddSizersAndChildren()
+void resForm::AddSizersAndChildren()
 {
     if (!m_ctrls.size())
         return;  // empty dialog -- rare, but it does happen
 
-    // std::sort(m_ctrls.begin(), m_ctrls.end(), [](rcCtrl a, rcCtrl b) { return a.du_top() < b.du_top(); });
-    std::sort(m_ctrls.begin(), m_ctrls.end(), [](rcCtrl a, rcCtrl b) { return is_lower_top(a, b); });
+    // std::sort(m_ctrls.begin(), m_ctrls.end(), [](resCtrl a, resCtrl b) { return a.du_top() < b.du_top(); });
+    std::sort(m_ctrls.begin(), m_ctrls.end(), [](resCtrl a, resCtrl b) { return is_lower_top(a, b); });
 
     // Sometimes a static text control will be placed to the left of another control such as an edit control, and moved down
     // a little bit so that it aligns with the control it precedes. When we sorted controls vertically, the static text
@@ -72,7 +72,7 @@ void rcForm::AddSizersAndChildren()
         if (end > begin + 1)
         {
             std::sort(m_ctrls.begin() + begin, m_ctrls.begin() + end,
-                      [](rcCtrl a, rcCtrl b) { return a.du_left() < b.du_left(); });
+                      [](resCtrl a, resCtrl b) { return a.du_left() < b.du_left(); });
         }
     }
 
@@ -189,7 +189,7 @@ void rcForm::AddSizersAndChildren()
     parent->FixDuplicateNodeNames();
 }
 
-void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
+void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 {
     if (box.du_width() > du_width() - 30)
     {
@@ -205,7 +205,7 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
         if (result < 0)
         {
             // No vertical alignment with the next control, so just add it normally
-            auto& child = reinterpret_cast<rcCtrl&>(*m_group_ctrls[idx_child]);
+            auto& child = reinterpret_cast<resCtrl&>(*m_group_ctrls[idx_child]);
             Adopt(static_box.GetNodePtr(), child);
 
             // REVIEW: [KeyWorks - 06-16-2021] Does this actually happen in a group box?
@@ -221,7 +221,7 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
             static_box.GetNode()->Adopt(sizer);
 
-            auto& child = reinterpret_cast<rcCtrl&>(*m_group_ctrls[idx_child]);
+            auto& child = reinterpret_cast<resCtrl&>(*m_group_ctrls[idx_child]);
 
             while (idx_child < m_group_ctrls.size() && m_group_ctrls[idx_child]->du_top() == child.du_top())
             {
@@ -242,7 +242,7 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             sizer->prop_set_value(prop_cols, ttlib::itoa(total_columns));
             static_box.GetNodePtr()->Adopt(sizer);
 
-            auto& child = reinterpret_cast<rcCtrl&>(*m_group_ctrls[idx_child]);
+            auto& child = reinterpret_cast<resCtrl&>(*m_group_ctrls[idx_child]);
             std::vector<int> positions;
             positions.reserve(total_columns);
             for (size_t idx = 0; idx < static_cast<size_t>(total_columns); ++idx)
@@ -288,7 +288,7 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
     // orientation as well as spanning more than one column or row.
 }
 
-int rcForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* /* p_static_box */)
+int resForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const resCtrl* /* p_static_box */)
 {
     ASSERT(idx_end < m_ctrls.size());
 
@@ -322,7 +322,7 @@ int rcForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* /* p
     return static_cast<int>(max_columns);
 }
 
-int rcForm::GroupGridSizerNeeded(size_t idx_start) const
+int resForm::GroupGridSizerNeeded(size_t idx_start) const
 {
     if (idx_start + 1 >= m_group_ctrls.size() ||
         m_group_ctrls[idx_start + 1]->du_top() != m_group_ctrls[idx_start]->du_top())
@@ -356,7 +356,7 @@ int rcForm::GroupGridSizerNeeded(size_t idx_start) const
     return static_cast<int>(max_columns);
 }
 
-void rcForm::CollectGroupControls(size_t idx_parent)
+void resForm::CollectGroupControls(size_t idx_parent)
 {
     m_group_ctrls.clear();
     auto& rc_parent = m_ctrls[idx_parent].GetDialogRect();
@@ -379,7 +379,7 @@ void rcForm::CollectGroupControls(size_t idx_parent)
     }
 }
 
-void rcForm::Adopt(const NodeSharedPtr& node, rcCtrl& child)
+void resForm::Adopt(const NodeSharedPtr& node, resCtrl& child)
 {
     ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
 
@@ -397,7 +397,7 @@ static std::set<std::string> s_btn_names = {
 
 };
 
-bool rcForm::ProcessStdButton(Node* parent_sizer, size_t idx_child)
+bool resForm::ProcessStdButton(Node* parent_sizer, size_t idx_child)
 {
     for (size_t idx = idx_child; idx < m_ctrls.size(); ++idx)
     {

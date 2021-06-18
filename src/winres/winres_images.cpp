@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   rcCtrl class image/icon functions
+// Purpose:   resCtrl class image/icon functions
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -56,7 +56,7 @@ static std::map<std::string, const char*> map_win_wx_stock = {
 
 // clang-format on
 
-void rcCtrl::ParseIconControl(ttlib::cview line)
+void resCtrl::ParseIconControl(ttlib::cview line)
 {
     line.moveto_nextword();
 
@@ -126,7 +126,7 @@ void rcCtrl::ParseIconControl(ttlib::cview line)
 // has already been created.
 //
 // Works with either SS_BITMAP or SS_ICON.
-void rcCtrl::ParseImageControl(ttlib::cview line)
+void resCtrl::ParseImageControl(ttlib::cview line)
 {
     ttlib::cstr image_name;
 

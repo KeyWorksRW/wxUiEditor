@@ -11,17 +11,17 @@
 
 #include "gen_enums.h"    // Enumerations for generators
 #include "node.h"         // Node class
-#include "winres_ctrl.h"  // rcCtrl -- Process Windows Resource control data
+#include "winres_ctrl.h"  // resCtrl -- Process Windows Resource control data
 
 class WinResource;
 
 constexpr int32_t FudgeAmount = 3;
 
 // This will either be a wxDialog or a MenuBar
-class rcForm
+class resForm
 {
 public:
-    rcForm();
+    resForm();
 
     enum : size_t
     {
@@ -56,7 +56,7 @@ protected:
     // Returns true if button was processed, otherwise treat it like a normal button.
     bool ProcessStdButton(Node* parent_sizer, size_t idx_child);
     // Adopts child node and sets child flag to indicate it has been added
-    void Adopt(const NodeSharedPtr& node, rcCtrl& child);
+    void Adopt(const NodeSharedPtr& node, resCtrl& child);
 
     // Fills in m_group_ctrls with every control within the boundaries of the group box
     void CollectGroupControls(size_t idx_parent);
@@ -64,12 +64,12 @@ protected:
     // -1 if no horizontal alignment needed
     // 0 if box sizer needed
     // > 0 number of columns required for wxFlexGridSizer
-    int GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* p_static_box);
+    int GridSizerNeeded(size_t idx_start, size_t idx_end, const resCtrl* p_static_box);
 
     // Similar to GridSizerNeeded(), but only processes m_group_ctrls
     int GroupGridSizerNeeded(size_t idx_start) const;
 
-    void AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box);
+    void AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box);
     void AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine);
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
     void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
@@ -88,11 +88,11 @@ private:
 
     size_t m_form_type;
 
-    std::vector<rcCtrl> m_ctrls;
+    std::vector<resCtrl> m_ctrls;
 
     // This will contain pointers to every control within a wxStaticBoxSizer. It gets reset
     // every time a new wxStaticBoxSizer needs to be processed (see CollectGroupControls()).
-    std::vector<rcCtrl*> m_group_ctrls;
+    std::vector<resCtrl*> m_group_ctrls;
 
     WinResource* m_pWinResource;
 

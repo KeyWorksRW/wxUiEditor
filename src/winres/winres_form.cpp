@@ -15,9 +15,9 @@
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
 #include "uifuncs.h"        // Miscellaneous functions for displaying UI
 
-rcForm::rcForm() {}
+resForm::resForm() {}
 
-void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine)
 {
     m_pWinResource = pWinResource;
     auto line = txtfile[curTxtLine].subview();
@@ -53,7 +53,7 @@ void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, si
     line.remove_prefix(end);
     line.moveto_digit();
 
-    rcCtrl::ParseDimensions(line, m_du_rect, m_pixel_rect);
+    resCtrl::ParseDimensions(line, m_du_rect, m_pixel_rect);
 
     auto lst_includes = pWinResource->GetIncludeLines();
     if (lst_includes.size())
@@ -98,7 +98,7 @@ void rcForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, si
     // TODO: [KeyWorks - 10-18-2020] The last step will be to figure what to use for the base and derived filenames.
 }
 
-void rcForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
 {
     ttlib::cstr style(txtfile[curTxtLine]);
 
@@ -187,7 +187,7 @@ void rcForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 }
 
-void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
+void resForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
 {
     for (; curTxtLine < txtfile.size(); ++curTxtLine)
     {
@@ -220,7 +220,7 @@ void rcForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 }
 
-void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
+void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 {
     ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
     if (updated_style.size())
@@ -229,7 +229,7 @@ void rcForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
     m_node->prop_set_value(prop_name, updated_style);
 }
 
-ttlib::cstr rcForm::ConvertDialogId(ttlib::cview id)
+ttlib::cstr resForm::ConvertDialogId(ttlib::cview id)
 {
     id.moveto_nonspace();
     ttlib::cstr value;

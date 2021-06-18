@@ -13,7 +13,7 @@
 #include "tttextfile.h"
 
 #include "../import/import_xml.h"  // ImportXML -- Base class for XML importing
-#include "winres_form.h"           // rcForm -- Process a Windows Resource form  (usually a dialog)
+#include "winres_form.h"           // resForm -- Process a Windows Resource form  (usually a dialog)
 
 class NodeCreator;
 class Node;
@@ -35,7 +35,7 @@ public:
     auto& GetIncludeLines() { return m_include_lines; }
 
 protected:
-    void FormToNode(rcForm& form);
+    void FormToNode(resForm& form);
     void ParseDialog();
 
 private:
@@ -49,7 +49,7 @@ private:
 
     ttlib::textfile m_file;
 
-    std::vector<rcForm> m_forms;
+    std::vector<resForm> m_forms;
     std::set<ttlib::cstr> m_include_lines;
 
     std::map<std::string, ttlib::cstr> m_map_icons;

@@ -94,10 +94,10 @@ void rcForm::AddSizersAndChildren()
             // If last control is a button, we may need to center or right-align it.
             if (child.GetNode()->isGen(gen_wxButton))
             {
-                int dlg_margin = (GetWidth() / 2) - child.GetWidth();
-                if (child.GetLeft() > dlg_margin)
+                int dlg_margin = (du_width() / 2) - child.du_width();
+                if (child.du_left() > dlg_margin)
                 {
-                    if (child.GetRight() < (GetWidth() - dlg_margin))
+                    if (child.du_left() + child.du_width() < (du_width() - dlg_margin))
                         child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
                     else
                         child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
@@ -141,7 +141,7 @@ void rcForm::AddSizersAndChildren()
             // In order to properly step through the loop
             --idx_child;
 
-            if (m_ctrls[idx_child].GetLeft() + m_ctrls[idx_child].GetWidth() > GetWidth() - 10)
+            if (m_ctrls[idx_child].du_left() + m_ctrls[idx_child].du_width() > du_width() - 10)
             {
                 sizer->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
             }
@@ -171,7 +171,7 @@ void rcForm::AddSizersAndChildren()
                 if (idx_child + 2 < m_ctrls.size())
                 {
                     // If the next two sizers have the same top, then they need to be placed in a horizontal sizer.
-                    if (m_ctrls[idx_child + 1].GetTop() == m_ctrls[idx_child + 2].GetTop())
+                    if (m_ctrls[idx_child + 1].du_top() == m_ctrls[idx_child + 2].du_top())
                         break;
                 }
                 ++idx_child;
@@ -184,7 +184,7 @@ void rcForm::AddSizersAndChildren()
 
 void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
 {
-    if (box.GetWidth() > GetWidth() - 30)
+    if (box.du_width() > du_width() - 30)
     {
         box.GetNode()->prop_set_value(prop_flags, "wxEXPAND");
     }
@@ -202,8 +202,8 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             Adopt(static_box.GetNodePtr(), child);
 
             // REVIEW: [KeyWorks - 06-16-2021] Does this actually happen in a group box?
-            int dlg_margin = (box.GetWidth() / 2) - child.GetWidth();
-            if (child.GetRight() < (box.GetWidth() - dlg_margin))
+            int dlg_margin = (box.du_width() / 2) - child.du_width();
+            if (child.du_left() + du_width() < (box.du_width() - dlg_margin))
                 child.GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
             continue;
         }
@@ -216,7 +216,7 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
 
             auto& child = reinterpret_cast<rcCtrl&>(*m_group_ctrls[idx_child]);
 
-            while (idx_child < m_group_ctrls.size() && m_group_ctrls[idx_child]->GetTop() == child.GetTop())
+            while (idx_child < m_group_ctrls.size() && m_group_ctrls[idx_child]->du_top() == child.du_top())
             {
                 // Note that we add the child we are comparing to first.
                 Adopt(sizer, *m_group_ctrls[idx_child]);
@@ -240,8 +240,8 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             positions.reserve(total_columns);
             for (size_t idx = 0; idx < static_cast<size_t>(total_columns); ++idx)
             {
-                if (m_group_ctrls[idx_child + idx]->GetTop() == child.GetTop())
-                    positions.emplace_back(m_group_ctrls[idx_child + idx]->GetLeft());
+                if (m_group_ctrls[idx_child + idx]->du_top() == child.du_top())
+                    positions.emplace_back(m_group_ctrls[idx_child + idx]->du_left());
                 else
                     positions.emplace_back(-1);
             }
@@ -256,9 +256,9 @@ void rcForm::AddStaticBoxChildren(const rcCtrl& box, size_t idx_group_box)
             {
                 // This covers the case where the previous rows had gaps in the columns
                 if (positions[cur_column] == -1)
-                    positions[cur_column] = m_group_ctrls[idx_child]->GetLeft();
+                    positions[cur_column] = m_group_ctrls[idx_child]->du_left();
 
-                while (m_group_ctrls[idx_child]->GetLeft() > positions[cur_column])
+                while (m_group_ctrls[idx_child]->du_left() > positions[cur_column])
                 {
                     auto spacer = g_NodeCreator.CreateNode(gen_spacer, sizer.get());
                     sizer->Adopt(spacer);
@@ -285,11 +285,11 @@ int rcForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* /* p
 {
     ASSERT(idx_end < m_ctrls.size());
 
-    if (idx_start + 1 > idx_end || m_ctrls[idx_start + 1].GetTop() != m_ctrls[idx_start].GetTop())
+    if (idx_start + 1 > idx_end || m_ctrls[idx_start + 1].du_top() != m_ctrls[idx_start].du_top())
         return -1;
 
     size_t row_children = 2;
-    while (idx_start + row_children < idx_end && m_ctrls[idx_start + row_children].GetTop() != m_ctrls[idx_start].GetTop())
+    while (idx_start + row_children < idx_end && m_ctrls[idx_start + row_children].du_top() != m_ctrls[idx_start].du_top())
         ++row_children;
 
     size_t idx_next_row = idx_start + row_children;
@@ -298,11 +298,11 @@ int rcForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* /* p
 
     size_t max_columns = row_children;
 
-    while (idx_next_row < idx_end && m_ctrls[idx_next_row + 1].GetTop() != m_ctrls[idx_next_row].GetTop())
+    while (idx_next_row < idx_end && m_ctrls[idx_next_row + 1].du_top() != m_ctrls[idx_next_row].du_top())
     {
         row_children = 2;
         while (idx_next_row + row_children < idx_end &&
-               m_ctrls[idx_next_row + row_children].GetTop() != m_ctrls[idx_next_row].GetTop())
+               m_ctrls[idx_next_row + row_children].du_top() != m_ctrls[idx_next_row].du_top())
             ++row_children;
         if (row_children > max_columns)
             max_columns = row_children;
@@ -318,27 +318,27 @@ int rcForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const rcCtrl* /* p
 int rcForm::GroupGridSizerNeeded(size_t idx_start) const
 {
     if (idx_start + 1 >= m_group_ctrls.size() ||
-        m_group_ctrls[idx_start + 1]->GetTop() != m_group_ctrls[idx_start]->GetTop())
+        m_group_ctrls[idx_start + 1]->du_top() != m_group_ctrls[idx_start]->du_top())
         return -1;
 
     size_t row_children = 2;
     while (idx_start + row_children < m_group_ctrls.size() &&
-           m_group_ctrls[idx_start + row_children]->GetTop() == m_group_ctrls[idx_start]->GetTop())
+           m_group_ctrls[idx_start + row_children]->du_top() == m_group_ctrls[idx_start]->du_top())
         ++row_children;
 
     size_t idx_next_row = idx_start + row_children;
     if (idx_next_row + 1 >= m_group_ctrls.size() ||
-        m_group_ctrls[idx_next_row + +1]->GetTop() != m_group_ctrls[idx_next_row]->GetTop())
+        m_group_ctrls[idx_next_row + +1]->du_top() != m_group_ctrls[idx_next_row]->du_top())
         return 0;  // only one aligned row, so a box sizer is needed
 
     size_t max_columns = row_children;
 
     while (idx_next_row + 1 < m_group_ctrls.size() &&
-           m_group_ctrls[idx_next_row + 1]->GetTop() == m_group_ctrls[idx_next_row]->GetTop())
+           m_group_ctrls[idx_next_row + 1]->du_top() == m_group_ctrls[idx_next_row]->du_top())
     {
         row_children = 2;
         while (idx_next_row + row_children < m_group_ctrls.size() &&
-               m_group_ctrls[idx_next_row + row_children]->GetTop() == m_group_ctrls[idx_next_row]->GetTop())
+               m_group_ctrls[idx_next_row + row_children]->du_top() == m_group_ctrls[idx_next_row]->du_top())
             ++row_children;
         if (row_children > max_columns)
             max_columns = row_children;

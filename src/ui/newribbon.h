@@ -17,5 +17,10 @@ public:
     // Checks current selected node to see if it accepts a wxRibbonBar as a child
     bool IsCreatable(bool notify_user = true);
 
+    void WantFormVersion() { m_is_form = true; }
+
     void CreateNode();
+
+private:
+    bool m_is_form { false };
 };

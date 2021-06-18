@@ -107,7 +107,7 @@
                   class="ribbonTool"
                   bitmap="Header; ..\art_headers\ribbon_bar_png.hxx; ; [-1; -1]"
                   help="wxRibbonBar"
-                  id="gen_RibbonBar" />
+                  id="CreateNewFormRibbon" />
               </node>
             </node>
           </node>

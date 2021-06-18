@@ -25,12 +25,20 @@ NewRibbon::NewRibbon(wxWindow* parent) : NewRibbonBase(parent)
 
 void NewRibbon::CreateNode()
 {
-    auto bar_node = g_NodeCreator.CreateNode(gen_wxRibbonBar, wxGetFrame().GetSelectedNode());
-    ASSERT(bar_node);
-    if (!bar_node)
+    NodeSharedPtr bar_node;
+    if (m_is_form)
     {
-        appMsgBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
-        return;
+        bar_node = g_NodeCreator.CreateNode(gen_RibbonBar, wxGetApp().GetProject());
+        ASSERT(bar_node);
+    }
+    else
+    {
+        bar_node = g_NodeCreator.CreateNode(gen_wxRibbonBar, wxGetFrame().GetSelectedNode());
+        if (!bar_node)
+        {
+            appMsgBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
+            return;
+        }
     }
 
     for (int count = 0; count < m_num_pages; ++count)

@@ -15,5 +15,6 @@ enum
     CreateNewDialog,
     CreateNewFrame,
     CreateNewRibbon,
+    CreateNewFormRibbon,
 
 };

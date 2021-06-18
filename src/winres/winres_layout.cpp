@@ -110,7 +110,7 @@ void rcForm::AddSizersAndChildren()
                 // orphaned child, add to form's top level sizer
                 parent->Adopt(child.GetNodePtr());
             }
-            return;
+            break;
         }
 
         if (is_same_top(child, m_ctrls[idx_child + 1]))

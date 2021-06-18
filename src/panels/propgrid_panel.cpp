@@ -18,7 +18,7 @@
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "propgrid_panel.h"
 

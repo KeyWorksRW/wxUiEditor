@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <ttstr.h>  // ttString -- wxString with additional methods similar to ttlib::cstr
+#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
 
 #include "embedimg_base.h"
 

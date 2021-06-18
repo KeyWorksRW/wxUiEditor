@@ -3,7 +3,7 @@
 // Purpose:   Command line parser
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../LICENSE
+// License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -37,8 +37,8 @@
 #include <string_view>
 #include <vector>
 
-#include <ttcstr.h>     // cstr -- Classes for handling zero-terminated char strings.
-#include <ttcvector.h>  // cstrVector -- Vector of ttlib::cstr strings
+#include "ttcstr.h"     // cstr -- Classes for handling zero-terminated char strings.
+#include "ttcvector.h"  // cstrVector -- Vector of ttlib::cstr strings
 
 namespace ttlib
 {

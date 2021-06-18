@@ -14,7 +14,7 @@
 // clang-format on
 #endif  // _DEBUG
 
-#include <ttcvector.h>  // cstrVector -- Vector of ttlib::cstr strings
+#include "ttcvector.h"  // cstrVector -- Vector of ttlib::cstr strings
 
 class MsgFrame;
 

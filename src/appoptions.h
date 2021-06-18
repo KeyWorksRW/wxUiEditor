@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <ttstr.h>
+#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
 
 class AppOptions
 {

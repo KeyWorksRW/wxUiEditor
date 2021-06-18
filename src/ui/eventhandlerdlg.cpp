@@ -9,7 +9,7 @@
 
 #include <unordered_map>
 
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "eventhandlerdlg.h"  // auto-generated: eventhandlerdlg_base.h and eventhandlerdlg_base.cpp
 

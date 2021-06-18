@@ -13,7 +13,7 @@
 #include <wx/dir.h>                // wxDir is a class for enumerating the files in a directory
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "../art_headers/empty_png.hxx"
 

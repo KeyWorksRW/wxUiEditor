@@ -18,7 +18,7 @@ Options:
     TargetDir:   ../bin       # target directory
     Natvis:      wxui.natvis  # MSVC Debug visualizer
 
-    IncDirs:     ./;nodes;generate;utils;customprops;ui;../ttLib
+    IncDirs:     ./;nodes;generate;utils;customprops;ui;ttLib
 
 Files:
     wxUiEditor.rc         # Windows resources
@@ -157,14 +157,14 @@ Files:
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp
 
-    ../ttLib/ttcstr.cpp      # Class for handling zero-terminated char strings.
-    ../ttLib/ttcview.cpp     # string_view functionality on a zero-terminated char string.
-    ../ttLib/ttmultistr.cpp  # Breaks a single string into multiple strings
-    ../ttLib/ttparser.cpp    # Command line parser
-    ../ttLib/ttstr.cpp       # Enhanced version of wxString
-    ../ttLib/ttlibspace.cpp  # ttlib namespace functions
-    ../ttLib/ttstrings.cpp   # Class for handling zero-terminated char strings.
-    ../ttLib/tttextfile.cpp  # Classes for reading and writing text files.
+    ttLib/ttcstr.cpp             # Class for handling zero-terminated char strings.
+    ttLib/ttcview.cpp            # string_view functionality on a zero-terminated char string.
+    ttLib/ttmultistr.cpp         # Breaks a single string into multiple strings
+    ttLib/ttparser.cpp           # Command line parser
+    ttLib/ttstr.cpp              # Enhanced version of wxString
+    ttLib/ttlibspace.cpp         # ttlib namespace functions
+    ttLib/ttstrings.cpp          # Class for handling zero-terminated char strings.
+    ttLib/tttextfile.cpp         # Classes for reading and writing text files.
 
 DebugFiles:
     debugging/msg_logging.cpp    # Message logging class
@@ -179,7 +179,7 @@ DebugFiles:
     ui/debugsettingsBase.cpp     # wxUiEditor generated file
     ui/msgframe_base.cpp         # wxUiEditor generated file
 
-    ../ttLib/ttdebug.cpp         # Various debugging functionality
+    ttLib/ttdebug.cpp         # Various debugging functionality
 
 GZIP:
     xml/aui.xml: xml/aui.hgz

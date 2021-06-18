@@ -7,8 +7,8 @@
 
 #include "pch.h"
 
-#include <ttcvector.h>  // cstrVector -- Vector of ttlib::cstr strings
-#include <ttcwd.h>      // cwd -- Class for storing and optionally restoring the current directory
+#include "ttcvector.h"  // cstrVector -- Vector of ttlib::cstr strings
+#include "ttcwd.h"      // cwd -- Class for storing and optionally restoring the current directory
 
 #include "mainframe.h"
 

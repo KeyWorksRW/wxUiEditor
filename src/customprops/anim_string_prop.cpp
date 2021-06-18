@@ -10,7 +10,7 @@
 #include <wx/filedlg.h>            // wxFileDialog base header
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include <ttcwd.h>  // cwd -- Class for storing and optionally restoring the current directory
+#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
 
 #include "anim_string_prop.h"
 

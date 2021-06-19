@@ -14,7 +14,7 @@
 class MsgFrame : public MsgFrameBase
 {
 public:
-    MsgFrame(ttlib::cstrVector* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
+    MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
 
     void AddErrorMsg(ttlib::cview msg);
     void Add_wxErrorMsg(ttlib::cview msg);
@@ -38,6 +38,6 @@ protected:
     void OnInfo(wxCommandEvent& WXUNUSED(event)) override;
 
 private:
-    ttlib::cstrVector* m_pMsgs;
+    std::vector<ttlib::cstr>* m_pMsgs;
     bool* m_pDestroyed;
 };

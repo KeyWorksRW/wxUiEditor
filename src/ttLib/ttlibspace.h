@@ -13,11 +13,11 @@
 
 #include <cctype>
 #include <filesystem>  // directory_entry
-#include <stdlib.h>    // for std::abs(long)
 #include <string>
 #include <string_view>
+#include <vector>
 
-class wxString;  // for use with functions in ttLibwx.lib or UNIX builds that require wxWidgets
+class wxString;  // for use with functions that require wxWidgets
 
 #if defined(NDEBUG)
 /// Use this macro to comment out parameters that are not used in Release builds
@@ -39,9 +39,6 @@ class wxString;  // for use with functions in ttLibwx.lib or UNIX builds that re
 /// assert with a message
     #define assertm(exp, msg) assert(((void) msg, exp))
 #endif
-
-// The tt namespace is for enums and constexpr values that only require a header. The ttlib namespace is for
-// functions and classes that require linking to ttLib.lib in order to use.
 
 namespace tt
 {
@@ -66,7 +63,7 @@ namespace tt
 
 namespace ttlib
 {
-    class cstr;  // forward definition
+    class cstr;
     class cview;
 
     extern const std::string emptystring;
@@ -132,6 +129,56 @@ namespace ttlib
                 return true;
         }
         return false;
+    }
+
+    // Combining has_member() and add_if() lets you use a std::vector like a std::set -- the vector will have have a lower
+    // memory footprint, but searching will be slower.
+
+    template <class T>
+    bool has_member(const std::vector<T>& vec, std::string_view str, tt::CASE checkcase = tt::CASE::exact)
+    {
+        for (size_t idx = 0; idx < vec.size(); ++idx)
+        {
+            if (ttlib::is_sameas(vec[idx], str, checkcase))
+                return true;
+        }
+        return false;
+    }
+
+    template <class T>
+    /// Only adds the string if it doesn't already exist.
+    void add_if(std::vector<T>& vec, std::string_view str, tt::CASE checkcase = tt::CASE::exact)
+    {
+        for (size_t idx = 0; idx < vec.size(); ++idx)
+        {
+            if (ttlib::is_sameas(vec[idx], str, checkcase))
+                return;
+        }
+        vec.emplace_back(str);
+    }
+
+    template <class T>
+    /// Search the entire vector for a member containing the substring.
+    size_t find_substr(std::vector<T>& vec, std::string_view str, tt::CASE checkcase = tt::CASE::exact)
+    {
+        for (size_t idx = 0; idx < vec.size(); ++idx)
+        {
+            if (ttlib::contains(vec[idx], str))
+                return idx;
+        }
+        return tt::npos;
+    }
+
+    template <class T>
+    /// Search the vector from the given start index for a member containing the substring.
+    size_t find_substr(std::vector<T>& vec, size_t start, std::string_view str, tt::CASE checkcase = tt::CASE::exact)
+    {
+        for (size_t idx = start; idx < vec.size(); ++idx)
+        {
+            if (ttlib::contains(vec[idx], str))
+                return idx;
+        }
+        return tt::npos;
     }
 
     /// Returns a pointer to the next character in a UTF8 string.

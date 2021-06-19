@@ -7,7 +7,6 @@
 
 #include "pch.h"
 
-#include "ttcvector.h"  // cstrVector -- Vector of ttlib::cstr strings
 #include "ttcwd.h"      // cwd -- Class for storing and optionally restoring the current directory
 
 #include "mainframe.h"
@@ -32,7 +31,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
     ttSaveCwd cwd;
     ttlib::ChangeDir(wxGetApp().getProjectPath());
     ttlib::cstr path;
-    ttlib::cstrVector results;
+    std::vector<ttlib::cstr> results;
 
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
@@ -159,7 +158,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
     ttlib::cwd cwd;
     ttlib::ChangeDir(wxGetApp().getProjectPath());
     ttlib::cstr path;
-    ttlib::cstrVector results;
+    std::vector<ttlib::cstr> results;
 
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");

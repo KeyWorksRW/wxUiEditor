@@ -38,7 +38,6 @@
 #include <vector>
 
 #include "ttcstr.h"     // cstr -- Classes for handling zero-terminated char strings.
-#include "ttcvector.h"  // cstrVector -- Vector of ttlib::cstr strings
 
 namespace ttlib
 {
@@ -137,7 +136,7 @@ namespace ttlib
         size_t getSharedValue() const { return m_sharedvalue; }
 
         /// Call this to get a vector of argmuments that were not associated with an option
-        ttlib::cstrVector& getExtras() { return m_extras; }
+        auto& getExtras() { return m_extras; }
 
         /// Call this to get a vector of sorted option names and their descriptions.
         ///
@@ -150,12 +149,12 @@ namespace ttlib
         ///
         /// If the constructor was a UNICODE string or array, the arguments will have been
         /// converted to UTF8.
-        ttlib::cstrVector& getAllArgs() { return m_originalArgs; }
+        auto& getAllArgs() { return m_originalArgs; }
 
     private:
-        ttlib::cstrVector m_extras;  // arguments specified that were not associated with an option
+        std::vector<ttlib::cstr> m_extras;  // arguments specified that were not associated with an option
         std::vector<Result> m_results;
-        ttlib::cstrVector m_originalArgs;
+        std::vector<ttlib::cstr> m_originalArgs;
 
         struct Option
         {

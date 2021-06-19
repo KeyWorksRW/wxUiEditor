@@ -19,7 +19,7 @@
 #include "mainframe.h"  // MainFrame -- Main window frame
 #include "uifuncs.h"    // Miscellaneous functions for displaying UI
 
-MsgFrame::MsgFrame(ttlib::cstrVector* pMsgs, bool* pDestroyed, wxWindow* parent) :
+MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* parent) :
     MsgFrameBase(parent), m_pMsgs(pMsgs), m_pDestroyed(pDestroyed)
 {
     for (auto& iter: *m_pMsgs)

@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "ttcvector.h"
 #include "tttextfile.h"
 
 #include "../import/import_xml.h"  // ImportXML -- Base class for XML importing

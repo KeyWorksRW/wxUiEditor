@@ -14,8 +14,6 @@
 // clang-format on
 #endif  // _DEBUG
 
-#include "ttcvector.h"  // cstrVector -- Vector of ttlib::cstr strings
-
 class MsgFrame;
 
 #if defined(_DEBUG)
@@ -39,7 +37,7 @@ public:
 
 private:
     MsgFrame* m_msgFrame { nullptr };
-    ttlib::cstrVector m_Msgs;
+    std::vector<ttlib::cstr> m_Msgs;
 
     bool m_bDestroyed { true };
     bool m_isFirstShown { false };  // If false, and PREFS_MSG_WINDOW is set, then show the window

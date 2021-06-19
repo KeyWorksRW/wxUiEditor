@@ -22,7 +22,7 @@ using namespace ttlib;
 cmd::cmd(int argc, char** argv)
 {
     for (auto argpos = 1; argpos < argc; ++argpos)
-        m_originalArgs += argv[argpos];
+        m_originalArgs.emplace_back(argv[argpos]);
     m_hasCommandArgs = true;
 }
 
@@ -175,7 +175,7 @@ std::optional<ttlib::cstr> cmd::getOption(std::string_view name)
 bool cmd::parse(int argc, char** argv)
 {
     for (auto argpos = 1; argpos < argc; ++argpos)
-        m_originalArgs += argv[argpos];
+        m_originalArgs.emplace_back(argv[argpos]);
     m_hasCommandArgs = true;
     return parse();
 }

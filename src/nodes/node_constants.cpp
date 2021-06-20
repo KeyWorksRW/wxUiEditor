@@ -441,6 +441,13 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxHSCROLL);
     ADD_CONSTANT(wxVSCROLL);
 
+    // Books
+    ADD_CONSTANT(wxBK_DEFAULT)
+    ADD_CONSTANT(wxBK_TOP)
+    ADD_CONSTANT(wxBK_BOTTOM)
+    ADD_CONSTANT(wxBK_LEFT)
+    ADD_CONSTANT(wxBK_RIGHT)
+
     // wxNotebook
     ADD_CONSTANT(wxNB_TOP)
     ADD_CONSTANT(wxNB_LEFT)

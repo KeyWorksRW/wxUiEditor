@@ -7,7 +7,7 @@
 
 #include "pch.h"
 
-#include "ttcwd.h"      // cwd -- Class for storing and optionally restoring the current directory
+#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
 
 #include "mainframe.h"
 
@@ -17,7 +17,7 @@
 #include "uifuncs.h"     // Miscellaneous functions for displaying UI
 #include "write_code.h"  // Write code to Scintilla or file
 
-bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
+bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
 {
     auto project = wxGetApp().GetProject();
     if (project->GetChildCount() == 0)
@@ -54,6 +54,8 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
         if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
         {
             path = base_file;
+            // "filename_base" is the default filename given to all form files. Unless it's changed, no code will be
+            // generated.
             if (path == "filename_base")
                 continue;
             path.make_absolute();
@@ -80,37 +82,65 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
 
             path.replace_extension(header_ext);
             auto retval = h_cw->WriteFile(NeedsGenerateCheck);
-            if (NeedsGenerateCheck && retval > 0)
-                return true;
-            if (retval < 0)
+
+            if (retval > 0)
+            {
+                if (!NeedsGenerateCheck)
+                {
+                    results.emplace_back() << path << _tt(strIdSaved) << '\n';
+                }
+                else
+                {
+                    if (pClassList)
+                    {
+                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                        continue;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+            else if (retval < 0)
             {
                 results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
             }
-            else if (retval == result::exists)
+            else  // retval == result::exists)
             {
                 ++currentFiles;
-            }
-            else
-            {
-                results.emplace_back() << path << _tt(strIdSaved) << '\n';
             }
 
             path.replace_extension(source_ext);
             retval = cpp_cw->WriteFile(NeedsGenerateCheck);
-            if (NeedsGenerateCheck && retval > 0)
-                return true;
 
-            if (retval < 0)
+            if (retval > 0)
+            {
+                if (!NeedsGenerateCheck)
+                {
+                    results.emplace_back() << path << _tt(strIdSaved) << '\n';
+                }
+                else
+                {
+                    if (pClassList)
+                    {
+                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                        continue;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            else if (retval < 0)
             {
                 results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
             }
-            else if (retval == result::exists)
+            else  // retval == result::exists
             {
                 ++currentFiles;
-            }
-            else
-            {
-                results.emplace_back() << path << _tt(strIdSaved) << '\n';
             }
         }
         catch (const std::exception& DBG_PARAM(e))
@@ -123,9 +153,12 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck)
         }
     }
 
-    if (!parent || NeedsGenerateCheck)
+    if (NeedsGenerateCheck)
     {
-        return false;
+        if (pClassList && pClassList->size())
+            return true;
+        else
+            return false;
     }
 
     if (results.size())
@@ -287,3 +320,121 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
                   _tt(strIdTitleCodeGeneration), wxOK);
     }
 }
+
+#if defined(_DEBUG)
+    #include "../pugixml/pugixml.hpp"
+
+void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root)
+{
+    auto project = wxGetApp().GetProject();
+
+    ttSaveCwd cwd;
+    ttlib::ChangeDir(wxGetApp().getProjectPath());
+    ttlib::cstr path;
+    std::vector<ttlib::cstr> results;
+
+    ttlib::cstr source_ext(".cpp");
+    ttlib::cstr header_ext(".h");
+
+    if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
+    {
+        source_ext = extProp;
+    }
+
+    if (auto& extProp = project->prop_as_string(prop_header_ext); extProp.size())
+    {
+        header_ext = extProp;
+    }
+
+    for (auto& iter_class: ClassList)
+    {
+        for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
+        {
+            auto form = project->GetChild(pos);
+            if (form->prop_as_string(prop_class_name).is_sameas(iter_class))
+            {
+                BaseCodeGenerator codegen;
+
+                // At this point we know which form has changes, but we don't know if it's the src file, the header file, or
+                // both, so we need to check again.
+                ttlib::cstr base_file(form->prop_as_string(prop_base_file));
+                base_file.replace_extension(header_ext);
+                base_file.make_absolute();
+
+                base_file.replace_extension(header_ext);
+                auto h_cw = std::make_unique<FileCodeWriter>(base_file.wx_str());
+                codegen.SetHdrWriteCode(h_cw.get());
+
+                base_file.replace_extension(source_ext);
+                auto cpp_cw = std::make_unique<FileCodeWriter>(base_file.wx_str());
+                codegen.SetSrcWriteCode(cpp_cw.get());
+
+                codegen.GenerateBaseClass(project, form);
+
+                base_file.replace_extension(header_ext);
+                bool new_hdr = (h_cw->WriteFile(true) > 0);
+
+                base_file.replace_extension(source_ext);
+                bool new_src = (cpp_cw->WriteFile(true) > 0);
+
+                if (new_hdr)
+                {
+                    path = "~wxue_";
+                    path << form->prop_as_string(prop_base_file);
+                    path.make_absolute();
+
+                    path.replace_extension(header_ext);
+                    h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                    codegen.SetHdrWriteCode(h_cw.get());
+
+                    path.replace_extension(source_ext);
+                    cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                    codegen.SetSrcWriteCode(cpp_cw.get());
+
+                    codegen.GenerateBaseClass(project, form);
+
+                    path.replace_extension(header_ext);
+                    h_cw->WriteFile();
+
+                    auto paths = root.append_child("paths");
+                    base_file.replace_extension(header_ext);
+                    paths.append_child("left").text().set(base_file.c_str());
+                    paths.append_child("left-readonly").text().set("0");
+
+                    paths.append_child("right").text().set(path.c_str());
+                    paths.append_child("right-readonly").text().set("1");
+                }
+
+                if (new_src)
+                {
+                    path = "~wxue_";
+                    path << form->prop_as_string(prop_base_file);
+                    path.make_absolute();
+
+                    path.replace_extension(header_ext);
+                    h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                    codegen.SetHdrWriteCode(h_cw.get());
+
+                    path.replace_extension(source_ext);
+                    cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                    codegen.SetSrcWriteCode(cpp_cw.get());
+
+                    codegen.GenerateBaseClass(project, form);
+
+                    path.replace_extension(source_ext);
+                    cpp_cw->WriteFile();
+
+                    auto paths = root.append_child("paths");
+                    base_file.replace_extension(source_ext);
+                    paths.append_child("left").text().set(base_file.c_str());
+                    paths.append_child("left-readonly").text().set("0");
+
+                    paths.append_child("right").text().set(path.c_str());
+                    paths.append_child("right-readonly").text().set("1");
+                }
+            }
+        }
+    }
+}
+
+#endif  // _DEBUG

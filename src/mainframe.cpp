@@ -64,8 +64,6 @@
 
 using namespace GenEnum;
 
-bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck);
-
 enum
 {
     IDM_IMPORT_WINRES = wxID_HIGHEST + 500,
@@ -74,7 +72,8 @@ enum
     id_DebugPreferences,
     id_ShowLogger,
     id_NodeMemory,
-    id_WinResDlg
+    id_WinResDlg,
+    id_CodeDiffDlg
 };
 
 MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
@@ -90,10 +89,13 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 #if defined(_DEBUG)
     auto menuDebug = new wxMenu;
     menuDebug->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
-    menuDebug->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
     menuDebug->Append(id_DebugPreferences, "Debug &Settings...", "Settings to use in Debug build");
+    menuDebug->AppendSeparator();
+    menuDebug->Append(id_CodeDiffDlg, "Compare Code &Generation...",
+                      "Dialog showing what class have changed, and optional viewing in WinMerge");
     menuDebug->Append(id_WinResDlg, "Import &Windows Resource...",
                       "Close current project and import a Windows Resource file");
+    menuDebug->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
 
     menuDebug->AppendSeparator();
     menuDebug->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
@@ -163,6 +165,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
         wxEVT_MENU, [](wxCommandEvent&) { g_pMsgLogging->ShowLogger(); }, id_ShowLogger);
 
     Bind(wxEVT_MENU, &MainFrame::OnDbgImportWinRes, this, id_WinResDlg);
+    Bind(wxEVT_MENU, &MainFrame::OnDbgCodeDiff, this, id_CodeDiffDlg);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 
@@ -1415,6 +1418,7 @@ Node* MainFrame::FindChildSizerItem(Node* node)
 
 #if defined(_DEBUG)
 
+    #include "debugging/dbg_code_diff.h"
     #include "debugging/dbg_winres_dlg.h"
 
 void MainFrame::OnDbgImportWinRes(wxCommandEvent& WXUNUSED(event))
@@ -1424,6 +1428,12 @@ void MainFrame::OnDbgImportWinRes(wxCommandEvent& WXUNUSED(event))
     {
         wxGetApp().ImportProject(dlg.GetFilename());
     }
+}
+
+void MainFrame::OnDbgCodeDiff(wxCommandEvent& WXUNUSED(event))
+{
+    DbgCodeDiff dlg(this);
+    dlg.ShowModal();
 }
 
 #endif  // _DEBUG

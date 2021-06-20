@@ -172,8 +172,11 @@ DebugFiles:
     debugging/nodeinfo.cpp       # Node memory usage dialog
     debugging/nodeinfo_base.cpp  # wxUiEditor generated file
 
-    debugging/dbg_winres_dlg.cpp       # Convert one or more Windows Resource files
+    debugging/dbg_winres_dlg.cpp      # Convert one or more Windows Resource files
     debugging/dbg_winres_dlg_base.cpp
+
+    debugging/dbg_code_diff.cpp       # Compare code generationg
+    debugging/dbg_code_diff_base.cpp
 
     ui/debugsettings.cpp         # Settings while running the Debug version of wxUiEditor
     ui/debugsettingsBase.cpp     # wxUiEditor generated file

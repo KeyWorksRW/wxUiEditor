@@ -18,6 +18,11 @@ class wxWindow;
 
 using EventVector = std::vector<NodeEvent*>;
 
+namespace pugi
+{
+    class xml_node;
+}
+
 enum PANEL_TYPE : size_t
 {
     NOT_PANEL,
@@ -38,8 +43,13 @@ namespace result
 }  // namespace result
 
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at
-// least one file needs to be generated.
-bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck = false);
+// least one file needs to be generated. If pClassList is non-null, it will contain the base
+// class name over every form that needs updating.
+bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+
+#if defined(_DEBUG)
+void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root);
+#endif  // _DEBUG
 
 class BaseCodeGenerator
 {

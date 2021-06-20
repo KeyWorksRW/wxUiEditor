@@ -284,6 +284,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_style, "style" },
     { prop_tab_behaviour, "tab_behaviour" },
     { prop_tab_indents, "tab_indents" },
+    { prop_tab_position, "tab_position" },
     { prop_tab_width, "tab_width" },
     { prop_text, "text" },
     { prop_theme, "theme" },

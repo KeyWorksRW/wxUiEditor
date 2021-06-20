@@ -282,6 +282,7 @@ namespace GenEnum
         prop_style,
         prop_tab_behaviour,
         prop_tab_indents,
+        prop_tab_position,
         prop_tab_width,
         prop_text,
         prop_theme,

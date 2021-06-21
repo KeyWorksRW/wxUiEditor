@@ -28,7 +28,7 @@
 
 DbgCodeDiff::DbgCodeDiff(wxWindow* parent) : DbgCodeDiffBase(parent) {}
 
-DbgCodeDiffBase::~DbgCodeDiffBase()
+DbgCodeDiff::~DbgCodeDiff()
 {
     wxDir dir;
     wxArrayString files;

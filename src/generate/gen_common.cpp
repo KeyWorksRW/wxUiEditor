@@ -269,59 +269,51 @@ void GenSize(Node* node, ttlib::cstr& code)
         code << "wxDefaultSize";
 }
 
-void GenStyle(Node* node, ttlib::cstr& code, ttlib::cview extra_style, ttlib::cview extra_def_value)
+void GenStyle(Node* node, ttlib::cstr& code)
 {
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
+    ttlib::cstr all_styles;
 
-    if (style.empty() && win_style.empty() && extra_style.empty())
+    if (node->HasValue(prop_tab_position) && !node->prop_as_string(prop_tab_position).is_sameas("wxBK_DEFAULT"))
+    {
+        if (all_styles.size())
+            all_styles << '|';
+        all_styles << node->prop_as_string(prop_tab_position);
+    }
+
+    if (node->HasValue(prop_orientation) && !node->prop_as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL"))
+    {
+        if (all_styles.size())
+            all_styles << '|';
+        all_styles << node->prop_as_string(prop_orientation);
+    }
+
+    if (node->HasValue(prop_style))
+    {
+        if (all_styles.size())
+            all_styles << '|';
+        all_styles << node->prop_as_string(prop_style);
+    }
+
+    if (node->HasValue(prop_window_style))
+    {
+        if (all_styles.size())
+            all_styles << '|';
+        all_styles << node->prop_as_string(prop_window_style);
+    }
+
+    if (all_styles.empty())
+    {
         code << "0";
+    }
     else
     {
-        if (extra_style.size() && node->prop_as_string(prop_extra_style) != extra_def_value)
-        {
-            code << node->prop_as_string(prop_extra_style);
-            if (style.size())
-            {
-                if (style.size())
-                {
-                    code << '|' << style;
-                    if (win_style.size())
-                    {
-                        code << '|' << win_style;
-                    }
-                }
-                else if (win_style.size())
-                {
-                    code << '|' << win_style;
-                }
-            }
-        }
-        else if (style.size())
-        {
-            code << style;
-            if (win_style.size())
-            {
-                code << '|' << win_style;
-            }
-        }
-        else if (win_style.size())
-        {
-            code << win_style;
-        }
+        code << all_styles;
     }
 }
 
-void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator, ttlib::cview extra_style,
-                          ttlib::cview extra_def_value)
+void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator, ttlib::cview def_style)
 {
-    auto pos = node->prop_as_wxPoint(prop_pos);
-    auto size = node->prop_as_wxPoint(prop_size);
-    auto& style = node->prop_as_string(prop_style);
-    auto& win_style = node->prop_as_string(prop_window_style);
-    auto& win_name = node->prop_as_string(prop_window_name);
-
-    if (win_name.size())
+    if (node->HasValue(prop_window_name))
     {
         // Window name is always the last parameter, so if it is specified, everything has to be generated.
         if (code.size() < 80)
@@ -333,7 +325,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         code << ", ";
         GenSize(node, code);
         code << ", ";
-        GenStyle(node, code, extra_style, extra_def_value);
+        GenStyle(node, code);
         if (uses_def_validator)
             code << ", wxDefaultValidator";
         code << ", " << node->prop_as_string(prop_window_name) << ");";
@@ -341,26 +333,12 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
     }
 
     ttlib::cstr all_styles;
-    if (extra_style.size())
-        all_styles << node->prop_as_string(prop_extra_style);
-    if (style.size())
-    {
-        if (all_styles.size())
-            all_styles << '|';
-        all_styles << style;
-    }
-    if (win_style.size())
-    {
-        if (all_styles.size())
-            all_styles << '|';
-        all_styles << win_style;
-    }
-
-    // If the only style specified is the default extra style, then clear it since we don't need to write anything.
-    if (all_styles.size() && all_styles.is_sameas(extra_def_value))
+    GenStyle(node, all_styles);
+    if (all_styles.is_sameas("0") || all_styles.is_sameas(def_style))
         all_styles.clear();
 
-    bool isPosSet = false;
+    bool isPosSet { false };
+    auto pos = node->prop_as_wxPoint(prop_pos);
     if (pos.x != -1 || pos.y != -1)
     {
         code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
@@ -368,7 +346,8 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         isPosSet = true;
     }
 
-    bool isSizeSet = false;
+    bool isSizeSet { false };
+    auto size = node->prop_as_wxSize(prop_size);
     if (size.x != -1 || size.y != -1)
     {
         if (!isPosSet)
@@ -380,7 +359,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         isSizeSet = true;
     }
 
-    if (win_style.size() && win_style != "wxTAB_TRAVERSAL")
+    if (node->HasValue(prop_window_style) && !node->prop_as_string(prop_window_style).is_sameas("wxTAB_TRAVERSAL"))
     {
         if (!isPosSet)
             code << ", wxDefaultPosition";

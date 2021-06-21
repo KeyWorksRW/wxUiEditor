@@ -55,8 +55,10 @@ ttlib::cstr GetParentName(Node* node);
 
 // Check for pos, size, flags, window_flags, and window name, and generate code if needed
 // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
+//
+// If the only style specified is def_style, then it will not be added.
 void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator = false,
-                          ttlib::cview extra_style = tt_empty_cstr, ttlib::cview extra_def_value = tt_empty_cstr);
+                          ttlib::cview def_style = tt_empty_cstr);
 
 // Generate any non-default wxWindow settings
 void GenerateWindowSettings(Node* node, ttlib::cstr& code);
@@ -75,9 +77,8 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name);
 void GenPos(Node* node, ttlib::cstr& code);
 void GenSize(Node* node, ttlib::cstr& code);
 
-// This will output "0" if style, win_style, and extra_style are all empty
-void GenStyle(Node* node, ttlib::cstr& code, ttlib::cview extra_style = tt_empty_cstr,
-              ttlib::cview extra_def_value = tt_empty_cstr);
+// This will output "0" if there are no styles (style, window_style, tab_position etc.)
+void GenStyle(Node* node, ttlib::cstr& code);
 
 // Version of GenAdditionalCode() specifically for forms
 ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node);

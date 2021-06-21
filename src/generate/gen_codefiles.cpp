@@ -379,9 +379,11 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 
                 if (new_hdr)
                 {
-                    path = "~wxue_";
-                    path << form->prop_as_string(prop_base_file);
-                    path.make_absolute();
+                    path = base_file;
+                    if (auto pos_file = path.find_filename(); ttlib::is_found(pos_file))
+                    {
+                        path.insert(pos_file, "~wxue_");
+                    }
 
                     path.replace_extension(header_ext);
                     h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
@@ -407,9 +409,11 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 
                 if (new_src)
                 {
-                    path = "~wxue_";
-                    path << form->prop_as_string(prop_base_file);
-                    path.make_absolute();
+                    path = base_file;
+                    if (auto pos_file = path.find_filename(); ttlib::is_found(pos_file))
+                    {
+                        path.insert(pos_file, "~wxue_");
+                    }
 
                     path.replace_extension(header_ext);
                     h_cw = std::make_unique<FileCodeWriter>(path.wx_str());

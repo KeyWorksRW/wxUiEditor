@@ -40,7 +40,7 @@ std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxDatePickerCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
-    GeneratePosSizeFlags(node, code, true, "wxDP_DEFAULT|wxDP_SHOWCENTURY", "wxDP_DEFAULT|wxDP_SHOWCENTURY");
+    GeneratePosSizeFlags(node, code, true, "wxDP_DEFAULT|wxDP_SHOWCENTURY");
 
     return code;
 }
@@ -77,7 +77,7 @@ std::optional<ttlib::cstr> TimePickerCtrlGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxTimePickerCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
-    GeneratePosSizeFlags(node, code, true, "wxTP_DEFAULT", "wxTP_DEFAULT");
+    GeneratePosSizeFlags(node, code, true, "wxTP_DEFAULT");
 
     return code;
 }
@@ -158,7 +158,7 @@ std::optional<ttlib::cstr> FilePickerGenerator::GenConstruction(Node* node)
 
     // Note that wxFLP_DEFAULT_STYLE cannot be specified by the user. We use this to force writing 0 if the user doesn't
     // select any options.
-    GeneratePosSizeFlags(node, code, true, "wxFLP_DEFAULT_STYLE", "wxFLP_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, true, "wxFLP_DEFAULT_STYLE");
 
     return code;
 }
@@ -221,7 +221,7 @@ std::optional<ttlib::cstr> DirPickerGenerator::GenConstruction(Node* node)
         }
     }
 
-    GeneratePosSizeFlags(node, code, true, "wxDIRP_DEFAULT_STYLE", "wxDIRP_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, true, "wxDIRP_DEFAULT_STYLE");
 
     return code;
 }
@@ -261,7 +261,7 @@ std::optional<ttlib::cstr> ColourPickerGenerator::GenConstruction(Node* node)
         code << node->prop_as_string(prop_colour);
     else
         code << "*wxBLACK";
-    GeneratePosSizeFlags(node, code, true, "wxCLRP_DEFAULT_STYLE", "wxCLRP_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, true, "wxCLRP_DEFAULT_STYLE");
 
     return code;
 }
@@ -329,7 +329,7 @@ std::optional<ttlib::cstr> FontPickerGenerator::GenConstruction(Node* node)
         code << "wxNullFont";
     }
 
-    GeneratePosSizeFlags(node, code, true, "wxFNTP_DEFAULT_STYLE", "wxFNTP_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, true, "wxFNTP_DEFAULT_STYLE");
 
     return code;
 }

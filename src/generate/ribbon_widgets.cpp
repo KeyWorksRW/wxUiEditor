@@ -157,7 +157,7 @@ std::optional<ttlib::cstr> RibbonBarGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << " = new wxRibbonBar(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
-    GeneratePosSizeFlags(node, code, false, "wxRIBBON_BAR_DEFAULT_STYLE", "wxRIBBON_BAR_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, false, "wxRIBBON_BAR_DEFAULT_STYLE");
 
     return code;
 }
@@ -294,7 +294,7 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
     else
         code << ", wxNullBitmap";
 
-    GeneratePosSizeFlags(node, code, false, "wxRIBBON_PANEL_DEFAULT_STYLE", "wxRIBBON_PANEL_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, false, "wxRIBBON_PANEL_DEFAULT_STYLE");
 
     code.Replace(", wxNullBitmap);", ");");
     code.Replace(", wxNullBitmap,", ",\n\t\twxNullBitmap,");

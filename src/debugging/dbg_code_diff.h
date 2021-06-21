@@ -13,6 +13,7 @@ class DbgCodeDiff : public DbgCodeDiffBase
 {
 public:
     DbgCodeDiff(wxWindow* parent = nullptr);
+    ~DbgCodeDiff();
 
 protected:
     void OnWinMerge(wxCommandEvent& event) override;

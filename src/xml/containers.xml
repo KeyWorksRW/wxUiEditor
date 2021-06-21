@@ -177,18 +177,18 @@
             help="All tab images will be scaled to this size.">16, 16</property>
         <property name="persist_name" type="string"
             help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
-        <property name="style" type="bitlist">
-            <option name="wxLB_DEFAULT"
-                help="Choose the default location for the labels depending on the current platform (left everywhere except Mac where it is top)." />
-            <option name="wxLB_TOP"
+        <property name="tab_position" type="option">
+            <option name="wxBK_DEFAULT"
+                help="Default location for the labels depending on the current platform (left everywhere except Mac where it is top)." />
+            <option name="wxBK_TOP"
                 help="Place labels above the page area." />
-            <option name="wxLB_LEFT"
+            <option name="wxBK_LEFT"
                 help="Place labels on the left side." />
-            <option name="wxLB_RIGHT"
+            <option name="wxBK_RIGHT"
                 help="Place labels on the right side." />
-            <option name="wxLB_BOTTOM"
+            <option name="wxBK_BOTTOM"
                 help="Place labels below the page area." />
-            wxLB_DEFAULT
+            wxBK_DEFAULT
         </property>
         <event name="wxEVT_LISTBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
             help="The page selection was changed." />
@@ -213,15 +213,20 @@
             help="All tab images will be scaled to this size.">16, 16</property>
         <property name="persist_name" type="string"
             help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
-        <property name="style" type="bitlist">
-            <option name="wxNB_TOP"
+        <property name="tab_position" type="option">
+            <option name="wxBK_DEFAULT"
+                help="Default placement of tabs (currently top on all platforms)." />
+            <option name="wxBK_TOP"
                 help="Place tabs on the top side." />
-            <option name="wxNB_LEFT"
+            <option name="wxBK_BOTTOM"
+                help="Place tabs under instead of above the book pages." />
+            <option name="wxBK_LEFT"
                 help="Place tabs on the left side." />
-            <option name="wxNB_RIGHT"
+            <option name="wxBK_RIGHT"
                 help="Place tabs on the right side." />
-            <option name="wxNB_BOTTOM"
-                help="Place tabs under instead of above the notebook pages." />
+            wxBK_DEFAULT
+        </property>
+        <property name="style" type="bitlist">
             <option name="wxNB_FIXEDWIDTH"
                 help="All tabs will have same width. (Windows only)" />
             <option name="wxNB_MULTILINE"

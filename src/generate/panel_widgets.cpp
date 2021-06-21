@@ -105,7 +105,7 @@ std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenConstruction(Node* node)
         code << "wxEmptyString";
     }
 
-    GeneratePosSizeFlags(node, code, true, "wxCP_DEFAULT_STYLE", "wxCP_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, true, "wxCP_DEFAULT_STYLE");
 
     return code;
 }

@@ -278,7 +278,7 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
     else
     {
         code << " = new wxToolBar(" << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-        GeneratePosSizeFlags(node, code, false, "", "wxTB_HORIZONTAL");
+        GeneratePosSizeFlags(node, code, false, "wxTB_HORIZONTAL");
     }
 
     return code;
@@ -460,7 +460,7 @@ std::optional<ttlib::cstr> AuiToolBarGenerator::GenConstruction(Node* node)
     code << node->prop_as_string(prop_var_name);
 
     code << " = new wxAuiToolBar(" << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, false, "", "wxAUI_TB_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, false, "wxAUI_TB_DEFAULT_STYLE");
 
     return code;
 }

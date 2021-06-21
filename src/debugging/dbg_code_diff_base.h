@@ -19,7 +19,6 @@ class DbgCodeDiffBase : public wxDialog
 {
 public:
     DbgCodeDiffBase(wxWindow* parent);
-    ~DbgCodeDiffBase();
 
 protected:
 

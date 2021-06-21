@@ -140,9 +140,9 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
 
 wxObject* NotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                 node->prop_as_wxSize(prop_size),
-                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+    auto widget = new wxNotebook(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
+        node->prop_as_int(prop_tab_position) | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
 
     AddBookImageList(node, widget);
 
@@ -251,9 +251,11 @@ bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 wxObject* ListbookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
+    // Note the currently, wxListbook does not have a "style" property since the only thing that can be set is the label
+    // (tab) position
     auto widget = new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
                                  node->prop_as_wxSize(prop_size),
-                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                 node->prop_as_int(prop_tab_position) | node->prop_as_int(prop_window_style));
 
     AddBookImageList(node, widget);
 

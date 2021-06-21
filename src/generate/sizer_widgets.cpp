@@ -288,8 +288,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
         code << "wxEmptyString";
     }
 
-    GeneratePosSizeFlags(node, code);
-    code << '\n';
+    code << ");\n";
 
     if (auto result = GenInheritSettings(node); result)
     {

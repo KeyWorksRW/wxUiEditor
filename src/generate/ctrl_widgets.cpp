@@ -39,7 +39,7 @@ std::optional<ttlib::cstr> CalendarCtrlGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxCalendarCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
-    GeneratePosSizeFlags(node, code, false, "wxCAL_SHOW_HOLIDAYS", "wxCAL_SHOW_HOLIDAYS");
+    GeneratePosSizeFlags(node, code, false, "wxCAL_SHOW_HOLIDAYS");
 
     code.Replace(", wxDefaultDateTime);", ");");
 
@@ -170,7 +170,7 @@ std::optional<ttlib::cstr> GenericDirCtrlGenerator::GenConstruction(Node* node)
 
     if (!node->HasValue(prop_filter) && node->prop_as_int(prop_defaultfilter) == 0 && !node->HasValue(prop_window_name))
     {
-        GeneratePosSizeFlags(node, code, false, "wxDIRCTRL_DEFAULT_STYLE", "wxDIRCTRL_DEFAULT_STYLE");
+        GeneratePosSizeFlags(node, code, false, "wxDIRCTRL_DEFAULT_STYLE");
     }
     else
     {

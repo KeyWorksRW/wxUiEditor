@@ -54,7 +54,7 @@ std::optional<ttlib::cstr> TreeCtrlGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxTreeCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, true, "wxTR_DEFAULT_STYLE", "wxTR_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, true, "wxTR_DEFAULT_STYLE");
 
     code.Replace(", wxID_ANY);", ");");
 
@@ -92,7 +92,7 @@ std::optional<ttlib::cstr> TreeListViewGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxTreeListCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, true, "wxTL_DEFAULT_STYLE", "wxTL_DEFAULT_STYLE");
+    GeneratePosSizeFlags(node, code, true, "wxTL_DEFAULT_STYLE");
 
     return code;
 }

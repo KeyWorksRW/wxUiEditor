@@ -165,7 +165,7 @@ std::optional<ttlib::cstr> SpinButtonGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = new wxSpinButton(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, false, "wxSP_VERTICAL", "wxSP_VERTICAL");
+    GeneratePosSizeFlags(node, code, false, "wxSP_VERTICAL");
 
     code.Replace(", wxID_ANY);", ");");
 

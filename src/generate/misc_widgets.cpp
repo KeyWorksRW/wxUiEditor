@@ -456,7 +456,7 @@ std::optional<ttlib::cstr> GaugeGenerator::GenConstruction(Node* node)
         code << ", ";
     }
 
-    GeneratePosSizeFlags(node, code, true, "orientation", "wxGA_HORIZONTAL");
+    GeneratePosSizeFlags(node, code, true, "wxGA_HORIZONTAL");
 
     return code;
 }
@@ -543,7 +543,7 @@ std::optional<ttlib::cstr> SliderGenerator::GenConstruction(Node* node)
         code << ", ";
     }
 
-    GeneratePosSizeFlags(node, code, true, "orientation", "wxSL_HORIZONTAL");
+    GeneratePosSizeFlags(node, code, true, "wxSL_HORIZONTAL");
 
     return code;
 }

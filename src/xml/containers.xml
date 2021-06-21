@@ -177,7 +177,7 @@
             help="All tab images will be scaled to this size.">16, 16</property>
         <property name="persist_name" type="string"
             help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
-        <property name="tab_position" type="option">
+        <property name="style" type="option">
             <option name="wxBK_DEFAULT"
                 help="Default location for the labels depending on the current platform (left everywhere except Mac where it is top)." />
             <option name="wxBK_TOP"
@@ -280,19 +280,20 @@
             help="All tab images will be scaled to this size.">16, 16</property>
         <property name="persist_name" type="string"
             help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page and the expand/collapse state of sub pages." />
-        <property name="style" type="bitlist">
-            <option name="wxNB_TOP"
-                help="Place tabs on the top side." />
-            <option name="wxNB_LEFT"
+        <property name="tab_position" type="option">
+            <option name="wxBK_DEFAULT"
+                help="Default placement of tab (currently, positioned on the left)." />
+            <option name="wxBK_TOP"
+                help="Place tab on the top side." />
+            <option name="wxBK_BOTTOM"
+                help="Place tab under instead of above the book pages." />
+            <option name="wxBK_LEFT"
                 help="Place tabs on the left side." />
-            <option name="wxNB_RIGHT"
-                help="Place tabs on the right side." />
-            <option name="wxNB_BOTTOM"
-                help="Place tabs under instead of above the treebook pages." />
-            <option name="wxNB_FIXEDWIDTH"
-                help="All tabs will have same width. (Windows only)" />
-            <option name="wxNB_MULTILINE"
-                help="There can be several rows of tabs. (Windows only)" />
+            <option name="wxBK_RIGHT"
+                help="Place tab on the right side." />
+            wxBK_DEFAULT
+        </property>
+        <property name="style" type="bitlist">
             <option name="wxNB_NOPAGETHEME"
                 help="Display a solid colour on treebook pages, and not a gradient, which can reduce performance. (Windows only)" />
         </property>

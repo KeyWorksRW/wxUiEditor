@@ -411,9 +411,10 @@ void MainFrame::OnAbout(wxCommandEvent&)
     aboutInfo.SetName(txtVersion);
 
     // Use trailing spaces to make the dialog width a bit wider
-    aboutInfo.SetDescription("wxWidgets GUI designer for C++ applications  ");
+    aboutInfo.SetDescription(ttlib::cstr() << "wxWidgets GUI designer for C++ applications  \n\n\tBuilt using " << wxVERSION_STRING << '\n');
     aboutInfo.SetCopyright(txtCopyRight);
     aboutInfo.SetWebSite("https://github.com/KeyWorksRW/wxUiEditor");
+
     aboutInfo.AddDeveloper("Ralph Walden");
 
     wxIcon icon;

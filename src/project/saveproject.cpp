@@ -11,6 +11,8 @@
 #include "node.h"       // Node class
 #include "prop_decl.h"  // PropChildDeclaration and PropDeclaration classes
 
+#include "../pugixml/pugixml.hpp"
+
 using namespace GenEnum;
 
 void Node::CreateDoc(pugi::xml_document& doc)

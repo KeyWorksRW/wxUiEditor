@@ -75,9 +75,18 @@ void InsertNodeAction::Change()
     }
     else
     {
-        m_parent->AddChild(m_node);
-        if (m_pos >= 0)
-            m_parent->ChangeChildPosition(m_node, m_pos);
+        if (m_pos == -1 && m_parent->IsSizer() && m_parent->GetChildCount() > 0 &&
+            m_parent->GetChildPtr(m_parent->GetChildCount() - 1)->isGen(gen_wxStdDialogButtonSizer))
+        {
+            m_parent->AddChild(m_node);
+            m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
+        }
+        else
+        {
+            m_parent->AddChild(m_node);
+            if (m_pos >= 0)
+                m_parent->ChangeChildPosition(m_node, m_pos);
+        }
     }
     wxGetFrame().SelectNode(m_node.get(), false, false);
 }

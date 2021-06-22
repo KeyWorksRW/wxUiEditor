@@ -8,6 +8,7 @@
 #include "pch.h"
 
 #include <wx/menu.h>      // wxMenu and wxMenuBar classes
+#include <wx/sizer.h>     // provide wxSizer class for layout
 #include <wx/statline.h>  // wxStaticLine class interface
 #include <wx/stattext.h>  // wxStaticText base header
 

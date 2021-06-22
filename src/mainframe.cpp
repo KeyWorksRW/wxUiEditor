@@ -10,9 +10,12 @@
 #include <sstream>
 
 #include <wx/aboutdlg.h>          // declaration of wxAboutDialog class
+#include <wx/aui/auibook.h>       // wxaui: wx advanced user interface - notebook
 #include <wx/clipbrd.h>           // wxClipboad class and clipboard functions
 #include <wx/config.h>            // wxConfig base header
+#include <wx/fdrepdlg.h>          // wxFindReplaceDialog class
 #include <wx/filedlg.h>           // wxFileDialog base header
+#include <wx/filehistory.h>       // wxFileHistory class
 #include <wx/frame.h>             // wxFrame class interface
 #include <wx/infobar.h>           // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/persist/splitter.h>  // persistence support for wxTLW

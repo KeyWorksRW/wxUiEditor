@@ -11,8 +11,6 @@
 #include <optional>
 #include <set>
 
-#include <wx/bitmap.h>  // wxBitmap class interface
-
 #include "node_classes.h"  // Forward defintions of Node classes
 
 #include "category.h"    // NodeCategory -- Node property categories

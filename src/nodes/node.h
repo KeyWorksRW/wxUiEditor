@@ -12,10 +12,10 @@
 #include <unordered_set>
 #include <vector>
 
-#include <wx/bitmap.h>  // wxBitmap class interface
-#include <wx/sizer.h>   // provide wxSizer class for layout
-
-#include "../pugixml/pugixml.hpp"
+namespace pugi
+{
+    class xml_document;
+}
 
 #include "font_prop.h"   // FontProperty class
 #include "gen_enums.h"   // Enumerations for generators
@@ -24,6 +24,8 @@
 #include "node_prop.h"   // NodeProperty class
 #include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
 #include "prop_names.h"  // Property names
+
+class wxSizerFlags;
 
 class Node;
 using NodeSharedPtr = std::shared_ptr<Node>;

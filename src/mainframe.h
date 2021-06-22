@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/filehistory.h>  // wxFileHistory class
 
@@ -27,9 +26,12 @@ class MockupPanel;
 class MockupParent;
 class FocusKillerEvtHandler;
 
-class ueStatusBar;
+class wxAuiNotebook;
+class wxAuiNotebookEvent;
 class wxInfoBar;
 class wxSplitterWindow;
+
+class ueStatusBar;
 class NavigationPanel;
 class RibbonPanel;
 

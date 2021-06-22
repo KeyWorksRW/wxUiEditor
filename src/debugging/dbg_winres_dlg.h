@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "dbg_winres_dlg_base.h"
+#include <wx/filehistory.h>  // wxFileHistory class
 
-class wxFileHistory;
+#include "dbg_winres_dlg_base.h"
 
 class DbgWinResDlg : public DbgWinResBase
 {

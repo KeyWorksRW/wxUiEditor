@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <wx/font.h>     // wxFontBase class: the interface of wxFont
-#include <wx/variant.h>  // wxVariant class, container for any type
+class wxFont;
+class wxVariant;
 
 class FontProperty
 {

@@ -8,6 +8,7 @@
 #include "pch.h"
 
 #include <wx/event.h>     // Event classes
+#include <wx/sizer.h>     // provide wxSizer class for layout
 #include <wx/treectrl.h>  // wxTreeCtrl base header
 #include <wx/treelist.h>  // wxTreeListCtrl class declaration.
 

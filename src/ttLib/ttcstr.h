@@ -18,8 +18,6 @@
 /// most places where std::string<char> is used. It provides additional functionality including utf8/16
 /// conversions, file name handling, etc.
 
-#include <cassert>
-#include <filesystem>
 #include <string>
 #include <string_view>
 

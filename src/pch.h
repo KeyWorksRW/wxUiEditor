@@ -159,14 +159,6 @@ bool ttAssertionMsg(const char* filename, const char* function, int line, const 
         #define ASSERT(cond)          wxASSERT(cond)
         #define ASSERT_MSG(cond, msg) wxASSERT_MSG(cond, msg)
         #define FAIL_MSG(msg)         wxFAIL_MSG(msg)
-
-        // In _DEBUG builds this will display an assertion dialog first then it will throw
-        // an excpetion. In Release builds, only the exception is thrown.
-        #define THROW(msg)         \
-            {                      \
-                wxFAIL_MSG(msg);   \
-                throw CExcept(msg) \
-            }
     #endif  // _WIN32
 
 #endif  // defined(NDEBUG)

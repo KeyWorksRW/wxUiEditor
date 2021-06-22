@@ -7,6 +7,8 @@
 
 #include "pch.h"
 
+#include <wx/sizer.h>  // provide wxSizer class for layout
+
 #include "node.h"
 
 #include "appoptions.h"    // AppOptions -- Application-wide options

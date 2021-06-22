@@ -61,6 +61,19 @@
 // Without this, a huge number of #included wxWidgets header files will generate the warning
 #pragma warning(disable : 4251)  // needs to have dll-interface to be used by clients of class
 
+#include <map>
+#include <unordered_map>
+
+#include <set>
+#include <unordered_set>
+
+#include <memory>
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include "ttlibspace.h"  // This must be included before any other ttLib header files
 
 #include "ttcstr.h"   // ttlib::cstr -- std::string with additional functions

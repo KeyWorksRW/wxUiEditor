@@ -54,6 +54,9 @@
 
 #endif
 
+// This is included because mainframe.h needs it, and changing mainframe.h results in 37 files needing to read this.
+#include <wx/gdicmn.h>
+
 #ifdef _MSC_VER
     #pragma warning(pop)
 #endif

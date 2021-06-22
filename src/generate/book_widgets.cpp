@@ -37,9 +37,8 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node);
 
 wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                    node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                              node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     auto node_parent = node->GetParent();
     auto book = wxDynamicCast(parent, wxBookCtrlBase);
@@ -140,9 +139,8 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
 
 wxObject* NotebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxNotebook(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-        node->prop_as_int(prop_tab_position) | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+    auto widget = new wxNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                 node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     AddBookImageList(node, widget);
 
@@ -202,8 +200,7 @@ bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* ChoicebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxChoicebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                   node->prop_as_wxSize(prop_size),
-                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                   node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &ChoicebookGenerator::OnPageChanged, this);
@@ -254,8 +251,7 @@ wxObject* ListbookGenerator::CreateMockup(Node* node, wxObject* parent)
     // Note the currently, wxListbook does not have a "style" property since the only thing that can be set is the label
     // (tab) position
     auto widget = new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                 node->prop_as_wxSize(prop_size),
-                                 node->prop_as_int(prop_tab_position) | node->prop_as_int(prop_window_style));
+                                 node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     AddBookImageList(node, widget);
 
@@ -315,8 +311,7 @@ bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                 node->prop_as_wxSize(prop_size),
-                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                 node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     // A toolbook always has images, so we can't use AddBookImageList
 
@@ -396,8 +391,7 @@ bool ToolbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* TreebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTreebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                 node->prop_as_wxSize(prop_size),
-                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                 node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     AddBookImageList(node, widget);
 
@@ -450,7 +444,7 @@ bool TreebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSimplebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                   node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
+                                   node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_BOOKCTRL_PAGE_CHANGED, &SimplebookGenerator::OnPageChanged, this);

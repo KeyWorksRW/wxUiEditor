@@ -25,7 +25,7 @@
 wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto grid = new wxGrid(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                           node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
+                           node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     wxGridUpdateLocker prevent_updates(grid);
 
@@ -97,7 +97,6 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         grid->SetRowLabelValue(i, labels[i]);
     }
-
 
     // Cell Properties
     grid->SetDefaultCellAlignment(node->prop_as_int(prop_cell_horiz_alignment), node->prop_as_int(prop_cell_vert_alignment));
@@ -306,8 +305,7 @@ bool GridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 wxObject* PropertyGridGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxPropertyGrid(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                     node->prop_as_wxSize(prop_size),
-                                     node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                     node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_extra_style))
     {
@@ -390,8 +388,7 @@ bool PropertyGridGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxPropertyGridManager(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                            node->prop_as_wxSize(prop_size),
-                                            node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                            node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_extra_style))
     {

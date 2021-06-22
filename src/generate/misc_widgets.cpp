@@ -35,7 +35,7 @@
 wxObject* ActivityIndicatorGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                          node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
+                                          node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Start();
@@ -74,7 +74,7 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     auto widget =
         new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation.IsOk() ? animation : wxNullAnimation,
-                            node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style));
+                            node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     if (animation.IsOk())
@@ -213,8 +213,7 @@ bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 wxObject* StaticLineGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                   node->prop_as_wxSize(prop_size),
-                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                   node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -269,10 +268,9 @@ bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto org_style = node->prop_as_int(prop_style);
+    auto org_style = GetStyleInt(node);
     // Don't display the gripper as it can resize our main window rather than just the mockup window
-    auto widget = new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY,
-                                  (org_style &= ~wxSTB_SIZEGRIP) | node->prop_as_int(prop_window_style));
+    auto widget = new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY, (org_style &= ~wxSTB_SIZEGRIP));
     widget->SetFieldsCount(node->prop_as_int(prop_fields));
 
     if (org_style & wxSTB_SIZEGRIP)
@@ -330,9 +328,9 @@ bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxBitmap(prop_bitmap),
-                                            node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                                            node->prop_as_int(prop_window_style));
+    auto widget =
+        new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxBitmap(prop_bitmap),
+                                  node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
     if (auto value = node->prop_as_string(prop_scale_mode); value != "None")
     {
         if (value == "Fill")
@@ -416,9 +414,7 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 wxObject* GaugeGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxGauge(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_range),
-                              node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                              node->prop_as_int(prop_orientation) | node->prop_as_int(prop_style) |
-                                  node->prop_as_int(prop_window_style));
+                              node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
     widget->SetValue(node->prop_as_int(prop_position));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -491,10 +487,10 @@ bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std
 
 wxObject* SliderGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSlider(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_value), node->prop_as_int(prop_minValue),
-        node->prop_as_int(prop_maxValue), node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-        node->prop_as_int(prop_orientation) | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+    auto widget = new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_value),
+                               node->prop_as_int(prop_minValue), node->prop_as_int(prop_maxValue),
+                               node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+
     widget->SetValue(node->prop_as_int(prop_position));
     if (node->prop_as_int(prop_line_size) > 0)
         widget->SetLineSize(node->prop_as_int(prop_line_size));
@@ -607,8 +603,7 @@ wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                       node->prop_as_wxString(prop_url), node->prop_as_wxPoint(prop_pos),
-                                      node->prop_as_wxSize(prop_size),
-                                      node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                      node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_hover_color))
     {

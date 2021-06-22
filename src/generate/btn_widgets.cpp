@@ -23,9 +23,8 @@ using namespace GenEnum;
 
 wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
-                     node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+    auto widget = new wxButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
+                               node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->prop_as_bool(prop_markup))
         widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
@@ -241,8 +240,7 @@ bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxToggleButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
-                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                                     node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->prop_as_bool(prop_markup))
         widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
@@ -431,7 +429,7 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxCommandLinkButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_main_label),
                                           node->prop_as_wxString(prop_note), node->prop_as_wxPoint(prop_pos),
-                                          node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style));
+                                          node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->prop_as_bool(prop_default))
         widget->SetDefault();

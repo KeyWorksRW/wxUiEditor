@@ -32,8 +32,7 @@
 wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
-                                   node->prop_as_wxSize(prop_size),
-                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                   node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->prop_as_bool(prop_markup))
         widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
@@ -143,8 +142,7 @@ bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
-                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->SetMaxLength(node->prop_as_int(prop_maxlength));
 
@@ -263,8 +261,7 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
-                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                                     node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -317,8 +314,7 @@ bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                   node->prop_as_wxSize(prop_size),
-                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                   node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->SetPage("<b>wxHtmlWindow</b><br/><br/>This is a dummy page.</body></html>");
 
@@ -359,9 +355,9 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     // REVIEW: [KeyWorks - 12-10-2020] This is the original code which needs to be replaced as part of issue #512
 
-    auto scintilla = new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                          node->prop_as_wxSize(prop_size), node->prop_as_int(prop_window_style),
-                                          node->prop_as_wxString(prop_var_name));
+    auto scintilla =
+        new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                             node->prop_as_wxSize(prop_size), GetStyleInt(node), node->prop_as_wxString(prop_var_name));
 
     if (node->prop_as_int(prop_line_numbers) != 0)
     {

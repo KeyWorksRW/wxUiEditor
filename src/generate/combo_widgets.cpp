@@ -20,8 +20,7 @@
 wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
-                                 node->prop_as_wxSize(prop_size), 0, nullptr,
-                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                 node->prop_as_wxSize(prop_size), 0, nullptr, GetStyleInt(node));
 
     if (node->HasValue(prop_choices))
     {
@@ -164,8 +163,7 @@ bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* ChoiceGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxChoice(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                               node->prop_as_wxSize(prop_size), 0, nullptr,
-                               node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                               node->prop_as_wxSize(prop_size), 0, nullptr, GetStyleInt(node));
 
     if (node->HasValue(prop_choices))
     {
@@ -302,7 +300,7 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxBitmapComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), 0, nullptr,
-                                       node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                       GetStyleInt(node));
 
     if (node->HasValue(prop_choices))
     {

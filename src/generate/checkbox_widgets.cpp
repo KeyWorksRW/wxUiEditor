@@ -22,9 +22,9 @@ wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->prop_as_string(prop_style).contains("wxALIGN_RIGHT"))
         style_value |= wxALIGN_RIGHT;
 
-    auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                                 style_value | node->prop_as_int(prop_window_style));
+    auto widget =
+        new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), style_value | GetStyleInt(node));
 
     if (node->prop_as_bool(prop_checked))
         widget->SetValue(true);
@@ -98,7 +98,7 @@ bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 wxObject* Check3StateGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    long style_value = wxCHK_3STATE | node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style);
+    long style_value = wxCHK_3STATE | GetStyleInt(node);
 
     auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                  node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), style_value);

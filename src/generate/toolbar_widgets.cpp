@@ -23,9 +23,9 @@ static ttlib::cstr ConstructTool(Node* node);
 
 wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxToolBar(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-        node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style) | wxTB_NOALIGN | wxTB_NODIVIDER | wxNO_BORDER);
+    auto widget =
+        new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                      node->prop_as_wxSize(prop_size), GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER | wxNO_BORDER);
 
     if (node->HasValue(prop_bitmapsize))
         widget->SetToolBitmapSize(node->prop_as_wxSize(prop_bitmapsize));
@@ -179,9 +179,8 @@ void ToolBarFormGenerator::OnTool(wxCommandEvent& event)
 
 wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxToolBar(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-        node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style) | wxTB_NODIVIDER | wxNO_BORDER);
+    auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                node->prop_as_wxSize(prop_size), GetStyleInt(node) | wxTB_NODIVIDER | wxNO_BORDER);
 
     if (node->HasValue(prop_bitmapsize))
         widget->SetToolBitmapSize(node->prop_as_wxSize(prop_bitmapsize));
@@ -389,9 +388,8 @@ std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
 
 wxObject* AuiToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxAuiToolBar(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-        node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style) | wxTB_NODIVIDER | wxNO_BORDER);
+    auto widget = new wxAuiToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                   node->prop_as_wxSize(prop_size), GetStyleInt(node) | wxTB_NODIVIDER | wxNO_BORDER);
 
     if (node->HasValue(prop_bitmapsize))
         widget->SetToolBitmapSize(node->prop_as_wxSize(prop_bitmapsize));

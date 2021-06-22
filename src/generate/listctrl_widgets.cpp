@@ -21,8 +21,7 @@
 wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                 node->prop_as_wxSize(prop_size),
-                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                 node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
 #if 0
 // REVIEW: [KeyWorks - 12-13-2020] This is the original code, but we should be able to do much better by making it possible for the user

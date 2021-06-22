@@ -80,6 +80,10 @@ void GenSize(Node* node, ttlib::cstr& code);
 // This will output "0" if there are no styles (style, window_style, tab_position etc.)
 void GenStyle(Node* node, ttlib::cstr& code);
 
+// Returns the integer value of all style properties for the node. Includes style,
+// window_style, tab_position etc.
+int GetStyleInt(Node* node);
+
 // Version of GenAdditionalCode() specifically for forms
 ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node);
 

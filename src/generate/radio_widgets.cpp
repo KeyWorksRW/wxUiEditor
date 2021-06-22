@@ -20,8 +20,7 @@
 wxObject* RadioButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRadioButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                    node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                                    node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                    node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->prop_as_bool(prop_checked))
         widget->SetValue(true);
@@ -123,8 +122,7 @@ wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
     auto widget = new wxRadioBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                  node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), choices,
-                                 node->prop_as_int(prop_majorDimension),
-                                 node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                 node->prop_as_int(prop_majorDimension), GetStyleInt(node));
 
     if (int selection = node->prop_as_int(prop_selection); static_cast<size_t>(selection) < choices.Count())
     {

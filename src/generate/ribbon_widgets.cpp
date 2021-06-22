@@ -22,8 +22,7 @@
 wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                  node->prop_as_wxSize(prop_size),
-                                  node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                  node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->prop_as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
@@ -118,8 +117,7 @@ bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_
 wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                  node->prop_as_wxSize(prop_size),
-                                  node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                  node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (node->prop_as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
@@ -255,8 +253,7 @@ wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->prop_as_wxString(prop_label),
                                     node->prop_as_wxBitmap(prop_bitmap), node->prop_as_wxPoint(prop_pos),
-                                    node->prop_as_wxSize(prop_size),
-                                    node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                    node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

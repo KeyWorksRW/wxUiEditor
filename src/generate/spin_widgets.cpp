@@ -21,10 +21,9 @@
 
 wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
-                       node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style),
-                       node->prop_as_int(prop_min), node->prop_as_int(prop_max), node->prop_as_int(prop_initial));
+    auto widget = new wxSpinCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
+                                 node->prop_as_wxSize(prop_size), GetStyleInt(node), node->prop_as_int(prop_min),
+                                 node->prop_as_int(prop_max), node->prop_as_int(prop_initial));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -79,8 +78,7 @@ bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* SpinCtrlDoubleGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSpinCtrlDouble(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
-                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                                       node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style),
+                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node),
                                        node->prop_as_double(prop_min), node->prop_as_double(prop_max),
                                        node->prop_as_double(prop_initial), node->prop_as_double(prop_inc));
 
@@ -150,8 +148,7 @@ bool SpinCtrlDoubleGenerator::GetIncludes(Node* node, std::set<std::string>& set
 wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                   node->prop_as_wxSize(prop_size),
-                                   node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                   node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -188,8 +185,7 @@ bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 wxObject* ScrollBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxScrollBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                  node->prop_as_wxSize(prop_size),
-                                  node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                  node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->SetScrollbar(node->prop_as_int(prop_position), node->prop_as_int(prop_thumbsize), node->prop_as_int(prop_range),
                          node->prop_as_int(prop_pagesize));

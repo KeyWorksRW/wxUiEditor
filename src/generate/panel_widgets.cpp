@@ -24,9 +24,8 @@
 
 wxObject* PanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                    node->prop_as_wxSize(prop_size), node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                              node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -57,8 +56,7 @@ std::optional<ttlib::cstr> PanelGenerator::GenConstruction(Node* node)
 wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size),
-                                        node->prop_as_int(prop_style) | node->prop_as_int(prop_window_style));
+                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     if (GetMockup()->IsShowingHidden())
         widget->Collapse(false);

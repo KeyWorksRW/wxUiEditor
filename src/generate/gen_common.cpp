@@ -393,6 +393,20 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
     code << ");";
 }
 
+int GetStyleInt(Node* node)
+{
+    ttlib::cstr styles;
+    GenStyle(node, styles);
+
+    int result = 0;
+    ttlib::multistr mstr(styles, '|');
+    for (auto& iter: mstr)
+    {
+        result |= g_NodeCreator.GetConstantAsInt(iter);
+    }
+    return result;
+}
+
 // An event can be a regular function, a lambda, or a function in another class.
 ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
 {

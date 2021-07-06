@@ -21,14 +21,14 @@ Options:
     IncDirs:     ./;nodes;generate;utils;customprops;ui;ttLib
 
 Files:
-    wxUiEditor.rc         # Windows resources
+    wxUiEditor.rc         # Only processed when compiling for Windows, ignored otherwise
 
     mainapp.cpp           # Main application class
     mainframe.cpp         # Main window frame
 
     appoptions.cpp        # Application-wide options
     bitmaps.cpp           # Map of bitmaps accessed by name
-    clipboard.cpp
+    clipboard.cpp         # Handles reading and writing OS clipboard data
     cstm_event.cpp        # Custom Event handling
     gen_enums.cpp         # Enumerations for generators
     frame_status_bar.cpp  # MainFrame status bar functions
@@ -63,6 +63,9 @@ Files:
     generate/base_generator.cpp    # Base widget generator class
     generate/gen_initialize.cpp    # Initialize all widget generate classes
     generate/gen_common.cpp        # Common widget generation functions
+
+    # The following files in generate/ are used to display the widget in the Mockup panel and to generate
+    # the code to insert into the source and header files.
 
     generate/book_widgets.cpp      # Book generation classes
     generate/btn_widgets.cpp       # Button generation class
@@ -141,7 +144,7 @@ Files:
     ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
 
-# wxUiEditor generated files
+    # wxUiEditor generated files
 
     ui/artpropdlg_base.cpp
     ui/editstringdialog_base.cpp
@@ -157,6 +160,8 @@ Files:
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp
 
+    # Copy of the files we need from the https://github.com/KeyWorksRW/ttLib repository
+
     ttLib/ttcstr.cpp             # Class for handling zero-terminated char strings.
     ttLib/ttcview.cpp            # string_view functionality on a zero-terminated char string.
     ttLib/ttmultistr.cpp         # Breaks a single string into multiple strings
@@ -166,6 +171,8 @@ Files:
     ttLib/ttstrings.cpp          # Class for handling zero-terminated char strings.
     ttLib/tttextfile.cpp         # Classes for reading and writing text files.
 
+# When ttBld generates the ninja scripts, the files in the DebugFiles section will ONLY be added to the
+# debug ninja scripts.
 DebugFiles:
     debugging/msg_logging.cpp    # Message logging class
     debugging/msgframe.cpp       # Stores messages
@@ -184,6 +191,8 @@ DebugFiles:
 
     ttLib/ttdebug.cpp         # Various debugging functionality
 
+# ttBld will add these files to the ninja scripts which will in turn call ttBld to process and compress the source file
+# into the destination file.
 GZIP:
     xml/aui.xml: xml/aui.hgz
     xml/bars.xml: xml/bars.hgz
@@ -193,6 +202,8 @@ GZIP:
     xml/sizers.xml: xml/sizers.hgz
     xml/widgets.xml: xml/widgets.hgz
 
+# ttBld will add these files to the ninja scripts which will in turn call ttBld to convert the original PNG file into
+# a header file that can be compiled into the executable.
 PNG:
     art_src/alignbottom.png: art_headers/alignbottom_png.hxx
     art_src/aligncenter.png: art_headers/aligncenter_png.hxx
@@ -348,6 +359,8 @@ PNG:
     art_src/wxWizard.png: art_headers/wxWizard_png.hxx
     art_src/wxWizardPageSimple.png: art_headers/wxWizardPageSimple_png.hxx
 
+# ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation
+# files.
 Docs:
     ../README.md
     ../docs/DEV_NOTES.md

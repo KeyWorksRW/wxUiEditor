@@ -30,33 +30,6 @@ Node& wxGetProject()
 
 Node::Node(NodeDeclaration* declaration) : m_declaration(declaration) {}
 
-Node::~Node()
-{
-    // REVIEW: [KeyWorks - 09-09-2020] This makes no sense to me. We're being destroyed because our shared reference
-    // count hit zero. If we then tell the parent to destroy us, the destructor will be called again, and since m_parent
-    // didn't get cleared, we'll keep trying to have our parent destroy us.
-
-    ASSERT(!m_parent);
-
-#if 0  // [KeyWorks - 09-09-2020] Code disabled unless we can find a valid reason for it to be here and not blow up.
-    auto parent = m_parent;
-
-    if (parent)
-    {
-        try
-        {
-            NodeSharedPtr pobj(GetSharedPtr());
-            parent->RemoveChild(pobj->get());
-        }
-        catch (const std::exception& e)
-        {
-            FAIL_MSG(e.what());
-            MSG_ERROR(e.what());
-        }
-    }
-#endif
-}
-
 NodeProperty* Node::get_prop_ptr(PropName name)
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())

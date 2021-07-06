@@ -36,7 +36,6 @@ class Node : public std::enable_shared_from_this<Node>
 {
 public:
     Node(NodeDeclaration* declaration);
-    ~Node();
 
     // Use get_name() if you want the enum value.
     auto DeclName() const noexcept { return m_declaration->DeclName(); }

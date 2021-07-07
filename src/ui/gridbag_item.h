@@ -16,10 +16,19 @@ class GridBagItem : public GridBagItemBase
 public:
     GridBagItem(wxWindow* parent);
 
+    enum
+    {
+        action_append,  // append column if row exists, else append row
+        action_insert_column,
+        action_insert_row,
+    };
+
     auto GetColumn() const { return m_column; }
     auto GetRow() const { return m_row; }
     auto GetColumnSpan() const { return m_column_span; }
     auto GetRowSpan() const { return m_row_span; }
+
+    auto GetAction() const { return m_action; }
 
 protected:
     int GetNewColumn(int row);
@@ -38,4 +47,6 @@ private:
 
     int m_max_column { -1 };
     int m_max_row { -1 };
+
+    int m_action { action_append };
 };

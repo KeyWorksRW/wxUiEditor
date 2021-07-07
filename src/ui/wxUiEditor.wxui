@@ -1937,7 +1937,7 @@
       class_name="GridBagItemBase"
       derived_class_name="GridBagItem"
       derived_file="gridbag_item"
-      title="Insert Item Into wxGridBagSizer"
+      title="Append or Insert into wxGridBagSizer"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1945,17 +1945,13 @@
         var_name="dlg_sizer"
         flags="wxEXPAND">
         <node
-          class="wxInfoBar"
-          flags="wxEXPAND"
-          proportion="1" />
-        <node
           class="wxFlexGridSizer"
           cols="4"
           hgap="5">
           <node
             class="wxStaticText"
             class_access="none"
-            label="Insert in &amp;column:"
+            label="&amp;Column:"
             var_name="staticText"
             alignment="wxALIGN_CENTER_VERTICAL" />
           <node
@@ -1978,7 +1974,7 @@
           <node
             class="wxStaticText"
             class_access="none"
-            label="Insert in &amp;row:"
+            label="&amp;Row:"
             var_name="staticText_3"
             alignment="wxALIGN_CENTER_VERTICAL" />
           <node
@@ -1998,6 +1994,25 @@
             min="1"
             var_name="m_spin_span_row"
             borders="wxTOP|wxBOTTOM|wxRIGHT" />
+        </node>
+        <node
+          class="wxInfoBar"
+          var_name="m_infoBar"
+          flags="wxEXPAND"
+          proportion="1" />
+        <node
+          class="wxBoxSizer">
+          <node
+            class="wxRadioButton"
+            label="Insert &amp;column"
+            style="wxRB_GROUP"
+            var_name="m_radio_column"
+            hidden="true" />
+          <node
+            class="wxRadioButton"
+            label="Insert &amp;row"
+            var_name="m_radio_row"
+            hidden="true" />
         </node>
         <node
           class="wxStdDialogButtonSizer"

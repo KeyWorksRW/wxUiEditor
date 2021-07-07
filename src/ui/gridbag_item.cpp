@@ -7,6 +7,8 @@
 
 #include "pch.h"
 
+#include <wx/stockitem.h>
+
 #include "gridbag_item.h"  // auto-generated: gridbag_item_base.h and gridbag_item_base.cpp
 
 #include "mainframe.h"     // MoveDirection -- Main window frame
@@ -38,16 +40,24 @@ void GridBagItem::OnInit(wxInitDialogEvent& WXUNUSED(event))
             m_spin_column->SetValue(GetNewColumn(cur_node->prop_as_int(prop_row)));
         }
     }
+
+    m_infoBar->AddButton(wxID_HIGHEST + 1, "Insert");
+    m_infoBar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GridBagItem::OnOK, this, wxID_HIGHEST + 1);
 }
 
-void GridBagItem::OnOK(wxCommandEvent& event)
+void GridBagItem::OnOK(wxCommandEvent& WXUNUSED(event))
 {
     m_column = m_spin_column->GetValue();
     m_row = m_spin_row->GetValue();
     m_column_span = m_spin_span_column->GetValue();
     m_row_span = m_spin_span_row->GetValue();
 
-    event.Skip();
+    if (m_infoBar->IsShown())
+    {
+        m_action = m_radio_column->GetValue() ? action_insert_column : action_insert_row;
+    }
+
+    EndModal(wxID_OK);
 }
 
 void GridBagItem::OnColumn(wxSpinEvent& WXUNUSED(event))
@@ -76,20 +86,28 @@ void GridBagItem::OnColumn(wxSpinEvent& WXUNUSED(event))
 
             if (is_inuse)
             {
-                m_infoCtrl->ShowMessage("This column is already in use.", wxICON_INFORMATION);
+                m_infoBar->ShowMessage("This column is already in use.", wxICON_INFORMATION);
+                m_radio_column->Show();
+                m_radio_column->SetValue(true);
+                m_radio_row->Show();
+                m_radio_row->SetValue(false);
                 Fit();
             }
-            else if (m_infoCtrl->IsShown())
+            else if (m_infoBar->IsShown())
             {
-                m_infoCtrl->Dismiss();
+                m_radio_column->Hide();
+                m_radio_row->Hide();
+                m_infoBar->Dismiss();
                 Fit();
             }
         }
         else
         {
-            if (m_infoCtrl->IsShown())
+            if (m_infoBar->IsShown())
             {
-                m_infoCtrl->Dismiss();
+                m_radio_column->Hide();
+                m_radio_row->Hide();
+                m_infoBar->Dismiss();
                 Fit();
             }
         }
@@ -108,9 +126,11 @@ void GridBagItem::OnRow(wxSpinEvent& WXUNUSED(event))
         m_spin_column->SetValue(GetNewColumn(new_row) + 1);
     }
 
-    if (m_infoCtrl->IsShown())
+    if (m_infoBar->IsShown())
     {
-        m_infoCtrl->Dismiss();
+        m_radio_column->Hide();
+        m_radio_row->Hide();
+        m_infoBar->Dismiss();
         Fit();
     }
 }

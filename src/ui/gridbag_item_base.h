@@ -10,6 +10,7 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/infobar.h>
+#include <wx/radiobut.h>
 #include <wx/spinctrl.h>
 
 class GridBagItemBase : public wxDialog
@@ -21,7 +22,9 @@ protected:
 
     // Class member variables
 
-    wxInfoBar* m_infoCtrl;
+    wxInfoBar* m_infoBar;
+    wxRadioButton* m_radio_column;
+    wxRadioButton* m_radio_row;
     wxSpinCtrl* m_spin_column;
     wxSpinCtrl* m_spin_row;
     wxSpinCtrl* m_spin_span_column;

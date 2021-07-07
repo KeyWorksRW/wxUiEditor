@@ -34,8 +34,8 @@ void GridBagItem::OnInit(wxInitDialogEvent& WXUNUSED(event))
             m_max_column = gb.GetMaxColumn();
             m_max_row = gb.GetMaxRow();
 
-            m_spin_column->SetValue(gb.GetMaxColumn() + 1);
             m_spin_row->SetValue(cur_node->prop_as_int(prop_row));
+            m_spin_column->SetValue(GetNewColumn(cur_node->prop_as_int(prop_row)));
         }
     }
 }
@@ -126,7 +126,6 @@ int GridBagItem::GetNewColumn(int row)
                           m_gbsizer->GetChild(child_idx)->prop_as_int(prop_colspan);
             if (column > new_column)
                 new_column = column;
-            break;
         }
     }
     return new_column;

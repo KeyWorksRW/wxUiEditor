@@ -111,3 +111,17 @@ protected:
 private:
     std::vector<UndoActionPtr> m_cmds;
 };
+
+class AppendGridBagAction : public UndoAction
+{
+public:
+    AppendGridBagAction(Node* node, Node* parent, const ttlib::cstr& undo_str, int pos = -1);
+    void Change() override;
+    void Revert() override;
+
+private:
+    NodeSharedPtr m_parent;
+    NodeSharedPtr m_node;
+    NodeSharedPtr m_old_selected;
+    int m_pos;
+};

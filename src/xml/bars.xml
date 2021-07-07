@@ -213,7 +213,7 @@
         <inherits class="wxWindow" />
         <inherits class="Window Events" />
         <inherits class="sizer_child" />
-        <property name="var_name" type="string">m_infoCtrl</property>
+        <property name="var_name" type="string">m_infoBar</property>
         <property name="show_effect" type="option"
             help="Set the effects to use when showing the bar.">
             <option name="wxSHOW_EFFECT_NONE"

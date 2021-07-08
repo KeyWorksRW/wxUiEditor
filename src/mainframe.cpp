@@ -608,9 +608,9 @@ void MainFrame::UpdateFrame()
     menu_text = _ttwx(strIdRedo);
     if (m_undo_stack.IsRedoAvailable())
     {
-        if (m_undo_stack.GetUndoString().size())
+        if (m_undo_stack.GetRedoString().size())
         {
-            menu_text << ' ' << m_undo_stack.GetUndoString();
+            menu_text << ' ' << m_undo_stack.GetRedoString();
         }
     }
     menu_text << "\tCtrl+Y";

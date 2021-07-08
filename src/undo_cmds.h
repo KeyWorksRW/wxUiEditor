@@ -125,3 +125,23 @@ private:
     NodeSharedPtr m_old_selected;
     int m_pos;
 };
+
+// Use this when the entire wxGridBagSizer node needs to be saved.
+class GridBagAction : public UndoAction
+{
+public:
+    GridBagAction(Node* cur_gbsizer, const ttlib::cstr& undo_str);
+    void Change() override;
+    void Revert() override;
+
+    // Call this after making all changes to the gbsizer children
+    void Update(Node* cur_gbsizer, Node* selected);
+
+private:
+    NodeSharedPtr m_cur_gbsizer;
+    NodeSharedPtr m_old_cur_gbsizer;  // Set when Update() is called
+    NodeSharedPtr m_old_gbsizer;
+
+    size_t m_idx_old_selected { 0 };
+    size_t m_idx_cur_selected { 0 };
+};

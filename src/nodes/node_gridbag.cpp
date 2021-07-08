@@ -61,7 +61,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
     if (dlg.GetRow() > m_max_row)
     {
         ttlib::cstr undo_str;
-        undo_str << "append " << map_GenNames[new_node->gen_name()];
+        undo_str << "Append " << map_GenNames[new_node->gen_name()];
         wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_node, gbsizer, undo_str));
         new_node->FixDuplicateName();
         wxGetFrame().FireCreatedEvent(new_node);
@@ -97,7 +97,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
             pos_append = -1;  // Append the child at the very end
 
         ttlib::cstr undo_str;
-        undo_str << "append " << map_GenNames[new_node->gen_name()];
+        undo_str << "Append " << map_GenNames[new_node->gen_name()];
         wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_node, gbsizer, undo_str, pos_append));
         new_node->FixDuplicateName();
         wxGetFrame().FireCreatedEvent(new_node);
@@ -108,5 +108,69 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
     // If we get here, then either the row or the column must be inserted. That means any duplicate row/column needs to be
     // incremented, which has to be done recursively.
 
-    return false;
+    ttlib::cstr undo_str;
+    undo_str << "Insert " << map_GenNames[new_node->gen_name()];
+
+    // Unlike a normal undo command, this one will simply make a copy of the current gbsizer and the current selection.
+    auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
+    wxGetFrame().PushUndoAction(undo_cmd);
+
+    size_t insert_pos = 0;
+    if (dlg.GetAction() == GridBagItem::action_insert_row)
+    {
+        insert_pos = IncrementRows(dlg.GetRow(), gbsizer);
+    }
+    else
+    {
+        insert_pos = IncrementColumns(dlg.GetRow(), dlg.GetColumn(), gbsizer);
+    }
+
+    gbsizer->AddChild(insert_pos, new_node);
+    new_node->SetParent(gbsizer);
+    undo_cmd->Update(gbsizer, new_node);
+    wxGetFrame().FireCreatedEvent(new_node);
+    wxGetFrame().SelectNode(new_node, true, true);
+
+    return true;
+}
+
+size_t GridBag::IncrementRows(int row, Node* gbsizer)
+{
+    size_t result = tt::npos;
+    for (size_t idx = 0; idx < gbsizer->GetChildCount(); ++idx)
+    {
+        if (gbsizer->GetChild(idx)->prop_as_int(prop_row) == row)
+        {
+            if (result == tt::npos)
+                result = idx;
+            gbsizer->GetChild(idx)->prop_set_value(prop_row, row + 1);
+        }
+    }
+
+    ++row;
+    if (row <= m_max_row)
+        IncrementRows(row, gbsizer);
+
+    return result;
+}
+
+size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
+{
+    size_t result = tt::npos;
+    for (size_t idx = 0; idx < gbsizer->GetChildCount(); ++idx)
+    {
+        if (gbsizer->GetChild(idx)->prop_as_int(prop_row) == row &&
+            gbsizer->GetChild(idx)->prop_as_int(prop_column) == column)
+        {
+            if (result == tt::npos)
+                result = idx;
+            gbsizer->GetChild(idx)->prop_set_value(prop_column, column + 1);
+        }
+    }
+
+    ++column;
+    if (row <= m_max_column)
+        IncrementColumns(row, column, gbsizer);
+
+    return result;
 }

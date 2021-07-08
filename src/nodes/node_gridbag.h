@@ -19,6 +19,8 @@ public:
     bool InsertNode(Node* gbsizer, Node* new_node);
 
 protected:
+    size_t IncrementColumns(int row, int column, Node* gbsizer);
+    size_t IncrementRows(int row, Node* gbsizer);
     void Initialize();
 
 private:

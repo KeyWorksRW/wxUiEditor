@@ -9,9 +9,10 @@
 
 #include "undo_cmds.h"
 
-#include "mainframe.h"   // MainFrame -- Main window frame
-#include "node.h"        // Node class
-#include "prop_names.h"  // Property names
+#include "mainframe.h"     // MainFrame -- Main window frame
+#include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "prop_names.h"    // Property names
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -325,4 +326,69 @@ void AppendGridBagAction::Revert()
     m_parent->RemoveChild(m_node);
     m_node->SetParent(NodeSharedPtr());
     wxGetFrame().SelectNode(m_old_selected.get());
+}
+
+///////////////////////////////// GridBagAction ////////////////////////////////////
+
+GridBagAction::GridBagAction(Node* cur_gbsizer, const ttlib::cstr& undo_str) : UndoAction(undo_str.c_str())
+{
+    m_cur_gbsizer = cur_gbsizer->GetSharedPtr();
+    m_old_gbsizer = g_NodeCreator.MakeCopy(cur_gbsizer);
+    auto selected = wxGetFrame().GetSelectedNodePtr();
+    if (selected->isGen(gen_wxGridBagSizer))
+    {
+        m_idx_old_selected = 0;
+    }
+    else
+    {
+        for (size_t idx = 0; idx < cur_gbsizer->GetChildCount(); ++idx)
+        {
+            if (selected == cur_gbsizer->GetChildPtr(idx))
+            {
+                m_idx_old_selected = idx;
+                break;
+            }
+        }
+    }
+}
+
+void GridBagAction::Change()
+{
+    // m_old_cur_gbsizer doesn't get set until Update() is called, which should be after the first time that Change() is
+    // called.
+
+    if (m_old_cur_gbsizer)
+    {
+        m_cur_gbsizer->RemoveAllChildren();
+        for (size_t idx = 0; idx < m_old_cur_gbsizer->GetChildCount(); ++idx)
+        {
+            m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(m_old_cur_gbsizer->GetChild(idx)));
+        }
+        wxGetFrame().SelectNode(m_cur_gbsizer->GetChild(m_idx_cur_selected));
+    }
+}
+
+void GridBagAction::Revert()
+{
+    m_cur_gbsizer->RemoveAllChildren();
+    for (size_t idx = 0; idx < m_old_gbsizer->GetChildCount(); ++idx)
+    {
+        m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(m_old_gbsizer->GetChild(idx)));
+    }
+
+    wxGetFrame().SelectNode(m_cur_gbsizer->GetChild(m_idx_old_selected));
+}
+
+void GridBagAction::Update(Node* cur_gbsizer, Node* selected)
+{
+    m_old_cur_gbsizer = g_NodeCreator.MakeCopy(cur_gbsizer);
+
+    for (size_t idx = 0; idx < cur_gbsizer->GetChildCount(); ++idx)
+    {
+        if (selected == cur_gbsizer->GetChild(idx))
+        {
+            m_idx_cur_selected = idx;
+            break;
+        }
+    }
 }

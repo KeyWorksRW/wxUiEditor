@@ -9,9 +9,10 @@
 
 #include "undo_cmds.h"
 
-#include "mainframe.h"   // MainFrame -- Main window frame
-#include "node.h"        // Node class
-#include "prop_names.h"  // Property names
+#include "mainframe.h"     // MainFrame -- Main window frame
+#include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "prop_names.h"    // Property names
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -27,6 +28,10 @@ void InsertNodeAction::Change()
 {
     m_node->SetParent(m_parent);
 
+    ASSERT_MSG(!m_parent->isGen(gen_wxGridBagSizer),
+               "Only use AppendGridBagAction or InsertGridBagAction to add items to a wxGridBagSizer!");
+
+#if 0
     if (m_parent->isGen(gen_wxGridBagSizer) && m_parent->GetChildCount() > 0)
     {
         // This is a child of a wxGridBagSizer, so if m_pos is -1, then add as a new row. If m_pos >= 0, then add as a column
@@ -88,6 +93,20 @@ void InsertNodeAction::Change()
                 m_parent->ChangeChildPosition(m_node, m_pos);
         }
     }
+#else
+    if (m_pos == -1 && m_parent->IsSizer() && m_parent->GetChildCount() > 0 &&
+        m_parent->GetChildPtr(m_parent->GetChildCount() - 1)->isGen(gen_wxStdDialogButtonSizer))
+    {
+        m_parent->AddChild(m_node);
+        m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
+    }
+    else
+    {
+        m_parent->AddChild(m_node);
+        if (m_pos >= 0)
+            m_parent->ChangeChildPosition(m_node, m_pos);
+    }
+#endif
     wxGetFrame().SelectNode(m_node.get(), false, false);
 }
 
@@ -270,5 +289,106 @@ void MultiAction::Revert()
     for (auto cmd = m_cmds.rbegin(); cmd != m_cmds.rend(); ++cmd)
     {
         cmd->get()->Revert();
+    }
+}
+
+///////////////////////////////// AppendGridBagAction ////////////////////////////////////
+
+AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, const ttlib::cstr& undo_str, int pos) :
+    UndoAction(undo_str.c_str()), m_pos(pos)
+{
+    m_old_selected = wxGetFrame().GetSelectedNodePtr();
+    m_node = node->GetSharedPtr();
+    m_parent = parent->GetSharedPtr();
+}
+
+void AppendGridBagAction::Change()
+{
+    m_node->SetParent(m_parent);
+    if (m_pos == -1 && m_parent->GetChildCount() > 0 &&
+        m_parent->GetChildPtr(m_parent->GetChildCount() - 1)->isGen(gen_wxStdDialogButtonSizer))
+    {
+        m_parent->AddChild(m_node);
+        m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
+    }
+    else
+    {
+        m_parent->AddChild(m_node);
+        if (m_pos >= 0)
+            m_parent->ChangeChildPosition(m_node, m_pos);
+    }
+
+    wxGetFrame().SelectNode(m_node.get(), false, false);
+}
+
+void AppendGridBagAction::Revert()
+{
+    m_parent->RemoveChild(m_node);
+    m_node->SetParent(NodeSharedPtr());
+    wxGetFrame().SelectNode(m_old_selected.get());
+}
+
+///////////////////////////////// GridBagAction ////////////////////////////////////
+
+GridBagAction::GridBagAction(Node* cur_gbsizer, const ttlib::cstr& undo_str) : UndoAction(undo_str.c_str())
+{
+    m_cur_gbsizer = cur_gbsizer->GetSharedPtr();
+    m_old_gbsizer = g_NodeCreator.MakeCopy(cur_gbsizer);
+    auto selected = wxGetFrame().GetSelectedNodePtr();
+    if (selected->isGen(gen_wxGridBagSizer))
+    {
+        m_idx_old_selected = 0;
+    }
+    else
+    {
+        for (size_t idx = 0; idx < cur_gbsizer->GetChildCount(); ++idx)
+        {
+            if (selected == cur_gbsizer->GetChildPtr(idx))
+            {
+                m_idx_old_selected = idx;
+                break;
+            }
+        }
+    }
+}
+
+void GridBagAction::Change()
+{
+    // m_old_cur_gbsizer doesn't get set until Update() is called, which should be after the first time that Change() is
+    // called.
+
+    if (m_old_cur_gbsizer)
+    {
+        m_cur_gbsizer->RemoveAllChildren();
+        for (size_t idx = 0; idx < m_old_cur_gbsizer->GetChildCount(); ++idx)
+        {
+            m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(m_old_cur_gbsizer->GetChild(idx)));
+        }
+        wxGetFrame().SelectNode(m_cur_gbsizer->GetChild(m_idx_cur_selected));
+    }
+}
+
+void GridBagAction::Revert()
+{
+    m_cur_gbsizer->RemoveAllChildren();
+    for (size_t idx = 0; idx < m_old_gbsizer->GetChildCount(); ++idx)
+    {
+        m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(m_old_gbsizer->GetChild(idx)));
+    }
+
+    wxGetFrame().SelectNode(m_cur_gbsizer->GetChild(m_idx_old_selected));
+}
+
+void GridBagAction::Update(Node* cur_gbsizer, Node* selected)
+{
+    m_old_cur_gbsizer = g_NodeCreator.MakeCopy(cur_gbsizer);
+
+    for (size_t idx = 0; idx < cur_gbsizer->GetChildCount(); ++idx)
+    {
+        if (selected == cur_gbsizer->GetChild(idx))
+        {
+            m_idx_cur_selected = idx;
+            break;
+        }
     }
 }

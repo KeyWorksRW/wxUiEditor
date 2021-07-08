@@ -1931,5 +1931,94 @@
           flags="wxEXPAND" />
       </node>
     </node>
+    <node
+      class="wxDialog"
+      base_file="gridbag_item_base"
+      class_name="GridBagItemBase"
+      derived_class_name="GridBagItem"
+      derived_file="gridbag_item"
+      title="Append or Insert into wxGridBagSizer"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxFlexGridSizer"
+          cols="4"
+          hgap="5">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Column:"
+            var_name="staticText"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxSpinCtrl"
+            var_name="m_spin_column"
+            borders="wxTOP|wxBOTTOM|wxRIGHT"
+            wxEVT_SPINCTRL="OnColumn" />
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Span c&amp;olumns:"
+            var_name="staticText_2"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxSpinCtrl"
+            initial="1"
+            min="1"
+            var_name="m_spin_span_column"
+            borders="wxTOP|wxBOTTOM|wxRIGHT" />
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Row:"
+            var_name="staticText_3"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxSpinCtrl"
+            var_name="m_spin_row"
+            borders="wxTOP|wxBOTTOM|wxRIGHT"
+            wxEVT_SPINCTRL="OnRow" />
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Span ro&amp;ws:"
+            var_name="staticText_4"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxSpinCtrl"
+            initial="1"
+            min="1"
+            var_name="m_spin_span_row"
+            borders="wxTOP|wxBOTTOM|wxRIGHT" />
+        </node>
+        <node
+          class="wxInfoBar"
+          var_name="m_infoBar"
+          flags="wxEXPAND"
+          proportion="1" />
+        <node
+          class="wxBoxSizer">
+          <node
+            class="wxRadioButton"
+            label="Insert &amp;column"
+            style="wxRB_GROUP"
+            var_name="m_radio_column"
+            hidden="true" />
+          <node
+            class="wxRadioButton"
+            label="Insert &amp;row"
+            var_name="m_radio_row"
+            hidden="true" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

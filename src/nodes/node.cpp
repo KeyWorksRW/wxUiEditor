@@ -12,9 +12,11 @@
 #include "node.h"
 
 #include "appoptions.h"    // AppOptions -- Application-wide options
+#include "gridbag_item.h"  // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node_creator.h"  // NodeCreator class
 #include "node_decl.h"     // NodeDeclaration class
+#include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"     // NodeProperty -- NodeProperty class
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
@@ -473,6 +475,17 @@ Node* Node::CreateChildNode(GenName name)
 
     if (new_node)
     {
+        if (isGen(gen_wxGridBagSizer))
+        {
+            GridBag grid_bag(this);
+            if (grid_bag.InsertNode(this, new_node.get()))
+                return new_node.get();
+            else
+            {
+                return nullptr;
+            }
+        }
+
 #if defined(_WIN32)
 
         // In a Windows build, the default background colour of white doesn't match the normal background color of the parent
@@ -528,6 +541,17 @@ Node* Node::CreateChildNode(GenName name)
             new_node = g_NodeCreator.CreateNode(name, parent);
             if (new_node)
             {
+                if (parent->isGen(gen_wxGridBagSizer))
+                {
+                    GridBag grid_bag(parent);
+                    if (grid_bag.InsertNode(parent, new_node.get()))
+                        return new_node.get();
+                    else
+                    {
+                        return nullptr;
+                    }
+                }
+
                 auto pos = parent->FindInsertionPos(this);
                 ttlib::cstr undo_str;
                 undo_str << "insert " << map_GenNames[name];

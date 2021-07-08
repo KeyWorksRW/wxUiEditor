@@ -11,12 +11,12 @@
 
 void UndoStack::Push(UndoActionPtr ptr)
 {
-    ptr->Change();
     if (!m_locked)
     {
         m_undo.push_back(ptr);
         m_redo.clear();
     }
+    ptr->Change();
 }
 
 void UndoStack::Undo()
@@ -25,8 +25,8 @@ void UndoStack::Undo()
     {
         auto command = m_undo.back();  // make a copy of the share_ptr to increase the reference count
         m_undo.pop_back();
-        command->Revert();
         m_redo.push_back(command);
+        command->Revert();
     }
 }
 
@@ -36,8 +36,8 @@ void UndoStack::Redo()
     {
         auto command = m_redo.back();  // make a copy of the share_ptr to increase the reference count
         m_redo.pop_back();
-        command->Change();
         m_undo.push_back(command);
+        command->Change();
     }
 }
 

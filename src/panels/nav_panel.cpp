@@ -106,12 +106,14 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
 
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { AddAllNodes(); });
 
-    Bind(EVT_NodeCreated, [this](CustomEvent& event) {
-        if (event.GetNode())
-        {
-            AddNode(event.GetNode(), event.GetNode()->GetParent());
-        }
-    });
+    Bind(EVT_NodeCreated,
+         [this](CustomEvent& event)
+         {
+             if (event.GetNode())
+             {
+                 AddNode(event.GetNode(), event.GetNode()->GetParent());
+             }
+         });
     Bind(EVT_NodeDeleted, [this](CustomEvent& event) { DeleteNode(event.GetNode()); });
 
     Bind(wxEVT_MENU, &NavigationPanel::OnExpand, this, id_NavExpand);
@@ -429,16 +431,27 @@ void NavigationPanel::EraseAllMaps(Node* node)
 
 void NavigationPanel::OnNodeSelected(CustomEvent& event)
 {
+    auto node = event.GetNode();
+    if (node->GetParent() && node->GetParent()->isGen(gen_wxGridBagSizer))
+    {
+        wxGetFrame().setStatusText(ttlib::cstr() << "Row: " << node->prop_as_int(prop_row)
+                                                 << ", Column: " << node->prop_as_int(prop_column));
+    }
+    else
+    {
+        if (node->HasValue(prop_var_name) && !node->prop_as_string(prop_class_access).is_sameprefix("none"))
+            wxGetFrame().setStatusText(node->prop_as_string(prop_var_name));
+        else
+            wxGetFrame().setStatusText(tt_empty_cstr);
+    }
+
     if (m_isSelChangeSuspended)
         return;
 
-    auto node = event.GetNode();
-    ASSERT(node);
-
-    if (auto it = m_node_tree_map.find(node); it != m_node_tree_map.end())
+    if (auto iter = m_node_tree_map.find(node); iter != m_node_tree_map.end())
     {
-        m_tree_ctrl->EnsureVisible(it->second);
-        m_tree_ctrl->SelectItem(it->second);
+        m_tree_ctrl->EnsureVisible(iter->second);
+        m_tree_ctrl->SelectItem(iter->second);
     }
     else
     {

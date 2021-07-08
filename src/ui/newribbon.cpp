@@ -82,8 +82,6 @@ void NewRibbon::CreateNode()
     auto parent = wxGetFrame().GetSelectedNode();
     auto pos = parent->FindInsertionPos(parent);
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), parent, undo_str, pos));
-    bar_node->FixDuplicateNodeNames();
-
     wxGetFrame().FireCreatedEvent(bar_node);
     wxGetFrame().SelectNode(bar_node, true, true);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(bar_node.get(), true, true);

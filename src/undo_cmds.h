@@ -22,6 +22,7 @@ private:
     NodeSharedPtr m_node;
     NodeSharedPtr m_old_selected;
     int m_pos;
+    bool m_fix_duplicate_names { true };
 };
 
 class RemoveNodeAction : public UndoAction

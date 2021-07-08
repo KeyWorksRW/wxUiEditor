@@ -508,7 +508,6 @@ Node* Node::CreateChildNode(GenName name)
         ttlib::cstr undo_str;
         undo_str << "insert " << map_GenNames[name];
         frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
-        new_node->FixDuplicateName();
     }
 
     // A "ribbonButton" component is used for both wxRibbonButtonBar and wxRibbonToolBar. If creating the node failed,
@@ -520,7 +519,6 @@ Node* Node::CreateChildNode(GenName name)
         {
             ttlib::cstr undo_str = "insert ribbon tool";
             frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
-            new_node->FixDuplicateName();
         }
         else
         {
@@ -556,7 +554,6 @@ Node* Node::CreateChildNode(GenName name)
                 ttlib::cstr undo_str;
                 undo_str << "insert " << map_GenNames[name];
                 frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
-                new_node->FixDuplicateName();
             }
         }
         else

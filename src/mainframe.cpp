@@ -1074,8 +1074,6 @@ void MainFrame::PasteNode(Node* parent)
 
     auto pos = parent->FindInsertionPos(m_selected_node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
-    new_node->FixDuplicateNodeNames();
-
     FireCreatedEvent(new_node);
     SelectNode(new_node, true, true);
 }
@@ -1092,8 +1090,6 @@ void MainFrame::DuplicateNode(Node* node)
     auto pos = parent->FindInsertionPos(m_selected_node);
     auto new_node = g_NodeCreator.MakeCopy(node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
-    new_node->FixDuplicateNodeNames();
-
     FireCreatedEvent(new_node);
     SelectNode(new_node, true, true);
 }

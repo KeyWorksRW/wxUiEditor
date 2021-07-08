@@ -22,7 +22,7 @@
 #include "node_creator.h"  // NodeCreator class
 #include "node_decl.h"     // NodeDeclaration class
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
-#include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"     // Undoable command classes derived from UndoAction
 
 #include "../utils/auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
 

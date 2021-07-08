@@ -31,73 +31,11 @@ void InsertNodeAction::Change()
     ASSERT_MSG(!m_parent->isGen(gen_wxGridBagSizer),
                "Only use AppendGridBagAction or InsertGridBagAction to add items to a wxGridBagSizer!");
 
-#if 0
-    if (m_parent->isGen(gen_wxGridBagSizer) && m_parent->GetChildCount() > 0)
-    {
-        // This is a child of a wxGridBagSizer, so if m_pos is -1, then add as a new row. If m_pos >= 0, then add as a column
-
-        auto row = -1;
-        if (m_pos < 0)
-        {
-            for (size_t pos = 0; pos < m_parent->GetChildCount(); ++pos)
-            {
-                auto child_row = m_parent->GetChild(pos)->prop_as_int(prop_row);
-                if (child_row > row)
-                    row = child_row;
-            }
-
-            m_parent->AddChild(m_node);
-            m_node->get_prop_ptr(prop_row)->set_value(row + 1);
-        }
-        else
-        {
-            if (m_pos > 0)
-            {
-                // This assumes the children are in row order, which is not necessarily the case
-                row = m_parent->GetChild(m_pos - 1)->prop_as_int(prop_row);
-            }
-            auto col = -1;
-            for (size_t pos = 0; pos < m_parent->GetChildCount(); ++pos)
-            {
-                if (m_parent->GetChild(pos)->prop_as_int(prop_row) == row)
-                {
-                    auto child_col = m_parent->GetChild(pos)->prop_as_int(prop_column);
-                    if (child_col > col)
-                    {
-                        auto col_span = m_parent->GetChild(pos)->prop_as_int(prop_colspan);
-                        col = child_col + (col_span - 1);
-                    }
-                }
-            }
-            if (row == -1)
-                ++row;
-            m_node->get_prop_ptr(prop_row)->set_value(row);
-            m_node->get_prop_ptr(prop_column)->set_value(col + 1);
-
-            m_parent->AddChild(m_node);
-            m_parent->ChangeChildPosition(m_node, m_pos);
-        }
-    }
-    else
-    {
-        if (m_pos == -1 && m_parent->IsSizer() && m_parent->GetChildCount() > 0 &&
-            m_parent->GetChildPtr(m_parent->GetChildCount() - 1)->isGen(gen_wxStdDialogButtonSizer))
-        {
-            m_parent->AddChild(m_node);
-            m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
-        }
-        else
-        {
-            m_parent->AddChild(m_node);
-            if (m_pos >= 0)
-                m_parent->ChangeChildPosition(m_node, m_pos);
-        }
-    }
-#else
     if (m_pos == -1 && m_parent->IsSizer() && m_parent->GetChildCount() > 0 &&
         m_parent->GetChildPtr(m_parent->GetChildCount() - 1)->isGen(gen_wxStdDialogButtonSizer))
     {
         m_parent->AddChild(m_node);
+        // Add the child BEFORE any wxStdDialogButtonSizer
         m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
     }
     else
@@ -106,14 +44,25 @@ void InsertNodeAction::Change()
         if (m_pos >= 0)
             m_parent->ChangeChildPosition(m_node, m_pos);
     }
-#endif
+
+    if (m_fix_duplicate_names)
+    {
+        // This needs to be done only once, even if the insertion is reverted and then changed again. The reason is that any
+        // name changes to other nodes cannot be undone.
+
+        m_node->FixDuplicateNodeNames();
+        m_fix_duplicate_names = false;
+    }
+
+    // Probably not necessary, but with both parameters set to false, this simply ensures the mainframe has it's selection
+    // node set correctly.
     wxGetFrame().SelectNode(m_node.get(), false, false);
 }
 
 void InsertNodeAction::Revert()
 {
     m_parent->RemoveChild(m_node);
-    m_node->SetParent(NodeSharedPtr());
+    m_node->SetParent(NodeSharedPtr());  // Remove the parent pointer
     wxGetFrame().SelectNode(m_old_selected.get());
 }
 

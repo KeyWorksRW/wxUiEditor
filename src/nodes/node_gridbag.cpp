@@ -15,7 +15,7 @@
 #include "mainapp.h"       // App -- Main application class
 #include "mainframe.h"     // Main window frame
 #include "node.h"          // Node class
-#include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "undo_cmds.h"     // Undoable command classes derived from UndoAction
 
 GridBag::GridBag(Node* node_gridbag) : m_gridbag(node_gridbag)
 {

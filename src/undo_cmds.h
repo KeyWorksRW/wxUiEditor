@@ -124,7 +124,7 @@ private:
 class AppendGridBagAction : public UndoAction
 {
 public:
-    AppendGridBagAction(Node* node, Node* parent, const ttlib::cstr& undo_str, int pos = -1);
+    AppendGridBagAction(Node* node, Node* parent, int pos = -1);
     void Change() override;
     void Revert() override;
 
@@ -132,7 +132,10 @@ private:
     NodeSharedPtr m_parent;
     NodeSharedPtr m_node;
     NodeSharedPtr m_old_selected;
+    size_t m_old_pos;
+
     int m_pos;
+    bool m_fix_duplicate_names { true };
 };
 
 // Use this when the entire wxGridBagSizer node needs to be saved.

@@ -60,12 +60,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 
     if (dlg.GetRow() > m_max_row)
     {
-        ttlib::cstr undo_str;
-        undo_str << "Append " << map_GenNames[new_node->gen_name()];
-        wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_node, gbsizer, undo_str));
-        new_node->FixDuplicateName();
-        wxGetFrame().FireCreatedEvent(new_node);
-        wxGetFrame().SelectNode(new_node, true, true);
+        wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_node, gbsizer));
         return true;
     }
 
@@ -96,12 +91,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
         if (pos_append >= static_cast<int_t>(gbsizer->GetChildCount()))
             pos_append = -1;  // Append the child at the very end
 
-        ttlib::cstr undo_str;
-        undo_str << "Append " << map_GenNames[new_node->gen_name()];
-        wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_node, gbsizer, undo_str, pos_append));
-        new_node->FixDuplicateName();
-        wxGetFrame().FireCreatedEvent(new_node);
-        wxGetFrame().SelectNode(new_node, true, true);
+        wxGetFrame().PushUndoAction(std::make_shared<AppendGridBagAction>(new_node, gbsizer, pos_append));
         return true;
     }
 

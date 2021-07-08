@@ -248,12 +248,19 @@ void MultiAction::Revert()
 
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////
 
-AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, const ttlib::cstr& undo_str, int pos) :
-    UndoAction(undo_str.c_str()), m_pos(pos)
+AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) : m_pos(pos)
 {
     m_old_selected = wxGetFrame().GetSelectedNodePtr();
     m_node = node->GetSharedPtr();
     m_parent = parent->GetSharedPtr();
+    m_old_pos = m_parent->GetChildPosition(node);
+
+    m_undo_string << "Append " << map_GenNames[node->gen_name()];
+
+    m_RedoEventGenerated = true;
+    m_RedoSelectEventGenerated = true;
+    m_UndoEventGenerated = true;
+    m_UndoSelectEventGenerated = true;
 }
 
 void AppendGridBagAction::Change()
@@ -272,13 +279,25 @@ void AppendGridBagAction::Change()
             m_parent->ChangeChildPosition(m_node, m_pos);
     }
 
-    wxGetFrame().SelectNode(m_node.get(), false, false);
+    if (m_fix_duplicate_names)
+    {
+        // This needs to be done only once, even if the insertion is reverted and then changed again. The reason is that any
+        // name changes to other nodes cannot be undone.
+
+        m_node->FixDuplicateNodeNames();
+        m_fix_duplicate_names = false;
+    }
+
+    wxGetFrame().FireCreatedEvent(m_node);
+    wxGetFrame().SelectNode(m_node, true, true);
 }
 
 void AppendGridBagAction::Revert()
 {
     m_parent->RemoveChild(m_node);
     m_node->SetParent(NodeSharedPtr());
+
+    wxGetFrame().FireDeletedEvent(m_node.get());
     wxGetFrame().SelectNode(m_old_selected.get());
 }
 

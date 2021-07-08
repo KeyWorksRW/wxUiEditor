@@ -14,7 +14,11 @@ class InsertNodeAction : public UndoAction
 {
 public:
     InsertNodeAction(Node* node, Node* parent, const ttlib::cstr& undo_str, int pos = -1);
+
+    // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
+
+    // Called when Undo is requested
     void Revert() override;
 
 private:
@@ -29,7 +33,11 @@ class RemoveNodeAction : public UndoAction
 {
 public:
     RemoveNodeAction(Node* node, const ttlib::cstr& undo_str, bool AddToClipboard = false);
+
+    // Called when pushed to the Undo stack and when Redo is called
     void Change() override;
+
+    // Called when Undo is requested
     void Revert() override;
 
 private:

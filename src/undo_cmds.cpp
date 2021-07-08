@@ -76,6 +76,9 @@ RemoveNodeAction::RemoveNodeAction(Node* node, const ttlib::cstr& undo_str, bool
     m_parent = node->GetParentPtr();
     m_old_pos = m_parent->GetChildPosition(node);
     m_old_selected = wxGetFrame().GetSelectedNodePtr();
+
+    m_RedoEventGenerated = true;
+    m_RedoSelectEventGenerated = true;
 }
 
 void RemoveNodeAction::Change()

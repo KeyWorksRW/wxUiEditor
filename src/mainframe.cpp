@@ -1110,9 +1110,10 @@ void MainFrame::Undo()
 
     m_undo_stack.Undo();
     m_isProject_modified = (m_undo_stack_size != m_undo_stack.size());
-    FireProjectUpdatedEvent();
-    ASSERT(m_selected_node)
-    FireSelectedEvent(m_selected_node.get());
+    if (!m_undo_stack.wasUndoEventGenerated())
+        FireProjectUpdatedEvent();
+    if (!m_undo_stack.wasUndoSelectEventGenerated())
+        FireSelectedEvent(m_selected_node.get());
 }
 
 void MainFrame::Redo()
@@ -1121,8 +1122,10 @@ void MainFrame::Redo()
 
     m_undo_stack.Redo();
     m_isProject_modified = (m_undo_stack_size != m_undo_stack.size());
-    FireProjectUpdatedEvent();
-    FireSelectedEvent(GetSelectedNode());
+    if (!m_undo_stack.wasRedoEventGenerated())
+        FireProjectUpdatedEvent();
+    if (!m_undo_stack.wasRedoSelectEventGenerated())
+        FireSelectedEvent(GetSelectedNode());
 }
 
 void MainFrame::OnToggleExpandLayout(wxCommandEvent&)

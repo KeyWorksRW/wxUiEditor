@@ -24,7 +24,7 @@ public:
     ttlib::cstr GetUndoString() { return m_undo_string; }
     void SetUndoString(ttlib::cview str) { m_undo_string = str; }
 
-private:
+protected:
     ttlib::cstr m_undo_string;
 };
 

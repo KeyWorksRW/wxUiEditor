@@ -112,7 +112,7 @@ void RemoveNodeAction::Revert()
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview value) : m_property(prop)
 {
-    SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
+    m_undo_string << "change " << prop->DeclName();
 
     m_change_value << value;
     m_revert_value = prop->as_string();
@@ -120,7 +120,7 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview valu
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_property(prop)
 {
-    SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
+    m_undo_string << "change " << prop->DeclName();
 
     m_change_value << value;
     m_revert_value = prop->as_string();
@@ -140,7 +140,7 @@ void ModifyPropertyAction::Revert()
 
 ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event)
 {
-    SetUndoString(ttlib::cstr() << "change " << event->get_name() << " handler");
+    m_undo_string << "change " << event->get_name() << " handler";
 
     m_change_value << value;
     m_revert_value = event->get_value();
@@ -160,7 +160,7 @@ void ModifyEventAction::Revert()
 
 ChangePositionAction::ChangePositionAction(Node* node, size_t position)
 {
-    SetUndoString(ttlib::cstr() << "change " << node->DeclName() << " position");
+    m_undo_string << "change " << node->DeclName() << " position";
 
     m_node = node->GetSharedPtr();
     m_parent = node->GetParentPtr();
@@ -183,7 +183,7 @@ void ChangePositionAction::Revert()
 
 ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
 {
-    SetUndoString(ttlib::cstr() << "change " << node->DeclName() << " parent");
+    m_undo_string << "change " << node->DeclName() << " parent";
 
     m_node = node->GetSharedPtr();
     m_change_parent = parent->GetSharedPtr();

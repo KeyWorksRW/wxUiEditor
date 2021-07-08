@@ -407,25 +407,24 @@ void NavigationPanel::AddNode(Node* node, Node* parent)
 
 void NavigationPanel::DeleteNode(Node* node)
 {
-    if (auto it = m_node_tree_map.find(node); it != m_node_tree_map.end() && it->second.IsOk())
-    {
-        m_tree_ctrl->Delete(it->second);
-        EraseAllMaps(it->first);
-    }
+    EraseAllMaps(node);
 }
 
 void NavigationPanel::EraseAllMaps(Node* node)
 {
-    if (auto it = m_node_tree_map.find(node); it != m_node_tree_map.end() && it->second.IsOk())
+    if (auto iter = m_node_tree_map.find(node); iter != m_node_tree_map.end())
     {
-        m_tree_node_map.erase(it->second);
+        m_tree_node_map.erase(iter->second);
+        if (iter->second.IsOk())
+            m_tree_ctrl->Delete(iter->second);
+
+        // Don't erase this until the iterator is no longer needed
+        m_node_tree_map.erase(node);
     }
 
-    m_node_tree_map.erase(node);
-
-    for (size_t i = 0; i < node->GetChildCount(); i++)
+    for (size_t idx = 0; idx < node->GetChildCount(); idx++)
     {
-        EraseAllMaps(node->GetChild(i));
+        EraseAllMaps(node->GetChild(idx));
     }
 }
 

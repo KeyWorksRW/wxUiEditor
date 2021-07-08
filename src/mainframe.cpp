@@ -1381,26 +1381,18 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
     if (!parent)
         return;
 
-    // We need to make a copy in order to pass to FireDeletedEvent
-    auto deleted_node = node;
-    Node* node_copy = node;
-
     if (isCutMode)
     {
         ttlib::cstr undo_str;
         undo_str << "cut " << node->DeclName();
-        PushUndoAction(std::make_shared<RemoveNodeAction>(node_copy, undo_str, true));
+        PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, true));
     }
     else
     {
         ttlib::cstr undo_str;
         undo_str << "delete " << node->DeclName();
-        PushUndoAction(std::make_shared<RemoveNodeAction>(node_copy, undo_str, false));
+        PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, false));
     }
-
-    FireDeletedEvent(deleted_node);
-    ASSERT(GetSelectedNodePtr());  // RemoveNodeAction should have selected something
-    SelectNode(GetSelectedNode(), true, true);
 }
 
 Node* MainFrame::FindChildSizerItem(Node* node)

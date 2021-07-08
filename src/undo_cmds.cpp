@@ -137,6 +137,8 @@ void RemoveNodeAction::Change()
     m_parent->RemoveChild(m_node);
     m_node->SetParent(NodeSharedPtr());
 
+    wxGetFrame().FireDeletedEvent(m_node.get());
+
     if (m_parent->GetChildCount())
     {
         auto pos = (m_old_pos < m_parent->GetChildCount() ? m_old_pos : m_parent->GetChildCount() - 1);

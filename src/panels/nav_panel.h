@@ -30,10 +30,14 @@ public:
     void ChangeExpansion(Node* node, bool include_children, bool expand);
 
 protected:
+    void AddAllChildren(Node* node_parent);
     void AddAllNodes();
     void AddChildNodes(Node* child, wxTreeItemId& parent, bool is_root = false);
     void AddNode(Node* item, Node* parent);
+
+    void InsertNode(Node* node);
     void DeleteNode(Node* item);
+
     void EraseAllMaps(Node* node);
     void ExpandAllNodes(Node* node);
     int GetImageIndex(Node* node);
@@ -53,6 +57,7 @@ protected:
     void OnCollapse(wxCommandEvent& event);
     void OnExpand(wxCommandEvent& event);
 
+    void OnNodeCreated(CustomEvent& event);
     void OnNodeSelected(CustomEvent& event);
     void OnNodePropChange(CustomEvent& event);
 

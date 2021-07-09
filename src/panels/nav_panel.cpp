@@ -106,14 +106,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
 
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { AddAllNodes(); });
 
-    Bind(EVT_NodeCreated,
-         [this](CustomEvent& event)
-         {
-             if (event.GetNode())
-             {
-                 AddNode(event.GetNode(), event.GetNode()->GetParent());
-             }
-         });
+    Bind(EVT_NodeCreated, &NavigationPanel::OnNodeCreated, this);
     Bind(EVT_NodeDeleted, [this](CustomEvent& event) { DeleteNode(event.GetNode()); });
 
     Bind(wxEVT_MENU, &NavigationPanel::OnExpand, this, id_NavExpand);
@@ -269,6 +262,17 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     }
 }
 
+void NavigationPanel::AddNode(Node* node, Node* parent)
+{
+    if (node && parent)
+    {
+        if (auto it = m_node_tree_map.find(parent); it != m_node_tree_map.end() && it->second.IsOk())
+        {
+            AddChildNodes(node, it->second, false);
+        }
+    }
+}
+
 void NavigationPanel::AddChildNodes(Node* node, wxTreeItemId& parent, bool is_root)
 {
     wxTreeItemId new_parent;
@@ -301,6 +305,48 @@ void NavigationPanel::AddChildNodes(Node* node, wxTreeItemId& parent, bool is_ro
     for (size_t i = 0; i < count; i++)
     {
         AddChildNodes(node->GetChild(i), new_parent);
+    }
+}
+
+void NavigationPanel::OnNodeCreated(CustomEvent& event)
+{
+    AutoFreeze freeze(this);
+    InsertNode(event.GetNode());
+}
+
+void NavigationPanel::InsertNode(Node* node)
+{
+    auto node_parent = node->GetParent();
+    ASSERT(node_parent);
+    auto tree_parent = m_node_tree_map[node_parent];
+    auto new_item = m_tree_ctrl->InsertItem(tree_parent, node_parent->GetChildPosition(node), "", GetImageIndex(node), -1);
+    UpdateDisplayName(new_item, node);
+    m_node_tree_map[node] = new_item;
+    m_tree_node_map[new_item] = node;
+
+    if (node->GetChildCount())
+    {
+        AddAllChildren(node);
+    }
+}
+
+void NavigationPanel::AddAllChildren(Node* node_parent)
+{
+    auto tree_parent = m_node_tree_map[node_parent];
+    ASSERT(tree_parent.IsOk());
+
+    for (auto& iter_child: node_parent->GetChildNodePtrs())
+    {
+        auto node = iter_child.get();
+        auto new_item = m_tree_ctrl->AppendItem(tree_parent, "", GetImageIndex(node), -1);
+        UpdateDisplayName(new_item, node);
+        m_node_tree_map[node] = new_item;
+        m_tree_node_map[new_item] = node;
+
+        if (node->GetChildCount())
+        {
+            AddAllChildren(node);
+        }
     }
 }
 
@@ -394,29 +440,19 @@ void NavigationPanel::ExpandAllNodes(Node* node)
         ExpandAllNodes(node->GetChild(i));
 }
 
-void NavigationPanel::AddNode(Node* node, Node* parent)
-{
-    if (node && parent)
-    {
-        if (auto it = m_node_tree_map.find(parent); it != m_node_tree_map.end() && it->second.IsOk())
-        {
-            AddChildNodes(node, it->second, false);
-        }
-    }
-}
-
 void NavigationPanel::DeleteNode(Node* node)
 {
+    AutoFreeze freeze(this);
     EraseAllMaps(node);
 }
 
 void NavigationPanel::EraseAllMaps(Node* node)
 {
-    if (auto iter = m_node_tree_map.find(node); iter != m_node_tree_map.end())
+    if (auto result = m_node_tree_map.find(node); result != m_node_tree_map.end())
     {
-        m_tree_node_map.erase(iter->second);
-        if (iter->second.IsOk())
-            m_tree_ctrl->Delete(iter->second);
+        m_tree_node_map.erase(result->second);
+        if (result->second.IsOk())
+            m_tree_ctrl->Delete(result->second);
 
         // Don't erase this until the iterator is no longer needed
         m_node_tree_map.erase(node);

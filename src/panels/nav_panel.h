@@ -42,6 +42,8 @@ protected:
     void ExpandAllNodes(Node* node);
     int GetImageIndex(Node* node);
     Node* GetNode(wxTreeItemId item);
+
+    ttlib::cstr GetDisplayName(Node* node) const;
     void UpdateDisplayName(wxTreeItemId id, Node* node);
 
     // Event handlers

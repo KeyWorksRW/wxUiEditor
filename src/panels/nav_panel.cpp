@@ -319,8 +319,8 @@ void NavigationPanel::InsertNode(Node* node)
     auto node_parent = node->GetParent();
     ASSERT(node_parent);
     auto tree_parent = m_node_tree_map[node_parent];
-    auto new_item = m_tree_ctrl->InsertItem(tree_parent, node_parent->GetChildPosition(node), "", GetImageIndex(node), -1);
-    UpdateDisplayName(new_item, node);
+    auto new_item = m_tree_ctrl->InsertItem(tree_parent, node_parent->GetChildPosition(node), GetDisplayName(node).wx_str(),
+                                            GetImageIndex(node), -1);
     m_node_tree_map[node] = new_item;
     m_tree_node_map[new_item] = node;
 
@@ -338,8 +338,7 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
     for (auto& iter_child: node_parent->GetChildNodePtrs())
     {
         auto node = iter_child.get();
-        auto new_item = m_tree_ctrl->AppendItem(tree_parent, "", GetImageIndex(node), -1);
-        UpdateDisplayName(new_item, node);
+        auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).wx_str(), GetImageIndex(node), -1);
         m_node_tree_map[node] = new_item;
         m_tree_node_map[new_item] = node;
 
@@ -372,60 +371,54 @@ int NavigationPanel::GetImageIndex(Node* node)
 
 void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
 {
-    ttlib::cstr text;
-    auto prop = node->get_prop_ptr(prop_label);
-    if (!prop && node->HasValue(prop_main_label))
-        prop = node->get_prop_ptr(prop_main_label);  // used by wxCommandLinkButton
+    m_tree_ctrl->SetItemText(id, GetDisplayName(node).wx_str());
+}
 
-    if (prop && prop->get_value().size())
+ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
+{
+    ttlib::cstr display_name;
+    if (node->HasValue(prop_label))
+        display_name = node->prop_as_string(prop_label);
+    else if (node->HasValue(prop_main_label))  // used by wxCommandLinkButton
+        display_name = node->prop_as_string(prop_main_label);
+    else if (node->HasValue(prop_var_name))
+        display_name = node->prop_as_string(prop_var_name);
+    else if (node->HasValue(prop_class_name))
+        display_name = node->prop_as_string(prop_class_name);
+    else if (node->isGen(gen_ribbonTool))
+        display_name = node->prop_as_string(prop_id);
+
+    if (display_name.size())
     {
-        text = prop->get_value();
         // Accelerators make the text hard to read, so remove them
-        text.Replace("&", "", true);
+        display_name.Replace("&", "", true);
 
-        if (text.size() > MaxLabelLength)
+        if (display_name.size() > MaxLabelLength)
         {
-            text.erase(MaxLabelLength);
-            text << "...";
+            display_name.erase(MaxLabelLength);
+            display_name << "...";
         }
     }
-    else if (prop = node->get_prop_ptr(prop_var_name); prop)
+    else
     {
-        text = prop->get_value();
-    }
-    else if (prop = node->get_prop_ptr(prop_class_name); prop)
-    {
-        text = prop->get_value();
-    }
-    else if (node->isGen(gen_ribbonTool))
-    {
-        text = node->prop_as_string(prop_id);
-    }
-
-    if (text.empty() && node->isGen(gen_Project))
-    {
-        text << _tt(strIdProjectName) << wxGetApp().getProjectFileName().filename();
-    }
-
-    // If there is no name then add the class name in parenthesis.
-    else if (text.empty())
-    {
-        if (node->isGen(gen_wxContextMenuEvent))
+        if (node->isGen(gen_Project))
+            display_name << "Project: " << wxGetApp().getProjectFileName().filename();
+        else if (node->isGen(gen_wxContextMenuEvent))
         {
-            text = node->prop_as_string(prop_handler_name);
-            if (text.size() > MaxLabelLength)
+            display_name = node->prop_as_string(prop_handler_name);
+            if (display_name.size() > MaxLabelLength)
             {
-                text.erase(MaxLabelLength);
-                text << "...";
+                display_name.erase(MaxLabelLength);
+                display_name << "...";
             }
         }
         else
         {
-            text << " (" << node->DeclName() << ")";
+            display_name << " (" << node->DeclName() << ")";
         }
     }
 
-    m_tree_ctrl->SetItemText(id, text.wx_str());
+    return display_name;
 }
 
 void NavigationPanel::ExpandAllNodes(Node* node)

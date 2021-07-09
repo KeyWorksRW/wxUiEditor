@@ -508,7 +508,6 @@ Node* Node::CreateChildNode(GenName name)
         ttlib::cstr undo_str;
         undo_str << "insert " << map_GenNames[name];
         frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
-        new_node->FixDuplicateName();
     }
 
     // A "ribbonButton" component is used for both wxRibbonButtonBar and wxRibbonToolBar. If creating the node failed,
@@ -520,7 +519,6 @@ Node* Node::CreateChildNode(GenName name)
         {
             ttlib::cstr undo_str = "insert ribbon tool";
             frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
-            new_node->FixDuplicateName();
         }
         else
         {
@@ -556,7 +554,6 @@ Node* Node::CreateChildNode(GenName name)
                 ttlib::cstr undo_str;
                 undo_str << "insert " << map_GenNames[name];
                 frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
-                new_node->FixDuplicateName();
             }
         }
         else
@@ -592,7 +589,6 @@ void Node::ModifyProperty(PropName name, ttlib::cview value)
     if (prop && value != prop->as_cview())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
-        wxGetFrame().FirePropChangeEvent(prop);
     }
 }
 
@@ -605,7 +601,6 @@ void Node::ModifyProperty(ttlib::cview name, int value)
     if (prop && value != prop->as_int())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
-        wxGetFrame().FirePropChangeEvent(prop);
     }
 }
 
@@ -618,7 +613,6 @@ void Node::ModifyProperty(ttlib::cview name, ttlib::cview value)
     if (prop && value != prop->as_cview())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
-        wxGetFrame().FirePropChangeEvent(prop);
     }
 }
 
@@ -627,7 +621,6 @@ void Node::ModifyProperty(NodeProperty* prop, int value)
     if (prop && value != prop->as_int())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
-        wxGetFrame().FirePropChangeEvent(prop);
     }
 }
 
@@ -636,7 +629,6 @@ void Node::ModifyProperty(NodeProperty* prop, ttlib::cview value)
     if (prop && value != prop->as_cview())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
-        wxGetFrame().FirePropChangeEvent(prop);
     }
 }
 

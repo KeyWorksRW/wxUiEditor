@@ -18,14 +18,27 @@ public:
 
     virtual ~UndoAction() = default;
 
+    // Called when pushed to the Undo stack and when Redo is called
     virtual void Change() = 0;
+
+    // Called when Undo is requested
     virtual void Revert() = 0;
 
     ttlib::cstr GetUndoString() { return m_undo_string; }
     void SetUndoString(ttlib::cview str) { m_undo_string = str; }
 
-private:
+    bool wasUndoEventGenerated() { return m_UndoEventGenerated; }
+    bool wasRedoEventGenerated() { return m_RedoEventGenerated; }
+    bool wasUndoSelectEventGenerated() { return m_UndoSelectEventGenerated; }
+    bool wasRedoSelectEventGenerated() { return m_RedoSelectEventGenerated; }
+
+protected:
     ttlib::cstr m_undo_string;
+
+    bool m_UndoEventGenerated { false };
+    bool m_RedoEventGenerated { false };
+    bool m_UndoSelectEventGenerated { false };
+    bool m_RedoSelectEventGenerated { false };
 };
 
 using UndoActionPtr = std::shared_ptr<UndoAction>;
@@ -64,6 +77,15 @@ public:
         m_redo.clear();
         m_undo.clear();
     }
+
+    // When undo is called, the command is popped and pushed onto the redo stack. So to get at the last undo command, you
+    // have to get the last item in the redo stack. Redo works just the opposite, pushing it's command to the last of the
+    // undo stack.
+
+    bool wasUndoEventGenerated() { return m_redo.back()->wasUndoEventGenerated(); }
+    bool wasRedoEventGenerated() { return m_undo.back()->wasRedoEventGenerated(); }
+    bool wasUndoSelectEventGenerated() { return m_redo.back()->wasUndoSelectEventGenerated(); }
+    bool wasRedoSelectEventGenerated() { return m_undo.back()->wasRedoSelectEventGenerated(); }
 
 private:
     std::vector<UndoActionPtr> m_undo;

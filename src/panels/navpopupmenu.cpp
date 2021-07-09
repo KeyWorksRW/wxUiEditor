@@ -311,7 +311,6 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
         multi_cmd->Add(insert_cmd);
 
         wxGetFrame().PushUndoAction(multi_cmd);
-        new_sizer->FixDuplicateName();
 
         // REVIEW: [KeyWorks - 03-30-2021] See issue #94 about the problem this causes.
         wxGetFrame().FireProjectUpdatedEvent();

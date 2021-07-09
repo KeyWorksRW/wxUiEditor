@@ -31,73 +31,11 @@ void InsertNodeAction::Change()
     ASSERT_MSG(!m_parent->isGen(gen_wxGridBagSizer),
                "Only use AppendGridBagAction or InsertGridBagAction to add items to a wxGridBagSizer!");
 
-#if 0
-    if (m_parent->isGen(gen_wxGridBagSizer) && m_parent->GetChildCount() > 0)
-    {
-        // This is a child of a wxGridBagSizer, so if m_pos is -1, then add as a new row. If m_pos >= 0, then add as a column
-
-        auto row = -1;
-        if (m_pos < 0)
-        {
-            for (size_t pos = 0; pos < m_parent->GetChildCount(); ++pos)
-            {
-                auto child_row = m_parent->GetChild(pos)->prop_as_int(prop_row);
-                if (child_row > row)
-                    row = child_row;
-            }
-
-            m_parent->AddChild(m_node);
-            m_node->get_prop_ptr(prop_row)->set_value(row + 1);
-        }
-        else
-        {
-            if (m_pos > 0)
-            {
-                // This assumes the children are in row order, which is not necessarily the case
-                row = m_parent->GetChild(m_pos - 1)->prop_as_int(prop_row);
-            }
-            auto col = -1;
-            for (size_t pos = 0; pos < m_parent->GetChildCount(); ++pos)
-            {
-                if (m_parent->GetChild(pos)->prop_as_int(prop_row) == row)
-                {
-                    auto child_col = m_parent->GetChild(pos)->prop_as_int(prop_column);
-                    if (child_col > col)
-                    {
-                        auto col_span = m_parent->GetChild(pos)->prop_as_int(prop_colspan);
-                        col = child_col + (col_span - 1);
-                    }
-                }
-            }
-            if (row == -1)
-                ++row;
-            m_node->get_prop_ptr(prop_row)->set_value(row);
-            m_node->get_prop_ptr(prop_column)->set_value(col + 1);
-
-            m_parent->AddChild(m_node);
-            m_parent->ChangeChildPosition(m_node, m_pos);
-        }
-    }
-    else
-    {
-        if (m_pos == -1 && m_parent->IsSizer() && m_parent->GetChildCount() > 0 &&
-            m_parent->GetChildPtr(m_parent->GetChildCount() - 1)->isGen(gen_wxStdDialogButtonSizer))
-        {
-            m_parent->AddChild(m_node);
-            m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
-        }
-        else
-        {
-            m_parent->AddChild(m_node);
-            if (m_pos >= 0)
-                m_parent->ChangeChildPosition(m_node, m_pos);
-        }
-    }
-#else
     if (m_pos == -1 && m_parent->IsSizer() && m_parent->GetChildCount() > 0 &&
         m_parent->GetChildPtr(m_parent->GetChildCount() - 1)->isGen(gen_wxStdDialogButtonSizer))
     {
         m_parent->AddChild(m_node);
+        // Add the child BEFORE any wxStdDialogButtonSizer
         m_parent->ChangeChildPosition(m_node, m_parent->GetChildCount() - 2);
     }
     else
@@ -106,14 +44,25 @@ void InsertNodeAction::Change()
         if (m_pos >= 0)
             m_parent->ChangeChildPosition(m_node, m_pos);
     }
-#endif
+
+    if (m_fix_duplicate_names)
+    {
+        // This needs to be done only once, even if the insertion is reverted and then changed again. The reason is that any
+        // name changes to other nodes cannot be undone.
+
+        m_node->FixDuplicateNodeNames();
+        m_fix_duplicate_names = false;
+    }
+
+    // Probably not necessary, but with both parameters set to false, this simply ensures the mainframe has it's selection
+    // node set correctly.
     wxGetFrame().SelectNode(m_node.get(), false, false);
 }
 
 void InsertNodeAction::Revert()
 {
     m_parent->RemoveChild(m_node);
-    m_node->SetParent(NodeSharedPtr());
+    m_node->SetParent(NodeSharedPtr());  // Remove the parent pointer
     wxGetFrame().SelectNode(m_old_selected.get());
 }
 
@@ -127,6 +76,9 @@ RemoveNodeAction::RemoveNodeAction(Node* node, const ttlib::cstr& undo_str, bool
     m_parent = node->GetParentPtr();
     m_old_pos = m_parent->GetChildPosition(node);
     m_old_selected = wxGetFrame().GetSelectedNodePtr();
+
+    m_RedoEventGenerated = true;
+    m_RedoSelectEventGenerated = true;
 }
 
 void RemoveNodeAction::Change()
@@ -136,6 +88,8 @@ void RemoveNodeAction::Change()
 
     m_parent->RemoveChild(m_node);
     m_node->SetParent(NodeSharedPtr());
+
+    wxGetFrame().FireDeletedEvent(m_node.get());
 
     if (m_parent->GetChildCount())
     {
@@ -161,15 +115,17 @@ void RemoveNodeAction::Revert()
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview value) : m_property(prop)
 {
-    SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
+    m_undo_string << "change " << prop->DeclName();
 
     m_change_value << value;
     m_revert_value = prop->as_string();
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
 }
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_property(prop)
 {
-    SetUndoString(ttlib::cstr() << "change " << prop->DeclName());
+    m_undo_string << "change " << prop->DeclName();
 
     m_change_value << value;
     m_revert_value = prop->as_string();
@@ -178,38 +134,46 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_pr
 void ModifyPropertyAction::Change()
 {
     m_property->set_value(m_change_value);
+
+    wxGetFrame().FirePropChangeEvent(m_property);
 }
 
 void ModifyPropertyAction::Revert()
 {
     m_property->set_value(m_revert_value);
+
+    wxGetFrame().FirePropChangeEvent(m_property);
 }
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
-ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event)
+ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event), m_change_value(value)
 {
-    SetUndoString(ttlib::cstr() << "change " << event->get_name() << " handler");
+    m_undo_string << "change " << event->get_name() << " handler";
 
-    m_change_value << value;
     m_revert_value = event->get_value();
+
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
 }
 
 void ModifyEventAction::Change()
 {
     m_event->set_value(m_change_value);
+    wxGetFrame().FireChangeEventHandler(m_event);
 }
 
 void ModifyEventAction::Revert()
 {
     m_event->set_value(m_revert_value);
+    wxGetFrame().FireChangeEventHandler(m_event);
 }
 
 ///////////////////////////////// ChangePositionAction ////////////////////////////////////
 
 ChangePositionAction::ChangePositionAction(Node* node, size_t position)
 {
-    SetUndoString(ttlib::cstr() << "change " << node->DeclName() << " position");
+    m_undo_string << "change " << node->DeclName() << " position";
 
     m_node = node->GetSharedPtr();
     m_parent = node->GetParentPtr();
@@ -232,7 +196,7 @@ void ChangePositionAction::Revert()
 
 ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
 {
-    SetUndoString(ttlib::cstr() << "change " << node->DeclName() << " parent");
+    m_undo_string << "change " << node->DeclName() << " parent";
 
     m_node = node->GetSharedPtr();
     m_change_parent = parent->GetSharedPtr();
@@ -294,12 +258,19 @@ void MultiAction::Revert()
 
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////
 
-AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, const ttlib::cstr& undo_str, int pos) :
-    UndoAction(undo_str.c_str()), m_pos(pos)
+AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) : m_pos(pos)
 {
     m_old_selected = wxGetFrame().GetSelectedNodePtr();
     m_node = node->GetSharedPtr();
     m_parent = parent->GetSharedPtr();
+    m_old_pos = m_parent->GetChildPosition(node);
+
+    m_undo_string << "Append " << map_GenNames[node->gen_name()];
+
+    m_RedoEventGenerated = true;
+    m_RedoSelectEventGenerated = true;
+    m_UndoEventGenerated = true;
+    m_UndoSelectEventGenerated = true;
 }
 
 void AppendGridBagAction::Change()
@@ -318,13 +289,25 @@ void AppendGridBagAction::Change()
             m_parent->ChangeChildPosition(m_node, m_pos);
     }
 
-    wxGetFrame().SelectNode(m_node.get(), false, false);
+    if (m_fix_duplicate_names)
+    {
+        // This needs to be done only once, even if the insertion is reverted and then changed again. The reason is that any
+        // name changes to other nodes cannot be undone.
+
+        m_node->FixDuplicateNodeNames();
+        m_fix_duplicate_names = false;
+    }
+
+    wxGetFrame().FireCreatedEvent(m_node);
+    wxGetFrame().SelectNode(m_node, true, true);
 }
 
 void AppendGridBagAction::Revert()
 {
     m_parent->RemoveChild(m_node);
     m_node->SetParent(NodeSharedPtr());
+
+    wxGetFrame().FireDeletedEvent(m_node.get());
     wxGetFrame().SelectNode(m_old_selected.get());
 }
 

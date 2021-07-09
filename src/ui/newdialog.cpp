@@ -99,8 +99,6 @@ void NewDialog::CreateNode()
 
     auto pos = parent->FindInsertionPos(parent);
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), parent, undo_str, pos));
-    form_node->FixDuplicateNodeNames();
-
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, true, true);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);

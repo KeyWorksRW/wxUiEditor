@@ -608,9 +608,9 @@ void MainFrame::UpdateFrame()
     menu_text = _ttwx(strIdRedo);
     if (m_undo_stack.IsRedoAvailable())
     {
-        if (m_undo_stack.GetUndoString().size())
+        if (m_undo_stack.GetRedoString().size())
         {
-            menu_text << ' ' << m_undo_stack.GetUndoString();
+            menu_text << ' ' << m_undo_stack.GetRedoString();
         }
     }
     menu_text << "\tCtrl+Y";
@@ -1074,8 +1074,6 @@ void MainFrame::PasteNode(Node* parent)
 
     auto pos = parent->FindInsertionPos(m_selected_node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
-    new_node->FixDuplicateNodeNames();
-
     FireCreatedEvent(new_node);
     SelectNode(new_node, true, true);
 }
@@ -1092,8 +1090,6 @@ void MainFrame::DuplicateNode(Node* node)
     auto pos = parent->FindInsertionPos(m_selected_node);
     auto new_node = g_NodeCreator.MakeCopy(node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
-    new_node->FixDuplicateNodeNames();
-
     FireCreatedEvent(new_node);
     SelectNode(new_node, true, true);
 }
@@ -1114,9 +1110,10 @@ void MainFrame::Undo()
 
     m_undo_stack.Undo();
     m_isProject_modified = (m_undo_stack_size != m_undo_stack.size());
-    FireProjectUpdatedEvent();
-    ASSERT(m_selected_node)
-    FireSelectedEvent(m_selected_node.get());
+    if (!m_undo_stack.wasUndoEventGenerated())
+        FireProjectUpdatedEvent();
+    if (!m_undo_stack.wasUndoSelectEventGenerated())
+        FireSelectedEvent(m_selected_node.get());
 }
 
 void MainFrame::Redo()
@@ -1125,8 +1122,10 @@ void MainFrame::Redo()
 
     m_undo_stack.Redo();
     m_isProject_modified = (m_undo_stack_size != m_undo_stack.size());
-    FireProjectUpdatedEvent();
-    FireSelectedEvent(GetSelectedNode());
+    if (!m_undo_stack.wasRedoEventGenerated())
+        FireProjectUpdatedEvent();
+    if (!m_undo_stack.wasRedoSelectEventGenerated())
+        FireSelectedEvent(GetSelectedNode());
 }
 
 void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
@@ -1203,7 +1202,6 @@ void MainFrame::ModifyProperty(NodeProperty* prop, ttlib::cview value)
     if (prop && value != prop->as_cview())
     {
         PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
-        FirePropChangeEvent(prop);
     }
 }
 
@@ -1381,26 +1379,26 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
     if (!parent)
         return;
 
-    // We need to make a copy in order to pass to FireDeletedEvent
-    auto deleted_node = node;
-    Node* node_copy = node;
-
     if (isCutMode)
     {
         ttlib::cstr undo_str;
         undo_str << "cut " << node->DeclName();
-        PushUndoAction(std::make_shared<RemoveNodeAction>(node_copy, undo_str, true));
+        PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, true));
     }
     else
     {
         ttlib::cstr undo_str;
         undo_str << "delete " << node->DeclName();
-        PushUndoAction(std::make_shared<RemoveNodeAction>(node_copy, undo_str, false));
+        PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, false));
     }
+}
 
-    FireDeletedEvent(deleted_node);
-    ASSERT(GetSelectedNodePtr());  // RemoveNodeAction should have selected something
-    SelectNode(GetSelectedNode(), true, true);
+void MainFrame::ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value)
+{
+    if (event && value != event->get_value())
+    {
+        PushUndoAction(std::make_shared<ModifyEventAction>(event, value));
+    }
 }
 
 Node* MainFrame::FindChildSizerItem(Node* node)

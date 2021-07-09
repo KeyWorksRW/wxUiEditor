@@ -352,14 +352,9 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
 int NavigationPanel::GetImageIndex(Node* node)
 {
     auto name = node->gen_name();
-    if (node->isGen(gen_VerticalBoxSizer))
+    if (node->isGen(gen_wxBoxSizer))
     {
-        if (!node->isPropValue(prop_orientation, "wxVERTICAL"))
-            name = gen_wxBoxSizer;
-    }
-    else if (node->isGen(gen_wxBoxSizer))
-    {
-        if (!node->isPropValue(prop_orientation, "wxHORIZONTAL"))
+        if (node->isPropValue(prop_orientation, "wxVERTICAL"))
             name = gen_VerticalBoxSizer;
     }
 

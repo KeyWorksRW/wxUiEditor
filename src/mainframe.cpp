@@ -1202,7 +1202,6 @@ void MainFrame::ModifyProperty(NodeProperty* prop, ttlib::cview value)
     if (prop && value != prop->as_cview())
     {
         PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
-        FirePropChangeEvent(prop);
     }
 }
 

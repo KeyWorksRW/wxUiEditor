@@ -33,6 +33,22 @@ wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
+bool SpinCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
+{
+    if (prop->isProp(prop_initial))
+    {
+        wxStaticCast(widget, wxSpinCtrl)->SetValue(node->prop_as_int(prop_initial));
+        return true;
+    }
+    else if (prop->isProp(prop_min) || prop->isProp(prop_max))
+    {
+        wxStaticCast(widget, wxSpinCtrl)->SetRange(node->prop_as_int(prop_min), node->prop_as_int(prop_max));
+        return true;
+    }
+
+    return false;
+}
+
 std::optional<ttlib::cstr> SpinCtrlGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;

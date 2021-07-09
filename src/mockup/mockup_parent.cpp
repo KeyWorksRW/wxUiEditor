@@ -344,6 +344,15 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
         return;
     }
 
+    if (prop->isProp(prop_initial) || prop->isProp(prop_min) || prop->isProp(prop_max))
+    {
+        if (auto node = wxGetFrame().GetSelectedNode(); node)
+        {
+            node->GetGenerator()->OnPropertyChange(Get_wxObject(node), node, prop);
+        }
+        return;
+    }
+
     for (auto iter: NonUiProps)
     {
         if (prop->isProp(iter))

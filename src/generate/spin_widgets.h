@@ -13,6 +13,7 @@ class SpinCtrlGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
+    bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;

@@ -104,16 +104,9 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     Bind(EVT_NodePropChange, &NavigationPanel::OnNodePropChange, this);
     Bind(EVT_NodeSelected, &NavigationPanel::OnNodeSelected, this);
 
-    Bind(EVT_ProjectUpdated, [this](CustomEvent&) { AddAllNodes(); });
+    Bind(EVT_ProjectUpdated, [this](CustomEvent&) { OnProjectUpdated(); });
 
-    Bind(EVT_NodeCreated,
-         [this](CustomEvent& event)
-         {
-             if (event.GetNode())
-             {
-                 AddNode(event.GetNode(), event.GetNode()->GetParent());
-             }
-         });
+    Bind(EVT_NodeCreated, &NavigationPanel::OnNodeCreated, this);
     Bind(EVT_NodeDeleted, [this](CustomEvent& event) { DeleteNode(event.GetNode()); });
 
     Bind(wxEVT_MENU, &NavigationPanel::OnExpand, this, id_NavExpand);
@@ -141,15 +134,15 @@ Node* NavigationPanel::GetNode(wxTreeItemId item)
 {
     if (item.IsOk())
     {
-        if (auto iter = m_tree_node_map.find(item); iter != m_tree_node_map.end())
+        if (auto result = m_tree_node_map.find(item); result != m_tree_node_map.end())
         {
-            return iter->second;
+            return result->second;
         }
     }
     return nullptr;
 }
 
-void NavigationPanel::AddAllNodes()
+void NavigationPanel::OnProjectUpdated()
 {
     AutoFreeze freeze(this);
 
@@ -157,22 +150,23 @@ void NavigationPanel::AddAllNodes()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    auto project = wxGetApp().GetProject();
-    if (project)
+    if (auto project = wxGetApp().GetProject(); project)
     {
-        wxTreeItemId dummy;
-        AddChildNodes(project, dummy, true);
+        auto root = m_tree_ctrl->AddRoot(GetDisplayName(project), GetImageIndex(project), -1);
+        m_node_tree_map[project] = root;
+        m_tree_node_map[root] = project;
+
+        AddAllChildren(project);
 
         // First we expand everything
         ExpandAllNodes(project);
 
         // Now we collapse all the project's immediate children
-
         for (size_t index = 0; index < project->GetChildCount(); ++index)
         {
-            if (auto item_it = m_node_tree_map.find(project->GetChild(index)); item_it != m_node_tree_map.end())
+            if (auto result = m_node_tree_map.find(project->GetChild(index)); result != m_node_tree_map.end())
             {
-                m_tree_ctrl->Collapse(item_it->second);
+                m_tree_ctrl->Collapse(result->second);
             }
         }
     }
@@ -269,52 +263,53 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     }
 }
 
-void NavigationPanel::AddChildNodes(Node* node, wxTreeItemId& parent, bool is_root)
+void NavigationPanel::OnNodeCreated(CustomEvent& event)
 {
-    wxTreeItemId new_parent;
+    AutoFreeze freeze(this);
+    InsertNode(event.GetNode());
+}
 
-    if (is_root)
-        new_parent = m_tree_ctrl->AddRoot("", -1, -1);
-    else
+void NavigationPanel::InsertNode(Node* node)
+{
+    auto node_parent = node->GetParent();
+    ASSERT(node_parent);
+    auto tree_parent = m_node_tree_map[node_parent];
+    auto new_item = m_tree_ctrl->InsertItem(tree_parent, node_parent->GetChildPosition(node), GetDisplayName(node).wx_str(),
+                                            GetImageIndex(node), -1);
+    m_node_tree_map[node] = new_item;
+    m_tree_node_map[new_item] = node;
+
+    if (node->GetChildCount())
     {
-        size_t pos = 0;
-
-        auto parent_node = node->GetParent();
-        ASSERT(parent_node)
-        pos = parent_node->GetChildPosition(node);
-
-        if (pos > 0)
-            new_parent = m_tree_ctrl->InsertItem(parent, pos, "", -1, -1);
-        else
-            new_parent = m_tree_ctrl->AppendItem(parent, "", -1, -1);
+        AddAllChildren(node);
     }
+}
 
-    m_node_tree_map[node] = new_parent;
-    m_tree_node_map[new_parent] = node;
+void NavigationPanel::AddAllChildren(Node* node_parent)
+{
+    auto tree_parent = m_node_tree_map[node_parent];
+    ASSERT(tree_parent.IsOk());
 
-    auto image_index = GetImageIndex(node);
-    m_tree_ctrl->SetItemImage(new_parent, image_index);
-
-    UpdateDisplayName(new_parent, node);
-
-    auto count = node->GetChildCount();
-    for (size_t i = 0; i < count; i++)
+    for (auto& iter_child: node_parent->GetChildNodePtrs())
     {
-        AddChildNodes(node->GetChild(i), new_parent);
+        auto node = iter_child.get();
+        auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).wx_str(), GetImageIndex(node), -1);
+        m_node_tree_map[node] = new_item;
+        m_tree_node_map[new_item] = node;
+
+        if (node->GetChildCount())
+        {
+            AddAllChildren(node);
+        }
     }
 }
 
 int NavigationPanel::GetImageIndex(Node* node)
 {
     auto name = node->gen_name();
-    if (node->isGen(gen_VerticalBoxSizer))
+    if (node->isGen(gen_wxBoxSizer))
     {
-        if (!node->isPropValue(prop_orientation, "wxVERTICAL"))
-            name = gen_wxBoxSizer;
-    }
-    else if (node->isGen(gen_wxBoxSizer))
-    {
-        if (!node->isPropValue(prop_orientation, "wxHORIZONTAL"))
+        if (node->isPropValue(prop_orientation, "wxVERTICAL"))
             name = gen_VerticalBoxSizer;
     }
 
@@ -326,60 +321,54 @@ int NavigationPanel::GetImageIndex(Node* node)
 
 void NavigationPanel::UpdateDisplayName(wxTreeItemId id, Node* node)
 {
-    ttlib::cstr text;
-    auto prop = node->get_prop_ptr(prop_label);
-    if (!prop && node->HasValue(prop_main_label))
-        prop = node->get_prop_ptr(prop_main_label);  // used by wxCommandLinkButton
+    m_tree_ctrl->SetItemText(id, GetDisplayName(node).wx_str());
+}
 
-    if (prop && prop->get_value().size())
+ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
+{
+    ttlib::cstr display_name;
+    if (node->HasValue(prop_label))
+        display_name = node->prop_as_string(prop_label);
+    else if (node->HasValue(prop_main_label))  // used by wxCommandLinkButton
+        display_name = node->prop_as_string(prop_main_label);
+    else if (node->HasValue(prop_var_name))
+        display_name = node->prop_as_string(prop_var_name);
+    else if (node->HasValue(prop_class_name))
+        display_name = node->prop_as_string(prop_class_name);
+    else if (node->isGen(gen_ribbonTool))
+        display_name = node->prop_as_string(prop_id);
+
+    if (display_name.size())
     {
-        text = prop->get_value();
         // Accelerators make the text hard to read, so remove them
-        text.Replace("&", "", true);
+        display_name.Replace("&", "", true);
 
-        if (text.size() > MaxLabelLength)
+        if (display_name.size() > MaxLabelLength)
         {
-            text.erase(MaxLabelLength);
-            text << "...";
+            display_name.erase(MaxLabelLength);
+            display_name << "...";
         }
     }
-    else if (prop = node->get_prop_ptr(prop_var_name); prop)
+    else
     {
-        text = prop->get_value();
-    }
-    else if (prop = node->get_prop_ptr(prop_class_name); prop)
-    {
-        text = prop->get_value();
-    }
-    else if (node->isGen(gen_ribbonTool))
-    {
-        text = node->prop_as_string(prop_id);
-    }
-
-    if (text.empty() && node->isGen(gen_Project))
-    {
-        text << _tt(strIdProjectName) << wxGetApp().getProjectFileName().filename();
-    }
-
-    // If there is no name then add the class name in parenthesis.
-    else if (text.empty())
-    {
-        if (node->isGen(gen_wxContextMenuEvent))
+        if (node->isGen(gen_Project))
+            display_name << "Project: " << wxGetApp().getProjectFileName().filename();
+        else if (node->isGen(gen_wxContextMenuEvent))
         {
-            text = node->prop_as_string(prop_handler_name);
-            if (text.size() > MaxLabelLength)
+            display_name = node->prop_as_string(prop_handler_name);
+            if (display_name.size() > MaxLabelLength)
             {
-                text.erase(MaxLabelLength);
-                text << "...";
+                display_name.erase(MaxLabelLength);
+                display_name << "...";
             }
         }
         else
         {
-            text << " (" << node->DeclName() << ")";
+            display_name << " (" << node->DeclName() << ")";
         }
     }
 
-    m_tree_ctrl->SetItemText(id, text.wx_str());
+    return display_name;
 }
 
 void NavigationPanel::ExpandAllNodes(Node* node)
@@ -394,29 +383,19 @@ void NavigationPanel::ExpandAllNodes(Node* node)
         ExpandAllNodes(node->GetChild(i));
 }
 
-void NavigationPanel::AddNode(Node* node, Node* parent)
-{
-    if (node && parent)
-    {
-        if (auto it = m_node_tree_map.find(parent); it != m_node_tree_map.end() && it->second.IsOk())
-        {
-            AddChildNodes(node, it->second, false);
-        }
-    }
-}
-
 void NavigationPanel::DeleteNode(Node* node)
 {
+    AutoFreeze freeze(this);
     EraseAllMaps(node);
 }
 
 void NavigationPanel::EraseAllMaps(Node* node)
 {
-    if (auto iter = m_node_tree_map.find(node); iter != m_node_tree_map.end())
+    if (auto result = m_node_tree_map.find(node); result != m_node_tree_map.end())
     {
-        m_tree_node_map.erase(iter->second);
-        if (iter->second.IsOk())
-            m_tree_ctrl->Delete(iter->second);
+        m_tree_node_map.erase(result->second);
+        if (result->second.IsOk())
+            m_tree_ctrl->Delete(result->second);
 
         // Don't erase this until the iterator is no longer needed
         m_node_tree_map.erase(node);

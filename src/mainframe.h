@@ -61,6 +61,7 @@ public:
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
 
+    void FireChangeEventHandler(NodeEvent* event);
     void FireCreatedEvent(Node* node);
     void FireDeletedEvent(Node* node);
     void FireProjectLoadedEvent();

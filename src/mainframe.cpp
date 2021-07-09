@@ -1393,6 +1393,14 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
     }
 }
 
+void MainFrame::ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value)
+{
+    if (event && value != event->get_value())
+    {
+        PushUndoAction(std::make_shared<ModifyEventAction>(event, value));
+    }
+}
+
 Node* MainFrame::FindChildSizerItem(Node* node)
 {
     if (node->GetNodeDeclaration()->isSubclassOf(gen_sizer_dimension))

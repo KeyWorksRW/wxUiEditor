@@ -79,15 +79,11 @@ void MainFrame::FireProjectUpdatedEvent()
     }
 }
 
-void MainFrame::ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value)
+void MainFrame::FireChangeEventHandler(NodeEvent* evt_node)
 {
-    if (event && value != event->get_value())
+    CustomEvent event(EVT_EventHandlerChanged, evt_node);
+    for (auto handler: m_custom_event_handlers)
     {
-        PushUndoAction(std::make_shared<ModifyEventAction>(event, value));
-        CustomEvent evt_node(EVT_EventHandlerChanged, event);
-        for (auto handler: m_custom_event_handlers)
-        {
-            handler->ProcessEvent(evt_node);
-        }
+        handler->ProcessEvent(event);
     }
 }

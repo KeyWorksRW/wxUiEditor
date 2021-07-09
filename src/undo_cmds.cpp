@@ -119,6 +119,8 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview valu
 
     m_change_value << value;
     m_revert_value = prop->as_string();
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
 }
 
 ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_property(prop)
@@ -132,31 +134,39 @@ ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, int value) : m_pr
 void ModifyPropertyAction::Change()
 {
     m_property->set_value(m_change_value);
+
+    wxGetFrame().FirePropChangeEvent(m_property);
 }
 
 void ModifyPropertyAction::Revert()
 {
     m_property->set_value(m_revert_value);
+
+    wxGetFrame().FirePropChangeEvent(m_property);
 }
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
-ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event)
+ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event), m_change_value(value)
 {
     m_undo_string << "change " << event->get_name() << " handler";
 
-    m_change_value << value;
     m_revert_value = event->get_value();
+
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
 }
 
 void ModifyEventAction::Change()
 {
     m_event->set_value(m_change_value);
+    wxGetFrame().FireChangeEventHandler(m_event);
 }
 
 void ModifyEventAction::Revert()
 {
     m_event->set_value(m_revert_value);
+    wxGetFrame().FireChangeEventHandler(m_event);
 }
 
 ///////////////////////////////// ChangePositionAction ////////////////////////////////////

@@ -104,7 +104,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     Bind(EVT_NodePropChange, &NavigationPanel::OnNodePropChange, this);
     Bind(EVT_NodeSelected, &NavigationPanel::OnNodeSelected, this);
 
-    Bind(EVT_ProjectUpdated, [this](CustomEvent&) { AddAllNodes(); });
+    Bind(EVT_ProjectUpdated, [this](CustomEvent&) { OnProjectUpdated(); });
 
     Bind(EVT_NodeCreated, &NavigationPanel::OnNodeCreated, this);
     Bind(EVT_NodeDeleted, [this](CustomEvent& event) { DeleteNode(event.GetNode()); });
@@ -134,15 +134,15 @@ Node* NavigationPanel::GetNode(wxTreeItemId item)
 {
     if (item.IsOk())
     {
-        if (auto iter = m_tree_node_map.find(item); iter != m_tree_node_map.end())
+        if (auto result = m_tree_node_map.find(item); result != m_tree_node_map.end())
         {
-            return iter->second;
+            return result->second;
         }
     }
     return nullptr;
 }
 
-void NavigationPanel::AddAllNodes()
+void NavigationPanel::OnProjectUpdated()
 {
     AutoFreeze freeze(this);
 
@@ -150,22 +150,23 @@ void NavigationPanel::AddAllNodes()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    auto project = wxGetApp().GetProject();
-    if (project)
+    if (auto project = wxGetApp().GetProject(); project)
     {
-        wxTreeItemId dummy;
-        AddChildNodes(project, dummy, true);
+        auto root = m_tree_ctrl->AddRoot(GetDisplayName(project), GetImageIndex(project), -1);
+        m_node_tree_map[project] = root;
+        m_tree_node_map[root] = project;
+
+        AddAllChildren(project);
 
         // First we expand everything
         ExpandAllNodes(project);
 
         // Now we collapse all the project's immediate children
-
         for (size_t index = 0; index < project->GetChildCount(); ++index)
         {
-            if (auto item_it = m_node_tree_map.find(project->GetChild(index)); item_it != m_node_tree_map.end())
+            if (auto result = m_node_tree_map.find(project->GetChild(index)); result != m_node_tree_map.end())
             {
-                m_tree_ctrl->Collapse(item_it->second);
+                m_tree_ctrl->Collapse(result->second);
             }
         }
     }
@@ -259,52 +260,6 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
 
         m_pMainFrame->FireCreatedEvent(node_src);
         m_pMainFrame->SelectNode(node_src, true);
-    }
-}
-
-void NavigationPanel::AddNode(Node* node, Node* parent)
-{
-    if (node && parent)
-    {
-        if (auto it = m_node_tree_map.find(parent); it != m_node_tree_map.end() && it->second.IsOk())
-        {
-            AddChildNodes(node, it->second, false);
-        }
-    }
-}
-
-void NavigationPanel::AddChildNodes(Node* node, wxTreeItemId& parent, bool is_root)
-{
-    wxTreeItemId new_parent;
-
-    if (is_root)
-        new_parent = m_tree_ctrl->AddRoot("", -1, -1);
-    else
-    {
-        size_t pos = 0;
-
-        auto parent_node = node->GetParent();
-        ASSERT(parent_node)
-        pos = parent_node->GetChildPosition(node);
-
-        if (pos > 0)
-            new_parent = m_tree_ctrl->InsertItem(parent, pos, "", -1, -1);
-        else
-            new_parent = m_tree_ctrl->AppendItem(parent, "", -1, -1);
-    }
-
-    m_node_tree_map[node] = new_parent;
-    m_tree_node_map[new_parent] = node;
-
-    auto image_index = GetImageIndex(node);
-    m_tree_ctrl->SetItemImage(new_parent, image_index);
-
-    UpdateDisplayName(new_parent, node);
-
-    auto count = node->GetChildCount();
-    for (size_t i = 0; i < count; i++)
-    {
-        AddChildNodes(node->GetChild(i), new_parent);
     }
 }
 

@@ -31,20 +31,22 @@ public:
 
 protected:
     void AddAllChildren(Node* node_parent);
-    void AddAllNodes();
-    void AddChildNodes(Node* child, wxTreeItemId& parent, bool is_root = false);
-    void AddNode(Node* item, Node* parent);
 
     void InsertNode(Node* node);
     void DeleteNode(Node* item);
-
     void EraseAllMaps(Node* node);
+
     void ExpandAllNodes(Node* node);
-    int GetImageIndex(Node* node);
     Node* GetNode(wxTreeItemId item);
 
+    int GetImageIndex(Node* node);
     ttlib::cstr GetDisplayName(Node* node) const;
     void UpdateDisplayName(wxTreeItemId id, Node* node);
+
+    // Event handlers without parameters are called by lamda's, which means the function can also be called directly without
+    // needing an event.
+
+    void OnProjectUpdated();
 
     // Event handlers
 

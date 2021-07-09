@@ -857,6 +857,8 @@
                 help="Same as wxTE_RIGHT for wxTextCtrl: the text is right aligned (this is the default)." />
             wxSP_ARROW_KEYS
         </property>
+        <property name="hexadecimal" type="bool"
+            help="Use hexadecimal as the base to display and enter numbers.">0</property>
         <event name="wxEVT_SPINCTRL" class="wxSpinEvent"
             help="Generated whenever the numeric value of the spinctrl is updated." />
         <event name="wxEVT_TEXT" class="wxCommandEvent"

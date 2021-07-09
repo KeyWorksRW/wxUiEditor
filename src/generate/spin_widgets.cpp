@@ -25,6 +25,9 @@ wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                                  node->prop_as_wxSize(prop_size), GetStyleInt(node), node->prop_as_int(prop_min),
                                  node->prop_as_int(prop_max), node->prop_as_int(prop_initial));
 
+    if (node->prop_as_bool(prop_hexadecimal))
+        widget->SetBase(16);
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -55,11 +58,26 @@ std::optional<ttlib::cstr> SpinCtrlGenerator::GenConstruction(Node* node)
 
     if (code.contains("wxEmptyString"))
     {
-        code.Replace("wxEmptyString, ", "wxEmptyString,\n\t\t\t");
+        // REVIEW: [KeyWorks - 07-08-2021] This would be nice, but currently line breaks aren't supported in GenConstruction
+        // calls code.Replace("wxEmptyString, ", "wxEmptyString,\n\t\t\t");
         code.insert(0, 1, '\t');
     }
 
     return code;
+}
+
+std::optional<ttlib::cstr> SpinCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    if (node->prop_as_bool(prop_hexadecimal))
+    {
+        ttlib::cstr code;
+        code << node->get_node_name() << "->SetBase(16);";
+        return code;
+    }
+    else
+    {
+        return {};
+    }
 }
 
 std::optional<ttlib::cstr> SpinCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

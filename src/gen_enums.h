@@ -167,6 +167,7 @@ namespace GenEnum
         prop_height,
         prop_help,
         prop_help_provider,
+        prop_hexadecimal,
         prop_hgap,
         prop_hidden,
         prop_hide_effect,

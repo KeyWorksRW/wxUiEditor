@@ -148,6 +148,10 @@ void NavigationPanel::OnProjectUpdated()
 {
     AutoFreeze freeze(this);
 
+    // Uncomment this to check whether the Navigation tree control is being recreated multiple times for a single action.
+
+    MSG_INFO("Navigation tree control recreated.");
+
     m_tree_ctrl->DeleteAllItems();
     m_tree_node_map.clear();
     m_node_tree_map.clear();

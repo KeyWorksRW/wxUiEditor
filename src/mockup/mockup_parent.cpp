@@ -112,6 +112,11 @@ void MockupParent::CreateContent()
         return;
     }
 
+    // Uncomment this to check whether the Mockup window is being created multiple times for a single action, or it's being recreated
+    // by a property change that doesn't need the Mockup to be recreated.
+
+    MSG_INFO("Mockup window recreated.");
+
     AutoFreeze freeze(this);
 
     // Note that we show the form even if it's property has it set to hidden

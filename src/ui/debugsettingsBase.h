@@ -7,7 +7,6 @@
 #pragma once
 
 #include <wx/button.h>
-#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -26,14 +25,11 @@ protected:
     bool m_DisplayMsgInfo { false };
     bool m_DisplayMsgWarnng { false };
     bool m_DisplayMsgWindow { false };
+    bool m_FireCreationMsgs { false };
 
     // Class member variables
 
     wxButton* m_btn;
-    wxCheckBox* m_checkBox2;
-    wxCheckBox* m_checkBox3;
-    wxCheckBox* m_checkBox4;
-    wxCheckBox* m_checkBox;
     wxStdDialogButtonSizer* std_button_sizer;
     wxButton* std_button_sizerOK;
     wxButton* std_button_sizerCancel;

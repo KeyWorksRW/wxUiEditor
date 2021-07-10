@@ -125,10 +125,12 @@ void PropGridPanel::Create()
     {
         AutoFreeze freeze(this);
 
-        // Uncomment this to check whether the Property window is being created multiple times for a single action, or it's
-        // being recreated by a property change that doesn't need the Property to be recreated.
-
-        MSG_INFO("Property window recreated.");
+#if defined(_DEBUG)
+        if (wxGetApp().isFireCreationMsgs())
+        {
+            MSG_INFO("Property window recreated.");
+        }
+#endif  // _DEBUG
 
         wxGetApp().GetMainFrame()->SetStatusText(wxEmptyString, 2);
 

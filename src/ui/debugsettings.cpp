@@ -22,6 +22,7 @@ void DebugSettings::OnInit(wxInitDialogEvent& event)
     m_DisplayMsgInfo = (m_orgFlags & App::PREFS_MSG_INFO);
     m_DisplayMsgEvent = (m_orgFlags & App::PREFS_MSG_EVENT);
     m_DisplayMsgWarnng = (m_orgFlags & App::PREFS_MSG_WARNING);
+    m_FireCreationMsgs = (m_orgFlags & App::PREFS_CREATION_MSG);
 
     event.Skip();  // transfer all validator data to their windows and update UI
 }
@@ -55,6 +56,11 @@ void DebugSettings::OnOK(wxCommandEvent& event)
         m_orgFlags |= App::PREFS_MSG_WARNING;
     else
         m_orgFlags &= ~App::PREFS_MSG_WARNING;
+
+    if (m_FireCreationMsgs)
+        m_orgFlags |= App::PREFS_CREATION_MSG;
+    else
+        m_orgFlags &= ~App::PREFS_CREATION_MSG;
 
     if (m_orgFlags != wxGetApp().GetPrefs().flags)
     {

@@ -56,12 +56,14 @@ public:
     ProjectSettings* GetProjectSettings() { return m_pjtSettings; };
 
     // clang-format off
-    enum
+    enum : long
     {
         PREFS_MSG_WINDOW    = 1 << 2,   // automatically create CMsgFrame window
         PREFS_MSG_INFO      = 1 << 3,   // filter AddInfoMsg
         PREFS_MSG_EVENT     = 1 << 4,   // filter AddEventMsg
         PREFS_MSG_WARNING   = 1 << 5,   // filter AddWarningMsg
+
+        PREFS_CREATION_MSG  = 1 << 6,  // Calls MSG_INFO when nav, prop, or mockup contents recreated
     };
 
     enum : long
@@ -82,6 +84,8 @@ public:
     };
 
     uiPREFERENCES& GetPrefs() { return m_prefs; }
+
+    bool isFireCreationMsgs()  const noexcept { return (m_prefs.flags & PREFS_CREATION_MSG); }
 
     bool IsPjtMemberPrefix() const noexcept { return (m_prefs.project_flags & PREFS_PJT_MEMBER_PREFIX); }
 

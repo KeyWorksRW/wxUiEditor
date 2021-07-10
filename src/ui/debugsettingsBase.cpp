@@ -6,6 +6,7 @@
 
 #include "pch.h"
 
+#include <wx/checkbox.h>
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
 #include <wx/statbox.h>
@@ -26,10 +27,10 @@ DebugSettingsBase::DebugSettingsBase(wxWindow* parent) : wxDialog()
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
     static_box->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    m_checkBox = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Display MSG Window"));
-    m_checkBox->SetValidator(wxGenericValidator(&m_DisplayMsgWindow));
-    m_checkBox->SetToolTip(wxString::FromUTF8("If checked, the MSG window will be displayed the first time it receives a non-filtered MSG. If unchecked, the window is never displayed unless you go here and click the Show Now button."));
-    box_sizer->Add(m_checkBox, wxSizerFlags().Center().Border(wxALL));
+    auto checkBox = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Display MSG Window"));
+    checkBox->SetValidator(wxGenericValidator(&m_DisplayMsgWindow));
+    checkBox->SetToolTip(wxString::FromUTF8("If checked, the MSG window will be displayed the first time it receives a non-filtered MSG. If unchecked, the window is never displayed unless you go here and click the Show Now button."));
+    box_sizer->Add(checkBox, wxSizerFlags().Center().Border(wxALL));
 
     box_sizer->AddSpacer(15);
 
@@ -39,17 +40,27 @@ DebugSettingsBase::DebugSettingsBase(wxWindow* parent) : wxDialog()
     auto box_sizer2 = new wxBoxSizer(wxVERTICAL);
     static_box->Add(box_sizer2, wxSizerFlags().Expand().Border(wxALL));
 
-    m_checkBox2 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Display MSG_INFO() messages"));
-    m_checkBox2->SetValidator(wxGenericValidator(&m_DisplayMsgInfo));
-    box_sizer2->Add(m_checkBox2, wxSizerFlags().Border(wxALL));
+    auto checkBox2 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Display MSG_INFO() messages"));
+    checkBox2->SetValidator(wxGenericValidator(&m_DisplayMsgInfo));
+    box_sizer2->Add(checkBox2, wxSizerFlags().Border(wxALL));
 
-    m_checkBox3 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Display MSG_EVENT() messages"));
-    m_checkBox3->SetValidator(wxGenericValidator(&m_DisplayMsgEvent));
-    box_sizer2->Add(m_checkBox3, wxSizerFlags().Border(wxALL));
+    auto checkBox3 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Display MSG_EVENT() messages"));
+    checkBox3->SetValidator(wxGenericValidator(&m_DisplayMsgEvent));
+    box_sizer2->Add(checkBox3, wxSizerFlags().Border(wxALL));
 
-    m_checkBox4 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Display MSG_WARNING() messages"));
-    m_checkBox4->SetValidator(wxGenericValidator(&m_DisplayMsgWarnng));
-    box_sizer2->Add(m_checkBox4, wxSizerFlags().Border(wxALL));
+    auto checkBox4 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Display MSG_WARNING() messages"));
+    checkBox4->SetValidator(wxGenericValidator(&m_DisplayMsgWarnng));
+    box_sizer2->Add(checkBox4, wxSizerFlags().Border(wxALL));
+
+    static_box->AddSpacer(10);
+
+    auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
+    static_box->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+
+    auto checkBox_2 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Display creation info"));
+    checkBox_2->SetValidator(wxGenericValidator(&m_FireCreationMsgs));
+    checkBox_2->SetToolTip(wxString::FromUTF8("MSG_INFO called when nav, prop, and mockup panels have their contents recreated."));
+    box_sizer_2->Add(checkBox_2, wxSizerFlags().Border(wxALL));
 
     std_button_sizer = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(std_button_sizer, wxSizerFlags().Expand().Border(wxALL));

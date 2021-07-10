@@ -113,10 +113,12 @@ void MockupParent::CreateContent()
         return;
     }
 
-    // Uncomment this to check whether the Mockup window is being created multiple times for a single action, or it's being recreated
-    // by a property change that doesn't need the Mockup to be recreated.
-
-    MSG_INFO("Mockup window recreated.");
+#if defined(_DEBUG)
+    if (wxGetApp().isFireCreationMsgs())
+    {
+        MSG_INFO("Mockup window recreated.");
+    }
+#endif  // _DEBUG
 
     AutoFreeze freeze(this);
 

@@ -191,14 +191,14 @@ void ChangePositionAction::Change()
 {
     m_parent->ChangeChildPosition(m_node, m_change_pos);
     wxGetFrame().FirePositionChangedEvent(this);
-    wxGetFrame().FireSelectedEvent(m_node);
+    wxGetFrame().SelectNode(m_node);
 }
 
 void ChangePositionAction::Revert()
 {
     m_parent->ChangeChildPosition(m_node, m_revert_pos);
     wxGetFrame().FirePositionChangedEvent(this);
-    wxGetFrame().FireSelectedEvent(m_node);
+    wxGetFrame().SelectNode(m_node);
 }
 
 ///////////////////////////////// ChangeParentAction ////////////////////////////////////
@@ -229,7 +229,7 @@ void ChangeParentAction::Change()
         m_node->SetParent(m_change_parent);
 
         wxGetFrame().FireParentChangedEvent(this);
-        wxGetFrame().FireSelectedEvent(m_node);
+        wxGetFrame().SelectNode(m_node);
 
         // TODO: [KeyWorks - 11-18-2020] If we got moved into a gridbag sizer, then things are a bit complicated since row
         // and column aren't going to be right. We need to make some intelligent guess and change the node's property
@@ -250,7 +250,7 @@ void ChangeParentAction::Revert()
         prop->set_value(m_revert_col);
 
     wxGetFrame().FireParentChangedEvent(this);
-    wxGetFrame().FireSelectedEvent(m_node);
+    wxGetFrame().SelectNode(m_node);
 }
 
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////

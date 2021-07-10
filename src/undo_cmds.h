@@ -96,6 +96,10 @@ public:
     void Change() override;
     void Revert() override;
 
+    Node* GetOldParent() { return m_revert_parent.get(); }
+    Node* GetNewParent() { return m_change_parent.get(); }
+    Node* GetNode() { return m_node.get(); }
+
 private:
     NodeSharedPtr m_node;
     NodeSharedPtr m_change_parent;

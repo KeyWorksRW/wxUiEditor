@@ -35,6 +35,8 @@ class ueStatusBar;
 class NavigationPanel;
 class RibbonPanel;
 
+class ChangeParentAction;
+
 enum class MoveDirection
 {
     Up = 1,
@@ -64,6 +66,7 @@ public:
     void FireChangeEventHandler(NodeEvent* event);
     void FireCreatedEvent(Node* node);
     void FireDeletedEvent(Node* node);
+    void FireParentChangedEvent(ChangeParentAction* undo_cmd);
     void FireProjectLoadedEvent();
     void FireProjectUpdatedEvent();
     void FirePropChangeEvent(NodeProperty* prop);

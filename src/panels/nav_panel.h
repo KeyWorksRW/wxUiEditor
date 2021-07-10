@@ -35,6 +35,7 @@ protected:
     void InsertNode(Node* node);
     void DeleteNode(Node* item);
     void EraseAllMaps(Node* node);
+    void RecreateChildren(Node* node);
 
     void ExpandAllNodes(Node* node);
     Node* GetNode(wxTreeItemId item);
@@ -64,6 +65,7 @@ protected:
     void OnNodeCreated(CustomEvent& event);
     void OnNodeSelected(CustomEvent& event);
     void OnNodePropChange(CustomEvent& event);
+    void OnParentChange(CustomEvent& event);
 
 private:
     MainFrame* m_pMainFrame;

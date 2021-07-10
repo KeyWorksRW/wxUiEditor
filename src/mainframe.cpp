@@ -1308,9 +1308,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 
         if (grandparent)
         {
+            AutoFreeze freeze(this);
             PushUndoAction(std::make_shared<ChangeParentAction>(node, grandparent));
-            FireProjectUpdatedEvent();
-            SelectNode(node, true);
             return true;
         }
         appMsgBox(_tt("There is no sizer to the left of this item that it can be moved into."), _tt(strIdMoveTitle));
@@ -1327,9 +1326,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 
             if (parent)
             {
+                AutoFreeze freeze(this);
                 PushUndoAction(std::make_shared<ChangeParentAction>(node, parent));
-                FireProjectUpdatedEvent();
-                SelectNode(node, true);
                 return true;
             }
         }
@@ -1343,8 +1341,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             return (pos > 0);
         if (pos > 0)
         {
-            PushUndoAction(std::make_shared<ChangePositionAction>(node, pos - 1));
             AutoFreeze freeze(this);
+            PushUndoAction(std::make_shared<ChangePositionAction>(node, pos - 1));
             FireProjectUpdatedEvent();
             SelectNode(node, true);
             return true;
@@ -1358,8 +1356,8 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             return (pos < parent->GetChildCount());
         if (pos < parent->GetChildCount())
         {
-            PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
             AutoFreeze freeze(this);
+            PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
             FireProjectUpdatedEvent();
             SelectNode(node, true);
             return true;

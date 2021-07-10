@@ -103,6 +103,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
 
     Bind(EVT_NodePropChange, &NavigationPanel::OnNodePropChange, this);
     Bind(EVT_NodeSelected, &NavigationPanel::OnNodeSelected, this);
+    Bind(EVT_ParentChanged, &NavigationPanel::OnParentChange, this);
 
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { OnProjectUpdated(); });
 
@@ -257,9 +258,6 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         }
 
         m_pMainFrame->PushUndoAction(std::make_shared<ChangeParentAction>(node_src, nextSizer));
-
-        m_pMainFrame->FireCreatedEvent(node_src);
-        m_pMainFrame->SelectNode(node_src, true);
     }
 }
 
@@ -375,7 +373,8 @@ void NavigationPanel::ExpandAllNodes(Node* node)
 {
     if (auto item_it = m_node_tree_map.find(node); item_it != m_node_tree_map.end())
     {
-        m_tree_ctrl->Expand(item_it->second);
+        if (m_tree_ctrl->ItemHasChildren(item_it->second))
+            m_tree_ctrl->Expand(item_it->second);
     }
 
     auto count = node->GetChildCount();
@@ -405,6 +404,16 @@ void NavigationPanel::EraseAllMaps(Node* node)
     {
         EraseAllMaps(node->GetChild(idx));
     }
+}
+
+void NavigationPanel::RecreateChildren(Node* node)
+{
+    for (size_t idx = 0; idx < node->GetChildCount(); idx++)
+    {
+        EraseAllMaps(node->GetChild(idx));
+    }
+    AddAllChildren(node);
+    ExpandAllNodes(node);
 }
 
 void NavigationPanel::OnNodeSelected(CustomEvent& event)
@@ -524,6 +533,16 @@ void NavigationPanel::OnUpdateEvent(wxUpdateUIEvent& event)
             event.Enable((node->GetParent() && node->GetParent()->GetChildCount() > 0) || node->GetChildCount() > 0);
             break;
     }
+}
+
+void NavigationPanel::OnParentChange(CustomEvent& event)
+{
+    AutoFreeze freeze(this);
+
+    auto undo_cmd = static_cast<ChangeParentAction*>(event.GetUndoCmd());
+
+    RecreateChildren(undo_cmd->GetOldParent());
+    RecreateChildren(undo_cmd->GetNewParent());
 }
 
 void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool expand)

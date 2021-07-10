@@ -310,12 +310,9 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
         auto insert_cmd = std::make_shared<InsertNodeAction>(new_sizer.get(), parent, tt_empty_cstr, childPos);
         multi_cmd->Add(insert_cmd);
 
+        wxGetFrame().Freeze();
         wxGetFrame().PushUndoAction(multi_cmd);
-
-        // REVIEW: [KeyWorks - 03-30-2021] See issue #94 about the problem this causes.
-        wxGetFrame().FireProjectUpdatedEvent();
-
-        wxGetFrame().SelectNode(new_sizer->GetChild(0), true, true);
+        wxGetFrame().Thaw();
     }
 }
 

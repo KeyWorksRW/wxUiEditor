@@ -52,6 +52,7 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCod
     Bind(EVT_NodeDeleted, [this](wxEvent&) { GenerateBaseClass(); });
     Bind(EVT_NodePropChange, [this](wxEvent&) { GenerateBaseClass(); });
     Bind(EVT_ParentChanged, [this](wxEvent&) { GenerateBaseClass(); });
+    Bind(EVT_PositionChanged, [this](wxEvent&) { GenerateBaseClass(); });
     Bind(EVT_ProjectUpdated, [this](wxEvent&) { GenerateBaseClass(); });
 
     Bind(EVT_NodeSelected, &BasePanel::OnNodeSelected, this);

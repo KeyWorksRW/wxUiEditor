@@ -38,6 +38,7 @@ private:
 wxDECLARE_EVENT(EVT_ProjectUpdated, CustomEvent);
 wxDECLARE_EVENT(EVT_EventHandlerChanged, CustomEvent);
 wxDECLARE_EVENT(EVT_ParentChanged, CustomEvent);
+wxDECLARE_EVENT(EVT_PositionChanged, CustomEvent);
 
 wxDECLARE_EVENT(EVT_NodeCreated, CustomEvent);
 wxDECLARE_EVENT(EVT_NodeDeleted, CustomEvent);

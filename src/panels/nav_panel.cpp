@@ -104,6 +104,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     Bind(EVT_NodePropChange, &NavigationPanel::OnNodePropChange, this);
     Bind(EVT_NodeSelected, &NavigationPanel::OnNodeSelected, this);
     Bind(EVT_ParentChanged, &NavigationPanel::OnParentChange, this);
+    Bind(EVT_PositionChanged, &NavigationPanel::OnPositionChange, this);
 
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { OnProjectUpdated(); });
 
@@ -543,6 +544,15 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
 
     RecreateChildren(undo_cmd->GetOldParent());
     RecreateChildren(undo_cmd->GetNewParent());
+}
+
+void NavigationPanel::OnPositionChange(CustomEvent& event)
+{
+    AutoFreeze freeze(this);
+
+    auto undo_cmd = static_cast<ChangePositionAction*>(event.GetUndoCmd());
+
+    RecreateChildren(undo_cmd->GetParent());
 }
 
 void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool expand)

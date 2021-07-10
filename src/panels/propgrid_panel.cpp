@@ -93,6 +93,7 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
 
     Bind(EVT_NodeSelected, [this](CustomEvent&) { Create(); });
     Bind(EVT_ParentChanged, [this](CustomEvent&) { Create(); });
+    Bind(EVT_PositionChanged, [this](CustomEvent&) { Create(); });
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { Create(); });
 
     frame->AddCustomEventHandler(GetEventHandler());

@@ -82,6 +82,9 @@ public:
     void Change() override;
     void Revert() override;
 
+    Node* GetParent() { return m_parent.get(); }
+    Node* GetNode() { return m_node.get(); }
+
 private:
     NodeSharedPtr m_parent;
     NodeSharedPtr m_node;

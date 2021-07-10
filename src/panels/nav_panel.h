@@ -66,6 +66,7 @@ protected:
     void OnNodeSelected(CustomEvent& event);
     void OnNodePropChange(CustomEvent& event);
     void OnParentChange(CustomEvent& event);
+    void OnPositionChange(CustomEvent& event);
 
 private:
     MainFrame* m_pMainFrame;

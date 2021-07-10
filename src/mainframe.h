@@ -36,6 +36,7 @@ class NavigationPanel;
 class RibbonPanel;
 
 class ChangeParentAction;
+class ChangePositionAction;
 
 enum class MoveDirection
 {
@@ -67,6 +68,7 @@ public:
     void FireCreatedEvent(Node* node);
     void FireDeletedEvent(Node* node);
     void FireParentChangedEvent(ChangeParentAction* undo_cmd);
+    void FirePositionChangedEvent(ChangePositionAction* undo_cmd);
     void FireProjectLoadedEvent();
     void FireProjectUpdatedEvent();
     void FirePropChangeEvent(NodeProperty* prop);

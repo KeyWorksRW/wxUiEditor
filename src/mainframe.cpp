@@ -1343,8 +1343,6 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
         {
             AutoFreeze freeze(this);
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos - 1));
-            FireProjectUpdatedEvent();
-            SelectNode(node, true);
             return true;
         }
         appMsgBox(_tt(strIdCantMoveUp), _tt(strIdMoveTitle));
@@ -1358,8 +1356,6 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
         {
             AutoFreeze freeze(this);
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
-            FireProjectUpdatedEvent();
-            SelectNode(node, true);
             return true;
         }
         appMsgBox(node->DeclName() + _tt(" cannot be moved down any lower."), _tt(strIdMoveTitle));

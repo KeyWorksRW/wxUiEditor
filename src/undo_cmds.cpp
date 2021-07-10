@@ -180,16 +180,25 @@ ChangePositionAction::ChangePositionAction(Node* node, size_t position)
 
     m_change_pos = position;
     m_revert_pos = m_parent->GetChildPosition(node);
+
+    m_UndoEventGenerated = true;
+    m_RedoEventGenerated = true;
+    m_UndoSelectEventGenerated = true;
+    m_RedoSelectEventGenerated = true;
 }
 
 void ChangePositionAction::Change()
 {
     m_parent->ChangeChildPosition(m_node, m_change_pos);
+    wxGetFrame().FirePositionChangedEvent(this);
+    wxGetFrame().FireSelectedEvent(m_node);
 }
 
 void ChangePositionAction::Revert()
 {
     m_parent->ChangeChildPosition(m_node, m_revert_pos);
+    wxGetFrame().FirePositionChangedEvent(this);
+    wxGetFrame().FireSelectedEvent(m_node);
 }
 
 ///////////////////////////////// ChangeParentAction ////////////////////////////////////

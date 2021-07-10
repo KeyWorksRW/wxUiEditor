@@ -17,6 +17,7 @@
 wxDEFINE_EVENT(EVT_ProjectUpdated, CustomEvent);
 wxDEFINE_EVENT(EVT_EventHandlerChanged, CustomEvent);
 wxDEFINE_EVENT(EVT_ParentChanged, CustomEvent);
+wxDEFINE_EVENT(EVT_PositionChanged, CustomEvent);
 
 wxDEFINE_EVENT(EVT_NodeCreated, CustomEvent);
 wxDEFINE_EVENT(EVT_NodeDeleted, CustomEvent);
@@ -92,6 +93,15 @@ void MainFrame::FireChangeEventHandler(NodeEvent* evt_node)
 void MainFrame::FireParentChangedEvent(ChangeParentAction* undo_cmd)
 {
     CustomEvent event(EVT_ParentChanged, undo_cmd);
+    for (auto handler: m_custom_event_handlers)
+    {
+        handler->ProcessEvent(event);
+    }
+}
+
+void MainFrame::FirePositionChangedEvent(ChangePositionAction* undo_cmd)
+{
+    CustomEvent event(EVT_PositionChanged, undo_cmd);
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(event);

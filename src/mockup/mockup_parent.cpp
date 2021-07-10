@@ -87,6 +87,7 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     Bind(EVT_NodeCreated, [this](CustomEvent&) { CreateContent(); });
     Bind(EVT_NodeDeleted, [this](CustomEvent&) { CreateContent(); });
     Bind(EVT_ParentChanged, [this](CustomEvent&) { CreateContent(); });
+    Bind(EVT_PositionChanged, [this](CustomEvent&) { CreateContent(); });
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { CreateContent(); });
 
     frame->AddCustomEventHandler(GetEventHandler());

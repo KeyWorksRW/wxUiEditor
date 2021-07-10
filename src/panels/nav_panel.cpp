@@ -148,6 +148,10 @@ void NavigationPanel::OnProjectUpdated()
 {
     AutoFreeze freeze(this);
 
+    // Uncomment this to check whether the Navigation tree control is being recreated multiple times for a single action.
+
+    MSG_INFO("Navigation tree control recreated.");
+
     m_tree_ctrl->DeleteAllItems();
     m_tree_node_map.clear();
     m_node_tree_map.clear();
@@ -176,6 +180,9 @@ void NavigationPanel::OnProjectUpdated()
 
 void NavigationPanel::OnSelChanged(wxTreeEvent& event)
 {
+    if (m_isSelChangeSuspended)
+        return;
+
     auto id = event.GetItem();
     if (!id.IsOk())
         return;
@@ -542,8 +549,16 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
 
     auto undo_cmd = static_cast<ChangeParentAction*>(event.GetUndoCmd());
 
+    m_isSelChangeSuspended = true;
     RecreateChildren(undo_cmd->GetOldParent());
     RecreateChildren(undo_cmd->GetNewParent());
+    m_isSelChangeSuspended = false;
+
+    if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())
+    {
+        m_tree_ctrl->EnsureVisible(iter->second);
+        m_tree_ctrl->SelectItem(iter->second);
+    }
 }
 
 void NavigationPanel::OnPositionChange(CustomEvent& event)
@@ -552,7 +567,15 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
 
     auto undo_cmd = static_cast<ChangePositionAction*>(event.GetUndoCmd());
 
+    m_isSelChangeSuspended = true;
     RecreateChildren(undo_cmd->GetParent());
+    m_isSelChangeSuspended = false;
+
+    if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())
+    {
+        m_tree_ctrl->EnsureVisible(iter->second);
+        m_tree_ctrl->SelectItem(iter->second);
+    }
 }
 
 void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool expand)

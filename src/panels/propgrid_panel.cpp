@@ -92,8 +92,6 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
     Bind(EVT_NodePropChange, &PropGridPanel::OnNodePropChange, this);
 
     Bind(EVT_NodeSelected, [this](CustomEvent&) { Create(); });
-    Bind(EVT_ParentChanged, [this](CustomEvent&) { Create(); });
-    Bind(EVT_PositionChanged, [this](CustomEvent&) { Create(); });
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { Create(); });
 
     frame->AddCustomEventHandler(GetEventHandler());
@@ -126,6 +124,11 @@ void PropGridPanel::Create()
     if (node)
     {
         AutoFreeze freeze(this);
+
+        // Uncomment this to check whether the Property window is being created multiple times for a single action, or it's
+        // being recreated by a property change that doesn't need the Property to be recreated.
+
+        MSG_INFO("Property window recreated.");
 
         wxGetApp().GetMainFrame()->SetStatusText(wxEmptyString, 2);
 

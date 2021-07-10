@@ -131,10 +131,12 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 
     Bind(EVT_NodeSelected, &MainFrame::OnNodeSelected, this);
 
-    Bind(EVT_NodeCreated, [this](CustomEvent&) { UpdateFrame(); });
     Bind(EVT_EventHandlerChanged, [this](CustomEvent&) { UpdateFrame(); });
+    Bind(EVT_NodeCreated, [this](CustomEvent&) { UpdateFrame(); });
     Bind(EVT_NodeDeleted, [this](CustomEvent&) { UpdateFrame(); });
     Bind(EVT_NodePropChange, [this](CustomEvent&) { UpdateFrame(); });
+    Bind(EVT_ParentChanged, [this](CustomEvent&) { UpdateFrame(); });
+    Bind(EVT_PositionChanged, [this](CustomEvent&) { UpdateFrame(); });
 
     Bind(
         wxEVT_MENU, [this](wxCommandEvent&) { Close(); }, wxID_EXIT);

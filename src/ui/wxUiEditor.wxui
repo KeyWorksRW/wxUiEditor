@@ -894,73 +894,6 @@
     </node>
     <node
       class="wxDialog"
-      base_file="debugsettingsBase"
-      class_name="DebugSettingsBase"
-      derived_class_name="DebugSettings"
-      derived_file="debugsettings"
-      persist="true"
-      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-      title="Debug Settings"
-      wxEVT_INIT_DIALOG="OnInit">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="parent_sizer">
-        <node
-          class="wxStaticBoxSizer"
-          label="MSG Window Settings"
-          flags="wxEXPAND">
-          <node
-            class="wxBoxSizer"
-            flags="wxEXPAND">
-            <node
-              class="wxCheckBox"
-              label="Display MSG Window"
-              validator_variable="m_DisplayMsgWindow"
-              tooltip="If checked, the MSG window will be displayed the first time it receives a non-filtered MSG. If unchecked, the window is never displayed unless you go here and click the Show Now button."
-              alignment="wxALIGN_CENTER" />
-            <node
-              class="spacer"
-              width="15"
-              flags="wxEXPAND" />
-            <node
-              class="wxButton"
-              label="Show Now"
-              wxEVT_BUTTON="OnShowNow" />
-          </node>
-          <node
-            class="wxBoxSizer"
-            orientation="wxVERTICAL"
-            var_name="box_sizer2"
-            flags="wxEXPAND">
-            <node
-              class="wxCheckBox"
-              label="Display MSG_INFO() messages"
-              var_name="m_checkBox2"
-              validator_variable="m_DisplayMsgInfo" />
-            <node
-              class="wxCheckBox"
-              label="Display MSG_EVENT() messages"
-              var_name="m_checkBox3"
-              validator_variable="m_DisplayMsgEvent" />
-            <node
-              class="wxCheckBox"
-              label="Display MSG_WARNING() messages"
-              var_name="m_checkBox4"
-              validator_variable="m_DisplayMsgWarnng" />
-          </node>
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          class_access="protected:"
-          static_line="false"
-          var_name="std_button_sizer"
-          flags="wxEXPAND"
-          OKButtonClicked="OnOK" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
       base_file="newproject_base"
       class_name="NewProjectBase"
       derived_class_name="NewProjectDlg"
@@ -1821,6 +1754,94 @@
     </node>
     <node
       class="wxDialog"
+      base_file="debugsettingsBase"
+      class_name="DebugSettingsBase"
+      derived_class_name="DebugSettings"
+      derived_file="debugsettings"
+      persist="true"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Debug Settings"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer">
+        <node
+          class="wxStaticBoxSizer"
+          label="MSG Window Settings"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            flags="wxEXPAND">
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display MSG Window"
+              var_name="checkBox"
+              validator_variable="m_DisplayMsgWindow"
+              tooltip="If checked, the MSG window will be displayed the first time it receives a non-filtered MSG. If unchecked, the window is never displayed unless you go here and click the Show Now button."
+              alignment="wxALIGN_CENTER" />
+            <node
+              class="spacer"
+              width="15"
+              flags="wxEXPAND" />
+            <node
+              class="wxButton"
+              label="Show Now"
+              wxEVT_BUTTON="OnShowNow" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer2"
+            flags="wxEXPAND">
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display MSG_INFO() messages"
+              var_name="checkBox2"
+              validator_variable="m_DisplayMsgInfo" />
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display MSG_EVENT() messages"
+              var_name="checkBox3"
+              validator_variable="m_DisplayMsgEvent" />
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display MSG_WARNING() messages"
+              var_name="checkBox4"
+              validator_variable="m_DisplayMsgWarnng" />
+          </node>
+          <node
+            class="spacer"
+            height="10" />
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer_2"
+            flags="wxEXPAND">
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display creation info"
+              var_name="checkBox_2"
+              validator_variable="m_FireCreationMsgs"
+              tooltip="MSG_INFO called when nav, prop, and mockup panels have their contents recreated." />
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          class_access="protected:"
+          static_line="false"
+          var_name="std_button_sizer"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
       base_file="..\debugging\dbg_winres_dlg_base"
       class_name="DbgWinResBase"
       derived_class_name="DbgWinResDlg"
@@ -1997,7 +2018,6 @@
         </node>
         <node
           class="wxInfoBar"
-          var_name="m_infoBar"
           flags="wxEXPAND"
           proportion="1" />
         <node

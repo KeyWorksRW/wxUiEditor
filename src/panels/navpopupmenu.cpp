@@ -296,26 +296,16 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
     }
 
     // Avoid the temptation to set new_sizer to the raw pointer so that .get() doesn't have to be called below. Doing so will
-    // result in the reference count being decremented before we are done hooking it up, and you end up crashing (see issue
-    // #93).
+    // result in the reference count being decremented before we are done hooking it up, and you end up crashing.
 
     auto new_sizer = g_NodeCreator.CreateNode(widget, parent);
     if (new_sizer)
     {
-        auto multi_cmd = std::make_shared<MultiAction>(ttlib::cstr() << "new sizer for " << node->DeclName());
-
-        auto reparent_cmd = std::make_shared<ChangeParentAction>(node, new_sizer.get());
-        multi_cmd->Add(reparent_cmd);
-
-        auto insert_cmd = std::make_shared<InsertNodeAction>(new_sizer.get(), parent, tt_empty_cstr, childPos);
-        multi_cmd->Add(insert_cmd);
-
-        wxGetFrame().PushUndoAction(multi_cmd);
-
-        // REVIEW: [KeyWorks - 03-30-2021] See issue #94 about the problem this causes.
-        wxGetFrame().FireProjectUpdatedEvent();
-
-        wxGetFrame().SelectNode(new_sizer->GetChild(0), true, true);
+        wxGetFrame().Freeze();
+        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_sizer.get(), parent, "Insert new sizer", childPos));
+        wxGetFrame().PushUndoAction(std::make_shared<ChangeParentAction>(node, new_sizer.get()));
+        wxGetFrame().SelectNode(node, true, true);
+        wxGetFrame().Thaw();
     }
 }
 

@@ -84,9 +84,11 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     Bind(EVT_NodeSelected, &MockupParent::OnNodeSelected, this);
     Bind(EVT_NodePropChange, &MockupParent::OnNodePropModified, this);
 
-    Bind(EVT_ProjectUpdated, [this](CustomEvent&) { CreateContent(); });
     Bind(EVT_NodeCreated, [this](CustomEvent&) { CreateContent(); });
     Bind(EVT_NodeDeleted, [this](CustomEvent&) { CreateContent(); });
+    Bind(EVT_ParentChanged, [this](CustomEvent&) { CreateContent(); });
+    Bind(EVT_PositionChanged, [this](CustomEvent&) { CreateContent(); });
+    Bind(EVT_ProjectUpdated, [this](CustomEvent&) { CreateContent(); });
 
     frame->AddCustomEventHandler(GetEventHandler());
 }
@@ -110,6 +112,11 @@ void MockupParent::CreateContent()
         m_MockupWindow->Hide();
         return;
     }
+
+    // Uncomment this to check whether the Mockup window is being created multiple times for a single action, or it's being recreated
+    // by a property change that doesn't need the Mockup to be recreated.
+
+    MSG_INFO("Mockup window recreated.");
 
     AutoFreeze freeze(this);
 

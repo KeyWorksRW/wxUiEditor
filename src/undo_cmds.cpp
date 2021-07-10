@@ -180,16 +180,25 @@ ChangePositionAction::ChangePositionAction(Node* node, size_t position)
 
     m_change_pos = position;
     m_revert_pos = m_parent->GetChildPosition(node);
+
+    m_UndoEventGenerated = true;
+    m_RedoEventGenerated = true;
+    m_UndoSelectEventGenerated = true;
+    m_RedoSelectEventGenerated = true;
 }
 
 void ChangePositionAction::Change()
 {
     m_parent->ChangeChildPosition(m_node, m_change_pos);
+    wxGetFrame().FirePositionChangedEvent(this);
+    wxGetFrame().FireSelectedEvent(m_node);
 }
 
 void ChangePositionAction::Revert()
 {
     m_parent->ChangeChildPosition(m_node, m_revert_pos);
+    wxGetFrame().FirePositionChangedEvent(this);
+    wxGetFrame().FireSelectedEvent(m_node);
 }
 
 ///////////////////////////////// ChangeParentAction ////////////////////////////////////
@@ -205,6 +214,11 @@ ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
     m_revert_position = m_revert_parent->GetChildPosition(node);
     m_revert_row = node->prop_as_int(prop_row);
     m_revert_col = node->prop_as_int(prop_column);
+
+    m_UndoEventGenerated = true;
+    m_RedoEventGenerated = true;
+    m_UndoSelectEventGenerated = true;
+    m_RedoSelectEventGenerated = true;
 }
 
 void ChangeParentAction::Change()
@@ -213,6 +227,9 @@ void ChangeParentAction::Change()
     {
         m_revert_parent->RemoveChild(m_node);
         m_node->SetParent(m_change_parent);
+
+        wxGetFrame().FireParentChangedEvent(this);
+        wxGetFrame().FireSelectedEvent(m_node);
 
         // TODO: [KeyWorks - 11-18-2020] If we got moved into a gridbag sizer, then things are a bit complicated since row
         // and column aren't going to be right. We need to make some intelligent guess and change the node's property
@@ -231,29 +248,9 @@ void ChangeParentAction::Revert()
         prop->set_value(m_revert_row);
     if (auto prop = m_node->get_prop_ptr(prop_column); prop)
         prop->set_value(m_revert_col);
-}
 
-///////////////////////////////// MultiAction ////////////////////////////////////
-
-void MultiAction::Add(UndoActionPtr command)
-{
-    m_cmds.emplace_back(command);
-}
-
-void MultiAction::Change()
-{
-    for (auto& cmd: m_cmds)
-    {
-        cmd->Change();
-    }
-}
-
-void MultiAction::Revert()
-{
-    for (auto cmd = m_cmds.rbegin(); cmd != m_cmds.rend(); ++cmd)
-    {
-        cmd->get()->Revert();
-    }
+    wxGetFrame().FireParentChangedEvent(this);
+    wxGetFrame().FireSelectedEvent(m_node);
 }
 
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////

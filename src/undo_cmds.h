@@ -82,6 +82,9 @@ public:
     void Change() override;
     void Revert() override;
 
+    Node* GetParent() { return m_parent.get(); }
+    Node* GetNode() { return m_node.get(); }
+
 private:
     NodeSharedPtr m_parent;
     NodeSharedPtr m_node;
@@ -96,6 +99,10 @@ public:
     void Change() override;
     void Revert() override;
 
+    Node* GetOldParent() { return m_revert_parent.get(); }
+    Node* GetNewParent() { return m_change_parent.get(); }
+    Node* GetNode() { return m_node.get(); }
+
 private:
     NodeSharedPtr m_node;
     NodeSharedPtr m_change_parent;
@@ -104,21 +111,6 @@ private:
     size_t m_revert_position;
     int m_revert_row;
     int m_revert_col;
-};
-
-class MultiAction : public UndoAction
-{
-public:
-    MultiAction(const ttlib::cstr& undo_str) : UndoAction(undo_str.c_str()) {};
-
-    void Add(UndoActionPtr command);
-
-protected:
-    void Change() override;
-    void Revert() override;
-
-private:
-    std::vector<UndoActionPtr> m_cmds;
 };
 
 class AppendGridBagAction : public UndoAction

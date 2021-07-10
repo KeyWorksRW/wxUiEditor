@@ -180,6 +180,9 @@ void NavigationPanel::OnProjectUpdated()
 
 void NavigationPanel::OnSelChanged(wxTreeEvent& event)
 {
+    if (m_isSelChangeSuspended)
+        return;
+
     auto id = event.GetItem();
     if (!id.IsOk())
         return;
@@ -546,8 +549,16 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
 
     auto undo_cmd = static_cast<ChangeParentAction*>(event.GetUndoCmd());
 
+    m_isSelChangeSuspended = true;
     RecreateChildren(undo_cmd->GetOldParent());
     RecreateChildren(undo_cmd->GetNewParent());
+    m_isSelChangeSuspended = false;
+
+    if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())
+    {
+        m_tree_ctrl->EnsureVisible(iter->second);
+        m_tree_ctrl->SelectItem(iter->second);
+    }
 }
 
 void NavigationPanel::OnPositionChange(CustomEvent& event)
@@ -556,7 +567,15 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
 
     auto undo_cmd = static_cast<ChangePositionAction*>(event.GetUndoCmd());
 
+    m_isSelChangeSuspended = true;
     RecreateChildren(undo_cmd->GetParent());
+    m_isSelChangeSuspended = false;
+
+    if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())
+    {
+        m_tree_ctrl->EnsureVisible(iter->second);
+        m_tree_ctrl->SelectItem(iter->second);
+    }
 }
 
 void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool expand)

@@ -113,21 +113,6 @@ private:
     int m_revert_col;
 };
 
-class MultiAction : public UndoAction
-{
-public:
-    MultiAction(const ttlib::cstr& undo_str) : UndoAction(undo_str.c_str()) {};
-
-    void Add(UndoActionPtr command);
-
-protected:
-    void Change() override;
-    void Revert() override;
-
-private:
-    std::vector<UndoActionPtr> m_cmds;
-};
-
 class AppendGridBagAction : public UndoAction
 {
 public:

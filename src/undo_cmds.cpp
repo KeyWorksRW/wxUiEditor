@@ -253,29 +253,6 @@ void ChangeParentAction::Revert()
     wxGetFrame().FireSelectedEvent(m_node);
 }
 
-///////////////////////////////// MultiAction ////////////////////////////////////
-
-void MultiAction::Add(UndoActionPtr command)
-{
-    m_cmds.emplace_back(command);
-}
-
-void MultiAction::Change()
-{
-    for (auto& cmd: m_cmds)
-    {
-        cmd->Change();
-    }
-}
-
-void MultiAction::Revert()
-{
-    for (auto cmd = m_cmds.rbegin(); cmd != m_cmds.rend(); ++cmd)
-    {
-        cmd->get()->Revert();
-    }
-}
-
 ///////////////////////////////// AppendGridBagAction ////////////////////////////////////
 
 AppendGridBagAction::AppendGridBagAction(Node* node, Node* parent, int pos) : m_pos(pos)

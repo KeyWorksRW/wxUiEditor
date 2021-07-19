@@ -407,8 +407,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 prop_name = result->second;
                 if (auto find_prop = rmap_PropNames.find(prop_name.c_str()); find_prop != rmap_PropNames.end())
                 {
-                    prop = newobject->get_prop_ptr(find_prop->second);
-                    prop->set_value(xml_prop.text().as_cview());
+                    if (prop = newobject->get_prop_ptr(find_prop->second); prop)
+                    {
+                        // In some cases, there is no equivalent -- for example, form builder has a permissions property for
+                        // spacers. Since these aren't an actual widget, wxUE does not have that property
+                        prop->set_value(xml_prop.text().as_cview());
+                    }
                     xml_prop = xml_prop.next_sibling("property");
                     continue;
                 }

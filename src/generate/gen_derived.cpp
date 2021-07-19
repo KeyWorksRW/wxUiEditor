@@ -29,6 +29,16 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 )===";
 
+static constexpr const char* lst_close_type_button[] = {
+
+    // Buttons that would normally be used to close the dialog need to call event.Skip() to get validator data and to close
+    // the dialog.
+    "OKButtonClicked",
+    "YesButtonClicked",
+    "SaveButtonClicked",
+
+};
+
 // clang-format on
 
 int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYPE panel_type)
@@ -149,7 +159,6 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
 
     if (panel_type != HDR_PANEL)
     {
-
         if (auto prop = project->prop_as_string(prop_local_pch_file); prop.size())
         {
             ttlib::cstr pch("#include ");
@@ -231,8 +240,22 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
 
             if (generatedHandlers.find(event->get_value()) == generatedHandlers.end())
             {
+                bool close_type_button { false };
+                for (auto& iter: lst_close_type_button)
+                {
+                    if (event->GetEventInfo()->get_name().is_sameas(iter))
+                    {
+                        close_type_button = true;
+                        break;
+                    }
+                }
+
                 ttlib::cstr prototype;
-                if (event->GetEventInfo()->get_name() == "OnInitDialog" || form->prop_as_bool(prop_persist))
+
+                // If this is a button that closes a dialog, and the dialog is marked as persist, then event.Skip() must be
+                // called.
+                if (event->GetEventInfo()->get_name().is_sameas("wxEVT_INIT_DIALOG") ||
+                    (close_type_button && form->prop_as_bool(prop_persist)))
                 {
                     // OnInitDialog needs to call event.Skip() in order to initialize validators and update the UI
                     prototype.Format("%s(%s& event)", event->get_value().c_str(),
@@ -252,11 +275,11 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
                     m_source->writeLine("{");
                     m_source->Indent();
                     auto name = event->GetEventInfo()->get_name();
-                    if (name == "OnInitDialog")
+                    if (name == "wxEVT_INIT_DIALOG")
                     {
                         m_source->writeLine("event.Skip();  // transfer all validator data to their windows and update UI");
                     }
-                    else if (name == "OnOKButtonClick")
+                    else if (close_type_button)
                     {
                         m_source->writeLine("if (!Validate() || !TransferDataFromWindow())");
                         m_source->Indent();

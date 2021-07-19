@@ -164,3 +164,41 @@ size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
 
     return result;
 }
+
+static bool CompareRowNodes(NodeSharedPtr a, NodeSharedPtr b)
+{
+    return (a->prop_as_int(prop_row) < b->prop_as_int(prop_row));
+}
+
+static bool CompareColumnNodes(NodeSharedPtr a, NodeSharedPtr b)
+{
+    return (a->prop_as_int(prop_column) < b->prop_as_int(prop_column));
+}
+
+void GridBag::GridBagSort(Node* gridbag)
+{
+    if (!gridbag->GetChildCount())
+        return;  // no children, so nothing to do
+
+    auto& grid_vector = gridbag->GetChildNodePtrs();
+
+    // First sort the rows
+    std::sort(grid_vector.begin(), grid_vector.end(), CompareRowNodes);
+
+    // Now sort the columns within each row
+    for (size_t idx = 0; idx < grid_vector.size() - 1;)
+    {
+        auto row = grid_vector[idx]->prop_as_int(prop_row);
+        auto end = idx + 1;
+        while (grid_vector[end]->prop_as_int(prop_row) == row)
+        {
+            ++end;
+            if (end >= grid_vector.size())
+                break;
+        }
+
+        std::sort(grid_vector.begin() + idx, grid_vector.begin() + end, CompareColumnNodes);
+
+        idx = end;
+    }
+}

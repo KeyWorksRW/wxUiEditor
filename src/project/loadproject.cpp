@@ -25,6 +25,7 @@ using namespace GenEnum;
 #include "../import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
 #include "../ui/newproject.h"            // NewProjectDlg -- Dialog to create a new project
 #include "../winres/import_winres.h"     // WinResource -- Parse a Windows resource file
+#include "node_gridbag.h"                // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "oldproject.h"                  // Load older version of wxUiEditor project
 
 using namespace GenEnum;
@@ -366,6 +367,11 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
     for (auto child = xml_obj.child("node"); child; child = child.next_sibling("node"))
     {
         CreateNode(child, new_node.get());
+    }
+
+    if (new_node->isGen(gen_wxGridBagSizer))
+    {
+        GridBag::GridBagSort(new_node.get());
     }
 
     return new_node;

@@ -7,7 +7,7 @@
 
 #pragma once
 
-class Node;
+#include "node_classes.h"  // Forward defintions of Node classes
 
 class GridBag
 {
@@ -17,6 +17,8 @@ public:
     auto GetMaxColumn() { return m_max_column; }
     auto GetMaxRow() { return m_max_row; }
     bool InsertNode(Node* gbsizer, Node* new_node);
+
+    static void GridBagSort(Node* gridbag);
 
 protected:
     size_t IncrementColumns(int row, int column, Node* gbsizer);

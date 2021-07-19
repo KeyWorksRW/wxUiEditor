@@ -325,6 +325,7 @@ const std::unordered_map<std::string, const char*> s_EventNames = {
     { "wxEVT_DATAVIEW_ITEM_VALUE_CHANGED", "OnItemValueChanged" },
     { "wxEVT_DATAVIEW_SELECTION_CHANGED", "OnDataViewCtrlSelectionChanged" },
     { "wxEVT_DATE_CHANGED", "OnDateChanged" },
+    { "wxEVT_DESTROY", "OnDestroyed" },
     { "wxEVT_DIRCTRL_FILEACTIVATED", "OnDirctrlFileActivated" },
     { "wxEVT_DIRCTRL_SELECTIONCHANGED", "OnDirctrlSelectionChanged" },
     { "wxEVT_DIRPICKER_CHANGED", "OnDirChanged" },

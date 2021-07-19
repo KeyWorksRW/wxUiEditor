@@ -171,6 +171,18 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
         return false;
     }
 
+    if (m_errors.size())
+    {
+        ttlib::cstr errMsg("Not everything in the wxFormBuilder project could be converted:\n\n");
+        for (auto& iter: m_errors)
+        {
+            MSG_ERROR(iter);
+            errMsg << iter << '\n';
+        }
+
+        appMsgBox(errMsg, "Import wxFormBuilder project");
+    }
+
     return true;
 }
 
@@ -292,11 +304,17 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
+    if (class_name.is_sameas("CustomControl"))
+    {
+        m_errors.emplace(ttlib::cstr() << "Unable to create " << class_name);
+        return {};
+    }
+
     auto newobject = g_NodeCreator.CreateNode(class_name, parent);
     if (!newobject)
     {
-        FAIL_MSG(ttlib::cstr() << "Unable to create " << class_name);
-        throw std::runtime_error("Invalid project file -- object could not be created!");
+        m_errors.emplace(ttlib::cstr() << "Unable to create " << class_name);
+        return {};
     }
 
     auto xml_prop = xml_obj.child("property");
@@ -475,6 +493,10 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     if (g_NodeCreator.IsOldHostType(newobject->DeclName()))
     {
         newobject = CreateFbpNode(child, parent, newobject.get());
+        if (!newobject)
+        {
+            return newobject;
+        }
         if (newobject->isGen(gen_wxStdDialogButtonSizer))
             newobject->get_prop_ptr(prop_static_line)->set_value(false);
         child = child.next_sibling("object");

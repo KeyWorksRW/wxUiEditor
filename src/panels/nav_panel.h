@@ -62,6 +62,7 @@ protected:
     void OnCollapse(wxCommandEvent& event);
     void OnExpand(wxCommandEvent& event);
 
+    void OnGridBagAction(CustomEvent& event);
     void OnNodeCreated(CustomEvent& event);
     void OnNodeSelected(CustomEvent& event);
     void OnNodePropChange(CustomEvent& event);

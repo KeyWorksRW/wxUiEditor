@@ -25,6 +25,7 @@ class PropGridPanel;
 class MockupPanel;
 class MockupParent;
 class FocusKillerEvtHandler;
+class GridBagAction;
 
 class wxAuiNotebook;
 class wxAuiNotebookEvent;
@@ -59,6 +60,7 @@ public:
     void FireChangeEventHandler(NodeEvent* event);
     void FireCreatedEvent(Node* node);
     void FireDeletedEvent(Node* node);
+    void FireGridBagActionEvent(GridBagAction* undo_cmd);
     void FireParentChangedEvent(ChangeParentAction* undo_cmd);
     void FirePositionChangedEvent(ChangePositionAction* undo_cmd);
     void FireProjectLoadedEvent();

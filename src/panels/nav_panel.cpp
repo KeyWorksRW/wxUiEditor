@@ -108,6 +108,8 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
 
     Bind(EVT_ProjectUpdated, [this](CustomEvent&) { OnProjectUpdated(); });
 
+    Bind(EVT_GridBagAction, &NavigationPanel::OnGridBagAction, this);
+
     Bind(EVT_NodeCreated, &NavigationPanel::OnNodeCreated, this);
     Bind(EVT_NodeDeleted, [this](CustomEvent& event) { DeleteNode(event.GetNode()); });
 
@@ -276,6 +278,14 @@ void NavigationPanel::OnNodeCreated(CustomEvent& event)
 {
     AutoFreeze freeze(this);
     InsertNode(event.GetNode());
+}
+
+void NavigationPanel::OnGridBagAction(CustomEvent& event)
+{
+    AutoFreeze freeze(this);
+
+    auto gb_action = static_cast<GridBagAction*>(event.GetUndoCmd());
+    RecreateChildren(gb_action->GetSizerNode());
 }
 
 void NavigationPanel::InsertNode(Node* node)

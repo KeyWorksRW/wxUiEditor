@@ -140,6 +140,7 @@ public:
 
     // Call this after making all changes to the gbsizer children
     void Update(Node* cur_gbsizer, Node* selected);
+    Node* GetSizerNode() const { return m_cur_gbsizer.get(); }
 
 private:
     NodeSharedPtr m_cur_gbsizer;

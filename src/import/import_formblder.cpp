@@ -449,7 +449,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {
-        if (auto event_name = xml_event.attribute("name").as_cview(); event_name.size())
+        if (auto event_name = xml_event.attribute("name").as_cview(); event_name.size() && xml_event.text().as_cview().size())
         {
             if (auto result = m_mapEventNames.find(event_name.c_str()); result != m_mapEventNames.end())
             {

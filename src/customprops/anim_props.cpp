@@ -10,7 +10,7 @@
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "anim_props.h"  // AnimationProperties
-#include "mainapp.h"     // MoveDirection -- Main application class
+#include "mainapp.h"     // App -- Main application class
 #include "node.h"        // Node -- Node class
 #include "utils.h"       // Utility functions that work with properties
 

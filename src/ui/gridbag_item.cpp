@@ -11,7 +11,7 @@
 
 #include "gridbag_item.h"  // auto-generated: gridbag_item_base.h and gridbag_item_base.cpp
 
-#include "mainframe.h"     // MoveDirection -- Main window frame
+#include "mainframe.h"     // MainFrame -- Main window frame
 #include "node.h"          // Node class
 #include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 

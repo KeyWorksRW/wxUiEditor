@@ -11,7 +11,7 @@
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
-#include "mainframe.h"               // MoveDirection -- Main window frame
+#include "mainframe.h"               // MainFrame -- Main window frame
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
 #include "uifuncs.h"                 // Miscellaneous functions for displaying UI

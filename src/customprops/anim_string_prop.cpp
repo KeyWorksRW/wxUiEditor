@@ -14,9 +14,9 @@
 
 #include "anim_string_prop.h"
 
-#include "mainapp.h"       // MoveDirection -- Main application class
-#include "node.h"          // Node -- Node class
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
+#include "mainapp.h"  // App -- Main application class
+#include "node.h"     // Node -- Node class
+#include "uifuncs.h"  // Miscellaneous functions for displaying UI
 
 bool AnimDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
 {

@@ -38,14 +38,6 @@ class RibbonPanel;
 class ChangeParentAction;
 class ChangePositionAction;
 
-enum class MoveDirection
-{
-    Up = 1,
-    Down,
-    Left,
-    Right
-};
-
 // Warning! This MUST be at least 3!
 constexpr const size_t StatusPanels = 3;
 

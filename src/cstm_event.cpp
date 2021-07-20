@@ -9,7 +9,7 @@
 
 #include "cstm_event.h"
 
-#include "mainapp.h"     // MoveDirection -- Main application class
+#include "mainapp.h"     // App -- Main application class
 #include "mainframe.h"   // MainFrame -- Main window frame
 #include "node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
 #include "undo_cmds.h"   // Undoable command classes derived from UndoAction

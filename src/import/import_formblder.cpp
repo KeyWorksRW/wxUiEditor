@@ -708,6 +708,10 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
             prop->set_value(xml_prop.text().as_string());
         }
     }
+    else if (prop_name.is_sameas("hidden") && newobject->isGen(gen_wxDialog))
+    {
+        return;
+    }
 
     else
     {

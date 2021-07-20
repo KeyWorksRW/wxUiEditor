@@ -183,7 +183,7 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview name, Node* parent)
     if (result == rmap_GenNames.end())
     {
         FAIL_MSG(ttlib::cstr() << "No component definition for " << name);
-        throw std::runtime_error("Internal error: missing component definition");
+        return {};
     }
 
     return CreateNode(result->second, parent);

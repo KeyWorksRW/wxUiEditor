@@ -46,5 +46,7 @@ private:
     ttlib::cstr m_eventGeneration;
     ttlib::cstr m_baseFile;
 
+    std::set<ttlib::cstr> m_errors;
+
     int m_VerMinor { 0 };
 };

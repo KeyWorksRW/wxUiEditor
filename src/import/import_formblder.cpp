@@ -171,6 +171,18 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
         return false;
     }
 
+    if (m_errors.size())
+    {
+        ttlib::cstr errMsg("Not everything in the wxFormBuilder project could be converted:\n\n");
+        for (auto& iter: m_errors)
+        {
+            MSG_ERROR(iter);
+            errMsg << iter << '\n';
+        }
+
+        appMsgBox(errMsg, "Import wxFormBuilder project");
+    }
+
     return true;
 }
 
@@ -292,11 +304,17 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
+    if (class_name.is_sameas("CustomControl"))
+    {
+        m_errors.emplace(ttlib::cstr() << "Unable to create " << class_name);
+        return {};
+    }
+
     auto newobject = g_NodeCreator.CreateNode(class_name, parent);
     if (!newobject)
     {
-        FAIL_MSG(ttlib::cstr() << "Unable to create " << class_name);
-        throw std::runtime_error("Invalid project file -- object could not be created!");
+        m_errors.emplace(ttlib::cstr() << "Unable to create " << class_name);
+        return {};
     }
 
     auto xml_prop = xml_obj.child("property");
@@ -407,8 +425,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 prop_name = result->second;
                 if (auto find_prop = rmap_PropNames.find(prop_name.c_str()); find_prop != rmap_PropNames.end())
                 {
-                    prop = newobject->get_prop_ptr(find_prop->second);
-                    prop->set_value(xml_prop.text().as_cview());
+                    if (prop = newobject->get_prop_ptr(find_prop->second); prop)
+                    {
+                        // In some cases, there is no equivalent -- for example, form builder has a permissions property for
+                        // spacers. Since these aren't an actual widget, wxUE does not have that property
+                        prop->set_value(xml_prop.text().as_cview());
+                    }
                     xml_prop = xml_prop.next_sibling("property");
                     continue;
                 }
@@ -427,7 +449,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {
-        if (auto event_name = xml_event.attribute("name").as_cview(); event_name.size())
+        if (auto event_name = xml_event.attribute("name").as_cview(); event_name.size() && xml_event.text().as_cview().size())
         {
             if (auto result = m_mapEventNames.find(event_name.c_str()); result != m_mapEventNames.end())
             {
@@ -471,6 +493,10 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     if (g_NodeCreator.IsOldHostType(newobject->DeclName()))
     {
         newobject = CreateFbpNode(child, parent, newobject.get());
+        if (!newobject)
+        {
+            return newobject;
+        }
         if (newobject->isGen(gen_wxStdDialogButtonSizer))
             newobject->get_prop_ptr(prop_static_line)->set_value(false);
         child = child.next_sibling("object");
@@ -681,6 +707,10 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
         {
             prop->set_value(xml_prop.text().as_string());
         }
+    }
+    else if (prop_name.is_sameas("hidden") && newobject->isGen(gen_wxDialog))
+    {
+        return;
     }
 
     else

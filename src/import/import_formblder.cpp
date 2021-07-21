@@ -713,10 +713,25 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     {
         return;
     }
-    else if (prop_name.is_sameas("subclass") && (xml_prop.text().as_cview().is_sameas("; ; forward_declare") ||
-                                                 xml_prop.text().as_cview().is_sameas("; forward_declare")))
+    else if (prop_name.is_sameas("subclass"))
     {
-        return;
+        ttlib::multistr parts(xml_prop.text().as_string());
+        parts[0].BothTrim();
+        if (parts[0].empty())
+            return;
+        if (auto prop = newobject->get_prop_ptr(prop_derived_class); prop)
+        {
+            prop->set_value(parts[0]);
+            if (parts.size() > 0 && !parts[1].contains("forward_declare"))
+            {
+                parts[1].BothTrim();
+                prop = newobject->get_prop_ptr(prop_derived_header);
+                if (prop)
+                {
+                    prop->set_value(parts[1]);
+                }
+            }
+        }
     }
     else
     {

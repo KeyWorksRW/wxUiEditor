@@ -14,10 +14,12 @@ class GridBag
 public:
     GridBag(Node* node_gridbag);
 
+
     auto GetMaxColumn() { return m_max_column; }
     auto GetMaxRow() { return m_max_row; }
     bool InsertNode(Node* gbsizer, Node* new_node);
 
+    static bool MoveNode(Node* node, MoveDirection where, bool check_only);
     static void GridBagSort(Node* gridbag);
 
 protected:

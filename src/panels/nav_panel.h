@@ -29,15 +29,16 @@ public:
     NavigationPanel(wxWindow* parent, MainFrame* frame);
     void ChangeExpansion(Node* node, bool include_children, bool expand);
 
-protected:
+    void EraseAllMaps(Node* node);
     void AddAllChildren(Node* node_parent);
+    void ExpandAllNodes(Node* node);
+
+protected:
 
     void InsertNode(Node* node);
     void DeleteNode(Node* item);
-    void EraseAllMaps(Node* node);
     void RecreateChildren(Node* node);
 
-    void ExpandAllNodes(Node* node);
     Node* GetNode(wxTreeItemId item);
 
     int GetImageIndex(Node* node);
@@ -62,7 +63,6 @@ protected:
     void OnCollapse(wxCommandEvent& event);
     void OnExpand(wxCommandEvent& event);
 
-    void OnGridBagAction(CustomEvent& event);
     void OnNodeCreated(CustomEvent& event);
     void OnNodeSelected(CustomEvent& event);
     void OnNodePropChange(CustomEvent& event);

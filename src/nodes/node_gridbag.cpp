@@ -117,8 +117,8 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 
     gbsizer->AddChild(insert_pos, new_node);
     new_node->SetParent(gbsizer);
-    undo_cmd->Update(gbsizer, new_node);
-    wxGetFrame().FireCreatedEvent(new_node);
+    undo_cmd->Update();
+    wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
     wxGetFrame().SelectNode(new_node, true, true);
 
     return true;
@@ -201,4 +201,121 @@ void GridBag::GridBagSort(Node* gridbag)
 
         idx = end;
     }
+}
+
+static void SwapNodes(Node* gbSizer, size_t first_pos, size_t second_pos)
+{
+    auto& vector = gbSizer->GetChildNodePtrs();
+    auto temp = std::move(vector[first_pos]);
+    vector[first_pos] = std::move(vector[second_pos]);
+    vector[second_pos] = std::move(temp);
+}
+
+bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
+{
+    // This function is completely reliant on the children of the wxGridBagSizer being sorted. That means unless we are just
+    // doing a check or know that no action can be taken, then we always resort the entire gridbagsizer.
+
+    auto gbsizer = node->GetParent();
+    ASSERT(gbsizer->isGen(gen_wxGridBagSizer));
+
+    if (where == MoveDirection::Left)
+    {
+        if (check_only || node->prop_as_int(prop_column) == 0)
+        {
+            return (node->prop_as_int(prop_column) > 0);
+        }
+
+        ttlib::cstr undo_str;
+        undo_str << "Change column of " << map_GenNames[node->gen_name()];
+
+        // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+        auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
+        wxGetFrame().PushUndoAction(undo_cmd);
+
+        GridBagSort(gbsizer);
+
+        auto cur_position = gbsizer->GetChildPosition(node);
+        auto cur_row = node->prop_as_int(prop_row);
+        auto cur_column = node->prop_as_int(prop_column);
+
+        auto previous_node = gbsizer->GetChild(cur_position - 1);
+        bool isColumnChangeOnly { false };
+        if (previous_node->prop_as_int(prop_row) != cur_row)
+        {
+            isColumnChangeOnly = true;
+        }
+        else
+        {
+            auto previous_column = previous_node->prop_as_int(prop_column) + (previous_node->prop_as_int(prop_colspan) - 1);
+            if (cur_column - 1 > previous_column)
+                isColumnChangeOnly = true;
+        }
+
+        if (isColumnChangeOnly)
+        {
+            node->prop_set_value(prop_column, cur_column - 1);
+        }
+        else
+        {
+            node->prop_set_value(prop_column, previous_node->prop_as_int(prop_column));
+            previous_node->prop_set_value(prop_column, cur_column);
+
+            SwapNodes(gbsizer, cur_position - 1, cur_position);
+        }
+
+        // This needs to be called once the gbsizer has been modified
+        undo_cmd->Update();
+        wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
+        wxGetFrame().SelectNode(node, true, true);
+    }
+    else if (where == MoveDirection::Right)
+    {
+        // Unless we decide to enforce a limit, the user can always increase the column number
+        if (check_only)
+            return true;
+
+        ttlib::cstr undo_str;
+        undo_str << "Change column of " << map_GenNames[node->gen_name()];
+        // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+        auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
+        wxGetFrame().PushUndoAction(undo_cmd);
+
+        GridBagSort(gbsizer);
+
+        auto cur_position = gbsizer->GetChildPosition(node);
+        auto cur_row = node->prop_as_int(prop_row);
+        auto cur_column = node->prop_as_int(prop_column);
+
+        auto next_node = (cur_position + 1 < gbsizer->GetChildCount()) ? gbsizer->GetChild(cur_position + 1) : nullptr;
+
+        bool isColumnChangeOnly { false };
+        if (!next_node || next_node->prop_as_int(prop_row) != cur_row)
+        {
+            isColumnChangeOnly = true;
+        }
+        else if (cur_column + node->prop_as_int(prop_colspan) < next_node->prop_as_int(prop_column))
+        {
+            isColumnChangeOnly = true;
+        }
+
+        if (isColumnChangeOnly)
+        {
+            node->prop_set_value(prop_column, cur_column + 1);
+        }
+        else
+        {
+            // prop_colspan is always at least 1
+            node->prop_set_value(prop_column, cur_column + next_node->prop_as_int(prop_colspan));
+            next_node->prop_set_value(prop_column, cur_column);
+
+            SwapNodes(gbsizer, cur_position + 1, cur_position);
+        }
+
+        undo_cmd->Update();
+        wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
+        wxGetFrame().SelectNode(node, true, true);
+    }
+
+    return false;
 }

@@ -29,7 +29,7 @@
             id="id_NewProject"
             label="&amp;New Project...&#09;Ctrl+N"
             var_name="menuItem"
-            wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetApp().NewProject(); }" />
+            wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetApp().NewProject(true); }" />
           <node
             class="wxMenuItem"
             bitmap="Art; wxART_FILE_OPEN; wxART_MENU; [-1; -1]"
@@ -43,6 +43,11 @@
             class_access="protected:"
             label="Open &amp;Recent"
             var_name="m_submenu_recent" />
+          <node
+            class="wxMenuItem"
+            label="&amp;Import..."
+            var_name="menu_import"
+            wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetApp().NewProject(false); }" />
           <node
             class="separator" />
           <node
@@ -894,10 +899,11 @@
     </node>
     <node
       class="wxDialog"
-      base_file="newproject_base"
-      class_name="NewProjectBase"
-      derived_class_name="NewProjectDlg"
-      title="New Project"
+      base_file="import_base"
+      class_name="ImportBase"
+      derived_class_name="ImportDlg"
+      derived_file="import_dlg"
+      title="New Imported Project"
       wxEVT_INIT_DIALOG="OnInitDialog">
       <node
         class="wxBoxSizer"
@@ -905,54 +911,42 @@
         var_name="parent_sizer"
         flags="wxEXPAND">
         <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="box_sizer3"
-          flags="wxEXPAND">
-          <node
-            class="wxCheckBox"
-            checked="true"
-            label="&amp;Empty project"
-            var_name="m_checkBoxEmptyProject"
-            wxEVT_CHECKBOX="OnEmptyProject" />
-        </node>
-        <node
           class="wxStaticBoxSizer"
           class_access="protected:"
-          label="Import Project(s)/File(s)"
+          label="Import Type"
           var_name="m_import_staticbox"
           flags="wxEXPAND">
           <node
             class="wxFlexGridSizer">
             <node
               class="wxRadioButton"
-              label="Import wx&amp;FormBuilder Project(s)"
+              label="wx&amp;FormBuilder Project(s)"
               style="wxRB_GROUP"
-              var_name="m_radioBtnFormBuilder"
+              var_name="m_radio_wxFormBuilder"
               wxEVT_RADIOBUTTON="OnFormBuilder" />
             <node
               class="wxRadioButton"
-              label="Import &amp;Windows Resource"
-              var_name="m_radioBtnWinRes"
+              label="&amp;Windows Resource"
+              var_name="m_radio_WindowsResource"
               row="1"
               wxEVT_RADIOBUTTON="OnWindowsResource" />
             <node
               class="wxRadioButton"
-              label="Import &amp;XRC File(s)"
-              var_name="m_radioBtnXrc"
+              label="&amp;XRC File(s)"
+              var_name="m_radio_XRC"
               column="1"
               row="1"
               wxEVT_RADIOBUTTON="OnXRC" />
             <node
               class="wxRadioButton"
-              label="Import wx&amp;Smith Project(s)"
-              var_name="m_radioBtnSmith"
+              label="wx&amp;Smith Project(s)"
+              var_name="m_radio_wxSmith"
               column="1"
               wxEVT_RADIOBUTTON="OnWxSmith" />
             <node
               class="wxRadioButton"
-              label="Import wx&amp;Glade Project(s)"
-              var_name="m_radioBtnGlade"
+              label="wx&amp;Glade Project(s)"
+              var_name="m_radio_wxGlade"
               column="1"
               wxEVT_RADIOBUTTON="OnWxGlade" />
           </node>
@@ -974,6 +968,13 @@
               alignment="wxALIGN_CENTER_VERTICAL"
               borders="wxTOP|wxRIGHT|wxLEFT"
               wxEVT_BUTTON="OnDirectory" />
+            <node
+              class="wxStaticText"
+              label="..."
+              style="wxST_ELLIPSIZE_MIDDLE"
+              var_name="m_static_cwd"
+              alignment="wxALIGN_CENTER_VERTICAL"
+              proportion="1" />
           </node>
           <node
             class="wxBoxSizer"

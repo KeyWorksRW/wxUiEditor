@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Dialog to create a new project
+// Purpose:   Dialog to import one or more projects
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -11,74 +11,36 @@
 #include <wx/dirdlg.h>   // wxDirDialog base class
 #include <wx/filedlg.h>  // wxFileDialog base header
 
-#include "newproject.h"  // auto-generated: newproject_base.h and newproject_base.cpp
+#include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
 #include "uifuncs.h"     // Miscellaneous functions for displaying UI
 
 #include "../pugixml/pugixml.hpp"
 
-NewProjectDlg::NewProjectDlg(wxWindow* parent) : NewProjectBase(parent) {}
+ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 
-void NewProjectDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
+void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
 {
-    if (m_checkBoxEmptyProject->IsChecked())
-    {
-        m_import_staticbox->GetStaticBox()->Enable(false);
-    }
-    else
-    {
-        m_import_staticbox->GetStaticBox()->Enable();
-    }
-}
-void NewProjectDlg::OnOK(wxCommandEvent& event)
-{
-    if (!m_checkBoxEmptyProject->IsChecked())
-    {
-        for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
-        {
-            if (m_checkListProjects->IsChecked(pos))
-            {
-                m_lstProjects.emplace_back(m_checkListProjects->GetString(pos));
-            }
-        }
-    }
+    m_stdBtn->GetAffirmativeButton()->Disable();
+    m_radio_wxFormBuilder->SetFocus();
 
-    event.Skip();
-}
-
-void NewProjectDlg::OnEmptyProject(wxCommandEvent& WXUNUSED(event))
-{
-    if (m_checkBoxEmptyProject->IsChecked())
-    {
-        m_import_staticbox->GetStaticBox()->Enable(false);
-    }
-    else
-    {
-        m_import_staticbox->GetStaticBox()->Enable();
-    }
-}
-
-void NewProjectDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
-{
-    wxDirDialog dlg(this, "Choose directory", wxEmptyString, wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
-    if (dlg.ShowModal() != wxID_OK)
-        return;
-
-    ttlib::ChangeDir(dlg.GetPath().utf8_str().data());
+    ttString cwd;
+    cwd.assignCwd();
+    m_static_cwd->SetLabel(cwd);
 
     wxDir dir;
     wxArrayString files;
 
     m_checkListProjects->Clear();
 
-    if (m_radioBtnFormBuilder->GetValue())
+    if (m_radio_wxFormBuilder->GetValue())
         dir.GetAllFiles(".", &files, "*.fbp");
-    else if (m_radioBtnSmith->GetValue())
+    else if (m_radio_wxSmith->GetValue())
         dir.GetAllFiles(".", &files, "*.wxs");
-    else if (m_radioBtnGlade->GetValue())
+    else if (m_radio_wxGlade->GetValue())
         dir.GetAllFiles(".", &files, "*.wxg");
-    else if (m_radioBtnXrc->GetValue())
+    else if (m_radio_XRC->GetValue())
         dir.GetAllFiles(".", &files, "*.xrc");
-    else if (m_radioBtnWinRes->GetValue())
+    else if (m_radio_WindowsResource->GetValue())
     {
         dir.GetAllFiles(".", &files, "*.rc");
         dir.GetAllFiles(".", &files, "*.dlg");
@@ -88,7 +50,69 @@ void NewProjectDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void NewProjectDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnCheckFiles(wxCommandEvent& WXUNUSED(event))
+{
+    m_stdBtn->GetAffirmativeButton()->Disable();
+
+    for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
+    {
+        if (m_checkListProjects->IsChecked(pos))
+        {
+            m_stdBtn->GetAffirmativeButton()->Enable();
+            return;
+        }
+    }
+}
+
+void ImportDlg::OnOK(wxCommandEvent& event)
+{
+    for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
+    {
+        if (m_checkListProjects->IsChecked(pos))
+        {
+            m_lstProjects.emplace_back(m_checkListProjects->GetString(pos));
+        }
+    }
+
+    event.Skip();
+}
+
+void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
+{
+    wxDirDialog dlg(this, "Choose directory", wxEmptyString, wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+    if (dlg.ShowModal() != wxID_OK)
+        return;
+
+    ttlib::ChangeDir(dlg.GetPath().utf8_str().data());
+
+    ttString cwd;
+    cwd.assignCwd();
+    m_static_cwd->SetLabel(cwd);
+
+    wxDir dir;
+    wxArrayString files;
+
+    m_checkListProjects->Clear();
+
+    if (m_radio_wxFormBuilder->GetValue())
+        dir.GetAllFiles(".", &files, "*.fbp");
+    else if (m_radio_wxSmith->GetValue())
+        dir.GetAllFiles(".", &files, "*.wxs");
+    else if (m_radio_wxGlade->GetValue())
+        dir.GetAllFiles(".", &files, "*.wxg");
+    else if (m_radio_XRC->GetValue())
+        dir.GetAllFiles(".", &files, "*.xrc");
+    else if (m_radio_WindowsResource->GetValue())
+    {
+        dir.GetAllFiles(".", &files, "*.rc");
+        dir.GetAllFiles(".", &files, "*.dlg");
+    }
+
+    if (files.size())
+        m_checkListProjects->InsertItems(files, 0);
+}
+
+void ImportDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))
 {
     m_checkListProjects->Clear();
 
@@ -100,7 +124,7 @@ void NewProjectDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void NewProjectDlg::OnWindowsResource(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnWindowsResource(wxCommandEvent& WXUNUSED(event))
 {
     m_checkListProjects->Clear();
 
@@ -113,7 +137,7 @@ void NewProjectDlg::OnWindowsResource(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void NewProjectDlg::OnWxSmith(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnWxSmith(wxCommandEvent& WXUNUSED(event))
 {
     m_checkListProjects->Clear();
 
@@ -125,7 +149,7 @@ void NewProjectDlg::OnWxSmith(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void NewProjectDlg::OnXRC(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnXRC(wxCommandEvent& WXUNUSED(event))
 {
     m_checkListProjects->Clear();
 
@@ -137,7 +161,7 @@ void NewProjectDlg::OnXRC(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void NewProjectDlg::OnWxGlade(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnWxGlade(wxCommandEvent& WXUNUSED(event))
 {
     m_checkListProjects->Clear();
 
@@ -149,18 +173,20 @@ void NewProjectDlg::OnWxGlade(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-void NewProjectDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
 {
     for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
     {
         m_checkListProjects->Check(pos, true);
     }
+    m_stdBtn->GetAffirmativeButton()->Enable();
 }
 
-void NewProjectDlg::OnSelectNone(wxCommandEvent& WXUNUSED(event))
+void ImportDlg::OnSelectNone(wxCommandEvent& WXUNUSED(event))
 {
     for (unsigned int pos = 0; pos < m_checkListProjects->GetCount(); ++pos)
     {
         m_checkListProjects->Check(pos, false);
     }
+    m_stdBtn->GetAffirmativeButton()->Disable();
 }

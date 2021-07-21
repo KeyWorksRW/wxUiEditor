@@ -137,12 +137,12 @@ Files:
 
     ui/embedimg.cpp             # Convert image to Header (.h) or XPM (.xpm) file
     ui/eventhandlerdlg.cpp      # Dialog for editing event handlers
-    ui/gridbag_item.cpp
+    ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node
+    ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ui/insertdialog.cpp         # Dialog to lookup and insert a widget
-    ui/newdialog.cpp            # Dialog for creating a new project dialog
     ui/newframe.cpp             # Dialog for creating a new project wxFrame
-    ui/newproject.cpp           # Dialog to create a new project
+    ui/newdialog.cpp            # Dialog for creating a new project dialog
     ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
 
@@ -158,7 +158,7 @@ Files:
     ui/mainframe_base.cpp
     ui/newdialog_base.cpp
     ui/newframe_base.cpp
-    ui/newproject_base.cpp
+    ui/import_base.cpp
     ui/newribbon_base.cpp
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp

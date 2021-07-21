@@ -72,6 +72,9 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_submenu_recent = new wxMenu();
     m_menuFile->AppendSubMenu(m_submenu_recent, wxString::FromUTF8("Open &Recent"));
 
+    auto menu_import = new wxMenuItem(m_menuFile, wxID_ANY, wxString::FromUTF8("&Import..."));
+    m_menuFile->Append(menu_import);
+
     m_menuFile->AppendSeparator();
 
     auto menu_item = new wxMenuItem(m_menuFile, wxID_SAVE, wxString::FromUTF8("&Save\tCtrl+S"),
@@ -372,9 +375,12 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     // Event handlers
     Bind(wxEVT_CLOSE_WINDOW, &MainFrameBase::OnClose, this);
     Bind(wxEVT_MENU,
-        [](wxCommandEvent&) { wxGetApp().NewProject(); },
+        [](wxCommandEvent&) { wxGetApp().NewProject(true); },
         id_NewProject);
     Bind(wxEVT_MENU, &MainFrameBase::OnOpenProject, this, id_OpenProject);
+    Bind(wxEVT_MENU,
+        [](wxCommandEvent&) { wxGetApp().NewProject(false); },
+        menu_import->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveProject, this, wxID_SAVE);
     Bind(wxEVT_UPDATE_UI,
         [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().IsModified()); },

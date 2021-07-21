@@ -130,6 +130,7 @@ int App::OnRun()
 
     // Create the frame before the dialog so that file history is initialized.
     m_frame = new MainFrame();
+    bool EmptyProject { true };
 
     if (projectFile.empty())
     {
@@ -146,25 +147,7 @@ int App::OnRun()
                 break;
 
             case CStartup::START_CONVERT:
-                {
-                    wxFileDialog dialog(nullptr, "Open Project to Convert", wxEmptyString, wxEmptyString,
-                                        "All Importable Files|*.rc;*.dlg;*.fbp;*.wxg;*.wxs;*.xrc"
-                                        "|Windows Resource File (*.rc)|*.rc;*.dlg"
-                                        "|wxFormBuilder Project File (*.fbp)|*.fbp"
-                                        "|wxGlade File (*.wxg)|*.wxg"
-                                        "|wxSmith File (*.wxs)|*.wxs"
-                                        "|XRC File (*.xrc)|*.xrc||",
-                                        wxFD_OPEN);
-
-                    if (dialog.ShowModal() == wxID_OK)
-                    {
-                        projectFile.utf(dialog.GetPath().wx_str());
-                    }
-                    else
-                    {
-                        return 1;
-                    }
-                }
+                EmptyProject = false;
                 break;
 
             case CStartup::START_OPEN:
@@ -231,7 +214,7 @@ int App::OnRun()
     }
     else
     {
-        if (!NewProject())
+        if (!NewProject(EmptyProject))
         {
             m_frame->Close();
             wxApp::OnRun();  // Make sure all events get handled

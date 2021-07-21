@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Dialog to create a new project
+// Purpose:   Dialog to import one or more projects
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,25 +9,26 @@
 
 #include <map>
 
-#include "newproject_base.h"
+#include "import_base.h"
 
-class NewProjectDlg : public NewProjectBase
+#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
+
+class ImportDlg : public ImportBase
 {
 public:
-    NewProjectDlg(wxWindow* parent = nullptr);
+    ImportDlg(wxWindow* parent = nullptr);
 
-    bool isImportFormBuilder() { return m_radioBtnFormBuilder->GetValue(); }
-    bool isImportSmith() { return m_radioBtnSmith->GetValue(); }
-    bool isImportXRC() { return m_radioBtnXrc->GetValue(); }
-    bool isImportWinRes() { return m_radioBtnWinRes->GetValue(); }
+    bool isImportFormBuilder() { return m_radio_wxFormBuilder->GetValue(); }
+    bool isImportSmith() { return m_radio_wxSmith->GetValue(); }
+    bool isImportXRC() { return m_radio_XRC->GetValue(); }
+    bool isImportWinRes() { return m_radio_WindowsResource->GetValue(); }
 
     std::vector<ttString>& GetFileList() { return m_lstProjects; };
 
 protected:
     void OnWxGlade(wxCommandEvent& event) override;
-    // void OnCheckFiles(wxCommandEvent& event) override;
+    void OnCheckFiles(wxCommandEvent& event) override;
     void OnDirectory(wxCommandEvent& event) override;
-    void OnEmptyProject(wxCommandEvent& event) override;
     void OnFormBuilder(wxCommandEvent& event) override;
     void OnInitDialog(wxInitDialogEvent& event) override;
 

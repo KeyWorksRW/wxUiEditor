@@ -36,7 +36,7 @@ public:
     void AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& m_dialogs);
 
     bool LoadProject(const ttString& file);
-    bool NewProject();
+    bool NewProject(bool create_empty = false);
 
     // Determines which import method to use based on the filename's extension
     bool ImportProject(ttString& file);

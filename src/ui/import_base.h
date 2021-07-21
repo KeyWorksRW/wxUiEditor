@@ -7,7 +7,6 @@
 #pragma once
 
 #include <wx/button.h>
-#include <wx/checkbox.h>
 #include <wx/checklst.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -17,25 +16,25 @@
 #include <wx/statbox.h>
 #include <wx/stattext.h>
 
-class NewProjectBase : public wxDialog
+class ImportBase : public wxDialog
 {
 public:
-    NewProjectBase(wxWindow* parent);
+    ImportBase(wxWindow* parent);
 
 protected:
 
     // Class member variables
 
     wxButton* m_btnAddFile;
-    wxCheckBox* m_checkBoxEmptyProject;
     wxCheckListBox* m_checkListProjects;
-    wxRadioButton* m_radioBtnFormBuilder;
-    wxRadioButton* m_radioBtnGlade;
-    wxRadioButton* m_radioBtnSmith;
-    wxRadioButton* m_radioBtnWinRes;
-    wxRadioButton* m_radioBtnXrc;
+    wxRadioButton* m_radio_WindowsResource;
+    wxRadioButton* m_radio_XRC;
+    wxRadioButton* m_radio_wxFormBuilder;
+    wxRadioButton* m_radio_wxGlade;
+    wxRadioButton* m_radio_wxSmith;
     wxStaticBoxSizer* m_import_staticbox;
     wxStaticText* m_staticFiles;
+    wxStaticText* m_static_cwd;
     wxStdDialogButtonSizer* m_stdBtn;
     wxButton* m_stdBtnOK;
     wxButton* m_stdBtnCancel;
@@ -44,7 +43,6 @@ protected:
 
     virtual void OnCheckFiles(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDirectory(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEmptyProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFormBuilder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInitDialog(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }

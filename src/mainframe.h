@@ -203,6 +203,7 @@ protected:
     void OnImportWindowsResource(wxCommandEvent& event) override;
     void OnInsertWidget(wxCommandEvent&) override;
     void OnNewProject(wxCommandEvent& event);
+    void OnImportProject(wxCommandEvent& event);
     void OnOpenProject(wxCommandEvent& event) override;
     void OnOpenRecentProject(wxCommandEvent& event);
     void OnOptionsDlg(wxCommandEvent& event) override;

@@ -397,6 +397,15 @@ void MainFrame::OnNewProject(wxCommandEvent&)
     if (!SaveWarning())
         return;
 
+    // true means create an empty project
+    wxGetApp().NewProject(true);
+}
+
+void MainFrame::OnImportProject(wxCommandEvent&)
+{
+    if (!SaveWarning())
+        return;
+
     wxGetApp().NewProject();
 }
 

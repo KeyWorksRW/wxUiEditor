@@ -23,7 +23,7 @@ using namespace GenEnum;
 #include "../import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
 #include "../import/import_wxglade.h"    // WxGlade -- Import a wxGlade file
 #include "../import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
-#include "../ui/newproject.h"            // NewProjectDlg -- Dialog to create a new project
+#include "../ui/import_dlg.h"            // ImportDlg -- Dialog to create a new project
 #include "../winres/import_winres.h"     // WinResource -- Parse a Windows resource file
 #include "node_gridbag.h"                // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "oldproject.h"                  // Load older version of wxUiEditor project
@@ -449,12 +449,28 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
     return false;
 }
 
-bool App::NewProject()
+bool App::NewProject(bool create_empty)
 {
     if (m_frame->IsModified() && m_frame && !m_frame->SaveWarning())
         return false;
 
-    NewProjectDlg dlg(m_frame);
+    if (create_empty)
+    {
+        delete m_pjtSettings;
+        m_pjtSettings = new ProjectSettings;
+        ttString file;
+        file.assignCwd();
+        file.append_filename("MyNewProject");
+        m_pjtSettings->SetProjectFile(file);
+        m_pjtSettings->SetProjectPath(file);
+
+        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+
+        wxGetFrame().FireProjectLoadedEvent();
+        return true;
+    }
+
+    ImportDlg dlg(m_frame);
     if (dlg.ShowModal() != wxID_OK)
         return false;
 
@@ -462,7 +478,7 @@ bool App::NewProject()
     m_pjtSettings = new ProjectSettings;
     ttString file;
     file.assignCwd();
-    file.append_filename("MyNewProject");
+    file.append_filename("MyImportedProject");
     m_pjtSettings->SetProjectFile(file);
     m_pjtSettings->SetProjectPath(file);
 

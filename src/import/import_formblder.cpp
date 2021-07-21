@@ -449,7 +449,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {
-        if (auto event_name = xml_event.attribute("name").as_cview(); event_name.size() && xml_event.text().as_cview().size())
+        if (auto event_name = xml_event.attribute("name").as_cview();
+            event_name.size() && xml_event.text().as_cview().size())
         {
             if (auto result = m_mapEventNames.find(event_name.c_str()); result != m_mapEventNames.end())
             {
@@ -712,10 +713,18 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     {
         return;
     }
-
+    else if (prop_name.is_sameas("subclass") && (xml_prop.text().as_cview().is_sameas("; ; forward_declare") ||
+                                                 xml_prop.text().as_cview().is_sameas("; forward_declare")))
+    {
+        return;
+    }
     else
     {
-        MSG_INFO(ttlib::cstr() << prop_name << " property in " << class_name << " class not supported");
+        if (xml_prop.text().as_cview().size())
+        {
+            MSG_INFO(ttlib::cstr() << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name
+                                   << " class not supported");
+        }
     }
 }
 

@@ -120,7 +120,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxButton(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (!node->prop_as_bool(prop_markup))
@@ -316,7 +316,7 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxToggleButton(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (!node->prop_as_bool(prop_markup))
@@ -464,7 +464,7 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxCommandLinkButton(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     code << GenerateQuotedString(node, prop_main_label) << ", " << GenerateQuotedString(node, prop_note);

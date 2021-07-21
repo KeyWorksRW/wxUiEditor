@@ -55,7 +55,7 @@ std::optional<ttlib::cstr> CheckBoxGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxCheckBox(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     auto& label = node->prop_as_string(prop_label);

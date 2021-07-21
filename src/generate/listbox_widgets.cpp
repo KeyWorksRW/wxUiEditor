@@ -56,7 +56,7 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxListBox(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_type) == "wxLB_SINGLE" &&
@@ -187,7 +187,7 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxCheckListBox(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_type) == "wxLB_SINGLE" &&
@@ -318,7 +318,7 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxRearrangeCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     code << ", ";
@@ -431,7 +431,7 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxSimpleHtmlListBox(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_type) == "wxLB_SINGLE" &&

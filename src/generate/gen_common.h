@@ -91,3 +91,7 @@ ttlib::cstr GenFormSettings(Node* node);
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
+
+// Generates " = new class(" -- with class being the derived_class (if specified) or the
+// normal class name.
+ttlib::cstr GenerateNewAssignment(Node* node);

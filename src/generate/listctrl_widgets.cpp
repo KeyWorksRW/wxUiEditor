@@ -65,7 +65,7 @@ std::optional<ttlib::cstr> ListViewGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxListView(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxLC_ICON");
 

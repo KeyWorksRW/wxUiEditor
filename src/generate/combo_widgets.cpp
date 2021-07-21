@@ -71,7 +71,7 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxComboBox(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     // We don't add any strings until after the constructor, so if an initial selection string is specified, we set it
@@ -211,7 +211,7 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxChoice(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     if (node->prop_as_string(prop_window_name).empty() && node->prop_as_string(prop_style).empty() &&
@@ -348,7 +348,7 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxBitmapComboBox(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     // We don't add any strings until after the constructor, so if an initial selection string is specified, we set it

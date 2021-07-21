@@ -48,7 +48,7 @@ std::optional<ttlib::cstr> ActivityIndicatorGenerator::GenConstruction(Node* nod
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxActivityIndicator(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);
@@ -88,7 +88,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxAnimationCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     code << ",\n\t\t";
@@ -152,7 +152,7 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxBannerWindow(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_direction) << ");";
 
     return code;
@@ -438,7 +438,7 @@ std::optional<ttlib::cstr> GaugeGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxGauge(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", " << node->prop_as_string(prop_range);
 
     auto& win_name = node->prop_as_string(prop_window_name);
@@ -524,7 +524,7 @@ std::optional<ttlib::cstr> SliderGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxSlider(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", " << node->prop_as_string(prop_position);
     code << ", " << node->prop_as_string(prop_minValue) << ", " << node->prop_as_string(prop_maxValue);
 
@@ -628,7 +628,7 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxHyperlinkCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
@@ -745,7 +745,7 @@ std::optional<ttlib::cstr> InfoBarGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxInfoBar(this);";
+    code << node->get_node_name() << GenerateNewAssignment(node) << "this);";
 
     return code;
 }

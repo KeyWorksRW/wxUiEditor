@@ -51,7 +51,7 @@ std::optional<ttlib::cstr> RadioButtonGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxRadioButton(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (node->prop_as_string(prop_label).size())
@@ -175,7 +175,7 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
 
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxRadioBox(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     auto& label = node->prop_as_string(prop_label);

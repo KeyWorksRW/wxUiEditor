@@ -37,7 +37,7 @@ std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxDatePickerCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
     GeneratePosSizeFlags(node, code, true, "wxDP_DEFAULT|wxDP_SHOWCENTURY");
 
@@ -73,7 +73,7 @@ std::optional<ttlib::cstr> TimePickerCtrlGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxTimePickerCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
     GeneratePosSizeFlags(node, code, true, "wxTP_DEFAULT");
 
@@ -113,7 +113,7 @@ std::optional<ttlib::cstr> FilePickerGenerator::GenConstruction(Node* node)
     ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxFilePickerCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     {
         auto& path = node->prop_as_string(prop_initial_path);
@@ -190,7 +190,7 @@ std::optional<ttlib::cstr> DirPickerGenerator::GenConstruction(Node* node)
     ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxDirPickerCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     {
         auto& path = node->prop_as_string(prop_initial_path);
@@ -251,7 +251,7 @@ std::optional<ttlib::cstr> ColourPickerGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxColourPickerCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     if (node->prop_as_string(prop_colour).size())
         code << node->prop_as_string(prop_colour);
@@ -295,7 +295,7 @@ std::optional<ttlib::cstr> FontPickerGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxFontPickerCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     if (node->prop_as_string(prop_initial_font).size())
     {

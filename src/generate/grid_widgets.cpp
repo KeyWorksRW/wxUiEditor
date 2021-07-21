@@ -138,7 +138,7 @@ std::optional<ttlib::cstr> GridGenerator::GenConstruction(Node* node)
     ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxGrid(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxWANTS_CHARS");
 
@@ -357,7 +357,7 @@ std::optional<ttlib::cstr> PropertyGridGenerator::GenConstruction(Node* node)
     ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxPropertyGrid(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxPG_DEFAULT_STYLE");
 
@@ -462,7 +462,7 @@ std::optional<ttlib::cstr> PropertyGridManagerGenerator::GenConstruction(Node* n
     ttlib::cstr code("\t");
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxPropertyGridManager(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxPGMAN_DEFAULT_STYLE");
 

@@ -180,7 +180,7 @@ std::optional<ttlib::cstr> SplitterWindowGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxSplitterWindow(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);

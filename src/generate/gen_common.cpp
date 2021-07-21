@@ -917,3 +917,18 @@ ttlib::cstr ConvertToCodeString(const ttlib::cstr& text)
     }
     return result;
 }
+
+ttlib::cstr GenerateNewAssignment(Node* node)
+{
+    ttlib::cstr code(" = new ");
+    if (node->HasValue(prop_derived_class))
+    {
+        code << node->prop_as_string(prop_derived_class);
+    }
+    else
+    {
+        code << node->DeclName();
+    }
+    code << '(';
+    return code;
+}

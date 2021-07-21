@@ -118,8 +118,8 @@
                 help="Sets the background colour of the dialog. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
             <property name="window_name" type="string_escapes"
                 help="Used to associate a name with the window, allowing the application user to set Motif resource values for individual dialog boxes." />
-            <property name="base_class_name" type="string"
-                help="If you have derived a class from wxDialog and you want this class to inherit from your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property. Note that your base class must specify a constructor with no parameters to match a wxDialog() constructor." />
+            <property name="derived_class" type="string"
+                help="If you have derived a class from wxDialog and you want to use your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property. Note that your base class must specify a constructor with no parameters to match a wxDialog() constructor." />
         </category>
 
         <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent"
@@ -179,8 +179,8 @@
                 help="Sets the background colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
             <property name="window_name" type="string_escapes"
                 help="Used to associate a name with the window, allowing the application user to set Motif resource values for individual panel boxes." />
-            <property name="base_class_name" type="string"
-                help="If you have derived a class from wxpanel and you want this class to inherit from your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property." />
+            <property name="derived_class" type="string"
+                help="If you have derived a class from wxPanel and you want to use your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property." />
         </category>
 
         <event name="wxEVT_INIT_DIALOG" class="wxInitDialogEvent"

@@ -137,10 +137,23 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
         // as a forwarded class.
 
+        // First output all the wxWidget header files
         for (auto& iter: hdr_includes)
         {
-            m_header->writeLine((ttlib::cstr&) iter);
+            if (ttlib::contains(iter, "<wx"))
+                m_header->writeLine((ttlib::cstr&) iter);
         }
+
+        m_header->writeLine();
+
+        // Now output all the other header files (this will include forward class declarations)
+        for (auto& iter: hdr_includes)
+        {
+            if (!ttlib::contains(iter, "<wx"))
+                m_header->writeLine((ttlib::cstr&) iter);
+        }
+
+        m_header->writeLine();
 
         if (form_node->HasValue(prop_base_hdr_includes))
         {
@@ -182,9 +195,20 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     // Make certain there is a blank line before the the wxWidget #includes
     m_source->writeLine();
 
+    // First output all the wxWidget header files
     for (auto& iter: src_includes)
     {
-        m_source->writeLine((ttlib::cstr&) iter);
+        if (ttlib::contains(iter, "<wx"))
+            m_source->writeLine((ttlib::cstr&) iter);
+    }
+
+    m_source->writeLine();
+
+    // Now output all the other header files (this will include derived_class header files)
+    for (auto& iter: src_includes)
+    {
+        if (!ttlib::contains(iter, "<wx"))
+            m_source->writeLine((ttlib::cstr&) iter);
     }
 
     m_source->writeLine();
@@ -631,6 +655,18 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
         }
     }
 
+    if (node->HasValue(prop_derived_header))
+    {
+        ttlib::cstr header("#include \"");
+        header << node->prop_as_string(prop_derived_header) << '"';
+        set_src.insert(header);
+    }
+
+    if (node->HasValue(prop_derived_class) && !node->isPropValue(prop_class_access, "none"))
+    {
+        set_hdr.insert(ttlib::cstr() << "class " << node->prop_as_string(prop_derived_class) << ';');
+    }
+
     // A lot of widgets have wxWindow and/or wxAnyButton as derived classes, and those classes contain properties for
     // font, color, and bitmaps. If the property is used, then we add a matching header file.
 
@@ -697,6 +733,13 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     ttlib::cstr code;
 
     ttlib::cstr class_name(node->DeclName());
+
+    if (class_name.is_sameprefix("wx") && node->HasValue(prop_derived_class))
+    {
+        code << node->prop_as_string(prop_derived_class) << "* " << node->get_node_name() << ';';
+        return code;
+    }
+
     if (class_name.is_sameprefix("wx"))
     {
         code << class_name << "* " << node->get_node_name() << ';';

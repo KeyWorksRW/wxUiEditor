@@ -36,7 +36,7 @@ std::optional<ttlib::cstr> CalendarCtrlGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxCalendarCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxDefaultDateTime";
     GeneratePosSizeFlags(node, code, false, "wxCAL_SHOW_HOLIDAYS");
 
@@ -84,7 +84,7 @@ std::optional<ttlib::cstr> FileCtrlGenerator::GenConstruction(Node* node)
     code << "\t";
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxFileCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (node->HasValue(prop_initial_folder))
@@ -158,7 +158,7 @@ std::optional<ttlib::cstr> GenericDirCtrlGenerator::GenConstruction(Node* node)
     code << '\t';
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxGenericDirCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     if (node->HasValue(prop_defaultfolder))
         code << GenerateQuotedString(node->prop_as_string(prop_defaultfolder));
@@ -232,7 +232,7 @@ std::optional<ttlib::cstr> SearchCtrlGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxSearchCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (node->HasValue(prop_value))

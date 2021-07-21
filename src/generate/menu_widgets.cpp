@@ -211,9 +211,9 @@ std::optional<ttlib::cstr> MenuBarFormGenerator::GenAdditionalCode(GenEnum::GenC
 
     else if (cmd == code_base_class)
     {
-        if (node->HasValue(prop_base_class_name))
+        if (node->HasValue(prop_derived_class))
         {
-            code << node->prop_as_string(prop_base_class_name);
+            code << node->prop_as_string(prop_derived_class);
         }
         else
         {

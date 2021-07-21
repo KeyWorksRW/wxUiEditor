@@ -54,7 +54,7 @@ std::optional<ttlib::cstr> SpinCtrlGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxSpinCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxEmptyString, ";
     GenPos(node, code);
     code << ", ";
@@ -128,7 +128,7 @@ std::optional<ttlib::cstr> SpinCtrlDoubleGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxSpinCtrlDouble(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxEmptyString, ";
 
     GenPos(node, code);
@@ -194,7 +194,7 @@ std::optional<ttlib::cstr> SpinButtonGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxSpinButton(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxSP_VERTICAL");
 
@@ -235,7 +235,7 @@ std::optional<ttlib::cstr> ScrollBarGenerator::GenConstruction(Node* node)
     code << '\t';  // lead with tab since we add a second line
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxScrollBar(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code);
 

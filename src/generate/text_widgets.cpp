@@ -74,7 +74,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxStaticText(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
@@ -173,7 +173,7 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxTextCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     if (node->prop_as_string(prop_value).size())
@@ -273,7 +273,7 @@ std::optional<ttlib::cstr> RichTextCtrlGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxRichTextCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     code << "wxEmptyString";
@@ -328,7 +328,7 @@ std::optional<ttlib::cstr> HtmlWindowGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxHtmlWindow(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
@@ -482,7 +482,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxStyledTextCtrl(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);

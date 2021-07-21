@@ -9,7 +9,7 @@
 
 #include "cstm_event.h"
 
-#include "mainapp.h"     // MoveDirection -- Main application class
+#include "mainapp.h"     // App -- Main application class
 #include "mainframe.h"   // MainFrame -- Main window frame
 #include "node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
 #include "undo_cmds.h"   // Undoable command classes derived from UndoAction
@@ -24,6 +24,8 @@ wxDEFINE_EVENT(EVT_NodeDeleted, CustomEvent);
 wxDEFINE_EVENT(EVT_NodeSelected, CustomEvent);
 
 wxDEFINE_EVENT(EVT_NodePropChange, CustomEvent);
+
+wxDEFINE_EVENT(EVT_GridBagAction, CustomEvent);
 
 void MainFrame::FireProjectLoadedEvent()
 {
@@ -102,6 +104,15 @@ void MainFrame::FireParentChangedEvent(ChangeParentAction* undo_cmd)
 void MainFrame::FirePositionChangedEvent(ChangePositionAction* undo_cmd)
 {
     CustomEvent event(EVT_PositionChanged, undo_cmd);
+    for (auto handler: m_custom_event_handlers)
+    {
+        handler->ProcessEvent(event);
+    }
+}
+
+void MainFrame::FireGridBagActionEvent(GridBagAction* undo_cmd)
+{
+    CustomEvent event(EVT_GridBagAction, undo_cmd);
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(event);

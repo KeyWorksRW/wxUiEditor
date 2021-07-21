@@ -25,6 +25,7 @@ class PropGridPanel;
 class MockupPanel;
 class MockupParent;
 class FocusKillerEvtHandler;
+class GridBagAction;
 
 class wxAuiNotebook;
 class wxAuiNotebookEvent;
@@ -37,14 +38,6 @@ class RibbonPanel;
 
 class ChangeParentAction;
 class ChangePositionAction;
-
-enum class MoveDirection
-{
-    Up = 1,
-    Down,
-    Left,
-    Right
-};
 
 // Warning! This MUST be at least 3!
 constexpr const size_t StatusPanels = 3;
@@ -67,6 +60,7 @@ public:
     void FireChangeEventHandler(NodeEvent* event);
     void FireCreatedEvent(Node* node);
     void FireDeletedEvent(Node* node);
+    void FireGridBagActionEvent(GridBagAction* undo_cmd);
     void FireParentChangedEvent(ChangeParentAction* undo_cmd);
     void FirePositionChangedEvent(ChangePositionAction* undo_cmd);
     void FireProjectLoadedEvent();

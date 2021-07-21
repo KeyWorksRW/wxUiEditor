@@ -39,6 +39,7 @@
 #include "gen_enums.h"     // Enumerations for generators
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
+#include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"     // NodeProperty -- NodeProperty class
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
@@ -132,6 +133,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
     Bind(EVT_NodeSelected, &MainFrame::OnNodeSelected, this);
 
     Bind(EVT_EventHandlerChanged, [this](CustomEvent&) { UpdateFrame(); });
+    Bind(EVT_GridBagAction, [this](CustomEvent&) { UpdateFrame(); });
     Bind(EVT_NodeCreated, [this](CustomEvent&) { UpdateFrame(); });
     Bind(EVT_NodeDeleted, [this](CustomEvent&) { UpdateFrame(); });
     Bind(EVT_NodePropChange, [this](CustomEvent&) { UpdateFrame(); });
@@ -413,7 +415,8 @@ void MainFrame::OnAbout(wxCommandEvent&)
     aboutInfo.SetName(txtVersion);
 
     // Use trailing spaces to make the dialog width a bit wider
-    aboutInfo.SetDescription(ttlib::cstr() << "wxWidgets GUI designer for C++ applications  \n\n\tBuilt using " << wxVERSION_STRING << '\n');
+    aboutInfo.SetDescription(ttlib::cstr() << "wxWidgets GUI designer for C++ applications  \n\n\tBuilt using "
+                                           << wxVERSION_STRING << '\n');
     aboutInfo.SetCopyright(txtCopyRight);
     aboutInfo.SetWebSite("https://github.com/KeyWorksRW/wxUiEditor");
 
@@ -1293,9 +1296,13 @@ bool MainFrame::GetLayoutSettings(int* flag, int* option, int* border, int* orie
 bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 {
     auto parent = node->GetParent();
+
     ASSERT(parent || node->isGen(gen_Project));
     if (!parent)
         return false;
+
+    if (parent->isGen(gen_wxGridBagSizer))
+        return GridBag::MoveNode(node, where, check_only);
 
     if (where == MoveDirection::Left)
     {

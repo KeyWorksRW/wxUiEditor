@@ -9,10 +9,12 @@
 
 #include "undo_cmds.h"
 
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
-#include "prop_names.h"    // Property names
+#include "../panels/nav_panel.h"   // NavigationPanel -- Navigation Panel
+#include "../utils/auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
+#include "mainframe.h"             // MainFrame -- Main window frame
+#include "node.h"                  // Node class
+#include "node_creator.h"          // NodeCreator -- Class used to create nodes
+#include "prop_names.h"            // Property names
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -312,63 +314,90 @@ void AppendGridBagAction::Revert()
 
 GridBagAction::GridBagAction(Node* cur_gbsizer, const ttlib::cstr& undo_str) : UndoAction(undo_str.c_str())
 {
+    m_RedoEventGenerated = true;
+    m_RedoSelectEventGenerated = true;
+    m_UndoEventGenerated = true;
+    m_UndoSelectEventGenerated = true;
+
     m_cur_gbsizer = cur_gbsizer->GetSharedPtr();
     m_old_gbsizer = g_NodeCreator.MakeCopy(cur_gbsizer);
-    auto selected = wxGetFrame().GetSelectedNodePtr();
-    if (selected->isGen(gen_wxGridBagSizer))
+
+    auto nav_panel = wxGetFrame().GetNavigationPanel();
+
+    // Thaw() is called when GridBagAction::Update() is called
+    nav_panel->Freeze();
+
+    for (size_t idx = 0; idx < cur_gbsizer->GetChildCount(); idx++)
     {
-        m_idx_old_selected = 0;
-    }
-    else
-    {
-        for (size_t idx = 0; idx < cur_gbsizer->GetChildCount(); ++idx)
-        {
-            if (selected == cur_gbsizer->GetChildPtr(idx))
-            {
-                m_idx_old_selected = idx;
-                break;
-            }
-        }
+        nav_panel->EraseAllMaps(cur_gbsizer->GetChild(idx));
     }
 }
 
 void GridBagAction::Change()
 {
-    // m_old_cur_gbsizer doesn't get set until Update() is called, which should be after the first time that Change() is
-    // called.
-
-    if (m_old_cur_gbsizer)
+    if (m_isReverted)
     {
-        m_cur_gbsizer->RemoveAllChildren();
-        for (size_t idx = 0; idx < m_old_cur_gbsizer->GetChildCount(); ++idx)
+        auto nav_panel = wxGetFrame().GetNavigationPanel();
+        AutoFreeze freeze(nav_panel);
+
+        for (size_t idx = 0; idx < m_cur_gbsizer->GetChildCount(); idx++)
         {
-            m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(m_old_cur_gbsizer->GetChild(idx)));
+            nav_panel->EraseAllMaps(m_cur_gbsizer->GetChild(idx));
         }
-        wxGetFrame().SelectNode(m_cur_gbsizer->GetChild(m_idx_cur_selected));
+
+        auto save = g_NodeCreator.MakeCopy(m_cur_gbsizer);
+        m_cur_gbsizer->RemoveAllChildren();
+        for (size_t idx = 0; idx < m_old_gbsizer->GetChildCount(); ++idx)
+        {
+            m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(m_old_gbsizer->GetChild(idx)));
+        }
+        m_old_gbsizer = std::move(save);
+        m_isReverted = false;
+
+        nav_panel->AddAllChildren(m_cur_gbsizer.get());
+        nav_panel->ExpandAllNodes(m_cur_gbsizer.get());
+
+        wxGetFrame().FireGridBagActionEvent(this);
+        wxGetFrame().SelectNode(m_cur_gbsizer);
     }
 }
 
 void GridBagAction::Revert()
 {
+    auto nav_panel = wxGetFrame().GetNavigationPanel();
+    AutoFreeze freeze(nav_panel);
+
+    for (size_t idx = 0; idx < m_cur_gbsizer->GetChildCount(); idx++)
+    {
+        nav_panel->EraseAllMaps(m_cur_gbsizer->GetChild(idx));
+    }
+
+    auto save = g_NodeCreator.MakeCopy(m_cur_gbsizer);
     m_cur_gbsizer->RemoveAllChildren();
     for (size_t idx = 0; idx < m_old_gbsizer->GetChildCount(); ++idx)
     {
         m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(m_old_gbsizer->GetChild(idx)));
     }
+    m_old_gbsizer = std::move(save);
+    m_isReverted = true;
 
-    wxGetFrame().SelectNode(m_cur_gbsizer->GetChild(m_idx_old_selected));
+    nav_panel->AddAllChildren(m_cur_gbsizer.get());
+    nav_panel->ExpandAllNodes(m_cur_gbsizer.get());
+
+    wxGetFrame().FireGridBagActionEvent(this);
+    wxGetFrame().SelectNode(m_cur_gbsizer);
 }
 
-void GridBagAction::Update(Node* cur_gbsizer, Node* selected)
+void GridBagAction::Update()
 {
-    m_old_cur_gbsizer = g_NodeCreator.MakeCopy(cur_gbsizer);
+    auto nav_panel = wxGetFrame().GetNavigationPanel();
 
-    for (size_t idx = 0; idx < cur_gbsizer->GetChildCount(); ++idx)
+    for (size_t idx = 0; idx < m_cur_gbsizer->GetChildCount(); idx++)
     {
-        if (selected == cur_gbsizer->GetChild(idx))
-        {
-            m_idx_cur_selected = idx;
-            break;
-        }
+        nav_panel->EraseAllMaps(m_cur_gbsizer->GetChild(idx));
     }
+
+    nav_panel->AddAllChildren(m_cur_gbsizer.get());
+    nav_panel->ExpandAllNodes(m_cur_gbsizer.get());
+    nav_panel->Thaw();
 }

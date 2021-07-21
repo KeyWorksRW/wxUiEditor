@@ -130,7 +130,8 @@ private:
     bool m_fix_duplicate_names { true };
 };
 
-// Use this when the entire wxGridBagSizer node needs to be saved.
+// Use this when the entire wxGridBagSizer node needs to be saved. You *MUST* call Update()
+// or the Navigation Panel will be frozen!
 class GridBagAction : public UndoAction
 {
 public:
@@ -139,13 +140,13 @@ public:
     void Revert() override;
 
     // Call this after making all changes to the gbsizer children
-    void Update(Node* cur_gbsizer, Node* selected);
+    void Update();
+    Node* GetOldSizerNode() const { return m_old_gbsizer.get(); }
+    Node* GetCurSizerNode() const { return m_cur_gbsizer.get(); }
 
 private:
     NodeSharedPtr m_cur_gbsizer;
-    NodeSharedPtr m_old_cur_gbsizer;  // Set when Update() is called
     NodeSharedPtr m_old_gbsizer;
 
-    size_t m_idx_old_selected { 0 };
-    size_t m_idx_cur_selected { 0 };
+    bool m_isReverted { false };
 };

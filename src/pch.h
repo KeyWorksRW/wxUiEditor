@@ -91,7 +91,15 @@
 // signed integer type with width determined by platform
 typedef ptrdiff_t int_t;
 
-#endif
+#endif  // not !defined(int_t)
+
+enum class MoveDirection
+{
+    Up = 1,
+    Down,
+    Left,
+    Right
+};
 
 constexpr const char* txtVersion = "wxUiEditor 1.0.0";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2021 KeyWorks Software";

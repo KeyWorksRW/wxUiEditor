@@ -10,7 +10,7 @@
 #include "newdialog.h"  // auto-generated: newdialog_base.h and newdialog_base.cpp
 
 #include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
-#include "mainframe.h"            // MoveDirection -- Main window frame
+#include "mainframe.h"            // MainFrame -- Main window frame
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction

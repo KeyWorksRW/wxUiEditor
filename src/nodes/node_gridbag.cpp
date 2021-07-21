@@ -226,48 +226,7 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
             return (node->prop_as_int(prop_column) > 0);
         }
 
-        ttlib::cstr undo_str;
-        undo_str << "Change column of " << map_GenNames[node->gen_name()];
-
-        // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
-        auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
-        wxGetFrame().PushUndoAction(undo_cmd);
-
-        GridBagSort(gbsizer);
-
-        auto cur_position = gbsizer->GetChildPosition(node);
-        auto cur_row = node->prop_as_int(prop_row);
-        auto cur_column = node->prop_as_int(prop_column);
-
-        auto previous_node = gbsizer->GetChild(cur_position - 1);
-        bool isColumnChangeOnly { false };
-        if (previous_node->prop_as_int(prop_row) != cur_row)
-        {
-            isColumnChangeOnly = true;
-        }
-        else
-        {
-            auto previous_column = previous_node->prop_as_int(prop_column) + (previous_node->prop_as_int(prop_colspan) - 1);
-            if (cur_column - 1 > previous_column)
-                isColumnChangeOnly = true;
-        }
-
-        if (isColumnChangeOnly)
-        {
-            node->prop_set_value(prop_column, cur_column - 1);
-        }
-        else
-        {
-            node->prop_set_value(prop_column, previous_node->prop_as_int(prop_column));
-            previous_node->prop_set_value(prop_column, cur_column);
-
-            SwapNodes(gbsizer, cur_position - 1, cur_position);
-        }
-
-        // This needs to be called once the gbsizer has been modified
-        undo_cmd->Update();
-        wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
-        wxGetFrame().SelectNode(node, true, true);
+        MoveLeft(node);
     }
     else if (where == MoveDirection::Right)
     {
@@ -275,47 +234,261 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
         if (check_only)
             return true;
 
-        ttlib::cstr undo_str;
-        undo_str << "Change column of " << map_GenNames[node->gen_name()];
-        // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
-        auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
-        wxGetFrame().PushUndoAction(undo_cmd);
-
-        GridBagSort(gbsizer);
-
-        auto cur_position = gbsizer->GetChildPosition(node);
-        auto cur_row = node->prop_as_int(prop_row);
-        auto cur_column = node->prop_as_int(prop_column);
-
-        auto next_node = (cur_position + 1 < gbsizer->GetChildCount()) ? gbsizer->GetChild(cur_position + 1) : nullptr;
-
-        bool isColumnChangeOnly { false };
-        if (!next_node || next_node->prop_as_int(prop_row) != cur_row)
+        MoveRight(node);
+    }
+    else if (where == MoveDirection::Up)
+    {
+        if (check_only || node->prop_as_int(prop_row) == 0)
         {
-            isColumnChangeOnly = true;
-        }
-        else if (cur_column + node->prop_as_int(prop_colspan) < next_node->prop_as_int(prop_column))
-        {
-            isColumnChangeOnly = true;
+            return (node->prop_as_int(prop_row) > 0);
         }
 
-        if (isColumnChangeOnly)
-        {
-            node->prop_set_value(prop_column, cur_column + 1);
-        }
-        else
-        {
-            // prop_colspan is always at least 1
-            node->prop_set_value(prop_column, cur_column + next_node->prop_as_int(prop_colspan));
-            next_node->prop_set_value(prop_column, cur_column);
+        MoveUp(node);
+    }
+    else if (where == MoveDirection::Down)
+    {
+        // Unless we decide to enforce a limit, the user can always increase the row
+        if (check_only)
+            return true;
 
-            SwapNodes(gbsizer, cur_position + 1, cur_position);
-        }
-
-        undo_cmd->Update();
-        wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
-        wxGetFrame().SelectNode(node, true, true);
+        MoveDown(node);
     }
 
     return false;
+}
+
+void GridBag::MoveLeft(Node* node)
+{
+    auto gbsizer = node->GetParent();
+    ttlib::cstr undo_str;
+    undo_str << "Change column of " << map_GenNames[node->gen_name()];
+
+    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+    auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
+    wxGetFrame().PushUndoAction(undo_cmd);
+
+    GridBagSort(gbsizer);
+
+    auto cur_position = gbsizer->GetChildPosition(node);
+    auto cur_row = node->prop_as_int(prop_row);
+    auto cur_column = node->prop_as_int(prop_column);
+
+    auto previous_node = gbsizer->GetChild(cur_position - 1);
+    bool isColumnChangeOnly { false };
+    if (previous_node->prop_as_int(prop_row) != cur_row)
+    {
+        isColumnChangeOnly = true;
+    }
+    else
+    {
+        auto previous_column = previous_node->prop_as_int(prop_column) + (previous_node->prop_as_int(prop_colspan) - 1);
+        if (cur_column - 1 > previous_column)
+            isColumnChangeOnly = true;
+    }
+
+    if (isColumnChangeOnly)
+    {
+        node->prop_set_value(prop_column, cur_column - 1);
+    }
+    else
+    {
+        node->prop_set_value(prop_column, previous_node->prop_as_int(prop_column));
+        previous_node->prop_set_value(prop_column, cur_column);
+
+        SwapNodes(gbsizer, cur_position - 1, cur_position);
+    }
+
+    // This needs to be called once the gbsizer has been modified
+    undo_cmd->Update();
+    wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
+    wxGetFrame().SelectNode(node, true, true);
+}
+
+void GridBag::MoveRight(Node* node)
+{
+    auto gbsizer = node->GetParent();
+
+    ttlib::cstr undo_str;
+    undo_str << "Change column of " << map_GenNames[node->gen_name()];
+    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+    auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
+    wxGetFrame().PushUndoAction(undo_cmd);
+
+    GridBagSort(gbsizer);
+
+    auto cur_position = gbsizer->GetChildPosition(node);
+    auto cur_row = node->prop_as_int(prop_row);
+    auto cur_column = node->prop_as_int(prop_column);
+
+    auto next_node = (cur_position + 1 < gbsizer->GetChildCount()) ? gbsizer->GetChild(cur_position + 1) : nullptr;
+
+    bool isColumnChangeOnly { false };
+    if (!next_node || next_node->prop_as_int(prop_row) != cur_row)
+    {
+        isColumnChangeOnly = true;
+    }
+    else if (cur_column + node->prop_as_int(prop_colspan) < next_node->prop_as_int(prop_column))
+    {
+        isColumnChangeOnly = true;
+    }
+
+    if (isColumnChangeOnly)
+    {
+        node->prop_set_value(prop_column, cur_column + 1);
+    }
+    else
+    {
+        // prop_colspan is always at least 1
+        node->prop_set_value(prop_column, cur_column + next_node->prop_as_int(prop_colspan));
+        next_node->prop_set_value(prop_column, cur_column);
+
+        SwapNodes(gbsizer, cur_position + 1, cur_position);
+    }
+
+    undo_cmd->Update();
+    wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
+    wxGetFrame().SelectNode(node, true, true);
+}
+
+void GridBag::MoveUp(Node* node)
+{
+    auto gbsizer = node->GetParent();
+
+    ttlib::cstr undo_str;
+    undo_str << "Change row";
+
+    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+    auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
+    wxGetFrame().PushUndoAction(undo_cmd);
+
+    GridBagSort(gbsizer);
+
+    auto cur_row = node->prop_as_int(prop_row);
+    auto begin_position = gbsizer->GetChildPosition(node);
+    while (begin_position > 0)
+    {
+        if (gbsizer->GetChild(begin_position - 1)->prop_as_int(prop_row) == cur_row)
+            --begin_position;
+        else
+            break;
+    }
+
+    auto end_position = begin_position + 1;
+    while (end_position < gbsizer->GetChildCount())
+    {
+        if (gbsizer->GetChild(end_position)->prop_as_int(prop_row) == cur_row)
+            ++end_position;
+        else
+            break;
+    }
+
+    if (begin_position == 0)
+    {
+        auto new_row = cur_row - 1;
+        while (begin_position < end_position)
+        {
+            gbsizer->GetChild(begin_position)->prop_set_value(prop_row, new_row);
+            ++begin_position;
+        }
+        undo_cmd->Update();
+        wxGetFrame().SelectNode(node, true, true);
+        return;
+    }
+
+    auto end_swap = begin_position - 1;
+    auto new_row = gbsizer->GetChild(end_swap)->prop_as_int(prop_row);
+    while (begin_position < end_position)
+    {
+        gbsizer->GetChild(begin_position)->prop_set_value(prop_row, new_row);
+        ++begin_position;
+    }
+
+    for (;;)
+    {
+        gbsizer->GetChild(end_swap)->prop_set_value(prop_row, cur_row);
+        --end_swap;
+        if (gbsizer->GetChild(end_swap)->prop_as_int(prop_row) != new_row)
+            break;
+        else if (end_swap == 0)
+        {
+            gbsizer->GetChild(end_swap)->prop_set_value(prop_row, cur_row);
+            break;
+        }
+    }
+
+    // We've changed the row number for at least two items, and possible several more, so resort
+    GridBagSort(gbsizer);
+
+    undo_cmd->Update();
+    wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
+    wxGetFrame().SelectNode(node, true, true);
+}
+
+void GridBag::MoveDown(Node* node)
+{
+    auto gbsizer = node->GetParent();
+
+    ttlib::cstr undo_str;
+    undo_str << "Change row";
+
+    // Unlike a normal undo command, this one will make a copy of the current gbsizer rather than the current node.
+    auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
+    wxGetFrame().PushUndoAction(undo_cmd);
+
+    GridBagSort(gbsizer);
+
+    auto cur_row = node->prop_as_int(prop_row);
+    auto begin_position = gbsizer->GetChildPosition(node);
+    while (begin_position > 0)
+    {
+        if (gbsizer->GetChild(begin_position - 1)->prop_as_int(prop_row) == cur_row)
+            --begin_position;
+        else
+            break;
+    }
+
+    auto end_position = begin_position + 1;
+    while (end_position < gbsizer->GetChildCount())
+    {
+        if (gbsizer->GetChild(end_position)->prop_as_int(prop_row) == cur_row)
+            ++end_position;
+        else
+            break;
+    }
+
+    if (end_position == gbsizer->GetChildCount())
+    {
+        auto new_row = cur_row + 1;
+        while (begin_position < end_position)
+        {
+            gbsizer->GetChild(begin_position)->prop_set_value(prop_row, new_row);
+            ++begin_position;
+        }
+        undo_cmd->Update();
+        wxGetFrame().SelectNode(node, true, true);
+        return;
+    }
+
+    auto end_swap = end_position;
+    auto new_row = gbsizer->GetChild(end_swap)->prop_as_int(prop_row);
+    while (begin_position < end_position)
+    {
+        gbsizer->GetChild(begin_position)->prop_set_value(prop_row, new_row);
+        ++begin_position;
+    }
+
+    for (;;)
+    {
+        gbsizer->GetChild(end_swap)->prop_set_value(prop_row, cur_row);
+        ++end_swap;
+        if (end_swap == gbsizer->GetChildCount() || gbsizer->GetChild(end_swap)->prop_as_int(prop_row) != new_row)
+            break;
+    }
+
+    // We've changed the row number for at least two items, and possible several more, so resort
+    GridBagSort(gbsizer);
+
+    undo_cmd->Update();
+    wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
+    wxGetFrame().SelectNode(node, true, true);
 }

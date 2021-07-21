@@ -27,6 +27,11 @@ protected:
     size_t IncrementRows(int row, Node* gbsizer);
     void Initialize();
 
+    static void MoveLeft(Node* node);
+    static void MoveRight(Node* node);
+    static void MoveUp(Node* node);
+    static void MoveDown(Node* node);
+
 private:
     Node* m_gridbag;
 

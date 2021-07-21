@@ -352,7 +352,7 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
         // Accelerators make the text hard to read, so remove them
         display_name.Replace("&", "", true);
 
-        if (display_name.size() > MaxLabelLength)
+        if (!node->IsForm() && display_name.size() > MaxLabelLength)
         {
             display_name.erase(MaxLabelLength);
             display_name << "...";

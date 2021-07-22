@@ -858,186 +858,57 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     code << node->GetParent()->get_node_name();
 
-    if (node->prop_as_int(prop_proportion) != 0)
+    if (node->GetParent()->isGen(gen_wxGridBagSizer))
     {
-        code << "->AddStretchSpacer(" << node->prop_as_string(prop_proportion) << ");";
+        auto flags = node->GetSizerFlags();
+
+        code << "->Add(" << node->prop_as_int(prop_width) << ", " << node->prop_as_int(prop_height);
+        code << ", wxGBPosition(" << node->prop_as_int(prop_row) << ", " << node->prop_as_int(prop_column);
+        code << "), wxGBSpan(" << node->prop_as_int(prop_rowspan) << ", " << node->prop_as_int(prop_colspan);
+        code << "), " << flags.GetFlags() << ", " << node->prop_as_int(prop_border_size);
+        if (node->prop_as_bool(prop_add_default_border))
+            code << " + wxSizerFlags::GetDefaultBorder()";
+        code << ");";
     }
     else
     {
-        if (node->prop_as_int(prop_width) == node->prop_as_int(prop_height))
+        if (node->prop_as_int(prop_proportion) != 0)
         {
-            code << "->AddSpacer(" << node->prop_as_string(prop_width);
+            code << "->AddStretchSpacer(" << node->prop_as_string(prop_proportion) << ");";
         }
-        else if (node->GetParent()->HasValue(prop_orientation))
-        {
-            code << "->AddSpacer(";
-            if (node->GetParent()->prop_as_string(prop_orientation) == "wxVERTICAL")
-            {
-                code << node->prop_as_string(prop_height);
-            }
-            else
-            {
-                code << node->prop_as_string(prop_width);
-            }
-        }
-
         else
         {
-            code << "->Add(" << node->prop_as_string(prop_width);
+            if (node->prop_as_int(prop_width) == node->prop_as_int(prop_height))
+            {
+                code << "->AddSpacer(" << node->prop_as_string(prop_width);
+            }
+            else if (node->GetParent()->HasValue(prop_orientation))
+            {
+                code << "->AddSpacer(";
+                if (node->GetParent()->prop_as_string(prop_orientation) == "wxVERTICAL")
+                {
+                    code << node->prop_as_string(prop_height);
+                }
+                else
+                {
+                    code << node->prop_as_string(prop_width);
+                }
+            }
+
+            else
+            {
+                code << "->Add(" << node->prop_as_string(prop_width);
+                if (node->prop_as_bool(prop_add_default_border))
+                    code << " + wxSizerFlags::GetDefaultBorder()";
+                code << ", " << node->prop_as_string(prop_height);
+            }
+
             if (node->prop_as_bool(prop_add_default_border))
                 code << " + wxSizerFlags::GetDefaultBorder()";
-            code << ", " << node->prop_as_string(prop_height);
+
+            code << ");";
         }
-
-        if (node->prop_as_bool(prop_add_default_border))
-            code << " + wxSizerFlags::GetDefaultBorder()";
-
-        code << ");";
     }
-
-    // BUGBUG: [KeyWorks - 03-16-2021] Spacers get handled differently in a wxGridBagSizer. Since wxGridBagSizer needs a
-    // massiver overhaul (see #65), this entire section has been commented out until we can incorporate it into the
-    // wxGridBagSizer overhaul.
-#if 0
-    if (node->GetParent()->isGen(gen_wxGridBagSizer))
-    {
-        code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column) << "), ";
-
-        // Only write the span if it's not a default value.
-        auto row_span = node->prop_as_int(prop_rowspan);
-        auto col_span = node->prop_as_int(prop_colspan);
-        if (row_span <= 1 && col_span <= 1)
-            code << "wxGBSpan(), ";
-        else
-            code << "wxGBSpan(" << row_span << ", " << col_span << "), ";
-
-        auto alignment = node->prop_as_string(prop_alignment);
-        auto flags = node->prop_as_string(prop_flags);
-        auto borders = node->prop_as_string(prop_borders);
-
-        if (alignment.empty() && flags.empty())
-        {
-            if (borders.empty())
-                borders = "0";
-            code << borders << ", ";
-        }
-        else
-        {
-            // As of wxWidgets 3.1.4, wxGridBaseSizer doesn't support passing in a wxSizerFlags parameter. Since
-            // wxSizerFlags avoids compiler warnings with C++20 compilers (combining different enumeration flags)
-            // and is arguably more readable, we use it anyway and just call GetFlags().
-
-            code << "wxSizerFlags()";
-            if (alignment.contains("wxALIGN_CENTER"))
-            {
-                // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher.
-                code << ".Center()";
-            }
-            else
-            {
-                if (alignment.contains("wxALIGN_LEFT"))
-                {
-                    code << ".Left()";
-                }
-                else if (alignment.contains("wxALIGN_RIGHT"))
-                {
-                    code << ".Right()";
-                }
-
-                if (alignment.contains("wxALIGN_TOP"))
-                {
-                    code << ".Top()";
-                }
-                else if (alignment.contains("wxALIGN_BOTTOM"))
-                {
-                    code << ".Bottom()";
-                }
-            }
-
-            // REVIEW: [KeyWorks - 10-26-2020] Do all of these flags actually work in a wxGridBagSizer?
-
-            if (flags.contains("wxEXPAND"))
-            {
-                code << ".Expand()";
-            }
-            if (flags.contains("wxSHAPED"))
-            {
-                code << ".Shaped()";
-            }
-            if (flags.contains("wxFIXED_MINSIZE"))
-            {
-                code << ".FixedMinSize()";
-            }
-            if (flags.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
-            {
-                code << ".ReserveSpaceEvenIfHidden()";
-            }
-
-            if (borders.contains("wxALL"))
-            {
-                code << ".Border(wxALL";
-            }
-            else
-            {
-                code << ".Border(";
-                ttlib::cstr border_flags;
-
-                if (borders.contains("wxLEFT"))
-                {
-                    if (border_flags.size())
-                        border_flags << '|';
-                    border_flags << "wxLEFT";
-                }
-                if (borders.contains("wxRIGHT"))
-                {
-                    if (border_flags.size())
-                        border_flags << '|';
-                    border_flags << "wxRIGHT";
-                }
-                if (borders.contains("wxTOP"))
-                {
-                    if (border_flags.size())
-                        border_flags << '|';
-                    border_flags << "wxTOP";
-                }
-                if (borders.contains("wxBOTTOM"))
-                {
-                    if (border_flags.size())
-                        border_flags << '|';
-                    border_flags << "wxBOTTOM";
-                }
-
-                if (border_flags.empty())
-                    border_flags = "0";
-
-                code << border_flags;
-            }
-
-            code << ").GetFlags(), ";
-        }
-
-        auto border_size = node->prop_as_string(prop_border_size);
-
-        // Using GetDefaultBorder() means it will change correctly on high DPI displays.
-        if (border_size == "5")
-        {
-            code << "wxSizerFlags::GetDefaultBorder()";
-        }
-        else if (border_size == "10")
-        {
-            code << "wxSizerFlags::GetDefaultBorder() * 2";
-        }
-        else if (border_size == "15")
-        {
-            code << "wxSizerFlags::GetDefaultBorder() * 5";
-        }
-        else
-        {
-            code << border_size;
-        }
-        code << ");";
-    }
-#endif
 
     return code;
 }

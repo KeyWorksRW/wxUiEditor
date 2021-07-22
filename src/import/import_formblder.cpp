@@ -32,8 +32,9 @@ constexpr const IMPORT_NAME_PAIR prop_pair[] = {
     { "bg", "background_colour" },
     { "fg", "background_colour" },
     { "bitmapsize", "image_size" },
-    { "permission", "class_access" },
     { "hover", "current" },
+    { "settings", "settings_code" },
+    { "class", "class_name" },
 
     { nullptr, nullptr },
 };
@@ -304,12 +305,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (class_name.is_sameas("CustomControl"))
-    {
-        m_errors.emplace(ttlib::cstr() << "Unable to create " << class_name);
-        return {};
-    }
-
     auto newobject = g_NodeCreator.CreateNode(class_name, parent);
     if (!newobject)
     {
@@ -317,8 +312,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         return {};
     }
 
-    auto xml_prop = xml_obj.child("property");
-    while (xml_prop)
+    for (auto xml_prop = xml_obj.child("property"); xml_prop; xml_prop = xml_prop.next_sibling("property"))
     {
         if (auto prop_name = xml_prop.attribute("name").as_cview(); prop_name.size())
         {
@@ -375,7 +369,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                         prop->set_value(value);
                     }
                 }
-                xml_prop = xml_prop.next_sibling("property");
                 continue;
             }
 
@@ -394,13 +387,11 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                                 prop->set_value(true);
                             }
                         }
-                        xml_prop = xml_prop.next_sibling("property");
                         continue;
                     }
                 }
             }
-
-            if (prop_name.is_sameas("name"))
+            else if (prop_name.is_sameas("name"))
             {
                 if (newobject->IsForm())
                 {
@@ -412,7 +403,36 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 }
 
                 prop->set_value(xml_prop.text().as_cview());
-                xml_prop = xml_prop.next_sibling("property");
+                continue;
+            }
+            else if (prop_name.is_sameas("declaration"))
+            {
+                // This property is for a custom control, and we don't use this specific property
+                continue;
+            }
+            else if (prop_name.is_sameas("construction"))
+            {
+                ttlib::cstr copy = xml_prop.text().as_string();
+                if (auto pos = copy.find('('); ttlib::is_found(pos))
+                {
+                    copy.erase(0, pos);
+                }
+                if (auto pos = copy.find(';'); ttlib::is_found(pos))
+                {
+                    copy.erase_from(';');
+                }
+
+                newobject->prop_set_value(prop_parameters, copy);
+                continue;
+            }
+            else if (prop_name.is_sameas("include"))
+            {
+                ttlib::cstr header;
+                header.ExtractSubString(xml_prop.text().as_cview().view_stepover());
+                if (header.size())
+                {
+                    newobject->prop_set_value(prop_header, header);
+                }
                 continue;
             }
 
@@ -431,7 +451,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                         // spacers. Since these aren't an actual widget, wxUE does not have that property
                         prop->set_value(xml_prop.text().as_cview());
                     }
-                    xml_prop = xml_prop.next_sibling("property");
                     continue;
                 }
             }
@@ -443,7 +462,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 ProcessPropValue(xml_prop, prop_name, class_name, newobject.get());
             }
         }
-        xml_prop = xml_prop.next_sibling("property");
     }
 
     auto xml_event = xml_obj.child("event");
@@ -588,6 +606,16 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
             return;  // we don't use this (and neither does wxFormBuilder for that matter)
         else if (class_name.is_sameas("wxDialog"))
             newobject->prop_set_value(prop_class_name, xml_prop.text().as_cview());
+    }
+    else if (prop_name.is_sameas("permission"))
+    {
+        auto value = xml_prop.text().as_cview();
+        if (value.is_sameas("protected") || value.is_sameas("private"))
+            newobject->prop_set_value(prop_class_access, "protected:");
+        else if (value.is_sameas("public"))
+            newobject->prop_set_value(prop_class_access, "public:");
+        else
+            newobject->prop_set_value(prop_class_access, "none");
     }
 
     else if (prop_name.is_sameas("border"))

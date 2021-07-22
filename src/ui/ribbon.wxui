@@ -746,6 +746,11 @@
                   bitmap="Header; ..\art_headers\wxBannerWindow_png.hxx; ; [-1; -1]"
                   help="wxBannerWindow"
                   id="gen_wxBannerWindow" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Header; ..\art_headers\CustomControl_png.hxx; ; [-1; -1]"
+                  help="CustomControl"
+                  id="gen_CustomControl" />
               </node>
             </node>
             <node

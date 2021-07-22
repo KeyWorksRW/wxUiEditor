@@ -167,5 +167,7 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_wxWrapSizer, WrapSizerGenerator)
     SET_GENERATOR(gen_TextSizer, TextSizerGenerator)
 
+    SET_GENERATOR(gen_CustomControl, CustomControl)
+
     AddAllConstants();
 }

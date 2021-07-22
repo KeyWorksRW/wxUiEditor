@@ -783,3 +783,53 @@ bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
     InsertGeneratorInclude(node, "#include <wx/infobar.h>", set_src, set_hdr);
     return true;
 }
+
+//////////////////////////////////////////  CustomControl  //////////////////////////////////////////
+
+wxObject* CustomControl::CreateMockup(Node* /* node */, wxObject* parent)
+{
+    auto widget = new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, GetInternalImage("CustomControl"));
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> CustomControl::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = new " << node->prop_as_string(prop_class_name)
+         << node->prop_as_string(prop_parameters) << ';';
+
+    return code;
+}
+
+std::optional<ttlib::cstr> CustomControl::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+    if (node->HasValue(prop_settings_code))
+    {
+        code << node->prop_as_string(prop_settings_code);
+        return code;
+    }
+    else
+    {
+        return {};
+    }
+}
+
+bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    if (node->HasValue(prop_header))
+    {
+        set_src.insert(ttlib::cstr() << "#include \"" << node->prop_as_string(prop_header) << '"');
+    }
+
+    if (node->prop_as_string(prop_class_access) != "none" && node->HasValue(prop_class_name))
+    {
+        set_hdr.insert(ttlib::cstr() << "class " << node->prop_as_string(prop_class_name));
+    }
+    return true;
+}

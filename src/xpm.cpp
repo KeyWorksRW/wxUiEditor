@@ -54,6 +54,7 @@
 #include "art_headers/calendar_png.hxx"
 #include "art_headers/check3state_png.hxx"
 #include "art_headers/colourPickerIcon_png.hxx"
+#include "art_headers/CustomControl_png.hxx"
 #include "art_headers/dataview_ctrl_png.hxx"
 #include "art_headers/dataviewlist_column_png.hxx"
 #include "art_headers/dataviewlist_ctrl_png.hxx"
@@ -205,6 +206,7 @@ static const ImageMap png_headers[] = {
     { "calendar", calendar_png, sizeof(calendar_png) },
     { "check3state", check3state_png, sizeof(check3state_png) },
     { "colourPickerIcon", colourPickerIcon_png, sizeof(colourPickerIcon_png) },
+    { "CustomControl", CustomControl_png, sizeof(CustomControl_png) },
     { "dataview_ctrl", dataview_ctrl_png, sizeof(dataview_ctrl_png) },
     { "dataviewlist_column", dataviewlist_column_png, sizeof(dataviewlist_column_png) },
     { "dataviewlist_ctrl", dataviewlist_ctrl_png, sizeof(dataviewlist_ctrl_png) },

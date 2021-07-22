@@ -15,6 +15,7 @@ using namespace GenEnum;
 
 #include "ribbonpanel_base.h"
 
+#include "../art_headers/CustomControl_png.hxx"
 #include "../art_headers/book_page_png.hxx"
 #include "../art_headers/calendar_png.hxx"
 #include "../art_headers/colourPickerIcon_png.hxx"
@@ -391,6 +392,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
         other_bar_ctrls->AddTool(gen_wxActivityIndicator, GetImgFromHdr(wxActivityIndicator_png, sizeof(wxActivityIndicator_png)), wxString::FromUTF8("wxActivityIndicator"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxAnimationCtrl, GetImgFromHdr(wxAnimation_png, sizeof(wxAnimation_png)), wxString::FromUTF8("wxAnimationCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxBannerWindow, GetImgFromHdr(wxBannerWindow_png, sizeof(wxBannerWindow_png)), wxString::FromUTF8("wxBannerWindow"), wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_CustomControl, GetImgFromHdr(CustomControl_png, sizeof(CustomControl_png)), wxString::FromUTF8("CustomControl"), wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_ctrls->Realize();
 

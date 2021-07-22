@@ -734,15 +734,13 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 
     ttlib::cstr class_name(node->DeclName());
 
-    if (class_name.is_sameprefix("wx") && node->HasValue(prop_derived_class))
-    {
-        code << node->prop_as_string(prop_derived_class) << "* " << node->get_node_name() << ';';
-        return code;
-    }
-
     if (class_name.is_sameprefix("wx"))
     {
-        code << class_name << "* " << node->get_node_name() << ';';
+        if (node->HasValue(prop_derived_class))
+            code << node->prop_as_string(prop_derived_class) << "* " << node->get_node_name() << ';';
+        else
+            code << class_name << "* " << node->get_node_name() << ';';
+
         if (class_name == "wxStdDialogButtonSizer")
         {
             if (node->prop_as_bool(prop_OK))
@@ -831,6 +829,10 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         {
             FAIL_MSG("Unrecognized class name so no idea how to declare it in the header file.");
         }
+    }
+    else if (class_name.is_sameas("CustomControl"))
+    {
+        code << node->prop_as_string(prop_class_name) << "* " << node->get_node_name() << ';';
     }
 
     return code;

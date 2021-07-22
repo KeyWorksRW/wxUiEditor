@@ -34,6 +34,8 @@ constexpr const IMPORT_NAME_PAIR prop_pair[] = {
     { "bitmapsize", "image_size" },
     { "permission", "class_access" },
     { "hover", "current" },
+    { "settings", "settings_code" },
+    { "class", "class_name" },
 
     { nullptr, nullptr },
 };
@@ -304,12 +306,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (class_name.is_sameas("CustomControl"))
-    {
-        m_errors.emplace(ttlib::cstr() << "Unable to create " << class_name);
-        return {};
-    }
-
     auto newobject = g_NodeCreator.CreateNode(class_name, parent);
     if (!newobject)
     {
@@ -399,8 +395,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     }
                 }
             }
-
-            if (prop_name.is_sameas("name"))
+            else if (prop_name.is_sameas("name"))
             {
                 if (newobject->IsForm())
                 {
@@ -412,6 +407,39 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 }
 
                 prop->set_value(xml_prop.text().as_cview());
+                xml_prop = xml_prop.next_sibling("property");
+                continue;
+            }
+            else if (prop_name.is_sameas("declaration"))
+            {
+                // This property is for a custom control, and we don't use this specific property
+                xml_prop = xml_prop.next_sibling("property");
+                continue;
+            }
+            else if (prop_name.is_sameas("construction"))
+            {
+                ttlib::cstr copy = xml_prop.text().as_string();
+                if (auto pos = copy.find('('); ttlib::is_found(pos))
+                {
+                    copy.erase(0, pos);
+                }
+                if (auto pos = copy.find(';'); ttlib::is_found(pos))
+                {
+                    copy.erase_from(';');
+                }
+
+                newobject->prop_set_value(prop_parameters, copy);
+                xml_prop = xml_prop.next_sibling("property");
+                continue;
+            }
+            else if (prop_name.is_sameas("include"))
+            {
+                ttlib::cstr header;
+                header.ExtractSubString(xml_prop.text().as_cview().view_stepover());
+                if (header.size())
+                {
+                    newobject->prop_set_value(prop_header, header);
+                }
                 xml_prop = xml_prop.next_sibling("property");
                 continue;
             }

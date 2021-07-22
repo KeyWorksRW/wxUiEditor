@@ -1070,8 +1070,6 @@ void MainFrame::PasteNode(Node* parent)
         parent = m_selected_node.get();
     }
 
-    ttlib::cstr undo_str("paste ");
-    undo_str << m_clipboard->DeclName();
     auto new_node = g_NodeCreator.MakeCopy(m_clipboard);
 
     if (!parent->IsChildAllowed(new_node))
@@ -1085,6 +1083,16 @@ void MainFrame::PasteNode(Node* parent)
         }
         parent = grandparent;
     }
+
+    if (parent->isGen(gen_wxGridBagSizer))
+    {
+        GridBag grid_bag(parent);
+        grid_bag.InsertNode(parent, new_node.get());
+        return;
+    }
+
+    ttlib::cstr undo_str("paste ");
+    undo_str << m_clipboard->DeclName();
 
     auto pos = parent->FindInsertionPos(m_selected_node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));

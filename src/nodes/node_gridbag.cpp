@@ -105,6 +105,11 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
     auto undo_cmd = std::make_shared<GridBagAction>(gbsizer, undo_str);
     wxGetFrame().PushUndoAction(undo_cmd);
 
+    // Inserting means we have to change multiple columns or multiple rows, and to do that we need the children correctly
+    // sorted.
+
+    GridBagSort(gbsizer);
+
     size_t insert_pos = 0;
     if (dlg.GetAction() == GridBagItem::action_insert_row)
     {
@@ -126,43 +131,45 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 
 size_t GridBag::IncrementRows(int row, Node* gbsizer)
 {
-    size_t result = tt::npos;
+    size_t insert_position = tt::npos;
     for (size_t idx = 0; idx < gbsizer->GetChildCount(); ++idx)
     {
         if (gbsizer->GetChild(idx)->prop_as_int(prop_row) == row)
         {
-            if (result == tt::npos)
-                result = idx;
-            gbsizer->GetChild(idx)->prop_set_value(prop_row, row + 1);
+            insert_position = idx;
+            while (idx < gbsizer->GetChildCount())
+            {
+                gbsizer->GetChild(idx)->prop_set_value(prop_row, gbsizer->GetChild(idx)->prop_as_int(prop_row) + 1);
+                ++idx;
+            }
+            break;
         }
     }
 
-    ++row;
-    if (row <= m_max_row)
-        IncrementRows(row, gbsizer);
-
-    return result;
+    return insert_position;
 }
 
 size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
 {
-    size_t result = tt::npos;
+    size_t insert_position = tt::npos;
     for (size_t idx = 0; idx < gbsizer->GetChildCount(); ++idx)
     {
         if (gbsizer->GetChild(idx)->prop_as_int(prop_row) == row &&
             gbsizer->GetChild(idx)->prop_as_int(prop_column) == column)
         {
-            if (result == tt::npos)
-                result = idx;
-            gbsizer->GetChild(idx)->prop_set_value(prop_column, column + 1);
+            insert_position = idx;
+            while (idx < gbsizer->GetChildCount())
+            {
+                if (gbsizer->GetChild(idx)->prop_as_int(prop_row) != row)
+                    break;
+                gbsizer->GetChild(idx)->prop_set_value(prop_column, gbsizer->GetChild(idx)->prop_as_int(prop_column) + 1);
+                ++idx;
+            }
+            break;
         }
     }
 
-    ++column;
-    if (row <= m_max_column)
-        IncrementColumns(row, column, gbsizer);
-
-    return result;
+    return insert_position;
 }
 
 static bool CompareRowNodes(NodeSharedPtr a, NodeSharedPtr b)

@@ -2257,6 +2257,9 @@
     </gen>
 
     <gen class="CustomControl" image="CustomControl" type="widget">
+        <inherits class="wxWindow" />
+        <inherits class="Window Events" />
+        <inherits class="sizer_child" />
         <property name="var_name" type="string">m_custom</property>
         <property name="class_name" type="string"
             help="The name of the custom class.">CustomClass</property>

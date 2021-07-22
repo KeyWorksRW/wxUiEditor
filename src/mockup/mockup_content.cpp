@@ -109,20 +109,32 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     {
         if (node->IsSpacer() && parentNode)
         {
-            if (node->prop_as_int(prop_proportion) != 0)
+            if (node->GetParent()->isGen(gen_wxGridBagSizer))
             {
-                wxStaticCast(parentNode, wxSizer)->AddStretchSpacer(node->prop_as_int(prop_proportion));
+                auto flags = node->GetSizerFlags();
+                wxStaticCast(parentNode, wxGridBagSizer)
+                    ->Add(node->prop_as_int(prop_width), node->prop_as_int(prop_height),
+                          wxGBPosition(node->prop_as_int(prop_row), node->prop_as_int(prop_column)),
+                          wxGBSpan(node->prop_as_int(prop_rowspan), node->prop_as_int(prop_colspan)), flags.GetFlags(),
+                          node->prop_as_int(prop_border_size));
             }
             else
             {
-                auto width = node->prop_as_int(prop_width);
-                auto height = node->prop_as_int(prop_height);
-                if (node->prop_as_bool(prop_add_default_border))
+                if (node->prop_as_int(prop_proportion) != 0)
                 {
-                    width += wxSizerFlags::GetDefaultBorder();
-                    height += wxSizerFlags::GetDefaultBorder();
+                    wxStaticCast(parentNode, wxSizer)->AddStretchSpacer(node->prop_as_int(prop_proportion));
                 }
-                wxStaticCast(parentNode, wxSizer)->Add(width, height);
+                else
+                {
+                    auto width = node->prop_as_int(prop_width);
+                    auto height = node->prop_as_int(prop_height);
+                    if (node->prop_as_bool(prop_add_default_border))
+                    {
+                        width += wxSizerFlags::GetDefaultBorder();
+                        height += wxSizerFlags::GetDefaultBorder();
+                    }
+                    wxStaticCast(parentNode, wxSizer)->Add(width, height);
+                }
             }
         }
         return;  // means the component doesn't create any UI element, and cannot have children

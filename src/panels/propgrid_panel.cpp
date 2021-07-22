@@ -173,7 +173,12 @@ void PropGridPanel::Create()
                 CreateEventCategory(info_base->DeclName(), node, info_base, event_set);
             }
 
-            if (node->GetParent() && node->GetParent()->IsSizer() && !node->IsSpacer())
+            if (node->IsSpacer())
+            {
+                if (node->isParent(gen_wxGridBagSizer))
+                    CreateLayoutCategory(node);
+            }
+            else if (node->GetParent() && node->GetParent()->IsSizer())
             {
                 CreateLayoutCategory(node);
             }
@@ -1444,11 +1449,19 @@ static constexpr std::initializer_list<PropName> lst_LayoutProps = {
 
 };
 
+// clang-format off
 static constexpr std::initializer_list<PropName> lst_GridBagProps = {
 
-    prop_row, prop_column, prop_rowspan, prop_colspan
+    prop_borders,
+    prop_border_size,
+    prop_flags,
+    prop_row,
+    prop_column,
+    prop_rowspan,
+    prop_colspan
 
 };
+// clang-format on
 
 void PropGridPanel::CreateLayoutCategory(Node* node)
 {
@@ -1456,22 +1469,22 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 
     auto id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
 
-    for (auto iter: lst_LayoutProps)
-    {
-        auto prop = node->get_prop_ptr(iter);
-        if (!prop)
-            continue;
-
-        auto id_prop = m_prop_grid->Append(GetProperty(prop));
-
-        auto propInfo = prop->GetPropDeclaration();
-        m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
-
-        m_property_map[id_prop] = prop;
-    }
-
     if (!node->isParent(gen_wxGridBagSizer))
     {
+        for (auto iter: lst_LayoutProps)
+        {
+            auto prop = node->get_prop_ptr(iter);
+            if (!prop)
+                continue;
+
+            auto id_prop = m_prop_grid->Append(GetProperty(prop));
+
+            auto propInfo = prop->GetPropDeclaration();
+            m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
+
+            m_property_map[id_prop] = prop;
+        }
+
         if (auto prop = node->get_prop_ptr(prop_proportion); prop)
         {
             auto id_prop = m_prop_grid->Append(GetProperty(prop));

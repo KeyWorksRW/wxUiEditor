@@ -739,6 +739,11 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         code << node->prop_as_string(prop_derived_class) << "* " << node->get_node_name() << ';';
         return code;
     }
+    else if (class_name.is_sameas("CustomControl"))
+    {
+        code << node->prop_as_string(prop_class_name) << "* " << node->get_node_name() << ';';
+        return code;
+    }
 
     if (class_name.is_sameprefix("wx"))
     {

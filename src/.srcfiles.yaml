@@ -265,6 +265,7 @@ PNG:
     art_src/calendar.png: art_headers/calendar_png.hxx
     art_src/check3state.png: art_headers/check3state_png.hxx
     art_src/colourPickerIcon.png: art_headers/colourPickerIcon_png.hxx
+    art_src/CustomControl.png: art_headers/CustomControl_png.hxx
     art_src/dataview_ctrl.png: art_headers/dataview_ctrl_png.hxx
     art_src/dataviewlist_column.png: art_headers/dataviewlist_column_png.hxx
     art_src/dataviewlist_ctrl.png: art_headers/dataviewlist_ctrl_png.hxx

@@ -33,9 +33,9 @@ The files `gen_enums.h` and `gen_enums.cpp` _must_ be updated any time you add a
 ## Adding a new generator
 
 - Add the declaration to one of the XML files.
-- Add any the generator class to gen_enums.cpp and gen_enums.h.
+- Add the generator class to gen_enums.cpp and gen_enums.h.
 - Add any unique property types to gen_enums.cpp and gen_enums.h.
-- Add the generator class to one of the files in gnerate/ or create a new file
+- Add the generator class to one of the files in generate/ or create a new file
 - Add any required wxWidgets header file to gen_initialize.cpp
 - Add the generator class name to the InitGenerators() in gen_initialize.cpp
 

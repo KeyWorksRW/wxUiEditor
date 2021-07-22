@@ -313,8 +313,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         return {};
     }
 
-    auto xml_prop = xml_obj.child("property");
-    while (xml_prop)
+    for (auto xml_prop = xml_obj.child("property"); xml_prop; xml_prop = xml_prop.next_sibling("property"))
     {
         if (auto prop_name = xml_prop.attribute("name").as_cview(); prop_name.size())
         {
@@ -371,7 +370,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                         prop->set_value(value);
                     }
                 }
-                xml_prop = xml_prop.next_sibling("property");
                 continue;
             }
 
@@ -390,7 +388,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                                 prop->set_value(true);
                             }
                         }
-                        xml_prop = xml_prop.next_sibling("property");
                         continue;
                     }
                 }
@@ -407,13 +404,11 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 }
 
                 prop->set_value(xml_prop.text().as_cview());
-                xml_prop = xml_prop.next_sibling("property");
                 continue;
             }
             else if (prop_name.is_sameas("declaration"))
             {
                 // This property is for a custom control, and we don't use this specific property
-                xml_prop = xml_prop.next_sibling("property");
                 continue;
             }
             else if (prop_name.is_sameas("construction"))
@@ -429,7 +424,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 }
 
                 newobject->prop_set_value(prop_parameters, copy);
-                xml_prop = xml_prop.next_sibling("property");
                 continue;
             }
             else if (prop_name.is_sameas("include"))
@@ -440,7 +434,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 {
                     newobject->prop_set_value(prop_header, header);
                 }
-                xml_prop = xml_prop.next_sibling("property");
                 continue;
             }
 
@@ -459,7 +452,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                         // spacers. Since these aren't an actual widget, wxUE does not have that property
                         prop->set_value(xml_prop.text().as_cview());
                     }
-                    xml_prop = xml_prop.next_sibling("property");
                     continue;
                 }
             }
@@ -471,7 +463,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 ProcessPropValue(xml_prop, prop_name, class_name, newobject.get());
             }
         }
-        xml_prop = xml_prop.next_sibling("property");
     }
 
     auto xml_event = xml_obj.child("event");

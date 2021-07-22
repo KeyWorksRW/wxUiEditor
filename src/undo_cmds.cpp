@@ -14,6 +14,7 @@
 #include "mainframe.h"             // MainFrame -- Main window frame
 #include "node.h"                  // Node class
 #include "node_creator.h"          // NodeCreator -- Class used to create nodes
+#include "node_gridbag.h"          // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "prop_names.h"            // Property names
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
@@ -225,17 +226,24 @@ ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
 
 void ChangeParentAction::Change()
 {
-    if (m_change_parent->AddChild(m_node))
+    m_revert_parent->RemoveChild(m_node);
+    if (m_change_parent->isGen(gen_wxGridBagSizer))
     {
-        m_revert_parent->RemoveChild(m_node);
+        GridBag grid_bag(m_change_parent.get());
+        if (!grid_bag.InsertNode(m_change_parent.get(), m_node.get()))
+        {
+            m_node->SetParent(m_revert_parent);
+            m_revert_parent->AddChild(m_node);
+            m_revert_parent->ChangeChildPosition(m_node, m_revert_position);
+            wxGetFrame().SelectNode(m_node);
+        }
+    }
+    else if (m_change_parent->AddChild(m_node))
+    {
         m_node->SetParent(m_change_parent);
 
         wxGetFrame().FireParentChangedEvent(this);
         wxGetFrame().SelectNode(m_node);
-
-        // TODO: [KeyWorks - 11-18-2020] If we got moved into a gridbag sizer, then things are a bit complicated since row
-        // and column aren't going to be right. We need to make some intelligent guess and change the node's property
-        // accordingly
     }
 }
 
@@ -290,8 +298,8 @@ void AppendGridBagAction::Change()
 
     if (m_fix_duplicate_names)
     {
-        // This needs to be done only once, even if the insertion is reverted and then changed again. The reason is that any
-        // name changes to other nodes cannot be undone.
+        // This needs to be done only once, even if the insertion is reverted and then changed again. The reason is that
+        // any name changes to other nodes cannot be undone.
 
         m_node->FixDuplicateNodeNames();
         m_fix_duplicate_names = false;

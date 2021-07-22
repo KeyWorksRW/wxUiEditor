@@ -32,7 +32,6 @@ constexpr const IMPORT_NAME_PAIR prop_pair[] = {
     { "bg", "background_colour" },
     { "fg", "background_colour" },
     { "bitmapsize", "image_size" },
-    { "permission", "class_access" },
     { "hover", "current" },
     { "settings", "settings_code" },
     { "class", "class_name" },
@@ -607,6 +606,16 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
             return;  // we don't use this (and neither does wxFormBuilder for that matter)
         else if (class_name.is_sameas("wxDialog"))
             newobject->prop_set_value(prop_class_name, xml_prop.text().as_cview());
+    }
+    else if (prop_name.is_sameas("permission"))
+    {
+        auto value = xml_prop.text().as_cview();
+        if (value.is_sameas("protected") || value.is_sameas("private"))
+            newobject->prop_set_value(prop_class_access, "protected:");
+        else if (value.is_sameas("public"))
+            newobject->prop_set_value(prop_class_access, "public:");
+        else
+            newobject->prop_set_value(prop_class_access, "none");
     }
 
     else if (prop_name.is_sameas("border"))

@@ -77,10 +77,12 @@ namespace ttlib
         }
 
 #if defined(_WIN32)
-        /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
+        /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on
+        /// other platforms
         std::wstring wx_str() const { return to_utf16(); };
 #else
-        /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on other platforms
+        /// Returns a copy of the string converted to UTF16 on Windows, or a normal copy on
+        /// other platforms
         std::string wx_str() const { return substr(); }
 #endif  // _WIN32
 
@@ -100,10 +102,13 @@ namespace ttlib
         size_t locate(std::string_view str, size_t posStart = 0, tt::CASE check = tt::CASE::exact) const;
 
         /// Returns true if the sub string exists
-        bool contains(std::string_view sub, tt::CASE checkcase = tt::CASE::exact) const { return (locate(sub, 0, checkcase) != npos); }
+        bool contains(std::string_view sub, tt::CASE checkcase = tt::CASE::exact) const
+        {
+            return (locate(sub, 0, checkcase) != npos);
+        }
 
         /// Returns true if any string in the iteration list appears somewhere in the the main string.
-        template<class iterT>
+        template <class iterT>
         bool strContains(iterT iter, tt::CASE checkcase = tt::CASE::exact)
         {
             for (auto& strIter: iter)
@@ -196,16 +201,16 @@ namespace ttlib
         /// Assigns the string between chBegin and chEnd. This is typically used to copy the
         /// contents of a quoted string. Returns the position of the ending character in src.
         ///
-        /// Unless chBegin is a whitespace character, all whitespace characters starting with
-        /// offset will be ignored.
+        /// Unless chBegin is a whitespace character, all initial whitespace characters
+        /// will be ignored.
         size_t AssignSubString(std::string_view src, char chBegin = '"', char chEnd = '"');
 
         /// Extracts a string from another string using start and end characters deduced from
-        /// the first non-whitespace character after offset. Supports double and single quotes,
-        /// angle and square brackets, and parenthesis.
+        /// the first non-whitespace character. Supports double and single quotes, angle and
+        /// square brackets, and parenthesis.
         ///
-        /// The return position is to the character in src that ended the string, or **npos** if no
-        /// ending character was found.
+        /// The return position is to the character in src that ended the string, or **npos**
+        /// if no ending character was found.
         size_t ExtractSubString(std::string_view src, size_t offset = 0);
 
         /// Replace first (or all) occurrences of substring with another one
@@ -258,10 +263,12 @@ namespace ttlib
                 push_back('/');
         }
 
-        /// Returns true if current filename contains the specified case-insensitive extension.
+        /// Returns true if current filename contains the specified case-insensitive
+        /// extension.
         bool has_extension(std::string_view ext) const { return ttlib::is_sameas(extension(), ext, tt::CASE::either); }
 
-        /// Returns true if current filename contains the specified case-insensitive file name.
+        /// Returns true if current filename contains the specified case-insensitive file
+        /// name.
         bool has_filename(std::string_view name) const { return ttlib::is_sameas(filename(), name, tt::CASE::either); }
 
         /// Returns a view to the current extension. View is empty if there is no extension.
@@ -277,8 +284,8 @@ namespace ttlib
         /// Returns offset to the current filename or tt::npos if there is no filename.
         size_t find_filename() const noexcept;
 
-        /// Replaces any existing extension with a new extension, or appends the extension if the
-        /// name doesn't currently have an extension.
+        /// Replaces any existing extension with a new extension, or appends the extension if
+        /// the name doesn't currently have an extension.
         ///
         /// Returns view to the entire string.
         cstr& replace_extension(std::string_view newExtension);
@@ -298,8 +305,8 @@ namespace ttlib
         cstr& append_filename(std::string_view filename);
         cstr& append_filename(std::wstring_view filename) { return append_filename(utf16to8(filename)); }
 
-        /// Makes the current path relative to the supplied path. Use "." to be relative to the current
-        /// directory. Supplied path should not contain a filename.
+        /// Makes the current path relative to the supplied path. Use "." to be relative to
+        /// the current directory. Supplied path should not contain a filename.
         ///
         /// Unlike fs::relative(), this will not resolve symbolic links, allowing it to work
         /// even when you are using a directory with a symbolic link to a different drive.

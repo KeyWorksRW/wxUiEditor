@@ -44,6 +44,45 @@ void InsertDialog::OnNameText(wxCommandEvent& WXUNUSED(event))
             m_listBox->AppendString(iter->DeclName().wx_str());
     }
 
+#if !defined(_DEBUG)
+    // There are some generators that we allow in a Release build even though they don't have a 'wx' prefix
+
+    // The various else clauses are to prevent adding the same name more than once -- e.g., static or sizer appends the same
+    // string, so the else {} prevents adding them twice.
+
+    if (name.contains("box", tt::CASE::either))
+    {
+        m_listBox->AppendString("VerticalBoxSizer");
+        m_listBox->AppendString("Check3State");
+    }
+    else if (name.contains("static", tt::CASE::either))
+    {
+        m_listBox->AppendString("StaticCheckboxBoxSizer");
+        m_listBox->AppendString("StaticRadioBtnBoxSizer");
+    }
+    else if (name.contains("sizer", tt::CASE::either))
+    {
+        m_listBox->AppendString("StaticCheckboxBoxSizer");
+        m_listBox->AppendString("StaticRadioBtnBoxSizer");
+    }
+    else if (name.contains("check", tt::CASE::either))
+    {
+        m_listBox->AppendString("Check3State");
+    }
+    else if (name.contains("custom", tt::CASE::either))
+    {
+        m_listBox->AppendString("CustomControl");
+    }
+    else if (name.contains("book", tt::CASE::either))
+    {
+        m_listBox->AppendString("BookPage");
+    }
+    else if (name.contains("page", tt::CASE::either))
+    {
+        m_listBox->AppendString("BookPage");
+    }
+#endif  // not defined(_DEBUG)
+
     if (m_listBox->GetCount() > 0)
     {
         m_listBox->Select(0);

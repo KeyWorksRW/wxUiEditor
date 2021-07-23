@@ -223,8 +223,7 @@ bool GridBag::MoveNode(Node* node, MoveDirection where, bool check_only)
     // This function is completely reliant on the children of the wxGridBagSizer being sorted. That means unless we are just
     // doing a check or know that no action can be taken, then we always resort the entire gridbagsizer.
 
-    auto gbsizer = node->GetParent();
-    ASSERT(gbsizer->isGen(gen_wxGridBagSizer));
+    ASSERT(node->GetParent()->isGen(gen_wxGridBagSizer));
 
     if (where == MoveDirection::Left)
     {

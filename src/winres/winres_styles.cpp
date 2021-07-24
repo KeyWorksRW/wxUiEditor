@@ -119,8 +119,17 @@ void resCtrl::ParseButtonStyles(ttlib::cview line)
 
 void resCtrl::ParseListViewStyles(ttlib::cview line)
 {
-    // Clear the default style (wxLC_ICON)
     m_node->prop_set_value(prop_style, "");
+
+    if (line.contains("LVS_ICON"))
+        m_node->prop_set_value(prop_mode, "wxLC_ICON");
+    else if (line.contains("LVS_SMALLICON"))
+        m_node->prop_set_value(prop_mode, "wxLC_SMALL_ICON");
+    else if (line.contains("LVS_LIST"))
+        m_node->prop_set_value(prop_mode, "wxLC_LIST");
+    else if (line.contains("LVS_REPORT"))
+        m_node->prop_set_value(prop_mode, "wxLC_REPORT");
+    AppendStyle(prop_style, "wxLC_REPORT");
 
     if (line.contains("LVS_ALIGNLEFT"))
         AppendStyle(prop_style, "wxLC_ALIGN_LEFT");
@@ -131,14 +140,6 @@ void resCtrl::ParseListViewStyles(ttlib::cview line)
         AppendStyle(prop_style, "wxLC_AUTOARRANGE");
     if (line.contains("LVS_EDITLABELS"))
         AppendStyle(prop_style, "wxLC_EDIT_LABELS");
-    if (line.contains("LVS_ICON"))
-        AppendStyle(prop_style, "wxLC_ICON");
-    if (line.contains("LVS_SMALLICON"))
-        AppendStyle(prop_style, "wxLC_SMALL_ICON");
-    if (line.contains("LVS_LIST"))
-        AppendStyle(prop_style, "wxLC_LIST");
-    if (line.contains("LVS_REPORT"))
-        AppendStyle(prop_style, "wxLC_REPORT");
     if (line.contains("LVS_NOCOLUMNHEADER"))
         AppendStyle(prop_style, "wxLC_NO_HEADER");
     if (line.contains("LVS_SINGLESEL"))

@@ -194,7 +194,6 @@ protected:
     void OnClose(wxCloseEvent& event) override;
     void OnCopy(wxCommandEvent& event) override;
     void OnCut(wxCommandEvent& event) override;
-    void OnDbgImportWinRes(wxCommandEvent& event);
     void OnDbgCodeDiff(wxCommandEvent& event);
     void OnDelete(wxCommandEvent& event) override;
     void OnEmbedImageConverter(wxCommandEvent& event) override;

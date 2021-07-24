@@ -53,7 +53,7 @@
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
 #include "importwinresdlg.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
-#include "insertdialog.h"     // InsertDialog -- Dialog to lookup and insert a widget
+#include "insertwidget.h"     // InsertWidget -- Dialog to lookup and insert a widget
 
 #if defined(_DEBUG)
     #include "debugging/nodeinfo.h"  // NodeInfo -- Node memory usage dialog
@@ -76,7 +76,6 @@ enum
     id_DebugPreferences,
     id_ShowLogger,
     id_NodeMemory,
-    id_WinResDlg,
     id_CodeDiffDlg
 };
 
@@ -97,8 +96,6 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
     menuDebug->AppendSeparator();
     menuDebug->Append(id_CodeDiffDlg, "Compare Code &Generation...",
                       "Dialog showing what class have changed, and optional viewing in WinMerge");
-    menuDebug->Append(id_WinResDlg, "Import &Windows Resource...",
-                      "Close current project and import a Windows Resource file");
     menuDebug->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
 
     menuDebug->AppendSeparator();
@@ -172,7 +169,6 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
     Bind(
         wxEVT_MENU, [](wxCommandEvent&) { g_pMsgLogging->ShowLogger(); }, id_ShowLogger);
 
-    Bind(wxEVT_MENU, &MainFrame::OnDbgImportWinRes, this, id_WinResDlg);
     Bind(wxEVT_MENU, &MainFrame::OnDbgCodeDiff, this, id_CodeDiffDlg);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
@@ -364,7 +360,7 @@ void MainFrame::OnImportWindowsResource(wxCommandEvent&)
 
 void MainFrame::OnInsertWidget(wxCommandEvent&)
 {
-    InsertDialog dlg(this);
+    InsertWidget dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
         if (auto result = rmap_GenNames.find(dlg.GetWidget()); result != rmap_GenNames.end())
@@ -1442,16 +1438,6 @@ Node* MainFrame::FindChildSizerItem(Node* node)
 #if defined(_DEBUG)
 
     #include "debugging/dbg_code_diff.h"
-    #include "debugging/dbg_winres_dlg.h"
-
-void MainFrame::OnDbgImportWinRes(wxCommandEvent& WXUNUSED(event))
-{
-    DbgWinResDlg dlg(this);
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        wxGetApp().ImportProject(dlg.GetFilename());
-    }
-}
 
 void MainFrame::OnDbgCodeDiff(wxCommandEvent& WXUNUSED(event))
 {

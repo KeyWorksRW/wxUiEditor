@@ -367,7 +367,12 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
     for (auto iter: NonUiProps)
     {
         if (prop->isProp(iter))
-            return;
+        {
+            if (prop->isProp(prop_message) && prop->GetNode()->isGen(gen_wxBannerWindow))
+                break;  // In this case, Mockup does need to be redrawn
+            else
+                return;
+        }
     }
 
     // Some properties can be changed after the widget is created. We call the component to update the widget, and if returns

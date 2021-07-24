@@ -947,10 +947,10 @@
     </node>
     <node
       class="wxDialog"
-      base_file="insertdialog_base"
-      class_name="InsertDialogBase"
-      derived_class_name="InsertDialog"
-      derived_file="insertdialog"
+      base_file="insertwidget_base"
+      class_name="InsertWidgetBase"
+      derived_class_name="InsertWidget"
+      derived_file="insertwidget"
       minimum_size="-1,-1"
       title="Insert widget"
       wxEVT_INIT_DIALOG="OnInit">

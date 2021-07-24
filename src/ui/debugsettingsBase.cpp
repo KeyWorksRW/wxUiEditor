@@ -14,10 +14,11 @@
 
 #include "debugsettingsBase.h"
 
-DebugSettingsBase::DebugSettingsBase(wxWindow* parent) : wxDialog()
+bool DebugSettingsBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Debug Settings"), wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -74,4 +75,6 @@ DebugSettingsBase::DebugSettingsBase(wxWindow* parent) : wxDialog()
     Bind(wxEVT_INIT_DIALOG, &DebugSettingsBase::OnInit, this);
     m_btn->Bind(wxEVT_BUTTON, &DebugSettingsBase::OnShowNow, this);
     Bind(wxEVT_BUTTON, &DebugSettingsBase::OnOK, this, wxID_OK);
+
+    return true;
 }

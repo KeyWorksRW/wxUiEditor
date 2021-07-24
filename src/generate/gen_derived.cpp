@@ -152,7 +152,8 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         m_header->writeLine("public:");
         m_header->Indent();
 
-        m_header->writeLine(ttlib::cstr() << derived_name << "(wxWindow* parent = nullptr);");
+        m_header->writeLine(ttlib::cstr() << derived_name << "();  // If you use this constructor, you must call Create(parent)");
+        m_header->writeLine(ttlib::cstr() << derived_name << "(wxWindow* parent);");
 
         m_header->Unindent();
     }
@@ -213,8 +214,18 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
 
         {
             ttlib::cstr code;
-            code << derived_name << "::" << derived_name << "(wxWindow* parent) : ";
-            code << form->get_node_name() << "(parent) {}";
+            if (form->isGen(gen_wxDialog))
+            {
+                code << "// If this constructor is used, the caller must call Create(parent)\n";
+                code << derived_name << "::" << derived_name << "() {}\n\n";
+                code << derived_name << "::" << derived_name << "(wxWindow* parent) { Create(parent); }";
+            }
+            else
+            {
+                code << derived_name << "::" << derived_name << "(wxWindow* parent) : ";
+                code << form->get_node_name() << "(parent) {}";
+            }
+
             m_source->writeLine(code);
         }
     }

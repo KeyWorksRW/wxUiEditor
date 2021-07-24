@@ -8,9 +8,11 @@
 
 #include "import_base.h"
 
-ImportBase::ImportBase(wxWindow* parent) : wxDialog()
+bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("New Imported Project"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -84,4 +86,6 @@ ImportBase::ImportBase(wxWindow* parent) : wxDialog()
     btn_2->Bind(wxEVT_BUTTON, &ImportBase::OnSelectAll, this);
     btn__2->Bind(wxEVT_BUTTON, &ImportBase::OnSelectNone, this);
     Bind(wxEVT_BUTTON, &ImportBase::OnOK, this, wxID_OK);
+
+    return true;
 }

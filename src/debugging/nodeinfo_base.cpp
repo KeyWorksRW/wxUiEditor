@@ -12,9 +12,11 @@
 
 #include "nodeinfo_base.h"
 
-NodeInfoBase::NodeInfoBase(wxWindow* parent) : wxDialog()
+bool NodeInfoBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Node Information"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -36,4 +38,6 @@ NodeInfoBase::NodeInfoBase(wxWindow* parent) : wxDialog()
 
     SetSizerAndFit(parent_sizer);
     Centre(wxBOTH);
+
+    return true;
 }

@@ -12,9 +12,11 @@
 
 #include "gridbag_item_base.h"
 
-GridBagItemBase::GridBagItemBase(wxWindow* parent) : wxDialog()
+bool GridBagItemBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Append or Insert into wxGridBagSizer"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -72,4 +74,6 @@ GridBagItemBase::GridBagItemBase(wxWindow* parent) : wxDialog()
     m_spin_column->Bind(wxEVT_SPINCTRL, &GridBagItemBase::OnColumn, this);
     m_spin_row->Bind(wxEVT_SPINCTRL, &GridBagItemBase::OnRow, this);
     Bind(wxEVT_BUTTON, &GridBagItemBase::OnOK, this, wxID_OK);
+
+    return true;
 }

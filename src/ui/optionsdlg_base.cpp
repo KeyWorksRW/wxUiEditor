@@ -16,9 +16,11 @@
 
 #include "optionsdlg_base.h"
 
-OptionsDlgBase::OptionsDlgBase(wxWindow* parent) : wxDialog()
+bool OptionsDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Options"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -77,4 +79,6 @@ OptionsDlgBase::OptionsDlgBase(wxWindow* parent) : wxDialog()
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &OptionsDlgBase::OnInit, this);
     Bind(wxEVT_BUTTON, &OptionsDlgBase::OnAffirmative, this, wxID_OK);
+
+    return true;
 }

@@ -15,9 +15,11 @@
 
 #include "embedimg_base.h"
 
-EmbedImageBase::EmbedImageBase(wxWindow* parent) : wxDialog()
+bool EmbedImageBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Convert Image"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -208,4 +210,6 @@ EmbedImageBase::EmbedImageBase(wxWindow* parent) : wxDialog()
     m_ForceXpmMask->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnForceXpmMask, this);
     m_comboXpmMask->Bind(wxEVT_COMBOBOX, &EmbedImageBase::OnComboXpmMask, this);
     m_btnConvert->Bind(wxEVT_BUTTON, &EmbedImageBase::OnConvert, this);
+
+    return true;
 }

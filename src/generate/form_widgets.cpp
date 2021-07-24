@@ -20,48 +20,14 @@ bool DialogFormGenerator::GenConstruction(Node* node, WriteCode* src_code)
 {
     ttlib::cstr code;
 
-    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
-    code << "(wxWindow* parent) : wxDialog()\n{";
+    code
+        << "bool " << node->prop_as_string(prop_class_name)
+        << "::Create(wxWindow *parent, wxWindowID id, const wxString &title,\n\t\tconst wxPoint&pos, const wxSize& size, long "
+           "style, const wxString &name)\n{\n\tif (!wxDialog::Create(parent, id, title, pos, size, style, name))\n\t\treturn "
+           "false;\n\n";
+
     src_code->writeLine(code, indent::none);
     src_code->Indent();
-    code.clear();
-
-    code << "Create(parent, " << node->prop_as_string(prop_id) << ", ";
-    code << GenerateQuotedString(node, prop_title);  // will return wxEmptyString if property is empty
-
-    auto position = node->prop_as_wxPoint(prop_pos);
-    if (position == wxDefaultPosition && node->prop_as_string(prop_style) == "wxDEFAULT_DIALOG_STYLE")
-    {
-        code << ");";
-        src_code->writeLine(code);
-    }
-    else
-    {
-        code << ", ";
-        if (position != wxDefaultPosition)
-        {
-            code << "wxPoint(" << position.x << ", " << position.y << ")";
-        }
-        else
-        {
-            code << "wxDefaultPosition";
-        }
-        code << ", wxDefaultSize,";
-        if (node->HasValue(prop_style))
-        {
-            src_code->writeLine(code);
-            src_code->Indent();
-            code = node->prop_as_string(prop_style) + ");";
-            src_code->writeLine(code);
-            src_code->Unindent();
-        }
-        else
-        {
-            code << " 0);";
-            src_code->writeLine(code);
-        }
-    }
-
     code.clear();
 
     if (node->HasValue(prop_extra_style))
@@ -164,8 +130,73 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCo
     else if (cmd == code_header)
     {
         ttlib::cstr code;
+        code.reserve(256);
 
-        code << node->get_node_name() << "(wxWindow* parent);\n\n";
+        code << node->get_node_name() << "() {}\n";
+        code << node->get_node_name() << "(wxWindow *parent, ";
+        code << "wxWindowID id = " << node->prop_as_string(prop_id) << ", ";
+        code << "const wxString& title = " << GenerateQuotedString(node, prop_title) << ",\n\t";
+        code << "const wxPoint& pos = ";
+
+        auto position = node->prop_as_wxPoint(prop_pos);
+        if (position == wxDefaultPosition)
+            code << "wxDefaultPosition, ";
+        else
+            code << "wxPoint(" << position.x << ", " << position.y << "), ";
+
+        code << "const wxSize& size = ";
+
+        auto size = node->prop_as_wxSize(prop_size);
+        if (size == wxDefaultSize)
+            code << "wxDefaultSize";
+        else
+            code << "wxSize(" << size.x << ", " << size.y << ")";
+
+        code << ",\n\tlong style = ";
+        if (node->HasValue(prop_style))
+            code << node->prop_as_string(prop_style);
+        else
+            code << "wxDEFAULT_DIALOG_STYLE";
+
+        code << ", const wxString &name = ";
+        if (node->HasValue(prop_window_name))
+            code << GenerateQuotedString(node, prop_window_name);
+        else
+            code << "wxDialogNameStr";
+
+        code << ")\n{\n\tCreate(parent, id, title, pos, size, style, name);\n}\n";
+
+        code << "\nbool Create(wxWindow *parent, ";
+        code << "wxWindowID id = " << node->prop_as_string(prop_id) << ", ";
+        code << "const wxString& title = " << GenerateQuotedString(node, prop_title) << ",\n\t";
+        code << "const wxPoint& pos = ";
+
+        if (position == wxDefaultPosition)
+            code << "wxDefaultPosition, ";
+        else
+            code << "wxPoint(" << position.x << ", " << position.y << "), ";
+
+        code << "const wxSize& size = ";
+
+        if (size == wxDefaultSize)
+            code << "wxDefaultSize";
+        else
+            code << "wxSize(" << size.x << ", " << size.y << ")";
+
+        code << ",\n\tlong style = ";
+        if (node->HasValue(prop_style))
+            code << node->prop_as_string(prop_style);
+        else
+            code << "wxDEFAULT_DIALOG_STYLE";
+
+        code << ", const wxString &name = ";
+        if (node->HasValue(prop_window_name))
+            code << GenerateQuotedString(node, prop_window_name);
+        else
+            code << "wxDialogNameStr";
+
+        code << ");\n\n";
+
         return code;
     }
 

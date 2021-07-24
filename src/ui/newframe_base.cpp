@@ -15,9 +15,11 @@
 
 #include "newframe_base.h"
 
-NewFrameBase::NewFrameBase(wxWindow* parent) : wxDialog()
+bool NewFrameBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("New wxFrame window"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -72,4 +74,6 @@ NewFrameBase::NewFrameBase(wxWindow* parent) : wxDialog()
         [this](wxInitDialogEvent& event) { m_classname->SetFocus();  event.Skip(); }
         );
     m_checkBox_mainframe->Bind(wxEVT_CHECKBOX, &NewFrameBase::OnCheckMainFrame, this);
+
+    return true;
 }

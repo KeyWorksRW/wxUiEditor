@@ -85,6 +85,7 @@ const auto g_lstIgnoreProps = {
     "resize",
     "show",
     "toolbar_pane",
+    "two_step_creation",
     "use_enum",
 
 };
@@ -290,6 +291,11 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     else if (class_name.is_sameas("Panel"))
     {
         class_name = "PanelForm";
+    }
+    else if (class_name.is_sameas("CustomCode"))
+    {
+        m_errors.emplace(ttlib::cstr() << "Custom code is not supported in wxUiEditor");
+        return {};
     }
 
     if (class_name.is_sameas("wxCheckBox"))

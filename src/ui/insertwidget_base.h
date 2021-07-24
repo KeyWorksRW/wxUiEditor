@@ -14,11 +14,11 @@
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
 
-class InsertDialogBase : public wxDialog
+class InsertWidgetBase : public wxDialog
 {
 public:
-    InsertDialogBase() {}
-    InsertDialogBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Insert widget"),
+    InsertWidgetBase() {}
+    InsertWidgetBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Insert widget"),
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {

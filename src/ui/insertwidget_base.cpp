@@ -8,9 +8,9 @@
 
 #include <wx/stattext.h>
 
-#include "insertdialog_base.h"
+#include "insertwidget_base.h"
 
-bool InsertDialogBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+bool InsertWidgetBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
         const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
@@ -41,13 +41,13 @@ bool InsertDialogBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &InsertDialogBase::OnInit, this);
-    m_text_name->Bind(wxEVT_TEXT, &InsertDialogBase::OnNameText, this);
+    Bind(wxEVT_INIT_DIALOG, &InsertWidgetBase::OnInit, this);
+    m_text_name->Bind(wxEVT_TEXT, &InsertWidgetBase::OnNameText, this);
     m_listBox->Bind(wxEVT_LISTBOX,
         [this](wxCommandEvent&) { m_stdBtn->GetAffirmativeButton()->Enable(); }
         );
-    m_listBox->Bind(wxEVT_LISTBOX_DCLICK, &InsertDialogBase::OnListBoxDblClick, this);
-    Bind(wxEVT_BUTTON, &InsertDialogBase::OnOK, this, wxID_OK);
+    m_listBox->Bind(wxEVT_LISTBOX_DCLICK, &InsertWidgetBase::OnListBoxDblClick, this);
+    Bind(wxEVT_BUTTON, &InsertWidgetBase::OnOK, this, wxID_OK);
 
     return true;
 }

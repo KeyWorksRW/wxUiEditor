@@ -110,77 +110,6 @@
     </node>
     <node
       class="wxDialog"
-      base_file="..\debugging\dbg_winres_dlg_base"
-      class_name="DbgWinResBase"
-      derived_class_name="DbgWinResDlg"
-      derived_file="../debugging/dbg_winres_dlg"
-      title="Resource Files"
-      wxEVT_INIT_DIALOG="OnInit">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        flags="wxEXPAND">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="box_sizer_3"
-          borders="wxTOP|wxRIGHT|wxLEFT">
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="&amp;Folders:"
-            var_name="staticText"
-            borders="wxTOP|wxRIGHT|wxLEFT" />
-        </node>
-        <node
-          class="wxBoxSizer"
-          var_name="box_sizer_2">
-          <node
-            class="wxListBox"
-            var_name="m_list_folders"
-            minimum_size="200,150"
-            tooltip="This list will be retained between sessions."
-            wxEVT_LISTBOX="OnSelectFolder" />
-          <node
-            class="wxButton"
-            class_access="none"
-            label="Folder..."
-            var_name="btn"
-            tooltip="Add a folder to the Folders list."
-            wxEVT_BUTTON="OnFolderBtn" />
-        </node>
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL"
-          var_name="box_sizer_4"
-          flags="wxEXPAND">
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="&amp;Resource Files:"
-            var_name="staticText_2"
-            borders="wxTOP|wxRIGHT|wxLEFT" />
-          <node
-            class="wxListBox"
-            var_name="m_list_files"
-            minimum_size="-1,100"
-            tooltip="All the resource files located in all folders underneath the above selected folder."
-            flags="wxEXPAND"
-            wxEVT_LISTBOX="[this](wxCommandEvent&amp;) { m_res_file->SetValue(m_list_files->GetString(m_list_files->GetSelection())); }" />
-          <node
-            class="wxTextCtrl"
-            var_name="m_res_file"
-            tooltip="Use this if you need to copy the filename to an editor for previewing."
-            flags="wxEXPAND" />
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          flags="wxEXPAND"
-          OKButtonClicked="OnAffirmative" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
       base_file="debugsettingsBase"
       class_name="DebugSettingsBase"
       derived_class_name="DebugSettings"
@@ -947,10 +876,10 @@
     </node>
     <node
       class="wxDialog"
-      base_file="insertdialog_base"
-      class_name="InsertDialogBase"
-      derived_class_name="InsertDialog"
-      derived_file="insertdialog"
+      base_file="insertwidget_base"
+      class_name="InsertWidgetBase"
+      derived_class_name="InsertWidget"
+      derived_file="insertwidget"
       minimum_size="-1,-1"
       title="Insert widget"
       wxEVT_INIT_DIALOG="OnInit">

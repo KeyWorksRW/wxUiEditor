@@ -140,7 +140,7 @@ Files:
     ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
-    ui/insertdialog.cpp         # Dialog to lookup and insert a widget
+    ui/insertwidget.cpp         # Dialog to lookup and insert a widget
     ui/newframe.cpp             # Dialog for creating a new project wxFrame
     ui/newdialog.cpp            # Dialog for creating a new project dialog
     ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
@@ -154,7 +154,7 @@ Files:
     ui/eventhandlerdlg_base.cpp
     ui/gridbag_item_base.cpp
     ui/importwinres_base.cpp
-    ui/insertdialog_base.cpp
+    ui/insertwidget_base.cpp
     ui/mainframe_base.cpp
     ui/newdialog_base.cpp
     ui/newframe_base.cpp
@@ -181,9 +181,6 @@ DebugFiles:
     debugging/msgframe.cpp       # Stores messages
     debugging/nodeinfo.cpp       # Node memory usage dialog
     debugging/nodeinfo_base.cpp  # wxUiEditor generated file
-
-    debugging/dbg_winres_dlg.cpp      # Convert one or more Windows Resource files
-    debugging/dbg_winres_dlg_base.cpp
 
     debugging/dbg_code_diff.cpp       # Compare code generationg
     debugging/dbg_code_diff_base.cpp

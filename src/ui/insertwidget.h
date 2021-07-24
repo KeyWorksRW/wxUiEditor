@@ -6,16 +6,16 @@
 
 #pragma once
 
-#include "insertdialog_base.h"
+#include "insertwidget_base.h"
 
-class InsertDialog : public InsertDialogBase
+class InsertWidget : public InsertWidgetBase
 {
 public:
-    InsertDialog(wxWindow* parent = nullptr);
+    InsertWidget(wxWindow* parent = nullptr);
     ttlib::cstr GetWidget() { return m_widget; }
 
 protected:
-    // Handlers for InsertDialogBase events
+    // Handlers for InsertWidgetBase events
     void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
     void OnNameText(wxCommandEvent& WXUNUSED(event)) override;
     void OnListBoxDblClick(wxCommandEvent& WXUNUSED(event)) override;

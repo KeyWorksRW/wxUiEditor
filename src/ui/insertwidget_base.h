@@ -6,24 +6,26 @@
 
 #pragma once
 
+#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/listbox.h>
+#include <wx/sizer.h>
 #include <wx/textctrl.h>
 
-class DbgWinResBase : public wxDialog
+class InsertWidgetBase : public wxDialog
 {
 public:
-    DbgWinResBase() {}
-    DbgWinResBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Resource Files"),
+    InsertWidgetBase() {}
+    InsertWidgetBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Insert widget"),
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Resource Files"),
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Insert widget"),
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
@@ -31,14 +33,16 @@ protected:
 
     // Class member variables
 
-    wxListBox* m_list_files;
-    wxListBox* m_list_folders;
-    wxTextCtrl* m_res_file;
+    wxListBox* m_listBox;
+    wxStdDialogButtonSizer* m_stdBtn;
+    wxButton* m_stdBtnOK;
+    wxButton* m_stdBtnCancel;
+    wxTextCtrl* m_text_name;
 
     // Virtual event handlers -- override them in your derived class
 
-    virtual void OnAffirmative(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFolderBtn(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnSelectFolder(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnListBoxDblClick(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNameText(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 };

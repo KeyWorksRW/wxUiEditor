@@ -7,19 +7,19 @@
 
 #include "pch.h"
 
-#include "insertdialog.h"  // auto-generated: insertdialog_base.h and insertdialog_base.cpp
+#include "insertwidget.h"  // auto-generated: insertwidget_base.h and insertwidget_base.cpp
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
-InsertDialog::InsertDialog(wxWindow* parent) : InsertDialogBase(parent) {}
+InsertWidget::InsertWidget(wxWindow* parent) : InsertWidgetBase(parent) {}
 
-void InsertDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
     m_stdBtn->GetAffirmativeButton()->Disable();
     m_text_name->SetFocus();
 }
 
-void InsertDialog::OnNameText(wxCommandEvent& WXUNUSED(event))
+void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
 {
     ttlib::cstr name = m_text_name->GetValue().utf8_str().data();
     m_listBox->Clear();
@@ -94,13 +94,13 @@ void InsertDialog::OnNameText(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void InsertDialog::OnListBoxDblClick(wxCommandEvent& WXUNUSED(event))
+void InsertWidget::OnListBoxDblClick(wxCommandEvent& WXUNUSED(event))
 {
     wxCommandEvent event(wxEVT_BUTTON, m_stdBtn->GetAffirmativeButton()->GetId());
     ProcessEvent(event);
 }
 
-void InsertDialog::OnOK(wxCommandEvent& event)
+void InsertWidget::OnOK(wxCommandEvent& event)
 {
     m_widget << m_listBox->GetStringSelection().wx_str();
     event.Skip();

@@ -1265,14 +1265,6 @@
                   tooltip="Bitmap should change when mouse is over button, or button is disabled."
                   column="2" />
                 <node
-                  class="wxCheckBox"
-                  class_access="none"
-                  label="Disable"
-                  var_name="disable_bitmaps"
-                  column="2"
-                  row="1"
-                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp; event) { m_btn_bitmaps->Enable(!event.IsChecked()); }" />
-                <node
                   class="wxButton"
                   label="Right"
                   var_name="m_btn_4"
@@ -1286,6 +1278,14 @@
                   style="wxBU_EXACTFIT"
                   tooltip="Style set to exact fit, so it should be a bit smaller than usual."
                   column="4" />
+                <node
+                  class="wxCheckBox"
+                  class_access="none"
+                  label="Disable"
+                  var_name="disable_bitmaps"
+                  column="2"
+                  row="1"
+                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp; event) { m_btn_bitmaps->Enable(!event.IsChecked()); }" />
               </node>
               <node
                 class="wxBoxSizer"
@@ -1303,18 +1303,46 @@
           </node>
           <node
             class="BookPage"
-            label="Tab 2"
+            bitmap="Header; ..\art\normal_png.h; ; [-1; -1]"
+            label="Banners"
             var_name="page_3"
             window_style="wxTAB_TRAVERSAL">
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-              var_name="box_sizer_4">
+              var_name="box_sizer_4"
+              flags="wxEXPAND">
               <node
-                class="wxStaticText"
-                label="TODO: replace this control with something more useful..."
-                var_name="m_staticText_3"
-                wrap="200" />
+                class="wxBoxSizer"
+                var_name="box_sizer_8"
+                proportion="1">
+                <node
+                  class="wxBannerWindow"
+                  direction="wxLEFT"
+                  title="Left Banner"
+                  var_name="m_banner_left" />
+                <node
+                  class="wxBannerWindow"
+                  end_colour="wxSYS_COLOUR_HIGHLIGHT"
+                  message="This is the top banner message"
+                  start_colour="wxSYS_COLOUR_INACTIVECAPTION"
+                  title="Top Banner"
+                  var_name="m_banner_top" />
+                <node
+                  class="wxBannerWindow"
+                  direction="wxRIGHT"
+                  title="Right Banner"
+                  var_name="m_banner_right" />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_9">
+                <node
+                  class="wxBannerWindow"
+                  bitmap="Header; ..\art\wiztest_png.h; ; [-1; -1]"
+                  direction="wxLEFT"
+                  title="This is a long title" />
+              </node>
             </node>
           </node>
           <node

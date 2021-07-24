@@ -6,8 +6,10 @@
 
 #pragma once
 
+#include <wx/bannerwindow.h>
 #include <wx/bitmap.h>
 #include <wx/button.h>
+#include <wx/colour.h>
 #include <wx/commandlinkbutton.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -15,6 +17,7 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/notebook.h>
+#include <wx/settings.h>
 #include <wx/stattext.h>
 #include <wx/tglbtn.h>
 
@@ -37,6 +40,10 @@ protected:
 
     // Class member variables
 
+    wxBannerWindow* m_banner;
+    wxBannerWindow* m_banner_left;
+    wxBannerWindow* m_banner_right;
+    wxBannerWindow* m_banner_top;
     wxButton* m_btn;
     wxButton* m_btn_2;
     wxButton* m_btn_4;
@@ -44,7 +51,6 @@ protected:
     wxCommandLinkButton* m_btn_5;
     wxNotebook* m_notebook;
     wxStaticText* m_staticText;
-    wxStaticText* m_staticText_3;
     wxStaticText* m_staticText_4;
     wxStaticText* m_staticText_5;
     wxToggleButton* m_toggleBtn;

@@ -85,13 +85,18 @@
           orientation="wxVERTICAL">
           <node
             class="wxStaticText"
+            label="If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.&#10;"
+            wrap="250" />
+          <node
+            class="wxStaticText"
             class_access="none"
             label="&amp;Changed Classes:"
             var_name="staticText" />
           <node
             class="wxListBox"
             var_name="m_list_changes"
-            minimum_size="200,200" />
+            disabled="true"
+            minimum_size="250,200" />
           <node
             class="wxButton"
             label="&amp;WinMerge..."

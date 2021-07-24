@@ -7,7 +7,6 @@
 #include "pch.h"
 
 #include <wx/sizer.h>
-#include <wx/stattext.h>
 
 #include "dbg_code_diff_base.h"
 
@@ -24,11 +23,16 @@ bool DbgCodeDiffBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
+    m_staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.\n"));
+    m_staticText->Wrap(250);
+    box_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
+
     auto staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Changed Classes:"));
     box_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_list_changes = new wxListBox(this, wxID_ANY);
-    m_list_changes->SetMinSize(wxSize(200, 200));
+    m_list_changes->Enable(false);
+    m_list_changes->SetMinSize(wxSize(250, 200));
     box_sizer->Add(m_list_changes, wxSizerFlags().Border(wxALL));
 
     m_btn = new wxButton(this, wxID_ANY, wxString::FromUTF8("&WinMerge..."));

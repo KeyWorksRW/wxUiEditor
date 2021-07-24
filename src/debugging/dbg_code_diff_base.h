@@ -14,6 +14,7 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/listbox.h>
+#include <wx/stattext.h>
 
 class DbgCodeDiffBase : public wxDialog
 {
@@ -36,6 +37,7 @@ protected:
 
     wxButton* m_btn;
     wxListBox* m_list_changes;
+    wxStaticText* m_staticText;
 
     // Virtual event handlers -- override them in your derived class
 

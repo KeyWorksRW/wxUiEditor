@@ -56,12 +56,12 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
         if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
         {
             m_value = default_name->second;
-            m_text_function->SetValue(default_name->second);
         }
         else
         {
             m_value = "OnEvent";
         }
+        m_text_function->SetValue(m_value);
 
         m_lambda_box->GetStaticBox()->Enable(false);
     }
@@ -87,6 +87,10 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
                 m_stc->SetText(body);
             }
         }
+        else
+        {
+            m_text_function->SetValue(m_value);
+        }
     }
 
     FormatBindText();
@@ -99,8 +103,21 @@ void EventHandlerDlg::OnUseFunction(wxCommandEvent& WXUNUSED(event))
         m_radio_use_lambda->SetValue(false);
         m_lambda_box->GetStaticBox()->Enable(false);
         m_function_box->GetStaticBox()->Enable(true);
-        FormatBindText();
+
+        if (m_value.empty() || m_value.Find('[') != wxNOT_FOUND)
+        {
+            if (auto default_name = s_EventNames.find(m_event->get_name()); default_name != s_EventNames.end())
+            {
+                m_value = default_name->second;
+            }
+            else
+            {
+                m_value = "OnEvent";
+            }
+        }
+        m_text_function->SetValue(m_value);
     }
+    FormatBindText();
 }
 
 void EventHandlerDlg::OnUseLambda(wxCommandEvent& WXUNUSED(event))
@@ -549,7 +566,6 @@ const std::unordered_map<std::string, const char*> s_EventNames = {
     { "wxEVT_STC_UPDATEUI", "OnUpdateUI" },
     { "wxEVT_STC_USERLISTSELECTION", "OnUserListSelection" },
     { "wxEVT_STC_ZOOM", "OnZoom" },
-
 
     { "ApplyButtonClicked", "OnApply" },
     { "CancelButtonClicked", "OnCancel" },

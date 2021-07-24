@@ -150,3 +150,15 @@ private:
 
     bool m_isReverted { false };
 };
+
+// This sorts all the children of the project based on their class_name property
+class SortProjectAction : public UndoAction
+{
+public:
+    SortProjectAction();
+    void Change() override;
+    void Revert() override;
+
+private:
+    NodeSharedPtr m_old_project;
+};

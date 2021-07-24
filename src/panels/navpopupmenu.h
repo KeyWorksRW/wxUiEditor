@@ -20,11 +20,12 @@ public:
     NavPopupMenu(Node* node);
 
 protected:
-    void OnCreateNewFrame(wxCommandEvent& event);
     void OnAddNew(wxCommandEvent& event);
     void OnBorders(wxCommandEvent& event);
     void OnCreateNewDialog(wxCommandEvent& event);
+    void OnCreateNewFrame(wxCommandEvent& event);
     void OnMenuEvent(wxCommandEvent& event);
+    void OnSortForms(wxCommandEvent& WXUNUSED(event));
     void OnUpdateEvent(wxUpdateUIEvent& event);
 
     void CreateNormalMenu(Node* node);
@@ -101,6 +102,7 @@ protected:
         MenuPROJECT_ADD_DIALOG,
         MenuPROJECT_ADD_WINDOW,
         MenuPROJECT_ADD_WIZARD,
+        MenuPROJECT_SORT_FORMS,
 
         MenuTESTING_INFO,
         MenuDEBUG_KEYHH,

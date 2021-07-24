@@ -302,7 +302,8 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
     if (new_sizer)
     {
         wxGetFrame().Freeze();
-        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_sizer.get(), parent, "Insert new sizer", childPos));
+        wxGetFrame().PushUndoAction(
+            std::make_shared<InsertNodeAction>(new_sizer.get(), parent, "Insert new sizer", childPos));
         wxGetFrame().PushUndoAction(std::make_shared<ChangeParentAction>(node, new_sizer.get()));
         wxGetFrame().SelectNode(node, true, true);
         wxGetFrame().Thaw();
@@ -500,9 +501,12 @@ void NavPopupMenu::CreateProjectMenu(Node* WXUNUSED(node))
     Append(MenuPROJECT_ADD_DIALOG, "Add new dialog");
     Append(MenuPROJECT_ADD_WINDOW, "Add new window");
     Append(MenuPROJECT_ADD_WIZARD, "Add new wizard");
+    AppendSeparator();
+    Append(MenuPROJECT_SORT_FORMS, "Sort Forms");
 
     Bind(wxEVT_MENU, &NavPopupMenu::OnCreateNewDialog, this, MenuPROJECT_ADD_DIALOG);
     Bind(wxEVT_MENU, &NavPopupMenu::OnCreateNewFrame, this, MenuPROJECT_ADD_WINDOW);
+    Bind(wxEVT_MENU, &NavPopupMenu::OnSortForms, this, MenuPROJECT_SORT_FORMS);
 
     Bind(
         wxEVT_MENU,
@@ -966,4 +970,9 @@ void NavPopupMenu::OnCreateNewFrame(wxCommandEvent& WXUNUSED(event))
     {
         dlg.CreateNode();
     }
+}
+
+void NavPopupMenu::OnSortForms(wxCommandEvent& WXUNUSED(event))
+{
+    wxGetFrame().PushUndoAction(std::make_shared<SortProjectAction>());
 }

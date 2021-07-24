@@ -409,3 +409,47 @@ void GridBagAction::Update()
     nav_panel->ExpandAllNodes(m_cur_gbsizer.get());
     nav_panel->Thaw();
 }
+
+///////////////////////////////// SortProjectAction ////////////////////////////////////
+
+static bool CompareClassNames(NodeSharedPtr a, NodeSharedPtr b)
+{
+    return (a->prop_as_string(prop_class_name).compare(b->prop_as_string(prop_class_name)) < 0);
+}
+
+SortProjectAction::SortProjectAction()
+{
+    m_RedoEventGenerated = true;
+    m_RedoSelectEventGenerated = true;
+    m_UndoEventGenerated = true;
+    m_UndoSelectEventGenerated = true;
+
+    m_undo_string = "Sort Project";
+
+    m_old_project = g_NodeCreator.MakeCopy(wxGetApp().GetProject());
+}
+
+void SortProjectAction::Change()
+{
+    m_old_project = g_NodeCreator.MakeCopy(wxGetApp().GetProjectPtr());
+    auto project = wxGetApp().GetProject();
+
+    auto& children = project->GetChildNodePtrs();
+    std::sort(children.begin(), children.end(), CompareClassNames);
+
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SelectNode(project);
+}
+
+void SortProjectAction::Revert()
+{
+    auto project = wxGetApp().GetProject();
+    project->RemoveAllChildren();
+    for (size_t idx = 0; idx < m_old_project->GetChildCount(); ++idx)
+    {
+        project->Adopt(g_NodeCreator.MakeCopy(m_old_project->GetChild(idx)));
+    }
+
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SelectNode(project);
+}

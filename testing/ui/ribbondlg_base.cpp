@@ -19,10 +19,11 @@
 #include "../art/english.xpm"
 #include "../art/french.xpm"
 
-RibbonDlgBase::RibbonDlgBase(wxWindow* parent) : wxDialog()
+bool RibbonDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Ribbon Dialog"), wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -122,4 +123,6 @@ RibbonDlgBase::RibbonDlgBase(wxWindow* parent) : wxDialog()
     m_btn_2->Bind(wxEVT_BUTTON,
         [this](wxCommandEvent&) { m_scintilla->ClearAll();  m_scintilla->AddTextRaw("Ceci est une phrase en français."); }
         );
+
+    return true;
 }

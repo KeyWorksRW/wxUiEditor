@@ -31,10 +31,11 @@ static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
     return image;
 };
 
-DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent) : wxDialog()
+bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Widgets Testing"), wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
@@ -65,9 +66,6 @@ DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent) : wxDialog()
     m_btn_bitmaps->SetToolTip(wxString::FromUTF8("Bitmap should change when mouse is over button, or button is disabled."));
     grid_bag_sizer->Add(m_btn_bitmaps, wxGBPosition(0, 2), wxGBSpan(1, 1), wxALL, 5);
 
-    auto disable_bitmaps = new wxCheckBox(page_2, wxID_ANY, wxString::FromUTF8("Disable"));
-    grid_bag_sizer->Add(disable_bitmaps, wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
-
     m_btn_4 = new wxButton(page_2, wxID_ANY, wxString::FromUTF8("Right"));
     m_btn_4->SetBitmap(GetImgFromHdr(normal_png, sizeof(normal_png)));
     m_btn_4->SetBitmapPosition(wxRIGHT);
@@ -78,6 +76,9 @@ DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent) : wxDialog()
     wxBU_EXACTFIT);
     m_toggleBtn->SetToolTip(wxString::FromUTF8("Style set to exact fit, so it should be a bit smaller than usual."));
     grid_bag_sizer->Add(m_toggleBtn, wxGBPosition(0, 4), wxGBSpan(1, 1), wxALL, 5);
+
+    auto disable_bitmaps = new wxCheckBox(page_2, wxID_ANY, wxString::FromUTF8("Disable"));
+    grid_bag_sizer->Add(disable_bitmaps, wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
 
     auto box_sizer_7 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_3->Add(box_sizer_7, wxSizerFlags().Border(wxALL));
@@ -144,4 +145,6 @@ DlgMultiTestBase::DlgMultiTestBase(wxWindow* parent) : wxDialog()
     disable_bitmaps->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent& event) { m_btn_bitmaps->Enable(!event.IsChecked()); }
         );
+
+    return true;
 }

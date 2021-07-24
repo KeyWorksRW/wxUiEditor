@@ -32,19 +32,20 @@ static wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
     return animation;
 };
 
-CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent) : wxDialog()
+bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Common controls"), wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer6 = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));
 
-    m_infoCtrl = new wxInfoBar(this);
-    m_infoCtrl->SetShowHideEffects(wxSHOW_EFFECT_EXPAND, wxSHOW_EFFECT_NONE);
-    box_sizer6->Add(m_infoCtrl, wxSizerFlags().Expand().Border(wxALL));
+    m_infoBar = new wxInfoBar(this);
+    m_infoBar->SetShowHideEffects(wxSHOW_EFFECT_EXPAND, wxSHOW_EFFECT_NONE);
+    box_sizer6->Add(m_infoBar, wxSizerFlags().Expand().Border(wxALL));
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
@@ -260,6 +261,8 @@ CommonCtrlsBase::CommonCtrlsBase(wxWindow* parent) : wxDialog()
         [this](wxCommandEvent&) { if (m_toggleBtn->GetValue())  m_animation_ctrl->Play();  else  m_animation_ctrl->Stop(); }
         );
     m_slider->Bind(wxEVT_SLIDER, &CommonCtrlsBase::OnSlider, this);
+
+    return true;
 }
 
 void CommonCtrlsBase::OnContextMenu(wxContextMenuEvent& event)

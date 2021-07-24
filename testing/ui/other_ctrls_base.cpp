@@ -19,10 +19,11 @@
 
 #include "other_ctrls_base.h"
 
-OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent) : wxDialog()
+bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("NoteBook Dialog"), wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -71,8 +72,7 @@ OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent) : wxDialog()
     m_scrollBar->SetScrollbar(0, 1, 100, 1);
     parent_sizer3->Add(m_scrollBar, wxSizerFlags().Expand().Border(wxALL));
 
-    m_spinCtrl = new wxSpinCtrl(m_panel2, wxID_ANY, wxEmptyString,
-    wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 4);
+    m_spinCtrl = new wxSpinCtrl(m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 4);
     m_spinCtrl->SetValidator(wxGenericValidator(&m_spinValidate));
     parent_sizer3->Add(m_spinCtrl, wxSizerFlags().Border(wxALL));
 
@@ -160,4 +160,6 @@ OtherCtrlsBase::OtherCtrlsBase(wxWindow* parent) : wxDialog()
     Centre(wxBOTH);
 
     wxPersistentRegisterAndRestore(this, "OtherCtrlsBase");
+
+    return true;
 }

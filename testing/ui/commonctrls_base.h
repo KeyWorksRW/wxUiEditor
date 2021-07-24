@@ -33,7 +33,17 @@
 class CommonCtrlsBase : public wxDialog
 {
 public:
-    CommonCtrlsBase(wxWindow* parent);
+    CommonCtrlsBase() {}
+    CommonCtrlsBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Common controls"),
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
+    {
+        Create(parent, id, title, pos, size, style, name);
+    }
+
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Common controls"),
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
 protected:
 
@@ -56,7 +66,7 @@ protected:
     wxComboBox* m_comboBox2;
     wxComboBox* m_comboBox;
     wxGauge* m_gauge;
-    wxInfoBar* m_infoCtrl;
+    wxInfoBar* m_infoBar;
     wxListBox* m_listBox2;
     wxListBox* m_listBox;
     wxRadioBox* m_radioBox;

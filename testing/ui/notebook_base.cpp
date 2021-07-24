@@ -21,9 +21,11 @@
 #include "../art/french.xpm"
 #include "../art/japanese.xpm"
 
-NotebookBase::NotebookBase(wxWindow* parent) : wxDialog()
+bool NotebookBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Notebook"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -80,4 +82,6 @@ NotebookBase::NotebookBase(wxWindow* parent) : wxDialog()
 
     SetSizerAndFit(box_sizer);
     Centre(wxBOTH);
+
+    return true;
 }

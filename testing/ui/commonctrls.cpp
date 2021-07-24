@@ -25,67 +25,67 @@ CommonCtrls::~CommonCtrls()
 
 void CommonCtrls::OnProcessEnter(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_TEXT_ENTER event");
+    m_infoBar->ShowMessage("wxEVT_TEXT_ENTER event");
     Fit();
 }
 
 void CommonCtrls::OnCheckBox(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_CHECKBOX event");
+    m_infoBar->ShowMessage("wxEVT_CHECKBOX event");
     Fit();
 }
 
 void CommonCtrls::OnFirstBtn(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_BUTTON event");
+    m_infoBar->ShowMessage("wxEVT_BUTTON event");
     Fit();
 }
 
 void CommonCtrls::OnRadio(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_RADIOBUTTON event");
+    m_infoBar->ShowMessage("wxEVT_RADIOBUTTON event");
     Fit();
 }
 
 void CommonCtrls::OnChoice(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_CHOICE event");
+    m_infoBar->ShowMessage("wxEVT_CHOICE event");
     Fit();
 }
 
 void CommonCtrls::OnCombo(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_COMBOBOX event");
+    m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
     Fit();
 }
 
 void CommonCtrls::OnComboClose(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_COMBOBOX_CLOSEUP event");
+    m_infoBar->ShowMessage("wxEVT_COMBOBOX_CLOSEUP event");
     Fit();
 }
 
 void CommonCtrls::OnListChecked(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_CHECKLISTBOX event");
+    m_infoBar->ShowMessage("wxEVT_CHECKLISTBOX event");
     Fit();
 }
 
 void CommonCtrls::OnRadioBox(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_RADIOBOX event");
+    m_infoBar->ShowMessage("wxEVT_RADIOBOX event");
     Fit();
 }
 
 void CommonCtrls::OnSlider(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_SLIDER event");
+    m_infoBar->ShowMessage("wxEVT_SLIDER event");
     Fit();
 }
 
 void CommonCtrls::OnListBox(wxCommandEvent& WXUNUSED(event))
 {
-    m_infoCtrl->ShowMessage("wxEVT_LISTBOX event");
+    m_infoBar->ShowMessage("wxEVT_LISTBOX event");
     Fit();
 }
 

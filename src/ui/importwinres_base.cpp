@@ -10,9 +10,11 @@
 
 #include "importwinres_base.h"
 
-ImportWinResBase::ImportWinResBase(wxWindow* parent) : wxDialog()
+bool ImportWinResBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Import Windows Resource Dialogs"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -60,4 +62,6 @@ ImportWinResBase::ImportWinResBase(wxWindow* parent) : wxDialog()
     m_btnSelectAll->Bind(wxEVT_BUTTON, &ImportWinResBase::OnSelectAll, this);
     m_btnClearAll->Bind(wxEVT_BUTTON, &ImportWinResBase::OnClearAll, this);
     Bind(wxEVT_BUTTON, &ImportWinResBase::OnOk, this, wxID_OK);
+
+    return true;
 }

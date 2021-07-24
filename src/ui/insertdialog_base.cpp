@@ -10,9 +10,11 @@
 
 #include "insertdialog_base.h"
 
-InsertDialogBase::InsertDialogBase(wxWindow* parent) : wxDialog()
+bool InsertDialogBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Insert widget"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
     box_sizer->SetMinSize(300, 400);
@@ -46,4 +48,6 @@ InsertDialogBase::InsertDialogBase(wxWindow* parent) : wxDialog()
         );
     m_listBox->Bind(wxEVT_LISTBOX_DCLICK, &InsertDialogBase::OnListBoxDblClick, this);
     Bind(wxEVT_BUTTON, &InsertDialogBase::OnOK, this, wxID_OK);
+
+    return true;
 }

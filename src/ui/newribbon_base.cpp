@@ -12,9 +12,11 @@
 
 #include "newribbon_base.h"
 
-NewRibbonBase::NewRibbonBase(wxWindow* parent) : wxDialog()
+bool NewRibbonBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("New Ribbon Bar"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -55,4 +57,6 @@ NewRibbonBase::NewRibbonBase(wxWindow* parent) : wxDialog()
 
     SetSizerAndFit(box_sizer);
     Centre(wxBOTH);
+
+    return true;
 }

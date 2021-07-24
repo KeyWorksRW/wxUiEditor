@@ -14,9 +14,11 @@
 
 #include "newdialog_base.h"
 
-NewDialogBase::NewDialogBase(wxWindow* parent) : wxDialog()
+bool NewDialogBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("New Dialog"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -81,4 +83,6 @@ NewDialogBase::NewDialogBase(wxWindow* parent) : wxDialog()
     m_check_tabs->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&) { m_spinCtrlTabs->Enable(m_check_tabs->GetValue()); }
         );
+
+    return true;
 }

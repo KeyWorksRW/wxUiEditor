@@ -12,9 +12,11 @@
 
 #include "dbg_winres_dlg_base.h"
 
-DbgWinResBase::DbgWinResBase(wxWindow* parent) : wxDialog()
+bool DbgWinResBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Resource Files"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -65,4 +67,6 @@ DbgWinResBase::DbgWinResBase(wxWindow* parent) : wxDialog()
         [this](wxCommandEvent&) { m_res_file->SetValue(m_list_files->GetString(m_list_files->GetSelection())); }
         );
     Bind(wxEVT_BUTTON, &DbgWinResBase::OnAffirmative, this, wxID_OK);
+
+    return true;
 }

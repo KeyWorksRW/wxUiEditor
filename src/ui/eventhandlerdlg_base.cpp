@@ -10,9 +10,11 @@
 
 #include "eventhandlerdlg_base.h"
 
-EventHandlerDlgBase::EventHandlerDlgBase(wxWindow* parent) : wxDialog()
+bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Event Handler"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -83,4 +85,6 @@ EventHandlerDlgBase::EventHandlerDlgBase(wxWindow* parent) : wxDialog()
     m_check_include_event->Bind(wxEVT_CHECKBOX, &EventHandlerDlgBase::OnIncludeEvent, this);
     m_stc->Bind(wxEVT_STC_CHANGE, &EventHandlerDlgBase::OnChange, this);
     Bind(wxEVT_BUTTON, &EventHandlerDlgBase::OnOK, this, wxID_OK);
+
+    return true;
 }

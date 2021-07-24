@@ -13,9 +13,11 @@
 
 #include "WinMerge.xpm"
 
-DbgCodeDiffBase::DbgCodeDiffBase(wxWindow* parent) : wxDialog()
+bool DbgCodeDiffBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, wxID_ANY, wxString::FromUTF8("Compare Code Generation"));
+    if (!wxDialog::Create(parent, id, title, pos, size, style, name))
+        return false;
 
     auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -44,4 +46,6 @@ DbgCodeDiffBase::DbgCodeDiffBase(wxWindow* parent) : wxDialog()
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &DbgCodeDiffBase::OnInit, this);
     m_btn->Bind(wxEVT_BUTTON, &DbgCodeDiffBase::OnWinMerge, this);
+
+    return true;
 }

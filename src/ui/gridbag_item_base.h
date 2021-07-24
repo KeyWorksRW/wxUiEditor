@@ -16,7 +16,17 @@
 class GridBagItemBase : public wxDialog
 {
 public:
-    GridBagItemBase(wxWindow* parent);
+    GridBagItemBase() {}
+    GridBagItemBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Append or Insert into wxGridBagSizer"),
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
+    {
+        Create(parent, id, title, pos, size, style, name);
+    }
+
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Append or Insert into wxGridBagSizer"),
+        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
 protected:
 

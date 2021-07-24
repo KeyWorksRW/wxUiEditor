@@ -17,6 +17,7 @@
 #include "../art/disabled_png.h"
 #include "../art/focus_png.h"
 #include "../art/normal_png.h"
+#include "../art/wiztest_png.h"
 
 #include <wx/mstream.h>  // Memory stream classes
 
@@ -91,13 +92,38 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     page_2->SetSizerAndFit(box_sizer_3);
 
     auto page_3 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page_3, wxString::FromUTF8("Tab 2"));
+    m_notebook->AddPage(page_3, wxString::FromUTF8("Banners"));
 
     auto box_sizer_4 = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText_3 = new wxStaticText(page_3, wxID_ANY, wxString::FromUTF8("TODO: replace this control with something more useful..."));
-    m_staticText_3->Wrap(200);
-    box_sizer_4->Add(m_staticText_3, wxSizerFlags().Border(wxALL));
+    auto box_sizer_8 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_4->Add(box_sizer_8, wxSizerFlags(1).Border(wxALL));
+
+    m_banner_left = new wxBannerWindow(page_3, wxLEFT);
+    m_banner_left->SetText(wxString::FromUTF8("Left Banner"),
+        wxEmptyString);
+    box_sizer_8->Add(m_banner_left, wxSizerFlags().Border(wxALL));
+
+    m_banner_top = new wxBannerWindow(page_3, wxTOP);
+    m_banner_top->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION),
+        wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    m_banner_top->SetText(wxString::FromUTF8("Top Banner"),
+        wxString::FromUTF8("This is the top banner message"));
+    box_sizer_8->Add(m_banner_top, wxSizerFlags().Border(wxALL));
+
+    m_banner_right = new wxBannerWindow(page_3, wxRIGHT);
+    m_banner_right->SetText(wxString::FromUTF8("Right Banner"),
+        wxEmptyString);
+    box_sizer_8->Add(m_banner_right, wxSizerFlags().Border(wxALL));
+
+    auto box_sizer_9 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_4->Add(box_sizer_9, wxSizerFlags().Border(wxALL));
+
+    m_banner = new wxBannerWindow(page_3, wxLEFT);
+    m_banner->SetBitmap(GetImgFromHdr(wiztest_png, sizeof(wiztest_png)));
+    m_banner->SetText(wxString::FromUTF8("This is a long title"),
+        wxEmptyString);
+    box_sizer_9->Add(m_banner, wxSizerFlags().Border(wxALL));
 
     page_3->SetSizerAndFit(box_sizer_4);
 

@@ -302,6 +302,30 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
             node->prop_set_value(prop_style, "wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL");
         }
     }
+    else if (node->isGen(gen_wxListView))
+    {
+        ttlib::cstr style(xml_prop.text().as_string());
+        ttlib::multistr mstr(style, '|');
+        style.clear();
+        for (auto& iter: mstr)
+        {
+            if (iter.is_sameprefix("wxLC_ICON") || iter.is_sameprefix("wxLC_SMALL_ICON") ||
+                iter.is_sameprefix("wxLC_LIST") || iter.is_sameprefix("wxLC_REPORT"))
+            {
+                node->prop_set_value(prop_mode, iter);
+            }
+            else
+            {
+                if (style.size())
+                {
+                    style << '|';
+                }
+                style << iter;
+            }
+        }
+        if (style.size())
+            prop->set_value(style);
+    }
 
     else
     {

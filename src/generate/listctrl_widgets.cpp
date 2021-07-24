@@ -67,7 +67,11 @@ std::optional<ttlib::cstr> ListViewGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-    GeneratePosSizeFlags(node, code, false, "wxLC_ICON");
+
+    // Note that the default style is not specified, so that it will always be generated. That makes the generated code
+    // easier to understand since you know exactly which type of list view is being created instead of having to know what
+    // the default it.
+    GeneratePosSizeFlags(node, code);
 
     return code;
 }

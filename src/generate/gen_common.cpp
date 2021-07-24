@@ -301,6 +301,13 @@ void GenStyle(Node* node, ttlib::cstr& code)
         all_styles << node->prop_as_string(prop_window_style);
     }
 
+    if (node->isGen(gen_wxListView))
+    {
+        if (all_styles.size())
+            all_styles << '|';
+        all_styles << node->prop_as_string(prop_mode);
+    }
+
     if (all_styles.empty())
     {
         code << "0";

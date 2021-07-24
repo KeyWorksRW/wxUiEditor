@@ -411,17 +411,20 @@
         <inherits class="Window Events" />
         <inherits class="sizer_child" />
         <property name="var_name" type="string">m_lstview</property>
-        <property name="style" type="bitlist">
-            <option name="wxLC_LIST"
-                help="Multicolumn list view, with optional small icons. Columns are computed automatically, i.e. you don't set columns as in wxLC_REPORT. In other words, the list wraps, unlike a wxListBox." />
-            <option name="wxLC_REPORT"
-                help="Single or multicolumn report view, with optional header." />
-            <option name="wxLC_VIRTUAL"
-                help="The application provides items text on demand. May only be used with wxLC_REPORT." />
+        <property name="mode" type="option">
             <option name="wxLC_ICON"
                 help="Large icon view, with optional labels." />
             <option name="wxLC_SMALL_ICON"
                 help="Small icon view, with optional labels." />
+            <option name="wxLC_LIST"
+                help="Multicolumn list view, with optional small icons. Columns are computed automatically, i.e. you don't set columns as in wxLC_REPORT. In other words, the list wraps, unlike a wxListBox." />
+            <option name="wxLC_REPORT"
+                help="Single or multicolumn report view, with optional header." />
+                wxLC_REPORT
+        </property>
+        <property name="style" type="bitlist">
+            <option name="wxLC_VIRTUAL"
+                help="The application provides items text on demand. May only be used with wxLC_REPORT." />
             <option name="wxLC_ALIGN_TOP"
                 help="Icons align to the top. Win32 default, Win32 only." />
             <option name="wxLC_ALIGN_LEFT"
@@ -442,7 +445,6 @@
                 help="Draws light horizontal rules between rows in report mode." />
             <option name="wxLC_VRULES"
                 help="Draws light vertical rules between columns in report mode." />
-            wxLC_ICON
         </property>
         <event name="wxEVT_LIST_BEGIN_DRAG" class="wxListEvent"
             help="Begin dragging with the left mouse button." />

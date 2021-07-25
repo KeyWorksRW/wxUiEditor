@@ -74,10 +74,15 @@ bool App::LoadProject(const ttString& file)
         }
         else
         {
-            appMsgBox(ttlib::cstr() << "Project version " << curWxuiMajorVer << '.' << curWxuiMinorVer
-                                    << " is not supported.",
-                      "Unsupported Project Version");
-            return false;
+            if (appMsgBox(ttlib::cstr() << "Project version " << version / 10 << '.' << version % 10
+                                        << " is not supported.\n\nDo you want to attempt to load it anyway?",
+                          "Unsupported Project Version", wxYES_NO) == wxNO)
+            {
+                return false;
+            }
+            project = LoadProject(doc);
+            if (!project)
+                return false;
         }
     }
 
@@ -173,19 +178,9 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
     if (class_name.empty())
         return NodeSharedPtr();
 
-    //// Temporary until all projects converted
+    // This should never be the case, but let's switch it in the off chance it slips through
     if (class_name.is_sameas("wxListCtrl"))
         class_name = "wxListView";
-    else if (class_name.is_sameas("Dialog"))
-        class_name = "wxDialog";
-    else if (class_name.is_sameas("Frame"))
-        class_name = "wxFrame";
-    else if (class_name.is_sameas("Wizard"))
-        class_name = "wxWizard";
-    else if (class_name.is_sameas("WizardPageSimple"))
-        class_name = "wxWizardPageSimple";
-    else if (class_name.is_sameas("Panel"))
-        class_name = "PanelForm";
 
     auto new_node = CreateNode(class_name, parent);
     if (!new_node)
@@ -207,106 +202,6 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
             }
             continue;
         }
-
-        ///////////////////////////////////// Begin slightly old project conversion ////////////////////////////////////////
-
-        // Convert old name property into class_name and var_name
-        if (iter.cname().is_sameas("name"))
-        {
-            if (new_node->IsForm())
-            {
-                if (auto prop = new_node->get_prop_ptr(prop_class_name); prop)
-                {
-                    prop->set_value(iter.value());
-                    continue;
-                }
-            }
-            else
-            {
-                if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
-                {
-                    prop->set_value(iter.value());
-                    continue;
-                }
-            }
-        }
-
-        // Convert old orient name to orientationr
-        else if (iter.cname().is_sameas("orient"))
-        {
-            if (auto prop = new_node->get_prop_ptr(prop_orientation); prop)
-            {
-                prop->set_value(iter.value());
-                continue;
-            }
-        }
-
-        // Convert old access name to class_access
-        else if (iter.cname().is_sameas("access"))
-        {
-            if (auto prop = new_node->get_prop_ptr(prop_class_access); prop)
-            {
-                prop->set_value(iter.value());
-                continue;
-            }
-        }
-
-        // Convert old derived_name to derived_class_name
-        else if (iter.cname().is_sameas("derived_name"))
-        {
-            if (auto prop = new_node->get_prop_ptr(prop_derived_class_name); prop)
-            {
-                prop->set_value(iter.value());
-                continue;
-            }
-        }
-
-        // Convert old hdr_preamble to  to derived_class_name
-        else if (iter.cname().is_sameas("hdr_preamble"))
-        {
-            if (auto prop = new_node->get_prop_ptr(prop_base_hdr_includes); prop)
-            {
-                prop->set_value(iter.value());
-                continue;
-            }
-        }
-
-        // Convert old HDR; style bitmap to new image style
-        else if (iter.cname().is_sameas("bitmap") && iter.cvalue().contains("HDR;"))
-        {
-            if (auto prop = new_node->get_prop_ptr(prop_bitmap); prop)
-            {
-                ttlib::cstr new_value = iter.value();
-                new_value.Replace("HDR;", "XPM;");
-                new_value.Replace("; [", "; ; [");
-
-                prop->set_value(new_value);
-                continue;
-            }
-        }
-
-        // Convert old value property names
-        else if (iter.cname().is_sameas("value"))
-        {
-            if (class_name.is_sameas("wxFilePickerCtrl") || class_name.is_sameas("wxDirPickerCtrl"))
-            {
-                if (auto prop = new_node->get_prop_ptr(prop_initial_path); prop)
-                {
-                    prop->set_value(iter.value());
-                    continue;
-                }
-            }
-            else if (class_name.is_sameas("wxFontPickerCtrl"))
-            {
-                if (auto prop = new_node->get_prop_ptr(prop_initial_font); prop)
-                {
-                    prop->set_value(iter.value());
-                    continue;
-                }
-            }
-        }
-
-        /////////////////////////////////// End slightly old project conversion //////////////////////////////////////
 
         NodeProperty* prop = nullptr;
         if (auto find_prop = rmap_PropNames.find(iter.name()); find_prop != rmap_PropNames.end())
@@ -346,7 +241,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
                 // TODO: [KeyWorks - 06-03-2020] We need to store a list of unrecognized properties and display them to
                 // the user all at once after the project is completely loaded. We also need to flag the project file as
-                // unsaveable (only SaveAs can be used. See issue #69).
+                // unsaveable (only SaveAs can be used. See https://github.com/KeyWorksRW/wxUiEditor/issues/385 ).
 
                 MSG_WARNING(ttlib::cstr("Unrecognized property: ") << iter.name() << " in class: " << class_name);
 

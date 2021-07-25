@@ -399,6 +399,7 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
 
 void NavigationPanel::ExpandAllNodes(Node* node)
 {
+    AutoFreeze freeze(this);
     if (auto item_it = m_node_tree_map.find(node); item_it != m_node_tree_map.end())
     {
         if (m_tree_ctrl->ItemHasChildren(item_it->second))
@@ -670,6 +671,11 @@ void NavigationPanel::OnCollExpand(wxCommandEvent&)
     if (!node)
         return;  // This is theoretically impossible
 
+    ExpandCollapse(node);
+}
+
+void NavigationPanel::ExpandCollapse(Node* node)
+{
     AutoFreeze freeze(this);
 
     auto parent = node->GetParent();

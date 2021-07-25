@@ -13,6 +13,7 @@
 
 #include "bitmaps.h"       // Contains various images handling functions
 #include "mainframe.h"     // MainFrame -- Main window frame
+#include "nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
@@ -43,10 +44,7 @@ static const auto lstBarGenerators = {
 static const auto lstContainerGenerators = {
 
     gen_BookPage,
-    gen_PanelForm,
-    gen_wxDialog,
     gen_wxPanel,
-    gen_wxPopupTransientWindow,
     gen_wxWizardPageSimple,
 
 };
@@ -67,6 +65,12 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
             CreateBarMenu(node);
             return;
         }
+    }
+
+    if (node->IsForm())
+    {
+        CreateFormMenu(node);
+        return;
     }
 
     for (auto& iter: lstContainerGenerators)
@@ -123,6 +127,11 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
                 else
                     wxGetFrame().CreateToolNode(m_tool_name);
             }
+            break;
+
+        case MenuEXPAND_ALL:
+            wxGetFrame().GetNavigationPanel()->ExpandCollapse(m_node);
+            wxGetFrame().SelectNode(m_node);
             break;
 
         case wxID_CUT:
@@ -227,8 +236,10 @@ void NavPopupMenu::OnUpdateEvent(wxUpdateUIEvent& event)
     {
         case wxID_CUT:
         case wxID_COPY:
-            // case wxID_DELETE:
-            event.Enable(wxGetFrame().CanCopyNode());
+            if (m_node && !m_node->isGen(gen_Project))
+                event.Enable(true);
+            else
+                event.Enable(wxGetFrame().CanCopyNode());
             break;
 
         case wxID_PASTE:
@@ -496,10 +507,33 @@ void NavPopupMenu::CreateNormalMenu(Node* node)
     Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_GRIDBAG_SIZER);
 }
 
-void NavPopupMenu::CreateProjectMenu(Node* WXUNUSED(node))
+void NavPopupMenu::CreateProjectMenu(Node* node)
 {
-    Append(MenuPROJECT_ADD_DIALOG, "Add new dialog");
-    Append(MenuPROJECT_ADD_WINDOW, "Add new window");
+    if (wxGetFrame().GetClipboard())
+    {
+        auto clipboard = wxGetFrame().GetClipboard();
+
+        // The selected node is a container, so there aren't very many things you can paste into it.
+
+        if (clipboard->IsForm() || clipboard->IsContainer() || (clipboard->IsSizer() && node->GetChildCount() == 0))
+        {
+            auto menu_item = Append(wxID_PASTE);
+            menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
+            AppendSeparator();
+
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().PasteNode(wxGetApp().GetProject());
+                    ;
+                },
+                wxID_PASTE);
+        }
+    }
+
+    Append(MenuPROJECT_ADD_DIALOG, "Add new dialog...");
+    Append(MenuPROJECT_ADD_WINDOW, "Add new window...");
     Append(MenuPROJECT_ADD_WIZARD, "Add new wizard");
     AppendSeparator();
     Append(MenuPROJECT_SORT_FORMS, "Sort Forms");
@@ -756,6 +790,24 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
     }
 }
 
+void NavPopupMenu::CreateFormMenu(Node* node)
+{
+    m_node = node;
+
+    wxMenuItem* menu_item;
+
+    menu_item = Append(wxID_CUT);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU));
+    menu_item = Append(wxID_COPY);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
+
+    AppendSeparator();
+    menu_item = Append(MenuEXPAND_ALL, "Expand All");
+
+    Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
+    Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
+}
+
 void NavPopupMenu::CreateTopSizerMenu(Node* node)
 {
     wxMenuItem* menu_item;
@@ -852,7 +904,17 @@ void NavPopupMenu::CreateMenuMenu(Node* /* node */)
 
 void NavPopupMenu::CreateBarMenu(Node* node)
 {
+    m_node = node;
+
     wxMenuItem* menu_item;
+
+    menu_item = Append(wxID_CUT);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU));
+    menu_item = Append(wxID_COPY);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
+
+    AppendSeparator();
+    menu_item = Append(MenuEXPAND_ALL, "Expand All");
 
     if (!node->isGen(gen_wxStatusBar))
     {
@@ -860,11 +922,6 @@ void NavPopupMenu::CreateBarMenu(Node* node)
         menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
         AppendSeparator();
     }
-
-    menu_item = Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
-    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
-    menu_item = Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
-    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
 
     if (node->isGen(gen_wxMenuBar) || node->isGen(gen_MenuBar))
     {

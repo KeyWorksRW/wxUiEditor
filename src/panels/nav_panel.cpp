@@ -291,14 +291,19 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         return;
     }
 
+    auto src_parent = node_src->GetParent();
     if (dst_parent->isGen(gen_wxGridBagSizer))
     {
-        auto src_parent = node_src->GetParent();
         if (src_parent == dst_parent)
         {
             appMsgBox("You cannot drag and drop an item within the same wxGridBagSizer. Use the Move commands instead.");
             return;
         }
+    }
+    else if (src_parent == dst_parent)
+    {
+        m_pMainFrame->PushUndoAction(std::make_shared<ChangePositionAction>(node_src, dst_parent->GetChildPosition(node_dst)));
+        return;
     }
 
     m_pMainFrame->PushUndoAction(std::make_shared<ChangeParentAction>(node_src, dst_parent));

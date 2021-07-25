@@ -26,7 +26,6 @@ using namespace GenEnum;
 #include "../ui/import_dlg.h"            // ImportDlg -- Dialog to create a new project
 #include "../winres/import_winres.h"     // WinResource -- Parse a Windows resource file
 #include "node_gridbag.h"                // GridBag -- Create and modify a node containing a wxGridBagSizer
-#include "oldproject.h"                  // Load older version of wxUiEditor project
 
 using namespace GenEnum;
 
@@ -73,9 +72,13 @@ bool App::LoadProject(const ttString& file)
             appMsgBox(ttlib::cstr() << "The data file " << file.wx_str() << " is invalid and cannot be opened.");
             return false;
         }
-
-        project = ::LoadOldProject(doc);
-        m_isProject_updated = true;
+        else
+        {
+            appMsgBox(ttlib::cstr() << "Project version " << curWxuiMajorVer << '.' << curWxuiMinorVer
+                                    << " is not supported.",
+                      "Unsupported Project Version");
+            return false;
+        }
     }
 
     else

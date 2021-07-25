@@ -118,7 +118,7 @@ Files:
     panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar
 
     project/loadproject.cpp     # Load wxUiEditor project
-    project/oldproject.cpp      # Load older version of wxUiEditor project
+    # project/oldproject.cpp      # Load older version of wxUiEditor project
     project/saveproject.cpp     # Save a wxUiEditor project file
 
     utils/font_prop.cpp         # FontProperty class

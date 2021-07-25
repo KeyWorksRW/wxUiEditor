@@ -234,59 +234,79 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     {
         if (item == itemSrc)
         {
+            if (appMsgBox("Do you want to duplicate this item?", "Drop item onto itself", wxYES_NO) == wxYES)
+            {
+                wxGetFrame().DuplicateNode(GetNode(itemSrc));
+                ExpandAllNodes(wxGetFrame().GetSelectedNode());
+            }
             return;
         }
         item = m_tree_ctrl->GetItemParent(item);
     }
 
     auto node_src = GetNode(itemSrc);
+    ASSERT(node_src);
     if (!node_src)
     {
         return;
     }
 
     auto node_dst = GetNode(itemDst);
+    ASSERT(node_dst);
     if (!node_dst)
     {
         return;
     }
 
-    // TODO: [KeyWorks - 11-19-2020] Currently, we only allow dragging into a sizer. However, depending on the child, there
-    // may be other hosts that would work, such as moving a menuitem or a submenu.
-
-    auto nextSizer = node_dst;
-    while (nextSizer && !nextSizer->IsSizer())
+    auto dst_parent = node_dst;
+    while (!dst_parent->IsChildAllowed(node_src))
     {
-        nextSizer = nextSizer->GetParent();
-    }
-
-    if (nextSizer)
-    {
-        if (nextSizer->isGen(gen_wxStdDialogButtonSizer))
+        if (dst_parent->IsSizer())
         {
-            appMsgBox("You cannot move a control into a wxStdDialogBtnSizer", _tt(strIdMoveTitle));
+            appMsgBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a sizer.");
             return;
         }
-
-        if (nextSizer->isGen(gen_wxGridBagSizer))
+        else if (dst_parent->IsContainer())
         {
-            auto previousSizer = node_src;
-            while (previousSizer && !previousSizer->IsSizer())
-            {
-                previousSizer = previousSizer->GetParent();
-            }
-
-            if (nextSizer == previousSizer)
-            {
-                appMsgBox("You cannot drag and drop an item within the same wxGridBagSizer.", _tt(strIdMoveTitle));
-                return;
-            }
-
-            m_pMainFrame->SelectNode(nextSizer, false, false);
+            appMsgBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a " << dst_parent->DeclName()
+                                    << '.');
+            return;
         }
-
-        m_pMainFrame->PushUndoAction(std::make_shared<ChangeParentAction>(node_src, nextSizer));
+        else if (dst_parent->isGen(gen_Project))
+        {
+            appMsgBox(ttlib::cstr() << "Only forms can be dropped onto your project.");
+            return;
+        }
+        dst_parent = dst_parent->GetParent();
+        if (!dst_parent)
+        {
+            appMsgBox(ttlib::cstr() << node_src->DeclName() << " can't be dropped onto this target.");
+            return;
+        }
     }
+
+    if (dst_parent->isGen(gen_wxStdDialogButtonSizer))
+    {
+        appMsgBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a wxStdDialogBtnSizer.");
+        return;
+    }
+
+    auto src_parent = node_src->GetParent();
+    if (dst_parent->isGen(gen_wxGridBagSizer))
+    {
+        if (src_parent == dst_parent)
+        {
+            appMsgBox("You cannot drag and drop an item within the same wxGridBagSizer. Use the Move commands instead.");
+            return;
+        }
+    }
+    else if (src_parent == dst_parent)
+    {
+        m_pMainFrame->PushUndoAction(std::make_shared<ChangePositionAction>(node_src, dst_parent->GetChildPosition(node_dst)));
+        return;
+    }
+
+    m_pMainFrame->PushUndoAction(std::make_shared<ChangeParentAction>(node_src, dst_parent));
 }
 
 void NavigationPanel::OnNodeCreated(CustomEvent& event)

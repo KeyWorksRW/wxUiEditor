@@ -28,11 +28,12 @@ protected:
     void OnSortForms(wxCommandEvent& WXUNUSED(event));
     void OnUpdateEvent(wxUpdateUIEvent& event);
 
-    void CreateNormalMenu(Node* node);
     void CreateBarMenu(Node* node);
     void CreateBookMenu(Node* node);
     void CreateContainerMenu(Node* node);
+    void CreateFormMenu(Node* node);
     void CreateMenuMenu(Node* node);
+    void CreateNormalMenu(Node* node);
     void CreateProjectMenu(Node* node);
     void CreateTopSizerMenu(Node* node);
     void CreateWizardMenu(Node* node);
@@ -104,12 +105,14 @@ protected:
         MenuPROJECT_ADD_WIZARD,
         MenuPROJECT_SORT_FORMS,
 
+        MenuEXPAND_ALL,
+
         MenuTESTING_INFO,
         MenuDEBUG_KEYHH,
     };
 
 private:
-    Node* m_node;
+    Node* m_node { nullptr };
     Node* m_child { nullptr };
     GenEnum::GenName m_tool_name { GenEnum::GenName::gen_name_array_size };  // used by MenuNEW_ITEM -> wxGetApp().CreateToolNode(m_tool_name)
 };

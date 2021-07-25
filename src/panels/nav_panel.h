@@ -33,6 +33,9 @@ public:
     void AddAllChildren(Node* node_parent);
     void ExpandAllNodes(Node* node);
 
+    // This will expand the specified node and collapse all other siblings
+    void ExpandCollapse(Node* node);
+
 protected:
 
     void InsertNode(Node* node);

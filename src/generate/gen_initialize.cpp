@@ -44,6 +44,7 @@ using namespace GenEnum;
 void NodeCreator::InitGenerators()
 {
     SET_GENERATOR(gen_BookPage, BookPageGenerator)
+    SET_GENERATOR(gen_PageCtrl, PageCtrlGenerator)
 
     SET_GENERATOR(gen_wxWizardPageSimple, WizardPageGenerator)
     SET_GENERATOR(gen_wxBannerWindow, BannerWindowGenerator)

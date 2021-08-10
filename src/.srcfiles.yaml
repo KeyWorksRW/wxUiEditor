@@ -287,6 +287,7 @@ PNG:
     art_src/moveColRight.png: art_headers/moveColRight_png.hxx
     art_src/moveRowDown.png: art_headers/moveRowDown_png.hxx
     art_src/moveRowUp.png: art_headers/moveRowUp_png.hxx
+    art_src/pagectrl.png: art_headers/pagectrl_png.hxx
     art_src/project.png: art_headers/project_png.hxx
     art_src/propgriditem.png: art_headers/propgriditem_png.hxx
     art_src/propgridpage.png: art_headers/propgridpage_png.hxx

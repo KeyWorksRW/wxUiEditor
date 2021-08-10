@@ -135,6 +135,114 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
     return code;
 }
 
+//////////////////////////////////////////  PageCtrlGenerator  //////////////////////////////////////////
+
+wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
+{
+    if (!node->GetChildCount())
+        return nullptr;
+
+    auto child_generator = node->GetChild(0)->GetGenerator();
+    ASSERT(child_generator);
+    auto widget = child_generator->CreateMockup(node->GetChild(0), parent);
+    ASSERT(widget);
+
+    auto node_parent = node->GetParent();
+    auto book = wxDynamicCast(parent, wxBookCtrlBase);
+    ASSERT(book);
+
+    if (book)
+    {
+        if (node_parent->isGen(gen_wxToolbook))
+        {
+            int idx_image = 0;
+            for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child, ++idx_image)
+            {
+                if (node_parent->GetChild(idx_child) == node)
+                    break;
+            }
+            book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
+        }
+        else if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
+        {
+            int idx_image = 0;
+            for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+            {
+                if (node_parent->GetChild(idx_child) == node)
+                    break;
+                if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap) || node_parent->isGen(gen_wxToolbook))
+                    ++idx_image;
+            }
+
+            book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
+        }
+        else
+        {
+            book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label));
+        }
+
+        auto cur_selection = book->GetSelection();
+        if (node->prop_as_bool(prop_select))
+        {
+            book->SetSelection(book->GetPageCount() - 1);
+        }
+        else if (cur_selection >= 0)
+        {
+            book->SetSelection(cur_selection);
+        }
+    }
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> PageCtrlGenerator::GenConstruction(Node* node)
+{
+    if (!node->GetChildCount())
+        return {};
+
+    auto child_node = node->GetChild(0);
+
+    auto child_generator = child_node->GetGenerator();
+    ASSERT(child_generator);
+
+    auto result = child_generator->GenConstruction(child_node);
+    if (!result)
+    {
+        return {};
+    }
+
+    ttlib::cstr code;
+    code << result.value() << '\n';
+    code << GetParentName(node) << "->AddPage(" << child_node->get_node_name() << ", ";
+    code << GenerateQuotedString(node, prop_label);
+
+    // Default is false, so only add parameter if it is true.
+    if (node->prop_as_bool(prop_select))
+        code << ", true";
+
+    if (node->HasValue(prop_bitmap) &&
+        (node->GetParent()->prop_as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
+    {
+        auto node_parent = node->GetParent();
+        int idx_image = 0;
+        for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+        {
+            if (node_parent->GetChild(idx_child) == node)
+                break;
+            if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                ++idx_image;
+        }
+
+        if (!node->prop_as_bool(prop_select))
+            code << ", false";
+        code << ", " << idx_image;
+    }
+
+    code << ");";
+
+    return code;
+}
+
 //////////////////////////////////////////  NotebookGenerator  //////////////////////////////////////////
 
 wxObject* NotebookGenerator::CreateMockup(Node* node, wxObject* parent)

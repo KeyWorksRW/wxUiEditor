@@ -336,6 +336,15 @@
         <property name="bitmap" type="image"
             help="Page Image (not all books use this)" />
     </gen>
+
+    <gen class="PageCtrl" image="pagectrl" type="page">
+        <property name="label" type="string_escapes">page</property>
+        <property name="select" type="bool"
+            help="Select Page when Adding">0</property>
+        <property name="bitmap" type="image"
+            help="Page Image (optional)" />
+    </gen>
+
     <!-- wxFormBuilder import only -->
 
     <gen class="oldbookpage" type="oldbookpage">

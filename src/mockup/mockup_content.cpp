@@ -195,9 +195,23 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         new_wxparent = collpane->GetPane();
     }
 
-    for (const auto& child: node->GetChildNodePtrs())
+    if (node->isGen(gen_PageCtrl) && node->GetChildCount())
     {
-        CreateChildren(child.get(), new_wxparent, created_object);
+        auto page_child = node->GetChild(0);
+        if (page_child)
+        {
+            for (const auto& child: page_child->GetChildNodePtrs())
+            {
+                CreateChildren(child.get(), parent, parentNode);
+            }
+        }
+    }
+    else
+    {
+        for (const auto& child: node->GetChildNodePtrs())
+        {
+            CreateChildren(child.get(), new_wxparent, created_object);
+        }
     }
 
     if (node->GetParent()->isType(type_wizard))
@@ -350,6 +364,7 @@ static const GenEnum::GenName lst_select_nodes[] = {
 
     gen_wxWizardPageSimple,
     gen_BookPage,
+    gen_PageCtrl,
     gen_wxRibbonPage,
     gen_wxRibbonPanel,
     gen_wxRibbonButtonBar,
@@ -393,7 +408,7 @@ void MockupContent::OnNodeSelected(Node* node)
         return;
     }
 
-    else if (node->isGen(gen_BookPage))
+    else if (node->isGen(gen_BookPage) || node->isGen(gen_PageCtrl))
     {
         auto parent = node->GetParent();
         auto book = wxStaticCast(Get_wxObject(parent), wxBookCtrlBase);
@@ -402,12 +417,33 @@ void MockupContent::OnNodeSelected(Node* node)
         {
             // If this is a wxChoicebook, then some of the children might be a widget rather then a book page
             size_t sel_pos = 0;
-            for (size_t child = 0; child < parent->GetChildCount(); ++child)
+            for (size_t idx_child = 0; idx_child < parent->GetChildCount(); ++idx_child)
             {
-                if (parent->GetChildNodePtrs()[child].get() == node)
+                auto child = parent->GetChildNodePtrs()[idx_child].get();
+                if (child == node)
+                {
+                    if (child->gen_type() == type_page && !child->GetChildCount())
+                    {
+                        // When a PageCtrl is first created, it won't have any children and cannot be selected
+                        m_mockupParent->ClearIgnoreSelection();
+                        return;
+                    }
                     break;
-                if (parent->GetChildNodePtrs()[child].get()->gen_type() == type_widget)
+                }
+                else if (child->gen_type() == type_widget)
                     continue;
+                else if (child->gen_type() == type_page && !child->GetChildCount())
+                {
+                    // PageCtrl is an abstract class -- until it has a child, the parent book cannot select it as a page. If
+                    // this is the last page, then we must back up the selection index and break out of the loop.
+                    if (idx_child + 1 >= parent->GetChildCount())
+                    {
+                        if (sel_pos > 0)
+                            --sel_pos;
+                        break;
+                    }
+                    continue;
+                }
                 ++sel_pos;
             }
             book->SetSelection(sel_pos);

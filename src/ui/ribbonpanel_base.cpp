@@ -37,6 +37,7 @@ using namespace GenEnum;
 #include "../art_headers/infobar_png.hxx"
 #include "../art_headers/menu_png.hxx"
 #include "../art_headers/menuitem_png.hxx"
+#include "../art_headers/pagectrl_png.hxx"
 #include "../art_headers/propgriditem_png.hxx"
 #include "../art_headers/propgridpage_png.hxx"
 #include "../art_headers/radio_box_png.hxx"
@@ -277,7 +278,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
 
     auto container_bar_page = new wxRibbonToolBar(panel_page, wxID_ANY);
     {
-        container_bar_page->AddTool(gen_BookPage, GetImgFromHdr(book_page_png, sizeof(book_page_png)), wxString::FromUTF8("Book Page"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_page->AddTool(gen_BookPage, GetImgFromHdr(book_page_png, sizeof(book_page_png)), wxString::FromUTF8("Adds a wxPanel, allowing for multiple controls"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_page->AddTool(gen_PageCtrl, GetImgFromHdr(pagectrl_png, sizeof(pagectrl_png)), wxString::FromUTF8("Adds a single control as the page"), wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_page->Realize();
 

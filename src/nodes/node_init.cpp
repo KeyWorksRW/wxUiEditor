@@ -42,11 +42,31 @@ static const ParentChild lstParentChild[] = {
     { type_bookpage, type_gbsizer, one },
     { type_bookpage, type_sizer, one },
 
+    { type_page, type_auinotebook, one },
+    { type_page, type_choicebook, one },
+    { type_page, type_container, one },
+    { type_page, type_dataviewctrl, one },
+    { type_page, type_dataviewlistctrl, one },
+    { type_page, type_dataviewtreectrl, one },
+    { type_page, type_listbook, one },
+    { type_page, type_notebook, one },
+    { type_page, type_propgrid, one },
+    { type_page, type_propgridman, one },
+    { type_page, type_ribbonbar, one },
+    { type_page, type_simplebook, one },
+    { type_page, type_splitter, one },
+    { type_page, type_treelistctrl, one },
+    { type_page, type_widget, one },
+
     { type_choicebook, type_bookpage, infinite },
+    { type_choicebook, type_page, infinite },
     { type_choicebook, type_widget, infinite },  // The only book that allows adding a widget
     { type_listbook, type_bookpage, infinite },
+    { type_listbook, type_page, infinite },
     { type_notebook, type_bookpage, infinite },
+    { type_notebook, type_page, infinite },
     { type_simplebook, type_bookpage, infinite },
+    { type_simplebook, type_page, infinite },
 
     // Menus
 

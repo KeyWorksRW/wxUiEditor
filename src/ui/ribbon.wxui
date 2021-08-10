@@ -434,8 +434,13 @@
                 <node
                   class="ribbonTool"
                   bitmap="Header; ..\art_headers\book_page_png.hxx; ; [-1; -1]"
-                  help="Book Page"
+                  help="Adds a wxPanel, allowing for multiple controls"
                   id="gen_BookPage" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Header; ..\art_headers\pagectrl_png.hxx; ; [-1; -1]"
+                  help="Adds a single control as the page"
+                  id="gen_PageCtrl" />
               </node>
             </node>
           </node>

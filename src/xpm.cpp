@@ -45,6 +45,7 @@
 #include "art_headers/wxStaticCheckBoxSizer_png.hxx"
 #include "art_headers/wxStaticRadioBtnSizer_png.hxx"
 
+#include "art_headers/CustomControl_png.hxx"
 #include "art_headers/auinotebook_png.hxx"
 #include "art_headers/auitoolbar_png.hxx"
 #include "art_headers/bitmap_button_png.hxx"
@@ -54,7 +55,6 @@
 #include "art_headers/calendar_png.hxx"
 #include "art_headers/check3state_png.hxx"
 #include "art_headers/colourPickerIcon_png.hxx"
-#include "art_headers/CustomControl_png.hxx"
 #include "art_headers/dataview_ctrl_png.hxx"
 #include "art_headers/dataviewlist_column_png.hxx"
 #include "art_headers/dataviewlist_ctrl_png.hxx"
@@ -79,6 +79,7 @@
 #include "art_headers/moveColRight_png.hxx"
 #include "art_headers/moveRowDown_png.hxx"
 #include "art_headers/moveRowUp_png.hxx"
+#include "art_headers/pagectrl_png.hxx"
 #include "art_headers/project_png.hxx"
 #include "art_headers/propgriditem_png.hxx"
 #include "art_headers/propgridpage_png.hxx"
@@ -231,6 +232,7 @@ static const ImageMap png_headers[] = {
     { "moveColRight", moveColRight_png, sizeof(moveColRight_png) },
     { "moveRowDown", moveRowDown_png, sizeof(moveRowDown_png) },
     { "moveRowUp", moveRowUp_png, sizeof(moveRowUp_png) },
+    { "pagectrl", pagectrl_png, sizeof(pagectrl_png) },
     { "project", project_png, sizeof(project_png) },
     { "propgriditem", propgriditem_png, sizeof(propgriditem_png) },
     { "propgridpage", propgridpage_png, sizeof(propgridpage_png) },

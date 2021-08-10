@@ -1144,9 +1144,28 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             m_source->writeLine(code);
         }
 
-        for (const auto& child: node->GetChildNodePtrs())
+        if (node->isGen(gen_PageCtrl) && node->GetChildCount())
         {
-            GenConstruction(child.get());
+            // type_page will have already constructed the code for the child. However, we still need to generate settings
+            // and process any grandchildren.
+
+            auto page_child = node->GetChild(0);
+            if (page_child)
+            {
+                GenSettings(page_child);
+
+                for (const auto& child: page_child->GetChildNodePtrs())
+                {
+                    GenConstruction(child.get());
+                }
+            }
+        }
+        else
+        {
+            for (const auto& child: node->GetChildNodePtrs())
+            {
+                GenConstruction(child.get());
+            }
         }
 
         if (node->IsSizer())

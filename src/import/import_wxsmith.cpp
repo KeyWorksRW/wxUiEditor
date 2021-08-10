@@ -97,6 +97,19 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
     while (!new_node)
     {
+        if (sizeritem->isGen(gen_oldbookpage))
+        {
+            if (auto page = g_NodeCreator.CreateNode(gen_PageCtrl, parent); page)
+            {
+                if (sizeritem->HasValue(prop_label))
+                {
+                    page->prop_set_value(prop_label, sizeritem->prop_as_string(prop_label));
+                }
+                parent->Adopt(page);
+                return CreateXrcNode(xml_obj, page.get(), sizeritem);
+            }
+        }
+
         // parent will be null if pasting from the clipboard
         if (parent)
         {

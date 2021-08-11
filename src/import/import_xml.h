@@ -31,6 +31,7 @@ protected:
     void ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop);
     void ProcessAttributes(const pugi::xml_node& xml_obj, Node* node);
     void ProcessContent(const pugi::xml_node& xml_obj, Node* node);
+    void ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* node);
     void ProcessBitmap(const pugi::xml_node& xml_obj, Node* node);
     void ProcessHandler(const pugi::xml_node& xml_obj, Node* node);
     void ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent = nullptr);
@@ -38,4 +39,5 @@ protected:
     pugi::xml_document m_docOut;
     ttString m_importProjectFile;
     NodeSharedPtr m_project;
+    std::map<std::string, std::string> m_notebook_tabs;
 };

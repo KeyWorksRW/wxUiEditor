@@ -83,6 +83,20 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
             if (result)
                 break;
         }
+        else if (base.is_sameas("EditDialog"))
+        {
+            result = ConvertToGenName("wxDialog", parent);
+            if (result)
+                break;
+        }
+        else if (base.is_sameas("EditTopLevelPanel"))
+        {
+            result = ConvertToGenName("Panel", parent);
+            if (result)
+                break;
+        }
+
+        // TODO: [KeyWorks - 08-10-2021] wxGlade supports wxMDIChildFrame using a base name of "EditMDIChildFrame"
 
         // This appears to be a placeholder to reserve a spot. We just ignore it.
         if (object_name == "sizerslot")
@@ -193,6 +207,12 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
 
         ProcessAttributes(xml_obj, new_node.get());
         ProcessProperties(xml_obj, new_node.get());
+    }
+
+    if (new_node->isGen(gen_wxGridSizer))
+    {
+        if (new_node->prop_as_int(prop_rows) > 0 && new_node->prop_as_int(prop_cols) > 0)
+            new_node->prop_set_value(prop_rows, 0);
     }
 
     while (child)

@@ -97,7 +97,7 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
     auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
     while (!new_node)
     {
-        if (sizeritem->isGen(gen_oldbookpage))
+        if (sizeritem && sizeritem->isGen(gen_oldbookpage))
         {
             if (auto page = g_NodeCreator.CreateNode(gen_PageCtrl, parent); page)
             {

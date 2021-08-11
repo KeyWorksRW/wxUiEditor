@@ -393,6 +393,11 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
+                  bitmap="Header; ..\art_headers\auinotebook_png.hxx; ; [-1; -1]"
+                  help="wxAuiNotebook"
+                  id="gen_wxAuiNotebook" />
+                <node
+                  class="ribbonTool"
                   bitmap="Header; ..\art_headers\wxChoicebook_png.hxx; ; [-1; -1]"
                   help="wxChoicebook"
                   id="gen_wxChoicebook" />

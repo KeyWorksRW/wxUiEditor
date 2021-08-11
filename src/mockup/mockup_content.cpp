@@ -11,14 +11,15 @@
 
 #include "pch.h"
 
-#include <wx/bookctrl.h>    // wxBookCtrlBase: common base class for wxList/Tree/Notebook
-#include <wx/choicebk.h>    // wxChoicebook: wxChoice and wxNotebook combination
-#include <wx/collpane.h>    // wxCollapsiblePane
-#include <wx/gbsizer.h>     // wxGridBagSizer:  A sizer that can lay out items in a grid,
-#include <wx/ribbon/bar.h>  // Top-level component of the ribbon-bar-style interface
-#include <wx/sizer.h>       // provide wxSizer class for layout
-#include <wx/statbox.h>     // wxStaticBox base header
-#include <wx/statline.h>    // wxStaticLine class interface
+#include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
+#include <wx/bookctrl.h>     // wxBookCtrlBase: common base class for wxList/Tree/Notebook
+#include <wx/choicebk.h>     // wxChoicebook: wxChoice and wxNotebook combination
+#include <wx/collpane.h>     // wxCollapsiblePane
+#include <wx/gbsizer.h>      // wxGridBagSizer:  A sizer that can lay out items in a grid,
+#include <wx/ribbon/bar.h>   // Top-level component of the ribbon-bar-style interface
+#include <wx/sizer.h>        // provide wxSizer class for layout
+#include <wx/statbox.h>      // wxStaticBox base header
+#include <wx/statline.h>     // wxStaticLine class interface
 
 #include "mockup_content.h"
 
@@ -411,44 +412,47 @@ void MockupContent::OnNodeSelected(Node* node)
     else if (node->isGen(gen_BookPage) || node->isGen(gen_PageCtrl))
     {
         auto parent = node->GetParent();
-        auto book = wxStaticCast(Get_wxObject(parent), wxBookCtrlBase);
-        ASSERT(book);
-        if (book)
+        size_t sel_pos = 0;
+        for (size_t idx_child = 0; idx_child < parent->GetChildCount(); ++idx_child)
         {
-            // If this is a wxChoicebook, then some of the children might be a widget rather then a book page
-            size_t sel_pos = 0;
-            for (size_t idx_child = 0; idx_child < parent->GetChildCount(); ++idx_child)
+            auto child = parent->GetChildNodePtrs()[idx_child].get();
+            if (child == node)
             {
-                auto child = parent->GetChildNodePtrs()[idx_child].get();
-                if (child == node)
+                if (child->gen_type() == type_page && !child->GetChildCount())
                 {
-                    if (child->gen_type() == type_page && !child->GetChildCount())
-                    {
-                        // When a PageCtrl is first created, it won't have any children and cannot be selected
-                        m_mockupParent->ClearIgnoreSelection();
-                        return;
-                    }
+                    // When a PageCtrl is first created, it won't have any children and cannot be selected
+                    m_mockupParent->ClearIgnoreSelection();
+                    return;
+                }
+                break;
+            }
+            else if (child->gen_type() == type_widget)
+                continue;
+            else if (child->gen_type() == type_page && !child->GetChildCount())
+            {
+                // PageCtrl is an abstract class -- until it has a child, the parent book cannot select it as a
+                // page. If this is the last page, then we must back up the selection index and break out of the
+                // loop.
+                if (idx_child + 1 >= parent->GetChildCount())
+                {
+                    if (sel_pos > 0)
+                        --sel_pos;
                     break;
                 }
-                else if (child->gen_type() == type_widget)
-                    continue;
-                else if (child->gen_type() == type_page && !child->GetChildCount())
-                {
-                    // PageCtrl is an abstract class -- until it has a child, the parent book cannot select it as a page. If
-                    // this is the last page, then we must back up the selection index and break out of the loop.
-                    if (idx_child + 1 >= parent->GetChildCount())
-                    {
-                        if (sel_pos > 0)
-                            --sel_pos;
-                        break;
-                    }
-                    continue;
-                }
-                ++sel_pos;
+                continue;
             }
-            book->SetSelection(sel_pos);
-            m_mockupParent->ClearIgnoreSelection();
+            ++sel_pos;
         }
+        if (parent->isGen(gen_wxAuiNotebook))
+        {
+            wxStaticCast(Get_wxObject(parent), wxAuiNotebook)->SetSelection(sel_pos);
+        }
+        else
+        {
+            wxStaticCast(Get_wxObject(parent), wxBookCtrlBase)->SetSelection(sel_pos);
+        }
+        m_mockupParent->ClearIgnoreSelection();
+
         return;
     }
 

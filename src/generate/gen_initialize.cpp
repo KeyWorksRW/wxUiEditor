@@ -39,7 +39,11 @@
 
 using namespace GenEnum;
 
-#define SET_GENERATOR(name, generator) get_declaration(name)->SetGenerator(new generator());
+#define SET_GENERATOR(name, generator)                        \
+    {                                                         \
+        ASSERT(get_declaration(name));                        \
+        get_declaration(name)->SetGenerator(new generator()); \
+    }
 
 void NodeCreator::InitGenerators()
 {
@@ -66,6 +70,7 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_wxInfoBar, InfoBarGenerator)
     SET_GENERATOR(gen_wxListBox, ListBoxGenerator)
     SET_GENERATOR(gen_wxSimpleHtmlListBox, HtmlListBoxGenerator)
+    SET_GENERATOR(gen_wxAuiNotebook, AuiNotebookGenerator)
     SET_GENERATOR(gen_wxListbook, ListbookGenerator)
     SET_GENERATOR(gen_wxNotebook, NotebookGenerator)
     SET_GENERATOR(gen_wxToolbook, ToolbookGenerator)

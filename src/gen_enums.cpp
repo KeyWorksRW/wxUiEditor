@@ -49,6 +49,7 @@ std::unordered_map<std::string, PropType> GenEnum::rmap_PropTypes;
 std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
 
     { prop_Apply, "Apply" },
+    { prop_art_provider, "art_provider" },
     { prop_BottomDockable, "BottomDockable" },
     { prop_Cancel, "Cancel" },
     { prop_Close, "Close" },
@@ -389,7 +390,7 @@ std::unordered_map<std::string, GenType> GenEnum::rmap_GenTypes;
 std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
     { gen_AUI, "AUI" },
-    { gen_AuiToolBar, "AuiToolBar" },
+
     { gen_Bitmaps, "Bitmaps" },
     { gen_BookPage, "BookPage" },
     { gen_Boolean_Validator, "Boolean Validator" },
@@ -440,6 +441,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxActivityIndicator, "wxActivityIndicator" },
     { gen_wxAnimationCtrl, "wxAnimationCtrl" },
     { gen_wxAuiMDIChildFrame, "wxAuiMDIChildFrame" },
+    { gen_wxAuiNotebook, "wxAuiNotebook" },
     { gen_wxAuiToolBar, "wxAuiToolBar" },
     { gen_wxBannerWindow, "wxBannerWindow" },
     { gen_wxBitmapComboBox, "wxBitmapComboBox" },

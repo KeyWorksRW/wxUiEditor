@@ -214,6 +214,12 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
         ProcessProperties(xml_obj, new_node.get());
     }
 
+    if (new_node->isGen(gen_wxGridSizer))
+    {
+        if (new_node->prop_as_int(prop_rows) > 0 && new_node->prop_as_int(prop_cols) > 0)
+            new_node->prop_set_value(prop_rows, 0);
+    }
+
     while (child)
     {
         CreateXrcNode(child, new_node.get());

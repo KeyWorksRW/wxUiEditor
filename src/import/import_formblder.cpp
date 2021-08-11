@@ -470,6 +470,12 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
+    if (newobject->isGen(gen_wxGridSizer))
+    {
+        if (newobject->prop_as_int(prop_rows) > 0 && newobject->prop_as_int(prop_cols) > 0)
+            newobject->prop_set_value(prop_rows, 0);
+    }
+
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {

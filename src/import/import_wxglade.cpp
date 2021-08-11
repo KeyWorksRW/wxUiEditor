@@ -209,6 +209,12 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         ProcessProperties(xml_obj, new_node.get());
     }
 
+    if (new_node->isGen(gen_wxGridSizer))
+    {
+        if (new_node->prop_as_int(prop_rows) > 0 && new_node->prop_as_int(prop_cols) > 0)
+            new_node->prop_set_value(prop_rows, 0);
+    }
+
     while (child)
     {
         CreateGladeNode(child, new_node.get());

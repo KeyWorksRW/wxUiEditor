@@ -203,7 +203,8 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
         auto copyProp = copyObj->get_prop_ptr(iter.get_name());
         ASSERT(copyProp);
 
-        copyProp->set_value(iter.as_string());
+        if (copyProp)
+            copyProp->set_value(iter.as_string());
     }
 
     auto count = node->GetEventCount();
@@ -211,16 +212,18 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
     {
         auto event = node->GetEvent(i);
         auto copyEvent = copyObj->GetEvent(event->get_name());
-        ASSERT(copyEvent)
-        copyEvent->set_value(event->get_value());
+        ASSERT(copyEvent);
+        if (copyEvent)
+            copyEvent->set_value(event->get_value());
     }
 
     count = node->GetChildCount();
     for (size_t i = 0; i < count; i++)
     {
         auto childCopy = MakeCopy(node->GetChild(i));
-        ASSERT(childCopy)
-        copyObj->Adopt(childCopy);
+        ASSERT(childCopy);
+        if (childCopy)
+            copyObj->Adopt(childCopy);
     }
 
     return copyObj;

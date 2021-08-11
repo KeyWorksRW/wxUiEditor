@@ -121,8 +121,57 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
+    if (gen_name == gen_BookPage && new_node)
+    {
+        if (!xml_obj.attribute("name").empty())
+        {
+            if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string()); tab != m_notebook_tabs.end())
+            {
+                new_node->prop_set_value(prop_label, tab->second);
+            }
+        }
+    }
+
     while (!new_node)
     {
+        if (parent->isGen(gen_wxNotebook))
+        {
+            if (gen_name == gen_wxPanel)
+            {
+                new_node = g_NodeCreator.CreateNode(gen_BookPage, parent);
+                if (new_node)
+                {
+                    if (!xml_obj.attribute("name").empty())
+                    {
+                        if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string());
+                            tab != m_notebook_tabs.end())
+                        {
+                            new_node->prop_set_value(prop_label, tab->second);
+                        }
+                    }
+                    continue;
+                }
+            }
+            else
+            {
+                if (auto page = g_NodeCreator.CreateNode(gen_PageCtrl, parent); page)
+                {
+                    parent->Adopt(page);
+                    if (!xml_obj.attribute("name").empty())
+                    {
+                        if (auto tab = m_notebook_tabs.find(xml_obj.attribute("name").as_string());
+                            tab != m_notebook_tabs.end())
+                        {
+                            page->prop_set_value(prop_label, tab->second);
+                        }
+                    }
+
+                    new_node = g_NodeCreator.CreateNode(gen_name, page.get());
+                    if (new_node)
+                        continue;
+                }
+            }
+        }
         MSG_INFO(ttlib::cstr() << "Unable to create " << map_GenNames[gen_name] << " as a child of " << parent->DeclName());
         return NodeSharedPtr();
     }

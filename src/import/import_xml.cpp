@@ -483,6 +483,11 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             ProcessContent(iter, node);
             continue;
         }
+        else if (iter.cname().is_sameas("tabs"))
+        {
+            ProcessNotebookTabs(iter, node);
+            continue;
+        }
         else if (iter.cname().is_sameas("value"))
         {
             auto escaped = ConvertEscapeSlashes(iter.text().as_string());
@@ -570,6 +575,21 @@ void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
 
     if (choices.size())
         node->prop_set_value(prop_choices, choices);
+}
+
+void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node */)
+{
+    m_notebook_tabs.clear();
+    for (auto& iter: xml_obj.children())
+    {
+        if (iter.cname().is_sameas("tab"))
+        {
+            if (!iter.attribute("window").empty())
+            {
+                m_notebook_tabs[iter.attribute("window").as_string()] = iter.child_as_cstr();
+            }
+        }
+    }
 }
 
 void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)

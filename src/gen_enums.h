@@ -47,6 +47,7 @@ namespace GenEnum
     enum PropName : size_t
     {
         prop_Apply,
+        prop_art_provider,
         prop_BottomDockable,
         prop_Cancel,
         prop_Close,
@@ -399,7 +400,6 @@ namespace GenEnum
 
         gen_AUI = 0,
 
-        gen_AuiToolBar,
         gen_Bitmaps,
         gen_BookPage,
         gen_Boolean_Validator,
@@ -450,6 +450,7 @@ namespace GenEnum
         gen_wxActivityIndicator,
         gen_wxAnimationCtrl,
         gen_wxAuiMDIChildFrame,
+        gen_wxAuiNotebook,
         gen_wxAuiToolBar,
         gen_wxBannerWindow,
         gen_wxBitmapComboBox,

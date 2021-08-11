@@ -16,6 +16,7 @@ using namespace GenEnum;
 #include "ribbonpanel_base.h"
 
 #include "../art_headers/CustomControl_png.hxx"
+#include "../art_headers/auinotebook_png.hxx"
 #include "../art_headers/book_page_png.hxx"
 #include "../art_headers/calendar_png.hxx"
 #include "../art_headers/colourPickerIcon_png.hxx"
@@ -265,6 +266,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
 
     auto container_bar_books = new wxRibbonToolBar(panel_books, wxID_ANY);
     {
+        container_bar_books->AddTool(gen_wxAuiNotebook, GetImgFromHdr(auinotebook_png, sizeof(auinotebook_png)), wxString::FromUTF8("wxAuiNotebook"), wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxChoicebook, GetImgFromHdr(wxChoicebook_png, sizeof(wxChoicebook_png)), wxString::FromUTF8("wxChoicebook"), wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxListbook, GetImgFromHdr(wxListbook_png, sizeof(wxListbook_png)), wxString::FromUTF8("wxListbook"), wxRIBBON_BUTTON_NORMAL);
         container_bar_books->AddTool(gen_wxNotebook, GetImgFromHdr(wxNotebook_png, sizeof(wxNotebook_png)), wxString::FromUTF8("wxNotebook"), wxRIBBON_BUTTON_NORMAL);

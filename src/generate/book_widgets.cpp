@@ -7,14 +7,15 @@
 
 #include "pch.h"
 
-#include <wx/bookctrl.h>    // wxBookCtrlBase: common base class for wxList/Tree/Notebook
-#include <wx/choicebk.h>    // wxChoicebook: wxChoice and wxNotebook combination
-#include <wx/event.h>       // Event classes
-#include <wx/listbook.h>    // wxListbook: wxListView and wxNotebook combination
-#include <wx/notebook.h>    // wxNotebook interface
-#include <wx/simplebook.h>  // wxBookCtrlBase-derived class without any controller.
-#include <wx/toolbook.h>    // wxToolbook: wxToolBar and wxNotebook combination
-#include <wx/treebook.h>    // wxTreebook: wxNotebook-like control presenting pages in a tree
+#include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
+#include <wx/bookctrl.h>     // wxBookCtrlBase: common base class for wxList/Tree/Notebook
+#include <wx/choicebk.h>     // wxChoicebook: wxChoice and wxNotebook combination
+#include <wx/event.h>        // Event classes
+#include <wx/listbook.h>     // wxListbook: wxListView and wxNotebook combination
+#include <wx/notebook.h>     // wxNotebook interface
+#include <wx/simplebook.h>   // wxBookCtrlBase-derived class without any controller.
+#include <wx/toolbook.h>     // wxToolbook: wxToolBar and wxNotebook combination
+#include <wx/treebook.h>     // wxTreebook: wxNotebook-like control presenting pages in a tree
 
 #include "bitmaps.h"     // Map of bitmaps accessed by name
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
@@ -41,8 +42,8 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                               node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     auto node_parent = node->GetParent();
-    auto book = wxDynamicCast(parent, wxBookCtrlBase);
-    if (book)
+
+    if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
         if (node_parent->isGen(gen_wxToolbook))
         {
@@ -80,6 +81,40 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         else if (cur_selection >= 0)
         {
             book->SetSelection(cur_selection);
+        }
+    }
+    else
+    {
+        auto aui_book = wxDynamicCast(parent, wxAuiNotebook);
+        if (aui_book)
+        {
+            if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
+            {
+                int idx_image = 0;
+                for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+                {
+                    if (node_parent->GetChild(idx_child) == node)
+                        break;
+                    if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                        ++idx_image;
+                }
+
+                aui_book->AddPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
+            }
+            else
+            {
+                aui_book->AddPage(widget, node->prop_as_wxString(prop_label));
+            }
+
+            auto cur_selection = aui_book->GetSelection();
+            if (node->prop_as_bool(prop_select))
+            {
+                aui_book->SetSelection(aui_book->GetPageCount() - 1);
+            }
+            else if (cur_selection >= 0)
+            {
+                aui_book->SetSelection(cur_selection);
+            }
         }
     }
 
@@ -148,10 +183,8 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     ASSERT(widget);
 
     auto node_parent = node->GetParent();
-    auto book = wxDynamicCast(parent, wxBookCtrlBase);
-    ASSERT(book);
 
-    if (book)
+    if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
         if (node_parent->isGen(gen_wxToolbook))
         {
@@ -189,6 +222,40 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         else if (cur_selection >= 0)
         {
             book->SetSelection(cur_selection);
+        }
+    }
+    else
+    {
+        auto aui_book = wxDynamicCast(parent, wxAuiNotebook);
+        if (aui_book)
+        {
+            if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
+            {
+                int idx_image = 0;
+                for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+                {
+                    if (node_parent->GetChild(idx_child) == node)
+                        break;
+                    if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                        ++idx_image;
+                }
+
+                aui_book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
+            }
+            else
+            {
+                aui_book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label));
+            }
+
+            auto cur_selection = aui_book->GetSelection();
+            if (node->prop_as_bool(prop_select))
+            {
+                aui_book->SetSelection(aui_book->GetPageCount() - 1);
+            }
+            else if (cur_selection >= 0)
+            {
+                aui_book->SetSelection(cur_selection);
+            }
         }
     }
 
@@ -288,6 +355,79 @@ std::optional<ttlib::cstr> NotebookGenerator::GenEvents(NodeEvent* event, const 
 bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/notebook.h>", set_src, set_hdr);
+    auto size = node->prop_as_wxSize(prop_bitmapsize);
+    if (size.x != -1 || size.y != -1)
+    {
+        InsertGeneratorInclude(node, "#include <wx/imaglist.h>", set_src, set_hdr);
+        InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
+    }
+
+    if (node->HasValue(prop_persist_name))
+    {
+        set_src.insert("#include <wx/persist/bookctrl.h>");
+    }
+
+    return true;
+}
+
+//////////////////////////////////////////  AuiNotebookGenerator  //////////////////////////////////////////
+
+wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
+{
+    auto widget = new wxAuiNotebook(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
+                                    node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiGenericTabArt"))
+        widget->SetArtProvider(new wxAuiGenericTabArt());
+    else if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
+        widget->SetArtProvider(new wxAuiSimpleTabArt());
+
+    AddBookImageList(node, widget);
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+    widget->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &AuiNotebookGenerator::OnPageChanged, this);
+
+    return widget;
+}
+
+void AuiNotebookGenerator::OnPageChanged(wxNotebookEvent& event)
+{
+    auto book = wxDynamicCast(event.GetEventObject(), wxNotebook);
+    if (book && event.GetSelection() != wxNOT_FOUND)
+        GetMockup()->SelectNode(book->GetPage(event.GetSelection()));
+    event.Skip();
+}
+
+std::optional<ttlib::cstr> AuiNotebookGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = new wxAuiNotebook(";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+
+    GeneratePosSizeFlags(node, code);
+    BookCtorAddImagelist(code, node);
+
+    if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiGenericTabArt"))
+    {
+        code << "\n\t" << node->get_node_name() << "->SetArtProvider(new wxAuiGenericTabArt());";
+    }
+    else if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
+    {
+        code << "\n\t" << node->get_node_name() << "->SetArtProvider(new wxAuiSimpleTabArt());";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> AuiNotebookGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/aui/auibook.h>", set_src, set_hdr);
     auto size = node->prop_as_wxSize(prop_bitmapsize);
     if (size.x != -1 || size.y != -1)
     {

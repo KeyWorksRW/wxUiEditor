@@ -135,7 +135,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
         forms_bar_windows->AddTool(gen_PanelForm, GetImgFromHdr(wxPanel_png, sizeof(wxPanel_png)), wxString::FromUTF8("wxPanel"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(CreateNewFrame, GetImgFromHdr(wxFrame_png, sizeof(wxFrame_png)), wxString::FromUTF8("wxFrame"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(gen_wxPopupTransientWindow, GetImgFromHdr(wxPopupTransientWindow_png, sizeof(wxPopupTransientWindow_png)), wxString::FromUTF8("wxPopupTransientWindow"), wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(gen_wxContextMenuEvent, GetImgFromHdr(menuitem_png, sizeof(menuitem_png)), wxString::FromUTF8("wxPopupTransientWindow"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(gen_wxContextMenuEvent, GetImgFromHdr(menuitem_png, sizeof(menuitem_png)), wxString::FromUTF8("wxContextMenuEvent"), wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_windows->Realize();
 

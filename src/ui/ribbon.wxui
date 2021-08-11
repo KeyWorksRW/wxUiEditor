@@ -60,7 +60,7 @@
                 <node
                   class="ribbonTool"
                   bitmap="Header; ..\art_headers\menuitem_png.hxx; ; [-1; -1]"
-                  help="wxPopupTransientWindow"
+                  help="wxContextMenuEvent"
                   id="gen_wxContextMenuEvent" />
               </node>
             </node>

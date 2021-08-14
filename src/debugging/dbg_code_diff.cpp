@@ -58,10 +58,10 @@ void DbgCodeDiff::OnInit(wxInitDialogEvent& WXUNUSED(event))
     #include <windows.h>
 
 /// Converts all text to UTF16 before calling ShellExecuteW(...)
-HINSTANCE ShellRun(std::string_view filename, std::string_view args, std::string_view directory, INT nShow = SW_SHOWNORMAL,
+HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::string_view directory, INT nShow = SW_SHOWNORMAL,
                    HWND hwndParent = NULL);
 
-HINSTANCE ShellRun(std::string_view filename, std::string_view args, std::string_view dir, INT nShow, HWND hwndParent)
+HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::string_view dir, INT nShow, HWND hwndParent)
 {
     std::wstring name16;
     ttlib::utf8to16(filename, name16);
@@ -91,5 +91,5 @@ void DbgCodeDiff::OnWinMerge(wxCommandEvent& WXUNUSED(event))
 
     // /e -- terminate with escape
     // /u -- don't add files to MRU
-    ShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd);
+    winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd);
 }

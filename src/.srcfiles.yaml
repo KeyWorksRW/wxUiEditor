@@ -18,7 +18,7 @@ Options:
     TargetDir:   ../bin       # target directory
     Natvis:      wxui.natvis  # MSVC Debug visualizer
 
-    IncDirs:     ./;nodes;generate;utils;customprops;ui;ttLib
+    IncDirs:     ./;nodes;generate;utils;customprops;ui;../ttLib/include
 
 Files:
     wxUiEditor.rc         # Only processed when compiling for Windows, ignored otherwise
@@ -165,14 +165,14 @@ Files:
 
     # Copy of the files we need from the https://github.com/KeyWorksRW/ttLib repository
 
-    ttLib/ttcstr.cpp             # Class for handling zero-terminated char strings.
-    ttLib/ttcview.cpp            # string_view functionality on a zero-terminated char string.
-    ttLib/ttmultistr.cpp         # Breaks a single string into multiple strings
-    ttLib/ttparser.cpp           # Command line parser
-    ttLib/ttstr.cpp              # Enhanced version of wxString
-    ttLib/ttlibspace.cpp         # ttlib namespace functions
-    ttLib/ttstrings.cpp          # Class for handling zero-terminated char strings.
-    ttLib/tttextfile.cpp         # Classes for reading and writing text files.
+    ../ttLib/src/ttcstr.cpp             # Class for handling zero-terminated char strings.
+    ../ttLib/src/ttcview.cpp            # string_view functionality on a zero-terminated char string.
+    ../ttLib/src/ttmultistr.cpp         # Breaks a single string into multiple strings
+    ../ttLib/src/ttparser.cpp           # Command line parser
+    ../ttLib/src/ttstr.cpp              # Enhanced version of wxString
+    ../ttLib/src/ttlibspace.cpp         # ttlib namespace functions
+    ../ttLib/src/ttstrings.cpp          # Class for handling zero-terminated char strings.
+    ../ttLib/src/tttextfile.cpp         # Classes for reading and writing text files.
 
 # When ttBld generates the ninja scripts, the files in the DebugFiles section will ONLY be added to the
 # debug ninja scripts.
@@ -189,7 +189,7 @@ DebugFiles:
     ui/debugsettingsBase.cpp     # wxUiEditor generated file
     ui/msgframe_base.cpp         # wxUiEditor generated file
 
-    ttLib/ttdebug.cpp         # Various debugging functionality
+    ../ttLib/src/winsrc/ttdebug_min.cpp  # ttAssertionMsg
 
 # ttBld will add these files to the ninja scripts which will in turn call ttBld to process and compress the source file
 # into the destination file.

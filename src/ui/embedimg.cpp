@@ -31,7 +31,7 @@
 #include "uifuncs.h"      // Miscellaneous functions for displaying UI
 #include "utils.h"        // Utility functions that work with properties
 
-#include "../art_headers/empty_png.hxx"
+#include "../art_headers/empty_png.h_img"
 
 // Any mime type in the following list with NOT be converted to PNG even if m_check_make_png is set to true
 
@@ -162,7 +162,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     m_orginal_size = 0;
 
     bool isImageLoaded { false };
-    if (file.has_extension(".h") || file.has_extension(".hpp") || file.has_extension(".hh") || file.has_extension(".hxx"))
+    if (file.has_extension(".h_img"))
     {
         {
             wxBusyCursor wait;
@@ -925,8 +925,9 @@ void EmbedImage::SetOutputBitmap()
     wxBusyCursor wait;
     wxImage image;
 
-    if (out_file.has_extension(".h") || out_file.has_extension(".hpp") || out_file.has_extension(".hh") ||
-        out_file.has_extension(".hxx"))
+    // if (out_file.has_extension(".h") || out_file.has_extension(".hpp") || out_file.has_extension(".hh") ||
+    // out_file.has_extension(".hxx"))
+    if (out_file.has_extension(".h_img"))
     {
         image = GetHeaderImage(out_file.sub_cstr());
     }
@@ -982,10 +983,6 @@ void EmbedImage::AdjustOutputFilename()
     ttString filename = m_fileOutput->GetPath();
     if (filename.size())
     {
-        auto ext_property = wxGetApp().GetProject()->prop_as_string(prop_header_ext);
-        if (ext_property.empty())
-            ext_property = ".h";
-
         ttString suffix(m_mime_type);
         suffix.Replace("image/", "_");
         suffix.Replace("x-", "");  // if something like x-bmp, just use bmp
@@ -1005,11 +1002,11 @@ void EmbedImage::AdjustOutputFilename()
         if (!filename.contains_wx(suffix))
         {
             filename.remove_extension();
-            filename << suffix << ext_property;
+            filename << suffix << ".h_img";
         }
         else
         {
-            filename.replace_extension_wx(ext_property);
+            filename.replace_extension_wx(".h_img");
         }
         m_fileOutput->SetPath(filename);
     }

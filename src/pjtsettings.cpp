@@ -120,8 +120,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
         if (!image.IsOk())
         {
-            if (path.has_extension(".h") || path.has_extension(".hpp") || path.has_extension(".hh") ||
-                path.has_extension(".hxx"))
+            if (path.has_extension(".h_img"))
             {
                 image = GetHeaderImage(path);
             }

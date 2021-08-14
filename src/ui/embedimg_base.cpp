@@ -56,7 +56,7 @@ bool EmbedImageBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     flex_grid_sizer->Add(m_staticHeader, wxSizerFlags().Center().Border(wxALL));
 
     m_fileOutput = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
-    wxString::FromUTF8("Header files|*.h;*.hh;*.hxx;*.hpp||"), wxDefaultPosition, wxDefaultSize,
+    wxString::FromUTF8("Header files|*.h_img||"), wxDefaultPosition, wxDefaultSize,
     wxFLP_SAVE|wxFLP_USE_TEXTCTRL);
     flex_grid_sizer->Add(m_fileOutput, wxSizerFlags().Expand().Border(wxALL));
 

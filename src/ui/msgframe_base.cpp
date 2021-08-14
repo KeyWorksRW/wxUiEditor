@@ -11,7 +11,7 @@
 
 #include "msgframe_base.h"
 
-#include "../art_headers/hidden_png.hxx"
+#include "../art_headers/hidden_png.h_img"
 
 #include <wx/mstream.h>  // Memory stream classes
 

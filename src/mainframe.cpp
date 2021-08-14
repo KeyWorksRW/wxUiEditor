@@ -64,7 +64,7 @@
 
 #include "../pugixml/pugixml.hpp"
 
-#include "art_headers/logo64_png.hxx"
+#include "art_headers/logo64_png.h_img"
 
 using namespace GenEnum;
 

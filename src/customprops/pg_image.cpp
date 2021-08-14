@@ -15,7 +15,7 @@
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
-#include "../art_headers/empty_png.hxx"
+#include "../art_headers/empty_png.h_img"
 
 #include "pg_image.h"
 
@@ -118,7 +118,7 @@ void PropertyGrid_Image::RefreshChildren()
                     art_dir = "./";
                 wxDir dir;
                 wxArrayString array_files;
-                dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "XPM" ? "*.xpm" : "*.h*");
+                dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "XPM" ? "*.xpm" : "*.h_img");
                 for (size_t pos = 0; pos < array_files.size(); ++pos)
                 {
                     ttString* ptr = static_cast<ttString*>(&array_files[pos]);

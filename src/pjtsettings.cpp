@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Hold data for currently loaded project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,8 @@
 #include <wx/artprov.h>   // wxArtProvider class
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/filesys.h>   // class for opening files - virtual file system
+#include <wx/mstream.h>   // Memory stream classes
+#include <wx/wfstream.h>  // File stream classes
 
 #include "ttcview.h"     // cview -- string_view functionality on a zero-terminated char string.
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
@@ -162,4 +164,91 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     }
 
     return image;
+}
+
+bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
+
+bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
+{
+    if (!path.file_exists())
+        return false;
+
+    std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
+
+    if (m_map_embedded.find(path.filename().c_str()) != m_map_embedded.end())
+        return false;
+
+    wxFFileInputStream stream(path.wx_str());
+    if (!stream.IsOk())
+        return false;
+
+    wxImageHandler* handler;
+    auto& list = wxImage::GetHandlers();
+    for (auto node = list.GetFirst(); node; node = node->GetNext())
+    {
+        handler = (wxImageHandler*) node->GetData();
+        if (handler->CanRead(stream))
+        {
+            wxImage orgImage;
+            if (handler->LoadFile(&orgImage, stream))
+            {
+                auto& embed = m_embedded_images.emplace_back();
+                embed.array_name = path.filename();
+                embed.array_name.Replace(".", "_", true);
+                m_map_embedded[path.filename().c_str()] = m_embedded_images.size() - 1;
+
+                // At this point, other threads can lookup and add an embedded image, they just can't access the data of this
+                // image until we're done.
+
+                std::unique_lock<std::mutex> retrieve_lock(m_mutex_embed_retrieve);
+                add_lock.unlock();
+
+                wxMemoryOutputStream save_stream;
+                wxImage image;
+                auto mime_type = handler->GetMimeType();
+                auto type = handler->GetType();
+
+                // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
+                // better compression.
+
+                if (isConvertibleMime(mime_type))
+                {
+                    // Maximize compression
+                    image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, 9);
+                    image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
+                    image.SaveFile(save_stream, wxBITMAP_TYPE_PNG);
+                }
+                else
+                {
+                    image.SaveFile(save_stream, type);
+                }
+
+                auto read_stream = save_stream.GetOutputStreamBuffer();
+
+                embed.form = form;
+                embed.array_size = read_stream->GetBufferSize();
+                embed.array_data = std::make_unique<unsigned char[]>(embed.array_size);
+                memcpy(embed.array_data.get(), read_stream->GetBufferStart(), embed.array_size);
+
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+const EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::cstr path)
+{
+    std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
+
+    if (auto result = m_map_embedded.find(path.filename().c_str()); result != m_map_embedded.end())
+    {
+        std::unique_lock<std::mutex> retrieve_lock(m_mutex_embed_retrieve);
+        return &m_embedded_images[result->second];
+    }
+    else
+    {
+        return nullptr;
+    }
 }

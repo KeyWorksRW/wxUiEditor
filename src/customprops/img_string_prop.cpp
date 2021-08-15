@@ -31,6 +31,27 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         }
         return false;
     }
+    else if (m_img_props.type.contains("Embed"))
+    {
+        ttlib::cwd cwd(true);
+        if (wxGetApp().GetProject()->HasValue(prop_original_art))
+        {
+            ttlib::ChangeDir(wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art));
+            cwd.assignCwd();
+        }
+
+        ttlib::cstr pattern = "All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||";
+        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Image"), cwd.wx_str(), wxEmptyString, pattern,
+                         wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+            ttString path = dlg.GetPath();
+            path.make_relative(cwd);
+            SetValue(path);
+            return true;
+        }
+        return false;
+    }
     else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("Header"))
     {
         ttlib::cwd cwd(true);
@@ -41,7 +62,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         }
 
         ttlib::cstr pattern = m_img_props.type.contains("XPM") ? "XPM File (*.xpm)|*.xpm" : "Header|*.h_img";
-        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open XPM file"), cwd.wx_str(), wxEmptyString, pattern,
+        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Image"), cwd.wx_str(), wxEmptyString, pattern,
                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {

@@ -246,8 +246,11 @@ int App::OnExit()
 
 wxImage App::GetImage(const ttlib::cstr& description)
 {
-    if (description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") || description.is_sameprefix("Art;"))
+    if (description.is_sameprefix("Embed;") || description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") ||
+        description.is_sameprefix("Art;"))
+    {
         return m_pjtSettings->GetPropertyBitmap(description);
+    }
     else
         return GetInternalImage("unknown");
 }

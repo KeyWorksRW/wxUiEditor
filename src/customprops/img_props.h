@@ -13,7 +13,8 @@
 
 class NodeProperty;
 
-inline constexpr std::array<const char*, 3> s_type_names = {
+inline constexpr std::array<const char*, 4> s_type_names = {
+    "Embed",
     "Header",
     "Art",
     "XPM",

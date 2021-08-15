@@ -22,10 +22,11 @@
 
 #include "pjtsettings.h"  // ProjectSettings
 
-#include "bitmaps.h"  // Map of bitmaps accessed by name
-#include "mainapp.h"  // App -- App class
-#include "node.h"     // Node class
-#include "utils.h"    // Utility functions that work with properties
+#include "bitmaps.h"    // Map of bitmaps accessed by name
+#include "mainapp.h"    // App -- App class
+#include "mainframe.h"  // MainFrame -- Main window frame
+#include "node.h"       // Node class
+#include "utils.h"      // Utility functions that work with properties
 
 ProjectSettings::ProjectSettings() {}
 
@@ -106,6 +107,29 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
             parts[IndexArtClient] = "wxART_OTHER";
         image = wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR(parts[IndexArtClient]))
                     .ConvertToImage();
+    }
+    else if (parts[IndexType].contains("Embed"))
+    {
+        if (!path.file_exists())
+        {
+            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art);
+            path.append_filename(parts[IndexImage]);
+        }
+        auto embed = GetEmbeddedImage(path);
+        if (!embed)
+        {
+            bool added = AddEmbeddedImage(path, wxGetFrame().GetSelectedForm());
+            if (added)
+            {
+                embed = GetEmbeddedImage(path);
+            }
+        }
+
+        if (embed)
+        {
+            wxMemoryInputStream stream(embed->array_data.get(), embed->array_size);
+            image.LoadFile(stream);
+        }
     }
     else
     {
@@ -189,8 +213,8 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
         handler = (wxImageHandler*) node->GetData();
         if (handler->CanRead(stream))
         {
-            wxImage orgImage;
-            if (handler->LoadFile(&orgImage, stream))
+            wxImage image;
+            if (handler->LoadFile(&image, stream))
             {
                 auto& embed = m_embedded_images.emplace_back();
                 embed.array_name = path.filename();
@@ -204,7 +228,6 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
                 add_lock.unlock();
 
                 wxMemoryOutputStream save_stream;
-                wxImage image;
                 auto mime_type = handler->GetMimeType();
                 auto type = handler->GetType();
 

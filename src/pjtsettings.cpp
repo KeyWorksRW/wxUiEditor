@@ -163,7 +163,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     }
 
     // cache it so that we don't need to read it from disk again
-    if (result == m_images.end())
+    if (!parts[IndexType].contains("Embed") && result == m_images.end())
         m_images[path] = image;
 
     // Scale if needed

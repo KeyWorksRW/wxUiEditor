@@ -20,6 +20,7 @@ struct EmbededImage
     ttlib::cstr array_name;
     size_t array_size;
     std::unique_ptr<unsigned char[]> array_data;
+    wxBitmapType type;
 };
 
 class ProjectSettings

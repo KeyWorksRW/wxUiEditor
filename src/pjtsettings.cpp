@@ -222,33 +222,28 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
                 m_map_embedded[path.filename().c_str()] = m_embedded_images.size() - 1;
 
                 // At this point, other threads can lookup and add an embedded image, they just can't access the data of this
-                // image until we're done.
+                // image until we're done. I.e., GetEmbeddedImage() won't return until retrieve_lock is released.
 
                 std::unique_lock<std::mutex> retrieve_lock(m_mutex_embed_retrieve);
                 add_lock.unlock();
 
-                wxMemoryOutputStream save_stream;
-                auto mime_type = handler->GetMimeType();
-                auto type = handler->GetType();
-
                 // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
                 // better compression.
 
-                if (isConvertibleMime(mime_type))
+                if (isConvertibleMime(handler->GetMimeType()))
                 {
                     // Maximize compression
                     image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, 9);
                     image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
-                    image.SaveFile(save_stream, wxBITMAP_TYPE_PNG);
-                }
-                else
-                {
-                    image.SaveFile(save_stream, type);
+                    embed.type = wxBITMAP_TYPE_PNG;
                 }
 
+                wxMemoryOutputStream save_stream;
+                image.SaveFile(save_stream, embed.type);
                 auto read_stream = save_stream.GetOutputStreamBuffer();
 
                 embed.form = form;
+                embed.type = handler->GetType();
                 embed.array_size = read_stream->GetBufferSize();
                 embed.array_data = std::make_unique<unsigned char[]>(embed.array_size);
                 memcpy(embed.array_data.get(), read_stream->GetBufferStart(), embed.array_size);

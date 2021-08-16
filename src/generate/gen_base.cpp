@@ -34,9 +34,9 @@ using namespace GenEnum;
 
 // clang-format off
 
-inline constexpr const auto txt_GetImgFromHdrFunction = R"===(
+inline constexpr const auto txt_GetImageFromArrayFunction = R"===(
 // Convert a data header file into a wxImage
-static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
+static wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -321,7 +321,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         if (need_hdr_func)
         {
             ttlib::textfile function;
-            function.ReadString(txt_GetImgFromHdrFunction);
+            function.ReadString(txt_GetImageFromArrayFunction);
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
@@ -1356,6 +1356,8 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
     }
 }
 
+// We're just trying to figure out if we need to generate code to include wx/mstream.h as well as generating the code to load
+// the image from memory.
 bool BaseCodeGenerator::FindImageHeader(Node* node)
 {
     for (size_t i = 0; i < node->GetChildCount(); i++)
@@ -1370,10 +1372,9 @@ bool BaseCodeGenerator::FindImageHeader(Node* node)
                 iter.BothTrim();
             }
 
-            if (parts[IndexType] == "Header" && parts[IndexImage].size())
+            if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header") && parts[IndexImage].size())
             {
-                if (!parts[IndexImage].contains(".xpm", tt::CASE::either))
-                    return true;
+                return true;
             }
         }
         if (child->GetChildCount())

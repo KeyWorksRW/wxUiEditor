@@ -616,7 +616,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     }
     else
     {
-        code << "GetImgFromHdr(";
+        code << "GetImageFromArray(";
 
         ttlib::cstr name(parts[1].filename());
         name.remove_extension();

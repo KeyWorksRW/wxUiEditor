@@ -39,7 +39,7 @@
 #include <wx/mstream.h>  // Memory stream classes
 
 // Convert a data header file into a wxImage
-static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
+static wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -61,7 +61,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menuItem = new wxMenuItem(m_menuFile, id_NewProject, wxString::FromUTF8("&New Project...\tCtrl+N"),
     wxString::FromUTF8("Create an empty project"), wxITEM_NORMAL);
-    menuItem->SetBitmap(GetImgFromHdr(new_png, sizeof(new_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menuItem->SetBitmap(GetImageFromArray(new_png, sizeof(new_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuFile->Append(menuItem);
 
     auto menuItem2 = new wxMenuItem(m_menuFile, id_OpenProject, wxString::FromUTF8("&Open Project...\tCtrl+O"),
@@ -79,7 +79,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item = new wxMenuItem(m_menuFile, wxID_SAVE, wxString::FromUTF8("&Save\tCtrl+S"),
     wxString::FromUTF8("Save current project"), wxITEM_NORMAL);
-    menu_item->SetBitmap(GetImgFromHdr(save_png, sizeof(save_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item->SetBitmap(GetImageFromArray(save_png, sizeof(save_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuFile->Append(menu_item);
 
     auto menu_item2 = new wxMenuItem(m_menuFile, id_SaveProjectAs, wxString::FromUTF8("Save &As...\tCtrl-Shift+S"),
@@ -172,22 +172,22 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item4 = new wxMenuItem(submenu3, id_MoveUp, wxString::FromUTF8("Up") + '\t' + "Alt+Up",
     wxString::FromUTF8("Moves selected item up"), wxITEM_NORMAL);
-    menu_item4->SetBitmap(GetImgFromHdr(nav_moveup_png, sizeof(nav_moveup_png)));
+    menu_item4->SetBitmap(GetImageFromArray(nav_moveup_png, sizeof(nav_moveup_png)));
     submenu3->Append(menu_item4);
 
     auto menu_item5 = new wxMenuItem(submenu3, id_MoveDown, wxString::FromUTF8("Down") + '\t' + "Alt+Down",
     wxString::FromUTF8("Moves selected item down"), wxITEM_NORMAL);
-    menu_item5->SetBitmap(GetImgFromHdr(nav_movedown_png, sizeof(nav_movedown_png)));
+    menu_item5->SetBitmap(GetImageFromArray(nav_movedown_png, sizeof(nav_movedown_png)));
     submenu3->Append(menu_item5);
 
     auto menu_item6 = new wxMenuItem(submenu3, id_MoveLeft, wxString::FromUTF8("Left") + '\t' + "Alt+Left",
     wxString::FromUTF8("Moves selected item left"), wxITEM_NORMAL);
-    menu_item6->SetBitmap(GetImgFromHdr(nav_moveleft_png, sizeof(nav_moveleft_png)));
+    menu_item6->SetBitmap(GetImageFromArray(nav_moveleft_png, sizeof(nav_moveleft_png)));
     submenu3->Append(menu_item6);
 
     auto menu_item7 = new wxMenuItem(submenu3, id_MoveRight, wxString::FromUTF8("Right") + '\t' + "Alt+Right",
     wxString::FromUTF8("Moves selected item right"), wxITEM_NORMAL);
-    menu_item7->SetBitmap(GetImgFromHdr(nav_moveright_png, sizeof(nav_moveright_png)));
+    menu_item7->SetBitmap(GetImageFromArray(nav_moveright_png, sizeof(nav_moveright_png)));
     submenu3->Append(menu_item7);
     m_menuEdit->AppendSubMenu(submenu3, wxString::FromUTF8("Move"));
 
@@ -195,35 +195,35 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item8 = new wxMenuItem(submenu2, id_AlignLeft, wxString::FromUTF8("&Left") + '\t' + "Alt+Shift+Left",
     wxString::FromUTF8("Align selected item to the left"), wxITEM_CHECK);
-    menu_item8->SetBitmap(GetImgFromHdr(alignleft_png, sizeof(alignleft_png)));
+    menu_item8->SetBitmap(GetImageFromArray(alignleft_png, sizeof(alignleft_png)));
     submenu2->Append(menu_item8);
 
     auto menu_item10 = new wxMenuItem(submenu2, id_AlignCenterHorizontal, wxString::FromUTF8("Center &Horizontal") + '\t' + "Alt+Shift+H",
     wxString::FromUTF8("Align selected item to the center horizontally"), wxITEM_CHECK);
-    menu_item10->SetBitmap(GetImgFromHdr(aligncenter_png, sizeof(aligncenter_png)));
+    menu_item10->SetBitmap(GetImageFromArray(aligncenter_png, sizeof(aligncenter_png)));
     submenu2->Append(menu_item10);
     menu_item10->Check();
 
     auto menu_item9 = new wxMenuItem(submenu2, id_AlignRight, wxString::FromUTF8("&Right") + '\t' + "Alt+Shift+Right",
     wxString::FromUTF8("Align selected item to the right"), wxITEM_CHECK);
-    menu_item9->SetBitmap(GetImgFromHdr(alignright_png, sizeof(alignright_png)));
+    menu_item9->SetBitmap(GetImageFromArray(alignright_png, sizeof(alignright_png)));
     submenu2->Append(menu_item9);
 
     submenu2->AppendSeparator();
 
     auto menu_item11 = new wxMenuItem(submenu2, id_AlignTop, wxString::FromUTF8("&Top") + '\t' + "Alt+Shift+Up",
     wxString::FromUTF8("Align selected item to the top"), wxITEM_CHECK);
-    menu_item11->SetBitmap(GetImgFromHdr(aligntop_png, sizeof(aligntop_png)));
+    menu_item11->SetBitmap(GetImageFromArray(aligntop_png, sizeof(aligntop_png)));
     submenu2->Append(menu_item11);
 
     auto menu_item12 = new wxMenuItem(submenu2, id_AlignCenterVertical, wxString::FromUTF8("Center &Vertical") + '\t' + "Alt+Shift+V",
     wxString::FromUTF8("Align selected item to the center vertically"), wxITEM_CHECK);
-    menu_item12->SetBitmap(GetImgFromHdr(alignvertcenter_png, sizeof(alignvertcenter_png)));
+    menu_item12->SetBitmap(GetImageFromArray(alignvertcenter_png, sizeof(alignvertcenter_png)));
     submenu2->Append(menu_item12);
 
     auto menu_item13 = new wxMenuItem(submenu2, id_AlignBottom, wxString::FromUTF8("&Bottom") + '\t' + "Alt+Shift+Down",
     wxString::FromUTF8("Align selected item to the bottom"), wxITEM_CHECK);
-    menu_item13->SetBitmap(GetImgFromHdr(alignbottom_png, sizeof(alignbottom_png)));
+    menu_item13->SetBitmap(GetImageFromArray(alignbottom_png, sizeof(alignbottom_png)));
     submenu2->Append(menu_item13);
     m_menuEdit->AppendSubMenu(submenu2, wxString::FromUTF8("Align"));
 
@@ -231,28 +231,28 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item14 = new wxMenuItem(submenu4, id_BorderLeft, wxString::FromUTF8("&Left"),
     wxString::FromUTF8("Toggle border on the left side of the item"), wxITEM_CHECK);
-    menu_item14->SetBitmap(GetImgFromHdr(left_png, sizeof(left_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item14->SetBitmap(GetImageFromArray(left_png, sizeof(left_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item14);
 
     auto menu_item15 = new wxMenuItem(submenu4, id_BorderRight, wxString::FromUTF8("&Right"),
     wxString::FromUTF8("Toggle border on the right side of the item"), wxITEM_CHECK);
-    menu_item15->SetBitmap(GetImgFromHdr(top_png, sizeof(top_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item15->SetBitmap(GetImageFromArray(top_png, sizeof(top_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item15);
 
     auto menu_item16 = new wxMenuItem(submenu4, id_BorderTop, wxString::FromUTF8("&Top"),
     wxString::FromUTF8("Toggle border on the top side of the item"), wxITEM_CHECK);
-    menu_item16->SetBitmap(GetImgFromHdr(top_png, sizeof(top_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item16->SetBitmap(GetImageFromArray(top_png, sizeof(top_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item16);
 
     auto menu_item17 = new wxMenuItem(submenu4, id_BorderBottom, wxString::FromUTF8("&Bottom"),
     wxString::FromUTF8("Toggle border on the bottom side of the item"), wxITEM_CHECK);
-    menu_item17->SetBitmap(GetImgFromHdr(bottom_png, sizeof(bottom_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item17->SetBitmap(GetImageFromArray(bottom_png, sizeof(bottom_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item17);
     m_menuEdit->AppendSubMenu(submenu4, wxString::FromUTF8("Borders"));
 
     auto menu_item18 = new wxMenuItem(m_menuEdit, id_Expand, wxString::FromUTF8("&Expand") + '\t' + "Alt+E",
     wxString::FromUTF8("Toggle the wxEXPAND flag"), wxITEM_CHECK);
-    menu_item18->SetBitmap(GetImgFromHdr(expand_png, sizeof(expand_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item18->SetBitmap(GetImageFromArray(expand_png, sizeof(expand_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuEdit->Append(menu_item18);
     m_menubar->Append(m_menuEdit, wxString::FromUTF8("&Edit"));
 
@@ -260,7 +260,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item19 = new wxMenuItem(m_menuTools, id_GenerateCode, wxString::FromUTF8("&Generate Base Code"),
     wxString::FromUTF8("Generates C++ Code for each top level form"), wxITEM_NORMAL);
-    menu_item19->SetBitmap(GetImgFromHdr(generate_png, sizeof(generate_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item19->SetBitmap(GetImageFromArray(generate_png, sizeof(generate_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuTools->Append(menu_item19);
 
     auto menu_item20 = new wxMenuItem(m_menuTools, id_GenerateDerived, wxString::FromUTF8("Create &Derived Code"),
@@ -285,16 +285,16 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar = CreateToolBar(wxTB_FLAT|wxTB_HORIZONTAL);
 
-    m_toolbar->AddTool(id_NewProject, wxString::FromUTF8("New"), GetImgFromHdr(new_png, sizeof(new_png)),
+    m_toolbar->AddTool(id_NewProject, wxString::FromUTF8("New"), GetImageFromArray(new_png, sizeof(new_png)),
     wxString::FromUTF8("New Project (Ctrl+N)"));
 
     m_toolbar->AddTool(id_OpenProject, wxString::FromUTF8("Open"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR),
     wxString::FromUTF8("Open Project (Ctrl+O)"));
 
-    m_toolbar->AddTool(wxID_SAVE, wxString::FromUTF8("Save"), GetImgFromHdr(save_png, sizeof(save_png)),
+    m_toolbar->AddTool(wxID_SAVE, wxString::FromUTF8("Save"), GetImageFromArray(save_png, sizeof(save_png)),
     wxString::FromUTF8("Save current project"));
 
-    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, GetImgFromHdr(generate_png, sizeof(generate_png)),
+    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, GetImageFromArray(generate_png, sizeof(generate_png)),
     wxString::FromUTF8("Generate base class code"));
 
     m_toolbar->AddSeparator();
@@ -321,51 +321,51 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, GetImgFromHdr(alignleft_png, sizeof(alignleft_png)),
+    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, GetImageFromArray(alignleft_png, sizeof(alignleft_png)),
     wxString::FromUTF8("Align left"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString, GetImgFromHdr(aligncenter_png, sizeof(aligncenter_png)),
+    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString, GetImageFromArray(aligncenter_png, sizeof(aligncenter_png)),
     wxString::FromUTF8("Center horizontally"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignRight, wxEmptyString, GetImgFromHdr(alignright_png, sizeof(alignright_png)),
+    m_toolbar->AddTool(id_AlignRight, wxEmptyString, GetImageFromArray(alignright_png, sizeof(alignright_png)),
     wxString::FromUTF8("Align right"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_AlignTop, wxEmptyString, GetImgFromHdr(aligntop_png, sizeof(aligntop_png)),
+    m_toolbar->AddTool(id_AlignTop, wxEmptyString, GetImageFromArray(aligntop_png, sizeof(aligntop_png)),
     wxString::FromUTF8("Align top"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, GetImgFromHdr(alignvertcenter_png, sizeof(alignvertcenter_png)),
+    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, GetImageFromArray(alignvertcenter_png, sizeof(alignvertcenter_png)),
     wxString::FromUTF8("Center vertically"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignBottom, wxEmptyString, GetImgFromHdr(alignbottom_png, sizeof(alignbottom_png)),
+    m_toolbar->AddTool(id_AlignBottom, wxEmptyString, GetImageFromArray(alignbottom_png, sizeof(alignbottom_png)),
     wxString::FromUTF8("Align bottom"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, GetImgFromHdr(left_png, sizeof(left_png)),
+    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, GetImageFromArray(left_png, sizeof(left_png)),
     wxString::FromUTF8("Left border"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderRight, wxEmptyString, GetImgFromHdr(right_png, sizeof(right_png)),
+    m_toolbar->AddTool(id_BorderRight, wxEmptyString, GetImageFromArray(right_png, sizeof(right_png)),
     wxString::FromUTF8("Right border"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderTop, wxEmptyString, GetImgFromHdr(top_png, sizeof(top_png)),
+    m_toolbar->AddTool(id_BorderTop, wxEmptyString, GetImageFromArray(top_png, sizeof(top_png)),
     wxString::FromUTF8("Top border"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, GetImgFromHdr(bottom_png, sizeof(bottom_png)),
+    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, GetImageFromArray(bottom_png, sizeof(bottom_png)),
     wxString::FromUTF8("Bottom border"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_Expand, wxEmptyString, GetImgFromHdr(expand_png, sizeof(expand_png)),
+    m_toolbar->AddTool(id_Expand, wxEmptyString, GetImageFromArray(expand_png, sizeof(expand_png)),
     wxString::FromUTF8("Expand to fill the space"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_ShowHidden, wxEmptyString, GetImgFromHdr(hidden_png, sizeof(hidden_png)),
+    m_toolbar->AddTool(id_ShowHidden, wxEmptyString, GetImageFromArray(hidden_png, sizeof(hidden_png)),
     wxString::FromUTF8("Show hidden controls in Mockup panel"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_Magnify, wxEmptyString, GetImgFromHdr(magnify_png, sizeof(magnify_png)),
+    m_toolbar->AddTool(id_Magnify, wxEmptyString, GetImageFromArray(magnify_png, sizeof(magnify_png)),
     wxString::FromUTF8("Magnify the size of the Mockup window"), wxITEM_CHECK);
 
     m_toolbar->Realize();

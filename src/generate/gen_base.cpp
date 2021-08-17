@@ -35,21 +35,19 @@ using namespace GenEnum;
 // clang-format off
 
 inline constexpr const auto txt_GetImageFromArrayFunction = R"===(
-// Convert a data header file into a wxImage
-static wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+// Convert a data array into a wxImage
+inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
-    if (!image.FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
     image.LoadFile(strm);
     return image;
 };
 )===";
 
 inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
-// Convert a data header file into a wxAnimation
-static wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
+// Convert a data array into a wxAnimation
+inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxAnimation animation;

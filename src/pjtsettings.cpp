@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <fstream>
 #include <regex>
+#include <thread>
 
 #include <wx/artprov.h>   // wxArtProvider class
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
@@ -29,6 +30,18 @@
 #include "utils.h"      // Utility functions that work with properties
 
 ProjectSettings::ProjectSettings() {}
+
+ProjectSettings::~ProjectSettings()
+{
+    // If the thread is running, this will tell it to stop
+    m_is_terminating = true;
+
+    if (m_collect_thread)
+    {
+        m_collect_thread->join();
+        delete m_collect_thread;
+    }
+}
 
 ttlib::cstr& ProjectSettings::SetProjectFile(const ttString& file)
 {
@@ -194,6 +207,8 @@ bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
 
 bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
 {
+    std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
+
     if (!path.file_exists())
     {
         if (wxGetApp().GetProject()->HasValue(prop_original_art))
@@ -210,7 +225,6 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
         }
     }
 
-    std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
 
     if (m_map_embedded.find(path.filename().c_str()) != m_map_embedded.end())
         return false;
@@ -233,6 +247,7 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
                 auto embed = m_map_embedded[path.filename().c_str()].get();
                 embed->array_name = path.filename();
                 embed->array_name.Replace(".", "_", true);
+                embed->form = form;
 
                 // At this point, other threads can lookup and add an embedded image, they just can't access the data of this
                 // image until we're done. I.e., GetEmbeddedImage() won't return until retrieve_lock is released.
@@ -255,7 +270,6 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
                 image.SaveFile(save_stream, embed->type);
                 auto read_stream = save_stream.GetOutputStreamBuffer();
 
-                embed->form = form;
                 embed->type = handler->GetType();
                 embed->array_size = read_stream->GetBufferSize();
                 embed->array_data = std::make_unique<unsigned char[]>(embed->array_size);
@@ -281,5 +295,94 @@ const EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::cstr path)
     else
     {
         return nullptr;
+    }
+}
+
+// To consistently generate the same code, an image declaration needs to be added to the first form that uses it. That means
+// that all embeded images need to be initialized -- otherwise, the user could select a form that has not been initialized
+// yet, and it will look like it's the first form to use the image, when in fact it's just because the previous form wasn't
+// initialized.
+
+// When a project is loaded, MainFrame start processing nodes and collecting embedded image data. However, that will stop as
+// soon as it's determined that at least one of the forms needs to have code regenerated. So to be certain that every node
+// gets parsed, we create a background thread that parses all nodes every time a project is loaded.
+
+void ProjectSettings::ParseEmbeddedImages()
+{
+    if (m_collect_thread)
+    {
+        m_collect_thread->join();
+        return;
+    }
+
+    m_collect_thread = new std::thread(&ProjectSettings::CollectEmbeddedImages, this);
+}
+
+void ProjectSettings::CollectEmbeddedImages()
+{
+    // We need the shared ptr rather than the raw pointer because we can't let the pointer become invalid while we're still
+    // processing nodes.
+    auto project = wxGetApp().GetProjectPtr();
+
+    for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
+    {
+        if (m_is_terminating)
+            return;
+
+        auto form = project->GetChildPtr(pos);
+
+        for (auto& iter: form->GetChildNodePtrs())
+        {
+            if (m_is_terminating)
+                return;
+            CollectNodeImages(iter.get(), form.get());
+        }
+    }
+}
+
+void ProjectSettings::CollectNodeImages(Node* node, Node* form)
+{
+    for (auto& iter: node->get_props_vector())
+    {
+        if (iter.type() == type_image || iter.type() == type_animation)
+        {
+            if (!iter.HasValue())
+                continue;
+            auto& value = iter.as_string();
+            if (value.is_sameprefix("Embed"))
+            {
+                if (m_is_terminating)
+                    return;
+                ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
+                for (auto& iter_parts: parts)
+                {
+                    iter_parts.BothTrim();
+                }
+
+                if (parts[IndexImage].size())
+                {
+                    std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
+                    if (auto result = m_map_embedded.find(parts[IndexImage].filename().c_str()); result == m_map_embedded.end())
+                    {
+                        if (m_is_terminating)
+                            return;
+
+                        add_lock.unlock();
+                        AddEmbeddedImage(parts[IndexImage], form);
+                        if (m_is_terminating)
+                            return;
+                    }
+                }
+            }
+        }
+    }
+
+    auto count = node->GetChildCount();
+    for (size_t i = 0; i < count; i++)
+    {
+        if (m_is_terminating)
+            return;
+        auto child = node->GetChildPtr(i);
+        CollectNodeImages(child.get(), form);
     }
 }

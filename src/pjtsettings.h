@@ -13,6 +13,7 @@
 #include <wx/bitmap.h>
 
 class Node;
+class std::thread;
 
 struct EmbededImage
 {
@@ -27,6 +28,7 @@ class ProjectSettings
 {
 public:
     ProjectSettings();
+    ~ProjectSettings();
 
     ttlib::cstr& getProjectFile() { return m_projectFile; }
     ttString GetProjectFile() { return ttString() << m_projectFile.wx_str(); }
@@ -46,6 +48,13 @@ public:
     bool AddEmbeddedImage(ttlib::cstr path, Node* form);
     const EmbededImage* GetEmbeddedImage(ttlib::cstr path);
 
+    // This will launch a thread to start collecting all the embedded images in the project
+    void ParseEmbeddedImages();
+
+protected:
+    void CollectEmbeddedImages();
+    void CollectNodeImages(Node* node, Node* form);
+
 private:
     ttlib::cstr m_projectFile;
     ttlib::cstr m_projectPath;
@@ -55,5 +64,9 @@ private:
 
     std::map<std::string, wxImage> m_images;
 
+    std::thread* m_collect_thread { nullptr };
+
     std::map<std::string, std::unique_ptr<EmbededImage>> m_map_embedded;
+
+    bool m_is_terminating { false };
 };

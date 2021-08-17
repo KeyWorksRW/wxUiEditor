@@ -567,7 +567,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     }
 
     ttlib::cstr result;
-    if (parts[IndexType].is_sameas("XPM") || parts[IndexImage].filename().has_extension(".xpm"))
+    if (parts[IndexType].is_sameas("XPM"))
     {
         code << "wxImage(";
 

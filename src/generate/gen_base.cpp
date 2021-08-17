@@ -93,7 +93,7 @@ BaseCodeGenerator::BaseCodeGenerator()
 
         g_map_handlers[wxBITMAP_TYPE_ICO] = "wxICOHandler";
         g_map_handlers[wxBITMAP_TYPE_CUR] = "wxCURHandler";
-        g_map_handlers[wxBITMAP_TYPE_XBM] = "wxXPMHandler";
+        g_map_handlers[wxBITMAP_TYPE_XPM] = "wxXPMHandler";
         g_map_handlers[wxBITMAP_TYPE_TIFF] = "wxTIFFHandler";
         g_map_handlers[wxBITMAP_TYPE_GIF] = "wxGIFHandler";
         g_map_handlers[wxBITMAP_TYPE_PNG] = "wxPNGHandler";

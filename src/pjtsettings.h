@@ -55,6 +55,5 @@ private:
 
     std::map<std::string, wxImage> m_images;
 
-    std::vector<EmbededImage> m_embedded_images;
-    std::map<std::string, size_t> m_map_embedded;
+    std::map<std::string, std::unique_ptr<EmbededImage>> m_map_embedded;
 };

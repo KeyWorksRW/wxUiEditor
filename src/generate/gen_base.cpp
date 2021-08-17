@@ -402,11 +402,19 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
         if (m_embedded_images.size())
         {
-            m_source->writeLine();
-            m_source->writeLine("namespace wxue_img\n{");
-            m_source->Indent();
+            bool is_namespace_written = false;
             for (auto iter_array: m_embedded_images)
             {
+                if (iter_array->form != m_form_node)
+                    continue;
+
+                if (!is_namespace_written)
+                {
+                    m_source->writeLine();
+                    m_source->writeLine("namespace wxue_img\n{");
+                    m_source->Indent();
+                    is_namespace_written = true;
+                }
                 m_source->writeLine();
                 m_source->writeLine(ttlib::cstr("const unsigned char ")
                                     << iter_array->array_name << '[' << iter_array->array_size << "] {");
@@ -426,9 +434,12 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 }
                 m_source->writeLine("};");
             }
-            m_source->writeLine();
-            m_source->Unindent();
-            m_source->writeLine("}\n");
+            if (is_namespace_written)
+            {
+                m_source->writeLine();
+                m_source->Unindent();
+                m_source->writeLine("}\n");
+            }
         }
     }
 

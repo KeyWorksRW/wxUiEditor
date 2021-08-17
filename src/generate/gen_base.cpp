@@ -414,7 +414,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                     is_namespace_written = true;
                 }
                 m_source->writeLine();
-                m_source->writeLine(ttlib::cstr("const unsigned char ")
+                m_source->writeLine(ttlib::cstr("inline const unsigned char ")
                                     << iter_array->array_name << '[' << iter_array->array_size << "] {");
 
                 size_t pos = 0;

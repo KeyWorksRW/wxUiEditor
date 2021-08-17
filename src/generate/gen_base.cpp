@@ -452,6 +452,33 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         }
         m_header->writeLine();
     }
+
+    if (m_panel_type != CPP_PANEL && m_embedded_images.size())
+    {
+        bool is_namespace_written = false;
+        for (auto iter_array: m_embedded_images)
+        {
+            if (iter_array->form != m_form_node)
+                continue;
+
+            if (!is_namespace_written)
+            {
+                m_header->writeLine();
+                m_header->writeLine("namespace wxue_img\n{");
+                m_header->Indent();
+                m_header->writeLine("// Images declared in this class module:");
+                is_namespace_written = true;
+            }
+            m_header->writeLine();
+            m_header->writeLine(ttlib::cstr("extern const unsigned char ")
+                                << iter_array->array_name << '[' << iter_array->array_size << "];");
+        }
+        if (is_namespace_written)
+        {
+            m_header->Unindent();
+            m_header->writeLine("}\n");
+        }
+    }
 }
 
 void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events)
@@ -1429,10 +1456,6 @@ void BaseCodeGenerator::GenSettings(Node* node)
 
 void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& embedset)
 {
-    // Nothing we collect here is useful for the header file
-    if (m_panel_type == HDR_PANEL)
-        return;
-
     for (auto& iter: node->get_props_vector())
     {
         if (iter.type() == type_image || iter.type() == type_animation)

@@ -166,15 +166,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
 
         case IndexImage:
             {
-                ttlib::cstr results;
-                results << childValue.GetString().wx_str();
-                auto pos = results.find_first_of('|');
-                if (ttlib::is_found(pos))
-                {
-                    img_props.convert = results.subview(pos + 1);
-                    results.erase(pos);
-                }
-                img_props.image = results;
+                img_props.image.assign_wx(childValue.GetString());
             }
             break;
 

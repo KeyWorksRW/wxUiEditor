@@ -29,10 +29,17 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     m_choice_client->Append("wxART_MESSAGE_BOX");
     m_choice_client->Append("wxART_OTHER");
 
-    if (img_props.convert.size())
-        m_client = img_props.convert;
+    if (auto pos = img_props.image.find('|'); ttlib::is_found(pos))
+    {
+        m_client = img_props.image.subview(pos + 1);
+    }
     else
-        m_client = "wxART_OTHER";
+    {
+        if (img_props.convert.size())
+            m_client = img_props.convert;
+        else
+            m_client = "wxART_OTHER";
+    }
 
     m_choice_client->SetStringSelection(m_client);
     ChangeClient();

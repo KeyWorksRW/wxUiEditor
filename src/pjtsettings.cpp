@@ -116,10 +116,19 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     }
     else if (parts[IndexType].contains("Art"))
     {
-        if (parts[IndexArtClient].empty())
-            parts[IndexArtClient] = "wxART_OTHER";
-        image = wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR(parts[IndexArtClient]))
-                    .ConvertToImage();
+        if (auto pos = parts[IndexArtID].find('|'); ttlib::is_found(pos))
+        {
+            ttlib::cstr client = parts[IndexArtID].subview(pos + 1);
+            parts[IndexArtID].erase(pos);
+            image = wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR(client)).ConvertToImage();
+        }
+        else
+        {
+            if (parts[IndexArtClient].empty())
+                parts[IndexArtClient] = "wxART_OTHER";
+            image = wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR(parts[IndexArtClient]))
+                        .ConvertToImage();
+        }
     }
     else if (parts[IndexType].contains("Embed"))
     {
@@ -224,7 +233,6 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
             return false;
         }
     }
-
 
     if (m_map_embedded.find(path.filename().c_str()) != m_map_embedded.end())
         return false;
@@ -362,7 +370,8 @@ void ProjectSettings::CollectNodeImages(Node* node, Node* form)
                 if (parts[IndexImage].size())
                 {
                     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
-                    if (auto result = m_map_embedded.find(parts[IndexImage].filename().c_str()); result == m_map_embedded.end())
+                    if (auto result = m_map_embedded.find(parts[IndexImage].filename().c_str());
+                        result == m_map_embedded.end())
                     {
                         if (m_is_terminating)
                             return;

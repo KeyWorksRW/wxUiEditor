@@ -538,14 +538,18 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
 
     if (parts[IndexType].contains("Art"))
     {
-        code << "wxArtProvider::GetBitmap(" << parts[IndexArtID];
-        if (parts[IndexArtClient].size())
-            code << ", " << parts[IndexArtClient];
-        code << ')';
+        ttlib::cstr art_id(parts[IndexArtID]);
+        ttlib::cstr art_client(parts[IndexArtClient]);
+        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        {
+            art_client = art_id.subview(pos + 1);
+            art_id.erase(pos);
+        }
 
-        // This code is obsolete!
-        if (!parts[IndexType].is_sameas("Art"))
-            return code;
+        code << "wxArtProvider::GetBitmap(" << art_id;
+        if (art_client.size())
+            code << ", " << art_client;
+        code << ')';
 
         // Scale if needed
         if (parts.size() > IndexConvert && parts[IndexSize].size())

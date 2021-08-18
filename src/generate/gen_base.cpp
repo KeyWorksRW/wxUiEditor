@@ -34,22 +34,20 @@ using namespace GenEnum;
 
 // clang-format off
 
-inline constexpr const auto txt_GetImgFromHdrFunction = R"===(
-// Convert a data header file into a wxImage
-static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
+inline constexpr const auto txt_GetImageFromArrayFunction = R"===(
+// Convert a data array into a wxImage
+inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
-    if (!image.FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
     image.LoadFile(strm);
     return image;
 };
 )===";
 
 inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
-// Convert a data header file into a wxAnimation
-static wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
+// Convert a data array into a wxAnimation
+inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxAnimation animation;
@@ -71,15 +69,57 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 extern std::unordered_set<std::string> set_wx_ids;
 
-BaseCodeGenerator::BaseCodeGenerator() {}
+std::map<wxBitmapType, std::string> g_map_handlers;
+std::map<wxBitmapType, std::string> g_map_types;
+
+#define ADD_TYPE(name) g_map_types[name] = #name;
+
+BaseCodeGenerator::BaseCodeGenerator()
+{
+    if (g_map_types.empty())
+    {
+        ADD_TYPE(wxBITMAP_TYPE_BMP);  // We include this, but the handler is always loaded
+        ADD_TYPE(wxBITMAP_TYPE_ICO);
+        ADD_TYPE(wxBITMAP_TYPE_CUR);
+        ADD_TYPE(wxBITMAP_TYPE_XPM);
+        ADD_TYPE(wxBITMAP_TYPE_TIFF);
+        ADD_TYPE(wxBITMAP_TYPE_GIF);
+        ADD_TYPE(wxBITMAP_TYPE_PNG);
+        ADD_TYPE(wxBITMAP_TYPE_JPEG);
+        ADD_TYPE(wxBITMAP_TYPE_PNM);
+        ADD_TYPE(wxBITMAP_TYPE_PCX);
+        ADD_TYPE(wxBITMAP_TYPE_ANI);
+        ADD_TYPE(wxBITMAP_TYPE_TGA);
+
+        g_map_handlers[wxBITMAP_TYPE_ICO] = "wxICOHandler";
+        g_map_handlers[wxBITMAP_TYPE_CUR] = "wxCURHandler";
+        g_map_handlers[wxBITMAP_TYPE_XPM] = "wxXPMHandler";
+        g_map_handlers[wxBITMAP_TYPE_TIFF] = "wxTIFFHandler";
+        g_map_handlers[wxBITMAP_TYPE_GIF] = "wxGIFHandler";
+        g_map_handlers[wxBITMAP_TYPE_PNG] = "wxPNGHandler";
+        g_map_handlers[wxBITMAP_TYPE_JPEG] = "wxJPEGHandler";
+        g_map_handlers[wxBITMAP_TYPE_PNM] = "wxPNMHandler";
+        g_map_handlers[wxBITMAP_TYPE_PCX] = "wxPCXHandler";
+        g_map_handlers[wxBITMAP_TYPE_ANI] = "wxANIHandler";
+        g_map_handlers[wxBITMAP_TYPE_TGA] = "wxTGAHandler";
+    }
+}
 
 void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_TYPE panel_type)
 {
-    EventVector events;
     m_CtxMenuEvents.clear();
+    m_embedded_images.clear();
+    m_type_generated.clear();
+
+    m_form_node = form_node;
+
+    EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
 
-    auto thrd_need_hdr_func = std::async(&BaseCodeGenerator::FindImageHeader, this, form_node);
+    // Determine if we need to generate GetImageFromArray()
+    auto thrd_need_img_func = std::async(&BaseCodeGenerator::FindImageHeader, this, form_node);
+
+    // Determine if we need to generate GetAnimFromHdr()
     auto thrd_need_anim_func = std::async(&BaseCodeGenerator::FindAnimationHeader, this, form_node);
 
     m_panel_type = panel_type;
@@ -256,14 +296,18 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     m_source->writeLine();
 
     thrd_collect_img_headers.join();
-    if (!img_include_set.empty())
-    {
-        for (auto& iter: img_include_set)
-        {
-            m_source->writeLine(iter.c_str());
-        }
 
-        m_source->writeLine();
+    if (m_panel_type != HDR_PANEL)
+    {
+        if (!img_include_set.empty())
+        {
+            for (auto& iter: img_include_set)
+            {
+                m_source->writeLine(iter.c_str());
+            }
+
+            m_source->writeLine();
+        }
     }
 
     // Make a copy of the string so that we can tweak it
@@ -310,7 +354,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     if (m_panel_type != HDR_PANEL)
     {
-        auto need_hdr_func = thrd_need_hdr_func.get();
+        auto need_hdr_func = thrd_need_img_func.get();
         auto need_anim_func = thrd_need_anim_func.get();
 
         if (need_hdr_func || need_anim_func)
@@ -321,7 +365,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         if (need_hdr_func)
         {
             ttlib::textfile function;
-            function.ReadString(txt_GetImgFromHdrFunction);
+            function.ReadString(txt_GetImageFromArrayFunction);
             for (auto& iter: function)
             {
                 m_source->writeLine(iter, indent::none);
@@ -338,7 +382,63 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
             }
         }
 
+        if (m_embedded_images.size())
+        {
+            m_source->writeLine();
+            m_source->writeLine("namespace wxue_img\n{");
+            m_source->Indent();
+            for (auto iter_array: m_embedded_images)
+            {
+                m_source->writeLine(ttlib::cstr("extern const unsigned char ")
+                                    << iter_array->array_name << '[' << iter_array->array_size << "];");
+            }
+            m_source->Unindent();
+            m_source->writeLine("}\n");
+        }
+
         GenerateClassConstructor(form_node, events);
+
+        if (m_embedded_images.size())
+        {
+            bool is_namespace_written = false;
+            for (auto iter_array: m_embedded_images)
+            {
+                if (iter_array->form != m_form_node)
+                    continue;
+
+                if (!is_namespace_written)
+                {
+                    m_source->writeLine();
+                    m_source->writeLine("namespace wxue_img\n{");
+                    m_source->Indent();
+                    is_namespace_written = true;
+                }
+                m_source->writeLine();
+                m_source->writeLine(ttlib::cstr("inline const unsigned char ")
+                                    << iter_array->array_name << '[' << iter_array->array_size << "] {");
+
+                size_t pos = 0;
+                while (pos < iter_array->array_size)
+                {
+                    ttlib::cstr code;
+                    // Using 132 will generate lines up to 140 characters long (4 indent + max 3 chars for number + comma)
+                    for (; pos < iter_array->array_size && code.size() < 132; ++pos)
+                    {
+                        code << static_cast<int>(iter_array->array_data[pos]) << ',';
+                    }
+                    if (pos >= iter_array->array_size && code.back() == ',')
+                        code.pop_back();
+                    m_source->writeLine(code);
+                }
+                m_source->writeLine("};");
+            }
+            if (is_namespace_written)
+            {
+                m_source->writeLine();
+                m_source->Unindent();
+                m_source->writeLine("}\n");
+            }
+        }
     }
 
     if (indent > 0)
@@ -349,6 +449,33 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
             m_header->writeLine(ttlib::cstr() << "} // namespace " << names[--indent]);
         }
         m_header->writeLine();
+    }
+
+    if (m_panel_type != CPP_PANEL && m_embedded_images.size())
+    {
+        bool is_namespace_written = false;
+        for (auto iter_array: m_embedded_images)
+        {
+            if (iter_array->form != m_form_node)
+                continue;
+
+            if (!is_namespace_written)
+            {
+                m_header->writeLine();
+                m_header->writeLine("namespace wxue_img\n{");
+                m_header->Indent();
+                m_header->writeLine("// Images declared in this class module:");
+                is_namespace_written = true;
+            }
+            m_header->writeLine();
+            m_header->writeLine(ttlib::cstr("extern const unsigned char ")
+                                << iter_array->array_name << '[' << iter_array->array_size << "];");
+        }
+        if (is_namespace_written)
+        {
+            m_header->Unindent();
+            m_header->writeLine("}\n");
+        }
     }
 }
 
@@ -991,6 +1118,22 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         m_source->Indent();
     }
 
+    if (m_embedded_images.size())
+    {
+        for (auto& iter_img: m_embedded_images)
+        {
+            if (iter_img->type != wxBITMAP_TYPE_BMP && m_type_generated.find(iter_img->type) == m_type_generated.end())
+            {
+                m_source->writeLine(ttlib::cstr("if (!wxImage::FindHandler(") << g_map_types[iter_img->type] << "))");
+                m_source->Indent();
+                m_source->writeLine(ttlib::cstr("\twxImage::AddHandler(new ") << g_map_handlers[iter_img->type] << ");");
+                m_source->Unindent();
+                m_type_generated.insert(iter_img->type);
+            }
+        }
+        m_source->writeLine();
+    }
+
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
@@ -1313,14 +1456,67 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 {
     for (auto& iter: node->get_props_vector())
     {
-        if (iter.type() == type_image)
+        if (iter.type() == type_image || iter.type() == type_animation)
         {
             if (!iter.HasValue())
                 continue;
             auto& value = iter.as_string();
-            if (value.is_sameprefix("Header") || value.is_sameprefix("XPM") || value.is_sameprefix("HDR"))
+
+            if (value.is_sameprefix("Embed"))
             {
-                auto posBegin = value.stepover();
+                ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
+                for (auto& iter_parts: parts)
+                {
+                    iter_parts.BothTrim();
+                }
+
+                if (parts[IndexImage].size())
+                {
+                    auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+                    if (!embed)
+                    {
+                        if (!wxGetApp().GetProjectSettings()->AddEmbeddedImage(parts[IndexImage], m_form_node))
+                            continue;
+                        embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+                        if (!embed)
+                            continue;
+                    }
+                    else
+                    {
+                        bool is_found = false;
+                        for (size_t idx = 0; idx < m_embedded_images.size(); ++idx)
+                        {
+                            if (m_embedded_images[idx] == embed)
+                            {
+                                is_found = true;
+                                break;
+                            }
+                        }
+                        if (is_found)
+                            continue;  // we already have this image
+                    }
+
+
+                    m_embedded_images.emplace_back(embed);
+                }
+            }
+            else if (iter.type() == type_image)
+            {
+                if (value.is_sameprefix("Header") || value.is_sameprefix("XPM"))
+                {
+                    auto posBegin = value.stepover();
+                    auto posEnd = value.find(';', posBegin);
+                    ttlib::cstr path = value.substr(posBegin, posEnd - posBegin);
+                    path.make_relative(m_baseFullPath);
+                    path.backslashestoforward();
+                    ttlib::cstr inc;
+                    inc << "#include \"" << path << "\"";
+                    embedset.insert(inc);
+                }
+            }
+            else if (iter.type() == type_animation)
+            {
+                auto posBegin = value.find_nonspace();
                 auto posEnd = value.find(';', posBegin);
                 ttlib::cstr path = value.substr(posBegin, posEnd - posBegin);
                 path.make_relative(m_baseFullPath);
@@ -1328,23 +1524,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 ttlib::cstr inc;
                 inc << "#include \"" << path << "\"";
                 embedset.insert(inc);
-                continue;
             }
-        }
-        else if (iter.type() == type_animation)
-        {
-            if (!iter.HasValue())
-                continue;
-            auto& value = iter.as_string();
-            auto posBegin = value.find_nonspace();
-            auto posEnd = value.find(';', posBegin);
-            ttlib::cstr path = value.substr(posBegin, posEnd - posBegin);
-            path.make_relative(m_baseFullPath);
-            path.backslashestoforward();
-            ttlib::cstr inc;
-            inc << "#include \"" << path << "\"";
-            embedset.insert(inc);
-            continue;
         }
     }
 
@@ -1356,6 +1536,8 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
     }
 }
 
+// We're just trying to figure out if we need to generate code to include wx/mstream.h as well as generating the code to
+// load the image from memory.
 bool BaseCodeGenerator::FindImageHeader(Node* node)
 {
     for (size_t i = 0; i < node->GetChildCount(); i++)
@@ -1370,10 +1552,9 @@ bool BaseCodeGenerator::FindImageHeader(Node* node)
                 iter.BothTrim();
             }
 
-            if (parts[IndexType] == "Header" && parts[IndexImage].size())
+            if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header") && parts[IndexImage].size())
             {
-                if (!parts[IndexImage].contains(".xpm", tt::CASE::either))
-                    return true;
+                return true;
             }
         }
         if (child->GetChildCount())

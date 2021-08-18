@@ -11,12 +11,13 @@
 
 #include "import_xml.h"
 
-#include "gen_enums.h"  // Enumerations for generators
-#include "mainapp.h"    // App -- Main application class
-#include "mainframe.h"  // Main window frame
-#include "node.h"       // Node class
-#include "uifuncs.h"    // Miscellaneous functions for displaying UI
-#include "utils.h"      // Utility functions that work with properties
+#include "gen_enums.h"    // Enumerations for generators
+#include "mainapp.h"      // App -- Main application class
+#include "mainframe.h"    // Main window frame
+#include "node.h"         // Node class
+#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
+#include "uifuncs.h"      // Miscellaneous functions for displaying UI
+#include "utils.h"        // Utility functions that work with properties
 
 using namespace GenEnum;
 
@@ -614,6 +615,27 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
         {
             ttlib::cstr bitmap("XPM; ");
             bitmap << file;
+            bitmap << "; ; [-1; -1]";
+
+            if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
+            {
+                prop->set_value(bitmap);
+                if (node->isGen(gen_wxButton))
+                    node->prop_set_value(prop_markup, true);
+            }
+        }
+        else
+        {
+            ttlib::cstr bitmap("Embed; ");
+
+            // wxGlade doubles the backslash after the drive letter on Windows, and that causes the conversion to a relative
+            // path to be incorrect
+            file.Replace(":\\\\", ":\\");
+
+            ttString relative(file.wx_str());
+            relative.make_relative_wx(wxGetCwd());
+            relative.backslashestoforward();
+            bitmap << relative.wx_str();
             bitmap << "; ; [-1; -1]";
 
             if (auto prop = node->get_prop_ptr(prop_bitmap); prop)

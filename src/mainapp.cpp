@@ -237,8 +237,7 @@ int App::OnExit()
 
 #endif  // defined(_WIN32) && defined(_DEBUG) && defined(USE_CRT_MEMORY_DUMP)
 
-    // Probably not necessary to delete this -- presumably any wxBitmaps that it stores will get freed without calling
-    // the dtor, but this ensures we don't leave any operating system resource handles lying around.
+    // This must get deleted in order to stop any thread it started to process embedded images
     delete m_pjtSettings;
 
     return wxApp::OnExit();
@@ -246,8 +245,11 @@ int App::OnExit()
 
 wxImage App::GetImage(const ttlib::cstr& description)
 {
-    if (description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") || description.is_sameprefix("Art;"))
+    if (description.is_sameprefix("Embed;") || description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") ||
+        description.is_sameprefix("Art;"))
+    {
         return m_pjtSettings->GetPropertyBitmap(description);
+    }
     else
         return GetInternalImage("unknown");
 }

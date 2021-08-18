@@ -16,6 +16,8 @@ class NodeCreator;
 class WriteCode;
 class wxWindow;
 
+struct EmbededImage;
+
 using EventVector = std::vector<NodeEvent*>;
 
 namespace pugi
@@ -128,6 +130,11 @@ private:
 
     ttlib::cstr m_baseFullPath;
     EventVector m_CtxMenuEvents;
+
+    std::vector<const EmbededImage*> m_embedded_images;
+    std::set<wxBitmapType> m_type_generated;
+
+    Node* m_form_node;
 
     PANEL_TYPE m_panel_type { NOT_PANEL };
     bool m_artProvider;

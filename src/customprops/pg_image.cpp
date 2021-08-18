@@ -46,6 +46,7 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     types.Add(s_type_names[0]);
     types.Add(s_type_names[1]);
     types.Add(s_type_names[2]);
+    types.Add(s_type_names[3]);
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));

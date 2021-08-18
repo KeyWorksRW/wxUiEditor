@@ -13,9 +13,10 @@
 
 #include "gen_common.h"
 
-#include "mainapp.h"  // App -- App class
-#include "node.h"     // Node class
-#include "utils.h"    // Utility functions that work with properties
+#include "mainapp.h"      // App -- App class
+#include "node.h"         // Node class
+#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"        // Utility functions that work with properties
 
 ttlib::cstr GenerateSizerFlags(Node* node)
 {
@@ -566,7 +567,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     }
 
     ttlib::cstr result;
-    if (parts[IndexType].is_sameas("XPM") || parts[IndexImage].filename().has_extension(".xpm"))
+    if (parts[IndexType].is_sameas("XPM"))
     {
         code << "wxImage(";
 
@@ -616,11 +617,21 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     }
     else
     {
-        code << "GetImgFromHdr(";
+        code << "GetImageFromArray(";
 
         ttlib::cstr name(parts[1].filename());
         name.remove_extension();
         name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra dots that have to be converted to '_'
+
+        if (parts[0].is_sameprefix("Embed"))
+        {
+            auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[1]);
+            if (embed)
+            {
+                name = "wxue_img::" + embed->array_name;
+            }
+        }
+
         code << name << ", sizeof(" << name << "))";
 
         if (parts[IndexType].is_sameas("Header"))

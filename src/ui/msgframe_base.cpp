@@ -16,7 +16,7 @@
 #include <wx/mstream.h>  // Memory stream classes
 
 // Convert a data header file into a wxImage
-static wxImage GetImgFromHdr(const unsigned char* data, size_t size_data)
+static wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -45,7 +45,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     menu_file->Append(menu_item_clear);
 
     auto menu_item_hide = new wxMenuItem(menu_file, id_hide, wxString::FromUTF8("&Hide"));
-    menu_item_hide->SetBitmap(GetImgFromHdr(hidden_png, sizeof(hidden_png)));
+    menu_item_hide->SetBitmap(GetImageFromArray(hidden_png, sizeof(hidden_png)));
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, wxString::FromUTF8("&File"));
 

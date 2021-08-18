@@ -36,7 +36,7 @@
 // Any mime type in the following list with NOT be converted to PNG even if m_check_make_png is set to true
 
 // clang-format off
-static constexpr const char* lst_no_png_conversion[] = {
+inline constexpr const char* lst_no_png_conversion[] = {
 
     "image/x-ani",
     "image/x-cur",

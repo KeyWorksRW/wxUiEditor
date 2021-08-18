@@ -13,7 +13,6 @@
 #include <wx/bitmap.h>
 
 class Node;
-class std::thread;
 
 struct EmbededImage
 {

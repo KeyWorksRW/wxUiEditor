@@ -124,10 +124,8 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
         }
         else
         {
-            if (parts[IndexArtClient].empty())
-                parts[IndexArtClient] = "wxART_OTHER";
-            image = wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR(parts[IndexArtClient]))
-                        .ConvertToImage();
+            image =
+                wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER")).ConvertToImage();
         }
     }
     else if (parts[IndexType].contains("Embed"))
@@ -189,9 +187,9 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
         m_images[path] = image;
 
     // Scale if needed
-    if (want_scaled && parts.size() > IndexConvert && parts[IndexSize].size() && parts[IndexSize] != "-1, -1")
+    if (want_scaled && parts.size() > IndexScale && parts[IndexScale].size() && parts[IndexScale] != "[-1,-1]")
     {
-        auto scale_size = ConvertToSize(parts[IndexSize]);
+        auto scale_size = ConvertToSize(parts[IndexScale]);
         if (scale_size.x != -1 || scale_size.y != -1)
         {
             auto original_size = image.GetSize();

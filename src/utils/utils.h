@@ -21,11 +21,9 @@ class Node;
 enum PropIndex
 {
     IndexType = 0,
-    IndexImage = 1,
-    IndexArtID = 1,
-    IndexConvert = 2,
-    IndexArtClient = 2,
-    IndexSize
+    IndexImage,
+    IndexArtID = IndexImage,
+    IndexScale
 };
 
 ttlib::cstr ClearPropFlag(ttlib::cview flag, ttlib::cview currentValue);

@@ -35,10 +35,7 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     }
     else
     {
-        if (img_props.convert.size())
-            m_client = img_props.convert;
-        else
-            m_client = "wxART_OTHER";
+        m_client = "wxART_OTHER";
     }
 
     m_choice_client->SetStringSelection(m_client);

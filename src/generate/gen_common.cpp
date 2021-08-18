@@ -539,7 +539,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     if (parts[IndexType].contains("Art"))
     {
         ttlib::cstr art_id(parts[IndexArtID]);
-        ttlib::cstr art_client(parts[IndexArtClient]);
+        ttlib::cstr art_client;
         if (auto pos = art_id.find('|'); ttlib::is_found(pos))
         {
             art_client = art_id.subview(pos + 1);
@@ -552,9 +552,9 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         code << ')';
 
         // Scale if needed
-        if (parts.size() > IndexConvert && parts[IndexSize].size())
+        if (parts.size() > IndexImage && parts[IndexScale].size())
         {
-            auto scale_size = ConvertToSize(parts[IndexSize]);
+            auto scale_size = ConvertToSize(parts[IndexScale]);
             if (scale_size.x != -1 || scale_size.y != -1)
             {
                 auto bmp = wxGetApp().GetImage(parts[IndexImage]);
@@ -579,43 +579,20 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         name.remove_extension();
         code << name << "_xpm)";
 
-        if (parts[IndexType].is_sameas("XPM") || parts[IndexType].is_sameas("Header"))
+        // Scale if needed
+        if (parts.size() > IndexImage && parts[IndexScale].size())
         {
-            // Scale if needed
-            if (parts.size() > IndexConvert && parts[IndexSize].size())
+            auto scale_size = ConvertToSize(parts[IndexScale]);
+            if (scale_size.x != -1 || scale_size.y != -1)
             {
-                auto scale_size = ConvertToSize(parts[IndexSize]);
-                if (scale_size.x != -1 || scale_size.y != -1)
-                {
-                    auto bmp = wxGetApp().GetImage(parts[IndexImage]);
-                    auto original_size = bmp.GetSize();
-                    if (scale_size.x != -1)
-                        original_size.x = scale_size.x;
-                    if (scale_size.y != -1)
-                        original_size.y = scale_size.y;
-                    // XPM files use a mask which does not scale well when wxIMAGE_QUALITY_HIGH is used
-                    code << ttlib::cstr().Format(".Scale(%d, %d)", original_size.x, original_size.y);
-                }
-            }
-        }
-
-        // This code is obsolete!
-        else
-        {
-            // Scale if needed
-            if (parts.size() > 2 && parts[2].size())
-            {
-                auto scale_size = ConvertToSize(parts[2]);
-                if (scale_size.x != -1 || scale_size.y != -1)
-                {
-                    auto bmp = wxGetApp().GetImage(parts[1]);
-                    auto original_size = bmp.GetSize();
-                    if (scale_size.x != -1)
-                        original_size.x = scale_size.x;
-                    if (scale_size.y != -1)
-                        original_size.y = scale_size.y;
-                    code << ttlib::cstr().Format(".Scale(%d, %d)", original_size.x, original_size.y);
-                }
+                auto bmp = wxGetApp().GetImage(parts[IndexImage]);
+                auto original_size = bmp.GetSize();
+                if (scale_size.x != -1)
+                    original_size.x = scale_size.x;
+                if (scale_size.y != -1)
+                    original_size.y = scale_size.y;
+                // XPM files use a mask which does not scale well when wxIMAGE_QUALITY_HIGH is used
+                code << ttlib::cstr().Format(".Scale(%d, %d)", original_size.x, original_size.y);
             }
         }
     }
@@ -627,9 +604,9 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         name.remove_extension();
         name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra dots that have to be converted to '_'
 
-        if (parts[0].is_sameprefix("Embed"))
+        if (parts[IndexType].is_sameprefix("Embed"))
         {
-            auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[1]);
+            auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
                 name = "wxue_img::" + embed->array_name;
@@ -638,43 +615,20 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
 
         code << name << ", sizeof(" << name << "))";
 
-        if (parts[IndexType].is_sameas("Header"))
+        // Scale if needed
+        if (parts.size() > IndexImage && parts[IndexScale].size())
         {
-            // Scale if needed
-            if (parts.size() > IndexConvert && parts[IndexSize].size())
+            auto scale_size = ConvertToSize(parts[IndexScale]);
+            if (scale_size.x != -1 || scale_size.y != -1)
             {
-                auto scale_size = ConvertToSize(parts[IndexSize]);
-                if (scale_size.x != -1 || scale_size.y != -1)
-                {
-                    auto bmp = wxGetApp().GetImage(description);
-                    auto original_size = bmp.GetSize();
-                    if (scale_size.x != -1)
-                        original_size.x = scale_size.x;
-                    if (scale_size.y != -1)
-                        original_size.y = scale_size.y;
-                    // PNG will have an alpha channel, so high-quality scaling makes sense
-                    code << ttlib::cstr().Format(".Scale(%d, %d, wxIMAGE_QUALITY_HIGH)", original_size.x, original_size.y);
-                }
-            }
-        }
-
-        // This code is obsolete!
-        else
-        {
-            // Scale if needed
-            if (parts.size() > 2 && parts[2].size())
-            {
-                auto scale_size = ConvertToSize(parts[2]);
-                if (scale_size.x != -1 || scale_size.y != -1)
-                {
-                    auto bmp = wxGetApp().GetImage(parts[1]);
-                    auto original_size = bmp.GetSize();
-                    if (scale_size.x != -1)
-                        original_size.x = scale_size.x;
-                    if (scale_size.y != -1)
-                        original_size.y = scale_size.y;
-                    code << ttlib::cstr().Format(".Scale(%d, %d, wxIMAGE_QUALITY_HIGH)", original_size.x, original_size.y);
-                }
+                auto bmp = wxGetApp().GetImage(description);
+                auto original_size = bmp.GetSize();
+                if (scale_size.x != -1)
+                    original_size.x = scale_size.x;
+                if (scale_size.y != -1)
+                    original_size.y = scale_size.y;
+                // Assume an alpha channel, so high-quality scaling makes sense
+                code << ttlib::cstr().Format(".Scale(%d, %d, wxIMAGE_QUALITY_HIGH)", original_size.x, original_size.y);
             }
         }
     }

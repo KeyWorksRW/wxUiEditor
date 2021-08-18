@@ -813,42 +813,13 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
         }
         else
         {
-            {
-                ttSaveCwd saveCwd;
-                ttString newDir(m_importProjectFile);
-                newDir.remove_filename();
-                newDir.ChangeDir();
-
-                if (!filename.file_exists())
-                {
-                    ttlib::cstr tmp_filename = filename;
-                    tmp_filename.make_absolute();
-                    if (tmp_filename.file_exists())
-                    {
-                        filename = tmp_filename;
-                    }
-                    else
-                    {
-                        if (m_eventGeneration.size())
-                        {
-                            tmp_filename = m_eventGeneration;
-                            tmp_filename.append_filename(filename);
-                            if (tmp_filename.file_exists())
-                            {
-                                filename = tmp_filename;
-                            }
-                        }
-                    }
-                }
-
-                // It needs to be absolute to the current directory since we're about to switch back to the previous
-                // directory
-                filename.make_absolute();
-            }
-
-            ttlib::cstr value("XPM; ; ");
-            value << filename << "; [-1; -1]";
-            prop->set_value(value);
+            ttlib::cstr bitmap("Embed; ");
+            ttString relative(filename.wx_str());
+            relative.make_relative_wx(wxGetCwd());
+            relative.backslashestoforward();
+            bitmap << relative.wx_str();
+            bitmap << "; ; [-1; -1]";
+            prop->set_value(bitmap);
         }
     }
     else if (org_value.contains("Load From Art"))

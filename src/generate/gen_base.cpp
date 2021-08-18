@@ -1481,6 +1481,21 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                         if (!embed)
                             continue;
                     }
+                    else
+                    {
+                        bool is_found = false;
+                        for (size_t idx = 0; idx < m_embedded_images.size(); ++idx)
+                        {
+                            if (m_embedded_images[idx] == embed)
+                            {
+                                is_found = true;
+                                break;
+                            }
+                        }
+                        if (is_found)
+                            continue;  // we already have this image
+                    }
+
 
                     m_embedded_images.emplace_back(embed);
                 }

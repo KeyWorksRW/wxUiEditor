@@ -28,12 +28,9 @@ void ImageProperties::InitValues(const char* value)
     if (mstr.size() > IndexImage)
         image = mstr[IndexImage];
 
-    if (mstr.size() > IndexConvert)
-        convert = mstr[IndexConvert];
-
-    if (mstr.size() > IndexSize)
+    if (mstr.size() > IndexImage)
     {
-        ttlib::multistr dimensions(mstr[IndexSize], ',');
+        ttlib::multistr dimensions(mstr[IndexScale], ',');
         for (auto& iter: dimensions)
         {
             iter.BothTrim();
@@ -48,15 +45,11 @@ void ImageProperties::InitValues(const char* value)
 
 ttlib::cstr ImageProperties::CombineValues()
 {
-    // The user may have picked the filename from the autocomplete, in which case it's in the converted_art directory.
-    // Or they may have chosen it from the File Open dialog which uses the converted_art as the default directory. In
-    // either case, we need to change the path to the file's actual location.
-
     if (type.size() && type != "Art")
     {
-        if (!image.file_exists() && wxGetApp().GetProject()->HasValue(prop_converted_art))
+        if (!image.file_exists() && wxGetApp().GetProject()->HasValue(prop_original_art))
         {
-            auto path = wxGetApp().GetProject()->prop_as_string(prop_converted_art);
+            auto path = wxGetApp().GetProject()->prop_as_string(prop_original_art);
             path.append_filename(image);
             path.make_relative(wxGetApp().getProjectPath());
             if (path.file_exists())
@@ -67,6 +60,6 @@ ttlib::cstr ImageProperties::CombineValues()
     }
 
     ttlib::cstr value;
-    value << type << ';' << image << ';' << convert << ";[" << size.x << ',' << size.y << "]";
+    value << type << ';' << image << ";[" << size.x << ',' << size.y << "]";
     return value;
 }

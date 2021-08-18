@@ -43,14 +43,13 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
 
     wxPGChoices types;
 
-    types.Add(s_type_names[0]);
-    types.Add(s_type_names[1]);
-    types.Add(s_type_names[2]);
-    types.Add(s_type_names[3]);
+    types.Add(s_type_names[0]);  // Art
+    types.Add(s_type_names[1]);  // Embed
+    types.Add(s_type_names[2]);  // XPM
+    types.Add(s_type_names[3]);  // Header
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
-    AddPrivateChild(new wxStringProperty("convert_from", wxPG_LABEL, m_img_props.convert.wx_str()));
     AddPrivateChild(new CustomSizeProperty("size", m_img_props.size));
 }
 
@@ -64,15 +63,24 @@ void PropertyGrid_Image::RefreshChildren()
         if (m_img_props.type == "Art")
         {
             Item(IndexImage)->SetLabel("id");
-            Item(IndexConvert)->SetLabel("client");
-            Item(IndexConvert)
-                ->SetHelpString("Serves as a hint to wxArtProvider that helps it to choose the best looking image.");
+            Item(IndexImage)->SetHelpString("Specifies the art ID and optional Client (separated by a | character).");
         }
         else
         {
             Item(IndexImage)->SetLabel("image");
-            Item(IndexConvert)->SetLabel("convert_from");
-            Item(IndexConvert)->SetHelpString("Specifies the original art file that should be converted to the image file.");
+        }
+
+        if (m_img_props.type == "Embed")
+        {
+            Item(IndexImage)->SetHelpString("Specifies the original image which will be embedded into a generated class source file as an unsigned char array.");
+        }
+        else if (m_img_props.type == "XPM")
+        {
+            Item(IndexImage)->SetHelpString("Specifies the XPM file to include.");
+        }
+        else if (m_img_props.type == "Header")
+        {
+            Item(IndexImage)->SetHelpString("Specifies an external file containing the image as an unsigned char array.");
         }
 
         if (m_old_image != m_img_props.image || m_old_type != m_img_props.type)
@@ -114,12 +122,12 @@ void PropertyGrid_Image::RefreshChildren()
             }
             else
             {
-                auto art_dir = wxGetApp().GetProject()->prop_as_string(prop_converted_art);
+                auto art_dir = wxGetApp().GetProject()->prop_as_string(prop_original_art);
                 if (art_dir.empty())
                     art_dir = "./";
                 wxDir dir;
                 wxArrayString array_files;
-                dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "XPM" ? "*.xpm" : "*.h_img");
+                dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "XPM" ? "*.xpm" : "*.png");
                 for (size_t pos = 0; pos < array_files.size(); ++pos)
                 {
                     ttString* ptr = static_cast<ttString*>(&array_files[pos]);
@@ -134,8 +142,7 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
     Item(IndexImage)->SetValue(m_img_props.image.wx_str());
-    Item(IndexConvert)->SetValue(m_img_props.convert.wx_str());
-    Item(IndexSize)->SetValue((wxVariant(m_img_props.size)));
+    Item(IndexScale)->SetValue((wxVariant(m_img_props.size)));
 }
 
 wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
@@ -157,32 +164,19 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 {
                     img_props.type = s_type_names[index];
 
-                    // If the type has changed, then the image and convert properties are no longer valid, so we clear them
+                    // If the type has changed, then the image property is no longer valid
                     img_props.image.clear();
-                    img_props.convert.clear();
                 }
                 break;
             }
 
         case IndexImage:
             {
-                ttlib::cstr results;
-                results << childValue.GetString().wx_str();
-                auto pos = results.find_first_of('|');
-                if (ttlib::is_found(pos))
-                {
-                    img_props.convert = results.subview(pos + 1);
-                    results.erase(pos);
-                }
-                img_props.image = results;
+                img_props.image.assign_wx(childValue.GetString());
             }
             break;
 
-        case IndexConvert:
-            img_props.convert = childValue.GetString().utf8_str().data();
-            break;
-
-        case IndexSize:
+        case IndexScale:
             img_props.size = wxSizeRefFromVariant(childValue);
             break;
     }

@@ -9,7 +9,6 @@
 
 #include <filesystem>
 #include <fstream>
-#include <regex>
 #include <thread>
 
 #include <wx/artprov.h>   // wxArtProvider class
@@ -78,23 +77,7 @@ ttlib::cstr& ProjectSettings::setProjectPath(const ttlib::cstr& file, bool remov
 
 wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled)
 {
-    static std::regex words_regex("\\[.+;.+\\]");
-
-    ttlib::cstr desc_copy(description);
-
-    // Convert "[num; num]" to "num, num" so that we can break the property string into multiple parts
-
-    std::cmatch match;
-    if (std::regex_search(description.c_str(), match, words_regex))
-    {
-        ttlib::cstr fix(match[0]);
-        fix.Replace(";", ",");
-        fix.Replace("[", "");
-        fix.Replace("]", "");
-        desc_copy.Replace(ttlib::cview(match[0]), fix);
-    }
-
-    ttlib::multistr parts(desc_copy, BMP_PROP_SEPARATOR);
+    ttlib::multistr parts(description, BMP_PROP_SEPARATOR);
     for (auto& iter: parts)
     {
         iter.BothTrim();
@@ -116,10 +99,17 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     }
     else if (parts[IndexType].contains("Art"))
     {
-        if (parts[IndexArtClient].empty())
-            parts[IndexArtClient] = "wxART_OTHER";
-        image = wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR(parts[IndexArtClient]))
-                    .ConvertToImage();
+        if (auto pos = parts[IndexArtID].find('|'); ttlib::is_found(pos))
+        {
+            ttlib::cstr client = parts[IndexArtID].subview(pos + 1);
+            parts[IndexArtID].erase(pos);
+            image = wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR(client)).ConvertToImage();
+        }
+        else
+        {
+            image =
+                wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER")).ConvertToImage();
+        }
     }
     else if (parts[IndexType].contains("Embed"))
     {
@@ -175,14 +165,25 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
         return GetInternalImage("unknown");
     }
 
-    // cache it so that we don't need to read it from disk again
+    // If it's not embedded, then cache it so that we don't read it from disk again
     if (!parts[IndexType].contains("Embed") && result == m_images.end())
         m_images[path] = image;
 
     // Scale if needed
-    if (want_scaled && parts.size() > IndexConvert && parts[IndexSize].size() && parts[IndexSize] != "-1, -1")
+    if (want_scaled && parts.size() > IndexScale)
     {
-        auto scale_size = ConvertToSize(parts[IndexSize]);
+        // If a dimension was specified, then it will have been split out, so we need to combine them
+        if (parts.size() > IndexScale + 1)
+        {
+            parts[IndexScale] << ',' << parts[IndexScale + 1];
+        }
+
+        ttlib::multistr scale_parts(parts[IndexScale].c_str() + 1, ',');
+
+        wxSize scale_size;
+        scale_size.x = scale_parts[0].atoi();
+        scale_size.y = scale_parts[1].atoi();
+
         if (scale_size.x != -1 || scale_size.y != -1)
         {
             auto original_size = image.GetSize();
@@ -191,6 +192,8 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
             if (scale_size.y != -1)
                 original_size.y = scale_size.y;
 
+            // Scaling a mask doesn't work well at high quality, so only use higher quality for images with no mask (alpha
+            // channel is fine)
             auto newImage = image.Scale(original_size.x, original_size.y,
                                         image.HasMask() ? wxIMAGE_QUALITY_NORMAL : wxIMAGE_QUALITY_HIGH);
             if (newImage.IsOk())
@@ -224,7 +227,6 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
             return false;
         }
     }
-
 
     if (m_map_embedded.find(path.filename().c_str()) != m_map_embedded.end())
         return false;
@@ -362,7 +364,8 @@ void ProjectSettings::CollectNodeImages(Node* node, Node* form)
                 if (parts[IndexImage].size())
                 {
                     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
-                    if (auto result = m_map_embedded.find(parts[IndexImage].filename().c_str()); result == m_map_embedded.end())
+                    if (auto result = m_map_embedded.find(parts[IndexImage].filename().c_str());
+                        result == m_map_embedded.end())
                     {
                         if (m_is_terminating)
                             return;

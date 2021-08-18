@@ -14,18 +14,17 @@
 class NodeProperty;
 
 inline constexpr std::array<const char*, 4> s_type_names = {
-    "Embed",
-    "Header",
     "Art",
+    "Embed",
     "XPM",
+    "Header",
 };
 
 struct ImageProperties
 {
 public:
-    ttlib::cstr type { s_type_names[0] };
+    ttlib::cstr type { s_type_names[1] };
     ttlib::cstr image;
-    ttlib::cstr convert;
     wxSize size { wxDefaultSize };
 
     NodeProperty* node_property;

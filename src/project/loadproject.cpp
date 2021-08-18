@@ -54,9 +54,9 @@ bool App::LoadProject(const ttString& file)
 
     NodeSharedPtr project;
 
-    auto version = root.attribute("data_version").as_int((curWxuiMajorVer * 10) + curWxuiMinorVer);
+    m_ProjectVersion = root.attribute("data_version").as_int((curWxuiMajorVer * 10) + curWxuiMinorVer);
 
-    if (version > (curWxuiMajorVer * 10) + curWxuiMinorVer)
+    if (m_ProjectVersion > (curWxuiMajorVer * 10) + curWxuiMinorVer)
     {
         if (wxMessageBox("wxUiEditor does not recognize this version of the data file.\n"
                          "You may be able to load the file, but if you then save it you could lose data.\n\n"
@@ -65,24 +65,27 @@ bool App::LoadProject(const ttString& file)
             return false;
     }
 
-    else if (version < (curWxuiMajorVer * 10) + curWxuiMinorVer)
+    else if (m_ProjectVersion < (curWxuiMajorVer * 10) + curWxuiMinorVer)
     {
         if (!root.child("object") && !root.child("node"))
         {
             appMsgBox(ttlib::cstr() << "The data file " << file.wx_str() << " is invalid and cannot be opened.");
             return false;
         }
+        else if (m_ProjectVersion == 11)
+        {
+            // This version has a slightly different property for bitmaps, and we have code in place to convert it
+            project = LoadProject(doc);
+        }
         else
         {
-            if (appMsgBox(ttlib::cstr() << "Project version " << version / 10 << '.' << version % 10
+            if (appMsgBox(ttlib::cstr() << "Project version " << m_ProjectVersion / 10 << '.' << m_ProjectVersion % 10
                                         << " is not supported.\n\nDo you want to attempt to load it anyway?",
                           "Unsupported Project Version", wxYES_NO) == wxNO)
             {
                 return false;
             }
             project = LoadProject(doc);
-            if (!project)
-                return false;
         }
     }
 
@@ -116,7 +119,7 @@ bool App::LoadProject(const ttString& file)
     wxGetFrame().SetImportedFlag(false);
     wxGetFrame().FireProjectLoadedEvent();
 
-    if (m_isProject_updated)
+    if (m_isProject_updated || m_ProjectVersion == 11)
         wxGetFrame().SetModified();
 
     return true;
@@ -175,6 +178,8 @@ static const auto lstStdButtonEvents = {
 };
 // clang-format on
 
+#include "utils.h"  // for old style art indices
+
 NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 {
     auto class_name = xml_obj.attribute("class").as_cview();
@@ -213,9 +218,37 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
             if (prop)
             {
                 if (prop->type() == type_bool)
+                {
                     prop->set_value(iter.as_bool());
+                }
+                else if (wxGetApp().GetProjectVersion() == 11 && prop->type() == type_image &&
+                         (prop->isProp(prop_bitmap) || prop->isProp(prop_disabled_bmp) || prop->isProp(prop_icon) ||
+                          prop->isProp(prop_focus) || prop->isProp(prop_current) || prop->isProp(prop_inactive_bitmap)))
+                {
+                    // Old style conversion -- remove once we're certain all projects have been updated
+
+                    ttlib::multistr parts(iter.value(), BMP_PROP_SEPARATOR);
+                    for (auto& iter_parts: parts)
+                    {
+                        iter_parts.BothTrim();
+                    }
+
+                    ttlib::cstr bitmap(parts[IndexType]);
+                    bitmap << "; " << parts[IndexImage];
+                    if (parts[IndexType] == "Art" && parts[2].size())
+                    {
+                        bitmap << '|' << parts[2];
+                    }
+                    if (parts.size() > 4)
+                    {
+                        bitmap << "; " << parts[3] << "," << parts[4];
+                    }
+                    prop->set_value(bitmap);
+                }
                 else
+                {
                     prop->set_value(iter.value());
+                }
             }
         }
         else

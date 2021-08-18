@@ -221,7 +221,9 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                 {
                     prop->set_value(iter.as_bool());
                 }
-                else if (prop->isProp(prop_bitmap) && wxGetApp().GetProjectVersion() == 11)
+                else if (wxGetApp().GetProjectVersion() == 11 && prop->type() == type_image &&
+                         (prop->isProp(prop_bitmap) || prop->isProp(prop_disabled_bmp) || prop->isProp(prop_icon) ||
+                          prop->isProp(prop_focus) || prop->isProp(prop_current) || prop->isProp(prop_inactive_bitmap)))
                 {
                     // Old style conversion -- remove once we're certain all projects have been updated
 

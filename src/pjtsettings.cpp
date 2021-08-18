@@ -9,7 +9,6 @@
 
 #include <filesystem>
 #include <fstream>
-#include <regex>
 #include <thread>
 
 #include <wx/artprov.h>   // wxArtProvider class
@@ -78,23 +77,7 @@ ttlib::cstr& ProjectSettings::setProjectPath(const ttlib::cstr& file, bool remov
 
 wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled)
 {
-    static std::regex words_regex("\\[.+;.+\\]");
-
-    ttlib::cstr desc_copy(description);
-
-    // Convert "[num; num]" to "num, num" so that we can break the property string into multiple parts
-
-    std::cmatch match;
-    if (std::regex_search(description.c_str(), match, words_regex))
-    {
-        ttlib::cstr fix(match[0]);
-        fix.Replace(";", ",");
-        fix.Replace("[", "");
-        fix.Replace("]", "");
-        desc_copy.Replace(ttlib::cview(match[0]), fix);
-    }
-
-    ttlib::multistr parts(desc_copy, BMP_PROP_SEPARATOR);
+    ttlib::multistr parts(description, BMP_PROP_SEPARATOR);
     for (auto& iter: parts)
     {
         iter.BothTrim();
@@ -182,14 +165,25 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
         return GetInternalImage("unknown");
     }
 
-    // cache it so that we don't need to read it from disk again
+    // If it's not embedded, then cache it so that we don't read it from disk again
     if (!parts[IndexType].contains("Embed") && result == m_images.end())
         m_images[path] = image;
 
     // Scale if needed
-    if (want_scaled && parts.size() > IndexScale && parts[IndexScale].size() && parts[IndexScale] != "[-1,-1]")
+    if (want_scaled && parts.size() > IndexScale)
     {
-        auto scale_size = ConvertToSize(parts[IndexScale]);
+        // If a dimension was specified, then it will have been split out, so we need to combine them
+        if (parts.size() > IndexScale + 1)
+        {
+            parts[IndexScale] << ',' << parts[IndexScale + 1];
+        }
+
+        ttlib::multistr scale_parts(parts[IndexScale].c_str() + 1, ',');
+
+        wxSize scale_size;
+        scale_size.x = scale_parts[0].atoi();
+        scale_size.y = scale_parts[1].atoi();
+
         if (scale_size.x != -1 || scale_size.y != -1)
         {
             auto original_size = image.GetSize();
@@ -198,6 +192,8 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
             if (scale_size.y != -1)
                 original_size.y = scale_size.y;
 
+            // Scaling a mask doesn't work well at high quality, so only use higher quality for images with no mask (alpha
+            // channel is fine)
             auto newImage = image.Scale(original_size.x, original_size.y,
                                         image.HasMask() ? wxIMAGE_QUALITY_NORMAL : wxIMAGE_QUALITY_HIGH);
             if (newImage.IsOk())

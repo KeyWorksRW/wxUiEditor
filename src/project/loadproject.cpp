@@ -175,6 +175,8 @@ static const auto lstStdButtonEvents = {
 };
 // clang-format on
 
+#include "utils.h"  // for old style art indices
+
 NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 {
     auto class_name = xml_obj.attribute("class").as_cview();
@@ -215,7 +217,29 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                 if (prop->type() == type_bool)
                     prop->set_value(iter.as_bool());
                 else
-                    prop->set_value(iter.value());
+                {
+                    // Old style conversion -- remove once we're certain all projects with art providers have been updated
+                    if (prop->isProp(prop_bitmap) && ttlib::is_sameprefix(iter.value(), "Art") && !ttlib::contains(iter.value(), "|"))
+                    {
+                        ttlib::multistr parts(iter.value(), BMP_PROP_SEPARATOR);
+                        for (auto& iter_parts: parts)
+                        {
+                            iter_parts.BothTrim();
+                        }
+
+                        if (parts[IndexArtClient].size())
+                        {
+                            parts[IndexArtID] << '|' << parts[IndexArtClient];
+                            ttlib::cstr bitmap("Art; ");
+                            bitmap << parts[IndexArtID] << "; ; " << iter.value() + ttlib::findstr_pos(iter.value(), "[");
+                            prop->set_value(bitmap);
+                        }
+                    }
+                    else
+                    {
+                        prop->set_value(iter.value());
+                    }
+                }
             }
         }
         else

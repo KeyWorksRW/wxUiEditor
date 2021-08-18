@@ -340,11 +340,12 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
         m_pjtSettings->SetProjectFile(file);
         m_pjtSettings->SetProjectPath(file);
 
+        // Start a thread to collect all of the embedded images
+        m_pjtSettings->ParseEmbeddedImages();
+
         wxGetFrame().SetImportedFlag(true);
         wxGetFrame().FireProjectLoadedEvent();
         wxGetFrame().SetModified();
-
-        // An imported project will have already processed all embedded images, so there is no need to call ParseEmbeddedImages()
 
         return true;
     }
@@ -422,6 +423,9 @@ bool App::NewProject(bool create_empty)
         }
         m_frame->SetImportedFlag();
     }
+
+    // Start a thread to collect all of the embedded images
+    m_pjtSettings->ParseEmbeddedImages();
 
     wxGetFrame().FireProjectLoadedEvent();
     if (m_project->GetChildCount())

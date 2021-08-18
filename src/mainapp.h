@@ -22,7 +22,7 @@ class ImportXML;
 
 // Current version of wxUiEditor project files
 constexpr const auto curWxuiMajorVer = 1;
-constexpr const auto curWxuiMinorVer = 1;
+constexpr const auto curWxuiMinorVer = 2;
 
 class App : public wxApp
 {
@@ -104,6 +104,8 @@ public:
 
     void ShowPreferences(wxWindow* parent);
 
+    auto GetProjectVersion() { return m_ProjectVersion; }
+
 protected:
     bool OnInit() override;
     bool Import(ImportXML& import, ttString& file, bool append = false);
@@ -117,6 +119,7 @@ protected:
 
     auto LoadProject(pugi::xml_document& doc) -> std::shared_ptr<Node>;
 
+
 private:
     std::shared_ptr<Node> m_project;
 
@@ -129,6 +132,7 @@ private:
     wxLanguage m_lang;  // language specified by user
     wxLocale m_locale;  // locale we'll be using
 
+    int m_ProjectVersion;
     bool m_isMainFrameClosing { false };
     bool m_isProject_updated { false };
 };

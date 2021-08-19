@@ -7,8 +7,6 @@
 
 #include "pch.h"
 
-#include <regex>
-
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "gen_common.h"
@@ -508,23 +506,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         return code;
     }
 
-    static std::regex words_regex("\\[.+;.+\\]");
-
-    ttlib::cstr desc_copy(description);
-
-    // Convert "[num; num]" to "num, num"
-
-    std::cmatch match;
-    if (std::regex_search(description.c_str(), match, words_regex))
-    {
-        ttlib::cstr fix(match[0]);
-        fix.Replace(";", ",");
-        fix.Replace("[", "");
-        fix.Replace("]", "");
-        desc_copy.Replace(ttlib::cview(match[0]), fix);
-    }
-
-    ttlib::multistr parts(desc_copy, BMP_PROP_SEPARATOR);
+    ttlib::multistr parts(description, BMP_PROP_SEPARATOR);
     for (auto& iter: parts)
     {
         iter.BothTrim();
@@ -535,6 +517,18 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         code << "wxNullBitmap";
         return code;
     }
+
+    // If a dimension was specified, then it will have been split out, so we need to combine them
+    if (parts.size() > IndexScale + 1)
+    {
+        parts[IndexScale] << ',' << parts[IndexScale + 1];
+    }
+
+    ttlib::multistr scale_parts(parts[IndexScale].c_str() + 1, ',');
+
+    wxSize scale_size;
+    scale_size.x = scale_parts[0].atoi();
+    scale_size.y = scale_parts[1].atoi();
 
     if (parts[IndexType].contains("Art"))
     {
@@ -552,19 +546,15 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         code << ')';
 
         // Scale if needed
-        if (parts.size() > IndexImage && parts[IndexScale].size())
+        if (scale_size.x != -1 || scale_size.y != -1)
         {
-            auto scale_size = ConvertToSize(parts[IndexScale]);
-            if (scale_size.x != -1 || scale_size.y != -1)
-            {
-                auto bmp = wxGetApp().GetImage(parts[IndexImage]);
-                auto original_size = bmp.GetSize();
-                if (scale_size.x != -1)
-                    original_size.x = scale_size.x;
-                if (scale_size.y != -1)
-                    original_size.y = scale_size.y;
-                code << ttlib::cstr().Format(".ConvertToImage().Scale(%d, %d)", original_size.x, original_size.y);
-            }
+            auto bmp = wxGetApp().GetImage(parts[IndexImage]);
+            auto original_size = bmp.GetSize();
+            if (scale_size.x != -1)
+                original_size.x = scale_size.x;
+            if (scale_size.y != -1)
+                original_size.y = scale_size.y;
+            code << ttlib::cstr().Format(".ConvertToImage().Scale(%d, %d)", original_size.x, original_size.y);
         }
 
         return code;
@@ -580,20 +570,16 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         code << name << "_xpm)";
 
         // Scale if needed
-        if (parts.size() > IndexImage && parts[IndexScale].size())
+        if (scale_size.x != -1 || scale_size.y != -1)
         {
-            auto scale_size = ConvertToSize(parts[IndexScale]);
-            if (scale_size.x != -1 || scale_size.y != -1)
-            {
-                auto bmp = wxGetApp().GetImage(parts[IndexImage]);
-                auto original_size = bmp.GetSize();
-                if (scale_size.x != -1)
-                    original_size.x = scale_size.x;
-                if (scale_size.y != -1)
-                    original_size.y = scale_size.y;
-                // XPM files use a mask which does not scale well when wxIMAGE_QUALITY_HIGH is used
-                code << ttlib::cstr().Format(".Scale(%d, %d)", original_size.x, original_size.y);
-            }
+            auto bmp = wxGetApp().GetImage(parts[IndexImage]);
+            auto original_size = bmp.GetSize();
+            if (scale_size.x != -1)
+                original_size.x = scale_size.x;
+            if (scale_size.y != -1)
+                original_size.y = scale_size.y;
+            // XPM files use a mask which does not scale well when wxIMAGE_QUALITY_HIGH is used
+            code << ttlib::cstr().Format(".Scale(%d, %d)", original_size.x, original_size.y);
         }
     }
     else
@@ -616,20 +602,16 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         code << name << ", sizeof(" << name << "))";
 
         // Scale if needed
-        if (parts.size() > IndexImage && parts[IndexScale].size())
+        if (scale_size.x != -1 || scale_size.y != -1)
         {
-            auto scale_size = ConvertToSize(parts[IndexScale]);
-            if (scale_size.x != -1 || scale_size.y != -1)
-            {
-                auto bmp = wxGetApp().GetImage(description);
-                auto original_size = bmp.GetSize();
-                if (scale_size.x != -1)
-                    original_size.x = scale_size.x;
-                if (scale_size.y != -1)
-                    original_size.y = scale_size.y;
-                // Assume an alpha channel, so high-quality scaling makes sense
-                code << ttlib::cstr().Format(".Scale(%d, %d, wxIMAGE_QUALITY_HIGH)", original_size.x, original_size.y);
-            }
+            auto bmp = wxGetApp().GetImage(description);
+            auto original_size = bmp.GetSize();
+            if (scale_size.x != -1)
+                original_size.x = scale_size.x;
+            if (scale_size.y != -1)
+                original_size.y = scale_size.y;
+            // Assume an alpha channel, so high-quality scaling makes sense
+            code << ttlib::cstr().Format(".Scale(%d, %d, wxIMAGE_QUALITY_HIGH)", original_size.x, original_size.y);
         }
     }
     return code;

@@ -22,11 +22,13 @@
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
-#include "bitmaps.h"     // Contains various images handling functions
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
-#include "write_code.h"  // WriteCode -- Write code to Scintilla or file
+#include "bitmaps.h"      // Contains various images handling functions
+#include "gen_common.h"   // GeneratorLibrary -- Generator classes
+#include "mainapp.h"      // App -- Main application class
+#include "node.h"         // Node class
+#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"        // Utility functions that work with properties
+#include "write_code.h"   // WriteCode -- Write code to Scintilla or file
 
 #include "misc_widgets.h"
 
@@ -69,8 +71,8 @@ wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
     wxAnimation animation;
     if (node->HasValue(prop_animation))
     {
-        ttlib::multistr file_names(node->prop_as_string(prop_animation), ';');
-        GetAnimationImage(animation, file_names[0]);
+        ttlib::multistr parts(node->prop_as_string(prop_animation), ';');
+        GetAnimationImage(animation, parts[IndexImage]);
     }
     auto widget =
         new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation.IsOk() ? animation : wxNullAnimation,
@@ -89,22 +91,30 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << GenerateNewAssignment(node);
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    code << ",\n\t\t";
     if (node->HasValue(prop_animation))
     {
-        ttlib::multistr files(node->prop_as_string(prop_animation), ';');
-        files[0].BothTrim();
-        files[0].remove_extension();
-        code << "GetAnimFromHdr(" << files[0].filename() << ", sizeof(" << files[0].filename() << "))";
+        ttlib::multistr parts(node->prop_as_string(prop_animation), ';');
+        ttlib::cstr name(parts[IndexImage].filename());
+        name.remove_extension();
+        if (parts[IndexType].is_sameprefix("Embed"))
+        {
+            auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+            if (embed)
+            {
+                name = "wxue_img::" + embed->array_name;
+            }
+        }
+
+        code << "GetAnimFromHdr(" << name << ", sizeof(" << name << "))";
     }
     else
     {
         code << "wxNullAnimation";
     }
 
-    GeneratePosSizeFlags(node, code);
+    GeneratePosSizeFlags(node, code, false, "wxAC_DEFAULT_STYLE");
     if (node->HasValue(prop_inactive_bitmap))
     {
         code << "\n\t" << node->get_node_name() << "->SetInactiveBitmap(";

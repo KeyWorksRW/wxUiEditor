@@ -14,7 +14,10 @@
 
 #include "node.h"  // Node -- Node class
 
-#include "anim_string_prop.h"  // wxSingleChoiceDialogAdapter
+#include "img_props.h"        // Handles property grid image properties
+#include "img_string_prop.h"  // wxSingleChoiceDialogAdapter
+#include "mainapp.h"          // Main application class
+#include "utils.h"            // Utility functions that work with properties
 
 wxIMPLEMENT_ABSTRACT_CLASS(PropertyGrid_Animation, wxPGProperty);
 
@@ -27,8 +30,13 @@ PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProper
         m_img_props.InitValues(prop->as_string().c_str());
     }
 
-    AddPrivateChild(new AnimStringProperty("header_file", m_img_props));
-    AddPrivateChild(new wxStringProperty("convert_from", wxPG_LABEL, m_img_props.convert.wx_str()));
+    wxPGChoices types;
+
+    types.Add(s_type_names[1]);  // Embed
+    types.Add(s_type_names[3]);  // Header
+
+    AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
+    AddPrivateChild(new ImageStringProperty("image", m_img_props));
 }
 
 void PropertyGrid_Animation::RefreshChildren()
@@ -38,21 +46,49 @@ void PropertyGrid_Animation::RefreshChildren()
     {
         m_img_props.InitValues(value.utf8_str().data());
 
-        Item(0)->SetLabel("header_file");
-        Item(1)->SetLabel("convert_from");
-        Item(1)->SetHelpString(
-            "Specifies the original animation file that should be converted to an animation header file.");
+        Item(IndexImage)->SetLabel("image");
+
+        if (m_img_props.type == "Embed")
+        {
+            Item(IndexImage)
+                ->SetHelpString(
+                    "Specifies the original animation image which will be embedded into a generated class source "
+                    "file as an unsigned char array.");
+        }
+        else
+        {
+            Item(IndexImage)
+                ->SetHelpString("Specifies an external file containing the animation image as an unsigned char array.");
+        }
     }
 
-    Item(0)->SetValue(m_img_props.image.wx_str());
-    Item(1)->SetValue(m_img_props.convert.wx_str());
+    if (m_old_type != m_img_props.type)
+    {
+        wxArrayString array_art_ids;
+        auto art_dir = wxGetApp().GetProject()->prop_as_string(prop_original_art);
+        if (art_dir.empty())
+            art_dir = "./";
+        wxDir dir;
+        wxArrayString array_files;
+        dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif;*.ani");
+        for (size_t pos = 0; pos < array_files.size(); ++pos)
+        {
+            ttString* ptr = static_cast<ttString*>(&array_files[pos]);
+            array_art_ids.Add(ptr->filename());
+        }
+        Item(IndexImage)->SetAttribute(wxPG_ATTR_AUTOCOMPLETE, array_art_ids);
+        m_old_type = m_img_props.type;
+    }
+
+    Item(IndexType)->SetValue(m_img_props.type.wx_str());
+    Item(IndexImage)->SetValue(m_img_props.image.wx_str());
 }
 
 wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
 {
     wxString value = thisValue;
 
-    AnimationProperties img_props;
+    ImageProperties img_props;
     if (value.size())
     {
         img_props.InitValues(value.utf8_str().data());
@@ -60,22 +96,23 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
 
     switch (childIndex)
     {
-        case 0:
+        case IndexType:
             {
-                ttlib::cstr results;
-                results << childValue.GetString().wx_str();
-                auto pos = results.find_first_of('|');
-                if (ttlib::is_found(pos))
+                auto index = childValue.GetLong();
+                if (index >= 0)
                 {
-                    img_props.convert = results.subview(pos + 1);
-                    results.erase(pos);
-                }
-                img_props.image = results;
-            }
-            break;
+                    img_props.type = s_type_names[index];
 
-        case 1:
-            img_props.convert = childValue.GetString().utf8_str().data();
+                    // If the type has changed, then the image property is no longer valid
+                    img_props.image.clear();
+                }
+                break;
+            }
+
+        case IndexImage:
+            {
+                img_props.image.assign_wx(childValue.GetString());
+            }
             break;
     }
 

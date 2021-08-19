@@ -20,21 +20,45 @@
 
 bool AnimDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
 {
-    ttlib::cwd cwd(true);
-    if (wxGetApp().GetProject()->HasValue(prop_converted_art))
+    if (m_img_props.type.contains("Embed"))
     {
-        ttlib::ChangeDir(wxGetApp().GetProjectPtr()->prop_as_string(prop_converted_art));
-        cwd.assignCwd();
-    }
+        ttlib::cwd cwd(true);
+        if (wxGetApp().GetProject()->HasValue(prop_original_art))
+        {
+            ttlib::ChangeDir(wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art));
+            cwd.assignCwd();
+        }
 
-    wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Header file"), cwd.wx_str(), wxEmptyString,
-                     "Header|*.h;*.hpp;*.hh;*.hxx", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        ttString path = dlg.GetPath();
-        path.make_relative(cwd);
-        SetValue(path);
-        return true;
+        ttlib::cstr pattern = "All files|*.*|Gif|*.gif|Ani|*.ani";
+        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Animation"), cwd.wx_str(), wxEmptyString, pattern,
+                         wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+            ttString path = dlg.GetPath();
+            path.make_relative(cwd);
+            SetValue(path);
+            return true;
+        }
+        return false;
     }
-    return false;
+    else
+    {
+        ttlib::cwd cwd(true);
+        if (wxGetApp().GetProject()->HasValue(prop_converted_art))
+        {
+            ttlib::ChangeDir(wxGetApp().GetProjectPtr()->prop_as_string(prop_converted_art));
+            cwd.assignCwd();
+        }
+
+        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Header file"), cwd.wx_str(), wxEmptyString, "Header|*.h_img",
+                         wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+            ttString path = dlg.GetPath();
+            path.make_relative(cwd);
+            SetValue(path);
+            return true;
+        }
+        return false;
+    }
 }

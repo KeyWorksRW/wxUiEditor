@@ -9,7 +9,7 @@
 
 #include <wx/propgrid/property.h>  // wxPGProperty and related support classes
 
-#include "anim_props.h"  // ImageProperties -- Handles property grid image properties
+#include "img_props.h"  // ImageProperties -- Handles property grid image properties
 
 class NodeProperty;
 
@@ -28,10 +28,10 @@ public:
         return wxPGEditor_TextCtrl;
     }
 
-    AnimationProperties& GetImageProperties() { return m_img_props; }
+    ImageProperties& GetImageProperties() { return m_img_props; }
 
 private:
-    AnimationProperties m_img_props;
+    ImageProperties m_img_props;
 
     ttlib::cstr m_old_type;
     ttlib::cstr m_old_image;

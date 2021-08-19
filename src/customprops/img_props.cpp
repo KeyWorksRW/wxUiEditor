@@ -28,7 +28,7 @@ void ImageProperties::InitValues(const char* value)
     if (mstr.size() > IndexImage)
         image = mstr[IndexImage];
 
-    if (mstr.size() > IndexImage)
+    if (mstr.size() > IndexImage + 1)
     {
         ttlib::multistr dimensions(mstr[IndexScale], ',');
         for (auto& iter: dimensions)

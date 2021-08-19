@@ -221,29 +221,43 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                 {
                     prop->set_value(iter.as_bool());
                 }
-                else if (wxGetApp().GetProjectVersion() == 11 && prop->type() == type_image &&
-                         (prop->isProp(prop_bitmap) || prop->isProp(prop_disabled_bmp) || prop->isProp(prop_icon) ||
-                          prop->isProp(prop_focus) || prop->isProp(prop_current) || prop->isProp(prop_inactive_bitmap)))
+                else if (wxGetApp().GetProjectVersion() == 11)
                 {
-                    // Old style conversion -- remove once we're certain all projects have been updated
+                    if (prop->type() == type_image)
+                    {
+                        // Old style conversion -- remove once we're certain all projects have been updated
 
-                    ttlib::multistr parts(iter.value(), BMP_PROP_SEPARATOR);
-                    for (auto& iter_parts: parts)
-                    {
-                        iter_parts.BothTrim();
-                    }
+                        ttlib::multistr parts(iter.value(), BMP_PROP_SEPARATOR);
+                        for (auto& iter_parts: parts)
+                        {
+                            iter_parts.BothTrim();
+                        }
 
-                    ttlib::cstr bitmap(parts[IndexType]);
-                    bitmap << "; " << parts[IndexImage];
-                    if (parts[IndexType] == "Art" && parts[2].size())
-                    {
-                        bitmap << '|' << parts[2];
+                        ttlib::cstr bitmap(parts[IndexType]);
+                        bitmap << "; " << parts[IndexImage];
+                        if (parts[IndexType] == "Art" && parts[2].size())
+                        {
+                            bitmap << '|' << parts[2];
+                        }
+                        if (parts.size() > 3)
+                        {
+                            bitmap << "; " << parts[3] << "," << parts[4];
+                        }
+                        prop->set_value(bitmap);
                     }
-                    if (parts.size() > 4)
+                    else if (prop->type() == type_animation && prop->isProp(prop_animation))
                     {
-                        bitmap << "; " << parts[3] << "," << parts[4];
+                        ttlib::cstr bitmap("Header; ");
+                        bitmap << iter.value();
+                        bitmap.RightTrim();
+                        if (bitmap.back() == ';')
+                            bitmap.pop_back();
+                        prop->set_value(bitmap);
                     }
-                    prop->set_value(bitmap);
+                    else
+                    {
+                        prop->set_value(iter.value());
+                    }
                 }
                 else
                 {

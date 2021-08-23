@@ -68,15 +68,9 @@ bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& 
 
 wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    wxAnimation animation;
-    if (node->HasValue(prop_animation))
-    {
-        ttlib::multistr parts(node->prop_as_string(prop_animation), ';');
-        GetAnimationImage(animation, parts[IndexImage]);
-    }
-    auto widget =
-        new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation.IsOk() ? animation : wxNullAnimation,
-                            node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto animation = node->prop_as_wxAnimation(prop_animation);
+    auto widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, node->prop_as_wxPoint(prop_pos),
+                                      node->prop_as_wxSize(prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     if (animation.IsOk())

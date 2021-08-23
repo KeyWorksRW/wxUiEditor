@@ -70,7 +70,7 @@ void PropertyGrid_Animation::RefreshChildren()
             art_dir = "./";
         wxDir dir;
         wxArrayString array_files;
-        dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif");
+        dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif", wxDIR_FILES);
         if (m_img_props.type == "Embed")
             dir.GetAllFiles(art_dir, &array_files, "*.ani");
         for (size_t pos = 0; pos < array_files.size(); ++pos)

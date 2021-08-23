@@ -6,6 +6,8 @@ The XML files in this directory declare every type node that can be created. Dur
 
 A generator can inherit an interface class either by using a `<inherits class=` node, or by creating a `<category` node with a `base_name=` attribute that specifies the class to begin inheriting from. Note that currently if you use `base_name`, you cannot hide the included properties.
 
+If you need to override a default property value from an inherited class, then add the property value as a child of the `inherits` node.
+
 ## Limiting events in a declaration
 
 Declarations which inherit from the **Window Events** base class will have all of the normal **wxWindow** event categories (mouse, keyboard, etc.). You can prevent specific categories from displaying in the Property Grid Panel by adding one or more flags to the `gen` object (`flags="no_name_events"`) where _name_ is they category to block). The following flag strings are supported:

@@ -299,7 +299,10 @@
     </gen>
 
     <gen class="wxSimpleHtmlListBox" image="wxSimpleHtmlListBox" type="widget">
-        <inherits class="wxWindow" />
+        <inherits class="wxWindow">
+            <property name="proportion" type="uint">1</property>
+            <property name="flags" type="bitlist">wxEXPAND</property>
+        </inherits>
         <inherits class="Window Events" />
         <inherits class="sizer_child" />
         <property name="var_name" type="string">m_html_listbox</property>
@@ -1081,7 +1084,10 @@
     </gen>
 
     <gen class="wxWebView" image="webview" type="widget">
-        <inherits class="wxWindow" />
+        <inherits class="wxWindow">
+            <property name="proportion" type="uint">1</property>
+            <property name="flags" type="bitlist">wxEXPAND</property>
+        </inherits>
         <inherits class="sizer_child" />
         <property name="var_name" type="string">m_webview</property>
         <property name="url" type="string_escapes" />

@@ -357,6 +357,7 @@ PNG:
     art_src/wxToolBar.png: art_headers/wxToolBar_png.h_img
     art_src/wxToolbook.png: art_headers/wxToolbook_png.h_img
     art_src/wxTreebook.png: art_headers/wxTreebook_png.h_img
+    art_src/webview.png: art_headers/webview_png.h_img
     art_src/wxWizard.png: art_headers/wxWizard_png.h_img
     art_src/wxWizardPageSimple.png: art_headers/wxWizardPageSimple_png.h_img
 

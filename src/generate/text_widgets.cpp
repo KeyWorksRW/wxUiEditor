@@ -18,6 +18,7 @@
 #include <wx/richtext/richtextctrl.h>  // A rich edit control
 #include <wx/stattext.h>               // wxStaticText base header
 #include <wx/stc/stc.h>                // A wxWidgets implementation of Scintilla.
+#include <wx/webview.h>                // Common interface and events for web view component
 
 #ifdef _MSC_VER
     #pragma warning(pop)
@@ -346,6 +347,77 @@ std::optional<ttlib::cstr> HtmlWindowGenerator::GenEvents(NodeEvent* event, cons
 bool HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/html/htmlwin.h>", set_src, set_hdr);
+    return true;
+}
+
+//////////////////////////////////////////  WebViewGenerator  //////////////////////////////////////////
+
+#if !wxUSE_WEBVIEW_WEBKIT && !wxUSE_WEBVIEW_WEBKIT2 && !wxUSE_WEBVIEW_IE
+    #error "A wxWebView backend is for the wxWebView Mockup"
+#endif
+
+wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
+{
+    auto widget = wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_string(prop_url).wx_str(),
+                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), wxWebViewBackendDefault,
+                                 GetStyleInt(node));
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << " = wxWebView::New(";
+
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", " << GenerateQuotedString(node->prop_as_string(prop_url));
+
+    bool isPosSet { false };
+    auto pos = node->prop_as_wxPoint(prop_pos);
+    if (pos.x != -1 || pos.y != -1)
+    {
+        code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
+        isPosSet = true;
+    }
+
+    bool isSizeSet { false };
+    auto size = node->prop_as_wxSize(prop_size);
+    if (size.x != -1 || size.y != -1)
+    {
+        if (!isPosSet)
+        {
+            code << ", wxDefaultPosition";
+            isPosSet = true;
+        }
+        code << ", wxSize(" << size.x << ", " << size.y << ")";
+        isSizeSet = true;
+    }
+
+    ttlib::cstr all_styles;
+    GenStyle(node, all_styles);
+    if (all_styles.is_sameas("0"))
+        all_styles.clear();
+
+    if (all_styles.size())
+    {
+        code << ", wxWebViewBackendDefault, " << all_styles;
+    }
+
+    code << ");";
+
+    return code;
+}
+
+std::optional<ttlib::cstr> WebViewGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool WebViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/webview.h>", set_src, set_hdr);
     return true;
 }
 

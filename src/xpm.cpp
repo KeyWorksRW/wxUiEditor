@@ -149,6 +149,7 @@
 #include "art_headers/wxToolBar_png.h_img"
 #include "art_headers/wxToolbook_png.h_img"
 #include "art_headers/wxTreebook_png.h_img"
+#include "art_headers/webview_png.h_img"
 #include "art_headers/wxWizardPageSimple_png.h_img"
 #include "art_headers/wxWizard_png.h_img"
 
@@ -303,6 +304,7 @@ static const ImageMap png_headers[] = {
     { "wxTreebook", wxTreebook_png, sizeof(wxTreebook_png) },
     { "wxWizard", wxWizard_png, sizeof(wxWizard_png) },
     { "wxWizardPageSimple", wxWizardPageSimple_png, sizeof(wxWizardPageSimple_png) },
+    { "webview", webview_png, sizeof(webview_png) },
 
 // A different Icon is used for debug builds so that it is easier to identify that a debug build is being run.
 

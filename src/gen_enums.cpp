@@ -524,6 +524,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxTreeCtrlBase, "wxTreeCtrlBase" },
     { gen_wxTreeListCtrl, "wxTreeListCtrl" },
     { gen_wxTreebook, "wxTreebook" },
+    { gen_wxWebView, "wxWebView" },
     { gen_wxWindow, "wxWindow" },
     { gen_wxWizard, "wxWizard" },
     { gen_wxWizardPageSimple, "wxWizardPageSimple" },

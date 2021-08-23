@@ -567,6 +567,15 @@ const std::unordered_map<std::string, const char*> s_EventNames = {
     { "wxEVT_STC_USERLISTSELECTION", "OnUserListSelection" },
     { "wxEVT_STC_ZOOM", "OnZoom" },
 
+    { "wxEVT_WEBVIEW_NAVIGATING", "OnNavigating" },
+    { "wxEVT_WEBVIEW_NAVIGATED", "OnNavigated" },
+    { "wxEVT_WEBVIEW_LOADED", "OnLoaded" },
+    { "wxEVT_WEBVIEW_ERROR", "OnWebViewError" },
+    { "wxEVT_WEBVIEW_NEWWINDOW", "OnWebViewWindow" },
+    { "wxEVT_WEBVIEW_TITLE_CHANGED", "OnWebViewTitleChanged" },
+    { "EVT_WEBVIEW_FULL_SCREEN_CHANGED", "OnFullScreen" },
+    { "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED", "OnScriptMessage" },
+
     { "ApplyButtonClicked", "OnApply" },
     { "CancelButtonClicked", "OnCancel" },
     { "ContextHelpButtonClicked", "OnContextHelp" },

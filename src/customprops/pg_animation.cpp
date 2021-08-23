@@ -70,7 +70,9 @@ void PropertyGrid_Animation::RefreshChildren()
             art_dir = "./";
         wxDir dir;
         wxArrayString array_files;
-        dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif;*.ani");
+        dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif");
+        if (m_img_props.type == "Embed")
+            dir.GetAllFiles(art_dir, &array_files, "*.ani");
         for (size_t pos = 0; pos < array_files.size(); ++pos)
         {
             ttString* ptr = static_cast<ttString*>(&array_files[pos]);
@@ -99,10 +101,13 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
         case IndexType:
             {
                 auto index = childValue.GetLong();
+                if (index == 0)
+                    img_props.type = s_type_names[1];
+                else if (index == 1)
+                    img_props.type = s_type_names[3];
+
                 if (index >= 0)
                 {
-                    img_props.type = s_type_names[index];
-
                     // If the type has changed, then the image property is no longer valid
                     img_props.image.clear();
                 }

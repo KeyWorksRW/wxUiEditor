@@ -348,7 +348,6 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
     if (pos.x != -1 || pos.y != -1)
     {
         code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
-        ;
         isPosSet = true;
     }
 

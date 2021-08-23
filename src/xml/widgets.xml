@@ -1080,6 +1080,29 @@
             help="" />
     </gen>
 
+    <gen class="wxWebView" image="webview" type="widget">
+        <inherits class="wxWindow" />
+        <inherits class="sizer_child" />
+        <property name="var_name" type="string">m_webview</property>
+        <property name="url" type="string_escapes" />
+        <event name="wxEVT_WEBVIEW_NAVIGATING" class="wxWebViewEvent"
+            help="Generated before trying to get a resource." />
+        <event name="wxEVT_WEBVIEW_NAVIGATED" class="wxWebViewEvent"
+            help="Generated after it was confirmed that a resource would be requested." />
+        <event name="wxEVT_WEBVIEW_LOADED" class="wxWebViewEvent"
+            help="Generated when the document is fully loaded and displayed." />
+        <event name="wxEVT_WEBVIEW_ERROR" class="wxWebViewEvent"
+            help="Generated when a navigation error occurs." />
+        <event name="wxEVT_WEBVIEW_NEWWINDOW" class="wxWebViewEvent"
+            help="Generated when a new window is created." />
+        <event name="wxEVT_WEBVIEW_TITLE_CHANGED" class="wxWebViewEvent"
+            help="Generated when the page title changes." />
+        <event name="EVT_WEBVIEW_FULL_SCREEN_CHANGED" class="wxWebViewEvent"
+            help="Generated when the page wants to enter or leave fullscreen." />
+        <event name="wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED" class="wxWebViewEvent"
+            help="Only available in wxWidgets 3.1.5 or later." />
+    </gen>
+
     <gen class="wxRichTextCtrl" image="richtextctrl" type="widget">
         <inherits class="wxWindow">
             <property name="window_style" type="bitlist">wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS</property>

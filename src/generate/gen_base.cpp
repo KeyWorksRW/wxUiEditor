@@ -112,15 +112,13 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     m_type_generated.clear();
 
     m_form_node = form_node;
+    m_NeedAnimationFunction = false;
+    m_NeedHeaderFunction = false;
+    m_NeedArtProviderHeader = false;
 
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
-
-    // Determine if we need to generate GetImageFromArray()
-    auto thrd_need_img_func = std::async(&BaseCodeGenerator::FindImageHeader, this, form_node);
-
-    // Determine if we need to generate GetAnimFromHdr()
-    auto thrd_need_anim_func = std::async(&BaseCodeGenerator::FindAnimationHeader, this, form_node);
+    std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, form_node);
 
     m_panel_type = panel_type;
 
@@ -218,16 +216,14 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         src_includes.insert("#include <wx/persist/toplevel.h>");
     }
 
-    m_artProvider = form_node->prop_as_string(prop_icon).is_sameprefix("Art");
-    if (!m_artProvider)
+    if (form_node->HasValue(prop_icon))
     {
-        // REVIEW: [KeyWorks - 05-06-2021] What happens if the user specified a Header file?
-        if (form_node->prop_as_string(prop_icon).is_sameprefix("XPM"))
-            src_includes.insert("#include <wx/icon.h>");
-        CheckForArtProvider(form_node);  // Will set m_artProvider to true if Art Provider used
+        src_includes.insert("#include <wx/icon.h>");
     }
 
-    if (m_artProvider)
+    thrd_need_img_func.join();
+
+    if (m_NeedArtProviderHeader)
     {
         src_includes.insert("#include <wx/artprov.h>");
     }
@@ -354,16 +350,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     if (m_panel_type != HDR_PANEL)
     {
-        auto need_hdr_func = thrd_need_img_func.get();
-        auto need_anim_func = thrd_need_anim_func.get();
-
-        if (need_hdr_func || need_anim_func)
-            m_source->writeLine("\n#include <wx/mstream.h>  // Memory stream classes", indent::none);
-        if (need_anim_func && src_includes.find("#include <wx/animate.h>") == src_includes.end())
-            m_source->writeLine("#include <wx/animate.h>", indent::none);
-
-        if (need_hdr_func)
+        if (m_NeedHeaderFunction)
         {
+            m_source->writeLine("\n#include <wx/mstream.h>  // Memory stream classes", indent::none);
             ttlib::textfile function;
             function.ReadString(txt_GetImageFromArrayFunction);
             for (auto& iter: function)
@@ -372,8 +361,12 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
             }
         }
 
-        if (need_anim_func)
+        if (m_NeedAnimationFunction)
         {
+            m_source->writeLine();
+            m_source->writeLine("#include <wx/animate.h>", indent::none);
+            if (!m_NeedHeaderFunction)
+                m_source->writeLine("#include <wx/mstream.h>  // Memory stream classes", indent::none);
             ttlib::textfile function;
             function.ReadString(txt_GetAnimFromHdrFunction);
             for (auto& iter: function)
@@ -1456,10 +1449,8 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 {
     for (auto& iter: node->get_props_vector())
     {
-        if (iter.type() == type_image || iter.type() == type_animation)
+        if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
         {
-            if (!iter.HasValue())
-                continue;
             auto& value = iter.as_string();
 
             if (value.is_sameprefix("Embed"))
@@ -1496,27 +1487,13 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                             continue;  // we already have this image
                     }
 
-
                     m_embedded_images.emplace_back(embed);
                 }
             }
-            else if (iter.type() == type_image)
+            // else if (iter.type() == type_image)
+            else if (value.is_sameprefix("Header") || value.is_sameprefix("XPM"))
             {
-                if (value.is_sameprefix("Header") || value.is_sameprefix("XPM"))
-                {
-                    auto posBegin = value.stepover();
-                    auto posEnd = value.find(';', posBegin);
-                    ttlib::cstr path = value.substr(posBegin, posEnd - posBegin);
-                    path.make_relative(m_baseFullPath);
-                    path.backslashestoforward();
-                    ttlib::cstr inc;
-                    inc << "#include \"" << path << "\"";
-                    embedset.insert(inc);
-                }
-            }
-            else if (iter.type() == type_animation)
-            {
-                auto posBegin = value.find_nonspace();
+                auto posBegin = value.stepover();
                 auto posEnd = value.find(';', posBegin);
                 ttlib::cstr path = value.substr(posBegin, posEnd - posBegin);
                 path.make_relative(m_baseFullPath);
@@ -1536,79 +1513,40 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
     }
 }
 
-// We're just trying to figure out if we need to generate code to include wx/mstream.h as well as generating the code to
-// load the image from memory.
-bool BaseCodeGenerator::FindImageHeader(Node* node)
+// Determine if Header or Animation functions need to be generated, and whether the
+// wx/artprov.h header is needed
+void BaseCodeGenerator::ParseImageProperties(Node* node)
 {
     for (size_t i = 0; i < node->GetChildCount(); i++)
     {
         auto child = node->GetChild(i);
-        auto description = child->prop_as_string(prop_bitmap);
-        if (description.size())
+        for (auto& iter: child->get_props_vector())
         {
-            ttlib::multistr parts(description, BMP_PROP_SEPARATOR);
-            for (auto& iter: parts)
+            if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
             {
-                iter.BothTrim();
-            }
+                ttlib::multistr parts(iter.as_string(), BMP_PROP_SEPARATOR);
+                if (parts.size() < IndexImage + 1)
+                    continue;
+                parts[IndexType].BothTrim();
+                parts[IndexImage].BothTrim();
 
-            if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header") && parts[IndexImage].size())
-            {
-                return true;
-            }
-        }
-        if (child->GetChildCount())
-        {
-            auto result = FindImageHeader(child);
-            if (result)
-                return result;
-        }
-    }
-    return false;
-}
-
-bool BaseCodeGenerator::FindAnimationHeader(Node* node)
-{
-    for (size_t i = 0; i < node->GetChildCount(); i++)
-    {
-        auto child = node->GetChild(i);
-        if (child->HasValue(prop_animation))
-        {
-            ttlib::multistr parts(child->prop_as_string(prop_animation));
-            for (auto& iter: parts)
-            {
-                iter.BothTrim();
-            }
-
-            if (parts[0].size())
-            {
-                return true;
+                if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header"))
+                {
+                    if (iter.type() == type_animation)
+                        m_NeedAnimationFunction = true;
+                    else
+                        m_NeedHeaderFunction = true;
+                }
+                else if ((parts[IndexType] == "Art"))
+                {
+                    m_NeedArtProviderHeader = true;
+                }
             }
         }
         if (child->GetChildCount())
         {
-            auto result = FindAnimationHeader(child);
-            if (result)
-                return result;
+            ParseImageProperties(child);
         }
-    }
-    return false;
-}
-
-void BaseCodeGenerator::CheckForArtProvider(Node* node)
-{
-    for (size_t i = 0; i < node->GetChildCount(); i++)
-    {
-        auto child = node->GetChild(i);
-        auto description = child->prop_as_string(prop_bitmap);
-        if (description.is_sameprefix("Art"))
-        {
-            m_artProvider = true;
-            return;
-        }
-
-        if (child->GetChildCount())
-            CheckForArtProvider(child);
     }
 }
 

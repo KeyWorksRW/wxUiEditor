@@ -26,6 +26,7 @@ namespace pugi
 #include "prop_names.h"  // Property names
 
 class wxSizerFlags;
+class wxAnimation;
 
 class Node;
 using NodeSharedPtr = std::shared_ptr<Node>;
@@ -173,6 +174,7 @@ public:
     wxFont prop_as_font(PropName name) const;
     wxPoint prop_as_wxPoint(PropName name) const;
     wxSize prop_as_wxSize(PropName name) const;
+    wxAnimation prop_as_wxAnimation(PropName name) const;
     wxBitmap prop_as_wxBitmap(PropName name) const;
     wxArrayString prop_as_wxArrayString(PropName name) const;
 

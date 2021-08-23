@@ -7,7 +7,8 @@
 
 #include "pch.h"
 
-#include <wx/sizer.h>  // provide wxSizer class for layout
+#include <wx/animate.h>  // wxAnimation and wxAnimationCtrl
+#include <wx/sizer.h>    // provide wxSizer class for layout
 
 #include "node.h"
 
@@ -325,6 +326,14 @@ wxSize Node::prop_as_wxSize(PropName name) const
         return m_properties[result->second].as_size();
     else
         return wxDefaultSize;
+}
+
+wxAnimation Node::prop_as_wxAnimation(PropName name) const
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_animation();
+    else
+        return wxNullAnimation;
 }
 
 wxBitmap Node::prop_as_wxBitmap(PropName name) const

@@ -46,7 +46,6 @@ Files:
     customprops/txt_string_prop.cpp   # Derived wxStringProperty class for single-line text
 
     customprops/art_prop_dlg.cpp   # Art Property Dialog for image property
-    customprops/anim_props.cpp     # Handles property grid image properties
     customprops/img_props.cpp      # Handles property grid image properties
 
     customprops/pg_image.cpp       # Custom property grid class for images

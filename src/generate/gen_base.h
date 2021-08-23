@@ -104,19 +104,15 @@ protected:
     // Generates an enum of all use-defined ids
     void GenEnumIds(Node* class_node);
 
-    // Returns true if there is at least one image data Header file
-    bool FindImageHeader(Node* class_node);
-
-    // Returns true if there is at least one animation data Header file
-    bool FindAnimationHeader(Node* class_node);
+    // Determine if Header or Animation functions need to be generated, and whether the
+    // wx/artprov.h is needed
+    void ParseImageProperties(Node* class_node);
 
     // Generate node construction code
     void GenConstruction(Node* node);
 
     // This allows generators to create calls to a widget after it has been created.
     void GenSettings(Node* node);
-
-    void CheckForArtProvider(Node* node);
 
     // Write everything in the set and then clear it
     void WriteSetLines(WriteCode* pDest, std::set<std::string>& code_lines);
@@ -137,5 +133,8 @@ private:
     Node* m_form_node;
 
     PANEL_TYPE m_panel_type { NOT_PANEL };
-    bool m_artProvider;
+
+    bool m_NeedArtProviderHeader { false };
+    bool m_NeedHeaderFunction { false };
+    bool m_NeedAnimationFunction { false };
 };

@@ -31,4 +31,9 @@ public:
 
     void InitValues(const char* value);
     ttlib::cstr CombineValues();
+
+    void SetAnimationType() { m_isAnimationType = true; }
+
+private:
+    bool m_isAnimationType { false };
 };

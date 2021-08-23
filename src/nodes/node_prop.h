@@ -11,6 +11,8 @@
 #include "node_classes.h"  // Forward defintions of Node classes
 #include "prop_decl.h"     // PropDeclaration -- PropChildDeclaration and PropDeclaration classes
 
+class wxAnimation;
+
 class NodeProperty
 {
 public:
@@ -37,6 +39,7 @@ public:
     const auto& as_string() const { return m_value; }
     auto as_cview() const { return ttlib::cview(m_value.c_str(), m_value.length()); }
 
+    wxAnimation as_animation() const;
     wxBitmap as_bitmap() const;
     wxColour as_color() const;
     wxFont as_font() const;

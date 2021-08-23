@@ -237,14 +237,14 @@ wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description
     }
 
     auto path = parts[IndexImage];
+    if (!path.file_exists())
+    {
+        path = wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art);
+        path.append_filename(parts[IndexImage]);
+    }
 
     if (parts[IndexType].contains("Embed"))
     {
-        if (!path.file_exists())
-        {
-            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art);
-            path.append_filename(parts[IndexImage]);
-        }
         auto embed = GetEmbeddedImage(path);
         if (!embed)
         {
@@ -260,6 +260,11 @@ wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description
             wxMemoryInputStream stream(embed->array_data.get(), embed->array_size);
             image.Load(stream);
         }
+    }
+    else
+    {
+        // This handles Header files
+        GetAnimationImage(image, path);
     }
 
     if (!image.IsOk())

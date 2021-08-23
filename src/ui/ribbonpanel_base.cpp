@@ -69,6 +69,7 @@ using namespace GenEnum;
 #include "../art_headers/tree_ctrl_png.h_img"
 #include "../art_headers/treelistctrl_png.h_img"
 #include "../art_headers/treelistctrlcolumn_png.h_img"
+#include "../art_headers/webview_png.h_img"
 #include "../art_headers/wrap_sizer_png.h_img"
 #include "../art_headers/wxActivityIndicator_png.h_img"
 #include "../art_headers/wxAnimation_png.h_img"
@@ -104,13 +105,11 @@ using namespace GenEnum;
 
 #include <wx/mstream.h>  // Memory stream classes
 
-// Convert a data header file into a wxImage
-static wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+// Convert a data array into a wxImage
+inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
-    if (!image.FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
     image.LoadFile(strm);
     return image;
 };
@@ -405,6 +404,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     auto other_bar_html = new wxRibbonToolBar(panel_html, wxID_ANY);
     {
         other_bar_html->AddTool(gen_wxHtmlWindow, GetImageFromArray(htmlwin_png, sizeof(htmlwin_png)), wxString::FromUTF8("wxHtmlWindow"), wxRIBBON_BUTTON_NORMAL);
+        other_bar_html->AddTool(gen_wxWebView, GetImageFromArray(webview_png, sizeof(webview_png)), wxString::FromUTF8("wxWebView"), wxRIBBON_BUTTON_NORMAL);
     }
     other_bar_html->Realize();
     m_rbnBar->Realize();

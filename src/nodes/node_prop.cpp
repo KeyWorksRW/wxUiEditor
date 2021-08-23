@@ -10,14 +10,17 @@
 #include <array>
 #include <charconv>
 
+#include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
 #include <wx/propgrid/propgriddefs.h>  // wxPropertyGrid miscellaneous definitions
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "font_prop.h"     // FontProperty -- FontProperty class
 #include "mainapp.h"       // App -- App class
+#include "mainapp.h"       // App -- Main application class
 #include "node.h"          // Node -- Node class
 #include "node_creator.h"  // NodeCreator class
+#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
 #include "utils.h"         // Utility functions that work with properties
 
 #include "node_prop.h"
@@ -151,6 +154,11 @@ wxBitmap NodeProperty::as_bitmap() const
         return wxNullBitmap;
     else
         return image;
+}
+
+wxAnimation NodeProperty::as_animation() const
+{
+    return wxGetApp().GetProjectSettings()->GetPropertyAnimation(m_value);
 }
 
 ttlib::cstr NodeProperty::as_escape_text() const

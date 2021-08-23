@@ -13,6 +13,7 @@
 #include <wx/bitmap.h>
 
 class Node;
+class wxAnimation;
 
 struct EmbededImage
 {
@@ -43,6 +44,10 @@ public:
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
     wxImage GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled = true);
+
+    // This takes the full animation property description and uses that to determine the image
+    // to load. The image is cached for as long as the project is open.
+    wxAnimation GetPropertyAnimation(const ttlib::cstr& description);
 
     bool AddEmbeddedImage(ttlib::cstr path, Node* form);
     const EmbededImage* GetEmbeddedImage(ttlib::cstr path);

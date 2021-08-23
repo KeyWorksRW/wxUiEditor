@@ -518,17 +518,14 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         return code;
     }
 
+    wxSize scale_size { -1, -1 };
+
     // If a dimension was specified, then it will have been split out, so we need to combine them
     if (parts.size() > IndexScale + 1)
     {
-        parts[IndexScale] << ',' << parts[IndexScale + 1];
+        scale_size.x = parts[IndexScale].atoi();
+        scale_size.y = parts[IndexScale + 1].atoi();
     }
-
-    ttlib::multistr scale_parts(parts[IndexScale].c_str() + 1, ',');
-
-    wxSize scale_size;
-    scale_size.x = scale_parts[0].atoi();
-    scale_size.y = scale_parts[1].atoi();
 
     if (parts[IndexType].contains("Art"))
     {

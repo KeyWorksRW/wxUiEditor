@@ -94,6 +94,8 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
 
     m_checkListProjects->Clear();
 
+    wxBusyCursor wait;
+
     if (m_radio_wxFormBuilder->GetValue())
         dir.GetAllFiles(".", &files, "*.fbp");
     else if (m_radio_wxSmith->GetValue())

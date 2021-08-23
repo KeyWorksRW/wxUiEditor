@@ -875,6 +875,8 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
                 code << "\n\twxButton* " << node->get_node_name() << "No;";
             if (node->prop_as_bool(prop_Cancel))
                 code << "\n\twxButton* " << node->get_node_name() << "Cancel;";
+            if (node->prop_as_bool(prop_Close))
+                code << "\n\twxButton* " << node->get_node_name() << "Close;";
             if (node->prop_as_bool(prop_Help))
                 code << "\n\twxButton* " << node->get_node_name() << "Help;";
             if (node->prop_as_bool(prop_ContextHelp))

@@ -1058,6 +1058,29 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
 
     code << "\n\t" << node->get_node_name() << "->Realize();\n";
 
+    if (!node->IsLocal())
+    {
+        if (node->prop_as_bool(prop_OK))
+            code << node->get_node_name() << "OK = wxStaticCast(FindWindowById(wxID_OK), wxButton);\n";
+        if (node->prop_as_bool(prop_Yes))
+            code << node->get_node_name() << "Yes = wxStaticCast(FindWindowById(wxID_YES), wxButton);\n";
+        if (node->prop_as_bool(prop_Save))
+            code << node->get_node_name() << "Save = wxStaticCast(FindWindowById(wxID_SAVE), wxButton);\n";
+        if (node->prop_as_bool(prop_Apply))
+            code << node->get_node_name() << "Apply = wxStaticCast(FindWindowById(wxID_APPLY), wxButton);\n";
+
+        if (node->prop_as_bool(prop_No))
+            code << node->get_node_name() << "No = wxStaticCast(FindWindowById(wxID_NO), wxButton);\n";
+        if (node->prop_as_bool(prop_Cancel))
+            code << node->get_node_name() << "Cancel = wxStaticCast(FindWindowById(wxID_CANCEL), wxButton);\n";
+        if (node->prop_as_bool(prop_Close))
+            code << node->get_node_name() << "Close = wxStaticCast(FindWindowById(wxID_CLOSE), wxButton);\n";
+        if (node->prop_as_bool(prop_Help))
+            code << node->get_node_name() << "Help = wxStaticCast(FindWindowById(wxID_HELP), wxButton);\n";
+        if (node->prop_as_bool(prop_ContextHelp))
+            code << node->get_node_name() << "ContextHelp = wxStaticCast(FindWindowById(wxID_CONTEXT_HELP), wxButton);\n";
+    }
+
     return code;
 }
 

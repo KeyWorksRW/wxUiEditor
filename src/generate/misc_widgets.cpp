@@ -92,6 +92,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
         ttlib::multistr parts(node->prop_as_string(prop_animation), ';');
         ttlib::cstr name(parts[IndexImage].filename());
         name.remove_extension();
+        name.LeftTrim();
         if (parts[IndexType].is_sameprefix("Embed"))
         {
             auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);

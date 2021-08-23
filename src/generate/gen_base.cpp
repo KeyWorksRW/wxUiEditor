@@ -363,6 +363,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
         if (m_NeedAnimationFunction)
         {
+            m_source->writeLine();
             m_source->writeLine("#include <wx/animate.h>", indent::none);
             if (!m_NeedHeaderFunction)
                 m_source->writeLine("#include <wx/mstream.h>  // Memory stream classes", indent::none);

@@ -231,7 +231,7 @@ wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description
 
     wxAnimation image;
 
-    if (parts[IndexImage].empty())
+    if (parts.size() <= IndexImage || parts[IndexImage].empty())
     {
         return GetAnimFromHdr(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
     }

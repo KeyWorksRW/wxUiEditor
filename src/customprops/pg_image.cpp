@@ -26,7 +26,7 @@
 #include "utils.h"        // Utility functions that work with properties
 
 #include "img_string_prop.h"  // wxSingleChoiceDialogAdapter
-#include "pg_size.h"          // CustomSizeProperty -- Custom property grid class for wxSize
+#include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint
 
 #include "art_ids.cpp"  // wxART_ strings
 
@@ -50,7 +50,8 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
-    AddPrivateChild(new CustomSizeProperty("size", m_img_props.size));
+    AddPrivateChild(new CustomPointProperty("scale size", prop, CustomPointProperty::type_scale));
+    Item(IndexScale)->SetHelpString("Scale the image to this size.");
 }
 
 void PropertyGrid_Image::RefreshChildren()

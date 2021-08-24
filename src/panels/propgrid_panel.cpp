@@ -42,7 +42,6 @@
 #include "../customprops/pg_animation.h"     // PropertyGrid_Animation -- Custom property grid class for animations
 #include "../customprops/pg_image.h"         // PropertyGrid_Image -- Custom property grid class for images
 #include "../customprops/pg_point.h"         // CustomPointProperty -- custom wxPGProperty for handling wxPoint
-#include "../customprops/pg_size.h"          // CustomSizeProperty -- custom wxPGProperty for handling wxSize
 #include "../customprops/txt_string_prop.h"  // EditStringProperty -- dialog for editing single-line strings
 
 #include "wx_id_list.cpp"  // wxID_ strings
@@ -268,10 +267,10 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             return new wxBoolProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string() == "1");
 
         case type_wxPoint:
-            return new CustomPointProperty(prop->DeclName().wx_str(), prop->as_point());
+            return new CustomPointProperty(prop->DeclName().wx_str(), prop, CustomPointProperty::type_point);
 
         case type_wxSize:
-            return new CustomSizeProperty(prop->DeclName().wx_str(), prop->as_size());
+            return new CustomPointProperty(prop->DeclName().wx_str(), prop, CustomPointProperty::type_size);
 
         case type_wxFont:
             if (prop->as_string().empty())
@@ -922,16 +921,10 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             break;
 
         case type_wxPoint:
-            {
-                wxPoint point = wxPointRefFromVariant(event.GetPropertyValue());
-                modifyProperty(prop, ttlib::cstr() << point.x << ',' << point.y);
-            }
-            break;
-
         case type_wxSize:
             {
-                wxSize size = wxSizeRefFromVariant(event.GetPropertyValue());
-                modifyProperty(prop, ttlib::cstr().Format("%i,%i", size.GetWidth(), size.GetHeight()));
+                auto value = event.GetPropertyValue().GetString();
+                modifyProperty(prop, value.utf8_string());
             }
             break;
 

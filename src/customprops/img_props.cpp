@@ -30,16 +30,30 @@ void ImageProperties::InitValues(const char* value)
 
     if (mstr.size() > IndexImage + 1)
     {
-        ttlib::multistr dimensions(mstr[IndexScale], ',');
-        for (auto& iter: dimensions)
+        if (mstr[IndexScale][0] == '[')
         {
-            iter.BothTrim();
+            m_size.x = atoi(mstr[IndexScale].c_str() + 1);
+            if (auto pos_comma = mstr[IndexScale].find(','); ttlib::is_found(pos_comma))
+            {
+                m_size.y = atoi(mstr[IndexScale].c_str() + pos_comma + 1);
+            }
+            else
+            {
+                m_size.y = atoi(mstr[IndexScale + 1]);
+            }
         }
+        else
+        {
+            ttlib::multistr scale(mstr[IndexScale], ',');
+            for (auto& iter: scale)
+            {
+                iter.BothTrim();
+            }
 
-        if (dimensions.size() > 0)
-            size.x = atoi(dimensions[0].c_str() + 1);  // step over the leading bracket
-        if (dimensions.size() > 1)
-            size.y = atoi(dimensions[1]);
+            m_size.x = scale[0].atoi();
+            if (scale.size() > 1)
+                m_size.y = scale[1].atoi();
+        }
     }
 }
 
@@ -60,6 +74,13 @@ ttlib::cstr ImageProperties::CombineValues()
     }
 
     ttlib::cstr value;
-    value << type << ';' << image << ";[" << size.x << ',' << size.y << "]";
+    value << type << ';' << image << ";[" << m_size.x << ',' << m_size.y << "]";
+    return value;
+}
+
+ttlib::cstr ImageProperties::CombineScale()
+{
+    ttlib::cstr value;
+    value << m_size.x << ',' << m_size.y;
     return value;
 }

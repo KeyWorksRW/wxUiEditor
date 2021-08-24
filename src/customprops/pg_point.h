@@ -16,14 +16,14 @@ class CustomPointProperty : public wxPGProperty
 public:
     wxDECLARE_ABSTRACT_CLASS(CustomSizeProperty);
 
-    enum data_type
+    enum DataType
     {
         type_size,
         type_point,
         type_scale
     };
 
-    CustomPointProperty(const wxString& label, NodeProperty* prop, data_type type = CustomPointProperty::type_size);
+    CustomPointProperty(const wxString& label, NodeProperty* prop, DataType type = CustomPointProperty::type_size);
 
     wxVariant ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const override;
     void RefreshChildren() override;
@@ -36,4 +36,5 @@ public:
 private:
     wxPoint m_point { wxDefaultPosition };
     bool m_dialog_units { false };
+    DataType m_prop_type;
 };

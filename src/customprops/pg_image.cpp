@@ -73,7 +73,9 @@ void PropertyGrid_Image::RefreshChildren()
 
         if (m_img_props.type == "Embed")
         {
-            Item(IndexImage)->SetHelpString("Specifies the original image which will be embedded into a generated class source file as an unsigned char array.");
+            Item(IndexImage)
+                ->SetHelpString("Specifies the original image which will be embedded into a generated class source file as "
+                                "an unsigned char array.");
         }
         else if (m_img_props.type == "XPM")
         {
@@ -143,42 +145,41 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
     Item(IndexImage)->SetValue(m_img_props.image.wx_str());
-    Item(IndexScale)->SetValue((wxVariant(m_img_props.size)));
+    Item(IndexScale)->SetValue(m_img_props.CombineScale());
 }
 
 wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
 {
-    wxString value = thisValue;
-
     ImageProperties img_props;
+
+    auto value = thisValue.GetString();
     if (value.size())
     {
-        img_props.InitValues(value.utf8_str().data());
+        img_props.InitValues(value.utf8_string().c_str());
     }
 
     switch (childIndex)
     {
         case IndexType:
+            if (auto index = childValue.GetLong(); index >= 0)
             {
-                auto index = childValue.GetLong();
-                if (index >= 0)
-                {
-                    img_props.type = s_type_names[index];
+                img_props.type = s_type_names[index];
 
-                    // If the type has changed, then the image property is no longer valid
-                    img_props.image.clear();
-                }
-                break;
-            }
-
-        case IndexImage:
-            {
-                img_props.image.assign_wx(childValue.GetString());
+                // If the type has changed, then the image property is no longer valid
+                img_props.image.clear();
             }
             break;
 
+        case IndexImage:
+            img_props.image.assign_wx(childValue.GetString());
+            break;
+
         case IndexScale:
-            img_props.size = wxSizeRefFromVariant(childValue);
+            {
+                ttlib::multistr mstr(childValue.GetString().utf8_string(), ',');
+                img_props.SetWidth(mstr[0].atoi());
+                img_props.SetHeight(mstr[1].atoi());
+            }
             break;
     }
 

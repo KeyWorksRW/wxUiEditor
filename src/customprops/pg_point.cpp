@@ -13,15 +13,29 @@
 
 #include "pg_point.h"
 
-#include "node.h"  // Node -- Node class
+#include "node.h"   // Node -- Node class
+#include "utils.h"  // Utility functions that work with properties
 
 wxIMPLEMENT_ABSTRACT_CLASS(CustomPointProperty, wxPGProperty);
 
-CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* prop, data_type type) :
+CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* prop, DataType type) :
     wxPGProperty(label, wxPG_LABEL)
 {
-    m_value = prop->as_wxString();
-    InitValues(prop->as_string());
+    m_prop_type = type;
+
+    if (type == CustomPointProperty::type_scale && prop->HasValue() && prop->as_string().contains("["))
+    {
+        ttlib::cstr value(prop->as_string().substr(prop->as_string().find('[') + 1));
+        if (value.back() == ']')
+            value.pop_back();
+        m_value = value;
+        InitValues(value);
+    }
+    else
+    {
+        m_value = prop->as_wxString();
+        InitValues(prop->as_string());
+    }
 
     // For a property, the only difference between a size and a point is the label
 
@@ -51,7 +65,8 @@ void CustomPointProperty::RefreshChildren()
         InitValues(value.utf8_string());
         Item(0)->SetValue(m_point.x);
         Item(1)->SetValue(m_point.y);
-        Item(2)->SetValue(m_dialog_units);
+        if (m_prop_type != type_scale)
+            Item(2)->SetValue(m_dialog_units);
     }
 }
 
@@ -79,7 +94,7 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
     }
 
     value.clear();
-    value << point.x << ';' << point.y;
+    value << point.x << ',' << point.y;
     if (dialog_units)
         value << 'd';
 
@@ -96,7 +111,9 @@ void CustomPointProperty::InitValues(ttlib::cview value)
     }
     else
     {
-        ttlib::multistr mstr(value, ';');
+        // ttlib::multistr mstr(value, value.contains(",") ? ',' : ';');
+        ASSERT_MSG(!value.contains(";"), "Expected comma separator!");
+        ttlib::multistr mstr(value, ',');
         for (auto& iter: mstr)
         {
             iter.BothTrim();
@@ -111,7 +128,7 @@ void CustomPointProperty::InitValues(ttlib::cview value)
 ttlib::cstr CustomPointProperty::CombineValues()
 {
     ttlib::cstr value;
-    value << m_point.x << ';' << m_point.y;
+    value << m_point.x << ',' << m_point.y;
     if (m_dialog_units)
         value << 'd';
     return value;

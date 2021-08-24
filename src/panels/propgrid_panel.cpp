@@ -967,37 +967,14 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             }
 
         case type_animation:
-            {
-                // The main difference between this and type_image is that the image is in field 0 instead of field 1.
-                ttlib::cstr value;
-                value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
-
-                ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
-                for (auto& iter: parts)
-                {
-                    iter.BothTrim();
-                }
-
-                // If the image field is empty, then the entire property needs to be cleared
-                if (parts[0].empty())
-                    value.clear();
-                modifyProperty(prop, value);
-            }
-            break;
-
         case type_image:
             {
                 ttlib::cstr value;
-                value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
-
+                // Do NOT call GetValueAsString() -- we need to return the value the way the custom property formatted it
+                value << m_prop_grid->GetPropertyValue(property).GetString().wx_str();
                 ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
-                for (auto& iter: parts)
-                {
-                    iter.BothTrim();
-                }
-
                 // If the image field is empty, then the entire property needs to be cleared
-                if (parts[IndexImage].empty())
+                if (parts.size() > IndexImage && parts[IndexImage].empty())
                     value.clear();
                 modifyProperty(prop, value);
             }

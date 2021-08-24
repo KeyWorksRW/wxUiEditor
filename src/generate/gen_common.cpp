@@ -347,7 +347,15 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
     auto pos = node->prop_as_wxPoint(prop_pos);
     if (pos.x != -1 || pos.y != -1)
     {
-        code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
+        if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
+        {
+            code << ", ConvertPixelsToDialog(wxPoint(" << pos.x << ", " << pos.y << "))";
+        }
+        else
+        {
+            code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
+        }
+
         isPosSet = true;
     }
 
@@ -360,7 +368,15 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
             code << ", wxDefaultPosition";
             isPosSet = true;
         }
-        code << ", wxSize(" << size.x << ", " << size.y << ")";
+        if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
+        {
+            code << ", ConvertPixelsToDialog(wxSize(" << size.x << ", " << size.y << "))";
+        }
+        else
+        {
+            code << ", wxSize(" << size.x << ", " << size.y << ")";
+        }
+
         isSizeSet = true;
     }
 

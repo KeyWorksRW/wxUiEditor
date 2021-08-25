@@ -254,7 +254,16 @@ void GenPos(Node* node, ttlib::cstr& code)
 {
     auto point = node->prop_as_wxPoint(prop_pos);
     if (point.x != -1 || point.y != -1)
-        code << "wxPoint(" << point.x << ", " << point.y << ")";
+    {
+        if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
+        {
+            code << ", ConvertPixelsToDialog(wxPoint(" << point.x << ", " << point.y << "))";
+        }
+        else
+        {
+            code << "wxPoint(" << point.x << ", " << point.y << ")";
+        }
+    }
     else
         code << "wxDefaultPosition";
 }
@@ -263,7 +272,16 @@ void GenSize(Node* node, ttlib::cstr& code)
 {
     auto size = node->prop_as_wxSize(prop_size);
     if (size != wxDefaultSize)
-        code << "wxSize(" << size.x << ", " << size.y << ")";
+    {
+        if (node->prop_as_string(prop_size).contains("d", tt::CASE::either))
+        {
+            code << ", ConvertPixelsToDialog(wxSize(" << size.x << ", " << size.y << "))";
+        }
+        else
+        {
+            code << "wxSize(" << size.x << ", " << size.y << ")";
+        }
+    }
     else
         code << "wxDefaultSize";
 }
@@ -347,7 +365,15 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
     auto pos = node->prop_as_wxPoint(prop_pos);
     if (pos.x != -1 || pos.y != -1)
     {
-        code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
+        if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
+        {
+            code << ", ConvertPixelsToDialog(wxPoint(" << pos.x << ", " << pos.y << "))";
+        }
+        else
+        {
+            code << ", wxPoint(" << pos.x << ", " << pos.y << ")";
+        }
+
         isPosSet = true;
     }
 
@@ -360,7 +386,15 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
             code << ", wxDefaultPosition";
             isPosSet = true;
         }
-        code << ", wxSize(" << size.x << ", " << size.y << ")";
+        if (node->prop_as_string(prop_size).contains("d", tt::CASE::either))
+        {
+            code << ", ConvertPixelsToDialog(wxSize(" << size.x << ", " << size.y << "))";
+        }
+        else
+        {
+            code << ", wxSize(" << size.x << ", " << size.y << ")";
+        }
+
         isSizeSet = true;
     }
 

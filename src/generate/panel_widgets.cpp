@@ -15,6 +15,7 @@
 #include "../mainframe.h"  // MainFrame -- Main window frame
 #include "gen_common.h"    // GeneratorLibrary -- Generator classes
 #include "node.h"          // Node class
+#include "utils.h"         // Utility functions that work with properties
 
 #include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
 
@@ -24,8 +25,8 @@
 
 wxObject* PanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                              node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                              DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -55,8 +56,9 @@ std::optional<ttlib::cstr> PanelGenerator::GenConstruction(Node* node)
 
 wxObject* CollapsiblePaneGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                        node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget =
+        new wxCollapsiblePane(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+                              DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (GetMockup()->IsShowingHidden())
         widget->Collapse(false);

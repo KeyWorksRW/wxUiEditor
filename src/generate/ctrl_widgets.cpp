@@ -24,7 +24,7 @@
 wxObject* CalendarCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxCalendarCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
-                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                                     DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -68,7 +68,7 @@ wxObject* FileCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 
     auto widget = new wxFileCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_folder),
                                  node->prop_as_wxString(prop_initial_filename), wild, GetStyleInt(node),
-                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size));
+                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size));
 
     if (!(node->prop_as_int(prop_style) & wxFC_NOSHOWHIDDEN))
         widget->ShowHidden(node->prop_as_bool(prop_show_hidden));
@@ -142,7 +142,7 @@ bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* GenericDirCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxGenericDirCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_defaultfolder),
-                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node),
+                                       DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node),
                                        node->prop_as_wxString(prop_filter), node->prop_as_int(prop_defaultfilter));
 
     widget->ShowHidden(node->prop_as_bool(prop_show_hidden));
@@ -210,7 +210,7 @@ bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
-                                   node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                                   DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_search_button))
     {

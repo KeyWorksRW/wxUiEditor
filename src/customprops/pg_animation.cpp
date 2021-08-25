@@ -44,9 +44,7 @@ void PropertyGrid_Animation::RefreshChildren()
     wxString value = m_value;
     if (value.size())
     {
-        m_img_props.InitValues(value.utf8_str().data());
-
-        Item(IndexImage)->SetLabel("image");
+        m_img_props.InitValues(value.utf8_string().c_str());
 
         if (m_img_props.type == "Embed")
         {

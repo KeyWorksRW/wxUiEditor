@@ -14,6 +14,7 @@
 #include "bitmaps.h"     // Map of bitmaps accessed by name
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
+#include "utils.h"       // Utility functions that work with properties
 
 #include "ribbon_widgets.h"
 
@@ -21,8 +22,8 @@
 
 wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                  node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->prop_as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
@@ -116,8 +117,8 @@ bool RibbonBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_
 
 wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                  node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxRibbonBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->prop_as_string(prop_theme) == "Default")
         widget->SetArtProvider(new wxRibbonDefaultArtProvider);
@@ -252,8 +253,8 @@ bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 wxObject* RibbonPanelGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRibbonPanel((wxRibbonPage*) parent, wxID_ANY, node->prop_as_wxString(prop_label),
-                                    node->prop_as_wxBitmap(prop_bitmap), node->prop_as_wxPoint(prop_pos),
-                                    node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                                    node->prop_as_wxBitmap(prop_bitmap), DlgPoint(parent, node, prop_pos),
+                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -315,8 +316,8 @@ bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 wxObject* RibbonButtonBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonButtonBar((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                        node->prop_as_wxSize(prop_size), 0);
+    auto widget = new wxRibbonButtonBar((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                        DlgSize(parent, node, prop_size), 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -407,8 +408,8 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenEvents(NodeEvent* event, co
 
 wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonToolBar((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                      node->prop_as_wxSize(prop_size));
+    auto widget = new wxRibbonToolBar((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                      DlgSize(parent, node, prop_size));
     if (node->prop_as_int(prop_min_rows) != 1 || node->prop_as_string(prop_max_rows) != "-1")
     {
         auto min_rows = node->prop_as_int(prop_min_rows);
@@ -536,8 +537,8 @@ std::optional<ttlib::cstr> RibbonToolGenerator::GenEvents(NodeEvent* event, cons
 
 wxObject* RibbonGalleryGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                      node->prop_as_wxSize(prop_size), 0);
+    auto widget = new wxRibbonGallery((wxRibbonPanel*) parent, wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                      DlgSize(parent, node, prop_size), 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

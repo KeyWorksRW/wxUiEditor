@@ -11,6 +11,8 @@
 
 #include "ttcstr.h"  // ttlib::cstr -- std::string with additional methods
 
+#include "gen_enums.h"  // Enumerations for generators
+
 class wxColour;
 class wxImage;
 class wxPoint;
@@ -69,3 +71,9 @@ wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);
 
 // Converts a GZIP unsigned char array into a string.
 std::string LoadGzipString(const unsigned char* data, size_t size_data);
+
+// If the property specifies dialog units, then parent will be used to do the conversion
+wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);
+
+// If the property specifies dialog units, then parent will be used to do the conversion
+wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);

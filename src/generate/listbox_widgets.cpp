@@ -24,8 +24,8 @@
 wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                      node->prop_as_wxSize(prop_size), 0, nullptr, node->prop_as_int(prop_type) | GetStyleInt(node));
+        new wxListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                      DlgSize(parent, node, prop_size), 0, nullptr, node->prop_as_int(prop_type) | GetStyleInt(node));
 
     auto& items = node->prop_as_string(prop_choices);
     if (items.size())
@@ -155,8 +155,8 @@ bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
-        new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                           node->prop_as_wxSize(prop_size), 0, nullptr, node->prop_as_int(prop_type) | GetStyleInt(node));
+        new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                           DlgSize(parent, node, prop_size), 0, nullptr, node->prop_as_int(prop_type) | GetStyleInt(node));
 
     auto& items = node->prop_as_string(prop_choices);
     if (items.size())
@@ -285,8 +285,8 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                      node->prop_as_wxSize(prop_size), wxArrayInt(), wxArrayString(),
+    auto widget = new wxRearrangeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                      DlgSize(parent, node, prop_size), wxArrayInt(), wxArrayString(),
                                       node->prop_as_int(prop_type) | GetStyleInt(node));
 
     auto& items = node->prop_as_string(prop_choices);
@@ -410,8 +410,8 @@ bool RearrangeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_
 
 wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                          node->prop_as_wxSize(prop_size), 0, nullptr, GetStyleInt(node));
+    auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                          DlgSize(parent, node, prop_size), 0, nullptr, GetStyleInt(node));
 
     auto& items = node->prop_as_string(prop_choices);
     if (items.size())

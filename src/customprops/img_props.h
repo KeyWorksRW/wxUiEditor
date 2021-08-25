@@ -25,15 +25,19 @@ struct ImageProperties
 public:
     ttlib::cstr type { s_type_names[1] };
     ttlib::cstr image;
-    wxSize size { wxDefaultSize };
 
     NodeProperty* node_property;
 
     void InitValues(const char* value);
     ttlib::cstr CombineValues();
+    ttlib::cstr CombineScale();
+
+    void SetWidth(int width) { m_size.x = width; }
+    void SetHeight(int height) { m_size.y = height; }
 
     void SetAnimationType() { m_isAnimationType = true; }
 
 private:
     bool m_isAnimationType { false };
+    wxSize m_size { wxDefaultSize };
 };

@@ -626,7 +626,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
         }
         else
         {
-            ttlib::cstr bitmap("Embed; ");
+            ttlib::cstr bitmap("Embed;");
 
             // wxGlade doubles the backslash after the drive letter on Windows, and that causes the conversion to a relative
             // path to be incorrect
@@ -636,7 +636,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
             relative.make_relative_wx(wxGetCwd());
             relative.backslashestoforward();
             bitmap << relative.wx_str();
-            bitmap << "; ; [-1; -1]";
+            bitmap << ";[-1,-1]";
 
             if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
             {

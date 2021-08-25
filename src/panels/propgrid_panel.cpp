@@ -42,7 +42,6 @@
 #include "../customprops/pg_animation.h"     // PropertyGrid_Animation -- Custom property grid class for animations
 #include "../customprops/pg_image.h"         // PropertyGrid_Image -- Custom property grid class for images
 #include "../customprops/pg_point.h"         // CustomPointProperty -- custom wxPGProperty for handling wxPoint
-#include "../customprops/pg_size.h"          // CustomSizeProperty -- custom wxPGProperty for handling wxSize
 #include "../customprops/txt_string_prop.h"  // EditStringProperty -- dialog for editing single-line strings
 
 #include "wx_id_list.cpp"  // wxID_ strings
@@ -268,10 +267,10 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             return new wxBoolProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string() == "1");
 
         case type_wxPoint:
-            return new CustomPointProperty(prop->DeclName().wx_str(), prop->as_point());
+            return new CustomPointProperty(prop->DeclName().wx_str(), prop, CustomPointProperty::type_point);
 
         case type_wxSize:
-            return new CustomSizeProperty(prop->DeclName().wx_str(), prop->as_size());
+            return new CustomPointProperty(prop->DeclName().wx_str(), prop, CustomPointProperty::type_size);
 
         case type_wxFont:
             if (prop->as_string().empty())
@@ -922,16 +921,10 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             break;
 
         case type_wxPoint:
-            {
-                wxPoint point = wxPointRefFromVariant(event.GetPropertyValue());
-                modifyProperty(prop, ttlib::cstr() << point.x << ',' << point.y);
-            }
-            break;
-
         case type_wxSize:
             {
-                wxSize size = wxSizeRefFromVariant(event.GetPropertyValue());
-                modifyProperty(prop, ttlib::cstr().Format("%i,%i", size.GetWidth(), size.GetHeight()));
+                auto value = event.GetPropertyValue().GetString();
+                modifyProperty(prop, value.utf8_string());
             }
             break;
 
@@ -974,37 +967,14 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             }
 
         case type_animation:
-            {
-                // The main difference between this and type_image is that the image is in field 0 instead of field 1.
-                ttlib::cstr value;
-                value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
-
-                ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
-                for (auto& iter: parts)
-                {
-                    iter.BothTrim();
-                }
-
-                // If the image field is empty, then the entire property needs to be cleared
-                if (parts[0].empty())
-                    value.clear();
-                modifyProperty(prop, value);
-            }
-            break;
-
         case type_image:
             {
                 ttlib::cstr value;
-                value << m_prop_grid->GetPropertyValueAsString(property).wx_str();
-
+                // Do NOT call GetValueAsString() -- we need to return the value the way the custom property formatted it
+                value << m_prop_grid->GetPropertyValue(property).GetString().wx_str();
                 ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
-                for (auto& iter: parts)
-                {
-                    iter.BothTrim();
-                }
-
                 // If the image field is empty, then the entire property needs to be cleared
-                if (parts[IndexImage].empty())
+                if (parts.size() > IndexImage && parts[IndexImage].empty())
                     value.clear();
                 modifyProperty(prop, value);
             }

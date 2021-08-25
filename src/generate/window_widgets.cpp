@@ -13,6 +13,7 @@
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
+#include "utils.h"       // Utility functions that work with properties
 
 #include "window_widgets.h"
 
@@ -63,8 +64,8 @@ private:
 
 wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto splitter = new wxCustomSplitterWindow(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                               node->prop_as_wxSize(prop_size), (GetStyleInt(node)) & ~wxSP_PERMIT_UNSPLIT);
+    auto splitter = new wxCustomSplitterWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                               DlgSize(parent, node, prop_size), (GetStyleInt(node)) & ~wxSP_PERMIT_UNSPLIT);
 
     if (node->HasValue(prop_sashgravity))
     {
@@ -239,8 +240,8 @@ bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 wxObject* ScrolledWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxScrolled<wxPanel>(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                          node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxScrolled<wxPanel>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                          DlgSize(parent, node, prop_size), GetStyleInt(node));
     widget->SetScrollRate(node->prop_as_int(prop_scroll_rate_x), node->prop_as_int(prop_scroll_rate_y));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

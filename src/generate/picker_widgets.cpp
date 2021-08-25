@@ -24,8 +24,9 @@
 
 wxObject* DatePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
-                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget =
+        new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(parent, node, prop_pos),
+                             DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -60,8 +61,9 @@ bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 wxObject* TimePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxTimePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime,
-                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget =
+        new wxTimePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(parent, node, prop_pos),
+                             DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -96,12 +98,12 @@ bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxFilePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
-                                       node->prop_as_string(prop_message).size() ? node->prop_as_wxString(prop_message) :
-                                                                                   wxFileSelectorPromptStr,
-                                       node->prop_as_string(prop_wildcard).size() ? node->prop_as_wxString(prop_wildcard) :
-                                                                                    wxFileSelectorDefaultWildcardStr,
-                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxFilePickerCtrl(
+        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
+        node->prop_as_string(prop_message).size() ? node->prop_as_wxString(prop_message) : wxFileSelectorPromptStr,
+        node->prop_as_string(prop_wildcard).size() ? node->prop_as_wxString(prop_wildcard) :
+                                                     wxFileSelectorDefaultWildcardStr,
+        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -178,7 +180,7 @@ wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxDirPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
                                       node->prop_as_string(prop_message).size() ? node->prop_as_wxString(prop_message) :
                                                                                   wxDirSelectorPromptStr,
-                                      node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                                      DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -239,7 +241,7 @@ wxObject* ColourPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxColourPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxColour(prop_colour),
-                               node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                               DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -277,8 +279,9 @@ bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* FontPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_font(prop_initial_font),
-                                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget =
+        new wxFontPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_font(prop_initial_font),
+                             DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_max_point_size))
     {

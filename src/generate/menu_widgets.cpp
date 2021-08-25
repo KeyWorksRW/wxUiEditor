@@ -15,6 +15,7 @@
 #include "gen_common.h"    // GeneratorLibrary -- Generator classes
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator -- NodeCreator class
+#include "utils.h"         // Utility functions that work with properties
 
 #include "menu_widgets.h"
 

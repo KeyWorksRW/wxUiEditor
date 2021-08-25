@@ -32,8 +32,8 @@
 
 wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, node->prop_as_wxPoint(prop_pos),
-                                   node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
+                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->prop_as_bool(prop_markup))
         widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
@@ -143,7 +143,7 @@ bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
-                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->SetMaxLength(node->prop_as_int(prop_maxlength));
 
@@ -262,7 +262,7 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
-                                     node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                                     DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -314,8 +314,8 @@ bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                   node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->SetPage("<b>wxHtmlWindow</b><br/><br/>This is a dummy page.</body></html>");
 
@@ -359,7 +359,7 @@ bool HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 wxObject* WebViewGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = wxWebView::New(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_string(prop_url).wx_str(),
-                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), wxWebViewBackendDefault,
+                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), wxWebViewBackendDefault,
                                  GetStyleInt(node));
 
     return widget;
@@ -372,7 +372,8 @@ std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
         code << "auto ";
     code << node->get_node_name() << " = wxWebView::New(";
 
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", " << GenerateQuotedString(node->prop_as_string(prop_url));
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", "
+         << GenerateQuotedString(node->prop_as_string(prop_url));
 
     bool isPosSet { false };
     auto pos = node->prop_as_wxPoint(prop_pos);
@@ -428,8 +429,8 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     // REVIEW: [KeyWorks - 12-10-2020] This is the original code which needs to be replaced as part of issue #512
 
     auto scintilla =
-        new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                             node->prop_as_wxSize(prop_size), GetStyleInt(node), node->prop_as_wxString(prop_var_name));
+        new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                             DlgSize(parent, node, prop_size), GetStyleInt(node), node->prop_as_wxString(prop_var_name));
 
     if (node->prop_as_int(prop_line_numbers) != 0)
     {

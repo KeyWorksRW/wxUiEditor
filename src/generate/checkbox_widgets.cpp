@@ -13,6 +13,7 @@
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
+#include "utils.h"       // Utility functions that work with properties
 
 #include "checkbox_widgets.h"
 
@@ -24,7 +25,7 @@ wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
     auto widget =
         new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                       node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), style_value | GetStyleInt(node));
+                       DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), style_value | GetStyleInt(node));
 
     if (node->prop_as_bool(prop_checked))
         widget->SetValue(true);
@@ -101,7 +102,7 @@ wxObject* Check3StateGenerator::CreateMockup(Node* node, wxObject* parent)
     long style_value = wxCHK_3STATE | GetStyleInt(node);
 
     auto widget = new wxCheckBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                 node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), style_value);
+                                 DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), style_value);
 
     auto& state = node->prop_as_string(prop_initial_state);
     if (state == "wxCHK_UNCHECKED")

@@ -36,8 +36,8 @@
 
 wxObject* ActivityIndicatorGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                          node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxActivityIndicator(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                          DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Start();
@@ -69,8 +69,8 @@ bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& 
 wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto animation = node->prop_as_wxAnimation(prop_animation);
-    auto widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, node->prop_as_wxPoint(prop_pos),
-                                      node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
+                                      DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     if (animation.IsOk())
@@ -217,8 +217,8 @@ bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 wxObject* StaticLineGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxPoint(prop_pos),
-                                   node->prop_as_wxSize(prop_size), GetStyleInt(node));
+    auto widget = new wxStaticLine(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -335,7 +335,7 @@ wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget =
         new wxGenericStaticBitmap(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxBitmap(prop_bitmap),
-                                  node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
     if (auto value = node->prop_as_string(prop_scale_mode); value != "None")
     {
         if (value == "Fill")
@@ -419,7 +419,7 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 wxObject* GaugeGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxGauge(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_range),
-                              node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                              DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
     widget->SetValue(node->prop_as_int(prop_position));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -494,7 +494,7 @@ wxObject* SliderGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxSlider(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_int(prop_value),
                                node->prop_as_int(prop_minValue), node->prop_as_int(prop_maxValue),
-                               node->prop_as_wxPoint(prop_pos), node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                               DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->SetValue(node->prop_as_int(prop_position));
     if (node->prop_as_int(prop_line_size) > 0)
@@ -607,8 +607,8 @@ bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                      node->prop_as_wxString(prop_url), node->prop_as_wxPoint(prop_pos),
-                                      node->prop_as_wxSize(prop_size), GetStyleInt(node));
+                                      node->prop_as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
+                                      DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     if (node->HasValue(prop_hover_color))
     {

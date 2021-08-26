@@ -12,8 +12,6 @@
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties

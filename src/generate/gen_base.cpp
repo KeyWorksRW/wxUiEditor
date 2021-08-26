@@ -1495,9 +1495,12 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
             // else if (iter.type() == type_image)
             else if (value.is_sameprefix("Header") || value.is_sameprefix("XPM"))
             {
-                auto posBegin = value.stepover();
-                auto posEnd = value.find(';', posBegin);
-                ttlib::cstr path = value.substr(posBegin, posEnd - posBegin);
+                ttlib::multiview parts(value);
+                if (ttlib::is_whitespace(parts[IndexImage].front()))
+                {
+                    parts[IndexImage].remove_prefix(1);
+                }
+                ttlib::cstr path = parts[IndexImage];
                 path.make_relative(m_baseFullPath);
                 path.backslashestoforward();
                 ttlib::cstr inc;

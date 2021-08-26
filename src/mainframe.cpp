@@ -24,9 +24,6 @@
 #include <wx/stc/stc.h>           // Scintilla
 #include <wx/toolbar.h>           // wxToolBar interface declaration
 
-#include "ttcwd.h"       // cwd -- Class for storing and optionally restoring the current directory
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 // auto-generated: ui/mainframe_base.h and ui/mainframe_base.cpp
 
 #include "mainframe.h"

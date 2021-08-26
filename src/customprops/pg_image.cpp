@@ -130,11 +130,23 @@ void PropertyGrid_Image::RefreshChildren()
                     art_dir = "./";
                 wxDir dir;
                 wxArrayString array_files;
-                dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "XPM" ? "*.xpm" : "*.png", wxDIR_FILES);
-                for (size_t pos = 0; pos < array_files.size(); ++pos)
+                wxBusyCursor hourglass;
+                if (m_img_props.type == "Header")
                 {
-                    ttString* ptr = static_cast<ttString*>(&array_files[pos]);
-                    array_art_ids.Add(ptr->filename());
+                    dir.GetAllFiles(art_dir, &array_files, "*.xpm", wxDIR_FILES);
+                    dir.GetAllFiles(art_dir, &array_files, "*.h_img", wxDIR_FILES);
+                }
+                if (m_img_props.type == "Embed")
+                {
+                    // For auto-completion, we limit the array to the most common image types
+                    dir.GetAllFiles(art_dir, &array_files, "*.png", wxDIR_FILES);
+                    dir.GetAllFiles(art_dir, &array_files, "*.bmp", wxDIR_FILES);
+                }
+
+                for (auto& iter: array_files)
+                {
+                    wxFileName name(iter);
+                    array_art_ids.Add(name.GetFullName());
                 }
             }
 
@@ -171,7 +183,30 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             break;
 
         case IndexImage:
-            img_props.image.assign_wx(childValue.GetString());
+            {
+                ttString name(childValue.GetString());
+                if (!name.file_exists())
+                {
+                    if (img_props.type == "Header")
+                    {
+                        name = wxGetApp().GetConvertedArtDir();
+                        name.append_filename_wx(childValue.GetString());
+                        if (!name.file_exists())
+                        {
+                            name = wxGetApp().GetOriginalArtDir();
+                            name.append_filename_wx(childValue.GetString());
+                        }
+                    }
+                    else
+                    {
+                        name = wxGetApp().GetOriginalArtDir();
+                        name.append_filename_wx(childValue.GetString());
+                    }
+                }
+                name.make_relative_wx(wxGetApp().GetProjectPath());
+                name.backslashestoforward();
+                img_props.image.assign_wx(name);
+            }
             break;
 
         case IndexScale:

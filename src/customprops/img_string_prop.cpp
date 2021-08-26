@@ -10,14 +10,13 @@
 #include <wx/filedlg.h>            // wxFileDialog base header
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
-
 #include "img_string_prop.h"
 
 #include "art_prop_dlg.h"  // ArtBrowserDialog -- Art Property Dialog for image property
 #include "mainapp.h"       // MoveDirection -- Main application class
 #include "node.h"          // Node -- Node class
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
+#include "utils.h"         // Utility functions that work with properties
 
 bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
 {
@@ -33,42 +32,64 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     }
     else if (m_img_props.type.contains("Embed"))
     {
-        ttlib::cwd cwd(true);
+        ttSaveCwd cwd;
         if (wxGetApp().GetProject()->HasValue(prop_original_art))
         {
-            ttlib::ChangeDir(wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art));
-            cwd.assignCwd();
+            wxFileName::SetCwd(wxGetApp().GetOriginalArtDir());
         }
 
-        ttlib::cstr pattern = "All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||";
-        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Image"), cwd.wx_str(), wxEmptyString, pattern,
+        wxString pattern;
+        if (m_img_props.IsAnimationType())
+        {
+            pattern = "All files|*.*|Gif|*.gif|Ani|*.ani||";
+        }
+        else
+        {
+            pattern = "All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||";
+        }
+
+        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Image"), wxFileName::GetCwd(), wxEmptyString, pattern,
                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {
-            ttString path = dlg.GetPath();
-            path.make_relative(cwd);
-            SetValue(path);
+            ttString name(dlg.GetPath());
+            name.make_relative_wx(wxGetApp().GetProjectPath());
+            name.backslashestoforward();
+            SetValue(name);
             return true;
         }
         return false;
     }
     else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("Header"))
     {
-        ttlib::cwd cwd(true);
+        ttSaveCwd cwd;
         if (wxGetApp().GetProject()->HasValue(prop_converted_art))
         {
-            ttlib::ChangeDir(wxGetApp().GetProjectPtr()->prop_as_string(prop_converted_art));
-            cwd.assignCwd();
+            wxFileName::SetCwd(wxGetApp().GetConvertedArtDir());
+        }
+        else if (wxGetApp().GetProject()->HasValue(prop_original_art))
+        {
+            wxFileName::SetCwd(wxGetApp().GetOriginalArtDir());
         }
 
-        ttlib::cstr pattern = m_img_props.type.contains("XPM") ? "XPM File (*.xpm)|*.xpm" : "Header|*.h_img";
-        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Image"), cwd.wx_str(), wxEmptyString, pattern,
+        wxString pattern;
+        if (m_img_props.IsAnimationType())
+        {
+            pattern = "Header files (*.h_img)|*.h_img";
+        }
+        else
+        {
+            pattern = m_img_props.type.contains("XPM") ? "XPM files (*.xpm)|*.xpm" : "Header files (*.h_img)|*.h_img";
+        }
+
+        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Image"), wxFileName::GetCwd(), wxEmptyString, pattern,
                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {
-            ttString path = dlg.GetPath();
-            path.make_relative(cwd);
-            SetValue(path);
+            ttString name(dlg.GetPath());
+            name.make_relative_wx(wxGetApp().GetProjectPath());
+            name.backslashestoforward();
+            SetValue(name);
             return true;
         }
         return false;

@@ -111,16 +111,15 @@ void CustomPointProperty::InitValues(ttlib::cview value)
     }
     else
     {
-        // ttlib::multistr mstr(value, value.contains(",") ? ',' : ';');
-        ASSERT_MSG(!value.contains(";"), "Expected comma separator!");
-        ttlib::multistr mstr(value, ',');
-        for (auto& iter: mstr)
-        {
-            iter.BothTrim();
-        }
+        ttlib::multiview parts;
+        if (value.contains(";"))
+            parts.SetString(value, ';');
+        else
+            parts.SetString(value, ',');
 
-        m_point.x = mstr[0].atoi();
-        m_point.y = mstr[1].atoi();
+        // We don't need to trim, because ttlib::atoi() skips leading whitespace
+        m_point.x = ttlib::atoi(parts[0]);
+        m_point.y = ttlib::atoi(parts[1]);
         m_dialog_units = ttlib::contains(value, "d", tt::CASE::either);
     }
 }

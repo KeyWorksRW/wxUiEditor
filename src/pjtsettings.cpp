@@ -193,11 +193,15 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
             parts[IndexScale] << ',' << parts[IndexScale + 1];
         }
 
-        ttlib::multistr scale_parts(parts[IndexScale].c_str() + 1, ',');
+        ttlib::multiview scale_parts;
+        if (parts[IndexScale].contains(";"))
+            scale_parts.SetString(parts[IndexScale].c_str() + 1, ';');
+        else
+            scale_parts.SetString(parts[IndexScale].c_str() + 1, ',');
 
         wxSize scale_size;
-        scale_size.x = scale_parts[0].atoi();
-        scale_size.y = scale_parts[1].atoi();
+        scale_size.x = ttlib::atoi(scale_parts[0]);
+        scale_size.y = ttlib::atoi(scale_parts[1]);
 
         if (scale_size.x != -1 || scale_size.y != -1)
         {

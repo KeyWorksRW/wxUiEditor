@@ -44,15 +44,15 @@ void ImageProperties::InitValues(const char* value)
         }
         else
         {
-            ttlib::multistr scale(mstr[IndexScale], ',');
-            for (auto& iter: scale)
-            {
-                iter.BothTrim();
-            }
+            ttlib::multiview scale;
+            if (mstr[IndexScale].contains(";"))
+                scale.SetString(value, ';');
+            else
+                scale.SetString(value, ',');
 
-            m_size.x = scale[0].atoi();
+            m_size.x = ttlib::atoi(scale[0]);
             if (scale.size() > 1)
-                m_size.y = scale[1].atoi();
+                m_size.y = ttlib::atoi(scale[1]);
         }
     }
 }

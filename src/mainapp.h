@@ -50,6 +50,8 @@ public:
     const ttlib::cstr& getProjectPath();
     ttString GetProjectFileName();
     ttString GetProjectPath();
+    ttString GetOriginalArtDir();
+    ttString GetConvertedArtDir();
 
     wxImage GetImage(const ttlib::cstr& description);
 

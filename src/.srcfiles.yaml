@@ -40,7 +40,6 @@ Files:
     undo_stack.cpp        # Maintain an undo and redo stack
     xpm.cpp               # All xpm files
 
-    customprops/anim_string_prop.cpp  # Derived wxStringProperty class for handling animation files
     customprops/evt_string_prop.cpp   # Derived wxStringProperty class for event function
     customprops/img_string_prop.cpp   # Derived wxStringProperty class for handling wxImage files or art
     customprops/txt_string_prop.cpp   # Derived wxStringProperty class for single-line text

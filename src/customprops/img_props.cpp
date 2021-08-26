@@ -78,9 +78,9 @@ ttlib::cstr ImageProperties::CombineValues()
     return value;
 }
 
-ttlib::cstr ImageProperties::CombineScale()
+wxString ImageProperties::CombineScale()
 {
-    ttlib::cstr value;
+    wxString value;
     value << m_size.x << ',' << m_size.y;
     return value;
 }

@@ -30,12 +30,13 @@ public:
 
     void InitValues(const char* value);
     ttlib::cstr CombineValues();
-    ttlib::cstr CombineScale();
+    wxString CombineScale();
 
     void SetWidth(int width) { m_size.x = width; }
     void SetHeight(int height) { m_size.y = height; }
 
     void SetAnimationType() { m_isAnimationType = true; }
+    bool IsAnimationType() { return m_isAnimationType; }
 
 private:
     bool m_isAnimationType { false };

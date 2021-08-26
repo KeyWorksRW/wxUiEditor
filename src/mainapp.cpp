@@ -254,6 +254,16 @@ wxImage App::GetImage(const ttlib::cstr& description)
         return GetInternalImage("unknown");
 }
 
+ttString App::GetOriginalArtDir()
+{
+    return m_project->prop_as_string(prop_original_art).wx_str();
+}
+
+ttString App::GetConvertedArtDir()
+{
+    return m_project->prop_as_string(prop_converted_art).wx_str();
+}
+
 #if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
 
     #include <wx/stackwalk.h>

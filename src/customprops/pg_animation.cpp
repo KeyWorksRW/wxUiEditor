@@ -24,6 +24,7 @@ wxIMPLEMENT_ABSTRACT_CLASS(PropertyGrid_Animation, wxPGProperty);
 PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProperty* prop) : wxPGProperty(label, wxPG_LABEL)
 {
     m_img_props.node_property = prop;
+    m_img_props.SetAnimationType();
     m_value = prop->as_wxString();
     if (prop->HasValue())
     {
@@ -63,7 +64,7 @@ void PropertyGrid_Animation::RefreshChildren()
     if (m_old_type != m_img_props.type)
     {
         wxArrayString array_art_ids;
-        auto art_dir = wxGetApp().GetProject()->prop_as_string(prop_original_art);
+        auto art_dir = wxGetApp().GetOriginalArtDir();
         if (art_dir.empty())
             art_dir = "./";
         wxDir dir;
@@ -71,10 +72,10 @@ void PropertyGrid_Animation::RefreshChildren()
         dir.GetAllFiles(art_dir, &array_files, m_img_props.type == "Header" ? "*.h_img" : "*.gif", wxDIR_FILES);
         if (m_img_props.type == "Embed")
             dir.GetAllFiles(art_dir, &array_files, "*.ani");
-        for (size_t pos = 0; pos < array_files.size(); ++pos)
+        for (auto& iter: array_files)
         {
-            ttString* ptr = static_cast<ttString*>(&array_files[pos]);
-            array_art_ids.Add(ptr->filename());
+            wxFileName name(iter);
+            array_art_ids.Add(name.GetFullName());
         }
         Item(IndexImage)->SetAttribute(wxPG_ATTR_AUTOCOMPLETE, array_art_ids);
         m_old_type = m_img_props.type;
@@ -114,7 +115,15 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
 
         case IndexImage:
             {
-                img_props.image.assign_wx(childValue.GetString());
+                ttString name(childValue.GetString());
+                if (!name.file_exists())
+                {
+                    name = wxGetApp().GetOriginalArtDir();
+                    name.append_filename_wx(childValue.GetString());
+                }
+                name.make_relative_wx(wxGetApp().GetProjectPath());
+                name.backslashestoforward();
+                img_props.image.assign_wx(name);
             }
             break;
     }

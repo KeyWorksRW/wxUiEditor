@@ -127,56 +127,6 @@ bool isPropFlagSet(ttlib::cview flag, ttlib::cview currentValue)
     return false;
 }
 
-wxPoint ConvertToPoint(ttlib::cview value)
-{
-    wxPoint pt { -1, -1 };
-    if (value.size())
-    {
-        ttlib::multiview tokens(value, ',');
-        if (tokens.size())
-        {
-            if (tokens[0].size() && tokens[0].size())
-                pt.x = ttlib::atoi(tokens[0]);
-
-            if (tokens.size() > 1 && tokens[1].size())
-                pt.y = ttlib::atoi(tokens[1]);
-        }
-    }
-    return pt;
-}
-
-wxSize ConvertToSize(ttlib::cview value)
-{
-    wxSize size { -1, -1 };
-    if (value.size())
-    {
-        ttlib::multiview tokens(value, ',');
-        if (tokens.size())
-        {
-            if (tokens[0].size() && tokens[0].size())
-                size.x = ttlib::atoi(tokens[0]);
-
-            if (tokens.size() > 1 && tokens[1].size())
-                size.y = ttlib::atoi(tokens[1]);
-        }
-    }
-    return size;
-}
-
-ttlib::cstr ConvertPointToString(const wxPoint& point)
-{
-    ttlib::cstr str;
-    str << point.x << ',' << point.y;
-    return str;
-}
-
-ttlib::cstr ConvertSizeToString(const wxSize& size)
-{
-    ttlib::cstr str;
-    str << size.x << ',' << size.y;
-    return str;
-}
-
 int ConvertBitlistToInt(ttlib::cview list)
 {
     int result = 0;

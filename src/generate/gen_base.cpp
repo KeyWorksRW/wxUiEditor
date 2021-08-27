@@ -407,7 +407,10 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                     is_namespace_written = true;
                 }
                 m_source->writeLine();
-                m_source->writeLine(ttlib::cstr("inline const unsigned char ")
+                m_source->writeLine("#if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))");
+                m_source->writeLine("\t\tinline", false);
+                m_source->writeLine("#endif");
+                m_source->writeLine(ttlib::cstr("const unsigned char ")
                                     << iter_array->array_name << '[' << iter_array->array_size << "] {");
 
                 size_t pos = 0;

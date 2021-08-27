@@ -119,7 +119,7 @@ bool isPropFlagSet(ttlib::cview flag, ttlib::cview currentValue)
     ttlib::multiview mstr(currentValue, '|');
     for (auto& iter: mstr)
     {
-        if (iter == flag)
+        if (iter.is_sameas(flag))
         {
             return true;  // flag has already been added
         }

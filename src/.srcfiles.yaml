@@ -163,6 +163,7 @@ Files:
 
     ../ttLib/src/ttcstr.cpp             # Class for handling zero-terminated char strings.
     ../ttLib/src/ttcview.cpp            # string_view functionality on a zero-terminated char string.
+    ../ttLib/src/ttsview.cpp            # std::string_view with additional methods
     ../ttLib/src/ttmultistr.cpp         # Breaks a single string into multiple strings
     ../ttLib/src/ttparser.cpp           # Command line parser
     ../ttLib/src/ttstr.cpp              # Enhanced version of wxString

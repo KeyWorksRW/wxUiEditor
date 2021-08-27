@@ -71,11 +71,11 @@ wxPoint NodeProperty::as_point() const
         ttlib::multiview tokens(m_value, ',');
         if (tokens.size())
         {
-            if (tokens[0].size() && tokens[0].size())
-                result.x = ttlib::atoi(tokens[0]);
+            if (tokens[0].size())
+                result.x = tokens[0].atoi();
 
             if (tokens.size() > 1 && tokens[1].size())
-                result.y = ttlib::atoi(tokens[1]);
+                result.y = tokens[1].atoi();
         }
     }
     return result;
@@ -89,11 +89,11 @@ wxSize NodeProperty::as_size() const
         ttlib::multiview tokens(m_value, ',');
         if (tokens.size())
         {
-            if (tokens[0].size() && tokens[0].size())
-                result.x = ttlib::atoi(tokens[0]);
+            if (tokens[0].size())
+                result.x = tokens[0].atoi();
 
             if (tokens.size() > 1 && tokens[1].size())
-                result.y = ttlib::atoi(tokens[1]);
+                result.y = tokens[1].atoi();
         }
     }
     return result;

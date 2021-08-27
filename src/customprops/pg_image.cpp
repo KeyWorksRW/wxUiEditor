@@ -211,9 +211,10 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
 
         case IndexScale:
             {
-                ttlib::multiview mstr(childValue.GetString().utf8_string(), ',');
-                img_props.SetWidth(ttlib::atoi(mstr[0]));
-                img_props.SetHeight(ttlib::atoi(mstr[1]));
+                auto u8_value = childValue.GetString().utf8_string();
+                ttlib::multiview mstr(u8_value, ',');
+                img_props.SetWidth(mstr[0].atoi());
+                img_props.SetHeight(mstr[1].atoi());
             }
             break;
     }

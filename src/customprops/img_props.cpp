@@ -50,9 +50,9 @@ void ImageProperties::InitValues(const char* value)
             else
                 scale.SetString(value, ',');
 
-            m_size.x = ttlib::atoi(scale[0]);
+            m_size.x = scale[0].atoi();
             if (scale.size() > 1)
-                m_size.y = ttlib::atoi(scale[1]);
+                m_size.y = scale[1].atoi();
         }
     }
 }

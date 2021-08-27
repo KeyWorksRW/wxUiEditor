@@ -554,10 +554,20 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     wxSize scale_size { -1, -1 };
 
     // If a dimension was specified, then it will have been split out, so we need to combine them
-    if (parts.size() > IndexScale + 1)
+    if (parts.size() > IndexScale)
     {
-        scale_size.x = parts[IndexScale].atoi();
-        scale_size.y = parts[IndexScale + 1].atoi();
+        ttlib::multiview scale;
+        if (parts[IndexScale].contains(";"))
+            scale.SetString(parts[IndexScale], ';');
+        else
+            scale.SetString(parts[IndexScale], ',');
+
+        if (scale[0].front() == '[')
+            scale[0].remove_prefix(1);
+
+        scale_size.x = scale[0].atoi();
+        if (scale.size() > 1)
+            scale_size.y = scale[1].atoi();
     }
 
     if (parts[IndexType].contains("Art"))

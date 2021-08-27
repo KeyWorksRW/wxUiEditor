@@ -37,13 +37,9 @@ ttlib::cstr DoubleToStr(double val);
 
 bool isPropFlagSet(ttlib::cview flag, ttlib::cview currentValue);
 
-wxPoint ConvertToPoint(ttlib::cview value);
-wxSize ConvertToSize(ttlib::cview value);
 wxSystemColour ConvertToSystemColour(ttlib::cview value);
 int ConvertBitlistToInt(ttlib::cview list);
 
-ttlib::cstr ConvertPointToString(const wxPoint& point);
-ttlib::cstr ConvertSizeToString(const wxSize& size);
 ttlib::cstr ConvertColourToString(const wxColour& colour);
 ttlib::cstr ConvertSystemColourToString(long colour);
 const char* ConvertFontFamilyToString(wxFontFamily family);

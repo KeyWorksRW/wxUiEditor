@@ -436,6 +436,17 @@ void EmbedImage::OnConvert(wxCommandEvent& WXUNUSED(event))
     SetOutputBitmap();
 }
 
+// clang-format off
+
+inline constexpr const auto txt_ImgPrefix =
+R"===(#if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+    inline
+#else
+    static
+#endif)===";
+
+// clang-format on
+
 void EmbedImage::ImgageInHeaderOut()
 {
     ttString in_filename = m_fileOriginal->GetTextCtrlValue();
@@ -490,12 +501,10 @@ void EmbedImage::ImgageInHeaderOut()
     string_name.Replace(".", "_", true);
 
     ttlib::textfile file;
-    if (m_check_c17->GetValue())
-        file.addEmptyLine().Format("inline constexpr const unsigned char %s[%zu] = {", string_name.filename().c_str(),
-                                   read_stream->GetBufferSize());
-    else
-        file.addEmptyLine().Format("static const unsigned char %s[%zu] = {", string_name.filename().c_str(),
-                                   read_stream->GetBufferSize());
+    file.emplace_back(txt_ImgPrefix);
+
+    file.addEmptyLine().Format("const unsigned char %s[%zu] = {", string_name.filename().c_str(),
+                               read_stream->GetBufferSize());
 
     read_stream->Seek(0, wxFromStart);
 

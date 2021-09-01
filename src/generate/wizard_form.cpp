@@ -28,8 +28,8 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
 
     // By calling the default wxWizard() constructor, we don't need for the caller to pass in wxNullBitmap which will be
-    // ignored if a the bitmap property for the wizard has been set. Calling Create() instead gives us the opportunity to
-    // first load the image from a header file.
+    // ignored if the bitmap property for the wizard has been set. Calling Create() instead gives us the opportunity to
+    // first load the image.
 
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
     code << "(wxWindow* parent, wxWindowID id, const wxString& title,";

@@ -1100,7 +1100,38 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     {
         if (auto result = generator->GenConstruction(form_node); result)
         {
-            m_source->writeLine(result.value(), indent::none);
+            if (!form_node->isGen(gen_wxWizard) || !form_node->HasValue(prop_bitmap) || m_embedded_images.empty())
+            {
+                m_source->writeLine(result.value(), indent::none);
+            }
+            else
+            {
+                // Before the wizard code calls Create, we need to be certain any embedded image handler type got loaded
+                ttlib::multiview lines(result.value(), '\n');
+                for (auto& iter_line: lines)
+                {
+                    m_source->writeLine(iter_line, indent::none);
+                    if (iter_line.front() == '{')
+                    {
+                        for (auto& iter_img: m_embedded_images)
+                        {
+                            m_source->Indent();
+                            if (iter_img->type != wxBITMAP_TYPE_BMP &&
+                                m_type_generated.find(iter_img->type) == m_type_generated.end())
+                            {
+                                m_source->writeLine(ttlib::cstr("if (!wxImage::FindHandler(")
+                                                    << g_map_types[iter_img->type] << "))");
+                                m_source->Indent();
+                                m_source->writeLine(ttlib::cstr("\twxImage::AddHandler(new ")
+                                                    << g_map_handlers[iter_img->type] << ");");
+                                m_source->Unindent();
+                                m_type_generated.insert(iter_img->type);
+                            }
+                            m_source->Unindent();
+                        }
+                    }
+                }
+            }
         }
         m_source->Indent();
 
@@ -1290,8 +1321,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
         if (node->isGen(gen_PageCtrl) && node->GetChildCount())
         {
-            // type_page will have already constructed the code for the child. However, we still need to generate settings
-            // and process any grandchildren.
+            // type_page will have already constructed the code for the child. However, we still need to generate
+            // settings and process any grandchildren.
 
             auto page_child = node->GetChild(0);
             if (page_child)

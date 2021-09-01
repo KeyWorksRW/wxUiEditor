@@ -39,3 +39,10 @@ protected:
 
     virtual void OnBeforeChange(wxWizardEvent& event) { event.Skip(); }
 };
+
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char wiztest2_png[6797];
+}

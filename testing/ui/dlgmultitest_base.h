@@ -55,3 +55,16 @@ protected:
     wxStaticText* m_staticText_5;
     wxToggleButton* m_toggleBtn;
 };
+
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char normal_png[524];
+
+    extern const unsigned char focus_png[533];
+
+    extern const unsigned char disabled_png[453];
+
+    extern const unsigned char wiztest_png[1239];
+}

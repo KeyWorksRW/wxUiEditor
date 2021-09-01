@@ -20,11 +20,11 @@
 #include "../art/clr_hourglass_gif.hxx"
 #include "../art/empty.xpm"
 
-#include <wx/mstream.h>  // Memory stream classes
 #include <wx/animate.h>
+#include <wx/mstream.h>  // Memory stream classes
 
-// Convert a data header file into a wxAnimation
-static wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
+// Convert a data array into a wxAnimation
+inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxAnimation animation;
@@ -211,9 +211,7 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     wxBU_EXACTFIT);
     flex_grid_sizer->Add(m_toggleBtn, wxSizerFlags().Border(wxALL));
 
-    m_animation_ctrl = new wxAnimationCtrl(this, wxID_ANY,
-    GetAnimFromHdr(clr_hourglass_gif, sizeof(clr_hourglass_gif)), wxDefaultPosition, wxDefaultSize,
-    wxAC_DEFAULT_STYLE);
+    m_animation_ctrl = new wxAnimationCtrl(this, wxID_ANY, GetAnimFromHdr(clr_hourglass_gif, sizeof(clr_hourglass_gif)));
     m_animation_ctrl->SetInactiveBitmap(wxImage(empty_xpm));
     flex_grid_sizer->Add(m_animation_ctrl, wxSizerFlags().Border(wxALL));
 

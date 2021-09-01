@@ -38,13 +38,11 @@
 
 #include <wx/mstream.h>  // Memory stream classes
 
-// Convert a data header file into a wxImage
-static wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+// Convert a data array into a wxImage
+inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
-    if (!image.FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
     image.LoadFile(strm);
     return image;
 };

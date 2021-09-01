@@ -108,7 +108,7 @@ wxColour NodeProperty::as_color() const
     }
     else
     {
-        ttlib::multistr mstr(m_value, ',');
+        ttlib::multiview mstr(m_value, ',');
         unsigned long rgb = 0;
         if (mstr.size() > 2)
         {

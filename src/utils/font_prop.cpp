@@ -38,11 +38,11 @@ FontProperty::FontProperty(ttlib::cview font)
 void FontProperty::Convert(ttlib::cview font)
 {
     // face name, style, weight, point size, family, underlined, aliased, encoding
-    ttlib::multistr mstr(font, ',');
+    ttlib::multiview mstr(font, ',');
 
     if (mstr.size() > 0)
     {
-        m_face = mstr[0];
+        m_face = mstr[0].wx_str();
     }
 
     if (mstr.size() > 1)

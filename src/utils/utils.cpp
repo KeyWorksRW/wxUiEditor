@@ -40,7 +40,7 @@ ttlib::cstr ClearPropFlag(ttlib::cview flag, ttlib::cview currentValue)
         return result;
     }
 
-    ttlib::multistr mstr(currentValue, '|');
+    ttlib::multiview mstr(currentValue, '|');
     for (auto& iter: mstr)
     {
         if (iter != flag)
@@ -95,10 +95,10 @@ ttlib::cstr SetPropFlag(ttlib::cview flag, ttlib::cview currentValue)
         return result;
     }
 
-    ttlib::multistr mstr(currentValue, '|');
+    ttlib::multiview mstr(currentValue, '|');
     for (auto& iter: mstr)
     {
-        if (iter == flag)
+        if (iter.is_sameas(flag))
         {
             return result;  // flag has already been added
         }
@@ -256,7 +256,7 @@ wxColour ConvertToColour(ttlib::cview value)
     }
     else
     {
-        ttlib::multistr mstr(value, ',');
+        ttlib::multiview mstr(value, ',');
         unsigned long rgb = 0;
         if (mstr.size() > 2)
         {
@@ -455,4 +455,18 @@ wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop)
     {
         return node->prop_as_wxSize(prop);
     }
+}
+
+void GetScaleInfo(wxSize& size, ttlib::sview description)
+{
+    ttlib::multiview scale;
+    if (description.contains(";"))
+        scale.SetString(description, ';', tt::TRIM::left);
+    else
+        scale.SetString(description, ',');
+
+    size_t start = scale[0].front() == '[' ? 1 : 0;
+    size.x = scale[0].atoi(start);
+    if (scale.size() > 1)
+        size.y = scale[1].atoi();
 }

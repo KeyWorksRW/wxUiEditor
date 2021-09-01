@@ -18,7 +18,7 @@
 
 #include "node_creator.h"  // NodeCreator class
 
-void WriteCode::WriteCodeLine(ttlib::cview code, size_t indentation)
+void WriteCode::WriteCodeLine(ttlib::sview code, size_t indentation)
 {
     if (indentation == indent::auto_no_whitespace)
     {
@@ -80,7 +80,7 @@ void WriteCode::writeLine(std::string& code, size_t indentation)
     }
     if (ttlib::is_found(code.find('\n')))
     {
-        ttlib::multistr lines(code, '\n');
+        ttlib::multiview lines(code, '\n');
         for (auto& iter: lines)
         {
             WriteCodeLine(iter, indentation);
@@ -88,14 +88,11 @@ void WriteCode::writeLine(std::string& code, size_t indentation)
     }
     else
     {
-        code.erase(std::find_if(code.rbegin(), code.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(),
-                   code.end());
-
         WriteCodeLine(code, indentation);
     }
 }
 
-void WriteCode::writeLine(ttlib::cview code, bool auto_indent)
+void WriteCode::writeLine(ttlib::sview code, bool auto_indent)
 {
     if (code.empty())
     {
@@ -104,7 +101,7 @@ void WriteCode::writeLine(ttlib::cview code, bool auto_indent)
     }
     if (ttlib::is_found(code.find('\n')))
     {
-        ttlib::multistr lines(code, '\n');
+        ttlib::multiview lines(code, '\n');
         for (auto& iter: lines)
         {
             WriteCodeLine(iter, auto_indent);
@@ -125,7 +122,7 @@ void WriteCode::writeLine()
     m_IsLastLineBlank = true;
 }
 
-void WriteCode::write(ttlib::cview code, bool auto_indent)
+void WriteCode::write(ttlib::sview code, bool auto_indent)
 {
     // Early abort to not produce lines with trailing whitespace
     if (code.empty())
@@ -184,9 +181,9 @@ void PanelCodeWriter::Clear()
     m_Scintilla->ClearAll();
 }
 
-void PanelCodeWriter::doWrite(ttlib::cview code)
+void PanelCodeWriter::doWrite(ttlib::sview code)
 {
-    m_Scintilla->AddTextRaw(code);
+    m_Scintilla->AddTextRaw(code.data(), static_cast<int>(code.length()));
 }
 
 //////////////////////////////////////////// FileCodeWriter class /////////////////////////////////////////////

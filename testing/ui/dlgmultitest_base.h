@@ -65,6 +65,4 @@ namespace wxue_img
     extern const unsigned char focus_png[533];
 
     extern const unsigned char disabled_png[453];
-
-    extern const unsigned char wiztest_png[1239];
 }

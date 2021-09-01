@@ -89,7 +89,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
 
     if (node->HasValue(prop_animation))
     {
-        ttlib::multistr parts(node->prop_as_string(prop_animation), ';');
+        ttlib::multiview parts(node->prop_as_string(prop_animation), ';');
         ttlib::cstr name(parts[IndexImage].filename());
         name.remove_extension();
         name.LeftTrim();

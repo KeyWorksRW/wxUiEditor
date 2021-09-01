@@ -16,11 +16,7 @@
 
 void ImageProperties::InitValues(const char* value)
 {
-    ttlib::multistr mstr(value, ';');
-    for (auto& iter: mstr)
-    {
-        iter.BothTrim();
-    }
+    ttlib::multiview mstr(value, ';', tt::TRIM::both);
 
     if (mstr.size() > IndexType)
         type = mstr[IndexType];
@@ -30,30 +26,7 @@ void ImageProperties::InitValues(const char* value)
 
     if (mstr.size() > IndexImage + 1)
     {
-        if (mstr[IndexScale][0] == '[')
-        {
-            m_size.x = atoi(mstr[IndexScale].c_str() + 1);
-            if (auto pos_comma = mstr[IndexScale].find(','); ttlib::is_found(pos_comma))
-            {
-                m_size.y = atoi(mstr[IndexScale].c_str() + pos_comma + 1);
-            }
-            else
-            {
-                m_size.y = atoi(mstr[IndexScale + 1]);
-            }
-        }
-        else
-        {
-            ttlib::multiview scale;
-            if (mstr[IndexScale].contains(";"))
-                scale.SetString(value, ';');
-            else
-                scale.SetString(value, ',');
-
-            m_size.x = scale[0].atoi();
-            if (scale.size() > 1)
-                m_size.y = scale[1].atoi();
-        }
+        GetScaleInfo(m_size, mstr[IndexScale]);
     }
 }
 

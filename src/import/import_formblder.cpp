@@ -711,7 +711,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     else if (prop_name.is_sameas("style") && class_name.is_sameas("wxCheckBox"))
     {
         // wxCHK_2STATE and wxCHK_3STATE are part of the type property instead of style
-        ttlib::multistr styles(xml_prop.text().as_string());
+        ttlib::multiview styles(xml_prop.text().as_string());
         ttlib::cstr new_style;
         for (auto& iter: styles)
         {
@@ -755,8 +755,7 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     }
     else if (prop_name.is_sameas("subclass"))
     {
-        ttlib::multistr parts(xml_prop.text().as_string());
-        parts[0].BothTrim();
+        ttlib::multistr parts(xml_prop.text().as_string(), ';', tt::TRIM::both);
         if (parts[0].empty())
             return;
         if (auto prop = newobject->get_prop_ptr(prop_derived_class); prop)
@@ -764,7 +763,6 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
             prop->set_value(parts[0]);
             if (parts.size() > 0 && !parts[1].contains("forward_declare"))
             {
-                parts[1].BothTrim();
                 prop = newobject->get_prop_ptr(prop_derived_header);
                 if (prop)
                 {

@@ -50,7 +50,7 @@ public:
     wxAnimation GetPropertyAnimation(const ttlib::cstr& description);
 
     bool AddEmbeddedImage(ttlib::cstr path, Node* form);
-    const EmbededImage* GetEmbeddedImage(ttlib::cstr path);
+    const EmbededImage* GetEmbeddedImage(ttlib::sview path);
 
     // This will launch a thread to start collecting all the embedded images in the project
     void ParseEmbeddedImages();
@@ -70,7 +70,7 @@ private:
 
     std::thread* m_collect_thread { nullptr };
 
-    std::map<std::string, std::unique_ptr<EmbededImage>> m_map_embedded;
+    std::map<std::string, std::unique_ptr<EmbededImage>, std::less<>> m_map_embedded;
 
     bool m_is_terminating { false };
 };

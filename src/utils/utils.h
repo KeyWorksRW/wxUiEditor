@@ -9,7 +9,8 @@
 
 #include <wx/settings.h>
 
-#include "ttcstr.h"  // ttlib::cstr -- std::string with additional methods
+#include "ttcstr.h"   // ttlib::cstr -- std::string with additional methods
+#include "ttsview.h"  // sview -- std::string_view with additional methods
 
 #include "gen_enums.h"  // Enumerations for generators
 
@@ -73,3 +74,6 @@ wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);
 
 // If the property specifies dialog units, then parent will be used to do the conversion
 wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
+
+// Convert the parts[IndexScale] or equivalent string into wxSize dimensions
+void GetScaleInfo(wxSize& size, ttlib::sview description);

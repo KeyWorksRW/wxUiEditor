@@ -20,6 +20,7 @@
 
 #include "ttcview.h"     // cview -- string_view functionality on a zero-terminated char string.
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+#include "ttsview.h"     // sview -- std::string_view with additional methods
 
 #include "pjtsettings.h"  // ProjectSettings
 
@@ -92,11 +93,7 @@ ttlib::cstr& ProjectSettings::setProjectPath(const ttlib::cstr& file, bool remov
 
 wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled)
 {
-    ttlib::multistr parts(description, BMP_PROP_SEPARATOR);
-    for (auto& iter: parts)
-    {
-        iter.BothTrim();
-    }
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexImage].empty())
     {
@@ -105,7 +102,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
     wxImage image;
 
-    auto path = parts[IndexImage];
+    ttlib::cstr path = parts[IndexImage];
 
     auto result = m_images.find(path);
     if (result != m_images.end())
@@ -114,16 +111,15 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     }
     else if (parts[IndexType].contains("Art"))
     {
-        if (auto pos = parts[IndexArtID].find('|'); ttlib::is_found(pos))
+        if (parts[IndexArtID].contains("|"))
         {
-            ttlib::cstr client = parts[IndexArtID].subview(pos + 1);
-            parts[IndexArtID].erase(pos);
-            image = wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR(client)).ConvertToImage();
+            ttlib::multistr id_client(parts[IndexArtID], '|');
+            image = wxArtProvider::GetBitmap(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1])).ConvertToImage();
         }
         else
         {
-            image =
-                wxArtProvider::GetBitmap(parts[IndexArtID], wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER")).ConvertToImage();
+            image = wxArtProvider::GetBitmap(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
+                        .ConvertToImage();
         }
     }
     else if (parts[IndexType].contains("Embed"))
@@ -187,21 +183,16 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     // Scale if needed
     if (want_scaled && parts.size() > IndexScale)
     {
+        wxSize scale_size;
         // If a dimension was specified, then it will have been split out, so we need to combine them
         if (parts.size() > IndexScale + 1)
         {
-            parts[IndexScale] << ',' << parts[IndexScale + 1];
+            GetScaleInfo(scale_size, ttlib::cstr(parts[IndexScale]) << ',' << parts[IndexScale + 1]);
         }
-
-        ttlib::multiview scale_parts;
-        if (parts[IndexScale].contains(";"))
-            scale_parts.SetString(parts[IndexScale].c_str() + 1, ';');
         else
-            scale_parts.SetString(parts[IndexScale].c_str() + 1, ',');
-
-        wxSize scale_size;
-        scale_size.x = ttlib::atoi(scale_parts[0]);
-        scale_size.y = ttlib::atoi(scale_parts[1]);
+        {
+            GetScaleInfo(scale_size, parts[IndexScale]);
+        }
 
         if (scale_size.x != -1 || scale_size.y != -1)
         {
@@ -227,11 +218,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
 wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description)
 {
-    ttlib::multistr parts(description, BMP_PROP_SEPARATOR);
-    for (auto& iter: parts)
-    {
-        iter.BothTrim();
-    }
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     wxAnimation image;
 
@@ -240,7 +227,7 @@ wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description
         return GetAnimFromHdr(wxue_img::pulsing_unknown_gif, sizeof(wxue_img::pulsing_unknown_gif));
     }
 
-    auto path = parts[IndexImage];
+    ttlib::cstr path = parts[IndexImage];
     if (!path.file_exists())
     {
         path = wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art);
@@ -367,11 +354,11 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
     return false;
 }
 
-const EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::cstr path)
+const EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
 {
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
 
-    if (auto result = m_map_embedded.find(path.filename().c_str()); result != m_map_embedded.end())
+    if (auto result = m_map_embedded.find(path.filename()); result != m_map_embedded.end())
     {
         std::unique_lock<std::mutex> retrieve_lock(m_mutex_embed_retrieve);
         return result->second.get();
@@ -437,17 +424,12 @@ void ProjectSettings::CollectNodeImages(Node* node, Node* form)
             {
                 if (m_is_terminating)
                     return;
-                ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
-                for (auto& iter_parts: parts)
-                {
-                    iter_parts.BothTrim();
-                }
 
+                ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts[IndexImage].size())
                 {
                     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
-                    if (auto result = m_map_embedded.find(parts[IndexImage].filename().c_str());
-                        result == m_map_embedded.end())
+                    if (auto result = m_map_embedded.find(parts[IndexImage].filename()); result == m_map_embedded.end())
                     {
                         if (m_is_terminating)
                             return;

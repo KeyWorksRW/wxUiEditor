@@ -35,13 +35,13 @@ public:
     void writeLine(std::string& lines, size_t indentation = indent::auto_no_whitespace);
 
     // This will NOT right trim a single line
-    void writeLine(ttlib::cview, bool auto_indent = true);
+    void writeLine(ttlib::sview, bool auto_indent = true);
 
     // Write an empty line (unless the previous line was also empty)
     void writeLine();
 
     // Write the code without adding a trailing \n.
-    void write(ttlib::cview code, bool auto_indent = true);
+    void write(ttlib::sview code, bool auto_indent = true);
 
     // Call this to prevent any further blank lines from being written until the next non-blank line is
     // written
@@ -51,9 +51,9 @@ public:
 
 protected:
     // Derived class provides this to write text to whatever output device is being used
-    virtual void doWrite(ttlib::cview code) = 0;
+    virtual void doWrite(ttlib::sview code) = 0;
 
-    void WriteCodeLine(ttlib::cview code, size_t indentation);
+    void WriteCodeLine(ttlib::sview code, size_t indentation);
 
 private:
     int m_indent { 0 };
@@ -71,7 +71,7 @@ public:
     void Clear() override;
 
 protected:
-    void doWrite(ttlib::cview code) override;
+    void doWrite(ttlib::sview code) override;
 
 private:
     wxStyledTextCtrl* m_Scintilla;
@@ -89,7 +89,7 @@ public:
     int WriteFile(bool test_only = false);
 
 protected:
-    void doWrite(ttlib::cview code) override { m_buffer << code; };
+    void doWrite(ttlib::sview code) override { m_buffer << code; };
 
     ttlib::cstr m_buffer;
 

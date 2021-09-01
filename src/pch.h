@@ -85,6 +85,7 @@
 #include "ttcstr.h"   // ttlib::cstr -- std::string with additional functions
 #include "ttcview.h"  // ttlib::cview -- string_view functionality on a zero-terminated char string.
 #include "ttstr.h"    // ttString -- wxString with ttlib::cstr equivalent functions
+#include "ttsview.h"  // sview -- std::string_view with additional methods
 
 #if !defined(int_t)
 

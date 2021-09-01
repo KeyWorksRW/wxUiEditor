@@ -227,11 +227,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                     {
                         // Old style conversion -- remove once we're certain all projects have been updated
 
-                        ttlib::multistr parts(iter.value(), BMP_PROP_SEPARATOR);
-                        for (auto& iter_parts: parts)
-                        {
-                            iter_parts.BothTrim();
-                        }
+                        ttlib::multiview parts(iter.value(), BMP_PROP_SEPARATOR, tt::TRIM::both);
 
                         ttlib::cstr bitmap(parts[IndexType]);
                         bitmap << "; " << parts[IndexImage];

@@ -102,6 +102,9 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
     // Make a copy of the string so that we can tweak it
     if (auto namespace_prop = project->prop_as_string(prop_name_space); namespace_prop.size())
     {
+        // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
+        // as a forwarded class.
+
         // ttlib::multistr works with a single char, not a string.
         namespace_prop.Replace("::", ":");
         // we also accept using semi-colons to separate the namespaces
@@ -152,7 +155,8 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         m_header->writeLine("public:");
         m_header->Indent();
 
-        m_header->writeLine(ttlib::cstr() << derived_name << "();  // If you use this constructor, you must call Create(parent)");
+        m_header->writeLine(ttlib::cstr() << derived_name
+                                          << "();  // If you use this constructor, you must call Create(parent)");
         m_header->writeLine(ttlib::cstr() << derived_name << "(wxWindow* parent);");
 
         m_header->Unindent();

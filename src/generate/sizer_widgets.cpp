@@ -549,7 +549,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
 
     if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
     {
-        ttlib::multistr values(growable, ',');
+        ttlib::multiview values(growable, ',');
         for (auto& iter: values)
         {
             if (!isExpanded)
@@ -561,7 +561,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
             int proportion = 0;
             if (auto pos = iter.find(':'); ttlib::is_found(pos))
             {
-                proportion = ttlib::atoi(ttlib::find_nonspace(iter.c_str() + pos + 1));
+                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
             }
             code << "\n\t    " << node->get_node_name() << "->AddGrowableCol(" << val;
             if (proportion > 0)
@@ -572,7 +572,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
 
     if (auto& growable = node->prop_as_string(prop_growablerows); growable.size())
     {
-        ttlib::multistr values(growable, ',');
+        ttlib::multiview values(growable, ',');
         for (auto& iter: values)
         {
             if (!isExpanded)
@@ -584,7 +584,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
             int proportion = 0;
             if (auto pos = iter.find(':'); ttlib::is_found(pos))
             {
-                proportion = ttlib::atoi(ttlib::find_nonspace(iter.c_str() + pos + 1));
+                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
             }
             code << "\n\t    " << node->get_node_name() << "->AddGrowableRow(" << val;
             if (proportion > 0)
@@ -768,7 +768,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
 
     if (auto& growable = node->prop_as_string(prop_growablerows); growable.size())
     {
-        ttlib::multistr values(growable, ',');
+        ttlib::multiview values(growable, ',');
         for (auto& iter: values)
         {
             if (!isExpanded)
@@ -780,7 +780,7 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
             int proportion = 0;
             if (auto pos = iter.find(':'); ttlib::is_found(pos))
             {
-                proportion = ttlib::atoi(ttlib::find_nonspace(iter.c_str() + pos + 1));
+                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
             }
             code << "\n\t    " << node->get_node_name() << "->AddGrowableRow(" << val;
             if (proportion > 0)

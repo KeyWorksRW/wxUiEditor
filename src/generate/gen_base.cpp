@@ -312,6 +312,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     ttlib::multistr names;
     if (namespace_prop.size())
     {
+        // BUGBUG: [KeyWorks - 09-01-2021] ttlib::multistr works fine with a string as the separator. So does
+        // ttlib::multiview which is what we should be using here.
+
         // ttlib::multistr works with a single char, not a string.
         namespace_prop.Replace("::", ":");
         // we also accept using semi-colons to separate the namespaces
@@ -1460,11 +1463,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 
             if (value.is_sameprefix("Embed"))
             {
-                ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
-                for (auto& iter_parts: parts)
-                {
-                    iter_parts.BothTrim();
-                }
+                ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
                 if (parts[IndexImage].size())
                 {
@@ -1532,11 +1531,9 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         {
             if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
             {
-                ttlib::multistr parts(iter.as_string(), BMP_PROP_SEPARATOR);
+                ttlib::multiview parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts.size() < IndexImage + 1)
                     continue;
-                parts[IndexType].BothTrim();
-                parts[IndexImage].BothTrim();
 
                 if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header"))
                 {

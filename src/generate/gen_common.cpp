@@ -438,6 +438,7 @@ int GetStyleInt(Node* node)
     GenStyle(node, styles);
 
     int result = 0;
+    // GetConstantAsInt() searches an unordered_map, so we need a std::string to pass to it
     ttlib::multistr mstr(styles, '|');
     for (auto& iter: mstr)
     {
@@ -539,11 +540,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         return code;
     }
 
-    ttlib::multistr parts(description, BMP_PROP_SEPARATOR);
-    for (auto& iter: parts)
-    {
-        iter.BothTrim();
-    }
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
     if (parts[IndexImage].empty())
     {
@@ -556,18 +553,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     // If a dimension was specified, then it will have been split out, so we need to combine them
     if (parts.size() > IndexScale)
     {
-        ttlib::multiview scale;
-        if (parts[IndexScale].contains(";"))
-            scale.SetString(parts[IndexScale], ';');
-        else
-            scale.SetString(parts[IndexScale], ',');
-
-        if (scale[0].front() == '[')
-            scale[0].remove_prefix(1);
-
-        scale_size.x = scale[0].atoi();
-        if (scale.size() > 1)
-            scale_size.y = scale[1].atoi();
+        GetScaleInfo(scale_size, parts[IndexScale]);
     }
 
     if (parts[IndexType].contains("Art"))

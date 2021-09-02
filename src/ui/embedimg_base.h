@@ -41,7 +41,6 @@ protected:
     wxCheckBox* m_ConvertAlphaChannel;
     wxCheckBox* m_ForceHdrMask;
     wxCheckBox* m_ForceXpmMask;
-    wxCheckBox* m_check_c17;
     wxCheckBox* m_check_make_png;
     wxChoicebook* m_choicebook;
     wxComboBox* m_comboHdrMask;
@@ -62,7 +61,6 @@ protected:
 
     // Virtual event handlers -- override them in your derived class
 
-    virtual void OnC17Encoding(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckPngConversion(wxCommandEvent& event) { event.Skip(); }
     virtual void OnComboHdrMask(wxCommandEvent& event) { event.Skip(); }
     virtual void OnComboXpmMask(wxCommandEvent& event) { event.Skip(); }

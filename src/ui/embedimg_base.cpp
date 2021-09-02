@@ -84,10 +84,6 @@ bool EmbedImageBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     m_check_make_png->SetToolTip(wxString::FromUTF8("If checked, image will be converted to PNG before being saved."));
     box_sizer_2->Add(m_check_make_png, wxSizerFlags().Border(wxALL));
 
-    m_check_c17 = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("C++1&7 &encoding"));
-    m_check_c17->SetToolTip(wxString::FromUTF8("If checked, this will prefix the array with \"inline constexpr\" instead of \"static\"."));
-    box_sizer_2->Add(m_check_c17, wxSizerFlags().Border(wxALL));
-
     m_ForceHdrMask = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Force Mask"));
     m_ForceHdrMask->SetToolTip(wxString::FromUTF8("Check this to override any mask specified in the original image file."));
     box_sizer_2->Add(m_ForceHdrMask, wxSizerFlags().Border(wxALL));
@@ -203,7 +199,6 @@ bool EmbedImageBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     m_fileOutput->Bind(wxEVT_FILEPICKER_CHANGED, &EmbedImageBase::OnOutputChange, this);
     m_choicebook->Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, &EmbedImageBase::OnPageChanged, this);
     m_check_make_png->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnCheckPngConversion, this);
-    m_check_c17->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnC17Encoding, this);
     m_ForceHdrMask->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnForceHdrMask, this);
     m_comboHdrMask->Bind(wxEVT_COMBOBOX, &EmbedImageBase::OnComboHdrMask, this);
     m_ConvertAlphaChannel->Bind(wxEVT_CHECKBOX, &EmbedImageBase::OnConvertAlpha, this);

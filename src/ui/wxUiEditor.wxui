@@ -326,12 +326,6 @@
                       wxEVT_CHECKBOX="OnCheckPngConversion" />
                     <node
                       class="wxCheckBox"
-                      label="C++1&amp;7 &amp;encoding"
-                      var_name="m_check_c17"
-                      tooltip="If checked, this will prefix the array with &quot;inline constexpr&quot; instead of &quot;static&quot;."
-                      wxEVT_CHECKBOX="OnC17Encoding" />
-                    <node
-                      class="wxCheckBox"
                       label="&amp;Force Mask"
                       var_name="m_ForceHdrMask"
                       tooltip="Check this to override any mask specified in the original image file."

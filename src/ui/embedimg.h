@@ -27,7 +27,6 @@ protected:
 
     // Handlers for EmbedImageBase events.
 
-    void OnC17Encoding(wxCommandEvent& event) override;
     void OnCheckPngConversion(wxCommandEvent& event) override;
     void OnConvert(wxCommandEvent& event) override;
     void OnConvertAlpha(wxCommandEvent& event) override;

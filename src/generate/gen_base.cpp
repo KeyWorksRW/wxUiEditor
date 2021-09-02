@@ -120,6 +120,12 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
     std::thread thrd_need_img_func(&BaseCodeGenerator::ParseImageProperties, this, form_node);
 
+    // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
+    if (panel_type != NOT_PANEL)
+    {
+        wxGetApp().GetProjectSettings()->UpdateEmbedNodes();
+    }
+
     m_panel_type = panel_type;
 
     m_header->Clear();
@@ -1498,7 +1504,6 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                     m_embedded_images.emplace_back(embed);
                 }
             }
-            // else if (iter.type() == type_image)
             else if (value.is_sameprefix("Header") || value.is_sameprefix("XPM"))
             {
                 ttlib::multiview parts(value);

@@ -405,6 +405,7 @@ void MainFrame::OnImportProject(wxCommandEvent&)
 
 void MainFrame::OnGenerateCode(wxCommandEvent&)
 {
+    wxGetApp().GetProjectSettings()->UpdateEmbedNodes();
     GenerateCodeFiles(this);
     m_isProject_generated = true;
 

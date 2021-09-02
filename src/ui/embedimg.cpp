@@ -162,7 +162,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     m_orginal_size = 0;
 
     bool isImageLoaded { false };
-    if (file.has_extension(".h_img"))
+    if (file.has_extension(".h_img") || file.has_extension(".h"))
     {
         {
             wxBusyCursor wait;
@@ -173,8 +173,8 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         {
             isImageLoaded = true;
 
-            // Note that we allow header to header conversion. That makes converting wxFormBuilder headers, and the options
-            // png conversion and c++17.
+            // Note that we allow header to header conversion. That makes converting wxFormBuilder headers, and changing
+            // conversion options.
         }
         else
         {
@@ -976,14 +976,6 @@ void EmbedImage::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
     {
         EnableConvertButton();
         AdjustOutputFilename();
-    }
-}
-
-void EmbedImage::OnC17Encoding(wxCommandEvent& WXUNUSED(event))
-{
-    if (IsHeaderPage())
-    {
-        EnableConvertButton();
     }
 }
 

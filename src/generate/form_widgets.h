@@ -37,7 +37,7 @@ class PanelFormGenerator : public BaseGenerator
 {
 public:
     // Return true if all construction and settings code was written to src_code
-    bool GenConstruction(Node*, WriteCode* src_code) override;
+    bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
 
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -49,7 +49,7 @@ class DialogFormGenerator : public BaseGenerator
 {
 public:
     // Return true if all construction and settings code was written to src_code
-    bool GenConstruction(Node*, WriteCode* src_code) override;
+    bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
 
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;

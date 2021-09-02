@@ -7,6 +7,7 @@
 
 #include "pch.h"
 
+#include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
@@ -16,15 +17,18 @@
 
 //////////////////////////////////////////  DialogFormGenerator  //////////////////////////////////////////
 
-bool DialogFormGenerator::GenConstruction(Node* node, WriteCode* src_code)
+bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen)
 {
+    auto src_code = code_gen->GetSrcWriter();
+
     ttlib::cstr code;
 
-    code
-        << "bool " << node->prop_as_string(prop_class_name)
-        << "::Create(wxWindow *parent, wxWindowID id, const wxString &title,\n\t\tconst wxPoint&pos, const wxSize& size, long "
-           "style, const wxString &name)\n{\n\tif (!wxDialog::Create(parent, id, title, pos, size, style, name))\n\t\treturn "
-           "false;\n\n";
+    code << "bool " << node->prop_as_string(prop_class_name)
+         << "::Create(wxWindow *parent, wxWindowID id, const wxString &title,\n\t\tconst wxPoint&pos, const wxSize& size, "
+            "long "
+            "style, const wxString &name)\n{\n\tif (!wxDialog::Create(parent, id, title, pos, size, style, "
+            "name))\n\t\treturn "
+            "false;\n\n";
 
     src_code->writeLine(code, indent::none);
     src_code->Indent();
@@ -39,6 +43,8 @@ bool DialogFormGenerator::GenConstruction(Node* node, WriteCode* src_code)
 
     if (node->HasValue(prop_icon))
     {
+        code_gen->GenerateHandlers();
+
         auto image_code = GenerateBitmapCode(node->prop_as_string(prop_icon));
         if (!image_code.contains(".Scale") && image_code.is_sameprefix("wxImage("))
         {
@@ -367,8 +373,10 @@ bool PopupWinGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 //////////////////////////////////////////  PanelFormGenerator  //////////////////////////////////////////
 
-bool PanelFormGenerator::GenConstruction(Node* node, WriteCode* src_code)
+bool PanelFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen)
 {
+    auto src_code = code_gen->GetSrcWriter();
+
     ttlib::cstr code;
     code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
 

@@ -69,6 +69,9 @@ public:
     // Returns result::fail, result::exists, result::created, or result::ignored
     int GenerateDerivedClass(Node* project, Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
 
+    auto GetHeaderWriter() { return m_header; }
+    auto GetSrcWriter() { return m_source; }
+
     // Write code to m_source that will load any handlers needed by the form's class
     void GenerateHandlers();
 

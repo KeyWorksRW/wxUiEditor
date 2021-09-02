@@ -1096,7 +1096,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
 
-    if (!generator->GenConstruction(form_node, m_source))
+    if (!generator->GenConstruction(form_node, this))
     {
         if (auto result = generator->GenConstruction(form_node); result)
         {

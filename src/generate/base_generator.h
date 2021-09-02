@@ -18,6 +18,7 @@ class MockupParent;
 class wxWindow;
 class wxMouseEvent;
 class WriteCode;
+class BaseCodeGenerator;
 
 namespace pugi
 {
@@ -58,7 +59,7 @@ public:
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
 
     // Return true if all construction and settings code was written to src_code
-    virtual bool GenConstruction(Node*, WriteCode* /* src_code */) { return false; }
+    virtual bool GenConstruction(Node*, BaseCodeGenerator* /* code_gen */) { return false; }
 
     // Generate specific additional code
     virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }

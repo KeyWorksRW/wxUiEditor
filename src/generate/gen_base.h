@@ -58,6 +58,7 @@ class BaseCodeGenerator
 public:
     BaseCodeGenerator();
 
+
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
@@ -67,6 +68,9 @@ public:
 
     // Returns result::fail, result::exists, result::created, or result::ignored
     int GenerateDerivedClass(Node* project, Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
+
+    // Write code to m_source that will load any handlers needed by the form's class
+    void GenerateHandlers();
 
 protected:
     void GenCtxConstruction(Node* node);

@@ -1096,7 +1096,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
 
-    if (!generator->GenConstruction(form_node, m_source))
+    if (!generator->GenConstruction(form_node, this))
     {
         if (auto result = generator->GenConstruction(form_node); result)
         {
@@ -1113,22 +1113,9 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
                     m_source->writeLine(iter_line, indent::none);
                     if (iter_line.front() == '{')
                     {
-                        for (auto& iter_img: m_embedded_images)
-                        {
-                            m_source->Indent();
-                            if (iter_img->type != wxBITMAP_TYPE_BMP &&
-                                m_type_generated.find(iter_img->type) == m_type_generated.end())
-                            {
-                                m_source->writeLine(ttlib::cstr("if (!wxImage::FindHandler(")
-                                                    << g_map_types[iter_img->type] << "))");
-                                m_source->Indent();
-                                m_source->writeLine(ttlib::cstr("\twxImage::AddHandler(new ")
-                                                    << g_map_handlers[iter_img->type] << ");");
-                                m_source->Unindent();
-                                m_type_generated.insert(iter_img->type);
-                            }
-                            m_source->Unindent();
-                        }
+                        m_source->Indent();
+                        GenerateHandlers();
+                        m_source->Unindent();
                     }
                 }
             }
@@ -1150,21 +1137,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         m_source->Indent();
     }
 
-    if (m_embedded_images.size())
-    {
-        for (auto& iter_img: m_embedded_images)
-        {
-            if (iter_img->type != wxBITMAP_TYPE_BMP && m_type_generated.find(iter_img->type) == m_type_generated.end())
-            {
-                m_source->writeLine(ttlib::cstr("if (!wxImage::FindHandler(") << g_map_types[iter_img->type] << "))");
-                m_source->Indent();
-                m_source->writeLine(ttlib::cstr("\twxImage::AddHandler(new ") << g_map_handlers[iter_img->type] << ");");
-                m_source->Unindent();
-                m_type_generated.insert(iter_img->type);
-            }
-        }
-        m_source->writeLine();
-    }
+    GenerateHandlers();
 
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
@@ -1696,5 +1669,24 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
             }
             m_source->writeLine();
         }
+    }
+}
+
+void BaseCodeGenerator::GenerateHandlers()
+{
+    if (m_embedded_images.size())
+    {
+        for (auto& iter_img: m_embedded_images)
+        {
+            if (iter_img->type != wxBITMAP_TYPE_BMP && m_type_generated.find(iter_img->type) == m_type_generated.end())
+            {
+                m_source->writeLine(ttlib::cstr("if (!wxImage::FindHandler(") << g_map_types[iter_img->type] << "))");
+                m_source->Indent();
+                m_source->writeLine(ttlib::cstr("\twxImage::AddHandler(new ") << g_map_handlers[iter_img->type] << ");");
+                m_source->Unindent();
+                m_type_generated.insert(iter_img->type);
+            }
+        }
+        m_source->writeLine();
     }
 }

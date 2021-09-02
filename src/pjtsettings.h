@@ -30,6 +30,12 @@ public:
     ProjectSettings();
     ~ProjectSettings();
 
+    // This will parse the entire project, and ensure that each embedded image is associated
+    // with the form node of the form it first appears in.
+    //
+    // Returns true if an associated node changed
+    bool UpdateEmbedNodes();
+
     ttlib::cstr& getProjectFile() { return m_projectFile; }
     ttString GetProjectFile() { return ttString() << m_projectFile.wx_str(); }
 
@@ -50,12 +56,13 @@ public:
     wxAnimation GetPropertyAnimation(const ttlib::cstr& description);
 
     bool AddEmbeddedImage(ttlib::cstr path, Node* form);
-    const EmbededImage* GetEmbeddedImage(ttlib::sview path);
+    EmbededImage* GetEmbeddedImage(ttlib::sview path);
 
     // This will launch a thread to start collecting all the embedded images in the project
     void ParseEmbeddedImages();
 
 protected:
+    bool CheckNode(Node* node);
     void CollectEmbeddedImages();
     void CollectNodeImages(Node* node, Node* form);
 

@@ -354,7 +354,7 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
     return false;
 }
 
-const EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
+EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
 {
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
 
@@ -452,6 +452,63 @@ void ProjectSettings::CollectNodeImages(Node* node, Node* form)
         auto child = node->GetChildPtr(i);
         CollectNodeImages(child.get(), form);
     }
+}
+
+bool ProjectSettings::UpdateEmbedNodes()
+{
+    bool is_changed = false;
+    auto project = wxGetApp().GetProject();
+
+    for (size_t idx_form = 0; idx_form < project->GetChildCount(); ++idx_form)
+    {
+        if (CheckNode(project->GetChild(idx_form)))
+            is_changed = true;
+    }
+    return is_changed;
+}
+
+bool ProjectSettings::CheckNode(Node* node)
+{
+    bool is_changed = false;
+
+    Node* node_form = node->IsForm() ? node : node->FindParentForm();
+    auto node_position = wxGetApp().GetProject()->GetChildPosition(node_form);
+
+    for (auto& iter: node->get_props_vector())
+    {
+        if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
+        {
+            ttlib::multiview parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+            if (parts[IndexType] != "Embed")
+                continue;
+
+            if (auto result = m_map_embedded.find(parts[IndexImage].filename()); result != m_map_embedded.end())
+            {
+                // If it hasn't been added yet, add it now
+                if (result == m_map_embedded.end())
+                {
+                    AddEmbeddedImage(parts[IndexImage], node_form);
+                    continue;
+                }
+
+                auto embed = result->second.get();
+                auto child_pos = wxGetApp().GetProject()->GetChildPosition(embed->form);
+                if (child_pos > node_position)
+                {
+                    embed->form = node_form;
+                    is_changed = true;
+                }
+            }
+        }
+    }
+
+    for (size_t idx_child = 0; idx_child < node->GetChildCount(); idx_child++)
+    {
+        if (CheckNode(node->GetChild(idx_child)))
+            is_changed = true;
+    }
+
+    return is_changed;
 }
 
 namespace wxue_img

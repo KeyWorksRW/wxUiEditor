@@ -1,0 +1,207 @@
+inline const char* forms_xml = R"===(<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+	<gen class="wxFrame" image="wxFrame" type="form">
+		<inherits class="Code Generation" />
+		<inherits class="wxTopLevelWindow" />
+		<inherits class="wxWindow" />
+		<property name="class_name" type="string"
+			help="The name of the base class.">MyFrameBase</property>
+		<property name="title" type="string_escapes"
+			help="The text to display on the frame's title bar." />
+		<property name="persist" type="bool"
+			help="Use wxPersistentRegisterAndRestore to save/restore the size and position of the window.">0</property>
+		<property name="style" type="bitlist">
+			<option name="wxDEFAULT_FRAME_STYLE"
+				help="Defined as wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN" />
+			<option name="wxCAPTION"
+				help="Puts a caption on the frame." />
+			<option name="wxCLOSE_BOX"
+				help="Displays a close box on the frame." />
+			<option name="wxFRAME_TOOL_WINDOW"
+				help="Causes a frame with a small titlebar to be created; the frame does not appear in the taskbar under Windows or GTK+." />
+			<option name="wxFRAME_NO_TASKBAR"
+				help="Creates an otherwise normal frame but it does not appear in the taskbar under Windows or GTK+ (note that it will minimize to the desktop window under Windows which may seem strange to the users and thus it might be better to use this style only without wxMINIMIZE_BOX style). In wxGTK, the flag is respected only if GTK+ is at least version 2.2 and the window manager supports _NET_WM_STATE_SKIP_TASKBAR hint. Has no effect under other platforms." />
+			<option name="wxFRAME_FLOAT_ON_PARENT"
+				help="The frame will always be on top of its parent (unlike wxSTAY_ON_TOP). A frame created with this style must have a non-NULL parent." />
+			<option name="wxFRAME_SHAPED"
+				help="Windows with this style are allowed to have their shape changed with the SetShape method." />
+			<option name="wxICONIZE"
+				help="Display the frame iconized (minimized). Windows only." />
+			<option name="wxMAXIMIZE"
+				help="Displays the frame maximized. Windows only." />
+			<option name="wxMAXIMIZE_BOX"
+				help="Displays a maximize box on the frame." />
+			<option name="wxMINIMIZE"
+				help="Identical to wxICONIZE. Windows only." />
+			<option name="wxMINIMIZE_BOX"
+				help="Displays a minimize box on the frame." />
+			<option name="wxRESIZE_BORDER"
+				help="Displays a resizeable border around the window." />
+			<option name="wxSTAY_ON_TOP"
+				help="Stay on top of all other windows, see also wxFRAME_FLOAT_ON_PARENT." />
+			<option name="wxSYSTEM_MENU"
+				help="Displays a system menu." />
+			wxDEFAULT_FRAME_STYLE
+		</property>
+		<property name="extra_style" type="bitlist">
+			<option name="wxFRAME_EX_CONTEXTHELP"
+				help="Under Windows, puts a query button on the caption. When pressed, Windows will go into a context-sensitive help mode and wxWidgets will send a wxEVT_HELP event if the user clicked on an application window. You cannot use this style together with wxMAXIMIZE_BOX or wxMINIMIZE_BOX." />
+			<option name="wxFRAME_EX_METAL"
+				help="On Mac OS X, frames with this style will be shown with a metallic look." />
+		</property>
+		<property name="center" type="option"
+			help="Centers the window on the desktop in the chosen direction.">
+			<option name="" />
+			<option name="wxHORIZONTAL" />
+			<option name="wxVERTICAL" />
+			<option name="wxBOTH" />
+			wxBOTH
+		</property>
+	</gen>
+
+	<gen class="wxPopupTransientWindow" image="wxPopupTransientWindow" type="form">
+		<inherits class="Code Generation" />
+		<property name="class_name" type="string"
+			help="The name of the base class.">MyPopupBase</property>
+		<property name="border" type="option"
+			help="Specifies the type of border to use for the window.">
+			<option name="wxBORDER_NONE"
+				help="No border will be displayed." />
+			<option name="wxBORDER_RAISED"
+				help="Displays a raised border." />
+			<option name="wxBORDER_SIMPLE"
+				help="Displays a thin border around the window." />
+			<option name="wxBORDER_SUNKEN"
+				help="Displays a sunken border." />
+			<option name="wxBORDER_THEME"
+				help="Displays a native border suitable for a control, on the current platform. On Windows, this will be a themed border; on most other platforms a sunken border will be used." />
+			wxBORDER_NONE
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxPU_CONTAINS_CONTROLS"
+				help="By default in wxMSW, a popup window will not take focus from its parent window. However many standard controls, including common ones such as wxTextCtrl, need focus to function correctly and will not work when placed on a default popup. This flag can be used to make the popup take focus and let all controls work but at the price of not allowing the parent window to keep focus while the popup is shown, which can also be sometimes desirable. This style is currently only implemented in MSW and simply does nothing under the other platforms. Requires wxWidgets 3.1.3" />
+		</property>
+		<property name="font" type="wxFont"
+			help="Sets the font for this window. This should not be use for a parent window if you don't want its font to be inherited by its children" />
+		<property name="foreground_colour" type="wxColour"
+			help="Sets the foreground colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
+		<property name="background_colour" type="wxColour"
+			help="Sets the background colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
+		<event name="wxEVT_CONTEXT_MENU" class="wxContextMenuEvent"
+			help="Either provide your own handler function, or add a wxContextMenuEvent to create a popup menu." />
+		<event name="wxEVT_DESTROY" class="wxWindowDestroyEvent"
+			help="Sent from the class destructor just before the window is destroyed." />
+		</gen>
+
+	<gen class="MenuBar" image="wxMenuBar" type="menubar_form">
+		<inherits class="Code Generation" />
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="class_name" type="string"
+			help="The name of the base class.">MyMenuBarBase</property>
+		<property name="label" type="string_escapes">MyMenuBar</property>
+		<property name="style" type="bitlist">
+			<option name="wxMB_DOCKABLE"
+				help="Allows the menu bar to be detached (wxGTK only)." />
+		</property>
+	</gen>
+
+	<gen class="ToolBar" image="wxToolBar" type="toolbar_form">
+		<inherits class="Code Generation" />
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="class_name" type="string"
+			help="The name of the base class.">MyToolBarBase</property>
+		<property name="bitmapsize" type="wxSize"
+			help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels." />
+		<property name="margins" type="wxSize"
+			help="Values to be used as margins for the toolbar." />
+		<property name="packing" type="uint"
+			help="Value used for spacing tools. The packing is used for spacing in the vertical direction if the toolbar is horizontal, and for spacing in the horizontal direction if the toolbar is vertical.">1</property>
+		<property name="separation" type="uint"
+			help="The default separator size. This is the size between each toolbar tool.">5</property>
+		<property name="style" type="bitlist">
+			<option name="wxTB_FLAT"
+				help="Gives the toolbar a flat look (Windows and GTK only)." />
+			<option name="wxTB_DOCKABLE"
+				help="Makes the toolbar floatable and dockable (GTK only)." />
+			<option name="wxTB_HORIZONTAL"
+				help="Specifies horizontal layout." />
+			<option name="wxTB_VERTICAL"
+				help="Specifies vertical layout." />
+			<option name="wxTB_TEXT"
+				help="Shows the text in the toolbar buttons; by default only icons are shown." />
+			<option name="wxTB_NOICONS"
+				help="Specifies no icons in the toolbar buttons; by default they are shown." />
+			<option name="wxTB_NODIVIDER"
+				help="Specifies no divider (border) above the toolbar (Windows only)." />
+			<option name="wxTB_NOALIGN"
+				help="Specifies no alignment with the parent window (Windows only, not very useful)." />
+			<option name="wxTB_HORZ_LAYOUT"
+				help="Shows the text and the icons alongside, not vertically stacked (Windows and GTK 2 only). This style must be used with wxTB_TEXT." />
+			<option name="wxTB_HORZ_TEXT"
+				help="Combination of wxTB_HORZ_LAYOUT and wxTB_TEXT." />
+			wxTB_HORIZONTAL
+		</property>
+	</gen>
+
+	<gen class="RibbonBar" image="ribbon_bar" type="ribbonbar_form">
+		<inherits class="Code Generation" />
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="class_name" type="string"
+			help="The name of the base class.">MyRibbonBarBase</property>
+		<property name="theme" type="option"
+			help="Select the RibbonBar theme.">
+			<option name="Default"
+				help="Use Default theme." />
+			<option name="Generic"
+				help="Use Generic theme." />
+			<option name="MSW"
+				help="Use MSW theme." />
+			Default
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxRIBBON_BAR_DEFAULT_STYLE"
+				help="Defined as wxRIBBON_BAR_FLOW_HORIZONTAL | wxRIBBON_BAR_SHOW_PAGE_LABELS | wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS | wxRIBBON_BAR_SHOW_TOGGLE_BUTTON | wxRIBBON_BAR_SHOW_HELP_BUTTON." />
+			<option name="wxRIBBON_BAR_FOLDBAR_STYLE"
+				help="Defined as wxRIBBON_BAR_FLOW_VERTICAL | wxRIBBON_BAR_SHOW_PAGE_ICONS | wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS | wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS." />
+			<option name="wxRIBBON_BAR_SHOW_PAGE_LABELS"
+				help="Causes labels to be shown on the tabs in the ribbon bar." />
+			<option name="wxRIBBON_BAR_SHOW_PAGE_ICONS"
+				help="Causes icons to be shown on the tabs in the ribbon bar." />
+			<option name="wxRIBBON_BAR_FLOW_HORIZONTAL"
+				help="Causes panels within pages to stack horizontally." />
+			<option name="wxRIBBON_BAR_FLOW_VERTICAL"
+				help="Causes panels within pages to stack vertically." />
+			<option name="wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS"
+				help="Causes extension buttons to be shown on panels (where the panel has such a button)." />
+			<option name="wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS"
+				help="Causes minimise buttons to be shown on panels (where the panel has such a button)." />
+			<option name="wxRIBBON_BAR_SHOW_TOGGLE_BUTTON"
+				help="Causes a toggle button to appear on the ribbon bar at top-right corner." />
+			<option name="wxRIBBON_BAR_SHOW_HELP_BUTTON"
+				help="Causes a help button to appear on the ribbon bar at the top-right corner." />
+			wxRIBBON_BAR_DEFAULT_STYLE
+		</property>
+		<event name="wxEVT_RIBBONBAR_PAGE_CHANGED" class="wxRibbonBarEvent"
+			help="Triggered after the transition from one page being active to a different page being active." />
+		<event name="wxEVT_RIBBONBAR_PAGE_CHANGING" class="wxRibbonBarEvent"
+			help="Triggered prior to the transition from one page being active to a different page being active, and can veto the change." />
+		<event name="wxEVT_RIBBONBAR_TAB_MIDDLE_DOWN" class="wxRibbonBarEvent"
+			help="Triggered when the middle mouse button is pressed on a tab." />
+		<event name="wxEVT_RIBBONBAR_TAB_MIDDLE_UP" class="wxRibbonBarEvent"
+			help="Triggered when the middle mouse button is released on a tab." />
+		<event name="wxEVT_RIBBONBAR_TAB_RIGHT_DOWN" class="wxRibbonBarEvent"
+			help="Triggered when the right mouse button is pressed on a tab." />
+		<event name="wxEVT_RIBBONBAR_TAB_RIGHT_UP" class="wxRibbonBarEvent"
+			help="Triggered when the right mouse button is released on a tab." />
+		<event name="wxEVT_RIBBONBAR_TAB_LEFT_DCLICK" class="wxRibbonBarEvent"
+			help="Triggered when the left mouse button is double clicked on a tab." />
+		<event name="wxEVT_RIBBONBAR_TOGGLED" class="wxRibbonBarEvent"
+			help="Triggered when the button triggering the ribbon bar is clicked." />
+		<event name="wxEVT_RIBBONBAR_HELP_CLICKED" class="wxRibbonBarEvent"
+			help="Triggered when the help button is clicked." />
+	</gen>
+</GeneratorDefinitions>)===";

@@ -1,0 +1,135 @@
+inline const char* validators_xml = R"===(<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+	<gen class="Text Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator" />
+		<property name="validator_type" type="option"
+			help="Type of a validator assigned to the window">
+			<option name="wxTextValidator"
+				help="Use this to transfer data to/from a wxString variable." />
+			<option name="wxGenericValidator"
+				help="Use this if you need to use something besides a wxString." />
+			wxTextValidator
+		</property>
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxString"
+				help="String value." />
+			<option name="wxFileName"
+				help="Only use this with a wxGenericValidator type." />
+			<option name="int"
+				help="Only use this with a wxGenericValidator type." />
+			<option name="double"
+				help="Only use this with a wxGenericValidator type." />
+			<option name="float"
+				help="Only use this with a wxGenericValidator type." />
+			wxString
+		</property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable." />
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable." />
+		<property name="validator_style" type="bitlist"
+			help="Data filtering style for wxTextValidator or wxGenericValidator.">
+			<option name="wxFILTER_NONE"
+				help="No filtering takes place." />
+			<option name="wxFILTER_ASCII"
+				help="Non-ASCII characters are filtered out." />
+			<option name="wxFILTER_ALPHA"
+				help="Non-alpha characters are filtered out." />
+			<option name="wxFILTER_ALPHANUMERIC"
+				help="Non-alphanumeric characters are filtered out." />
+			<option name="wxFILTER_DIGITS"
+				help="Non-numeric characters are filtered out. Uses isdigit() to perform the check." />
+			<option name="wxFILTER_NUMERIC"
+				help="Non-numeric characters are filtered out, but allows decimal points, minus/plus signs and the 'e' or 'E' character." />
+			<option name="wxFILTER_INCLUDE_LIST"
+				help="Use an include list. The validator checks if the user input is on the list, complaining if not. See wxTextValidator::SetIncludes." />
+			<option name="wxFILTER_EXCLUDE_LIST"
+				help="Use an exclude list. The validator checks if the user input is on the list, complaining if it is. See wxTextValidator::SetExcludes." />
+			<option name="wxFILTER_INCLUDE_CHAR_LIST"
+				help="Use an include list. The validator checks if each input character is in the list (one character per list element), complaining if not. See wxTextValidator::SetIncludes." />
+			<option name="wxFILTER_EXCLUDE_CHAR_LIST"
+				help="Use an include list. The validator checks if each input character is in the list (one character per list element), complaining if it is. See wxTextValidator::SetExcludes." />
+			wxFILTER_NONE
+		</property>
+	</gen>
+
+	<gen class="Boolean Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator" />
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="bool"
+				help="Boolean value." />
+			bool
+		</property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable." />
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable." />
+	</gen>
+
+	<gen class="Integer Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator" />
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="int"
+				help="Integer value." />
+			int
+		</property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable." />
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable." />
+	</gen>
+
+	<gen class="Choice Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator" />
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxString"
+				help="String value." />
+			<option name="int"
+				help="Integer value." />
+			wxString
+		</property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable." />
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable." />
+	</gen>
+
+	<gen class="String Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator" />
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxString"
+				help="String value." />
+			wxString
+		</property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable." />
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable." />
+	</gen>
+
+	<gen class="List Validator" type="interface">
+		<property name="validator_variable" type="string"
+			help="Name of a member variable associated with the validator" />
+		<property name="validator_data_type" type="option"
+			help="Data type of the member variable">
+			<option name="wxArrayInt"
+				help="Integer value." />
+			wxArrayInt
+		</property>
+		<property name="get_function" type="string"
+			help="Function name to get the value of the variable." />
+		<property name="set_function" type="string"
+			help="Function name to set the value of the variable." />
+	</gen>
+</GeneratorDefinitions>)===";

@@ -1,0 +1,346 @@
+inline const char* dataview_xml = R"===(<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+	<gen class="wxDataViewCtrl" image="dataviewtree_ctrl" type="dataviewctrl">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_dataViewCtrl</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxDV_SINGLE"
+				help="Single selection mode. This is the default." />
+			<option name="wxDV_MULTIPLE"
+				help="Multiple selection mode." />
+			<option name="wxDV_ROW_LINES"
+				help="Use alternating colours for rows if supported by platform and theme. Currently only supported by the native GTK and OS X implementations but not by the generic one." />
+			<option name="wxDV_HORIZ_RULES"
+				help="Display the separator lines between rows" />
+			<option name="wxDV_VERT_RULES"
+				help="Display the separator lines between columns." />
+			<option name="wxDV_VARIABLE_LINE_HEIGHT"
+				help="Allow variable line heights. This can be inefficient when displaying large number of items." />
+			<option name="wxDV_NO_HEADER"
+				help="Do not show column headers (which are shown by default)." />
+		</property>
+		<event name="wxEVT_DATAVIEW_SELECTION_CHANGED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_ACTIVATED" class="wxDataViewEvent"
+			help="This event is triggered by double clicking an item or pressing some special key (usually 'Enter') when it is focused." />
+		<event name="wxEVT_DATAVIEW_ITEM_START_EDITING" class="wxDataViewEvent"
+			help="This event can be vetoed in order to prevent editing on an item by item basis." />
+		<event name="wxEVT_DATAVIEW_ITEM_EDITING_STARTED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_EDITING_DONE" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_COLLAPSING" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_COLLAPSED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_EXPANDING" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_EXPANDED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_VALUE_CHANGED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_CONTEXT_MENU" class="wxDataViewEvent"
+			help="Generated when the user right clicks inside the control. Notice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item." />
+		<event name="wxEVT_DATAVIEW_COLUMN_HEADER_CLICK" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK" class="wxDataViewEvent"
+			help="Notice that currently this event is not generated in the native OS X versions of the control." />
+		<event name="wxEVT_DATAVIEW_COLUMN_SORTED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_COLUMN_REORDERED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_BEGIN_DRAG" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_DROP" class="wxDataViewEvent"
+			help="" />
+	</gen>
+
+	<gen class="wxDataViewTreeCtrl" image="dataviewtree_ctrl" type="dataviewtreectrl">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_dataViewTreeCtrl</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxDV_SINGLE"
+				help="Single selection mode. This is the default." />
+			<option name="wxDV_MULTIPLE"
+				help="Multiple selection mode." />
+			<option name="wxDV_ROW_LINES"
+				help="Use alternating colours for rows if supported by platform and theme. Currently only supported by the native GTK and OS X implementations but not by the generic one." />
+			<option name="wxDV_HORIZ_RULES"
+				help="Display the separator lines between rows" />
+			<option name="wxDV_VERT_RULES"
+				help="Display the separator lines between columns." />
+			<option name="wxDV_VARIABLE_LINE_HEIGHT"
+				help="Allow variable line heights. This can be inefficient when displaying large number of items." />
+			<option name="wxDV_NO_HEADER"
+				help="Do not show column headers (which are shown by default)." />
+		</property>
+		<event name="wxEVT_DATAVIEW_SELECTION_CHANGED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_ACTIVATED" class="wxDataViewEvent"
+			help="This event is triggered by double clicking an item or pressing some special key (usually 'Enter') when it is focused." />
+		<event name="wxEVT_DATAVIEW_ITEM_START_EDITING" class="wxDataViewEvent"
+			help="This event can be vetoed in order to prevent editing on an item by item basis." />
+		<event name="wxEVT_DATAVIEW_ITEM_EDITING_STARTED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_EDITING_DONE" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_COLLAPSING" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_COLLAPSED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_EXPANDING" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_EXPANDED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_VALUE_CHANGED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_CONTEXT_MENU" class="wxDataViewEvent"
+			help="Generated when the user right clicks inside the control. Notice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item." />
+		<event name="wxEVT_DATAVIEW_COLUMN_HEADER_CLICK" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK" class="wxDataViewEvent"
+			help="Notice that currently this event is not generated in the native OS X versions of the control." />
+		<event name="wxEVT_DATAVIEW_COLUMN_SORTED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_COLUMN_REORDERED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_BEGIN_DRAG" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_DROP" class="wxDataViewEvent"
+			help="" />
+	</gen>
+
+	<gen class="wxDataViewListCtrl" image="dataviewlist_ctrl" type="dataviewlistctrl">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_dataViewListCtrl</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxDV_SINGLE"
+				help="Single selection mode. This is the default." />
+			<option name="wxDV_MULTIPLE"
+				help="Multiple selection mode." />
+			<option name="wxDV_ROW_LINES"
+				help="Use alternating colours for rows if supported by platform and theme. Currently only supported by the native GTK and OS X implementations but not by the generic one." />
+			<option name="wxDV_HORIZ_RULES"
+				help="Display the separator lines between rows" />
+			<option name="wxDV_VERT_RULES"
+				help="Display the separator lines between columns." />
+			<option name="wxDV_VARIABLE_LINE_HEIGHT"
+				help="Allow variable line heights. This can be inefficient when displaying large number of items." />
+			<option name="wxDV_NO_HEADER"
+				help="Do not show column headers (which are shown by default)." />
+		</property>
+		<event name="wxEVT_DATAVIEW_SELECTION_CHANGED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_ACTIVATED" class="wxDataViewEvent"
+			help="This event is triggered by double clicking an item or pressing some special key (usually 'Enter') when it is focused." />
+		<event name="wxEVT_DATAVIEW_ITEM_START_EDITING" class="wxDataViewEvent"
+			help="This event can be vetoed in order to prevent editing on an item by item basis." />
+		<event name="wxEVT_DATAVIEW_ITEM_EDITING_STARTED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_EDITING_DONE" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_COLLAPSING" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_COLLAPSED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_EXPANDING" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_EXPANDED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_VALUE_CHANGED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_CONTEXT_MENU" class="wxDataViewEvent"
+			help="Generated when the user right clicks inside the control. Notice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item." />
+		<event name="wxEVT_DATAVIEW_COLUMN_HEADER_CLICK" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK" class="wxDataViewEvent"
+			help="Notice that currently this event is not generated in the native OS X versions of the control." />
+		<event name="wxEVT_DATAVIEW_COLUMN_SORTED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_COLUMN_REORDERED" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_BEGIN_DRAG" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE" class="wxDataViewEvent"
+			help="" />
+		<event name="wxEVT_DATAVIEW_ITEM_DROP" class="wxDataViewEvent"
+			help="" />
+	</gen>
+)==="
+R"===(
+	<gen class="dataViewColumn" image="dataviewlist_column" type="dataviewcolumn">
+		<property name="var_name" type="string">m_dataViewColumn</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="label" type="string_escapes">Name</property>
+		<property name="model_column" type="uint">0</property>
+		<property name="type" type="option">
+			<option name="Text"
+				help="Appends a text column to the control and the store." />
+			<option name="Bitmap"
+				help="Appends a column for rendering a bitmap." />
+			<option name="Date"
+				help="Appends a column for rendering a date." />
+			<option name="Toggle"
+				help="Appends a toggle column to the control and the store." />
+			<option name="Progress"
+				help="Appends a progress column to the control and the store." />
+			<option name="IconText"
+				help="Appends an icon-and-text column to the control and the store." />
+			Text
+		</property>
+		<property name="mode" type="option">
+			<option name="wxDATAVIEW_CELL_INERT"
+				help="The cell only displays information and cannot be manipulated or otherwise interacted with in any way." />
+			<option name="wxDATAVIEW_CELL_ACTIVATABLE"
+				help="Indicates that the cell can be activated by clicking it or using keyboard." />
+			<option name="wxDATAVIEW_CELL_EDITABLE"
+				help="Indicates that the user can edit the data in-place in an inline editor control that will show up when the user wants to edit the cell." />
+			wxDATAVIEW_CELL_INERT
+		</property>
+		<property name="width" type="int">-1</property>
+		<property name="align" type="bitlist">
+			<option name="wxALIGN_LEFT"
+				help="Align the item to the left." />
+			<option name="wxALIGN_TOP"
+				help="Align the item to the top." />
+			<option name="wxALIGN_RIGHT"
+				help="Align the item to the right." />
+			<option name="wxALIGN_BOTTOM"
+				help="Align the item to the bottom." />
+			<option name="wxALIGN_CENTER"
+				help="Align the item to the center." />
+			<option name="wxALIGN_CENTER_HORIZONTAL"
+				help="Align the item to the horizontal center." />
+			<option name="wxALIGN_CENTER_VERTICAL"
+				help="Align the item to the vertical." />
+			wxALIGN_LEFT
+		</property>
+		<property name="flags" type="bitlist">
+			<option name="wxDATAVIEW_COL_RESIZABLE"
+				help="Column can be resized." />
+			<option name="wxDATAVIEW_COL_SORTABLE"
+				help="Column can be clicked to toggle the sort order by its contents." />
+			<option name="wxDATAVIEW_COL_REORDERABLE"
+				help="Column can be dragged to change its order." />
+			<option name="wxDATAVIEW_COL_HIDDEN"
+				help="Column is not shown at all." />
+			wxDATAVIEW_COL_RESIZABLE
+		</property>
+		<property name="ellipsize" type="option">
+			<option name="" />
+			<option name="wxELLIPSIZE_NONE"
+				help="Don't ellipsize the text at all." />
+			<option name="wxELLIPSIZE_START"
+				help="Put the ellipsis at the start of the string, if the string needs ellipsization." />
+			<option name="wxELLIPSIZE_MIDDLE"
+				help="Put the ellipsis in the middle of the string, if the string needs ellipsization." />
+			<option name="wxELLIPSIZE_END"
+				help="Put the ellipsis at the end of the string, if the string needs ellipsization." />
+		</property>
+	</gen>
+
+	<gen class="dataViewListColumn" image="dataviewlist_column" type="dataviewlistcolumn">
+		<property name="var_name" type="string">m_dataViewListColumn</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="label" type="string_escapes">Name</property>
+		<property name="type" type="option">
+			<option name="Text"
+				help="Appends a text column to the control and the store." />
+			<option name="Toggle"
+				help="Appends a toggle column to the control and the store." />
+			<option name="Progress"
+				help="Appends a progress column to the control and the store." />
+			<option name="IconText"
+				help="Appends an icon-and-text column to the control and the store." />
+			Text
+		</property>
+		<property name="mode" type="option">
+			<option name="wxDATAVIEW_CELL_INERT"
+				help="The cell only displays information and cannot be manipulated or otherwise interacted with in any way." />
+			<option name="wxDATAVIEW_CELL_ACTIVATABLE"
+				help="Indicates that the cell can be activated by clicking it or using keyboard." />
+			<option name="wxDATAVIEW_CELL_EDITABLE"
+				help="Indicates that the user can edit the data in-place in an inline editor control that will show up when the user wants to edit the cell." />
+			wxDATAVIEW_CELL_INERT
+		</property>
+		<property name="width" type="int">-1</property>
+		<property name="align" type="bitlist">
+			<option name="wxALIGN_LEFT"
+				help="Align the item to the left." />
+			<option name="wxALIGN_TOP"
+				help="Align the item to the top." />
+			<option name="wxALIGN_RIGHT"
+				help="Align the item to the right." />
+			<option name="wxALIGN_BOTTOM"
+				help="Align the item to the bottom." />
+			<option name="wxALIGN_CENTER"
+				help="Align the item to the center." />
+			<option name="wxALIGN_CENTER_HORIZONTAL"
+				help="Align the item to the horizontal center." />
+			<option name="wxALIGN_CENTER_VERTICAL"
+				help="Align the item to the vertical." />
+			wxALIGN_LEFT
+		</property>
+		<property name="flags" type="bitlist">
+			<option name="wxDATAVIEW_COL_RESIZABLE"
+				help="Column can be resized." />
+			<option name="wxDATAVIEW_COL_SORTABLE"
+				help="Column can be clicked to toggle the sort order by its contents." />
+			<option name="wxDATAVIEW_COL_REORDERABLE"
+				help="Column can be dragged to change its order." />
+			<option name="wxDATAVIEW_COL_HIDDEN"
+				help="Column is not shown at all." />
+			wxDATAVIEW_COL_RESIZABLE
+		</property>
+		<property name="ellipsize" type="option">
+			<option name="" />
+			<option name="wxELLIPSIZE_NONE"
+				help="Don't ellipsize the text at all." />
+			<option name="wxELLIPSIZE_START"
+				help="Put the ellipsis at the start of the string, if the string needs ellipsization." />
+			<option name="wxELLIPSIZE_MIDDLE"
+				help="Put the ellipsis in the middle of the string, if the string needs ellipsization." />
+			<option name="wxELLIPSIZE_END"
+				help="Put the ellipsis at the end of the string, if the string needs ellipsization." />
+		</property>
+	</gen>
+</GeneratorDefinitions>)===";

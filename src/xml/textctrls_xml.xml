@@ -1,0 +1,133 @@
+inline const char* textctrls_xml = R"===(<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+	<gen class="wxStaticText" image="wxStaticText" type="widget">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="String Validator" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_staticText</property>
+		<property name="label" type="string_edit_escapes">MyLabel</property>
+		<property name="markup" type="bool"
+			help="Simple markup can be used to apply different fonts or colours to different parts of the control label when supported. If markup is not supported by the control or platform, it is simply stripped and SetLabel() is used with the resulting string.">0</property>
+		<property name="wrap" type="int"
+			help="Wraps the control's label so that each of its lines becomes at most this many pixels wide if possible (the lines are broken at words boundaries so it might not be the case if words are too long). If width is negative, no wrapping is done.">-1</property>
+		<property name="style" type="bitlist">
+			<option name="wxALIGN_LEFT"
+				help="Align the text to the left." />
+			<option name="wxALIGN_RIGHT"
+				help="Align the text to the right." />
+			<option name="wxALIGN_CENTER_HORIZONTAL"
+				help="Center the text (horizontally)." />
+			<option name="wxST_NO_AUTORESIZE"
+				help="By default, the control will adjust its size to exactly fit to the size of the text when SetLabel() is called. If this style flag is given, the control will not change its size (this style is especially useful with controls which also have the wxALIGN_RIGHT or the wxALIGN_CENTER_HORIZONTAL style because otherwise they won't make sense any longer after a call to SetLabel())." />
+			<option name="wxST_ELLIPSIZE_START"
+				help="If the labeltext width exceeds the control width, replace the beginning of the label with an ellipsis; uses wxControl::Ellipsize." />
+			<option name="wxST_ELLIPSIZE_MIDDLE"
+				help="If the label text width exceeds the control width, replace the middle of the label with an ellipsis; uses wxControl::Ellipsize." />
+			<option name="wxST_ELLIPSIZE_END"
+				help="If the label text width exceeds the control width, replace the end of the label with an ellipsis; uses wxControl::Ellipsize." />
+		</property>
+	</gen>
+
+	<gen class="wxTextCtrl" image="wxTextCtrl" type="widget">
+		<inherits class="Text Validator" />
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_textCtrl</property>
+		<property name="value" type="string_escapes" />
+		<property name="maxlength" type="string"
+			help="The maximum length of user-entered text. 0 means no limit. Note that in wxGTK this function may only be used with single line text controls." />
+		<property name="style" type="bitlist">
+			<option name="wxTE_PROCESS_ENTER"
+				help="The control will generate the event wxEVT_TEXT_ENTER (otherwise pressing Enter key is either processed internally by the control or used for navigation between dialog controls)." />
+			<option name="wxTE_PROCESS_TAB"
+				help="The control will receive wxEVT_CHAR events for TAB pressed - normally, TAB is used for passing to the next control in a dialog instead. For the control created with this style, you can still use Ctrl-Enter to pass to the next control from the keyboard." />
+			<option name="wxTE_MULTILINE"
+				help="The text control allows multiple lines." />
+			<option name="wxTE_PASSWORD"
+				help="The text will be echoed as asterisks." />
+			<option name="wxTE_READONLY"
+				help="The text will not be user-editable." />
+			<option name="wxTE_RICH"
+				help="Use rich text control under Windows. This allows having more than 64KB of text in the control. This style is ignored under other platforms." />
+			<option name="wxTE_RICH2"
+				help="Use rich text control version 2.0 or 3.0 under Windows. This style is ignored under other platforms." />
+			<option name="wxTE_AUTO_URL"
+				help="Highlight the URLs and generate the wxTextUrlEvents when mouse events occur over them. This style is only supported for wxTE_RICH Win32 and multi-line wxGTK2 text controls." />
+			<option name="wxTE_NOHIDESEL"
+				help="By default, the Windows text control doesn't show the selection when it doesn't have focus - use this style to force it to always show it. This style is ignored under other platforms." />
+			<option name="wxTE_NO_VSCROLL"
+				help="For multiline controls only: a vertical scrollbar will never be created. This limits the amount of text which can be entered into the control to what can be displayed in it under MSW but not under GTK2. Currently not implemented for the other platforms." />
+			<option name="wxTE_LEFT"
+				help="The text in the control will be left-justified (default)." />
+			<option name="wxTE_CENTER"
+				help="The text in the control will be centered (currently Windows and wxGTK2 only). " />
+			<option name="wxTE_RIGHT"
+				help="The text in the control will be right-justified (currently Windows and wxGTK2 only)." />
+			<option name="wxTE_DONTWRAP"
+				help="Same as wxHSCROLL style: don't wrap at all, show horizontal scrollbar instead." />
+			<option name="wxTE_CHARWRAP"
+				help="Wrap the lines too long to be shown entirely at any position (wxUniv and wxGTK2 only)." />
+			<option name="wxTE_WORDWRAP"
+				help="Wrap the lines too long to be shown entirely at word boundaries (wxUniv and wxGTK2 only)." />
+			<option name="wxTE_BESTWRAP"
+				help="Wrap the lines at word boundaries or at any other character if there are words longer than the window width (this is the default)." />
+		</property>
+		<property name="auto_complete" type="stringlist"
+			help="If one or more strings are entered, they will be used to initialized autocomplete (" />
+		<event name="wxEVT_TEXT" class="wxCommandEvent"
+			help="Generated when the text changes. Notice that this event will always be generated when the text controls contents changes - whether this is due to user input or comes from the program itself (for example, if SetValue() is called.)" />
+		<event name="wxEVT_TEXT_ENTER" class="wxCommandEvent"
+			help="Generated when enter is pressed in a text control (which must have wxTE_PROCESS_ENTER style for this event to be generated)." />
+		<event name="wxEVT_TEXT_URL" class="wxTextUrlEvent"
+			help="Generated when the a mouse event occurred over an URL in the text control (Windows and wxGTK2 only)" />
+		<event name="wxEVT_TEXT_MAXLEN" class="wxCommandEvent"
+			help="Generated when the user tries to enter more text into the control than the limit set by SetMaxLength." />
+	</gen>
+
+	<gen class="wxRichTextCtrl" image="richtextctrl" type="widget">
+		<inherits class="wxWindow">
+			<property name="window_style" type="bitlist">wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS</property>
+		</inherits>
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_richText</property>
+		<property name="style" type="bitlist">
+			<option name="wxTE_PROCESS_ENTER"
+				help="The control will generate the event wxEVT_TEXT_ENTER (otherwise pressing Enter key is either processed internally by the control or used for navigation between dialog controls)." />
+			<option name="wxTE_PROCESS_TAB"
+				help="The control will receive wxEVT_CHAR events for TAB pressed - normally, TAB is used for passing to the next control in a dialog instead. For the control created with this style, you can still use Ctrl-Enter to pass to the next control from the keyboard." />
+			<option name="wxTE_READONLY"
+				help="The text will not be user-editable." />
+			<option name="wxTE_AUTO_URL"
+				help="Highlight the URLs and generate the wxTextUrl events when mouse events occur over them." />
+		</property>
+		<event name="wxEVT_TEXT" class="wxCommandEvent"
+			help="Generated when the text changes. Notice that this event will always be sent when the text controls contents changes - whether this is due to user input or comes from the program itself (for example, if SetValue() is called)" />
+		<event name="wxEVT_TEXT_ENTER" class="wxCommandEvent"
+			help="Generated when enter is pressed in a text control (which must have wxTE_PROCESS_ENTER style for this event to be generated)." />
+		<event name="wxEVT_TEXT_URL" class="wxTextUrlEvent"
+			help="Generated when a mouse event occurrs over a URL in the text control (wxMSW and wxGTK2 only)" />
+		<event name="wxEVT_TEXT_MAXLEN" class="wxCommandEvent"
+			help="Generated when the user tries to enter more text into the control than the limit set by SetMaxLength." />
+		<event name="wxEVT_RICHTEXT_CHARACTER" class="wxCommandEvent"
+			help="Generated when the user presses a character key. Valid event functions: GetFlags, GetPosition, GetCharacter." />
+		<event name="wxEVT_RICHTEXT_DELETE" class="wxCommandEvent"
+			help="Generated when the user presses the backspace or delete key. Valid event functions: GetFlags, GetPosition." />
+		<event name="wxEVT_RICHTEXT_RETURN" class="wxCommandEvent"
+			help="Generated when the user presses the return key. Valid event functions: GetFlags, GetPosition." />
+		<event name="wxEVT_RICHTEXT_STYLE_CHANGED" class="wxCommandEvent"
+			help="Generated when styling has been applied to the control. Valid event functions: GetPosition, GetRange." />
+		<event name="wxEVT_RICHTEXT_STYLESHEET_CHANGED" class="wxCommandEvent"
+			help="Generated when the control's stylesheet has changed, for example the user added, edited or deleted a style. Valid event functions: GetRange, GetPosition." />
+		<event name="wxEVT_RICHTEXT_STYLESHEET_REPLACING" class="wxCommandEvent"
+			help="Generated when the control's stylesheet is about to be replaced, for example when a file is loaded into the control. Valid event functions: Veto, GetOldStyleSheet, GetNewStyleSheet." />
+		<event name="wxEVT_RICHTEXT_STYLESHEET_REPLACED" class="wxCommandEvent"
+			help="Generated when the control's stylesheet has been replaced, for example when a file is loaded into the control. Valid event functions: GetOldStyleSheet, GetNewStyleSheet." />
+		<event name="wxEVT_RICHTEXT_CONTENT_INSERTED" class="wxCommandEvent"
+			help="Generated when content has been inserted into the control. Valid event functions: GetPosition, GetRange." />
+		<event name="wxEVT_RICHTEXT_CONTENT_DELETED" class="wxCommandEvent"
+			help="Generated when content has been deleted from the control. Valid event functions: GetPosition, GetRange." />
+	</gen>
+</GeneratorDefinitions>)===";

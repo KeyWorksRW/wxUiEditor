@@ -96,7 +96,6 @@ private:
 
     // Contains a map to every interface class -- valid only during Initialize()
     std::map<std::string, pugi::xml_node> m_interfaces;
-    bool m_is_interface;  // true means an interface file is being processed
 };
 
 extern NodeCreator g_NodeCreator;

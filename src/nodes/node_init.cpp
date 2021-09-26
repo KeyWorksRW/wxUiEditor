@@ -18,7 +18,75 @@
 
 #include "../pugixml/pugixml.hpp"
 
-bool LoadInternalXmlDocFile(ttlib::cview file, pugi::xml_document* doc);
+// The following are interfaces
+
+#include "../xml/interface_xml.xml"
+#include "../xml/sizer_child_xml.xml"
+#include "../xml/validators_xml.xml"
+#include "../xml/window_interfaces_xml.xml"
+
+// clang-format off
+inline const char* lst_xml_interfaces[] = {
+
+    // Note that interface_xml must *not* be added to this list! It is loaded as the root document.
+    sizer_child_xml,
+    validators_xml,
+    window_interfaces_xml,
+
+};
+// clang-format on
+
+// The following are generators
+
+#include "../xml/aui_xml.xml"
+#include "../xml/bars_xml.xml"
+#include "../xml/books_xml.xml"
+#include "../xml/boxes_xml.xml"
+#include "../xml/buttons_xml.xml"
+#include "../xml/containers_xml.xml"
+#include "../xml/dataview_xml.xml"
+#include "../xml/dialogs_xml.xml"
+#include "../xml/forms_xml.xml"
+#include "../xml/grid_xml.xml"
+#include "../xml/listview_xml.xml"
+#include "../xml/pickers_xml.xml"
+#include "../xml/project_xml.xml"
+#include "../xml/propgrid_xml.xml"
+#include "../xml/scintilla_xml.xml"
+#include "../xml/sizers_xml.xml"
+#include "../xml/std_dlg_btns_xml.xml"
+#include "../xml/textctrls_xml.xml"
+#include "../xml/trees_xml.xml"
+#include "../xml/widgets_xml.xml"
+#include "../xml/wizard_xml.xml"
+
+// clang-format off
+inline const char* lst_xml_generators[] = {
+
+    aui_xml,
+    bars_xml,
+    books_xml,
+    boxes_xml,
+    buttons_xml,
+    containers_xml,
+    dataview_xml,
+    dialogs_xml,
+    forms_xml,
+    grid_xml,
+    listview_xml,
+    pickers_xml,
+    project_xml,
+    propgrid_xml,
+    scintilla_xml,
+    sizers_xml,
+    std_dlg_btns_xml,
+    textctrls_xml,
+    trees_xml,
+    widgets_xml,
+    wizard_xml,
+
+};
+// clang-format on
 
 using namespace child_count;
 using namespace GenEnum;
@@ -211,17 +279,37 @@ void NodeCreator::Initialize()
         pugi::xml_document doc;
         m_pdoc_interface = &doc;
 
-        // This *MUST* be the first file processed so that m_interfaces is initialized
-        m_is_interface = true;
-        ParseGeneratorFile("interface");
-        m_is_interface = false;
+        // We start by loading the main interface_xml string, then we append the nodes from all the other interface strings.
+        auto result = m_pdoc_interface->load_string(interface_xml);
+        if (!result)
+        {
+            FAIL_MSG("xml/interface_xml.xml is corrupted!");
+            throw std::runtime_error("Internal XML file is corrupted.");
+        }
 
-        ParseGeneratorFile("aui");
-        ParseGeneratorFile("bars");
-        ParseGeneratorFile("forms");
-        ParseGeneratorFile("containers");
-        ParseGeneratorFile("sizers");
-        ParseGeneratorFile("widgets");
+        for (auto& iter: lst_xml_interfaces)
+        {
+            pugi::xml_document sub_interface;
+            result = sub_interface.load_string(iter);
+            if (!result)
+            {
+                FAIL_MSG("XML file is corrupted!");
+                throw std::runtime_error("Internal XML file is corrupted.");
+            }
+            auto root = sub_interface.child("GeneratorDefinitions");
+            for (auto& child_node: root)
+            {
+                m_pdoc_interface->append_copy(child_node);
+            }
+        }
+
+        // Now parse the completed m_pdoc_interface document
+        ParseGeneratorFile(ttlib::emptystring);
+
+        for (auto& iter: lst_xml_generators)
+        {
+            ParseGeneratorFile(iter);
+        }
 
         m_interfaces.clear();
         m_pdoc_interface = nullptr;
@@ -242,31 +330,25 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview name)
     pugi::xml_document doc;
     pugi::xml_node root;
 
-    if (m_is_interface)
+    if (name.empty())
     {
-        if (!LoadInternalXmlDocFile(name, m_pdoc_interface))
-        {
-            // In _DEBUG builds, an assertion will have already been generated.
-            return;
-        }
-
         root = m_pdoc_interface->child("GeneratorDefinitions");
     }
     else
     {
-        if (!LoadInternalXmlDocFile(name, &doc))
+        auto result = doc.load_string(name);
+        if (!result)
         {
-            // In _DEBUG builds, an assertion will have already been generated.
-            return;
+            FAIL_MSG("XML file is corrupted!");
+            throw std::runtime_error("Internal XML file is corrupted.");
         }
-
         root = doc.child("GeneratorDefinitions");
     }
 
     if (!root)
     {
-        FAIL_MSG(ttlib::cstr("Cannot locate group in the name ") << name);
-        return;
+        FAIL_MSG("GeneratorDefinitions not found in XML file.");
+        throw std::runtime_error("Internal XML file is corrupted.");
     }
 
     auto generator = root.child("gen");
@@ -288,7 +370,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview name)
         }
 #endif  // _DEBUG
 
-        if (m_is_interface)
+        if (name.empty())
         {
             m_interfaces[class_name] = generator;
         }

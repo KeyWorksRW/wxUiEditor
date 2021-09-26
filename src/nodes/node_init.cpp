@@ -276,16 +276,17 @@ void NodeCreator::Initialize()
     }
 
     {
-        pugi::xml_document doc;
-        m_pdoc_interface = &doc;
+        pugi::xml_document interface_doc;
+        m_pdoc_interface = &interface_doc;
 
         // We start by loading the main interface_xml string, then we append the nodes from all the other interface strings.
-        auto result = m_pdoc_interface->load_string(interface_xml);
+        auto result = interface_doc.load_string(interface_xml);
         if (!result)
         {
             FAIL_MSG("xml/interface_xml.xml is corrupted!");
             throw std::runtime_error("Internal XML file is corrupted.");
         }
+        auto interface_root = interface_doc.child("GeneratorDefinitions");
 
         for (auto& iter: lst_xml_interfaces)
         {
@@ -299,7 +300,7 @@ void NodeCreator::Initialize()
             auto root = sub_interface.child("GeneratorDefinitions");
             for (auto& child_node: root)
             {
-                m_pdoc_interface->append_copy(child_node);
+                interface_root.append_copy(child_node);
             }
         }
 
@@ -323,20 +324,21 @@ void NodeCreator::Initialize()
     }
 }
 
-void NodeCreator::ParseGeneratorFile(ttlib::cview name)
+// The xml_data parameter is the char* pointer to the XML data. It will be empty when processing the interface document.
+void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
 {
     // All but one of the possible files will use the doc file, so we create it even if it gets ignored because this is an
     // interface file
     pugi::xml_document doc;
     pugi::xml_node root;
 
-    if (name.empty())
+    if (xml_data.empty())
     {
         root = m_pdoc_interface->child("GeneratorDefinitions");
     }
     else
     {
-        auto result = doc.load_string(name);
+        auto result = doc.load_string(xml_data);
         if (!result)
         {
             FAIL_MSG("XML file is corrupted!");
@@ -370,7 +372,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview name)
         }
 #endif  // _DEBUG
 
-        if (name.empty())
+        if (xml_data.empty())
         {
             m_interfaces[class_name] = generator;
         }
@@ -410,7 +412,8 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview name)
         generator = generator.next_sibling("gen");
     }
 
-    if (!name.is_sameas("interface"))
+    // Interface processing doesn't have a xml_data
+    if (xml_data.size())
     {
         auto elem_obj = root.child("gen");
         while (elem_obj)

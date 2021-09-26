@@ -276,16 +276,17 @@ void NodeCreator::Initialize()
     }
 
     {
-        pugi::xml_document doc;
-        m_pdoc_interface = &doc;
+        pugi::xml_document interface_doc;
+        m_pdoc_interface = &interface_doc;
 
         // We start by loading the main interface_xml string, then we append the nodes from all the other interface strings.
-        auto result = m_pdoc_interface->load_string(interface_xml);
+        auto result = interface_doc.load_string(interface_xml);
         if (!result)
         {
             FAIL_MSG("xml/interface_xml.xml is corrupted!");
             throw std::runtime_error("Internal XML file is corrupted.");
         }
+        auto interface_root = interface_doc.child("GeneratorDefinitions");
 
         for (auto& iter: lst_xml_interfaces)
         {
@@ -299,7 +300,7 @@ void NodeCreator::Initialize()
             auto root = sub_interface.child("GeneratorDefinitions");
             for (auto& child_node: root)
             {
-                m_pdoc_interface->append_copy(child_node);
+                interface_root.append_copy(child_node);
             }
         }
 

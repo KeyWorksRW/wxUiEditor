@@ -1,0 +1,228 @@
+inline const char* books_xml = R"===(<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+	<gen class="wxChoicebook" image="wxChoicebook" type="choicebook">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_choicebook</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="persist_name" type="string"
+			help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
+		<property name="style" type="option">
+			<option name="wxCHB_DEFAULT"
+				help="Choose the default location for the labels depending on the current platform (but currently it's the same everywhere, namely wxCHB_TOP)." />
+			<option name="wxCHB_TOP"
+				help="Place labels above the page area." />
+			<option name="wxCHB_LEFT"
+				help="Place labels on the left side." />
+			<option name="wxCHB_RIGHT"
+				help="Place labels on the right side." />
+			<option name="wxCHB_BOTTOM"
+				help="Place labels below the page area." />
+			wxCHB_DEFAULT
+		</property>
+		<event name="wxEVT_CHOICEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+			help="The page selection was changed." />
+		<event name="wxEVT_CHOICEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
+			help="The page selection is about to be changed. This event can be vetoed (using wxNotifyEvent::Veto())." />
+	</gen>
+
+	<gen class="wxListbook" image="wxListbook" type="listbook">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_listbook</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="display_images" type="bool"
+			help="If true, will display an image on the tab in addition to any text.">0</property>
+		<property name="image_size" type="wxSize"
+			help="All tab images will be scaled to this size.">16, 16</property>
+		<property name="persist_name" type="string"
+			help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
+		<property name="style" type="option">
+			<option name="wxBK_DEFAULT"
+				help="Default location for the labels depending on the current platform (left everywhere except Mac where it is top)." />
+			<option name="wxBK_TOP"
+				help="Place labels above the page area." />
+			<option name="wxBK_LEFT"
+				help="Place labels on the left side." />
+			<option name="wxBK_RIGHT"
+				help="Place labels on the right side." />
+			<option name="wxBK_BOTTOM"
+				help="Place labels below the page area." />
+			wxBK_DEFAULT
+		</property>
+		<event name="wxEVT_LISTBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+			help="The page selection was changed." />
+		<event name="wxEVT_LISTBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
+			help="The page selection is about to be changed. This event can be vetoed." />
+	</gen>
+
+	<gen class="wxNotebook" image="wxNotebook" type="notebook">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_notebook</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="display_images" type="bool"
+			help="If true, will display an image on the tab in addition to any text.">0</property>
+		<property name="image_size" type="wxSize"
+			help="All tab images will be scaled to this size.">16, 16</property>
+		<property name="persist_name" type="string"
+			help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
+		<property name="tab_position" type="option">
+			<option name="wxBK_DEFAULT"
+				help="Default placement of tabs (currently top on all platforms)." />
+			<option name="wxBK_TOP"
+				help="Place tabs on the top side." />
+			<option name="wxBK_BOTTOM"
+				help="Place tabs under instead of above the book pages." />
+			<option name="wxBK_LEFT"
+				help="Place tabs on the left side." />
+			<option name="wxBK_RIGHT"
+				help="Place tabs on the right side." />
+			wxBK_DEFAULT
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxNB_FIXEDWIDTH"
+				help="All tabs will have same width. (Windows only)" />
+			<option name="wxNB_MULTILINE"
+				help="There can be several rows of tabs. (Windows only)" />
+			<option name="wxNB_NOPAGETHEME"
+				help="Display a solid colour on notebook pages, and not a gradient, which can reduce performance. (Windows only)" />
+		</property>
+		<event name="wxEVT_NOTEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+			help="The page selection was changed." />
+		<event name="wxEVT_NOTEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
+			help="The page selection is about to be changed. This event can be vetoed." />
+	</gen>
+
+	<gen class="wxToolbook" image="wxToolbook" type="notebook">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_toolbook</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="image_size" type="wxSize"
+			help="All tool images will be scaled to this size.">16, 16</property>
+		<property name="style" type="bitlist">
+			<option name="wxTBK_HORZ_LAYOUT"
+				help="Shows the text and the icons alongside, not vertically stacked (only implement under Windows and GTK 2 platforms as it relies on wxTB_HORZ_LAYOUT flag support)." />
+		</property>
+		<event name="wxEVT_TOOLBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+			help="The page selection was changed." />
+		<event name="wxEVT_TOOLBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
+			help="The page selection is about to be changed. This event can be vetoed." />
+	</gen>
+
+	<gen class="wxTreebook" image="wxTreebook" type="notebook">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_treebook</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="display_images" type="bool"
+			help="If true, will display an image on the tab in addition to any text.">0</property>
+		<property name="image_size" type="wxSize"
+			help="All tab images will be scaled to this size.">16, 16</property>
+		<property name="persist_name" type="string"
+			help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page and the expand/collapse state of sub pages." />
+		<property name="tab_position" type="option">
+			<option name="wxBK_DEFAULT"
+				help="Default placement of tab (currently, positioned on the left)." />
+			<option name="wxBK_TOP"
+				help="Place tab on the top side." />
+			<option name="wxBK_BOTTOM"
+				help="Place tab under instead of above the book pages." />
+			<option name="wxBK_LEFT"
+				help="Place tabs on the left side." />
+			<option name="wxBK_RIGHT"
+				help="Place tab on the right side." />
+			wxBK_DEFAULT
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxNB_NOPAGETHEME"
+				help="Display a solid colour on treebook pages, and not a gradient, which can reduce performance. (Windows only)" />
+		</property>
+		<event name="wxEVT_TREEBOOK_PAGE_CHANGED" class="wxBookCtrlEvent"
+			help="The page selection was changed." />
+		<event name="wxEVT_TREEBOOK_PAGE_CHANGING" class="wxBookCtrlEvent"
+			help="The page selection is about to be changed. This event can be vetoed." />
+		<event name="wxEVT_TREEBOOK_NODE_COLLAPSED" class="wxBookCtrlEvent"
+			help="Generated when the page node is going to be collapsed." />
+		<event name="wxEVT_TREEBOOK_NODE_EXPANDED" class="wxBookCtrlEvent"
+			help="Generated when the page node is going to be collapsed." />
+	</gen>
+
+	<gen class="wxSimplebook" image="wxSimplebook" type="simplebook">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">m_simplebook</property>
+		<event name="wxEVT_BOOKCTRL_PAGE_CHANGED" class="wxBookCtrlEvent"
+			help="The page selection was changed." />
+		<event name="wxEVT_BOOKCTRL_PAGE_CHANGING" class="wxBookCtrlEvent"
+			help="The page selection is about to be changed. This event can be vetoed." />
+	</gen>
+
+	<gen class="BookPage" image="book_page" type="bookpage">
+		<inherits class="Window Events" />
+		<inherits class="wxWindow">
+			<property name="window_style" type="bitlist">wxTAB_TRAVERSAL</property>
+		</inherits>
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">page</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<property name="label" type="string_escapes">page</property>
+		<property name="select" type="bool"
+			help="Select Page when Adding">0</property>
+		<property name="bitmap" type="image"
+			help="Page Image (not all books use this)" />
+	</gen>
+
+	<gen class="PageCtrl" image="pagectrl" type="page">
+		<property name="label" type="string_escapes">page</property>
+		<property name="select" type="bool"
+			help="Select Page when Adding">0</property>
+		<property name="bitmap" type="image"
+			help="Page Image (optional)" />
+	</gen>
+
+	<!-- wxFormBuilder import only -->
+
+	<gen class="oldbookpage" type="oldbookpage">
+		<property name="label" type="string_escapes" />
+		<property name="bitmap" type="image" />
+		<property name="select" type="bool" />
+	</gen>
+</GeneratorDefinitions>)===";

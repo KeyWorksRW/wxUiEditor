@@ -1,0 +1,41 @@
+inline const char* project_xml = R"===(<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+	<gen class="Project" type="project" image="project">
+		<property name="source_ext" type="option">
+			<option name=".cpp" />
+			<option name=".cc" />
+			<option name=".cxx" />
+			.cpp
+		</property>
+		<property name="header_ext" type="option">
+			<option name=".h" />
+			<option name=".hh" />
+			<option name=".hpp" />
+			<option name=".hxx" />
+			.h
+		</property>
+		<property name="local_pch_file" type="file"
+			help="The filename of a local precompiled header file. The file will be included in quotes." />
+		<property name="src_preamble" type="string_edit"
+			help="Code to generate at the top of the source file after the inclusion of any local precompiled header file. This can include er files, comments, macros, etc." />
+		<property name="original_art" type="path"
+			help="The directory containing your original artwork." />
+		<property name="converted_art" type="path"
+			help="The directory containing XPM and PNG header files." />
+		<property name="internationalize" type="bool"
+			help="Wrap strings in a _() macro which expands into a call to wxGetTranslation().">0</property>
+		<property name="help_provider" type="option"
+			help="The class of help provider to use for context-sensitive help.">
+			<option name="none"
+				help="No support for context-sensitive help." />
+			<option name="wxSimpleHelpProvider"
+				help="Use wxSimpleHelpProvider to provide context-sensitive help." />
+			<option name="wxHelpControllerHelpProvider"
+				help="Use wxHelpControllerHelpProvider to provide context-sensitive help." />
+			none
+		</property>
+		<property name="name_space" type="string"
+			help="Namespace to enclose class declarations in. Separate nested namespaces with a double colon (e.g. company::app::subname)" />
+	</gen>
+</GeneratorDefinitions>)===";

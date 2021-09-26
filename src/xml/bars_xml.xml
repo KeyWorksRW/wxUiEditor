@@ -1,0 +1,497 @@
+inline const char* bars_xml = R"===(<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+	<gen class="wxMenuBar" image="wxMenuBar" type="menubar">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">m_menubar</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxMB_DOCKABLE"
+				help="Allows the menu bar to be detached (wxGTK only)." />
+		</property>
+	</gen>
+
+	<gen class="wxMenu" image="menu" type="menu">
+		<property name="var_name" type="string">m_menu</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="label" type="string_escapes">MyMenu</property>
+	</gen>
+
+	<gen class="submenu" image="submenu" type="submenu">
+		<property name="var_name" type="string">submenu</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<property name="label" type="string_escapes">MySubMenu</property>
+		<property name="bitmap" type="image"
+			help="Bitmap for the submenu item." />
+	</gen>
+
+	<gen class="wxMenuItem" image="menuitem" type="menuitem">
+		<property name="var_name" type="string">menu_item</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<property name="label" type="string_escapes"
+			help="Text for the menu item, as shown on the menu. An accelerator key can be specified using the ampersand &quot;&amp;&quot; character.">MyMenuItem</property>
+		<property name="shortcut" type="string_escapes"
+			help="Optional keyboard shortcut. The syntax is any combination of &quot;CTRL&quot;, &quot;ALT&quot; and &quot;SHIFT&quot; strings (case doesn't matter) separated by either '-' or '+' characters and followed by the accelerator itself. The accelerator may be any alphanumeric character, or any function key (from F1 to F12)" />
+		<property name="help" type="string_edit"
+			help="Optional string that will be shown on the status bar." />
+		<property name="id" type="id">wxID_ANY</property>
+		<property name="bitmap" type="image"
+			help="Bitmap for the menu item. This doubles as the checked bitmap if the menu item is wxITEM_CHECK." />
+		<property name="unchecked_bitmap" type="image"
+			help="Unchecked bitmap for the menu item. This will be shown if the menu item is wxITEM_CHECK and it is currently unchecked. (Windows only)" />
+		<property name="checked" type="bool">0</property>
+		<property name="disabled" type="bool">0</property>
+		<property name="kind" type="option">
+			<option name="wxITEM_NORMAL"
+				help="Creates a normal menu item." />
+			<option name="wxITEM_CHECK"
+				help="Creates a checkable menu item." />
+			<option name="wxITEM_RADIO"
+				help="Creates a radio menu item. Consecutive radio items form a radio group such that exactly one button in the group is selected at any moment." />
+			wxITEM_NORMAL
+		</property>
+		<event name="wxEVT_MENU" class="wxCommandEvent"
+			help="" />
+		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"
+			help="" />
+	</gen>
+
+	<gen class="separator" image="separator" type="menuitem">
+		<property name="var_name" type="string">separator</property>
+	</gen>
+
+	<gen class="wxContextMenuEvent" image="menu" type="ctx_menu">
+		<property name="handler_name" type="string"
+			help="This is the handler name that will be used in the parent's wxEVT_CONTEXT_MENU. If you change this name, it will automatically be changed in the parent as well.">OnContextMenu</property>
+	</gen>
+
+	<gen class="wxToolBar" image="wxToolBar" type="toolbar">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_toolBar</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="bitmapsize" type="wxSize"
+			help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels." />
+		<property name="margins" type="wxSize"
+			help="Values to be used as margins for the toolbar." />
+		<property name="packing" type="uint"
+			help="Value used for spacing tools. The packing is used for spacing in the vertical direction if the toolbar is horizontal, and for spacing in the horizontal direction if the toolbar is vertical.">1</property>
+		<property name="separation" type="uint"
+			help="The default separator size. This is the size between each toolbar tool.">5</property>
+		<property name="style" type="bitlist">
+			<option name="wxTB_FLAT"
+				help="Gives the toolbar a flat look (Windows and GTK only)." />
+			<option name="wxTB_DOCKABLE"
+				help="Makes the toolbar floatable and dockable (GTK only)." />
+			<option name="wxTB_HORIZONTAL"
+				help="Specifies horizontal layout (default)." />
+			<option name="wxTB_VERTICAL"
+				help="Specifies vertical layout." />
+			<option name="wxTB_TEXT"
+				help="Shows the text in the toolbar buttons; by default only icons are shown." />
+			<option name="wxTB_NOICONS"
+				help="Specifies no icons in the toolbar buttons; by default they are shown." />
+			<option name="wxTB_NODIVIDER"
+				help="Specifies no divider (border) above the toolbar (Windows only)." />
+			<option name="wxTB_NOALIGN"
+				help="Specifies no alignment with the parent window (Windows only, not very useful)." />
+			<option name="wxTB_HORZ_LAYOUT"
+				help="Shows the text and the icons alongside, not vertically stacked (Windows and GTK 2 only). This style must be used with wxTB_TEXT." />
+			<option name="wxTB_HORZ_TEXT"
+				help="Combination of wxTB_HORZ_LAYOUT and wxTB_TEXT." />
+			<option name="wxTB_NO_TOOLTIPS"
+				help="Don't show the short help tooltips for the tools when the mouse hovers over them." />
+			<option name="wxTB_BOTTOM"
+				help="Align the toolbar at the bottom of parent window." />
+			<option name="wxTB_RIGHT"
+				help="Align the toolbar at the right side of parent window." />
+			wxTB_HORIZONTAL
+		</property>
+	</gen>
+
+	<gen class="tool" image="tool" type="tool">
+		<property name="var_name" type="string">tool</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<property name="label" type="string_escapes" />
+		<property name="bitmap" type="image"
+			help="The primary tool bitmap." />
+		<property name="kind" type="option">
+			<option name="wxITEM_NORMAL"
+				help="A normal toolbar button." />
+			<option name="wxITEM_CHECK"
+				help="A checkable tool (stays pressed after it has been toggled)." />
+			<option name="wxITEM_DROPDOWN"
+				help="Creates a normal tool button with a dropdown arrow next to it." />
+			<option name="wxITEM_RADIO"
+				help="A checkable tool which makes part of a radio group of tools each of which is automatically unchecked whenever another button in the group is checked." />
+			wxITEM_NORMAL
+		</property>
+		<property name="tooltip" type="string_edit"
+			help="String to display in the tooltip." />
+		<property name="statusbar" type="string_edit"
+			help="This string is shown in the statusbar (if any) of the parent frame when the mouse pointer is inside the tool." />
+		<property name="id" type="id">wxID_ANY</property>
+		<event name="wxEVT_TOOL" class="wxCommandEvent"
+			help="" />
+		<event name="wxEVT_TOOL_DROPDOWN" class="wxCommandEvent"
+			help="" />
+		<event name="wxEVT_TOOL_RCLICKED" class="wxCommandEvent"
+			help="" />
+		<event name="wxEVT_TOOL_ENTER" class="wxCommandEvent"
+			help="This uses the tools parent ID, the ToolBar, so be sure you set it to something that is not the default. The value of wxCommandEvent::GetSelection is the tool id, or -1 if the mouse cursor has moved off a tool." />
+		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"
+			help="" />
+	</gen>
+
+	<gen class="toolSeparator" image="toolseparator" type="tool" />
+
+	<gen class="ribbonSeparator" image="toolseparator" type="ribbontool" />
+
+	<gen class="wxStatusBar" image="statusbar" type="statusbar">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">m_statusBar</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="fields" type="uint"
+			help="Number of fields in the statusbar.">1</property>
+		<property name="style" type="bitlist">
+			<option name="wxSTB_SIZEGRIP"
+				help="Displays a gripper at the right-hand side of the status bar which can be used to resize the parent window." />
+			<option name="wxSTB_SHOW_TIPS"
+				help="Displays tooltips for those panes whose status text has been ellipsized/truncated because the status text doesn't fit the pane width. Note that this style has effect only on wxGTK (with GTK+ >= 2.12) currently." />
+			<option name="wxSTB_ELLIPSIZE_START"
+				help="Replace the beginning of the status texts with an ellipsis when the status text widths exceed the status bar pane's widths (uses wxControl::Ellipsize)." />
+			<option name="wxSTB_ELLIPSIZE_MIDDLE"
+				help="Replace the middle of the status texts with an ellipsis when the status text widths exceed the status bar pane's widths (uses wxControl::Ellipsize)." />
+			<option name="wxSTB_ELLIPSIZE_END"
+				help="Replace the end of the status texts with an ellipsis when the status text widths exceed the status bar pane's widths (uses wxControl::Ellipsize)." />
+			<option name="wxSTB_DEFAULT_STYLE"
+				help="The default style: includes wxSTB_SIZEGRIP | wxSTB_SHOW_TIPS | wxSTB_ELLIPSIZE_END | wxFULL_REPAINT_ON_RESIZE" />
+			wxSTB_DEFAULT_STYLE
+		</property>
+	</gen>
+
+	<gen class="wxInfoBar" image="infobar" type="widget">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_infoBar</property>
+		<property name="show_effect" type="option"
+			help="Set the effects to use when showing the bar.">
+			<option name="wxSHOW_EFFECT_NONE"
+				help="No effect, equivalent to normal wxWindow::Show() or Hide() call." />
+			<option name="wxSHOW_EFFECT_ROLL_TO_LEFT"
+				help="Roll window to the left." />
+			<option name="wxSHOW_EFFECT_ROLL_TO_RIGHT"
+				help="Roll window to the right." />
+			<option name="wxSHOW_EFFECT_ROLL_TO_TOP"
+				help="Roll window to the top." />
+			<option name="wxSHOW_EFFECT_ROLL_TO_BOTTOM"
+				help="Roll window to the bottom." />
+			<option name="wxSHOW_EFFECT_SLIDE_TO_LEFT"
+				help="Slide window to the left." />
+			<option name="wxSHOW_EFFECT_SLIDE_TO_RIGHT"
+				help="Slide window to the right." />
+			<option name="wxSHOW_EFFECT_SLIDE_TO_TOP"
+				help="Slide window to the top." />
+			<option name="wxSHOW_EFFECT_SLIDE_TO_BOTTOM"
+				help="Slide window to the bottom." />
+			<option name="wxSHOW_EFFECT_BLEND"
+				help="Fade in or out effect." />
+			<option name="wxSHOW_EFFECT_EXPAND"
+				help="Expanding or collapsing effect." />
+			wxSHOW_EFFECT_NONE
+		</property>
+		<property name="hide_effect" type="option"
+			help="Set the effects to use when hiding the bar. ">
+			<option name="wxSHOW_EFFECT_NONE"
+				help="No effect, equivalent to normal wxWindow::Show() or Hide() call." />
+			<option name="wxSHOW_EFFECT_ROLL_TO_LEFT"
+				help="Roll window to the left." />
+			<option name="wxSHOW_EFFECT_ROLL_TO_RIGHT"
+				help="Roll window to the right." />
+			<option name="wxSHOW_EFFECT_ROLL_TO_TOP"
+				help="Roll window to the top." />
+			<option name="wxSHOW_EFFECT_ROLL_TO_BOTTOM"
+				help="Roll window to the bottom." />
+			<option name="wxSHOW_EFFECT_SLIDE_TO_LEFT"
+				help="Slide window to the left." />
+			<option name="wxSHOW_EFFECT_SLIDE_TO_RIGHT"
+				help="Slide window to the right." />
+			<option name="wxSHOW_EFFECT_SLIDE_TO_TOP"
+				help="Slide window to the top." />
+			<option name="wxSHOW_EFFECT_SLIDE_TO_BOTTOM"
+				help="Slide window to the bottom." />
+			<option name="wxSHOW_EFFECT_BLEND"
+				help="Fade in or out effect." />
+			<option name="wxSHOW_EFFECT_EXPAND"
+				help="Expanding or collapsing effect." />
+			wxSHOW_EFFECT_NONE
+		</property>
+		<property name="duration" type="int"
+			help="Set the duration of the animation (in milliseconds) used when showing or hiding the bar.">500</property>
+	</gen>
+)==="
+R"===(
+	<gen class="wxRibbonBar" image="ribbon_bar" type="ribbonbar">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_rbnBar</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="theme" type="option"
+			help="Select the RibbonBar theme.">
+			<option name="Default"
+				help="Use Default theme." />
+			<option name="Generic"
+				help="Use Generic theme." />
+			<option name="MSW"
+				help="Use MSW theme." />
+			Default
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxRIBBON_BAR_DEFAULT_STYLE"
+				help="Defined as wxRIBBON_BAR_FLOW_HORIZONTAL | wxRIBBON_BAR_SHOW_PAGE_LABELS | wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS | wxRIBBON_BAR_SHOW_TOGGLE_BUTTON | wxRIBBON_BAR_SHOW_HELP_BUTTON." />
+			<option name="wxRIBBON_BAR_FOLDBAR_STYLE"
+				help="Defined as wxRIBBON_BAR_FLOW_VERTICAL | wxRIBBON_BAR_SHOW_PAGE_ICONS | wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS | wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS." />
+			<option name="wxRIBBON_BAR_SHOW_PAGE_LABELS"
+				help="Causes labels to be shown on the tabs in the ribbon bar." />
+			<option name="wxRIBBON_BAR_SHOW_PAGE_ICONS"
+				help="Causes icons to be shown on the tabs in the ribbon bar." />
+			<option name="wxRIBBON_BAR_FLOW_HORIZONTAL"
+				help="Causes panels within pages to stack horizontally." />
+			<option name="wxRIBBON_BAR_FLOW_VERTICAL"
+				help="Causes panels within pages to stack vertically." />
+			<option name="wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS"
+				help="Causes extension buttons to be shown on panels (where the panel has such a button)." />
+			<option name="wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS"
+				help="Causes minimise buttons to be shown on panels (where the panel has such a button)." />
+			<option name="wxRIBBON_BAR_SHOW_TOGGLE_BUTTON"
+				help="Causes a toggle button to appear on the ribbon bar at top-right corner." />
+			<option name="wxRIBBON_BAR_SHOW_HELP_BUTTON"
+				help="Causes a help button to appear on the ribbon bar at the top-right corner." />
+			wxRIBBON_BAR_DEFAULT_STYLE
+		</property>
+		<event name="wxEVT_RIBBONBAR_PAGE_CHANGED" class="wxRibbonBarEvent"
+			help="Triggered after the transition from one page being active to a different page being active." />
+		<event name="wxEVT_RIBBONBAR_PAGE_CHANGING" class="wxRibbonBarEvent"
+			help="Triggered prior to the transition from one page being active to a different page being active, and can veto the change." />
+		<event name="wxEVT_RIBBONBAR_TAB_MIDDLE_DOWN" class="wxRibbonBarEvent"
+			help="Triggered when the middle mouse button is pressed on a tab." />
+		<event name="wxEVT_RIBBONBAR_TAB_MIDDLE_UP" class="wxRibbonBarEvent"
+			help="Triggered when the middle mouse button is released on a tab." />
+		<event name="wxEVT_RIBBONBAR_TAB_RIGHT_DOWN" class="wxRibbonBarEvent"
+			help="Triggered when the right mouse button is pressed on a tab." />
+		<event name="wxEVT_RIBBONBAR_TAB_RIGHT_UP" class="wxRibbonBarEvent"
+			help="Triggered when the right mouse button is released on a tab." />
+		<event name="wxEVT_RIBBONBAR_TAB_LEFT_DCLICK" class="wxRibbonBarEvent"
+			help="Triggered when the left mouse button is double clicked on a tab." />
+		<event name="wxEVT_RIBBONBAR_TOGGLED" class="wxRibbonBarEvent"
+			help="Triggered when the button triggering the ribbon bar is clicked." />
+		<event name="wxEVT_RIBBONBAR_HELP_CLICKED" class="wxRibbonBarEvent"
+			help="Triggered when the help button is clicked." />
+	</gen>
+
+	<gen class="wxRibbonPage" image="ribbon_page" type="ribbonpage">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">rbnPage</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<property name="label" type="string_escapes">MyRibbonPage</property>
+		<property name="bitmap" type="image"
+			help="wxRibbonPage bitmap." />
+		<property name="select" type="bool"
+			help="Select this ribbon page when adding.">0</property>
+	</gen>
+
+	<gen class="wxRibbonPanel" image="ribbon_panel" type="ribbonpanel">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">rbnPanel</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<property name="label" type="string_escapes">MyRibbonPanel</property>
+		<property name="bitmap" type="image"
+			help="wxRibbonPanel bitmap." />
+		<property name="style" type="bitlist">
+			<option name="wxRIBBON_PANEL_DEFAULT_STYLE"
+				help="Defined as no other flags set." />
+			<option name="wxRIBBON_PANEL_NO_AUTO_MINIMISE"
+				help="Prevents the panel from automatically minimising to conserve screen space." />
+			<option name="wxRIBBON_PANEL_EXT_BUTTON"
+				help="Causes an extension button to be shown in the panel's chrome (if the bar in which it is contained has wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS set). The behaviour of this button is application controlled, but typically will show an extended drop-down menu relating to the panel." />
+			<option name="wxRIBBON_PANEL_MINIMISE_BUTTON"
+				help="Causes a (de)minimise button to be shown in the panel's chrome (if the bar in which it is contained has the wxRIBBON_BAR_SHOW_PANEL_MINIMISE_BUTTONS style set). This flag is typically combined with wxRIBBON_PANEL_NO_AUTO_MINIMISE to make a panel which the user always has manual control over when it minimises." />
+			<option name="wxRIBBON_PANEL_STRETCH"
+				help="Stretches a single panel to fit the parent page." />
+			<option name="wxRIBBON_PANEL_FLEXIBLE"
+				help="Allows the panel to size in both directions; currently only useful when a single wxRibbonToolBar is the child of the panel, particularly in vertical orientation where the number of rows is dependent on the amount of horizontal space available. Set the minimum and maximum toolbar rows to take full advantage of this wrapping behaviour." />
+			wxRIBBON_PANEL_DEFAULT_STYLE
+		</property>
+		<event name="wxEVT_RIBBONPANEL_EXTBUTTON_ACTIVATED" class="wxRibbonPanelEvent"
+			help="Triggered when the user activate the panel extension button." />
+	</gen>
+
+	<gen class="wxRibbonButtonBar" image="ribbon_buttonbar" type="ribbonbuttonbar">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">rbnBtnBar</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<event name="EVT_RIBBONBUTTONBAR_CLICKED" class="wxRibbonToolBarEvent"
+			help="Triggered when the normal (non-dropdown) region of a button on the button bar is clicked." />
+		<event name="EVT_RIBBONBUTTONBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
+			help="Triggered when the dropdown region of a button on the button bar is clicked. wxRibbonButtonBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown buttons should be doing)." />
+	</gen>
+
+	<gen class="ribbonButton" image="ribbon_button" type="ribbonbutton">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="label" type="string_escapes">MyRibbonButton</property>
+		<property name="bitmap" type="image"
+			help="ribbonButton bitmap." />
+		<property name="help" type="string_escapes"
+			help="ribbonButton" />
+		<property name="kind" type="option">
+			<option name="wxRIBBON_BUTTON_NORMAL"
+				help="Normal button or tool with a clickable area which causes some generic action." />
+			<option name="wxRIBBON_BUTTON_DROPDOWN"
+				help="Dropdown button or tool with a clickable area which typically causes a dropdown menu." />
+			<option name="wxRIBBON_BUTTON_HYBRID"
+				help="Button or tool with two clickable areas - one which causes a dropdown menu, and one which causes a generic action." />
+			<option name="wxRIBBON_BUTTON_TOGGLE"
+				help="Normal button or tool with a clickable area which toggles the button between a pressed and unpressed state." />
+			wxRIBBON_BUTTON_NORMAL
+		</property>
+		<event name="wxEVT_RIBBONBUTTON_CLICKED" class="wxRibbonButtonBarEvent"
+			help="Triggered when the normal (non-dropdown) region of a button on the button bar is clicked." />
+		<event name="wxEVT_RIBBONBUTTON_DROPDOWN_CLICKED" class="wxRibbonButtonBarEvent"
+			help="Triggered when the dropdown region of a button on the button bar is clicked. wxRibbonButtonBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown buttons should be doing)." />
+	</gen>
+
+	<gen class="wxRibbonToolBar" image="ribbon_buttonbar" type="ribbontoolbar">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">rbnToolBar</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<property name="min_rows" type="int"
+			help="Minimum number of rows.">1</property>
+		<property name="max_rows" type="int"
+			help="Maximum number of rows. -1 defaults to minimum number of rows.">-1</property>
+		<event name="wxEVT_RIBBONTOOLBAR_CLICKED" class="wxRibbonToolBarEvent"
+			help="Triggered when the normal (non-dropdown) region of a tool on the tool bar is clicked." />
+		<event name="wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
+			help="Triggered when the dropdown region of a tool on the tool bar is clicked. wxRibbonToolBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown tools should be doing)." />
+	</gen>
+
+	<gen class="ribbonTool" image="ribbon_button" type="ribbontool">
+		<property name="id" type="id"
+			help="ID of the tool (used for event callbacks)." />
+		<property name="bitmap" type="image"
+			help="ribbonTool bitmap." />
+		<property name="help" type="string_escapes"
+			help="ribbonTool" />
+		<property name="kind" type="option">
+			<option name="wxRIBBON_BUTTON_NORMAL"
+				help="Normal button or tool with a clickable area which causes some generic action." />
+			<option name="wxRIBBON_BUTTON_DROPDOWN"
+				help="Dropdown button or tool with a clickable area which typically causes a dropdown menu." />
+			<option name="wxRIBBON_BUTTON_HYBRID"
+				help="Button or tool with two clickable areas - one which causes a dropdown menu, and one which causes a generic action." />
+			<option name="wxRIBBON_BUTTON_TOGGLE"
+				help="Normal button or tool with a clickable area which toggles the button between a pressed and unpressed state." />
+			wxRIBBON_BUTTON_NORMAL
+		</property>
+		<event name="wxEVT_RIBBONTOOLBAR_CLICKED" class="wxRibbonToolBarEvent"
+			help="Triggered when the normal (non-dropdown) region of a tool on the tool bar is clicked." />
+		<event name="wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
+			help="Triggered when the dropdown region of a tool on the tool bar is clicked. wxRibbonToolBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown tools should be doing)." />
+	</gen>
+
+	<gen class="wxRibbonGallery" image="ribbon_gallery" type="ribbongallery">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">rbnGallery</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<event name="wxEVT_RIBBONGALLERY_SELECTED" class="wxRibbonGalleryEvent"
+			help="Triggered when the user selects an item from the gallery." />
+		<event name="wxEVT_RIBBONGALLERY_CLICKED" class="wxRibbonGalleryEvent"
+			help="Similar to EVT_RIBBONGALLERY_SELECTED but triggered every time a gallery item is clicked, even if it is already selected." />
+		<event name="wxEVT_RIBBONGALLERY_HOVER_CHANGED" class="wxRibbonGalleryEvent"
+			help="Triggered when the item being hovered over by the user changes. The item in the event will be the new item being hovered, or NULL if there is no longer an item being hovered." />
+		<event name="wxEVT_BUTTON" class="wxCommandEvent"
+			help="Triggered when the extension button of the gallery is pressed." />
+	</gen>
+
+	<gen class="ribbonGalleryItem" image="ribbon_gallery_item" type="ribbongalleryitem">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="bitmap" type="image"
+			help="The bitmap to display for the item. Note that all items must have equally sized bitmaps. " />
+	</gen>
+</GeneratorDefinitions>)===";

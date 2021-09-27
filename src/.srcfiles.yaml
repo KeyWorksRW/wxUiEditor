@@ -151,6 +151,7 @@ Files:
     ui/importwinres_base.cpp
     ui/insertwidget_base.cpp
     ui/mainframe_base.cpp
+    ui/navtoolbar_base.cpp
     ui/newdialog_base.cpp
     ui/newframe_base.cpp
     ui/import_base.cpp
@@ -190,10 +191,6 @@ DebugFiles:
 # ttBld will add these files to the ninja scripts which will in turn call ttBld to convert the original PNG file into
 # a header file that can be compiled into the executable.
 PNG:
-    art_src/nav_coll_expand.png: art_headers/nav_coll_expand_png.h_img
-    art_src/nav_collapse.png: art_headers/nav_collapse_png.h_img
-    art_src/nav_expand.png: art_headers/nav_expand_png.h_img
-
     art_src/default.png: art_headers/default_png.h_img
     art_src/empty.png: art_headers/empty_png.h_img
     art_src/title_close.png: art_headers/title_close_png.h_img

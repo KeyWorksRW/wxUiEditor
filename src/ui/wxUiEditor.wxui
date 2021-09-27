@@ -1615,6 +1615,70 @@
       </node>
     </node>
     <node
+      class="ToolBar"
+      class_name="NavToolbar"
+      style="wxTB_NODIVIDER"
+      base_file="navtoolbar_base">
+      <node
+        class="tool"
+        bitmap="Embed;../art_src/nav_coll_expand.png;[-1,-1]"
+        id="id_NavCollExpand"
+        label=""
+        statusbar="Expand selected item, collapse all other items at the same level"
+        tooltip="Collapse siblings, expand children"
+        var_name="collapse_expand" />
+      <node
+        class="tool"
+        bitmap="Embed;../art_src/nav_expand.png;[-1,-1]"
+        id="id_NavExpand"
+        label=""
+        statusbar="Expand selected item and all of it's sub-items"
+        tooltip="Expand all children"
+        var_name="expand" />
+      <node
+        class="tool"
+        bitmap="Embed;../art_src/nav_collapse.png;[-1,-1]"
+        id="id_NavCollapse"
+        label=""
+        statusbar="Collapse selected item and all items at the same level"
+        tooltip="Collapse all siblings"
+        var_name="collapse" />
+      <node
+        class="toolSeparator" />
+      <node
+        class="tool"
+        bitmap="Embed;../art_src/nav_moveleft.png;[-1,-1]"
+        id="id_NavMoveLeft"
+        label=""
+        statusbar="Move the selected item left"
+        tooltip="Move Left"
+        var_name="move_left" />
+      <node
+        class="tool"
+        bitmap="Embed;../art_src/nav_moveup.png;[-1,-1]"
+        id="id_NavMoveUp"
+        label=""
+        statusbar="Move the selected item up"
+        tooltip="Move Up"
+        var_name="move_up" />
+      <node
+        class="tool"
+        bitmap="Embed;../art_src/nav_movedown.png;[-1,-1]"
+        id="id_NavMoveDown"
+        label=""
+        statusbar="Move the selected item down"
+        tooltip="Move Down"
+        var_name="move_down" />
+      <node
+        class="tool"
+        bitmap="Embed;../art_src/nav_moveright.png;[-1,-1]"
+        id="id_NavMoveRight"
+        label=""
+        statusbar="Move the selected item right"
+        tooltip="Move Right"
+        var_name="move_right" />
+    </node>
+    <node
       class="wxDialog"
       base_file="newdialog_base"
       class_name="NewDialogBase"

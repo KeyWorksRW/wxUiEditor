@@ -23,10 +23,6 @@
 #include "art_headers/default_png.h_img"
 #include "art_headers/unknown_png.h_img"
 
-#include "art_headers/nav_coll_expand_png.h_img"
-#include "art_headers/nav_collapse_png.h_img"
-#include "art_headers/nav_expand_png.h_img"
-
 #include "art_headers/flex_grid_sizer_png.h_img"
 #include "art_headers/grid_bag_sizer_png.h_img"
 #include "art_headers/grid_sizer_png.h_img"
@@ -171,10 +167,6 @@ static const ImageMap png_headers[] = {
 
     { "unknown", unknown_png, sizeof(unknown_png) },
     { "default", default_png, sizeof(default_png) },
-
-    { "nav_coll_expand", nav_coll_expand_png, sizeof(nav_coll_expand_png) },
-    { "nav_collapse", nav_collapse_png, sizeof(nav_collapse_png) },
-    { "nav_expand", nav_expand_png, sizeof(nav_expand_png) },
 
     { "flex_grid_sizer", flex_grid_sizer_png, sizeof(flex_grid_sizer_png) },
     { "grid_bag_sizer", grid_bag_sizer_png, sizeof(grid_bag_sizer_png) },

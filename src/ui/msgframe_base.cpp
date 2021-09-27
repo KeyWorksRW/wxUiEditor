@@ -11,8 +11,6 @@
 
 #include "msgframe_base.h"
 
-#include "../art_headers/hidden_png.h_img"
-
 #include <wx/mstream.h>  // Memory stream classes
 
 // Convert a data array into a wxImage
@@ -24,10 +22,18 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
     return image;
 };
 
+namespace wxue_img
+{
+    extern const unsigned char hidden_png[494];
+}
+
 MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style) :
     wxFrame(parent, id, title, pos, size, style)
 {
+    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
+        wxImage::AddHandler(new wxPNGHandler);
+
     auto menubar = new wxMenuBar();
 
     auto menu_file = new wxMenu();
@@ -43,7 +49,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     menu_file->Append(menu_item_clear);
 
     auto menu_item_hide = new wxMenuItem(menu_file, id_hide, wxString::FromUTF8("&Hide"));
-    menu_item_hide->SetBitmap(GetImageFromArray(hidden_png, sizeof(hidden_png)));
+    menu_item_hide->SetBitmap(GetImageFromArray(wxue_img::hidden_png, sizeof(wxue_img::hidden_png)));
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, wxString::FromUTF8("&File"));
 

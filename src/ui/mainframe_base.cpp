@@ -15,27 +15,6 @@
 
 #include "mainframe_base.h"
 
-#include "../art_headers/alignbottom_png.h_img"
-#include "../art_headers/aligncenter_png.h_img"
-#include "../art_headers/alignleft_png.h_img"
-#include "../art_headers/alignright_png.h_img"
-#include "../art_headers/aligntop_png.h_img"
-#include "../art_headers/alignvertcenter_png.h_img"
-#include "../art_headers/bottom_png.h_img"
-#include "../art_headers/expand_png.h_img"
-#include "../art_headers/generate_png.h_img"
-#include "../art_headers/hidden_png.h_img"
-#include "../art_headers/left_png.h_img"
-#include "../art_headers/magnify_png.h_img"
-#include "../art_headers/nav_movedown_png.h_img"
-#include "../art_headers/nav_moveleft_png.h_img"
-#include "../art_headers/nav_moveright_png.h_img"
-#include "../art_headers/nav_moveup_png.h_img"
-#include "../art_headers/new_png.h_img"
-#include "../art_headers/right_png.h_img"
-#include "../art_headers/save_png.h_img"
-#include "../art_headers/top_png.h_img"
-
 #include <wx/mstream.h>  // Memory stream classes
 
 // Convert a data array into a wxImage
@@ -47,11 +26,38 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
     return image;
 };
 
+namespace wxue_img
+{
+    extern const unsigned char new_png[946];
+    extern const unsigned char save_png[1392];
+    extern const unsigned char nav_moveup_png[576];
+    extern const unsigned char nav_movedown_png[600];
+    extern const unsigned char nav_moveleft_png[661];
+    extern const unsigned char nav_moveright_png[567];
+    extern const unsigned char alignleft_png[376];
+    extern const unsigned char aligncenter_png[351];
+    extern const unsigned char alignright_png[390];
+    extern const unsigned char aligntop_png[359];
+    extern const unsigned char alignvertcenter_png[348];
+    extern const unsigned char alignbottom_png[363];
+    extern const unsigned char left_png[174];
+    extern const unsigned char right_png[172];
+    extern const unsigned char top_png[166];
+    extern const unsigned char bottom_png[164];
+    extern const unsigned char expand_png[512];
+    extern const unsigned char generate_png[1411];
+    extern const unsigned char hidden_png[494];
+    extern const unsigned char magnify_png[749];
+}
+
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style) :
     wxFrame(parent, id, title, pos, size, style)
 {
     SetSizeHints(wxSize(800, 800));
+
+    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
+        wxImage::AddHandler(new wxPNGHandler);
 
     m_menubar = new wxMenuBar();
 
@@ -59,7 +65,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menuItem = new wxMenuItem(m_menuFile, id_NewProject, wxString::FromUTF8("&New Project...\tCtrl+N"),
     wxString::FromUTF8("Create an empty project"), wxITEM_NORMAL);
-    menuItem->SetBitmap(GetImageFromArray(new_png, sizeof(new_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menuItem->SetBitmap(GetImageFromArray(wxue_img::new_png, sizeof(wxue_img::new_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuFile->Append(menuItem);
 
     auto menuItem2 = new wxMenuItem(m_menuFile, id_OpenProject, wxString::FromUTF8("&Open Project...\tCtrl+O"),
@@ -77,7 +83,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item = new wxMenuItem(m_menuFile, wxID_SAVE, wxString::FromUTF8("&Save\tCtrl+S"),
     wxString::FromUTF8("Save current project"), wxITEM_NORMAL);
-    menu_item->SetBitmap(GetImageFromArray(save_png, sizeof(save_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::save_png, sizeof(wxue_img::save_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuFile->Append(menu_item);
 
     auto menu_item2 = new wxMenuItem(m_menuFile, id_SaveProjectAs, wxString::FromUTF8("Save &As...\tCtrl-Shift+S"),
@@ -170,22 +176,22 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item4 = new wxMenuItem(submenu3, id_MoveUp, wxString::FromUTF8("Up") + '\t' + "Alt+Up",
     wxString::FromUTF8("Moves selected item up"), wxITEM_NORMAL);
-    menu_item4->SetBitmap(GetImageFromArray(nav_moveup_png, sizeof(nav_moveup_png)));
+    menu_item4->SetBitmap(GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)));
     submenu3->Append(menu_item4);
 
     auto menu_item5 = new wxMenuItem(submenu3, id_MoveDown, wxString::FromUTF8("Down") + '\t' + "Alt+Down",
     wxString::FromUTF8("Moves selected item down"), wxITEM_NORMAL);
-    menu_item5->SetBitmap(GetImageFromArray(nav_movedown_png, sizeof(nav_movedown_png)));
+    menu_item5->SetBitmap(GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)));
     submenu3->Append(menu_item5);
 
     auto menu_item6 = new wxMenuItem(submenu3, id_MoveLeft, wxString::FromUTF8("Left") + '\t' + "Alt+Left",
     wxString::FromUTF8("Moves selected item left"), wxITEM_NORMAL);
-    menu_item6->SetBitmap(GetImageFromArray(nav_moveleft_png, sizeof(nav_moveleft_png)));
+    menu_item6->SetBitmap(GetImageFromArray(wxue_img::nav_moveleft_png, sizeof(wxue_img::nav_moveleft_png)));
     submenu3->Append(menu_item6);
 
     auto menu_item7 = new wxMenuItem(submenu3, id_MoveRight, wxString::FromUTF8("Right") + '\t' + "Alt+Right",
     wxString::FromUTF8("Moves selected item right"), wxITEM_NORMAL);
-    menu_item7->SetBitmap(GetImageFromArray(nav_moveright_png, sizeof(nav_moveright_png)));
+    menu_item7->SetBitmap(GetImageFromArray(wxue_img::nav_moveright_png, sizeof(wxue_img::nav_moveright_png)));
     submenu3->Append(menu_item7);
     m_menuEdit->AppendSubMenu(submenu3, wxString::FromUTF8("Move"));
 
@@ -193,35 +199,35 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item8 = new wxMenuItem(submenu2, id_AlignLeft, wxString::FromUTF8("&Left") + '\t' + "Alt+Shift+Left",
     wxString::FromUTF8("Align selected item to the left"), wxITEM_CHECK);
-    menu_item8->SetBitmap(GetImageFromArray(alignleft_png, sizeof(alignleft_png)));
+    menu_item8->SetBitmap(GetImageFromArray(wxue_img::alignleft_png, sizeof(wxue_img::alignleft_png)));
     submenu2->Append(menu_item8);
 
     auto menu_item10 = new wxMenuItem(submenu2, id_AlignCenterHorizontal, wxString::FromUTF8("Center &Horizontal") + '\t' + "Alt+Shift+H",
     wxString::FromUTF8("Align selected item to the center horizontally"), wxITEM_CHECK);
-    menu_item10->SetBitmap(GetImageFromArray(aligncenter_png, sizeof(aligncenter_png)));
+    menu_item10->SetBitmap(GetImageFromArray(wxue_img::aligncenter_png, sizeof(wxue_img::aligncenter_png)));
     submenu2->Append(menu_item10);
     menu_item10->Check();
 
     auto menu_item9 = new wxMenuItem(submenu2, id_AlignRight, wxString::FromUTF8("&Right") + '\t' + "Alt+Shift+Right",
     wxString::FromUTF8("Align selected item to the right"), wxITEM_CHECK);
-    menu_item9->SetBitmap(GetImageFromArray(alignright_png, sizeof(alignright_png)));
+    menu_item9->SetBitmap(GetImageFromArray(wxue_img::alignright_png, sizeof(wxue_img::alignright_png)));
     submenu2->Append(menu_item9);
 
     submenu2->AppendSeparator();
 
     auto menu_item11 = new wxMenuItem(submenu2, id_AlignTop, wxString::FromUTF8("&Top") + '\t' + "Alt+Shift+Up",
     wxString::FromUTF8("Align selected item to the top"), wxITEM_CHECK);
-    menu_item11->SetBitmap(GetImageFromArray(aligntop_png, sizeof(aligntop_png)));
+    menu_item11->SetBitmap(GetImageFromArray(wxue_img::aligntop_png, sizeof(wxue_img::aligntop_png)));
     submenu2->Append(menu_item11);
 
     auto menu_item12 = new wxMenuItem(submenu2, id_AlignCenterVertical, wxString::FromUTF8("Center &Vertical") + '\t' + "Alt+Shift+V",
     wxString::FromUTF8("Align selected item to the center vertically"), wxITEM_CHECK);
-    menu_item12->SetBitmap(GetImageFromArray(alignvertcenter_png, sizeof(alignvertcenter_png)));
+    menu_item12->SetBitmap(GetImageFromArray(wxue_img::alignvertcenter_png, sizeof(wxue_img::alignvertcenter_png)));
     submenu2->Append(menu_item12);
 
     auto menu_item13 = new wxMenuItem(submenu2, id_AlignBottom, wxString::FromUTF8("&Bottom") + '\t' + "Alt+Shift+Down",
     wxString::FromUTF8("Align selected item to the bottom"), wxITEM_CHECK);
-    menu_item13->SetBitmap(GetImageFromArray(alignbottom_png, sizeof(alignbottom_png)));
+    menu_item13->SetBitmap(GetImageFromArray(wxue_img::alignbottom_png, sizeof(wxue_img::alignbottom_png)));
     submenu2->Append(menu_item13);
     m_menuEdit->AppendSubMenu(submenu2, wxString::FromUTF8("Align"));
 
@@ -229,28 +235,28 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item14 = new wxMenuItem(submenu4, id_BorderLeft, wxString::FromUTF8("&Left"),
     wxString::FromUTF8("Toggle border on the left side of the item"), wxITEM_CHECK);
-    menu_item14->SetBitmap(GetImageFromArray(left_png, sizeof(left_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item14->SetBitmap(GetImageFromArray(wxue_img::left_png, sizeof(wxue_img::left_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item14);
 
     auto menu_item15 = new wxMenuItem(submenu4, id_BorderRight, wxString::FromUTF8("&Right"),
     wxString::FromUTF8("Toggle border on the right side of the item"), wxITEM_CHECK);
-    menu_item15->SetBitmap(GetImageFromArray(top_png, sizeof(top_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item15->SetBitmap(GetImageFromArray(wxue_img::right_png, sizeof(wxue_img::right_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item15);
 
     auto menu_item16 = new wxMenuItem(submenu4, id_BorderTop, wxString::FromUTF8("&Top"),
     wxString::FromUTF8("Toggle border on the top side of the item"), wxITEM_CHECK);
-    menu_item16->SetBitmap(GetImageFromArray(top_png, sizeof(top_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item16->SetBitmap(GetImageFromArray(wxue_img::top_png, sizeof(wxue_img::top_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item16);
 
     auto menu_item17 = new wxMenuItem(submenu4, id_BorderBottom, wxString::FromUTF8("&Bottom"),
     wxString::FromUTF8("Toggle border on the bottom side of the item"), wxITEM_CHECK);
-    menu_item17->SetBitmap(GetImageFromArray(bottom_png, sizeof(bottom_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item17->SetBitmap(GetImageFromArray(wxue_img::bottom_png, sizeof(wxue_img::bottom_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     submenu4->Append(menu_item17);
     m_menuEdit->AppendSubMenu(submenu4, wxString::FromUTF8("Borders"));
 
     auto menu_item18 = new wxMenuItem(m_menuEdit, id_Expand, wxString::FromUTF8("&Expand") + '\t' + "Alt+E",
     wxString::FromUTF8("Toggle the wxEXPAND flag"), wxITEM_CHECK);
-    menu_item18->SetBitmap(GetImageFromArray(expand_png, sizeof(expand_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item18->SetBitmap(GetImageFromArray(wxue_img::expand_png, sizeof(wxue_img::expand_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuEdit->Append(menu_item18);
     m_menubar->Append(m_menuEdit, wxString::FromUTF8("&Edit"));
 
@@ -258,7 +264,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item19 = new wxMenuItem(m_menuTools, id_GenerateCode, wxString::FromUTF8("&Generate Base Code"),
     wxString::FromUTF8("Generates C++ Code for each top level form"), wxITEM_NORMAL);
-    menu_item19->SetBitmap(GetImageFromArray(generate_png, sizeof(generate_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
+    menu_item19->SetBitmap(GetImageFromArray(wxue_img::generate_png, sizeof(wxue_img::generate_png)).Scale(16, 16, wxIMAGE_QUALITY_HIGH));
     m_menuTools->Append(menu_item19);
 
     auto menu_item20 = new wxMenuItem(m_menuTools, id_GenerateDerived, wxString::FromUTF8("Create &Derived Code"),
@@ -283,16 +289,16 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar = CreateToolBar(wxTB_FLAT|wxTB_HORIZONTAL);
 
-    m_toolbar->AddTool(id_NewProject, wxString::FromUTF8("New"), GetImageFromArray(new_png, sizeof(new_png)),
+    m_toolbar->AddTool(id_NewProject, wxString::FromUTF8("New"), GetImageFromArray(wxue_img::new_png, sizeof(wxue_img::new_png)),
     wxString::FromUTF8("New Project (Ctrl+N)"));
 
     m_toolbar->AddTool(id_OpenProject, wxString::FromUTF8("Open"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR),
     wxString::FromUTF8("Open Project (Ctrl+O)"));
 
-    m_toolbar->AddTool(wxID_SAVE, wxString::FromUTF8("Save"), GetImageFromArray(save_png, sizeof(save_png)),
+    m_toolbar->AddTool(wxID_SAVE, wxString::FromUTF8("Save"), GetImageFromArray(wxue_img::save_png, sizeof(wxue_img::save_png)),
     wxString::FromUTF8("Save current project"));
 
-    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, GetImageFromArray(generate_png, sizeof(generate_png)),
+    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, GetImageFromArray(wxue_img::generate_png, sizeof(wxue_img::generate_png)),
     wxString::FromUTF8("Generate base class code"));
 
     m_toolbar->AddSeparator();
@@ -319,51 +325,51 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, GetImageFromArray(alignleft_png, sizeof(alignleft_png)),
+    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, GetImageFromArray(wxue_img::alignleft_png, sizeof(wxue_img::alignleft_png)),
     wxString::FromUTF8("Align left"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString, GetImageFromArray(aligncenter_png, sizeof(aligncenter_png)),
+    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString, GetImageFromArray(wxue_img::aligncenter_png, sizeof(wxue_img::aligncenter_png)),
     wxString::FromUTF8("Center horizontally"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignRight, wxEmptyString, GetImageFromArray(alignright_png, sizeof(alignright_png)),
+    m_toolbar->AddTool(id_AlignRight, wxEmptyString, GetImageFromArray(wxue_img::alignright_png, sizeof(wxue_img::alignright_png)),
     wxString::FromUTF8("Align right"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_AlignTop, wxEmptyString, GetImageFromArray(aligntop_png, sizeof(aligntop_png)),
+    m_toolbar->AddTool(id_AlignTop, wxEmptyString, GetImageFromArray(wxue_img::aligntop_png, sizeof(wxue_img::aligntop_png)),
     wxString::FromUTF8("Align top"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, GetImageFromArray(alignvertcenter_png, sizeof(alignvertcenter_png)),
+    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, GetImageFromArray(wxue_img::aligncenter_png, sizeof(wxue_img::aligncenter_png)),
     wxString::FromUTF8("Center vertically"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignBottom, wxEmptyString, GetImageFromArray(alignbottom_png, sizeof(alignbottom_png)),
+    m_toolbar->AddTool(id_AlignBottom, wxEmptyString, GetImageFromArray(wxue_img::alignvertcenter_png, sizeof(wxue_img::alignvertcenter_png)),
     wxString::FromUTF8("Align bottom"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, GetImageFromArray(left_png, sizeof(left_png)),
+    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, GetImageFromArray(wxue_img::left_png, sizeof(wxue_img::left_png)),
     wxString::FromUTF8("Left border"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderRight, wxEmptyString, GetImageFromArray(right_png, sizeof(right_png)),
+    m_toolbar->AddTool(id_BorderRight, wxEmptyString, GetImageFromArray(wxue_img::right_png, sizeof(wxue_img::right_png)),
     wxString::FromUTF8("Right border"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderTop, wxEmptyString, GetImageFromArray(top_png, sizeof(top_png)),
+    m_toolbar->AddTool(id_BorderTop, wxEmptyString, GetImageFromArray(wxue_img::top_png, sizeof(wxue_img::top_png)),
     wxString::FromUTF8("Top border"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, GetImageFromArray(bottom_png, sizeof(bottom_png)),
+    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, GetImageFromArray(wxue_img::bottom_png, sizeof(wxue_img::bottom_png)),
     wxString::FromUTF8("Bottom border"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_Expand, wxEmptyString, GetImageFromArray(expand_png, sizeof(expand_png)),
+    m_toolbar->AddTool(id_Expand, wxEmptyString, GetImageFromArray(wxue_img::expand_png, sizeof(wxue_img::expand_png)),
     wxString::FromUTF8("Expand to fill the space"), wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_ShowHidden, wxEmptyString, GetImageFromArray(hidden_png, sizeof(hidden_png)),
+    m_toolbar->AddTool(id_ShowHidden, wxEmptyString, GetImageFromArray(wxue_img::hidden_png, sizeof(wxue_img::hidden_png)),
     wxString::FromUTF8("Show hidden controls in Mockup panel"), wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_Magnify, wxEmptyString, GetImageFromArray(magnify_png, sizeof(magnify_png)),
+    m_toolbar->AddTool(id_Magnify, wxEmptyString, GetImageFromArray(wxue_img::magnify_png, sizeof(wxue_img::magnify_png)),
     wxString::FromUTF8("Magnify the size of the Mockup window"), wxITEM_CHECK);
 
     m_toolbar->Realize();
@@ -448,4 +454,414 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnEmbedImageConverter, this, id_ConvertImage);
     Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_TOOL, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
+}
+
+namespace wxue_img
+{
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char new_png[946] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,3,84,73,68,65,84,72,199,197,150,79,108,27,69,24,197,127,51,187,177,99,
+    43,137,27,75,53,73,43,165,73,26,84,164,230,66,47,149,122,40,9,141,212,67,81,136,202,37,23,218,94,144,248,39,161,180,151,72,17,183,182,
+    39,36,174,145,34,14,185,85,112,160,234,133,75,41,23,148,34,17,65,1,19,137,166,24,99,146,134,164,177,201,186,96,111,236,153,29,14,174,
+    195,238,122,157,86,234,129,149,62,205,191,157,247,190,247,246,27,205,10,158,243,177,231,109,51,144,30,0,160,80,42,160,222,86,194,191,
+    190,55,152,155,155,51,82,74,140,49,65,4,33,16,33,208,66,185,192,98,215,34,19,99,19,76,31,155,166,219,234,2,224,177,254,155,27,191,220,
+    224,246,143,183,225,74,99,155,237,223,120,249,242,21,170,174,139,148,2,33,162,163,90,175,242,234,23,227,156,26,56,197,153,161,211,252,
+    85,255,157,99,214,56,0,223,212,127,230,204,139,167,169,216,21,150,62,94,50,204,32,100,48,89,129,148,2,41,101,100,8,33,88,88,89,32,223,
+    153,103,40,115,152,162,94,193,217,205,114,64,118,115,64,118,227,236,102,41,234,21,134,50,135,137,31,138,211,162,160,65,208,0,146,17,
+    217,107,207,227,179,245,79,17,189,144,223,254,1,58,45,82,53,69,45,233,130,128,82,49,139,19,179,201,187,26,209,13,124,136,9,18,200,39,
+    192,79,72,194,81,119,93,238,171,251,232,74,157,233,206,119,56,145,126,25,75,192,200,193,81,0,46,212,23,208,6,190,251,227,123,238,86,
+    102,96,40,172,0,2,224,97,21,74,41,76,204,236,149,134,193,224,47,137,192,88,0,241,8,139,2,192,33,37,150,109,115,164,227,8,185,248,175,
+    92,251,103,134,145,2,188,224,193,172,253,21,0,31,253,54,206,166,132,7,21,48,113,32,7,178,165,36,67,224,210,23,201,68,130,137,228,4,70,
+    131,227,65,17,40,90,96,236,70,20,173,198,156,227,129,209,192,82,132,69,126,91,194,22,197,98,49,46,245,93,226,214,195,91,108,236,110,
+    144,223,134,178,132,123,165,123,0,172,22,161,228,65,213,6,74,192,231,136,72,139,132,148,1,155,154,125,128,227,35,199,185,254,231,117,
+    102,187,102,217,116,55,121,88,134,119,151,103,0,208,29,96,122,128,50,240,86,227,75,181,183,40,164,162,153,64,34,145,96,242,228,36,243,
+    122,158,169,218,20,125,189,253,152,140,133,201,88,244,245,246,51,85,155,130,55,255,59,252,173,85,20,65,210,4,111,182,169,84,138,179,
+    99,103,25,93,31,37,151,203,81,42,149,0,72,167,211,28,125,233,40,55,185,73,36,193,158,2,31,81,24,188,217,198,227,113,134,135,135,25,28,
+    28,196,243,60,0,44,203,66,202,160,41,45,10,136,200,190,29,9,176,119,242,141,49,24,99,240,60,211,158,0,95,246,97,224,40,112,173,53,74,
+    41,106,181,26,90,235,134,10,187,99,127,5,126,144,118,125,0,165,20,174,235,226,56,14,59,59,59,84,170,85,108,219,230,235,165,187,251,40,
+    136,200,58,106,94,107,141,235,186,108,109,61,34,151,203,161,181,38,147,57,72,54,251,19,31,188,255,94,96,179,140,64,121,42,153,82,138,
+    114,249,49,107,107,107,244,31,234,103,108,236,21,214,215,215,184,120,225,98,203,203,45,4,226,41,138,140,49,40,165,112,202,14,219,197,
+    34,169,158,30,238,220,249,146,201,201,215,35,101,203,118,217,183,179,201,24,211,176,168,234,146,76,38,89,94,254,150,115,231,94,19,237,
+    238,108,217,110,193,127,55,183,220,211,128,180,109,86,31,172,114,254,252,27,98,223,159,2,255,224,218,213,171,207,164,160,166,52,27,155,
+    91,44,126,178,32,248,191,159,127,1,209,176,59,61,178,101,123,50,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char save_png[1392] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,5,18,73,68,65,84,72,199,173,150,91,108,20,85,28,198,127,115,230,204,
+    206,116,119,187,219,46,91,122,217,82,174,149,210,66,185,73,17,99,76,136,104,130,15,196,198,68,65,52,225,193,7,223,72,52,241,69,240,193,
+    40,49,248,132,49,42,225,65,99,72,8,129,8,15,70,8,81,131,85,65,40,84,98,165,182,92,165,92,150,210,210,10,109,119,103,103,102,207,241,
+    97,183,165,165,21,95,60,47,115,59,231,251,254,255,111,190,239,204,192,255,48,158,89,131,222,183,11,93,22,67,63,252,204,0,48,195,21,58,
+    47,226,96,88,44,115,122,72,152,138,188,254,111,96,211,128,138,6,120,103,91,140,218,153,113,14,30,74,243,254,23,229,244,222,77,34,243,
+    253,4,153,1,195,0,88,184,126,155,110,109,125,158,44,97,222,112,119,82,175,122,240,49,31,141,158,7,191,228,47,204,199,179,132,102,181,
+    144,25,81,220,250,227,56,167,239,182,114,228,246,219,180,183,29,230,242,177,15,13,9,80,83,55,143,117,107,234,57,116,170,15,35,63,132,
+    233,221,64,33,30,129,46,9,170,36,193,114,27,43,217,68,102,68,113,179,251,44,61,87,203,248,110,232,89,86,173,40,227,218,165,185,92,6,
+    36,128,20,154,174,11,189,28,252,186,141,214,173,91,153,183,184,146,108,206,159,22,90,99,147,207,252,64,48,242,30,177,242,102,188,81,
+    232,237,238,68,81,143,170,223,206,209,79,175,147,172,184,49,161,20,192,243,3,22,45,168,101,89,99,29,174,83,205,133,123,146,210,248,204,
+    41,224,194,140,18,210,39,48,220,61,196,82,205,120,174,224,90,215,89,250,134,146,68,231,111,199,86,115,105,154,159,97,238,236,106,126,
+    110,239,126,64,32,132,193,224,168,207,224,125,23,105,4,180,159,58,205,146,165,205,104,52,90,41,12,33,192,136,66,238,48,21,198,14,170,
+    170,235,200,21,193,239,103,82,196,26,62,162,171,103,144,170,57,1,253,247,92,6,238,185,147,59,0,176,164,192,178,44,180,134,45,91,94,159,
+    82,125,110,248,36,110,250,115,108,187,6,207,11,211,219,253,27,185,96,14,11,215,238,39,89,217,64,203,106,56,218,214,129,48,197,67,111,
+    107,154,241,217,238,79,88,185,114,101,81,115,73,68,118,81,105,239,164,52,28,193,15,98,92,235,254,157,116,127,24,93,243,22,250,150,199,
+    213,27,39,57,115,230,44,115,23,61,89,240,254,4,146,113,2,97,24,24,194,0,96,211,43,27,9,201,18,64,226,103,59,24,189,254,1,209,112,12,
+    207,143,114,243,98,39,217,220,76,150,175,223,71,180,188,17,165,10,114,44,172,111,224,196,185,171,72,241,47,29,8,33,40,164,2,238,220,
+    190,75,34,145,192,182,67,88,217,221,36,171,214,146,247,3,110,118,30,228,198,157,8,181,45,31,67,40,197,200,200,224,56,208,224,96,225,
+    124,172,200,105,37,18,194,192,48,160,253,76,59,205,75,155,73,95,63,71,208,255,11,171,87,63,199,192,245,115,12,141,36,152,185,116,23,
+    190,168,225,214,173,107,147,128,58,59,207,51,35,213,56,126,173,244,52,4,166,105,162,53,108,222,244,42,0,223,127,187,151,125,95,94,98,
+    199,187,245,164,102,173,163,105,221,70,226,201,37,211,230,163,121,241,114,142,182,117,96,10,129,16,6,99,141,72,0,165,52,74,169,241,201,
+    67,119,251,240,3,197,210,229,107,169,170,89,68,170,105,49,241,25,243,241,13,147,59,125,233,105,9,44,89,144,216,48,5,10,73,94,61,212,
+    129,210,154,218,170,4,123,142,245,178,231,88,111,81,51,137,101,87,115,160,187,15,212,77,130,124,113,174,202,35,132,137,82,133,27,90,
+    249,69,253,45,102,87,39,64,249,140,25,105,156,192,15,20,241,178,8,21,201,4,94,102,144,225,129,66,220,3,47,64,106,69,160,193,26,51,200,
+    132,163,116,226,96,87,162,148,66,8,129,16,38,94,160,167,118,240,224,237,248,100,122,142,208,148,146,68,194,113,66,182,131,101,21,166,
+    185,217,236,228,13,53,159,231,252,133,179,164,75,90,112,202,107,240,114,62,210,82,88,150,57,185,3,165,53,65,145,210,83,10,153,31,230,
+    229,205,111,210,221,211,77,239,229,43,248,126,192,156,5,245,172,94,245,4,217,209,12,110,144,37,155,201,81,26,139,194,129,253,220,235,
+    203,83,89,85,137,159,27,97,96,104,180,64,174,30,145,100,41,12,2,95,241,235,137,227,252,116,201,65,196,106,89,208,249,13,179,106,235,
+    24,28,26,32,147,117,241,60,151,218,212,236,241,53,129,82,88,150,141,148,222,228,13,242,97,240,80,49,137,78,137,77,73,200,166,52,153,
+    162,178,174,161,0,18,120,248,65,128,86,138,80,200,33,100,89,19,138,18,68,173,169,159,65,49,182,77,200,162,104,158,82,4,74,99,201,194,
+    226,112,164,132,104,60,94,52,130,79,62,235,98,8,129,99,135,176,38,16,8,41,16,166,129,41,5,134,97,78,78,242,112,214,103,232,239,97,106,
+    146,165,164,251,10,145,119,236,18,44,39,202,253,63,59,240,239,167,41,207,231,24,29,29,197,55,52,142,37,177,109,7,33,4,94,209,170,192,
+    184,25,38,234,34,1,122,218,190,98,95,137,197,75,47,60,77,245,194,26,218,207,27,152,166,195,134,13,47,210,216,120,5,223,29,198,41,93,
+    65,36,18,193,182,29,164,52,177,164,133,82,10,223,117,73,150,133,169,74,68,8,11,143,234,68,128,29,178,38,255,85,0,68,102,181,232,199,
+    158,122,13,199,14,81,235,253,72,117,101,5,142,227,76,178,100,54,235,78,209,56,51,220,207,5,119,17,174,153,196,20,5,247,104,165,73,95,
+    60,197,237,51,123,141,127,0,162,167,7,164,27,181,152,182,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char nav_moveup_png[576] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,0,31,243,255,97,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,0,
+    0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,226,73,68,65,84,56,203,181,147,59,104,83,97,20,199,127,223,125,244,230,
+    214,84,145,168,84,41,166,131,14,106,16,28,74,31,136,138,40,136,96,187,56,52,139,147,147,8,78,66,161,14,110,22,31,131,139,147,21,177,
+    58,9,10,5,241,209,12,22,41,148,86,208,208,86,68,163,53,144,88,82,67,218,36,182,121,220,220,123,28,82,45,152,180,136,232,183,124,31,135,
+    255,249,113,56,63,62,248,159,103,240,97,92,206,95,126,45,127,213,124,105,40,33,209,47,203,242,114,58,47,225,171,51,107,66,180,122,197,
+    11,143,51,114,176,115,43,23,39,97,36,107,209,125,114,23,167,110,127,174,11,81,191,23,206,70,74,114,168,213,228,209,156,98,42,87,77,156,
+    9,194,102,93,24,126,155,32,210,187,83,173,9,8,191,114,229,192,54,141,137,37,152,41,128,166,87,19,74,160,39,0,166,11,35,111,98,140,133,
+    119,171,26,192,137,72,69,246,53,235,196,92,152,21,208,172,85,128,120,160,28,232,176,192,116,224,230,94,165,106,118,160,101,203,68,231,
+    132,119,41,112,242,224,228,160,188,114,59,57,40,102,97,52,1,233,69,33,116,125,92,106,38,104,233,185,34,223,55,248,209,155,44,52,127,
+    128,253,237,199,217,211,106,147,47,184,68,63,124,35,57,245,12,207,17,140,82,133,212,157,115,106,93,133,71,250,199,228,254,120,78,6,39,
+    151,37,242,177,40,3,47,22,36,120,250,218,159,89,56,118,47,35,221,33,63,186,79,231,198,180,176,165,81,209,23,82,76,124,117,25,232,50,
+    213,186,128,195,195,37,57,26,52,177,125,138,187,73,112,85,53,177,195,130,222,102,136,166,93,110,181,25,245,53,118,61,41,73,123,75,3,
+    150,15,158,231,193,53,64,173,88,192,131,237,58,116,218,16,155,47,48,212,209,88,107,33,96,232,100,29,120,154,6,135,106,179,102,84,85,
+    42,29,146,101,24,205,192,38,219,166,237,65,252,215,62,140,159,143,197,79,25,222,207,111,164,210,212,128,97,43,52,115,117,2,241,192,115,
+    32,94,20,10,158,203,210,108,234,223,253,216,31,4,126,188,18,33,250,163,23,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char nav_movedown_png[600] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,0,31,243,255,97,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,0,
+    0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,250,73,68,65,84,56,203,181,147,59,104,147,97,20,134,159,239,255,255,
+    92,107,26,8,218,180,84,108,171,53,5,181,22,41,138,40,226,210,193,34,20,68,132,6,113,113,42,94,16,220,4,135,14,78,226,220,73,167,34,14,
+    46,186,136,80,17,165,85,170,86,109,212,86,16,193,148,20,111,49,189,37,105,242,231,191,28,135,36,173,37,21,68,241,192,11,103,57,207,247,
+    114,222,239,192,63,150,170,54,59,174,60,151,112,231,30,190,107,58,154,95,161,121,64,105,128,128,56,224,90,96,23,4,35,91,162,49,187,196,
+    232,153,6,5,96,84,1,117,109,81,186,91,13,166,45,72,235,160,123,43,0,192,181,193,49,33,104,42,186,55,251,72,103,34,43,14,180,106,243,
+    226,100,139,90,44,20,56,28,129,102,111,229,85,167,60,44,14,120,128,222,141,16,246,64,198,118,106,1,0,195,251,131,234,91,198,225,88,16,
+    34,121,40,254,40,203,158,131,120,8,2,69,225,213,76,137,167,71,125,106,93,0,192,208,94,67,125,250,98,115,190,73,8,231,92,172,180,195,
+    217,70,23,127,222,98,52,177,192,227,190,213,97,0,125,189,205,166,22,235,7,183,182,238,228,84,187,198,238,128,77,93,209,228,230,157,215,
+    60,188,216,161,126,155,2,64,244,244,144,216,62,3,205,163,104,238,60,66,87,108,19,161,128,206,251,100,129,55,207,70,112,115,25,156,172,
+    201,134,124,142,217,187,151,212,26,192,174,107,227,210,117,96,31,147,166,66,188,160,85,82,16,64,108,112,75,96,23,160,69,9,222,165,34,
+    247,142,7,85,141,131,11,211,34,150,7,198,77,144,95,254,129,235,128,107,66,155,130,118,29,166,190,58,220,239,49,84,205,18,39,18,31,105,
+    112,160,215,7,214,60,152,115,171,138,185,112,208,15,159,231,221,149,225,26,192,147,248,118,53,54,153,34,234,8,39,66,80,204,148,213,225,
+    66,95,189,240,33,85,226,214,33,125,141,235,154,24,31,244,111,81,35,99,73,98,82,162,63,108,177,109,185,192,64,83,137,151,111,23,184,222,
+    227,83,127,124,36,241,171,83,242,232,93,86,18,201,101,185,60,60,43,127,117,105,231,6,39,228,198,237,25,225,127,214,79,137,126,205,59,
+    112,209,11,239,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char nav_moveleft_png[661] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,0,31,243,255,97,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,0,
+    0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,2,55,73,68,65,84,56,203,197,146,61,104,83,97,20,134,159,239,126,55,73,
+    211,164,220,155,254,81,109,73,180,96,169,109,234,15,88,29,196,173,98,7,21,252,25,92,20,116,146,226,230,218,193,193,65,176,75,23,167,
+    226,34,82,39,177,46,46,46,14,133,64,11,130,173,22,20,37,169,197,88,211,38,55,222,219,252,222,123,63,135,96,106,45,14,226,224,129,151,
+    3,231,156,247,229,28,206,11,255,24,226,111,9,163,143,51,66,249,202,40,101,190,169,119,147,199,139,218,159,6,147,83,41,51,57,149,42,252,
+    90,187,154,42,137,174,246,72,92,151,90,65,72,153,6,208,127,39,158,156,253,96,72,169,89,71,134,251,89,207,85,201,221,120,80,88,127,56,
+    17,155,88,112,69,77,121,241,238,142,72,186,175,167,131,55,145,61,236,18,24,123,178,106,232,82,203,156,24,233,37,43,96,169,38,112,67,
+    141,145,22,159,184,174,203,116,212,8,50,95,128,156,148,0,52,79,56,55,243,201,104,171,248,153,177,161,30,195,149,176,88,7,34,65,180,128,
+    48,19,151,239,171,160,167,210,3,49,201,98,21,242,58,104,33,97,238,216,32,154,47,167,199,207,244,27,25,36,115,155,16,136,129,22,132,222,
+    145,113,174,156,141,50,176,87,50,157,5,43,2,50,8,90,128,237,13,110,221,89,44,92,63,221,103,126,220,146,204,126,6,37,64,104,13,28,30,
+    232,226,216,254,48,247,150,21,95,171,13,198,207,94,83,224,208,96,167,217,109,6,88,200,186,212,60,64,53,160,128,182,176,36,99,249,108,
+    148,84,179,14,219,89,3,144,82,196,230,82,5,110,38,37,67,109,224,123,13,40,23,86,210,101,66,158,203,237,164,32,44,64,121,224,187,141,
+    188,195,72,147,143,214,204,138,17,41,28,28,52,120,225,8,222,107,80,183,97,227,217,83,134,91,122,184,120,105,148,74,107,128,185,18,124,
+    247,161,146,7,124,98,205,47,220,189,218,103,213,61,101,46,172,213,139,71,195,112,64,3,85,1,85,181,89,218,120,27,123,190,236,88,150,227,
+    171,83,173,208,90,7,175,172,112,203,138,29,78,156,190,208,94,116,125,18,43,155,126,49,46,32,161,41,148,83,195,179,171,188,188,214,30,
+    155,255,226,174,218,37,165,134,116,104,113,106,4,237,42,187,172,60,51,22,42,122,138,196,202,186,103,201,98,133,232,150,67,116,203,1,
+    224,213,249,208,190,215,217,250,106,46,239,89,157,182,109,117,59,182,226,191,199,15,81,222,232,236,76,214,121,58,0,0,0,0,73,69,78,68,
+    174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char nav_moveright_png[567] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,0,31,243,255,97,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,0,
+    0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,217,73,68,65,84,56,203,205,210,79,72,84,81,20,199,241,239,125,247,189,
+    121,243,116,198,254,76,138,137,48,18,180,72,199,40,72,52,193,138,40,168,192,92,5,185,105,53,155,86,237,34,208,69,139,160,77,181,10,35,
+    41,136,164,90,68,5,66,145,52,187,16,100,40,108,48,55,49,32,19,78,133,134,65,90,211,252,185,239,180,120,53,99,52,238,61,240,227,194,61,
+    220,15,7,238,129,77,81,3,99,75,50,56,85,145,254,231,69,89,127,223,62,116,85,78,61,249,41,39,82,21,217,232,173,5,240,37,218,68,115,76,
+    211,219,30,226,240,100,13,89,107,140,80,106,10,211,213,170,25,126,109,100,67,160,18,13,241,182,8,110,24,142,198,29,142,221,95,17,0,29,
+    117,201,137,34,107,96,127,139,69,50,85,148,186,128,237,41,140,11,83,171,224,133,21,167,19,17,142,140,76,139,21,137,97,123,176,32,144,
+    254,1,135,58,28,46,60,91,145,255,0,203,1,237,130,177,225,94,30,116,88,147,28,236,102,111,239,113,172,16,88,46,204,23,224,233,103,197,
+    201,238,70,70,39,22,229,31,64,105,176,236,224,52,10,174,191,23,138,218,102,79,135,135,178,193,210,65,230,190,195,141,89,195,153,129,
+    237,220,125,156,147,42,128,250,195,169,32,59,26,20,241,173,22,171,5,19,180,84,45,61,109,54,223,214,12,179,243,203,181,9,196,15,130,15,
+    109,46,92,74,40,222,44,20,200,124,88,174,246,148,192,185,56,36,182,8,183,95,124,228,230,229,3,170,10,248,101,48,37,216,169,225,108,43,
+    164,63,25,110,141,223,33,63,247,18,191,4,170,12,67,49,216,166,133,135,51,121,30,93,236,250,59,51,54,128,255,75,104,54,138,131,30,100,
+    190,26,198,250,29,5,16,59,63,46,170,4,125,46,56,6,38,223,45,146,74,238,82,235,127,193,6,104,241,13,157,142,77,118,169,192,68,95,67,77,
+    47,86,216,231,10,78,89,241,42,147,101,122,120,183,170,187,142,157,87,210,210,243,32,87,119,211,18,215,102,132,77,93,191,1,211,175,163,
+    141,202,80,236,184,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char alignleft_png[376] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,26,73,68,65,84,72,199,237,149,79,74,195,64,20,135,191,151,63,99,170,
+    184,16,209,133,226,194,149,23,112,231,202,3,121,6,235,21,188,135,119,232,13,20,113,43,21,17,119,90,48,181,109,50,157,25,23,141,214,78,
+    18,107,139,130,96,30,60,8,243,224,247,189,121,191,153,9,76,194,21,249,227,17,240,203,209,0,254,1,32,242,23,246,78,174,28,64,75,149,217,
+    2,24,235,48,70,211,61,63,148,165,0,251,219,9,199,71,7,236,108,128,207,88,107,193,245,109,202,69,231,126,249,29,188,223,182,199,30,36,
+    94,117,53,131,167,62,100,186,66,169,141,163,141,204,247,192,65,58,170,207,97,14,198,85,136,159,126,115,7,48,17,2,208,94,85,91,120,205,
+    97,108,61,113,128,179,79,223,211,154,84,2,94,10,192,56,246,0,14,6,25,24,235,137,47,114,76,29,48,210,245,153,27,176,110,218,225,194,38,
+    135,129,16,23,157,43,53,91,91,81,16,71,33,129,200,204,24,62,60,144,50,176,4,120,24,40,182,230,116,245,156,133,190,201,82,247,220,87,
+    122,112,121,115,135,90,223,36,242,6,24,135,66,47,29,178,155,244,233,150,143,233,151,227,106,126,56,13,224,15,3,222,0,114,125,108,182,
+    222,240,72,151,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char aligncenter_png[351] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,1,73,68,65,84,72,199,237,148,193,74,195,64,16,134,191,77,11,105,86,
+    80,107,137,40,61,235,213,179,207,228,205,39,200,75,228,117,60,123,43,248,6,30,74,15,69,15,165,104,54,155,157,241,208,148,6,105,209,90,
+    162,8,25,88,118,15,243,207,199,254,179,179,208,114,152,122,215,150,235,183,2,80,128,168,109,139,58,192,223,3,250,95,37,92,221,79,116,
+    48,136,169,196,224,3,120,1,17,8,106,88,250,136,69,126,109,14,2,164,167,150,219,155,11,2,125,22,5,44,11,112,30,74,129,233,171,227,233,
+    71,22,229,155,185,72,226,30,227,52,97,156,90,46,207,44,231,67,203,104,104,25,157,36,28,31,197,91,53,187,111,144,213,73,243,250,156,97,
+    68,161,244,80,1,174,2,191,94,1,42,105,232,230,13,125,182,153,224,95,110,242,154,156,163,220,97,190,93,37,195,236,210,108,111,114,35,
+    81,117,101,133,87,40,3,184,176,178,202,53,45,250,164,217,235,21,205,94,222,121,120,124,38,138,12,34,32,53,84,48,188,21,189,253,126,190,
+    238,55,237,0,7,15,154,242,31,227,3,218,63,98,34,59,144,57,25,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char alignright_png[390] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,40,73,68,65,84,72,199,237,149,203,74,195,64,20,134,191,36,77,210,166,
+    13,78,116,85,81,33,239,226,243,184,118,231,116,35,62,138,224,27,248,12,130,27,183,162,27,187,147,20,164,36,78,46,227,34,177,52,177,161,
+    23,172,27,243,195,48,48,231,159,249,56,231,204,48,176,31,233,106,96,178,103,117,128,127,0,232,109,106,12,47,30,52,193,25,129,63,32,205,
+    117,45,150,21,160,62,222,1,120,190,14,141,245,0,73,4,132,72,102,223,75,111,201,136,243,227,33,167,99,143,68,213,237,115,5,224,243,248,
+    244,218,82,34,137,64,34,22,171,87,8,32,90,54,30,186,249,218,44,79,60,213,90,162,168,2,149,154,44,101,34,9,0,10,173,73,179,156,79,5,170,
+    113,78,154,150,115,94,232,173,155,44,184,169,158,188,1,142,5,125,187,125,24,59,53,249,178,220,103,153,224,185,224,187,96,55,78,234,89,
+    229,60,109,5,200,6,92,163,171,50,5,11,163,9,67,7,14,60,176,27,121,219,217,54,215,84,34,152,252,132,90,6,12,28,240,251,96,209,2,48,54,
+    3,204,86,89,93,27,142,70,48,22,48,143,235,49,85,192,52,218,181,7,149,146,56,225,246,254,133,59,211,64,175,136,199,170,224,47,213,125,
+    56,29,224,23,245,5,107,107,79,167,170,81,240,215,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char aligntop_png[359] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,9,73,68,65,84,72,199,237,149,63,78,195,48,20,135,63,59,113,210,166,
+    68,64,153,2,98,96,228,98,92,163,157,56,11,18,55,232,73,16,82,219,173,11,66,12,168,74,112,18,135,161,83,44,98,76,35,15,149,120,203,147,
+    252,228,223,103,191,63,54,4,54,1,116,33,1,146,127,243,168,193,160,37,15,47,221,77,49,231,50,159,82,183,253,82,53,6,244,231,59,0,235,
+    199,187,65,157,216,5,152,167,45,247,215,51,110,139,140,74,247,99,123,13,144,243,182,121,101,237,208,112,2,76,215,81,55,45,95,26,180,
+    5,168,235,131,111,141,187,9,157,0,41,32,137,96,162,64,88,58,198,39,199,191,1,34,9,89,10,121,10,202,82,138,163,131,223,141,1,196,18,102,
+    9,156,103,160,172,137,81,141,95,23,185,111,32,96,154,64,62,129,136,1,128,24,1,72,21,92,157,65,113,1,251,178,31,211,6,118,31,35,107,80,
+    149,21,79,171,45,207,82,252,248,96,149,218,156,218,220,47,255,254,242,138,163,196,151,254,251,196,209,39,247,132,72,47,241,133,181,182,
+    240,79,87,240,20,5,255,209,78,31,16,220,190,1,12,155,69,239,75,2,120,131,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char alignvertcenter_png[348] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,0,254,73,68,65,84,72,199,213,149,49,78,195,48,20,134,63,59,78,75,231,
+    78,168,18,43,51,91,103,174,195,202,1,122,2,182,94,134,27,48,51,50,119,170,42,80,212,198,73,93,251,49,128,84,103,33,137,26,211,214,139,
+    173,39,219,223,251,253,219,207,144,184,169,223,94,18,239,159,4,32,0,186,215,146,5,194,162,95,50,58,181,7,221,1,203,40,243,101,119,21,
+    221,1,79,71,195,26,227,62,134,164,48,217,180,205,186,127,126,151,219,233,4,21,229,172,21,216,218,179,254,42,249,120,121,248,83,77,43,
+    96,54,189,225,113,126,135,137,14,115,148,195,106,109,121,125,91,181,202,104,5,104,173,112,146,55,98,25,224,113,28,130,58,29,16,2,124,
+    150,48,202,142,177,177,129,162,2,231,25,0,0,20,22,198,17,160,50,176,173,192,133,1,0,34,80,238,193,71,51,115,129,218,253,168,27,64,129,
+    162,246,210,184,69,2,236,3,120,25,192,131,77,149,97,55,182,113,139,140,134,98,87,179,117,250,252,15,237,130,170,233,165,22,187,228,255,
+    193,191,86,83,225,26,219,55,174,167,90,71,192,57,137,232,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char alignbottom_png[363] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,13,73,68,65,84,72,199,229,149,75,78,2,65,16,134,191,158,71,3,18,23,
+    196,132,5,137,11,87,94,192,157,43,15,196,29,56,131,247,240,14,30,193,16,183,4,99,136,59,37,113,20,152,105,122,202,133,152,12,157,97,
+    50,210,25,19,240,95,85,210,85,245,117,85,245,3,26,150,170,237,57,66,10,118,237,184,160,233,10,254,3,96,132,32,133,254,3,8,178,53,19,
+    239,33,151,37,171,57,232,198,79,209,239,84,179,45,127,170,202,82,207,135,15,2,208,209,65,105,160,205,5,107,13,211,219,171,157,121,162,
+    42,192,69,191,205,205,245,37,131,30,184,140,110,7,198,147,132,187,251,231,202,10,42,1,63,13,127,153,67,219,241,60,73,225,245,3,82,195,
+    254,0,4,146,213,183,105,28,79,11,44,51,176,226,3,96,55,192,228,240,153,193,58,247,4,188,111,0,235,216,1,8,44,82,176,62,0,1,86,166,252,
+    77,17,5,153,133,220,167,69,97,160,136,55,59,215,122,123,173,165,33,142,66,2,165,246,7,204,22,154,217,227,19,250,244,140,200,41,33,14,
+    21,243,100,201,91,26,114,220,82,133,251,116,152,63,90,227,250,2,19,41,83,121,181,217,95,132,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char left_png[174] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,0,80,73,68,65,84,72,199,237,208,193,13,128,48,12,4,193,77,68,73,169,
+    201,69,165,38,247,116,60,16,52,128,19,9,116,247,218,151,37,15,252,103,145,34,82,165,13,244,109,15,8,36,80,245,221,190,148,218,68,38,
+    50,145,137,76,84,180,227,142,22,121,197,28,60,47,206,209,94,245,86,162,207,238,4,125,50,96,158,11,39,216,122,0,0,0,0,73,69,78,68,174,
+    66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char right_png[172] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,0,78,73,68,65,84,72,199,237,208,177,13,128,48,16,67,209,31,196,72,204,
+    116,67,49,211,237,100,26,154,68,233,114,66,10,178,171,223,250,193,127,22,41,34,85,218,192,177,29,132,64,130,201,131,225,90,213,76,100,
+    34,19,153,200,68,21,68,103,71,4,112,95,109,165,91,36,111,111,74,244,249,30,53,122,96,158,243,35,40,83,0,0,0,0,73,69,78,68,174,66,96,
+    130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char top_png[166] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,0,72,73,68,65,84,72,199,237,208,49,17,0,32,12,4,193,3,77,209,20,81,104,
+    138,167,80,48,96,0,40,96,254,171,171,190,88,120,125,101,149,71,2,100,179,189,67,143,17,205,10,64,229,159,121,228,100,58,249,35,34,17,
+    137,72,68,34,186,71,116,170,63,35,186,180,14,141,213,80,146,254,100,6,192,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char bottom_png[164] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,0,70,73,68,65,84,72,199,99,96,24,62,32,237,204,127,134,180,51,255,169,
+    202,102,96,96,96,26,166,65,68,69,115,70,131,104,52,136,70,131,104,52,136,70,131,136,26,128,17,197,107,12,12,12,255,103,153,80,102,96,
+    218,25,8,99,150,9,227,112,75,69,52,2,0,227,151,80,146,60,123,246,21,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char expand_png[512] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,162,73,68,65,84,72,199,229,148,207,74,35,65,16,198,127,253,103,37,
+    30,140,201,97,47,158,178,224,205,151,152,119,240,5,242,12,251,4,1,207,178,7,133,189,230,21,124,0,37,135,221,171,160,7,21,68,8,136,11,
+    162,146,65,113,146,249,211,221,30,122,18,103,195,196,100,215,17,20,11,106,122,106,122,248,170,191,250,170,26,62,186,9,128,245,239,199,
+    46,216,168,179,90,83,24,235,112,128,195,63,138,235,146,150,28,254,129,211,189,109,174,127,253,16,139,36,208,0,171,203,138,173,205,53,
+    190,214,191,240,96,192,88,72,45,164,6,210,204,175,153,133,250,50,236,28,60,114,100,22,103,160,243,3,50,24,193,69,4,231,55,30,52,74,224,
+    97,4,247,67,184,143,33,138,65,105,56,185,4,45,95,64,236,246,28,237,96,194,110,242,171,3,172,245,167,207,198,12,138,76,12,36,153,223,
+    155,91,155,110,207,253,197,96,44,134,16,32,5,168,105,151,185,43,191,95,180,86,231,25,172,95,194,68,86,217,49,173,18,38,149,38,232,79,
+    127,104,7,66,191,26,180,19,136,210,250,231,66,107,242,218,55,107,96,128,149,8,146,20,80,62,78,28,36,248,119,165,96,73,139,249,42,23,
+    186,72,3,68,113,198,238,254,45,35,167,185,123,180,100,214,39,25,101,48,76,33,78,32,54,32,133,228,42,76,49,153,89,8,124,146,96,112,254,
+    155,159,103,14,156,65,10,112,14,108,193,221,120,162,133,96,168,26,212,110,47,248,60,86,42,87,171,211,107,0,131,60,12,251,157,160,249,
+    191,9,228,140,214,11,11,97,227,53,12,228,91,151,72,206,155,204,254,243,0,53,170,209,160,219,27,204,40,75,72,251,223,181,40,99,240,109,
+    198,0,53,43,235,162,233,59,125,122,58,171,209,192,131,134,64,243,93,15,218,19,203,60,177,65,67,138,112,56,0,0,0,0,73,69,78,68,174,66,
+    96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char generate_png[1411] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,5,37,73,68,65,84,72,199,141,149,123,108,84,69,20,198,127,51,123,187,
+    189,221,150,66,105,160,37,165,82,106,93,2,196,215,74,98,229,165,40,1,124,148,2,42,248,74,16,163,104,0,137,198,7,47,69,76,10,74,162,33,
+    34,176,49,166,17,136,104,68,196,86,65,172,162,130,69,139,197,18,45,8,21,8,32,165,219,82,150,22,11,237,190,238,157,241,143,221,46,237,
+    210,18,79,50,185,51,247,222,243,125,231,124,103,230,12,36,88,105,105,169,214,90,235,72,36,162,45,203,138,15,219,182,227,67,41,165,109,
+    219,214,145,72,68,119,116,116,232,186,186,58,61,117,234,84,77,15,102,36,190,208,90,199,159,90,107,132,16,241,117,226,92,74,137,16,130,
+    156,156,28,86,173,90,133,148,82,151,149,149,137,255,77,32,132,136,175,123,51,167,211,25,5,50,12,188,94,47,134,97,232,109,219,182,197,
+    73,100,162,67,44,72,12,135,64,138,43,153,116,37,79,12,196,48,12,132,16,100,101,101,225,245,122,41,42,42,210,189,102,16,142,40,46,92,
+    12,18,12,6,73,77,113,224,74,73,142,3,201,40,35,26,186,101,39,165,36,18,9,83,85,85,133,211,233,228,245,215,150,17,14,135,117,69,69,133,
+    232,166,215,67,179,223,208,195,60,197,52,95,20,248,206,117,16,137,132,88,253,130,155,155,134,13,196,178,53,74,217,128,64,74,7,93,61,
+    133,16,88,86,4,173,163,129,88,150,197,209,163,71,41,44,44,20,241,12,102,47,252,64,103,14,189,143,223,143,156,65,234,54,148,13,117,39,
+    219,240,183,228,34,29,6,42,28,96,211,87,167,201,205,54,185,239,206,235,8,6,173,152,246,14,218,3,33,54,150,157,34,51,217,199,201,15,215,
+    49,235,182,241,124,222,94,127,69,162,194,9,143,234,212,65,19,249,252,203,221,60,125,191,193,162,133,211,144,66,210,228,111,199,149,18,
+    45,162,153,44,249,251,116,59,102,146,6,12,76,19,108,75,227,48,36,134,212,252,188,239,15,210,35,123,89,61,103,46,3,7,229,243,92,77,53,
+    239,118,18,100,229,141,165,178,166,153,250,154,173,228,62,49,153,100,51,141,112,56,76,110,78,6,231,252,29,124,179,247,31,180,86,52,249,
+    3,180,92,108,39,100,255,69,186,203,193,205,238,190,156,108,8,82,181,111,55,129,179,229,60,247,226,43,156,203,203,230,207,175,247,144,
+    243,197,126,214,143,122,64,27,0,205,109,41,28,61,213,2,237,187,132,165,166,104,0,165,20,32,105,104,186,204,230,242,19,180,180,133,169,
+    62,18,0,161,168,168,246,115,179,59,149,185,197,57,124,250,109,19,170,229,36,139,151,44,37,197,233,224,237,21,43,216,243,227,110,54,76,
+    126,28,159,63,24,205,224,196,25,63,194,200,141,237,91,59,94,60,219,210,12,191,62,131,247,151,222,74,40,24,100,230,155,199,25,119,163,
+    139,101,179,243,9,132,52,14,135,131,243,181,37,76,185,55,140,28,60,151,181,94,47,191,86,238,101,214,172,25,108,62,123,138,237,59,190,
+    18,18,160,189,181,142,140,129,253,72,187,163,84,135,157,67,0,139,36,105,211,250,239,37,2,33,139,254,253,210,233,223,47,141,1,131,51,
+    201,24,208,151,244,244,52,106,14,84,227,93,57,153,103,199,239,167,207,145,223,168,41,153,65,217,214,45,20,79,43,34,20,130,233,197,15,
+    71,119,88,103,180,5,15,150,235,180,92,15,25,102,7,163,10,28,184,92,73,28,107,178,152,119,119,50,163,71,102,210,17,180,56,80,215,76,63,
+    151,131,227,135,170,168,218,249,60,107,230,187,240,85,66,195,225,8,13,245,141,212,166,223,66,107,254,93,76,154,56,137,188,188,60,70,
+    140,24,33,226,39,249,196,23,197,66,53,255,0,102,18,251,27,76,246,158,114,210,110,105,82,157,10,219,142,30,168,177,55,102,51,52,59,149,
+    67,149,37,172,153,239,162,49,6,222,216,220,198,225,203,41,84,253,237,99,206,147,79,49,102,204,24,12,195,232,158,65,167,149,188,179,65,
+    23,77,127,132,80,224,50,153,105,130,129,253,251,128,112,96,107,129,208,54,235,87,222,203,146,233,103,241,237,139,129,159,191,68,173,
+    223,230,135,22,147,101,222,173,120,60,30,164,35,137,243,205,77,184,221,110,113,85,171,200,238,43,185,41,63,131,72,40,25,91,129,101,43,
+    148,82,216,150,197,247,229,171,89,50,163,158,198,74,17,3,111,163,214,175,216,229,131,87,215,125,132,199,227,65,105,16,202,138,183,145,
+    171,8,172,216,38,10,132,162,39,85,105,129,86,54,229,159,44,98,206,168,10,26,43,5,103,99,178,212,94,80,236,190,144,204,75,239,149,50,
+    102,236,56,148,6,180,2,28,241,214,110,244,212,130,181,214,40,29,253,193,138,132,216,185,117,57,115,70,125,71,227,190,24,248,249,40,248,
+    1,59,155,85,155,63,198,237,118,199,128,187,248,43,213,51,129,82,81,73,180,178,8,133,66,108,223,184,128,121,19,170,175,138,252,176,121,
+    3,235,183,236,196,52,205,110,190,137,115,121,173,203,100,249,210,5,204,29,91,79,83,66,228,123,46,186,88,248,150,23,211,52,227,64,93,
+    193,187,154,236,77,162,131,7,15,50,36,43,13,99,192,124,78,31,151,248,206,181,114,168,69,16,184,117,58,107,182,253,68,65,65,65,55,240,
+    196,209,43,65,231,13,118,236,88,29,69,247,120,184,224,59,76,90,95,77,99,159,27,216,113,198,38,123,100,33,89,89,89,87,201,218,147,212,
+    215,44,242,142,207,54,48,115,241,104,126,217,242,37,21,7,218,120,204,187,137,242,117,195,123,4,84,74,33,165,236,145,168,215,26,52,182,
+    218,188,188,246,55,154,111,47,225,153,143,171,25,54,124,36,82,202,248,21,217,57,18,215,137,223,254,3,143,246,203,71,84,89,65,40,0,0,
+    0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char hidden_png[494] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,1,144,73,68,65,84,72,199,229,148,161,171,242,96,20,198,127,219,68,28,
+    12,6,98,48,12,4,131,197,106,147,89,52,25,140,107,98,51,250,63,88,13,254,33,186,32,54,139,101,65,131,77,4,209,110,80,16,22,84,176,156,
+    91,188,227,126,223,39,119,239,117,134,15,238,129,193,222,195,206,121,118,158,231,188,15,252,15,225,251,190,180,219,109,249,60,119,58,
+    29,25,12,6,242,54,128,84,42,37,128,0,98,154,102,244,174,82,171,41,98,200,171,245,122,220,7,150,101,201,11,192,234,0,174,235,82,44,22,
+    73,167,211,81,206,48,12,28,199,161,86,171,37,227,126,189,94,75,92,108,183,91,249,177,6,253,126,95,70,163,17,155,205,6,203,178,104,52,
+    26,84,171,85,202,229,50,134,97,176,223,239,89,46,151,204,231,115,14,135,3,142,227,224,121,30,195,225,240,185,38,179,217,76,186,221,174,
+    60,248,78,252,120,158,39,190,239,11,128,182,88,44,100,50,153,176,219,237,48,77,147,124,62,79,38,147,137,192,199,227,49,182,109,115,185,
+    92,168,84,42,228,114,57,166,211,41,217,108,150,211,233,68,171,213,194,178,44,0,238,247,59,199,227,145,48,12,41,20,10,52,155,205,120,
+    29,122,189,158,0,98,219,118,196,123,169,84,18,64,234,245,186,36,189,7,18,4,1,34,130,235,186,81,242,122,189,178,90,173,208,117,253,51,
+    175,189,186,72,114,62,159,191,221,162,184,187,160,130,252,232,243,164,88,211,98,251,232,42,99,220,110,183,119,216,205,183,118,240,15,
+    53,65,16,40,25,158,178,217,253,77,211,131,158,228,102,247,132,111,194,48,84,30,255,39,252,253,49,197,219,39,248,250,231,170,205,95,18,
+    92,85,220,164,91,245,139,226,3,173,7,253,64,244,107,162,174,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        inline
+    #endif
+    const unsigned char magnify_png[749] {
+    137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,
+    0,0,0,9,112,72,89,115,0,0,10,240,0,0,10,240,1,66,172,52,152,0,0,2,143,73,68,65,84,72,199,173,148,91,72,20,97,28,197,207,39,187,186,168,
+    153,46,34,106,91,154,154,161,249,144,68,15,41,232,168,164,73,33,186,50,120,1,69,76,12,173,44,149,10,130,50,193,75,4,93,44,197,82,215,
+    162,90,47,81,34,98,20,248,208,20,228,141,50,12,161,155,136,137,208,75,6,21,74,232,230,233,33,148,210,221,117,148,61,48,15,243,205,252,
+    191,223,156,255,124,255,35,96,67,138,162,240,223,123,73,146,4,54,160,85,69,114,106,10,223,142,79,194,47,108,55,54,121,250,128,32,4,136,
+    47,19,239,160,249,57,131,193,225,225,13,129,0,0,6,127,63,70,165,231,176,99,116,138,214,116,170,209,76,173,187,158,231,78,151,113,221,
+    155,135,4,7,49,173,164,130,106,4,87,61,27,235,46,171,130,104,0,32,55,83,230,184,101,51,186,234,46,64,74,126,189,102,17,103,103,224,237,
+    235,15,213,128,241,111,191,16,18,25,185,188,248,60,219,96,179,32,182,109,26,0,16,153,36,35,0,51,52,221,53,219,255,39,138,162,48,41,175,
+    100,217,126,236,129,87,118,219,179,244,188,210,220,199,148,212,180,53,219,228,4,0,115,63,190,175,62,94,66,252,119,173,84,104,120,4,230,
+    44,42,91,100,177,172,126,147,180,255,113,174,110,238,152,183,252,134,42,7,30,94,122,155,14,108,233,243,196,39,120,186,233,214,6,72,146,
+    36,180,98,209,170,131,37,23,214,96,111,134,6,32,230,103,213,181,8,95,39,237,31,75,43,237,26,125,214,139,17,229,137,80,5,232,237,125,
+    44,12,161,17,156,254,56,246,55,119,84,204,66,160,110,22,35,235,153,228,150,250,171,244,217,190,83,221,36,3,12,223,155,184,254,184,232,
+    126,208,198,29,161,187,152,152,83,104,117,227,125,251,15,50,47,211,200,140,220,98,66,191,135,90,103,29,163,98,147,120,177,242,44,85,
+    167,233,210,240,153,90,154,177,32,52,112,210,104,33,44,243,240,116,213,65,206,202,94,142,237,192,128,109,92,12,145,97,8,139,70,127,195,
+    81,28,203,143,65,189,169,115,227,73,187,82,169,105,70,250,39,215,176,184,117,138,233,53,131,132,115,16,243,51,15,209,97,128,167,61,15,
+    9,225,197,184,210,110,22,52,140,81,174,29,38,156,131,121,188,32,203,113,144,246,214,27,4,60,152,80,222,195,130,250,49,202,181,67,132,
+    38,128,37,135,51,28,7,105,170,171,34,224,193,184,210,110,22,54,190,167,177,234,37,33,182,176,188,40,215,113,144,251,205,215,8,184,49,
+    186,168,141,71,110,125,160,177,186,159,112,218,202,43,151,170,29,7,233,184,125,157,128,11,163,138,218,89,214,181,64,239,248,10,38,196,
+    199,57,14,0,0,143,204,77,132,139,47,125,99,78,18,240,227,29,211,77,199,2,0,96,224,69,31,207,159,57,193,174,206,123,4,128,63,175,5,166,
+    211,145,199,186,190,0,0,0,0,73,69,78,68,174,66,96,130
+    };
+
 }

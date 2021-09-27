@@ -190,29 +190,9 @@ DebugFiles:
 # ttBld will add these files to the ninja scripts which will in turn call ttBld to convert the original PNG file into
 # a header file that can be compiled into the executable.
 PNG:
-    art_src/alignbottom.png: art_headers/alignbottom_png.h_img
-    art_src/aligncenter.png: art_headers/aligncenter_png.h_img
-    art_src/alignleft.png: art_headers/alignleft_png.h_img
-    art_src/alignright.png: art_headers/alignright_png.h_img
-    art_src/aligntop.png: art_headers/aligntop_png.h_img
-    art_src/alignvertcenter.png: art_headers/alignvertcenter_png.h_img
-    art_src/bottom.png: art_headers/bottom_png.h_img
-    art_src/expand.png: art_headers/expand_png.h_img
-    art_src/generate.png: art_headers/generate_png.h_img
-    art_src/hidden.png: art_headers/hidden_png.h_img
-    art_src/left.png: art_headers/left_png.h_img
-    art_src/magnify.png: art_headers/magnify_png.h_img
     art_src/nav_coll_expand.png: art_headers/nav_coll_expand_png.h_img
     art_src/nav_collapse.png: art_headers/nav_collapse_png.h_img
     art_src/nav_expand.png: art_headers/nav_expand_png.h_img
-    art_src/nav_movedown.png: art_headers/nav_movedown_png.h_img
-    art_src/nav_moveleft.png: art_headers/nav_moveleft_png.h_img
-    art_src/nav_moveright.png: art_headers/nav_moveright_png.h_img
-    art_src/nav_moveup.png: art_headers/nav_moveup_png.h_img
-    art_src/new.png: art_headers/new_png.h_img
-    art_src/right.png: art_headers/right_png.h_img
-    art_src/save.png: art_headers/save_png.h_img
-    art_src/top.png: art_headers/top_png.h_img
 
     art_src/default.png: art_headers/default_png.h_img
     art_src/empty.png: art_headers/empty_png.h_img

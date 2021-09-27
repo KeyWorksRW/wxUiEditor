@@ -14,15 +14,16 @@
 
 #include "nav_panel.h"
 
-#include "bitmaps.h"       // Contains various images handling functions
-#include "cstm_event.h"    // CustomEvent -- Custom Event class
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "navpopupmenu.h"  // NavPopupMenu -- Context-menu for an item
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "node_decl.h"     // NodeDeclaration class
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
-#include "undo_cmds.h"     // Undoable command classes derived from UndoAction
+#include "bitmaps.h"         // Contains various images handling functions
+#include "cstm_event.h"      // CustomEvent -- Custom Event class
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "mainframe_base.h"  // contains all the wxue_img namespace embedded images
+#include "navpopupmenu.h"    // NavPopupMenu -- Context-menu for an item
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator class
+#include "node_decl.h"       // NodeDeclaration class
+#include "uifuncs.h"         // Miscellaneous functions for displaying UI
+#include "undo_cmds.h"       // Undoable command classes derived from UndoAction
 
 #include "../utils/auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
 
@@ -74,14 +75,17 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
 
     toolbar->AddSeparator();
 
-    toolbar->AddTool(id_NavMoveLeft, "Move Left", GetInternalImage("nav_moveleft"), wxNullBitmap, wxITEM_NORMAL, "Move Left",
-                     "Move the selected item left");
-    toolbar->AddTool(id_NavMoveUp, "Move Up", GetInternalImage("nav_moveup"), wxNullBitmap, wxITEM_NORMAL, "Move Ip",
-                     "Move the selected item up");
-    toolbar->AddTool(id_NavMoveDown, "Move Down", GetInternalImage("nav_movedown"), wxNullBitmap, wxITEM_NORMAL, "Move Down",
-                     "Move the selected item down");
-    toolbar->AddTool(id_NavMoveRight, "Move Right", GetInternalImage("nav_moveright"), wxNullBitmap, wxITEM_NORMAL,
-                     "Move Right", "Move the selected item right");
+    toolbar->AddTool(id_NavMoveLeft, "Move Left",
+                     GetImageFromArray(wxue_img::nav_moveleft_png, sizeof(wxue_img::nav_moveleft_png)), wxNullBitmap,
+                     wxITEM_NORMAL, "Move Left", "Move the selected item left");
+    toolbar->AddTool(id_NavMoveUp, "Move Up", GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)),
+                     wxNullBitmap, wxITEM_NORMAL, "Move Up", "Move the selected item up");
+    toolbar->AddTool(id_NavMoveDown, "Move Down",
+                     GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)), wxNullBitmap,
+                     wxITEM_NORMAL, "Move Down", "Move the selected item down");
+    toolbar->AddTool(id_NavMoveRight, "Move Right",
+                     GetImageFromArray(wxue_img::nav_moveleft_png, sizeof(wxue_img::nav_moveleft_png)), wxNullBitmap,
+                     wxITEM_NORMAL, "Move Right", "Move the selected item right");
 
     toolbar->Realize();
 
@@ -302,7 +306,8 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     }
     else if (src_parent == dst_parent)
     {
-        m_pMainFrame->PushUndoAction(std::make_shared<ChangePositionAction>(node_src, dst_parent->GetChildPosition(node_dst)));
+        m_pMainFrame->PushUndoAction(
+            std::make_shared<ChangePositionAction>(node_src, dst_parent->GetChildPosition(node_dst)));
         return;
     }
 

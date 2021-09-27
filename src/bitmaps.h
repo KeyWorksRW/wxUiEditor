@@ -36,3 +36,6 @@ wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);
 bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename);
 
 wxAnimation LoadAnimationImage(wxAnimation& animation, const unsigned char* data, size_t size_data);
+
+// Defined in all generated code
+inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data);

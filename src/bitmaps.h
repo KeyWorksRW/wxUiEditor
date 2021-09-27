@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <wx/mstream.h>  // Memory stream classes
+
 class wxAnimation;
 class wxIcon;
 class wxImage;
@@ -37,5 +39,11 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename);
 
 wxAnimation LoadAnimationImage(wxAnimation& animation, const unsigned char* data, size_t size_data);
 
-// Defined in all generated code
-inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data);
+// Convert a data array into a wxImage
+inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxImage image;
+    image.LoadFile(strm);
+    return image;
+};

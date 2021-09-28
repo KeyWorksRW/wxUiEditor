@@ -39,7 +39,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     m_tree_ctrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                  wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT | wxTR_DEFAULT_STYLE | wxBORDER_SUNKEN);
     int index = 0;
-    m_iconList = new wxImageList(CompImgSize, CompImgSize);
+    m_iconList = new wxImageList(GenImageSize, GenImageSize);
 
     for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
     {

@@ -14,7 +14,7 @@ class wxIcon;
 class wxImage;
 
 // This is the size of component images
-constexpr const int CompImgSize = 22;
+constexpr const int GenImageSize = 22;
 
 // This will first look for an associated PNG Header array, and if unavailable an XPM file.
 // If neither can be found, a 16x16 question mark image is returned.
@@ -27,10 +27,6 @@ wxIcon GetIconImage(ttlib::cview name);
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header
 // file might or might not work.
 wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size = nullptr, ttString* p_mime_type = nullptr);
-
-// Converts the binary data into an image. This is typically use for loading internal
-// #included images
-wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);
 
 // Converts the ASCII header file into binary data and loads it as an animation. It's designed to
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header
@@ -47,3 +43,7 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
     image.LoadFile(strm);
     return image;
 };
+
+// This is almost identical to GetImageFromArray() -- the only difference is that this one
+// first tries to load the image via the PNG handler.
+wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);

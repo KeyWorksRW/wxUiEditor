@@ -470,9 +470,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 m_header->writeLine("namespace wxue_img\n{");
                 m_header->Indent();
                 m_header->writeLine("// Images declared in this class module:");
+                m_header->writeLine();
                 is_namespace_written = true;
             }
-            m_header->writeLine();
             m_header->writeLine(ttlib::cstr("extern const unsigned char ")
                                 << iter_array->array_name << '[' << iter_array->array_size << "];");
         }

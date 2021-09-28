@@ -34,8 +34,6 @@ namespace wxue_img
     // Images declared in this class module:
 
     extern const unsigned char nav_coll_expand_png[332];
-
     extern const unsigned char nav_expand_png[503];
-
     extern const unsigned char nav_collapse_png[315];
 }

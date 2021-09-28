@@ -127,7 +127,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
         {
             auto line = m_file[idx].view_nonspace();
             ttlib::cstr id;
-            if (line[0] == '"')
+            if (line.at(0) == '"')
                 id.AssignSubString(line);
             else
                 id = line.subview(0, line.find_space());

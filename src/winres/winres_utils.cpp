@@ -33,10 +33,10 @@ bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRe
     if (line.empty())
         return false;
 
-    if (line[0] == ',')
+    if (line.at(0) == ',')
         line.moveto_digit();
 
-    if (line.empty() || !ttlib::is_digit(line[0]))
+    if (line.empty() || !ttlib::is_digit(line.at(0)))
         return false;
     duRect.SetLeft(ttlib::atoi(line));
 
@@ -46,7 +46,7 @@ bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRe
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line[0]))
+    if (line.empty() || !ttlib::is_digit(line.at(0)))
         return false;
     duRect.SetTop(ttlib::atoi(line));
 
@@ -56,7 +56,7 @@ bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRe
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line[0]))
+    if (line.empty() || !ttlib::is_digit(line.at(0)))
         return false;
     duRect.SetWidth(ttlib::atoi(line));
 
@@ -66,7 +66,7 @@ bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRe
 
     line.remove_prefix(pos);
     line.moveto_digit();
-    if (line.empty() || !ttlib::is_digit(line[0]))
+    if (line.empty() || !ttlib::is_digit(line.at(0)))
         return false;
     duRect.SetHeight(ttlib::atoi(line));
 
@@ -103,7 +103,7 @@ ttlib::cview resCtrl::GetID(ttlib::cview line)
     }
 
     ttlib::cstr id;
-    if (line[0] == ',')
+    if (line.at(0) == ',')
     {
         line = StepOverComma(line, id);
         id.LeftTrim();
@@ -163,7 +163,7 @@ ttlib::cview resCtrl::GetLabel(ttlib::cview line)
 
     ttlib::cstr label;
 
-    if (line[0] == '"')
+    if (line.at(0) == '"')
     {
         line = StepOverQuote(line, label);
     }

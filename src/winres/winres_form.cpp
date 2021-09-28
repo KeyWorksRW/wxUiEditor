@@ -192,7 +192,7 @@ void resForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
     for (; curTxtLine < txtfile.size(); ++curTxtLine)
     {
         auto line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
-        if (line.empty() || line[0] == '/')  // ignore blank lines and comments
+        if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
             continue;
 
         if (line.is_sameprefix("END") || line.is_sameprefix("}"))
@@ -233,7 +233,7 @@ ttlib::cstr resForm::ConvertDialogId(ttlib::cview id)
 {
     id.moveto_nonspace();
     ttlib::cstr value;
-    if (id[0] == '"')
+    if (id.at(0) == '"')
     {
         value.AssignSubString(id);
     }

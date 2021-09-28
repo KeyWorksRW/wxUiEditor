@@ -324,7 +324,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     if (is_control)
     {
         // This should be the class
-        if (line.size() && line[0] == '"')
+        if (line.size() && line.at(0) == '"')
         {
             ttlib::cstr value;
             line = StepOverQuote(line, value);
@@ -442,7 +442,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
     }
 
     // This should be the dimensions.
-    if (line.size() && (ttlib::is_digit(line[0]) || line[0] == ','))
+    if (line.size() && (ttlib::is_digit(line.at(0)) || line.at(0) == ','))
     {
         if (!ParseDimensions(line, m_du_rect, m_pixel_rect))
         {

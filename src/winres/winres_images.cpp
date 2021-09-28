@@ -63,7 +63,7 @@ void resCtrl::ParseIconControl(ttlib::cview line)
     ttlib::cstr icon_name;
 
     // Unlike a normal text parameter, for the ICON directive it might or might not be in quotes.
-    if (line[0] == '"')
+    if (line.at(0) == '"')
     {
         line = StepOverQuote(line, icon_name);
     }
@@ -131,7 +131,7 @@ void resCtrl::ParseImageControl(ttlib::cview line)
     ttlib::cstr image_name;
 
     // Unlike a normal text parameter, for the ICON directive it might or might not be in quotes.
-    if (line[0] == '"')
+    if (line.at(0) == '"')
     {
         line = StepOverQuote(line, image_name);
     }
@@ -227,7 +227,7 @@ void resCtrl::ParseImageControl(ttlib::cview line)
     }
 
     // This should be the class
-    if (line.size() && line[0] == '"')
+    if (line.size() && line.at(0) == '"')
     {
         auto pos_comma = line.find(',');
         if (!ttlib::is_found(pos_comma))

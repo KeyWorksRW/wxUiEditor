@@ -28,7 +28,7 @@
 
 #include "../utils/auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
 
-constexpr size_t MaxLabelLength = 16;
+constexpr size_t MaxLabelLength = 24;
 
 NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
 {

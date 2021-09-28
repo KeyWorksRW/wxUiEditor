@@ -16,6 +16,7 @@ Options:
     CFlags_dbg:  -DWXUSINGDLL # dll wxWidgets libraries in debug build
 
     TargetDir:   ../bin       # target directory
+    TargetDir32: ../bin       # 32-bit target directory
     Natvis:      wxui.natvis  # MSVC Debug visualizer
 
     IncDirs:     ./;nodes;generate;utils;customprops;ui;../ttLib/include
@@ -159,7 +160,7 @@ Files:
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp
 
-    # Copy of the files we need from the https://github.com/KeyWorksRW/ttLib repository
+    # ttLib submodule files (see https://github.com/KeyWorksRW/ttLib repository)
 
     ../ttLib/src/ttcstr.cpp             # Class for handling zero-terminated char strings.
     ../ttLib/src/ttcview.cpp            # string_view functionality on a zero-terminated char string.
@@ -171,9 +172,9 @@ Files:
     ../ttLib/src/ttstrings.cpp          # Class for handling zero-terminated char strings.
     ../ttLib/src/tttextfile.cpp         # Classes for reading and writing text files.
 
-# When ttBld generates the ninja scripts, the files in the DebugFiles section will ONLY be added to the
-# debug ninja scripts.
 DebugFiles:
+    # Debug-only files
+
     debugging/msg_logging.cpp    # Message logging class
     debugging/msgframe.cpp       # Stores messages
     debugging/nodeinfo.cpp       # Node memory usage dialog
@@ -188,9 +189,10 @@ DebugFiles:
 
     ../ttLib/src/winsrc/ttdebug_min.cpp  # ttAssertionMsg
 
-# ttBld will add these files to the ninja scripts which will in turn call ttBld to convert the original PNG file into
-# a header file that can be compiled into the executable.
 PNG:
+    # ttBld will add these files to the ninja scripts which will in turn call ttBld to convert the original PNG file into
+    # a header file that can be compiled into the executable.
+
     art_src/default.png: art_headers/default_png.h_img
     art_src/empty.png: art_headers/empty_png.h_img
     art_src/title_close.png: art_headers/title_close_png.h_img
@@ -237,9 +239,10 @@ PNG:
     art_src/wxRearrangeCtrl.png: art_headers/wxRearrangeCtrl_png.h_img
     art_src/wxSimpleHtmlListBox.png: art_headers/wxSimpleHtmlListBox_png.h_img
 
-# ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation
-# files.
 Docs:
+    # ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation
+    # files.
+
     ../README.md
     ../docs/DEV_NOTES.md
     ../docs/import_formbuilder.md

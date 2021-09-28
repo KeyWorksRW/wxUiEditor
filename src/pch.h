@@ -7,6 +7,8 @@
 
 // This header file is used to create a pre-compiled header for use in the entire project
 
+#pragma once
+
 #define wxUSE_UNICODE     1
 #define wxUSE_GUI         1
 #define wxUSE_NO_MANIFEST 1  // This is required for compiling using CLANG 9 and earlier
@@ -28,7 +30,6 @@
 
 #include <wx/defs.h>  // Declarations/definitions common to all wx source files
 
-#pragma once
 #if (wxMAJOR_VERSION < 3) || (wxMINOR_VERSION < 1) || (wxRELEASE_NUMBER < 5)
     #error "You must have wxWidgets 3.1.5 or later to build this project."
 #endif

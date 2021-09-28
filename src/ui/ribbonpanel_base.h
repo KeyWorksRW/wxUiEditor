@@ -37,3 +37,98 @@ protected:
     virtual void OnDropDown(wxRibbonToolBarEvent& event) { event.Skip(); }
     virtual void OnToolClick(wxRibbonToolBarEvent& event) { event.Skip(); }
 };
+
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char WXPOPupTransientWindow_png[374];
+    extern const unsigned char auinotebook_png[300];
+    extern const unsigned char book_page_png[245];
+    extern const unsigned char calendar_png[953];
+    extern const unsigned char colourPickerIcon_png[550];
+    extern const unsigned char customControl_png[756];
+    extern const unsigned char dataview_ctrl_png[245];
+    extern const unsigned char dataviewlist_column_png[240];
+    extern const unsigned char datepicker_png[1063];
+    extern const unsigned char dirPicker_png[706];
+    extern const unsigned char doc_mdi_parent_frame_png[559];
+    extern const unsigned char filePicker_png[721];
+    extern const unsigned char flex_grid_sizer_png[155];
+    extern const unsigned char fontPicker_png[779];
+    extern const unsigned char gauge_png[276];
+    extern const unsigned char genericdir_ctrl_png[344];
+    extern const unsigned char grid_bag_sizer_png[161];
+    extern const unsigned char grid_png[187];
+    extern const unsigned char grid_sizer_png[143];
+    extern const unsigned char htmlwin_png[1069];
+    extern const unsigned char hyperlink_ctrl_png[345];
+    extern const unsigned char infobar_png[572];
+    extern const unsigned char menu_png[811];
+    extern const unsigned char menuitem_png[497];
+    extern const unsigned char pagectrl_png[617];
+    extern const unsigned char propgriditem_png[452];
+    extern const unsigned char propgridpage_png[253];
+    extern const unsigned char radio_box_png[504];
+    extern const unsigned char ribbon_bar_png[860];
+    extern const unsigned char ribbon_button_png[220];
+    extern const unsigned char ribbon_buttonbar_png[316];
+    extern const unsigned char ribbon_gallery_item_png[679];
+    extern const unsigned char ribbon_page_png[384];
+    extern const unsigned char ribbon_panel_png[408];
+    extern const unsigned char richtextctrl_png[752];
+    extern const unsigned char scintilla_png[745];
+    extern const unsigned char search_png[800];
+    extern const unsigned char separator_png[322];
+    extern const unsigned char sizer_horizontal_png[145];
+    extern const unsigned char sizer_png[149];
+    extern const unsigned char slider_png[264];
+    extern const unsigned char spacer_png[199];
+    extern const unsigned char spin_ctrl_png[316];
+    extern const unsigned char static_bitmap_png[794];
+    extern const unsigned char static_line_png[138];
+    extern const unsigned char statusbar_png[448];
+    extern const unsigned char stddialogbuttonsizer_png[540];
+    extern const unsigned char submenu_png[776];
+    extern const unsigned char text_sizer_png[173];
+    extern const unsigned char timepicker_png[243];
+    extern const unsigned char tool_png[645];
+    extern const unsigned char toolseparator_png[597];
+    extern const unsigned char tree_ctrl_png[262];
+    extern const unsigned char treelistctrl_png[441];
+    extern const unsigned char treelistctrlcolumn_png[520];
+    extern const unsigned char webview_png[1224];
+    extern const unsigned char wrap_sizer_png[161];
+    extern const unsigned char wxButton_png[516];
+    extern const unsigned char wxChoicebook_png[450];
+    extern const unsigned char wxCollapsiblePane_png[340];
+    extern const unsigned char wxDialog_png[652];
+    extern const unsigned char wxFrame_png[440];
+    extern const unsigned char wxListBox_png[326];
+    extern const unsigned char wxListbook_png[373];
+    extern const unsigned char wxMenuBar_png[506];
+    extern const unsigned char wxPanel_png[172];
+    extern const unsigned char wxPropertyGridManager_png[241];
+    extern const unsigned char wxPropertyGrid_png[228];
+    extern const unsigned char wxStaticBoxSizer_png[215];
+    extern const unsigned char wxStaticText_png[306];
+    extern const unsigned char wxToolBar_png[570];
+    extern const unsigned char wxToolbook_png[466];
+    extern const unsigned char wxTreebook_png[500];
+    extern const unsigned char wxWizardPageSimple_png[621];
+    extern const unsigned char wxWizard_png[1063];
+    extern const unsigned char wxactivityIndicator_png[812];
+    extern const unsigned char wxanimation_png[264];
+    extern const unsigned char wxbannerWindow_png[851];
+    extern const unsigned char wxcheckBox_png[218];
+    extern const unsigned char wxcomboBox_png[249];
+    extern const unsigned char wxfileCtrl_png[271];
+    extern const unsigned char wxmenuBar_png[506];
+    extern const unsigned char wxnotebook_png[193];
+    extern const unsigned char wxradioButton_png[284];
+    extern const unsigned char wxscrolledWindow_png[274];
+    extern const unsigned char wxsimplebook_png[265];
+    extern const unsigned char wxsplitterWindow_png[282];
+    extern const unsigned char wxtextCtrl_png[299];
+    extern const unsigned char wxtoolBar_png[570];
+}

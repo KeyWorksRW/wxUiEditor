@@ -20,130 +20,47 @@
 #include "bitmaps.h"  // Contains various images handling functions
 #include "utils.h"    // Utility functions that work with properties
 
+#include "ribbonpanel_base.h"  // Most of the embedded generator images will be declared here
+
+using namespace wxue_img;
+
 #include "art_headers/default_png.h_img"
 #include "art_headers/unknown_png.h_img"
 
-#include "art_headers/flex_grid_sizer_png.h_img"
-#include "art_headers/grid_bag_sizer_png.h_img"
-#include "art_headers/grid_sizer_png.h_img"
-#include "art_headers/sizer_horizontal_png.h_img"
-#include "art_headers/sizer_png.h_img"
-#include "art_headers/slider_png.h_img"
-#include "art_headers/spacer_png.h_img"
-#include "art_headers/stddialogbuttonsizer_png.h_img"
-#include "art_headers/text_sizer_png.h_img"
-#include "art_headers/wrap_sizer_png.h_img"
-#include "art_headers/wxStaticBoxSizer_png.h_img"
 #include "art_headers/wxStaticCheckBoxSizer_png.h_img"
 #include "art_headers/wxStaticRadioBtnSizer_png.h_img"
 
-#include "art_headers/CustomControl_png.h_img"
-#include "art_headers/auinotebook_png.h_img"
 #include "art_headers/auitoolbar_png.h_img"
 #include "art_headers/bitmap_button_png.h_img"
 #include "art_headers/bitmap_toggle_button_png.h_img"
 #include "art_headers/bmp_combo_box_png.h_img"
-#include "art_headers/book_page_png.h_img"
-#include "art_headers/calendar_png.h_img"
 #include "art_headers/check3state_png.h_img"
-#include "art_headers/colourPickerIcon_png.h_img"
-#include "art_headers/dataview_ctrl_png.h_img"
-#include "art_headers/dataviewlist_column_png.h_img"
 #include "art_headers/dataviewlist_ctrl_png.h_img"
 #include "art_headers/dataviewtree_ctrl_png.h_img"
-#include "art_headers/datepicker_png.h_img"
-#include "art_headers/dirPicker_png.h_img"
-#include "art_headers/doc_mdi_parent_frame_png.h_img"
 #include "art_headers/doc_parent_frame_png.h_img"
 #include "art_headers/document_png.h_img"
 #include "art_headers/empty_png.h_img"
-#include "art_headers/filePicker_png.h_img"
-#include "art_headers/fontPicker_png.h_img"
-#include "art_headers/gauge_png.h_img"
-#include "art_headers/genericdir_ctrl_png.h_img"
-#include "art_headers/grid_png.h_img"
-#include "art_headers/htmlwin_png.h_img"
-#include "art_headers/hyperlink_ctrl_png.h_img"
-#include "art_headers/infobar_png.h_img"
-#include "art_headers/menu_png.h_img"
-#include "art_headers/menuitem_png.h_img"
 #include "art_headers/moveColLeft_png.h_img"
 #include "art_headers/moveColRight_png.h_img"
 #include "art_headers/moveRowDown_png.h_img"
 #include "art_headers/moveRowUp_png.h_img"
-#include "art_headers/pagectrl_png.h_img"
 #include "art_headers/project_png.h_img"
-#include "art_headers/propgriditem_png.h_img"
-#include "art_headers/propgridpage_png.h_img"
-#include "art_headers/radio_box_png.h_img"
-#include "art_headers/ribbon_bar_png.h_img"
 #include "art_headers/ribbon_button_dropdown_png.h_img"
 #include "art_headers/ribbon_button_hybrid_png.h_img"
-#include "art_headers/ribbon_button_png.h_img"
 #include "art_headers/ribbon_button_toggle_png.h_img"
-#include "art_headers/ribbon_buttonbar_png.h_img"
-#include "art_headers/ribbon_gallery_item_png.h_img"
 #include "art_headers/ribbon_gallery_png.h_img"
-#include "art_headers/ribbon_page_png.h_img"
-#include "art_headers/ribbon_panel_png.h_img"
-#include "art_headers/richtextctrl_png.h_img"
-#include "art_headers/scintilla_png.h_img"
 #include "art_headers/scrollbar_png.h_img"
-#include "art_headers/search_png.h_img"
-#include "art_headers/separator_png.h_img"
 #include "art_headers/spin_ctrl_double_png.h_img"
-#include "art_headers/spin_ctrl_png.h_img"
 #include "art_headers/spinbtn_png.h_img"
-#include "art_headers/static_bitmap_png.h_img"
-#include "art_headers/static_line_png.h_img"
-#include "art_headers/statusbar_png.h_img"
-#include "art_headers/submenu_png.h_img"
-#include "art_headers/timepicker_png.h_img"
 #include "art_headers/timer_png.h_img"
 #include "art_headers/title_close_png.h_img"
 #include "art_headers/toggle_button_png.h_img"
-#include "art_headers/tool_png.h_img"
-#include "art_headers/toolseparator_png.h_img"
-#include "art_headers/tree_ctrl_png.h_img"
-#include "art_headers/treelistctrl_png.h_img"
-#include "art_headers/treelistctrlcolumn_png.h_img"
-#include "art_headers/wxActivityIndicator_png.h_img"
-#include "art_headers/wxAnimation_png.h_img"
-#include "art_headers/wxBannerWindow_png.h_img"
-#include "art_headers/wxButton_png.h_img"
-#include "art_headers/wxCheckBox_png.h_img"
 #include "art_headers/wxCheckListBox_png.h_img"
 #include "art_headers/wxChoice_png.h_img"
-#include "art_headers/wxChoicebook_png.h_img"
-#include "art_headers/wxCollapsiblePane_png.h_img"
-#include "art_headers/wxComboBox_png.h_img"
 #include "art_headers/wxCommandLinkButton_png.h_img"
-#include "art_headers/wxDialog_png.h_img"
-#include "art_headers/wxFileCtrl_png.h_img"
-#include "art_headers/wxFrame_png.h_img"
-#include "art_headers/wxListBox_png.h_img"
 #include "art_headers/wxListView_png.h_img"
-#include "art_headers/wxListbook_png.h_img"
-#include "art_headers/wxMenuBar_png.h_img"
-#include "art_headers/wxNotebook_png.h_img"
-#include "art_headers/wxPanel_png.h_img"
-#include "art_headers/wxPopupTransientWindow_png.h_img"
-#include "art_headers/wxPropertyGridManager_png.h_img"
-#include "art_headers/wxPropertyGrid_png.h_img"
-#include "art_headers/wxRadioButton_png.h_img"
 #include "art_headers/wxRearrangeCtrl_png.h_img"
-#include "art_headers/wxScrolledWindow_png.h_img"
 #include "art_headers/wxSimpleHtmlListBox_png.h_img"
-#include "art_headers/wxSimplebook_png.h_img"
-#include "art_headers/wxSplitterWindow_png.h_img"
-#include "art_headers/wxStaticText_png.h_img"
-#include "art_headers/wxTextCtrl_png.h_img"
-#include "art_headers/wxToolBar_png.h_img"
-#include "art_headers/wxToolbook_png.h_img"
-#include "art_headers/wxTreebook_png.h_img"
-#include "art_headers/webview_png.h_img"
-#include "art_headers/wxWizardPageSimple_png.h_img"
-#include "art_headers/wxWizard_png.h_img"
 
 #if defined(_DEBUG)
     #include "art_headers/debug_16_png.h_img"
@@ -191,7 +108,7 @@ static const ImageMap png_headers[] = {
     { "calendar", calendar_png, sizeof(calendar_png) },
     { "check3state", check3state_png, sizeof(check3state_png) },
     { "colourPickerIcon", colourPickerIcon_png, sizeof(colourPickerIcon_png) },
-    { "CustomControl", CustomControl_png, sizeof(CustomControl_png) },
+    { "CustomControl", customControl_png, sizeof(customControl_png) },
     { "dataview_ctrl", dataview_ctrl_png, sizeof(dataview_ctrl_png) },
     { "dataviewlist_column", dataviewlist_column_png, sizeof(dataviewlist_column_png) },
     { "dataviewlist_ctrl", dataviewlist_ctrl_png, sizeof(dataviewlist_ctrl_png) },
@@ -251,37 +168,37 @@ static const ImageMap png_headers[] = {
     { "tree_ctrl", tree_ctrl_png, sizeof(tree_ctrl_png) },
     { "treelistctrl", treelistctrl_png, sizeof(treelistctrl_png) },
     { "treelistctrlcolumn", treelistctrlcolumn_png, sizeof(treelistctrlcolumn_png) },
-    { "wxActivityIndicator", wxActivityIndicator_png, sizeof(wxActivityIndicator_png) },
-    { "wxAnimation", wxAnimation_png, sizeof(wxAnimation_png) },
-    { "wxBannerWindow", wxBannerWindow_png, sizeof(wxBannerWindow_png) },
+    { "wxActivityIndicator", wxactivityIndicator_png, sizeof(wxactivityIndicator_png) },
+    { "wxAnimation", wxanimation_png, sizeof(wxanimation_png) },
+    { "wxBannerWindow", wxbannerWindow_png, sizeof(wxbannerWindow_png) },
     { "wxButton", wxButton_png, sizeof(wxButton_png) },
-    { "wxCheckBox", wxCheckBox_png, sizeof(wxCheckBox_png) },
+    { "wxCheckBox", wxcheckBox_png, sizeof(wxcheckBox_png) },
     { "wxCheckListBox", wxCheckListBox_png, sizeof(wxCheckListBox_png) },
     { "wxChoice", wxChoice_png, sizeof(wxChoice_png) },
     { "wxChoicebook", wxChoicebook_png, sizeof(wxChoicebook_png) },
     { "wxCollapsiblePane", wxCollapsiblePane_png, sizeof(wxCollapsiblePane_png) },
-    { "wxComboBox", wxComboBox_png, sizeof(wxComboBox_png) },
+    { "wxComboBox", wxcomboBox_png, sizeof(wxcomboBox_png) },
     { "wxCommandLinkButton", wxCommandLinkButton_png, sizeof(wxCommandLinkButton_png) },
     { "wxDialog", wxDialog_png, sizeof(wxDialog_png) },
-    { "wxFileCtrl", wxFileCtrl_png, sizeof(wxFileCtrl_png) },
+    { "wxFileCtrl", wxfileCtrl_png, sizeof(wxfileCtrl_png) },
     { "wxFrame", wxFrame_png, sizeof(wxFrame_png) },
     { "wxListBox", wxListBox_png, sizeof(wxListBox_png) },
     { "wxListView", wxListView_png, sizeof(wxListView_png) },
     { "wxListbook", wxListbook_png, sizeof(wxListbook_png) },
     { "wxMenuBar", wxMenuBar_png, sizeof(wxMenuBar_png) },
-    { "wxNotebook", wxNotebook_png, sizeof(wxNotebook_png) },
+    { "wxNotebook", wxnotebook_png, sizeof(wxnotebook_png) },
     { "wxPanel", wxPanel_png, sizeof(wxPanel_png) },
-    { "wxPopupTransientWindow", wxPopupTransientWindow_png, sizeof(wxPopupTransientWindow_png) },
+    { "wxPopupTransientWindow", WXPOPupTransientWindow_png, sizeof(WXPOPupTransientWindow_png) },
     { "wxPropertyGrid", wxPropertyGrid_png, sizeof(wxPropertyGrid_png) },
     { "wxPropertyGridManager", wxPropertyGridManager_png, sizeof(wxPropertyGridManager_png) },
-    { "wxRadioButton", wxRadioButton_png, sizeof(wxRadioButton_png) },
+    { "wxRadioButton", wxradioButton_png, sizeof(wxradioButton_png) },
     { "wxRearrangeCtrl", wxRearrangeCtrl_png, sizeof(wxRearrangeCtrl_png) },
-    { "wxScrolledWindow", wxScrolledWindow_png, sizeof(wxScrolledWindow_png) },
+    { "wxScrolledWindow", wxscrolledWindow_png, sizeof(wxscrolledWindow_png) },
     { "wxSimpleHtmlListBox", wxSimpleHtmlListBox_png, sizeof(wxSimpleHtmlListBox_png) },
-    { "wxSimplebook", wxSimplebook_png, sizeof(wxSimplebook_png) },
-    { "wxSplitterWindow", wxSplitterWindow_png, sizeof(wxSplitterWindow_png) },
+    { "wxSimplebook", wxsimplebook_png, sizeof(wxsimplebook_png) },
+    { "wxSplitterWindow", wxsplitterWindow_png, sizeof(wxsplitterWindow_png) },
     { "wxStaticText", wxStaticText_png, sizeof(wxStaticText_png) },
-    { "wxTextCtrl", wxTextCtrl_png, sizeof(wxTextCtrl_png) },
+    { "wxTextCtrl", wxtextCtrl_png, sizeof(wxtextCtrl_png) },
     { "wxToolBar", wxToolBar_png, sizeof(wxToolBar_png) },
     { "wxToolbook", wxToolbook_png, sizeof(wxToolbook_png) },
     { "wxTreebook", wxTreebook_png, sizeof(wxTreebook_png) },

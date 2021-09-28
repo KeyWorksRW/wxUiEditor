@@ -389,10 +389,10 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
         if (image_name.size())
         {
             auto image = GetInternalImage(image_name);
-            if (image.GetWidth() != CompImgSize || image.GetHeight() != CompImgSize)
+            if (image.GetWidth() != GenImageSize || image.GetHeight() != GenImageSize)
             {
                 MSG_INFO(ttlib::cstr() << image_name << " width: " << image.GetWidth() << "height: " << image.GetHeight());
-                declaration->SetImage(image.Scale(CompImgSize, CompImgSize));
+                declaration->SetImage(image.Scale(GenImageSize, GenImageSize));
             }
             else
             {
@@ -401,7 +401,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
         }
         else
         {
-            declaration->SetImage(GetInternalImage("unknown").Scale(CompImgSize, CompImgSize));
+            declaration->SetImage(GetInternalImage("unknown").Scale(GenImageSize, GenImageSize));
         }
 
         // ParseProperties(generator, declaration.get(), declaration->GetCategory());

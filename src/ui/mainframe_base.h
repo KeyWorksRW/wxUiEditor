@@ -92,3 +92,29 @@ protected:
     virtual void OnSaveProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnToggleExpandLayout(wxCommandEvent& event) { event.Skip(); }
 };
+
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char alignbottom_png[363];
+    extern const unsigned char aligncenter_png[351];
+    extern const unsigned char alignleft_png[376];
+    extern const unsigned char alignright_png[390];
+    extern const unsigned char aligntop_png[359];
+    extern const unsigned char alignvertcenter_png[348];
+    extern const unsigned char bottom_png[164];
+    extern const unsigned char expand_png[512];
+    extern const unsigned char generate_png[1411];
+    extern const unsigned char hidden_png[494];
+    extern const unsigned char left_png[174];
+    extern const unsigned char magnify_png[749];
+    extern const unsigned char nav_movedown_png[600];
+    extern const unsigned char nav_moveleft_png[661];
+    extern const unsigned char nav_moveright_png[567];
+    extern const unsigned char nav_moveup_png[576];
+    extern const unsigned char new_png[946];
+    extern const unsigned char right_png[172];
+    extern const unsigned char save_png[1392];
+    extern const unsigned char top_png[166];
+}

@@ -211,6 +211,8 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
     return image;
 }
 
+// This is almost identical to GetImageFromArray() -- the only difference is that this one
+// first tries to load the image via the PNG handler.
 wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream stream(data, size_data);

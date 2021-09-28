@@ -151,6 +151,7 @@ Files:
     ui/importwinres_base.cpp
     ui/insertwidget_base.cpp
     ui/mainframe_base.cpp
+    ui/navtoolbar_base.cpp
     ui/newdialog_base.cpp
     ui/newframe_base.cpp
     ui/import_base.cpp
@@ -190,30 +191,6 @@ DebugFiles:
 # ttBld will add these files to the ninja scripts which will in turn call ttBld to convert the original PNG file into
 # a header file that can be compiled into the executable.
 PNG:
-    art_src/alignbottom.png: art_headers/alignbottom_png.h_img
-    art_src/aligncenter.png: art_headers/aligncenter_png.h_img
-    art_src/alignleft.png: art_headers/alignleft_png.h_img
-    art_src/alignright.png: art_headers/alignright_png.h_img
-    art_src/aligntop.png: art_headers/aligntop_png.h_img
-    art_src/alignvertcenter.png: art_headers/alignvertcenter_png.h_img
-    art_src/bottom.png: art_headers/bottom_png.h_img
-    art_src/expand.png: art_headers/expand_png.h_img
-    art_src/generate.png: art_headers/generate_png.h_img
-    art_src/hidden.png: art_headers/hidden_png.h_img
-    art_src/left.png: art_headers/left_png.h_img
-    art_src/magnify.png: art_headers/magnify_png.h_img
-    art_src/nav_coll_expand.png: art_headers/nav_coll_expand_png.h_img
-    art_src/nav_collapse.png: art_headers/nav_collapse_png.h_img
-    art_src/nav_expand.png: art_headers/nav_expand_png.h_img
-    art_src/nav_movedown.png: art_headers/nav_movedown_png.h_img
-    art_src/nav_moveleft.png: art_headers/nav_moveleft_png.h_img
-    art_src/nav_moveright.png: art_headers/nav_moveright_png.h_img
-    art_src/nav_moveup.png: art_headers/nav_moveup_png.h_img
-    art_src/new.png: art_headers/new_png.h_img
-    art_src/right.png: art_headers/right_png.h_img
-    art_src/save.png: art_headers/save_png.h_img
-    art_src/top.png: art_headers/top_png.h_img
-
     art_src/default.png: art_headers/default_png.h_img
     art_src/empty.png: art_headers/empty_png.h_img
     art_src/title_close.png: art_headers/title_close_png.h_img
@@ -225,127 +202,40 @@ PNG:
     art_src/logo32.png: art_headers/logo32_png.h_img
     art_src/logo64.png: art_headers/logo64_png.h_img
 
-    art_src/flex_grid_sizer.png: art_headers/flex_grid_sizer_png.h_img
-    art_src/grid_bag_sizer.png: art_headers/grid_bag_sizer_png.h_img
-    art_src/grid_sizer.png: art_headers/grid_sizer_png.h_img
-    art_src/sizer.png: art_headers/sizer_png.h_img
-    art_src/sizer_horizontal.png: art_headers/sizer_horizontal_png.h_img
-    art_src/spacer.png: art_headers/spacer_png.h_img
-    art_src/stddialogbuttonsizer.png: art_headers/stddialogbuttonsizer_png.h_img
-    art_src/text_sizer.png: art_headers/text_sizer_png.h_img
-    art_src/wrap_sizer.png: art_headers/wrap_sizer_png.h_img
-    art_src/wxStaticBoxSizer.png: art_headers/wxStaticBoxSizer_png.h_img
     art_src/wxStaticCheckBoxSizer.png: art_headers/wxStaticCheckBoxSizer_png.h_img
     art_src/wxStaticRadioBtnSizer.png: art_headers/wxStaticRadioBtnSizer_png.h_img
 
-    art_src/auinotebook.png: art_headers/auinotebook_png.h_img
     art_src/auitoolbar.png: art_headers/auitoolbar_png.h_img
     art_src/bitmap_button.png: art_headers/bitmap_button_png.h_img
     art_src/bitmap_toggle_button.png: art_headers/bitmap_toggle_button_png.h_img
     art_src/bmp_combo_box.png: art_headers/bmp_combo_box_png.h_img
-    art_src/book_page.png: art_headers/book_page_png.h_img
-    art_src/calendar.png: art_headers/calendar_png.h_img
     art_src/check3state.png: art_headers/check3state_png.h_img
-    art_src/colourPickerIcon.png: art_headers/colourPickerIcon_png.h_img
-    art_src/CustomControl.png: art_headers/CustomControl_png.h_img
-    art_src/dataview_ctrl.png: art_headers/dataview_ctrl_png.h_img
-    art_src/dataviewlist_column.png: art_headers/dataviewlist_column_png.h_img
     art_src/dataviewlist_ctrl.png: art_headers/dataviewlist_ctrl_png.h_img
     art_src/dataviewtree_ctrl.png: art_headers/dataviewtree_ctrl_png.h_img
-    art_src/datepicker.png: art_headers/datepicker_png.h_img
-    art_src/dirPicker.png: art_headers/dirPicker_png.h_img
     art_src/doc_mdi_parent_frame.png: art_headers/doc_mdi_parent_frame_png.h_img
     art_src/doc_parent_frame.png: art_headers/doc_parent_frame_png.h_img
     art_src/document.png: art_headers/document_png.h_img
     art_src/empty.png: art_headers/empty_png.h_img
-    art_src/filePicker.png: art_headers/filePicker_png.h_img
-    art_src/fontPicker.png: art_headers/fontPicker_png.h_img
-    art_src/gauge.png: art_headers/gauge_png.h_img
-    art_src/genericdir_ctrl.png: art_headers/genericdir_ctrl_png.h_img
-    art_src/grid.png: art_headers/grid_png.h_img
-    art_src/htmlwin.png: art_headers/htmlwin_png.h_img
-    art_src/hyperlink_ctrl.png: art_headers/hyperlink_ctrl_png.h_img
-    art_src/infobar.png: art_headers/infobar_png.h_img
-    art_src/menu.png: art_headers/menu_png.h_img
-    art_src/menuitem.png: art_headers/menuitem_png.h_img
     art_src/moveColLeft.png: art_headers/moveColLeft_png.h_img
     art_src/moveColRight.png: art_headers/moveColRight_png.h_img
     art_src/moveRowDown.png: art_headers/moveRowDown_png.h_img
     art_src/moveRowUp.png: art_headers/moveRowUp_png.h_img
-    art_src/pagectrl.png: art_headers/pagectrl_png.h_img
     art_src/project.png: art_headers/project_png.h_img
-    art_src/propgriditem.png: art_headers/propgriditem_png.h_img
-    art_src/propgridpage.png: art_headers/propgridpage_png.h_img
-    art_src/radio_box.png: art_headers/radio_box_png.h_img
-    art_src/ribbon_bar.png: art_headers/ribbon_bar_png.h_img
-    art_src/ribbon_button.png: art_headers/ribbon_button_png.h_img
     art_src/ribbon_button_dropdown.png: art_headers/ribbon_button_dropdown_png.h_img
     art_src/ribbon_button_hybrid.png: art_headers/ribbon_button_hybrid_png.h_img
     art_src/ribbon_button_toggle.png: art_headers/ribbon_button_toggle_png.h_img
-    art_src/ribbon_buttonbar.png: art_headers/ribbon_buttonbar_png.h_img
     art_src/ribbon_gallery.png: art_headers/ribbon_gallery_png.h_img
-    art_src/ribbon_gallery_item.png: art_headers/ribbon_gallery_item_png.h_img
-    art_src/ribbon_page.png: art_headers/ribbon_page_png.h_img
-    art_src/ribbon_panel.png: art_headers/ribbon_panel_png.h_img
-    art_src/richtextctrl.png: art_headers/richtextctrl_png.h_img
-    art_src/scintilla.png: art_headers/scintilla_png.h_img
     art_src/scrollbar.png: art_headers/scrollbar_png.h_img
-    art_src/search.png: art_headers/search_png.h_img
-    art_src/separator.png: art_headers/separator_png.h_img
-    art_src/slider.png: art_headers/slider_png.h_img
-    art_src/spin_ctrl.png: art_headers/spin_ctrl_png.h_img
     art_src/spin_ctrl_double.png: art_headers/spin_ctrl_double_png.h_img
     art_src/spinbtn.png: art_headers/spinbtn_png.h_img
-    art_src/static_bitmap.png: art_headers/static_bitmap_png.h_img
-    art_src/static_line.png: art_headers/static_line_png.h_img
-    art_src/statusbar.png: art_headers/statusbar_png.h_img
-    art_src/submenu.png: art_headers/submenu_png.h_img
-    art_src/timepicker.png: art_headers/timepicker_png.h_img
     art_src/timer.png: art_headers/timer_png.h_img
-    art_src/title_close.png: art_headers/title_close_png.h_img
     art_src/toggle_button.png: art_headers/toggle_button_png.h_img
-    art_src/tool.png: art_headers/tool_png.h_img
-    art_src/toolseparator.png: art_headers/toolseparator_png.h_img
-    art_src/tree_ctrl.png: art_headers/tree_ctrl_png.h_img
-    art_src/treelistctrl.png: art_headers/treelistctrl_png.h_img
-    art_src/treelistctrlcolumn.png: art_headers/treelistctrlcolumn_png.h_img
-    art_src/wxActivityIndicator.png: art_headers/wxActivityIndicator_png.h_img
-    art_src/wxAnimation.png: art_headers/wxAnimation_png.h_img
-    art_src/wxBannerWindow.png: art_headers/wxBannerWindow_png.h_img
-    art_src/wxButton.png: art_headers/wxButton_png.h_img
-    art_src/wxCheckBox.png: art_headers/wxCheckBox_png.h_img
     art_src/wxCheckListBox.png: art_headers/wxCheckListBox_png.h_img
     art_src/wxChoice.png: art_headers/wxChoice_png.h_img
-    art_src/wxChoicebook.png: art_headers/wxChoicebook_png.h_img
-    art_src/wxCollapsiblePane.png: art_headers/wxCollapsiblePane_png.h_img
-    art_src/wxComboBox.png: art_headers/wxComboBox_png.h_img
     art_src/wxCommandLinkButton.png: art_headers/wxCommandLinkButton_png.h_img
-    art_src/wxDialog.png: art_headers/wxDialog_png.h_img
-    art_src/wxFileCtrl.png: art_headers/wxFileCtrl_png.h_img
-    art_src/wxFrame.png: art_headers/wxFrame_png.h_img
-    art_src/wxListBox.png: art_headers/wxListBox_png.h_img
     art_src/wxListView.png: art_headers/wxListView_png.h_img
-    art_src/wxListbook.png: art_headers/wxListbook_png.h_img
-    art_src/wxMenuBar.png: art_headers/wxMenuBar_png.h_img
-    art_src/wxNotebook.png: art_headers/wxNotebook_png.h_img
-    art_src/wxPanel.png: art_headers/wxPanel_png.h_img
-    art_src/wxPopupTransientWindow.png: art_headers/wxPopupTransientWindow_png.h_img
-    art_src/wxPropertyGrid.png: art_headers/wxPropertyGrid_png.h_img
-    art_src/wxPropertyGridManager.png: art_headers/wxPropertyGridManager_png.h_img
-    art_src/wxRadioButton.png: art_headers/wxRadioButton_png.h_img
     art_src/wxRearrangeCtrl.png: art_headers/wxRearrangeCtrl_png.h_img
-    art_src/wxScrolledWindow.png: art_headers/wxScrolledWindow_png.h_img
     art_src/wxSimpleHtmlListBox.png: art_headers/wxSimpleHtmlListBox_png.h_img
-    art_src/wxSimplebook.png: art_headers/wxSimplebook_png.h_img
-    art_src/wxSplitterWindow.png: art_headers/wxSplitterWindow_png.h_img
-    art_src/wxStaticText.png: art_headers/wxStaticText_png.h_img
-    art_src/wxTextCtrl.png: art_headers/wxTextCtrl_png.h_img
-    art_src/wxToolBar.png: art_headers/wxToolBar_png.h_img
-    art_src/wxToolbook.png: art_headers/wxToolbook_png.h_img
-    art_src/wxTreebook.png: art_headers/wxTreebook_png.h_img
-    art_src/webview.png: art_headers/webview_png.h_img
-    art_src/wxWizard.png: art_headers/wxWizard_png.h_img
-    art_src/wxWizardPageSimple.png: art_headers/wxWizardPageSimple_png.h_img
 
 # ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation
 # files.

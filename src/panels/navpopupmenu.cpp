@@ -11,14 +11,15 @@
 
 #include "navpopupmenu.h"  // NavPopupMenu
 
-#include "bitmaps.h"       // Contains various images handling functions
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "nav_panel.h"     // NavigationPanel -- Navigation Panel
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
-#include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
-#include "utils.h"         // Utility functions that work with properties
+#include "bitmaps.h"         // Contains various images handling functions
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "mainframe_base.h"  // contains all the wxue_img namespace embedded images
+#include "nav_panel.h"       // NavigationPanel -- Navigation Panel
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator class
+#include "uifuncs.h"         // Miscellaneous functions for displaying UI
+#include "undo_cmds.h"       // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"           // Utility functions that work with properties
 
 #include "newdialog.h"  // NewDialog -- Dialog for creating a new project dialog
 #include "newframe.h"   // NewFrame -- Dialog for creating a new project wxFrame
@@ -364,13 +365,13 @@ void NavPopupMenu::CreateNormalMenu(Node* node)
 
     auto sub_menu = new wxMenu;
     menu_item = sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
-    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)));
     menu_item = sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
-    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)));
     menu_item = sub_menu->Append(MenuMOVE_LEFT, "Left\tAlt+Left", "Moves selected item left");
-    menu_item->SetBitmap(GetInternalImage("nav_moveleft"));
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_moveleft_png, sizeof(wxue_img::nav_moveleft_png)));
     menu_item = sub_menu->Append(MenuMOVE_RIGHT, "Right\tAlt+Right", "Moves selected item right");
-    menu_item->SetBitmap(GetInternalImage("nav_moveright"));
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_moveleft_png, sizeof(wxue_img::nav_moveleft_png)));
     AppendSubMenu(sub_menu, "Move");
 
     sub_menu = new wxMenu;
@@ -679,9 +680,9 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
 
     auto sub_menu = new wxMenu;
     menu_item = sub_menu->Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
-    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)));
     menu_item = sub_menu->Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
-    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)));
     AppendSubMenu(sub_menu, "Move");
 
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);
@@ -860,10 +861,10 @@ void NavPopupMenu::CreateMenuMenu(Node* /* node */)
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
 
     AppendSeparator();
-    menu_item = Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
-    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
-    menu_item = Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
-    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
+    menu_item = Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)));
+    menu_item = Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)));
 
     AppendSeparator();
     Append(MenuADD_MENUITEM, "Add Menu &Item\tCtrl+I");
@@ -970,10 +971,10 @@ void NavPopupMenu::CreateWizardMenu(Node* /* node */)
     menu_item = Append(wxID_PASTE);
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
     AppendSeparator();
-    menu_item = Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
-    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
-    menu_item = Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
-    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
+    menu_item = Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)));
+    menu_item = Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)));
 
     AppendSeparator();
     m_tool_name = gen_wxWizardPageSimple;
@@ -990,10 +991,10 @@ void NavPopupMenu::CreateBookMenu(Node* /* node */)
     menu_item = Append(wxID_PASTE);
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
     AppendSeparator();
-    menu_item = Append(MenuMOVE_UP, "Move Up\tAlt+Up", "Moves selected item up");
-    menu_item->SetBitmap(GetInternalImage("nav_moveup"));
-    menu_item = Append(MenuMOVE_DOWN, "Move Down\tAlt+Down", "Moves selected item down");
-    menu_item->SetBitmap(GetInternalImage("nav_movedown"));
+    menu_item = Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)));
+    menu_item = Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
+    menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)));
 
     AppendSeparator();
     m_tool_name = gen_BookPage;

@@ -298,6 +298,8 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     m_source->writeLine();
 
     thrd_collect_img_headers.join();
+    std::sort(m_embedded_images.begin(), m_embedded_images.end(),
+              [](const EmbededImage* a, const EmbededImage* b) { return (a->array_name.compare(b->array_name) < 0); });
 
     if (m_panel_type != HDR_PANEL)
     {
@@ -470,9 +472,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 m_header->writeLine("namespace wxue_img\n{");
                 m_header->Indent();
                 m_header->writeLine("// Images declared in this class module:");
+                m_header->writeLine();
                 is_namespace_written = true;
             }
-            m_header->writeLine();
             m_header->writeLine(ttlib::cstr("extern const unsigned char ")
                                 << iter_array->array_name << '[' << iter_array->array_size << "];");
         }

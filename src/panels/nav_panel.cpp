@@ -14,30 +14,21 @@
 
 #include "nav_panel.h"
 
-#include "bitmaps.h"       // Contains various images handling functions
-#include "cstm_event.h"    // CustomEvent -- Custom Event class
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "navpopupmenu.h"  // NavPopupMenu -- Context-menu for an item
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "node_decl.h"     // NodeDeclaration class
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
-#include "undo_cmds.h"     // Undoable command classes derived from UndoAction
+#include "bitmaps.h"          // Contains various images handling functions
+#include "cstm_event.h"       // CustomEvent -- Custom Event class
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "mainframe_base.h"   // contains all the wxue_img namespace embedded images
+#include "navpopupmenu.h"     // NavPopupMenu -- Context-menu for an item
+#include "navtoolbar_base.h"  // generated NavToolbar class
+#include "node.h"             // Node class
+#include "node_creator.h"     // NodeCreator class
+#include "node_decl.h"        // NodeDeclaration class
+#include "uifuncs.h"          // Miscellaneous functions for displaying UI
+#include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 
 #include "../utils/auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
 
-constexpr size_t MaxLabelLength = 16;
-
-enum
-{
-    id_NavExpand = wxID_HIGHEST + 1000,
-    id_NavCollapse,
-    id_NavCollExpand,
-    id_NavMoveLeft,
-    id_NavMoveRight,
-    id_NavMoveUp,
-    id_NavMoveDown,
-};
+constexpr size_t MaxLabelLength = 24;
 
 NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
 {
@@ -48,7 +39,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     m_tree_ctrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                  wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT | wxTR_DEFAULT_STYLE | wxBORDER_SUNKEN);
     int index = 0;
-    m_iconList = new wxImageList(CompImgSize, CompImgSize);
+    m_iconList = new wxImageList(GenImageSize, GenImageSize);
 
     for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
     {
@@ -63,25 +54,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
 
     m_tree_ctrl->AssignImageList(m_iconList);
 
-    auto toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER);
-    toolbar->AddTool(id_NavCollExpand, wxEmptyString, GetInternalImage("nav_coll_expand"), wxNullBitmap, wxITEM_NORMAL,
-                     "Collapse siblings, expand children",
-                     "Expand selected item, collapse all other items at the same level");
-    toolbar->AddTool(id_NavExpand, wxEmptyString, GetInternalImage("nav_expand"), wxNullBitmap, wxITEM_NORMAL,
-                     "Expand all children", "Expand selected item and all of it's sub-items");
-    toolbar->AddTool(id_NavCollapse, wxEmptyString, GetInternalImage("nav_collapse"), wxNullBitmap, wxITEM_NORMAL,
-                     "Collapse all siblings", "Collapse selected item and all items at the same level");
-
-    toolbar->AddSeparator();
-
-    toolbar->AddTool(id_NavMoveLeft, "Move Left", GetInternalImage("nav_moveleft"), wxNullBitmap, wxITEM_NORMAL, "Move Left",
-                     "Move the selected item left");
-    toolbar->AddTool(id_NavMoveUp, "Move Up", GetInternalImage("nav_moveup"), wxNullBitmap, wxITEM_NORMAL, "Move Ip",
-                     "Move the selected item up");
-    toolbar->AddTool(id_NavMoveDown, "Move Down", GetInternalImage("nav_movedown"), wxNullBitmap, wxITEM_NORMAL, "Move Down",
-                     "Move the selected item down");
-    toolbar->AddTool(id_NavMoveRight, "Move Right", GetInternalImage("nav_moveright"), wxNullBitmap, wxITEM_NORMAL,
-                     "Move Right", "Move the selected item right");
+    auto toolbar = new NavToolbar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER);
 
     toolbar->Realize();
 
@@ -111,21 +84,21 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     Bind(EVT_NodeCreated, &NavigationPanel::OnNodeCreated, this);
     Bind(EVT_NodeDeleted, [this](CustomEvent& event) { DeleteNode(event.GetNode()); });
 
-    Bind(wxEVT_MENU, &NavigationPanel::OnExpand, this, id_NavExpand);
-    Bind(wxEVT_MENU, &NavigationPanel::OnCollapse, this, id_NavCollapse);
-    Bind(wxEVT_MENU, &NavigationPanel::OnCollExpand, this, id_NavCollExpand);
+    Bind(wxEVT_MENU, &NavigationPanel::OnExpand, this, NavToolbar::id_NavExpand);
+    Bind(wxEVT_MENU, &NavigationPanel::OnCollapse, this, NavToolbar::id_NavCollapse);
+    Bind(wxEVT_MENU, &NavigationPanel::OnCollExpand, this, NavToolbar::id_NavCollExpand);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Down); }, id_NavMoveDown);
+        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Down); }, NavToolbar::id_NavMoveDown);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Left); }, id_NavMoveLeft);
+        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Left); }, NavToolbar::id_NavMoveLeft);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Right); }, id_NavMoveRight);
+        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Right); }, NavToolbar::id_NavMoveRight);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Up); }, id_NavMoveUp);
+        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Up); }, NavToolbar::id_NavMoveUp);
 
     Bind(wxEVT_UPDATE_UI, &NavigationPanel::OnUpdateEvent, this);
 
@@ -302,7 +275,8 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     }
     else if (src_parent == dst_parent)
     {
-        m_pMainFrame->PushUndoAction(std::make_shared<ChangePositionAction>(node_src, dst_parent->GetChildPosition(node_dst)));
+        m_pMainFrame->PushUndoAction(
+            std::make_shared<ChangePositionAction>(node_src, dst_parent->GetChildPosition(node_dst)));
         return;
     }
 
@@ -554,31 +528,31 @@ void NavigationPanel::OnUpdateEvent(wxUpdateUIEvent& event)
 
     switch (event.GetId())
     {
-        case id_NavMoveUp:
+        case NavToolbar::id_NavMoveUp:
             event.Enable(m_pMainFrame->MoveNode(node, MoveDirection::Up, true));
             break;
 
-        case id_NavMoveDown:
+        case NavToolbar::id_NavMoveDown:
             event.Enable(m_pMainFrame->MoveNode(node, MoveDirection::Down, true));
             break;
 
-        case id_NavMoveLeft:
+        case NavToolbar::id_NavMoveLeft:
             event.Enable(m_pMainFrame->MoveNode(node, MoveDirection::Left, true));
             break;
 
-        case id_NavMoveRight:
+        case NavToolbar::id_NavMoveRight:
             event.Enable(m_pMainFrame->MoveNode(node, MoveDirection::Right, true));
             break;
 
-        case id_NavExpand:
+        case NavToolbar::id_NavExpand:
             event.Enable(node->GetChildCount() > 0);
             break;
 
-        case id_NavCollapse:
+        case NavToolbar::id_NavCollapse:
             event.Enable(node->GetParent() && node->GetParent()->GetChildCount() > 0);
             break;
 
-        case id_NavCollExpand:
+        case NavToolbar::id_NavCollExpand:
             event.Enable((node->GetParent() && node->GetParent()->GetChildCount() > 0) || node->GetChildCount() > 0);
             break;
     }

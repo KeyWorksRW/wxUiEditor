@@ -142,7 +142,6 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
         forms_bar_windows->AddTool(gen_PanelForm, GetImageFromArray(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)), wxString::FromUTF8("wxPanel"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(CreateNewFrame, GetImageFromArray(wxue_img::wxFrame_png, sizeof(wxue_img::wxFrame_png)), wxString::FromUTF8("wxFrame"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(gen_wxPopupTransientWindow, GetImageFromArray(wxue_img::WXPOPupTransientWindow_png, sizeof(wxue_img::WXPOPupTransientWindow_png)), wxString::FromUTF8("wxPopupTransientWindow"), wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(gen_wxContextMenuEvent, GetImageFromArray(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)), wxString::FromUTF8("wxContextMenuEvent"), wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_windows->Realize();
 
@@ -159,11 +158,20 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
 
     auto forms_bar_bars = new wxRibbonToolBar(panel_bars, wxID_ANY);
     {
-        forms_bar_bars->AddTool(gen_MenuBar, GetImageFromArray(wxue_img::wxMenuBar_png, sizeof(wxue_img::wxMenuBar_png)), wxString::FromUTF8("wxMenuBar"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars->AddTool(gen_ToolBar, GetImageFromArray(wxue_img::wxToolBar_png, sizeof(wxue_img::wxToolBar_png)), wxString::FromUTF8("wxToolBar"), wxRIBBON_BUTTON_NORMAL);
         forms_bar_bars->AddTool(CreateNewFormRibbon, GetImageFromArray(wxue_img::ribbon_bar_png, sizeof(wxue_img::ribbon_bar_png)), wxString::FromUTF8("wxRibbonBar"), wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_bars->Realize();
+
+    auto panel_menu = new wxRibbonPanel(page_forms, wxID_ANY, wxString::FromUTF8("Menus"));
+
+    auto forms_bar_bars_2 = new wxRibbonToolBar(panel_menu, wxID_ANY);
+    {
+        forms_bar_bars_2->AddTool(gen_MenuBar, GetImageFromArray(wxue_img::wxMenuBar_png, sizeof(wxue_img::wxMenuBar_png)), wxString::FromUTF8("wxMenuBar"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars_2->AddTool(gen_PopupMenu, GetImageFromArray(wxue_img::menu_png, sizeof(wxue_img::menu_png)), wxString::FromUTF8("wxMenu"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_bars_2->AddTool(gen_wxContextMenuEvent, GetImageFromArray(wxue_img::menuitem_png, sizeof(wxue_img::menuitem_png)), wxString::FromUTF8("wxContextMenuEvent"), wxRIBBON_BUTTON_NORMAL);
+    }
+    forms_bar_bars_2->Realize();
 
     auto pg_sizer = new wxRibbonPage(m_rbnBar, wxID_ANY, wxString::FromUTF8("Sizers"));
 
@@ -422,6 +430,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     forms_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     forms_bar_wizard->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     forms_bar_bars->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    forms_bar_bars_2->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     sizer_bar_grids->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);

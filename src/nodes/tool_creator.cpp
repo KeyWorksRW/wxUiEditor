@@ -9,11 +9,12 @@
 
 #include "node.h"
 
-#include "appoptions.h"    // AppOptions -- Application-wide options
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node_creator.h"  // NodeCreator class
-#include "node_decl.h"     // NodeDeclaration class
-#include "node_prop.h"     // NodeProperty -- NodeProperty class
+#include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
+#include "appoptions.h"              // AppOptions -- Application-wide options
+#include "mainframe.h"               // MainFrame -- Main window frame
+#include "node_creator.h"            // NodeCreator class
+#include "node_decl.h"               // NodeDeclaration class
+#include "node_prop.h"               // NodeProperty -- NodeProperty class
 
 using namespace GenEnum;
 
@@ -59,6 +60,15 @@ bool Node::CreateToolNode(GenName name)
         {
             node_menu->CreateChildNode(gen_wxMenuItem);
         }
+        if (name == gen_MenuBar)
+        {
+            wxGetFrame().GetRibbonPanel()->ActivateBarPage();
+        }
+    }
+    else if (name == gen_PopupMenu)
+    {
+        new_node->CreateChildNode(gen_wxMenuItem);
+        wxGetFrame().GetRibbonPanel()->ActivateBarPage();
     }
     else if (name == gen_wxToolBar || name == gen_ToolBar)
     {

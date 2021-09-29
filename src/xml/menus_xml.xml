@@ -1,0 +1,108 @@
+inline const char* menus_xml = R"===(<?xml version="1.0"?>
+<!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
+<GeneratorDefinitions>
+	<gen class="MenuBar" image="wxMenuBar" type="menubar_form">
+		<inherits class="Code Generation" />
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="class_name" type="string"
+			help="The name of the base class.">MyMenuBarBase</property>
+		<property name="label" type="string_escapes">MyMenuBar</property>
+		<property name="style" type="bitlist">
+			<option name="wxMB_DOCKABLE"
+				help="Allows the menu bar to be detached (wxGTK only)." />
+		</property>
+	</gen>
+
+	<gen class="PopupMenu" image="menu" type="popup_menu">
+		<inherits class="Code Generation" />
+		<property name="class_name" type="string"
+			help="The name of the base class.">MyPopupMenuBase</property>
+		<property name="label" type="string_escapes">MyPopupMenu</property>
+	</gen>
+
+	<gen class="wxContextMenuEvent" image="menu" type="ctx_menu">
+		<property name="handler_name" type="string"
+			help="This is the handler name that will be used in the parent's wxEVT_CONTEXT_MENU. If you change this name, it will automatically be changed in the parent as well.">OnContextMenu</property>
+	</gen>
+
+	<gen class="wxMenuBar" image="wxMenuBar" type="menubar">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<property name="var_name" type="string">m_menubar</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="style" type="bitlist">
+			<option name="wxMB_DOCKABLE"
+				help="Allows the menu bar to be detached (wxGTK only)." />
+		</property>
+	</gen>
+
+	<gen class="wxMenu" image="menu" type="menu">
+		<property name="var_name" type="string">m_menu</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="label" type="string_escapes">MyMenu</property>
+	</gen>
+
+	<gen class="submenu" image="submenu" type="submenu">
+		<property name="var_name" type="string">submenu</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<property name="label" type="string_escapes">MySubMenu</property>
+		<property name="bitmap" type="image"
+			help="Bitmap for the submenu item." />
+	</gen>
+
+	<gen class="wxMenuItem" image="menuitem" type="menuitem">
+		<property name="var_name" type="string">menu_item</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			none
+		</property>
+		<property name="label" type="string_escapes"
+			help="Text for the menu item, as shown on the menu. An accelerator key can be specified using the ampersand &quot;&amp;&quot; character.">MyMenuItem</property>
+		<property name="shortcut" type="string_escapes"
+			help="Optional keyboard shortcut. The syntax is any combination of &quot;CTRL&quot;, &quot;ALT&quot; and &quot;SHIFT&quot; strings (case doesn't matter) separated by either '-' or '+' characters and followed by the accelerator itself. The accelerator may be any alphanumeric character, or any function key (from F1 to F12)" />
+		<property name="help" type="string_edit"
+			help="Optional string that will be shown on the status bar." />
+		<property name="id" type="id">wxID_ANY</property>
+		<property name="bitmap" type="image"
+			help="Bitmap for the menu item. This doubles as the checked bitmap if the menu item is wxITEM_CHECK." />
+		<property name="unchecked_bitmap" type="image"
+			help="Unchecked bitmap for the menu item. This will be shown if the menu item is wxITEM_CHECK and it is currently unchecked. (Windows only)" />
+		<property name="checked" type="bool">0</property>
+		<property name="disabled" type="bool">0</property>
+		<property name="kind" type="option">
+			<option name="wxITEM_NORMAL"
+				help="Creates a normal menu item." />
+			<option name="wxITEM_CHECK"
+				help="Creates a checkable menu item." />
+			<option name="wxITEM_RADIO"
+				help="Creates a radio menu item. Consecutive radio items form a radio group such that exactly one button in the group is selected at any moment." />
+			wxITEM_NORMAL
+		</property>
+		<event name="wxEVT_MENU" class="wxCommandEvent"
+			help="" />
+		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"
+			help="" />
+	</gen>
+
+	<gen class="separator" image="separator" type="menuitem">
+		<property name="var_name" type="string">separator</property>
+	</gen>
+</GeneratorDefinitions>)===";

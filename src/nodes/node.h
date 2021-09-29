@@ -109,7 +109,7 @@ public:
     bool IsForm() const noexcept
     {
         return (isType(type_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) || isType(type_toolbar_form) ||
-                isType(type_wizard));
+                isType(type_wizard) || isType(type_popup_menu));
     }
     bool IsStaticBoxSizer() const noexcept
     {

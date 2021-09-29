@@ -105,6 +105,8 @@ Node* Node::FindParentForm() const noexcept
         return retObj;
     if (auto retObj = LocateAncestorType(type_wizard); retObj)
         return retObj;
+    if (auto retObj = LocateAncestorType(type_popup_menu); retObj)
+        return retObj;
 
     return nullptr;
 }
@@ -688,7 +690,7 @@ static const PropName s_var_names[] = {
 bool Node::FixDuplicateName()
 {
     if (isType(type_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) || isType(type_toolbar_form) ||
-        isType(type_wizard) || isType(type_project))
+        isType(type_wizard) || isType(type_popup_menu) || isType(type_project))
     {
         return false;
     }
@@ -741,7 +743,7 @@ void Node::FixDuplicateNodeNames(Node* form)
     if (!form)
     {
         if (isType(type_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) || isType(type_toolbar_form) ||
-            isType(type_wizard))
+            isType(type_wizard) || isType(type_popup_menu))
         {
             for (auto& child: GetChildNodePtrs())
             {

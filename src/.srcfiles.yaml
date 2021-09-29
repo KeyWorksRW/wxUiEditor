@@ -247,4 +247,37 @@ Docs:
     ../docs/DEV_NOTES.md
     ../docs/import_formbuilder.md
     nodes/README.md
+
+    # The following are the XML files we use for interfaces and generators
+
     xml/README.md
+
+    xml/interface_xml.xml
+    xml/sizer_child_xml.xml
+    xml/validators_xml.xml
+    xml/window_interfaces_xml.xml
+
+    xml/aui_xml.xml
+    xml/bars_xml.xml
+    xml/books_xml.xml
+    xml/boxes_xml.xml
+    xml/buttons_xml.xml
+    xml/containers_xml.xml
+    xml/dataview_xml.xml
+    xml/dialogs_xml.xml
+    xml/forms_xml.xml
+    xml/grid_xml.xml
+    xml/listview_xml.xml
+    xml/menus_xml.xml
+    xml/pickers_xml.xml
+    xml/project_xml.xml
+    xml/propgrid_xml.xml
+    xml/ribbon_xml.xml
+    xml/scintilla_xml.xml
+    xml/sizers_xml.xml
+    xml/std_dlg_btns_xml.xml
+    xml/textctrls_xml.xml
+    xml/toolbars_xml.xml
+    xml/trees_xml.xml
+    xml/widgets_xml.xml
+    xml/wizard_xml.xml

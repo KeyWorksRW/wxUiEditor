@@ -109,6 +109,7 @@ void NodeCreator::InitGenerators()
 
     SET_GENERATOR(gen_wxMenuBar, MenuBarGenerator)
     SET_GENERATOR(gen_MenuBar, MenuBarFormGenerator)
+    SET_GENERATOR(gen_PopupMenu, PopupMenuGenerator)
     SET_GENERATOR(gen_wxMenu, MenuGenerator)
     SET_GENERATOR(gen_submenu, SubMenuGenerator)
     SET_GENERATOR(gen_wxMenuItem, MenuItemGenerator)

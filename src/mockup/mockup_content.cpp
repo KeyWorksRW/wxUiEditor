@@ -75,7 +75,7 @@ void MockupContent::CreateAllGenerators()
     }
     else
     {
-        if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar))
+        if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar) || form->isGen(gen_PopupMenu))
         {
             // In this case, the form itself is created as a child
             CreateChildren(form, this, this, m_parent_sizer);

@@ -151,6 +151,9 @@ static const ParentChild lstParentChild[] = {
     { type_submenu, type_menuitem, infinite },
     { type_submenu, type_submenu, infinite },
 
+    { type_popup_menu, type_menuitem, infinite },
+    { type_popup_menu, type_submenu, infinite },
+
     { type_ctx_menu, type_menuitem, infinite },
     { type_ctx_menu, type_submenu, infinite },
 
@@ -167,6 +170,7 @@ static const ParentChild lstParentChild[] = {
 
     { type_project, type_form, infinite },
     { type_project, type_menubar_form, infinite },
+    { type_project, type_popup_menu, infinite },
     { type_project, type_ribbonbar_form, infinite },
     { type_project, type_toolbar_form, infinite },
     { type_project, type_wizard, infinite },

@@ -2084,11 +2084,6 @@
                   bitmap="Embed;../art_src/WXPOPupTransientWindow.png;[-1,-1]"
                   help="wxPopupTransientWindow"
                   id="gen_wxPopupTransientWindow" />
-                <node
-                  class="ribbonTool"
-                  bitmap="Embed;../art_src/menuitem.png;[-1,-1]"
-                  help="wxContextMenuEvent"
-                  id="gen_wxContextMenuEvent" />
               </node>
             </node>
             <node
@@ -2121,11 +2116,6 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxMenuBar.png;[-1,-1]"
-                  help="wxMenuBar"
-                  id="gen_MenuBar" />
-                <node
-                  class="ribbonTool"
                   bitmap="Embed;../art_src/wxToolBar.png;[-1,-1]"
                   help="wxToolBar"
                   id="gen_ToolBar" />
@@ -2134,6 +2124,31 @@
                   bitmap="Embed;../art_src/ribbon_bar.png;[-1,-1]"
                   help="wxRibbonBar"
                   id="CreateNewFormRibbon" />
+              </node>
+            </node>
+            <node
+              class="wxRibbonPanel"
+              label="Menus"
+              var_name="panel_menu">
+              <node
+                class="wxRibbonToolBar"
+                var_name="forms_bar_bars_2"
+                wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/wxMenuBar.png;[-1,-1]"
+                  help="wxMenuBar"
+                  id="gen_MenuBar" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/menu.png;[-1,-1]"
+                  help="wxMenu"
+                  id="gen_PopupMenu" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/menuitem.png;[-1,-1]"
+                  help="wxContextMenuEvent"
+                  id="gen_wxContextMenuEvent" />
               </node>
             </node>
           </node>

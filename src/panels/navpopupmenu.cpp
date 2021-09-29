@@ -68,6 +68,12 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         }
     }
 
+    if (node->isGen(gen_PopupMenu))
+    {
+        CreateMenuMenu(node);
+        return;
+    }
+
     if (node->IsForm())
     {
         CreateFormMenu(node);

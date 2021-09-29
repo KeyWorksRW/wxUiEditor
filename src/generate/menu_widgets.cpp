@@ -30,11 +30,20 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
     auto panel = new wxPanel(wxStaticCast(parent, wxWindow));
     auto sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    for (auto& iter: node->GetChildNodePtrs())
+    if (node->isGen(gen_PopupMenu))
     {
-        auto label = new wxStaticText(panel, wxID_ANY, iter->prop_as_wxString(prop_label));
+        auto label = new wxStaticText(panel, wxID_ANY, node->prop_as_wxString(prop_label));
         sizer->Add(label, wxSizerFlags().Border(wxALL));
         label->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
+    }
+    else
+    {
+        for (auto& iter: node->GetChildNodePtrs())
+        {
+            auto label = new wxStaticText(panel, wxID_ANY, iter->prop_as_wxString(prop_label));
+            sizer->Add(label, wxSizerFlags().Border(wxALL));
+            label->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
+        }
     }
 
     panel->SetSizerAndFit(sizer);
@@ -52,12 +61,20 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     ttlib::cstr text = menu_label->GetLabel().utf8_str().data();
 
     Node* menu_node = nullptr;
-    for (size_t pos_menu = 0; pos_menu < m_node_menubar->GetChildCount(); ++pos_menu)
+
+    if (m_node_menubar->isGen(gen_PopupMenu))
     {
-        if (m_node_menubar->GetChild(pos_menu)->prop_as_string(prop_label) == text)
+        menu_node = m_node_menubar;
+    }
+    else
+    {
+        for (size_t pos_menu = 0; pos_menu < m_node_menubar->GetChildCount(); ++pos_menu)
         {
-            menu_node = m_node_menubar->GetChild(pos_menu);
-            break;
+            if (m_node_menubar->GetChild(pos_menu)->prop_as_string(prop_label) == text)
+            {
+                menu_node = m_node_menubar->GetChild(pos_menu);
+                break;
+            }
         }
     }
     ASSERT_MSG(menu_node, "menu label and static text label don't match!");
@@ -226,6 +243,51 @@ std::optional<ttlib::cstr> MenuBarFormGenerator::GenAdditionalCode(GenEnum::GenC
 }
 
 bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
+
+    return true;
+}
+
+//////////////////////////////////////////  PopupMenuGenerator  //////////////////////////////////////////
+
+std::optional<ttlib::cstr> PopupMenuGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+
+    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
+    code << "() : wxMenu()\n{";
+
+    return code;
+}
+
+std::optional<ttlib::cstr> PopupMenuGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+{
+    ttlib::cstr code;
+
+    if (cmd == code_header)
+    {
+        // This is the code to add to the header file
+        code << node->get_node_name() << "();";
+        return code;
+    }
+
+    else if (cmd == code_base_class)
+    {
+        if (node->HasValue(prop_derived_class))
+        {
+            code << node->prop_as_string(prop_derived_class);
+        }
+        else
+        {
+            code << "wxMenu";
+        }
+        return code;
+    }
+    return {};
+}
+
+bool PopupMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 

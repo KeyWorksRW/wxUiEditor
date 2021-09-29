@@ -9,7 +9,7 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
-// Both MenuBarGenerator and MenuBarFormGenerator are derived from this class
+// MenuBarGenerator, MenuBarFormGenerator and PopupMenuGenerator are derived from this class
 class MenuBarBase : public BaseGenerator
 {
 public:
@@ -34,6 +34,15 @@ public:
 };
 
 class MenuBarFormGenerator : public MenuBarBase
+{
+public:
+    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
+
+    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+};
+
+class PopupMenuGenerator : public MenuBarBase
 {
 public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;

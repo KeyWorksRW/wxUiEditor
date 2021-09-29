@@ -389,7 +389,15 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenAdditionalCode(GenEnum::GenCodeT
 
     if (cmd == code_after_children)
     {
-        code << "\t" << node->get_parent_name() << "->AppendSubMenu(" << node->get_node_name() << ", ";
+        if (node->GetParent()->isGen(gen_PopupMenu))
+        {
+            code << "\t" "AppendSubMenu(" << node->get_node_name() << ", ";
+        }
+        else
+        {
+            code << "\t" << node->get_parent_name() << "->AppendSubMenu(" << node->get_node_name() << ", ";
+        }
+
         code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
     }
     else
@@ -424,12 +432,19 @@ bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
 {
-    ttlib::cstr code("\t");
+    ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
 
-    code << node->get_node_name() << " = new wxMenuItem(" << node->get_parent_name() << ", " << node->prop_as_string(prop_id)
-         << ", ";
+    if (node->GetParent()->isGen(gen_PopupMenu))
+    {
+        code << node->get_node_name() << " = Append(" << node->prop_as_string(prop_id) << ", ";
+    }
+    else
+    {
+        code << node->get_node_name() << " = new wxMenuItem(" << node->get_parent_name() << ", "
+             << node->prop_as_string(prop_id) << ", ";
+    }
     auto& label = node->prop_as_string(prop_label);
     if (label.size())
     {
@@ -451,7 +466,8 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
 
     if (node->HasValue(prop_help) || node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
     {
-        code << ",\n\t\t\t" << GenerateQuotedString(node->prop_as_string(prop_help)) << ", "
+        code.insert(0, 1, '\t');
+        code << ",\n\t\t" << GenerateQuotedString(node->prop_as_string(prop_help)) << ", "
              << node->prop_as_string(prop_kind);
     }
 
@@ -481,7 +497,11 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /*
 
     if (code.size())
         code << '\n';
-    code << "\t" << node->get_parent_name() << "->Append(" << node->get_node_name() << ");";
+
+    if (!node->GetParent()->isGen(gen_PopupMenu))
+    {
+        code << "\t" << node->get_parent_name() << "->Append(" << node->get_node_name() << ");";
+    }
 
     if ((node->prop_as_string(prop_kind) == "wxITEM_CHECK" || node->prop_as_string(prop_kind) == "wxITEM_RADIO") &&
         node->prop_as_bool(prop_checked))
@@ -512,7 +532,10 @@ std::optional<ttlib::cstr> SeparatorGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    code << node->get_parent_name() << "->AppendSeparator();";
+    if (node->GetParent()->isGen(gen_PopupMenu))
+        code << "AppendSeparator();";
+    else
+        code << node->get_parent_name() << "->AppendSeparator();";
 
     return code;
 }

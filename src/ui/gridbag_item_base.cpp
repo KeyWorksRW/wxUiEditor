@@ -55,7 +55,7 @@ bool GridBagItemBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
     m_radio_column = new wxRadioButton(this, wxID_ANY, wxString::FromUTF8("Insert &column"), wxDefaultPosition, wxDefaultSize,
-    wxRB_GROUP);
+        wxRB_GROUP);
     m_radio_column->Hide();
     box_sizer->Add(m_radio_column, wxSizerFlags().Border(wxALL));
 

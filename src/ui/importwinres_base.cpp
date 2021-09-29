@@ -25,8 +25,8 @@ bool ImportWinResBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     box_sizer4->Add(m_staticResFile, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_fileResource = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
-    wxString::FromUTF8("Resource Files|*.rc;*.dlg||"), wxDefaultPosition, wxDefaultSize,
-    wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL);
+        wxString::FromUTF8("Resource Files|*.rc;*.dlg||"), wxDefaultPosition, wxDefaultSize,
+        wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL);
     m_fileResource->SetMinSize(wxSize(240, -1));
     box_sizer4->Add(m_fileResource, wxSizerFlags().Expand().Border(wxALL));
 

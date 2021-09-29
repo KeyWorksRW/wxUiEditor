@@ -23,7 +23,7 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     m_import_staticbox->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));
 
     m_radio_wxFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("wx&FormBuilder Project(s)"), wxDefaultPosition, wxDefaultSize,
-    wxRB_GROUP);
+        wxRB_GROUP);
     flex_grid_sizer->Add(m_radio_wxFormBuilder, wxSizerFlags().Border(wxALL));
 
     m_radio_WindowsResource = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Windows Resource"));
@@ -49,7 +49,7 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     box_sizer6->Add(m_btnAddFile, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_static_cwd = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("..."), wxDefaultPosition, wxDefaultSize,
-    wxST_ELLIPSIZE_MIDDLE);
+        wxST_ELLIPSIZE_MIDDLE);
     box_sizer6->Add(m_static_cwd, wxSizerFlags(1).Center().Border(wxALL));
 
     auto box_sizer7 = new wxBoxSizer(wxVERTICAL);

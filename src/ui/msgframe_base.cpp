@@ -56,17 +56,17 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     auto menu_view = new wxMenu();
 
     m_menu_item_warnings = new wxMenuItem(menu_view, id_warning_msgs, wxString::FromUTF8("Warnings"),
-    wxEmptyString, wxITEM_CHECK);
+        wxEmptyString, wxITEM_CHECK);
     m_menu_item_warnings->SetBitmap(wxArtProvider::GetBitmap(wxART_WARNING, wxART_MENU));
     menu_view->Append(m_menu_item_warnings);
 
     m_menu_item_events = new wxMenuItem(menu_view, id_event_msgs, wxString::FromUTF8("Events"),
-    wxEmptyString, wxITEM_CHECK);
+        wxEmptyString, wxITEM_CHECK);
     m_menu_item_events->SetBitmap(wxArtProvider::GetBitmap(wxART_TIP, wxART_MENU));
     menu_view->Append(m_menu_item_events);
 
     m_menu_item_info = new wxMenuItem(menu_view, wxID_INFO, wxEmptyString,
-    wxEmptyString, wxITEM_CHECK);
+        wxEmptyString, wxITEM_CHECK);
     m_menu_item_info->SetBitmap(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_MENU));
     menu_view->Append(m_menu_item_info);
     menubar->Append(menu_view, wxString::FromUTF8("&View"));

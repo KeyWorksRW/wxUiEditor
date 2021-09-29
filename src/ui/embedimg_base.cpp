@@ -48,23 +48,23 @@ bool EmbedImageBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     flex_grid_sizer->Add(m_staticOriginal, wxSizerFlags().Center().Border(wxALL));
 
     m_fileOriginal = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
-    wxString::FromUTF8("Select file(s)\", \"All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||"), wxDefaultPosition, wxSize(300, -1),
-    wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
+        wxString::FromUTF8("Select file(s)\", \"All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||"), wxDefaultPosition, wxSize(300, -1),
+        wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
     flex_grid_sizer->Add(m_fileOriginal, wxSizerFlags().Expand().Border(wxALL));
 
     m_staticHeader = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("O&utput:"));
     flex_grid_sizer->Add(m_staticHeader, wxSizerFlags().Center().Border(wxALL));
 
     m_fileOutput = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
-    wxString::FromUTF8("Header files|*.h_img||"), wxDefaultPosition, wxDefaultSize,
-    wxFLP_SAVE|wxFLP_USE_TEXTCTRL);
+        wxString::FromUTF8("Header files|*.h_img||"), wxDefaultPosition, wxDefaultSize,
+        wxFLP_SAVE|wxFLP_USE_TEXTCTRL);
     flex_grid_sizer->Add(m_fileOutput, wxSizerFlags().Expand().Border(wxALL));
 
     auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("Output Type"));
     parent_sizer->Add(static_box, wxSizerFlags().Border(wxALL));
 
     m_choicebook = new wxChoicebook(static_box->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize,
-    wxCHB_LEFT);
+        wxCHB_LEFT);
     static_box->Add(m_choicebook, wxSizerFlags().Border(wxALL));
 
     auto header_page = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);

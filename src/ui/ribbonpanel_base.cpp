@@ -209,8 +209,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     auto pg_common = new wxRibbonPage(m_rbnBar, wxID_ANY, wxString::FromUTF8("Common"));
 
     auto panel_common_controls = new wxRibbonPanel(pg_common, wxID_ANY, wxString::FromUTF8("Controls"),
-    wxNullBitmap, wxDefaultPosition, wxDefaultSize,
-    wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
+        wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+        wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
 
     auto common_bar_controls = new wxRibbonToolBar(panel_common_controls, wxID_ANY);
     {
@@ -224,8 +224,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     common_bar_controls->Realize();
 
     auto panel_choices = new wxRibbonPanel(pg_common, wxID_ANY, wxString::FromUTF8("Choices"),
-    wxNullBitmap, wxDefaultPosition, wxDefaultSize,
-    wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
+        wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+        wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
 
     auto common_bar_choices = new wxRibbonToolBar(panel_choices, wxID_ANY);
     {
@@ -236,8 +236,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     common_bar_choices->Realize();
 
     auto panel_pickkers = new wxRibbonPanel(pg_common, wxID_ANY, wxString::FromUTF8("Pickers"),
-    wxNullBitmap, wxDefaultPosition, wxDefaultSize,
-    wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
+        wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+        wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
 
     auto common_bar_pickers = new wxRibbonToolBar(panel_pickkers, wxID_ANY);
     {
@@ -251,8 +251,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     common_bar_pickers->Realize();
 
     auto panel_other = new wxRibbonPanel(pg_common, wxID_ANY, wxString::FromUTF8("Other"),
-    wxNullBitmap, wxDefaultPosition, wxDefaultSize,
-    wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
+        wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+        wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_FLEXIBLE);
 
     auto common_bar_other = new wxRibbonToolBar(panel_other, wxID_ANY);
     {

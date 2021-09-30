@@ -213,21 +213,8 @@ PNG:
     art_src/logo64.png: art_headers/logo64_png.h_img
 
     art_src/auitoolbar.png: art_headers/auitoolbar_png.h_img
-    art_src/bitmap_button.png: art_headers/bitmap_button_png.h_img
-    art_src/bitmap_toggle_button.png: art_headers/bitmap_toggle_button_png.h_img
-    art_src/doc_mdi_parent_frame.png: art_headers/doc_mdi_parent_frame_png.h_img
-    art_src/doc_parent_frame.png: art_headers/doc_parent_frame_png.h_img
-    art_src/document.png: art_headers/document_png.h_img
-    art_src/moveColLeft.png: art_headers/moveColLeft_png.h_img
-    art_src/moveColRight.png: art_headers/moveColRight_png.h_img
-    art_src/moveRowDown.png: art_headers/moveRowDown_png.h_img
-    art_src/moveRowUp.png: art_headers/moveRowUp_png.h_img
     art_src/project.png: art_headers/project_png.h_img
-    art_src/ribbon_button_dropdown.png: art_headers/ribbon_button_dropdown_png.h_img
-    art_src/ribbon_button_hybrid.png: art_headers/ribbon_button_hybrid_png.h_img
-    art_src/ribbon_button_toggle.png: art_headers/ribbon_button_toggle_png.h_img
     art_src/scrollbar.png: art_headers/scrollbar_png.h_img
-    art_src/timer.png: art_headers/timer_png.h_img
 
 Docs:
     # ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation

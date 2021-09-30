@@ -37,21 +37,9 @@ using namespace wxue_img;
 #include "art_headers/unknown_png.h_img"
 
 #include "art_headers/auitoolbar_png.h_img"
-#include "art_headers/bitmap_button_png.h_img"
-#include "art_headers/bitmap_toggle_button_png.h_img"
-#include "art_headers/doc_parent_frame_png.h_img"
-#include "art_headers/document_png.h_img"
 #include "art_headers/empty_png.h_img"
-#include "art_headers/moveColLeft_png.h_img"
-#include "art_headers/moveColRight_png.h_img"
-#include "art_headers/moveRowDown_png.h_img"
-#include "art_headers/moveRowUp_png.h_img"
 #include "art_headers/project_png.h_img"
-#include "art_headers/ribbon_button_dropdown_png.h_img"
-#include "art_headers/ribbon_button_hybrid_png.h_img"
-#include "art_headers/ribbon_button_toggle_png.h_img"
 #include "art_headers/scrollbar_png.h_img"
-#include "art_headers/timer_png.h_img"
 #include "art_headers/title_close_png.h_img"
 
 #if defined(_DEBUG)
@@ -93,8 +81,6 @@ static const ImageMap png_headers[] = {
 
     { "auinotebook", auinotebook_png, sizeof(auinotebook_png) },
     { "auitoolbar", auitoolbar_png, sizeof(auitoolbar_png) },
-    { "bitmap_button", bitmap_button_png, sizeof(bitmap_button_png) },
-    { "bitmap_toggle_button", bitmap_toggle_button_png, sizeof(bitmap_toggle_button_png) },
     { "bmp_combo_box", bmp_combo_box_png, sizeof(bmp_combo_box_png) },
     { "book_page", book_page_png, sizeof(book_page_png) },
     { "calendar", calendar_png, sizeof(calendar_png) },
@@ -109,8 +95,6 @@ static const ImageMap png_headers[] = {
     { "default", default_png, sizeof(default_png) },
     { "dirPicker", dirPicker_png, sizeof(dirPicker_png) },
     { "doc_mdi_parent_frame", doc_mdi_parent_frame_png, sizeof(doc_mdi_parent_frame_png) },
-    { "doc_parent_frame", doc_parent_frame_png, sizeof(doc_parent_frame_png) },
-    { "document", document_png, sizeof(document_png) },
     { "filePicker", filePicker_png, sizeof(filePicker_png) },
     { "fontPicker", fontPicker_png, sizeof(fontPicker_png) },
     { "gauge", gauge_png, sizeof(gauge_png) },
@@ -121,10 +105,6 @@ static const ImageMap png_headers[] = {
     { "infobar", infobar_png, sizeof(infobar_png) },
     { "menu", menu_png, sizeof(menu_png) },
     { "menuitem", menuitem_png, sizeof(menuitem_png) },
-    { "moveColLeft", moveColLeft_png, sizeof(moveColLeft_png) },
-    { "moveColRight", moveColRight_png, sizeof(moveColRight_png) },
-    { "moveRowDown", moveRowDown_png, sizeof(moveRowDown_png) },
-    { "moveRowUp", moveRowUp_png, sizeof(moveRowUp_png) },
     { "pagectrl", pagectrl_png, sizeof(pagectrl_png) },
     { "project", project_png, sizeof(project_png) },
     { "propgriditem", propgriditem_png, sizeof(propgriditem_png) },
@@ -132,9 +112,6 @@ static const ImageMap png_headers[] = {
     { "radio_box", radio_box_png, sizeof(radio_box_png) },
     { "ribbon_bar", ribbon_bar_png, sizeof(ribbon_bar_png) },
     { "ribbon_button", ribbon_button_png, sizeof(ribbon_button_png) },
-    { "ribbon_button_dropdown", ribbon_button_dropdown_png, sizeof(ribbon_button_dropdown_png) },
-    { "ribbon_button_hybrid", ribbon_button_hybrid_png, sizeof(ribbon_button_hybrid_png) },
-    { "ribbon_button_toggle", ribbon_button_toggle_png, sizeof(ribbon_button_toggle_png) },
     { "ribbon_buttonbar", ribbon_buttonbar_png, sizeof(ribbon_buttonbar_png) },
     { "ribbon_gallery", ribbon_gallery_png, sizeof(ribbon_gallery_png) },
     { "ribbon_gallery_item", ribbon_gallery_item_png, sizeof(ribbon_gallery_item_png) },
@@ -153,7 +130,6 @@ static const ImageMap png_headers[] = {
     { "statusbar", statusbar_png, sizeof(statusbar_png) },
     { "submenu", submenu_png, sizeof(submenu_png) },
     { "timepicker", timepicker_png, sizeof(timepicker_png) },
-    { "timer", timer_png, sizeof(timer_png) },
     { "toggle_button", toggle_button_png, sizeof(toggle_button_png) },
     { "tool", tool_png, sizeof(tool_png) },
     { "toolseparator", toolseparator_png, sizeof(toolseparator_png) },

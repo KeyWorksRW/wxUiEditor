@@ -48,7 +48,6 @@ namespace wxue_img
     extern const unsigned char calendar_png[953];
     extern const unsigned char colourPickerIcon_png[550];
     extern const unsigned char customControl_png[756];
-    extern const unsigned char dataview_ctrl_png[245];
     extern const unsigned char dataviewlist_column_png[240];
     extern const unsigned char datepicker_png[1063];
     extern const unsigned char dirPicker_png[706];
@@ -70,9 +69,7 @@ namespace wxue_img
     extern const unsigned char propgriditem_png[452];
     extern const unsigned char propgridpage_png[253];
     extern const unsigned char radio_box_png[504];
-    extern const unsigned char ribbon_bar_png[860];
     extern const unsigned char ribbon_button_png[220];
-    extern const unsigned char ribbon_buttonbar_png[316];
     extern const unsigned char ribbon_gallery_item_png[679];
     extern const unsigned char ribbon_page_png[384];
     extern const unsigned char ribbon_panel_png[408];
@@ -84,11 +81,9 @@ namespace wxue_img
     extern const unsigned char sizer_png[149];
     extern const unsigned char slider_png[264];
     extern const unsigned char spacer_png[199];
-    extern const unsigned char spin_ctrl_png[316];
     extern const unsigned char static_bitmap_png[794];
     extern const unsigned char static_line_png[138];
     extern const unsigned char statusbar_png[448];
-    extern const unsigned char stddialogbuttonsizer_png[540];
     extern const unsigned char submenu_png[776];
     extern const unsigned char text_sizer_png[173];
     extern const unsigned char timepicker_png[243];
@@ -99,18 +94,15 @@ namespace wxue_img
     extern const unsigned char treelistctrlcolumn_png[520];
     extern const unsigned char webview_png[1224];
     extern const unsigned char wrap_sizer_png[161];
-    extern const unsigned char wxButton_png[516];
     extern const unsigned char wxChoicebook_png[450];
     extern const unsigned char wxCollapsiblePane_png[340];
     extern const unsigned char wxDialog_png[652];
     extern const unsigned char wxFrame_png[440];
-    extern const unsigned char wxListBox_png[326];
     extern const unsigned char wxListbook_png[373];
     extern const unsigned char wxMenuBar_png[506];
     extern const unsigned char wxPanel_png[172];
     extern const unsigned char wxPropertyGridManager_png[241];
     extern const unsigned char wxPropertyGrid_png[228];
-    extern const unsigned char wxStaticBoxSizer_png[215];
     extern const unsigned char wxStaticText_png[306];
     extern const unsigned char wxToolBar_png[570];
     extern const unsigned char wxToolbook_png[466];

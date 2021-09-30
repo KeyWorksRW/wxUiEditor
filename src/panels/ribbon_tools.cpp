@@ -23,6 +23,15 @@
 #include "newribbon.h"  // NewRibbon -- Dialog for creating a new wxRibbonBar
 #include "ribbon_ids.h"
 
+#include "menubutton_base.h"
+#include "menucheckbox_base.h"
+#include "menucombobox_base.h"
+#include "menudatactrl_base.h"
+#include "menulistbox_base.h"
+#include "menuspin_base.h"
+#include "menuribbontype_base.h"
+#include "menustaticsizer_base.h"
+
 // The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch that
 // to a default size here.
 RibbonPanel::RibbonPanel(wxWindow* parent) : RibbonPanelBase(parent) {}
@@ -100,67 +109,75 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 
 void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
 {
-    wxMenu menu;
-
     switch (event.GetId())
     {
         case NewCheckbox:
-            menu.Append(gen_wxCheckBox, "Insert wxCheckBox");
-            menu.Append(gen_Check3State, "Insert 3-state wxCheckBox");
-            break;
+            {
+                MenuCheckbox popup_menu;
+                popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                event.PopupMenu(&popup_menu);
+                return;
+            }
 
         case NewCombobox:
-            menu.Append(gen_wxComboBox, "Insert wxComboBox");
-            menu.Append(gen_wxChoice, "Insert wxChoice");
-            menu.Append(gen_wxBitmapComboBox, "Insert wxBitmapComboBox");
-            break;
+            {
+                MenuCombobox popup_menu;
+                popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                event.PopupMenu(&popup_menu);
+                return;
+            }
 
         case NewListbox:
-            menu.Append(gen_wxListBox, "Insert wxListBox");
-            menu.Append(gen_wxCheckListBox, "Insert wxCheckListBox");
-            menu.Append(gen_wxListView, "Insert wxListView");
-            menu.Append(gen_wxRearrangeCtrl, "Insert wxRearrangeCtrl");
-            menu.Append(gen_wxSimpleHtmlListBox, "Insert wxSimpleHtmlListBox");
-            break;
+            {
+                MenuListbox popup_menu;
+                popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                event.PopupMenu(&popup_menu);
+                return;
+            }
 
         case NewButton:
-            menu.Append(gen_wxButton, "Insert wxButton");
-            menu.Append(gen_wxToggleButton, "Insert wxToggleButton");
-            menu.Append(gen_wxStdDialogButtonSizer, "Insert wxStdDialogButtonSizer");
-            menu.Append(gen_wxCommandLinkButton, "Insert wxCommandLinkButton");
-            break;
+            {
+                MenuButton popup_menu;
+                popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                event.PopupMenu(&popup_menu);
+                return;
+            }
 
         case NewSpin:
-            menu.Append(gen_wxSpinCtrl, "Insert wxSpinCtrl");
-            menu.Append(gen_wxSpinCtrlDouble, "Insert wxSpinCtrlDouble");
-            menu.Append(gen_wxSpinButton, "Insert wxSpinButton");
-            break;
+            {
+                MenuSpin popup_menu;
+                popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                event.PopupMenu(&popup_menu);
+                return;
+            }
 
         case NewDataCtrl:
-            menu.Append(gen_wxDataViewCtrl, "Insert wxDataViewCtrl");
-            menu.Append(gen_wxDataViewTreeCtrl, "Insert wxDataViewTreeCtrl");
-            menu.Append(gen_wxDataViewListCtrl, "Insert wxDataViewListCtrl");
-            break;
+            {
+                MenuDataCtrl popup_menu;
+                popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                event.PopupMenu(&popup_menu);
+                return;
+            }
 
         case NewRibbonType:
-            menu.Append(gen_wxRibbonButtonBar, "Insert wxRibbonButtonBar");
-            menu.Append(gen_wxRibbonToolBar, "Insert wxRibbonToolBar");
-            menu.Append(gen_wxRibbonGallery, "Insert wxRibbonGallery");
-            break;
+            {
+                MenuRibbonType popup_menu;
+                popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                event.PopupMenu(&popup_menu);
+                return;
+            }
 
         case NewStaticSizer:
-            menu.Append(gen_wxStaticBoxSizer, "Insert wxStaticBoxSizer");
-            menu.Append(gen_StaticCheckboxBoxSizer, "Insert CheckBox wxStaticBoxSizer");
-            menu.Append(gen_StaticRadioBtnBoxSizer, "Insert RadioButton wxStaticBoxSizer");
-            break;
+            {
+                MenuStaticSizer popup_menu;
+                popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                event.PopupMenu(&popup_menu);
+                return;
+            }
 
         default:
             return;
     }
-
-    menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
-
-    event.PopupMenu(&menu);
 }
 
 void RibbonPanel::OnMenuEvent(wxCommandEvent& event)

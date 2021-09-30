@@ -2034,6 +2034,228 @@
       </node>
     </node>
     <node
+      class="PopupMenu"
+      class_name="MenuButton"
+      label="MenuButton"
+      base_file="menubutton_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      derived_class_name="MenuButton"
+      generate_ids="false">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxButton.png;[-1,-1]"
+        id="gen_wxButton"
+        label="Insert wxButton" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/toggle_button.png;[-1,-1]"
+        id="gen_wxToggleButton"
+        label="Insert wxToggleButton"
+        var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/stddialogbuttonsizer.png;[-1,-1]"
+        id="gen_wxStdDialogButtonSizer"
+        label="Insert wxStdDialogButtonSizer"
+        var_name="menu_item_3" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxCommandLinkButton.png;[-1,-1]"
+        id="gen_wxCommandLinkButton"
+        label="Insert wxCommandLinkButton"
+        var_name="menu_item_4" />
+    </node>
+    <node
+      class="PopupMenu"
+      class_name="MenuCheckbox"
+      label="MenuCheckbox"
+      base_file="menucheckbox_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      derived_class_name="MenuCheckbox"
+      generate_ids="false">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxCheckBox.png;[-1,-1]"
+        help="Insert a normal two-state checkbox"
+        id="gen_wxCheckBox"
+        label="Insert wxCheckBox" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/check3state.png;[-1,-1]"
+        help="Insert a 3-state checkbox"
+        id="gen_Check3State"
+        label="Insert 3-state wxCheckBox"
+        var_name="menu_item_2" />
+    </node>
+    <node
+      class="PopupMenu"
+      class_name="MenuCombobox"
+      label="MenuCombobox"
+      base_file="menucombobox_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      derived_class_name="MenuCombobox"
+      generate_ids="false">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxComboBox.png;[-1,-1]"
+        id="gen_wxComboBox"
+        label="Insert wxComboBox" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxChoice.png;[-1,-1]"
+        id="gen_wxChoice"
+        label="Insert wxChoice"
+        var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/bmp_combo_box.png;[-1,-1]"
+        id="gen_wxBitmapComboBox"
+        label="Insert wxBitmapComboBox"
+        var_name="menu_item_3" />
+    </node>
+    <node
+      class="PopupMenu"
+      class_name="MenuDataCtrl"
+      label="MenuDataCtrl"
+      base_file="menudatactrl_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      derived_class_name="MenuDataCtrl"
+      generate_ids="false">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/dataview_ctrl.png;[-1,-1]"
+        id="gen_wxDataViewCtrl"
+        label="Insert wxDataViewCtrl" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/dataviewtree_ctrl.png;[-1,-1]"
+        id="gen_wxDataViewTreeCtrl"
+        label="Insert wxDataViewTreeCtrl"
+        var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/dataviewlist_ctrl.png;[-1,-1]"
+        id="gen_wxDataViewListCtrl"
+        label="Insert wxDataViewListCtrl"
+        var_name="menu_item_3" />
+    </node>
+    <node
+      class="PopupMenu"
+      class_name="MenuListbox"
+      label="MenuListbox"
+      base_file="menulistbox_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      derived_class_name="MenuListbox"
+      generate_ids="false">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxListBox.png;[-1,-1]"
+        id="gen_wxListBox"
+        label="Insert wxListBox" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxCheckListBox.png;[-1,-1]"
+        id="gen_wxCheckListBox"
+        label="Insert wxCheckListBox"
+        var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxListView.png;[-1,-1]"
+        id="gen_wxListView"
+        label="Insert wxListView"
+        var_name="menu_item_3" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxRearrangeCtrl.png;[-1,-1]"
+        id="gen_wxRearrangeCtrl"
+        label="Insert wxRearrangeCtrl"
+        var_name="menu_item_4" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxSimpleHtmlListBox.png;[-1,-1]"
+        id="gen_wxSimpleHtmlListBox"
+        label="Insert wxSimpleHtmlListBox"
+        var_name="menu_item_5" />
+    </node>
+    <node
+      class="PopupMenu"
+      class_name="MenuRibbonType"
+      label="MenuRibbonType"
+      base_file="menuribbontype_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      derived_class_name="MenuRibbonType"
+      generate_ids="false">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/ribbon_buttonbar.png;[-1,-1]"
+        id="gen_wxRibbonButtonBar"
+        label="Insert wxRibbonButtonBar" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/ribbon_bar.png;[-1,-1]"
+        id="gen_wxRibbonToolBar"
+        label="Insert wxRibbonToolBar"
+        var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/ribbon_gallery.png;[-1,-1]"
+        id="gen_wxRibbonGallery"
+        label="Insert wxRibbonGallery"
+        var_name="menu_item_3" />
+    </node>
+    <node
+      class="PopupMenu"
+      class_name="MenuStaticSizer"
+      label="MenuStaticSizer"
+      base_file="menustaticsizer_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      derived_class_name="MenuStaticSizer"
+      generate_ids="false">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxStaticBoxSizer.png;[-1,-1]"
+        id="gen_wxStaticBoxSizer"
+        label="Insert wxStaticBoxSizer" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxStaticCheckBoxSizer.png;[-1,-1]"
+        id="gen_StaticCheckboxBoxSizer"
+        label="Insert CheckBox wxStaticBoxSizer"
+        var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxStaticRadioBtnSizer.png;[-1,-1]"
+        id="gen_StaticRadioBtnBoxSizer"
+        label="Insert RadioButton wxStaticBoxSizer"
+        var_name="menu_item_3" />
+    </node>
+    <node
+      class="PopupMenu"
+      class_name="MenuSpin"
+      label="MenuSpin"
+      base_file="menuspin_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      derived_class_name="MenuSpin"
+      generate_ids="false">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/spin_ctrl.png;[-1,-1]"
+        id="gen_wxSpinCtrl"
+        label="Insert wxSpinCtrl" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/spin_ctrl_double.png;[-1,-1]"
+        id="gen_wxSpinCtrlDouble"
+        label="Insert wxSpinCtrlDouble"
+        var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/spinbtn.png;[-1,-1]"
+        id="gen_wxSpinButton"
+        label="Insert wxSpinButton"
+        var_name="menu_item_3" />
+    </node>
+    <node
       class="PanelForm"
       base_file="ribbonpanel_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"

@@ -422,7 +422,13 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         {
             code << ",\n\t\t";
             if (code.is_sameprefix("    "))
+            {
                 code.insert(0, 4, ' ');
+            }
+            else if (code.at(0) != '\t')
+            {
+                code.insert(0, 1, '\t');
+            }
         }
 
         code << all_styles << ");";

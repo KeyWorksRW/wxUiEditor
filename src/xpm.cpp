@@ -22,21 +22,23 @@
 
 #include "ribbonpanel_base.h"  // Most of the embedded generator images will be declared here
 
+#include "menubutton_base.h"
+#include "menucheckbox_base.h"
+#include "menucombobox_base.h"
+#include "menulistbox_base.h"
+#include "menuspin_base.h"
+#include "menudatactrl_base.h"
+#include "menuribbontype_base.h"
+#include "menustaticsizer_base.h"
+
 using namespace wxue_img;
 
 #include "art_headers/default_png.h_img"
 #include "art_headers/unknown_png.h_img"
 
-#include "art_headers/wxStaticCheckBoxSizer_png.h_img"
-#include "art_headers/wxStaticRadioBtnSizer_png.h_img"
-
 #include "art_headers/auitoolbar_png.h_img"
 #include "art_headers/bitmap_button_png.h_img"
 #include "art_headers/bitmap_toggle_button_png.h_img"
-#include "art_headers/bmp_combo_box_png.h_img"
-#include "art_headers/check3state_png.h_img"
-#include "art_headers/dataviewlist_ctrl_png.h_img"
-#include "art_headers/dataviewtree_ctrl_png.h_img"
 #include "art_headers/doc_parent_frame_png.h_img"
 #include "art_headers/document_png.h_img"
 #include "art_headers/empty_png.h_img"
@@ -48,19 +50,9 @@ using namespace wxue_img;
 #include "art_headers/ribbon_button_dropdown_png.h_img"
 #include "art_headers/ribbon_button_hybrid_png.h_img"
 #include "art_headers/ribbon_button_toggle_png.h_img"
-#include "art_headers/ribbon_gallery_png.h_img"
 #include "art_headers/scrollbar_png.h_img"
-#include "art_headers/spin_ctrl_double_png.h_img"
-#include "art_headers/spinbtn_png.h_img"
 #include "art_headers/timer_png.h_img"
 #include "art_headers/title_close_png.h_img"
-#include "art_headers/toggle_button_png.h_img"
-#include "art_headers/wxCheckListBox_png.h_img"
-#include "art_headers/wxChoice_png.h_img"
-#include "art_headers/wxCommandLinkButton_png.h_img"
-#include "art_headers/wxListView_png.h_img"
-#include "art_headers/wxRearrangeCtrl_png.h_img"
-#include "art_headers/wxSimpleHtmlListBox_png.h_img"
 
 #if defined(_DEBUG)
     #include "art_headers/debug_16_png.h_img"

@@ -137,8 +137,16 @@ Files:
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ui/insertwidget.cpp         # Dialog to lookup and insert a widget
-    ui/newframe.cpp             # Dialog for creating a new project wxFrame
+    ui/menubutton_base.cpp      # Drop-down menu for ribbon panel
+    ui/menucheckbox_base.cpp    # Drop-down menu for ribbon panel
+    ui/menucombobox_base.cpp    # Drop-down menu for ribbon panel
+    ui/menudatactrl_base.cpp    # Drop-down menu for ribbon panel
+    ui/menulistbox_base.cpp     # Drop-down menu for ribbon panel
+    ui/menuribbontype_base.cpp  # Drop-down menu for ribbon panel
+    ui/menuspin_base.cpp        # Drop-down menu for ribbon panel
+    ui/menustaticsizer_base.cpp # Drop-down menu for ribbon panel
     ui/newdialog.cpp            # Dialog for creating a new project dialog
+    ui/newframe.cpp             # Dialog for creating a new project wxFrame
     ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
 
@@ -204,20 +212,12 @@ PNG:
     art_src/logo32.png: art_headers/logo32_png.h_img
     art_src/logo64.png: art_headers/logo64_png.h_img
 
-    art_src/wxStaticCheckBoxSizer.png: art_headers/wxStaticCheckBoxSizer_png.h_img
-    art_src/wxStaticRadioBtnSizer.png: art_headers/wxStaticRadioBtnSizer_png.h_img
-
     art_src/auitoolbar.png: art_headers/auitoolbar_png.h_img
     art_src/bitmap_button.png: art_headers/bitmap_button_png.h_img
     art_src/bitmap_toggle_button.png: art_headers/bitmap_toggle_button_png.h_img
-    art_src/bmp_combo_box.png: art_headers/bmp_combo_box_png.h_img
-    art_src/check3state.png: art_headers/check3state_png.h_img
-    art_src/dataviewlist_ctrl.png: art_headers/dataviewlist_ctrl_png.h_img
-    art_src/dataviewtree_ctrl.png: art_headers/dataviewtree_ctrl_png.h_img
     art_src/doc_mdi_parent_frame.png: art_headers/doc_mdi_parent_frame_png.h_img
     art_src/doc_parent_frame.png: art_headers/doc_parent_frame_png.h_img
     art_src/document.png: art_headers/document_png.h_img
-    art_src/empty.png: art_headers/empty_png.h_img
     art_src/moveColLeft.png: art_headers/moveColLeft_png.h_img
     art_src/moveColRight.png: art_headers/moveColRight_png.h_img
     art_src/moveRowDown.png: art_headers/moveRowDown_png.h_img
@@ -226,18 +226,8 @@ PNG:
     art_src/ribbon_button_dropdown.png: art_headers/ribbon_button_dropdown_png.h_img
     art_src/ribbon_button_hybrid.png: art_headers/ribbon_button_hybrid_png.h_img
     art_src/ribbon_button_toggle.png: art_headers/ribbon_button_toggle_png.h_img
-    art_src/ribbon_gallery.png: art_headers/ribbon_gallery_png.h_img
     art_src/scrollbar.png: art_headers/scrollbar_png.h_img
-    art_src/spin_ctrl_double.png: art_headers/spin_ctrl_double_png.h_img
-    art_src/spinbtn.png: art_headers/spinbtn_png.h_img
     art_src/timer.png: art_headers/timer_png.h_img
-    art_src/toggle_button.png: art_headers/toggle_button_png.h_img
-    art_src/wxCheckListBox.png: art_headers/wxCheckListBox_png.h_img
-    art_src/wxChoice.png: art_headers/wxChoice_png.h_img
-    art_src/wxCommandLinkButton.png: art_headers/wxCommandLinkButton_png.h_img
-    art_src/wxListView.png: art_headers/wxListView_png.h_img
-    art_src/wxRearrangeCtrl.png: art_headers/wxRearrangeCtrl_png.h_img
-    art_src/wxSimpleHtmlListBox.png: art_headers/wxSimpleHtmlListBox_png.h_img
 
 Docs:
     # ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation

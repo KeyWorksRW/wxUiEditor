@@ -1224,7 +1224,9 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
             // Some code generation may put added lines in a { } block, in which case we need to keep indents.
             m_source->writeLine(result.value(),
-                                ttlib::is_found(result.value().find('{')) ? indent::none : indent::auto_no_whitespace);
+                                (ttlib::is_found(result.value().find('{')) || ttlib::is_found(result.value().find("\n\t\t"))) ?
+                                    indent::none :
+                                    indent::auto_no_whitespace);
         }
         GenSettings(node);
 

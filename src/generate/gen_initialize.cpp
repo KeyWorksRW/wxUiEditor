@@ -19,6 +19,7 @@
 #include "dataview_widgets.h"  // DataViewCtrl -- wxDataView component classes
 #include "form_widgets.h"      // FrameFormGenerator -- Form component classes
 #include "grid_widgets.h"      // PropertyGridGenerator -- Grid component classes
+#include "images_form.h"       // ImagesGenerator -- Embedded images generator
 #include "listbox_widgets.h"   // ListBox component classes
 #include "listctrl_widgets.h"  // ListViewGenerator -- ListCtrl component class
 #include "menu_widgets.h"      // Menu component classes
@@ -115,6 +116,9 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_wxMenuItem, MenuItemGenerator)
     SET_GENERATOR(gen_separator, SeparatorGenerator)
     SET_GENERATOR(gen_wxContextMenuEvent, CtxMenuGenerator)
+
+    SET_GENERATOR(gen_Images, ImagesGenerator)
+    SET_GENERATOR(gen_embedded_image, EmbeddedImageGenerator)
 
     SET_GENERATOR(gen_wxDataViewCtrl, DataViewCtrl)
     SET_GENERATOR(gen_wxDataViewListCtrl, DataViewListCtrl)

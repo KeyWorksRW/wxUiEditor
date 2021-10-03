@@ -91,6 +91,7 @@ add_executable(wxUiEditor WIN32
     src/generate/dataview_widgets.cpp  # wxDataView generation classes
     src/generate/form_widgets.cpp      # Form generation classes
     src/generate/grid_widgets.cpp      # Grid generation classes
+    src/generate/images_form.cpp       # Embedded images generator
     src/generate/listbox_widgets.cpp   # ListBox generation classes
     src/generate/listctrl_widgets.cpp  # ListCtrl generation class
     src/generate/menu_widgets.cpp      # Menu generation classes

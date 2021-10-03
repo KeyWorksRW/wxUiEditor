@@ -73,6 +73,7 @@ Files:
     generate/dataview_widgets.cpp  # wxDataView generation classes
     generate/form_widgets.cpp      # Form generation classes
     generate/grid_widgets.cpp      # Grid generation classes
+    generate/images_form.cpp       # Embedded images generator
     generate/listbox_widgets.cpp   # ListBox generation classes
     generate/listctrl_widgets.cpp  # ListCtrl generation class
     generate/menu_widgets.cpp      # Menu generation classes

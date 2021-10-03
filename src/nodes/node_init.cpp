@@ -48,6 +48,7 @@ inline const char* lst_xml_interfaces[] = {
 #include "../xml/dialogs_xml.xml"
 #include "../xml/forms_xml.xml"
 #include "../xml/grid_xml.xml"
+#include "../xml/images_xml.xml"
 #include "../xml/listview_xml.xml"
 #include "../xml/menus_xml.xml"
 #include "../xml/pickers_xml.xml"
@@ -76,6 +77,7 @@ inline const char* lst_xml_generators[] = {
     dialogs_xml,
     forms_xml,
     grid_xml,
+    images_xml,
     listview_xml,
     menus_xml,
     pickers_xml,
@@ -162,6 +164,7 @@ static const ParentChild lstParentChild[] = {
     { type_form, type_ctx_menu, one },
     { type_form, type_gbsizer, one },
     { type_form, type_sizer, one },
+    { type_images, type_embed_image, infinite },
     { type_menubar_form, type_menu, infinite },
     { type_ribbonbar_form, type_ribbonpage, infinite },
     { type_toolbar_form, type_tool, infinite },
@@ -169,11 +172,13 @@ static const ParentChild lstParentChild[] = {
     { type_wizard, type_wizardpagesimple, infinite },
 
     { type_project, type_form, infinite },
+    { type_project, type_images, one },
     { type_project, type_menubar_form, infinite },
     { type_project, type_popup_menu, infinite },
     { type_project, type_ribbonbar_form, infinite },
     { type_project, type_toolbar_form, infinite },
     { type_project, type_wizard, infinite },
+
 
     // Containers
 

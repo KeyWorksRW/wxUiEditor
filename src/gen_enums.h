@@ -47,7 +47,6 @@ namespace GenEnum
     enum PropName : size_t
     {
         prop_Apply,
-        prop_art_provider,
         prop_BottomDockable,
         prop_Cancel,
         prop_Close,
@@ -64,6 +63,7 @@ namespace GenEnum
         prop_align,
         prop_alignment,
         prop_animation,
+        prop_art_provider,
         prop_aui_layer,
         prop_aui_name,
         prop_aui_position,

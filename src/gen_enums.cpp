@@ -49,7 +49,6 @@ std::unordered_map<std::string, PropType> GenEnum::rmap_PropTypes;
 std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
 
     { prop_Apply, "Apply" },
-    { prop_art_provider, "art_provider" },
     { prop_BottomDockable, "BottomDockable" },
     { prop_Cancel, "Cancel" },
     { prop_Close, "Close" },
@@ -66,6 +65,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_align, "align" },
     { prop_alignment, "alignment" },
     { prop_animation, "animation" },
+    { prop_art_provider, "art_provider" },
     { prop_aui_layer, "aui_layer" },
     { prop_aui_name, "aui_name" },
     { prop_aui_position, "aui_position" },

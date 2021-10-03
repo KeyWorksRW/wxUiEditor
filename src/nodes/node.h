@@ -105,12 +105,8 @@ public:
     bool IsStatusBar() const noexcept { return isType(type_statusbar); }
     bool IsRibbonBar() const noexcept { return isType(type_ribbonbar); }
 
-    // This does not include MenuBar, ToolBar, StatusBar or Wizard
-    bool IsForm() const noexcept
-    {
-        return (isType(type_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) || isType(type_toolbar_form) ||
-                isType(type_wizard) || isType(type_popup_menu));
-    }
+    bool IsForm() const noexcept;
+
     bool IsStaticBoxSizer() const noexcept
     {
         return (isGen(gen_wxStaticBoxSizer) || isGen(gen_StaticCheckboxBoxSizer) || isGen(gen_StaticRadioBtnBoxSizer));

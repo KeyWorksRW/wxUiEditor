@@ -38,6 +38,9 @@ endif()
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 add_compile_definitions($<$<CONFIG:Debug>:WXUSINGDLL>)
 
+list(APPEND CMAKE_MODULE_PATH "src/ui/")
+include(wxui_code)  # This will set ${wxue_generated_code} with list of generated files
+
 # Note the requirement that --config Debug is used to get the additional debug files
 add_executable(wxUiEditor WIN32
     src/wxUiEditor.rc         # Only processed when compiling for Windows, ignored otherwise
@@ -157,38 +160,12 @@ add_executable(wxUiEditor WIN32
     src/ui/import_dlg.cpp           # Dialog to import one or more projects
     src/ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     src/ui/insertwidget.cpp         # Dialog to lookup and insert a widget
-    src/ui/menubutton_base.cpp      # Drop-down menu for ribbon panel
-    src/ui/menucheckbox_base.cpp    # Drop-down menu for ribbon panel
-    src/ui/menucombobox_base.cpp    # Drop-down menu for ribbon panel
-    src/ui/menudatactrl_base.cpp    # Drop-down menu for ribbon panel
-    src/ui/menulistbox_base.cpp     # Drop-down menu for ribbon panel
-    src/ui/menuribbontype_base.cpp  # Drop-down menu for ribbon panel
-    src/ui/menuspin_base.cpp        # Drop-down menu for ribbon panel
-    src/ui/menustaticsizer_base.cpp # Drop-down menu for ribbon panel
     src/ui/newdialog.cpp            # Dialog for creating a new project dialog
     src/ui/newframe.cpp             # Dialog for creating a new project wxFrame
     src/ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
     src/ui/optionsdlg.cpp           # Dialog containing special Debugging commands
 
-    # wxUiEditor generated files
-
-    src/ui/artpropdlg_base.cpp
-    src/ui/editstringdialog_base.cpp
-    src/ui/embedimg_base.cpp
-    src/ui/eventhandlerdlg_base.cpp
-    src/ui/gridbag_item_base.cpp
-    src/ui/importwinres_base.cpp
-    src/ui/insertwidget_base.cpp
-    src/ui/mainframe_base.cpp
-    src/ui/navtoolbar_base.cpp
-    src/ui/newdialog_base.cpp
-    src/ui/newframe_base.cpp
-    src/ui/import_base.cpp
-    src/ui/newribbon_base.cpp
-    src/ui/optionsdlg_base.cpp
-    src/ui/ribbonpanel_base.cpp
-
-    src/ui/ui_images.cpp
+    ${wxue_generated_code}
 
     # ttLib submodule files (see https://github.com/KeyWorksRW/ttLib repository)
 

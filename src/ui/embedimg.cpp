@@ -29,7 +29,9 @@
 #include "uifuncs.h"      // Miscellaneous functions for displaying UI
 #include "utils.h"        // Utility functions that work with properties
 
-#include "../art_headers/empty_png.h_img"
+#include "ui_images.h"
+
+using namespace wxue_img;
 
 // Any mime type in the following list with NOT be converted to PNG even if m_check_make_png is set to true
 

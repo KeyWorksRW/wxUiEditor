@@ -29,24 +29,9 @@
 #include "menuribbontype_base.h"
 #include "menustaticsizer_base.h"
 
+#include "ui_images.h"
+
 using namespace wxue_img;
-
-#include "art_headers/default_png.h_img"
-#include "art_headers/unknown_png.h_img"
-
-#include "art_headers/auitoolbar_png.h_img"
-#include "art_headers/empty_png.h_img"
-#include "art_headers/project_png.h_img"
-#include "art_headers/scrollbar_png.h_img"
-#include "art_headers/title_close_png.h_img"
-
-#if defined(_DEBUG)
-    #include "art_headers/debug_16_png.h_img"
-    #include "art_headers/debug_32_png.h_img"
-#else
-    #include "art_headers/logo16_png.h_img"
-    #include "art_headers/logo32_png.h_img"
-#endif  // _DEBUG
 
 struct ImageMap
 {

@@ -188,6 +188,8 @@ add_executable(wxUiEditor WIN32
     src/ui/optionsdlg_base.cpp
     src/ui/ribbonpanel_base.cpp
 
+    src/ui/ui_images.cpp
+
     # ttLib submodule files (see https://github.com/KeyWorksRW/ttLib repository)
 
     ttLib/src/ttcstr.cpp             # Class for handling zero-terminated char strings.

@@ -19,8 +19,9 @@
 #include "mainframe.h"    // MainFrame -- Main window frame
 #include "node.h"         // Node class
 
-#include "../art_headers/empty_png.h_img"
-#include "../art_headers/unknown_png.h_img"
+#include "ui_images.h"
+
+using namespace wxue_img;
 
 #include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
 #include "../mockup/mockup_parent.h"   // MockupParent -- Top-level MockUp Parent window

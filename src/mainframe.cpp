@@ -59,8 +59,9 @@
 
 #include "../pugixml/pugixml.hpp"
 
-#include "art_headers/logo64_png.h_img"
+#include "ui_images.h"
 
+using namespace wxue_img;
 using namespace GenEnum;
 
 enum

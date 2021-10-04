@@ -472,6 +472,7 @@ bool ProjectSettings::CheckNode(Node* node)
     bool is_changed = false;
 
     Node* node_form = node->IsForm() ? node : node->FindParentForm();
+
     auto node_position = wxGetApp().GetProject()->GetChildPosition(node_form);
 
     for (auto& iter: node->get_props_vector())
@@ -492,11 +493,23 @@ bool ProjectSettings::CheckNode(Node* node)
                 }
 
                 auto embed = result->second.get();
-                auto child_pos = wxGetApp().GetProject()->GetChildPosition(embed->form);
-                if (child_pos > node_position)
+
+                if (node_form->isGen(gen_Images))
                 {
-                    embed->form = node_form;
-                    is_changed = true;
+                    if (embed->form != node_form)
+                    {
+                        embed->form = node_form;
+                        is_changed = true;
+                    }
+                }
+                else
+                {
+                    auto child_pos = wxGetApp().GetProject()->GetChildPosition(embed->form);
+                    if (child_pos > node_position)
+                    {
+                        embed->form = node_form;
+                        is_changed = true;
+                    }
                 }
             }
         }

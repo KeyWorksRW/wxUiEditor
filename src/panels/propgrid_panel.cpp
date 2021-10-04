@@ -1376,7 +1376,6 @@ void PropGridPanel::CreatePropCategory(ttlib::cview name, Node* node, NodeDeclar
     m_prop_grid->AddPage();
 
     auto id = m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
-
     AddProperties(name, node, category, prop_set);
 
     // Collapse categories that aren't likely to be used with the current object
@@ -1397,6 +1396,10 @@ void PropGridPanel::CreatePropCategory(ttlib::cview name, Node* node, NodeDeclar
         // It's going to be rare to want a validator for these classes, so collapse the validator for them
         if (node->isGen(gen_wxButton) || node->isGen(gen_wxStaticText))
             m_prop_grid->Collapse(id);
+    }
+    else if (name.contains("CMake"))
+    {
+        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
     }
 
     if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());

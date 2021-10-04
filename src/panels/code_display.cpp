@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/fdrepdlg.h>  // wxFindReplaceDialog class
 #include <wx/msgdlg.h>    // common header and base class for wxMessageDialog
 #include <wx/sizer.h>     // provide wxSizer class for layout

@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/event.h>     // Event classes
 #include <wx/listctrl.h>  // wxSearchCtrlBase class
 

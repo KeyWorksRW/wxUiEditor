@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/calctrl.h>   // date-picker control
 #include <wx/dirctrl.h>   // Directory control base header
 #include <wx/event.h>     // Event classes

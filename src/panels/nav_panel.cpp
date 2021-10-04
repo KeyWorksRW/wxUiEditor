@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/imaglist.h>  // wxImageList base header
 #include <wx/panel.h>     // Base header for wxPanel
 #include <wx/sizer.h>     // provide wxSizer class for layout

@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/config.h>  // wxConfig base header
 
 #include "debugsettings.h"  // auto-generated: debugsettingsBase.h and debugsettingsBase.cpp

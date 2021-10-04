@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/event.h>              // Event classes
 #include <wx/grid.h>               // wxGrid base header
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager

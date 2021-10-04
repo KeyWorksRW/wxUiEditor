@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "insertwidget.h"  // auto-generated: insertwidget_base.h and insertwidget_base.cpp
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes

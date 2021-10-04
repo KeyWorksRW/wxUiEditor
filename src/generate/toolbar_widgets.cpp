@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/aui/auibar.h>  // wxaui: wx advanced user interface - docking window manager
 #include <wx/toolbar.h>     // wxToolBar interface declaration
 

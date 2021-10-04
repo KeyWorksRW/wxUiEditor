@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/config.h>  // wxConfig base header
 
 #include "optionsdlg.h"  // auto-generated: optionsdlg_base.h and optionsdlg_base.cpp

@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/clrpicker.h>   // wxColourPickerCtrl base header
 #include <wx/datectrl.h>    // implements wxDatePickerCtrl
 #include <wx/event.h>       // Event classes

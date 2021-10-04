@@ -4,7 +4,6 @@
   <node
     class="Project"
     converted_art="../art_headers"
-    local_pch_file="pch.h"
     original_art="../art_src">
     <node
       class="wxDialog"

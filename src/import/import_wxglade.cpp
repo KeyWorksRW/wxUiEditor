@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "import_wxglade.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class

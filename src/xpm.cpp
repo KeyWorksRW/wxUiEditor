@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #if !defined(_WIN32) || defined(__clang__)
     // warning: trigraph ignored
     #pragma clang diagnostic ignored "-Wtrigraphs"

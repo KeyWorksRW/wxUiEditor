@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/activityindicator.h>  // wxActivityIndicator declaration.
 #include <wx/animate.h>            // wxAnimation and wxAnimationCtrl
 #include <wx/bannerwindow.h>       // wxBannerWindow class declaration

@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
 #include "txt_string_prop.h"

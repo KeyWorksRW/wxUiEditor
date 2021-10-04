@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/archive.h>  // Streams for archive formats
 #include <wx/image.h>    // wxImage class
 #include <wx/mstream.h>  // Memory stream classes

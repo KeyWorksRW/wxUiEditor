@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/bmpcbox.h>   // wxBitmapComboBox base header
 #include <wx/combobox.h>  // wxComboBox declaration
 #include <wx/event.h>     // Event classes

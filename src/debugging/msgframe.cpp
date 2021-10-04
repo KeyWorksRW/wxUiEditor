@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/config.h>            // wxConfig base header
 #include <wx/filedlg.h>           // wxFileDialog base header
 #include <wx/persist/toplevel.h>  // persistence support for wxTLW

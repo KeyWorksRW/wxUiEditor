@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <unordered_map>
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings

@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/button.h>       // wxButtonBase class
 #include <wx/checkbox.h>     // wxCheckBox class interface
 #include <wx/gbsizer.h>      // wxGridBagSizer:  A sizer that can lay out items in a grid,

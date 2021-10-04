@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "tttextfile.h"  // ttTextFile -- Similar to wxTextFile, but uses UTF8 strings
 
 #include "import_winres.h"

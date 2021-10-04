@@ -10,8 +10,6 @@
 // LoadHeaderImage() is used to load the image from a #included header file (the compiler already converted it into binary
 // data)
 
-#include "pch.h"
-
 #include <fstream>
 
 #include <wx/animate.h>  // wxAnimation and wxAnimationCtrl

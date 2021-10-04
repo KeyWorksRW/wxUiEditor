@@ -2373,6 +2373,26 @@
                   id="gen_wxContextMenuEvent" />
               </node>
             </node>
+            <node
+              class="wxRibbonPanel"
+              label="Images"
+              var_name="panel_wizard_2">
+              <node
+                class="wxRibbonToolBar"
+                var_name="forms_bar_images"
+                wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/pagectrl.png;[-1,-1]"
+                  help="Create a file containing embedded images"
+                  id="gen_Images" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/static_bitmap.png;[-1,-1]"
+                  help="Add an embedded image to an Images file"
+                  id="gen_embedded_image" />
+              </node>
+            </node>
           </node>
           <node
             class="wxRibbonPage"

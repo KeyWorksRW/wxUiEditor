@@ -43,15 +43,26 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
 
     wxPGChoices types;
 
-    types.Add(s_type_names[0]);  // Art
-    types.Add(s_type_names[1]);  // Embed
-    types.Add(s_type_names[2]);  // XPM
-    types.Add(s_type_names[3]);  // Header
+    if (prop->GetNode()->isGen(gen_embedded_image))
+    {
+        types.Add(s_type_names[1]);  // Embed
+        m_isEmbeddedImage = true;
+    }
+    else
+    {
+        types.Add(s_type_names[0]);  // Art
+        types.Add(s_type_names[1]);  // Embed
+        types.Add(s_type_names[2]);  // XPM
+        types.Add(s_type_names[3]);  // Header
+    }
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
-    AddPrivateChild(new CustomPointProperty("scale size", prop, CustomPointProperty::type_scale));
-    Item(IndexScale)->SetHelpString("Scale the image to this size.");
+    if (!m_isEmbeddedImage)
+    {
+        AddPrivateChild(new CustomPointProperty("scale size", prop, CustomPointProperty::type_scale));
+        Item(IndexScale)->SetHelpString("Scale the image to this size.");
+    }
 }
 
 void PropertyGrid_Image::RefreshChildren()
@@ -157,7 +168,10 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
     Item(IndexImage)->SetValue(m_img_props.image.wx_str());
-    Item(IndexScale)->SetValue(m_img_props.CombineScale());
+    if (!m_isEmbeddedImage)
+    {
+        Item(IndexScale)->SetValue(m_img_props.CombineScale());
+    }
 }
 
 wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const

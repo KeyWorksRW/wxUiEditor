@@ -35,4 +35,6 @@ private:
 
     ttlib::cstr m_old_type;
     ttlib::cstr m_old_image;
+
+    bool m_isEmbeddedImage { false };
 };

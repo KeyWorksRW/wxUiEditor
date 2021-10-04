@@ -71,6 +71,7 @@ add_executable(wxUiEditor WIN32
     src/customprops/pg_point.cpp       # Custom wxPGProperty for wxPoint
 
     src/generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
+    src/generate/gen_cmake.cpp         # Auto-generate a .cmake file
     src/generate/gen_codefiles.cpp     # Generate code files
     src/generate/gen_derived.cpp       # Generate Derived class code
     src/generate/gen_inherit.cpp       # Generate Inherited class code

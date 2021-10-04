@@ -24,6 +24,31 @@
 
 using namespace GenEnum;
 
+// clang-format off
+inline const GenType lst_form_types[] =
+{
+
+    type_form,
+    type_images,
+    type_menubar_form,
+    type_popup_menu,
+    type_ribbonbar_form,
+    type_toolbar_form,
+    type_wizard,
+
+};
+// clang-format on
+
+bool Node::IsForm() const noexcept
+{
+    for (auto& iter: lst_form_types)
+    {
+        if (isType(iter))
+            return true;
+    }
+    return false;
+}
+
 // Same as wxGetApp() only this returns a reference to the project node
 Node& wxGetProject()
 {
@@ -95,18 +120,11 @@ Node* Node::LocateAncestorType(GenType type) const noexcept
 
 Node* Node::FindParentForm() const noexcept
 {
-    if (auto retObj = LocateAncestorType(type_form); retObj)
-        return retObj;
-    if (auto retObj = LocateAncestorType(type_menubar_form); retObj)
-        return retObj;
-    if (auto retObj = LocateAncestorType(type_toolbar_form); retObj)
-        return retObj;
-    if (auto retObj = LocateAncestorType(type_ribbonbar_form); retObj)
-        return retObj;
-    if (auto retObj = LocateAncestorType(type_wizard); retObj)
-        return retObj;
-    if (auto retObj = LocateAncestorType(type_popup_menu); retObj)
-        return retObj;
+    for (auto& iter: lst_form_types)
+    {
+        if (auto retObj = LocateAncestorType(iter); retObj)
+            return retObj;
+    }
 
     return nullptr;
 }
@@ -742,8 +760,7 @@ void Node::FixDuplicateNodeNames(Node* form)
 {
     if (!form)
     {
-        if (isType(type_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) || isType(type_toolbar_form) ||
-            isType(type_wizard) || isType(type_popup_menu))
+        if (IsForm())
         {
             for (auto& child: GetChildNodePtrs())
             {

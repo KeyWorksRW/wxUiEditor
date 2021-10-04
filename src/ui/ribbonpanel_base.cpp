@@ -173,6 +173,15 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     }
     forms_bar_bars_2->Realize();
 
+    auto panel_wizard_2 = new wxRibbonPanel(page_forms, wxID_ANY, wxString::FromUTF8("Images"));
+
+    auto forms_bar_images = new wxRibbonToolBar(panel_wizard_2, wxID_ANY);
+    {
+        forms_bar_images->AddTool(gen_Images, GetImageFromArray(wxue_img::pagectrl_png, sizeof(wxue_img::pagectrl_png)), wxString::FromUTF8("Create a file containing embedded images"), wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddTool(gen_embedded_image, GetImageFromArray(wxue_img::static_bitmap_png, sizeof(wxue_img::static_bitmap_png)), wxString::FromUTF8("Add an embedded image to an Images file"), wxRIBBON_BUTTON_NORMAL);
+    }
+    forms_bar_images->Realize();
+
     auto pg_sizer = new wxRibbonPage(m_rbnBar, wxID_ANY, wxString::FromUTF8("Sizers"));
 
     auto panel_basic = new wxRibbonPanel(pg_sizer, wxID_ANY, wxString::FromUTF8("Basic"));
@@ -431,6 +440,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     forms_bar_wizard->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     forms_bar_bars->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     forms_bar_bars_2->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    forms_bar_images->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     sizer_bar_basic->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     sizer_bar_grids->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);

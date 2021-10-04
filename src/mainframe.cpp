@@ -956,9 +956,7 @@ Node* MainFrame::GetSelectedForm()
     if (!m_selected_node || m_selected_node->isGen(gen_Project))
         return nullptr;
 
-    if (m_selected_node->isType(type_form) || m_selected_node->isType(type_wizard) ||
-        m_selected_node->isType(type_menubar_form) || m_selected_node->isType(type_ribbonbar_form) ||
-        m_selected_node->isType(type_toolbar_form) || m_selected_node->isType(type_popup_menu))
+    if (m_selected_node->IsForm())
     {
         return m_selected_node.get();
     }

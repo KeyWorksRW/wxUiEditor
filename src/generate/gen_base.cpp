@@ -176,6 +176,11 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         hdr_includes.insert("#include <wx/event.h>");
     }
 
+    if (form_node->isGen(gen_Images))
+    {
+        hdr_includes.insert("#include <wx/mstream.h>");
+    }
+
     if (panel_type != CPP_PANEL)
     {
         // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
@@ -361,7 +366,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     if (m_panel_type != HDR_PANEL)
     {
-        if (m_NeedHeaderFunction)
+        if (m_NeedHeaderFunction && !form_node->isGen(gen_Images))
         {
             m_source->writeLine("\n#include <wx/mstream.h>  // Memory stream classes", indent::none);
             ttlib::textfile function;
@@ -386,7 +391,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
             }
         }
 
-        if (m_embedded_images.size())
+        if (m_embedded_images.size() && !form_node->isGen(gen_Images))
         {
             m_source->writeLine();
             m_source->writeLine("namespace wxue_img\n{");
@@ -470,9 +475,27 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
             {
                 m_header->writeLine();
                 m_header->writeLine("namespace wxue_img\n{");
+
+                if (form_node->isType(type_images))
+                {
+                    ttlib::textfile function;
+                    function.ReadString(txt_GetImageFromArrayFunction);
+                    for (auto& iter: function)
+                    {
+                        m_header->write("\t");
+                        if (iter.size() && iter.at(0) == ' ')
+                            m_header->write("\t");
+                        m_header->writeLine(iter);
+                    }
+                    m_header->writeLine();
+                }
+
                 m_header->Indent();
-                m_header->writeLine("// Images declared in this class module:");
-                m_header->writeLine();
+                if (!form_node->isType(type_images))
+                {
+                    m_header->writeLine("// Images declared in this class module:");
+                    m_header->writeLine();
+                }
                 is_namespace_written = true;
             }
             m_header->writeLine(ttlib::cstr("extern const unsigned char ")
@@ -976,17 +999,15 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 
 void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& events)
 {
-    auto propName = form_node->get_prop_ptr(prop_class_name);
-    if (!propName)
+    if (form_node->isType(type_images))
     {
-        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->DeclName());
+        // The Images form is not a class
         return;
     }
 
-    auto& class_name = propName->as_string();
-    if (class_name.empty())
+    if (!form_node->HasValue(prop_class_name))
     {
-        FAIL_MSG("Node name can not be null");
+        FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->DeclName());
         return;
     }
 
@@ -998,14 +1019,15 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
 
     if (auto result = generator->GenAdditionalCode(code_base_class, form_node); result)
     {
-        m_header->writeLine(ttlib::cstr() << "class " << class_name << " : public " << result.value());
+        m_header->writeLine(ttlib::cstr() << "class " << form_node->prop_as_string(prop_class_name) << " : public "
+                                          << result.value());
     }
     else
     {
         FAIL_MSG("All form generators need to support code_base_class command to provide the class name to derive from.");
 
         // The only way this would be valid is if the base class didn't derive from anything.
-        m_header->writeLine(ttlib::cstr() << "class " << class_name);
+        m_header->writeLine(ttlib::cstr() << "class " << form_node->prop_as_string(prop_class_name));
     }
 
     m_header->writeLine("{");
@@ -1195,7 +1217,10 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     }
 
     m_source->Unindent();
-    m_source->writeLine("}");
+    if (!form_node->isGen(gen_Images))
+    {
+        m_source->writeLine("}");
+    }
 
     Node* node_ctx_menu = nullptr;
     for (size_t pos_child = 0; pos_child < form_node->GetChildCount(); pos_child++)
@@ -1223,10 +1248,10 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             m_source->writeLine();
 
             // Some code generation may put added lines in a { } block, in which case we need to keep indents.
-            m_source->writeLine(result.value(),
-                                (ttlib::is_found(result.value().find('{')) || ttlib::is_found(result.value().find("\n\t\t"))) ?
-                                    indent::none :
-                                    indent::auto_no_whitespace);
+            m_source->writeLine(result.value(), (ttlib::is_found(result.value().find('{')) ||
+                                                 ttlib::is_found(result.value().find("\n\t\t"))) ?
+                                                    indent::none :
+                                                    indent::auto_no_whitespace);
         }
         GenSettings(node);
 
@@ -1683,7 +1708,7 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
 
 void BaseCodeGenerator::GenerateHandlers()
 {
-    if (m_embedded_images.size())
+    if (m_embedded_images.size() && !m_form_node->isGen(gen_Images))
     {
         for (auto& iter_img: m_embedded_images)
         {

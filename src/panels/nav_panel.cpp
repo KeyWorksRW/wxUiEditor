@@ -12,6 +12,8 @@
 #include <wx/sizer.h>     // provide wxSizer class for layout
 #include <wx/toolbar.h>   // wxToolBar interface declaration
 
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+
 #include "nav_panel.h"
 
 #include "bitmaps.h"          // Contains various images handling functions
@@ -357,6 +359,15 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
         display_name = node->prop_as_string(prop_class_name);
     else if (node->isGen(gen_ribbonTool))
         display_name = node->prop_as_string(prop_id);
+    else if (node->isGen(gen_embedded_image))
+    {
+        ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
+
+        if (mstr.size() > 1)
+        {
+            display_name = mstr[1].filename();
+        }
+    }
 
     if (display_name.size())
     {
@@ -509,6 +520,13 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
         }
     }
     else if (prop->isProp(prop_handler_name))
+    {
+        if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
+        {
+            UpdateDisplayName(it->second, it->first);
+        }
+    }
+    else if (prop->isProp(prop_bitmap) && prop->GetNode()->isGen(gen_embedded_image))
     {
         if (auto it = m_node_tree_map.find(prop->GetNode()); it != m_node_tree_map.end())
         {

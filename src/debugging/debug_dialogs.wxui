@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="12">
+  <node
+    class="Project"
+    original_art="../art_src">
+    <node
+      class="wxDialog"
+      base_file="..\debugging\nodeinfo_base"
+      class_name="NodeInfoBase"
+      derived_class_name="NodeInfo"
+      derived_file="../debugging/nodeinfo"
+      title="Node Information">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxStaticBoxSizer"
+          label="Memory Usage"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            label="Project:"
+            var_name="m_txt_project" />
+          <node
+            class="wxStaticText"
+            label="Selection:"
+            var_name="m_txt_selection" />
+          <node
+            class="wxStaticText"
+            label="Clipboard:"
+            var_name="m_txt_clipboard" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          Cancel="false"
+          Close="true"
+          OK="false"
+          default_button="Close"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      base_file="..\debugging\dbg_code_diff_base"
+      class_name="DbgCodeDiffBase"
+      derived_class_name="DbgCodeDiff"
+      derived_file="../debugging/dbg_code_diff"
+      title="Compare Code Generation"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL">
+          <node
+            class="wxStaticText"
+            label="If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.&#10;"
+            wrap="250" />
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Changed Classes:"
+            var_name="staticText" />
+          <node
+            class="wxListBox"
+            var_name="m_list_changes"
+            disabled="true"
+            minimum_size="250,200" />
+          <node
+            class="wxButton"
+            label="&amp;WinMerge..."
+            bitmap="XPM; ..\debugging\WinMerge.xpm; [-1,-1]"
+            disabled="true"
+            wxEVT_BUTTON="OnWinMerge" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          Cancel="false"
+          Close="true"
+          OK="false"
+          default_button="Close"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      base_file="debugsettingsBase"
+      class_name="DebugSettingsBase"
+      derived_class_name="DebugSettings"
+      derived_file="debugsettings"
+      persist="true"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Debug Settings"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer">
+        <node
+          class="wxStaticBoxSizer"
+          label="MSG Window Settings"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            flags="wxEXPAND">
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display MSG Window"
+              var_name="checkBox"
+              validator_variable="m_DisplayMsgWindow"
+              tooltip="If checked, the MSG window will be displayed the first time it receives a non-filtered MSG. If unchecked, the window is never displayed unless you go here and click the Show Now button."
+              alignment="wxALIGN_CENTER" />
+            <node
+              class="spacer"
+              width="15"
+              flags="wxEXPAND" />
+            <node
+              class="wxButton"
+              label="Show Now"
+              wxEVT_BUTTON="OnShowNow" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer2"
+            flags="wxEXPAND">
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display MSG_INFO() messages"
+              var_name="checkBox2"
+              validator_variable="m_DisplayMsgInfo" />
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display MSG_EVENT() messages"
+              var_name="checkBox3"
+              validator_variable="m_DisplayMsgEvent" />
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display MSG_WARNING() messages"
+              var_name="checkBox4"
+              validator_variable="m_DisplayMsgWarnng" />
+          </node>
+          <node
+            class="spacer"
+            height="10" />
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer_2"
+            flags="wxEXPAND">
+            <node
+              class="wxCheckBox"
+              class_access="none"
+              label="Display creation info"
+              var_name="checkBox_2"
+              validator_variable="m_FireCreationMsgs"
+              tooltip="MSG_INFO called when nav, prop, and mockup panels have their contents recreated." />
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          class_access="protected:"
+          static_line="false"
+          var_name="std_button_sizer"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="wxFrame"
+      class_name="MsgFrameBase"
+      title="wxUiEditor Messages"
+      base_file="msgframe_base"
+      derived_class_name="MsgFrame"
+      derived_file="../debugging/msgframe"
+      size="-1,-1"
+      window_style="wxTAB_TRAVERSAL"
+      wxEVT_CLOSE_WINDOW="OnClose">
+      <node
+        class="wxMenuBar"
+        class_access="none"
+        var_name="menubar">
+        <node
+          class="wxMenu"
+          class_access="none"
+          label="&amp;File"
+          var_name="menu_file">
+          <node
+            class="wxMenuItem"
+            bitmap="Art; wxART_FILE_SAVE_AS|wxART_MENU; [-1,-1]"
+            id="wxID_SAVEAS"
+            label=""
+            var_name="menu_item_saveas"
+            wxEVT_MENU="OnSaveAs" />
+          <node
+            class="separator" />
+          <node
+            class="wxMenuItem"
+            bitmap="Art; wxART_CUT|wxART_MENU; [-1,-1]"
+            id="wxID_CLEAR"
+            label=""
+            var_name="menu_item_clear"
+            wxEVT_MENU="OnClear" />
+          <node
+            class="wxMenuItem"
+            bitmap="Embed;../art_src/hidden.png;[-1,-1]"
+            id="id_hide"
+            label="&amp;Hide"
+            var_name="menu_item_hide"
+            wxEVT_MENU="OnHide" />
+        </node>
+        <node
+          class="wxMenu"
+          class_access="none"
+          label="&amp;View"
+          var_name="menu_view">
+          <node
+            class="wxMenuItem"
+            bitmap="Art; wxART_WARNING|wxART_MENU; [-1,-1]"
+            class_access="protected:"
+            id="id_warning_msgs"
+            kind="wxITEM_CHECK"
+            label="Warnings"
+            var_name="m_menu_item_warnings"
+            wxEVT_MENU="OnWarnings" />
+          <node
+            class="wxMenuItem"
+            bitmap="Art; wxART_TIP|wxART_MENU; [-1,-1]"
+            class_access="protected:"
+            id="id_event_msgs"
+            kind="wxITEM_CHECK"
+            label="Events"
+            var_name="m_menu_item_events"
+            wxEVT_MENU="OnEvents" />
+          <node
+            class="wxMenuItem"
+            bitmap="Art; wxART_INFORMATION|wxART_MENU; [-1,-1]"
+            class_access="protected:"
+            id="wxID_INFO"
+            kind="wxITEM_CHECK"
+            label=""
+            var_name="m_menu_item_info"
+            wxEVT_MENU="OnInfo" />
+        </node>
+      </node>
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer">
+        <node
+          class="wxTextCtrl"
+          style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL"
+          minimum_size="350,300"
+          border_size="0"
+          flags="wxEXPAND"
+          proportion="1" />
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>

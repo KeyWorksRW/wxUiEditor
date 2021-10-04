@@ -41,8 +41,11 @@ namespace result
         exists = 0,
         created = 1,
         ignored = 2,
+        needs_writing = 3,
     };
 }  // namespace result
+
+int WriteCMakeFile(bool test_only = true);  // See gen_cmake.cpp
 
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at
 // least one file needs to be generated. If pClassList is non-null, it will contain the base

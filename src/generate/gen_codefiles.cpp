@@ -48,6 +48,12 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
 
     size_t currentFiles = 0;
 
+    if (WriteCMakeFile(NeedsGenerateCheck) != result::exists)
+    {
+        ++currentFiles;
+        results.emplace_back() << project->prop_as_string(prop_cmake_file) << " saved" << '\n';
+    }
+
     for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
     {
         auto form = project->GetChild(pos);
@@ -87,7 +93,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             {
                 if (!NeedsGenerateCheck)
                 {
-                    results.emplace_back() << path << _tt(strIdSaved) << '\n';
+                    results.emplace_back() << path << " saved" << '\n';
                 }
                 else
                 {
@@ -118,7 +124,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             {
                 if (!NeedsGenerateCheck)
                 {
-                    results.emplace_back() << path << _tt(strIdSaved) << '\n';
+                    results.emplace_back() << path << " saved" << '\n';
                 }
                 else
                 {
@@ -171,7 +177,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
 
         if (currentFiles)
         {
-            msg << '\n' << _tt("The other ") << currentFiles << " generated files are current";
+            msg << '\n' << "The other " << currentFiles << " generated files are current";
         }
 
         appMsgBox(msg, _tt(strIdTitleCodeGeneration), wxOK, parent);
@@ -273,7 +279,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else
         {
-            results.emplace_back() << path << _tt(strIdSaved) << '\n';
+            results.emplace_back() << path << " saved" << '\n';
         }
 
         path.replace_extension(source_ext);
@@ -288,7 +294,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else
         {
-            results.emplace_back() << path << _tt(strIdSaved) << '\n';
+            results.emplace_back() << path << " saved" << '\n';
         }
     }
 

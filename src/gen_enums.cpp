@@ -400,6 +400,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_Bitmaps, "Bitmaps" },
     { gen_BookPage, "BookPage" },
     { gen_Boolean_Validator, "Boolean Validator" },
+    { gen_CMake, "CMake" },
     { gen_Check3State, "Check3State" },
     { gen_Choice_Validator, "Choice Validator" },
     { gen_Code_Generation, "Code Generation" },

@@ -409,6 +409,7 @@ namespace GenEnum
         gen_Bitmaps,
         gen_BookPage,
         gen_Boolean_Validator,
+        gen_CMake,
         gen_Check3State,
         gen_Choice_Validator,
         gen_Code_Generation,

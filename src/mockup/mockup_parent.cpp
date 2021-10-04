@@ -35,7 +35,9 @@
 #include "node.h"            // Node class
 #include "utils.h"           // Utility functions that work with properties
 
-#include "../art_headers/title_close_png.h_img"
+#include "ui_images.h"
+
+using namespace wxue_img;
 
 MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPanel>(parent)
 {

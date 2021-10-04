@@ -13,7 +13,9 @@
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
-#include "../art_headers/empty_png.h_img"
+#include "ui_images.h"
+
+using namespace wxue_img;
 
 #include "pg_image.h"
 

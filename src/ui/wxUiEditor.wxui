@@ -3069,5 +3069,45 @@
         </node>
       </node>
     </node>
+    <node
+      class="Images"
+      base_file="ui_images">
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/default.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/empty.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/unknown.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/project.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/title_close.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/debug_16.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/debug_32.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/logo16.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/logo32.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/logo64.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/auitoolbar.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/scrollbar.png;[-1,-1]" />
+    </node>
   </node>
 </wxUiEditorData>

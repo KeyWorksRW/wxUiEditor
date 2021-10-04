@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/checkbox.h>  // wxCheckBox class interface
 #include <wx/checklst.h>  // wxCheckListBox class interface
 #include <wx/event.h>     // Event classes

@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/stockitem.h>
 
 #include "gridbag_item.h"  // auto-generated: gridbag_item_base.h and gridbag_item_base.cpp

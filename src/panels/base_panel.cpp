@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/stc/stc.h>      // A wxWidgets implementation of Scintilla.  This class is the

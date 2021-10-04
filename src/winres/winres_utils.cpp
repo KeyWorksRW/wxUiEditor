@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "winres_ctrl.h"
 
 #include "utils.h"  // Utility functions that work with properties

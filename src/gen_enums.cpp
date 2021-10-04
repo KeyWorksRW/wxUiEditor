@@ -8,8 +8,6 @@
 // These maps can be used to convert the enumeration value into a string for writing out to a project file. When wxUiEditor
 // is first initialized, the regular maps will be read and used to initialize the rmaps.
 
-#include "pch.h"
-
 #include "gen_enums.h"
 
 using namespace GenEnum;

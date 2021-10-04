@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "gen_common.h"    // GeneratorLibrary -- Generator classes
 #include "mainapp.h"       // App -- App class
 #include "node_creator.h"  // NodeCreator

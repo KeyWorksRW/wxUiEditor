@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/event.h>     // Event classes
 #include <wx/scrolbar.h>  // wxScrollBar base header
 #include <wx/spinctrl.h>  // wxSpinCtrlBase class

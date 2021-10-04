@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "nodeinfo.h"  // auto-generated: nodeinfo_base.h and nodeinfo_base.cpp
 
 #include "mainapp.h"     // App -- Main application class

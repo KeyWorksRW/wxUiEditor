@@ -15,8 +15,6 @@
 // the executable, then the temporary files will NOT be deleted. Also not that if you have WinMerge running, and you alt+tab
 // back to wxUiEditor and close the dialog, all those temporary files will be deleted out from underneath WinMerge.
 
-#include "pch.h"
-
 #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
 
 #include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory

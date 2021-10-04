@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "ttcstr.h"      // cstr -- std::string with additional methods
 #include "ttlibspace.h"  // ttlib namespace functions and declarations
 

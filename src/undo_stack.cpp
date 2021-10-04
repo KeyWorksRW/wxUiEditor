@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "undo_stack.h"  // UndoStack
 
 void UndoStack::Push(UndoActionPtr ptr)

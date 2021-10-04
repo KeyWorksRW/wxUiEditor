@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/button.h>        // wxButtonBase class
 #include <wx/html/htmlwin.h>  // wxHtmlWindow class for parsing & displaying HTML
 #include <wx/sizer.h>         // provide wxSizer class for layout

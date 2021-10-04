@@ -8,8 +8,6 @@
 // A wxWizard derives from wxDialog which makes it unusable as a child of the wxPanel used by our Mockup panel. We emulate
 // the functionality here, use similar methods to what that the real wxWizard uses (see wxWidgets/src/generic/wizard.cpp).
 
-#include "pch.h"
-
 #include <wx/dcmemory.h>  // wxMemoryDC base header
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/statline.h>  // wxStaticLine class interface

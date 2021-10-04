@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "node_decl.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class

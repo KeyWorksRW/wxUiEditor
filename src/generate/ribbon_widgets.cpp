@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/ribbon/buttonbar.h>  // Ribbon control similar to a tool bar
 #include <wx/ribbon/gallery.h>    // Ribbon control which displays a gallery of items to choose from
 #include <wx/ribbon/toolbar.h>    // Ribbon-style tool bar

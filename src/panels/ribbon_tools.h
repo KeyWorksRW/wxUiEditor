@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/ribbon/art.h>
 #include <wx/ribbon/bar.h>      // Top-level component of the ribbon-bar-style interface
 #include <wx/ribbon/toolbar.h>  // Ribbon-style tool bar

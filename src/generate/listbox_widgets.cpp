@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/checklst.h>       // wxCheckListBox class interface
 #include <wx/event.h>          // Event classes
 #include <wx/htmllbox.h>       // wxHtmlListBox is a listbox whose items are wxHtmlCells

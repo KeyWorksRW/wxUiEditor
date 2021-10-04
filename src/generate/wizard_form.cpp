@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/wizard.h>  // wxWizard class: a GUI control presenting the user with a
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes

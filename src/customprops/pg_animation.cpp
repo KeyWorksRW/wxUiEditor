@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/dir.h>                // wxDir is a class for enumerating the files in a directory
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 

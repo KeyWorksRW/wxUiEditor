@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/gbsizer.h>  // wxGridBagSizer:  A sizer that can lay out items in a grid
 
 #include "node_gridbag.h"  // GridBag class

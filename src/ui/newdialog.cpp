@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "newdialog.h"  // auto-generated: newdialog_base.h and newdialog_base.cpp
 
 #include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel

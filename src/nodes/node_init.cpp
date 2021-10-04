@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "node_creator.h"
 
 #include "bitmaps.h"     // Contains various images handling functions

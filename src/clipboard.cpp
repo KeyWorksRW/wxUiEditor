@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "clipboard.h"
 
 #include "import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project

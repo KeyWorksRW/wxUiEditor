@@ -9,8 +9,6 @@
 // notable exception is a MockupWizard -- in this case we create a MockupWizard child which itself is a wxPanel that
 // substitutes for the wxWizard form.
 
-#include "pch.h"
-
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/bookctrl.h>     // wxBookCtrlBase: common base class for wxList/Tree/Notebook
 #include <wx/choicebk.h>     // wxChoicebook: wxChoice and wxNotebook combination

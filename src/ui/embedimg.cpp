@@ -10,8 +10,6 @@
 // changed, both Fit() and Layout() are called. That's still not 100% accurate, but it's close enough that the user isn't
 // likely to notice the extra spacing that sometimes occurs.
 
-#include "pch.h"
-
 #include <filesystem>
 #include <fstream>
 

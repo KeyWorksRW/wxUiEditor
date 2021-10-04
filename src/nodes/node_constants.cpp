@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/animate.h>            // wxAnimation and wxAnimationCtrl
 #include <wx/anybutton.h>          // wxAnyButtonBase class
 #include <wx/aui/auibar.h>         // wxaui: wx advanced user interface - docking window manager

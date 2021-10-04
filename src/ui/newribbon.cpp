@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "newribbon.h"  // auto-generated: newribbon_base.h and newribbon_base.cpp
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel

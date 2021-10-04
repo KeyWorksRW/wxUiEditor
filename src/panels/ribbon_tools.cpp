@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include <wx/menu.h>          // wxMenu and wxMenuBar classes
 #include <wx/ribbon/page.h>   // Container for ribbon-bar-style interface panels
 #include <wx/ribbon/panel.h>  // Ribbon-style container for a group of related tools / controls

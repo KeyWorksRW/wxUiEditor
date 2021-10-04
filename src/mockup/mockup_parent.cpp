@@ -15,8 +15,6 @@
 
 */
 
-#include "pch.h"
-
 #if defined(_WIN32)
     #include <wx/msw/uxtheme.h>
 #endif  // _WIN32

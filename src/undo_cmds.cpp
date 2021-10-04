@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "pch.h"
-
 #include "undo_cmds.h"
 
 #include "../panels/nav_panel.h"   // NavigationPanel -- Navigation Panel

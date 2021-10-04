@@ -17,10 +17,9 @@ class ImagesGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    void OnImageSelected();
-
 private:
     wxStaticBitmap* m_bitmap;
+    wxStaticText* m_image_name;
     wxStaticText* m_text_info;
 };
 

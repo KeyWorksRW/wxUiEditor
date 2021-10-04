@@ -73,9 +73,21 @@ void MockupContent::CreateAllGenerators()
 
         m_parent_sizer->Add(m_wizard, wxSizerFlags(1).Expand());
     }
+    else if (form->isGen(gen_Images))
+    {
+        auto comp = form->GetGenerator();
+        ASSERT_MSG(comp, ttlib::cstr() << "Missing component for " << form->DeclName());
+        if (!comp)
+            return;
+
+        auto sizer = comp->CreateMockup(form, this);
+        m_parent_sizer->Add(wxStaticCast(sizer, wxBoxSizer), wxSizerFlags(1).Expand());
+    }
+
     else
     {
-        if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar) || form->isGen(gen_PopupMenu))
+        if (form->isGen(gen_MenuBar) || form->isGen(gen_RibbonBar) || form->isGen(gen_ToolBar) ||
+            form->isGen(gen_PopupMenu) || form->isGen(gen_Images))
         {
             // In this case, the form itself is created as a child
             CreateChildren(form, this, this, m_parent_sizer);
@@ -181,12 +193,21 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     else
     {
         created_window = wxStaticCast(created_object, wxWindow);
-        SetWindowProperties(node, created_window);
+        if (!node->isType(type_images))
+        {
+            SetWindowProperties(node, created_window);
+        }
     }
 
     // Store the wxObject/Node pair both ways.
     m_obj_node_pair[created_object] = node;
     m_node_obj_pair[node] = created_object;
+
+    if (node->isType(type_images))
+    {
+        parent_sizer->Add(created_window, wxSizerFlags().Expand());
+        return;
+    }
 
     wxWindow* new_wxparent = (created_window ? created_window : parent);
 
@@ -380,6 +401,12 @@ void MockupContent::OnNodeSelected(Node* node)
 {
     if (node->IsForm())
         return;
+
+    if (node->isType(type_embed_image))
+    {
+        m_mockupParent->CreateContent();
+        return;
+    }
 
     bool HavePageNode = false;
     for (;;)

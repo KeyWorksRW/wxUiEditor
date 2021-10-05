@@ -47,9 +47,21 @@ int WriteCMakeFile(bool test_only)
     out.emplace_back();
     out.at(out.size() - 1) << "set (" << project->prop_as_string(prop_cmake_varname) << '\n';
 
+    std::set<ttlib::cstr> base_files;
+
     for (auto& iter: project->GetChildNodePtrs())
     {
         ttlib::cstr base_file = iter->prop_as_string(prop_base_file);
+        // "filename_base" is the default filename given to all form files. Unless it's changed, no code will be
+        // generated.
+        if (base_file == "filename_base")
+            continue;
+
+        base_files.emplace(base_file);
+    }
+
+    for (auto base_file: base_files)
+    {
         base_file.make_relative(wxGetApp().getProjectPath());
         base_file.backslashestoforward();
         base_file.remove_extension();

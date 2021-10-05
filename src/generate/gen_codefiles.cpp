@@ -48,6 +48,9 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
 
     if (WriteCMakeFile(NeedsGenerateCheck) != result::exists)
     {
+        if (NeedsGenerateCheck && !pClassList)
+            return true;
+
         ++currentFiles;
         results.emplace_back() << project->prop_as_string(prop_cmake_file) << " saved" << '\n';
     }

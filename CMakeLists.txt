@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(wxUiEditor
     LANGUAGES CXX
-    VERSION 0.9.0
+    VERSION 0.5.0
     DESCRIPTION "wxWidgets UI designer"
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 
@@ -224,4 +224,31 @@ target_include_directories(wxUiEditor PRIVATE
     src/customprops
     src/ui
     ttLib/include
+)
+
+# Packaging Instructions
+
+set(CPACK_PACKAGE_VENDOR "KeyWorks Software")
+set(CPACK_VERBATIM_VARIABLES YES)
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/EULA.TXT)
+set(CPACK_PACKAGE_INSTALL_DIRECTORY wxUiEditor)
+
+set(CPACK_WIX_UPGRADE_GUID 67974CB4-5812-40A7-8031-8FA861ED303E)
+set(CPACK_WIX_PRODUCT_ICON ${CMAKE_CURRENT_LIST_DIR}/src/wxUiEditor.ico)
+
+if (WIN32)
+    set(CPACK_GENERATOR ZIP WIX)
+else()
+    set(CPACK_GENERATOR TGZ)
+endif()
+
+include(GNUInstallDirs)
+include(CPack)
+
+install(TARGETS wxUiEditor
+    CONFIGURATIONS Release
+)
+
+set_property(INSTALL "bin/$<TARGET_FILE_NAME:wxUiEditor>"
+  PROPERTY CPACK_START_MENU_SHORTCUTS "wxUiEditor"
 )

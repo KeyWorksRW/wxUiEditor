@@ -126,44 +126,14 @@ void PropertyGrid_Image::RefreshChildren()
 
         if (m_old_type != m_img_props.type)
         {
-            wxArrayString array_art_ids;
-            if (m_img_props.type == "Art")
-            {
-                for (auto& iter: set_art_ids)
-                {
-                    array_art_ids.Add(iter);
-                }
-            }
-            else
-            {
-                auto art_dir = wxGetApp().GetProject()->prop_as_string(prop_original_art);
-                if (art_dir.empty())
-                    art_dir = "./";
-                wxDir dir;
-                wxArrayString array_files;
-                wxBusyCursor hourglass;
-                if (m_img_props.type == "Header")
-                {
-                    dir.GetAllFiles(art_dir, &array_files, "*.xpm", wxDIR_FILES);
-                    dir.GetAllFiles(art_dir, &array_files, "*.h_img", wxDIR_FILES);
-                }
-                if (m_img_props.type == "Embed")
-                {
-                    // For auto-completion, we limit the array to the most common image types
-                    dir.GetAllFiles(art_dir, &array_files, "*.png", wxDIR_FILES);
-                    dir.GetAllFiles(art_dir, &array_files, "*.bmp", wxDIR_FILES);
-                }
-
-                for (auto& iter: array_files)
-                {
-                    wxFileName name(iter);
-                    array_art_ids.Add(name.GetFullName());
-                }
-            }
-
-            Item(IndexImage)->SetAttribute(wxPG_ATTR_AUTOCOMPLETE, array_art_ids);
+            SetAutoComplete();
             m_old_type = m_img_props.type;
         }
+    }
+
+    if (!m_isAutoCompleteSet)
+    {
+        SetAutoComplete();
     }
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
@@ -172,6 +142,47 @@ void PropertyGrid_Image::RefreshChildren()
     {
         Item(IndexScale)->SetValue(m_img_props.CombineScale());
     }
+}
+
+void PropertyGrid_Image::SetAutoComplete()
+{
+    wxArrayString array_art_ids;
+    if (m_img_props.type == "Art")
+    {
+        for (auto& iter: set_art_ids)
+        {
+            array_art_ids.Add(iter);
+        }
+    }
+    else
+    {
+        auto art_dir = wxGetApp().GetProject()->prop_as_string(prop_original_art);
+        if (art_dir.empty())
+            art_dir = "./";
+        wxDir dir;
+        wxArrayString array_files;
+        wxBusyCursor hourglass;
+        if (m_img_props.type == "Header")
+        {
+            dir.GetAllFiles(art_dir, &array_files, "*.xpm", wxDIR_FILES);
+            dir.GetAllFiles(art_dir, &array_files, "*.h_img", wxDIR_FILES);
+        }
+        if (m_img_props.type == "Embed")
+        {
+            // For auto-completion, we limit the array to the most common image types
+            dir.GetAllFiles(art_dir, &array_files, "*.png", wxDIR_FILES);
+            dir.GetAllFiles(art_dir, &array_files, "*.bmp", wxDIR_FILES);
+        }
+
+        for (auto& iter: array_files)
+        {
+            wxFileName name(iter);
+            array_art_ids.Add(name.GetFullName());
+        }
+    }
+
+    Item(IndexImage)->SetAttribute(wxPG_ATTR_AUTOCOMPLETE, array_art_ids);
+    m_isAutoCompleteSet = true;
 }
 
 wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const

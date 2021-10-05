@@ -30,6 +30,9 @@ public:
 
     ImageProperties& GetImageProperties() { return m_img_props; }
 
+protected:
+    void SetAutoComplete();
+
 private:
     ImageProperties m_img_props;
 
@@ -37,4 +40,5 @@ private:
     ttlib::cstr m_old_image;
 
     bool m_isEmbeddedImage { false };
+    bool m_isAutoCompleteSet { false };
 };

@@ -20,9 +20,9 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
-    extern const unsigned char wxCheckListBox_png[514];
-    extern const unsigned char wxListBox_png[326];
-    extern const unsigned char wxListView_png[372];
-    extern const unsigned char wxRearrangeCtrl_png[348];
-    extern const unsigned char wxSimpleHtmlListBox_png[692];
+    extern const unsigned char wxCheckListBox_png[498];
+    extern const unsigned char wxListBox_png[310];
+    extern const unsigned char wxListView_png[356];
+    extern const unsigned char wxRearrangeCtrl_png[332];
+    extern const unsigned char wxSimpleHtmlListBox_png[676];
 }

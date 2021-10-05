@@ -327,12 +327,30 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
                     // Maximize compression
                     image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL, 9);
                     image.SetOption(wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL, 9);
-                    image.SaveFile(save_stream, handler->GetMimeType());
+                    image.SaveFile(save_stream, "image/png");
 
                     auto read_stream = save_stream.GetOutputStreamBuffer();
-                    embed->array_size = read_stream->GetBufferSize();
-                    embed->array_data = std::make_unique<unsigned char[]>(embed->array_size);
-                    memcpy(embed->array_data.get(), read_stream->GetBufferStart(), embed->array_size);
+                    stream.SeekI(0);
+                    if (read_stream->GetBufferSize() <= static_cast<size_t>(stream.GetLength()))
+                    {
+                        embed->array_size = read_stream->GetBufferSize();
+                        embed->array_data = std::make_unique<unsigned char[]>(embed->array_size);
+                        memcpy(embed->array_data.get(), read_stream->GetBufferStart(), embed->array_size);
+                    }
+                    else
+                    {
+#if defined(_DEBUG)
+                        auto org_size = static_cast<size_t>(stream.GetLength());
+                        auto png_size = read_stream->GetBufferSize();
+                        ttlib::cstr size_comparison;
+                        size_comparison.Format("Original: %ku, new: %ku", org_size, png_size);
+#endif  // _DEBUG
+
+                        embed->type = handler->GetType();
+                        embed->array_size = stream.GetSize();
+                        embed->array_data = std::make_unique<unsigned char[]>(embed->array_size);
+                        stream.Read(embed->array_data.get(), embed->array_size);
+                    }
                 }
                 else
                 {

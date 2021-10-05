@@ -24,16 +24,16 @@ namespace wxue_img
         return image;
     };
 
-    extern const unsigned char auitoolbar_png[492];
-    extern const unsigned char debug_16_png[672];
-    extern const unsigned char debug_32_png[1717];
-    extern const unsigned char default_png[534];
-    extern const unsigned char empty_png[117];
-    extern const unsigned char logo16_png[655];
-    extern const unsigned char logo32_png[1486];
-    extern const unsigned char logo64_png[1736];
-    extern const unsigned char project_png[915];
-    extern const unsigned char scrollbar_png[230];
-    extern const unsigned char title_close_png[160];
-    extern const unsigned char unknown_png[1715];
+    extern const unsigned char auitoolbar_png[476];
+    extern const unsigned char debug_16_png[656];
+    extern const unsigned char debug_32_png[1701];
+    extern const unsigned char default_png[518];
+    extern const unsigned char empty_png[101];
+    extern const unsigned char logo16_png[639];
+    extern const unsigned char logo32_png[1470];
+    extern const unsigned char logo64_png[1718];
+    extern const unsigned char project_png[899];
+    extern const unsigned char scrollbar_png[214];
+    extern const unsigned char title_close_png[144];
+    extern const unsigned char unknown_png[1699];
 }

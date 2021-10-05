@@ -62,6 +62,7 @@ namespace wxue_img
     extern const unsigned char ribbon_panel_png[392];
     extern const unsigned char richtextctrl_png[736];
     extern const unsigned char scintilla_png[729];
+    extern const unsigned char scrollbar_png[214];
     extern const unsigned char search_png[800];
     extern const unsigned char separator_png[306];
     extern const unsigned char sizer_horizontal_png[129];
@@ -414,6 +415,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
         other_bar_ctrls->AddTool(gen_wxCalendarCtrl, GetImageFromArray(wxue_img::calendar_png, sizeof(wxue_img::calendar_png)), wxString::FromUTF8("wxCalendarCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxFileCtrl, GetImageFromArray(wxue_img::wxfileCtrl_png, sizeof(wxue_img::wxfileCtrl_png)), wxString::FromUTF8("wxFileCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxGenericDirCtrl, GetImageFromArray(wxue_img::genericdir_ctrl_png, sizeof(wxue_img::genericdir_ctrl_png)), wxString::FromUTF8("wxGenericDirCtrl"), wxRIBBON_BUTTON_NORMAL);
+        other_bar_ctrls->AddTool(gen_wxScrollBar, GetImageFromArray(wxue_img::scrollbar_png, sizeof(wxue_img::scrollbar_png)), wxString::FromUTF8("wxScrollBar"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxActivityIndicator, GetImageFromArray(wxue_img::wxactivityIndicator_png, sizeof(wxue_img::wxactivityIndicator_png)), wxString::FromUTF8("wxActivityIndicator"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxAnimationCtrl, GetImageFromArray(wxue_img::wxanimation_png, sizeof(wxue_img::wxanimation_png)), wxString::FromUTF8("wxAnimationCtrl"), wxRIBBON_BUTTON_NORMAL);
         other_bar_ctrls->AddTool(gen_wxBannerWindow, GetImageFromArray(wxue_img::wxbannerWindow_png, sizeof(wxue_img::wxbannerWindow_png)), wxString::FromUTF8("wxBannerWindow"), wxRIBBON_BUTTON_NORMAL);

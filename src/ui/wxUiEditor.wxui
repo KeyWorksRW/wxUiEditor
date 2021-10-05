@@ -2764,6 +2764,11 @@
                   id="gen_wxGenericDirCtrl" />
                 <node
                   class="ribbonTool"
+                  bitmap="Embed;../art_src/scrollbar.png;[-1,-1]"
+                  help="wxScrollBar"
+                  id="gen_wxScrollBar" />
+                <node
+                  class="ribbonTool"
                   bitmap="Embed;../art_src/wxactivityIndicator.png;[-1,-1]"
                   help="wxActivityIndicator"
                   id="gen_wxActivityIndicator" />

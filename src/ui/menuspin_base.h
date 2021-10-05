@@ -20,7 +20,7 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
-    extern const unsigned char spin_ctrl_double_png[235];
-    extern const unsigned char spin_ctrl_png[316];
-    extern const unsigned char spinbtn_png[208];
+    extern const unsigned char spin_ctrl_double_png[219];
+    extern const unsigned char spin_ctrl_png[300];
+    extern const unsigned char spinbtn_png[192];
 }

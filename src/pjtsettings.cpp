@@ -158,12 +158,13 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
         if (!image.IsOk())
         {
-            if (path.has_extension(".h_img"))
+            if (path.has_extension(".h_img") || path.has_extension(".h"))
             {
                 image = GetHeaderImage(path);
             }
             else
             {
+                // Note that this will load an XPM file
                 image.LoadFile(path);
             }
         }

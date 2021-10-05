@@ -5,7 +5,8 @@
     class="Project"
     converted_art="../art"
     local_pch_file="pch.h"
-    original_art="../art">
+    original_art="../art"
+    generate_cmake="true">
     <node
       class="wxFrame"
       class_name="MainFrameBase"

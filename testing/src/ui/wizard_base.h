@@ -44,7 +44,6 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
-    extern const unsigned char wiztest_png[1239];
-
     extern const unsigned char wiztest2_png[6797];
+    extern const unsigned char wiztest_png[1239];
 }

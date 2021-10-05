@@ -39,12 +39,12 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     parent_sizer2->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_filePicker = new wxFilePickerCtrl(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
-    wxString::FromUTF8("BMP files|*.bmp"), wxDefaultPosition, wxDefaultSize,
-    wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
+        wxString::FromUTF8("BMP files|*.bmp"), wxDefaultPosition, wxDefaultSize,
+        wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
     static_box->Add(m_filePicker, wxSizerFlags().Border(wxALL));
 
     m_dirPicker = new wxDirPickerCtrl(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("."),  wxDirSelectorPromptStr, wxDefaultPosition, wxDefaultSize,
-    wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL);
+        wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL);
     static_box->Add(m_dirPicker, wxSizerFlags().Border(wxALL));
 
     m_colourPicker = new wxColourPickerCtrl(static_box->GetStaticBox(), wxID_ANY, *wxBLACK);
@@ -56,9 +56,9 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     m_timePicker = new wxTimePickerCtrl(static_box->GetStaticBox(), wxID_ANY, wxDefaultDateTime);
     static_box->Add(m_timePicker, wxSizerFlags().Border(wxALL));
 
-    m_fontPicker = new wxFontPickerCtrl(static_box->GetStaticBox(), wxID_ANY, 
-    wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Comic Sans MS"), wxDefaultPosition, wxDefaultSize,
-    wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL);
+        m_fontPicker = new wxFontPickerCtrl(static_box->GetStaticBox(), wxID_ANY, 
+            wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Comic Sans MS"), wxDefaultPosition, wxDefaultSize,
+        wxFNTP_DEFAULT_STYLE|wxFNTP_USE_TEXTCTRL);
     static_box->Add(m_fontPicker, wxSizerFlags().Border(wxALL));
 
     page->SetSizerAndFit(parent_sizer2);
@@ -138,7 +138,7 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     box_sizer->Add(m_toggleBtn, wxSizerFlags().Border(wxALL));
 
     m_hyperlink = new wxHyperlinkCtrl(m_panel6, wxID_ANY, wxString::FromUTF8("GitHub Website"), wxString::FromUTF8("https://github.com/"), wxDefaultPosition, wxDefaultSize,
-    wxHL_DEFAULT_STYLE);
+        wxHL_DEFAULT_STYLE);
     box_sizer->Add(m_hyperlink, wxSizerFlags().Center().Border(wxALL));
 
     m_searchCtrl = new wxSearchCtrl(m_panel6, wxID_ANY, wxString::FromUTF8("Search for something..."));

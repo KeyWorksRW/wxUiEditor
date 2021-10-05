@@ -15,12 +15,3 @@ public:
     MenuStaticSizer();
 protected:
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char wxStaticBoxSizer_png[199];
-    extern const unsigned char wxStaticCheckBoxSizer_png[341];
-    extern const unsigned char wxStaticRadioBtnSizer_png[367];
-}

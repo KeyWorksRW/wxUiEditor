@@ -15,13 +15,3 @@ public:
     MenuButton();
 protected:
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char stddialogbuttonsizer_png[524];
-    extern const unsigned char toggle_button_png[277];
-    extern const unsigned char wxButton_png[500];
-    extern const unsigned char wxCommandLinkButton_png[582];
-}

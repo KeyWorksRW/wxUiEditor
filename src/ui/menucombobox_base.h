@@ -15,12 +15,3 @@ public:
     MenuCombobox();
 protected:
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char bmp_combo_box_png[492];
-    extern const unsigned char wxChoice_png[330];
-    extern const unsigned char wxComboBox_png[233];
-}

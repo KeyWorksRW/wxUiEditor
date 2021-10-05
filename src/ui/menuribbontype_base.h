@@ -15,12 +15,3 @@ public:
     MenuRibbonType();
 protected:
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char ribbon_bar_png[844];
-    extern const unsigned char ribbon_buttonbar_png[300];
-    extern const unsigned char ribbon_gallery_png[215];
-}

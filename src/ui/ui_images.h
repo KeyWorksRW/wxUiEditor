@@ -25,6 +25,11 @@ namespace wxue_img
     };
 
     extern const unsigned char auitoolbar_png[476];
+    extern const unsigned char bmp_combo_box_png[492];
+    extern const unsigned char check3state_png[194];
+    extern const unsigned char dataview_ctrl_png[231];
+    extern const unsigned char dataviewlist_ctrl_png[685];
+    extern const unsigned char dataviewtree_ctrl_png[238];
     extern const unsigned char debug_16_png[656];
     extern const unsigned char debug_32_png[1701];
     extern const unsigned char default_png[518];
@@ -33,7 +38,28 @@ namespace wxue_img
     extern const unsigned char logo32_png[1470];
     extern const unsigned char logo64_png[1718];
     extern const unsigned char project_png[899];
+    extern const unsigned char ribbon_bar_png[844];
+    extern const unsigned char ribbon_buttonbar_png[300];
+    extern const unsigned char ribbon_gallery_png[215];
     extern const unsigned char scrollbar_png[214];
+    extern const unsigned char spin_ctrl_double_png[219];
+    extern const unsigned char spin_ctrl_png[300];
+    extern const unsigned char spinbtn_png[192];
+    extern const unsigned char stddialogbuttonsizer_png[524];
     extern const unsigned char title_close_png[144];
+    extern const unsigned char toggle_button_png[277];
     extern const unsigned char unknown_png[1699];
+    extern const unsigned char wxButton_png[500];
+    extern const unsigned char wxCheckBox_png[202];
+    extern const unsigned char wxCheckListBox_png[498];
+    extern const unsigned char wxChoice_png[330];
+    extern const unsigned char wxComboBox_png[233];
+    extern const unsigned char wxCommandLinkButton_png[582];
+    extern const unsigned char wxListBox_png[310];
+    extern const unsigned char wxListView_png[356];
+    extern const unsigned char wxRearrangeCtrl_png[332];
+    extern const unsigned char wxSimpleHtmlListBox_png[676];
+    extern const unsigned char wxStaticBoxSizer_png[199];
+    extern const unsigned char wxStaticCheckBoxSizer_png[341];
+    extern const unsigned char wxStaticRadioBtnSizer_png[367];
 }

@@ -15,12 +15,3 @@ public:
     MenuDataCtrl();
 protected:
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char dataview_ctrl_png[231];
-    extern const unsigned char dataviewlist_ctrl_png[685];
-    extern const unsigned char dataviewtree_ctrl_png[238];
-}

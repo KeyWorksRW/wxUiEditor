@@ -15,11 +15,3 @@ public:
     MenuCheckbox();
 protected:
 };
-
-namespace wxue_img
-{
-    // Images declared in this class module:
-
-    extern const unsigned char check3state_png[194];
-    extern const unsigned char wxCheckBox_png[202];
-}

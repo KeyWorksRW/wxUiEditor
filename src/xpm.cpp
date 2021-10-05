@@ -20,15 +20,6 @@
 
 #include "ribbonpanel_base.h"  // Most of the embedded generator images will be declared here
 
-#include "menubutton_base.h"
-#include "menucheckbox_base.h"
-#include "menucombobox_base.h"
-#include "menulistbox_base.h"
-#include "menuspin_base.h"
-#include "menudatactrl_base.h"
-#include "menuribbontype_base.h"
-#include "menustaticsizer_base.h"
-
 #include "ui_images.h"
 
 using namespace wxue_img;

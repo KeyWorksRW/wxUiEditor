@@ -60,9 +60,7 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
-    extern const unsigned char normal_png[524];
-
-    extern const unsigned char focus_png[533];
-
-    extern const unsigned char disabled_png[453];
+    extern const unsigned char disabled_png[437];
+    extern const unsigned char focus_png[517];
+    extern const unsigned char normal_png[508];
 }

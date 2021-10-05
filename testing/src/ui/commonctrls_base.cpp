@@ -54,7 +54,7 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer->Add(m_staticText, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxString::FromUTF8("Text \"ctrl\""), wxDefaultPosition, wxDefaultSize,
-    wxTE_PROCESS_ENTER);
+        wxTE_PROCESS_ENTER);
     m_textCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_textCtrlValidate));
     box_sizer->Add(m_textCtrl, wxSizerFlags().Border(wxALL));
 
@@ -77,7 +77,7 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer2->Add(btn2, wxSizerFlags().Border(wxALL));
 
     m_radioBtn = new wxRadioButton(this, wxID_ANY, wxString::FromUTF8("First radio"), wxDefaultPosition, wxDefaultSize,
-    wxRB_GROUP);
+        wxRB_GROUP);
     box_sizer2->Add(m_radioBtn, wxSizerFlags().Center().Border(wxALL));
 
     m_radioBtn2 = new wxRadioButton(this, wxID_ANY, wxString::FromUTF8("Second radio"));
@@ -208,7 +208,7 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     flex_grid_sizer->Add(m_bmpComboBox, wxSizerFlags().Border(wxALL));
 
     m_toggleBtn = new wxToggleButton(this, wxID_ANY, wxString::FromUTF8("Play Animation"), wxDefaultPosition, wxDefaultSize,
-    wxBU_EXACTFIT);
+        wxBU_EXACTFIT);
     flex_grid_sizer->Add(m_toggleBtn, wxSizerFlags().Border(wxALL));
 
     m_animation_ctrl = new wxAnimationCtrl(this, wxID_ANY, GetAnimFromHdr(clr_hourglass_gif, sizeof(clr_hourglass_gif)));

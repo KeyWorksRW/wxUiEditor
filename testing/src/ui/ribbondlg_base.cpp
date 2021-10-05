@@ -72,8 +72,8 @@ bool RibbonDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &titl
     auto m_ribbonPage2 = new wxRibbonPage(m_rbnBar, wxID_ANY, wxString::FromUTF8("Second"));
 
     auto m_ribbonPanel2 = new wxRibbonPanel(m_ribbonPage2, wxID_ANY, wxString::FromUTF8("Button Panel"),
-    wxNullBitmap, wxDefaultPosition, wxDefaultSize,
-    wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_STRETCH);
+        wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+        wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_STRETCH);
 
     auto rbnBtnBar = new wxRibbonButtonBar(m_ribbonPanel2, wxID_ANY);
 

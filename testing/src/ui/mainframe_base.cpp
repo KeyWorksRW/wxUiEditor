@@ -17,11 +17,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     auto menuDialogs = new wxMenu();
 
     auto menuItem = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("DlgMulitTest..."),
-    wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
+        wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
     menuDialogs->Append(menuItem);
 
     auto menuItem_2 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Common Controls..."),
-    wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
+        wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
     menuDialogs->Append(menuItem_2);
 
     auto menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Other Controls Dialog..."));

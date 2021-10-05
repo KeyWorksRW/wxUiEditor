@@ -9,7 +9,7 @@ Options:
 
     Crt_rel:      dll          # [static | dll] type of CRT to link to in release builds
     Crt_dbg:      dll          # [static | dll] type of CRT to link to in debug builds
-    Ms_linker:    true         # true means use link.exe even when compiling with clang
+    Ms_linker:    false        # true means use link.exe even when compiling with clang
 
     CFlags_cmn:   /Zc:__cplusplus /utf-8 # common compiler flags
 
@@ -21,7 +21,8 @@ Options:
 
     IncDirs:       ./;ui
     TargetDir:   ../bin              # target directory
-    Natvis:      ../src/wxui.natvis  # MSVC Debug visualizer
+    TargetDir32: ../build/Debug       # 32-bit target directory
+    Natvis:      ../../src/wxui.natvis  # Use Natvis from wxUiEditor
 
 Files:
     wxUiTesting.rc

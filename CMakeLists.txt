@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(wxUiEditor LANGUAGES CXX)
+project(wxUiEditor
+    LANGUAGES CXX
+    VERSION 0.9.0
+    DESCRIPTION "wxWidgets UI designer"
+    HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

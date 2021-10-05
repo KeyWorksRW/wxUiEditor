@@ -38,8 +38,10 @@ endif()
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 add_compile_definitions($<$<CONFIG:Debug>:WXUSINGDLL>)
 
-list(APPEND CMAKE_MODULE_PATH "src/ui/")
-include(wxui_code)  # This will set ${wxue_generated_code} with list of generated files
+# Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates. Specifying the full path and extension
+# means ninja sees this as a normal dependency that didn't change any time one of the files it specifies changes.
+
+include(src/ui/wxui_code.cmake)  # This will set ${wxue_generated_code} with list of generated files
 
 # Note the requirement that --config Debug is used to get the additional debug files
 add_executable(wxUiEditor WIN32

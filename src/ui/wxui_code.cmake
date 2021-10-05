@@ -13,19 +13,19 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/importwinres_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/insertwidget_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/navtoolbar_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/newdialog_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/newframe_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/newribbon_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/optionsdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menubutton_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menucheckbox_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menucombobox_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menudatactrl_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menulistbox_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menuribbontype_base.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/menustaticsizer_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menuspin_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/menustaticsizer_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/navtoolbar_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/newdialog_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/newframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/newribbon_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/optionsdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui_images.cpp
 

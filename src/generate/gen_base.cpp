@@ -1572,7 +1572,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 {
                     if (iter.type() == type_animation)
                         m_NeedAnimationFunction = true;
-                    else
+                    else if (!parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
                         m_NeedHeaderFunction = true;
                 }
                 else if ((parts[IndexType] == "Art"))

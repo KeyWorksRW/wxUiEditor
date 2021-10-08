@@ -16,11 +16,15 @@ void ImageProperties::InitValues(const char* value)
 {
     ttlib::multiview mstr(value, ';', tt::TRIM::both);
 
-    if (mstr.size() > IndexType)
-        type = mstr[IndexType];
-
     if (mstr.size() > IndexImage)
         image = mstr[IndexImage];
+
+    if (mstr.size() > IndexType)
+    {
+        type = mstr[IndexType];
+        if (type == "Header" && image.extension().is_sameas(".xpm", tt::CASE::either))
+            type = "XPM";
+    }
 
     if (mstr.size() > IndexImage + 1)
     {

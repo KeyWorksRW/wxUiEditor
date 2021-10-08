@@ -164,14 +164,18 @@ void PropertyGrid_Image::SetAutoComplete()
         wxBusyCursor hourglass;
         if (m_img_props.type == "Header")
         {
-            dir.GetAllFiles(art_dir, &array_files, "*.xpm", wxDIR_FILES);
             dir.GetAllFiles(art_dir, &array_files, "*.h_img", wxDIR_FILES);
         }
-        if (m_img_props.type == "Embed")
+        else if (m_img_props.type == "Embed")
         {
             // For auto-completion, we limit the array to the most common image types
             dir.GetAllFiles(art_dir, &array_files, "*.png", wxDIR_FILES);
+            dir.GetAllFiles(art_dir, &array_files, "*.ico", wxDIR_FILES);
             dir.GetAllFiles(art_dir, &array_files, "*.bmp", wxDIR_FILES);
+        }
+        else if (m_img_props.type == "XPM")
+        {
+            dir.GetAllFiles(art_dir, &array_files, "*.xpm", wxDIR_FILES);
         }
 
         for (auto& iter: array_files)
@@ -212,7 +216,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 ttString name(childValue.GetString());
                 if (!name.file_exists())
                 {
-                    if (img_props.type == "Header")
+                    if (img_props.type == "Header" || img_props.type == "XPM")
                     {
                         name = wxGetApp().GetConvertedArtDir();
                         name.append_filename_wx(childValue.GetString());

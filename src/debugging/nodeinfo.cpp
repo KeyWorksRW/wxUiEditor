@@ -31,27 +31,33 @@ void CalcNodeMemory(Node* node, NodeMemory& node_memory)
 
 NodeInfo::NodeInfo(wxWindow* parent) : NodeInfoBase(parent)
 {
-    auto project = wxGetApp().GetProject();
-    NodeMemory node_memory;
-    CalcNodeMemory(project, node_memory);
-
     ttlib::cstr label;
-    label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
-    m_txt_project->SetLabel(label);
+    NodeMemory node_memory;
 
     auto cur_sel = wxGetFrame().GetSelectedNode();
     if (cur_sel)
     {
+        label.clear();
+        label << "Generator: gen_" << cur_sel->DeclName();
+        m_txt_generator->SetLabel(label);
+        label.clear();
+        label << "Type: " << GenEnum::map_GenTypes.at(cur_sel->gen_type());
+        m_txt_type->SetLabel(label);
+
         node_memory.size = 0;
         node_memory.children = 0;
         CalcNodeMemory(cur_sel, node_memory);
         label.clear();
-        label.Format("Selection: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
-        auto name = cur_sel->get_node_name();
-        if (name.size())
-            label.Replace("Selection", name);
-        m_txt_selection->SetLabel(label);
+        label.Format("Memory: %kzu (%kzu node%s)", node_memory.size, node_memory.children,
+                     node_memory.children == 1 ? "" : "s");
+        m_txt_memory->SetLabel(label);
     }
+
+    auto project = wxGetApp().GetProject();
+    CalcNodeMemory(project, node_memory);
+
+    label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
+    m_txt_project->SetLabel(label);
 
     auto clipboard = wxGetFrame().GetClipboard();
     if (clipboard)

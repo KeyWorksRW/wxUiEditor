@@ -15,6 +15,7 @@
 #include <wx/image.h>
 #include <wx/menu.h>
 #include <wx/notebook.h>
+#include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
@@ -42,6 +43,8 @@ protected:
     wxMenuItem* m_menu_item_info;
     wxMenuItem* m_menu_item_warnings;
     wxNotebook* m_notebook;
+    wxPanel* m_page_log;
+    wxPanel* m_page_node;
     wxStaticText* m_txt_clipboard;
     wxStaticText* m_txt_generator;
     wxStaticText* m_txt_memory;
@@ -56,6 +59,8 @@ protected:
     virtual void OnEvents(wxCommandEvent& event) { event.Skip(); }
     virtual void OnHide(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInfo(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
+    virtual void OnParent(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveAs(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWarnings(wxCommandEvent& event) { event.Skip(); }
 };

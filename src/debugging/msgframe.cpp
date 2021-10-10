@@ -15,7 +15,17 @@
 
 #include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame
+#include "node.h"       // Node class
+#include "nodeinfo.h"   // NodeInfo -- Node memory usage dialog
 #include "uifuncs.h"    // Miscellaneous functions for displaying UI
+
+struct NodeMemory
+{
+    size_t size { 0 };
+    size_t children { 0 };
+};
+
+void CalcNodeMemory(Node* node, NodeMemory& node_memory);  // Defined in nodeinfo.cpp
 
 MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* parent) :
     MsgFrameBase(parent), m_pMsgs(pMsgs), m_pDestroyed(pDestroyed)
@@ -231,4 +241,81 @@ void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
     config->SetPath("/preferences");
     config->Write("flags", prefs.flags);
     config->SetPath("/");
+}
+
+void MsgFrame::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
+{
+    m_isNodeInfoPage = (m_notebook->GetCurrentPage() == m_page_node);
+    if (m_isNodeInfoPage)
+    {
+        UpdateNodeInfo();
+    }
+}
+
+void MsgFrame::OnNodeSelected()
+{
+    if (m_isNodeInfoPage)
+    {
+        UpdateNodeInfo();
+    }
+}
+
+void MsgFrame::UpdateNodeInfo()
+{
+    ttlib::cstr label;
+    NodeMemory node_memory;
+
+    auto cur_sel = wxGetFrame().GetSelectedNode();
+    if (cur_sel)
+    {
+        label.clear();
+        label << "Generator: gen_" << cur_sel->DeclName();
+        m_txt_generator->SetLabel(label);
+        label.clear();
+        label << "Type: " << GenEnum::map_GenTypes.at(cur_sel->gen_type());
+        m_txt_type->SetLabel(label);
+
+        node_memory.size = 0;
+        node_memory.children = 0;
+        CalcNodeMemory(cur_sel, node_memory);
+        label.clear();
+        label.Format("Memory: %kzu (%kzu node%s)", node_memory.size, node_memory.children,
+                     node_memory.children == 1 ? "" : "s");
+        m_txt_memory->SetLabel(label);
+    }
+
+    auto project = wxGetApp().GetProject();
+    CalcNodeMemory(project, node_memory);
+
+    label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
+    m_txt_project->SetLabel(label);
+
+    auto clipboard = wxGetFrame().GetClipboard();
+    if (clipboard)
+    {
+        node_memory.size = 0;
+        node_memory.children = 0;
+        CalcNodeMemory(clipboard, node_memory);
+        label.clear();
+        label.Format("Clipboard: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
+        m_txt_clipboard->SetLabel(label);
+    }
+}
+
+void MsgFrame::OnParent(wxCommandEvent& WXUNUSED(event))
+{
+    auto cur_sel = wxGetFrame().GetSelectedNode();
+    if (cur_sel)
+    {
+        auto parent = cur_sel->GetParent();
+        if (!parent)
+        {
+            appMsgBox("Current node doesn't have a parent!");
+        }
+        else
+        {
+            NodeInfo dlg(this, parent);
+            dlg.ShowModal();
+        }
+    }
 }

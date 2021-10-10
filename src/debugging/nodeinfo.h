@@ -7,10 +7,12 @@
 
 #pragma once
 
+class Node;
+
 #include "nodeinfo_base.h"
 
 class NodeInfo : public NodeInfoBase
 {
 public:
-    NodeInfo(wxWindow* parent = nullptr);
+    NodeInfo(wxWindow* parent, Node* cur_node = nullptr);
 };

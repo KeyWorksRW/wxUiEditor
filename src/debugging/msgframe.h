@@ -16,6 +16,8 @@ class MsgFrame : public MsgFrameBase
 public:
     MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* parent = nullptr);
 
+    void OnNodeSelected();
+
     void AddErrorMsg(ttlib::cview msg);
     void Add_wxErrorMsg(ttlib::cview msg);
 
@@ -28,16 +30,22 @@ public:
     void Add_wxInfoMsg(ttlib::cview msg);
 
 protected:
+    void UpdateNodeInfo();
+
     // Handlers for MsgFrameBase events
-    void OnClose(wxCloseEvent& WXUNUSED(event)) override;
-    void OnSaveAs(wxCommandEvent& WXUNUSED(event)) override;
     void OnClear(wxCommandEvent& WXUNUSED(event)) override;
-    void OnHide(wxCommandEvent& WXUNUSED(event)) override;
-    void OnWarnings(wxCommandEvent& WXUNUSED(event)) override;
+    void OnClose(wxCloseEvent& WXUNUSED(event)) override;
     void OnEvents(wxCommandEvent& WXUNUSED(event)) override;
+    void OnHide(wxCommandEvent& WXUNUSED(event)) override;
     void OnInfo(wxCommandEvent& WXUNUSED(event)) override;
+    void OnPageChanged(wxBookCtrlEvent& WXUNUSED(event)) override;
+    void OnParent(wxCommandEvent& event) override;
+    void OnSaveAs(wxCommandEvent& WXUNUSED(event)) override;
+    void OnWarnings(wxCommandEvent& WXUNUSED(event)) override;
 
 private:
     std::vector<ttlib::cstr>* m_pMsgs;
     bool* m_pDestroyed;
+
+    bool m_isNodeInfoPage { false };
 };

@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/artprov.h>
-#include <wx/panel.h>
+#include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
@@ -77,31 +77,37 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_notebook = new wxNotebook(this, wxID_ANY);
     m_notebook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-    parent_sizer->Add(m_notebook, wxSizerFlags().Border(wxALL));
+    parent_sizer->Add(m_notebook, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page, wxString::FromUTF8("Log"));
-    page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_page_log = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_page_log, wxString::FromUTF8("Log"));
+    m_page_log->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto log_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_textCtrl = new wxTextCtrl(page, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL);
+    m_textCtrl = new wxTextCtrl(m_page_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL);
     m_textCtrl->SetMinSize(wxSize(350, 300));
     log_sizer->Add(m_textCtrl, wxSizerFlags(1).Expand().Border(wxALL, 0));
 
-    page->SetSizerAndFit(log_sizer);
+    m_page_log->SetSizerAndFit(log_sizer);
 
-    auto page_2 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page_2, wxString::FromUTF8("Node"));
-    page_2->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_page_node = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_page_node, wxString::FromUTF8("Node"));
+    m_page_node->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto node_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto static_box_2 = new wxStaticBoxSizer(wxVERTICAL, page_2, wxString::FromUTF8("Selected Node"));
+    auto static_box_2 = new wxStaticBoxSizer(wxVERTICAL, m_page_node, wxString::FromUTF8("Selected Node"));
     node_sizer->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));
 
+    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    static_box_2->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
+
     m_txt_generator = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Name:"));
-    static_box_2->Add(m_txt_generator, wxSizerFlags().Border(wxALL));
+    box_sizer->Add(m_txt_generator, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto btn = new wxButton(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Parent..."));
+    box_sizer->Add(btn, wxSizerFlags().Center().Border(wxALL));
 
     m_txt_type = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Type:"));
     static_box_2->Add(m_txt_type, wxSizerFlags().Border(wxALL));
@@ -109,7 +115,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_txt_memory = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Memory:"));
     static_box_2->Add(m_txt_memory, wxSizerFlags().Border(wxALL));
 
-    auto static_box = new wxStaticBoxSizer(wxVERTICAL, page_2, wxString::FromUTF8("Memory Usage"));
+    auto static_box = new wxStaticBoxSizer(wxVERTICAL, m_page_node, wxString::FromUTF8("Memory Usage"));
     node_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_txt_project = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Project:"));
@@ -118,7 +124,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_txt_clipboard = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Clipboard:"));
     static_box->Add(m_txt_clipboard, wxSizerFlags().Border(wxALL));
 
-    page_2->SetSizerAndFit(node_sizer);
+    m_page_node->SetSizerAndFit(node_sizer);
 
     SetSizerAndFit(parent_sizer);
 
@@ -132,6 +138,8 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MsgFrameBase::OnWarnings, this, id_warning_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnEvents, this, id_event_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnInfo, this, wxID_INFO);
+    m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
+    btn->Bind(wxEVT_BUTTON, &MsgFrameBase::OnParent, this);
 }
 
 namespace wxue_img

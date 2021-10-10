@@ -29,12 +29,12 @@ void CalcNodeMemory(Node* node, NodeMemory& node_memory)
     }
 }
 
-NodeInfo::NodeInfo(wxWindow* parent) : NodeInfoBase(parent)
+NodeInfo::NodeInfo(wxWindow* parent, Node* cur_node) : NodeInfoBase(parent)
 {
     ttlib::cstr label;
     NodeMemory node_memory;
 
-    auto cur_sel = wxGetFrame().GetSelectedNode();
+    auto cur_sel = cur_node ? cur_node : wxGetFrame().GetSelectedNode();
     if (cur_sel)
     {
         label.clear();

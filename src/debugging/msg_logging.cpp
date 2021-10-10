@@ -245,3 +245,13 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             break;
     }
 }
+
+#if defined(_DEBUG)
+void MsgLogging::OnNodeSelected()
+{
+    if (m_msgFrame)
+    {
+        m_msgFrame->OnNodeSelected();
+    }
+}
+#endif

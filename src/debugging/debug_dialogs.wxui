@@ -272,10 +272,15 @@
         var_name="parent_sizer">
         <node
           class="wxNotebook"
-          background_colour="wxSYS_COLOUR_BTNFACE">
+          background_colour="wxSYS_COLOUR_BTNFACE"
+          flags="wxEXPAND"
+          proportion="1"
+          wxEVT_NOTEBOOK_PAGE_CHANGED="OnPageChanged">
           <node
             class="BookPage"
+            class_access="protected:"
             label="Log"
+            var_name="m_page_log"
             background_colour="wxSYS_COLOUR_BTNFACE"
             window_style="wxTAB_TRAVERSAL">
             <node
@@ -293,8 +298,9 @@
           </node>
           <node
             class="BookPage"
+            class_access="protected:"
             label="Node"
-            var_name="page_2"
+            var_name="m_page_node"
             background_colour="wxSYS_COLOUR_BTNFACE"
             window_style="wxTAB_TRAVERSAL">
             <node
@@ -307,9 +313,22 @@
                 var_name="static_box_2"
                 flags="wxEXPAND">
                 <node
-                  class="wxStaticText"
-                  label="Name:"
-                  var_name="m_txt_generator" />
+                  class="wxBoxSizer"
+                  flags="wxEXPAND">
+                  <node
+                    class="wxStaticText"
+                    label="Name:"
+                    var_name="m_txt_generator"
+                    flags="wxEXPAND"
+                    proportion="1" />
+                  <node
+                    class="wxButton"
+                    class_access="none"
+                    label="Parent..."
+                    var_name="btn"
+                    alignment="wxALIGN_CENTER_VERTICAL"
+                    wxEVT_BUTTON="OnParent" />
+                </node>
                 <node
                   class="wxStaticText"
                   label="Type:"

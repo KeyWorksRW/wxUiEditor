@@ -372,7 +372,7 @@ void App::ShowMsgWindow()
 
 void App::DbgCurrentTest(wxCommandEvent&)
 {
-    appMsgBox("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()", "Debug Testing");
+    MSG_WARNING("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()");
 }
 
 #endif  // defined(_DEBUG)

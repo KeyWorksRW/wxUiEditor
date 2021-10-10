@@ -18,16 +18,29 @@
         flags="wxEXPAND">
         <node
           class="wxStaticBoxSizer"
+          label="Selected Node"
+          var_name="static_box_2">
+          <node
+            class="wxStaticText"
+            label="Name:"
+            var_name="m_txt_generator" />
+          <node
+            class="wxStaticText"
+            label="Type:"
+            var_name="m_txt_type" />
+          <node
+            class="wxStaticText"
+            label="Memory:"
+            var_name="m_txt_memory" />
+        </node>
+        <node
+          class="wxStaticBoxSizer"
           label="Memory Usage"
           flags="wxEXPAND">
           <node
             class="wxStaticText"
             label="Project:"
             var_name="m_txt_project" />
-          <node
-            class="wxStaticText"
-            label="Selection:"
-            var_name="m_txt_selection" />
           <node
             class="wxStaticText"
             label="Clipboard:"

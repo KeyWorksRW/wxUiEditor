@@ -30,6 +30,8 @@ protected:
     // Class member variables
 
     wxStaticText* m_txt_clipboard;
+    wxStaticText* m_txt_generator;
+    wxStaticText* m_txt_memory;
     wxStaticText* m_txt_project;
-    wxStaticText* m_txt_selection;
+    wxStaticText* m_txt_type;
 };

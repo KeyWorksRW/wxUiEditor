@@ -51,8 +51,8 @@
 #include "insertwidget.h"     // InsertWidget -- Dialog to lookup and insert a widget
 
 #if defined(_DEBUG)
-    #include "debugging/nodeinfo.h"  // NodeInfo -- Node memory usage dialog
-    #include "ui/debugsettings.h"    // DebugSettings -- Settings while running the Debug version of wxUiEditor
+    #include "debugging/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
+    #include "debugging/nodeinfo.h"       // NodeInfo -- Node memory usage dialog
 #endif
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window

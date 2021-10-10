@@ -187,17 +187,16 @@ add_executable(wxUiEditor WIN32
 
     # Debug-only files
 
-    $<$<CONFIG:Debug>:src/debugging/msg_logging.cpp>  # Message logging class
-    $<$<CONFIG:Debug>:src/debugging/msgframe.cpp>  # Stores messages
-    $<$<CONFIG:Debug>:src/debugging/nodeinfo.cpp>  # Node memory usage dialog
-    $<$<CONFIG:Debug>:src/debugging/nodeinfo_base.cpp>  # wxUiEditor generated file
-
+    $<$<CONFIG:Debug>:src/debugging/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
     $<$<CONFIG:Debug>:src/debugging/dbg_code_diff.cpp>  # Compare code generationg
-    $<$<CONFIG:Debug>:src/debugging/dbg_code_diff_base.cpp>
+    $<$<CONFIG:Debug>:src/debugging/msg_logging.cpp>    # Message logging class
+    $<$<CONFIG:Debug>:src/debugging/msgframe.cpp>       # Stores messages
+    $<$<CONFIG:Debug>:src/debugging/nodeinfo.cpp>       # Node memory usage dialog
 
-    $<$<CONFIG:Debug>:src/ui/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
-    $<$<CONFIG:Debug>:src/ui/debugsettingsBase.cpp>  # wxUiEditor generated file
-    $<$<CONFIG:Debug>:src/ui/msgframe_base.cpp>  # wxUiEditor generated file
+    $<$<CONFIG:Debug>:src/debugging/msgframe_base.cpp>  # wxUiEditor generated file
+    $<$<CONFIG:Debug>:src/debugging/nodeinfo_base.cpp>  # wxUiEditor generated file
+    $<$<CONFIG:Debug>:src/debugging/dbg_code_diff_base.cpp>
+    $<$<CONFIG:Debug>:src/debugging/debugsettingsBase.cpp>  # wxUiEditor generated file
 
     $<$<CONFIG:Debug>:ttLib/src/winsrc/ttdebug_min.cpp>  # ttAssertionMsg
 )

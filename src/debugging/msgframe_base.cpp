@@ -5,7 +5,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/artprov.h>
+#include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/statbox.h>
 
 #include "msgframe_base.h"
 
@@ -22,7 +24,7 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 
 namespace wxue_img
 {
-    extern const unsigned char hidden_png[478];
+    extern const unsigned char hide_png[242];
 }
 
 MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -47,7 +49,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     menu_file->Append(menu_item_clear);
 
     auto menu_item_hide = new wxMenuItem(menu_file, id_hide, wxString::FromUTF8("&Hide"));
-    menu_item_hide->SetBitmap(GetImageFromArray(wxue_img::hidden_png, sizeof(wxue_img::hidden_png)));
+    menu_item_hide->SetBitmap(GetImageFromArray(wxue_img::hide_png, sizeof(wxue_img::hide_png)).Scale(16, 15, wxIMAGE_QUALITY_HIGH));
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, wxString::FromUTF8("&File"));
 
@@ -73,9 +75,56 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL);
+    m_notebook = new wxNotebook(this, wxID_ANY);
+    m_notebook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    parent_sizer->Add(m_notebook, wxSizerFlags(1).Expand().Border(wxALL));
+
+    m_page_log = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_page_log, wxString::FromUTF8("Log"));
+    m_page_log->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto log_sizer = new wxBoxSizer(wxVERTICAL);
+
+    m_textCtrl = new wxTextCtrl(m_page_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL);
     m_textCtrl->SetMinSize(wxSize(350, 300));
-    parent_sizer->Add(m_textCtrl, wxSizerFlags(1).Expand().Border(wxALL, 0));
+    log_sizer->Add(m_textCtrl, wxSizerFlags(1).Expand().Border(wxALL, 0));
+
+    m_page_log->SetSizerAndFit(log_sizer);
+
+    m_page_node = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_page_node, wxString::FromUTF8("Node"));
+    m_page_node->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto node_sizer = new wxBoxSizer(wxVERTICAL);
+
+    auto static_box_2 = new wxStaticBoxSizer(wxVERTICAL, m_page_node, wxString::FromUTF8("Selected Node"));
+    node_sizer->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));
+
+    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    static_box_2->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
+
+    m_txt_generator = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Name:"));
+    box_sizer->Add(m_txt_generator, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto btn = new wxButton(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Parent..."));
+    box_sizer->Add(btn, wxSizerFlags().Center().Border(wxALL));
+
+    m_txt_type = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Type:"));
+    static_box_2->Add(m_txt_type, wxSizerFlags().Border(wxALL));
+
+    m_txt_memory = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Memory:"));
+    static_box_2->Add(m_txt_memory, wxSizerFlags().Border(wxALL));
+
+    auto static_box = new wxStaticBoxSizer(wxVERTICAL, m_page_node, wxString::FromUTF8("Memory Usage"));
+    node_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
+
+    m_txt_project = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Project:"));
+    static_box->Add(m_txt_project, wxSizerFlags().Border(wxALL));
+
+    m_txt_clipboard = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Clipboard:"));
+    static_box->Add(m_txt_clipboard, wxSizerFlags().Border(wxALL));
+
+    m_page_node->SetSizerAndFit(node_sizer);
 
     SetSizerAndFit(parent_sizer);
 
@@ -89,25 +138,20 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     Bind(wxEVT_MENU, &MsgFrameBase::OnWarnings, this, id_warning_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnEvents, this, id_event_msgs);
     Bind(wxEVT_MENU, &MsgFrameBase::OnInfo, this, wxID_INFO);
+    m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &MsgFrameBase::OnPageChanged, this);
+    btn->Bind(wxEVT_BUTTON, &MsgFrameBase::OnParent, this);
 }
 
 namespace wxue_img
 {
 
-    const unsigned char hidden_png[478] {
+    const unsigned char hide_png[242] {
     137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,24,0,0,0,24,8,6,0,0,0,224,119,61,248,0,0,0,9,112,72,89,115,0,0,11,19,0,0,11,19,1,
-    0,154,156,24,0,0,1,144,73,68,65,84,72,199,229,148,161,171,242,96,20,198,127,219,68,28,12,6,98,48,12,4,131,197,106,147,89,52,25,140,107,
-    98,51,250,63,88,13,254,33,186,32,54,139,101,65,131,77,4,209,110,80,16,22,84,176,156,91,188,227,126,223,39,119,239,117,134,15,238,129,
-    193,222,195,206,121,118,158,231,188,15,252,15,225,251,190,180,219,109,249,60,119,58,29,25,12,6,242,54,128,84,42,37,128,0,98,154,102,
-    244,174,82,171,41,98,200,171,245,122,220,7,150,101,201,11,192,234,0,174,235,82,44,22,73,167,211,81,206,48,12,28,199,161,86,171,37,227,
-    126,189,94,75,92,108,183,91,249,177,6,253,126,95,70,163,17,155,205,6,203,178,104,52,26,84,171,85,202,229,50,134,97,176,223,239,89,46,
-    151,204,231,115,14,135,3,142,227,224,121,30,195,225,240,185,38,179,217,76,186,221,174,60,248,78,252,120,158,39,190,239,11,128,182,88,
-    44,100,50,153,176,219,237,48,77,147,124,62,79,38,147,137,192,199,227,49,182,109,115,185,92,168,84,42,228,114,57,166,211,41,217,108,150,
-    211,233,68,171,213,194,178,44,0,238,247,59,199,227,145,48,12,41,20,10,52,155,205,120,29,122,189,158,0,98,219,118,196,123,169,84,18,64,
-    234,245,186,36,189,7,18,4,1,34,130,235,186,81,242,122,189,178,90,173,208,117,253,51,175,189,186,72,114,62,159,191,221,162,184,187,160,
-    130,252,232,243,164,88,211,98,251,232,42,99,220,110,183,119,216,205,183,118,240,15,53,65,16,40,25,158,178,217,253,77,211,131,158,228,
-    102,247,132,111,194,48,84,30,255,39,252,253,49,197,219,39,248,250,231,170,205,95,18,92,85,220,164,91,245,139,226,3,173,7,253,64,244,
-    107,162,174,0,0,0,0,73,69,78,68,174,66,96,130
+    0,154,156,24,0,0,0,164,73,68,65,84,72,199,237,149,75,2,128,32,8,68,25,239,127,103,90,212,66,17,100,176,218,201,14,133,158,124,19,57,
+    146,8,140,174,34,34,170,122,95,2,248,5,208,67,30,16,235,79,25,84,33,75,80,116,225,66,38,231,25,138,82,4,12,196,1,13,74,219,73,143,213,
+    205,3,52,162,165,31,183,231,54,50,47,146,86,73,135,133,37,145,12,17,104,104,224,116,79,161,38,104,236,192,20,90,86,188,34,35,115,180,
+    57,143,108,251,215,83,69,206,192,11,40,232,85,177,1,65,121,85,48,93,213,157,35,26,180,145,14,208,5,13,107,146,53,79,117,61,63,243,1,
+    122,221,38,32,4,54,175,255,35,159,69,124,68,46,21,182,88,38,116,19,247,168,0,0,0,0,73,69,78,68,174,66,96,130
     };
 
 }

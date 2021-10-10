@@ -51,8 +51,8 @@
 #include "insertwidget.h"     // InsertWidget -- Dialog to lookup and insert a widget
 
 #if defined(_DEBUG)
-    #include "debugging/nodeinfo.h"  // NodeInfo -- Node memory usage dialog
-    #include "ui/debugsettings.h"    // DebugSettings -- Settings while running the Debug version of wxUiEditor
+    #include "debugging/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
+    #include "debugging/nodeinfo.h"       // NodeInfo -- Node memory usage dialog
 #endif
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
@@ -157,7 +157,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
         wxEVT_MENU,
         [this](wxCommandEvent&)
         {
-            NodeInfo dlg(this);
+            NodeInfo dlg(this, m_selected_node ? m_selected_node.get() : nullptr);
             dlg.ShowModal();
         },
         id_NodeMemory);
@@ -510,6 +510,10 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
 
     // If a code generation panel is open, then attempt to locate the node's name in that panel
     FindItemName(sel_node);
+
+#if defined(_DEBUG)
+    g_pMsgLogging->OnNodeSelected();
+#endif
 
     UpdateFrame();
 }

@@ -23,6 +23,7 @@ class MsgLogging
 #endif
 {
 public:
+
     void ShowLogger();
     void CloseLogger();
 
@@ -32,6 +33,7 @@ public:
     void AddErrorMsg(ttlib::cview msg);
 
 #if defined(_DEBUG)
+    void OnNodeSelected();
     void DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogRecordInfo& info) override;
 #endif
 

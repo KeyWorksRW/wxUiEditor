@@ -11,7 +11,7 @@
 
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
-#include "msgframe.h"  // auto-generated: ../ui/msgframe_base.h and ../ui/msgframe_base.cpp
+#include "msgframe.h"  // auto-generated: msgframe_base.h and msgframe_base.cpp
 
 #include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame

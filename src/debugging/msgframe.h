@@ -9,7 +9,7 @@
 
 #include <wx/log.h>
 
-#include "../ui/msgframe_base.h"
+#include "msgframe_base.h"
 
 class MsgFrame : public MsgFrameBase
 {

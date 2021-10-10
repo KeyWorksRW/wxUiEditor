@@ -226,7 +226,7 @@
             wxEVT_MENU="OnClear" />
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art_src/hidden.png;[-1,-1]"
+            bitmap="Embed;../art_src/hide.png;[16,15]"
             id="id_hide"
             label="&amp;Hide"
             var_name="menu_item_hide"
@@ -271,12 +271,70 @@
         orientation="wxVERTICAL"
         var_name="parent_sizer">
         <node
-          class="wxTextCtrl"
-          style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL"
-          minimum_size="350,300"
-          border_size="0"
-          flags="wxEXPAND"
-          proportion="1" />
+          class="wxNotebook"
+          background_colour="wxSYS_COLOUR_BTNFACE">
+          <node
+            class="BookPage"
+            label="Log"
+            background_colour="wxSYS_COLOUR_BTNFACE"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="log_sizer">
+              <node
+                class="wxTextCtrl"
+                style="wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL"
+                minimum_size="350,300"
+                border_size="0"
+                flags="wxEXPAND"
+                proportion="1" />
+            </node>
+          </node>
+          <node
+            class="BookPage"
+            label="Node"
+            var_name="page_2"
+            background_colour="wxSYS_COLOUR_BTNFACE"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="node_sizer">
+              <node
+                class="wxStaticBoxSizer"
+                label="Selected Node"
+                var_name="static_box_2"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  label="Name:"
+                  var_name="m_txt_generator" />
+                <node
+                  class="wxStaticText"
+                  label="Type:"
+                  var_name="m_txt_type" />
+                <node
+                  class="wxStaticText"
+                  label="Memory:"
+                  var_name="m_txt_memory" />
+              </node>
+              <node
+                class="wxStaticBoxSizer"
+                label="Memory Usage"
+                flags="wxEXPAND">
+                <node
+                  class="wxStaticText"
+                  label="Project:"
+                  var_name="m_txt_project" />
+                <node
+                  class="wxStaticText"
+                  label="Clipboard:"
+                  var_name="m_txt_clipboard" />
+              </node>
+            </node>
+          </node>
+        </node>
       </node>
     </node>
   </node>

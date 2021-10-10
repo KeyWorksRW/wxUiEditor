@@ -54,5 +54,5 @@ namespace wxue_img
 {
     // Images declared in this class module:
 
-    extern const unsigned char hidden_png[494];
+    extern const unsigned char hidden_png[478];
 }

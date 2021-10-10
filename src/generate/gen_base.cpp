@@ -952,6 +952,10 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     {
         code << "wxPGProperty* " << node->get_node_name() << ';';
     }
+    else if (class_name == "BookPage")
+    {
+        code << "wxPanel* " << node->get_node_name() << ';';
+    }
     else if (class_name == "propGridPage")
     {
         code << "wxPropertyGridPage* " << node->get_node_name() << ';';

@@ -23,10 +23,7 @@ public:
     wxVariant ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const override;
     void RefreshChildren() override;
 
-    const wxPGEditor* DoGetEditorClass() const override
-    {
-        return wxPGEditor_TextCtrl;
-    }
+    const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrl; }
 
     ImageProperties& GetImageProperties() { return m_img_props; }
 

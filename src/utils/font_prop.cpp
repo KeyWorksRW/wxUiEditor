@@ -100,14 +100,15 @@ wxFont FontProperty::GetFont() const
 wxString FontProperty::as_wxString() const
 {
     wxString str;
-    str.Printf("%s,%d,%d,%d,%d,%d", m_face, (int) m_style, (int) m_weight, (int) m_pointSize, (int) m_family, m_underlined ? 1 : 0);
+    str.Printf("%s,%d,%d,%d,%d,%d", m_face, (int) m_style, (int) m_weight, (int) m_pointSize, (int) m_family,
+               m_underlined ? 1 : 0);
     return str;
 }
 
 ttlib::cstr FontProperty::as_string() const
 {
     ttlib::cstr str;
-    str.Format("%s,%d,%d,%d,%d,%d", m_face.utf8_str().data(), (int) m_style, (int) m_weight, (int) m_pointSize, (int) m_family,
-               m_underlined ? 1 : 0);
+    str.Format("%s,%d,%d,%d,%d,%d", m_face.utf8_str().data(), (int) m_style, (int) m_weight, (int) m_pointSize,
+               (int) m_family, m_underlined ? 1 : 0);
     return str;
 }

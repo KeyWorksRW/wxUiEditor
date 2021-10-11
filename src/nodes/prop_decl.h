@@ -33,7 +33,7 @@ class PropDeclaration : public PropChildDeclaration
 {
 public:
     PropDeclaration(GenEnum::PropName prop_name, GenEnum::PropType prop_type, ttlib::cview def_value, ttlib::cview help,
-                 ttlib::cview customEditor)
+                    ttlib::cview customEditor)
     {
         m_def_value = def_value;
         m_help = help;

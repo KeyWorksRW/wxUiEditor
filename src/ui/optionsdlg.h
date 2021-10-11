@@ -15,6 +15,6 @@ public:
     OptionsDlg(wxWindow* parent) : OptionsDlgBase(parent) {}
 
 protected:
-	void OnAffirmative(wxCommandEvent& WXUNUSED(event)) override;
+    void OnAffirmative(wxCommandEvent& WXUNUSED(event)) override;
     void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
 };

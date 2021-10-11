@@ -37,7 +37,6 @@ public:
     void ExpandCollapse(Node* node);
 
 protected:
-
     void InsertNode(Node* node);
     void DeleteNode(Node* item);
     void RecreateChildren(Node* node);

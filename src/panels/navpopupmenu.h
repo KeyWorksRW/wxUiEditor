@@ -114,5 +114,7 @@ protected:
 private:
     Node* m_node { nullptr };
     Node* m_child { nullptr };
-    GenEnum::GenName m_tool_name { GenEnum::GenName::gen_name_array_size };  // used by MenuNEW_ITEM -> wxGetApp().CreateToolNode(m_tool_name)
+    GenEnum::GenName m_tool_name {
+        GenEnum::GenName::gen_name_array_size
+    };  // used by MenuNEW_ITEM -> wxGetApp().CreateToolNode(m_tool_name)
 };

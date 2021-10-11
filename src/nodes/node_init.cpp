@@ -177,7 +177,6 @@ static const ParentChild lstParentChild[] = {
     { type_project, type_toolbar_form, infinite },
     { type_project, type_wizard, infinite },
 
-
     // Containers
 
     { type_container, type_gbsizer, one },

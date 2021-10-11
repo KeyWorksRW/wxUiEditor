@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <wx/artprov.h>   // wxArtProvider class
+#include <wx/artprov.h>  // wxArtProvider class
 
 #include "../ui/artpropdlg_base.h"
 

@@ -87,7 +87,7 @@ public:
 
     uiPREFERENCES& GetPrefs() { return m_prefs; }
 
-    bool isFireCreationMsgs()  const noexcept { return (m_prefs.flags & PREFS_CREATION_MSG); }
+    bool isFireCreationMsgs() const noexcept { return (m_prefs.flags & PREFS_CREATION_MSG); }
 
     bool IsPjtMemberPrefix() const noexcept { return (m_prefs.project_flags & PREFS_PJT_MEMBER_PREFIX); }
 
@@ -120,7 +120,6 @@ protected:
     int OnExit() override;
 
     auto LoadProject(pugi::xml_document& doc) -> std::shared_ptr<Node>;
-
 
 private:
     std::shared_ptr<Node> m_project;

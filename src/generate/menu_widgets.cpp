@@ -389,7 +389,9 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenAdditionalCode(GenEnum::GenCodeT
     {
         if (node->GetParent()->isGen(gen_PopupMenu))
         {
-            code << "\t" "AppendSubMenu(" << node->get_node_name() << ", ";
+            code << "\t"
+                    "AppendSubMenu("
+                 << node->get_node_name() << ", ";
         }
         else
         {

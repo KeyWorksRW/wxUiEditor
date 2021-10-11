@@ -31,7 +31,8 @@
 class ueStatusBar : public wxStatusBar
 {
 public:
-    ueStatusBar(wxWindow* parent, wxWindowID id = wxID_ANY, long style = wxSTB_DEFAULT_STYLE, const wxString& name = wxStatusBarNameStr)
+    ueStatusBar(wxWindow* parent, wxWindowID id = wxID_ANY, long style = wxSTB_DEFAULT_STYLE,
+                const wxString& name = wxStatusBarNameStr)
     {
         m_pDC = nullptr;
         Create(parent, id, style, name);

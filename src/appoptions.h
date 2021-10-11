@@ -39,7 +39,6 @@ public:
     void set_ChmFile(const wxString& str) { m_chm_file = str; }
 #endif  // _DEBUG
 
-
 private:
     bool m_sizers_all_borders;
     bool m_sizers_always_expand;
@@ -48,17 +47,18 @@ private:
 
     wxString m_src_extension;
     wxString m_hdr_extension;
-    wxString m_member_prefix {  };
+    wxString m_member_prefix {};
 
 #if defined(_DEBUG)
     bool m_filter_warning_msgs { false };  // controls display of warning messages in debug CMsgFrame window
 
     wxString m_chm_file;  // path to wxWidgets chm file
-#endif  // _DEBUG
-
-
+#endif                    // _DEBUG
 };
 
 extern AppOptions g_AppOptions;
 
-inline AppOptions& GetAppOptions() { return g_AppOptions; }
+inline AppOptions& GetAppOptions()
+{
+    return g_AppOptions;
+}

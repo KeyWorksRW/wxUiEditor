@@ -12,23 +12,22 @@
 class ImportWinResDlg : public ImportWinResBase
 {
 public:
-	ImportWinResDlg(wxWindow* parent, ttString filename = wxEmptyString);
+    ImportWinResDlg(wxWindow* parent, ttString filename = wxEmptyString);
 
-
-	const ttlib::cstr& GetRcFilename() { return m_rcFilename; }
-	std::vector<ttlib::cstr>& GetDlgNames() { return m_dialogs; }
+    const ttlib::cstr& GetRcFilename() { return m_rcFilename; }
+    std::vector<ttlib::cstr>& GetDlgNames() { return m_dialogs; }
 
 protected:
-	// Handlers for ImportWinResBase events.
-	void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
-	void OnResourceFile(wxFileDirPickerEvent& WXUNUSED(event)) override;
-	void OnSelectAll(wxCommandEvent& WXUNUSED(event)) override;
-	void OnClearAll(wxCommandEvent& WXUNUSED(event)) override;
-	void OnOk(wxCommandEvent& WXUNUSED(event)) override;
+    // Handlers for ImportWinResBase events.
+    void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
+    void OnResourceFile(wxFileDirPickerEvent& WXUNUSED(event)) override;
+    void OnSelectAll(wxCommandEvent& WXUNUSED(event)) override;
+    void OnClearAll(wxCommandEvent& WXUNUSED(event)) override;
+    void OnOk(wxCommandEvent& WXUNUSED(event)) override;
 
-	void ReadRcFile();
+    void ReadRcFile();
 
 private:
-	ttlib::cstr m_rcFilename;
-	std::vector<ttlib::cstr> m_dialogs;
+    ttlib::cstr m_rcFilename;
+    std::vector<ttlib::cstr> m_dialogs;
 };

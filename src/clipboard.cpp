@@ -85,7 +85,6 @@ NodeSharedPtr GetClipboardNode()
             WxSmith smith;
             return smith.CreateXrcNode(child, nullptr);
         }
-
     }
 
     return {};

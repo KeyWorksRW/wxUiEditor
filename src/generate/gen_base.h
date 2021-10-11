@@ -61,7 +61,6 @@ class BaseCodeGenerator
 public:
     BaseCodeGenerator();
 
-
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 

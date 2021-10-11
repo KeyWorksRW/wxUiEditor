@@ -26,8 +26,8 @@
 #include "menucombobox_base.h"
 #include "menudatactrl_base.h"
 #include "menulistbox_base.h"
-#include "menuspin_base.h"
 #include "menuribbontype_base.h"
+#include "menuspin_base.h"
 #include "menustaticsizer_base.h"
 
 // The base class specifies a larger size for the panel to make it easier to work with in the Mockup window. We switch that

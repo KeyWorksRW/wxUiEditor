@@ -54,7 +54,10 @@ public:
 
     // Sets value only if the property exists.
     template <typename T>
-    void prop_set_value(PropName name, T value) { GetNode()->prop_set_value(name, value); }
+    void prop_set_value(PropName name, T value)
+    {
+        GetNode()->prop_set_value(name, value);
+    }
 
     static bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);
 

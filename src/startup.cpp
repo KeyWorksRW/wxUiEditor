@@ -41,7 +41,8 @@ class CStartupHtmlWindow : public wxHtmlWindow
 {
 public:
     CStartupHtmlWindow(CStartup* caller) :
-        wxHtmlWindow(caller, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_NEVER | wxHW_NO_SELECTION | wxRAISED_BORDER)
+        wxHtmlWindow(caller, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                     wxHW_SCROLLBAR_NEVER | wxHW_NO_SELECTION | wxRAISED_BORDER)
     {
         m_Startup = caller;
     }
@@ -52,7 +53,8 @@ private:
     CStartup* m_Startup;
 };
 
-CStartup::CStartup() : wxDialog(nullptr, wxID_ANY, txtAppname, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+CStartup::CStartup() :
+    wxDialog(nullptr, wxID_ANY, txtAppname, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     SetIcon(GetIconImage("logo32"));
 

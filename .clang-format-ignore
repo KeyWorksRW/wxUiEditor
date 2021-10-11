@@ -1,3 +1,4 @@
 ./src/ui/*_base.*
 ./src/debugging
 ./testing/src/ui/*_base.*
+./src/ui/ui_images.*

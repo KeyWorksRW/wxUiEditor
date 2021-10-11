@@ -139,14 +139,6 @@ Files:
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ui/insertwidget.cpp         # Dialog to lookup and insert a widget
-    ui/menubutton_base.cpp      # Drop-down menu for ribbon panel
-    ui/menucheckbox_base.cpp    # Drop-down menu for ribbon panel
-    ui/menucombobox_base.cpp    # Drop-down menu for ribbon panel
-    ui/menudatactrl_base.cpp    # Drop-down menu for ribbon panel
-    ui/menulistbox_base.cpp     # Drop-down menu for ribbon panel
-    ui/menuribbontype_base.cpp  # Drop-down menu for ribbon panel
-    ui/menuspin_base.cpp        # Drop-down menu for ribbon panel
-    ui/menustaticsizer_base.cpp # Drop-down menu for ribbon panel
     ui/newdialog.cpp            # Dialog for creating a new project dialog
     ui/newframe.cpp             # Dialog for creating a new project wxFrame
     ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
@@ -159,13 +151,21 @@ Files:
     ui/embedimg_base.cpp
     ui/eventhandlerdlg_base.cpp
     ui/gridbag_item_base.cpp
+    ui/import_base.cpp
     ui/importwinres_base.cpp
     ui/insertwidget_base.cpp
     ui/mainframe_base.cpp
+    ui/menubutton_base.cpp      # Drop-down menu for ribbon panel
+    ui/menucheckbox_base.cpp    # Drop-down menu for ribbon panel
+    ui/menucombobox_base.cpp    # Drop-down menu for ribbon panel
+    ui/menudatactrl_base.cpp    # Drop-down menu for ribbon panel
+    ui/menulistbox_base.cpp     # Drop-down menu for ribbon panel
+    ui/menuribbontype_base.cpp  # Drop-down menu for ribbon panel
+    ui/menuspin_base.cpp        # Drop-down menu for ribbon panel
+    ui/menustaticsizer_base.cpp # Drop-down menu for ribbon panel
     ui/navtoolbar_base.cpp
     ui/newdialog_base.cpp
     ui/newframe_base.cpp
-    ui/import_base.cpp
     ui/newribbon_base.cpp
     ui/optionsdlg_base.cpp
     ui/ribbonpanel_base.cpp

@@ -201,7 +201,8 @@ ttlib::cstr ConvertSystemColourToString(long colour)
 
 wxSystemColour ConvertToSystemColour(ttlib::cview value)
 {
-// clang-format off
+    // clang-format off
+
     #define IS_SYSCOLOUR(name) if (value.is_sameas(#name)) return name;
     #define ELSE_IS_SYSCOLOUR(name) else if (value.is_sameas(#name)) return name;
 

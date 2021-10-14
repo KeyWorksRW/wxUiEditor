@@ -135,7 +135,8 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
         {
             m_last_heartbeat = static_cast<intmax_t>(result);
             ttString cmd;
-            cmd << m_waka_cli.wx_str() << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing --project ";
+            cmd << m_waka_cli.wx_str()
+                << " --plugin \"wxUiEditor/0.5.0 wxUiEditor-wakatime/0.5.0\" --category designing --project ";
             ttString name = wxGetApp().GetProjectFileName().filename();
             name.remove_extension();
             cmd << name.wx_str();

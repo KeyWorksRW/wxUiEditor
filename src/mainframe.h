@@ -18,14 +18,15 @@
 
 using namespace GenEnum;
 
-class CustomEvent;
 class BasePanel;
-class NavigationPanel;
-class PropGridPanel;
-class MockupPanel;
-class MockupParent;
+class CustomEvent;
 class FocusKillerEvtHandler;
 class GridBagAction;
+class MockupPanel;
+class MockupParent;
+class NavigationPanel;
+class PropGridPanel;
+class WakaTime;
 
 class wxAuiNotebook;
 class wxAuiNotebookEvent;
@@ -43,6 +44,20 @@ class ChangePositionAction;
 constexpr const size_t StatusPanels = 3;
 
 inline constexpr auto txt_main_window_config = "/main_window";
+
+/*
+
+    It's fine to call UpdateWakaTime() frequently since it keeps a timer so that wakatime logging is only updated once every
+   two minutes. The exception is when a file is saved -- this will always notify wakatime. The following functions call
+   UpdateWakaTime() automatically:
+
+        UpdateFrame()
+        ProjectSaved()
+        OnGenerateCode()
+        RemoveNode()
+        ChangeEventHandler()
+
+*/
 
 class MainFrame : public MainFrameBase
 {
@@ -231,6 +246,7 @@ protected:
 
     void UpdateLayoutTools();
     void UpdateMoveMenu();
+    void UpdateWakaTime(bool FileSavedEvent = false);
 
 private:
     wxSplitterWindow* m_MainSplitter { nullptr };
@@ -240,6 +256,7 @@ private:
     PropGridPanel* m_property_panel;
     NavigationPanel* m_nav_panel;
     RibbonPanel* m_ribbon_panel;
+    std::unique_ptr<WakaTime> m_wakatime { nullptr };
 
     MockupParent* m_mockupPanel;
 

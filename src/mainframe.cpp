@@ -40,6 +40,7 @@
 #include "uifuncs.h"       // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"         // Utility functions that work with properties
+#include "wakatime.h"      // WakaTime -- Updates WakaTime metrics
 #include "write_code.h"    // Write code to Scintilla or file
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
@@ -84,6 +85,11 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
     SetIcons(bundle);
 
     SetTitle("wxUiEditor");
+
+    if (WakaTime::IsWakaTimeAvailable())
+    {
+        m_wakatime = std::make_unique<WakaTime>();
+    }
 
 #if defined(_DEBUG)
     auto menuDebug = new wxMenu;
@@ -406,6 +412,8 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
 {
     wxGetApp().GetProjectSettings()->UpdateEmbedNodes();
     GenerateCodeFiles(this);
+    UpdateWakaTime();
+
     m_isProject_generated = true;
 
     m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
@@ -638,6 +646,7 @@ void MainFrame::UpdateFrame()
 
     UpdateMoveMenu();
     UpdateLayoutTools();
+    UpdateWakaTime();
 }
 
 void MainFrame::OnCopy(wxCommandEvent&)
@@ -1407,6 +1416,7 @@ void MainFrame::RemoveNode(Node* node, bool isCutMode)
         undo_str << "delete " << node->DeclName();
         PushUndoAction(std::make_shared<RemoveNodeAction>(node, undo_str, false));
     }
+    UpdateWakaTime();
 }
 
 void MainFrame::ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value)
@@ -1414,6 +1424,7 @@ void MainFrame::ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value)
     if (event && value != event->get_value())
     {
         PushUndoAction(std::make_shared<ModifyEventAction>(event, value));
+        UpdateWakaTime();
     }
 }
 
@@ -1432,6 +1443,18 @@ Node* MainFrame::FindChildSizerItem(Node* node)
     }
 
     return nullptr;
+}
+
+void MainFrame::UpdateWakaTime(bool FileSavedEvent)
+{
+    // REVIEW: [KeyWorks - 10-14-2021] Before this can be added to release, we need an option that allows the user to disable
+    // it.
+#if defined(_DEBUG)
+    if (m_wakatime)
+    {
+        m_wakatime->SendHeartbeat(FileSavedEvent);
+    }
+#endif  // _DEBUG
 }
 
 #if defined(_DEBUG)

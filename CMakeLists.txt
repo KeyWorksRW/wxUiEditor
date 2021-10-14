@@ -58,14 +58,15 @@ add_executable(wxUiEditor WIN32
     src/bitmaps.cpp           # Map of bitmaps accessed by name
     src/clipboard.cpp         # Handles reading and writing OS clipboard data
     src/cstm_event.cpp        # Custom Event handling
-    src/gen_enums.cpp         # Enumerations for generators
     src/frame_status_bar.cpp  # MainFrame status bar functions
+    src/gen_enums.cpp         # Enumerations for generators
     src/gzip.cpp              # Convert compiled GZIP arrays into original strings/images
     src/pjtsettings.cpp       # Hold data for currently loaded project
     src/startup.cpp           # Dialog to display is wxUE is launched with no arguments
     src/strings.cpp           # Contains translatable strings
     src/undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     src/undo_stack.cpp        # Maintain an undo and redo stack
+    src/wakatime.cpp          # Updates WakaTime metrics
     src/xpm.cpp               # All xpm files
 
     src/customprops/evt_string_prop.cpp   # Derived wxStringProperty class for event function

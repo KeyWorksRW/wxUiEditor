@@ -31,14 +31,15 @@ Files:
     bitmaps.cpp           # Map of bitmaps accessed by name
     clipboard.cpp         # Handles reading and writing OS clipboard data
     cstm_event.cpp        # Custom Event handling
-    gen_enums.cpp         # Enumerations for generators
     frame_status_bar.cpp  # MainFrame status bar functions
+    gen_enums.cpp         # Enumerations for generators
     gzip.cpp              # Convert compiled GZIP arrays into original strings/images
     pjtsettings.cpp       # Hold data for currently loaded project
     startup.cpp           # Dialog to display is wxUE is launched with no arguments
     strings.cpp           # Contains translatable strings
     undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     undo_stack.cpp        # Maintain an undo and redo stack
+    wakatime.cpp          # Updates WakaTime metrics
     xpm.cpp               # All xpm files
 
     customprops/evt_string_prop.cpp   # Derived wxStringProperty class for event function

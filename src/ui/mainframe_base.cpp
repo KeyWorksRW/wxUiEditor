@@ -286,7 +286,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     SetMenuBar(m_menubar);
 
     m_toolbar = CreateToolBar(wxTB_FLAT|wxTB_HORIZONTAL);
-
     m_toolbar->AddTool(id_NewProject, wxString::FromUTF8("New"), GetImageFromArray(wxue_img::new_png, sizeof(wxue_img::new_png)),
             wxString::FromUTF8("New Project (Ctrl+N)"));
 

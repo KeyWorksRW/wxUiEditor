@@ -2000,7 +2000,7 @@
       class_name="RibbonPanelBase"
       derived_class_name="RibbonPanel"
       generate_ids="false"
-      mockup_size="600,100"
+      mockup_size="700,100"
       size="-1,-1">
       <node
         class="wxBoxSizer"

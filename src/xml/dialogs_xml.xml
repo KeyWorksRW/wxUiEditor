@@ -91,7 +91,7 @@ inline const char* dialogs_xml = R"===(<?xml version="1.0"?>
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyPanelBase</property>
 		<property name="mockup_size" type="wxSize"
-			help="This is the minimum size to display the panel in the Mockup Panel. It does not affect the actual size of the panel in your compiled code.">200, 200</property>
+			help="This is the minimum size to display the panel in the Mockup Panel. It does not affect the actual size of the panel in your compiled code. Note that for a wxRibbonBar this needs to be as wide as the widest ribbon panel or you will see a question mark for the wxRibbonPage.">200, 200</property>
 
 		<!-- We specify the category this way rather than inheriting it so that it appears before the Window Settings category. -->
 		<category name="Code Generation" base_name="Code Generation" />

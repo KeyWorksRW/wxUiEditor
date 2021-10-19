@@ -569,7 +569,7 @@ ttlib::cstr ConstructTool(Node* node)
     // If the user doesn't want access, then we have no use for the return value.
     if (node->IsLocal())
     {
-        if (node->isParent(gen_wxToolBar))
+        if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxAuiToolBar))
             code << node->get_parent_name() << "->AddTool(" << node->prop_as_string(prop_id) << ", ";
         else
             code << "AddTool(" << node->prop_as_string(prop_id) << ", ";

@@ -485,6 +485,17 @@ void MainFrame::ProjectLoaded()
 
     m_selected_node = wxGetApp().GetProjectPtr();
 
+    if (!m_iswakatime_bound)
+    {
+        m_iswakatime_bound = true;
+        Bind(wxEVT_ACTIVATE,
+             [this](wxActivateEvent&)
+             {
+                 if (m_wakatime && wxTheApp->IsActive())
+                     m_wakatime->ResetHeartbeat();
+             });
+    }
+
     UpdateFrame();
 }
 

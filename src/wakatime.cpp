@@ -154,3 +154,17 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
         }
     }
 }
+
+void WakaTime::ResetHeartbeat()
+{
+    auto result = time(nullptr);
+
+    if (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval))
+    {
+        // If the user just switched away for a short period of time, we'll continue sending the heartbeats normally.
+        // However, if too much time has passed, then reset the heartbeat timer so that the user doesn't get credited for
+        // time spent with another app activated.
+
+        m_last_heartbeat = static_cast<intmax_t>(result);
+    }
+}

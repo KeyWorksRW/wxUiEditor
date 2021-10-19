@@ -296,6 +296,8 @@ private:
     bool m_isProject_generated { false };
     bool m_isProject_modified { false };
 
+    bool m_iswakatime_bound { false };
+
     // If true, the entire project was imported, and a Save As must be done before a Save is
     // allowed.
     bool m_isImported { false };

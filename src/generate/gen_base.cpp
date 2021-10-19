@@ -1235,6 +1235,24 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         GenContextMenuHandler(form_node, node_ctx_menu);
 }
 
+// clang-format off
+
+// These are the types that need to have generator->GenAdditionalCode() called after the type is constructed
+constexpr const GenType aftercode_types[] = {
+    type_menubar,
+    type_menu,
+    type_submenu,
+    type_toolbar,
+    type_aui_toolbar,
+    type_tool,
+    type_listbook,
+    type_simplebook,
+    type_notebook,
+    type_auinotebook,
+    type_treelistctrl,
+};
+// clang-format on
+
 void BaseCodeGenerator::GenConstruction(Node* node)
 {
     auto type = node->gen_type();
@@ -1244,7 +1262,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     {
         if (auto result = generator->GenConstruction(node); result)
         {
-            m_source->writeLine();
+            // Don't add blank lines when adding tools to a toolbar
+            if (type != type_aui_tool && type != type_tool)
+            {
+                m_source->writeLine();
+            }
 
             // Some code generation may put added lines in a { } block, in which case we need to keep indents.
             m_source->writeLine(result.value(), (ttlib::is_found(result.value().find('{')) ||
@@ -1272,7 +1294,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
 
         auto parent = node->GetParent();
-        if (parent->IsSizer())
+        if (parent->IsSizer() && type != type_aui_toolbar)
         {
             ttlib::cstr code;
             if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
@@ -1400,16 +1422,22 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 }
             }
         }
-        else if (type == type_menubar || type == type_menu || type == type_submenu || type == type_toolbar ||
-                 type == type_tool || type == type_listbook || type == type_simplebook || type == type_notebook ||
-                 type == type_auinotebook || type == type_treelistctrl)
+
+        else
         {
-            if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
+            for (auto& iter: aftercode_types)
             {
-                if (result.value().size())
-                    m_source->writeLine(result.value(), indent::none);
+                if (type == iter)
+                {
+                    if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
+                    {
+                        if (result.value().size())
+                            m_source->writeLine(result.value(), indent::none);
+                    }
+                    m_source->writeLine();
+                    break;
+                }
             }
-            m_source->writeLine();
         }
     }
 

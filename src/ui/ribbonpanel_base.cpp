@@ -28,6 +28,7 @@ namespace wxue_img
 {
     extern const unsigned char WXPOPupTransientWindow_png[358];
     extern const unsigned char auinotebook_png[284];
+    extern const unsigned char auitoolbar_png[476];
     extern const unsigned char book_page_png[229];
     extern const unsigned char calendar_png[937];
     extern const unsigned char colourPickerIcon_png[534];
@@ -362,13 +363,16 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     }
     bars_bar_menu->Realize();
 
-    auto panel_bars_tool = new wxRibbonPanel(m_page_bars, wxID_ANY, wxString::FromUTF8("Tool"));
+    auto panel_bars_tool = new wxRibbonPanel(m_page_bars, wxID_ANY, wxString::FromUTF8("Toolbar"));
 
     auto bars_bar_tool = new wxRibbonToolBar(panel_bars_tool, wxID_ANY);
     {
         bars_bar_tool->AddTool(gen_wxToolBar, GetImageFromArray(wxue_img::wxtoolBar_png, sizeof(wxue_img::wxtoolBar_png)), wxString::FromUTF8("wxToolBar"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(gen_tool, GetImageFromArray(wxue_img::tool_png, sizeof(wxue_img::tool_png)), wxString::FromUTF8("Tool"), wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(gen_toolSeparator, GetImageFromArray(wxue_img::toolseparator_png, sizeof(wxue_img::toolseparator_png)), wxString::FromUTF8("Tool Separator"), wxRIBBON_BUTTON_NORMAL);
+        bars_bar_tool->AddSeparator();
+        bars_bar_tool->AddTool(gen_wxAuiToolBar, GetImageFromArray(wxue_img::auitoolbar_png, sizeof(wxue_img::auitoolbar_png)), wxString::FromUTF8("wxAuiToolBar"), wxRIBBON_BUTTON_NORMAL);
+        bars_bar_tool->AddTool(gen_auitool, GetImageFromArray(wxue_img::tool_png, sizeof(wxue_img::tool_png)), wxString::FromUTF8("Aui Tool"), wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_tool->Realize();
 

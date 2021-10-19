@@ -2000,7 +2000,7 @@
       class_name="RibbonPanelBase"
       derived_class_name="RibbonPanel"
       generate_ids="false"
-      mockup_size="600,100"
+      mockup_size="700,100"
       size="-1,-1">
       <node
         class="wxBoxSizer"
@@ -2614,7 +2614,7 @@
             </node>
             <node
               class="wxRibbonPanel"
-              label="Tool"
+              label="Toolbar"
               var_name="panel_bars_tool">
               <node
                 class="wxRibbonToolBar"
@@ -2635,6 +2635,18 @@
                   bitmap="Embed;../art_src/toolseparator.png;[-1,-1]"
                   help="Tool Separator"
                   id="gen_toolSeparator" />
+                <node
+                  class="ribbonSeparator" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/auitoolbar.png;[-1,-1]"
+                  help="wxAuiToolBar"
+                  id="gen_wxAuiToolBar" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/tool.png;[-1,-1]"
+                  help="Aui Tool"
+                  id="gen_auitool" />
               </node>
             </node>
             <node

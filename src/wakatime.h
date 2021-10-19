@@ -12,6 +12,11 @@ class WakaTime
 public:
     WakaTime();
 
+    // Call this to reset the heartbeat timer so that the next heartbeat won't get sent for
+    // two minutes. This is used to prevent app switching from generating heartbeats even
+    // though wxUiEditor wasn't being used.
+    void ResetHeartbeat();
+
     void SendHeartbeat(bool FileSavedEvent = false);
 
     static bool IsWakaTimeAvailable();

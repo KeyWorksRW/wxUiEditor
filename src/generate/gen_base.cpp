@@ -1262,7 +1262,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     {
         if (auto result = generator->GenConstruction(node); result)
         {
-            m_source->writeLine();
+            // Don't add blank lines when adding tools to a toolbar
+            if (type != type_aui_tool && type != type_tool)
+            {
+                m_source->writeLine();
+            }
 
             // Some code generation may put added lines in a { } block, in which case we need to keep indents.
             m_source->writeLine(result.value(), (ttlib::is_found(result.value().find('{')) ||

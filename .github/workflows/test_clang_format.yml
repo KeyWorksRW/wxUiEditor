@@ -1,16 +1,6 @@
-name: Run clang-format Linter
+name: Verigy clang-format
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - src/art_src
-      - src/xml
-      - pugixml
-      - ttLib
-      - testing
-
   pull_request:
     paths-ignore:
       - src/art_src

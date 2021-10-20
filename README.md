@@ -12,24 +12,14 @@ In addition to creating new projects, the following project types can be importe
 
 ## Building
 
-Currently, **wxUiEditor** can only be built on Windows primarily due to the need for **ttBld.exe**. Once that program builds on Unix, the build system for **wxUiEditor** will be updated to support building on Unix.
+Currently, you will need wxWidgets 3.15 installed somewhere with the `wx/` directory in your $INCLUDE environment variable, and a path to the wxWidgets libraries in your $LIB environment variable. Note that the Debug build uses the wxWidgets dlls, but the Release build expects static libraries. Currently, it's not possible to use vcpkg for the Release build because it also requires static versions of the CRT.
 
-In order to build the project, you must have version 1.7.2 or newer of [ttBld.exe](https://github.com/KeyWorksRW/ttBld) either in your path or in the `src/` directory. If you don't already have it, you can copy the version in `ttBld/win`.
+The easiest way to build the libraries is to run the following commands:
 
-In addition you will need to have the following in your $PATH:
-
-- [Ninja.exe](https://github.com/ninja-build/ninja)
-
-- Either of the following compilers (_must_ be able to generate c++17 code):
-  - [CLANG](https://clang.llvm.org/) (version 9 or higher)
-  - MSVC
-- Either `nmake.exe` (Microsoft) or `mingw32-make.exe`
-- wxWidgets headers and libraries version 3.1.5 or higher. Debug builds expect a dll version in your `LIB` environment paths, release builds expect a static library version.
-
-If you are building on Windows, you will need to start one of the Visual Studio command shells, preferably one that builds 64-bit targets. From within that shell, you can use the following commands to build **wxUiEditor.exe**:
-
-	cd src
-	nmake
+```
+    cmake -G "Ninja Multi-Config" . -B build
+    cmake.exe --build build --config Release
+```
 
 See [Developer notes](docs/DEV_NOTES.md) for more information about the code.
 

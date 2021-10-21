@@ -1,4 +1,4 @@
-name: Verigy clang-format
+name: Verify clang-format
 
 on:
   pull_request:

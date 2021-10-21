@@ -234,6 +234,61 @@ bool SplitterWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
     return true;
 }
 
+//////////////////////////////////////////  ScrolledCanvasGenerator  //////////////////////////////////////////
+
+wxObject* ScrolledCanvasGenerator::CreateMockup(Node* node, wxObject* parent)
+{
+    auto widget = new wxScrolled<wxWindow>(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                                           DlgSize(parent, node, prop_size), GetStyleInt(node));
+    widget->SetScrollRate(node->prop_as_int(prop_scroll_rate_x), node->prop_as_int(prop_scroll_rate_y));
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> ScrolledCanvasGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+
+    code << node->get_node_name() << " = new wxScrolled<wxWindow>(";
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
+
+    GeneratePosSizeFlags(node, code);
+
+    return code;
+}
+
+std::optional<ttlib::cstr> ScrolledCanvasGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    if (node->HasValue(prop_scroll_rate_x) || node->HasValue(prop_scroll_rate_y))
+    {
+        if (code.size())
+            code << "\n";
+
+        code << node->get_node_name() << "->SetScrollRate(" << node->prop_as_string(prop_scroll_rate_x) << ", "
+             << node->prop_as_string(prop_scroll_rate_y) << ");";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> ScrolledCanvasGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/scrolwin.h>", set_src, set_hdr);
+
+    return true;
+}
+
 //////////////////////////////////////////  ScrolledWindowGenerator  //////////////////////////////////////////
 
 wxObject* ScrolledWindowGenerator::CreateMockup(Node* node, wxObject* parent)

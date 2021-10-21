@@ -280,7 +280,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     {
         container_bar_windows->AddTool(gen_wxPanel, GetImageFromArray(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)), wxString::FromUTF8("wxPanel"), wxRIBBON_BUTTON_NORMAL);
         container_bar_windows->AddTool(gen_wxSplitterWindow, GetImageFromArray(wxue_img::wxsplitterWindow_png, sizeof(wxue_img::wxsplitterWindow_png)), wxString::FromUTF8("wxSplitterWindow"), wxRIBBON_BUTTON_NORMAL);
-        container_bar_windows->AddTool(gen_wxScrolledWindow, GetImageFromArray(wxue_img::wxscrolledWindow_png, sizeof(wxue_img::wxscrolledWindow_png)), wxString::FromUTF8("wxScrolledWindow"), wxRIBBON_BUTTON_NORMAL);
+        container_bar_windows->AddTool(NewScrolled, GetImageFromArray(wxue_img::wxscrolledWindow_png, sizeof(wxue_img::wxscrolledWindow_png)), wxString::FromUTF8("wxScrolled (Panel or Window)"), wxRIBBON_BUTTON_DROPDOWN);
         container_bar_windows->AddTool(gen_wxCollapsiblePane, GetImageFromArray(wxue_img::wxCollapsiblePane_png, sizeof(wxue_img::wxCollapsiblePane_png)), wxString::FromUTF8("wxCollapsiblePane"), wxRIBBON_BUTTON_NORMAL);
     }
     container_bar_windows->Realize();
@@ -456,6 +456,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     common_bar_pickers->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     common_bar_other->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+    container_bar_windows->Bind(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, &RibbonPanelBase::OnDropDown, this);
     container_bar_books->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     container_bar_page->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     data_bar_grid->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);

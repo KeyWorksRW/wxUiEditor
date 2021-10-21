@@ -507,6 +507,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxRibbonToolBar, "wxRibbonToolBar" },
     { gen_wxRichTextCtrl, "wxRichTextCtrl" },
     { gen_wxScrollBar, "wxScrollBar" },
+    { gen_wxScrolledCanvas, "wxScrolledCanvas" },
     { gen_wxScrolledWindow, "wxScrolledWindow" },
     { gen_wxSearchCtrl, "wxSearchCtrl" },
     { gen_wxSimpleHtmlListBox, "wxSimpleHtmlListBox" },

@@ -2499,7 +2499,8 @@
               <node
                 class="wxRibbonToolBar"
                 var_name="container_bar_windows"
-                wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick"
+                wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxPanel.png;[-1,-1]"
@@ -2513,8 +2514,9 @@
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxscrolledWindow.png;[-1,-1]"
-                  help="wxScrolledWindow"
-                  id="gen_wxScrolledWindow" />
+                  help="wxScrolled (Panel or Window)"
+                  id="NewScrolled"
+                  kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxCollapsiblePane.png;[-1,-1]"

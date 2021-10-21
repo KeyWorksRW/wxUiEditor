@@ -518,6 +518,7 @@ namespace GenEnum
         gen_wxRibbonToolBar,
         gen_wxRichTextCtrl,
         gen_wxScrollBar,
+        gen_wxScrolledCanvas,
         gen_wxScrolledWindow,
         gen_wxSearchCtrl,
         gen_wxSimpleHtmlListBox,

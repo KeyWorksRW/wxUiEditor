@@ -77,12 +77,38 @@ inline const char* containers_xml = R"===(<?xml version="1.0"?>
 			help="The sash was double clicked. The default behaviour is to unsplit the window when this happens (unless the minimum pane size has been set to a value greater than zero)." />
 	</gen>
 
+	<gen class="wxScrolledCanvas" image="wxScrolledWindow" type="container">
+		<inherits class="wxWindow">
+			<property name="window_style" type="bitlist">wxHSCROLL | wxVSCROLL</property>
+		</inherits>
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_scroll_canvas</property>
+		<property name="class_access" type="option">
+			<option name="none" />
+			<option name="protected:" />
+			<option name="public:" />
+			protected:
+		</property>
+		<property name="scroll_rate_x" type="uint"
+			help="Set the horizontal scrolling increment.">5</property>
+		<property name="scroll_rate_y" type="uint"
+			help="Set the vertical scrolling increment.">5</property>
+		<event name="wxEVT_SCROLLWIN_TOP" class="wxScrollWinEvent" />
+		<event name="wxEVT_SCROLLWIN_BOTTOM" class="wxScrollWinEvent" />
+		<event name="wxEVT_SCROLLWIN_LINEUP" class="wxScrollWinEvent" />
+		<event name="wxEVT_SCROLLWIN_LINEDOWN" class="wxScrollWinEvent" />
+		<event name="wxEVT_SCROLLWIN_PAGEUP" class="wxScrollWinEvent" />
+		<event name="wxEVT_SCROLLWIN_PAGEDOWN" class="wxScrollWinEvent" />
+		<event name="wxEVT_SCROLLWIN_THUMBTRACK" class="wxScrollWinEvent" />
+		<event name="wxEVT_SCROLLWIN_THUMBRELEASE" class="wxScrollWinEvent" />
+	</gen>
+
 	<gen class="wxScrolledWindow" image="wxScrolledWindow" type="container">
 		<inherits class="wxWindow">
 			<property name="window_style" type="bitlist">wxHSCROLL | wxVSCROLL</property>
 		</inherits>
 		<inherits class="sizer_child" />
-		<property name="var_name" type="string">m_scroll_win</property>
+		<property name="var_name" type="string">m_scroll_panel</property>
 		<property name="class_access" type="option">
 			<option name="none" />
 			<option name="protected:" />

@@ -27,6 +27,7 @@ inline const GenType lst_form_types[] =
 {
 
     type_form,
+    type_frame_form,
     type_images,
     type_menubar_form,
     type_popup_menu,
@@ -563,6 +564,16 @@ Node* Node::CreateChildNode(GenName name)
 
         if (parent)
         {
+            auto decl = g_NodeCreator.get_declaration(name);
+            auto max_children = GetNodeDeclaration()->GetAllowableChildren(decl->gen_type());
+            auto cur_children = g_NodeCreator.CountChildrenWithSameType(this, decl->gen_type());
+            if (max_children > 0 && cur_children >= static_cast<size_t>(max_children))
+            {
+                appMsgBox(ttlib::cstr() << "You can only add " << static_cast<size_t>(max_children) << ' '
+                                        << map_GenNames[name] << " as a child of " << DeclName());
+                return nullptr;
+            }
+
             new_node = g_NodeCreator.CreateNode(name, parent);
             if (new_node)
             {

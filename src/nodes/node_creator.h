@@ -73,13 +73,13 @@ public:
 
     const NodeDeclarationArray& GetNodeDeclarationArray() const { return m_a_declarations; }
 
+    size_t CountChildrenWithSameType(Node* parent, GenType type);
+
 protected:
     void ParseGeneratorFile(ttlib::cview file);
     void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
 
     NodeType* GetNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
-
-    size_t CountChildrenWithSameType(Node* parent, GenType type);
 
     void AddAllConstants();
 

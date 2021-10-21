@@ -81,7 +81,6 @@ protected:
 
     NodeType* GetNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
 
-
     void AddAllConstants();
 
 private:

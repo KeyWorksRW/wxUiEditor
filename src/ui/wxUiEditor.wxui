@@ -7,6 +7,124 @@
     original_art="../art_src"
     generate_cmake="true">
     <node
+      class="Images"
+      base_file="ui_images">
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/default.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/empty.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/unknown.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/project.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/title_close.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/debug_16.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/debug_32.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/logo16.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/logo32.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/logo64.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/auitoolbar.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/bmp_combo_box.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/check3state.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/dataview_ctrl.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/dataviewlist_ctrl.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/dataviewtree_ctrl.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/ribbon_bar.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/ribbon_buttonbar.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/ribbon_gallery.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/scrollbar.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/spinbtn.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/spin_ctrl.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/spin_ctrl_double.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/stddialogbuttonsizer.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/toggle_button.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxButton.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxCheckBox.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxCheckListBox.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxChoice.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxComboBox.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxCommandLinkButton.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxListBox.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxListView.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxRearrangeCtrl.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxSimpleHtmlListBox.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxStaticBoxSizer.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxStaticCheckBoxSizer.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxStaticRadioBtnSizer.png;[-1,-1]" />
+    </node>
+    <node
       class="wxDialog"
       base_file="artpropdlg_base"
       class_name="ArtPropertyDlgBase"
@@ -2824,124 +2942,6 @@
           </node>
         </node>
       </node>
-    </node>
-    <node
-      class="Images"
-      base_file="ui_images">
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/default.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/empty.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/unknown.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/project.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/title_close.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/debug_16.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/debug_32.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/logo16.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/logo32.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/logo64.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/auitoolbar.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/bmp_combo_box.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/check3state.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/dataview_ctrl.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/dataviewlist_ctrl.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/dataviewtree_ctrl.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/ribbon_bar.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/ribbon_buttonbar.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/ribbon_gallery.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/scrollbar.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/spinbtn.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/spin_ctrl.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/spin_ctrl_double.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/stddialogbuttonsizer.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/toggle_button.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxButton.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxCheckBox.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxCheckListBox.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxChoice.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxComboBox.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxCommandLinkButton.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxListBox.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxListView.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxRearrangeCtrl.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxSimpleHtmlListBox.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxStaticBoxSizer.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxStaticCheckBoxSizer.png;[-1,-1]" />
-      <node
-        class="embedded_image"
-        bitmap="Embed;../art_src/wxStaticRadioBtnSizer.png;[-1,-1]" />
     </node>
   </node>
 </wxUiEditorData>

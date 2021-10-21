@@ -173,6 +173,17 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
                 return;
             }
 
+        case NewScrolled:
+            {
+                wxMenu menu;
+                menu.Append(gen_wxScrolledWindow, "Insert wxScrolled<wxPanel> (wxScrolledWindow)");
+                menu.Append(gen_wxScrolledCanvas, "Insert wxScrolled<wxWindow> (wxScrolledCanvas)");
+
+                menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                event.PopupMenu(&menu);
+                return;
+            }
+
         default:
             return;
     }

@@ -11,6 +11,7 @@ enum
     NewListbox,
     NewDataCtrl,
     NewRibbonType,
+    NewScrolled,
     NewStaticSizer,
     CreateNewDialog,
     CreateNewFrame,

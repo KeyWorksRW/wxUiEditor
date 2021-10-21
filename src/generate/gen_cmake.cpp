@@ -45,7 +45,8 @@ int WriteCMakeFile(bool test_only)
     out.emplace_back();
 
     out.emplace_back();
-    out.at(out.size() - 1) << "set (" << project->prop_as_string(prop_cmake_varname) << '\n';
+    out.at(out.size() - 1) << "set (" << project->prop_as_string(prop_cmake_varname);
+    out.emplace_back();
 
     std::set<ttlib::cstr> base_files;
 

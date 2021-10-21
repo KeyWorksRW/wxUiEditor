@@ -1,7 +1,7 @@
 inline const char* forms_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
-	<gen class="wxFrame" image="wxFrame" type="form">
+	<gen class="wxFrame" image="wxFrame" type="frame_form">
 		<inherits class="Code Generation" />
 		<inherits class="wxTopLevelWindow" />
 		<inherits class="wxWindow" />

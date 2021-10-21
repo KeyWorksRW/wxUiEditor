@@ -158,11 +158,10 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
         else
         {
             auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
-            // REVIEW: [KeyWorks - 04-11-2021] Does this actually happen?
-            ASSERT_MSG(count < (size_t) max_children,
-                       "Parent allows one of this child type, a second of the same type is not allowed");
-            if (count < (size_t) max_children)
+            if (count < static_cast<size_t>(max_children))
+            {
                 node = NewNode(node_decl);
+            }
         }
     }
     else

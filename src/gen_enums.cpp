@@ -344,6 +344,7 @@ std::map<GenType, const char*> GenEnum::map_GenTypes = {
     { type_dataviewtreectrl, "dataviewtreectrl" },
     { type_embed_image, "embed_image" },
     { type_form, "form" },
+    { type_frame_form, "frame_form" },
     { type_gbsizer, "gbsizer" },
     { type_gbsizeritem, "gbsizeritem" },
     { type_images, "images" },

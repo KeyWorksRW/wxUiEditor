@@ -159,17 +159,36 @@ static const ParentChild lstParentChild[] = {
 
     // Forms
 
+    { type_frame_form, type_gbsizer, one },
+    { type_frame_form, type_sizer, one },
+
+    { type_frame_form, type_container, one },
+    { type_frame_form, type_splitter, one },
+
+    { type_frame_form, type_statusbar, one },
+    { type_frame_form, type_toolbar, one },
+    { type_frame_form, type_menubar, one },
+    { type_frame_form, type_aui_toolbar, one },  // REVIEW: [KeyWorks - 10-21-2021] Will thiss work?
+
+    { type_frame_form, type_choicebook, one },
+    { type_frame_form, type_listbook, one },
+    { type_frame_form, type_simplebook, one },
+    { type_frame_form, type_notebook, one },
+
     { type_form, type_ctx_menu, one },
     { type_form, type_gbsizer, one },
     { type_form, type_sizer, one },
-    { type_images, type_embed_image, infinite },
+
     { type_menubar_form, type_menu, infinite },
     { type_ribbonbar_form, type_ribbonpage, infinite },
     { type_toolbar_form, type_tool, infinite },
     { type_toolbar_form, type_widget, infinite },
+
+    { type_images, type_embed_image, infinite },
     { type_wizard, type_wizardpagesimple, infinite },
 
     { type_project, type_form, infinite },
+    { type_project, type_frame_form, infinite },
     { type_project, type_images, one },
     { type_project, type_menubar_form, infinite },
     { type_project, type_popup_menu, infinite },

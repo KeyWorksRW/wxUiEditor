@@ -348,6 +348,7 @@ namespace GenEnum
         type_dataviewtreectrl,
         type_embed_image,
         type_form,
+        type_frame_form,
         type_gbsizer,
         type_gbsizeritem,
         type_images,

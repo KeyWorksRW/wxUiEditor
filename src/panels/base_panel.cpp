@@ -17,6 +17,7 @@
 #include "gen_base.h"      // Generate Base class
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator -- Class used to create nodes
 #include "write_code.h"    // Write code to Scintilla or file
 
 BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCode) : wxPanel(parent)
@@ -65,29 +66,67 @@ void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
 {
     stc->SetLexer(wxSTC_LEX_CPP);
 
-    // These are just the keywords that we might generate -- there is no need for a complete list of C++ keywords
-    stc->SetKeyWords(0, "auto bool char char8_t class const constexpr \
-	                          decltype default delete do double else enum explicit \
-	                          extern false float for friend if inline int long \
-	                          mutable namespace new noexcept nullptr private protected public \
-	                          return short signed sizeof static static_cast \
-	                          struct template this true typedef typeid \
-	                          typename union unsigned using virtual void volatile wchar_t \
-	                          while");
+    // These are just the keywords that we might generate -- there is no need for a complete list of C++ keywords. We also
+    // add a few wxWidgets names.
+    stc->SetKeyWords(0, "auto bool char class const constexpr \
+	                     decltype default delete do double else enum explicit \
+	                     extern false float for friend if inline int long \
+	                     namespace new nullptr private protected public \
+	                     return short signed sizeof static static_cast \
+	                     struct template this true typedef \
+	                     unsigned using virtual void wchar_t \
+	                     while \
+                         Bind \
+                         wxAnimation \
+                         wxBitmap \
+                         wxImage \
+                         wxMemoryInputStream \
+                         wxPoint \
+                         wxSize \
+                         wxSizerFlags \
+                         wxStaticCast \
+                         wxString");
+
+    // clang-format off
+
+    // Add a regular classes that have different generator class names
+
+    ttlib::cstr widget_keywords("\
+        wxToolBar \
+        wxMenuBar \
+        wxWindow"
+
+        );
+
+    // clang-format on
+
+    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
+    {
+        if (!iter)
+        {
+            // This will happen if there is an enumerated value but no generator for it
+            continue;
+        }
+
+        if (!iter->DeclName().is_sameprefix("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
+            continue;
+        widget_keywords << ' ' << iter->DeclName();
+    }
+    stc->SetKeyWords(1, widget_keywords);
 
     wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     stc->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
     stc->StyleSetBold(wxSTC_C_WORD, true);
     stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-    stc->StyleSetForeground(wxSTC_C_STRING, *wxRED);
-    stc->StyleSetForeground(wxSTC_C_STRINGEOL, *wxRED);
+    stc->StyleSetForeground(wxSTC_C_WORD2, *wxRED);
+    stc->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
+    stc->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
     stc->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-    stc->StyleSetForeground(wxSTC_C_NUMBER, *wxBLUE);
 
     stc->SetTabWidth(4);
     stc->SetTabIndents(true);

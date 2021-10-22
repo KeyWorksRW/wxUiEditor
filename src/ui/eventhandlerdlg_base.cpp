@@ -19,12 +19,12 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    m_static_bind_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("..."));
+    m_static_bind_text = new wxStaticText(this, wxID_ANY, "...");
     box_sizer->Add(m_static_bind_text, wxSizerFlags().Border(wxALL));
 
     box_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
-    m_radio_use_function = new wxRadioButton(this, wxID_ANY, wxString::FromUTF8("Use function"));
+    m_radio_use_function = new wxRadioButton(this, wxID_ANY, "Use function");
     m_function_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_use_function), wxVERTICAL);
     box_sizer->Add(m_function_box, wxSizerFlags().Expand().Border(wxALL));
 
@@ -33,20 +33,20 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
 
     box_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
-    m_radio_use_lambda = new wxRadioButton(this, wxID_ANY, wxString::FromUTF8("Use lambda"));
+    m_radio_use_lambda = new wxRadioButton(this, wxID_ANY, "Use lambda");
     m_lambda_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_use_lambda), wxVERTICAL);
     box_sizer->Add(m_lambda_box, wxSizerFlags().Expand().Border(wxALL));
 
     auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     m_lambda_box->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
-    m_check_capture_this = new wxCheckBox(m_lambda_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Capture this"));
+    m_check_capture_this = new wxCheckBox(m_lambda_box->GetStaticBox(), wxID_ANY, "&Capture this");
     box_sizer_2->Add(m_check_capture_this, wxSizerFlags().Border(wxALL));
 
-    m_check_include_event = new wxCheckBox(m_lambda_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Include event parameter"));
+    m_check_include_event = new wxCheckBox(m_lambda_box->GetStaticBox(), wxID_ANY, "&Include event parameter");
     box_sizer_2->Add(m_check_include_event, wxSizerFlags().Border(wxALL));
 
-    auto staticText = new wxStaticText(m_lambda_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Lambda body:"));
+    auto staticText = new wxStaticText(m_lambda_box->GetStaticBox(), wxID_ANY, "Lambda body:");
     m_lambda_box->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_stc = new wxStyledTextCtrl(m_lambda_box->GetStaticBox(), wxID_ANY);

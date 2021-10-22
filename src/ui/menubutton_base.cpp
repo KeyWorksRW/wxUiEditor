@@ -39,15 +39,15 @@ MenuButton::MenuButton() : wxMenu()
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto menu_item = Append(gen_wxButton, wxString::FromUTF8("Insert wxButton"));
+    auto menu_item = Append(gen_wxButton, "Insert wxButton");
     menu_item->SetBitmap(GetImageFromArray(wxue_img::wxButton_png, sizeof(wxue_img::wxButton_png)));
 
-    auto menu_item_2 = Append(gen_wxToggleButton, wxString::FromUTF8("Insert wxToggleButton"));
+    auto menu_item_2 = Append(gen_wxToggleButton, "Insert wxToggleButton");
     menu_item_2->SetBitmap(GetImageFromArray(wxue_img::toggle_button_png, sizeof(wxue_img::toggle_button_png)));
 
-    auto menu_item_3 = Append(gen_wxStdDialogButtonSizer, wxString::FromUTF8("Insert wxStdDialogButtonSizer"));
+    auto menu_item_3 = Append(gen_wxStdDialogButtonSizer, "Insert wxStdDialogButtonSizer");
     menu_item_3->SetBitmap(GetImageFromArray(wxue_img::stddialogbuttonsizer_png, sizeof(wxue_img::stddialogbuttonsizer_png)));
 
-    auto menu_item_4 = Append(gen_wxCommandLinkButton, wxString::FromUTF8("Insert wxCommandLinkButton"));
+    auto menu_item_4 = Append(gen_wxCommandLinkButton, "Insert wxCommandLinkButton");
     menu_item_4->SetBitmap(GetImageFromArray(wxue_img::wxCommandLinkButton_png, sizeof(wxue_img::wxCommandLinkButton_png)));
 }

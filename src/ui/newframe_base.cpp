@@ -24,21 +24,21 @@ bool NewFrameBase::Create(wxWindow *parent, wxWindowID id, const wxString &title
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto staticText_3 = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("These are initial values -- all of them can be changed after the window is created."));
+    auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the window is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
     auto box_sizer__2 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer__2, wxSizerFlags().Expand().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Base class name:"));
+    auto staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
     box_sizer__2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
-    m_classname = new wxTextCtrl(this, wxID_ANY, wxString::FromUTF8("MyFrameBase"));
+    m_classname = new wxTextCtrl(this, wxID_ANY, "MyFrameBase");
     m_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_base_class));
     box_sizer__2->Add(m_classname, wxSizerFlags(1).Border(wxALL));
 
-    m_checkBox_mainframe = new wxCheckBox(this, wxID_ANY, wxString::FromUTF8("Main Frame Window"));
+    m_checkBox_mainframe = new wxCheckBox(this, wxID_ANY, "Main Frame Window");
     m_checkBox_mainframe->SetValidator(wxGenericValidator(&m_has_mainframe));
     auto static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_checkBox_mainframe), wxVERTICAL);
     box_sizer->Add(static_box, wxSizerFlags().Expand().DoubleBorder(wxALL));
@@ -46,17 +46,17 @@ bool NewFrameBase::Create(wxWindow *parent, wxWindowID id, const wxString &title
     auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
     static_box->Add(box_sizer_2, wxSizerFlags().Expand().DoubleBorder(wxALL));
 
-    m_checkBox_toolbar = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Add Toolbar"));
+    m_checkBox_toolbar = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Add Toolbar");
     m_checkBox_toolbar->SetValue(true);
     m_checkBox_toolbar->SetValidator(wxGenericValidator(&m_has_toolbar));
     box_sizer_2->Add(m_checkBox_toolbar, wxSizerFlags().Expand().Border(wxALL));
 
-    m_checkBox_menu = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Add Menu"));
+    m_checkBox_menu = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Add Menu");
     m_checkBox_menu->SetValue(true);
     m_checkBox_menu->SetValidator(wxGenericValidator(&m_has_menu));
     box_sizer_2->Add(m_checkBox_menu, wxSizerFlags().Expand().Border(wxALL));
 
-    m_checkBox_statusbar = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Add Statusbar"));
+    m_checkBox_statusbar = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Add Statusbar");
     m_checkBox_statusbar->SetValue(true);
     m_checkBox_statusbar->SetValidator(wxGenericValidator(&m_has_statusbar));
     box_sizer_2->Add(m_checkBox_statusbar, wxSizerFlags().Expand().Border(wxALL));

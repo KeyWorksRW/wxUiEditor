@@ -20,14 +20,14 @@ class ImportBase : public wxDialog
 {
 public:
     ImportBase() {}
-    ImportBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("New Imported Project"),
+    ImportBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Imported Project",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("New Imported Project"),
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Imported Project",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 

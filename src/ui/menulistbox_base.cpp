@@ -40,18 +40,18 @@ MenuListbox::MenuListbox() : wxMenu()
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto menu_item = Append(gen_wxListBox, wxString::FromUTF8("Insert wxListBox"));
+    auto menu_item = Append(gen_wxListBox, "Insert wxListBox");
     menu_item->SetBitmap(GetImageFromArray(wxue_img::wxListBox_png, sizeof(wxue_img::wxListBox_png)));
 
-    auto menu_item_2 = Append(gen_wxCheckListBox, wxString::FromUTF8("Insert wxCheckListBox"));
+    auto menu_item_2 = Append(gen_wxCheckListBox, "Insert wxCheckListBox");
     menu_item_2->SetBitmap(GetImageFromArray(wxue_img::wxCheckListBox_png, sizeof(wxue_img::wxCheckListBox_png)));
 
-    auto menu_item_3 = Append(gen_wxListView, wxString::FromUTF8("Insert wxListView"));
+    auto menu_item_3 = Append(gen_wxListView, "Insert wxListView");
     menu_item_3->SetBitmap(GetImageFromArray(wxue_img::wxListView_png, sizeof(wxue_img::wxListView_png)));
 
-    auto menu_item_4 = Append(gen_wxRearrangeCtrl, wxString::FromUTF8("Insert wxRearrangeCtrl"));
+    auto menu_item_4 = Append(gen_wxRearrangeCtrl, "Insert wxRearrangeCtrl");
     menu_item_4->SetBitmap(GetImageFromArray(wxue_img::wxRearrangeCtrl_png, sizeof(wxue_img::wxRearrangeCtrl_png)));
 
-    auto menu_item_5 = Append(gen_wxSimpleHtmlListBox, wxString::FromUTF8("Insert wxSimpleHtmlListBox"));
+    auto menu_item_5 = Append(gen_wxSimpleHtmlListBox, "Insert wxSimpleHtmlListBox");
     menu_item_5->SetBitmap(GetImageFromArray(wxue_img::wxSimpleHtmlListBox_png, sizeof(wxue_img::wxSimpleHtmlListBox_png)));
 }

@@ -20,7 +20,7 @@ bool InsertWidgetBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Name:"));
+    auto staticText = new wxStaticText(this, wxID_ANY, "&Name:");
     box_sizer_2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
     m_text_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString);

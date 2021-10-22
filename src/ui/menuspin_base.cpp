@@ -38,12 +38,12 @@ MenuSpin::MenuSpin() : wxMenu()
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto menu_item = Append(gen_wxSpinCtrl, wxString::FromUTF8("Insert wxSpinCtrl"));
+    auto menu_item = Append(gen_wxSpinCtrl, "Insert wxSpinCtrl");
     menu_item->SetBitmap(GetImageFromArray(wxue_img::spin_ctrl_png, sizeof(wxue_img::spin_ctrl_png)));
 
-    auto menu_item_2 = Append(gen_wxSpinCtrlDouble, wxString::FromUTF8("Insert wxSpinCtrlDouble"));
+    auto menu_item_2 = Append(gen_wxSpinCtrlDouble, "Insert wxSpinCtrlDouble");
     menu_item_2->SetBitmap(GetImageFromArray(wxue_img::spin_ctrl_double_png, sizeof(wxue_img::spin_ctrl_double_png)));
 
-    auto menu_item_3 = Append(gen_wxSpinButton, wxString::FromUTF8("Insert wxSpinButton"));
+    auto menu_item_3 = Append(gen_wxSpinButton, "Insert wxSpinButton");
     menu_item_3->SetBitmap(GetImageFromArray(wxue_img::spinbtn_png, sizeof(wxue_img::spinbtn_png)));
 }

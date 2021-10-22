@@ -21,28 +21,28 @@ bool NewRibbonBase::Create(wxWindow *parent, wxWindowID id, const wxString &titl
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto staticText_3 = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("These are initial values -- all of them can be changed after the ribbon bar\n is created."));
+    auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the ribbon bar\n is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
-    m_staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Type:"));
+    m_staticText = new wxStaticText(this, wxID_ANY, "&Type:");
     box_sizer_2->Add(m_staticText, wxSizerFlags().Center().Border(wxALL));
 
     m_comboBox = new wxComboBox(this, wxID_ANY, wxEmptyString);
-    m_comboBox->Append(wxString::FromUTF8("Tool"));
-    m_comboBox->Append(wxString::FromUTF8("Button"));
-    m_comboBox->Append(wxString::FromUTF8("Gallery"));
-    m_panel_type = wxString::FromUTF8("Tool");  // set validator variable
+    m_comboBox->Append("Tool");
+    m_comboBox->Append("Button");
+    m_comboBox->Append("Gallery");
+    m_panel_type = "Tool";  // set validator variable
     m_comboBox->SetValidator(wxGenericValidator(&m_panel_type));
     box_sizer_2->Add(m_comboBox, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
-    auto staticText_4 = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Pages:"));
+    auto staticText_4 = new wxStaticText(this, wxID_ANY, "&Pages:");
     box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_spinCtrlPages = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 7, 3);

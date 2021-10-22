@@ -16,14 +16,14 @@ class NewFrameBase : public wxDialog
 {
 public:
     NewFrameBase() {}
-    NewFrameBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("New wxFrame window"),
+    NewFrameBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New wxFrame window",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("New wxFrame window"),
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New wxFrame window",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
@@ -35,7 +35,7 @@ protected:
     bool m_has_menu { true };
     bool m_has_statusbar { true };
     bool m_has_toolbar { true };
-    wxString m_base_class { wxString::FromUTF8("MyFrameBase") };
+    wxString m_base_class { "MyFrameBase" };
 
     // Class member variables
 

@@ -29,7 +29,7 @@ bool ArtPropertyDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString 
     auto box_sizer3 = new wxBoxSizer(wxVERTICAL);
     box_sizer->Add(box_sizer3, wxSizerFlags(1).Border(wxALL));
 
-    m_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Size: 333x333"));
+    m_text = new wxStaticText(this, wxID_ANY, "Size: 333x333");
     box_sizer3->Add(m_text, wxSizerFlags().Border(wxALL));
 
     m_canvas = new wxStaticBitmap(this, wxID_ANY, wxNullBitmap);
@@ -38,7 +38,7 @@ bool ArtPropertyDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString 
     auto box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer2, wxSizerFlags().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Client:"));
+    auto staticText = new wxStaticText(this, wxID_ANY, "Client:");
     box_sizer2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
     m_choice_client = new wxChoice(this, wxID_ANY);

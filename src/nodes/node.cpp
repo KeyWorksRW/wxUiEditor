@@ -716,8 +716,8 @@ static const PropName s_var_names[] = {
 
 bool Node::FixDuplicateName()
 {
-    if (isType(type_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) || isType(type_toolbar_form) ||
-        isType(type_wizard) || isType(type_popup_menu) || isType(type_project))
+    if (isType(type_form) || isType(type_frame_form) || isType(type_menubar_form) || isType(type_ribbonbar_form) ||
+        isType(type_toolbar_form) || isType(type_wizard) || isType(type_popup_menu) || isType(type_project))
     {
         return false;
     }

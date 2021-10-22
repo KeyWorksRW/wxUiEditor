@@ -168,7 +168,7 @@ static const ParentChild lstParentChild[] = {
     { type_frame_form, type_statusbar, one },
     { type_frame_form, type_toolbar, one },
     { type_frame_form, type_menubar, one },
-    { type_frame_form, type_aui_toolbar, one },  // REVIEW: [KeyWorks - 10-21-2021] Will thiss work?
+    { type_frame_form, type_ctx_menu, one },
 
     { type_frame_form, type_choicebook, one },
     { type_frame_form, type_listbook, one },

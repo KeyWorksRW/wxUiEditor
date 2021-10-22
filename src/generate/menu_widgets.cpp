@@ -332,7 +332,7 @@ std::optional<ttlib::cstr> MenuGenerator::GenAdditionalCode(GenEnum::GenCodeType
                 return {};
             }
 
-            if (parent_type == type_form || parent_type == type_wizard)
+            if (parent_type == type_form || parent_type == type_frame_form || parent_type == type_wizard)
             {
                 code << "\tBind(wxEVT_RIGHT_DOWN, &" << node->get_parent_name() << "::" << node->get_parent_name()
                      << "OnContextMenu, this);";

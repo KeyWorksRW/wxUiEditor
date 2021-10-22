@@ -39,7 +39,7 @@ WizardBase::WizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    m_staticText = new wxStaticText(wizPage, wxID_ANY, wxString::FromUTF8("This is the first Wizard page"));
+    m_staticText = new wxStaticText(wizPage, wxID_ANY, "This is the first Wizard page");
     box_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
 
     wizPage->SetSizerAndFit(box_sizer);
@@ -48,7 +48,7 @@ WizardBase::WizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_staticText2 = new wxStaticText(m_wizPage2, wxID_ANY, wxString::FromUTF8("This is the second Wizard page which is wider."));
+    m_staticText2 = new wxStaticText(m_wizPage2, wxID_ANY, "This is the second Wizard page which is wider.");
     box_sizer2->Add(m_staticText2, wxSizerFlags().Border(wxALL));
 
     m_wizPage2->SetSizerAndFit(box_sizer2);
@@ -57,7 +57,7 @@ WizardBase::WizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
 
     auto box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
 
-    m_staticText3 = new wxStaticText(m_wizPage3, wxID_ANY, wxString::FromUTF8("This is the final Wizard page"));
+    m_staticText3 = new wxStaticText(m_wizPage3, wxID_ANY, "This is the final Wizard page");
     box_sizer3->Add(m_staticText3, wxSizerFlags().Border(wxALL));
 
     m_wizPage3->SetSizerAndFit(box_sizer3);

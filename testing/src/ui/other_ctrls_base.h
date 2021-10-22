@@ -34,14 +34,14 @@ public:
     wxHtmlWindow* m_htmlWin;
 
     OtherCtrlsBase() {}
-    OtherCtrlsBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("NoteBook Dialog"),
+    OtherCtrlsBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "NoteBook Dialog",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("NoteBook Dialog"),
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "NoteBook Dialog",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 

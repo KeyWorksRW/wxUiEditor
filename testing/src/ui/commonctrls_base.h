@@ -34,14 +34,14 @@ class CommonCtrlsBase : public wxDialog
 {
 public:
     CommonCtrlsBase() {}
-    CommonCtrlsBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Common controls"),
+    CommonCtrlsBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Common controls",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Common controls"),
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Common controls",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
@@ -50,7 +50,7 @@ protected:
     // Validator variables
 
     int m_valRadio { 1 };
-    wxString m_textCtrlValidate { wxString::FromUTF8("Text \"ctrl\"") };
+    wxString m_textCtrlValidate { "Text \"ctrl\"" };
 
     // Class member variables
 

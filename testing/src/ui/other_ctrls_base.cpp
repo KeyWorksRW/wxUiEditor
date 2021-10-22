@@ -31,19 +31,19 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     parent_sizer->Add(m_notebook, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME|wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page, wxString::FromUTF8("Pickers"));
+    m_notebook->AddPage(page, "Pickers");
 
     auto parent_sizer2 = new wxBoxSizer(wxVERTICAL);
 
-    auto static_box = new wxStaticBoxSizer(wxVERTICAL, page, wxString::FromUTF8("Pickers"));
+    auto static_box = new wxStaticBoxSizer(wxVERTICAL, page, "Pickers");
     parent_sizer2->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_filePicker = new wxFilePickerCtrl(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, 
-        wxString::FromUTF8("BMP files|*.bmp"), wxDefaultPosition, wxDefaultSize,
+        "BMP files|*.bmp", wxDefaultPosition, wxDefaultSize,
         wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST);
     static_box->Add(m_filePicker, wxSizerFlags().Border(wxALL));
 
-    m_dirPicker = new wxDirPickerCtrl(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("."),  wxDirSelectorPromptStr, wxDefaultPosition, wxDefaultSize,
+    m_dirPicker = new wxDirPickerCtrl(static_box->GetStaticBox(), wxID_ANY, ".",  wxDirSelectorPromptStr, wxDefaultPosition, wxDefaultSize,
         wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL);
     static_box->Add(m_dirPicker, wxSizerFlags().Border(wxALL));
 
@@ -64,7 +64,7 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     page->SetSizerAndFit(parent_sizer2);
 
     auto m_panel2 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED|wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel2, wxString::FromUTF8("Spinners"), true);
+    m_notebook->AddPage(m_panel2, "Spinners", true);
 
     auto parent_sizer3 = new wxBoxSizer(wxVERTICAL);
 
@@ -86,7 +86,7 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     m_panel2->SetSizerAndFit(parent_sizer3);
 
     auto m_panel3 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel3, wxString::FromUTF8("HTML"), true);
+    m_notebook->AddPage(m_panel3, "HTML", true);
 
     auto parent_sizer4 = new wxBoxSizer(wxVERTICAL);
 
@@ -96,7 +96,7 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     m_panel3->SetSizerAndFit(parent_sizer4);
 
     auto m_panel4 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel4, wxString::FromUTF8("RTF"));
+    m_notebook->AddPage(m_panel4, "RTF");
 
     auto parent_sizer5 = new wxBoxSizer(wxVERTICAL);
 
@@ -106,7 +106,7 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     m_panel4->SetSizerAndFit(parent_sizer5);
 
     auto m_panel5 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel5, wxString::FromUTF8("Scintilla"));
+    m_notebook->AddPage(m_panel5, "Scintilla");
 
     auto parent_sizer6 = new wxBoxSizer(wxVERTICAL);
 
@@ -127,21 +127,21 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     m_panel5->SetSizerAndFit(parent_sizer6);
 
     auto m_panel6 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel6, wxString::FromUTF8("Misc"));
+    m_notebook->AddPage(m_panel6, "Misc");
 
     auto parent_sizer7 = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer7->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    m_toggleBtn = new wxToggleButton(m_panel6, wxID_ANY, wxString::FromUTF8("Toggle"));
+    m_toggleBtn = new wxToggleButton(m_panel6, wxID_ANY, "Toggle");
     box_sizer->Add(m_toggleBtn, wxSizerFlags().Border(wxALL));
 
-    m_hyperlink = new wxHyperlinkCtrl(m_panel6, wxID_ANY, wxString::FromUTF8("GitHub Website"), wxString::FromUTF8("https://github.com/"), wxDefaultPosition, wxDefaultSize,
+    m_hyperlink = new wxHyperlinkCtrl(m_panel6, wxID_ANY, "GitHub Website", "https://github.com/", wxDefaultPosition, wxDefaultSize,
         wxHL_DEFAULT_STYLE);
     box_sizer->Add(m_hyperlink, wxSizerFlags().Center().Border(wxALL));
 
-    m_searchCtrl = new wxSearchCtrl(m_panel6, wxID_ANY, wxString::FromUTF8("Search for something..."));
+    m_searchCtrl = new wxSearchCtrl(m_panel6, wxID_ANY, "Search for something...");
     m_searchCtrl->ShowSearchButton(true);
     box_sizer->Add(m_searchCtrl, wxSizerFlags(1).Border(wxALL));
 

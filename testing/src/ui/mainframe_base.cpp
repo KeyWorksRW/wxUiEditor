@@ -16,46 +16,46 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menuDialogs = new wxMenu();
 
-    auto menuItem = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("DlgMulitTest..."),
-        wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
+    auto menuItem = new wxMenuItem(menuDialogs, wxID_ANY, "DlgMulitTest...",
+        "Common controls", wxITEM_NORMAL);
     menuDialogs->Append(menuItem);
 
-    auto menuItem_2 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Common Controls..."),
-        wxString::FromUTF8("Common controls"), wxITEM_NORMAL);
+    auto menuItem_2 = new wxMenuItem(menuDialogs, wxID_ANY, "Common Controls...",
+        "Common controls", wxITEM_NORMAL);
     menuDialogs->Append(menuItem_2);
 
-    auto menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Other Controls Dialog..."));
+    auto menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, "Other Controls Dialog...");
     menuDialogs->Append(menuItem1);
 
-    auto menuItem2 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Ribbon Dialog"));
+    auto menuItem2 = new wxMenuItem(menuDialogs, wxID_ANY, "Ribbon Dialog");
     menuDialogs->Append(menuItem2);
 
-    auto menuItem3 = new wxMenuItem(menuDialogs, wxID_ANY, wxString::FromUTF8("Wizard"));
+    auto menuItem3 = new wxMenuItem(menuDialogs, wxID_ANY, "Wizard");
     menuDialogs->Append(menuItem3);
 
     auto submenu = new wxMenu();
 
-    auto menu_choicebook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Choicebook"));
+    auto menu_choicebook = new wxMenuItem(submenu, wxID_ANY, "Choicebook");
     submenu->Append(menu_choicebook);
 
-    auto menu_listbook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Listbook"));
+    auto menu_listbook = new wxMenuItem(submenu, wxID_ANY, "Listbook");
     submenu->Append(menu_listbook);
 
-    auto menu_notebook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Notebook"));
+    auto menu_notebook = new wxMenuItem(submenu, wxID_ANY, "Notebook");
     submenu->Append(menu_notebook);
 
-    auto menu_toolbook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Toolbook"));
+    auto menu_toolbook = new wxMenuItem(submenu, wxID_ANY, "Toolbook");
     submenu->Append(menu_toolbook);
 
-    auto menu_treebook = new wxMenuItem(submenu, wxID_ANY, wxString::FromUTF8("Treebook"));
+    auto menu_treebook = new wxMenuItem(submenu, wxID_ANY, "Treebook");
     submenu->Append(menu_treebook);
-    menuDialogs->AppendSubMenu(submenu, wxString::FromUTF8("Book Controls"));
+    menuDialogs->AppendSubMenu(submenu, "Book Controls");
 
     menuDialogs->AppendSeparator();
 
-    auto menuItem4 = new wxMenuItem(menuDialogs, wxID_EXIT, wxString::FromUTF8("Exit"));
+    auto menuItem4 = new wxMenuItem(menuDialogs, wxID_EXIT, "Exit");
     menuDialogs->Append(menuItem4);
-    menubar->Append(menuDialogs, wxString::FromUTF8("&Dialogs"));
+    menubar->Append(menuDialogs, "&Dialogs");
 
     SetMenuBar(menubar);
 

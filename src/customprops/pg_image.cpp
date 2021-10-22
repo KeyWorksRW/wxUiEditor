@@ -213,28 +213,35 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
 
         case IndexImage:
             {
-                ttString name(childValue.GetString());
-                if (!name.file_exists())
+                if (img_props.type == "Art")
                 {
-                    if (img_props.type == "Header" || img_props.type == "XPM")
+                    img_props.image.assign_wx(childValue.GetString());
+                }
+                else
+                {
+                    ttString name(childValue.GetString());
+                    if (!name.file_exists())
                     {
-                        name = wxGetApp().GetConvertedArtDir();
-                        name.append_filename_wx(childValue.GetString());
-                        if (!name.file_exists())
+                        if (img_props.type == "Header" || img_props.type == "XPM")
+                        {
+                            name = wxGetApp().GetConvertedArtDir();
+                            name.append_filename_wx(childValue.GetString());
+                            if (!name.file_exists())
+                            {
+                                name = wxGetApp().GetOriginalArtDir();
+                                name.append_filename_wx(childValue.GetString());
+                            }
+                        }
+                        else
                         {
                             name = wxGetApp().GetOriginalArtDir();
                             name.append_filename_wx(childValue.GetString());
                         }
                     }
-                    else
-                    {
-                        name = wxGetApp().GetOriginalArtDir();
-                        name.append_filename_wx(childValue.GetString());
-                    }
+                    name.make_relative_wx(wxGetApp().GetProjectPath());
+                    name.backslashestoforward();
+                    img_props.image.assign_wx(name);
                 }
-                name.make_relative_wx(wxGetApp().GetProjectPath());
-                name.backslashestoforward();
-                img_props.image.assign_wx(name);
             }
             break;
 

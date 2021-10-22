@@ -1655,10 +1655,11 @@ void BaseCodeGenerator::GenContextMenuHandler(Node* form_node, Node* node_ctx_me
 
     m_source->Indent();
     m_source->writeLine("wxMenu menu;");
+    m_source->writeLine("auto pmenu = &menu;  // convenience variable for the auto-generated code");
 
     // All of the constructors are expecting a wxMenu parent -- so we need to temporarily create one
     auto node_menu = g_NodeCreator.NewNode(g_NodeCreator.GetNodeDeclaration("wxMenu"));
-    node_menu->prop_set_value(prop_var_name, "menu");
+    node_menu->prop_set_value(prop_var_name, "pmenu");
 
     for (size_t pos_child = 0; pos_child < node_ctx_menu->GetChildCount(); ++pos_child)
     {
@@ -1697,8 +1698,6 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
         if (auto result = generator->GenConstruction(node); result)
         {
             m_source->writeLine();
-            result->Replace("(menu", "(&menu");
-            result->Replace("menu->AppendSeparator(", "menu.AppendSeparator(");
             m_source->writeLine(result.value(), indent::auto_no_whitespace);
         }
         size_t auto_indent = indent::auto_no_whitespace;
@@ -1706,8 +1705,6 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
         {
             if (result.value().size())
             {
-                if (result->is_sameprefix("\tmenu->"))
-                    result->Replace("->", ".");
                 m_source->writeLine(result.value(), auto_indent);
             }
         }
@@ -1723,8 +1720,6 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
             {
                 if (result.value().size())
                 {
-                    if (result->is_sameprefix("\tmenu->"))
-                        result->Replace("->", ".");
                     m_source->writeLine(result.value(), indent::none);
                 }
             }

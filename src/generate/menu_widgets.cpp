@@ -448,15 +448,13 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
     auto& label = node->prop_as_string(prop_label);
     if (label.size())
     {
-        code << GenerateQuotedString(label);
-
-        // REVIEW: [KeyWorks - 12-08-2020] Frankly, I think this is kind of silly to add -- the documentation for label
-        // clearly lays out how to do this as part of the actual string. Removing this means the wxFormBuilder import needs
-        // to merge it into the main label.
-
         if (node->HasValue(prop_shortcut))
         {
-            code << " + '\\t' + \"" << node->prop_as_string(prop_shortcut) << '\"';
+            code << GenerateQuotedString(ttlib::cstr() << label << '\t' << node->prop_as_string(prop_shortcut));
+        }
+        else
+        {
+            code << GenerateQuotedString(label);
         }
     }
     else

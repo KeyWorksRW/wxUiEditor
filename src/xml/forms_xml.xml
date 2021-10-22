@@ -4,6 +4,7 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 	<gen class="wxFrame" image="wxFrame" type="frame_form">
 		<inherits class="Code Generation" />
 		<inherits class="wxTopLevelWindow" />
+		<inherits class="Window Events" />
 		<inherits class="wxWindow" />
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyFrameBase</property>

@@ -38,12 +38,12 @@ MenuStaticSizer::MenuStaticSizer() : wxMenu()
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto menu_item = Append(gen_wxStaticBoxSizer, wxString::FromUTF8("Insert wxStaticBoxSizer"));
+    auto menu_item = Append(gen_wxStaticBoxSizer, "Insert wxStaticBoxSizer");
     menu_item->SetBitmap(GetImageFromArray(wxue_img::wxStaticBoxSizer_png, sizeof(wxue_img::wxStaticBoxSizer_png)));
 
-    auto menu_item_2 = Append(gen_StaticCheckboxBoxSizer, wxString::FromUTF8("Insert CheckBox wxStaticBoxSizer"));
+    auto menu_item_2 = Append(gen_StaticCheckboxBoxSizer, "Insert CheckBox wxStaticBoxSizer");
     menu_item_2->SetBitmap(GetImageFromArray(wxue_img::wxStaticCheckBoxSizer_png, sizeof(wxue_img::wxStaticCheckBoxSizer_png)));
 
-    auto menu_item_3 = Append(gen_StaticRadioBtnBoxSizer, wxString::FromUTF8("Insert RadioButton wxStaticBoxSizer"));
+    auto menu_item_3 = Append(gen_StaticRadioBtnBoxSizer, "Insert RadioButton wxStaticBoxSizer");
     menu_item_3->SetBitmap(GetImageFromArray(wxue_img::wxStaticRadioBtnSizer_png, sizeof(wxue_img::wxStaticRadioBtnSizer_png)));
 }

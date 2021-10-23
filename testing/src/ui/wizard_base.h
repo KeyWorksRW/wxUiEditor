@@ -21,7 +21,7 @@ class WizardBase : public wxWizard
 {
 public:
     WizardBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-        const wxString& title = wxString::FromUTF8("Wizard Tests"),
+        const wxString& title = "Wizard Tests",
         const wxPoint& pos = wxDefaultPosition,
         long style = wxDEFAULT_DIALOG_STYLE);
 

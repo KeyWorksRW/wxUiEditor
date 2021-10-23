@@ -48,55 +48,54 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     box_sizer_2->Add(m_notebook, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto page_2 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page_2, wxString::FromUTF8("Buttons"));
+    m_notebook->AddPage(page_2, "Buttons");
 
     auto box_sizer_3 = new wxBoxSizer(wxVERTICAL);
 
     auto grid_bag_sizer = new wxGridBagSizer();
     box_sizer_3->Add(grid_bag_sizer, wxSizerFlags().Border(wxALL));
 
-    m_btn = new wxButton(page_2, wxID_ANY, wxString::FromUTF8("Normal"));
-    m_btn->SetToolTip(wxString::FromUTF8("A normal button"));
+    m_btn = new wxButton(page_2, wxID_ANY, "Normal");
+    m_btn->SetToolTip("A normal button");
     grid_bag_sizer->Add(m_btn, wxGBPosition(0, 0), wxGBSpan(1, 1), wxALL, 5);
 
     m_btn_2 = new wxButton(page_2, wxID_ANY);
-    m_btn_2->SetLabelMarkup(wxString::FromUTF8("<b><span foreground='red'>Markup</span></b>"));
-    m_btn_2->SetToolTip(wxString::FromUTF8("Text should be Bold and Red."));
+    m_btn_2->SetLabelMarkup("<b><span foreground='red'>Markup</span></b>");
+    m_btn_2->SetToolTip("Text should be Bold and Red.");
     grid_bag_sizer->Add(m_btn_2, wxGBPosition(0, 1), wxGBSpan(1, 1), wxALL, 5);
 
-    m_btn_bitmaps = new wxButton(page_2, wxID_ANY, wxString::FromUTF8("Bitmaps"));
+    m_btn_bitmaps = new wxButton(page_2, wxID_ANY, "Bitmaps");
     m_btn_bitmaps->SetBitmap(GetImageFromArray(wxue_img::normal_png, sizeof(wxue_img::normal_png)));
     m_btn_bitmaps->SetBitmapDisabled(GetImageFromArray(wxue_img::disabled_png, sizeof(wxue_img::disabled_png)));
     m_btn_bitmaps->SetBitmapCurrent(GetImageFromArray(wxue_img::focus_png, sizeof(wxue_img::focus_png)));
-    m_btn_bitmaps->SetToolTip(wxString::FromUTF8("Bitmap should change when mouse is over button, or button is disabled."));
+    m_btn_bitmaps->SetToolTip("Bitmap should change when mouse is over button, or button is disabled.");
     grid_bag_sizer->Add(m_btn_bitmaps, wxGBPosition(0, 2), wxGBSpan(1, 1), wxALL, 5);
 
-    m_btn_4 = new wxButton(page_2, wxID_ANY, wxString::FromUTF8("Right"));
+    m_btn_4 = new wxButton(page_2, wxID_ANY, "Right");
     m_btn_4->SetBitmap(GetImageFromArray(wxue_img::normal_png, sizeof(wxue_img::normal_png)));
     m_btn_4->SetBitmapPosition(wxRIGHT);
-    m_btn_4->SetToolTip(wxString::FromUTF8("Bitmap should be on the right side."));
+    m_btn_4->SetToolTip("Bitmap should be on the right side.");
     grid_bag_sizer->Add(m_btn_4, wxGBPosition(0, 3), wxGBSpan(1, 1), wxALL, 5);
 
-    m_toggleBtn = new wxToggleButton(page_2, wxID_ANY, wxString::FromUTF8("Toggle"), wxDefaultPosition, wxDefaultSize,
-        wxBU_EXACTFIT);
-    m_toggleBtn->SetToolTip(wxString::FromUTF8("Style set to exact fit, so it should be a bit smaller than usual."));
+    m_toggleBtn = new wxToggleButton(page_2, wxID_ANY, "Toggle", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    m_toggleBtn->SetToolTip("Style set to exact fit, so it should be a bit smaller than usual.");
     grid_bag_sizer->Add(m_toggleBtn, wxGBPosition(0, 4), wxGBSpan(1, 1), wxALL, 5);
 
-    auto disable_bitmaps = new wxCheckBox(page_2, wxID_ANY, wxString::FromUTF8("Disable"));
+    auto disable_bitmaps = new wxCheckBox(page_2, wxID_ANY, "Disable");
     grid_bag_sizer->Add(disable_bitmaps, wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
 
     auto box_sizer_7 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_3->Add(box_sizer_7, wxSizerFlags().Border(wxALL));
 
-    m_btn_5 = new wxCommandLinkButton(page_2, wxID_ANY, wxString::FromUTF8("Command"), wxString::FromUTF8("wxCommandLinkButton"));
+    m_btn_5 = new wxCommandLinkButton(page_2, wxID_ANY, "Command", "wxCommandLinkButton");
     m_btn_5->SetBitmap(wxArtProvider::GetBitmap(wxART_GO_FORWARD, wxART_OTHER));
-    m_btn_5->SetToolTip(wxString::FromUTF8("The bitmap for this is from Art Provider."));
+    m_btn_5->SetToolTip("The bitmap for this is from Art Provider.");
     box_sizer_7->Add(m_btn_5, wxSizerFlags().Border(wxALL));
 
     page_2->SetSizerAndFit(box_sizer_3);
 
     auto page_3 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page_3, wxString::FromUTF8("Banners"));
+    m_notebook->AddPage(page_3, "Banners");
 
     auto box_sizer_4 = new wxBoxSizer(wxVERTICAL);
 
@@ -104,19 +103,19 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     box_sizer_4->Add(box_sizer_8, wxSizerFlags(1).Border(wxALL));
 
     m_banner_left = new wxBannerWindow(page_3, wxLEFT);
-    m_banner_left->SetText(wxString::FromUTF8("Left Banner"),
+    m_banner_left->SetText("Left Banner",
         wxEmptyString);
     box_sizer_8->Add(m_banner_left, wxSizerFlags().Border(wxALL));
 
     m_banner_top = new wxBannerWindow(page_3, wxTOP);
     m_banner_top->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION),
         wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    m_banner_top->SetText(wxString::FromUTF8("Top Banner"),
-        wxString::FromUTF8("This is the top banner message"));
+    m_banner_top->SetText("Top Banner",
+        "This is the top banner message");
     box_sizer_8->Add(m_banner_top, wxSizerFlags().Border(wxALL));
 
     m_banner_right = new wxBannerWindow(page_3, wxRIGHT);
-    m_banner_right->SetText(wxString::FromUTF8("Right Banner"),
+    m_banner_right->SetText("Right Banner",
         wxEmptyString);
     box_sizer_8->Add(m_banner_right, wxSizerFlags().Border(wxALL));
 
@@ -125,40 +124,40 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
 
     m_banner = new wxBannerWindow(page_3, wxLEFT);
     m_banner->SetBitmap(GetImageFromArray(wxue_img::wiztest_png, sizeof(wxue_img::wiztest_png)));
-    m_banner->SetText(wxString::FromUTF8("This is a long title"),
+    m_banner->SetText("This is a long title",
         wxEmptyString);
     box_sizer_9->Add(m_banner, wxSizerFlags().Border(wxALL));
 
     page_3->SetSizerAndFit(box_sizer_4);
 
     auto page_4 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page_4, wxString::FromUTF8("Tab 3"));
+    m_notebook->AddPage(page_4, "Tab 3");
 
     auto box_sizer_5 = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText_4 = new wxStaticText(page_4, wxID_ANY, wxString::FromUTF8("TODO: replace this control with something more useful..."));
+    m_staticText_4 = new wxStaticText(page_4, wxID_ANY, "TODO: replace this control with something more useful...");
     m_staticText_4->Wrap(200);
     box_sizer_5->Add(m_staticText_4, wxSizerFlags().Border(wxALL));
 
     page_4->SetSizerAndFit(box_sizer_5);
 
     auto page_5 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page_5, wxString::FromUTF8("Tab 4"));
+    m_notebook->AddPage(page_5, "Tab 4");
 
     auto box_sizer_6 = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText_5 = new wxStaticText(page_5, wxID_ANY, wxString::FromUTF8("TODO: replace this control with something more useful..."));
+    m_staticText_5 = new wxStaticText(page_5, wxID_ANY, "TODO: replace this control with something more useful...");
     m_staticText_5->Wrap(200);
     box_sizer_6->Add(m_staticText_5, wxSizerFlags().Border(wxALL));
 
     page_5->SetSizerAndFit(box_sizer_6);
 
     auto page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page, wxString::FromUTF8("Tab 5"));
+    m_notebook->AddPage(page, "Tab 5");
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(page, wxID_ANY, wxString::FromUTF8("TODO: replace this control with something more useful..."));
+    m_staticText = new wxStaticText(page, wxID_ANY, "TODO: replace this control with something more useful...");
     m_staticText->Wrap(200);
     box_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
 

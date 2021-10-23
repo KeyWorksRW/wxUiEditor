@@ -44,12 +44,12 @@ bool NotebookBase::Create(wxWindow *parent, wxWindowID id, const wxString &title
     box_sizer->Add(m_notebook, wxSizerFlags().Expand().Border(wxALL));
 
     auto page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page, wxString::FromUTF8("English"), false, 0);
+    m_notebook->AddPage(page, "English", false, 0);
     page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText(page, wxID_ANY, wxString::FromUTF8("This is a sentence in English."));
+    m_staticText = new wxStaticText(page, wxID_ANY, "This is a sentence in English.");
     parent_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
 
     page->SetSizerAndFit(parent_sizer);

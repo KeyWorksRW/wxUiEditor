@@ -14,39 +14,39 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_import_staticbox = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("Import Type"));
+    m_import_staticbox = new wxStaticBoxSizer(wxVERTICAL, this, "Import Type");
     parent_sizer->Add(m_import_staticbox, wxSizerFlags().Expand().Border(wxALL));
 
     auto flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
     m_import_staticbox->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));
 
-    m_radio_wxFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("wx&FormBuilder Project(s)"), wxDefaultPosition, wxDefaultSize,
+    m_radio_wxFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&FormBuilder Project(s)", wxDefaultPosition, wxDefaultSize,
         wxRB_GROUP);
     flex_grid_sizer->Add(m_radio_wxFormBuilder, wxSizerFlags().Border(wxALL));
 
-    m_radio_WindowsResource = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Windows Resource"));
+    m_radio_WindowsResource = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Windows Resource");
     flex_grid_sizer->Add(m_radio_WindowsResource, wxSizerFlags().Border(wxALL));
 
-    m_radio_XRC = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&XRC File(s)"));
+    m_radio_XRC = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&XRC File(s)");
     flex_grid_sizer->Add(m_radio_XRC, wxSizerFlags().Border(wxALL));
 
-    m_radio_wxSmith = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("wx&Smith Project(s)"));
+    m_radio_wxSmith = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Smith Project(s)");
     flex_grid_sizer->Add(m_radio_wxSmith, wxSizerFlags().Border(wxALL));
 
-    m_radio_wxGlade = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("wx&Glade Project(s)"));
+    m_radio_wxGlade = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Glade Project(s)");
     flex_grid_sizer->Add(m_radio_wxGlade, wxSizerFlags().Border(wxALL));
 
     auto box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
     m_import_staticbox->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));
 
-    m_staticFiles = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Files:"));
+    m_staticFiles = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Files:");
     box_sizer6->Add(m_staticFiles, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_btnAddFile = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("&Directory..."));
-    m_btnAddFile->SetToolTip(wxString::FromUTF8("You can add multiple formbuilder projects to a single wxUiEdtior project."));
+    m_btnAddFile = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Directory...");
+    m_btnAddFile->SetToolTip("You can add multiple formbuilder projects to a single wxUiEdtior project.");
     box_sizer6->Add(m_btnAddFile, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_static_cwd = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("..."), wxDefaultPosition, wxDefaultSize,
+    m_static_cwd = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "...", wxDefaultPosition, wxDefaultSize,
         wxST_ELLIPSIZE_MIDDLE);
     box_sizer6->Add(m_static_cwd, wxSizerFlags(1).Center().Border(wxALL));
 
@@ -60,10 +60,10 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer7->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
-    auto btn_2 = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Select &All"));
+    auto btn_2 = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "Select &All");
     box_sizer_2->Add(btn_2, wxSizerFlags().Border(wxALL));
 
-    auto btn__2 = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Select &None"));
+    auto btn__2 = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "Select &None");
     box_sizer_2->Add(btn__2, wxSizerFlags().Border(wxALL));
 
     m_stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

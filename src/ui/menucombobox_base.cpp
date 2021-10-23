@@ -38,12 +38,12 @@ MenuCombobox::MenuCombobox() : wxMenu()
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto menu_item = Append(gen_wxComboBox, wxString::FromUTF8("Insert wxComboBox"));
+    auto menu_item = Append(gen_wxComboBox, "Insert wxComboBox");
     menu_item->SetBitmap(GetImageFromArray(wxue_img::wxComboBox_png, sizeof(wxue_img::wxComboBox_png)));
 
-    auto menu_item_2 = Append(gen_wxChoice, wxString::FromUTF8("Insert wxChoice"));
+    auto menu_item_2 = Append(gen_wxChoice, "Insert wxChoice");
     menu_item_2->SetBitmap(GetImageFromArray(wxue_img::wxChoice_png, sizeof(wxue_img::wxChoice_png)));
 
-    auto menu_item_3 = Append(gen_wxBitmapComboBox, wxString::FromUTF8("Insert wxBitmapComboBox"));
+    auto menu_item_3 = Append(gen_wxBitmapComboBox, "Insert wxBitmapComboBox");
     menu_item_3->SetBitmap(GetImageFromArray(wxue_img::bmp_combo_box_png, sizeof(wxue_img::bmp_combo_box_png)));
 }

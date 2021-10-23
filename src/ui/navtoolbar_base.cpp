@@ -40,27 +40,27 @@ NavToolbar::NavToolbar(wxWindow* parent, wxWindowID id,
         wxImage::AddHandler(new wxPNGHandler);
 
     AddTool(id_NavCollExpand, wxEmptyString, GetImageFromArray(wxue_img::nav_coll_expand_png, sizeof(wxue_img::nav_coll_expand_png)), wxNullBitmap, wxITEM_NORMAL, 
-            wxString::FromUTF8("Collapse siblings, expand children"), wxString::FromUTF8("Expand selected item, collapse all other items at the same level"));
+            "Collapse siblings, expand children", "Expand selected item, collapse all other items at the same level");
 
     AddTool(id_NavExpand, wxEmptyString, GetImageFromArray(wxue_img::nav_expand_png, sizeof(wxue_img::nav_expand_png)), wxNullBitmap, wxITEM_NORMAL, 
-            wxString::FromUTF8("Expand all children"), wxString::FromUTF8("Expand selected item and all of it's sub-items"));
+            "Expand all children", "Expand selected item and all of it's sub-items");
 
     AddTool(id_NavCollapse, wxEmptyString, GetImageFromArray(wxue_img::nav_collapse_png, sizeof(wxue_img::nav_collapse_png)), wxNullBitmap, wxITEM_NORMAL, 
-            wxString::FromUTF8("Collapse all siblings"), wxString::FromUTF8("Collapse selected item and all items at the same level"));
+            "Collapse all siblings", "Collapse selected item and all items at the same level");
 
     AddSeparator();
 
     AddTool(id_NavMoveLeft, wxEmptyString, GetImageFromArray(wxue_img::nav_moveleft_png, sizeof(wxue_img::nav_moveleft_png)), wxNullBitmap, wxITEM_NORMAL, 
-            wxString::FromUTF8("Move Left"), wxString::FromUTF8("Move the selected item left"));
+            "Move Left", "Move the selected item left");
 
     AddTool(id_NavMoveUp, wxEmptyString, GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)), wxNullBitmap, wxITEM_NORMAL, 
-            wxString::FromUTF8("Move Up"), wxString::FromUTF8("Move the selected item up"));
+            "Move Up", "Move the selected item up");
 
     AddTool(id_NavMoveDown, wxEmptyString, GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)), wxNullBitmap, wxITEM_NORMAL, 
-            wxString::FromUTF8("Move Down"), wxString::FromUTF8("Move the selected item down"));
+            "Move Down", "Move the selected item down");
 
     AddTool(id_NavMoveRight, wxEmptyString, GetImageFromArray(wxue_img::nav_moveright_png, sizeof(wxue_img::nav_moveright_png)), wxNullBitmap, wxITEM_NORMAL, 
-            wxString::FromUTF8("Move Right"), wxString::FromUTF8("Move the selected item right"));
+            "Move Right", "Move the selected item right");
 
 }
 

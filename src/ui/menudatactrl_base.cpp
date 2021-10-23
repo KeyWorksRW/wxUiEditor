@@ -38,12 +38,12 @@ MenuDataCtrl::MenuDataCtrl() : wxMenu()
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto menu_item = Append(gen_wxDataViewCtrl, wxString::FromUTF8("Insert wxDataViewCtrl"));
+    auto menu_item = Append(gen_wxDataViewCtrl, "Insert wxDataViewCtrl");
     menu_item->SetBitmap(GetImageFromArray(wxue_img::dataview_ctrl_png, sizeof(wxue_img::dataview_ctrl_png)));
 
-    auto menu_item_2 = Append(gen_wxDataViewTreeCtrl, wxString::FromUTF8("Insert wxDataViewTreeCtrl"));
+    auto menu_item_2 = Append(gen_wxDataViewTreeCtrl, "Insert wxDataViewTreeCtrl");
     menu_item_2->SetBitmap(GetImageFromArray(wxue_img::dataviewtree_ctrl_png, sizeof(wxue_img::dataviewtree_ctrl_png)));
 
-    auto menu_item_3 = Append(gen_wxDataViewListCtrl, wxString::FromUTF8("Insert wxDataViewListCtrl"));
+    auto menu_item_3 = Append(gen_wxDataViewListCtrl, "Insert wxDataViewListCtrl");
     menu_item_3->SetBitmap(GetImageFromArray(wxue_img::dataviewlist_ctrl_png, sizeof(wxue_img::dataviewlist_ctrl_png)));
 }

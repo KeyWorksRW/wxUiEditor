@@ -159,10 +159,32 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
     if (str.size())
     {
         auto str_with_escapes = ConvertToCodeString(str);
-        if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
-            code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
+
+        bool has_utf_char = false;
+        for (auto iter: str_with_escapes)
+        {
+            if (static_cast<signed char>(iter) < 0)
+            {
+                has_utf_char = true;
+                break;
+            }
+        }
+
+        if (has_utf_char)
+        {
+            // While this may not be necessary for non-Windows systems, it does ensure the code compiles on all platforms.
+            if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
+                code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
+            else
+                code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
+        }
         else
-            code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
+        {
+            if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
+                code << "_(\"" << str_with_escapes << "\")";
+            else
+                code << "\"" << str_with_escapes << "\"";
+        }
     }
     else
     {
@@ -174,22 +196,14 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
 
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
-    ttlib::cstr code;
-
     if (node->HasValue(prop_name))
     {
-        auto str_with_escapes = ConvertToCodeString(node->prop_as_string(prop_name));
-        if (wxGetApp().GetProject()->prop_as_bool(prop_internationalize))
-            code << "_(wxString::FromUTF8(\"" << str_with_escapes << "\"))";
-        else
-            code << "wxString::FromUTF8(\"" << str_with_escapes << "\")";
+        return GenerateQuotedString(node->prop_as_string(prop_name));
     }
     else
     {
-        code << "wxEmptyString";
+        return ttlib::cstr("wxEmptyString");
     }
-
-    return code;
 }
 
 // clang-format off

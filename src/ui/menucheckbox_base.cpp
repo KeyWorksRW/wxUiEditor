@@ -37,11 +37,11 @@ MenuCheckbox::MenuCheckbox() : wxMenu()
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto menu_item = Append(gen_wxCheckBox, wxString::FromUTF8("Insert wxCheckBox"),
-        wxString::FromUTF8("Insert a normal two-state checkbox"), wxITEM_NORMAL);
+    auto menu_item = Append(gen_wxCheckBox, "Insert wxCheckBox",
+        "Insert a normal two-state checkbox", wxITEM_NORMAL);
     menu_item->SetBitmap(GetImageFromArray(wxue_img::wxCheckBox_png, sizeof(wxue_img::wxCheckBox_png)));
 
-    auto menu_item_2 = Append(gen_Check3State, wxString::FromUTF8("Insert 3-state wxCheckBox"),
-        wxString::FromUTF8("Insert a 3-state checkbox"), wxITEM_NORMAL);
+    auto menu_item_2 = Append(gen_Check3State, "Insert 3-state wxCheckBox",
+        "Insert a 3-state checkbox", wxITEM_NORMAL);
     menu_item_2->SetBitmap(GetImageFromArray(wxue_img::check3state_png, sizeof(wxue_img::check3state_png)));
 }

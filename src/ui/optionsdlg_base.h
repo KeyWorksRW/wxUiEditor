@@ -14,14 +14,14 @@ class OptionsDlgBase : public wxDialog
 {
 public:
     OptionsDlgBase() {}
-    OptionsDlgBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Options"),
+    OptionsDlgBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Options",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Options"),
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Options",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 

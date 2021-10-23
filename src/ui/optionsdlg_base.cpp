@@ -25,43 +25,43 @@ bool OptionsDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
-    auto checkBox = new wxCheckBox(this, wxID_ANY, wxString::FromUTF8("New sizers have &borders on all sides"));
+    auto checkBox = new wxCheckBox(this, wxID_ANY, "New sizers have &borders on all sides");
     checkBox->SetValidator(wxGenericValidator(&m_sizers_all_borders));
     box_sizer->Add(checkBox, wxSizerFlags().Border(wxALL));
 
-    auto checkBox2 = new wxCheckBox(this, wxID_ANY, wxString::FromUTF8("New sizers have wx&EXPAND set"));
+    auto checkBox2 = new wxCheckBox(this, wxID_ANY, "New sizers have wx&EXPAND set");
     checkBox2->SetValidator(wxGenericValidator(&m_sizers_always_expand));
     box_sizer->Add(checkBox2, wxSizerFlags().Border(wxALL));
 
-    auto checkBox3 = new wxCheckBox(this, wxID_ANY, wxString::FromUTF8("New widgets always have a class &member"));
+    auto checkBox3 = new wxCheckBox(this, wxID_ANY, "New widgets always have a class &member");
     checkBox3->SetValidator(wxGenericValidator(&m_class_access));
     box_sizer->Add(checkBox3, wxSizerFlags().Border(wxALL));
 
     auto flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
     box_sizer->Add(flex_grid_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    auto staticTextSrcExt = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Source code extension:"));
+    auto staticTextSrcExt = new wxStaticText(this, wxID_ANY, "&Source code extension:");
     flex_grid_sizer->Add(staticTextSrcExt, wxSizerFlags().Left().Border(wxALL));
 
     auto choiceSrc = new wxChoice(this, wxID_ANY);
-    choiceSrc->Append(wxString::FromUTF8(".cpp"));
-    choiceSrc->Append(wxString::FromUTF8(".cxx"));
-    choiceSrc->Append(wxString::FromUTF8(".cc"));
+    choiceSrc->Append(".cpp");
+    choiceSrc->Append(".cxx");
+    choiceSrc->Append(".cc");
     choiceSrc->SetValidator(wxGenericValidator(&m_src_extension));
     flex_grid_sizer->Add(choiceSrc, wxSizerFlags().Border(wxALL));
 
-    auto staticTextHrdExt = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Header file extension:"));
+    auto staticTextHrdExt = new wxStaticText(this, wxID_ANY, "&Header file extension:");
     flex_grid_sizer->Add(staticTextHrdExt, wxSizerFlags().Left().Border(wxALL));
 
     auto choiceHdr = new wxChoice(this, wxID_ANY);
-    choiceHdr->Append(wxString::FromUTF8(".h"));
-    choiceHdr->Append(wxString::FromUTF8(".hpp"));
-    choiceHdr->Append(wxString::FromUTF8(".hxx"));
-    choiceHdr->Append(wxString::FromUTF8(".hh"));
+    choiceHdr->Append(".h");
+    choiceHdr->Append(".hpp");
+    choiceHdr->Append(".hxx");
+    choiceHdr->Append(".hh");
     choiceHdr->SetValidator(wxGenericValidator(&m_hdr_extension));
     flex_grid_sizer->Add(choiceHdr, wxSizerFlags().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Class member prefix"));
+    auto staticText = new wxStaticText(this, wxID_ANY, "&Class member prefix");
     flex_grid_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
     auto textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString);

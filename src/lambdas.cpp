@@ -16,7 +16,13 @@
 
 void ExpandLambda(ttlib::cstr& lambda)
 {
+    lambda.LeftTrim();
+    if (lambda.is_sameprefix("@@"))
+    {
+        lambda.erase(0, 2);
+    }
     lambda.Replace("@@", "\n", tt::REPLACE::all);
+    lambda.RightTrim();
 }
 
 void CompressLambda(ttlib::cstr& lambda)

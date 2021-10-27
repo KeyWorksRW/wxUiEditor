@@ -13,6 +13,7 @@
 
 #include "../nodes/node.h"        // Node class
 #include "../nodes/node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
+#include "lambdas.h"              // Functions for formatting and storage of lamda events
 
 // List of events and suggested function names
 extern const std::unordered_map<std::string, const char*> s_EventNames;
@@ -79,10 +80,12 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
             if (auto pos = m_value.Find('{'); pos != wxNOT_FOUND)
             {
-                wxString body = m_value.substr(pos + 1);
-                if (body.Last() == '}')
-                    body.RemoveLast();
-                m_stc->SetText(body);
+                ttlib::cstr lamda = m_value.substr(pos + 1);
+                if (lamda.back() == '}')
+                    lamda.pop_back();
+                ExpandLambda(lamda);
+
+                m_stc->AddTextRaw(lamda.c_str());
             }
         }
         else
@@ -170,24 +173,10 @@ void EventHandlerDlg::OnOK(wxCommandEvent& event)
         // REVIEW: [KeyWorks - 03-16-2021] Currently, our code generation assumes the entire lambda is a single line, so
         // retaining any formatting is going to make the code generation look fairly terrible.
 
-        ttlib::cstr body;
-        body << m_stc->GetText().wx_str();
-        body.Replace("\r", " ", true);  // Handle Windows EOL
+        ttlib::cstr body(m_stc->GetTextRaw().data());
 
-        ttlib::multistr mstr(body, "\n");
-        body.clear();
-        for (auto& iter: mstr)
-        {
-            if (body.size())
-                body << ' ';
-
-            // remove any leading whitespace
-            body << iter.subview(iter.find_nonspace());
-        }
-
-        body.RightTrim();
-
-        handler << ") { " << body << " }";
+        CompressLambda(body);
+        handler << ")@@{ " << body << "@@}";
         m_value = handler.wx_str();
     }
 
@@ -199,12 +188,6 @@ void EventHandlerDlg::FormatBindText()
     ttlib::cstr code;
     ttlib::cstr handler;
 
-    // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on it's own line, so we
-    // use a string for this to allow the lambda processing code to replace it.
-    std::string comma(", ");
-
-    bool is_lambda { false };
-
     if (m_radio_use_function->GetValue())
     {
         handler << m_event->get_name() << ", &" << m_event->GetNode()->get_form_name()
@@ -212,7 +195,7 @@ void EventHandlerDlg::FormatBindText()
     }
     else
     {
-        handler << m_event->get_name() << ",\n\t";
+        handler << m_event->get_name() << ", ";
         if (m_check_capture_this->GetValue())
             handler << "[this](";
         else
@@ -224,37 +207,17 @@ void EventHandlerDlg::FormatBindText()
         if (m_check_include_event->GetValue())
             handler << " event";
 
-        // REVIEW: [KeyWorks - 03-16-2021] Currently, our code generation assumes the entire lambda is a single line, so
-        // retaining any formatting is going to make the code generation look fairly terrible.
-
-        ttlib::cstr body;
-        body << m_stc->GetText().wx_str();
-        body.Replace("\r", " ", true);  // Handle Windows EOL
-
-        ttlib::multistr mstr(body, "\n");
-        body.clear();
-        for (auto& iter: mstr)
-        {
-            if (body.size())
-                body << ' ';
-
-            // remove any leading whitespace
-            body << iter.subview(iter.find_nonspace());
-        }
-
-        handler << ") { " << body << " }";
-
-        comma = ",\n\t";
-        is_lambda = true;
+        // We don't display the code's body in the static text control since it's visible in the control below
+        handler << ") { body }";
     }
 
     if (m_event->GetNode()->IsForm())
     {
-        code << "Bind(" << handler << (is_lambda ? "\n\t);" : ");");
+        code << "Bind(" << handler << ");";
     }
     else if (m_event->GetNode()->isGen(gen_wxMenuItem) || m_event->GetNode()->isGen(gen_tool))
     {
-        code << "Bind(" << handler << comma;
+        code << "Bind(" << handler << ", ";
         if (m_event->GetNode()->prop_as_string(prop_id) != "wxID_ANY")
             code << m_event->GetNode()->prop_as_string(prop_id) << ");";
         else
@@ -264,16 +227,16 @@ void EventHandlerDlg::FormatBindText()
     {
         if (m_event->GetNode()->prop_as_string(prop_id).empty())
         {
-            code << "Bind(" << handler << comma << "wxID_ANY);";
+            code << "Bind(" << handler << ", wxID_ANY);";
         }
         else
         {
-            code << "Bind(" << handler << comma << m_event->GetNode()->prop_as_string(prop_id) << ");";
+            code << "Bind(" << handler << ", " << m_event->GetNode()->prop_as_string(prop_id) << ");";
         }
     }
     else
     {
-        code << m_event->GetNode()->get_node_name() << "->Bind(" << handler << (is_lambda ? "\n\t);" : ");");
+        code << m_event->GetNode()->get_node_name() << "->Bind(" << handler << ");";
     }
 
     m_static_bind_text->SetLabel(code.wx_str());

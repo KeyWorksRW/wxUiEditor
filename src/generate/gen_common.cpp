@@ -9,6 +9,7 @@
 
 #include "gen_common.h"
 
+#include "lambdas.h"      // Functions for formatting and storage of lamda events
 #include "mainapp.h"      // App -- App class
 #include "node.h"         // Node class
 #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
@@ -484,6 +485,7 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
         handler.Replace("[", "\n\t[");
         comma = ",\n\t";
         is_lambda = true;
+        ExpandLambda(handler);
     }
     else if (event->get_value().contains("::"))
     {
@@ -513,7 +515,7 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
         {
             code << node->get_node_name() << "->GetStaticBox()";
         }
-        code << "->Bind(" << handler << (is_lambda ? "\n\t);" : ");");
+        code << "->Bind(" << handler << (is_lambda ? " );" : ");");
     }
 
     else if (node->isGen(gen_wxMenuItem) || node->isGen(gen_tool))
@@ -538,11 +540,11 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
     }
     else if (event->GetNode()->IsForm())
     {
-        code << "Bind(" << handler << (is_lambda ? "\n\t);" : ");");
+        code << "Bind(" << handler << (is_lambda ? " );" : ");");
     }
     else
     {
-        code << event->GetNode()->get_node_name() << "->Bind(" << handler << (is_lambda ? "\n\t);" : ");");
+        code << event->GetNode()->get_node_name() << "->Bind(" << handler << (is_lambda ? " );" : ");");
     }
 
     return code;

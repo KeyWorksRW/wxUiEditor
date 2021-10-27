@@ -111,7 +111,7 @@ void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
 
     stc->StyleSetBold(wxSTC_C_WORD, true);
     stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-    stc->StyleSetForeground(wxSTC_C_WORD2, *wxRED);
+    stc->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
     stc->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
@@ -119,6 +119,7 @@ void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
     stc->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
+    stc->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
 
     stc->SetTabWidth(4);
     stc->SetTabIndents(true);

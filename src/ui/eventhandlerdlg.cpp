@@ -24,15 +24,18 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
     m_stc->SetLexer(wxSTC_LEX_CPP);
 
-    // There is no need for a complete list of C++ keywords given how small a lamda in this context is likely to be
-    m_stc->SetKeyWords(0, "auto bool char char8_t class const constexpr \
-	                          decltype default delete do double else enum explicit \
-	                          extern false float for friend if inline int long \
-	                          mutable namespace new noexcept nullptr private protected public \
-	                          return short signed sizeof static static_cast \
-	                          struct template this true typedef typeid \
+    m_stc->SetKeyWords(0, "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto \
+                              bitand bitor bool break case catch char char8_t char16_t char32_t \
+                              class compl concept const consteval constexpr constinit const_cast \
+                              continue co_await co_return co_yield \
+	                          decltype default delete do double dynamic_cast else enum explicit \
+	                          export extern false float for friend goto if inline int long \
+	                          mutable namespace new noexcept not not_eq nullptr operator private or or_eq \
+                              private protected public reflexpr register reinterpret_cast requires \
+	                          return short signed sizeof static static_assert static_cast \
+	                          struct switch synchronized template this thread_local throw true try typedef typeid \
 	                          typename union unsigned using virtual void volatile wchar_t \
-	                          while");
+	                          while xor xor_eq");
 
     m_stc->StyleSetBold(wxSTC_C_WORD, true);
     m_stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
@@ -43,7 +46,6 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     m_stc->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-    m_stc->StyleSetForeground(wxSTC_C_NUMBER, *wxBLUE);
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))

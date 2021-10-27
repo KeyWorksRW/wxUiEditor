@@ -532,8 +532,38 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
         {
             if (auto result = generator->GenEvents(iter, class_name); result)
             {
-                m_source->writeLine(result.value(), result.value().contains("\n") ? indent::auto_keep_whitespace :
-                                                                                    indent::auto_no_whitespace);
+                if (!result.value().contains("["))
+                {
+                    m_source->writeLine(result.value(), result.value().contains("\n") ? indent::auto_keep_whitespace :
+                                                                                        indent::auto_no_whitespace);
+                }
+                else  // this is a lambda
+                {
+                    ttlib::cstr convert(result.value());
+                    convert.Replace("@@", "\n", tt::REPLACE::all);
+                    ttlib::multistr lines(convert, '\n');
+                    bool initial_bracket = false;
+                    for (auto& code: lines)
+                    {
+                        if (code.contains("}"))
+                        {
+                            m_source->Unindent();
+                        }
+
+                        m_source->writeLine(code, indent::auto_keep_whitespace);
+
+                        if (code.contains("{"))
+                        {
+                            m_source->Indent();
+                        }
+                        else if (!initial_bracket && code.contains("["))
+                        {
+                            initial_bracket = true;
+                            m_source->Indent();
+                        }
+                    }
+                    m_source->Unindent();
+                }
             }
         }
     }

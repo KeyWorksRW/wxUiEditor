@@ -61,6 +61,7 @@ add_executable(wxUiEditor WIN32
     src/frame_status_bar.cpp  # MainFrame status bar functions
     src/gen_enums.cpp         # Enumerations for generators
     src/gzip.cpp              # Convert compiled GZIP arrays into original strings/images
+    src/lambdas.cpp           # Functions for formatting and storage of lamda events
     src/pjtsettings.cpp       # Hold data for currently loaded project
     src/startup.cpp           # Dialog to display is wxUE is launched with no arguments
     src/strings.cpp           # Contains translatable strings

@@ -514,7 +514,8 @@
           <node
             class="wxStaticText"
             label="..."
-            var_name="m_static_bind_text" />
+            var_name="m_static_bind_text"
+            wrap="400" />
           <node
             class="spacer"
             add_default_border="true"
@@ -570,7 +571,7 @@
               line_numbers="false"
               use_tabs="false"
               var_name="m_stc"
-              minimum_size="400,-1"
+              minimum_size="400,200d"
               border_size="10"
               wxEVT_STC_CHANGE="OnChange" />
           </node>

@@ -66,26 +66,18 @@ void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
 {
     stc->SetLexer(wxSTC_LEX_CPP);
 
-    // These are just the keywords that we might generate -- there is no need for a complete list of C++ keywords. We also
-    // add a few wxWidgets names.
-    stc->SetKeyWords(0, "auto bool char class const constexpr \
-	                     decltype default delete do double else enum explicit \
-	                     extern false float for friend if inline int long \
-	                     namespace new nullptr private protected public \
-	                     return short signed sizeof static static_cast \
-	                     struct template this true typedef \
-	                     unsigned using virtual void wchar_t \
-	                     while \
-                         Bind \
-                         wxAnimation \
-                         wxBitmap \
-                         wxImage \
-                         wxMemoryInputStream \
-                         wxPoint \
-                         wxSize \
-                         wxSizerFlags \
-                         wxStaticCast \
-                         wxString");
+    stc->SetKeyWords(0, "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto \
+                         bitand bitor bool break case catch char char8_t char16_t char32_t \
+                         class compl concept const consteval constexpr constinit const_cast \
+                         continue co_await co_return co_yield \
+	                     decltype default delete do double dynamic_cast else enum explicit \
+	                     export extern false float for friend goto if inline int long \
+	                     mutable namespace new noexcept not not_eq nullptr operator private or or_eq \
+                         private protected public reflexpr register reinterpret_cast requires \
+	                     return short signed sizeof static static_assert static_cast \
+	                     struct switch synchronized template this thread_local throw true try typedef typeid \
+	                     typename union unsigned using virtual void volatile wchar_t \
+	                     while xor xor_eq");
 
     // clang-format off
 
@@ -119,7 +111,7 @@ void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
 
     stc->StyleSetBold(wxSTC_C_WORD, true);
     stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-    stc->StyleSetForeground(wxSTC_C_WORD2, *wxRED);
+    stc->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
     stc->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
@@ -127,6 +119,7 @@ void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
     stc->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
     stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
+    stc->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
 
     stc->SetTabWidth(4);
     stc->SetTabIndents(true);

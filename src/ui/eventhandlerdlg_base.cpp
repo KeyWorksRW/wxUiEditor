@@ -20,6 +20,7 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
     parent_sizer->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     m_static_bind_text = new wxStaticText(this, wxID_ANY, "...");
+    m_static_bind_text->Wrap(400);
     box_sizer->Add(m_static_bind_text, wxSizerFlags().Border(wxALL));
 
     box_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
@@ -61,9 +62,9 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
         m_stc->SetUseTabs(false);
         m_stc->SetTabWidth(4);
         m_stc->SetBackSpaceUnIndents(true);
-        m_stc->SetMinSize(wxSize(400, -1));
+        m_stc->SetMinSize(wxSize(400, 200));
     }
-    m_stc->SetMinSize(wxSize(400, -1));
+    m_stc->SetMinSize(wxSize(400, 200));
     m_lambda_box->Add(m_stc, wxSizerFlags().DoubleBorder(wxALL));
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());

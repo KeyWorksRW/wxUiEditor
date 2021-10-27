@@ -13,6 +13,7 @@
 
 #include "../nodes/node.h"        // Node class
 #include "../nodes/node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
+#include "lambdas.h"              // Functions for formatting and storage of lamda events
 
 // List of events and suggested function names
 extern const std::unordered_map<std::string, const char*> s_EventNames;
@@ -23,26 +24,46 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
     m_stc->SetLexer(wxSTC_LEX_CPP);
 
-    // There is no need for a complete list of C++ keywords given how small a lamda in this context is likely to be
-    m_stc->SetKeyWords(0, "auto bool char char8_t class const constexpr \
-	                          decltype default delete do double else enum explicit \
-	                          extern false float for friend if inline int long \
-	                          mutable namespace new noexcept nullptr private protected public \
-	                          return short signed sizeof static static_cast \
-	                          struct template this true typedef typeid \
+    m_stc->SetKeyWords(0, "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto \
+                              bitand bitor bool break case catch char char8_t char16_t char32_t \
+                              class compl concept const consteval constexpr constinit const_cast \
+                              continue co_await co_return co_yield \
+	                          decltype default delete do double dynamic_cast else enum explicit \
+	                          export extern false float for friend goto if inline int long \
+	                          mutable namespace new noexcept not not_eq nullptr operator private or or_eq \
+                              private protected public reflexpr register reinterpret_cast requires \
+	                          return short signed sizeof static static_assert static_cast \
+	                          struct switch synchronized template this thread_local throw true try typedef typeid \
 	                          typename union unsigned using virtual void volatile wchar_t \
-	                          while");
+	                          while xor xor_eq");
+
+    auto form = event->GetNode()->IsForm() ? event->GetNode() : event->GetNode()->FindParentForm();
+    if (form)
+    {
+        std::set<std::string> variables;
+        CollectMemberVariables(form, variables);
+        ttlib::cstr keywords;
+        for (auto& iter: variables)
+        {
+            keywords << iter << ' ';
+        }
+        if (keywords.back() == ' ')
+            keywords.pop_back();
+        m_stc->SetKeyWords(1, keywords);
+        // m_stc->StyleSetForeground(wxSTC_C_WORD2, *wxRED);
+        m_stc->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
+    }
 
     m_stc->StyleSetBold(wxSTC_C_WORD, true);
     m_stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-    m_stc->StyleSetForeground(wxSTC_C_STRING, *wxRED);
-    m_stc->StyleSetForeground(wxSTC_C_STRINGEOL, *wxRED);
+    m_stc->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
+    m_stc->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
     m_stc->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-    m_stc->StyleSetForeground(wxSTC_C_NUMBER, *wxBLUE);
+    m_stc->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
@@ -79,10 +100,12 @@ void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
             if (auto pos = m_value.Find('{'); pos != wxNOT_FOUND)
             {
-                wxString body = m_value.substr(pos + 1);
-                if (body.Last() == '}')
-                    body.RemoveLast();
-                m_stc->SetText(body);
+                ttlib::cstr lamda = m_value.substr(pos + 1);
+                if (lamda.back() == '}')
+                    lamda.pop_back();
+                ExpandLambda(lamda);
+
+                m_stc->AddTextRaw(lamda.c_str());
             }
         }
         else
@@ -170,24 +193,10 @@ void EventHandlerDlg::OnOK(wxCommandEvent& event)
         // REVIEW: [KeyWorks - 03-16-2021] Currently, our code generation assumes the entire lambda is a single line, so
         // retaining any formatting is going to make the code generation look fairly terrible.
 
-        ttlib::cstr body;
-        body << m_stc->GetText().wx_str();
-        body.Replace("\r", " ", true);  // Handle Windows EOL
+        ttlib::cstr body(m_stc->GetTextRaw().data());
 
-        ttlib::multistr mstr(body, "\n");
-        body.clear();
-        for (auto& iter: mstr)
-        {
-            if (body.size())
-                body << ' ';
-
-            // remove any leading whitespace
-            body << iter.subview(iter.find_nonspace());
-        }
-
-        body.RightTrim();
-
-        handler << ") { " << body << " }";
+        CompressLambda(body);
+        handler << ")@@{ " << body << "@@}";
         m_value = handler.wx_str();
     }
 
@@ -199,12 +208,6 @@ void EventHandlerDlg::FormatBindText()
     ttlib::cstr code;
     ttlib::cstr handler;
 
-    // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on it's own line, so we
-    // use a string for this to allow the lambda processing code to replace it.
-    std::string comma(", ");
-
-    bool is_lambda { false };
-
     if (m_radio_use_function->GetValue())
     {
         handler << m_event->get_name() << ", &" << m_event->GetNode()->get_form_name()
@@ -212,7 +215,7 @@ void EventHandlerDlg::FormatBindText()
     }
     else
     {
-        handler << m_event->get_name() << ",\n\t";
+        handler << m_event->get_name() << ", ";
         if (m_check_capture_this->GetValue())
             handler << "[this](";
         else
@@ -224,37 +227,17 @@ void EventHandlerDlg::FormatBindText()
         if (m_check_include_event->GetValue())
             handler << " event";
 
-        // REVIEW: [KeyWorks - 03-16-2021] Currently, our code generation assumes the entire lambda is a single line, so
-        // retaining any formatting is going to make the code generation look fairly terrible.
-
-        ttlib::cstr body;
-        body << m_stc->GetText().wx_str();
-        body.Replace("\r", " ", true);  // Handle Windows EOL
-
-        ttlib::multistr mstr(body, "\n");
-        body.clear();
-        for (auto& iter: mstr)
-        {
-            if (body.size())
-                body << ' ';
-
-            // remove any leading whitespace
-            body << iter.subview(iter.find_nonspace());
-        }
-
-        handler << ") { " << body << " }";
-
-        comma = ",\n\t";
-        is_lambda = true;
+        // We don't display the code's body in the static text control since it's visible in the control below
+        handler << ") { body }";
     }
 
     if (m_event->GetNode()->IsForm())
     {
-        code << "Bind(" << handler << (is_lambda ? "\n\t);" : ");");
+        code << "Bind(" << handler << ");";
     }
     else if (m_event->GetNode()->isGen(gen_wxMenuItem) || m_event->GetNode()->isGen(gen_tool))
     {
-        code << "Bind(" << handler << comma;
+        code << "Bind(" << handler << ", ";
         if (m_event->GetNode()->prop_as_string(prop_id) != "wxID_ANY")
             code << m_event->GetNode()->prop_as_string(prop_id) << ");";
         else
@@ -264,21 +247,47 @@ void EventHandlerDlg::FormatBindText()
     {
         if (m_event->GetNode()->prop_as_string(prop_id).empty())
         {
-            code << "Bind(" << handler << comma << "wxID_ANY);";
+            code << "Bind(" << handler << ", wxID_ANY);";
         }
         else
         {
-            code << "Bind(" << handler << comma << m_event->GetNode()->prop_as_string(prop_id) << ");";
+            code << "Bind(" << handler << ", " << m_event->GetNode()->prop_as_string(prop_id) << ");";
         }
     }
     else
     {
-        code << m_event->GetNode()->get_node_name() << "->Bind(" << handler << (is_lambda ? "\n\t);" : ");");
+        code << m_event->GetNode()->get_node_name() << "->Bind(" << handler << ");";
     }
 
     m_static_bind_text->SetLabel(code.wx_str());
 
     Fit();
+}
+
+void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& variables)
+{
+    if (node->HasValue(prop_class_access) && node->prop_as_string(prop_class_access) != "none")
+    {
+        if (node->HasValue(prop_checkbox_var_name))
+        {
+            variables.insert(node->prop_as_string(prop_checkbox_var_name));
+        }
+        else if (node->HasValue(prop_var_name))
+        {
+            variables.insert(node->prop_as_string(prop_var_name));
+        }
+    }
+
+    if (node->HasValue(prop_validator_variable))
+    {
+        variables.insert(node->prop_as_string(prop_validator_variable));
+    }
+
+    for (size_t i = 0; i < node->GetChildCount(); i++)
+    {
+        auto child = node->GetChild(i);
+        CollectMemberVariables(child, variables);
+    }
 }
 
 const std::unordered_map<std::string, const char*> s_EventNames = {

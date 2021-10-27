@@ -10,6 +10,7 @@
 #include "eventhandlerdlg_base.h"
 
 class NodeEvent;
+class Node;
 
 class EventHandlerDlg : public EventHandlerDlgBase
 {
@@ -18,6 +19,7 @@ public:
     const wxString& GetResults() { return m_value; }
 
 protected:
+    void CollectMemberVariables(Node* node, std::set<std::string>& variables);
     void FormatBindText();
 
     // Handlers for EventHandlerDlgBase events

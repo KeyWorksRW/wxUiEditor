@@ -37,15 +37,33 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 	                          typename union unsigned using virtual void volatile wchar_t \
 	                          while xor xor_eq");
 
+    auto form = event->GetNode()->IsForm() ? event->GetNode() : event->GetNode()->FindParentForm();
+    if (form)
+    {
+        std::set<std::string> variables;
+        CollectMemberVariables(form, variables);
+        ttlib::cstr keywords;
+        for (auto& iter: variables)
+        {
+            keywords << iter << ' ';
+        }
+        if (keywords.back() == ' ')
+            keywords.pop_back();
+        m_stc->SetKeyWords(1, keywords);
+        // m_stc->StyleSetForeground(wxSTC_C_WORD2, *wxRED);
+        m_stc->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
+    }
+
     m_stc->StyleSetBold(wxSTC_C_WORD, true);
     m_stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-    m_stc->StyleSetForeground(wxSTC_C_STRING, *wxRED);
-    m_stc->StyleSetForeground(wxSTC_C_STRINGEOL, *wxRED);
+    m_stc->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
+    m_stc->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
     m_stc->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
     m_stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
+    m_stc->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
 }
 
 void EventHandlerDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
@@ -244,6 +262,32 @@ void EventHandlerDlg::FormatBindText()
     m_static_bind_text->SetLabel(code.wx_str());
 
     Fit();
+}
+
+void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& variables)
+{
+    if (node->HasValue(prop_class_access) && node->prop_as_string(prop_class_access) != "none")
+    {
+        if (node->HasValue(prop_checkbox_var_name))
+        {
+            variables.insert(node->prop_as_string(prop_checkbox_var_name));
+        }
+        else if (node->HasValue(prop_var_name))
+        {
+            variables.insert(node->prop_as_string(prop_var_name));
+        }
+    }
+
+    if (node->HasValue(prop_validator_variable))
+    {
+        variables.insert(node->prop_as_string(prop_validator_variable));
+    }
+
+    for (size_t i = 0; i < node->GetChildCount(); i++)
+    {
+        auto child = node->GetChild(i);
+        CollectMemberVariables(child, variables);
+    }
 }
 
 const std::unordered_map<std::string, const char*> s_EventNames = {

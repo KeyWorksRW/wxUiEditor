@@ -235,6 +235,7 @@ void ChangeSizerType::Change()
     wxGetFrame().FireDeletedEvent(m_old_node.get());
     wxGetFrame().FireCreatedEvent(m_node);
     wxGetFrame().SelectNode(m_node.get());
+    wxGetFrame().GetNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
 }
 
 void ChangeSizerType::Revert()

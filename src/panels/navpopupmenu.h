@@ -35,9 +35,11 @@ protected:
     void CreateMenuMenu(Node* node);
     void CreateNormalMenu(Node* node);
     void CreateProjectMenu(Node* node);
+    void CreateSizerMenu(Node* node);
     void CreateTopSizerMenu(Node* node);
     void CreateWizardMenu(Node* node);
 
+    void ChangeSizer(GenEnum::GenName new_sizer_gen);
     void CreateSizerParent(Node* node, ttlib::cview widget);
 
     enum
@@ -71,6 +73,11 @@ protected:
         MenuNEW_SIBLING_FLEX_GRID_SIZER,
         MenuNEW_SIBLING_GRIDBAG_SIZER,
         MenuNEW_SIBLING_STD_DIALG_BTNS,
+
+        MenuChangeTo_FLEX_GRID_SIZER,
+        MenuChangeTo_GRID_SIZER,
+        MenuChangeTo_STATIC_SIZER,
+        MenuChangeTo_WRAP_SIZER,
 
         MenuNEW_CHILD_SPACER,
         MenuNEW_SIBLING_SPACER,

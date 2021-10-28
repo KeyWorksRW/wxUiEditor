@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "gen_enums.h"     // Enumerations for generators
 #include "node_classes.h"  // Forward defintions of Node classes
 #include "undo_stack.h"    // UndoAction -- Maintain a undo and redo stack
 
@@ -111,6 +112,23 @@ private:
     size_t m_revert_position;
     int m_revert_row;
     int m_revert_col;
+};
+
+class ChangeSizerType : public UndoAction
+{
+public:
+    ChangeSizerType(Node* node, GenEnum::GenName new_sizer);
+    void Change() override;
+    void Revert() override;
+
+    Node* GetOldNode() { return m_old_node.get(); }
+    Node* GetNode() { return m_node.get(); }
+
+private:
+    NodeSharedPtr m_node;
+    NodeSharedPtr m_old_node;
+    NodeSharedPtr m_parent;
+    GenEnum::GenName m_new_gen_sizer;
 };
 
 class AppendGridBagAction : public UndoAction

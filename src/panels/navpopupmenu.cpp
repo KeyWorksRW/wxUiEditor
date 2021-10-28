@@ -961,6 +961,36 @@ void NavPopupMenu::CreateSizerMenu(Node* node)
 
         AppendSubMenu(sub_menu, "Change Sizer To");
     }
+    else if (node->isGen(gen_wxGridSizer))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_FLEX_GRID_SIZER, "wxFlexGridSizer");
+        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item = sub_menu->Append(MenuChangeTo_WRAP_SIZER, "wxWrapSizer");
+        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+
+        AppendSubMenu(sub_menu, "Change Sizer To");
+    }
+    else if (node->isGen(gen_wxFlexGridSizer))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_GRID_SIZER, "wxGridSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item = sub_menu->Append(MenuChangeTo_WRAP_SIZER, "wxWrapSizer");
+        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+
+        AppendSubMenu(sub_menu, "Change Sizer To");
+    }
+    else if (node->isGen(gen_wxWrapSizer))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_FLEX_GRID_SIZER, "wxFlexGridSizer");
+        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item = sub_menu->Append(MenuChangeTo_GRID_SIZER, "wxGridSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+
+        AppendSubMenu(sub_menu, "Change Sizer To");
+    }
 
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this, wxID_ANY);

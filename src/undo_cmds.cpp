@@ -202,6 +202,54 @@ void ChangePositionAction::Revert()
     wxGetFrame().SelectNode(m_node);
 }
 
+///////////////////////////////// ChangeSizerType ////////////////////////////////////
+
+ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
+{
+    m_undo_string << "change sizer type";
+
+    m_old_node = node->GetSharedPtr();
+    m_parent = node->GetParentPtr();
+    m_new_gen_sizer = new_gen_sizer;
+
+    m_node = g_NodeCreator.NewNode(m_new_gen_sizer);
+    ASSERT(m_node);
+    if (m_node)
+    {
+        for (auto& iter: m_old_node->GetChildNodePtrs())
+        {
+            m_node->Adopt(g_NodeCreator.MakeCopy(iter.get()));
+        }
+    }
+}
+
+void ChangeSizerType::Change()
+{
+    auto pos = m_parent->GetChildPosition(m_old_node.get());
+    m_parent->RemoveChild(m_old_node);
+    m_old_node->SetParent(NodeSharedPtr());
+    m_parent->Adopt(m_node);
+    m_parent->FindParentForm()->FixDuplicateNodeNames();
+    m_parent->ChangeChildPosition(m_node, pos);
+
+    wxGetFrame().FireDeletedEvent(m_old_node.get());
+    wxGetFrame().FireCreatedEvent(m_node);
+    wxGetFrame().SelectNode(m_node.get());
+}
+
+void ChangeSizerType::Revert()
+{
+    auto pos = m_parent->GetChildPosition(m_node.get());
+    m_parent->RemoveChild(m_node);
+    m_node->SetParent(NodeSharedPtr());
+    m_parent->Adopt(m_old_node);
+    m_parent->ChangeChildPosition(m_old_node, pos);
+
+    wxGetFrame().FireDeletedEvent(m_node.get());
+    wxGetFrame().FireCreatedEvent(m_old_node);
+    wxGetFrame().SelectNode(m_old_node.get());
+}
+
 ///////////////////////////////// ChangeParentAction ////////////////////////////////////
 
 ChangeParentAction::ChangeParentAction(Node* node, Node* parent)

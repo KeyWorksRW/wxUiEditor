@@ -323,7 +323,7 @@
             class="wxToggleButton"
             label="Play Animation"
             style="wxBU_EXACTFIT"
-            wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;) { if (m_toggleBtn->GetValue())  m_animation_ctrl->Play();  else  m_animation_ctrl->Stop(); }" />
+            wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@}" />
           <node
             class="wxAnimationCtrl"
             animation="Header; ..\art\clr_hourglass_gif.hxx"
@@ -437,7 +437,7 @@
                     class="wxButton"
                     label="Switch"
                     alignment="wxALIGN_CENTER_HORIZONTAL"
-                    wxEVT_BUTTON="[this](wxCommandEvent&amp;) { m_scintilla->ClearAll();  m_scintilla->AddTextRaw(&quot;This is a sentence in English.&quot;); }" />
+                    wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_scintilla->ClearAll();  m_scintilla->AddTextRaw(&quot;This is a sentence in English.&quot;);@@}" />
                 </node>
               </node>
             </node>
@@ -468,7 +468,7 @@
                     label="Switch"
                     var_name="m_btn_2"
                     alignment="wxALIGN_CENTER_HORIZONTAL"
-                    wxEVT_BUTTON="[this](wxCommandEvent&amp;) { m_scintilla->ClearAll();  m_scintilla->AddTextRaw(&quot;Ceci est une phrase en français.&quot;); }" />
+                    wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_scintilla->ClearAll();  m_scintilla->AddTextRaw(&quot;Ceci est une phrase en français.&quot;);@@}" />
                 </node>
               </node>
             </node>
@@ -648,13 +648,13 @@
             class_access="none"
             label="First"
             var_name="btn"
-            wxEVT_BUTTON="[this](wxCommandEvent&amp;) { m_choicebook->SetSelection(0); }" />
+            wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(0);@@}" />
           <node
             class="wxButton"
             class_access="none"
             label="Last"
             var_name="btn_2"
-            wxEVT_BUTTON="[this](wxCommandEvent&amp;) { m_choicebook->SetSelection(2); }" />
+            wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_choicebook->SetSelection(2);@@}" />
           <node
             class="BookPage"
             bitmap="XPM; ..\art\english.xpm; [-1,-1]"
@@ -1286,7 +1286,7 @@
                   var_name="disable_bitmaps"
                   column="2"
                   row="1"
-                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp; event) { m_btn_bitmaps->Enable(!event.IsChecked()); }" />
+                  wxEVT_CHECKBOX="[this](wxCommandEvent&amp; event)@@{@@m_btn_bitmaps->Enable(!event.IsChecked());@@}" />
               </node>
               <node
                 class="wxBoxSizer"

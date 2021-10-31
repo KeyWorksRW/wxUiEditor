@@ -102,11 +102,15 @@ bool ChoiceBookBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
 
     // Event handlers
     btn->Bind(wxEVT_BUTTON,
-        [this](wxCommandEvent&) { m_choicebook->SetSelection(0); }
-        );
+        [this](wxCommandEvent&)
+        {
+            m_choicebook->SetSelection(0);
+        } );
     btn_2->Bind(wxEVT_BUTTON,
-        [this](wxCommandEvent&) { m_choicebook->SetSelection(2); }
-        );
+        [this](wxCommandEvent&)
+        {
+            m_choicebook->SetSelection(2);
+        } );
 
     return true;
 }

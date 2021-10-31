@@ -69,8 +69,11 @@ bool NewFrameBase::Create(wxWindow *parent, wxWindowID id, const wxString &title
 
     // Event handlers
     Bind(wxEVT_INIT_DIALOG,
-        [this](wxInitDialogEvent& event) { m_classname->SetFocus();  event.Skip(); }
-        );
+        [this](wxInitDialogEvent& event)
+        {
+            m_classname->SetFocus();
+            event.Skip();
+        } );
     m_checkBox_mainframe->Bind(wxEVT_CHECKBOX, &NewFrameBase::OnCheckMainFrame, this);
 
     return true;

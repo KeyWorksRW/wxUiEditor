@@ -190,13 +190,10 @@ void EventHandlerDlg::OnOK(wxCommandEvent& event)
         if (m_check_include_event->GetValue())
             handler << " event";
 
-        // REVIEW: [KeyWorks - 03-16-2021] Currently, our code generation assumes the entire lambda is a single line, so
-        // retaining any formatting is going to make the code generation look fairly terrible.
-
         ttlib::cstr body(m_stc->GetTextRaw().data());
 
         CompressLambda(body);
-        handler << ")@@{ " << body << "@@}";
+        handler << ")@@{" << body << "@@}";
         m_value = handler.wx_str();
     }
 

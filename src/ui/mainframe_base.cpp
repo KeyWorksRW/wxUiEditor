@@ -376,15 +376,24 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     // Event handlers
     Bind(wxEVT_CLOSE_WINDOW, &MainFrameBase::OnClose, this);
     Bind(wxEVT_MENU,
-        [](wxCommandEvent&) { wxGetApp().NewProject(true); },
+        [](wxCommandEvent&)
+        {
+            wxGetApp().NewProject(true);
+        },
         id_NewProject);
     Bind(wxEVT_MENU, &MainFrameBase::OnOpenProject, this, id_OpenProject);
     Bind(wxEVT_MENU,
-        [](wxCommandEvent&) { wxGetApp().NewProject(false); },
+        [](wxCommandEvent&)
+        {
+            wxGetApp().NewProject(false);
+        },
         menu_import->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveProject, this, wxID_SAVE);
     Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().IsModified()); },
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().IsModified());
+        },
         wxID_SAVE);
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
     Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
@@ -394,46 +403,82 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendXRC, this, id_AppendXRC);
     Bind(wxEVT_MENU, &MainFrameBase::OnOptionsDlg, this, id_OptionsDlg);
     Bind(wxEVT_MENU,
-        [](wxCommandEvent&) { wxGetFrame().Undo(); },
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().Undo();
+        },
         wxID_UNDO);
     Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().CanUndo()); },
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanUndo());
+        },
         wxID_UNDO);
     Bind(wxEVT_MENU,
-        [](wxCommandEvent&) { wxGetFrame().Redo(); },
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().Redo();
+        },
         wxID_REDO);
     Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().CanRedo()); },
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanRedo());
+        },
         wxID_REDO);
     Bind(wxEVT_MENU, &MainFrameBase::OnCut, this, wxID_CUT);
     Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().CanCopyNode()); },
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanCopyNode());
+        },
         wxID_CUT);
     Bind(wxEVT_MENU, &MainFrameBase::OnCopy, this, wxID_COPY);
     Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().CanCopyNode()); },
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanCopyNode());
+        },
         wxID_COPY);
     Bind(wxEVT_MENU, &MainFrameBase::OnPaste, this, wxID_PASTE);
     Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().CanPasteNode()); },
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanPasteNode());
+        },
         wxID_PASTE);
     Bind(wxEVT_MENU, &MainFrameBase::OnDelete, this, wxID_DELETE);
     Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event) { event.Enable(wxGetFrame().CanCopyNode()); },
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanCopyNode());
+        },
         wxID_DELETE);
     Bind(wxEVT_MENU, &MainFrameBase::OnFindDialog, this, wxID_FIND);
     Bind(wxEVT_MENU, &MainFrameBase::OnInsertWidget, this, id_insert_widget);
     Bind(wxEVT_MENU,
-        [](wxCommandEvent&) { wxGetFrame().MoveNode(MoveDirection::Up); },
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().MoveNode(MoveDirection::Up);
+        },
         id_MoveUp);
     Bind(wxEVT_MENU,
-        [](wxCommandEvent&) { wxGetFrame().MoveNode(MoveDirection::Down); },
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().MoveNode(MoveDirection::Down);
+        },
         id_MoveDown);
     Bind(wxEVT_MENU,
-        [](wxCommandEvent&) { wxGetFrame().MoveNode(MoveDirection::Left); },
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().MoveNode(MoveDirection::Left);
+        },
         id_MoveLeft);
     Bind(wxEVT_MENU,
-        [](wxCommandEvent&) { wxGetFrame().MoveNode(MoveDirection::Right); },
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().MoveNode(MoveDirection::Right);
+        },
         id_MoveRight);
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignLeft);
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeAlignment, this, id_AlignCenterHorizontal);

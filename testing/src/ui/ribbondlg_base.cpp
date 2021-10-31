@@ -118,11 +118,15 @@ bool RibbonDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &titl
 
     // Event handlers
     m_btn->Bind(wxEVT_BUTTON,
-        [this](wxCommandEvent&) { m_scintilla->ClearAll();  m_scintilla->AddTextRaw("This is a sentence in English."); }
-        );
+        [this](wxCommandEvent&)
+        {
+            m_scintilla->ClearAll();  m_scintilla->AddTextRaw("This is a sentence in English.");
+        } );
     m_btn_2->Bind(wxEVT_BUTTON,
-        [this](wxCommandEvent&) { m_scintilla->ClearAll();  m_scintilla->AddTextRaw("Ceci est une phrase en français."); }
-        );
+        [this](wxCommandEvent&)
+        {
+            m_scintilla->ClearAll();  m_scintilla->AddTextRaw("Ceci est une phrase en français.");
+        } );
 
     return true;
 }

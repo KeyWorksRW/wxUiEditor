@@ -253,8 +253,17 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     m_checkList->Bind(wxEVT_CHECKLISTBOX, &CommonCtrlsBase::OnListChecked, this);
     m_radioBox->Bind(wxEVT_RADIOBOX, &CommonCtrlsBase::OnRadioBox, this);
     m_toggleBtn->Bind(wxEVT_TOGGLEBUTTON,
-        [this](wxCommandEvent&) { if (m_toggleBtn->GetValue())  m_animation_ctrl->Play();  else  m_animation_ctrl->Stop(); }
-        );
+        [this](wxCommandEvent&)
+        {
+            if (m_toggleBtn->GetValue()) 
+            {
+                m_animation_ctrl->Play();
+            }
+            else 
+            {  
+                m_animation_ctrl->Stop();
+            }
+        } );
     m_slider->Bind(wxEVT_SLIDER, &CommonCtrlsBase::OnSlider, this);
 
     return true;

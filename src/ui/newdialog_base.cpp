@@ -79,8 +79,10 @@ bool NewDialogBase::Create(wxWindow *parent, wxWindowID id, const wxString &titl
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &NewDialogBase::OnInit, this);
     m_check_tabs->Bind(wxEVT_CHECKBOX,
-        [this](wxCommandEvent&) { m_spinCtrlTabs->Enable(m_check_tabs->GetValue()); }
-        );
+        [this](wxCommandEvent&)
+        {
+            m_spinCtrlTabs->Enable(m_check_tabs->GetValue());
+        } );
 
     return true;
 }

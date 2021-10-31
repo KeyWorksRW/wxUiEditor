@@ -899,7 +899,7 @@
             size="-1,300"
             flags="wxEXPAND"
             proportion="1"
-            wxEVT_LISTBOX="[this](wxCommandEvent&amp;) { m_stdBtn->GetAffirmativeButton()->Enable(); }"
+            wxEVT_LISTBOX="[this](wxCommandEvent&amp;)@@{@@m_stdBtn->GetAffirmativeButton()->Enable();@@}"
             wxEVT_LISTBOX_DCLICK="OnListBoxDblClick" />
         </node>
         <node
@@ -933,7 +933,7 @@
             id="id_NewProject"
             label="&amp;New Project...&#09;Ctrl+N"
             var_name="menuItem"
-            wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetApp().NewProject(true); }" />
+            wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetApp().NewProject(true);@@}" />
           <node
             class="wxMenuItem"
             bitmap="Art; wxART_FILE_OPEN|wxART_MENU; [-1,-1]"
@@ -951,7 +951,7 @@
             class="wxMenuItem"
             label="&amp;Import..."
             var_name="menu_import"
-            wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetApp().NewProject(false); }" />
+            wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetApp().NewProject(false);@@}" />
           <node
             class="separator" />
           <node
@@ -961,7 +961,7 @@
             id="wxID_SAVE"
             label="&amp;Save&#09;Ctrl+S"
             wxEVT_MENU="OnSaveProject"
-            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event) { event.Enable(wxGetFrame().IsModified()); }" />
+            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().IsModified());@@}" />
           <node
             class="wxMenuItem"
             bitmap="Art; wxART_FILE_SAVE_AS|wxART_MENU; [-1,-1]"
@@ -1042,16 +1042,16 @@
             id="wxID_UNDO"
             label=""
             var_name="menu_undo"
-            wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetFrame().Undo(); }"
-            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event) { event.Enable(wxGetFrame().CanUndo()); }" />
+            wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().Undo();@@}"
+            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanUndo());@@}" />
           <node
             class="wxMenuItem"
             bitmap="Art; wxART_REDO|wxART_MENU; [-1,-1]"
             id="wxID_REDO"
             label=""
             var_name="menu_redo"
-            wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetFrame().Redo(); }"
-            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event) { event.Enable(wxGetFrame().CanRedo()); }" />
+            wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().Redo();@@}"
+            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanRedo());@@}" />
           <node
             class="separator"
             var_name="separator5" />
@@ -1062,7 +1062,7 @@
             label=""
             var_name="menu_cut"
             wxEVT_MENU="OnCut"
-            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event) { event.Enable(wxGetFrame().CanCopyNode()); }" />
+            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
           <node
             class="wxMenuItem"
             bitmap="Art; wxART_COPY|wxART_MENU; [-1,-1]"
@@ -1070,7 +1070,7 @@
             label=""
             var_name="menu_copy"
             wxEVT_MENU="OnCopy"
-            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event) { event.Enable(wxGetFrame().CanCopyNode()); }" />
+            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
           <node
             class="wxMenuItem"
             bitmap="Art; wxART_PASTE|wxART_MENU; [-1,-1]"
@@ -1078,7 +1078,7 @@
             label=""
             var_name="menu_paste"
             wxEVT_MENU="OnPaste"
-            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event) { event.Enable(wxGetFrame().CanPasteNode()); }" />
+            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanPasteNode());@@}" />
           <node
             class="wxMenuItem"
             bitmap="Art; wxART_DELETE|wxART_MENU; [-1,-1]"
@@ -1087,7 +1087,7 @@
             label=""
             var_name="menu_delete"
             wxEVT_MENU="OnDelete"
-            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event) { event.Enable(wxGetFrame().CanCopyNode()); }" />
+            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
           <node
             class="separator"
             var_name="separator6" />
@@ -1122,7 +1122,7 @@
               label="Up"
               shortcut="Alt+Up"
               var_name="menu_item4"
-              wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetFrame().MoveNode(MoveDirection::Up); }" />
+              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Up);@@}" />
             <node
               class="wxMenuItem"
               bitmap="Embed;../art_src/nav_movedown.png;[-1,-1]"
@@ -1131,7 +1131,7 @@
               label="Down"
               shortcut="Alt+Down"
               var_name="menu_item5"
-              wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetFrame().MoveNode(MoveDirection::Down); }" />
+              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Down);@@}" />
             <node
               class="wxMenuItem"
               bitmap="Embed;../art_src/nav_moveleft.png;[-1,-1]"
@@ -1140,7 +1140,7 @@
               label="Left"
               shortcut="Alt+Left"
               var_name="menu_item6"
-              wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetFrame().MoveNode(MoveDirection::Left); }" />
+              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Left);@@}" />
             <node
               class="wxMenuItem"
               bitmap="Embed;../art_src/nav_moveright.png;[-1,-1]"
@@ -1149,7 +1149,7 @@
               label="Right"
               shortcut="Alt+Right"
               var_name="menu_item7"
-              wxEVT_MENU="[](wxCommandEvent&amp;) { wxGetFrame().MoveNode(MoveDirection::Right); }" />
+              wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Right);@@}" />
           </node>
           <node
             class="submenu"
@@ -1642,7 +1642,7 @@
               label="Tabbed &amp;Dialog"
               var_name="m_check_tabs"
               validator_variable="m_has_tabs"
-              wxEVT_CHECKBOX="[this](wxCommandEvent&amp;) { m_spinCtrlTabs->Enable(m_check_tabs->GetValue()); }" />
+              wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@m_spinCtrlTabs->Enable(m_check_tabs->GetValue());@@}" />
             <node
               class="wxStaticText"
               class_access="none"
@@ -1679,7 +1679,7 @@
       derived_class_name="NewFrame"
       derived_file="newframe"
       title="New wxFrame window"
-      wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event) { m_classname->SetFocus();  event.Skip(); }">
+      wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event)@@{@@m_classname->SetFocus();@@event.Skip();@@}">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"

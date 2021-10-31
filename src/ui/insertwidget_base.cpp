@@ -42,8 +42,10 @@ bool InsertWidgetBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     Bind(wxEVT_INIT_DIALOG, &InsertWidgetBase::OnInit, this);
     m_text_name->Bind(wxEVT_TEXT, &InsertWidgetBase::OnNameText, this);
     m_listBox->Bind(wxEVT_LISTBOX,
-        [this](wxCommandEvent&) { m_stdBtn->GetAffirmativeButton()->Enable(); }
-        );
+        [this](wxCommandEvent&)
+        {
+            m_stdBtn->GetAffirmativeButton()->Enable();
+        } );
     m_listBox->Bind(wxEVT_LISTBOX_DCLICK, &InsertWidgetBase::OnListBoxDblClick, this);
     Bind(wxEVT_BUTTON, &InsertWidgetBase::OnOK, this, wxID_OK);
 

@@ -172,8 +172,10 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
 
     // Event handlers
     disable_bitmaps->Bind(wxEVT_CHECKBOX,
-        [this](wxCommandEvent& event) { m_btn_bitmaps->Enable(!event.IsChecked()); }
-        );
+        [this](wxCommandEvent& event)
+        {
+            m_btn_bitmaps->Enable(!event.IsChecked());
+        } );
 
     return true;
 }

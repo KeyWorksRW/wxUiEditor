@@ -549,16 +549,16 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
                         {
                             m_source->Unindent();
                         }
-
-                        m_source->writeLine(code, indent::auto_keep_whitespace);
-
-                        if (code.contains("{"))
-                        {
-                            m_source->Indent();
-                        }
                         else if (!initial_bracket && code.contains("["))
                         {
                             initial_bracket = true;
+                            m_source->Indent();
+                        }
+
+                        m_source->writeLine(code, indent::auto_no_whitespace);
+
+                        if (code.contains("{"))
+                        {
                             m_source->Indent();
                         }
                     }

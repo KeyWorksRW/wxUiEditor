@@ -26,6 +26,7 @@
 
 #include "mainframe.h"
 
+#include "appoptions.h"    // AppOptions -- Application-wide options
 #include "auto_freeze.h"   // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "bitmaps.h"       // Map of bitmaps accessed by name
 #include "clipboard.h"     // wxUiEditorData -- Handles reading and writing OS clipboard data
@@ -1458,14 +1459,10 @@ Node* MainFrame::FindChildSizerItem(Node* node)
 
 void MainFrame::UpdateWakaTime(bool FileSavedEvent)
 {
-    // REVIEW: [KeyWorks - 10-14-2021] Before this can be added to release, we need an option that allows the user to disable
-    // it.
-#if defined(_DEBUG)
-    if (m_wakatime)
+    if (m_wakatime && GetAppOptions().get_isWakaTimeEnabled())
     {
         m_wakatime->SendHeartbeat(FileSavedEvent);
     }
-#endif  // _DEBUG
 }
 
 #if defined(_DEBUG)

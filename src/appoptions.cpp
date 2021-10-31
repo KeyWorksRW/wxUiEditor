@@ -18,11 +18,8 @@ void AppOptions::ReadConfig()
 
     m_sizers_all_borders = config->ReadBool("all_borders", true);
     m_sizers_always_expand = config->ReadBool("always_expand", true);
-    m_class_access = config->ReadBool("class_access", true);
+    m_enable_wakatime = config->ReadBool("enable_wakatime", true);
 
-    config->Read("src_extension", &m_src_extension, ".cpp");
-    config->Read("hdr_extension", &m_hdr_extension, ".h");
-    config->Read("member_prefix", &m_member_prefix, "m_");
     config->SetPath("/");
 }
 
@@ -33,10 +30,7 @@ void AppOptions::WriteConfig()
 
     config->Write("all_borders", m_sizers_all_borders);
     config->Write("always_expand", m_sizers_always_expand);
-    config->Write("class_access", m_class_access);
+    config->Write("enable_wakatime", m_enable_wakatime);
 
-    config->Write("src_extension", m_src_extension);
-    config->Write("hdr_extension", m_hdr_extension);
-    config->Write("member_prefix", m_member_prefix);
     config->SetPath("/");
 }

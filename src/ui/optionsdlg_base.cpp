@@ -6,10 +6,7 @@
 
 #include <wx/button.h>
 #include <wx/checkbox.h>
-#include <wx/choice.h>
 #include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
 #include <wx/valgen.h>
 
 #include "optionsdlg_base.h"
@@ -23,50 +20,27 @@ bool OptionsDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
-    parent_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
+    parent_sizer->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    auto checkBox = new wxCheckBox(this, wxID_ANY, "New sizers have &borders on all sides");
-    checkBox->SetValidator(wxGenericValidator(&m_sizers_all_borders));
-    box_sizer->Add(checkBox, wxSizerFlags().Border(wxALL));
+    auto checkBox_borders = new wxCheckBox(this, wxID_ANY, "New sizers have &borders on all sides");
+    checkBox_borders->SetValue(true);
+    checkBox_borders->SetValidator(wxGenericValidator(&m_sizers_all_borders));
+    checkBox_borders->SetToolTip("If checked, all new sizers will be created with wxALL for the border.");
+    box_sizer->Add(checkBox_borders, wxSizerFlags().Border(wxALL));
 
-    auto checkBox2 = new wxCheckBox(this, wxID_ANY, "New sizers have wx&EXPAND set");
-    checkBox2->SetValidator(wxGenericValidator(&m_sizers_always_expand));
-    box_sizer->Add(checkBox2, wxSizerFlags().Border(wxALL));
+    auto checkBox_expand = new wxCheckBox(this, wxID_ANY, "New sizers have wx&EXPAND set");
+    checkBox_expand->SetValue(true);
+    checkBox_expand->SetValidator(wxGenericValidator(&m_sizers_always_expand));
+    checkBox_expand->SetToolTip("If checked, new sizers will be created with the wxEXPAND flag.");
+    box_sizer->Add(checkBox_expand, wxSizerFlags().Border(wxALL));
 
-    auto checkBox3 = new wxCheckBox(this, wxID_ANY, "New widgets always have a class &member");
-    checkBox3->SetValidator(wxGenericValidator(&m_class_access));
-    box_sizer->Add(checkBox3, wxSizerFlags().Border(wxALL));
+    box_sizer->AddSpacer(16);
 
-    auto flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
-    box_sizer->Add(flex_grid_sizer, wxSizerFlags().Expand().Border(wxALL));
-
-    auto staticTextSrcExt = new wxStaticText(this, wxID_ANY, "&Source code extension:");
-    flex_grid_sizer->Add(staticTextSrcExt, wxSizerFlags().Left().Border(wxALL));
-
-    auto choiceSrc = new wxChoice(this, wxID_ANY);
-    choiceSrc->Append(".cpp");
-    choiceSrc->Append(".cxx");
-    choiceSrc->Append(".cc");
-    choiceSrc->SetValidator(wxGenericValidator(&m_src_extension));
-    flex_grid_sizer->Add(choiceSrc, wxSizerFlags().Border(wxALL));
-
-    auto staticTextHrdExt = new wxStaticText(this, wxID_ANY, "&Header file extension:");
-    flex_grid_sizer->Add(staticTextHrdExt, wxSizerFlags().Left().Border(wxALL));
-
-    auto choiceHdr = new wxChoice(this, wxID_ANY);
-    choiceHdr->Append(".h");
-    choiceHdr->Append(".hpp");
-    choiceHdr->Append(".hxx");
-    choiceHdr->Append(".hh");
-    choiceHdr->SetValidator(wxGenericValidator(&m_hdr_extension));
-    flex_grid_sizer->Add(choiceHdr, wxSizerFlags().Border(wxALL));
-
-    auto staticText = new wxStaticText(this, wxID_ANY, "&Class member prefix");
-    flex_grid_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
-
-    auto textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    textCtrl->SetValidator(wxGenericValidator(&m_member_prefix));
-    flex_grid_sizer->Add(textCtrl, wxSizerFlags().Border(wxALL));
+    auto checkBox_wakatime = new wxCheckBox(this, wxID_ANY, "Enable WakaTime");
+    checkBox_wakatime->SetValue(true);
+    checkBox_wakatime->SetValidator(wxGenericValidator(&m_isWakaTimeEnabled));
+    checkBox_wakatime->SetToolTip("If you have WakaTime installed, checking this will record time spent in the editor as \"designing\". (See https://wakatime.com/about)");
+    box_sizer->Add(checkBox_wakatime, wxSizerFlags().Border(wxALL));
 
     auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));

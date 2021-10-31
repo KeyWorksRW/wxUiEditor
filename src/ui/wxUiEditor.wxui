@@ -1825,64 +1825,35 @@
         var_name="parent_sizer">
         <node
           class="wxBoxSizer"
-          orientation="wxVERTICAL">
+          orientation="wxVERTICAL"
+          flags="wxEXPAND">
           <node
             class="wxCheckBox"
+            checked="true"
             class_access="none"
             label="New sizers have &amp;borders on all sides"
-            var_name="checkBox"
-            validator_variable="m_sizers_all_borders" />
+            var_name="checkBox_borders"
+            validator_variable="m_sizers_all_borders"
+            tooltip="If checked, all new sizers will be created with wxALL for the border." />
           <node
             class="wxCheckBox"
+            checked="true"
             class_access="none"
             label="New sizers have wx&amp;EXPAND set"
-            var_name="checkBox2"
-            validator_variable="m_sizers_always_expand" />
+            var_name="checkBox_expand"
+            validator_variable="m_sizers_always_expand"
+            tooltip="If checked, new sizers will be created with the wxEXPAND flag." />
+          <node
+            class="spacer"
+            height="16" />
           <node
             class="wxCheckBox"
+            checked="true"
             class_access="none"
-            label="New widgets always have a class &amp;member"
-            var_name="checkBox3"
-            validator_variable="m_class_access" />
-          <node
-            class="wxFlexGridSizer"
-            flags="wxEXPAND">
-            <node
-              class="wxStaticText"
-              class_access="none"
-              label="&amp;Source code extension:"
-              var_name="staticTextSrcExt"
-              alignment="wxALIGN_LEFT" />
-            <node
-              class="wxChoice"
-              choices="&quot;.cpp&quot; &quot;.cxx&quot; &quot;.cc&quot;"
-              class_access="none"
-              var_name="choiceSrc"
-              validator_variable="m_src_extension" />
-            <node
-              class="wxStaticText"
-              class_access="none"
-              label="&amp;Header file extension:"
-              var_name="staticTextHrdExt"
-              alignment="wxALIGN_LEFT" />
-            <node
-              class="wxChoice"
-              choices="&quot;.h&quot; &quot;.hpp&quot; &quot;.hxx&quot; &quot;.hh&quot;"
-              class_access="none"
-              var_name="choiceHdr"
-              validator_variable="m_hdr_extension" />
-            <node
-              class="wxStaticText"
-              class_access="none"
-              label="&amp;Class member prefix"
-              var_name="staticText" />
-            <node
-              class="wxTextCtrl"
-              class_access="none"
-              var_name="textCtrl"
-              validator_type="wxGenericValidator"
-              validator_variable="m_member_prefix" />
-          </node>
+            label="Enable WakaTime"
+            var_name="checkBox_wakatime"
+            validator_variable="m_isWakaTimeEnabled"
+            tooltip="If you have WakaTime installed, checking this will record time spent in the editor as &quot;designing&quot;. (See https://wakatime.com/about)" />
         </node>
         <node
           class="wxStdDialogButtonSizer"

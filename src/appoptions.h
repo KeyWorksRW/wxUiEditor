@@ -15,21 +15,13 @@ public:
     void ReadConfig();
     void WriteConfig();
 
-    bool get_SizersAllBorders() { return m_sizers_all_borders; }
-    bool get_SizersExpand() { return m_sizers_always_expand; }
-    bool get_ClassAccess() { return m_class_access; }
+    bool get_SizersAllBorders() const { return m_sizers_all_borders; }
+    bool get_SizersExpand() const { return m_sizers_always_expand; }
+    bool get_isWakaTimeEnabled() const { return m_enable_wakatime; }
 
     void set_SizersAllBorders(bool setting) { m_sizers_all_borders = setting; }
     void set_SizersExpand(bool setting) { m_sizers_always_expand = setting; }
-    void set_ClassAccess(bool setting) { m_class_access = setting; }
-
-    wxString& get_SrcExtension() { return m_src_extension; }
-    wxString& get_HdrExtension() { return m_hdr_extension; }
-    wxString& get_MemberPrefix() { return m_member_prefix; }
-
-    void set_SrcExtension(const wxString& str) { m_src_extension = str; }
-    void set_HdrExtension(const wxString& str) { m_hdr_extension = str; }
-    void set_MemberPrefix(const wxString& str) { m_member_prefix = str; }
+    void set_isWakaTimeEnabled(bool setting) { m_enable_wakatime = setting; }
 
 #if defined(_DEBUG)
     bool get_FilterWarningMsgs() { return m_filter_warning_msgs; }
@@ -42,12 +34,7 @@ public:
 private:
     bool m_sizers_all_borders;
     bool m_sizers_always_expand;
-
-    bool m_class_access;  // controls default member access for new widgets
-
-    wxString m_src_extension;
-    wxString m_hdr_extension;
-    wxString m_member_prefix {};
+    bool m_enable_wakatime;
 
 #if defined(_DEBUG)
     bool m_filter_warning_msgs { false };  // controls display of warning messages in debug CMsgFrame window

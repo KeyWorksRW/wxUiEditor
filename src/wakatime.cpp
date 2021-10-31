@@ -11,7 +11,8 @@
 
 #include "wakatime.h"  // WakaTime
 
-#include "mainapp.h"  // App -- Main application class
+#include "appoptions.h"  // AppOptions -- Application-wide options
+#include "mainapp.h"     // App -- Main application class
 
 WakaTime::WakaTime()
 {
@@ -123,6 +124,11 @@ constexpr const intmax_t waka_interval = 120;
 
 void WakaTime::SendHeartbeat(bool FileSavedEvent)
 {
+    if (!GetAppOptions().get_isWakaTimeEnabled())
+    {
+        return;
+    }
+
     if (m_waka_cli.empty())
     {
         return;
@@ -157,6 +163,11 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
 
 void WakaTime::ResetHeartbeat()
 {
+    if (!GetAppOptions().get_isWakaTimeEnabled())
+    {
+        return;
+    }
+
     auto result = time(nullptr);
 
     if (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval))

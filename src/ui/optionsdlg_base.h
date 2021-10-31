@@ -29,12 +29,9 @@ protected:
 
     // Validator variables
 
-    bool m_class_access { false };
-    bool m_sizers_all_borders { false };
-    bool m_sizers_always_expand { false };
-    wxString m_hdr_extension;
-    wxString m_member_prefix;
-    wxString m_src_extension;
+    bool m_isWakaTimeEnabled { true };
+    bool m_sizers_all_borders { true };
+    bool m_sizers_always_expand { true };
 
     // Virtual event handlers -- override them in your derived class
 

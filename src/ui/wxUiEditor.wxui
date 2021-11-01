@@ -1431,7 +1431,7 @@
           var_name="AlignTop" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/aligncenter.png;[-1,-1]"
+          bitmap="Embed;../art_src/alignvertcenter.png;[-1,-1]"
           id="id_AlignCenterVertical"
           kind="wxITEM_CHECK"
           label=""
@@ -1439,7 +1439,7 @@
           var_name="AlignCenterV" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/alignvertcenter.png;[-1,-1]"
+          bitmap="Embed;../art_src/alignbottom.png;[-1,-1]"
           id="id_AlignBottom"
           kind="wxITEM_CHECK"
           label=""

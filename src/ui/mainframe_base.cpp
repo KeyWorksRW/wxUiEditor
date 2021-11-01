@@ -336,10 +336,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_toolbar->AddTool(id_AlignTop, wxEmptyString, GetImageFromArray(wxue_img::aligntop_png, sizeof(wxue_img::aligntop_png)),
             "Align top", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, GetImageFromArray(wxue_img::aligncenter_png, sizeof(wxue_img::aligncenter_png)),
+    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, GetImageFromArray(wxue_img::alignvertcenter_png, sizeof(wxue_img::alignvertcenter_png)),
             "Center vertically", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignBottom, wxEmptyString, GetImageFromArray(wxue_img::alignvertcenter_png, sizeof(wxue_img::alignvertcenter_png)),
+    m_toolbar->AddTool(id_AlignBottom, wxEmptyString, GetImageFromArray(wxue_img::alignbottom_png, sizeof(wxue_img::alignbottom_png)),
             "Align bottom", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();

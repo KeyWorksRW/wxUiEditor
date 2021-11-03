@@ -274,6 +274,7 @@ ChangeParentAction::ChangeParentAction(Node* node, Node* parent)
 void ChangeParentAction::Change()
 {
     m_revert_parent->RemoveChild(m_node);
+    wxGetFrame().GetNavigationPanel()->DeleteNode(m_node.get());
     if (m_change_parent->isGen(gen_wxGridBagSizer))
     {
         GridBag grid_bag(m_change_parent.get());
@@ -282,6 +283,8 @@ void ChangeParentAction::Change()
             m_node->SetParent(m_revert_parent);
             m_revert_parent->AddChild(m_node);
             m_revert_parent->ChangeChildPosition(m_node, m_revert_position);
+            // Since we deleted it from Navigation Panel, need to add it back
+            wxGetFrame().FireParentChangedEvent(this);
             wxGetFrame().SelectNode(m_node);
         }
     }

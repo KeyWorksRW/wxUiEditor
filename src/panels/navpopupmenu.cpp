@@ -317,7 +317,14 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
     {
         // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
         FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
+#if !defined(_DEBUG)
+        appMsgBox(ttlib::cstr("An internal error occurred. The following node is missing a parent: ")
+                      << node->get_node_name(),
+                  "CreateSizerParent()");
+        throw;
+#else
         return;
+#endif  // _DEBUG
     }
 
     auto childPos = parent->GetChildPosition(node);
@@ -331,7 +338,13 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
     {
         // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
         FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
+#if !defined(_DEBUG)
+        appMsgBox(ttlib::cstr("An internal error occurred creating a sizer parent for ") << node->get_node_name(),
+                  "CreateSizerParent()");
+        throw;
+#else
         return;
+#endif  // _DEBUG
     }
 
     // Avoid the temptation to set new_sizer to the raw pointer so that .get() doesn't have to be called below. Doing so will
@@ -343,6 +356,13 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
         wxGetFrame().Freeze();
         wxGetFrame().PushUndoAction(
             std::make_shared<InsertNodeAction>(new_sizer.get(), parent, "Insert new sizer", childPos));
+
+        // InsertNodeAction does not fire the creation event since that's usually handled by the caller as needed. We don't
+        // want to fire an event because we don't want the Mockup or Code panels to update until we have changed the parent.
+        // However we *do* need to let the navigation panel know that a new node has been added.
+
+        wxGetFrame().GetNavigationPanel()->InsertNode(new_sizer.get());
+
         wxGetFrame().PushUndoAction(std::make_shared<ChangeParentAction>(node, new_sizer.get()));
         wxGetFrame().SelectNode(node, true, true);
         wxGetFrame().Thaw();

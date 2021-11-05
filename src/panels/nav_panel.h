@@ -36,11 +36,10 @@ public:
     // This will expand the specified node and collapse all other siblings
     void ExpandCollapse(Node* node);
 
-protected:
     void InsertNode(Node* node);
     void DeleteNode(Node* item);
-    void RecreateChildren(Node* node);
 
+protected:
     Node* GetNode(wxTreeItemId item);
 
     int GetImageIndex(Node* node);

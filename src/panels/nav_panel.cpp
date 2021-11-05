@@ -294,6 +294,7 @@ void NavigationPanel::InsertNode(Node* node)
     auto node_parent = node->GetParent();
     ASSERT(node_parent);
     auto tree_parent = m_node_tree_map[node_parent];
+    ASSERT(tree_parent);
     auto new_item = m_tree_ctrl->InsertItem(tree_parent, node_parent->GetChildPosition(node), GetDisplayName(node).wx_str(),
                                             GetImageIndex(node), -1);
     m_node_tree_map[node] = new_item;
@@ -422,6 +423,14 @@ void NavigationPanel::DeleteNode(Node* node)
 
 void NavigationPanel::EraseAllMaps(Node* node)
 {
+    // If you delete a parent tree item it will automatically delete all children, but our maps won't reflect that. To keep
+    // the treeview control and our maps in sync, we need to delete children before we delete the actual item.
+
+    for (size_t idx = 0; idx < node->GetChildCount(); idx++)
+    {
+        EraseAllMaps(node->GetChild(idx));
+    }
+
     if (auto result = m_node_tree_map.find(node); result != m_node_tree_map.end())
     {
         m_tree_node_map.erase(result->second);
@@ -431,21 +440,6 @@ void NavigationPanel::EraseAllMaps(Node* node)
         // Don't erase this until the iterator is no longer needed
         m_node_tree_map.erase(node);
     }
-
-    for (size_t idx = 0; idx < node->GetChildCount(); idx++)
-    {
-        EraseAllMaps(node->GetChild(idx));
-    }
-}
-
-void NavigationPanel::RecreateChildren(Node* node)
-{
-    for (size_t idx = 0; idx < node->GetChildCount(); idx++)
-    {
-        EraseAllMaps(node->GetChild(idx));
-    }
-    AddAllChildren(node);
-    ExpandAllNodes(node);
 }
 
 void NavigationPanel::OnNodeSelected(CustomEvent& event)
@@ -581,8 +575,9 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
     auto undo_cmd = static_cast<ChangeParentAction*>(event.GetUndoCmd());
 
     m_isSelChangeSuspended = true;
-    RecreateChildren(undo_cmd->GetOldParent());
-    RecreateChildren(undo_cmd->GetNewParent());
+    m_tree_ctrl->Unselect();
+    EraseAllMaps(undo_cmd->GetNode());
+    InsertNode(undo_cmd->GetNode());
     m_isSelChangeSuspended = false;
 
     if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())
@@ -599,7 +594,9 @@ void NavigationPanel::OnPositionChange(CustomEvent& event)
     auto undo_cmd = static_cast<ChangePositionAction*>(event.GetUndoCmd());
 
     m_isSelChangeSuspended = true;
-    RecreateChildren(undo_cmd->GetParent());
+    m_tree_ctrl->Unselect();
+    EraseAllMaps(undo_cmd->GetNode());
+    InsertNode(undo_cmd->GetNode());
     m_isSelChangeSuspended = false;
 
     if (auto iter = m_node_tree_map.find(m_pMainFrame->GetSelectedNode()); iter != m_node_tree_map.end())

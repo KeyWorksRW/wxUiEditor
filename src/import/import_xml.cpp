@@ -25,7 +25,9 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const ttString& file)
 
     if (auto result = doc.load_file(file.wx_str()); !result)
     {
-        appMsgBox(_ttc(strIdCantOpen) << file.wx_str() << "\n\n" << result.description(), _tt(strIdImportFormBuilder));
+        appMsgBox(ttlib::cstr("Cannot open ") << file.wx_str() << "\n\n"
+                                              << result.description(),
+                  "Import wxFormBuilder project");
         return {};
     }
 

@@ -29,7 +29,7 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
     if (!ttlib::is_sameas(root.name(), "wxsmith", tt::CASE::either) &&
         !ttlib::is_sameas(root.name(), "resource", tt::CASE::either))
     {
-        appMsgBox(filename.wx_str() + _ttc(" is not a wxSmith or XRC file"), _tt("Import"));
+        appMsgBox(ttlib::cstr() << filename.wx_str() << " is not a wxSmith or XRC file", "Import");
         return false;
     }
 
@@ -46,7 +46,7 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
 
         if (!m_project->GetChildCount())
         {
-            appMsgBox(filename.wx_str() + _ttc(" does not contain any top level forms."), _tt("Import"));
+            appMsgBox(ttlib::cstr() << filename.wx_str() << " does not contain any top level forms.", "Import");
             return false;
         }
 

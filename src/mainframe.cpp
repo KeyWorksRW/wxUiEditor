@@ -201,7 +201,7 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
         }
         else
         {
-            appMsgBox(ttlib::cstr("Unable to save the project: ") << wxGetApp().getProjectFileName(), _tt("Save Project"));
+            appMsgBox(ttlib::cstr("Unable to save the project: ") << wxGetApp().getProjectFileName(), "Save Project");
         }
     }
 }
@@ -209,7 +209,7 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
 void MainFrame::OnSaveAsProject(wxCommandEvent&)
 {
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
-    wxFileDialog dialog(this, _tt(strIdTitleSaveAs), wxEmptyString, wxEmptyString,
+    wxFileDialog dialog(this, "Save Project As", wxEmptyString, wxEmptyString,
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
@@ -225,28 +225,28 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
 
         else if (filename.extension().is_sameas(".fbp", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a wxFormBuilder project file", _tt(strIdTitleSaveAs));
+            appMsgBox("You cannot save the project as a wxFormBuilder project file", "Save Project As");
             return;
         }
         else if (filename.extension().is_sameas(".wxg", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a wxGlade file", _tt(strIdTitleSaveAs));
+            appMsgBox("You cannot save the project as a wxGlade file", "Save Project As");
             return;
         }
         else if (filename.extension().is_sameas(".wxs", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a wxSmith file", _tt(strIdTitleSaveAs));
+            appMsgBox("You cannot save the project as a wxSmith file", "Save Project As");
             return;
         }
         else if (filename.extension().is_sameas(".xrc", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a XRC file", _tt(strIdTitleSaveAs));
+            appMsgBox("You cannot save the project as a XRC file", "Save Project As");
             return;
         }
         else if (filename.extension().is_sameas(".rc", tt::CASE::either) ||
                  filename.extension().is_sameas(".dlg", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a Windows Resource file", _tt(strIdTitleSaveAs));
+            appMsgBox("You cannot save the project as a Windows Resource file", "Save Project As");
             return;
         }
 
@@ -264,7 +264,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
         }
         else
         {
-            appMsgBox(ttlib::cstr("Unable to save the project: ") << filename.wx_str(), _tt(strIdTitleSaveAs));
+            appMsgBox(ttlib::cstr("Unable to save the project: ") << filename.wx_str(), "Save Project As");
         }
     };
 }
@@ -275,7 +275,7 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
         return;
 
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
-    wxFileDialog dialog(this, _tt(strIdTitleOpenOrImport), wxEmptyString, wxEmptyString,
+    wxFileDialog dialog(this, "Open or Import Project", wxEmptyString, wxEmptyString,
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue"
                         "|Windows Resource File (*.rc)|*.rc"
                         "|WxFormBuilder Project File (*.fbp)|*.fbp"
@@ -303,7 +303,7 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
 void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 {
     ttSaveCwd cwd;
-    wxFileDialog dlg(this, _tt(strIdTitleOpenOrImport), cwd, wxEmptyString, "WxFormBuilder Project File (*.fbp)|*.fbp||",
+    wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "WxFormBuilder Project File (*.fbp)|*.fbp||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {
@@ -316,7 +316,7 @@ void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 void MainFrame::OnAppendGlade(wxCommandEvent&)
 {
     ttSaveCwd cwd;
-    wxFileDialog dlg(this, _tt(strIdTitleOpenOrImport), cwd, wxEmptyString, "wxGlade Project File (*.wxg)|*.wxg||",
+    wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "wxGlade Project File (*.wxg)|*.wxg||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {
@@ -329,7 +329,7 @@ void MainFrame::OnAppendGlade(wxCommandEvent&)
 void MainFrame::OnAppendSmith(wxCommandEvent&)
 {
     ttSaveCwd cwd;
-    wxFileDialog dlg(this, _tt(strIdTitleOpenOrImport), cwd, wxEmptyString, "wxSmith File (*.wxs)|*.wxs||",
+    wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "wxSmith File (*.wxs)|*.wxs||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {
@@ -342,7 +342,7 @@ void MainFrame::OnAppendSmith(wxCommandEvent&)
 void MainFrame::OnAppendXRC(wxCommandEvent&)
 {
     ttSaveCwd cwd;
-    wxFileDialog dlg(this, _tt(strIdTitleOpenOrImport), cwd, wxEmptyString, "XRC File (*.xrc)|*.xrc||",
+    wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "XRC File (*.xrc)|*.xrc||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {
@@ -386,8 +386,10 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     {
         wxGetApp().LoadProject(file);
     }
-    else if (appMsgBox(ttlib::cstr().Format(_tt(strIdProjectMRUQuery), file.wx_str()), _tt(strIdTitleOpenMRU),
-                       wxICON_WARNING | wxYES_NO) == wxYES)
+    else if (appMsgBox(ttlib::cstr().Format(
+                           "The project file '%s' doesn't exist.\n\nWould you like to remove it from the recent files list?",
+                           file.wx_str()),
+                       "Open recent project", wxICON_WARNING | wxYES_NO) == wxYES)
     {
         m_FileHistory.RemoveFileFromHistory(event.GetId() - wxID_FILE1);
     }
@@ -470,7 +472,7 @@ void MainFrame::OnClose(wxCloseEvent& event)
 void MainFrame::ProjectLoaded()
 {
     ttlib::ChangeDir(wxGetApp().getProjectPath());
-    setStatusText(_tt(strIdStatusProjectLoaded));
+    setStatusText("Project loaded");
     if (!m_isImported)
     {
         m_isProject_generated = !GenerateCodeFiles(this, true);
@@ -503,7 +505,7 @@ void MainFrame::ProjectLoaded()
 
 void MainFrame::ProjectSaved()
 {
-    ttlib::cstr str(wxGetApp().getProjectFileName().filename() + _ttc(strIdSaved));
+    ttlib::cstr str(wxGetApp().getProjectFileName().filename() + " saved");
     setStatusText(str);
     UpdateFrame();
 }
@@ -524,7 +526,10 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
             if (grandparent->isGen(gen_wxFrame) || grandparent->isGen(gen_wxAuiMDIChildFrame))
             {
                 // Caution! In wxWidgets 3.1.3 The info bar will wrap the first word if it starts with "If".
-                GetPropInfoBar()->ShowMessage(_tt(strId_tb_in_sizer), wxICON_INFORMATION);
+                GetPropInfoBar()->ShowMessage(
+                    "For the toolbar to be owned by the frame window, it should be placed directly under the frame, "
+                    "not under a sizer. Use Cut and Paste to move it.",
+                    wxICON_INFORMATION);
             }
         }
     }
@@ -613,13 +618,13 @@ void MainFrame::UpdateFrame()
 
     if (filename.empty())
     {
-        filename = wxT("untitled");
+        filename = "untitled";
     }
     filename.remove_extension();
 
     if (m_isProject_modified)
     {
-        filename.insert(0, wxT("*"));
+        filename.insert(0, "*");
         m_isProject_generated = false;
     }
     SetTitle(filename);
@@ -627,7 +632,7 @@ void MainFrame::UpdateFrame()
     m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
     m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
 
-    wxString menu_text = _ttwx(strIdUndo);
+    wxString menu_text = "Undo";
     if (m_undo_stack.IsUndoAvailable())
     {
         if (m_undo_stack.GetUndoString().size())
@@ -638,7 +643,7 @@ void MainFrame::UpdateFrame()
     menu_text << "\tCtrl+Z";
     m_menuEdit->FindChildItem(wxID_UNDO)->SetItemLabel(menu_text);
 
-    menu_text = _ttwx(strIdRedo);
+    menu_text = "Redo";
     if (m_undo_stack.IsRedoAvailable())
     {
         if (m_undo_stack.GetRedoString().size())
@@ -649,7 +654,7 @@ void MainFrame::UpdateFrame()
     menu_text << "\tCtrl+Y";
     m_menuEdit->FindChildItem(wxID_REDO)->SetItemLabel(menu_text);
 
-    bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == _ttwx(strIdMockupTabTitle));
+    bool isMockup = (m_notebook->GetPageText(m_notebook->GetSelection()) == "Mock Up");
     m_menuEdit->Enable(wxID_FIND, !isMockup);
 #if defined(_DEBUG)
     m_menuEdit->Enable(id_insert_widget, true);
@@ -850,7 +855,7 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
     m_mockupPanel = new MockupParent(m_notebook, this);
 
-    m_notebook->AddPage(m_mockupPanel, _ttwx(strIdMockupTabTitle), false, 0);
+    m_notebook->AddPage(m_mockupPanel, "Mock Up", false, 0);
 
     m_generatedPanel = new BasePanel(m_notebook, this, false);
     m_notebook->AddPage(m_generatedPanel, "Generated", false, 1);
@@ -1095,8 +1100,7 @@ void MainFrame::PasteNode(Node* parent)
         auto grandparent = parent->GetParent();
         if (!grandparent || !grandparent->IsChildAllowed(new_node))
         {
-            appMsgBox(ttlib::cstr() << _tt("You cannot paste ") << new_node->DeclName() << _tt(" into ")
-                                    << parent->DeclName());
+            appMsgBox(ttlib::cstr() << "You cannot paste " << new_node->DeclName() << " into " << parent->DeclName());
             return;
         }
         parent = grandparent;
@@ -1356,7 +1360,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             PushUndoAction(std::make_shared<ChangeParentAction>(node, grandparent));
             return true;
         }
-        appMsgBox(_tt("There is no sizer to the left of this item that it can be moved into."), _tt(strIdMoveTitle));
+        appMsgBox("There is no sizer to the left of this item that it can be moved into.", "Move item");
     }
     else if (where == MoveDirection::Right)
     {
@@ -1376,7 +1380,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             }
         }
         if (!check_only)
-            appMsgBox(_tt("There is nothing above this item that it can be moved into."), _tt(strIdMoveTitle));
+            appMsgBox("There is nothing above this item that it can be moved into.", "Move item");
     }
     else if (where == MoveDirection::Up)
     {
@@ -1389,7 +1393,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos - 1));
             return true;
         }
-        appMsgBox(_tt(strIdCantMoveUp), _tt(strIdMoveTitle));
+        appMsgBox("This component cannot be moved up any further.", "Move item");
     }
     else if (where == MoveDirection::Down)
     {
@@ -1402,7 +1406,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
             return true;
         }
-        appMsgBox(node->DeclName() + _tt(" cannot be moved down any lower."), _tt(strIdMoveTitle));
+        appMsgBox(node->DeclName() + " cannot be moved down any lower.", "Move item");
     }
 
     return false;

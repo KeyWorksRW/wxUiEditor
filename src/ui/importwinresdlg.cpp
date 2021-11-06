@@ -45,7 +45,7 @@ void ImportWinResDlg::ReadRcFile()
     ttlib::textfile rc_file;
     if (!rc_file.ReadFile(m_rcFilename))
     {
-        appMsgBox(_tt(strIdCantReadFile) + m_rcFilename);
+        appMsgBox("Unable to read the file " + m_rcFilename);
         return;
     }
 

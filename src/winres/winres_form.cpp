@@ -21,7 +21,7 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     auto line = txtfile[curTxtLine].subview();
     auto end = line.find_space();
     if (end == tt::npos)
-        throw std::invalid_argument(_tt("Expected an ID then a DIALOG or DIALOGEX."));
+        throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
 
     bool isDialog = true;
 

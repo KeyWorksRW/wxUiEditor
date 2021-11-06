@@ -39,14 +39,14 @@ bool App::LoadProject(const ttString& file)
     if (!result)
     {
         ASSERT_MSG(result, ttlib::cstr() << "pugi failed trying to load " << file.wx_str());
-        appMsgBox(_ttc(strIdCantOpen) << file.wx_str() << "\n\n" << result.description(), _tt(strIdTitleLoadProject));
+        appMsgBox(ttlib::cstr("Cannot open ") << file.wx_str() << "\n\n" << result.description(), "Load Project");
         return false;
     }
 
     auto root = doc.first_child();
     if (!ttlib::is_sameas(root.name(), "wxUiEditorData", tt::CASE::either))
     {
-        appMsgBox(file.wx_str() + ttlib::cstr(" is not a wxUiEditor XML file"), _tt(strIdTitleLoadProject));
+        appMsgBox(file.wx_str() + ttlib::cstr(" is not a wxUiEditor XML file"), "Load Project");
         return false;
     }
 
@@ -146,7 +146,7 @@ NodeSharedPtr App::LoadProject(pugi::xml_document& doc)
     catch (const std::exception& DBG_PARAM(e))
     {
         MSG_ERROR(e.what());
-        appMsgBox(_tt("This wxUiEditor project file is invalid and cannot be loaded."), _tt(strIdTitleLoadProject));
+        appMsgBox("This wxUiEditor project file is invalid and cannot be loaded.", "Load Project");
     }
 
     return project;

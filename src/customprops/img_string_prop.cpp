@@ -50,7 +50,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
             pattern = "All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||";
         }
 
-        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Image"), wxFileName::GetCwd(), wxEmptyString, pattern,
+        wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString, pattern,
                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {
@@ -84,7 +84,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
             pattern = m_img_props.type.contains("XPM") ? "XPM files (*.xpm)|*.xpm" : "Header files (*.h_img)|*.h_img";
         }
 
-        wxFileDialog dlg(propGrid->GetPanel(), _tt("Open Image"), wxFileName::GetCwd(), wxEmptyString, pattern,
+        wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString, pattern,
                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
         if (dlg.ShowModal() == wxID_OK)
         {

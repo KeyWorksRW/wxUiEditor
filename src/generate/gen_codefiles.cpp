@@ -23,7 +23,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         if (NeedsGenerateCheck)
             return false;
 
-        appMsgBox(_tt("You cannot generate any code until you have added a top level form."), _tt(strIdTitleCodeGeneration));
+        appMsgBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
     ttSaveCwd cwd;
@@ -70,7 +70,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         }
         else
         {
-            results.emplace_back() << _tt("No filename specified for ") << form->prop_as_string(prop_class_name) << '\n';
+            results.emplace_back() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n';
         }
 
         try
@@ -111,7 +111,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             }
             else if (retval < 0)
             {
-                results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
+                results.emplace_back() << "Cannot create or write to the file " << path << '\n';
             }
             else  // retval == result::exists)
             {
@@ -143,7 +143,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
 
             else if (retval < 0)
             {
-                results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
+                results.emplace_back() << "Cannot create or write to the file " << path << '\n';
             }
             else  // retval == result::exists
             {
@@ -155,7 +155,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             MSG_ERROR(e.what());
             appMsgBox(ttlib::cstr("An internal error occurred generating code files for ")
                           << form->prop_as_string(prop_base_file),
-                      _tt("Code generation"));
+                      "Code generation");
             continue;
         }
     }
@@ -181,13 +181,13 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             msg << '\n' << "The other " << currentFiles << " generated files are current";
         }
 
-        appMsgBox(msg, _tt(strIdTitleCodeGeneration), wxOK, parent);
+        appMsgBox(msg, "Code Generation", wxOK, parent);
     }
     else if (currentFiles && parent)
     {
         ttlib::cstr msg;
-        msg << '\n' << _tt("All ") << currentFiles << " generated files are current";
-        appMsgBox(msg, _tt(strIdTitleCodeGeneration), wxOK, parent);
+        msg << '\n' << "All " << currentFiles << " generated files are current";
+        appMsgBox(msg, "Code Generation", wxOK, parent);
     }
     return true;
 }
@@ -253,7 +253,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         ASSERT_MSG(retval != result::exists, "this should be impossible since we checked above")
         if (retval == result::fail)
         {
-            results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
+            results.emplace_back() << "Cannot create or write to the file " << path << '\n';
             continue;
         }
         else if (retval == result::exists)
@@ -272,7 +272,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
 
         if (retval == result::fail)
         {
-            results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
+            results.emplace_back() << "Cannot create or write to the file " << path << '\n';
         }
         else if (retval == result::exists)
         {
@@ -287,7 +287,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         retval = cpp_cw->WriteFile();
         if (retval == result::fail)
         {
-            results.emplace_back() << _tt(strIdCantWrite) << path << '\n';
+            results.emplace_back() << "Cannot create or write to the file " << path << '\n';
         }
         else if (retval == result::exists)
         {
@@ -309,22 +309,22 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
 
         if (currentFiles)
         {
-            msg << '\n' << _tt("The other ") << currentFiles << " derived files have already been created";
+            msg << '\n' << "The other " << currentFiles << " derived files have already been created";
         }
 
-        appMsgBox(msg, _tt(strIdTitleCodeGeneration), wxOK);
+        appMsgBox(msg, "Code Generation", wxOK);
     }
     else if (currentFiles)
     {
         ttlib::cstr msg;
-        msg << '\n' << _tt("All ") << currentFiles << " derived files have already been created";
-        appMsgBox(msg, _tt(strIdTitleCodeGeneration), wxOK);
+        msg << '\n' << "All " << currentFiles << " derived files have already been created";
+        appMsgBox(msg, "Code Generation", wxOK);
     }
     else
     {
-        appMsgBox(_tt("There were no derived filenames specified -- nothing to generate.\n\nAdd a filename to the "
-                      "derived_filename property to generate a derived file."),
-                  _tt(strIdTitleCodeGeneration), wxOK);
+        appMsgBox("There were no derived filenames specified -- nothing to generate.\n\nAdd a filename to the "
+                  "derived_filename property to generate a derived file.",
+                  "Code Generation", wxOK);
     }
 }
 

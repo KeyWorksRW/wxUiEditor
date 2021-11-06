@@ -36,7 +36,6 @@ Files:
     lambdas.cpp           # Functions for formatting and storage of lamda events
     pjtsettings.cpp       # Hold data for currently loaded project
     startup.cpp           # Dialog to display is wxUE is launched with no arguments
-    strings.cpp           # Contains translatable strings
     undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     undo_stack.cpp        # Maintain an undo and redo stack
     wakatime.cpp          # Updates WakaTime metrics
@@ -157,7 +156,6 @@ Files:
     ../ttLib/src/ttparser.cpp           # Command line parser
     ../ttLib/src/ttstr.cpp              # Enhanced version of wxString
     ../ttLib/src/ttlibspace.cpp         # ttlib namespace functions
-    ../ttLib/src/ttstrings.cpp          # Class for handling zero-terminated char strings.
     ../ttLib/src/tttextfile.cpp         # Classes for reading and writing text files.
 
 DebugFiles:

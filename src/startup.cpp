@@ -80,13 +80,13 @@ CStartup::CStartup() :
     if (ReplaceRecent.size())
         page.Replace("%recent%", ReplaceRecent);
     else
-        page.Replace("%recent%", _tt(strIdNoRecentFiles));
+        page.Replace("%recent%", "There are no recently opened projects.");
 
     htmlWindow->SetPage(page);
     htmlWindow->SetMinSize(wxSize(600, 500));
 
     sizer->Add(htmlWindow, wxSizerFlags(1).Expand().Border(wxALL, 8));
-    sizer->Add(new wxButton(this, wxID_CANCEL, _ttwx(strIdCancel)), wxSizerFlags().Center().Border(wxBOTTOM, 8));
+    sizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), wxSizerFlags().Center().Border(wxBOTTOM, 8));
 
     SetSizerAndFit(sizer);
     Center();

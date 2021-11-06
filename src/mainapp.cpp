@@ -143,7 +143,7 @@ int App::OnRun()
         projectFile.make_absolute();
         if (!projectFile.file_exists())
         {
-            appMsgBox(_tt(strIdCantOpen) + projectFile, _tt(strIdTitleLoadProject));
+            appMsgBox(ttlib::cstr("Cannot open ") << projectFile, "Load Project");
             projectFile.clear();
         }
     }
@@ -176,7 +176,7 @@ int App::OnRun()
                     // would actually make sense to process it since we can combine all of those resources into our single
                     // project file.
 
-                    wxFileDialog dialog(nullptr, _tt(strIdTitleOpenOrImport), wxEmptyString, wxEmptyString,
+                    wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
                                         "wxUiEditor Project File (*.wxui)|*.wxui"
                                         "|wxFormBuilder Project File (*.fbp)|*.fbp"
                                         "|wxGlade File (*.wxg)|*.wxg"
@@ -222,9 +222,9 @@ int App::OnRun()
             return wxApp::OnRun();
         }
 
-        auto answer = appMsgBox(ttlib::cstr() << _tt(strIdCannotLoadProjectFile) << projectFile
+        auto answer = appMsgBox(ttlib::cstr() << "Cannot load project file: " << projectFile
                                               << "\n\nDo you want to create an empty project?",
-                                _tt(strIdTitleLoadProject), wxYES_NO);
+                                "Load Project", wxYES_NO);
         if (answer != wxYES)
         {
             m_frame->Close();

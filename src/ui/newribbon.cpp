@@ -12,7 +12,6 @@
 #include "mainframe.h"               // MainFrame -- Main window frame
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
-#include "uifuncs.h"                 // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 NewRibbon::NewRibbon(wxWindow* parent) : NewRibbonBase(parent)
@@ -34,7 +33,7 @@ void NewRibbon::CreateNode()
         bar_node = g_NodeCreator.CreateNode(gen_wxRibbonBar, wxGetFrame().GetSelectedNode());
         if (!bar_node)
         {
-            appMsgBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
+            wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
             return;
         }
     }
@@ -96,7 +95,7 @@ bool NewRibbon::IsCreatable(bool notify_user)
 
     if (notify_user)
     {
-        appMsgBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
+        wxMessageBox("You need to have a sizer selected before you can create a wxRibbonBar.", "Create wxRibbonBar");
     }
 
     return false;

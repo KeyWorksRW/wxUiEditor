@@ -17,7 +17,6 @@
 #include "mainframe.h"  // MainFrame -- Main window frame
 #include "node.h"       // Node class
 #include "nodeinfo.h"   // NodeInfo -- Node memory usage dialog
-#include "uifuncs.h"    // Miscellaneous functions for displaying UI
 
 struct NodeMemory
 {
@@ -161,7 +160,7 @@ void MsgFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
 
     if (auto result = file.WriteFile(ttlib::cstr().utf(filename.wx_str())); !result)
     {
-        appMsgBox(ttlib::cstr("Cannot create or write to the file ") << filename.wx_str(), "Save messages");
+        wxMessageBox(wxString("Cannot create or write to the file ") << filename, "Save messages");
     }
     else
     {
@@ -310,7 +309,7 @@ void MsgFrame::OnParent(wxCommandEvent& WXUNUSED(event))
         auto parent = cur_sel->GetParent();
         if (!parent)
         {
-            appMsgBox("Current node doesn't have a parent!");
+            wxMessageBox("Current node doesn't have a parent!");
         }
         else
         {

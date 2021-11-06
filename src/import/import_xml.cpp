@@ -14,7 +14,6 @@
 #include "mainframe.h"    // Main window frame
 #include "node.h"         // Node class
 #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
-#include "uifuncs.h"      // Miscellaneous functions for displaying UI
 #include "utils.h"        // Utility functions that work with properties
 
 using namespace GenEnum;
@@ -25,9 +24,7 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const ttString& file)
 
     if (auto result = doc.load_file(file.wx_str()); !result)
     {
-        appMsgBox(ttlib::cstr("Cannot open ") << file.wx_str() << "\n\n"
-                                              << result.description(),
-                  "Import wxFormBuilder project");
+        wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Import wxFormBuilder project");
         return {};
     }
 

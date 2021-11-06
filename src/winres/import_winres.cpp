@@ -14,7 +14,6 @@
 #include "mainframe.h"              // Main window frame
 #include "node.h"                   // Node class
 #include "node_creator.h"           // NodeCreator class
-#include "uifuncs.h"                // Miscellaneous functions for displaying UI
 
 WinResource::WinResource() {}
 
@@ -245,10 +244,11 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        appMsgBox(ttlib::cstr() << "Problem parsing " << m_RcFilename << " at around line " << ttlib::itoa(m_curline << 1)
-                                << "\n\n"
-                                << e.what(),
-                  "RC Parser");
+        wxMessageBox((ttlib::cstr() << "Problem parsing " << m_RcFilename << " at around line "
+                                    << ttlib::itoa(m_curline << 1) << "\n\n"
+                                    << e.what())
+                         .wx_str(),
+                     "RC Parser");
         return false;
     }
 
@@ -281,9 +281,10 @@ void WinResource::ParseDialog()
     catch (const std::exception& e)
     {
         MSG_ERROR(e.what());
-        appMsgBox(ttlib::cstr() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
-                                << e.what(),
-                  "RC Parser");
+        wxMessageBox((ttlib::cstr() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
+                                    << e.what())
+                         .wx_str(),
+                     "RC Parser");
     }
 }
 

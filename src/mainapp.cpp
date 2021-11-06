@@ -21,7 +21,6 @@
 #include "node_creator.h"  // NodeCreator class
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
 #include "startup.h"       // CStartup -- Dialog to display is wxUE is launched with no arguments
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
 
 #include "../pugixml/pugixml.hpp"
 
@@ -143,7 +142,7 @@ int App::OnRun()
         projectFile.make_absolute();
         if (!projectFile.file_exists())
         {
-            appMsgBox(ttlib::cstr("Cannot open ") << projectFile, "Load Project");
+            wxMessageBox((ttlib::cstr("Cannot open ") << projectFile).wx_str(), "Load Project");
             projectFile.clear();
         }
     }
@@ -222,9 +221,10 @@ int App::OnRun()
             return wxApp::OnRun();
         }
 
-        auto answer = appMsgBox(ttlib::cstr() << "Cannot load project file: " << projectFile
-                                              << "\n\nDo you want to create an empty project?",
-                                "Load Project", wxYES_NO);
+        auto answer = wxMessageBox(
+            (ttlib::cstr() << "Cannot load project file: " << projectFile << "\n\nDo you want to create an empty project?")
+                .wx_str(),
+            "Load Project", wxYES_NO);
         if (answer != wxYES)
         {
             m_frame->Close();
@@ -358,7 +358,7 @@ void App::OnFatalException()
     #endif  // _DEBUG
 
     // Let the user know something terrible happened.
-    appMsgBox("An internal error has occurred!", txtVersion);
+    wxMessageBox("An internal error has occurred!", txtVersion);
 }
 
 #endif

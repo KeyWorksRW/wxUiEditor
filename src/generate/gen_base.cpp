@@ -24,7 +24,6 @@
 #include "node_creator.h"  // NodeCreator class
 #include "node_decl.h"     // NodeDeclaration class
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
 #include "utils.h"         // Utility functions that work with properties
 #include "write_code.h"    // Write code to Scintilla or file
 

@@ -10,7 +10,6 @@
 #include <wx/filedlg.h>  // wxFileDialog base header
 
 #include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
-#include "uifuncs.h"     // Miscellaneous functions for displaying UI
 
 #include "../pugixml/pugixml.hpp"
 

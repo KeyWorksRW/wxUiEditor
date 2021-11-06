@@ -26,7 +26,6 @@
 #include "bitmaps.h"      // Map of bitmaps accessed by name
 #include "mainframe.h"    // MainFrame -- Main window frame
 #include "node.h"         // Node class
-#include "uifuncs.h"      // Miscellaneous functions for displaying UI
 #include "utils.h"        // Utility functions that work with properties
 
 #include "ui_images.h"
@@ -178,8 +177,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
         }
         else
         {
-            appMsgBox(ttlib::cstr() << "Unrecognized file format in " << m_fileOriginal->GetTextCtrlValue().wx_str(),
-                      "Header Image");
+            wxMessageBox(wxString() << "Unrecognized file format in " << m_fileOriginal->GetTextCtrlValue(), "Header Image");
             m_fileOriginal->SetPath(wxEmptyString);
         }
     }
@@ -212,8 +210,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
                     }
                     else
                     {
-                        appMsgBox(ttlib::cstr() << "Unable to read " << m_fileOriginal->GetTextCtrlValue().wx_str(),
-                                  "Input Image");
+                        wxMessageBox(wxString() << "Unable to read " << m_fileOriginal->GetTextCtrlValue(), "Input Image");
                         break;
                     }
                 }
@@ -222,9 +219,8 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
         if (!isImageLoaded)
         {
-            appMsgBox(ttlib::cstr() << "The file format in " << m_fileOriginal->GetTextCtrlValue().wx_str()
-                                    << " is unsupported",
-                      "Input Image");
+            wxMessageBox(wxString() << "The file format in " << m_fileOriginal->GetTextCtrlValue() << " is unsupported",
+                         "Input Image");
             m_fileOriginal->SetPath(wxEmptyString);
         }
     }
@@ -441,18 +437,18 @@ void EmbedImage::ImgageInHeaderOut()
     ttString in_filename = m_fileOriginal->GetTextCtrlValue();
     if (in_filename.empty())
     {
-        appMsgBox("You need to specify a file to convert.");
+        wxMessageBox("You need to specify a file to convert.");
         return;
     }
     if (!in_filename.filename())
     {
-        appMsgBox("The input file you specified doesn't exist.");
+        wxMessageBox("The input file you specified doesn't exist.");
         return;
     }
 
     if (!m_orgImage.IsOk())
     {
-        appMsgBox(ttlib::cstr("Cannot open ") << in_filename.wx_str());
+        wxMessageBox(wxString("Cannot open ") << in_filename);
         return;
     }
 
@@ -548,18 +544,18 @@ void EmbedImage::ImageInXpmOut()
     ttString in_filename = m_fileOriginal->GetTextCtrlValue();
     if (in_filename.empty())
     {
-        appMsgBox("You need to specify a file to convert.");
+        wxMessageBox("You need to specify a file to convert.");
         return;
     }
     if (!in_filename.filename())
     {
-        appMsgBox("The input file you specified doesn't exist.");
+        wxMessageBox("The input file you specified doesn't exist.");
         return;
     }
 
     if (!m_xpmImage.IsOk())
     {
-        appMsgBox(ttlib::cstr("Cannot open ") << in_filename.wx_str());
+        wxMessageBox(wxString("Cannot open ") << in_filename);
         return;
     }
 

@@ -20,7 +20,6 @@
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
 
 #include "import_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs
 
@@ -130,7 +129,7 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
 
     if (!ttlib::is_sameas(root.name(), "wxFormBuilder_Project", tt::CASE::either))
     {
-        appMsgBox(ttlib::cstr() << filename.wx_str() << " is not a wxFormBuilder file", "Import wxFormBuilder project");
+        wxMessageBox(wxString() << filename << " is not a wxFormBuilder file", "Import wxFormBuilder project");
         return false;
     }
 
@@ -166,8 +165,8 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
     catch (const std::exception& DBG_PARAM(e))
     {
         MSG_ERROR(e.what());
-        appMsgBox(ttlib::cstr("This wxFormBuilder project file is invalid and cannot be loaded: ") << filename.wx_str(),
-                  "Import wxFormBuilder project");
+        wxMessageBox(wxString("This wxFormBuilder project file is invalid and cannot be loaded: ") << filename,
+                     "Import wxFormBuilder project");
         return false;
     }
 
@@ -180,7 +179,7 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
             errMsg << iter << '\n';
         }
 
-        appMsgBox(errMsg, "Import wxFormBuilder project");
+        wxMessageBox(errMsg, "Import wxFormBuilder project");
     }
 
     return true;

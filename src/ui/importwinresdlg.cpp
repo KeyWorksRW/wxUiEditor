@@ -12,7 +12,6 @@
 #include "importwinresdlg.h"  // auto-generated: importwinres_base.h and importwinres_base.cpp
 
 #include "mainapp.h"  // App -- App class
-#include "uifuncs.h"  // Miscellaneous functions for displaying UI
 
 ImportWinResDlg::ImportWinResDlg(wxWindow* parent, ttString filename) : ImportWinResBase(parent)
 {
@@ -45,7 +44,7 @@ void ImportWinResDlg::ReadRcFile()
     ttlib::textfile rc_file;
     if (!rc_file.ReadFile(m_rcFilename))
     {
-        appMsgBox("Unable to read the file " + m_rcFilename);
+        wxMessageBox(wxString("Unable to read the file ") << m_fileResource->GetPath());
         return;
     }
 

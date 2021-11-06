@@ -12,7 +12,6 @@
 #include "gen_base.h"    // BaseCodeGenerator -- Generate Base class
 #include "mainapp.h"     // App -- Main application class
 #include "node.h"        // Node class
-#include "uifuncs.h"     // Miscellaneous functions for displaying UI
 #include "write_code.h"  // Write code to Scintilla or file
 
 bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
@@ -23,7 +22,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         if (NeedsGenerateCheck)
             return false;
 
-        appMsgBox("You cannot generate any code until you have added a top level form.", "Code Generation");
+        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
     ttSaveCwd cwd;
@@ -153,9 +152,9 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         catch (const std::exception& DBG_PARAM(e))
         {
             MSG_ERROR(e.what());
-            appMsgBox(ttlib::cstr("An internal error occurred generating code files for ")
-                          << form->prop_as_string(prop_base_file),
-                      "Code generation");
+            wxMessageBox(ttlib::cstr("An internal error occurred generating code files for ")
+                             << form->prop_as_string(prop_base_file),
+                         "Code generation");
             continue;
         }
     }
@@ -181,13 +180,13 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             msg << '\n' << "The other " << currentFiles << " generated files are current";
         }
 
-        appMsgBox(msg, "Code Generation", wxOK, parent);
+        wxMessageBox(msg.wx_str(), "Code Generation", wxOK, parent);
     }
     else if (currentFiles && parent)
     {
         ttlib::cstr msg;
         msg << '\n' << "All " << currentFiles << " generated files are current";
-        appMsgBox(msg, "Code Generation", wxOK, parent);
+        wxMessageBox(msg, "Code Generation", wxOK, parent);
     }
     return true;
 }
@@ -312,19 +311,19 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
             msg << '\n' << "The other " << currentFiles << " derived files have already been created";
         }
 
-        appMsgBox(msg, "Code Generation", wxOK);
+        wxMessageBox(msg.wx_str(), "Code Generation", wxOK);
     }
     else if (currentFiles)
     {
         ttlib::cstr msg;
         msg << '\n' << "All " << currentFiles << " derived files have already been created";
-        appMsgBox(msg, "Code Generation", wxOK);
+        wxMessageBox(msg, "Code Generation", wxOK);
     }
     else
     {
-        appMsgBox("There were no derived filenames specified -- nothing to generate.\n\nAdd a filename to the "
-                  "derived_filename property to generate a derived file.",
-                  "Code Generation", wxOK);
+        wxMessageBox("There were no derived filenames specified -- nothing to generate.\n\nAdd a filename to the "
+                     "derived_filename property to generate a derived file.",
+                     "Code Generation", wxOK);
     }
 }
 

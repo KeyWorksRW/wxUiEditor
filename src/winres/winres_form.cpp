@@ -11,7 +11,6 @@
 
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
 #include "node_creator.h"   // NodeCreator -- Class used to create nodes
-#include "uifuncs.h"        // Miscellaneous functions for displaying UI
 
 resForm::resForm() {}
 

@@ -15,7 +15,6 @@
 #include "nav_panel.h"       // NavigationPanel -- Navigation Panel
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
-#include "uifuncs.h"         // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"       // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"           // Utility functions that work with properties
 

@@ -31,7 +31,6 @@
 #include "node_decl.h"    // NodeDeclaration class
 #include "node_prop.h"    // NodeProperty -- NodeProperty class
 #include "prop_decl.h"    // PropChildDeclaration and PropDeclaration classes
-#include "uifuncs.h"      // Miscellaneous functions for displaying UI
 #include "utils.h"        // Utility functions that work with properties
 
 // Various customized wxPGProperty classes
@@ -1583,7 +1582,7 @@ void PropGridPanel::VerifyChangeFile(wxPropertyGridEvent& event, NodeProperty* p
                 continue;
             if (project->GetChild(child_idx)->prop_as_string(prop_base_file) == filename)
             {
-                appMsgBox(ttlib::cstr() << "The base filename " << filename << " is already in use by "
+                wxMessageBox(wxString() << "The base filename " << newValue << " is already in use by "
                                         << project->GetChild(child_idx)->prop_as_string(prop_class_name)
                                         << "\n\nEither change the name, or press ESC to restore the original name.");
                 m_failure_handled = true;

@@ -14,7 +14,6 @@
 #include "mainframe.h"              // MainFrame -- Main window frame
 #include "node.h"                   // Node class
 #include "pjtsettings.h"            // ProjectSettings -- Hold data for currently loaded project
-#include "uifuncs.h"                // Miscellaneous functions for displaying UI
 
 using namespace GenEnum;
 
@@ -39,14 +38,14 @@ bool App::LoadProject(const ttString& file)
     if (!result)
     {
         ASSERT_MSG(result, ttlib::cstr() << "pugi failed trying to load " << file.wx_str());
-        appMsgBox(ttlib::cstr("Cannot open ") << file.wx_str() << "\n\n" << result.description(), "Load Project");
+        wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
         return false;
     }
 
     auto root = doc.first_child();
     if (!ttlib::is_sameas(root.name(), "wxUiEditorData", tt::CASE::either))
     {
-        appMsgBox(file.wx_str() + ttlib::cstr(" is not a wxUiEditor XML file"), "Load Project");
+        wxMessageBox(wxString() << file << " is not a wxUiEditor XML file", "Load Project");
         return false;
     }
 
@@ -67,7 +66,7 @@ bool App::LoadProject(const ttString& file)
     {
         if (!root.child("object") && !root.child("node"))
         {
-            appMsgBox(ttlib::cstr() << "The data file " << file.wx_str() << " is invalid and cannot be opened.");
+            wxMessageBox(wxString() << "The data file " << file << " is invalid and cannot be opened.");
             return false;
         }
         else if (m_ProjectVersion == 11)
@@ -77,9 +76,9 @@ bool App::LoadProject(const ttString& file)
         }
         else
         {
-            if (appMsgBox(ttlib::cstr() << "Project version " << m_ProjectVersion / 10 << '.' << m_ProjectVersion % 10
-                                        << " is not supported.\n\nDo you want to attempt to load it anyway?",
-                          "Unsupported Project Version", wxYES_NO) == wxNO)
+            if (wxMessageBox(ttlib::cstr() << "Project version " << m_ProjectVersion / 10 << '.' << m_ProjectVersion % 10
+                                           << " is not supported.\n\nDo you want to attempt to load it anyway?",
+                             "Unsupported Project Version", wxYES_NO) == wxNO)
             {
                 return false;
             }
@@ -91,7 +90,7 @@ bool App::LoadProject(const ttString& file)
     {
         if (!root.child("node"))
         {
-            appMsgBox(ttlib::cstr() << "The data file " << file.wx_str() << " is invalid and cannot be opened.");
+            wxMessageBox(wxString() << "The data file " << file << " is invalid and cannot be opened.");
             return false;
         }
 
@@ -102,7 +101,7 @@ bool App::LoadProject(const ttString& file)
     {
         ASSERT_MSG(project, ttlib::cstr() << "Failed trying to load " << file.wx_str());
 
-        appMsgBox(ttlib::cstr() << "The project file " << file.wx_str() << " is invalid and cannot be opened.");
+        wxMessageBox(wxString() << "The project file " << file << " is invalid and cannot be opened.");
         return false;
     }
 
@@ -146,7 +145,7 @@ NodeSharedPtr App::LoadProject(pugi::xml_document& doc)
     catch (const std::exception& DBG_PARAM(e))
     {
         MSG_ERROR(e.what());
-        appMsgBox("This wxUiEditor project file is invalid and cannot be loaded.", "Load Project");
+        wxMessageBox("This wxUiEditor project file is invalid and cannot be loaded.", "Load Project");
     }
 
     return project;
@@ -289,7 +288,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
                 MSG_WARNING(ttlib::cstr("Unrecognized property: ") << iter.name() << " in class: " << class_name);
 
-                appMsgBox(ttlib::cstr().Format(
+                wxMessageBox(ttlib::cstr().Format(
                     "The property named \"%s\" of class \"%s\" is not supported by this version of wxUiEditor.\n"
                     "If your project file was just converted from an older version, then the conversion was not "
                     "complete.\n"
@@ -504,8 +503,8 @@ void App::AppendFormBuilder(wxArrayString& files)
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                appMsgBox(ttlib::cstr("The project file ") << files[pos].wx_str() << " is invalid and cannot be opened.",
-                          "Import wxFormBuilder project");
+                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                             "Import wxFormBuilder project");
                 return;
             }
 
@@ -534,8 +533,8 @@ void App::AppendGlade(wxArrayString& files)
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                appMsgBox(ttlib::cstr("The project file ") << files[pos].wx_str() << " is invalid and cannot be opened.",
-                          "Import wxGlade project");
+                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                             "Import wxGlade project");
                 return;
             }
 
@@ -564,8 +563,8 @@ void App::AppendSmith(wxArrayString& files)
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                appMsgBox(ttlib::cstr("The project file ") << files[pos].wx_str() << " is invalid and cannot be opened.",
-                          "Import wxSmith project");
+                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                             "Import wxSmith project");
                 return;
             }
 
@@ -595,8 +594,8 @@ void App::AppendXRC(wxArrayString& files)
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                appMsgBox(ttlib::cstr("The project file ") << files[pos].wx_str() << " is invalid and cannot be opened.",
-                          "Import XRC project");
+                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                             "Import XRC project");
                 return;
             }
 

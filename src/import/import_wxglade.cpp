@@ -12,7 +12,6 @@
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
 #include "pjtsettings.h"     // ProjectSettings -- Hold data for currently loaded project
-#include "uifuncs.h"         // Miscellaneous functions for displaying UI
 #include "utils.h"           // Utility functions that work with properties
 
 WxGlade::WxGlade() {}
@@ -28,7 +27,7 @@ bool WxGlade::Import(const ttString& filename, bool write_doc)
 
     if (!ttlib::is_sameas(root.name(), "application", tt::CASE::either))
     {
-        appMsgBox(ttlib::cstr() << filename.wx_str() << " is not a wxGlade file", "Import");
+        wxMessageBox(wxString() << filename << " is not a wxGlade file", "Import");
         return false;
     }
 
@@ -45,7 +44,7 @@ bool WxGlade::Import(const ttString& filename, bool write_doc)
 
         if (!m_project->GetChildCount())
         {
-            appMsgBox(ttlib::cstr() << filename.wx_str() << " does not contain any top level forms.", "Import");
+            wxMessageBox(wxString() << filename << " does not contain any top level forms.", "Import");
             return false;
         }
 
@@ -56,7 +55,7 @@ bool WxGlade::Import(const ttString& filename, bool write_doc)
     catch (const std::exception& DBG_PARAM(e))
     {
         MSG_ERROR(e.what());
-        appMsgBox(ttlib::cstr("This project file is invalid and cannot be loaded: ") << filename.wx_str(), "Import Project");
+        wxMessageBox(wxString("This project file is invalid and cannot be loaded: ") << filename, "Import Project");
         return false;
     }
 

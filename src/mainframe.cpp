@@ -38,7 +38,6 @@
 #include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"     // NodeProperty -- NodeProperty class
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"         // Utility functions that work with properties
 #include "wakatime.h"      // WakaTime -- Updates WakaTime metrics
@@ -201,7 +200,7 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
         }
         else
         {
-            appMsgBox(ttlib::cstr("Unable to save the project: ") << wxGetApp().getProjectFileName(), "Save Project");
+            wxMessageBox(wxString("Unable to save the project: ") << wxGetApp().GetProjectFileName(), "Save Project");
         }
     }
 }
@@ -225,28 +224,28 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
 
         else if (filename.extension().is_sameas(".fbp", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a wxFormBuilder project file", "Save Project As");
+            wxMessageBox("You cannot save the project as a wxFormBuilder project file", "Save Project As");
             return;
         }
         else if (filename.extension().is_sameas(".wxg", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a wxGlade file", "Save Project As");
+            wxMessageBox("You cannot save the project as a wxGlade file", "Save Project As");
             return;
         }
         else if (filename.extension().is_sameas(".wxs", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a wxSmith file", "Save Project As");
+            wxMessageBox("You cannot save the project as a wxSmith file", "Save Project As");
             return;
         }
         else if (filename.extension().is_sameas(".xrc", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a XRC file", "Save Project As");
+            wxMessageBox("You cannot save the project as a XRC file", "Save Project As");
             return;
         }
         else if (filename.extension().is_sameas(".rc", tt::CASE::either) ||
                  filename.extension().is_sameas(".dlg", tt::CASE::either))
         {
-            appMsgBox("You cannot save the project as a Windows Resource file", "Save Project As");
+            wxMessageBox("You cannot save the project as a Windows Resource file", "Save Project As");
             return;
         }
 
@@ -264,7 +263,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
         }
         else
         {
-            appMsgBox(ttlib::cstr("Unable to save the project: ") << filename.wx_str(), "Save Project As");
+            wxMessageBox(wxString("Unable to save the project: ") << filename, "Save Project As");
         }
     };
 }
@@ -386,10 +385,11 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     {
         wxGetApp().LoadProject(file);
     }
-    else if (appMsgBox(ttlib::cstr().Format(
-                           "The project file '%s' doesn't exist.\n\nWould you like to remove it from the recent files list?",
-                           file.wx_str()),
-                       "Open recent project", wxICON_WARNING | wxYES_NO) == wxYES)
+    else if (wxMessageBox(
+                 wxString().Format(
+                     "The project file '%s' doesn't exist.\n\nWould you like to remove it from the recent files list?",
+                     file.c_str()),
+                 "Open recent project", wxICON_WARNING | wxYES_NO) == wxYES)
     {
         m_FileHistory.RemoveFileFromHistory(event.GetId() - wxID_FILE1);
     }
@@ -1021,14 +1021,14 @@ void MainFrame::CreateToolNode(GenName name)
 {
     if (!m_selected_node)
     {
-        appMsgBox("You need to select something first in order to properly place this widget.");
+        wxMessageBox("You need to select something first in order to properly place this widget.");
         return;
     }
 
     if (!m_selected_node->CreateToolNode(name))
     {
-        appMsgBox(ttlib::cstr() << "Unable to create " << map_GenNames[name] << " as a child of "
-                                << m_selected_node->DeclName());
+        wxMessageBox(ttlib::cstr() << "Unable to create " << map_GenNames[name] << " as a child of "
+                                   << m_selected_node->DeclName());
     }
 }
 
@@ -1081,7 +1081,7 @@ void MainFrame::PasteNode(Node* parent)
 
     if (!m_clipboard)
     {
-        appMsgBox("There is nothing in the clipboard that can be pasted!", "Paste Clipboard");
+        wxMessageBox("There is nothing in the clipboard that can be pasted!", "Paste Clipboard");
         return;
     }
 
@@ -1100,7 +1100,7 @@ void MainFrame::PasteNode(Node* parent)
         auto grandparent = parent->GetParent();
         if (!grandparent || !grandparent->IsChildAllowed(new_node))
         {
-            appMsgBox(ttlib::cstr() << "You cannot paste " << new_node->DeclName() << " into " << parent->DeclName());
+            wxMessageBox(ttlib::cstr() << "You cannot paste " << new_node->DeclName() << " into " << parent->DeclName());
             return;
         }
         parent = grandparent;
@@ -1360,7 +1360,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             PushUndoAction(std::make_shared<ChangeParentAction>(node, grandparent));
             return true;
         }
-        appMsgBox("There is no sizer to the left of this item that it can be moved into.", "Move item");
+        wxMessageBox("There is no sizer to the left of this item that it can be moved into.", "Move item");
     }
     else if (where == MoveDirection::Right)
     {
@@ -1380,7 +1380,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             }
         }
         if (!check_only)
-            appMsgBox("There is nothing above this item that it can be moved into.", "Move item");
+            wxMessageBox("There is nothing above this item that it can be moved into.", "Move item");
     }
     else if (where == MoveDirection::Up)
     {
@@ -1393,7 +1393,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos - 1));
             return true;
         }
-        appMsgBox("This component cannot be moved up any further.", "Move item");
+        wxMessageBox("This component cannot be moved up any further.", "Move item");
     }
     else if (where == MoveDirection::Down)
     {
@@ -1406,7 +1406,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
             return true;
         }
-        appMsgBox(node->DeclName() + " cannot be moved down any lower.", "Move item");
+        wxMessageBox(ttlib::cstr() << node->DeclName() << " cannot be moved down any lower.", "Move item");
     }
 
     return false;

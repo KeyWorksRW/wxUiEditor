@@ -14,7 +14,6 @@
 #include "bitmaps.h"    // Map of bitmaps accessed by name
 #include "mainapp.h"    // App -- App class
 #include "mainframe.h"  // MainFrame -- Main window frame
-#include "uifuncs.h"    // Miscellaneous functions for displaying UI
 
 // clang-format off
 static const char* txtContents = {

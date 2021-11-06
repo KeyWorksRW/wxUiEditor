@@ -13,7 +13,6 @@
 #include "mainframe.h"     // Main window frame
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
 
 #include "../../pugixml/pugixml.hpp"
 
@@ -63,7 +62,7 @@ NodeSharedPtr GetClipboardNode()
 
         if (!result)
         {
-            appMsgBox("Unable to parse the object in the clipboard", "Paste Clipboard");
+            wxMessageBox("Unable to parse the object in the clipboard", "Paste Clipboard");
             return {};
         }
 

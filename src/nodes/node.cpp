@@ -17,7 +17,6 @@
 #include "node_decl.h"     // NodeDeclaration class
 #include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"     // NodeProperty -- NodeProperty class
-#include "uifuncs.h"       // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 using namespace GenEnum;
@@ -569,8 +568,8 @@ Node* Node::CreateChildNode(GenName name)
             auto cur_children = g_NodeCreator.CountChildrenWithSameType(this, decl->gen_type());
             if (max_children > 0 && cur_children >= static_cast<size_t>(max_children))
             {
-                appMsgBox(ttlib::cstr() << "You can only add " << static_cast<size_t>(max_children) << ' '
-                                        << map_GenNames[name] << " as a child of " << DeclName());
+                wxMessageBox(ttlib::cstr() << "You can only add " << static_cast<size_t>(max_children) << ' '
+                                           << map_GenNames[name] << " as a child of " << DeclName());
                 return nullptr;
             }
 
@@ -596,7 +595,7 @@ Node* Node::CreateChildNode(GenName name)
         }
         else
         {
-            appMsgBox(ttlib::cstr() << "You cannot add " << map_GenNames[name] << " as a child of " << DeclName());
+            wxMessageBox(ttlib::cstr() << "You cannot add " << map_GenNames[name] << " as a child of " << DeclName());
             return nullptr;
         }
     }
@@ -615,7 +614,7 @@ Node* Node::CreateNode(GenName name)
     auto cur_selection = frame.GetSelectedNode();
     if (!cur_selection)
     {
-        appMsgBox("You need to select something first in order to properly place this widget.");
+        wxMessageBox("You need to select something first in order to properly place this widget.");
         return nullptr;
     }
     return cur_selection->CreateChildNode(name);

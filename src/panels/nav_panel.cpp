@@ -23,7 +23,6 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class
-#include "uifuncs.h"          // Miscellaneous functions for displaying UI
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 
 #include "../utils/auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
@@ -207,7 +206,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     {
         if (item == itemSrc)
         {
-            if (appMsgBox("Do you want to duplicate this item?", "Drop item onto itself", wxYES_NO) == wxYES)
+            if (wxMessageBox("Do you want to duplicate this item?", "Drop item onto itself", wxYES_NO) == wxYES)
             {
                 wxGetFrame().DuplicateNode(GetNode(itemSrc));
                 ExpandAllNodes(wxGetFrame().GetSelectedNode());
@@ -236,31 +235,31 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     {
         if (dst_parent->IsSizer())
         {
-            appMsgBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a sizer.");
+            wxMessageBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a sizer.");
             return;
         }
         else if (dst_parent->IsContainer())
         {
-            appMsgBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a " << dst_parent->DeclName()
-                                    << '.');
+            wxMessageBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a " << dst_parent->DeclName()
+                                       << '.');
             return;
         }
         else if (dst_parent->isGen(gen_Project))
         {
-            appMsgBox(ttlib::cstr() << "Only forms can be dropped onto your project.");
+            wxMessageBox("Only forms can be dropped onto your project.");
             return;
         }
         dst_parent = dst_parent->GetParent();
         if (!dst_parent)
         {
-            appMsgBox(ttlib::cstr() << node_src->DeclName() << " can't be dropped onto this target.");
+            wxMessageBox(ttlib::cstr() << node_src->DeclName() << " can't be dropped onto this target.");
             return;
         }
     }
 
     if (dst_parent->isGen(gen_wxStdDialogButtonSizer))
     {
-        appMsgBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a wxStdDialogBtnSizer.");
+        wxMessageBox(ttlib::cstr() << "You can't drop a " << node_src->DeclName() << " onto a wxStdDialogBtnSizer.");
         return;
     }
 
@@ -269,7 +268,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
     {
         if (src_parent == dst_parent)
         {
-            appMsgBox("You cannot drag and drop an item within the same wxGridBagSizer. Use the Move commands instead.");
+            wxMessageBox("You cannot drag and drop an item within the same wxGridBagSizer. Use the Move commands instead.");
             return;
         }
     }

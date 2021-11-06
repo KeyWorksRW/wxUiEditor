@@ -24,30 +24,6 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
     return image;
 };
 
-namespace wxue_img
-{
-    extern const unsigned char alignbottom_png[347];
-    extern const unsigned char aligncenter_png[335];
-    extern const unsigned char alignleft_png[360];
-    extern const unsigned char alignright_png[374];
-    extern const unsigned char aligntop_png[343];
-    extern const unsigned char alignvertcenter_png[332];
-    extern const unsigned char bottom_png[148];
-    extern const unsigned char expand_png[496];
-    extern const unsigned char generate_png[1395];
-    extern const unsigned char hidden_png[478];
-    extern const unsigned char left_png[158];
-    extern const unsigned char magnify_png[733];
-    extern const unsigned char nav_movedown_png[584];
-    extern const unsigned char nav_moveleft_png[645];
-    extern const unsigned char nav_moveright_png[551];
-    extern const unsigned char nav_moveup_png[560];
-    extern const unsigned char new_png[930];
-    extern const unsigned char right_png[156];
-    extern const unsigned char save_png[1376];
-    extern const unsigned char top_png[150];
-}
-
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style) :
     wxFrame(parent, id, title, pos, size, style)

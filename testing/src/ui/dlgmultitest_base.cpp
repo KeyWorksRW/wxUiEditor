@@ -27,9 +27,6 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 
 namespace wxue_img
 {
-    extern const unsigned char disabled_png[437];
-    extern const unsigned char focus_png[517];
-    extern const unsigned char normal_png[508];
     extern const unsigned char wiztest_png[1239];
 }
 

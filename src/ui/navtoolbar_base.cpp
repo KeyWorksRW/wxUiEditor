@@ -23,9 +23,6 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 
 namespace wxue_img
 {
-    extern const unsigned char nav_coll_expand_png[316];
-    extern const unsigned char nav_collapse_png[299];
-    extern const unsigned char nav_expand_png[487];
     extern const unsigned char nav_movedown_png[584];
     extern const unsigned char nav_moveleft_png[645];
     extern const unsigned char nav_moveright_png[551];

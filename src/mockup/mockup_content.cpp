@@ -55,6 +55,7 @@ void MockupContent::CreateAllGenerators()
 
     m_parent_sizer = new wxBoxSizer(wxVERTICAL);
 
+    ASSERT(m_mockupParent->GetSelectedForm());
     auto form = m_mockupParent->GetSelectedForm();
 
     if (form->isGen(gen_wxWizard))
@@ -73,8 +74,8 @@ void MockupContent::CreateAllGenerators()
     }
     else if (form->isGen(gen_Images))
     {
+        ASSERT_MSG(form->GetGenerator(), ttlib::cstr() << "Missing component for " << form->DeclName());
         auto comp = form->GetGenerator();
-        ASSERT_MSG(comp, ttlib::cstr() << "Missing component for " << form->DeclName());
         if (!comp)
             return;
 
@@ -110,8 +111,8 @@ void MockupContent::CreateAllGenerators()
 
 void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer)
 {
+    ASSERT_MSG(node->GetGenerator(), ttlib::cstr() << "Missing component for " << node->DeclName());
     auto comp = node->GetGenerator();
-    ASSERT_MSG(comp, ttlib::cstr() << "Missing component for " << node->DeclName());
     if (!comp)
         return;
 
@@ -428,15 +429,22 @@ void MockupContent::OnNodeSelected(Node* node)
 
     if (m_wizard && node->isGen(gen_wxWizardPageSimple))
     {
-        auto parent = node->GetParent();
-        ASSERT(parent->isGen(gen_wxWizard));
-        m_wizard->SetSelection(parent->GetChildPosition(node));
+        ASSERT(node->GetParent());
+        if (auto parent = node->GetParent(); parent)
+        {
+            ASSERT(parent->isGen(gen_wxWizard));
+            m_wizard->SetSelection(parent->GetChildPosition(node));
+        }
         return;
     }
 
     else if (node->isGen(gen_BookPage) || node->isGen(gen_PageCtrl))
     {
+        ASSERT(node->GetParent());
         auto parent = node->GetParent();
+        if (!parent)
+            return;
+
         size_t sel_pos = 0;
         for (size_t idx_child = 0; idx_child < parent->GetChildCount(); ++idx_child)
         {
@@ -483,46 +491,56 @@ void MockupContent::OnNodeSelected(Node* node)
 
     else if (node->isGen(gen_wxRibbonPage))
     {
-        auto parent = node->GetParent();
-        ASSERT(parent->isGen(gen_wxRibbonBar) || parent->isGen(gen_RibbonBar));
+        ASSERT(node->GetParent());
+        if (auto parent = node->GetParent(); parent)
+        {
+            ASSERT(parent->isGen(gen_wxRibbonBar) || parent->isGen(gen_RibbonBar));
 
-        auto bar = wxStaticCast(Get_wxObject(parent), wxRibbonBar);
-        auto page = wxStaticCast(Get_wxObject(node), wxRibbonPage);
-        bar->SetActivePage(page);
-
+            auto bar = wxStaticCast(Get_wxObject(parent), wxRibbonBar);
+            auto page = wxStaticCast(Get_wxObject(node), wxRibbonPage);
+            bar->SetActivePage(page);
+        }
         return;
     }
     else if (node->isGen(gen_wxRibbonPanel))
     {
-        auto parent = node->GetParent();
-        ASSERT(parent->isGen(gen_wxRibbonPage));
+        ASSERT(node->GetParent());
+        if (auto parent = node->GetParent(); parent)
+        {
+            ASSERT(parent->isGen(gen_wxRibbonPage));
 
-        auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
-        auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
-        bar->SetActivePage(page);
-
+            auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+            auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+            bar->SetActivePage(page);
+        }
         return;
     }
     else if (node->isGen(gen_wxRibbonButtonBar) || node->isGen(gen_wxRibbonToolBar))
     {
-        auto parent = node->GetParent()->GetParent();
-        ASSERT(parent->isGen(gen_wxRibbonPage));
-
-        auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
-        auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
-        bar->SetActivePage(page);
-
+        ASSERT(node->GetParent());
+        ASSERT(node->GetParent()->GetParent());
+        if (auto parent = node->GetParent()->GetParent(); parent)
+        {
+            ASSERT(parent->isGen(gen_wxRibbonPage));
+            auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+            auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+            bar->SetActivePage(page);
+        }
         return;
     }
     else if (node->isGen(gen_ribbonButton) || node->isGen(gen_ribbonTool))
     {
-        auto parent = node->GetParent()->GetParent()->GetParent();
-        ASSERT(parent->isGen(gen_wxRibbonPage));
+        ASSERT(node->GetParent());
+        ASSERT(node->GetParent()->GetParent());
+        ASSERT(node->GetParent()->GetParent()->GetParent());
+        if (auto parent = node->GetParent()->GetParent()->GetParent(); parent)
+        {
+            ASSERT(parent->isGen(gen_wxRibbonPage));
 
-        auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
-        auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
-        bar->SetActivePage(page);
-
+            auto bar = wxStaticCast(Get_wxObject(parent->GetParent()), wxRibbonBar);
+            auto page = wxStaticCast(Get_wxObject(parent), wxRibbonPage);
+            bar->SetActivePage(page);
+        }
         return;
     }
 }

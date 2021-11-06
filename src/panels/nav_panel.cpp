@@ -638,8 +638,8 @@ void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool ex
 
 void NavigationPanel::OnExpand(wxCommandEvent&)
 {
+    ASSERT(m_pMainFrame->GetSelectedNode());
     auto node = m_pMainFrame->GetSelectedNode();
-    ASSERT(node);
     if (!node)
         return;  // This is theoretically impossible
 
@@ -650,8 +650,8 @@ void NavigationPanel::OnExpand(wxCommandEvent&)
 
 void NavigationPanel::OnCollapse(wxCommandEvent&)
 {
+    ASSERT(m_pMainFrame->GetSelectedNode());
     auto node = m_pMainFrame->GetSelectedNode();
-    ASSERT(node);
     if (!node)
         return;  // This is theoretically impossible
 
@@ -673,8 +673,8 @@ void NavigationPanel::OnCollapse(wxCommandEvent&)
 
 void NavigationPanel::OnCollExpand(wxCommandEvent&)
 {
+    ASSERT(m_pMainFrame->GetSelectedNode());
     auto node = m_pMainFrame->GetSelectedNode();
-    ASSERT(node);
     if (!node)
         return;  // This is theoretically impossible
 

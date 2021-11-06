@@ -1121,8 +1121,8 @@ void MainFrame::DuplicateNode(Node* node)
 {
     ASSERT(node);
 
+    ASSERT(node->GetParent());
     auto parent = node->GetParent();
-    ASSERT(parent);
 
     ttlib::cstr undo_str("duplicate ");
     undo_str << node->DeclName();

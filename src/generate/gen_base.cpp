@@ -391,16 +391,31 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
         if (m_embedded_images.size() && !form_node->isGen(gen_Images))
         {
-            m_source->writeLine();
-            m_source->writeLine("namespace wxue_img\n{");
-            m_source->Indent();
+            bool isNameSpaceWritten = false;
             for (auto iter_array: m_embedded_images)
             {
+                // If the image is defined in this form, then it will already have been declared in the class's header file.
+                // For the source code, we only care about images defined in another source module.
+
+                if (iter_array->form == m_form_node)
+                    continue;
+
+                if (!isNameSpaceWritten)
+                {
+                    isNameSpaceWritten = true;
+                    m_source->writeLine();
+                    m_source->writeLine("namespace wxue_img\n{");
+                    m_source->Indent();
+                }
+
                 m_source->writeLine(ttlib::cstr("extern const unsigned char ")
                                     << iter_array->array_name << '[' << iter_array->array_size << "];");
             }
-            m_source->Unindent();
-            m_source->writeLine("}\n");
+            if (isNameSpaceWritten)
+            {
+                m_source->Unindent();
+                m_source->writeLine("}\n");
+            }
         }
 
         GenerateClassConstructor(form_node, events);

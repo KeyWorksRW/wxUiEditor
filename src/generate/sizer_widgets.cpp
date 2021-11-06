@@ -629,11 +629,11 @@ wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
     auto sizer = new wxGridBagSizer(node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
 
 #if 0
-    for (auto& col: node->GetPropertyAsVectorIntPair(txt_growablecols))
+    for (auto& col: node->GetPropertyAsVectorIntPair(map_PropNames[prop_growablecols]))
     {
         sizer->AddGrowableCol(col.first, col.second);
     }
-    for (auto& row: node->GetPropertyAsVectorIntPair(txt_growablerows))
+    for (auto& row: node->GetPropertyAsVectorIntPair(map_PropNames[prop_growablerows]))
     {
         sizer->AddGrowableRow(row.first, row.second);
     }

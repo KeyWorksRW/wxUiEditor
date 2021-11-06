@@ -23,7 +23,6 @@ namespace pugi
 #include "node_event.h"  // NodeEvent and NodeEventInfo classes
 #include "node_prop.h"   // NodeProperty class
 #include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
-#include "prop_names.h"  // Property names
 
 class wxSizerFlags;
 class wxAnimation;

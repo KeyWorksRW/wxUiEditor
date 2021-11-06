@@ -637,7 +637,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             prop_info =
                 std::make_shared<PropDeclaration>(prop_class_access, type_option, access,
                                                   "Determines the type of access your derived class has to this item.", "");
-            obj_info->GetPropInfoMap()[txt_class_access] = prop_info;
+            obj_info->GetPropInfoMap()[map_PropNames[prop_class_access]] = prop_info;
 
             auto& opts = prop_info->GetOptions();
 

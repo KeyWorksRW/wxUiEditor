@@ -588,13 +588,13 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     }
 
     // This will be caused by a spacer item which isn't actually a widget, so has no access property
-    else if (prop_name.is_sameas(txt_class_access))
+    else if (prop_name.is_sameas(map_PropNames[prop_class_access]))
     {
         return;
     }
 
     // The label property in a wxMenuBar is not supported (since it can't actually be used)
-    else if (prop_name.is_sameas(txt_label))
+    else if (prop_name.is_sameas(map_PropNames[prop_label]))
     {
         return;
     }

@@ -58,8 +58,9 @@
 
 #endif
 
-// This is included because mainframe.h needs it, and changing mainframe.h results in 37 files needing to read this.
-#include <wx/gdicmn.h>
+#include <wx/gdicmn.h>  // Common GDI classes, types and declarations
+#include <wx/msgdlg.h>  // common header and base class for wxMessageDialog
+#include <wx/string.h>  // wxString class
 
 #ifdef _MSC_VER
     #pragma warning(pop)
@@ -114,6 +115,28 @@ extern ttlib::cstr tt_empty_cstr;
 constexpr const char BMP_PROP_SEPARATOR = ';';
 
 //////////////////////////////////////// macros ////////////////////////////////////////
+
+// Use INTERNAL_ERROR(msg) if you always want to report a problem in any Debug or Release build. Use BETA_ERROR(msg) if this
+// is just something you want reported on during a Debug or Release beta build (which presumably will be fixed and not occur
+// before a non-beta Release). You do not need to call these if you are instead calling throw std::...()
+
+#if defined(BETA)
+    #define BETA_ERROR(msg)                                                                                              \
+        {                                                                                                                \
+            wxMessageBox(wxString("An internal error occured in ") << __func__ << " at line " << __LINE__ << '.' << msg, \
+                         txtVersion);                                                                                    \
+        }
+#else
+    #define BETA_ERROR(msg) \
+        {                   \
+        }
+#endif
+
+#define INTERNAL_ERROR(msg)                                                                                          \
+    {                                                                                                                \
+        wxMessageBox(wxString("An internal error occured in ") << __func__ << " at line " << __LINE__ << '.' << msg, \
+                     txtVersion);                                                                                    \
+    }
 
 #if defined(NDEBUG)
 

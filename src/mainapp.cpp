@@ -358,7 +358,7 @@ void App::OnFatalException()
     #endif  // _DEBUG
 
     // Let the user know something terrible happened.
-    appMsgBox(_tt(strIdInternalError), txtVersion);
+    appMsgBox("An internal error has occurred!", txtVersion);
 }
 
 #endif
@@ -372,6 +372,7 @@ void App::ShowMsgWindow()
 
 void App::DbgCurrentTest(wxCommandEvent&)
 {
+    INTERNAL_ERROR(ttlib::cstr() << "\n\nInternal error test.")
     MSG_WARNING("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()");
 }
 

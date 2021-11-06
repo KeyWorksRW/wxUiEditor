@@ -180,6 +180,7 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::cview name, Node* parent)
     if (result == rmap_GenNames.end())
     {
         FAIL_MSG(ttlib::cstr() << "No component definition for " << name);
+        BETA_ERROR(ttlib::cstr() << "\nNo component definition for " << name);
         return {};
     }
 

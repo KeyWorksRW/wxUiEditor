@@ -17,6 +17,8 @@
 
 #include "bitmaps.h"
 
+#include "uifuncs.h"  // Miscellaneous functions for displaying UI
+
 // [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will be called during project
 // loading, and there could be dozens of calls to the same problem file(s).
 
@@ -91,6 +93,7 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
                 if (!*buf_ptr)
                 {
                     FAIL_MSG(ttlib::cstr() << filename << " doesn't contain a closing brace");
+                    appMsgBox(ttlib::cstr() << filename << " doesn't contain a closing brace");
                     return image;
                 }
             }
@@ -297,6 +300,7 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
                 if (!*buf_ptr)
                 {
                     FAIL_MSG(ttlib::cstr() << filename << " doesn't contain a closing brace");
+                    appMsgBox(ttlib::cstr() << filename << " doesn't contain a closing brace");
                     return animation.IsOk();
                 }
             }

@@ -7,12 +7,6 @@ inline const char* trees_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_treeCtrl</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="style" type="bitlist">
 			<option name="wxTR_EDIT_LABELS"
 				help="Use this style if you wish the user to be able to edit labels in the tree control." />
@@ -91,12 +85,6 @@ inline const char* trees_xml = R"===(<?xml version="1.0"?>
 	<gen class="TreeListCtrlColumn" image="treelistctrlcolumn" type="treelistctrlcolumn">
 		<property name="var_name" type="string_escapes"
 			help="The column label.">Column</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="width" type="editoption"
 			help="The width of the column in pixels or the special wxCOL_WIDTH_AUTOSIZE value indicating that the column should adjust to its contents. Notice that the first column is special and will be always resized to fill all the space not taken by the other columns, i.e. the width specified here is ignored for it.">
 			<option name="wxCOL_WIDTH_DEFAULT"

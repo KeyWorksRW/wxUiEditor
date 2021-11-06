@@ -6,12 +6,6 @@ inline const char* dataview_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_dataViewCtrl</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="style" type="bitlist">
 			<option name="wxDV_SINGLE"
 				help="Single selection mode. This is the default." />
@@ -71,12 +65,6 @@ inline const char* dataview_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_dataViewTreeCtrl</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="style" type="bitlist">
 			<option name="wxDV_SINGLE"
 				help="Single selection mode. This is the default." />
@@ -136,12 +124,6 @@ inline const char* dataview_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_dataViewListCtrl</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="style" type="bitlist">
 			<option name="wxDV_SINGLE"
 				help="Single selection mode. This is the default." />
@@ -199,12 +181,6 @@ inline const char* dataview_xml = R"===(<?xml version="1.0"?>
 R"===(
 	<gen class="dataViewColumn" image="dataviewlist_column" type="dataviewcolumn">
 		<property name="var_name" type="string">m_dataViewColumn</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="label" type="string_escapes">Name</property>
 		<property name="model_column" type="uint">0</property>
 		<property name="type" type="option">
@@ -275,12 +251,6 @@ R"===(
 
 	<gen class="dataViewListColumn" image="dataviewlist_column" type="dataviewlistcolumn">
 		<property name="var_name" type="string">m_dataViewListColumn</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="label" type="string_escapes">Name</property>
 		<property name="type" type="option">
 			<option name="Text"

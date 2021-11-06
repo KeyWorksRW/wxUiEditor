@@ -89,12 +89,6 @@ inline const char* wizard_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<property name="var_name" type="string">wizPage</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="bitmap" type="image"
 			help="Page-specific bitmap (default: none)." />
 	</gen>

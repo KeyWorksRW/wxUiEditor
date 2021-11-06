@@ -5,12 +5,6 @@ inline const char* std_dlg_btns_xml = R"===(<?xml version="1.0"?>
 		<inherits class="sizer_dimension" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">stdBtn</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="OK" type="bool"
 			help="Create a 'OK' button. Cannot be combined with Yes or Save buttons.">1</property>
 		<property name="Yes" type="bool"

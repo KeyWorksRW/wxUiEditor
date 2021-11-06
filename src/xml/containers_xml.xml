@@ -8,12 +8,6 @@ inline const char* containers_xml = R"===(<?xml version="1.0"?>
 		</inherits>
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">panel</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 	</gen>
 
 	<gen class="wxSplitterWindow" image="wxSplitterWindow" type="splitter">
@@ -21,12 +15,6 @@ inline const char* containers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_splitter</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="splitmode" type="option">
 			<option name="wxSPLIT_VERTICAL"
 				help="Specifies a vertical split window." />
@@ -83,12 +71,6 @@ inline const char* containers_xml = R"===(<?xml version="1.0"?>
 		</inherits>
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_scroll_canvas</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="scroll_rate_x" type="uint"
 			help="Set the horizontal scrolling increment.">5</property>
 		<property name="scroll_rate_y" type="uint"
@@ -109,12 +91,6 @@ inline const char* containers_xml = R"===(<?xml version="1.0"?>
 		</inherits>
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_scroll_panel</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="scroll_rate_x" type="uint"
 			help="Set the horizontal scrolling increment.">5</property>
 		<property name="scroll_rate_y" type="uint"
@@ -145,11 +121,5 @@ inline const char* containers_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<event name="wxEVT_COLLAPSIBLEPANE_CHANGED" class="wxCollapsiblePaneEvent"
 			help="The user expanded or collapsed the collapsible pane." />
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 	</gen>
 </GeneratorDefinitions>)===";

@@ -6,12 +6,6 @@ inline const char* grid_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_grid</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="rows" type="uint"
 			help="Number of Rows.">5</property>
 		<property name="cols" type="uint"

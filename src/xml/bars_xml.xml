@@ -5,12 +5,6 @@ inline const char* bars_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<property name="var_name" type="string">m_statusBar</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="fields" type="uint"
 			help="Number of fields in the statusbar.">1</property>
 		<property name="style" type="bitlist">

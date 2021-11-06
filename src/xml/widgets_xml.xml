@@ -6,12 +6,6 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_indicator</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 	</gen>
 
 	<gen class="wxAnimationCtrl" image="wxAnimation" type="widget">
@@ -19,12 +13,6 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_animation_ctrl</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="style" type="bitlist">
 			<option name="wxAC_DEFAULT_STYLE"
 				help="The default style: wxBORDER_NONE." />
@@ -122,12 +110,6 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">bmp</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="scale_mode" type="option">
 			<option name="None"
 				help="Do not scale the image." />
@@ -148,12 +130,6 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">static_line</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="style" type="option">
 			<option name="wxLI_HORIZONTAL"
 				help="Creates a horizontal line." />

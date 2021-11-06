@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include <wx/msgdlg.h>
-#include <wx/string.h>
-
 #include "ttstrings.h"  // Functions accessing translatable strings
 
 #include "strings.h"  // Localized strings

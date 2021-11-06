@@ -42,6 +42,9 @@ endif()
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 add_compile_definitions($<$<CONFIG:Debug>:WXUSINGDLL>)
 
+# Comment the following line out for a non-beta Release
+add_compile_definitions(BETA)
+
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates. Specifying the full path and extension
 # means ninja sees this as a normal dependency that didn't change any time one of the files it specifies changes.
 

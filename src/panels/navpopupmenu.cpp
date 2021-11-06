@@ -318,9 +318,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
         // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
         FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
 #if !defined(_DEBUG)
-        appMsgBox(ttlib::cstr("An internal error occurred. The following node is missing a parent: ")
-                      << node->get_node_name(),
-                  "CreateSizerParent()");
+        INTERNAL_ERROR(ttlib::cstr() << "\nThe following node is missing a parent: " << node->get_node_name())
         throw;
 #else
         return;
@@ -339,8 +337,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
         // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
         FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
 #if !defined(_DEBUG)
-        appMsgBox(ttlib::cstr("An internal error occurred creating a sizer parent for ") << node->get_node_name(),
-                  "CreateSizerParent()");
+        INTERNAL_ERROR(ttlib::cstr() << "\nThe following node is missing a sizer parent: " << node->get_node_name())
         throw;
 #else
         return;

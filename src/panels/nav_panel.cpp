@@ -470,6 +470,8 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     {
         FAIL_MSG(ttlib::cstr("There is no tree item associated with this object.\n\tClass: ")
                  << node->DeclName() << "\n\tName: " << node->prop_as_string(prop_var_name).wx_str());
+        BETA_ERROR(ttlib::cstr("\nThere is no tree item associated with this object.\n\tClass: ")
+                   << node->DeclName() << "\n\tName: " << node->prop_as_string(prop_var_name).wx_str());
     }
 }
 

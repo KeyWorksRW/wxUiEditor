@@ -28,7 +28,7 @@ bool WxGlade::Import(const ttString& filename, bool write_doc)
 
     if (!ttlib::is_sameas(root.name(), "application", tt::CASE::either))
     {
-        appMsgBox(filename.wx_str() + _ttc(" is not a wxGlade file"), _tt("Import"));
+        appMsgBox(ttlib::cstr() << filename.wx_str() << " is not a wxGlade file", "Import");
         return false;
     }
 
@@ -45,7 +45,7 @@ bool WxGlade::Import(const ttString& filename, bool write_doc)
 
         if (!m_project->GetChildCount())
         {
-            appMsgBox(filename.wx_str() + _ttc(" does not contain any top level forms."), _tt("Import"));
+            appMsgBox(ttlib::cstr() << filename.wx_str() << " does not contain any top level forms.", "Import");
             return false;
         }
 

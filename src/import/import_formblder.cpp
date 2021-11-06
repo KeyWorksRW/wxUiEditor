@@ -130,7 +130,7 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
 
     if (!ttlib::is_sameas(root.name(), "wxFormBuilder_Project", tt::CASE::either))
     {
-        appMsgBox(filename.wx_str() + _ttc(" is not a wxFormBuilder file"), _tt(strIdImportFormBuilder));
+        appMsgBox(ttlib::cstr() << filename.wx_str() << " is not a wxFormBuilder file", "Import wxFormBuilder project");
         return false;
     }
 

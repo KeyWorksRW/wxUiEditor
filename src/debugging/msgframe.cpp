@@ -161,7 +161,7 @@ void MsgFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
 
     if (auto result = file.WriteFile(ttlib::cstr().utf(filename.wx_str())); !result)
     {
-        appMsgBox(_ttc(strIdCantWrite) << filename.wx_str(), "Save messages");
+        appMsgBox(ttlib::cstr("Cannot create or write to the file ") << filename.wx_str(), "Save messages");
     }
     else
     {

@@ -403,24 +403,24 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
         new_pg_property = new wxFileProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string());
         if (prop->isProp(prop_base_file))
         {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, _ttwx("Base class filename"));
+            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Base class filename");
             new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().getProjectPath().wx_str());
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().getProjectPath().wx_str());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, _ttwx("C++ Files|*.cpp;*.cc;*.cxx"));
+            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
         else if (prop->isProp(prop_derived_file))
         {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, _ttwx("Derived class filename"));
+            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived class filename");
             new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().getProjectPath().wx_str());
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().getProjectPath().wx_str());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, _ttwx("C++ Files|*.cpp;*.cc;*.cxx"));
+            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
         else if (prop->isProp(prop_local_pch_file))
         {
-            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, _ttwx("Precompiled header"));
-            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, _ttwx("Header Files|*.h;*.hh;*.hpp;*.hxx"));
+            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Precompiled header");
+            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
 
             // Often the project file will be kept in a sub-directory, with the precompiled header file in the parent
             // directory. If we can find a standard precompiled header filename in the parent directory, then use that

@@ -7,10 +7,6 @@
 
 #pragma once
 
-#include "ttstrings.h"  // Functions accessing translatable strings
-
-#include "strings.h"  // Localized strings
-
 /////////////////////// inline functions ////////////////////////////////////////
 
 // If you are using any of the _tt() macros for localizable strings, then using appMsgBox

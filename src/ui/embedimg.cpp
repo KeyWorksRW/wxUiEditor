@@ -95,7 +95,7 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
     dir.make_absolute();
     m_fileOutput->SetInitialDirectory(dir);
 
-    m_btnClose->SetLabel(_tt("Close"));
+    m_btnClose->SetLabel("Close");
 
     m_comboXpmMask->Append("none");
     m_comboXpmMask->Append("custom");
@@ -452,7 +452,7 @@ void EmbedImage::ImgageInHeaderOut()
 
     if (!m_orgImage.IsOk())
     {
-        appMsgBox(ttlib::cstr() << _tt(strIdCantOpen) << in_filename.wx_str());
+        appMsgBox(ttlib::cstr("Cannot open ") << in_filename.wx_str());
         return;
     }
 
@@ -537,7 +537,7 @@ void EmbedImage::ImgageInHeaderOut()
         }
         else
         {
-            m_staticSave->SetLabelText(wxString() << _ttwx(strIdCantOpen) << out_name);
+            m_staticSave->SetLabelText(wxString() << "Cannot open " << out_name);
             m_staticSave->Show();
         }
     }
@@ -559,7 +559,7 @@ void EmbedImage::ImageInXpmOut()
 
     if (!m_xpmImage.IsOk())
     {
-        appMsgBox(ttlib::cstr() << _tt(strIdCantOpen) << in_filename.wx_str());
+        appMsgBox(ttlib::cstr("Cannot open ") << in_filename.wx_str());
         return;
     }
 

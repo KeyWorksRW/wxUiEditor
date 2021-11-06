@@ -66,7 +66,6 @@ add_executable(wxUiEditor WIN32
     src/lambdas.cpp           # Functions for formatting and storage of lamda events
     src/pjtsettings.cpp       # Hold data for currently loaded project
     src/startup.cpp           # Dialog to display is wxUE is launched with no arguments
-    src/strings.cpp           # Contains translatable strings
     src/undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     src/undo_stack.cpp        # Maintain an undo and redo stack
     src/wakatime.cpp          # Updates WakaTime metrics
@@ -186,7 +185,6 @@ add_executable(wxUiEditor WIN32
     ttLib/src/ttparser.cpp           # Command line parser
     ttLib/src/ttstr.cpp              # Enhanced version of wxString
     ttLib/src/ttlibspace.cpp         # ttlib namespace functions
-    ttLib/src/ttstrings.cpp          # Class for handling zero-terminated char strings.
     ttLib/src/tttextfile.cpp         # Classes for reading and writing text files.
 
     # Debug-only files

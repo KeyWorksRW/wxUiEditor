@@ -30,12 +30,6 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<property name="var_name" type="string">m_menubar</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="style" type="bitlist">
 			<option name="wxMB_DOCKABLE"
 				help="Allows the menu bar to be detached (wxGTK only)." />
@@ -44,23 +38,11 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="wxMenu" image="menu" type="menu">
 		<property name="var_name" type="string">m_menu</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="label" type="string_escapes">MyMenu</property>
 	</gen>
 
 	<gen class="submenu" image="submenu" type="submenu">
 		<property name="var_name" type="string">submenu</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="label" type="string_escapes">MySubMenu</property>
 		<property name="bitmap" type="image"
 			help="Bitmap for the submenu item." />
@@ -68,12 +50,6 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="wxMenuItem" image="menuitem" type="menuitem">
 		<property name="var_name" type="string">menu_item</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="label" type="string_escapes"
 			help="Text for the menu item, as shown on the menu. An accelerator key can be specified using the ampersand &quot;&amp;&quot; character.">MyMenuItem</property>
 		<property name="shortcut" type="string_escapes"

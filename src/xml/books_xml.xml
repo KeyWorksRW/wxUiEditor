@@ -6,12 +6,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_choicebook</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="persist_name" type="string"
 			help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
 		<property name="style" type="option">
@@ -38,12 +32,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_listbook</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="display_images" type="bool"
 			help="If true, will display an image on the tab in addition to any text.">0</property>
 		<property name="image_size" type="wxSize"
@@ -74,12 +62,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_notebook</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="display_images" type="bool"
 			help="If true, will display an image on the tab in addition to any text.">0</property>
 		<property name="image_size" type="wxSize"
@@ -118,12 +100,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_toolbook</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="image_size" type="wxSize"
 			help="All tool images will be scaled to this size.">16, 16</property>
 		<property name="style" type="bitlist">
@@ -141,12 +117,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_treebook</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="display_images" type="bool"
 			help="If true, will display an image on the tab in addition to any text.">0</property>
 		<property name="image_size" type="wxSize"
@@ -197,12 +167,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		</inherits>
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">page</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="label" type="string_escapes">page</property>
 		<property name="select" type="bool"
 			help="Select Page when Adding">0</property>

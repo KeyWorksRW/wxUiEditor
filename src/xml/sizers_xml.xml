@@ -16,16 +16,11 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="splitteritem" type="splitteritem" />
+
 	<gen class="wxBoxSizer" image="sizer_horizontal" type="sizer">
 		<inherits class="sizer_dimension" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">box_sizer</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="orientation" type="option">
 			<option name="wxVERTICAL"
 				help="Align items vertically" />
@@ -39,12 +34,6 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="sizer_dimension" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">box_sizer</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="orientation" type="option">
 			<option name="wxVERTICAL"
 				help="Align items vertically" />
@@ -58,12 +47,6 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="sizer_dimension" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">static_box</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="label" type="string_escapes">label</property>
 		<property name="orientation" type="option">
 			<option name="wxVERTICAL"
@@ -86,12 +69,6 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="sizer_child" />
 		<inherits class="Boolean Validator" />
 		<property name="var_name" type="string">static_box</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="checkbox_var_name" type="string">m_checkBox</property>
 		<property name="label" type="string_escapes">label</property>
 		<property name="checked" type="bool">1</property>
@@ -124,12 +101,6 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="sizer_child" />
 		<inherits class="Boolean Validator" />
 		<property name="var_name" type="string">static_box</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="radiobtn_var_name" type="string">m_radioBtn</property>
 		<property name="label" type="string_escapes">label</property>
 		<property name="checked" type="bool">1</property>
@@ -157,12 +128,6 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="sizer_dimension" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">wrap_sizer</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="orientation" type="option">
 			<option name="wxVERTICAL"
 				help="Align items vertically" />
@@ -183,12 +148,6 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="sizer_dimension" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">grid_sizer</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="rows" type="uint"
 			help="Number of Rows. If '0', wxWidgets will automatically calculate the number of rows required to hold the supplied items.">0</property>
 		<property name="cols" type="uint"
@@ -204,12 +163,6 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="flexgridsizerbase" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">flex_grid_sizer</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="rows" type="uint"
 			help="Number of Rows. '0' tells wxWidgets to calculate the number of rows required to hold the supplied items. If you choose to fix the row number, set the 'cols' figure to zero instead.">0</property>
 		<property name="cols" type="uint"
@@ -221,12 +174,6 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<inherits class="flexgridsizerbase" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">grid_bag_sizer</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="empty_cell_size" type="wxSize"
 			help="The size used for cells in the grid with no item." />
 	</gen>
@@ -234,12 +181,6 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 	<gen class="TextSizer" image="text_sizer" type="widget">
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">sizer_text</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="text" type="string_edit_escapes"
 			help="Splits text up at newlines and places the lines into wxStaticText objects with the specified maximum width in a vertical wxBoxSizer.">MyText</property>
 		<property name="width" type="int"

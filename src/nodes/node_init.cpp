@@ -92,6 +92,38 @@ inline const char* lst_xml_generators[] = {
     wizard_xml,
 
 };
+
+// var_names for these generators will default to "none" for class access
+inline const GenName lst_no_class_access[] = {
+
+    gen_BookPage,
+    gen_StaticCheckboxBoxSizer,
+    gen_StaticRadioBtnBoxSizer,
+    gen_TextSizer,
+    gen_VerticalBoxSizer,
+    gen_separator,
+    gen_submenu,
+    gen_tool,
+    gen_wxBoxSizer,
+    gen_wxFlexGridSizer,
+    gen_wxGridBagSizer,
+    gen_wxGridSizer,
+    gen_wxMenuItem,
+    gen_wxPanel,
+    gen_wxRibbonButtonBar,
+    gen_wxRibbonGallery,
+    gen_wxRibbonPage,
+    gen_wxRibbonPanel,
+    gen_wxRibbonToolBar,
+    gen_wxStaticBitmap,
+    gen_wxStaticBoxSizer,
+    gen_wxStaticLine,
+    gen_wxStdDialogButtonSizer,
+    gen_wxWizardPageSimple,
+    gen_wxWrapSizer,
+
+};
+
 // clang-format on
 
 using namespace child_count;
@@ -572,21 +604,9 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             auto elem_opt = elem_prop.child("option");
             while (elem_opt)
             {
-                wxString OptionName = elem_opt.attribute("name").as_string();
-                ttlib::cstr help = elem_opt.attribute("help").as_string();
-                if (help.empty())
-                {
-                    if (OptionName == "none")
-                        help = "Your derived class has no access to this item.";
-                    else if (OptionName == "protected:")
-                        help = "Item is added as a protected: class member";
-                    else if (OptionName == "public:")
-                        help = "Item is added as a public: class member";
-                }
-
                 auto& opt = opts.emplace_back();
-                opt.name = OptionName;
-                opt.help = help.wx_str();
+                opt.name = elem_opt.attribute("name").as_string();
+                opt.help = elem_opt.attribute("help").as_string();
 
                 elem_opt = elem_opt.next_sibling("option");
             }
@@ -594,34 +614,44 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         elem_prop = elem_prop.next_sibling("property");
 
-        // All widgets need to have an access property after their name property. The XML file typically won't supply
-        // this, so we add it here.
-        if (elem_prop && ttlib::is_sameas(name, txt_var_name) &&
-            !elem_prop.attribute("name").as_cview().is_sameas(txt_class_access))
+        // Any time there is a var_name property, it needs to be followed by a class_access property. Rather than add this to
+        // all the XML generator specifications, we simply insert it here if it doesn't exist.
+
+        if (elem_prop && ttlib::is_sameas(name, map_PropNames[prop_var_name]))
         {
-            if (auto type = elem_prop.parent().attribute("type").as_cview();
-                type.is_sameas("widget") || type.is_sameas("expanded_widget"))
+            category.AddProperty(prop_class_access);
+            ttlib::cstr access("protected:");
+
+            // Most widgets will default to protected: as their class access. Those in the lst_no_class_access array should
+            // have "none" as the default class access.
+
+            for (auto generator: lst_no_class_access)
             {
-                category.AddProperty(prop_class_access);
-                prop_info = std::make_shared<PropDeclaration>(
-                    prop_class_access, type_option,
-                    "protected:", "Determines the type of access your derived class has to this item.", "");
-                obj_info->GetPropInfoMap()[txt_class_access] = prop_info;
-
-                auto& opts = prop_info->GetOptions();
-
-                opts.emplace_back();
-                opts[opts.size() - 1].name = "none";
-                opts[opts.size() - 1].help = "none: Your derived class has no access to this item.";
-
-                opts.emplace_back();
-                opts[opts.size() - 1].name = "protected:";
-                opts[opts.size() - 1].help = "protected: Item is added as a protected: class member";
-
-                opts.emplace_back();
-                opts[opts.size() - 1].name = "public:";
-                opts[opts.size() - 1].help = "public: Item is added as a public: class member";
+                if (obj_info->isGen(generator))
+                {
+                    access = "none";
+                    break;
+                }
             }
+
+            prop_info =
+                std::make_shared<PropDeclaration>(prop_class_access, type_option, access,
+                                                  "Determines the type of access your derived class has to this item.", "");
+            obj_info->GetPropInfoMap()[txt_class_access] = prop_info;
+
+            auto& opts = prop_info->GetOptions();
+
+            opts.emplace_back();
+            opts[opts.size() - 1].name = "none";
+            opts[opts.size() - 1].help = "none: Your derived class has no access to this item.";
+
+            opts.emplace_back();
+            opts[opts.size() - 1].name = "protected:";
+            opts[opts.size() - 1].help = "protected: Item is added as a protected: class member";
+
+            opts.emplace_back();
+            opts[opts.size() - 1].name = "public:";
+            opts[opts.size() - 1].help = "public: Item is added as a public: class member";
         }
     }
 }

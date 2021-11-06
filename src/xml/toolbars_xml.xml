@@ -45,12 +45,6 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_toolBar</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="bitmapsize" type="wxSize"
 			help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels." />
 		<property name="margins" type="wxSize"
@@ -92,12 +86,6 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="tool" image="tool" type="tool">
 		<property name="var_name" type="string">tool</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="label" type="string_escapes" />
 		<property name="bitmap" type="image"
 			help="The primary tool bitmap." />

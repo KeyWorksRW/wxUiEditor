@@ -6,12 +6,6 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_propertyGrid</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="include_advanced" type="bool"
 			help="Include Advanced Properties">1</property>
 		<property name="bitmap" type="image"
@@ -70,12 +64,6 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_propertyGridManager</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="include_advanced" type="bool"
 			help="Include Advanced Properties">1</property>
 		<property name="style" type="bitlist">
@@ -149,12 +137,6 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 	<gen class="propGridPage" image="propgridpage" type="propgridpage">
 		<property name="var_name" type="string"
 			help="Instance name.">m_propertyGridPage</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="label" type="string_escapes"
 			help="Label shown as a tooltip of the manager's tool button.">Page</property>
 		<property name="bitmap" type="image"
@@ -164,12 +146,6 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 	<gen class="propGridItem" image="propgriditem" type="propgriditem">
 		<property name="var_name" type="string"
 			help="Instance name and an internal name of the property item.">m_propertyGridItem</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="label" type="string_escapes"
 			help="Label shown in parent property grid/page.">Name</property>
 		<property name="type" type="option"

@@ -6,12 +6,6 @@ inline const char* ribbon_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_rbnBar</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			protected:
-		</property>
 		<property name="theme" type="option"
 			help="Select the RibbonBar theme.">
 			<option name="Default"
@@ -69,12 +63,6 @@ inline const char* ribbon_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<property name="var_name" type="string">rbnPage</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="label" type="string_escapes">MyRibbonPage</property>
 		<property name="bitmap" type="image"
 			help="wxRibbonPage bitmap." />
@@ -86,12 +74,6 @@ inline const char* ribbon_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<property name="var_name" type="string">rbnPanel</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="label" type="string_escapes">MyRibbonPanel</property>
 		<property name="bitmap" type="image"
 			help="wxRibbonPanel bitmap." />
@@ -118,12 +100,6 @@ inline const char* ribbon_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<property name="var_name" type="string">rbnBtnBar</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<event name="EVT_RIBBONBUTTONBAR_CLICKED" class="wxRibbonToolBarEvent"
 			help="Triggered when the normal (non-dropdown) region of a button on the button bar is clicked." />
 		<event name="EVT_RIBBONBUTTONBAR_DROPDOWN_CLICKED" class="wxRibbonToolBarEvent"
@@ -159,12 +135,6 @@ inline const char* ribbon_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<property name="var_name" type="string">rbnToolBar</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<property name="min_rows" type="int"
 			help="Minimum number of rows.">1</property>
 		<property name="max_rows" type="int"
@@ -203,12 +173,6 @@ inline const char* ribbon_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<property name="var_name" type="string">rbnGallery</property>
-		<property name="class_access" type="option">
-			<option name="none" />
-			<option name="protected:" />
-			<option name="public:" />
-			none
-		</property>
 		<event name="wxEVT_RIBBONGALLERY_SELECTED" class="wxRibbonGalleryEvent"
 			help="Triggered when the user selects an item from the gallery." />
 		<event name="wxEVT_RIBBONGALLERY_CLICKED" class="wxRibbonGalleryEvent"

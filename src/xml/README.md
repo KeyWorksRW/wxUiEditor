@@ -40,6 +40,7 @@ The files `gen_enums.h` and `gen_enums.cpp` _must_ be updated any time you add a
 - Add the generator class to one of the files in generate/ or create a new file
 - Add any required wxWidgets header file to gen_initialize.cpp
 - Add the generator class name to the InitGenerators() in gen_initialize.cpp
+- If the generator has a var_name property, and you want the default class access to be "none", then add the generator name to the lst_no_class_access list in node_init.cpp
 
 While testing, you can use any existing image, and insert the control using the Edit menu's `Insert Widget` command. Once ready for release, then take the following steps:
 

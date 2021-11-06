@@ -59,15 +59,9 @@ std::vector<ttlib::cstr> ConvertToArrayString(ttlib::cview value);
 // Use ConvertToArrayString() to get a vector, this function to get a wxArrayString
 wxArrayString ConvertToWxArrayString(ttlib::cview value);
 
-// Converts a GZIP unsigned char array into an image.
-wxImage LoadGzipImage(const unsigned char* data, size_t size_data);
-
 // Converts an unsigned char array into an image. This is typically used for loading internal
 // #included images
 wxImage LoadHeaderImage(const unsigned char* data, size_t size_data);
-
-// Converts a GZIP unsigned char array into a string.
-std::string LoadGzipString(const unsigned char* data, size_t size_data);
 
 // If the property specifies dialog units, then parent will be used to do the conversion
 wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);

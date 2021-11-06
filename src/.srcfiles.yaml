@@ -33,8 +33,7 @@ Files:
     cstm_event.cpp        # Custom Event handling
     frame_status_bar.cpp  # MainFrame status bar functions
     gen_enums.cpp         # Enumerations for generators
-    gzip.cpp              # Convert compiled GZIP arrays into original strings/images
-    lambdas.cpp            # Functions for formatting and storage of lamda events
+    lambdas.cpp           # Functions for formatting and storage of lamda events
     pjtsettings.cpp       # Hold data for currently loaded project
     startup.cpp           # Dialog to display is wxUE is launched with no arguments
     strings.cpp           # Contains translatable strings

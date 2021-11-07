@@ -153,13 +153,14 @@ add_executable(wxUiEditor WIN32
     src/utils/font_prop.cpp         # FontProperty class
     src/utils/utils.cpp             # Utility functions that work with properties
 
+    src/winres/ctrl_utils.cpp       # resCtrl class utility functions
+    src/winres/form_utils.cpp       # resForm utility functions code
     src/winres/import_winres.cpp    # Import a Windows resource file
     src/winres/winres_ctrl.cpp      # Process Windows Resource control data
     src/winres/winres_form.cpp      # Process a Windows Resource form (usually a dialog)
-    src/winres/winres_images.cpp    # rcCtrl class image/icon functions
-    src/winres/winres_layout.cpp    # rcForm layout code
-    src/winres/winres_styles.cpp    # rcCtrl style processing functions
-    src/winres/winres_utils.cpp     # rcCtrl class utility functions
+    src/winres/winres_images.cpp    # resCtrl class image/icon functions
+    src/winres/winres_layout.cpp    # resForm layout code
+    src/winres/winres_styles.cpp    # resCtrl class style processing functions
 
     pugixml/pugixml.cpp             # XML parser
 

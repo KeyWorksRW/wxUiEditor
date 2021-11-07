@@ -37,14 +37,14 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     }
 
     m_form_type = isDialog ? form_dialog : form_panel;
-    m_node = g_NodeCreator.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
+    m_form_node = g_NodeCreator.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
 
     ttlib::cstr value;  // General purpose string we can use throughout this function
     value = line.substr(0, end);
-    m_node->prop_set_value(prop_class_name, ConvertDialogId(value));
+    m_form_node->prop_set_value(prop_class_name, ConvertDialogId(value));
 
 #if defined(_DEBUG)
-    m_form_id = m_node->prop_as_string(prop_class_name);
+    m_form_id = m_form_node->prop_as_string(prop_class_name);
 #endif  // _DEBUG
 
     line.remove_prefix(end);
@@ -62,7 +62,7 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
                 value << '\n';
             value << iter;
         }
-        m_node->prop_set_value(prop_base_src_includes, value);
+        m_form_node->prop_set_value(prop_base_src_includes, value);
     }
 
     for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
@@ -76,7 +76,7 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
         {
             line.moveto_nextword();
             value.ExtractSubString(line);
-            m_node->prop_set_value(prop_title, value);
+            m_form_node->prop_set_value(prop_title, value);
         }
         else if (line.is_sameprefix("FONT"))
         {
@@ -114,15 +114,15 @@ void resForm::AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 
     if (style.contains("DS_CENTER"))
-        m_node->prop_set_value(prop_center, "wxBOTH");
+        m_form_node->prop_set_value(prop_center, "wxBOTH");
     if (style.contains("WS_EX_CONTEXTHELP"))
-        m_node->prop_set_value(prop_extra_style, "wxDIALOG_EX_CONTEXTHELP");
+        m_form_node->prop_set_value(prop_extra_style, "wxDIALOG_EX_CONTEXTHELP");
 
     ttlib::cstr original_styles(ttlib::stepover(style));
 
     if (original_styles.contains("DS_MODALFRAME"))
     {
-        m_node->prop_set_value(prop_style, "wxDEFAULT_DIALOG_STYLE");
+        m_form_node->prop_set_value(prop_style, "wxDEFAULT_DIALOG_STYLE");
         // It's common for dialogs to duplicate the styles that DS_MODALFRAME add, so we remove them here to
         // avoid adding them later.
         original_styles.Replace("WS_CAPTION", "");
@@ -219,11 +219,11 @@ void resForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
 
 void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
 {
-    ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
+    ttlib::cstr updated_style = m_form_node->prop_as_string(prop_name);
     if (updated_style.size())
         updated_style << '|';
     updated_style << style;
-    m_node->prop_set_value(prop_name, updated_style);
+    m_form_node->prop_set_value(prop_name, updated_style);
 }
 
 ttlib::cstr resForm::ConvertDialogId(ttlib::cview id)

@@ -37,10 +37,10 @@ public:
     ttlib::cstr ConvertDialogId(ttlib::cview id);
 
     // Call this after
-    void AddSizersAndChildren();
+    void CreateDialogLayout();
     size_t GetFormType() const { return m_form_type; }
-    Node* GetFormNode() const { return m_node.get(); }
-    auto GetFormName() const { return m_node->prop_as_string(prop_class_name); }
+    Node* GetFormNode() const { return m_form_node.get(); }
+    auto GetFormName() const { return m_form_node->prop_as_string(prop_class_name); }
     int GetWidth() const { return m_pixel_rect.GetWidth(); }
 
     // left position in dialog units
@@ -53,8 +53,11 @@ public:
     auto du_height() const { return m_du_rect.GetHeight(); }
 
 protected:
+    void AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls);
+
     // Returns true if button was processed, otherwise treat it like a normal button.
     bool ProcessStdButton(Node* parent_sizer, size_t idx_child);
+
     // Adopts child node and sets child flag to indicate it has been added
     void Adopt(const NodeSharedPtr& node, resCtrl& child);
 
@@ -74,8 +77,20 @@ protected:
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
     void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
 
+    // Sorts all controls both vertically and horizontally.
+    void SortCtrls();
+
     // Returns true if val1 is within range of val2 using a fudge value below and above val2.
     bool isInRange(int32_t val1, int32_t val2) { return (val1 >= (val2 - FudgeAmount) && val1 <= (val2 + FudgeAmount)); }
+
+    // This will take into account a static text control to the left which is vertically centered
+    // with the control on the right.
+    bool is_same_top(const resCtrl& left, const resCtrl& right);
+
+    bool is_lower_top(const resCtrl& left, const resCtrl& right);
+
+    // Returns true if left top/bottom is within right top/bottom
+    bool is_within_vertical(const resCtrl& left, const resCtrl& right);
 
 private:
     // These are in dialog coordinates
@@ -84,7 +99,7 @@ private:
     // These are in pixels
     wxRect m_pixel_rect { 0, 0, 0, 0 };
 
-    NodeSharedPtr m_node;
+    NodeSharedPtr m_form_node;
 
     size_t m_form_type;
 

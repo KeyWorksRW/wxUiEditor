@@ -315,7 +315,7 @@ void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
 
 void WinResource::FormToNode(resForm& form)
 {
-    form.AddSizersAndChildren();
+    form.CreateDialogLayout();
 
     switch (form.GetFormType())
     {

@@ -11,72 +11,18 @@
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
-static bool is_same_top(const resCtrl& left, const resCtrl& right)
-{
-    if (left.du_top() == right.du_top())
-        return true;
-    if (left.GetNode()->isGen(gen_wxStaticText))
-    {
-        if (left.du_top() - 1 == right.du_top() || left.du_top() - 2 == right.du_top())
-            return true;
-    }
-    return false;
-}
-
-static bool is_lower_top(const resCtrl& left, const resCtrl& right)
-{
-    if (left.du_top() == right.du_top())
-    {
-        return (left.du_left() < right.du_left());
-    }
-    return (left.du_top() < right.du_top());
-}
-
-void resForm::AddSizersAndChildren()
+void resForm::CreateDialogLayout()
 {
     if (!m_ctrls.size())
         return;  // empty dialog -- rare, but it does happen
 
-    // std::sort(m_ctrls.begin(), m_ctrls.end(), [](resCtrl a, resCtrl b) { return a.du_top() < b.du_top(); });
-    std::sort(m_ctrls.begin(), m_ctrls.end(), [](resCtrl a, resCtrl b) { return is_lower_top(a, b); });
+    SortCtrls();
 
-    // Sometimes a static text control will be placed to the left of another control such as an edit control, and moved down
-    // a little bit so that it aligns with the control it precedes. When we sorted controls vertically, the static text
-    // control will appear below the control it is supposed to precede.
+    // dlg_sizer is the top level sizer for the entire dialog
 
-    for (size_t idx = 1; idx < m_ctrls.size(); ++idx)
-    {
-        if (m_ctrls[idx].isGen(gen_wxStaticText) && is_same_top(m_ctrls[idx], m_ctrls[idx - 1]))
-        {
-            if (m_ctrls[idx - 1].du_left() > m_ctrls[idx].du_left() + m_ctrls[idx].du_width())
-            {
-                std::swap(m_ctrls[idx - 1], m_ctrls[idx]);
-                m_ctrls[idx - 1].GetDialogRect().SetTop(m_ctrls[idx].du_top());
-            }
-        }
-    }
-
-    // Sort horizontally within each top range
-    for (size_t begin = 0; begin < m_ctrls.size() - 1; ++begin)
-    {
-        auto end = begin + 1;
-        while (is_same_top(m_ctrls[begin], m_ctrls[end]))
-        {
-            ++end;
-            if (end >= m_ctrls.size())
-                break;
-        }
-
-        if (end > begin + 1)
-        {
-            std::sort(m_ctrls.begin() + begin, m_ctrls.begin() + end,
-                      [](resCtrl a, resCtrl b) { return a.du_left() < b.du_left(); });
-        }
-    }
-
-    auto parent = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_node.get());
-    parent->prop_set_value(prop_var_name, "dlg_sizer");
-    m_node->Adopt(parent);
+    auto dlg_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
+    dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
+    m_form_node->Adopt(dlg_sizer);
 
     for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
     {
@@ -87,9 +33,13 @@ void resForm::AddSizersAndChildren()
         if (child.isAdded())
             continue;
 
-        if (child.isGen(gen_wxButton) && ProcessStdButton(parent.get(), idx_child))
-            continue;
-
+        if (child.isGen(gen_wxButton))
+        {
+            if (ProcessStdButton(dlg_sizer.get(), idx_child))
+            {
+                continue;
+            }
+        }
         // Special handling for last control
         if (idx_child + 1 >= m_ctrls.size())
         {
@@ -110,7 +60,7 @@ void resForm::AddSizersAndChildren()
             if (!child.isGen(gen_wxStaticBoxSizer))
             {
                 // orphaned child, add to form's top level sizer
-                parent->Adopt(child.GetNodePtr());
+                dlg_sizer->Adopt(child.GetNodePtr());
             }
             break;
         }
@@ -120,8 +70,8 @@ void resForm::AddSizersAndChildren()
         {
             // If there is more than one child with the same top position, then create a horizontal box sizer
             // and add all children with the same top position.
-            auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, parent.get());
-            parent->Adopt(sizer);
+            auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, dlg_sizer.get());
+            dlg_sizer->Adopt(sizer);
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
 
             while (idx_child < m_ctrls.size() && is_same_top(child, m_ctrls[idx_child]))
@@ -131,6 +81,9 @@ void resForm::AddSizersAndChildren()
 
                 if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
                 {
+                    // Group boxes can have controls to the left and right that are lower than the top of the box. That means
+                    // that they will have been sorted after the group box, but must be added before it.
+
                     AddStaticBoxChildren(m_ctrls[idx_child], idx_child);
                 }
 
@@ -156,12 +109,12 @@ void resForm::AddSizersAndChildren()
             if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
             {
                 AddStaticBoxChildren(m_ctrls[idx_child], idx_child);
-                Adopt(parent, m_ctrls[idx_child]);
+                Adopt(dlg_sizer, m_ctrls[idx_child]);
                 continue;
             }
 
-            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent.get());
-            parent->Adopt(sizer);
+            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, dlg_sizer.get());
+            dlg_sizer->Adopt(sizer);
             sizer->Adopt(child.GetNodePtr());
             if (idx_child == 0)
                 continue;
@@ -184,7 +137,14 @@ void resForm::AddSizersAndChildren()
         }
     }
 
-    parent->FixDuplicateNodeNames();
+    dlg_sizer->FixDuplicateNodeNames();
+}
+
+void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls)
+{
+    if (actrls.size() == 1)
+    {
+    }
 }
 
 void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
@@ -361,7 +321,12 @@ void resForm::CollectGroupControls(size_t idx_parent)
 
     for (size_t idx = idx_parent + 1; idx < m_ctrls.size(); ++idx)
     {
+#if defined(_DEBUG)
+        auto child = m_ctrls[idx];
+        auto& child_rc = child.GetDialogRect();
+#else
         auto& child_rc = m_ctrls[idx].GetDialogRect();
+#endif  // _DEBUG
         if (rc_parent.Contains(m_ctrls[idx].GetDialogRect()))
         {
             m_group_ctrls.emplace_back(&m_ctrls[idx]);

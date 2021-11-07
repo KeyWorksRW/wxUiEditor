@@ -109,7 +109,47 @@ void resForm::CreateDialogLayout()
             if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
             {
                 AddStaticBoxChildren(m_ctrls[idx_child], idx_child);
-                Adopt(dlg_sizer, m_ctrls[idx_child]);
+
+                // There may be a control to the left or right of the group box but not at the same top position.
+
+                std::vector<resCtrl*> a_left_siblings;
+                std::vector<resCtrl*> a_right_siblings;
+
+                for (size_t side_child = idx_child + 1; side_child < m_ctrls.size(); side_child++)
+                {
+                    if (m_ctrls[side_child].isAdded())
+                        continue;
+
+                    if (is_within_vertical(&m_ctrls[side_child], &m_ctrls[idx_child]))
+                    {
+                        if (m_ctrls[side_child].GetLeft() < m_ctrls[idx_child].GetLeft())
+                        {
+                            a_left_siblings.emplace_back(&m_ctrls[side_child]);
+                        }
+                        else
+                        {
+                            a_right_siblings.emplace_back(&m_ctrls[side_child]);
+                        }
+                    }
+                    else
+                        break;
+                }
+
+                if (a_left_siblings.size() || a_right_siblings.size())
+                {
+                    auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, dlg_sizer.get());
+                    if (a_left_siblings.size())
+                        AddSiblings(sizer.get(), a_left_siblings, &m_ctrls[idx_child]);
+                    Adopt(sizer, m_ctrls[idx_child]);
+                    if (a_right_siblings.size())
+                        AddSiblings(sizer.get(), a_right_siblings, &m_ctrls[idx_child]);
+                    dlg_sizer->Adopt(sizer);
+                }
+                else
+                {
+                    Adopt(dlg_sizer, m_ctrls[idx_child]);
+                }
+
                 continue;
             }
 
@@ -144,7 +184,26 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
 {
     if (actrls.size() == 1)
     {
-        // if (pSibling && (is_same_top(actrls[0], pSibling)
+        if (pSibling && is_same_top(actrls[0], pSibling))
+        {
+            // If both siblings have the same top position, then just add this sibling directly to the parent sizer
+            parent_sizer->Adopt(actrls[0]->GetNodePtr());
+            actrls[0]->setAdded();
+            return;
+        }
+        else
+        {
+            // There's only one item which is positioned below the top of the sibling. We create a vertical box sizer and add
+            // a spacer before the control to provide approximately the same amount of vertical space above the control.
+
+            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent_sizer);
+            auto spacer = g_NodeCreator.CreateNode(gen_spacer, sizer.get());
+            spacer->prop_set_value(prop_height, actrls[0]->du_top() - pSibling->du_top());
+            sizer->Adopt(spacer);
+            sizer->Adopt(actrls[0]->GetNodePtr());
+            actrls[0]->setAdded();
+            parent_sizer->Adopt(sizer);
+        }
     }
 }
 

@@ -53,7 +53,7 @@ public:
     auto du_height() const { return m_du_rect.GetHeight(); }
 
 protected:
-    void AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls);
+    void AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, resCtrl* pSibling = nullptr);
 
     // Returns true if button was processed, otherwise treat it like a normal button.
     bool ProcessStdButton(Node* parent_sizer, size_t idx_child);
@@ -85,12 +85,12 @@ protected:
 
     // This will take into account a static text control to the left which is vertically centered
     // with the control on the right.
-    bool is_same_top(const resCtrl& left, const resCtrl& right);
+    bool is_same_top(const resCtrl* left, const resCtrl* right);
 
     bool is_lower_top(const resCtrl& left, const resCtrl& right);
 
     // Returns true if left top/bottom is within right top/bottom
-    bool is_within_vertical(const resCtrl& left, const resCtrl& right);
+    bool is_within_vertical(const resCtrl* left, const resCtrl* right) const;
 
 private:
     // These are in dialog coordinates

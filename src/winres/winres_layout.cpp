@@ -66,7 +66,7 @@ void resForm::CreateDialogLayout()
         }
 
         // Check for a possible row
-        if (is_same_top(child, m_ctrls[idx_child + 1]))
+        if (is_same_top(&child, &m_ctrls[idx_child + 1]))
         {
             // If there is more than one child with the same top position, then create a horizontal box sizer
             // and add all children with the same top position.
@@ -74,7 +74,7 @@ void resForm::CreateDialogLayout()
             dlg_sizer->Adopt(sizer);
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
 
-            while (idx_child < m_ctrls.size() && is_same_top(child, m_ctrls[idx_child]))
+            while (idx_child < m_ctrls.size() && is_same_top(&child, &m_ctrls[idx_child]))
             {
                 if (m_ctrls[idx_child].isAdded())
                     break;  // means there was a static box to the right
@@ -119,7 +119,7 @@ void resForm::CreateDialogLayout()
             if (idx_child == 0)
                 continue;
 
-            while (idx_child < m_ctrls.size() && !is_same_top(m_ctrls[idx_child - 1], m_ctrls[idx_child]))
+            while (idx_child < m_ctrls.size() && !is_same_top(&m_ctrls[idx_child - 1], &m_ctrls[idx_child]))
             {
                 if (m_ctrls[idx_child].isAdded())
                     break;  // means there was a static box to the right
@@ -140,10 +140,11 @@ void resForm::CreateDialogLayout()
     dlg_sizer->FixDuplicateNodeNames();
 }
 
-void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls)
+void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, resCtrl* pSibling)
 {
     if (actrls.size() == 1)
     {
+        // if (pSibling && (is_same_top(actrls[0], pSibling)
     }
 }
 

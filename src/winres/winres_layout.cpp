@@ -327,7 +327,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
         auto result = GroupGridSizerNeeded(group_ctrls, idx_child);
         if (result < 0)
         {
-            // No vertical alignment with the next control, so just add it normally
+            // No alignment with the next control, so just add it normally
             auto& child = reinterpret_cast<resCtrl&>(*group_ctrls[idx_child]);
             Adopt(static_box.GetNodePtr(), child);
 
@@ -339,7 +339,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
         }
         else if (result == 0)
         {
-            // Single row vertical alignment with now horizontal alignment in the next row, so use a horizontal box sizer
+            // Single row with all control tops the same, so use a horizontal box sizer
             auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, box.GetNode());
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
             static_box.GetNode()->Adopt(sizer);
@@ -357,48 +357,23 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
         }
         else
         {
-            // There's more than one row with vertical alignment, and at least one of those rows has a column with horizontal
-            // alignment, so use a wxFlexGridSizer.
+            // Multiple rows and columns, so use a flex grid sizer. There will be cases where a regular grid sizer would
+            // work, but it would add a lot of complexity to figure that out, and visually it would look the same.
 
             auto total_columns = result;  // This is just for readability
-            auto sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, box.GetNode());
-            sizer->prop_set_value(prop_cols, ttlib::itoa(total_columns));
-            static_box.GetNodePtr()->Adopt(sizer);
+            auto grid_sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, box.GetNode());
+            grid_sizer->prop_set_value(prop_cols, ttlib::itoa(total_columns));
+            static_box.GetNode()->Adopt(grid_sizer);
 
-            auto& child = reinterpret_cast<resCtrl&>(*group_ctrls[idx_child]);
-            std::vector<int> positions;
-            positions.reserve(total_columns);
-            for (size_t idx = 0; idx < static_cast<size_t>(total_columns); ++idx)
+            // TODO: [KeyWorks - 11-08-2021] The following code will handle cases where there are missing right columns in a
+            // row, but it doesn't handle gaps within a row.
+
+            int cur_column = 1;
+            for (; idx_child < group_ctrls.size();)
             {
-                if (group_ctrls[idx_child + idx]->du_top() == child.du_top())
-                    positions.emplace_back(group_ctrls[idx_child + idx]->du_left());
-                else
-                    positions.emplace_back(-1);
-            }
+                // Always add the first control in column 0
+                Adopt(grid_sizer, *group_ctrls[idx_child]);
 
-            // It's possible that there's an initial group of aligned controls followed by some randomly positioned control.
-            // However, that should be a rare case, so we assume that if we're using a grid, then all the rest of the
-            // controls in the group box should be placed into that grid.
-
-            // There may be gaps in the columns, so cur_column is used to track which column is being added.
-            int cur_column = 0;
-            for (; idx_child < group_ctrls.size(); ++idx_child)
-            {
-                // This covers the case where the previous rows had gaps in the columns
-                if (positions[cur_column] == -1)
-                    positions[cur_column] = group_ctrls[idx_child]->du_left();
-
-                while (group_ctrls[idx_child]->du_left() > positions[cur_column])
-                {
-                    auto spacer = g_NodeCreator.CreateNode(gen_spacer, sizer.get());
-                    sizer->Adopt(spacer);
-                    ++cur_column;
-                    if (cur_column >= total_columns)
-                    {
-                        break;
-                    }
-                }
-                Adopt(sizer, *group_ctrls[idx_child]);
                 if (group_ctrls[idx_child]->isGen(gen_wxStaticBoxSizer))
                 {
                     size_t idx_child_group_box = idx_group_box + 1;
@@ -413,9 +388,51 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
                     }
                 }
 
-                ++cur_column;
-                if (cur_column >= total_columns)
-                    cur_column = 0;
+                // Now add the other columns
+
+                auto idx_column = idx_child + 1;
+                for (; idx_column < group_ctrls.size(); ++idx_column)
+                {
+                    if (is_same_top(group_ctrls[idx_child], group_ctrls[idx_column], true))
+                    {
+                        Adopt(grid_sizer, *group_ctrls[idx_column]);
+                        ++cur_column;
+
+                        if (group_ctrls[idx_column]->isGen(gen_wxStaticBoxSizer))
+                        {
+                            size_t idx_child_group_box = idx_group_box + 1;
+                            for (; idx_child_group_box < m_ctrls.size(); ++idx_child_group_box)
+                            {
+                                if (m_ctrls[idx_child_group_box].GetNode() == group_ctrls[idx_column]->GetNode())
+                                    break;
+                            }
+                            if (idx_child_group_box < m_ctrls.size())
+                            {
+                                AddStaticBoxChildren(*group_ctrls[idx_column], idx_child_group_box);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // All columns for this row have been added
+                        break;
+                    }
+                }
+                idx_child = idx_column;
+
+                if (idx_child < group_ctrls.size())
+                {
+                    // Deal with case where a row doesn't have an entry for every column -- we simply add a spacer to fill
+                    // out the total number of columns.
+                    while (cur_column < total_columns)
+                    {
+                        auto spacer = g_NodeCreator.CreateNode(gen_spacer, grid_sizer.get());
+                        grid_sizer->Adopt(spacer);
+                        ++cur_column;
+                    }
+                }
+
+                cur_column = 1;
             }
             return;
         }
@@ -461,32 +478,34 @@ int resForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const resCtrl* /*
 
 int resForm::GroupGridSizerNeeded(std::vector<resCtrl*>& group_ctrls, size_t idx_start) const
 {
-    if (idx_start + 1 >= group_ctrls.size() ||
-        group_ctrls[idx_start + 1]->du_top() != group_ctrls[idx_start]->du_top())
+    if (idx_start + 1 >= group_ctrls.size() || !is_same_top(group_ctrls[idx_start], group_ctrls[idx_start + 1]))
         return -1;
 
     size_t row_children = 2;
     while (idx_start + row_children < group_ctrls.size() &&
-           group_ctrls[idx_start + row_children]->du_top() == group_ctrls[idx_start]->du_top())
+           is_same_top(group_ctrls[idx_start], group_ctrls[idx_start + row_children], true))
         ++row_children;
 
     size_t idx_next_row = idx_start + row_children;
     if (idx_next_row + 1 >= group_ctrls.size() ||
-        group_ctrls[idx_next_row + +1]->du_top() != group_ctrls[idx_next_row]->du_top())
+        is_same_top(group_ctrls[idx_start], group_ctrls[idx_start + idx_next_row + 1], true))
+    {
         return 0;  // only one aligned row, so a box sizer is needed
+    }
 
     size_t max_columns = row_children;
 
-    while (idx_next_row + 1 < group_ctrls.size() &&
-           group_ctrls[idx_next_row + 1]->du_top() == group_ctrls[idx_next_row]->du_top())
+    while (idx_next_row + 1 < group_ctrls.size())
     {
-        row_children = 2;
-        while (idx_next_row + row_children < group_ctrls.size() &&
-               group_ctrls[idx_next_row + row_children]->du_top() == group_ctrls[idx_next_row]->du_top())
-            ++row_children;
-        if (row_children > max_columns)
-            max_columns = row_children;
-
+        if (is_same_top(group_ctrls[idx_next_row], group_ctrls[idx_next_row + 1]))
+        {
+            row_children = 2;
+            while (idx_next_row + row_children < group_ctrls.size() &&
+                   is_same_top(group_ctrls[idx_next_row], group_ctrls[idx_next_row + row_children], true))
+                ++row_children;
+            if (row_children > max_columns)
+                max_columns = row_children;
+        }
         idx_next_row = idx_next_row + row_children;
     }
 

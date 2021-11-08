@@ -448,7 +448,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             return;
         }
 
-        if (m_add_wrap_property)
+        if (m_add_wrap_property || (m_node->isGen(gen_wxStaticText) && du_height() > 14))
         {
             m_node->prop_set_value(prop_wrap, m_pixel_rect.GetWidth());
         }

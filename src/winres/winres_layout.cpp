@@ -14,7 +14,17 @@
 void resForm::CreateDialogLayout()
 {
     if (!m_ctrls.size())
+    {
+        auto dlg_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
+        dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
+        m_form_node->Adopt(dlg_sizer);
+
+        // TODO This is a hack to get our Mockup window to display something -- but the dimensions should actually come from
+        // the dialog itself.
+        m_form_node->prop_set_value(prop_size, "200; 200; using dialog units");
+
         return;  // empty dialog -- rare, but it does happen
+    }
 
     SortCtrls();
 

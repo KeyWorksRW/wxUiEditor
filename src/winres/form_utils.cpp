@@ -9,10 +9,21 @@
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
-bool resForm::is_same_top(const resCtrl* left, const resCtrl* right)
+bool resForm::is_same_top(const resCtrl* left, const resCtrl* right, bool loose_check) const
 {
     if (left->du_top() == right->du_top())
         return true;
+
+    if (loose_check)
+    {
+        if (left->du_top() - 1 == right->du_top() || left->du_top() - 2 == right->du_top())
+            return true;
+        else if (left->du_top() == right->du_top() - 1 || left->du_top() == right->du_top() - 2)
+            return true;
+        else
+            return false;
+    }
+
     if (left->GetNode()->isGen(gen_wxStaticText))
     {
         if (left->du_top() - 1 == right->du_top() || left->du_top() - 2 == right->du_top())

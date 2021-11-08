@@ -69,7 +69,8 @@ protected:
     // > 0 number of columns required for wxFlexGridSizer
     int GridSizerNeeded(size_t idx_start, size_t idx_end, const resCtrl* p_static_box);
 
-    // Similar to GridSizerNeeded(), but only processes m_group_ctrls
+    // Similar to GridSizerNeeded(), but only processes m_group_ctrls. Returns total number
+    // of columns required.
     int GroupGridSizerNeeded(std::vector<resCtrl*>& group_ctrls, size_t idx_start) const;
 
     void AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box);
@@ -81,13 +82,13 @@ protected:
     void SortCtrls();
 
     // Returns true if val1 is within range of val2 using a fudge value below and above val2.
-    bool isInRange(int32_t val1, int32_t val2) { return (val1 >= (val2 - FudgeAmount) && val1 <= (val2 + FudgeAmount)); }
+    bool isInRange(int32_t val1, int32_t val2) const { return (val1 >= (val2 - FudgeAmount) && val1 <= (val2 + FudgeAmount)); }
 
     // This will take into account a static text control to the left which is vertically centered
     // with the control on the right.
-    bool is_same_top(const resCtrl* left, const resCtrl* right);
-
-    bool is_lower_top(const resCtrl& left, const resCtrl& right);
+    //
+    // If loose_check == true, any control can be -2 of the top of the other control.
+    bool is_same_top(const resCtrl* left, const resCtrl* right, bool loose_check = false) const;
 
     // Returns true if left top/bottom is within right top/bottom
     bool is_within_vertical(const resCtrl* left, const resCtrl* right) const;

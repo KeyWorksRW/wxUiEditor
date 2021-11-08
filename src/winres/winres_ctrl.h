@@ -38,8 +38,12 @@ public:
 
     // left position in dialog units
     auto du_left() const { return m_du_rect.GetLeft(); }
+    // right position in dialog units
+    auto du_right() const { return m_du_rect.GetLeft() + m_du_rect.GetWidth(); }
     // top position in dialog units
     auto du_top() const { return m_du_rect.GetTop(); }
+    // bottom position in dialog units
+    auto du_bottom() const { return m_du_rect.GetTop() + m_du_rect.GetHeight(); }
     // width in dialog units
     auto du_width() const { return m_du_rect.GetWidth(); }
     // height in dialog units

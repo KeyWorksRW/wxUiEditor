@@ -4,6 +4,10 @@ Windows Dialogs use absolute positions and size which we have to convert into fl
 
 The goal is not to get a perfect rendition of the original dialog, but to at least get all of the controls converted so that the user can make adjustments to get the dialog to look closer to the original Windows version. The closer we can get, the easier it will be for the user, but that will often result in special-case handling.
 
+## Group boxes
+
+Windows supports having the label for a group box in the center or right side, but unfortunately wxWidgets only supports that on wxGTK (as of 3.1.15).
+
 ## Testing
 
 Two repositories are used as the main tests for conversion primarily because they have a lot of dialogs and both are mostly hand-edited:
@@ -16,7 +20,7 @@ Two repositories are used as the main tests for conversion primarily because the
 
 `src/lang/` contains `res_*.rc` for the different languages. Visual Studio can't read these, but you can import them into **wxUE** -- or just import the matching `*.dlg` file.
 
-### NotePadPlusPlust
+### NotePadPlusPlus
 
 [https://github.com/notepad-plus-plus/notepad-plus-plus]
 

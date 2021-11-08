@@ -45,6 +45,10 @@
         <DisplayString>{m_info->m_name,s} class:{m_node->m_info->m_classname,s}</DisplayString>
     </Type>
 
+    <Type Name="resCtrl">
+        <DisplayString>res:{m_original_line,s}</DisplayString>
+    </Type>
+
     <Type Name="std::shared_ptr&lt;Node&gt;">
         <!-- <SmartPointer Usage="Minimal">_Ptr</SmartPointer> -->
         <DisplayString Condition="_Rep == 0">nullptr</DisplayString>

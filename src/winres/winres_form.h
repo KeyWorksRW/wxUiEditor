@@ -62,7 +62,7 @@ protected:
     void Adopt(const NodeSharedPtr& node, resCtrl& child);
 
     // Fills in m_group_ctrls with every control within the boundaries of the group box
-    void CollectGroupControls(size_t idx_parent);
+    void CollectGroupControls(std::vector<resCtrl*>& group_ctrls, size_t idx_parent);
 
     // -1 if no horizontal alignment needed
     // 0 if box sizer needed
@@ -70,7 +70,7 @@ protected:
     int GridSizerNeeded(size_t idx_start, size_t idx_end, const resCtrl* p_static_box);
 
     // Similar to GridSizerNeeded(), but only processes m_group_ctrls
-    int GroupGridSizerNeeded(size_t idx_start) const;
+    int GroupGridSizerNeeded(std::vector<resCtrl*>& group_ctrls, size_t idx_start) const;
 
     void AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box);
     void AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine);
@@ -104,10 +104,6 @@ private:
     size_t m_form_type;
 
     std::vector<resCtrl> m_ctrls;
-
-    // This will contain pointers to every control within a wxStaticBoxSizer. It gets reset
-    // every time a new wxStaticBoxSizer needs to be processed (see CollectGroupControls()).
-    std::vector<resCtrl*> m_group_ctrls;
 
     WinResource* m_pWinResource;
 

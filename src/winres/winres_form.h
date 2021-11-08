@@ -58,7 +58,14 @@ protected:
     // Returns true if button was processed, otherwise treat it like a normal button.
     bool ProcessStdButton(Node* parent_sizer, size_t idx_child);
 
-    // Adopts child node and sets child flag to indicate it has been added
+    // Adopts child node and sets child flag to indicate it has been added.
+    //
+    // Under Debug builds, this will catch logic errors where a child is added more than once
+    void Adopt(Node* node, resCtrl* child);
+
+    // Adopts child node and sets child flag to indicate it has been added.
+    //
+    // Under Debug builds, this will catch logic errors where a child is added more than once
     void Adopt(const NodeSharedPtr& node, resCtrl& child);
 
     // Fills in m_group_ctrls with every control within the boundaries of the group box

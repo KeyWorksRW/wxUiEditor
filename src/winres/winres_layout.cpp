@@ -70,7 +70,7 @@ void resForm::CreateDialogLayout()
             if (!child.isGen(gen_wxStaticBoxSizer))
             {
                 // orphaned child, add to form's top level sizer
-                dlg_sizer->Adopt(child.GetNodePtr());
+                Adopt(dlg_sizer, child);
             }
             break;
         }
@@ -98,7 +98,7 @@ void resForm::CreateDialogLayout()
                 }
 
                 // Note that we add the child we are comparing to first.
-                sizer->Adopt(m_ctrls[idx_child].GetNodePtr());
+                Adopt(sizer, m_ctrls[idx_child]);
                 ++idx_child;
             }
             if (idx_child < m_ctrls.size() && m_ctrls[idx_child].isAdded())
@@ -165,7 +165,7 @@ void resForm::CreateDialogLayout()
 
             auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, dlg_sizer.get());
             dlg_sizer->Adopt(sizer);
-            sizer->Adopt(child.GetNodePtr());
+            Adopt(sizer, child);
             if (idx_child == 0)
                 continue;
 
@@ -175,7 +175,7 @@ void resForm::CreateDialogLayout()
                     break;  // means there was a static box to the right
 
                 // Note that we add the child we are comparing to first.
-                sizer->Adopt(m_ctrls[idx_child].GetNodePtr());
+                Adopt(sizer, m_ctrls[idx_child]);
                 if (idx_child + 2 < m_ctrls.size())
                 {
                     // If the next two sizers have the same top, then they need to be placed in a horizontal sizer.
@@ -197,8 +197,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
         if (pSibling && is_same_top(actrls[0], pSibling))
         {
             // If both siblings have the same top position, then just add this sibling directly to the parent sizer
-            parent_sizer->Adopt(actrls[0]->GetNodePtr());
-            actrls[0]->setAdded();
+            Adopt(parent_sizer, actrls[0]);
             return;
         }
         else
@@ -211,8 +210,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
             auto spacer = g_NodeCreator.CreateNode(gen_spacer, vert_sizer.get());
             spacer->prop_set_value(prop_height, actrls[0]->du_top() - pSibling->du_top());
             vert_sizer->Adopt(spacer);
-            vert_sizer->Adopt(actrls[0]->GetNodePtr());
-            actrls[0]->setAdded();
+            Adopt(vert_sizer.get(), actrls[0]);
         }
     }
     else
@@ -247,8 +245,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
                     }
 
                     // Note that we add the child we are comparing to first.
-                    horz_sizer->Adopt(actrls[idx_child]->GetNodePtr());
-                    actrls[idx_child]->setAdded();
+                    Adopt(horz_sizer.get(), actrls[idx_child]);
                     ++idx_child;
                 }
                 if (idx_child < actrls.size() && actrls[idx_child]->isAdded())
@@ -299,23 +296,20 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
                         if (a_left_siblings.size())
                             AddSiblings(horz_sizer.get(), a_left_siblings, actrls[idx_child]);
                         Adopt(horz_sizer, child);
-                        child.setAdded();
                         if (a_right_siblings.size())
                             AddSiblings(horz_sizer.get(), a_right_siblings, actrls[idx_child]);
                         vert_sizer->Adopt(horz_sizer);
                     }
                     else
                     {
-                        vert_sizer->Adopt(child.GetNodePtr());
-                        child.setAdded();
+                        Adopt(vert_sizer, child);
                     }
 
                     continue;
                 }
 
                 // Not a group box, so just add the control normally
-                vert_sizer->Adopt(child.GetNodePtr());
-                child.setAdded();
+                Adopt(vert_sizer, child);
             }
         }
     }
@@ -562,6 +556,14 @@ void resForm::CollectGroupControls(std::vector<resCtrl*>& group_ctrls, size_t id
                 return;
         }
     }
+}
+
+void resForm::Adopt(Node* node, resCtrl* child)
+{
+    ASSERT_MSG(!child->isAdded(), "Logic problem, child has already been added.");
+
+    node->Adopt(child->GetNodePtr());
+    child->setAdded();
 }
 
 void resForm::Adopt(const NodeSharedPtr& node, resCtrl& child)

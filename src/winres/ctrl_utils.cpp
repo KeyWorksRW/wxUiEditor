@@ -126,20 +126,22 @@ ttlib::cview resCtrl::GetID(ttlib::cview line)
         line.remove_prefix(end < line.size() ? end + 1 : end);
     }
 
-    if (id == "IDOK" || id == "1")
+    if (id == "IDOK" || id == "1" || id == "IDC_OK")
         m_node->prop_set_value(prop_id, "wxID_OK");
-    else if (id == "IDCANCEL" || id == "2")
+    else if (id == "IDCANCEL" || id == "2" || id == "IDC_CANCEL")
         m_node->prop_set_value(prop_id, "wxID_CANCEL");
-    else if (id == "IDYES" || id == "6")
+    else if (id == "IDYES" || id == "6" || id == "IDC_YES")
         m_node->prop_set_value(prop_id, "wxID_YES");
-    else if (id == "IDNO" || id == "7")
+    else if (id == "IDNO" || id == "7" || id == "IDC_NO")
         m_node->prop_set_value(prop_id, "wxID_NO");
     else if (id == "IDABORT" || id == "3")
         m_node->prop_set_value(prop_id, "wxID_ABORT ");
-    else if (id == "IDCLOSE" || id == "8")
+    else if (id == "IDCLOSE" || id == "8" || id == "IDC_CLOSE")
         m_node->prop_set_value(prop_id, "wxID_CLOSE");
-    else if (id == "IDHELP" || id == "9" || id == "IDD_HELP")
+    else if (id == "IDHELP" || id == "9" || id == "IDD_HELP" || id == "IDC_HELP")
         m_node->prop_set_value(prop_id, "wxID_HELP");
+    else if (id == "IDC_APPLY")
+        m_node->prop_set_value(prop_id, "wxID_APPLY");
     else if (id == "IDC_STATIC")
         m_node->prop_set_value(prop_id, "wxID_ANY");
     else

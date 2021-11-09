@@ -68,6 +68,14 @@ bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRe
         return false;
     duRect.SetHeight(ttlib::atoi(line));
 
+    if (m_node->isGen(gen_wxComboBox) && !m_node->prop_as_string(prop_style).contains("wxCB_SIMPLE"))
+    {
+        // For a drop-down style, the resource file sets the height of the drop-down portion, but for figuring out layout of
+        // the control, we need the non-drop height. We can't actually get that, so we take a reasonable guess.
+
+        duRect.SetHeight(12);
+    }
+
     /*
 
         On Windows 10, dialogs are supposed to use Segoe UI, 9pt font. However, a lot of dialogs are going to be using

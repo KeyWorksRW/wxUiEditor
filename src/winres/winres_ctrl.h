@@ -63,7 +63,7 @@ public:
         GetNode()->prop_set_value(name, value);
     }
 
-    static bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);
+    bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);
 
 protected:
     // This will map window styles to wxWidgets styles and append them to prop_style

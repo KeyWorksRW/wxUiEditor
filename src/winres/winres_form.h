@@ -107,6 +107,8 @@ protected:
 
     void CreateStdButton();
 
+    bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);
+
 private:
     // These are in dialog coordinates
     wxRect m_du_rect { 0, 0, 0, 0 };

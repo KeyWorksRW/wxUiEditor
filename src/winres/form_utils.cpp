@@ -95,3 +95,74 @@ void resForm::SortCtrls()
         }
     }
 }
+
+// This is almost identical to the function of the same name in resCtrl -- however that one needs to access m_node in order
+// to handle a wxComboBox which has a different height then specified in the resource file.
+
+bool resForm::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect)
+{
+    duRect = { 0, 0, 0, 0 };
+    pixelRect = { 0, 0, 0, 0 };
+    line.moveto_nonspace();
+
+    if (line.empty())
+        return false;
+
+    if (line.at(0) == ',')
+        line.moveto_digit();
+
+    if (line.empty() || !ttlib::is_digit(line.at(0)))
+        return false;
+    duRect.SetLeft(ttlib::atoi(line));
+
+    auto pos = line.find_first_of(',');
+    if (!ttlib::is_found(pos))
+        return false;
+
+    line.remove_prefix(pos);
+    line.moveto_digit();
+    if (line.empty() || !ttlib::is_digit(line.at(0)))
+        return false;
+    duRect.SetTop(ttlib::atoi(line));
+
+    pos = line.find_first_of(',');
+    if (!ttlib::is_found(pos))
+        return false;
+
+    line.remove_prefix(pos);
+    line.moveto_digit();
+    if (line.empty() || !ttlib::is_digit(line.at(0)))
+        return false;
+    duRect.SetWidth(ttlib::atoi(line));
+
+    pos = line.find_first_of(',');
+    if (!ttlib::is_found(pos))
+        return false;
+
+    line.remove_prefix(pos);
+    line.moveto_digit();
+    if (line.empty() || !ttlib::is_digit(line.at(0)))
+        return false;
+    duRect.SetHeight(ttlib::atoi(line));
+
+    /*
+
+        On Windows 10, dialogs are supposed to use Segoe UI, 9pt font. However, a lot of dialogs are going to be using
+        "MS Shell Dlg" or "MS Shell Dlg2" using an 8pt size. Those coordinates will end up being wrong when displayed by
+        wxWidgets because wxWidgets follows the Windows 10 guidelines which normally uses a 9pt font.
+
+        The following code converts dialog coordinates into pixels assuming a 9pt font.
+
+        For the most part, these values are simply used to determine which sizer to place the control in. However, it will
+        change things like the wrapping width of a wxStaticText -- our wxWidgets version will be larger than the original if
+        the dialog used an 8pt font, smaller if it used a 10pt font.
+
+    */
+
+    pixelRect.SetLeft(static_cast<int>((static_cast<int64_t>(duRect.GetLeft()) * 7 / 4)));
+    pixelRect.SetWidth(static_cast<int>((static_cast<int64_t>(duRect.GetWidth()) * 7 / 4)));
+    pixelRect.SetTop(static_cast<int>((static_cast<int64_t>(duRect.GetTop()) * 15 / 4)));
+    pixelRect.SetHeight(static_cast<int>((static_cast<int64_t>(duRect.GetHeight()) * 15 / 4)));
+
+    return true;
+}

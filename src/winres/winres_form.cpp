@@ -50,7 +50,7 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     line.remove_prefix(end);
     line.moveto_digit();
 
-    resCtrl::ParseDimensions(line, m_du_rect, m_pixel_rect);
+    ParseDimensions(line, m_du_rect, m_pixel_rect);
 
     auto lst_includes = pWinResource->GetIncludeLines();
     if (lst_includes.size())

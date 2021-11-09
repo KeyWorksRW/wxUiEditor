@@ -492,7 +492,7 @@ int resForm::GroupGridSizerNeeded(std::vector<resCtrl*>& group_ctrls, size_t idx
 
     size_t idx_next_row = idx_start + row_children;
     if (idx_next_row + 1 >= group_ctrls.size() ||
-        is_same_top(group_ctrls[idx_start], group_ctrls[idx_start + idx_next_row + 1], true))
+        is_same_top(group_ctrls[idx_start], group_ctrls[idx_next_row + 1], true))
     {
         return 0;  // only one aligned row, so a box sizer is needed
     }

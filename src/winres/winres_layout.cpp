@@ -15,9 +15,9 @@ void resForm::CreateDialogLayout()
 {
     if (!m_ctrls.size())
     {
-        auto dlg_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
-        dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
-        m_form_node->Adopt(dlg_sizer);
+        m_dlg_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
+        m_dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
+        m_form_node->Adopt(m_dlg_sizer);
 
         // TODO This is a hack to get our Mockup window to display something -- but the dimensions should actually come from
         // the dialog itself.
@@ -30,9 +30,10 @@ void resForm::CreateDialogLayout()
 
     // dlg_sizer is the top level sizer for the entire dialog
 
-    auto dlg_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
-    dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
-    m_form_node->Adopt(dlg_sizer);
+    m_dlg_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
+    m_dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
+    m_form_node->Adopt(m_dlg_sizer);
+    CheckForStdButtons();
 
     for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
     {
@@ -43,13 +44,6 @@ void resForm::CreateDialogLayout()
         if (child.isAdded())
             continue;
 
-        if (child.isGen(gen_wxButton))
-        {
-            if (ProcessStdButton(dlg_sizer.get(), idx_child))
-            {
-                continue;
-            }
-        }
         // Special handling for last control
         if (idx_child + 1 >= m_ctrls.size())
         {
@@ -70,7 +64,7 @@ void resForm::CreateDialogLayout()
             if (!child.isGen(gen_wxStaticBoxSizer))
             {
                 // orphaned child, add to form's top level sizer
-                Adopt(dlg_sizer, child);
+                Adopt(m_dlg_sizer, child);
             }
             break;
         }
@@ -80,8 +74,8 @@ void resForm::CreateDialogLayout()
         {
             // If there is more than one child with the same top position, then create a horizontal box sizer
             // and add all children with the same top position.
-            auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, dlg_sizer.get());
-            dlg_sizer->Adopt(sizer);
+            auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+            m_dlg_sizer->Adopt(sizer);
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
 
             while (idx_child < m_ctrls.size() && is_same_top(&child, &m_ctrls[idx_child]))
@@ -147,24 +141,24 @@ void resForm::CreateDialogLayout()
 
                 if (a_left_siblings.size() || a_right_siblings.size())
                 {
-                    auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, dlg_sizer.get());
+                    auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                     if (a_left_siblings.size())
                         AddSiblings(sizer.get(), a_left_siblings, &m_ctrls[idx_child]);
                     Adopt(sizer, child);
                     if (a_right_siblings.size())
                         AddSiblings(sizer.get(), a_right_siblings, &m_ctrls[idx_child]);
-                    dlg_sizer->Adopt(sizer);
+                    m_dlg_sizer->Adopt(sizer);
                 }
                 else
                 {
-                    Adopt(dlg_sizer, child);
+                    Adopt(m_dlg_sizer, child);
                 }
 
                 continue;
             }
 
-            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, dlg_sizer.get());
-            dlg_sizer->Adopt(sizer);
+            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
+            m_dlg_sizer->Adopt(sizer);
             Adopt(sizer, child);
             if (idx_child == 0)
                 continue;
@@ -187,7 +181,12 @@ void resForm::CreateDialogLayout()
         }
     }
 
-    dlg_sizer->FixDuplicateNodeNames();
+    if (m_stdButtonSizer)
+    {
+        m_dlg_sizer->Adopt(m_stdButtonSizer);
+    }
+
+    m_dlg_sizer->FixDuplicateNodeNames();
 }
 
 void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, resCtrl* pSibling)
@@ -491,8 +490,7 @@ int resForm::GroupGridSizerNeeded(std::vector<resCtrl*>& group_ctrls, size_t idx
         ++row_children;
 
     size_t idx_next_row = idx_start + row_children;
-    if (idx_next_row + 1 >= group_ctrls.size() ||
-        is_same_top(group_ctrls[idx_start], group_ctrls[idx_next_row + 1], true))
+    if (idx_next_row + 1 >= group_ctrls.size() || is_same_top(group_ctrls[idx_start], group_ctrls[idx_next_row + 1], true))
     {
         return 0;  // only one aligned row, so a box sizer is needed
     }
@@ -574,53 +572,92 @@ void resForm::Adopt(const NodeSharedPtr& node, resCtrl& child)
     child.setAdded();
 }
 
-// This function tries to determine if standard dialog buttons are being used, in which case we can switch them to
-// wxStdDialogButtonSizer. Unfortunately, we have to rely on English labels to determine the button type -- we can't assume a
-// standard id like IDOK will also have a standard label.
-
-static std::set<std::string> s_btn_names = {
-
-    "OK", "Yes", "Save", "No", "Cancel", "Close"
-
-};
-
-bool resForm::ProcessStdButton(Node* parent_sizer, size_t idx_child)
+void resForm::CheckForStdButtons()
 {
-    for (size_t idx = idx_child; idx < m_ctrls.size(); ++idx)
-    {
-        if (!m_ctrls[idx].isGen(gen_wxButton))
-            return false;
+    if (m_form_type != form_dialog)
+        return;  // Only dialogs can have a wxStdDialogButtonSizer
 
-        if (auto result = s_btn_names.find(m_ctrls[idx].GetNode()->prop_as_string(prop_label)); result == s_btn_names.end())
+    for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
+    {
+        if (m_ctrls[idx_child].isGen(gen_wxButton))
         {
-            return false;
+            auto btn_node = m_ctrls[idx_child].GetNode();
+
+            // Both the id and the label need to match, since we can't auto-generate replacing the label.
+
+            if (btn_node->prop_as_string(prop_id) == "wxID_OK")
+            {
+                if (btn_node->prop_as_string(prop_label).is_sameas("Yes", tt::CASE::either))
+                {
+                    CreateStdButton();
+                    m_stdButtonSizer->prop_set_value(prop_Yes, "1");
+                    if (btn_node->prop_as_bool(prop_default))
+                        m_stdButtonSizer->prop_set_value(prop_default_button, "Yes");
+                    m_ctrls[idx_child].setAdded();
+                }
+                else if (btn_node->prop_as_string(prop_label).is_sameas("Save", tt::CASE::either))
+                {
+                    CreateStdButton();
+                    m_stdButtonSizer->prop_set_value(prop_Save, "1");
+                    if (btn_node->prop_as_bool(prop_default))
+                        m_stdButtonSizer->prop_set_value(prop_default_button, "Save");
+                    m_ctrls[idx_child].setAdded();
+                }
+                else if (btn_node->prop_as_string(prop_label).is_sameas("OK", tt::CASE::either))
+                {
+                    CreateStdButton();
+                    m_stdButtonSizer->prop_set_value(prop_OK, "1");
+                    m_ctrls[idx_child].setAdded();
+                }
+            }
+            else if (btn_node->prop_as_string(prop_id) == "wxID_CANCEL")
+            {
+                if (btn_node->prop_as_string(prop_label).is_sameas("Close", tt::CASE::either))
+                {
+                    CreateStdButton();
+                    m_stdButtonSizer->prop_set_value(prop_Close, "1");
+                    if (btn_node->prop_as_bool(prop_default))
+                        m_stdButtonSizer->prop_set_value(prop_default_button, "Close");
+                    m_ctrls[idx_child].setAdded();
+                }
+                else if (btn_node->prop_as_string(prop_label).is_sameas("Cancel", tt::CASE::either))
+                {
+                    CreateStdButton();
+                    m_stdButtonSizer->prop_set_value(prop_Cancel, "1");
+                    if (btn_node->prop_as_bool(prop_default))
+                        m_stdButtonSizer->prop_set_value(prop_default_button, "Cancel");
+                    m_ctrls[idx_child].setAdded();
+                }
+            }
+            else if (btn_node->prop_as_string(prop_id) == "wxID_APPLY")
+            {
+                if (btn_node->prop_as_string(prop_label).is_sameas("Apply", tt::CASE::either))
+                {
+                    CreateStdButton();
+                    m_stdButtonSizer->prop_set_value(prop_Apply, "1");
+                    m_ctrls[idx_child].setAdded();
+                }
+            }
+            else if (btn_node->prop_as_string(prop_id) == "wxID_HELP")
+            {
+                if (btn_node->prop_as_string(prop_label).is_sameas("Help", tt::CASE::either))
+                {
+                    CreateStdButton();
+                    m_stdButtonSizer->prop_set_value(prop_Help, "1");
+                    m_ctrls[idx_child].setAdded();
+                }
+            }
         }
     }
+}
 
-    // If we made it here, then all we have left are buttons, and they all have standard labels
-
-    auto sizer = g_NodeCreator.CreateNode(gen_wxStdDialogButtonSizer, parent_sizer);
-    // Clear the default properties
-    sizer->prop_set_value(prop_default_button, "");
-    sizer->prop_set_value(prop_OK, false);
-    sizer->prop_set_value(prop_Cancel, false);
-
-    // Set our own default property
-    sizer->prop_set_value(prop_flags, "wxEXPAND");
-
-    for (size_t idx = idx_child; idx < m_ctrls.size(); ++idx)
+void resForm::CreateStdButton()
+{
+    if (!m_stdButtonSizer)
     {
-        auto btn = m_ctrls[idx].GetNode();
-        if (btn->prop_as_bool(prop_default))
-            sizer->prop_set_value(prop_default_button, btn->prop_as_string(prop_label));
-        auto result = rmap_PropNames.find(btn->prop_as_string(prop_label));
-        if (result != rmap_PropNames.end())
-        {
-            sizer->prop_set_value(result->second, true);
-        }
-        m_ctrls[idx].setAdded();
+        m_stdButtonSizer = g_NodeCreator.CreateNode(gen_wxStdDialogButtonSizer, m_dlg_sizer.get());
+        m_stdButtonSizer->prop_set_value(prop_OK, "0");
+        m_stdButtonSizer->prop_set_value(prop_Cancel, "0");
+        m_stdButtonSizer->prop_set_value(prop_flags, "wxEXPAND");
     }
-
-    parent_sizer->Adopt(sizer);
-    return true;
 }

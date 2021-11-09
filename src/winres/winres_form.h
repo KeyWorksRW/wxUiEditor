@@ -53,10 +53,12 @@ public:
     auto du_height() const { return m_du_rect.GetHeight(); }
 
 protected:
-    void AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, resCtrl* pSibling = nullptr);
+    // This will check all button controls in a form_dialog, and if they match a
+    // wxStdDialogButtonSizer button, then that control will be created for the dialog and
+    // the matching button added.
+    void CheckForStdButtons();
 
-    // Returns true if button was processed, otherwise treat it like a normal button.
-    bool ProcessStdButton(Node* parent_sizer, size_t idx_child);
+    void AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, resCtrl* pSibling = nullptr);
 
     // Adopts child node and sets child flag to indicate it has been added.
     //
@@ -89,7 +91,10 @@ protected:
     void SortCtrls();
 
     // Returns true if val1 is within range of val2 using a fudge value below and above val2.
-    bool isInRange(int32_t val1, int32_t val2) const { return (val1 >= (val2 - FudgeAmount) && val1 <= (val2 + FudgeAmount)); }
+    bool isInRange(int32_t val1, int32_t val2) const
+    {
+        return (val1 >= (val2 - FudgeAmount) && val1 <= (val2 + FudgeAmount));
+    }
 
     // This will take into account a static text control to the left which is vertically centered
     // with the control on the right.
@@ -100,6 +105,8 @@ protected:
     // Returns true if left top/bottom is within right top/bottom
     bool is_within_vertical(const resCtrl* left, const resCtrl* right) const;
 
+    void CreateStdButton();
+
 private:
     // These are in dialog coordinates
     wxRect m_du_rect { 0, 0, 0, 0 };
@@ -108,6 +115,8 @@ private:
     wxRect m_pixel_rect { 0, 0, 0, 0 };
 
     NodeSharedPtr m_form_node;
+    NodeSharedPtr m_dlg_sizer;
+    NodeSharedPtr m_stdButtonSizer;
 
     size_t m_form_type;
 

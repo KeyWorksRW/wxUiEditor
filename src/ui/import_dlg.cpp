@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/config.h>   // wxConfig base header
 #include <wx/dir.h>      // wxDir is a class for enumerating the files in a directory
 #include <wx/dirdlg.h>   // wxDirDialog base class
 #include <wx/filedlg.h>  // wxFileDialog base header
@@ -15,6 +16,15 @@
 
 ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 
+enum
+{
+    DBG_IMPORT_FB,
+    DBG_IMPORT_WINRES,
+    DBG_IMPORT_GLADE,
+    DBG_IMPORT_SMITH,
+    DBG_IMPORT_XRC,
+};
+
 void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
 {
     m_stdBtn->GetAffirmativeButton()->Disable();
@@ -23,6 +33,35 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     ttString cwd;
     cwd.assignCwd();
     m_static_cwd->SetLabel(cwd);
+
+    auto config = wxConfig::Get();
+    config->SetPath("/preferences");
+    auto import_type = config->Read("import_type", DBG_IMPORT_FB);
+    config->SetPath("/");
+    switch (import_type)
+    {
+        case DBG_IMPORT_WINRES:
+            m_radio_WindowsResource->SetValue(true);
+            break;
+
+        case DBG_IMPORT_GLADE:
+            m_radio_wxGlade->SetValue(true);
+            break;
+
+        case DBG_IMPORT_SMITH:
+            m_radio_wxSmith->SetValue(true);
+            break;
+
+        case DBG_IMPORT_XRC:
+            m_radio_XRC->SetValue(true);
+            break;
+
+        case DBG_IMPORT_FB:
+            [[fallthrough]];
+        default:
+            m_radio_wxFormBuilder->SetValue(true);
+            break;
+    }
 
     wxDir dir;
     wxArrayString files;
@@ -70,6 +109,20 @@ void ImportDlg::OnOK(wxCommandEvent& event)
             m_lstProjects.emplace_back(m_checkListProjects->GetString(pos));
         }
     }
+
+    auto config = wxConfig::Get();
+    config->SetPath("/preferences");
+    if (m_radio_wxSmith->GetValue())
+        config->Write("import_type", static_cast<long>(DBG_IMPORT_SMITH));
+    else if (m_radio_wxGlade->GetValue())
+        config->Write("import_type", static_cast<long>(DBG_IMPORT_GLADE));
+    else if (m_radio_XRC->GetValue())
+        config->Write("import_type", static_cast<long>(DBG_IMPORT_XRC));
+    else if (m_radio_WindowsResource->GetValue())
+        config->Write("import_type", static_cast<long>(DBG_IMPORT_WINRES));
+    else
+        config->Write("import_type", static_cast<long>(DBG_IMPORT_FB));
+    config->SetPath("/");
 
     event.Skip();
 }

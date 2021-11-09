@@ -36,6 +36,7 @@ static const ClassGenPair lst_class_gen[] = {
 
     { "\"msctls_trackbar32\"", gen_wxSlider },
     { "\"msctls_updown32\"", gen_wxSpinCtrl },
+    { "\"msctls_progress32\"", gen_wxGauge },
 
     { "\"SysAnimate32\"", gen_wxAnimationCtrl },
     { "\"SysListView32\"", gen_wxListView },

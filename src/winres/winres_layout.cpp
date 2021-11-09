@@ -78,6 +78,7 @@ void resForm::CreateDialogLayout()
             m_dlg_sizer->Adopt(sizer);
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
 
+            size_t first_child = idx_child;
             while (idx_child < m_ctrls.size() && is_same_top(&child, &m_ctrls[idx_child]))
             {
                 if (m_ctrls[idx_child].isAdded())
@@ -101,8 +102,12 @@ void resForm::CreateDialogLayout()
             // In order to properly step through the loop
             --idx_child;
 
-            if (m_ctrls[idx_child].du_left() + m_ctrls[idx_child].du_width() > du_width() - 10)
+            // If the control is indented more than 10 pixels, and it appears that the right side is close to the right side
+            // of the dialog, then right-align the parent sizer.
+            if ((m_ctrls[first_child].du_left() > 10) &&
+                (m_ctrls[idx_child].du_left() + m_ctrls[idx_child].du_width() > du_width() - 10))
             {
+
                 sizer->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
             }
         }

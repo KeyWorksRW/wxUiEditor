@@ -106,11 +106,8 @@ void resCtrl::ParseIconControl(ttlib::cview line)
         }
 
         m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
-        ttlib::cstr final_name = result.value();
-        final_name.remove_extension();
-        final_name << "_ico.h";
         ttlib::cstr prop;
-        prop << "Header; " << final_name << "; " << result.value() << "; [-1; -1]";
+        prop << "Embed;" << result.value() << ";[-1; -1]";
 
         // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require the
         // code to be generated.

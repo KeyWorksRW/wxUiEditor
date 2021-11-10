@@ -64,25 +64,28 @@ void resForm::CreateDialogLayout()
             if (!child.isGen(gen_wxStaticBoxSizer))
             {
                 // orphaned child, add to form's top level sizer
-                Adopt(m_dlg_sizer, child);
+                auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                m_dlg_sizer->Adopt(sizer);
+                Adopt(sizer, child);
             }
             break;
         }
 
         // Check for a possible row
-        if (is_same_top(&child, &m_ctrls[idx_child + 1]))
+        if (is_same_top(&child, &m_ctrls[idx_child + 1], true))
         {
             // If there is more than one child with the same top position, then create a horizontal box sizer
             // and add all children with the same top position.
             auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
             m_dlg_sizer->Adopt(sizer);
-            sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
 
             size_t first_child = idx_child;
-            while (idx_child < m_ctrls.size() && is_same_top(&child, &m_ctrls[idx_child]))
+            Adopt(sizer, m_ctrls[idx_child++]);
+
+            while (idx_child < m_ctrls.size() && is_same_top(&m_ctrls[first_child], &m_ctrls[idx_child]))
             {
                 if (m_ctrls[idx_child].isAdded())
-                    break;  // means there was a static box to the right
+                    break;  // This is most like a standard button which has already been dealt with
 
                 if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
                 {
@@ -92,7 +95,6 @@ void resForm::CreateDialogLayout()
                     AddStaticBoxChildren(m_ctrls[idx_child], idx_child);
                 }
 
-                // Note that we add the child we are comparing to first.
                 Adopt(sizer, m_ctrls[idx_child]);
                 ++idx_child;
             }
@@ -102,12 +104,11 @@ void resForm::CreateDialogLayout()
             // In order to properly step through the loop
             --idx_child;
 
-            // If the control is indented more than 10 pixels, and it appears that the right side is close to the right side
+            // If the control is indented more than 15 pixels, and it appears that the right side is close to the right side
             // of the dialog, then right-align the parent sizer.
-            if ((m_ctrls[first_child].du_left() > 10) &&
-                (m_ctrls[idx_child].du_left() + m_ctrls[idx_child].du_width() > du_width() - 10))
+            if ((m_ctrls[first_child].du_left() > 15) &&
+                (m_ctrls[idx_child].du_left() + m_ctrls[idx_child].du_width() > du_width() - 15))
             {
-
                 sizer->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
             }
         }
@@ -165,23 +166,50 @@ void resForm::CreateDialogLayout()
             auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
             m_dlg_sizer->Adopt(sizer);
             Adopt(sizer, child);
-            if (idx_child == 0)
-                continue;
+            auto first_child = idx_child++;
 
-            while (idx_child < m_ctrls.size() && !is_same_top(&m_ctrls[idx_child - 1], &m_ctrls[idx_child]))
+            for (; idx_child < m_ctrls.size(); ++idx_child)
             {
                 if (m_ctrls[idx_child].isAdded())
-                    break;  // means there was a static box to the right
-
-                // Note that we add the child we are comparing to first.
-                Adopt(sizer, m_ctrls[idx_child]);
-                if (idx_child + 2 < m_ctrls.size())
+                    continue;
+                if (m_ctrls[idx_child].du_top() < m_ctrls[first_child].du_bottom() ||
+                    !isInRange(m_ctrls[idx_child].du_left(), m_ctrls[first_child].du_left()))
                 {
-                    // If the next two sizers have the same top, then they need to be placed in a horizontal sizer.
-                    if (m_ctrls[idx_child + 1].du_top() == m_ctrls[idx_child + 2].du_top())
-                        break;
+                    // Backup so that outer loop will process child
+                    --idx_child;
+                    break;
                 }
-                ++idx_child;
+
+                // We don't want to add any sizers as children
+                if (m_ctrls[idx_child].GetNode()->IsSizer())
+                {
+                    // Backup so that outer loop will process child
+                    --idx_child;
+                    break;
+                }
+
+                // This child is lower, but we only add it if it is orphaned -- i.e., it has nothing beside it.
+                if (idx_child + 1 < m_ctrls.size() && is_same_top(&m_ctrls[idx_child], &m_ctrls[idx_child + 1]))
+                {
+                    // Backup so that outer loop will process child
+                    --idx_child;
+                    break;
+                }
+
+                Adopt(sizer, m_ctrls[idx_child]);
+            }
+
+            // If there is only one child, check to see if it should be right-aligned.
+            if (sizer->GetChildCount() < 2)
+            {
+                // If the control is indented more than 15 pixels, and it appears that the right side is close to the right
+                // side of the dialog, then change the sizer to horizontal and right-align it.
+                if ((m_ctrls[first_child].du_left() > 15) &&
+                    (m_ctrls[first_child].du_left() + m_ctrls[first_child].du_width() > du_width() - 15))
+                {
+                    sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
+                    sizer->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                }
             }
         }
     }
@@ -523,31 +551,25 @@ void resForm::CollectGroupControls(std::vector<resCtrl*>& group_ctrls, size_t id
 {
     auto& rc_parent = m_ctrls[idx_parent].GetDialogRect();
 
-    for (size_t idx = idx_parent + 1; idx < m_ctrls.size(); ++idx)
+    for (size_t idx_child = idx_parent + 1; idx_child < m_ctrls.size(); ++idx_child)
     {
-#if defined(_DEBUG)
-        auto child = m_ctrls[idx];
-        auto& child_rc = child.GetDialogRect();
-#else
-        auto& child_rc = m_ctrls[idx].GetDialogRect();
-#endif  // _DEBUG
-        if (rc_parent.Contains(m_ctrls[idx].GetDialogRect()))
+        if (rc_parent.Contains(m_ctrls[idx_child].GetDialogRect()))
         {
-            group_ctrls.emplace_back(&m_ctrls[idx]);
+            group_ctrls.emplace_back(&m_ctrls[idx_child]);
 
             // If it's a group box, then we need to skip over it's children so that they are only added to the inner group
-            if (m_ctrls[idx].isGen(gen_wxStaticBoxSizer))
+            if (m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
-                auto& rc_sub_parent = m_ctrls[idx].GetDialogRect();
-                for (++idx; idx < m_ctrls.size(); ++idx)
+                auto& rc_sub_parent = m_ctrls[idx_child].GetDialogRect();
+                for (++idx_child; idx_child < m_ctrls.size(); ++idx_child)
                 {
-                    if (!rc_sub_parent.Contains(m_ctrls[idx].GetDialogRect()))
+                    if (!rc_sub_parent.Contains(m_ctrls[idx_child].GetDialogRect()))
                     {
                         break;
                     }
                 }
                 // Backup so that the outer loop will continue correctly
-                --idx;
+                --idx_child;
             }
             continue;
         }
@@ -555,7 +577,7 @@ void resForm::CollectGroupControls(std::vector<resCtrl*>& group_ctrls, size_t id
         {
             // It's possible the control is to the left or right of the group box in which case we keep looking. However, if
             // it's below it, then we're done.
-            if (child_rc.GetTop() >= (rc_parent.GetTop() + rc_parent.GetHeight()))
+            if (m_ctrls[idx_child].GetDialogRect().GetTop() >= (rc_parent.GetTop() + rc_parent.GetHeight()))
                 return;
         }
     }

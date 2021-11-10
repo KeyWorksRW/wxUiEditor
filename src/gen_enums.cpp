@@ -311,6 +311,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_validator_type, "validator_type" },
     { prop_validator_variable, "validator_variable" },
     { prop_value, "value" },
+    { prop_var_comment, "var_comment" },
     { prop_var_name, "var_name" },
     { prop_variant, "variant" },
     { prop_vgap, "vgap" },

@@ -614,11 +614,18 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         elem_prop = elem_prop.next_sibling("property");
 
-        // Any time there is a var_name property, it needs to be followed by a class_access property. Rather than add this to
-        // all the XML generator specifications, we simply insert it here if it doesn't exist.
+        // Any time there is a var_name property, it needs to be followed by a var_comment and class_access property. Rather
+        // than add this to all the XML generator specifications, we simply insert it here if it doesn't exist.
 
         if (elem_prop && ttlib::is_sameas(name, map_PropNames[prop_var_name]))
         {
+            category.AddProperty(prop_var_comment);
+            prop_info = std::make_shared<PropDeclaration>(prop_var_comment, type_string_edit_single, tt_empty_cstr,
+                                                          "Comment to add to the variable name in the generated header file "
+                                                          "if the class access is set to protected of public",
+                                                          "");
+            obj_info->GetPropInfoMap()[map_PropNames[prop_var_comment]] = prop_info;
+
             category.AddProperty(prop_class_access);
             ttlib::cstr access("protected:");
 

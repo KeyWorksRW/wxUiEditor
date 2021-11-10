@@ -150,10 +150,13 @@ ttlib::cview resCtrl::GetID(ttlib::cview line)
         m_node->prop_set_value(prop_id, "wxID_HELP");
     else if (id == "IDC_APPLY")
         m_node->prop_set_value(prop_id, "wxID_APPLY");
-    else if (id == "IDC_STATIC")
-        m_node->prop_set_value(prop_id, "wxID_ANY");
     else
-        m_node->prop_set_value(prop_id, id);
+        m_node->prop_set_value(prop_id, "wxID_ANY");
+
+    if (m_node->prop_as_string(prop_id) != "wxID_ANY" || !id.is_sameprefix("IDC_STATIC"))
+    {
+        m_node->prop_set_value(prop_var_comment, id);
+    }
 
     line.moveto_nonspace();
     return line;

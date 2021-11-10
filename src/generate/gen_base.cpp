@@ -966,7 +966,6 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
             if (node->prop_as_string(prop_scale_mode) != "None")
                 code.Replace("wxStaticBitmap", "wxGenericStaticBitmap");
         }
-        return code;
     }
 
     else if (class_name == "StaticCheckboxBoxSizer")
@@ -1038,6 +1037,11 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     else if (class_name.is_sameas("CustomControl"))
     {
         code << node->prop_as_string(prop_class_name) << "* " << node->get_node_name() << ';';
+    }
+
+    if (node->HasValue(prop_var_comment))
+    {
+        code << "  // " << node->prop_as_string(prop_var_comment);
     }
 
     return code;

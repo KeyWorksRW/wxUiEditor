@@ -311,6 +311,7 @@ namespace GenEnum
         prop_validator_type,
         prop_validator_variable,
         prop_value,
+        prop_var_comment,
         prop_var_name,
         prop_variant,
         prop_vgap,

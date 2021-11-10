@@ -52,19 +52,6 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
 
     ParseDimensions(line, m_du_rect, m_pixel_rect);
 
-    auto lst_includes = pWinResource->GetIncludeLines();
-    if (lst_includes.size())
-    {
-        value.clear();
-        for (auto& iter: lst_includes)
-        {
-            if (value.size())
-                value << '\n';
-            value << iter;
-        }
-        m_form_node->prop_set_value(prop_base_src_includes, value);
-    }
-
     for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
     {
         line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());

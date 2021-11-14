@@ -593,7 +593,13 @@ void resForm::Adopt(Node* node, resCtrl* child)
 
 void resForm::Adopt(const NodeSharedPtr& node, resCtrl& child)
 {
+#if defined(_DEBUG)
     ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
+    if (child.isAdded())
+    {
+        MSG_ERROR(ttlib::cstr() << "Control already added: " << m_form_id << ":: " << child.GetOrginalLine());
+    }
+#endif  // _DEBUG
 
     node->Adopt(child.GetNodePtr());
     child.setAdded();

@@ -64,6 +64,9 @@ public:
     }
 
     bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);
+#if defined(_DEBUG)
+    auto& GetOrginalLine() { return m_original_line; }
+#endif  // _DEBUG
 
 protected:
     // This will map window styles to wxWidgets styles and append them to prop_style

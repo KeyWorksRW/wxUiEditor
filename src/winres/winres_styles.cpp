@@ -203,7 +203,7 @@ void resCtrl::AddSpecialStyles(ttlib::cview line)
 
     if (line.contains("SS_SUNKEN"))
     {
-        AppendStyle(prop_window_style, "wxSUNKEN_BORDER");
+        AppendStyle(prop_window_style, "wxBORDER_SUNKEN");
     }
     if (line.contains("SS_SIMPLE"))
     {

@@ -40,24 +40,37 @@ static constexpr const auto lst_ignored_includes = {
 };
 // clang-format on
 
-bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& forms)
+bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& forms, bool isNested)
 {
-    m_RcFilename = rc_file;
+    if (!isNested)
+    {
+        m_RcFilename = rc_file;
+    }
 
-    if (!m_file.ReadFile(m_RcFilename))
+    ttSaveCwd save_cwd;
+
+    ttlib::textfile file;
+    if (!file.ReadFile(rc_file))
     {
         return false;
     }
 
-    // First step though the file to find all #includes. Local header files get stored to an array to add to forms.
-    // #included resource files get added to the end of m_file.
-
-    for (size_t idx = 0; idx < m_file.size(); ++idx)
+    ttlib::cstr cwd(rc_file);
+    cwd.remove_filename();
+    if (cwd.size())
     {
-        if (m_file[idx].contains("#include"))
+        ttlib::ChangeDir(cwd);
+    }
+
+    // First step though the file to find all #includes. Local header files get stored to an array to add to forms.
+    // #included resource files get added to the end of file.
+
+    for (size_t idx = 0; idx < file.size(); ++idx)
+    {
+        if (file[idx].contains("#include"))
         {
             ttlib::cstr name;
-            auto curline = m_file[idx].view_nonspace();
+            auto curline = file[idx].view_nonspace();
             name.ExtractSubString(curline, curline.stepover());
             if (name.size())
             {
@@ -80,49 +93,50 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                 }
                 else if (ext.is_sameas(".dlg") || ext.contains(".rc"))
                 {
-                    ttlib::cstr path = m_RcFilename;
-                    path.replace_filename(name);
-
-                    ttlib::viewfile sub_file;
-                    if (sub_file.ReadFile(path))
+                    curline.moveto_nextword();
+                    ttlib::cstr path;
+                    path.ExtractSubString(curline);
+                    if (!path.file_exists())
                     {
-                        for (auto& iter: sub_file)
-                        {
-                            m_file.emplace_back(iter);
-                        }
+                        path.make_relative(rc_file);
                     }
+
+                    ImportRc(path, forms, true);
                 }
             }
         }
     }
 
-    m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
-    m_codepage = 1252;
+    if (!isNested)
+    {
+        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+        m_codepage = 1252;
+    }
 
     // Resource statements often continue onto the next line. Processing a statement is more straightforward if
     // everything needed is on a single line, so we combine those lines here. Note that this will make error messages
     // about parsing problems not be accurate in terms of the line number.
 
-    for (size_t idx = 0; idx < m_file.size() - 1; ++idx)
+    for (size_t idx = 0; idx < file.size() - 1; ++idx)
     {
-        m_file[idx].trim();
-        while (m_file[idx].size() && (m_file[idx].back() == ',' || m_file[idx].back() == '|'))
+        file[idx].trim();
+        while (file[idx].size() && (file[idx].back() == ',' || file[idx].back() == '|'))
         {
-            m_file[idx] << m_file[idx + 1].view_nonspace();
-            m_file[idx].trim();
-            m_file.RemoveLine(idx + 1);
+            file[idx] << file[idx + 1].view_nonspace();
+            file[idx].trim();
+            file.RemoveLine(idx + 1);
         }
 
-        if (m_file[idx].size() > 3 && ttlib::is_found(m_file[idx].find("NOT", m_file[idx].size() - 4)))
+        if (file[idx].size() > 3 && ttlib::is_found(file[idx].find("NOT", file[idx].size() - 4)))
         {
-            m_file[idx] << ' ' << m_file[idx + 1].view_nonspace();
-            m_file[idx].trim();
-            m_file.RemoveLine(idx + 1);
+            file[idx] << ' ' << file[idx + 1].view_nonspace();
+            file[idx].trim();
+            file.RemoveLine(idx + 1);
         }
 
-        if (m_file[idx].contains("ICON") || m_file[idx].contains("BITMAP"))
+        if (file[idx].contains("ICON") || file[idx].contains("BITMAP"))
         {
-            auto line = m_file[idx].view_nonspace();
+            auto line = file[idx].view_nonspace();
             ttlib::cstr id;
             if (line.at(0) == '"')
                 id.AssignSubString(line);
@@ -144,9 +158,9 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
 
     try
     {
-        for (m_curline = 0; m_curline < m_file.size(); ++m_curline)
+        for (m_curline = 0; m_curline < file.size(); ++m_curline)
         {
-            auto curline = m_file[m_curline].view_nonspace();
+            auto curline = file[m_curline].view_nonspace();
             auto start = curline.find_nonspace();
             if (curline.empty() || curline[start] == '/')  // Ignore blank lines and comments.
                 continue;
@@ -160,9 +174,9 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                     if (ttlib::is_sameprefix(directive, "APSTUDIO_INVOKED"))
                     {
                         // Step over any APSTUDIO_INVOKED section.
-                        for (++m_curline; m_curline < m_file.size(); ++m_curline)
+                        for (++m_curline; m_curline < file.size(); ++m_curline)
                         {
-                            auto line = m_file[m_curline].subview();
+                            auto line = file[m_curline].subview();
                             start = line.find_nonspace();
                             if (line.empty() || line[start] == '/')  // Ignore blank lines and comments.
                                 continue;
@@ -182,32 +196,32 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                         // definition being checked is true or not. All we can do is assume the #ifdef is true and parse
                         // until either a #else of #endif.
 
-                        m_file.RemoveLine(m_curline);
-                        for (auto erase_position = m_curline; erase_position < m_file.size(); ++erase_position)
+                        file.RemoveLine(m_curline);
+                        for (auto erase_position = m_curline; erase_position < file.size(); ++erase_position)
                         {
-                            curline = m_file[erase_position].view_nonspace();
+                            curline = file[erase_position].view_nonspace();
                             if (curline.is_sameprefix("#else"))
                             {
                                 do
                                 {
-                                    m_file.RemoveLine(erase_position);
-                                    curline = m_file[erase_position].view_nonspace();
+                                    file.RemoveLine(erase_position);
+                                    curline = file[erase_position].view_nonspace();
                                     if (curline.is_sameprefix("#endif"))
                                     {
                                         break;
                                     }
-                                } while (erase_position < m_file.size());
+                                } while (erase_position < file.size());
                             }
                             if (curline.is_sameprefix("#endif"))
                             {
-                                m_file.RemoveLine(erase_position);
+                                file.RemoveLine(erase_position);
 
-                                while (m_file[erase_position - 1].size() && (m_file[erase_position - 1].back() == ',' ||
-                                                                             m_file[erase_position - 1].back() == '|'))
+                                while (file[erase_position - 1].size() &&
+                                       (file[erase_position - 1].back() == ',' || file[erase_position - 1].back() == '|'))
                                 {
-                                    m_file[erase_position - 1] << m_file[erase_position].view_nonspace();
-                                    m_file[erase_position - 1].trim();
-                                    m_file.RemoveLine(erase_position);
+                                    file[erase_position - 1] << file[erase_position].view_nonspace();
+                                    file[erase_position - 1].trim();
+                                    file.RemoveLine(erase_position);
                                 }
 
                                 break;
@@ -236,7 +250,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                         continue;
                     }
                 }
-                ParseDialog();
+                ParseDialog(file);
             }
         }
     }
@@ -252,16 +266,18 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
         return false;
     }
 
-    InsertDialogs(forms);
-
+    if (!isNested)
+    {
+        InsertDialogs(forms);
+    }
     return true;
 }
 
-void WinResource::ParseDialog()
+void WinResource::ParseDialog(ttlib::textfile& file)
 {
     try
     {
-        auto line = m_file[m_curline].subview();
+        auto line = file[m_curline].subview();
         auto end = line.find_space();
         if (end == tt::npos)
             throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
@@ -276,7 +292,7 @@ void WinResource::ParseDialog()
             throw std::invalid_argument("Expected dimensions following DIALOG or DIALOGEX.");
 
         auto& form = m_forms.emplace_back();
-        form.ParseDialog(this, m_file, m_curline);
+        form.ParseDialog(this, file, m_curline);
     }
     catch (const std::exception& e)
     {

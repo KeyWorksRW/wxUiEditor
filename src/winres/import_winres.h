@@ -25,7 +25,7 @@ public:
     bool Import(const ttString& filename, bool write_doc) override;
 
     // If forms is empty, then all forms will be parsed
-    bool ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& forms);
+    bool ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& forms, bool isNested = false);
     void InsertDialogs(std::vector<ttlib::cstr>& dialogs);
 
     std::optional<ttlib::cstr> FindIcon(const std::string& id);
@@ -35,7 +35,7 @@ public:
 
 protected:
     void FormToNode(resForm& form);
-    void ParseDialog();
+    void ParseDialog(ttlib::textfile& file);
 
 private:
     ttlib::cstr m_RcFilename;
@@ -45,8 +45,6 @@ private:
     wxString m_strErrorMsg;
 
     std::string strLanguage;
-
-    ttlib::textfile m_file;
 
     std::vector<resForm> m_forms;
     std::set<ttlib::cstr> m_include_lines;

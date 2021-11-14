@@ -43,7 +43,7 @@ protected:
     wxRadioButton* m_radio_wxGlade;
     wxRadioButton* m_radio_wxSmith;
     wxStaticBoxSizer* m_import_staticbox;
-    wxStaticText* m_staticFiles;
+    wxStaticText* m_staticImportList;
     wxStaticText* m_static_cwd;
     wxStdDialogButtonSizer* m_stdBtn;
     wxButton* m_stdBtnOK;

@@ -10,6 +10,8 @@
 #include <wx/dirdlg.h>   // wxDirDialog base class
 #include <wx/filedlg.h>  // wxFileDialog base header
 
+#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+
 #include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
 
 #include "../pugixml/pugixml.hpp"
@@ -42,6 +44,7 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     {
         case DBG_IMPORT_WINRES:
             m_radio_WindowsResource->SetValue(true);
+            m_staticImportList->SetLabel("&Files containing Dialogs or Menus:");
             break;
 
         case DBG_IMPORT_GLADE:
@@ -80,6 +83,7 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     {
         dir.GetAllFiles(".", &files, "*.rc");
         dir.GetAllFiles(".", &files, "*.dlg");
+        CheckResourceFiles(files);
     }
 
     if (files.size())
@@ -158,6 +162,7 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
     {
         dir.GetAllFiles(".", &files, "*.rc");
         dir.GetAllFiles(".", &files, "*.dlg");
+        CheckResourceFiles(files);
     }
 
     if (files.size())
@@ -167,6 +172,7 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
 void ImportDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))
 {
     m_checkListProjects->Clear();
+    m_staticImportList->SetLabel("&Files:");
 
     wxDir dir;
     wxArrayString files;
@@ -179,11 +185,13 @@ void ImportDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))
 void ImportDlg::OnWindowsResource(wxCommandEvent& WXUNUSED(event))
 {
     m_checkListProjects->Clear();
+    m_staticImportList->SetLabel("&Files containing Dialogs or Menus:");
 
     wxDir dir;
     wxArrayString files;
     dir.GetAllFiles(".", &files, "*.rc");
     dir.GetAllFiles(".", &files, "*.dlg");
+    CheckResourceFiles(files);
 
     if (files.size())
         m_checkListProjects->InsertItems(files, 0);
@@ -192,6 +200,7 @@ void ImportDlg::OnWindowsResource(wxCommandEvent& WXUNUSED(event))
 void ImportDlg::OnWxSmith(wxCommandEvent& WXUNUSED(event))
 {
     m_checkListProjects->Clear();
+    m_staticImportList->SetLabel("&Files:");
 
     wxDir dir;
     wxArrayString files;
@@ -216,6 +225,7 @@ void ImportDlg::OnXRC(wxCommandEvent& WXUNUSED(event))
 void ImportDlg::OnWxGlade(wxCommandEvent& WXUNUSED(event))
 {
     m_checkListProjects->Clear();
+    m_staticImportList->SetLabel("&Files:");
 
     wxDir dir;
     wxArrayString files;
@@ -241,4 +251,33 @@ void ImportDlg::OnSelectNone(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->Check(pos, false);
     }
     m_stdBtn->GetAffirmativeButton()->Disable();
+}
+
+void ImportDlg::CheckResourceFiles(wxArrayString& files)
+{
+    wxBusyCursor busy;
+
+    ttlib::viewfile rc_file;
+
+    for (size_t idx = 0; idx < files.size(); ++idx)
+    {
+        bool found = false;
+        if (rc_file.ReadFile(files[idx].utf8_string()))
+        {
+            for (auto& line: rc_file)
+            {
+                if (line.contains(" DIALOG") || line.contains(" MENU"))
+                {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            files.RemoveAt(idx);
+            --idx;  // because out loop will increment this
+        }
+    }
 }

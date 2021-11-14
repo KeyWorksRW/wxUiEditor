@@ -26,6 +26,7 @@ public:
     std::vector<ttString>& GetFileList() { return m_lstProjects; };
 
 protected:
+    void CheckResourceFiles(wxArrayString& files);
     void OnWxGlade(wxCommandEvent& event) override;
     void OnCheckFiles(wxCommandEvent& event) override;
     void OnDirectory(wxCommandEvent& event) override;

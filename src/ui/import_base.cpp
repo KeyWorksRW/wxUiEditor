@@ -39,9 +39,6 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     auto box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
     m_import_staticbox->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));
 
-    m_staticFiles = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Files:");
-    box_sizer6->Add(m_staticFiles, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
-
     m_btnAddFile = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Directory...");
     m_btnAddFile->SetToolTip("You can add multiple formbuilder projects to a single wxUiEdtior project.");
     box_sizer6->Add(m_btnAddFile, wxSizerFlags().Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
@@ -52,6 +49,9 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     auto box_sizer7 = new wxBoxSizer(wxVERTICAL);
     m_import_staticbox->Add(box_sizer7, wxSizerFlags(1).Expand().Border(wxALL));
+
+    m_staticImportList = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Files:");
+    box_sizer7->Add(m_staticImportList, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_checkListProjects = new wxCheckListBox(m_import_staticbox->GetStaticBox(), wxID_ANY);
     m_checkListProjects->SetMinSize(wxSize(-1, 240));

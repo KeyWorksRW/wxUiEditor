@@ -732,12 +732,6 @@
             var_name="box_sizer6"
             flags="wxEXPAND">
             <node
-              class="wxStaticText"
-              label="&amp;Files:"
-              var_name="m_staticFiles"
-              alignment="wxALIGN_CENTER"
-              borders="wxLEFT|wxRIGHT|wxTOP" />
-            <node
               class="wxButton"
               label="&amp;Directory..."
               var_name="m_btnAddFile"
@@ -759,6 +753,11 @@
             var_name="box_sizer7"
             flags="wxEXPAND"
             proportion="1">
+            <node
+              class="wxStaticText"
+              label="&amp;Files:"
+              var_name="m_staticImportList"
+              borders="wxLEFT|wxRIGHT|wxTOP" />
             <node
               class="wxCheckListBox"
               var_name="m_checkListProjects"

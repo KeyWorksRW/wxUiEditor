@@ -146,7 +146,16 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
             ttlib::cstr type = line.subview(0, line.find_space());
             if (!type.is_sameas("ICON") && !type.is_sameas("BITMAP"))
                 continue;  // type must be an exact match at this point.
-            line.moveto_nextword();
+
+            while (line.moveto_nextword())
+            {
+                if (line.at(0) == '"')
+                {
+                    break;
+                }
+                // This could be another command, such as DISCARDABLE
+            }
+
             ttlib::cstr filename;
             filename.AssignSubString(line);
             if (type.is_sameas("ICON"))

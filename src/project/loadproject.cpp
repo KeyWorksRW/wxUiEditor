@@ -359,6 +359,13 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
             return false;
         }
 
+        if (m_pjtSettings && m_pjtSettings->GetProjectFile().filename() == "MyImportedProject")
+        {
+            m_pjtSettings->getProjectFile().remove_filename();
+            m_pjtSettings->getProjectFile().append_filename(file.filename().wx_str());
+            m_pjtSettings->getProjectFile().remove_extension();
+        }
+
         if (append)
         {
             auto form = project.child("node");

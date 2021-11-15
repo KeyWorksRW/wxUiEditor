@@ -76,6 +76,11 @@ bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRe
         duRect.SetHeight(12);
     }
 
+    if (m_node->isGen(gen_wxListBox))
+    {
+        m_node->prop_set_value(prop_minimum_size, ttlib::cstr() << duRect.GetWidth() << ',' << duRect.GetHeight() << 'd');
+    }
+
     /*
 
         On Windows 10, dialogs are supposed to use Segoe UI, 9pt font. However, a lot of dialogs are going to be using

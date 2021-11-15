@@ -37,48 +37,49 @@ void resForm::CreateDialogLayout()
 
     for (size_t idx_child = 0; idx_child < m_ctrls.size(); NextChild(idx_child))
     {
-        auto& child = m_ctrls[idx_child];
-
         // Special handling for last control
         if (idx_child + 1 >= m_ctrls.size())
         {
             // If last control is a button, we may need to center or right-align it.
-            if (child.isGen(gen_wxButton))
+            if (m_ctrls[idx_child].isGen(gen_wxButton))
             {
-                int dlg_margin = (du_width() / 2) - child.du_width();
-                if (child.du_left() > dlg_margin)
+                int dlg_margin = (du_width() / 2) - m_ctrls[idx_child].du_width();
+                if (m_ctrls[idx_child].du_left() > dlg_margin)
                 {
-                    if (child.du_left() + child.du_width() < (du_width() - dlg_margin))
-                        child.prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+                    if (m_ctrls[idx_child].du_left() + m_ctrls[idx_child].du_width() < (du_width() - dlg_margin))
+                        m_ctrls[idx_child].prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
                     else
-                        child.prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                        m_ctrls[idx_child].prop_set_value(prop_alignment, "wxALIGN_RIGHT");
                 }
             }
 
-            ASSERT_MSG(!child.isGen(gen_wxStaticBoxSizer), "Ignoring group box with no children")
-            if (!child.isGen(gen_wxStaticBoxSizer))
+            ASSERT_MSG(!m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer), "Ignoring group box with no children")
+            if (!m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
                 // orphaned child, add to form's top level sizer
                 auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                 m_dlg_sizer->Adopt(sizer);
-                Adopt(sizer, child);
+                Adopt(sizer, m_ctrls[idx_child]);
             }
             break;
         }
 
         // Check for a possible row
-        if (is_same_top(&child, &m_ctrls[idx_child + 1], true))
+        if (is_same_top(&m_ctrls[idx_child], &m_ctrls[idx_child + 1], true))
         {
-            if (idx_child + 3 < m_ctrls.size() && !child.GetNode()->isGen(gen_wxStaticBoxSizer) &&
-                !m_ctrls[idx_child + 1].GetNode()->isGen(gen_wxStaticBoxSizer))
+            if (!m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
-                if (child.du_left() == m_ctrls[idx_child + 2].du_left() &&
-                    is_same_right(&m_ctrls[idx_child + 1], &m_ctrls[idx_child + 3]))
+                // Check for a double aligned column
+                if (idx_child + 3 < m_ctrls.size() && !m_ctrls[idx_child + 1].isGen(gen_wxStaticBoxSizer))
                 {
-                    idx_child = AddTwoColumnPairs(idx_child);
-                    // In order to properly step through the loop
-                    --idx_child;
-                    continue;
+                    if (m_ctrls[idx_child].du_left() == m_ctrls[idx_child + 2].du_left() &&
+                        is_same_right(&m_ctrls[idx_child + 1], &m_ctrls[idx_child + 3]))
+                    {
+                        idx_child = AddTwoColumnPairs(idx_child);
+                        // In order to properly step through the loop
+                        --idx_child;
+                        continue;
+                    }
                 }
             }
 
@@ -87,9 +88,9 @@ void resForm::CreateDialogLayout()
             auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
             m_dlg_sizer->Adopt(sizer);
 
-            if (child.GetNode()->isGen(gen_wxStaticBoxSizer))
+            if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
             {
-                AddStaticBoxChildren(child, idx_child);
+                AddStaticBoxChildren(m_ctrls[idx_child], idx_child);
             }
 
             size_t first_child = idx_child;
@@ -129,9 +130,9 @@ void resForm::CreateDialogLayout()
         // Add one or more controls vertically
         else
         {
-            if (child.GetNode()->isGen(gen_wxStaticBoxSizer))
+            if (m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
-                AddStaticBoxChildren(child, idx_child);
+                AddStaticBoxChildren(m_ctrls[idx_child], idx_child);
 
                 // There may be a control to the left or right of the group box but not at the same top position.
 
@@ -163,14 +164,14 @@ void resForm::CreateDialogLayout()
                     auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                     if (a_left_siblings.size() && !a_left_siblings[0]->isAdded())
                         AddSiblings(sizer.get(), a_left_siblings, &m_ctrls[idx_child]);
-                    Adopt(sizer, child);
+                    Adopt(sizer, m_ctrls[idx_child]);
                     if (a_right_siblings.size() && !a_right_siblings[0]->isAdded())
                         AddSiblings(sizer.get(), a_right_siblings, &m_ctrls[idx_child]);
                     m_dlg_sizer->Adopt(sizer);
                 }
                 else
                 {
-                    Adopt(m_dlg_sizer, child);
+                    Adopt(m_dlg_sizer, m_ctrls[idx_child]);
                 }
 
                 continue;
@@ -178,7 +179,7 @@ void resForm::CreateDialogLayout()
 
             auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
             m_dlg_sizer->Adopt(sizer);
-            Adopt(sizer, child);
+            Adopt(sizer, m_ctrls[idx_child]);
             auto first_child = idx_child++;
 
             for (; idx_child < m_ctrls.size(); NextChild(idx_child))

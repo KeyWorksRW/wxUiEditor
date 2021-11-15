@@ -79,6 +79,11 @@ void resForm::CreateDialogLayout()
             auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
             m_dlg_sizer->Adopt(sizer);
 
+            if (child.GetNode()->isGen(gen_wxStaticBoxSizer))
+            {
+                AddStaticBoxChildren(child, idx_child);
+            }
+
             size_t first_child = idx_child;
             Adopt(sizer, m_ctrls[idx_child++]);
 
@@ -148,10 +153,10 @@ void resForm::CreateDialogLayout()
                 if (a_left_siblings.size() || a_right_siblings.size())
                 {
                     auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
-                    if (a_left_siblings.size())
+                    if (a_left_siblings.size() && !a_left_siblings[0]->isAdded())
                         AddSiblings(sizer.get(), a_left_siblings, &m_ctrls[idx_child]);
                     Adopt(sizer, child);
-                    if (a_right_siblings.size())
+                    if (a_right_siblings.size() && !a_right_siblings[0]->isAdded())
                         AddSiblings(sizer.get(), a_right_siblings, &m_ctrls[idx_child]);
                     m_dlg_sizer->Adopt(sizer);
                 }
@@ -290,7 +295,13 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
             {
                 if (child.GetNode()->isGen(gen_wxStaticBoxSizer))
                 {
-                    AddStaticBoxChildren(child, idx_child);
+                    auto child_pos = FindChildPosition(child.GetNodePtr());
+                    ASSERT(child_pos);
+                    if (!ttlib::is_found(child_pos))
+                    {
+                        continue;  // I'm doubtful it's ever possible for the node not to be found.
+                    }
+                    AddStaticBoxChildren(child, child_pos);
 
                     // There may be a control to the left or right of the group box but not at the same top position.
 
@@ -341,7 +352,10 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
                 }
 
                 // Not a group box, so just add the control normally
-                Adopt(vert_sizer, child);
+                if (!child.isAdded())
+                {
+                    Adopt(vert_sizer, child);
+                }
             }
         }
     }
@@ -693,4 +707,15 @@ void resForm::CreateStdButton()
         m_stdButtonSizer->prop_set_value(prop_Cancel, "0");
         m_stdButtonSizer->prop_set_value(prop_flags, "wxEXPAND");
     }
+}
+
+size_t resForm::FindChildPosition(const NodeSharedPtr node)
+{
+    for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
+    {
+        if (m_ctrls[idx_child].GetNodePtr() == node)
+            return idx_child;
+    }
+
+    return static_cast<size_t>(-1);
 }

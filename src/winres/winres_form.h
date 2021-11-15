@@ -109,6 +109,10 @@ protected:
 
     bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);
 
+    // This will search through m_ctrls and find the index of the control matching the node
+    // parameter. Returns -1 if not found.
+    size_t FindChildPosition(const NodeSharedPtr node);
+
 private:
     // These are in dialog coordinates
     wxRect m_du_rect { 0, 0, 0, 0 };

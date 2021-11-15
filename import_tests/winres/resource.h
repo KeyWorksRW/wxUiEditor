@@ -1,7 +1,9 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by main_test.rc
 //
+#define IDD_DIALOG1                     101
+#define IDD_BLANK                       101
 #define IDD_MAINTEST                    102
 #define IDD_MAINDLG                     127
 #define IDEDIT_CLASS                    1000
@@ -57,7 +59,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        101
+#define _APS_NEXT_RESOURCE_VALUE        104
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

@@ -36,6 +36,10 @@
 #define IDCOMBO_RC_FILES                1043
 #define IDCHECK_RESIZABLE_CDIALOG       1045
 #define IDCHECK_RESIZABLE_CAXDIALOG     1046
+#define IDE_COLNAME                     1297
+#define IDC_COLLIST                     1370
+#define IDB_ADDCOL                      1372
+#define IDB_DELCOL                      1373
 #define IDD_COLUMNEDIT                  2020
 #define IDC_COL_INITNUM_EDIT            2021
 #define IDC_COL_INCREASENUM_EDIT        2022

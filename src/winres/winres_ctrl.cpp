@@ -243,7 +243,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             m_node = g_NodeCreator.NewNode(gen_wxStaticText);
             // We don't know if this will be in a horizontal or vertical sizer, so we just use wxALIGN_CENTER which works for
             // either.
-            m_node->prop_set_value(prop_alignment, "wxALIGN_CENTER");
+            m_node->prop_set_value(prop_style, "wxALIGN_CENTER_HORIZONTAL");
         }
         else if (line.is_sameprefix("DEFPUSHBUTTON"))
         {
@@ -253,12 +253,12 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         else if (line.is_sameprefix("LTEXT"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxStaticText);
-            m_node->prop_set_value(prop_alignment, "wxALIGN_LEFT");
+            // m_node->prop_set_value(prop_style, "wxALIGN_LEFT");
         }
         else if (line.is_sameprefix("RTEXT"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxStaticText);
-            m_node->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+            m_node->prop_set_value(prop_style, "wxALIGN_RIGHT");
         }
         else if (line.is_sameprefix("RADIOBUTTON "))
         {

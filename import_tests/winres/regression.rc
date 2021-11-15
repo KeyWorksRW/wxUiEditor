@@ -4,14 +4,19 @@
 // that there isn't a good way to know what the original dialog looked like -- it's simply a matter of taking a quick look to
 // see if these dialogs look reasonable.
 
+// Note that in most cases, the CAPTION describes what is being checked.
+
 /////////////////////////////////////////////////////////////////////////////
 //
-// Dialog
+// Dialogs
 //
+
+
+// https://github.com/microsoft/Windows-classic-samples/Samples/Win7Samples/dataaccess/oledb/rowsetviewer/rowsetviewer.rc
 
 IDD_ADDCOLUMN DIALOG DISCARDABLE  0, 0, 209, 175
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "ITableDefinition::AddColumn"
+CAPTION "Test two aligned columns"
 FONT 8, "MS Shell Dlg"
 BEGIN
     CTEXT           "TableID:",IDT_STATIC,10,10,57,12,SS_CENTERIMAGE |

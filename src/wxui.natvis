@@ -46,7 +46,7 @@
     </Type>
 
     <Type Name="resCtrl">
-        <DisplayString>res:{m_original_line,s}</DisplayString>
+        <DisplayString>added:{m_added} res:{m_original_line,s}</DisplayString>
     </Type>
 
     <Type Name="std::shared_ptr&lt;Node&gt;">

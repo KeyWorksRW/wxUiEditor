@@ -256,11 +256,11 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 }
 
 //////////////////////////////////////////  RichTextCtrlGenerator  //////////////////////////////////////////
-
 wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
-                                     DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget =
+        new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
+                           DlgSize(parent, node, prop_size), GetStyleInt(node) | wxRE_MULTILINE);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

@@ -87,6 +87,56 @@ void resForm::CreateDialogLayout()
                         continue;
                     }
                 }
+
+                // Check for a list box with a vertical column to the right
+                if (m_ctrls[idx_child].isGen(gen_wxListBox))
+                {
+                    // Note that a variation of this code is also in AddStaticBoxChildren() -- so if you change it here, look
+                    // for a similar code block in AddStaticBoxChildren() and change that as well if needed. It uses a subset
+                    // of controls rather than m_ctrls, so this can't be a stand-alone function.
+
+                    // clang-format off
+                    if (idx_child + 2 < m_ctrls.size() &&
+                        !m_ctrls[idx_child + 1].isAdded() && !m_ctrls[idx_child + 2].isAdded() &&
+                        m_ctrls[idx_child + 1].du_left() == m_ctrls[idx_child + 2].du_left() &&
+                        is_within_vertical(&m_ctrls[idx_child + 2], &m_ctrls[idx_child]))
+                    // clang-format on
+                    {
+                        auto horizontal_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                        m_dlg_sizer->Adopt(horizontal_sizer);
+                        Adopt(horizontal_sizer, m_ctrls[idx_child]);
+                        auto vertical_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
+                        horizontal_sizer->Adopt(vertical_sizer);
+                        auto listbox_child = idx_child;
+                        NextChild(idx_child);
+                        auto first_child = idx_child;
+                        for (; idx_child < m_ctrls.size(); NextChild(idx_child))
+                        {
+                            if (m_ctrls[idx_child].du_left() != m_ctrls[first_child].du_left())
+                                break;
+
+                            if (!is_within_vertical(&m_ctrls[idx_child], &m_ctrls[listbox_child]))
+                                break;
+
+                            // Check for a pair of buttons aligned horizontally
+                            if (idx_child + 1 < m_ctrls.size() && m_ctrls[idx_child].isGen(gen_wxButton) &&
+                                m_ctrls[idx_child + 1].isGen(gen_wxButton) && !m_ctrls[idx_child + 1].isAdded() &&
+                                is_same_top(&m_ctrls[idx_child], &m_ctrls[idx_child + 1]))
+                            {
+                                auto box_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                                vertical_sizer->Adopt(box_sizer);
+                                Adopt(box_sizer, m_ctrls[idx_child]);
+                                Adopt(box_sizer, m_ctrls[idx_child + 1]);
+                                ++idx_child;
+                                continue;  // This will increment idx_child past the second button
+                            }
+                            Adopt(vertical_sizer, m_ctrls[idx_child]);
+                        }
+                        // In order to properly step through the loop
+                        --idx_child;
+                        continue;
+                    }
+                }
             }
 
             // If there is more than one child with the same top position, then create a horizontal box sizer
@@ -434,6 +484,13 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
             int cur_column = 1;
             for (; idx_group_child < group_ctrls.size();)
             {
+                if (group_ctrls[idx_group_child]->isAdded())
+                {
+                    // A listbox with vertical siblings will have already added controls
+                    ++idx_group_child;
+                    continue;
+                }
+
                 // Always add the first control in column 0
                 Adopt(grid_sizer, *group_ctrls[idx_group_child]);
 
@@ -452,6 +509,52 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
                 }
 
                 // Now add the other columns
+
+                // Special-case a listbox in the first column and a vertical row of controls in the second column
+
+                if (group_ctrls[idx_group_child]->isGen(gen_wxListBox))
+                {
+                    // clang-format off
+                    if (idx_group_child + 2 < group_ctrls.size() &&
+                        !group_ctrls[idx_group_child + 1]->isAdded() && !group_ctrls[idx_group_child + 2]->isAdded() &&
+                        group_ctrls[idx_group_child + 1]->du_left() == group_ctrls[idx_group_child + 2]->du_left() &&
+                        is_within_vertical(group_ctrls[idx_group_child + 2], group_ctrls[idx_group_child]))
+                    // clang-format on
+                    {
+                        auto vertical_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
+                        grid_sizer->Adopt(vertical_sizer);
+                        auto listbox_child = idx_group_child;
+                        ++idx_group_child;
+                        auto first_child = idx_group_child;
+                        for (; idx_group_child < group_ctrls.size(); ++idx_group_child)
+                        {
+                            if (group_ctrls[idx_group_child]->du_left() != group_ctrls[first_child]->du_left())
+                                break;
+
+                            if (!is_within_vertical(group_ctrls[idx_group_child], group_ctrls[listbox_child]))
+                                break;
+
+                            // Check for a pair of buttons aligned horizontally
+                            if (idx_group_child + 1 < group_ctrls.size() &&
+                                group_ctrls[idx_group_child]->isGen(gen_wxButton) &&
+                                group_ctrls[idx_group_child + 1]->isGen(gen_wxButton) &&
+                                !group_ctrls[idx_group_child + 1]->isAdded() &&
+                                is_same_top(group_ctrls[idx_group_child], group_ctrls[idx_group_child + 1]))
+                            {
+                                auto box_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                                vertical_sizer->Adopt(box_sizer);
+                                Adopt(box_sizer, *group_ctrls[idx_group_child]);
+                                Adopt(box_sizer, *group_ctrls[idx_group_child + 1]);
+                                ++idx_group_child;
+                                continue;  // This will increment idx_group_child past the second button
+                            }
+                            Adopt(vertical_sizer, *group_ctrls[idx_group_child]);
+                        }
+                        // In order to properly step through the loop
+                        --idx_group_child;
+                        continue;
+                    }
+                }
 
                 auto idx_column = idx_group_child + 1;
                 for (; idx_column < group_ctrls.size(); ++idx_column)

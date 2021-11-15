@@ -457,7 +457,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
         if (m_add_min_width_property || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxComboBox) ||
             m_node->isGen(gen_wxRichTextCtrl))
         {
-            m_node->prop_set_value(prop_minimum_size, ttlib::cstr() << m_pixel_rect.GetWidth() << "; -1");
+            m_node->prop_set_value(prop_minimum_size, ttlib::cstr() << m_du_rect.GetWidth() << ",-1d");
         }
     }
     else

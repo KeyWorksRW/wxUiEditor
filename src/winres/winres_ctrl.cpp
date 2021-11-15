@@ -29,9 +29,9 @@ static const ClassGenPair lst_class_gen[] = {
     { "\"ComboBox\"", gen_wxComboBox },
     { "\"Edit\"", gen_wxTextCtrl },
     { "\"Listbox\"", gen_wxListBox },
-    { "\"RICHEDIT_CLASS\"", gen_wxRichTextCtrl },
-    { "\"RichEdit20A\"", gen_wxRichTextCtrl },
-    { "\"RichEdit\"", gen_wxRichTextCtrl },
+    { "\"RICHEDIT_CLASS\"", gen_wxTextCtrl },
+    { "\"RichEdit20A\"", gen_wxTextCtrl },
+    { "\"RichEdit\"", gen_wxTextCtrl },
     { "\"Scrollbar\"", gen_wxScrollBar },
 
     { "\"msctls_trackbar32\"", gen_wxSlider },
@@ -122,6 +122,11 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             if (line.contains(iter.class_name, tt::CASE::either))
             {
                 m_node = g_NodeCreator.NewNode(iter.gen_name);
+                if (ttlib::is_sameprefix(iter.class_name, "\"Rich", tt::CASE::either))
+                {
+                    m_node->prop_set_value(prop_style, "wxTE_RICH2");
+                }
+
                 break;
             }
         }
@@ -454,8 +459,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             m_node->prop_set_value(prop_wrap, m_pixel_rect.GetWidth());
         }
 
-        if (m_add_min_width_property || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxComboBox) ||
-            m_node->isGen(gen_wxRichTextCtrl))
+        if (m_add_min_width_property || m_node->isGen(gen_wxTextCtrl) || m_node->isGen(gen_wxComboBox))
         {
             m_node->prop_set_value(prop_minimum_size, ttlib::cstr() << m_du_rect.GetWidth() << ",-1d");
         }

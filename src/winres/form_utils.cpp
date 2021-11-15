@@ -32,6 +32,15 @@ bool resForm::is_same_top(const resCtrl* left, const resCtrl* right, bool loose_
     return false;
 }
 
+bool resForm::is_same_right(const resCtrl* left, const resCtrl* right) const
+{
+    if (left->du_left() != right->du_left())
+        return false;
+    if (left->du_left() + left->du_width() != right->du_left() + right->du_width())
+        return false;
+    return true;
+}
+
 bool resForm::is_within_vertical(const resCtrl* left, const resCtrl* right) const
 {
     if (left->du_top() >= right->du_top() && left->du_bottom() <= right->du_bottom())

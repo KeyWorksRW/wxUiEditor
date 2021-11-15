@@ -74,6 +74,19 @@ void resForm::CreateDialogLayout()
         // Check for a possible row
         if (is_same_top(&child, &m_ctrls[idx_child + 1], true))
         {
+            if (idx_child + 3 < m_ctrls.size() && !child.GetNode()->isGen(gen_wxStaticBoxSizer) &&
+                !m_ctrls[idx_child + 1].GetNode()->isGen(gen_wxStaticBoxSizer))
+            {
+                if (child.du_left() == m_ctrls[idx_child + 2].du_left() &&
+                    is_same_right(&m_ctrls[idx_child + 1], &m_ctrls[idx_child + 3]))
+                {
+                    idx_child = AddTwoColumnPairs(idx_child);
+                    // In order to properly step through the loop
+                    --idx_child;
+                    continue;
+                }
+            }
+
             // If there is more than one child with the same top position, then create a horizontal box sizer
             // and add all children with the same top position.
             auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
@@ -718,4 +731,47 @@ size_t resForm::FindChildPosition(const NodeSharedPtr node)
     }
 
     return static_cast<size_t>(-1);
+}
+
+size_t resForm::AddTwoColumnPairs(size_t idx_start)
+{
+    auto grid_sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
+    grid_sizer->prop_set_value(prop_cols, 2);
+    m_dlg_sizer->Adopt(grid_sizer);
+
+    // In a grid sizer, the control must aligned to center rather then having the style be centered
+
+    if (m_ctrls[idx_start].GetNode()->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
+        m_ctrls[idx_start].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+
+    Adopt(grid_sizer, m_ctrls[idx_start]);
+    Adopt(grid_sizer, m_ctrls[idx_start + 1]);
+
+    auto idx_child = idx_start + 2;
+    for (; idx_child + 1 < m_ctrls.size(); idx_child += 2)
+    {
+        if (m_ctrls[idx_child].isAdded() || m_ctrls[idx_child + 1].isAdded())
+            break;
+
+        if (!is_same_top(&m_ctrls[idx_child], &m_ctrls[idx_child + 1], true))
+            break;
+
+        if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer) ||
+            m_ctrls[idx_child + 1].GetNode()->isGen(gen_wxStaticBoxSizer))
+            break;
+
+        if (m_ctrls[idx_start].du_left() == m_ctrls[idx_start].du_left() &&
+            is_same_right(&m_ctrls[idx_start + 1], &m_ctrls[idx_start + 1]))
+        {
+            if (m_ctrls[idx_child].GetNode()->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
+                m_ctrls[idx_child].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+            Adopt(grid_sizer, m_ctrls[idx_child]);
+            Adopt(grid_sizer, m_ctrls[idx_child + 1]);
+        }
+        else
+        {
+            break;
+        }
+    }
+    return idx_child;
 }

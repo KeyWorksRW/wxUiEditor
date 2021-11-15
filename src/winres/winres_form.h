@@ -87,6 +87,10 @@ protected:
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
     void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
 
+    // This will create a 2-column flex grid and add controls as long as each row position
+    // and size is identical
+    size_t AddTwoColumnPairs(size_t idx_start);
+
     // Sorts all controls both vertically and horizontally.
     void SortCtrls();
 
@@ -101,6 +105,8 @@ protected:
     //
     // If loose_check == true, any control can be -2 of the top of the other control.
     bool is_same_top(const resCtrl* left, const resCtrl* right, bool loose_check = false) const;
+
+    bool is_same_right(const resCtrl* left, const resCtrl* right) const;
 
     // Returns true if left top/bottom is within right top/bottom
     bool is_within_vertical(const resCtrl* left, const resCtrl* right) const;

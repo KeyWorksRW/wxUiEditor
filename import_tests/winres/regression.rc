@@ -1,0 +1,46 @@
+
+// These dialogs and menus had problems at one point, so we want to be certain that they still work. However, since they come
+// from multiple resource files across multiple repositories, it's impractical to keep all of the header files. That means
+// that there isn't a good way to know what the original dialog looked like -- it's simply a matter of taking a quick look to
+// see if these dialogs look reasonable.
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ADDCOLUMN DIALOG DISCARDABLE  0, 0, 209, 175
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "ITableDefinition::AddColumn"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CTEXT           "TableID:",IDT_STATIC,10,10,57,12,SS_CENTERIMAGE |
+                    SS_SUNKEN
+    EDITTEXT        IDE_TABLEID,68,10,130,12,ES_MULTILINE | ES_AUTOHSCROLL |
+                    WS_VSCROLL
+    CTEXT           "ColumnID:",IDT_STATIC2,10,27,57,12,SS_CENTERIMAGE |
+                    SS_SUNKEN
+    EDITTEXT        IDE_COLUMNID,68,27,130,12,ES_AUTOHSCROLL
+    CTEXT           "pwszTypeName:",IDT_STATIC3,10,44,57,12,SS_CENTERIMAGE |
+                    SS_SUNKEN
+    COMBOBOX        IDC_TYPENAME,68,44,130,150,CBS_DROPDOWN |
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    CTEXT           "wType:",IDT_STATIC4,10,61,57,12,SS_CENTERIMAGE |
+                    SS_SUNKEN
+    COMBOBOX        IDC_TYPE,68,61,130,150,CBS_DROPDOWN | CBS_AUTOHSCROLL |
+                    WS_VSCROLL | WS_TABSTOP
+    CTEXT           "ColumnSize:",IDT_STATIC6,10,78,57,12,SS_CENTERIMAGE |
+                    SS_SUNKEN
+    EDITTEXT        IDE_SIZE,68,78,130,12,ES_AUTOHSCROLL
+    CTEXT           "Precision:",IDT_STATIC7,10,95,57,12,SS_CENTERIMAGE |
+                    SS_SUNKEN
+    EDITTEXT        IDE_PRECISION,68,95,130,12,ES_AUTOHSCROLL
+    CTEXT           "Scale:",IDT_STATIC8,10,112,57,12,SS_CENTERIMAGE |
+                    SS_SUNKEN
+    EDITTEXT        IDE_SCALE,68,112,130,12,ES_AUTOHSCROLL
+    CONTROL         "Use Properties",IDB_USEPROPERTIES,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,10,134,85,10
+    PUSHBUTTON      "&Properties...",IDB_SETPROPERTIES,10,151,50,14
+    DEFPUSHBUTTON   "OK",IDOK,90,151,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,140,151,50,14
+END

@@ -317,6 +317,13 @@ void GenStyle(Node* node, ttlib::cstr& code)
         all_styles << node->prop_as_string(prop_orientation);
     }
 
+    if (node->isGen(gen_wxRichTextCtrl))
+    {
+        if (all_styles.size())
+            all_styles << '|';
+        all_styles << "wxRE_MULTILINE";
+    }
+
     if (node->HasValue(prop_style))
     {
         if (all_styles.size())

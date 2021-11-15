@@ -35,7 +35,13 @@ void resForm::CreateDialogLayout()
     m_form_node->Adopt(m_dlg_sizer);
     CheckForStdButtons();
 
-    for (size_t idx_child = 0; idx_child < m_ctrls.size(); NextChild(idx_child))
+    size_t idx_child = 0;
+    while (idx_child < m_ctrls.size() && m_ctrls[idx_child].isAdded())
+    {
+        ++idx_child;
+    }
+
+    for (; idx_child < m_ctrls.size(); NextChild(idx_child))
     {
         // Special handling for last control
         if (idx_child + 1 >= m_ctrls.size())

@@ -35,14 +35,9 @@ void resForm::CreateDialogLayout()
     m_form_node->Adopt(m_dlg_sizer);
     CheckForStdButtons();
 
-    for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
+    for (size_t idx_child = 0; idx_child < m_ctrls.size(); NextChild(idx_child))
     {
         auto& child = m_ctrls[idx_child];
-        // A group box will have added a bunch of children, so if the current child has been added already then ignore it.
-        // Note that children can appear to the left or right of a group box, which is why we can't just step over a group of
-        // children when a group box is encountered.
-        if (child.isAdded())
-            continue;
 
         // Special handling for last control
         if (idx_child + 1 >= m_ctrls.size())
@@ -114,7 +109,7 @@ void resForm::CreateDialogLayout()
                 }
 
                 Adopt(sizer, m_ctrls[idx_child]);
-                ++idx_child;
+                NextChild(idx_child);
             }
             if (idx_child < m_ctrls.size() && m_ctrls[idx_child].isAdded())
                 continue;
@@ -186,7 +181,7 @@ void resForm::CreateDialogLayout()
             Adopt(sizer, child);
             auto first_child = idx_child++;
 
-            for (; idx_child < m_ctrls.size(); ++idx_child)
+            for (; idx_child < m_ctrls.size(); NextChild(idx_child))
             {
                 if (m_ctrls[idx_child].isAdded())
                     continue;
@@ -268,7 +263,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
         auto vert_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent_sizer);
         parent_sizer->Adopt(vert_sizer);
 
-        for (size_t idx_child = 0; idx_child < actrls.size(); ++idx_child)
+        for (size_t idx_child = 0; idx_child < actrls.size(); NextChild(idx_child))
         {
             auto& child = *actrls[idx_child];
 
@@ -296,10 +291,8 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
 
                     // Note that we add the child we are comparing to first.
                     Adopt(horz_sizer.get(), actrls[idx_child]);
-                    ++idx_child;
+                    NextChild(idx_child);
                 }
-                if (idx_child < actrls.size() && actrls[idx_child]->isAdded())
-                    continue;
 
                 // In order to properly step through the loop and add the last control
                 --idx_child;
@@ -385,13 +378,13 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
     CollectGroupControls(group_ctrls, idx_group_box);
 
     const auto& static_box = m_ctrls[idx_group_box];
-    for (size_t idx_child = 0; idx_child < group_ctrls.size(); ++idx_child)
+    for (size_t idx_group_child = 0; idx_group_child < group_ctrls.size(); ++idx_group_child)
     {
-        auto result = GroupGridSizerNeeded(group_ctrls, idx_child);
+        auto result = GroupGridSizerNeeded(group_ctrls, idx_group_child);
         if (result < 0)
         {
             // No alignment with the next control, so just add it normally
-            auto& child = reinterpret_cast<resCtrl&>(*group_ctrls[idx_child]);
+            auto& child = reinterpret_cast<resCtrl&>(*group_ctrls[idx_group_child]);
             Adopt(static_box.GetNodePtr(), child);
 
             // REVIEW: [KeyWorks - 06-16-2021] Does this actually happen in a group box?
@@ -407,16 +400,16 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
             static_box.GetNode()->Adopt(sizer);
 
-            auto& child = reinterpret_cast<resCtrl&>(*group_ctrls[idx_child]);
+            auto& child = reinterpret_cast<resCtrl&>(*group_ctrls[idx_group_child]);
 
-            while (idx_child < group_ctrls.size() && group_ctrls[idx_child]->du_top() == child.du_top())
+            while (idx_group_child < group_ctrls.size() && group_ctrls[idx_group_child]->du_top() == child.du_top())
             {
                 // Note that we add the child we are comparing to first.
-                Adopt(sizer, *group_ctrls[idx_child]);
-                ++idx_child;
+                Adopt(sizer, *group_ctrls[idx_group_child]);
+                ++idx_group_child;
             }
             // In order to properly step through the loop
-            --idx_child;
+            --idx_group_child;
         }
         else
         {
@@ -432,46 +425,46 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
             // row, but it doesn't handle gaps within a row.
 
             int cur_column = 1;
-            for (; idx_child < group_ctrls.size();)
+            for (; idx_group_child < group_ctrls.size();)
             {
                 // Always add the first control in column 0
-                Adopt(grid_sizer, *group_ctrls[idx_child]);
+                Adopt(grid_sizer, *group_ctrls[idx_group_child]);
 
-                if (group_ctrls[idx_child]->isGen(gen_wxStaticBoxSizer))
+                if (group_ctrls[idx_group_child]->isGen(gen_wxStaticBoxSizer))
                 {
-                    size_t idx_child_group_box = idx_group_box + 1;
-                    for (; idx_child_group_box < m_ctrls.size(); ++idx_child_group_box)
+                    size_t idx_group_child_group_box = idx_group_box + 1;
+                    for (; idx_group_child_group_box < m_ctrls.size(); ++idx_group_child_group_box)
                     {
-                        if (m_ctrls[idx_child_group_box].GetNode() == group_ctrls[idx_child]->GetNode())
+                        if (m_ctrls[idx_group_child_group_box].GetNode() == group_ctrls[idx_group_child]->GetNode())
                             break;
                     }
-                    if (idx_child_group_box < m_ctrls.size())
+                    if (idx_group_child_group_box < m_ctrls.size())
                     {
-                        AddStaticBoxChildren(*group_ctrls[idx_child], idx_child_group_box);
+                        AddStaticBoxChildren(*group_ctrls[idx_group_child], idx_group_child_group_box);
                     }
                 }
 
                 // Now add the other columns
 
-                auto idx_column = idx_child + 1;
+                auto idx_column = idx_group_child + 1;
                 for (; idx_column < group_ctrls.size(); ++idx_column)
                 {
-                    if (is_same_top(group_ctrls[idx_child], group_ctrls[idx_column], true))
+                    if (is_same_top(group_ctrls[idx_group_child], group_ctrls[idx_column], true))
                     {
                         Adopt(grid_sizer, *group_ctrls[idx_column]);
                         ++cur_column;
 
                         if (group_ctrls[idx_column]->isGen(gen_wxStaticBoxSizer))
                         {
-                            size_t idx_child_group_box = idx_group_box + 1;
-                            for (; idx_child_group_box < m_ctrls.size(); ++idx_child_group_box)
+                            size_t idx_group_child_group_box = idx_group_box + 1;
+                            for (; idx_group_child_group_box < m_ctrls.size(); ++idx_group_child_group_box)
                             {
-                                if (m_ctrls[idx_child_group_box].GetNode() == group_ctrls[idx_column]->GetNode())
+                                if (m_ctrls[idx_group_child_group_box].GetNode() == group_ctrls[idx_column]->GetNode())
                                     break;
                             }
-                            if (idx_child_group_box < m_ctrls.size())
+                            if (idx_group_child_group_box < m_ctrls.size())
                             {
-                                AddStaticBoxChildren(*group_ctrls[idx_column], idx_child_group_box);
+                                AddStaticBoxChildren(*group_ctrls[idx_column], idx_group_child_group_box);
                             }
                         }
                     }
@@ -481,9 +474,9 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
                         break;
                     }
                 }
-                idx_child = idx_column;
+                idx_group_child = idx_column;
 
-                if (idx_child < group_ctrls.size())
+                if (idx_group_child < group_ctrls.size())
                 {
                     // Deal with case where a row doesn't have an entry for every column -- we simply add a spacer to fill
                     // out the total number of columns.
@@ -578,7 +571,7 @@ void resForm::CollectGroupControls(std::vector<resCtrl*>& group_ctrls, size_t id
 {
     auto& rc_parent = m_ctrls[idx_parent].GetDialogRect();
 
-    for (size_t idx_child = idx_parent + 1; idx_child < m_ctrls.size(); ++idx_child)
+    for (size_t idx_child = idx_parent + 1; idx_child < m_ctrls.size(); NextChild(idx_child))
     {
         if (rc_parent.Contains(m_ctrls[idx_child].GetDialogRect()))
         {
@@ -588,7 +581,7 @@ void resForm::CollectGroupControls(std::vector<resCtrl*>& group_ctrls, size_t id
             if (m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
                 auto& rc_sub_parent = m_ctrls[idx_child].GetDialogRect();
-                for (++idx_child; idx_child < m_ctrls.size(); ++idx_child)
+                for (++idx_child; idx_child < m_ctrls.size(); NextChild(idx_child))
                 {
                     if (!rc_sub_parent.Contains(m_ctrls[idx_child].GetDialogRect()))
                     {

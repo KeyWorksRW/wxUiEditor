@@ -119,6 +119,18 @@ protected:
     // parameter. Returns -1 if not found.
     size_t FindChildPosition(const NodeSharedPtr node);
 
+    // Returns the index of the next control that has not already been added.
+    //
+    // Caution! This can increment the index beyond m_ctrls.size()
+    void NextChild(size_t& idx_child)
+    {
+        for (++idx_child; idx_child < m_ctrls.size(); ++idx_child)
+        {
+            if (!m_ctrls[idx_child].isAdded())
+                return;
+        }
+    }
+
 private:
     // These are in dialog coordinates
     wxRect m_du_rect { 0, 0, 0, 0 };

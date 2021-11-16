@@ -134,6 +134,7 @@ void ImportDlg::OnOK(wxCommandEvent& event)
 void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
 {
     wxDirDialog dlg(this, "Choose directory", wxEmptyString, wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+    dlg.SetPath(m_static_cwd->GetLabel());
     if (dlg.ShowModal() != wxID_OK)
         return;
 

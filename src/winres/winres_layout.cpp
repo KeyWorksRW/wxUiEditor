@@ -290,6 +290,8 @@ void resForm::CreateDialogLayout()
     }
 
     m_dlg_sizer->FixDuplicateNodeNames();
+
+    CheckForCenteredText(m_dlg_sizer.get());
 }
 
 void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, resCtrl* pSibling)
@@ -877,4 +879,23 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
         }
     }
     return idx_child;
+}
+
+void resForm::CheckForCenteredText(Node* node_parent)
+{
+    for (size_t idx = 0; idx < node_parent->GetChildCount(); ++idx)
+    {
+        auto child = node_parent->GetChild(idx);
+        if (child->isGen(gen_wxBoxSizer) && child->GetChildCount() == 1 && child->GetChild(0)->isGen(gen_wxStaticText) &&
+            child->GetChild(0)->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
+        {
+            child->prop_set_value(prop_flags, "wxEXPAND");
+            child->GetChild(0)->prop_set_value(prop_proportion, "1");
+            continue;
+        }
+        if (child->IsSizer())
+        {
+            CheckForCenteredText(child);
+        }
+    }
 }

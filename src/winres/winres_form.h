@@ -87,6 +87,9 @@ protected:
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
     void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
 
+    // Handle static text that needs to be centered
+    void CheckForCenteredText(Node* node_parent);
+
     // This will create a 2-column flex grid and add controls as long as each row position
     // and size is identical
     size_t AddTwoColumnPairs(size_t idx_start);

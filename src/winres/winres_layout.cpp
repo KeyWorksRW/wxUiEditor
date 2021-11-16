@@ -322,8 +322,11 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
         auto vert_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent_sizer);
         parent_sizer->Adopt(vert_sizer);
 
-        for (size_t idx_child = 0; idx_child < actrls.size(); NextChild(idx_child))
+        for (size_t idx_child = 0; idx_child < actrls.size(); ++idx_child)
         {
+            if (actrls[idx_child]->isAdded())
+                continue;
+
             auto& child = *actrls[idx_child];
 
             // Check for a possible row

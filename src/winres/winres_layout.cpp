@@ -63,9 +63,20 @@ void resForm::CreateDialogLayout()
             if (!m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
                 // orphaned child, add to form's top level sizer
-                auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
-                m_dlg_sizer->Adopt(sizer);
-                Adopt(sizer, m_ctrls[idx_child]);
+                if (m_ctrls[idx_child].GetNode()->prop_as_string(prop_alignment).contains("wxALIGN_RIGHT") ||
+                    m_ctrls[idx_child].GetNode()->prop_as_string(prop_alignment).contains("wxALIGN_CENTER_HORIZONTAL"))
+                {
+                    auto vertical_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
+                    vertical_sizer->prop_set_value(prop_flags, "wxEXPAND");
+                    m_dlg_sizer->Adopt(vertical_sizer);
+                    Adopt(vertical_sizer, m_ctrls[idx_child]);
+                }
+                else
+                {
+                    auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
+                    m_dlg_sizer->Adopt(sizer);
+                    Adopt(sizer, m_ctrls[idx_child]);
+                }
             }
             break;
         }

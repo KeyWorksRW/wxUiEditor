@@ -78,7 +78,7 @@ void resForm::CreateDialogLayout()
                 // Check for a double aligned column
                 if (idx_child + 3 < m_ctrls.size() && !m_ctrls[idx_child + 1].isGen(gen_wxStaticBoxSizer))
                 {
-                    if (m_ctrls[idx_child].du_left() == m_ctrls[idx_child + 2].du_left() &&
+                    if (is_same_left(m_ctrls, idx_child, idx_child + 2) &&
                         is_same_right(m_ctrls, idx_child + 1, idx_child + 3))
                     {
                         idx_child = AddTwoColumnPairs(idx_child);
@@ -98,7 +98,7 @@ void resForm::CreateDialogLayout()
                     // clang-format off
                     if (idx_child + 2 < m_ctrls.size() &&
                         !m_ctrls[idx_child + 1].isAdded() && !m_ctrls[idx_child + 2].isAdded() &&
-                        m_ctrls[idx_child + 1].du_left() == m_ctrls[idx_child + 2].du_left() &&
+                        is_same_left(m_ctrls, idx_child + 1, idx_child + 2) &&
                         is_within_vertical(m_ctrls, idx_child + 2, idx_child))
                     // clang-format on
                     {
@@ -868,8 +868,7 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
             m_ctrls[idx_child + 1].GetNode()->isGen(gen_wxStaticBoxSizer))
             break;
 
-        if (m_ctrls[idx_start].du_left() == m_ctrls[idx_start].du_left() &&
-            is_same_right(m_ctrls, idx_start + 1, idx_start + 1))
+        if (is_same_left(m_ctrls, idx_start, idx_start + 1) && is_same_right(m_ctrls, idx_start + 1, idx_start + 1))
         {
             if (m_ctrls[idx_child].GetNode()->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
                 m_ctrls[idx_child].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");

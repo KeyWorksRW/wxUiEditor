@@ -121,6 +121,11 @@ protected:
 
     bool is_same_right(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b) const;
 
+    bool is_same_left(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b) const
+    {
+        return ctrls[child_a].du_left() == ctrls[child_b].du_left();
+    }
+
     void CreateStdButton();
 
     bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);

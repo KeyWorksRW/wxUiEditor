@@ -32,18 +32,42 @@ bool resForm::is_same_top(const resCtrl* left, const resCtrl* right, bool loose_
     return false;
 }
 
-bool resForm::is_same_right(const resCtrl* left, const resCtrl* right) const
+bool resForm::is_same_right(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b) const
 {
-    if (left->du_left() != right->du_left())
+    if (ctrls[child_a].du_left() != ctrls[child_b].du_left())
         return false;
-    if (left->du_left() + left->du_width() != right->du_left() + right->du_width())
+    if (ctrls[child_a].du_left() + ctrls[child_a].du_width() != ctrls[child_b].du_left() + ctrls[child_b].du_width())
         return false;
     return true;
 }
 
-bool resForm::is_within_vertical(const resCtrl* left, const resCtrl* right) const
+bool resForm::is_same_top(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b, bool loose_check) const
 {
-    if (left->du_top() >= right->du_top() && left->du_bottom() <= right->du_bottom())
+    if (ctrls[child_a].du_top() == ctrls[child_b].du_top())
+        return true;
+
+    if (loose_check)
+    {
+        if (ctrls[child_a].du_top() - 1 == ctrls[child_b].du_top() || ctrls[child_a].du_top() - 2 == ctrls[child_b].du_top())
+            return true;
+        else if (ctrls[child_a].du_top() == ctrls[child_b].du_top() - 1 ||
+                 ctrls[child_a].du_top() == ctrls[child_b].du_top() - 2)
+            return true;
+        else
+            return false;
+    }
+
+    if (ctrls[child_a].GetNode()->isGen(gen_wxStaticText))
+    {
+        if (ctrls[child_a].du_top() - 1 == ctrls[child_b].du_top() || ctrls[child_a].du_top() - 2 == ctrls[child_b].du_top())
+            return true;
+    }
+    return false;
+}
+
+bool resForm::is_within_vertical(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b) const
+{
+    if (ctrls[child_a].du_top() >= ctrls[child_b].du_top() && ctrls[child_a].du_bottom() <= ctrls[child_b].du_bottom())
     {
         return true;
     }

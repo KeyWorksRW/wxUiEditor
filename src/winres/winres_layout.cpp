@@ -71,7 +71,7 @@ void resForm::CreateDialogLayout()
         }
 
         // Check for a possible row
-        if (is_same_top(&m_ctrls[idx_child], &m_ctrls[idx_child + 1], true))
+        if (is_same_top(m_ctrls, idx_child, idx_child + 1, true))
         {
             if (!m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
@@ -79,7 +79,7 @@ void resForm::CreateDialogLayout()
                 if (idx_child + 3 < m_ctrls.size() && !m_ctrls[idx_child + 1].isGen(gen_wxStaticBoxSizer))
                 {
                     if (m_ctrls[idx_child].du_left() == m_ctrls[idx_child + 2].du_left() &&
-                        is_same_right(&m_ctrls[idx_child + 1], &m_ctrls[idx_child + 3]))
+                        is_same_right(m_ctrls, idx_child + 1, idx_child + 3))
                     {
                         idx_child = AddTwoColumnPairs(idx_child);
                         // In order to properly step through the loop
@@ -99,7 +99,7 @@ void resForm::CreateDialogLayout()
                     if (idx_child + 2 < m_ctrls.size() &&
                         !m_ctrls[idx_child + 1].isAdded() && !m_ctrls[idx_child + 2].isAdded() &&
                         m_ctrls[idx_child + 1].du_left() == m_ctrls[idx_child + 2].du_left() &&
-                        is_within_vertical(&m_ctrls[idx_child + 2], &m_ctrls[idx_child]))
+                        is_within_vertical(m_ctrls, idx_child + 2, idx_child))
                     // clang-format on
                     {
                         auto horizontal_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
@@ -115,13 +115,13 @@ void resForm::CreateDialogLayout()
                             if (m_ctrls[idx_child].du_left() != m_ctrls[first_child].du_left())
                                 break;
 
-                            if (!is_within_vertical(&m_ctrls[idx_child], &m_ctrls[listbox_child]))
+                            if (!is_within_vertical(m_ctrls, idx_child, listbox_child))
                                 break;
 
                             // Check for a pair of buttons aligned horizontally
                             if (idx_child + 1 < m_ctrls.size() && m_ctrls[idx_child].isGen(gen_wxButton) &&
                                 m_ctrls[idx_child + 1].isGen(gen_wxButton) && !m_ctrls[idx_child + 1].isAdded() &&
-                                is_same_top(&m_ctrls[idx_child], &m_ctrls[idx_child + 1]))
+                                is_same_top(m_ctrls, idx_child, idx_child + 1))
                             {
                                 auto box_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                                 vertical_sizer->Adopt(box_sizer);
@@ -152,7 +152,7 @@ void resForm::CreateDialogLayout()
             size_t first_child = idx_child;
             Adopt(sizer, m_ctrls[idx_child++]);
 
-            while (idx_child < m_ctrls.size() && is_same_top(&m_ctrls[first_child], &m_ctrls[idx_child]))
+            while (idx_child < m_ctrls.size() && is_same_top(m_ctrls, first_child, idx_child))
             {
                 if (m_ctrls[idx_child].isAdded())
                     break;  // This is most like a standard button which has already been dealt with
@@ -192,23 +192,23 @@ void resForm::CreateDialogLayout()
 
                 // There may be a control to the left or right of the group box but not at the same top position.
 
-                std::vector<resCtrl*> a_left_siblings;
-                std::vector<resCtrl*> a_right_siblings;
+                std::vector<resCtrl> a_left_siblings;
+                std::vector<resCtrl> a_right_siblings;
 
                 for (size_t side_child = idx_child + 1; side_child < m_ctrls.size(); side_child++)
                 {
                     if (m_ctrls[side_child].isAdded())
                         continue;
 
-                    if (is_within_vertical(&m_ctrls[side_child], &m_ctrls[idx_child]))
+                    if (is_within_vertical(m_ctrls, side_child, idx_child))
                     {
                         if (m_ctrls[side_child].GetLeft() < m_ctrls[idx_child].GetLeft())
                         {
-                            a_left_siblings.emplace_back(&m_ctrls[side_child]);
+                            a_left_siblings.emplace_back(m_ctrls[side_child]);
                         }
                         else
                         {
-                            a_right_siblings.emplace_back(&m_ctrls[side_child]);
+                            a_right_siblings.emplace_back(m_ctrls[side_child]);
                         }
                     }
                     else
@@ -218,10 +218,10 @@ void resForm::CreateDialogLayout()
                 if (a_left_siblings.size() || a_right_siblings.size())
                 {
                     auto sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
-                    if (a_left_siblings.size() && !a_left_siblings[0]->isAdded())
+                    if (a_left_siblings.size() && !a_left_siblings[0].isAdded())
                         AddSiblings(sizer.get(), a_left_siblings, &m_ctrls[idx_child]);
                     Adopt(sizer, m_ctrls[idx_child]);
-                    if (a_right_siblings.size() && !a_right_siblings[0]->isAdded())
+                    if (a_right_siblings.size() && !a_right_siblings[0].isAdded())
                         AddSiblings(sizer.get(), a_right_siblings, &m_ctrls[idx_child]);
                     m_dlg_sizer->Adopt(sizer);
                 }
@@ -259,7 +259,7 @@ void resForm::CreateDialogLayout()
                 }
 
                 // This child is lower, but we only add it if it is orphaned -- i.e., it has nothing beside it.
-                if (idx_child + 1 < m_ctrls.size() && is_same_top(&m_ctrls[idx_child], &m_ctrls[idx_child + 1]))
+                if (idx_child + 1 < m_ctrls.size() && is_same_top(m_ctrls, idx_child, idx_child + 1))
                 {
                     // Backup so that outer loop will process child
                     --idx_child;
@@ -294,14 +294,14 @@ void resForm::CreateDialogLayout()
     CheckForCenteredText(m_dlg_sizer.get());
 }
 
-void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, resCtrl* pSibling)
+void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl>& actrls, resCtrl* pSibling)
 {
     if (actrls.size() == 1)
     {
-        if (pSibling && is_same_top(actrls[0], pSibling))
+        if (pSibling && is_same_top(&actrls[0], pSibling))
         {
             // If both siblings have the same top position, then just add this sibling directly to the parent sizer
-            Adopt(parent_sizer, actrls[0]);
+            Adopt(parent_sizer, &actrls[0]);
             return;
         }
         else
@@ -312,9 +312,9 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
             auto vert_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent_sizer);
             parent_sizer->Adopt(vert_sizer);
             auto spacer = g_NodeCreator.CreateNode(gen_spacer, vert_sizer.get());
-            spacer->prop_set_value(prop_height, actrls[0]->du_top() - pSibling->du_top());
+            spacer->prop_set_value(prop_height, actrls[0].du_top() - pSibling->du_top());
             vert_sizer->Adopt(spacer);
-            Adopt(vert_sizer.get(), actrls[0]);
+            Adopt(vert_sizer.get(), &actrls[0]);
         }
     }
     else
@@ -324,13 +324,13 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
 
         for (size_t idx_child = 0; idx_child < actrls.size(); ++idx_child)
         {
-            if (actrls[idx_child]->isAdded())
+            if (actrls[idx_child].isAdded())
                 continue;
 
-            auto& child = *actrls[idx_child];
+            auto first_child = idx_child;
 
             // Check for a possible row
-            if ((idx_child + 1 < actrls.size()) && is_same_top(&child, actrls[idx_child + 1]))
+            if ((idx_child + 1 < actrls.size()) && is_same_top(actrls, idx_child, idx_child + 1))
             {
                 // If there is more than one child with the same top position, then create a horizontal box sizer
                 // and add all children with the same top position.
@@ -338,21 +338,21 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
                 vert_sizer->Adopt(horz_sizer);
                 horz_sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
 
-                while (idx_child < actrls.size() && is_same_top(&child, actrls[idx_child]))
+                while (idx_child < actrls.size() && is_same_top(actrls, first_child, idx_child))
                 {
-                    if (actrls[idx_child]->isAdded())
+                    if (actrls[idx_child].isAdded())
                         break;  // means there was a static box to the right
 
-                    if (actrls[idx_child]->GetNode()->isGen(gen_wxStaticBoxSizer))
+                    if (actrls[idx_child].isGen(gen_wxStaticBoxSizer))
                     {
                         // Group boxes can have controls to the left and right that are lower than the top of the box. That
                         // means that they will have been sorted after the group box, but must be added before it.
 
-                        AddStaticBoxChildren(*actrls[idx_child], idx_child);
+                        AddStaticBoxChildren(actrls[idx_child], idx_child);
                     }
 
                     // Note that we add the child we are comparing to first.
-                    Adopt(horz_sizer.get(), actrls[idx_child]);
+                    Adopt(horz_sizer.get(), &actrls[idx_child]);
                     NextChild(idx_child);
                 }
 
@@ -361,20 +361,22 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
             }
             else
             {
-                if (child.GetNode()->isGen(gen_wxStaticBoxSizer))
+                if (actrls[first_child].isGen(gen_wxStaticBoxSizer))
                 {
-                    auto child_pos = FindChildPosition(child.GetNodePtr());
+                    auto child_pos = FindChildPosition(actrls[first_child].GetNodePtr());
                     ASSERT(child_pos);
                     if (!ttlib::is_found(child_pos))
                     {
                         continue;  // I'm doubtful it's ever possible for the node not to be found.
                     }
-                    AddStaticBoxChildren(child, child_pos);
+                    auto& test = actrls[first_child];
+                    // AddStaticBoxChildren(actrls[first_child], child_pos);
+                    AddStaticBoxChildren(test, child_pos);
 
                     // There may be a control to the left or right of the group box but not at the same top position.
 
-                    std::vector<resCtrl*> a_left_siblings;
-                    std::vector<resCtrl*> a_right_siblings;
+                    std::vector<resCtrl> a_left_siblings;
+                    std::vector<resCtrl> a_right_siblings;
 
                     // REVIEW: [KeyWorks - 11-07-2021] This will only work properly if the bottom of the group box isn't
                     // lower then it's siblings bottom -- otherwise, the controls might not be included in the array. The
@@ -383,12 +385,12 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
 
                     for (size_t side_child = idx_child + 1; side_child < actrls.size(); side_child++)
                     {
-                        if (actrls[side_child]->isAdded())
+                        if (actrls[side_child].isAdded())
                             continue;
 
-                        if (is_within_vertical(actrls[side_child], actrls[idx_child]))
+                        if (is_within_vertical(actrls, side_child, idx_child))
                         {
-                            if (actrls[side_child]->GetLeft() < actrls[idx_child]->GetLeft())
+                            if (actrls[side_child].GetLeft() < actrls[idx_child].GetLeft())
                             {
                                 a_left_siblings.emplace_back(actrls[side_child]);
                             }
@@ -405,24 +407,24 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, res
                     {
                         auto horz_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, vert_sizer.get());
                         if (a_left_siblings.size())
-                            AddSiblings(horz_sizer.get(), a_left_siblings, actrls[idx_child]);
-                        Adopt(horz_sizer, child);
+                            AddSiblings(horz_sizer.get(), a_left_siblings, &actrls[idx_child]);
+                        Adopt(horz_sizer, actrls[first_child]);
                         if (a_right_siblings.size())
-                            AddSiblings(horz_sizer.get(), a_right_siblings, actrls[idx_child]);
+                            AddSiblings(horz_sizer.get(), a_right_siblings, &actrls[idx_child]);
                         vert_sizer->Adopt(horz_sizer);
                     }
                     else
                     {
-                        Adopt(vert_sizer, child);
+                        Adopt(vert_sizer, actrls[first_child]);
                     }
 
                     continue;
                 }
 
                 // Not a group box, so just add the control normally
-                if (!child.isAdded())
+                if (!actrls[first_child].isAdded())
                 {
-                    Adopt(vert_sizer, child);
+                    Adopt(vert_sizer, actrls[first_child]);
                 }
             }
         }
@@ -436,7 +438,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
         box.GetNode()->prop_set_value(prop_flags, "wxEXPAND");
     }
 
-    std::vector<resCtrl*> group_ctrls;
+    std::vector<resCtrl> group_ctrls;
     CollectGroupControls(group_ctrls, idx_group_box);
 
     const auto& static_box = m_ctrls[idx_group_box];
@@ -446,13 +448,12 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
         if (result < 0)
         {
             // No alignment with the next control, so just add it normally
-            auto& child = reinterpret_cast<resCtrl&>(*group_ctrls[idx_group_child]);
-            Adopt(static_box.GetNodePtr(), child);
+            Adopt(static_box.GetNodePtr(), group_ctrls[idx_group_child]);
 
             // REVIEW: [KeyWorks - 06-16-2021] Does this actually happen in a group box?
-            int dlg_margin = (box.du_width() / 2) - child.du_width();
-            if (child.du_left() + du_width() < (box.du_width() - dlg_margin))
-                child.prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+            int dlg_margin = (box.du_width() / 2) - group_ctrls[idx_group_child].du_width();
+            if (group_ctrls[idx_group_child].du_left() + du_width() < (box.du_width() - dlg_margin))
+                group_ctrls[idx_group_child].prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
             continue;
         }
         else if (result == 0)
@@ -462,12 +463,11 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
             sizer->prop_set_value(prop_orientation, "wxHORIZONTAL");
             static_box.GetNode()->Adopt(sizer);
 
-            auto& child = reinterpret_cast<resCtrl&>(*group_ctrls[idx_group_child]);
-
-            while (idx_group_child < group_ctrls.size() && group_ctrls[idx_group_child]->du_top() == child.du_top())
+            while (idx_group_child < group_ctrls.size() &&
+                   group_ctrls[idx_group_child].du_top() == group_ctrls[idx_group_child].du_top())
             {
                 // Note that we add the child we are comparing to first.
-                Adopt(sizer, *group_ctrls[idx_group_child]);
+                Adopt(sizer, group_ctrls[idx_group_child]);
                 ++idx_group_child;
             }
             // In order to properly step through the loop
@@ -489,7 +489,7 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
             int cur_column = 1;
             for (; idx_group_child < group_ctrls.size();)
             {
-                if (group_ctrls[idx_group_child]->isAdded())
+                if (group_ctrls[idx_group_child].isAdded())
                 {
                     // A listbox with vertical siblings will have already added controls
                     ++idx_group_child;
@@ -497,19 +497,19 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
                 }
 
                 // Always add the first control in column 0
-                Adopt(grid_sizer, *group_ctrls[idx_group_child]);
+                Adopt(grid_sizer, group_ctrls[idx_group_child]);
 
-                if (group_ctrls[idx_group_child]->isGen(gen_wxStaticBoxSizer))
+                if (group_ctrls[idx_group_child].isGen(gen_wxStaticBoxSizer))
                 {
                     size_t idx_group_child_group_box = idx_group_box + 1;
                     for (; idx_group_child_group_box < m_ctrls.size(); ++idx_group_child_group_box)
                     {
-                        if (m_ctrls[idx_group_child_group_box].GetNode() == group_ctrls[idx_group_child]->GetNode())
+                        if (m_ctrls[idx_group_child_group_box].GetNode() == group_ctrls[idx_group_child].GetNode())
                             break;
                     }
                     if (idx_group_child_group_box < m_ctrls.size())
                     {
-                        AddStaticBoxChildren(*group_ctrls[idx_group_child], idx_group_child_group_box);
+                        AddStaticBoxChildren(group_ctrls[idx_group_child], idx_group_child_group_box);
                     }
                 }
 
@@ -517,13 +517,13 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 
                 // Special-case a listbox in the first column and a vertical row of controls in the second column
 
-                if (group_ctrls[idx_group_child]->isGen(gen_wxListBox))
+                if (group_ctrls[idx_group_child].isGen(gen_wxListBox))
                 {
                     // clang-format off
                     if (idx_group_child + 2 < group_ctrls.size() &&
-                        !group_ctrls[idx_group_child + 1]->isAdded() && !group_ctrls[idx_group_child + 2]->isAdded() &&
-                        group_ctrls[idx_group_child + 1]->du_left() == group_ctrls[idx_group_child + 2]->du_left() &&
-                        is_within_vertical(group_ctrls[idx_group_child + 2], group_ctrls[idx_group_child]))
+                        !group_ctrls[idx_group_child + 1].isAdded() && !group_ctrls[idx_group_child + 2].isAdded() &&
+                        group_ctrls[idx_group_child + 1].du_left() == group_ctrls[idx_group_child + 2].du_left() &&
+                        is_within_vertical(group_ctrls, idx_group_child + 2, idx_group_child))
                     // clang-format on
                     {
                         auto vertical_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_dlg_sizer.get());
@@ -533,27 +533,27 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
                         auto first_child = idx_group_child;
                         for (; idx_group_child < group_ctrls.size(); ++idx_group_child)
                         {
-                            if (group_ctrls[idx_group_child]->du_left() != group_ctrls[first_child]->du_left())
+                            if (group_ctrls[idx_group_child].du_left() != group_ctrls[first_child].du_left())
                                 break;
 
-                            if (!is_within_vertical(group_ctrls[idx_group_child], group_ctrls[listbox_child]))
+                            if (!is_within_vertical(group_ctrls, idx_group_child, listbox_child))
                                 break;
 
                             // Check for a pair of buttons aligned horizontally
                             if (idx_group_child + 1 < group_ctrls.size() &&
-                                group_ctrls[idx_group_child]->isGen(gen_wxButton) &&
-                                group_ctrls[idx_group_child + 1]->isGen(gen_wxButton) &&
-                                !group_ctrls[idx_group_child + 1]->isAdded() &&
-                                is_same_top(group_ctrls[idx_group_child], group_ctrls[idx_group_child + 1]))
+                                group_ctrls[idx_group_child].isGen(gen_wxButton) &&
+                                group_ctrls[idx_group_child + 1].isGen(gen_wxButton) &&
+                                !group_ctrls[idx_group_child + 1].isAdded() &&
+                                is_same_top(group_ctrls, idx_group_child, idx_group_child + 1))
                             {
                                 auto box_sizer = g_NodeCreator.CreateNode(gen_wxBoxSizer, m_dlg_sizer.get());
                                 vertical_sizer->Adopt(box_sizer);
-                                Adopt(box_sizer, *group_ctrls[idx_group_child]);
-                                Adopt(box_sizer, *group_ctrls[idx_group_child + 1]);
+                                Adopt(box_sizer, group_ctrls[idx_group_child]);
+                                Adopt(box_sizer, group_ctrls[idx_group_child + 1]);
                                 ++idx_group_child;
                                 continue;  // This will increment idx_group_child past the second button
                             }
-                            Adopt(vertical_sizer, *group_ctrls[idx_group_child]);
+                            Adopt(vertical_sizer, group_ctrls[idx_group_child]);
                         }
                         // In order to properly step through the loop
                         --idx_group_child;
@@ -564,22 +564,22 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
                 auto idx_column = idx_group_child + 1;
                 for (; idx_column < group_ctrls.size(); ++idx_column)
                 {
-                    if (is_same_top(group_ctrls[idx_group_child], group_ctrls[idx_column], true))
+                    if (is_same_top(group_ctrls, idx_group_child, idx_column, true))
                     {
-                        Adopt(grid_sizer, *group_ctrls[idx_column]);
+                        Adopt(grid_sizer, group_ctrls[idx_column]);
                         ++cur_column;
 
-                        if (group_ctrls[idx_column]->isGen(gen_wxStaticBoxSizer))
+                        if (group_ctrls[idx_column].isGen(gen_wxStaticBoxSizer))
                         {
                             size_t idx_group_child_group_box = idx_group_box + 1;
                             for (; idx_group_child_group_box < m_ctrls.size(); ++idx_group_child_group_box)
                             {
-                                if (m_ctrls[idx_group_child_group_box].GetNode() == group_ctrls[idx_column]->GetNode())
+                                if (m_ctrls[idx_group_child_group_box].GetNode() == group_ctrls[idx_column].GetNode())
                                     break;
                             }
                             if (idx_group_child_group_box < m_ctrls.size())
                             {
-                                AddStaticBoxChildren(*group_ctrls[idx_column], idx_group_child_group_box);
+                                AddStaticBoxChildren(group_ctrls[idx_column], idx_group_child_group_box);
                             }
                         }
                     }
@@ -647,18 +647,18 @@ int resForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const resCtrl* /*
     return static_cast<int>(max_columns);
 }
 
-int resForm::GroupGridSizerNeeded(std::vector<resCtrl*>& group_ctrls, size_t idx_start) const
+int resForm::GroupGridSizerNeeded(std::vector<resCtrl>& group_ctrls, size_t idx_start) const
 {
-    if (idx_start + 1 >= group_ctrls.size() || !is_same_top(group_ctrls[idx_start], group_ctrls[idx_start + 1]))
+    if (idx_start + 1 >= group_ctrls.size() || !is_same_top(group_ctrls, idx_start, idx_start + 1))
         return -1;
 
     size_t row_children = 2;
     while (idx_start + row_children < group_ctrls.size() &&
-           is_same_top(group_ctrls[idx_start], group_ctrls[idx_start + row_children], true))
+           is_same_top(group_ctrls, idx_start, idx_start + row_children, true))
         ++row_children;
 
     size_t idx_next_row = idx_start + row_children;
-    if (idx_next_row + 1 >= group_ctrls.size() || is_same_top(group_ctrls[idx_start], group_ctrls[idx_next_row + 1], true))
+    if (idx_next_row + 1 >= group_ctrls.size() || is_same_top(group_ctrls, idx_start, idx_next_row + 1, true))
     {
         return 0;  // only one aligned row, so a box sizer is needed
     }
@@ -667,11 +667,11 @@ int resForm::GroupGridSizerNeeded(std::vector<resCtrl*>& group_ctrls, size_t idx
 
     while (idx_next_row + 1 < group_ctrls.size())
     {
-        if (is_same_top(group_ctrls[idx_next_row], group_ctrls[idx_next_row + 1]))
+        if (is_same_top(group_ctrls, idx_next_row, idx_next_row + 1))
         {
             row_children = 2;
             while (idx_next_row + row_children < group_ctrls.size() &&
-                   is_same_top(group_ctrls[idx_next_row], group_ctrls[idx_next_row + row_children], true))
+                   is_same_top(group_ctrls, idx_next_row, idx_next_row + row_children, true))
                 ++row_children;
             if (row_children > max_columns)
                 max_columns = row_children;
@@ -682,7 +682,7 @@ int resForm::GroupGridSizerNeeded(std::vector<resCtrl*>& group_ctrls, size_t idx
     return static_cast<int>(max_columns);
 }
 
-void resForm::CollectGroupControls(std::vector<resCtrl*>& group_ctrls, size_t idx_parent)
+void resForm::CollectGroupControls(std::vector<resCtrl>& group_ctrls, size_t idx_parent)
 {
     auto& rc_parent = m_ctrls[idx_parent].GetDialogRect();
 
@@ -690,7 +690,7 @@ void resForm::CollectGroupControls(std::vector<resCtrl*>& group_ctrls, size_t id
     {
         if (rc_parent.Contains(m_ctrls[idx_child].GetDialogRect()))
         {
-            group_ctrls.emplace_back(&m_ctrls[idx_child]);
+            group_ctrls.emplace_back(m_ctrls[idx_child]);
 
             // If it's a group box, then we need to skip over it's children so that they are only added to the inner group
             if (m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
@@ -869,7 +869,7 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
             break;
 
         if (m_ctrls[idx_start].du_left() == m_ctrls[idx_start].du_left() &&
-            is_same_right(&m_ctrls[idx_start + 1], &m_ctrls[idx_start + 1]))
+            is_same_right(m_ctrls, idx_start + 1, idx_start + 1))
         {
             if (m_ctrls[idx_child].GetNode()->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
                 m_ctrls[idx_child].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");

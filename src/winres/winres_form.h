@@ -58,7 +58,7 @@ protected:
     // the matching button added.
     void CheckForStdButtons();
 
-    void AddSiblings(Node* parent_sizer, std::vector<resCtrl*>& actrls, resCtrl* pSibling = nullptr);
+    void AddSiblings(Node* parent_sizer, std::vector<resCtrl>& actrls, resCtrl* pSibling = nullptr);
 
     // Adopts child node and sets child flag to indicate it has been added.
     //
@@ -71,7 +71,7 @@ protected:
     void Adopt(const NodeSharedPtr& node, resCtrl& child);
 
     // Fills in m_group_ctrls with every control within the boundaries of the group box
-    void CollectGroupControls(std::vector<resCtrl*>& group_ctrls, size_t idx_parent);
+    void CollectGroupControls(std::vector<resCtrl>& group_ctrls, size_t idx_parent);
 
     // -1 if no horizontal alignment needed
     // 0 if box sizer needed
@@ -80,7 +80,7 @@ protected:
 
     // Similar to GridSizerNeeded(), but only processes m_group_ctrls. Returns total number
     // of columns required.
-    int GroupGridSizerNeeded(std::vector<resCtrl*>& group_ctrls, size_t idx_start) const;
+    int GroupGridSizerNeeded(std::vector<resCtrl>& group_ctrls, size_t idx_start) const;
 
     void AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box);
     void AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine);
@@ -109,10 +109,17 @@ protected:
     // If loose_check == true, any control can be -2 of the top of the other control.
     bool is_same_top(const resCtrl* left, const resCtrl* right, bool loose_check = false) const;
 
-    bool is_same_right(const resCtrl* left, const resCtrl* right) const;
+    // Returns true if child_a top/bottom is within child_b top/bottom. Only works with
+    // master vector of controls (m_ctrls)
+    bool is_within_vertical(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b) const;
 
-    // Returns true if left top/bottom is within right top/bottom
-    bool is_within_vertical(const resCtrl* left, const resCtrl* right) const;
+    // This will take into account a static text control to the left which is vertically centered
+    // with the control on the right.
+    //
+    // If loose_check == true, any control can be -2 of the top of the other control.
+    bool is_same_top(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b, bool loose_check = false) const;
+
+    bool is_same_right(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b) const;
 
     void CreateStdButton();
 

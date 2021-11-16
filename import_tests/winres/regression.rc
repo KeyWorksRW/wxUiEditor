@@ -11,8 +11,21 @@
 // Dialogs
 //
 
-
 // https://github.com/microsoft/Windows-classic-samples/Samples/Win7Samples/dataaccess/oledb/rowsetviewer/rowsetviewer.rc
+
+IDD_GETLISTVIEW DIALOG DISCARDABLE  0, 0, 334, 200
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Centered text: parent sizer needs wxExpand"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CONTROL         "List1",IDL_NAMES,"SysListView32",LVS_REPORT |
+                    LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,5,5,105,170
+    CONTROL         "List1",IDL_VALUES,"SysListView32",LVS_REPORT |
+                    LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,110,5,220,170
+    CTEXT           "Displays the rgBindings from the Accessor",IDT_HELPMSG,
+                    5,180,270,14,SS_CENTERIMAGE | SS_SUNKEN
+    DEFPUSHBUTTON   "OK",IDOK,280,180,50,14
+END
 
 IDD_ADDCOLUMN DIALOG DISCARDABLE  0, 0, 209, 175
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU

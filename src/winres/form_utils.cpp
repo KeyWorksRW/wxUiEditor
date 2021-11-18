@@ -199,3 +199,14 @@ bool resForm::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRe
 
     return true;
 }
+
+size_t resForm::FindChildPosition(const Node* node)
+{
+    for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
+    {
+        if (m_ctrls[idx_child].GetNode() == node)
+            return idx_child;
+    }
+
+    return static_cast<size_t>(-1);
+}

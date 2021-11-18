@@ -359,7 +359,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl>& actrls, resC
                         // Group boxes can have controls to the left and right that are lower than the top of the box. That
                         // means that they will have been sorted after the group box, but must be added before it.
 
-                        AddStaticBoxChildren(actrls[idx_child], idx_child);
+                        AddStaticBoxChildren(actrls[idx_child], FindChildPosition(actrls[idx_child].GetNode()));
                     }
 
                     // Note that we add the child we are comparing to first.
@@ -374,15 +374,7 @@ void resForm::AddSiblings(Node* parent_sizer, std::vector<resCtrl>& actrls, resC
             {
                 if (actrls[first_child].isGen(gen_wxStaticBoxSizer))
                 {
-                    auto child_pos = FindChildPosition(actrls[first_child].GetNodePtr());
-                    ASSERT(child_pos);
-                    if (!ttlib::is_found(child_pos))
-                    {
-                        continue;  // I'm doubtful it's ever possible for the node not to be found.
-                    }
-                    auto& test = actrls[first_child];
-                    // AddStaticBoxChildren(actrls[first_child], child_pos);
-                    AddStaticBoxChildren(test, child_pos);
+                    AddStaticBoxChildren(actrls[first_child], FindChildPosition(actrls[first_child].GetNode()));
 
                     // There may be a control to the left or right of the group box but not at the same top position.
 
@@ -512,16 +504,8 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 
                 if (group_ctrls[idx_group_child].isGen(gen_wxStaticBoxSizer))
                 {
-                    size_t idx_group_child_group_box = idx_group_box + 1;
-                    for (; idx_group_child_group_box < m_ctrls.size(); ++idx_group_child_group_box)
-                    {
-                        if (m_ctrls[idx_group_child_group_box].GetNode() == group_ctrls[idx_group_child].GetNode())
-                            break;
-                    }
-                    if (idx_group_child_group_box < m_ctrls.size())
-                    {
-                        AddStaticBoxChildren(group_ctrls[idx_group_child], idx_group_child_group_box);
-                    }
+                    AddStaticBoxChildren(group_ctrls[idx_group_child],
+                                         FindChildPosition(group_ctrls[idx_group_child].GetNode()));
                 }
 
                 // Now add the other columns
@@ -582,16 +566,8 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 
                         if (group_ctrls[idx_column].isGen(gen_wxStaticBoxSizer))
                         {
-                            size_t idx_group_child_group_box = idx_group_box + 1;
-                            for (; idx_group_child_group_box < m_ctrls.size(); ++idx_group_child_group_box)
-                            {
-                                if (m_ctrls[idx_group_child_group_box].GetNode() == group_ctrls[idx_column].GetNode())
-                                    break;
-                            }
-                            if (idx_group_child_group_box < m_ctrls.size())
-                            {
-                                AddStaticBoxChildren(group_ctrls[idx_column], idx_group_child_group_box);
-                            }
+                            AddStaticBoxChildren(group_ctrls[idx_column],
+                                                 FindChildPosition(group_ctrls[idx_column].GetNode()));
                         }
                     }
                     else
@@ -839,17 +815,6 @@ void resForm::CreateStdButton()
         m_stdButtonSizer->prop_set_value(prop_Cancel, "0");
         m_stdButtonSizer->prop_set_value(prop_flags, "wxEXPAND");
     }
-}
-
-size_t resForm::FindChildPosition(const NodeSharedPtr node)
-{
-    for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
-    {
-        if (m_ctrls[idx_child].GetNodePtr() == node)
-            return idx_child;
-    }
-
-    return static_cast<size_t>(-1);
 }
 
 size_t resForm::AddTwoColumnPairs(size_t idx_start)

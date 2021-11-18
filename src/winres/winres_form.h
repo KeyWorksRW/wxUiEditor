@@ -132,7 +132,7 @@ protected:
 
     // This will search through m_ctrls and find the index of the control matching the node
     // parameter. Returns -1 if not found.
-    size_t FindChildPosition(const NodeSharedPtr node);
+    size_t FindChildPosition(const Node* node);
 
     // Returns the index of the next control that has not already been added.
     //

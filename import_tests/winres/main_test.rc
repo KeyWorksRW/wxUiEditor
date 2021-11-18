@@ -214,6 +214,213 @@ BEGIN
     0
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+FRAMEMENU MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open\tEnter",                IDM_OPEN
+        MENUITEM "Edit\tF12",                   IDM_EDIT
+        MENUITEM "&Move...\tF7",                IDM_MOVE
+        MENUITEM "&Copy...\tF8",                IDM_COPY
+        MENUITEM "Copy to Clip&board\tCtrl+C",  IDM_COPYTOCLIPBOARD
+        MENUITEM "Cut to Clipboard\tCtrl+X",    IDM_CUTTOCLIPBOARD
+        MENUITEM "&Paste\tCtrl+V",              IDM_PASTE
+        MENUITEM "&Delete...\tDel",             IDM_DELETE
+        MENUITEM "Re&name...\tF2",              IDM_RENAME
+        MENUITEM "Proper&ties...\tAlt+Enter",   IDM_ATTRIBS
+        MENUITEM SEPARATOR
+        MENUITEM "Compre&ss...",                IDM_COMPRESS
+        MENUITEM "&Uncompress...",              IDM_UNCOMPRESS
+        MENUITEM SEPARATOR
+        MENUITEM "&Run...",                     IDM_RUN
+        MENUITEM "Pr&int...",                   IDM_PRINT
+        MENUITEM "&Associate...",               IDM_ASSOCIATE
+        MENUITEM SEPARATOR
+        MENUITEM "Cr&eate Directory...\tCtrl+Shift+N", IDM_MAKEDIR
+        MENUITEM "Searc&h...\tCtrl+F",          IDM_SEARCH
+        MENUITEM "Select &Files...",            IDM_SELECT
+        MENUITEM "Start Bash Shell...",         IDM_STARTBASHSHELL
+        MENUITEM "Start Cmd Shel&l...",         IDM_STARTCMDSHELL
+        MENUITEM "Start Po&werShell...",        IDM_STARTPOWERSHELL
+        MENUITEM "&Goto Directory...\tCtrl+G",  IDM_GOTODIR
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       IDM_EXIT
+    END
+    POPUP "&Disk"
+    BEGIN
+        MENUITEM "&Copy Disk...",               IDM_DISKCOPY
+        MENUITEM "&Label Disk...",              IDM_LABEL
+        MENUITEM SEPARATOR
+        MENUITEM "&Format Drive...",            IDM_FORMAT
+        MENUITEM SEPARATOR
+        MENUITEM "&Select Drive...",            IDM_DRIVESMORE
+    END
+    POPUP "&Tree"
+    BEGIN
+        MENUITEM "E&xpand One Level\t+",        IDM_EXPONE
+        MENUITEM "Expand &Branch\t*",           IDM_EXPSUB
+        MENUITEM "Expand &All\tCtrl+*",         IDM_EXPALL
+        MENUITEM "&Collapse Branch\t-",         IDM_COLLAPSE
+        MENUITEM SEPARATOR
+        MENUITEM "&Indicate Expandable Branches", IDM_ADDPLUSES
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "T&ree and Directory",         IDM_BOTH
+        MENUITEM "Tr&ee Only",                  IDM_TREEONLY
+        MENUITEM "Directory &Only",             IDM_DIRONLY
+        MENUITEM SEPARATOR
+        MENUITEM "Sp&lit",                      IDM_SPLIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Name",                       IDM_VNAME
+        MENUITEM "&All File Details",           IDM_VDETAILS, CHECKED, INACTIVE
+        MENUITEM "&Partial Details...",         IDM_VOTHER
+        MENUITEM SEPARATOR
+        MENUITEM "&Sort by Name",               IDM_BYNAME
+        MENUITEM "Sort &by Type",               IDM_BYTYPE
+        MENUITEM "Sort by Si&ze",               IDM_BYSIZE
+        MENUITEM "Sort by &Date",               IDM_BYDATE
+        MENUITEM "Sort &forward Date",          IDM_BYFDATE
+        MENUITEM SEPARATOR
+        MENUITEM "By File &Type...",            IDM_VINCLUDE
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "&Confirmation...",            IDM_CONFIRM
+        MENUITEM "&Font...",                    IDM_FONT
+        MENUITEM "Customize Tool&bar...",       IDM_TOOLBARCUST
+        MENUITEM "Additional &Preferences",     IDM_PREF
+        MENUITEM SEPARATOR
+        MENUITEM "&Toolbar",                    IDM_TOOLBAR
+        MENUITEM "&Drivebar",                   IDM_DRIVEBAR
+        MENUITEM "&Status Bar",                 IDM_STATUSBAR
+        MENUITEM SEPARATOR
+        MENUITEM "&Minimize on Use",            IDM_MINONRUN
+        MENUITEM "Create &Goto Index on Launch", IDM_INDEXONLAUNCH
+        MENUITEM "Save Settings on &Exit",      IDM_SAVESETTINGS
+    END
+    POPUP "&Security"
+    BEGIN
+        MENUITEM "&Permissions...",             IDM_PERMISSIONS
+        MENUITEM "&Auditing...",                IDM_AUDITING
+        MENUITEM "&Owner...",                   IDM_OWNER
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&New Window",                 IDM_NEWWINDOW
+        MENUITEM "&Cascade\tShift+F5",          IDM_CASCADE
+        MENUITEM "Tile &Horizontally",          IDM_TILEHORIZONTALLY
+        MENUITEM "&Tile Vertically\tShift+F4",  IDM_TILE
+        MENUITEM "&Arrange Icons",              IDM_ARRANGE
+        MENUITEM "&Refresh\tF5",                IDM_REFRESH
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Contents",                   IDM_HELPINDEX
+        MENUITEM "&Search for Help on...",      IDM_HELPKEYS
+        MENUITEM "&How to Use Help",            IDM_HELPHELP
+        MENUITEM SEPARATOR
+        MENUITEM "&About File Manager...",      IDM_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDM_OPEN,        "Opens selected item"
+    IDM_EDIT,        "Edits selected item using notepad.exe"
+    IDM_MOVE,        "Moves selected item"
+    IDM_COPY,        "Copies files and directories"
+    IDM_COPYTOCLIPBOARD, "Copies one or more files to the clipboard"
+	IDM_CUTTOCLIPBOARD, "Cuts one or more files to the clipboard"
+    IDM_PASTE,		"Paste file from clipboard to current directory"
+    IDM_COMPRESS,    "Compresses a file or directory"
+    IDM_UNCOMPRESS,  "Uncompresses a file or directory"
+    IDM_DELETE,      "Deletes files and directories"
+    IDM_RENAME,      "Renames a file or directory"
+    IDM_ATTRIBS,     "Sets file attributes and displays properties"
+    IDM_UNDELETE,    "Retrieves previously deleted files"
+    IDM_RUN, "Starts or opens an application or document"
+    IDM_PRINT,       "Prints a document"
+    IDM_ASSOCIATE,   "Associates a file with an application"
+    IDM_MAKEDIR,     "Creates a directory"
+    IDM_SEARCH,      "Searches for files and directories"
+    IDM_SELECT,      "Selects files and directories"
+    IDM_EXIT,        "Quits File Manager"
+    IDM_DISKCOPY,    "Copies the contents of a floppy disk"
+    IDM_LABEL,       "Assigns or changes a disk's volume label"
+    IDM_FORMAT,      "Formats a drive"
+//    IDM_SYSDISK,     "Copies MS-DOS files to a floppy disk"
+    IDM_CONNECT,     "Connects to a network drive"
+    IDM_DISCONNECT,  "Disconnects from a network drive"
+//    IDM_CONNECTIONS,       "Network Connections..."
+//    IDM_SHARES,    "View Shared Directories..."
+    IDM_SHAREAS,     "Shares a directory"
+    IDM_STOPSHARE,   "Stops sharing a directory"
+
+    IDM_DRIVESMORE,  "Selects a different drive"
+
+    IDM_EXPONE,      "Displays another level of a directory"
+    IDM_EXPSUB,      "Displays all levels of a directory"
+    IDM_EXPALL,      "Displays all levels of all directories"
+    IDM_COLLAPSE,    "Collapses all directories of a selected directory"
+    IDM_ADDPLUSES,   "Indicates directories that have subdirectories"
+
+    IDM_BOTH,        "Displays the directory tree and the contents of the current directory"
+    IDM_TREEONLY,    "Displays the directory tree"
+    IDM_DIRONLY,     "Displays the contents of the current directory"
+    IDM_SPLIT,       "Splits a directory window or moves the split bar"
+    IDM_VNAME,       "Shows filenames only"
+    IDM_VDETAILS,    "Shows all file details"
+    IDM_VOTHER,      "Shows partial file details"
+    IDM_BYNAME,      "Sorts files by name"
+    IDM_BYTYPE,      "Sorts files by type"
+    IDM_BYSIZE,      "Sorts files by size"
+    IDM_BYDATE,      "Sorts files by date"
+    IDM_BYFDATE,     "Sorts files by forward date"
+    IDM_VINCLUDE,    "Shows files of a specified type"
+
+    IDM_CONFIRM,     "Controls confirmation messages"
+    IDM_FONT,        "Changes the File Manager font"
+
+    IDM_TOOLBARCUST, "Customizes the toolbar"
+    IDM_TOOLBAR,     "Displays or hides the toolbar"
+    IDM_DRIVEBAR,    "Displays or hides the drivebar"
+    IDM_STATUSBAR,   "Displays or hides the status bar"
+    IDM_NEWWINONCONNECT,     "Opens a new window when you connect"
+
+    IDM_MINONRUN,    "Reduces File Manager to an icon at startup"
+    IDM_INDEXONLAUNCH, "Creates an index for Goto Directory when File Manager launches"
+    IDM_SAVESETTINGS,        "Saves settings when you quit File Manager"
+
+    IDM_NEWWINDOW,   "Opens a new window"
+    IDM_CASCADE,     "Cascades windows"
+    IDM_TILEHORIZONTALLY,    "Tiles windows horizontally"
+    IDM_TILE,        "Tiles windows vertically"
+    IDM_ARRANGE,     "Arranges icons"
+    IDM_REFRESH,     "Updates the contents of a window"
+
+    IDM_PERMISSIONS  "View or set permission information on the selected item(s)"
+    IDM_AUDITING     "View or set auditing information on the selected item(s)"
+    IDM_OWNER        "View or take ownership of the selected item(s)"
+
+    IDM_HELPINDEX,   "Displays contents for File Manager Help"
+    IDM_HELPKEYS,    "Searches for a topic in File Manager Help"
+    IDM_HELPHELP,    "Displays information about using Help"
+    IDM_ABOUT,       "Displays information about File Manager"
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

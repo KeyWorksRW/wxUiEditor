@@ -167,6 +167,20 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
 
     try
     {
+        // String tables need to be processed first because we need the id in case it's used as the help string for a menu.
+        m_curline = file.FindLineContaining("STRINGTABLE");
+        if (ttlib::is_found(m_curline))
+        {
+            for (; m_curline < file.size(); ++m_curline)
+            {
+                auto curline = file[m_curline].view_nonspace();
+                if (curline.is_sameprefix("STRINGTABLE"))
+                {
+                    ParseStringTable(file);
+                }
+            }
+        }
+
         for (m_curline = 0; m_curline < file.size(); ++m_curline)
         {
             auto curline = file[m_curline].view_nonspace();
@@ -275,6 +289,10 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                 }
                 ParseMenu(file);
             }
+            else if (curline.is_sameprefix("STRINGTABLE"))
+            {
+                ParseStringTable(file);
+            }
         }
     }
 
@@ -292,8 +310,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     if (!isNested)
     {
         std::sort(m_forms.begin(), m_forms.end(),
-                  [](resForm a, resForm b)
-                  { return (a.GetFormName().compare(b.GetFormName()) < 0); });
+                  [](resForm a, resForm b) { return (a.GetFormName().compare(b.GetFormName()) < 0); });
 
         InsertDialogs(forms);
     }
@@ -358,6 +375,41 @@ void WinResource::ParseMenu(ttlib::textfile& file)
     }
 }
 
+void WinResource::ParseStringTable(ttlib::textfile& file)
+{
+    for (++m_curline; m_curline < file.size(); ++m_curline)
+    {
+        auto line = file[m_curline].subview(file[m_curline].find_nonspace());
+        if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
+            continue;
+
+        if (line.is_sameprefix("END") || line.is_sameprefix("}"))
+        {
+            break;
+        }
+        if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
+        {
+            continue;
+        }
+
+        auto pos = line.find_space();
+        if (ttlib::is_found(pos))
+        {
+            ttlib::cstr id(line.substr(0, pos));
+            id.trim(tt::TRIM::right);
+            if (id.back() == ',')
+                id.pop_back();
+
+            pos = line.find_nonspace(pos);
+            if (ttlib::is_found(pos))
+            {
+                ttlib::cstr text(line.view_substr(pos));
+                m_map_stringtable[id] = text;
+            }
+        }
+    }
+}
+
 void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
 {
     if (dialogs.size())
@@ -418,6 +470,14 @@ std::optional<ttlib::cstr> WinResource::FindIcon(const std::string& id)
 std::optional<ttlib::cstr> WinResource::FindBitmap(const std::string& id)
 {
     if (auto result = m_map_bitmaps.find(id); result != m_map_bitmaps.end())
+        return result->second;
+    else
+        return {};
+}
+
+std::optional<ttlib::cstr> WinResource::FindStringID(const std::string& id)
+{
+    if (auto result = m_map_stringtable.find(id); result != m_map_stringtable.end())
         return result->second;
     else
         return {};

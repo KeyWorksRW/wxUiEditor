@@ -155,6 +155,11 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
                     {
                         id.trim(tt::TRIM::right);
                         item->prop_set_value(prop_id, id);
+                        auto help = m_pWinResource->FindStringID(ttlib::cstr() << id);
+                        if (help)
+                        {
+                            item->prop_set_value(prop_help, help.value());
+                        }
                     }
                     else
                     {
@@ -171,8 +176,14 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
                         {
                             item->prop_set_value(prop_disabled, true);
                         }
+                        auto help = m_pWinResource->FindStringID(ttlib::cstr() << item_id);
+                        if (help)
+                        {
+                            item->prop_set_value(prop_help, help.value());
+                        }
                     }
                 }
+
             }
         }
     }

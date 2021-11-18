@@ -28,8 +28,9 @@ public:
     bool ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& forms, bool isNested = false);
     void InsertDialogs(std::vector<ttlib::cstr>& dialogs);
 
-    std::optional<ttlib::cstr> FindIcon(const std::string& id);
     std::optional<ttlib::cstr> FindBitmap(const std::string& id);
+    std::optional<ttlib::cstr> FindIcon(const std::string& id);
+    std::optional<ttlib::cstr> FindStringID(const std::string& id);
 
     auto& GetIncludeLines() { return m_include_lines; }
 
@@ -37,6 +38,7 @@ protected:
     void FormToNode(resForm& form);
     void ParseDialog(ttlib::textfile& file);
     void ParseMenu(ttlib::textfile& file);
+    void ParseStringTable(ttlib::textfile& file);
 
 private:
     ttlib::cstr m_RcFilename;
@@ -50,8 +52,9 @@ private:
     std::vector<resForm> m_forms;
     std::set<ttlib::cstr> m_include_lines;
 
-    std::map<std::string, ttlib::cstr> m_map_icons;
     std::map<std::string, ttlib::cstr> m_map_bitmaps;
+    std::map<std::string, ttlib::cstr> m_map_icons;
+    std::map<std::string, ttlib::cstr> m_map_stringtable;
 
     size_t m_curline;
 

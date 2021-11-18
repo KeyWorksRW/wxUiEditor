@@ -31,10 +31,11 @@ public:
     };
 
     void ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine);
+    void ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine);
 
     // Remove outer quotes, prefix a digit with id_ -- this is how the id gets stored in the
     // dialog.
-    ttlib::cstr ConvertDialogId(ttlib::cview id);
+    ttlib::cstr ConvertFormID(ttlib::cview id);
 
     // Call this after
     void CreateDialogLayout();

@@ -45,7 +45,7 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
 
     ttlib::cstr value;  // General purpose string we can use throughout this function
     value = line.substr(0, end);
-    m_form_node->prop_set_value(prop_class_name, ConvertDialogId(value));
+    m_form_node->prop_set_value(prop_class_name, ConvertFormID(value));
 
 #if defined(_DEBUG)
     m_form_id = m_form_node->prop_as_string(prop_class_name);
@@ -217,7 +217,7 @@ void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
     m_form_node->prop_set_value(prop_name, updated_style);
 }
 
-ttlib::cstr resForm::ConvertDialogId(ttlib::cview id)
+ttlib::cstr resForm::ConvertFormID(ttlib::cview id)
 {
     id.moveto_nonspace();
     ttlib::cstr value;

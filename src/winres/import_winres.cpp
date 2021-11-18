@@ -261,6 +261,20 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                 }
                 ParseDialog(file);
             }
+            else if (curline.contains(" MENU"))
+            {
+                if (forms.size())
+                {
+                    auto pos_end = curline.find(' ');
+                    if (auto result = std::find(forms.begin(), forms.end(), curline.substr(0, pos_end));
+                        result == forms.end())
+                    {
+                        // menu id wasn't in the list, so ignore it
+                        continue;
+                    }
+                }
+                ParseMenu(file);
+            }
         }
     }
 
@@ -317,6 +331,33 @@ void WinResource::ParseDialog(ttlib::textfile& file)
     }
 }
 
+void WinResource::ParseMenu(ttlib::textfile& file)
+{
+    try
+    {
+        auto line = file[m_curline].subview();
+        auto end = line.find_space();
+        if (end == tt::npos)
+            throw std::invalid_argument("Expected an ID then a MENU.");
+
+        auto settings = line.subview(line.find_nonspace(end));
+
+        if (!settings.is_sameprefix("MENU"))  // verify this is a dialog
+            throw std::invalid_argument("Expected an ID then a MENU.");
+
+        auto& form = m_forms.emplace_back();
+        form.ParseMenu(this, file, m_curline);
+    }
+    catch (const std::exception& e)
+    {
+        MSG_ERROR(e.what());
+        wxMessageBox((ttlib::cstr() << "Problem parsing " << m_RcFilename << " at around line " << m_curline + 1 << "\n\n"
+                                    << e.what())
+                         .wx_str(),
+                     "RC Parser");
+    }
+}
+
 void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
 {
     if (dialogs.size())
@@ -325,7 +366,7 @@ void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
         {
             for (auto& dlg: m_forms)
             {
-                if (dlg.ConvertDialogId(dlg_name).is_sameas(dlg.GetFormName()))
+                if (dlg.ConvertFormID(dlg_name).is_sameas(dlg.GetFormName()))
                 {
                     FormToNode(dlg);
                     break;

@@ -36,6 +36,7 @@ public:
 protected:
     void FormToNode(resForm& form);
     void ParseDialog(ttlib::textfile& file);
+    void ParseMenu(ttlib::textfile& file);
 
 private:
     ttlib::cstr m_RcFilename;

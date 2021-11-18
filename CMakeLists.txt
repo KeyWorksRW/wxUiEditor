@@ -158,6 +158,7 @@ add_executable(wxUiEditor WIN32
     src/winres/import_winres.cpp    # Import a Windows resource file
     src/winres/winres_ctrl.cpp      # Process Windows Resource control data
     src/winres/winres_dlg.cpp       # Process a Windows Resource DIALOG or DIALOGEX
+    src/winres/winres_menu.cpp      # Process a Windows Resource MENU
     src/winres/winres_images.cpp    # resCtrl class image/icon functions
     src/winres/winres_layout.cpp    # resForm layout code
     src/winres/winres_styles.cpp    # resCtrl class style processing functions

@@ -128,6 +128,7 @@ Files:
     winres/import_winres.cpp    # Import a Windows resource file
     winres/winres_ctrl.cpp      # Process Windows Resource control data
     winres/winres_dlg.cpp       # Process a Windows Resource DIALOG or DIALOGEX
+    winres/winres_menu.cpp      # Process a Windows Resource MENU
     winres/winres_images.cpp    # resCtrl class image/icon functions
     winres/winres_layout.cpp    # resForm layout code
     winres/winres_styles.cpp    # resCtrl style processing functions

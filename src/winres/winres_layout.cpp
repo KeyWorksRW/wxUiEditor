@@ -31,6 +31,7 @@ void resForm::CreateDialogLayout()
     // dlg_sizer is the top level sizer for the entire dialog
 
     m_dlg_sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, m_form_node.get());
+    ASSERT(m_dlg_sizer);
     m_dlg_sizer->prop_set_value(prop_var_name, "dlg_sizer");
     m_form_node->Adopt(m_dlg_sizer);
     CheckForStdButtons();

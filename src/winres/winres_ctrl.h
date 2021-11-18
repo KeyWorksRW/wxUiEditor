@@ -68,6 +68,8 @@ public:
     auto& GetOrginalLine() { return m_original_line; }
 #endif  // _DEBUG
 
+    NodeSharedPtr SetNodePtr(NodeSharedPtr node) { m_node = node; return m_node; }
+
 protected:
     // This will map window styles to wxWidgets styles and append them to prop_style
     void ParseStyles(ttlib::cview line);

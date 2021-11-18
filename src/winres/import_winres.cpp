@@ -385,11 +385,20 @@ void WinResource::InsertDialogs(std::vector<ttlib::cstr>& dialogs)
 
 void WinResource::FormToNode(resForm& form)
 {
-    form.CreateDialogLayout();
+    if (form.GetFormType() == resForm::form_dialog || form.GetFormType() == resForm::form_panel)
+        form.CreateDialogLayout();
 
     switch (form.GetFormType())
     {
         case resForm::form_dialog:
+        case resForm::form_panel:
+            {
+                auto node = g_NodeCreator.MakeCopy(form.GetFormNode());
+                m_project->Adopt(node);
+            }
+            return;
+
+        case resForm::form_menu:
             {
                 auto node = g_NodeCreator.MakeCopy(form.GetFormNode());
                 m_project->Adopt(node);

@@ -42,8 +42,138 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
         if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
         {
             ++curTxtLine;
-            ParseControls(txtfile, curTxtLine);
+            ParseMenus(txtfile, curTxtLine);
             break;
+        }
+    }
+}
+
+void resForm::ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine)
+{
+    NodeSharedPtr parent { nullptr };
+
+    for (; curTxtLine < txtfile.size(); ++curTxtLine)
+    {
+        auto line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
+        if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
+            continue;
+
+        if (line.is_sameprefix("END") || line.is_sameprefix("}"))
+        {
+            break;
+        }
+
+        if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
+        {
+            if (parent)
+            {
+                ++curTxtLine;
+                ParseMenuItem(parent.get(), txtfile, curTxtLine);
+                parent = nullptr;
+            }
+            continue;
+        }
+
+        if (line.is_sameprefix("POPUP"))
+        {
+            auto& control = m_ctrls.emplace_back();
+            parent = control.SetNodePtr(g_NodeCreator.NewNode(gen_wxMenu));
+            m_form_node->Adopt(parent);
+            line.moveto_nextword();
+            parent->prop_set_value(prop_label, line.view_substr(0));
+        }
+    }
+}
+
+void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curTxtLine)
+{
+    NodeSharedPtr sub_parent { nullptr };
+    for (; curTxtLine < txtfile.size(); ++curTxtLine)
+    {
+        auto line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
+        if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
+            continue;
+
+        else if (line.is_sameprefix("END") || line.is_sameprefix("}"))
+        {
+            break;
+        }
+
+        else if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
+        {
+            if (sub_parent)
+            {
+                ++curTxtLine;
+                ParseMenuItem(sub_parent.get(), txtfile, curTxtLine);
+                sub_parent = nullptr;
+            }
+            continue;
+        }
+
+        else if (line.is_sameprefix("POPUP"))
+        {
+            auto& control = m_ctrls.emplace_back();
+            sub_parent = control.SetNodePtr(g_NodeCreator.NewNode(gen_submenu));
+            parent->Adopt(sub_parent);
+            line.moveto_nextword();
+            sub_parent->prop_set_value(prop_label, line.view_substr(0));
+        }
+        else if (line.is_sameprefix("MENUITEM"))
+        {
+            line.moveto_nextword();
+            if (line.is_sameprefix("SEPARATOR"))
+            {
+                auto& control = m_ctrls.emplace_back();
+                auto separator = control.SetNodePtr(g_NodeCreator.NewNode(gen_separator));
+                parent->Adopt(separator);
+            }
+            else
+            {
+                auto& control = m_ctrls.emplace_back();
+                auto item = control.SetNodePtr(g_NodeCreator.NewNode(gen_wxMenuItem));
+                parent->Adopt(item);
+                ttlib::sview label = line.view_substr(0);
+                auto end = label.find("\\t");
+                if (ttlib::is_found(end))
+                {
+                    item->prop_set_value(prop_label, label.substr(0, end));
+                    label.remove_prefix(end < label.size() ? end + 2 : end);
+                    item->prop_set_value(prop_shortcut, label);
+                }
+                else
+                {
+                    item->prop_set_value(prop_label, label);
+                }
+
+                auto pos = line.find("\",");
+                if (ttlib::is_found(pos))
+                {
+                    ttlib::sview id = line.subview(pos + 3);
+                    id.moveto_nonspace();
+                    end = id.find_first_of(',');
+                    if (!ttlib::is_found(end))
+                    {
+                        id.trim(tt::TRIM::right);
+                        item->prop_set_value(prop_id, id);
+                    }
+                    else
+                    {
+                        ttlib::sview item_id = id.substr(0, end);
+                        item_id.trim(tt::TRIM::right);
+                        item->prop_set_value(prop_id, item_id);
+                        id.remove_prefix(end < id.size() ? end + 1 : end);
+                        id.moveto_nonspace();
+                        if (id.contains("CHECKED"))
+                        {
+                            item->prop_set_value(prop_checked, true);
+                        }
+                        if (id.contains("INACTIVE"))
+                        {
+                            item->prop_set_value(prop_disabled, true);
+                        }
+                    }
+                }
+            }
         }
     }
 }

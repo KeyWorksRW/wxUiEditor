@@ -87,6 +87,8 @@ protected:
     void AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine);
     void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
     void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
+    void ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine);
+    void ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curTxtLine);
 
     // Handle static text that needs to be centered
     void CheckForCenteredText(Node* node_parent);

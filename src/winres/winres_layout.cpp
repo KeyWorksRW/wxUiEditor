@@ -182,7 +182,7 @@ void resForm::CreateDialogLayout()
             while (idx_child < m_ctrls.size() && is_same_top(m_ctrls, first_child, idx_child))
             {
                 if (m_ctrls[idx_child].isAdded())
-                    break;  // This is most like a standard button which has already been dealt with
+                    break;
 
                 if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer))
                 {
@@ -748,7 +748,8 @@ void resForm::CheckForStdButtons()
     if (m_form_type != form_dialog)
         return;  // Only dialogs can have a wxStdDialogButtonSizer
 
-    for (size_t idx_child = 0; idx_child < m_ctrls.size(); ++idx_child)
+    size_t idx_child = 0;
+    while (idx_child < m_ctrls.size())
     {
         if (m_ctrls[idx_child].isGen(gen_wxButton))
         {
@@ -765,7 +766,7 @@ void resForm::CheckForStdButtons()
                     m_stdButtonSizer->prop_set_value(prop_Yes, "1");
                     if (btn_node->prop_as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Yes");
-                    m_ctrls[idx_child].setAdded();
+                    m_ctrls.erase(m_ctrls.begin() + idx_child);
                 }
                 else if (btn_node->prop_as_string(prop_label).is_sameas("Save", tt::CASE::either) ||
                          btn_node->prop_as_string(prop_label).is_sameas("&Save", tt::CASE::either))
@@ -774,14 +775,14 @@ void resForm::CheckForStdButtons()
                     m_stdButtonSizer->prop_set_value(prop_Save, "1");
                     if (btn_node->prop_as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Save");
-                    m_ctrls[idx_child].setAdded();
+                    m_ctrls.erase(m_ctrls.begin() + idx_child);
                 }
                 else if (btn_node->prop_as_string(prop_label).is_sameas("OK", tt::CASE::either) ||
                          btn_node->prop_as_string(prop_label).is_sameas("&OK", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_OK, "1");
-                    m_ctrls[idx_child].setAdded();
+                    m_ctrls.erase(m_ctrls.begin() + idx_child);
                 }
             }
             else if (btn_node->prop_as_string(prop_id) == "wxID_CANCEL")
@@ -793,7 +794,7 @@ void resForm::CheckForStdButtons()
                     m_stdButtonSizer->prop_set_value(prop_Close, "1");
                     if (btn_node->prop_as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Close");
-                    m_ctrls[idx_child].setAdded();
+                    m_ctrls.erase(m_ctrls.begin() + idx_child);
                 }
                 else if (btn_node->prop_as_string(prop_label).is_sameas("Cancel", tt::CASE::either) ||
                          btn_node->prop_as_string(prop_label).is_sameas("&Cancel", tt::CASE::either))
@@ -802,7 +803,7 @@ void resForm::CheckForStdButtons()
                     m_stdButtonSizer->prop_set_value(prop_Cancel, "1");
                     if (btn_node->prop_as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Cancel");
-                    m_ctrls[idx_child].setAdded();
+                    m_ctrls.erase(m_ctrls.begin() + idx_child);
                 }
             }
             else if (btn_node->prop_as_string(prop_id) == "wxID_APPLY")
@@ -812,7 +813,7 @@ void resForm::CheckForStdButtons()
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Apply, "1");
-                    m_ctrls[idx_child].setAdded();
+                    m_ctrls.erase(m_ctrls.begin() + idx_child);
                 }
             }
             else if (btn_node->prop_as_string(prop_id) == "wxID_HELP")
@@ -822,10 +823,11 @@ void resForm::CheckForStdButtons()
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Help, "1");
-                    m_ctrls[idx_child].setAdded();
+                    m_ctrls.erase(m_ctrls.begin() + idx_child);
                 }
             }
         }
+        ++idx_child;
     }
 }
 

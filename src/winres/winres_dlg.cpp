@@ -40,7 +40,14 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     m_form_node = g_NodeCreator.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
 
 #if defined(_DEBUG)
-    m_form_node->prop_set_value(prop_base_src_includes, ttlib::cstr() << "// " << txtfile.filename());
+    ttlib::cstr fullpath;
+    fullpath.assignCwd();
+    fullpath.append_filename(txtfile.filename().filename());
+#if defined(_WIN32)
+    // VSCode File Open dialog can't handle forward slashes on Windows
+    fullpath.forwardslashestoback();
+#endif  // _WIN32
+    m_form_node->prop_set_value(prop_base_src_includes, ttlib::cstr() << "// " << fullpath);
 #endif  // _DEBUG
 
     ttlib::cstr value;  // General purpose string we can use throughout this function

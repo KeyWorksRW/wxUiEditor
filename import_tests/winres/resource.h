@@ -50,6 +50,7 @@
 #define IDM_STARTPOWERSHELL         128
 #define IDM_STARTBASHSHELL          129
 #define IDM_CLOSEWINDOW             130
+#define IDD_KRB_ADD_REALM           181
 #define IDM_GROUP_ATTRIBS           199
 #define IDM_DISKCOPY                201
 #define IDM_LABEL                   202
@@ -129,6 +130,9 @@
 #define IDCOMBO_RC_FILES            1043
 #define IDCHECK_RESIZABLE_CDIALOG   1045
 #define IDCHECK_RESIZABLE_CAXDIALOG 1046
+#define IDC_STATIC_REALM_HOSTNAME   1098
+#define IDC_STATIC_NOTE             1129
+#define IDC_EDIT_REALM              1131
 #define IDE_COLNAME                 1297
 #define IDC_COLLIST                 1370
 #define IDB_ADDCOL                  1372

@@ -203,6 +203,18 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,328,194,135,10
 END
 
+IDD_KRB_ADD_REALM DIALOG 0, 0, 295, 94
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add a Kerberos Realm"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_REALM,70,39,213,12,ES_UPPERCASE | ES_AUTOHSCROLL
+    PUSHBUTTON      "&OK",IDOK,232,67,50,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,179,67,50,14
+    LTEXT           "Kerberos Realm:",IDC_STATIC_REALM_HOSTNAME,12,41,53,8
+    LTEXT           "NOTE: You are about to add a Realm to the ""Kerberos Realm"" Listbox!!!",IDC_STATIC_NOTE,11,15,271,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -243,6 +255,14 @@ BEGIN
 
     IDD_STYLER_DLG, DIALOG
     BEGIN
+    END
+
+    IDD_KRB_ADD_REALM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 87
     END
 END
 #endif    // APSTUDIO_INVOKED

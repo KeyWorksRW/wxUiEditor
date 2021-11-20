@@ -203,7 +203,7 @@ ttlib::cview resCtrl::GetLabel(ttlib::cview line)
 
 ttlib::cview resCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
 {
-    ASSERT(line[0] == '"');
+    ASSERT(line.at(0) == '"');
 
     // We can't use str.AssignSubString() because in a resource file, quotes are escaped simply by doubling them.
 

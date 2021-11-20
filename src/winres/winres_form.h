@@ -98,6 +98,10 @@ protected:
     // and size is identical
     size_t AddTwoColumnPairs(size_t idx_start);
 
+    // This will create a 2-column flex grid and add controls as long as each row contains
+    // a static text and edit control pair
+    size_t AddTwoColumnStaticText(size_t idx_start);
+
     // Sorts all controls both vertically and horizontally.
     void SortCtrls();
 

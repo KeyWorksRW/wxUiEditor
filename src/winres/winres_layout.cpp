@@ -103,6 +103,16 @@ void resForm::CreateDialogLayout()
                         --idx_child;
                         continue;
                     }
+
+                    // Check for a double column of static text + edit control pairs
+                    else if (m_ctrls[idx_child].isGen(gen_wxStaticText) && m_ctrls[idx_child + 2].isGen(gen_wxStaticText) &&
+                             m_ctrls[idx_child + 1].isGen(gen_wxTextCtrl) && m_ctrls[idx_child + 3].isGen(gen_wxTextCtrl))
+                    {
+                        idx_child = AddTwoColumnStaticText(idx_child);
+                        // In order to properly step through the loop
+                        --idx_child;
+                        continue;
+                    }
                 }
 
                 // Check for a list box with a vertical column to the right
@@ -861,6 +871,44 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
         {
             if (m_ctrls[idx_child].GetNode()->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
                 m_ctrls[idx_child].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
+            Adopt(grid_sizer, m_ctrls[idx_child]);
+            Adopt(grid_sizer, m_ctrls[idx_child + 1]);
+        }
+        else
+        {
+            break;
+        }
+    }
+    return idx_child;
+}
+
+size_t resForm::AddTwoColumnStaticText(size_t idx_start)
+{
+    auto grid_sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
+    grid_sizer->prop_set_value(prop_cols, 2);
+    m_dlg_sizer->Adopt(grid_sizer);
+
+    m_ctrls[idx_start].GetNode()->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+
+    Adopt(grid_sizer, m_ctrls[idx_start]);
+    Adopt(grid_sizer, m_ctrls[idx_start + 1]);
+
+    auto idx_child = idx_start + 2;
+    for (; idx_child + 1 < m_ctrls.size(); idx_child += 2)
+    {
+        if (m_ctrls[idx_child].isAdded() || m_ctrls[idx_child + 1].isAdded())
+            break;
+
+        if (!is_same_top(&m_ctrls[idx_child], &m_ctrls[idx_child + 1], true))
+            break;
+
+        if (m_ctrls[idx_child].GetNode()->isGen(gen_wxStaticBoxSizer) ||
+            m_ctrls[idx_child + 1].GetNode()->isGen(gen_wxStaticBoxSizer))
+            break;
+
+        if (m_ctrls[idx_child].isGen(gen_wxStaticText) && m_ctrls[idx_child + 1].isGen(gen_wxTextCtrl))
+        {
+            m_ctrls[idx_child].GetNode()->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
             Adopt(grid_sizer, m_ctrls[idx_child]);
             Adopt(grid_sizer, m_ctrls[idx_child + 1]);
         }

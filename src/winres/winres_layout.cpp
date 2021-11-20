@@ -60,7 +60,6 @@ void resForm::CreateDialogLayout()
                 }
             }
 
-            ASSERT_MSG(!m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer), "Ignoring group box with no children")
             if (!m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
                 // orphaned child, add to form's top level sizer
@@ -79,6 +78,12 @@ void resForm::CreateDialogLayout()
                     Adopt(sizer, m_ctrls[idx_child]);
                 }
             }
+            else
+            {
+                // This is an empty group box
+                Adopt(m_dlg_sizer, m_ctrls[idx_child]);
+            }
+
             break;
         }
 

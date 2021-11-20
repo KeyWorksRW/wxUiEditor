@@ -203,11 +203,32 @@ ttlib::cview resCtrl::GetLabel(ttlib::cview line)
 
 ttlib::cview resCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
 {
-    auto pos = str.AssignSubString(line, '"', '"');
-    if (!ttlib::is_found(pos) || line[pos] != '"')
-        throw std::invalid_argument("Missing closing quote");
+    ASSERT(line[0] == '"');
 
-    return line.subview(pos + 1);
+    // We can't use str.AssignSubString() because in a resource file, quotes are escaped simply by doubling them.
+
+    size_t idx;
+    for (idx = 1; idx < line.size(); ++idx)
+    {
+        if (line[idx] == '"')
+        {
+            if (idx + 1 >= line.size() || line[idx + 1] != '"')
+            {
+                return line.subview(idx + 1);
+            }
+            else
+            {
+                // Doubled quote is an escape, so add the quote char and step over it
+                str += line[idx];
+                ++idx;
+            }
+        }
+        else
+        {
+            str += line[idx];
+        }
+    }
+    return line.subview(idx);
 }
 
 ttlib::cview resCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)

@@ -127,7 +127,8 @@ void resCtrl::ParseListViewStyles(ttlib::cview line)
         m_node->prop_set_value(prop_mode, "wxLC_LIST");
     else if (line.contains("LVS_REPORT"))
         m_node->prop_set_value(prop_mode, "wxLC_REPORT");
-    AppendStyle(prop_style, "wxLC_REPORT");
+    else
+        m_node->prop_set_value(prop_mode, "wxLC_REPORT");
 
     if (line.contains("LVS_ALIGNLEFT"))
         AppendStyle(prop_style, "wxLC_ALIGN_LEFT");

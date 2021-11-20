@@ -14,7 +14,7 @@
 
 #include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
 
-#include "../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
 ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 

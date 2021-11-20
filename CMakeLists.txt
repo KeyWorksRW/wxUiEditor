@@ -226,6 +226,7 @@ target_include_directories(wxUiEditor PRIVATE
     src/utils
     src/customprops
     src/ui
+    pugixml
     ttLib/include
 )
 

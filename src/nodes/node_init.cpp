@@ -14,7 +14,7 @@
 #include "node_types.h"  // NodeType -- Class for storing node types and allowable child count
 #include "prop_decl.h"   // PropChildDeclaration and PropDeclaration classes
 
-#include "../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
 // The following are interfaces
 

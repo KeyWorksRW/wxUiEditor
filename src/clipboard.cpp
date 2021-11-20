@@ -14,7 +14,7 @@
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
-#include "../../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
 bool isClipboardDataAvailable()
 {

@@ -18,7 +18,7 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-#include "../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
 #include "gen_enums.h"  // Enumerations for generators
 using namespace GenEnum;

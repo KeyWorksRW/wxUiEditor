@@ -22,7 +22,7 @@
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
 #include "startup.h"       // CStartup -- Dialog to display is wxUE is launched with no arguments
 
-#include "../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
 #ifdef _MSC_VER
     #define wxMSVC_VERSION_ABI_COMPAT

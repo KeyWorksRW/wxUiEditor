@@ -22,7 +22,7 @@
 #include "dbg_code_diff.h"  // auto-generated: dbg_code_diff_base.h and dbg_code_diff_base.cpp
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 
-#include "../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
 DbgCodeDiff::DbgCodeDiff(wxWindow* parent) : DbgCodeDiffBase(parent) {}
 

@@ -9,7 +9,7 @@
 
 #include <optional>
 
-#include "../../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
 #include "node.h"  // Node class
 

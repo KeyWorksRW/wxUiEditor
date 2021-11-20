@@ -58,7 +58,7 @@
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
 
-#include "../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
 #include "ui_images.h"
 

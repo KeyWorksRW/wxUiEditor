@@ -19,7 +19,7 @@ Options:
     TargetDir32: ../bin       # 32-bit target directory
     Natvis:      wxui.natvis  # MSVC Debug visualizer
 
-    IncDirs:     ./;nodes;generate;utils;customprops;ui;../ttLib/include
+    IncDirs:     ./;nodes;generate;utils;customprops;ui;../ttLib/include;../pugixml
 
 Files:
     wxUiEditor.rc         # Only processed when compiling for Windows, ignored otherwise

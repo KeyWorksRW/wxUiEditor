@@ -328,7 +328,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
 }
 
 #if defined(_DEBUG)
-    #include "../pugixml/pugixml.hpp"
+    #include "pugixml.hpp"
 
 void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root)
 {

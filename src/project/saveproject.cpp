@@ -9,7 +9,7 @@
 #include "node.h"       // Node class
 #include "prop_decl.h"  // PropChildDeclaration and PropDeclaration classes
 
-#include "../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
 using namespace GenEnum;
 

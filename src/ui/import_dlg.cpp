@@ -52,6 +52,8 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     if (m_FileHistory.GetCount())
     {
         m_combo_recent_dirs->Select(0);
+        wxFileName::SetCwd(m_combo_recent_dirs->GetValue());
+        m_static_cwd->SetLabel(m_combo_recent_dirs->GetValue());
     }
 #endif  // _DEBUG
 

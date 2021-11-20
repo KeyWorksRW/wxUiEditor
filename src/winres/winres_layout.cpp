@@ -748,7 +748,8 @@ void resForm::CheckForStdButtons()
 
             if (btn_node->prop_as_string(prop_id) == "wxID_OK")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("Yes", tt::CASE::either))
+                if (btn_node->prop_as_string(prop_label).is_sameas("Yes", tt::CASE::either) ||
+                    btn_node->prop_as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Yes, "1");
@@ -756,7 +757,8 @@ void resForm::CheckForStdButtons()
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Yes");
                     m_ctrls[idx_child].setAdded();
                 }
-                else if (btn_node->prop_as_string(prop_label).is_sameas("Save", tt::CASE::either))
+                else if (btn_node->prop_as_string(prop_label).is_sameas("Save", tt::CASE::either) ||
+                         btn_node->prop_as_string(prop_label).is_sameas("&Save", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Save, "1");
@@ -764,7 +766,8 @@ void resForm::CheckForStdButtons()
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Save");
                     m_ctrls[idx_child].setAdded();
                 }
-                else if (btn_node->prop_as_string(prop_label).is_sameas("OK", tt::CASE::either))
+                else if (btn_node->prop_as_string(prop_label).is_sameas("OK", tt::CASE::either) ||
+                         btn_node->prop_as_string(prop_label).is_sameas("&OK", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_OK, "1");
@@ -773,7 +776,8 @@ void resForm::CheckForStdButtons()
             }
             else if (btn_node->prop_as_string(prop_id) == "wxID_CANCEL")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("Close", tt::CASE::either))
+                if (btn_node->prop_as_string(prop_label).is_sameas("Close", tt::CASE::either) ||
+                    btn_node->prop_as_string(prop_label).is_sameas("&Close", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Close, "1");
@@ -781,7 +785,8 @@ void resForm::CheckForStdButtons()
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Close");
                     m_ctrls[idx_child].setAdded();
                 }
-                else if (btn_node->prop_as_string(prop_label).is_sameas("Cancel", tt::CASE::either))
+                else if (btn_node->prop_as_string(prop_label).is_sameas("Cancel", tt::CASE::either) ||
+                         btn_node->prop_as_string(prop_label).is_sameas("&Cancel", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Cancel, "1");
@@ -792,7 +797,8 @@ void resForm::CheckForStdButtons()
             }
             else if (btn_node->prop_as_string(prop_id) == "wxID_APPLY")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("Apply", tt::CASE::either))
+                if (btn_node->prop_as_string(prop_label).is_sameas("Apply", tt::CASE::either) ||
+                    btn_node->prop_as_string(prop_label).is_sameas("&Apply", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Apply, "1");
@@ -801,7 +807,8 @@ void resForm::CheckForStdButtons()
             }
             else if (btn_node->prop_as_string(prop_id) == "wxID_HELP")
             {
-                if (btn_node->prop_as_string(prop_label).is_sameas("Help", tt::CASE::either))
+                if (btn_node->prop_as_string(prop_label).is_sameas("Help", tt::CASE::either) ||
+                    btn_node->prop_as_string(prop_label).is_sameas("&Help", tt::CASE::either))
                 {
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Help, "1");

@@ -65,9 +65,50 @@ bool resForm::is_same_top(const std::vector<resCtrl>& ctrls, size_t child_a, siz
     return false;
 }
 
+bool resForm::is_same_top(const std::vector<std::reference_wrapper<resCtrl>>& ctrls, size_t child_a, size_t child_b,
+                          bool loose_check) const
+{
+    if (ctrls[child_a].get().du_top() == ctrls[child_b].get().du_top())
+        return true;
+
+    if (loose_check)
+    {
+        if (ctrls[child_a].get().du_top() - 1 == ctrls[child_b].get().du_top() ||
+            ctrls[child_a].get().du_top() - 2 == ctrls[child_b].get().du_top())
+            return true;
+        else if (ctrls[child_a].get().du_top() == ctrls[child_b].get().du_top() - 1 ||
+                 ctrls[child_a].get().du_top() == ctrls[child_b].get().du_top() - 2)
+            return true;
+        else
+            return false;
+    }
+
+    if (ctrls[child_a].get().GetNode()->isGen(gen_wxStaticText))
+    {
+        if (ctrls[child_a].get().du_top() - 1 == ctrls[child_b].get().du_top() ||
+            ctrls[child_a].get().du_top() - 2 == ctrls[child_b].get().du_top())
+            return true;
+    }
+    return false;
+}
+
 bool resForm::is_within_vertical(const std::vector<resCtrl>& ctrls, size_t child_a, size_t child_b) const
 {
     if (ctrls[child_a].du_top() >= ctrls[child_b].du_top() && ctrls[child_a].du_bottom() <= ctrls[child_b].du_bottom())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool resForm::is_within_vertical(const std::vector<std::reference_wrapper<resCtrl>>& ctrls, size_t child_a,
+                                 size_t child_b) const
+{
+    if (ctrls[child_a].get().du_top() >= ctrls[child_b].get().du_top() &&
+        ctrls[child_a].get().du_bottom() <= ctrls[child_b].get().du_bottom())
     {
         return true;
     }

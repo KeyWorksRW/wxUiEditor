@@ -8,6 +8,7 @@
 
 #include <wx/button.h>
 #include <wx/checklst.h>
+#include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
@@ -37,6 +38,7 @@ protected:
 
     wxButton* m_btnAddFile;
     wxCheckListBox* m_checkListProjects;
+    wxComboBox* m_combo_recent_dirs;
     wxRadioButton* m_radio_WindowsResource;
     wxRadioButton* m_radio_XRC;
     wxRadioButton* m_radio_wxFormBuilder;
@@ -56,6 +58,7 @@ protected:
     virtual void OnFormBuilder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInitDialog(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRecentDir(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelectAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelectNone(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWindowsResource(wxCommandEvent& event) { event.Skip(); }

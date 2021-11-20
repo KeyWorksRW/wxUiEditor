@@ -36,6 +36,14 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     m_radio_wxGlade = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Glade Project(s)");
     flex_grid_sizer->Add(m_radio_wxGlade, wxSizerFlags().Border(wxALL));
 
+    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    m_import_staticbox->Add(box_sizer, wxSizerFlags().Border(wxALL));
+
+    m_combo_recent_dirs = new wxComboBox(m_import_staticbox->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_combo_recent_dirs->Hide();
+    m_combo_recent_dirs->SetMinSize(wxSize(240, -1));
+    box_sizer->Add(m_combo_recent_dirs, wxSizerFlags().Border(wxALL));
+
     auto box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
     m_import_staticbox->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));
 
@@ -79,6 +87,7 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     m_radio_XRC->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnXRC, this);
     m_radio_wxSmith->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxSmith, this);
     m_radio_wxGlade->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxGlade, this);
+    m_combo_recent_dirs->Bind(wxEVT_COMBOBOX, &ImportBase::OnRecentDir, this);
     m_btnAddFile->Bind(wxEVT_BUTTON, &ImportBase::OnDirectory, this);
     m_checkListProjects->Bind(wxEVT_CHECKLISTBOX, &ImportBase::OnCheckFiles, this);
     btn_2->Bind(wxEVT_BUTTON, &ImportBase::OnSelectAll, this);

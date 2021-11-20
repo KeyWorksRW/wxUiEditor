@@ -9,6 +9,8 @@
 
 #include <map>
 
+#include <wx/filehistory.h>  // wxFileHistory class
+
 #include "import_base.h"
 
 #include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
@@ -41,6 +43,13 @@ protected:
 
     void OnOK(wxCommandEvent& event) override;
 
+#if defined(_DEBUG)
+    void OnRecentDir(wxCommandEvent& event) override;
+#endif
+
 private:
     std::vector<ttString> m_lstProjects;
+#if defined(_DEBUG)
+    wxFileHistory m_FileHistory;
+#endif
 };

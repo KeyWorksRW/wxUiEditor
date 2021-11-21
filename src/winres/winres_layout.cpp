@@ -767,6 +767,7 @@ void resForm::CheckForStdButtons()
                     if (btn_node->prop_as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Yes");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
+                    continue;
                 }
                 else if (btn_node->prop_as_string(prop_label).is_sameas("Save", tt::CASE::either) ||
                          btn_node->prop_as_string(prop_label).is_sameas("&Save", tt::CASE::either))
@@ -776,6 +777,7 @@ void resForm::CheckForStdButtons()
                     if (btn_node->prop_as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Save");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
+                    continue;
                 }
                 else if (btn_node->prop_as_string(prop_label).is_sameas("OK", tt::CASE::either) ||
                          btn_node->prop_as_string(prop_label).is_sameas("&OK", tt::CASE::either))
@@ -783,6 +785,7 @@ void resForm::CheckForStdButtons()
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_OK, "1");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
+                    continue;
                 }
             }
             else if (btn_node->prop_as_string(prop_id) == "wxID_CANCEL")
@@ -795,6 +798,7 @@ void resForm::CheckForStdButtons()
                     if (btn_node->prop_as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Close");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
+                    continue;
                 }
                 else if (btn_node->prop_as_string(prop_label).is_sameas("Cancel", tt::CASE::either) ||
                          btn_node->prop_as_string(prop_label).is_sameas("&Cancel", tt::CASE::either))
@@ -804,6 +808,7 @@ void resForm::CheckForStdButtons()
                     if (btn_node->prop_as_bool(prop_default))
                         m_stdButtonSizer->prop_set_value(prop_default_button, "Cancel");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
+                    continue;
                 }
             }
             else if (btn_node->prop_as_string(prop_id) == "wxID_APPLY")
@@ -814,6 +819,7 @@ void resForm::CheckForStdButtons()
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Apply, "1");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
+                    continue;
                 }
             }
             else if (btn_node->prop_as_string(prop_id) == "wxID_HELP")
@@ -824,6 +830,7 @@ void resForm::CheckForStdButtons()
                     CreateStdButton();
                     m_stdButtonSizer->prop_set_value(prop_Help, "1");
                     m_ctrls.erase(m_ctrls.begin() + idx_child);
+                    continue;
                 }
             }
         }

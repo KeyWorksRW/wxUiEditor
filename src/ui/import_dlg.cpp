@@ -30,6 +30,7 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
 {
 #if defined(_DEBUG)
     m_combo_recent_dirs->Show();
+    m_btnRemove->Show();
 #endif  // _DEBUG
 
     m_stdBtn->GetAffirmativeButton()->Disable();
@@ -237,6 +238,35 @@ void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
     if (files.size())
         m_checkListProjects->InsertItems(files, 0);
 }
+
+void ImportDlg::OnRemove(wxCommandEvent& event)
+{
+    auto directory = m_combo_recent_dirs->GetValue();
+    for (size_t idx = 0; idx < m_FileHistory.GetCount(); ++idx)
+    {
+        if (m_FileHistory.GetHistoryFile(idx) == directory)
+        {
+            m_FileHistory.RemoveFileFromHistory(idx);
+            auto config = wxConfig::Get();
+            config->SetPath("/preferences");
+            m_FileHistory.Save(*config);
+            config->SetPath("/");
+
+            m_combo_recent_dirs->Clear();
+            for (idx = 0; idx < m_FileHistory.GetCount(); ++idx)
+            {
+                m_combo_recent_dirs->AppendString(m_FileHistory.GetHistoryFile(idx));
+            }
+            if (m_FileHistory.GetCount())
+            {
+                m_combo_recent_dirs->Select(0);
+                OnRecentDir(event);
+            }
+            break;
+        }
+    }
+}
+
 #endif  // _DEBUG
 
 void ImportDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))

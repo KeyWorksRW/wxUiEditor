@@ -44,6 +44,10 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     m_combo_recent_dirs->SetMinSize(wxSize(240, -1));
     box_sizer->Add(m_combo_recent_dirs, wxSizerFlags().Border(wxALL));
 
+    m_btnRemove = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "Remove");
+    m_btnRemove->Hide();
+    box_sizer->Add(m_btnRemove, wxSizerFlags().Border(wxALL));
+
     auto box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
     m_import_staticbox->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));
 
@@ -88,6 +92,7 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     m_radio_wxSmith->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxSmith, this);
     m_radio_wxGlade->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxGlade, this);
     m_combo_recent_dirs->Bind(wxEVT_COMBOBOX, &ImportBase::OnRecentDir, this);
+    m_btnRemove->Bind(wxEVT_BUTTON, &ImportBase::OnRemove, this);
     m_btnAddFile->Bind(wxEVT_BUTTON, &ImportBase::OnDirectory, this);
     m_checkListProjects->Bind(wxEVT_CHECKLISTBOX, &ImportBase::OnCheckFiles, this);
     btn_2->Bind(wxEVT_BUTTON, &ImportBase::OnSelectAll, this);

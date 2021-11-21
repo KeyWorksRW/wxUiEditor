@@ -45,6 +45,7 @@ protected:
 
 #if defined(_DEBUG)
     void OnRecentDir(wxCommandEvent& event) override;
+    void OnRemove(wxCommandEvent& event) override;
 #endif
 
 private:

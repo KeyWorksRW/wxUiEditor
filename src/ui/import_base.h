@@ -37,6 +37,7 @@ protected:
     // Class member variables
 
     wxButton* m_btnAddFile;
+    wxButton* m_btnRemove;  // Remove file from history
     wxCheckListBox* m_checkListProjects;
     wxComboBox* m_combo_recent_dirs;
     wxRadioButton* m_radio_WindowsResource;
@@ -59,6 +60,7 @@ protected:
     virtual void OnInitDialog(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRecentDir(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRemove(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelectAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelectNone(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWindowsResource(wxCommandEvent& event) { event.Skip(); }

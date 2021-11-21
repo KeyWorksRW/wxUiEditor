@@ -735,6 +735,13 @@
               hidden="true"
               minimum_size="240,-1d"
               wxEVT_COMBOBOX="OnRecentDir" />
+            <node
+              class="wxButton"
+              label="Remove"
+              var_comment="Remove file from history"
+              var_name="m_btnRemove"
+              hidden="true"
+              wxEVT_BUTTON="OnRemove" />
           </node>
           <node
             class="wxBoxSizer"

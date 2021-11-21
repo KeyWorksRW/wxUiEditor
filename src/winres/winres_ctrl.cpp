@@ -39,6 +39,7 @@ static const ClassGenPair lst_class_gen[] = {
     { "\"msctls_progress32\"", gen_wxGauge },
 
     { "\"SysAnimate32\"", gen_wxAnimationCtrl },
+    { "\"SysLink\"", gen_wxHyperlinkCtrl },
     { "\"SysListView32\"", gen_wxListView },
     { "\"SysTreeView32\"", gen_wxTreeListCtrl },
 

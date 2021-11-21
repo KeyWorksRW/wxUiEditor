@@ -195,7 +195,56 @@ ttlib::cview resCtrl::GetLabel(ttlib::cview line)
         line.remove_prefix(pos);
     }
 
-    m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
+    if (m_node->isGen(gen_wxHyperlinkCtrl))
+    {
+        auto begin_anchor = label.locate("<a", 0, tt::CASE::either);
+        if (!ttlib::is_found(begin_anchor))
+        {
+            // Without an anchor, there is no URL
+            m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
+        }
+        else
+        {
+            ttlib::sview view_url = label.view_nonspace(begin_anchor);
+            if (view_url.is_sameprefix("<a>", tt::CASE::either))
+            {
+                view_url.remove_prefix(3);
+                view_url.erase_from("</a", tt::CASE::either);
+                m_node->prop_set_value(prop_url, view_url);
+                m_node->prop_set_value(prop_label, label.substr(0, begin_anchor));
+            }
+            else if (view_url.is_sameprefix("<a href=\"", tt::CASE::either))
+            {
+                view_url.remove_prefix(9);
+                view_url.erase_from("\">", tt::CASE::either);
+                m_node->prop_set_value(prop_url, view_url);
+                ttlib::cstr actual_label;
+                view_url = label.view_nonspace(label.find("\">"));
+                view_url.remove_prefix(2);
+                view_url.erase_from("</a", tt::CASE::either);
+                actual_label << label.substr(0, begin_anchor) << view_url;
+                m_node->prop_set_value(prop_label, actual_label);
+            }
+            // Also valid just as the above <a href= -- only difference is how many prefix chars to remove
+            else if (view_url.is_sameprefix("<a ref=\"", tt::CASE::either))
+            {
+                view_url.remove_prefix(8);
+                view_url.erase_from("\">", tt::CASE::either);
+                m_node->prop_set_value(prop_url, view_url);
+                ttlib::cstr actual_label;
+                view_url = label.view_nonspace(label.find("\">"));
+                view_url.remove_prefix(2);
+                view_url.erase_from("</a", tt::CASE::either);
+                actual_label << label.substr(0, begin_anchor) << view_url;
+                m_node->prop_set_value(prop_label, actual_label);
+            }
+        }
+    }
+
+    else
+    {
+        m_node->prop_set_value(prop_label, ConvertEscapeSlashes(label));
+    }
 
     line.moveto_nonspace();
     return line;

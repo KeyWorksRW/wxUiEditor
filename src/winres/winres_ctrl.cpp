@@ -43,6 +43,22 @@ static const ClassGenPair lst_class_gen[] = {
     { "\"SysListView32\"", gen_wxListView },
     { "\"SysTreeView32\"", gen_wxTreeListCtrl },
 
+    { "\"MfcButton\"", gen_wxButton },
+    { "\"MfcEditBrowse\"", gen_wxFilePickerCtrl },
+    { "\"MfcColorButton\"", gen_wxColourPickerCtrl },
+    { "\"MfcFontComboBox\"", gen_wxFontPickerCtrl },
+    { "\"MfcLink\"", gen_wxHyperlinkCtrl },
+    { "\"MfcMaskedEdit\"", gen_wxTextCtrl },
+    { "\"MfcPropertyGrid\"", gen_wxPropertyGridManager },
+    { "\"MfcShellList\"", gen_wxGenericDirCtrl },
+    { "\"MfcShellTree\"", gen_wxGenericDirCtrl },
+
+    // TODO: [KeyWorks - 11-22-2021] Uncomment once wxUiEditor can link with 3.1.16
+    // { "\"MfcVSListBox\"", gen_wxEditableListBox },
+
+    // TODO: [KeyWorks - 11-22-2021] Supporting this would mean creating a custom control that has a wxMenu as a child
+    // { "\"MfcMenuButton\"", ??? },
+
 };
 
 // lst_name_gen is used when there is a resource directive rather than a CONTROL directive.

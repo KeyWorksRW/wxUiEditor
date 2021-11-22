@@ -26,6 +26,7 @@
 #define IDB_BITMAP1                 105
 #define IDM_MOVE                    106
 #define IDM_COPY                    107
+#define IDD_MFC_DIALOG              107
 #define IDM_DELETE                  108
 #define IDM_RENAME                  109
 #define IDM_ATTRIBS                 110
@@ -103,22 +104,37 @@
 #define IDEDIT_CLASS                1000
 #define IDC_EDIT1                   1000
 #define IDEDIT_FILE                 1001
+#define IDC_MFCBUTTON1              1002
+#define IDC_MFCCOLORBUTTON1         1003
 #define IDLIST_MEMBERS              1004
+#define IDC_MFCEDITBROWSE1          1004
 #define IDBTN_ADD                   1005
+#define IDC_MFCVSLISTBOX1           1005
 #define IDBTN_REMOVE                1006
+#define IDC_MFCFONTCOMBO1           1006
 #define IDCHECK_ICONS               1007
+#define IDC_MFCMASKEDEDIT1          1007
 #define IDCHECK_METHOD_INITIALIZE   1008
+#define IDC_MFCMENUBUTTON1          1008
 #define IDCHECK_METHOD_CLOSE        1009
+#define IDC_MFCPROPERTYGRID1        1009
 #define IDRADIO_TYPE_CTTDLG         1010
+#define IDC_MFCSHELLLIST1           1010
 #define IDRADIO_TYPE_CAXDIALOGIMPL  1011
+#define IDC_MFCSHELLTREE1           1011
 #define IDRADIO_TYPE_CDIALOGIMPL    1012
+#define IDC_MFCLINK1                1012
 #define IDCHECK_DISP_EVENT          1013
+#define IDC_COMMAND1                1013
 #define IDCHECK_CENTER_WINDOW       1014
 #define IDCHECK_SHADED_BUTTONS      1015
 #define IDRADIO_TYPE_PROPERTY       1016
 #define IDCHECK_METHOD_CANCEL       1017
+#define IDC_COMMAND2                1019
 #define IDCHECK_CONSTRUCTOR         1020
 #define IDCHECK_DESTRUCTOR          1021
+#define IDC_SPLIT1                  1022
+#define IDC_COMBOBOXEX1             1023
 #define IDBTN_EDIT                  1033
 #define IDTXT_CUR_DIR               1034
 #define IDC_CHECK1                  1038
@@ -211,9 +227,9 @@
 //
 #ifdef APSTUDIO_INVOKED
     #ifndef APSTUDIO_READONLY_SYMBOLS
-        #define _APS_NEXT_RESOURCE_VALUE 106
+        #define _APS_NEXT_RESOURCE_VALUE 110
         #define _APS_NEXT_COMMAND_VALUE  40002
-        #define _APS_NEXT_CONTROL_VALUE  1001
+        #define _APS_NEXT_CONTROL_VALUE  1025
         #define _APS_NEXT_SYMED_VALUE    101
     #endif
 #endif

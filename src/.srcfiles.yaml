@@ -184,6 +184,7 @@ Docs:
     ../README.md
     ../docs/DEV_NOTES.md
     ../docs/import_formbuilder.md
+    ../docs/import_winres.md
     nodes/README.md
 
     # The following are the XML files we use for interfaces and generators

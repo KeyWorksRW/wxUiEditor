@@ -21,3 +21,7 @@ Note that if you are using a code editor that supports UTF8 text to edit your re
 ## Bitmaps and Icons
 
 When a bitmap or icon is specified for a Dialog, **wxUiEditor** will convert it into an embedded form that will be generated as part of the class's source file. This allows the image to work on non-Windows platforms without needing to take any additional steps, or needing to ship external files.
+
+## MFC controls
+
+**wxUiEditor** can convert most Mfc controls into a **wxWidgets** equivalent, but it will not have access to many of the properties. For example, `MfcLink` will be converted to `wxHyperlinkCtrl` with the correct label, but it will not have the URL that the link points to.

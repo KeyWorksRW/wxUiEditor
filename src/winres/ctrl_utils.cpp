@@ -7,7 +7,8 @@
 
 #include "winres_ctrl.h"
 
-#include "utils.h"  // Utility functions that work with properties
+#include "import_winres.h"  // WinResource -- Parse a Windows resource file
+#include "utils.h"          // Utility functions that work with properties
 
 void resCtrl::ParseCommonStyles(ttlib::cview line)
 {
@@ -194,6 +195,8 @@ ttlib::cview resCtrl::GetLabel(ttlib::cview line)
         label.assign(line, pos);
         line.remove_prefix(pos);
     }
+
+    label = std::move(m_pWinResource->ConvertCodePageString(label));
 
     if (m_node->isGen(gen_wxHyperlinkCtrl))
     {

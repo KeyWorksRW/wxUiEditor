@@ -30,9 +30,16 @@ public:
 
     std::optional<ttlib::cstr> FindBitmap(const std::string& id);
     std::optional<ttlib::cstr> FindIcon(const std::string& id);
+
+    // The strings have already been run through ConvertCodePageString().
     std::optional<ttlib::cstr> FindStringID(const std::string& id);
 
     auto& GetIncludeLines() { return m_include_lines; }
+
+    // When compiled for Windows, this will convert the string to UTF8 using the current codepage.
+    //
+    // For all other platforms, this will assume a utf8 string -- which may be invalid.
+    ttlib::cstr ConvertCodePageString(std::string_view str);
 
 protected:
     void FormToNode(resForm& form);

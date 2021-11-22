@@ -43,10 +43,10 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     ttlib::cstr fullpath;
     fullpath.assignCwd();
     fullpath.append_filename(txtfile.filename().filename());
-#if defined(_WIN32)
+    #if defined(_WIN32)
     // VSCode File Open dialog can't handle forward slashes on Windows
     fullpath.forwardslashestoback();
-#endif  // _WIN32
+    #endif  // _WIN32
     m_form_node->prop_set_value(prop_base_src_includes, ttlib::cstr() << "// " << fullpath);
 #endif  // _DEBUG
 
@@ -74,7 +74,7 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
         {
             line.moveto_nextword();
             value.ExtractSubString(line);
-            m_form_node->prop_set_value(prop_title, value);
+            m_form_node->prop_set_value(prop_title, m_pWinResource->ConvertCodePageString(value));
         }
         else if (line.is_sameprefix("FONT"))
         {

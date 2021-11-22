@@ -171,12 +171,18 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
         m_curline = file.FindLineContaining("STRINGTABLE");
         if (ttlib::is_found(m_curline))
         {
-            for (; m_curline < file.size(); ++m_curline)
+            // We have to restart at zero in order to pickup code page changes
+            for (m_curline = 0; m_curline < file.size(); ++m_curline)
             {
                 auto curline = file[m_curline].view_nonspace();
                 if (curline.is_sameprefix("STRINGTABLE"))
                 {
                     ParseStringTable(file);
+                }
+                else if (curline.is_sameprefix("#pragma code_page"))
+                {
+                    auto code = curline.find('(');
+                    m_codepage = std::atoi(curline.subview(code + 1));
                 }
             }
         }
@@ -403,7 +409,8 @@ void WinResource::ParseStringTable(ttlib::textfile& file)
             pos = line.find_nonspace(pos);
             if (ttlib::is_found(pos))
             {
-                ttlib::cstr text(line.view_substr(pos));
+                auto text = ConvertCodePageString(line.view_substr(pos));
+                // ttlib::cstr text(line.view_substr(pos));
                 m_map_stringtable[id] = text;
             }
         }
@@ -481,4 +488,20 @@ std::optional<ttlib::cstr> WinResource::FindStringID(const std::string& id)
         return result->second;
     else
         return {};
+}
+
+ttlib::cstr WinResource::ConvertCodePageString(std::string_view str)
+{
+    if (m_codepage == 65001)  // utf8 code page
+        return ttlib::cstr(str);
+#if defined(_WIN32)
+    std::wstring result;
+    auto out_size = (str.size() * sizeof(wchar_t)) + sizeof(wchar_t);
+    result.reserve(out_size);
+    auto count_chars = MultiByteToWideChar(m_codepage, 0, str.data(), static_cast<int>(str.size()), result.data(),
+                                           static_cast<int>(out_size));
+    return ttlib::utf16to8(std::wstring_view(result.c_str(), count_chars));
+#else
+    return ttlib::cstr(str);
+#endif  // _WIN32
 }

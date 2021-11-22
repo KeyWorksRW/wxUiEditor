@@ -80,7 +80,7 @@ void resForm::ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine)
             parent = control.SetNodePtr(g_NodeCreator.NewNode(gen_wxMenu));
             m_form_node->Adopt(parent);
             line.moveto_nextword();
-            parent->prop_set_value(prop_label, line.view_substr(0));
+            parent->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
         }
     }
 }
@@ -116,7 +116,7 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
             sub_parent = control.SetNodePtr(g_NodeCreator.NewNode(gen_submenu));
             parent->Adopt(sub_parent);
             line.moveto_nextword();
-            sub_parent->prop_set_value(prop_label, line.view_substr(0));
+            sub_parent->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
         }
         else if (line.is_sameprefix("MENUITEM"))
         {
@@ -136,13 +136,13 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
                 auto end = label.find("\\t");
                 if (ttlib::is_found(end))
                 {
-                    item->prop_set_value(prop_label, label.substr(0, end));
+                    item->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(label.substr(0, end)));
                     label.remove_prefix(end < label.size() ? end + 2 : end);
                     item->prop_set_value(prop_shortcut, label);
                 }
                 else
                 {
-                    item->prop_set_value(prop_label, label);
+                    item->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(label));
                 }
 
                 auto pos = line.find("\",");

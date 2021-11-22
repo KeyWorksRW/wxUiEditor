@@ -1,41 +1,23 @@
 # Importing Windows Resources
 
-**wxUiEditor** can import Dialogs from a Windows Resource file. The resulting dialog in **wxWidgets** will be similar to your original version, but you will almost certainly need to modify the dialogs in **wxUiEditor** after conversion. After conversion, you can select each dialog to display it in the Mockup Panel and determine whether or not you need to make adjustments. The following sections cover the types of changes you will see.
+**wxUiEditor** can import Menus and Dialogs from a Windows Resource file. While menus will look essentially the same, Dialogs will usually appear somewhat differently. This is due to the original Windows controls having absolution positions and sizes. **wxWidgets** controls have positions and sizes determined relative to the dialog, other controls in the dialog, the language and font currently in use by the user, and the operating system the dialog is being displayed on. The conversion algorithm attempts to replicate your intent for how your dialog should appear, but given all the possible ways absolute positioned controls can be specified, the conversion may not correctly replicate the original layout.
 
-## Layout
+After conversion, you can select each dialog to display it in the Mockup Panel and determine whether or not you need to make adjustments. The following sections cover some of the changes you will see.
 
-Within the resource file, all the dialog's' controls within it have absolute positions and size. Even if you used a library such as **MFC** to dynamically change positions or sizes at runtime, the resource file won't contain that information. When **wxUiEditor** converts the dialog, _all_ controls are placed within sizers and their position and size is automatically calculated by **wxWidgets**. The conversion will attempt to figure out your intent and use alignment and horizontal or vertical sizers, however you will probably need to make adjustments to get closer to your original layout design.
+## Columns and Rows
 
-If you used IDOK as the id for a dialog's default button, then **wxUiEditor** will convert that into a **wxStdDialogButtonSizer**. The advantage of this is that the dialog will have a consistent button placement on all platforms -- but it may look quite different from your original dialog.
+In some cases, **wxUiEditor** will not recognize a control as being part of a row or column, and the control will be displayed out of position relative to the other controls. In many cases you can simply drag and drop the control into the sizer (using the Navigation panel) containing the other controls it should be aligned with. Once in the correct sizer, you can move the control up or down so that the order of the controls is correct.
+
+## Buttons
+
+Depending on the label and id of your buttons, **wxUiEditor** may convert some of your buttons into a **wxStdDialogButtonSizer**. The advantage of this is that the dialog will have a consistent button placement on all platforms -- but the button placement may be quite different from your original dialog.
+
+## Text
+
+If you use the Windows version of **wxUiEditor**, then text for captions and labels will be converted into UTF8 based on the current code page specified in the resource file. The conversion relies on a Windows API, and as such, it is not currently available on non-Windows platforms (which means the text will be assumed to be UTF8 already).
+
+Note that if you are using a code editor that supports UTF8 text to edit your resource files, then you can specify `#pragma code_page(65001)` at the top of the resource file to indicate all text below it is in UTF8. Be aware that if you then edit the file with Visual Studio (any version through 17.0) then it will remove the code page and replace it with the current default Windows code page.
 
 ## Bitmaps and Icons
 
-**wxWidgets** supports reading bitmaps and icons from a resource file, however it means that your program can only be compiled for Windows unless you write conditional code for non-Windows compilation. **wxUiEditor** takes a different approach and converts your images into a header file that can be compiled directly into your program. This method works on all platforms and doesn't require shipping external images. The executable size will be roughly the same (or smaller if you used BMP files).
-
-After conversion, you will see a question mark for all your images until you tell **wxUiEditor** to generate code. You should check all images and make certain that both the original image and the name and location the header file is what you want. Do this _before_ you tell **wxUiEditor** to generate code!
-
-In a Windows Resource file, ICONS and BITMAPS can have different id names with identical id values. For example, you might define the following:
-
-```
-    #define IDICON_MAINFRAME                100
-    #define IDR_MAINFRAME                   100
-```
-
-In your resource file, you might have:
-
-```
-    IDR_MAINFRAME    BITMAP "res/MyBitmap.bmp"
-    IDICON_MAINFRAME ICON   "res/MyIcon.ico"
-```
-
-If you then try to add a picture control in Visual Studio specifying `IDR_MAINFRAME` as your bitmap, Visual Studio will write the control as:
-
-```
-    CONTROL IDICON_MAINFRAME,IDC_STATIC,"Static",SS_BITMAP
-```
-
-When the resource compiler parses the above line, it will convert `IDICON_MAINFRAME` into it's numerical value and use that to locate the bitmap rather than the icon.
-
-Because **wxUiEditor** isn't a resource compiler, it can only see the name of the id -- and as a result, it will get the image that the name refers to (in the above case this would be the icon).
-
-This problem only occurs if you use numerical ids that are the same for both ICONS and BITMAPS. If you do, the bitmap or icon may be wrong, and you will need to change it in the **wxWidgets** properties for the image.
+When a bitmap or icon is specified for a Dialog, **wxUiEditor** will convert it into an embedded form that will be generated as part of the class's source file. This allows the image to work on non-Windows platforms without needing to take any additional steps, or needing to ship external files.

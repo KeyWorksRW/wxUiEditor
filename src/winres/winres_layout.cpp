@@ -788,6 +788,30 @@ void resForm::CheckForStdButtons()
                     continue;
                 }
             }
+            else if (btn_node->prop_as_string(prop_id) == "wxID_YES")
+            {
+                if (btn_node->prop_as_string(prop_label).is_sameas("Yes", tt::CASE::either) ||
+                    btn_node->prop_as_string(prop_label).is_sameas("&Yes", tt::CASE::either))
+                {
+                    CreateStdButton();
+                    m_stdButtonSizer->prop_set_value(prop_Yes, "1");
+                    if (btn_node->prop_as_bool(prop_default))
+                        m_stdButtonSizer->prop_set_value(prop_default_button, "Yes");
+                    m_ctrls.erase(m_ctrls.begin() + idx_child);
+                    continue;
+                }
+            }
+            else if (btn_node->prop_as_string(prop_id) == "wxID_NO")
+            {
+                if (btn_node->prop_as_string(prop_label).is_sameas("No", tt::CASE::either) ||
+                    btn_node->prop_as_string(prop_label).is_sameas("&No", tt::CASE::either))
+                {
+                    CreateStdButton();
+                    m_stdButtonSizer->prop_set_value(prop_No, "1");
+                    m_ctrls.erase(m_ctrls.begin() + idx_child);
+                    continue;
+                }
+            }
             else if (btn_node->prop_as_string(prop_id) == "wxID_CANCEL")
             {
                 if (btn_node->prop_as_string(prop_label).is_sameas("Close", tt::CASE::either) ||

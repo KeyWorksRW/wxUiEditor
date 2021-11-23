@@ -43,6 +43,29 @@ END
 //
 // Note that in most cases, the CAPTION describes what is being checked.
 
+IDD_EDIT_REPLACE DIALOGEX 36, 44, 304, 90
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Test: Convert multiple rows to flex grid"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Fi&nd what:",IDC_STATIC,7,9,65,8
+    COMBOBOX        IDC_EDIT_FINDTEXT,75,7,165,66,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Re&place with:",IDC_STATIC,7,24,65,8
+    COMBOBOX        IDC_EDIT_REPLACE_WITH,75,22,165,66,CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Match &whole word only",IDC_EDIT_WHOLE_WORD,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,44,135,10
+    CONTROL         "Match &case",IDC_EDIT_MATCH_CASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,54,135,10
+    CONTROL         "Regular &expression",IDC_EDIT_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,135,10
+    CONTROL         "&Don't wrap end of file",IDC_EDIT_SCOPE_DONT_WRAP,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,74,135,10
+    GROUPBOX        "Replace in",IDC_STATIC,149,40,90,36,WS_GROUP
+    CONTROL         "&Selection",IDC_EDIT_SCOPE_SELECTION,"Button",BS_AUTORADIOBUTTON | WS_GROUP,154,51,80,10
+    CONTROL         "Wh&ole file",IDC_EDIT_SCOPE_WHOLE_FILE,"Button",BS_AUTORADIOBUTTON,154,61,80,10
+    DEFPUSHBUTTON   "&Find Next",IDC_EDIT_SKIP,247,7,50,14,WS_GROUP
+    PUSHBUTTON      "&Replace",IDC_EDIT_REPLACE,247,24,50,14
+    PUSHBUTTON      "Replace &All",IDC_EDIT_REPLACE_ALL,247,41,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,247,58,50,14
+END
+
 // https://github.com/coddec/Classic-Shell/blob/master/ClassicShellSrc/ClassicShellLib/ClassicShellLib.rc
 
 IDD_SETTINGS DIALOGEX 0, 0, 381, 213

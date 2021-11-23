@@ -42,6 +42,8 @@ static constexpr const auto lst_ignored_includes = {
 
 bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& forms, bool isNested)
 {
+    wxBusyCursor busy;
+
     if (!isNested)
     {
         m_RcFilename = rc_file;
@@ -291,6 +293,10 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
             }
             else if (curline.contains(" MENU"))
             {
+                auto view = curline.subview(curline.find(" MENU"));
+                if (view.size() > 5)
+                    continue;  // Means this isn't really a menu command
+
                 if (forms.size())
                 {
                     auto pos_end = curline.find(' ');

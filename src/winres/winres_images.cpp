@@ -92,7 +92,7 @@ void resCtrl::ParseIconControl(ttlib::cview line)
     if (auto stock_image = map_win_wx_stock.find(icon_name); stock_image != map_win_wx_stock.end())
     {
         ttlib::cstr prop;
-        prop << "Art; " << stock_image->second << "; wxART_TOOLBAR; [-1; -1]";
+        prop << "Art; " << stock_image->second << "|wxART_TOOLBAR; [-1; -1]";
         m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
         m_node->prop_set_value(prop_bitmap, prop);
     }

@@ -43,6 +43,17 @@ END
 //
 // Note that in most cases, the CAPTION describes what is being checked.
 
+IDD_CONFIRMDELETE DIALOG DISCARDABLE  0, 0, 231, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Test standard icon conversion"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            32515,IDC_STATIC,7,7,18,20
+    CTEXT           "",IDC_MESSAGE,31,7,193,18
+    DEFPUSHBUTTON   "Don't Delete",IDCANCEL,7,34,67,14
+    PUSHBUTTON      "Delete!",IDC_DELETE,174,34,50,14
+END
+
 IDD_EDIT_REPLACE DIALOGEX 36, 44, 304, 90
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Test: Convert multiple rows to flex grid"

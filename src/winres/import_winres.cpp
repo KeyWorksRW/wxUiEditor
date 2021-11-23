@@ -62,6 +62,11 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
         ttlib::ChangeDir(cwd);
     }
 
+    if (m_OutDirectory.empty() && !isNested)
+    {
+        m_OutDirectory.assignCwd();
+    }
+
     // First step though the file to find all #includes. Local header files get stored to an array to add to forms.
     // #included resource files get added to the end of file.
 
@@ -158,6 +163,9 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
 
             ttlib::cstr filename;
             filename.AssignSubString(line);
+            filename.make_relative(cwd);
+            filename.make_absolute();
+            filename.make_relative(m_OutDirectory);
             if (type.is_sameas("ICON"))
                 m_map_icons[id] = filename;
             else

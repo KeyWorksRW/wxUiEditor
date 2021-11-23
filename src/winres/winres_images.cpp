@@ -98,20 +98,27 @@ void resCtrl::ParseIconControl(ttlib::cview line)
     }
     else
     {
-        auto result = m_pWinResource->FindIcon(icon_name);
-        if (!result)
+        if (icon_name.empty())
         {
-            MSG_ERROR(ttlib::cstr() << "Icon not found :" << m_original_line);
-            return;
+            m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
         }
+        else
+        {
+            auto result = m_pWinResource->FindIcon(icon_name);
+            if (!result)
+            {
+                MSG_ERROR(ttlib::cstr() << "Icon not found :" << m_original_line);
+                return;
+            }
 
-        m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
-        ttlib::cstr prop;
-        prop << "Embed;" << result.value() << ";[-1; -1]";
+            m_node = g_NodeCreator.NewNode(gen_wxStaticBitmap);
+            ttlib::cstr prop;
+            prop << "Embed;" << result.value() << ";[-1; -1]";
 
-        // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require the
-        // code to be generated.
-        m_node->prop_set_value(prop_bitmap, prop);
+            // Note that this sets up the filename to convert, but doesn't actually do the conversion -- that will require
+            // the code to be generated.
+            m_node->prop_set_value(prop_bitmap, prop);
+        }
     }
     line = GetID(line);
     ParseDimensions(line, m_du_rect, m_pixel_rect);

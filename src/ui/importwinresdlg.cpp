@@ -50,7 +50,16 @@ void ImportWinResDlg::ReadRcFile()
 
     for (auto& iter: rc_file)
     {
-        if (iter.contains(" DIALOG"))
+        if (iter.empty() || !ttlib::is_alpha(iter[0]))
+            continue;
+
+        auto type = iter.view_stepover();
+
+        // If there is a DESIGNINFO section, there may be a DIALOG specified for APSTUDIO to used -- however that dialog may
+        // not actually exist. So instead, we look for a trailing space which should indicate the statement is followed by
+        // dimensions.
+
+        if (type.is_sameprefix("DIALOG ") || type.is_sameprefix("DIALOGEX ") || type.is_sameprefix("MENU"))
         {
             auto pos_end = iter.find(' ');
             auto name = iter.substr(0, pos_end);

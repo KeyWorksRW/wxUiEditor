@@ -366,7 +366,16 @@ void ImportDlg::CheckResourceFiles(wxArrayString& files)
         {
             for (auto& line: rc_file)
             {
-                if (line.contains(" DIALOG") || line.contains(" MENU"))
+                if (line.empty() || !ttlib::is_alpha(line[0]))
+                    continue;
+
+                auto type = line.view_stepover();
+
+                // If there is a DESIGNINFO section, there may be a DIALOG specified for APSTUDIO to used -- however that
+                // dialog may not actually exist. So instead, we look for a trailing space which should indicate the
+                // statement is followed by dimensions.
+
+                if (type.is_sameprefix("DIALOG ") || type.is_sameprefix("DIALOGEX ") || type.is_sameprefix("MENU"))
                 {
                     found = true;
                     break;
@@ -377,7 +386,7 @@ void ImportDlg::CheckResourceFiles(wxArrayString& files)
         if (!found)
         {
             files.RemoveAt(idx);
-            --idx;  // because out loop will increment this
+            --idx;  // because the for() loop will increment this
         }
     }
 }

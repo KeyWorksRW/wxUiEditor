@@ -183,7 +183,6 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
                         }
                     }
                 }
-
             }
         }
     }

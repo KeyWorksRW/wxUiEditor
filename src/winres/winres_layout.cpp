@@ -92,6 +92,8 @@ void resForm::CreateDialogLayout()
         {
             if (!m_ctrls[idx_child].isGen(gen_wxStaticBoxSizer))
             {
+#if 0
+// REVIEW: [Randalphwa - 11-23-2021] I've disabled this so that CheckForFlexGrid() will process it instead.
                 // Check for a double aligned column
                 if (idx_child + 3 < m_ctrls.size() && !m_ctrls[idx_child + 1].isGen(gen_wxStaticBoxSizer))
                 {
@@ -114,6 +116,7 @@ void resForm::CreateDialogLayout()
                         continue;
                     }
                 }
+#endif
 
                 // Check for a list box with a vertical column to the right
                 if (m_ctrls[idx_child].isGen(gen_wxListBox) || m_ctrls[idx_child].isGen(gen_wxListView))
@@ -318,6 +321,7 @@ void resForm::CreateDialogLayout()
 
     m_dlg_sizer->FixDuplicateNodeNames();
 
+    CheckForFlexGrid(m_dlg_sizer.get());
     CheckForCenteredText(m_dlg_sizer.get());
 }
 
@@ -880,7 +884,7 @@ size_t resForm::AddTwoColumnPairs(size_t idx_start)
     grid_sizer->prop_set_value(prop_cols, 2);
     m_dlg_sizer->Adopt(grid_sizer);
 
-    // In a grid sizer, the control must aligned to center rather then having the style be centered
+    // In a grid sizer, the control must be aligned to center rather then having the style be centered
 
     if (m_ctrls[idx_start].GetNode()->prop_as_string(prop_style).contains("wxALIGN_CENTER_HORIZONTAL"))
         m_ctrls[idx_start].GetNode()->prop_set_value(prop_alignment, "wxALIGN_CENTER_HORIZONTAL");
@@ -969,6 +973,91 @@ void resForm::CheckForCenteredText(Node* node_parent)
         if (child->IsSizer())
         {
             CheckForCenteredText(child);
+        }
+    }
+}
+
+void resForm::CheckForFlexGrid(Node* parent)
+{
+    if (parent->GetChildCount() < 2)
+        // if (parent->GetChildCount() < 999)
+        return;
+
+    for (size_t idx_child = 0; idx_child < parent->GetChildCount() - 1; ++idx_child)
+    {
+        if (parent->GetChild(idx_child)->isGen(gen_wxBoxSizer) && parent->GetChild(idx_child + 1)->isGen(gen_wxBoxSizer))
+        {
+            // first_sizer needs to be a shared ptr so that we can access it even after parent has deleted it's reference to
+            // it.
+            auto first_sizer = parent->GetChildPtr(idx_child);
+            auto second_sizer = parent->GetChild(idx_child + 1);
+            if (first_sizer->GetChildCount() != second_sizer->GetChildCount())
+                continue;
+            size_t box_child;
+            for (box_child = 0; box_child < first_sizer->GetChildCount(); ++box_child)
+            {
+                // children in the same position need to be the same type
+                if (first_sizer->GetChild(box_child)->gen_name() != second_sizer->GetChild(box_child)->gen_name())
+                {
+                    break;
+                }
+            }
+
+            if (box_child < first_sizer->GetChildCount())
+                continue;
+
+            // If we get here, then the two box sizers can be converted into a single flex grid sizer
+            auto grid_sizer = g_NodeCreator.CreateNode(gen_wxFlexGridSizer, m_dlg_sizer.get());
+            grid_sizer->prop_set_value(prop_cols, ttlib::cstr() << first_sizer->GetChildCount());
+            for (box_child = 0; box_child < first_sizer->GetChildCount(); ++box_child)
+            {
+                grid_sizer->Adopt(first_sizer->GetChildPtr(box_child));
+            }
+            for (box_child = 0; box_child < second_sizer->GetChildCount(); ++box_child)
+            {
+                grid_sizer->Adopt(second_sizer->GetChildPtr(box_child));
+            }
+
+            if (first_sizer->GetChild(0)->isGen(gen_wxStaticText))
+            {
+                first_sizer->GetChild(0)->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                second_sizer->GetChild(0)->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+            }
+
+            parent->RemoveChild(idx_child + 1);
+            parent->RemoveChild(idx_child);
+            parent->Adopt(grid_sizer);
+            parent->ChangeChildPosition(grid_sizer, idx_child);
+            ++idx_child;
+            while (idx_child < parent->GetChildCount() && parent->GetChild(idx_child)->isGen(gen_wxBoxSizer))
+            {
+                second_sizer = parent->GetChild(idx_child);
+                if (first_sizer->GetChildCount() != second_sizer->GetChildCount())
+                    break;
+                for (box_child = 0; box_child < first_sizer->GetChildCount(); ++box_child)
+                {
+                    // children in the same position need to be the same type
+                    if (first_sizer->GetChild(box_child)->gen_name() != second_sizer->GetChild(box_child)->gen_name())
+                    {
+                        break;
+                    }
+                }
+
+                if (box_child < first_sizer->GetChildCount())
+                    break;
+                for (box_child = 0; box_child < second_sizer->GetChildCount(); ++box_child)
+                {
+                    grid_sizer->Adopt(second_sizer->GetChildPtr(box_child));
+                }
+                if (second_sizer->GetChild(0)->isGen(gen_wxStaticText))
+                {
+                    second_sizer->GetChild(0)->prop_set_value(prop_alignment, "wxALIGN_RIGHT");
+                }
+                parent->RemoveChild(idx_child);
+            }
+
+            // Because outer loop will increment this
+            --idx_child;
         }
     }
 }

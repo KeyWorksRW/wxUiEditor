@@ -54,6 +54,11 @@ public:
     auto du_height() const { return m_du_rect.GetHeight(); }
 
 protected:
+    // Called after all controls are processed, this will check for adjoining horizontal box
+    // sizers, and if the have the identical type and number of controls, it will convert
+    // them into a single flex gird sizer.
+    void CheckForFlexGrid(Node* parent);
+
     // This will check all button controls in a form_dialog, and if they match a
     // wxStdDialogButtonSizer button, then that control will be created for the dialog and
     // the matching button added.

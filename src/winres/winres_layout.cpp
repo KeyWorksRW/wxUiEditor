@@ -179,7 +179,7 @@ void resForm::CreateDialogLayout()
             size_t first_child = idx_child;
             Adopt(sizer, m_ctrls[idx_child++]);
 
-            while (idx_child < m_ctrls.size() && is_same_top(m_ctrls, first_child, idx_child))
+            while (idx_child < m_ctrls.size() && is_same_top(m_ctrls, first_child, idx_child, true))
             {
                 if (m_ctrls[idx_child].isAdded())
                     break;

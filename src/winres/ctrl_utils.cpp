@@ -152,7 +152,7 @@ ttlib::cview resCtrl::GetID(ttlib::cview line)
         m_node->prop_set_value(prop_id, "wxID_ABORT ");
     else if (id == "IDCLOSE" || id == "8" || id == "IDC_CLOSE")
         m_node->prop_set_value(prop_id, "wxID_CLOSE");
-    else if (id == "IDHELP" || id == "9" || id == "IDD_HELP" || id == "IDC_HELP")
+    else if (id == "IDHELP" || id == "9" || id == "IDD_HELP" || id == "IDC_HELP" || id == "ID_HELP")
         m_node->prop_set_value(prop_id, "wxID_HELP");
     else if (id == "IDC_APPLY")
         m_node->prop_set_value(prop_id, "wxID_APPLY");

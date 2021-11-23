@@ -500,6 +500,19 @@ Node* Node::CreateChildNode(GenName name)
 
     auto new_node = g_NodeCreator.CreateNode(name, this);
 
+    Node* parent = this;
+
+    if (!new_node)
+    {
+        if ((IsForm() || IsContainer()) && GetChildCount() && GetChild(0)->isGen(gen_wxBoxSizer))
+        {
+            new_node = g_NodeCreator.CreateNode(name, GetChild(0));
+            if (!new_node)
+                return nullptr;
+            parent = GetChild(0);
+        }
+    }
+
     if (new_node)
     {
         if (isGen(gen_wxGridBagSizer))
@@ -534,7 +547,7 @@ Node* Node::CreateChildNode(GenName name)
 
         ttlib::cstr undo_str;
         undo_str << "insert " << map_GenNames[name];
-        frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), this, undo_str));
+        frame.PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str));
     }
 
     // A "ribbonButton" component is used for both wxRibbonButtonBar and wxRibbonToolBar. If creating the node failed,
@@ -559,7 +572,7 @@ Node* Node::CreateChildNode(GenName name)
         // widget, and wants a new widget created right after the selected widget with both having the same parent
         // (typically a sizer).
 
-        auto parent = GetParent();
+        parent = GetParent();
 
         if (parent)
         {

@@ -116,7 +116,7 @@ void resForm::CreateDialogLayout()
                 }
 
                 // Check for a list box with a vertical column to the right
-                if (m_ctrls[idx_child].isGen(gen_wxListBox))
+                if (m_ctrls[idx_child].isGen(gen_wxListBox) || m_ctrls[idx_child].isGen(gen_wxListView))
                 {
                     // Note that a variation of this code is also in AddStaticBoxChildren() -- so if you change it here, look
                     // for a similar code block in AddStaticBoxChildren() and change that as well if needed. It uses a subset
@@ -528,7 +528,8 @@ void resForm::AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box)
 
                 // Special-case a listbox in the first column and a vertical row of controls in the second column
 
-                if (group_ctrls[idx_group_child].get().isGen(gen_wxListBox))
+                if (group_ctrls[idx_group_child].get().isGen(gen_wxListBox) ||
+                    group_ctrls[idx_group_child].get().isGen(gen_wxListView))
                 {
                     // clang-format off
                     if (idx_group_child + 2 < group_ctrls.size() &&

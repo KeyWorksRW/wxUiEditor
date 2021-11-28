@@ -69,23 +69,23 @@ bool RibbonDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &titl
 
     rbnPanel_2->SetSizerAndFit(first_parent_sizer_2);
 
-    auto m_ribbonPage2 = new wxRibbonPage(m_rbnBar, wxID_ANY, "Second");
+    auto ribbonPage2 = new wxRibbonPage(m_rbnBar, wxID_ANY, "Second");
 
-    auto m_ribbonPanel2 = new wxRibbonPanel(m_ribbonPage2, wxID_ANY, "Button Panel",
+    auto ribbonPanel2 = new wxRibbonPanel(ribbonPage2, wxID_ANY, "Button Panel",
         wxNullBitmap, wxDefaultPosition, wxDefaultSize,
         wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_STRETCH);
 
-    auto rbnBtnBar = new wxRibbonButtonBar(m_ribbonPanel2, wxID_ANY);
+    auto rbnBtnBar = new wxRibbonButtonBar(ribbonPanel2, wxID_ANY);
 
     rbnBtnBar->AddButton(wxID_ANY, "Forward", wxArtProvider::GetBitmap(wxART_GO_FORWARD, wxART_OTHER), wxEmptyString, wxRIBBON_BUTTON_NORMAL);
 
     rbnBtnBar->AddButton(wxID_ANY, "Backward", wxArtProvider::GetBitmap(wxART_GO_BACK, wxART_OTHER), wxEmptyString, wxRIBBON_BUTTON_NORMAL);
 
-    auto m_ribbonPage_2 = new wxRibbonPage(m_rbnBar, wxID_ANY, "Third");
+    auto ribbonPage_2 = new wxRibbonPage(m_rbnBar, wxID_ANY, "Third");
 
-    auto m_ribbonPanel_2 = new wxRibbonPanel(m_ribbonPage_2, wxID_ANY, "Tool Panel");
+    auto ribbonPanel_2 = new wxRibbonPanel(ribbonPage_2, wxID_ANY, "Tool Panel");
 
-    auto rbnToolBar = new wxRibbonToolBar(m_ribbonPanel_2, wxID_ANY);
+    auto rbnToolBar = new wxRibbonToolBar(ribbonPanel_2, wxID_ANY);
     {
         rbnToolBar->AddTool(wxID_FILE1, wxArtProvider::GetBitmap(wxART_GOTO_FIRST, wxART_TOOLBAR), wxEmptyString, wxRIBBON_BUTTON_NORMAL);
         rbnToolBar->AddTool(wxID_FILE9, wxArtProvider::GetBitmap(wxART_GOTO_LAST, wxART_TOOLBAR), wxEmptyString, wxRIBBON_BUTTON_NORMAL);

@@ -476,12 +476,12 @@
           <node
             class="wxRibbonPage"
             label="Second"
-            var_name="m_ribbonPage2">
+            var_name="ribbonPage2">
             <node
               class="wxRibbonPanel"
               label="Button Panel"
               style="wxRIBBON_PANEL_DEFAULT_STYLE|wxRIBBON_PANEL_STRETCH"
-              var_name="m_ribbonPanel2">
+              var_name="ribbonPanel2">
               <node
                 class="wxRibbonButtonBar">
                 <node
@@ -498,11 +498,11 @@
           <node
             class="wxRibbonPage"
             label="Third"
-            var_name="m_ribbonPage_2">
+            var_name="ribbonPage_2">
             <node
               class="wxRibbonPanel"
               label="Tool Panel"
-              var_name="m_ribbonPanel_2">
+              var_name="ribbonPanel_2">
               <node
                 class="wxRibbonToolBar">
                 <node
@@ -1152,6 +1152,7 @@
               var_name="parent_sizer5">
               <node
                 class="wxRichTextCtrl"
+                minimum_size="200,100d"
                 window_style="wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS"
                 flags="wxEXPAND"
                 proportion="1" />

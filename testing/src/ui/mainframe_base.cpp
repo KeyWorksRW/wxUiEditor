@@ -6,6 +6,8 @@
 
 #include "pch.h"
 
+#include <wx/menu.h>
+
 #include "mainframe_base.h"
 
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,

@@ -8,6 +8,7 @@
 
 #include <wx/artprov.h>
 #include <wx/event.h>
+#include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
 #include <wx/statbox.h>

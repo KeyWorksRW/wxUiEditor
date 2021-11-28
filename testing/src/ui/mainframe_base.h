@@ -9,7 +9,6 @@
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
-#include <wx/menu.h>
 #include <wx/statusbr.h>
 
 class MainFrameBase : public wxFrame

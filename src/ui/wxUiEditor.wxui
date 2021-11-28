@@ -2742,18 +2742,6 @@
                   bitmap="Embed;../art_src/toolseparator.png;[-1,-1]"
                   help="Tool Separator"
                   id="gen_toolSeparator" />
-                <node
-                  class="ribbonSeparator" />
-                <node
-                  class="ribbonTool"
-                  bitmap="Embed;../art_src/auitoolbar.png;[-1,-1]"
-                  help="wxAuiToolBar"
-                  id="gen_wxAuiToolBar" />
-                <node
-                  class="ribbonTool"
-                  bitmap="Embed;../art_src/tool.png;[-1,-1]"
-                  help="Aui Tool"
-                  id="gen_auitool" />
               </node>
             </node>
             <node

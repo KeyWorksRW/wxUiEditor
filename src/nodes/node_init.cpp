@@ -141,7 +141,7 @@ struct ParentChild
 static const ParentChild lstParentChild[] = {
 
     { type_aui_toolbar, type_aui_tool, infinite },
-    { type_aui_toolbar, type_widget, infinite },
+    // { type_aui_toolbar, type_widget, infinite },
 
     // Books
 
@@ -260,7 +260,7 @@ static const ParentChild lstParentChild[] = {
     // Sizers
 
     { type_sizer, type_auinotebook, infinite },
-    { type_sizer, type_aui_toolbar, infinite },
+    // { type_sizer, type_aui_toolbar, infinite },
     { type_sizer, type_choicebook, infinite },
     { type_sizer, type_container, infinite },
     { type_sizer, type_dataviewctrl, infinite },

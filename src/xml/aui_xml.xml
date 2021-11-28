@@ -51,7 +51,7 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 		<event name="wxEVT_AUINOTEBOOK_TAB_RIGHT_UP" class="wxAuiNotebookEvent" help="The right mouse button is released on a tab." />
 		<event name="wxEVT_AUINOTEBOOK_BG_DCLICK" class="wxAuiNotebookEvent" help="Double clicked on the tabs background area." />
 	</gen>
-
+<!-- Disabled unless we find a valid reason to support it (we don't support any type of MDI or wxAuiFrame windows.
 	<gen class="wxAuiToolBar" image="auitoolbar" type="aui_toolbar">
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
@@ -130,5 +130,6 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 			help="" />
 		<event name="wxEVT_AUITOOLBAR_BEGIN_DRAG" class="wxAuiToolBarEvent"
 			help="" />
-	</gen>
+	</gen> -->
+
 </GeneratorDefinitions>)===";

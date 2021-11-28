@@ -330,7 +330,10 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     if (!isNested)
     {
         std::sort(m_forms.begin(), m_forms.end(),
-                  [](resForm a, resForm b) { return (a.GetFormName().compare(b.GetFormName()) < 0); });
+                  [](resForm a, resForm b)
+                  {
+                      return (a.GetFormName().compare(b.GetFormName()) < 0);
+                  });
 
         InsertDialogs(forms);
     }

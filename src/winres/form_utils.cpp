@@ -165,7 +165,10 @@ void resForm::SortCtrls()
         if (end > begin + 1)
         {
             std::sort(m_ctrls.begin() + begin, m_ctrls.begin() + end,
-                      [](resCtrl a, resCtrl b) { return a.du_left() < b.du_left(); });
+                      [](resCtrl a, resCtrl b)
+                      {
+                          return a.du_left() < b.du_left();
+                      });
         }
     }
 }

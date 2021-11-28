@@ -3,7 +3,7 @@
 AlignConsecutiveMacros: true
 AllowAllArgumentsOnNextLine: true
 AllowAllConstructorInitializersOnNextLine: true
-AllowShortLambdasOnASingleLine: All
+AllowShortLambdasOnASingleLine: Empty
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: false

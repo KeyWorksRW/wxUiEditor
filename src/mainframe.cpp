@@ -119,8 +119,16 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
     wxPersistentRegisterAndRestore(this, "MainFrame");
     CreateSplitters();
 
-    m_SecondarySplitter->Bind(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED, [this](wxSplitterEvent&) { UpdateStatusWidths(); });
-    m_MainSplitter->Bind(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED, [this](wxSplitterEvent&) { UpdateStatusWidths(); });
+    m_SecondarySplitter->Bind(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED,
+                              [this](wxSplitterEvent&)
+                              {
+                                  UpdateStatusWidths();
+                              });
+    m_MainSplitter->Bind(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED,
+                         [this](wxSplitterEvent&)
+                         {
+                             UpdateStatusWidths();
+                         });
 
     Bind(wxEVT_MENU, &MainFrame::OnImportWindowsResource, this, IDM_IMPORT_WINRES);
     Bind(wxEVT_MENU, &MainFrame::OnOpenRecentProject, this, wxID_FILE1, wxID_FILE9);
@@ -131,23 +139,70 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 
     Bind(EVT_NodeSelected, &MainFrame::OnNodeSelected, this);
 
-    Bind(EVT_EventHandlerChanged, [this](CustomEvent&) { UpdateFrame(); });
-    Bind(EVT_GridBagAction, [this](CustomEvent&) { UpdateFrame(); });
-    Bind(EVT_NodeCreated, [this](CustomEvent&) { UpdateFrame(); });
-    Bind(EVT_NodeDeleted, [this](CustomEvent&) { UpdateFrame(); });
-    Bind(EVT_NodePropChange, [this](CustomEvent&) { UpdateFrame(); });
-    Bind(EVT_ParentChanged, [this](CustomEvent&) { UpdateFrame(); });
-    Bind(EVT_PositionChanged, [this](CustomEvent&) { UpdateFrame(); });
-    Bind(EVT_ProjectUpdated, [this](CustomEvent&) { UpdateFrame(); });
+    Bind(EVT_EventHandlerChanged,
+         [this](CustomEvent&)
+         {
+             UpdateFrame();
+         });
+    Bind(EVT_GridBagAction,
+         [this](CustomEvent&)
+         {
+             UpdateFrame();
+         });
+    Bind(EVT_NodeCreated,
+         [this](CustomEvent&)
+         {
+             UpdateFrame();
+         });
+    Bind(EVT_NodeDeleted,
+         [this](CustomEvent&)
+         {
+             UpdateFrame();
+         });
+    Bind(EVT_NodePropChange,
+         [this](CustomEvent&)
+         {
+             UpdateFrame();
+         });
+    Bind(EVT_ParentChanged,
+         [this](CustomEvent&)
+         {
+             UpdateFrame();
+         });
+    Bind(EVT_PositionChanged,
+         [this](CustomEvent&)
+         {
+             UpdateFrame();
+         });
+    Bind(EVT_ProjectUpdated,
+         [this](CustomEvent&)
+         {
+             UpdateFrame();
+         });
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { Close(); }, wxID_EXIT);
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            Close();
+        },
+        wxID_EXIT);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent& event) { m_mockupPanel->ShowHiddenControls(event.IsChecked()); }, id_ShowHidden);
+        wxEVT_MENU,
+        [this](wxCommandEvent& event)
+        {
+            m_mockupPanel->ShowHiddenControls(event.IsChecked());
+        },
+        id_ShowHidden);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent& event) { m_mockupPanel->MagnifyWindow(event.IsChecked()); }, id_Magnify);
+        wxEVT_MENU,
+        [this](wxCommandEvent& event)
+        {
+            m_mockupPanel->MagnifyWindow(event.IsChecked());
+        },
+        id_Magnify);
 
 #if defined(_DEBUG)
     Bind(
@@ -169,7 +224,12 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
         id_NodeMemory);
 
     Bind(
-        wxEVT_MENU, [](wxCommandEvent&) { g_pMsgLogging->ShowLogger(); }, id_ShowLogger);
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            g_pMsgLogging->ShowLogger();
+        },
+        id_ShowLogger);
 
     Bind(wxEVT_MENU, &MainFrame::OnDbgCodeDiff, this, id_CodeDiffDlg);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);

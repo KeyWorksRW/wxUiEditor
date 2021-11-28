@@ -10,6 +10,7 @@
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
 #include <wx/statusbr.h>
+#include <wx/toolbar.h>
 
 class MainFrameBase : public wxFrame
 {
@@ -24,6 +25,7 @@ protected:
     // Class member variables
 
     wxStatusBar* m_statusBar;
+    wxToolBar* m_toolBar;
 
     // Virtual event handlers -- override them in your derived class
 

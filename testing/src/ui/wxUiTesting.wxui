@@ -27,7 +27,7 @@
           var_name="menuDialogs">
           <node
             class="wxMenuItem"
-            help="Common controls"
+            help="Launch DlgMultiTest Dialog"
             label="DlgMulitTest..."
             var_name="menuItem"
             wxEVT_MENU="OnMultiTestDialog" />
@@ -90,6 +90,16 @@
             var_name="menuItem4"
             wxEVT_MENU="OnQuit" />
         </node>
+      </node>
+      <node
+        class="wxToolBar">
+        <node
+          class="tool"
+          bitmap="Art;wxART_REPORT_VIEW|wxART_OTHER;[-1,-1]"
+          label="DlgMulitTest..."
+          statusbar="Launch DlgMultiTest Dialog"
+          tooltip="Launch DlgMultiTest Dialog"
+          wxEVT_TOOL="OnMultiTestDialog" />
       </node>
       <node
         class="wxStatusBar" />

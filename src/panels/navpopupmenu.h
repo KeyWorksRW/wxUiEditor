@@ -103,7 +103,8 @@ protected:
         MenuADD_MENU,
         MenuADD_MENUITEM,
         MenuADD_SUBMENU,
-        MenuADD_SEPARATOR,
+        MenuADD_MENU_SEPARATOR,
+        MenuADD_TOOL_SEPARATOR,
 
         MenuADD_WIZARD_PAGE,
 

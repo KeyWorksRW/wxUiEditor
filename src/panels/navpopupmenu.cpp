@@ -27,6 +27,7 @@ static const auto lstBarGenerators = {
     gen_wxStatusBar,
     gen_wxMenuBar,
     gen_wxToolBar,
+    gen_tool,
 
     gen_MenuBar,  // form version of wxMenuBar
     gen_RibbonBar,  // form version of wxRibbonBar
@@ -138,6 +139,13 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
                 else
                     wxGetFrame().CreateToolNode(m_tool_name);
             }
+            break;
+
+        case MenuADD_TOOL_SEPARATOR:
+            if (m_child)
+                m_child->CreateToolNode(gen_toolSeparator);
+            else
+                wxGetFrame().CreateToolNode(gen_toolSeparator);
             break;
 
         case MenuEXPAND_ALL:
@@ -577,7 +585,6 @@ void NavPopupMenu::CreateProjectMenu(Node* node)
                 [](wxCommandEvent&)
                 {
                     wxGetFrame().PasteNode(wxGetApp().GetProject());
-                    ;
                 },
                 wxID_PASTE);
         }
@@ -598,7 +605,6 @@ void NavPopupMenu::CreateProjectMenu(Node* node)
         [](wxCommandEvent&)
         {
             wxGetFrame().CreateToolNode(gen_wxWizard);
-            ;
         },
         MenuPROJECT_ADD_WIZARD);
 }
@@ -1049,7 +1055,7 @@ void NavPopupMenu::CreateMenuMenu(Node* /* node */)
     AppendSeparator();
     Append(MenuADD_MENUITEM, "Add Menu &Item\tCtrl+I");
     Append(MenuADD_SUBMENU, "Add &Submenu &Item\tCtrl+S");
-    Append(MenuADD_SEPARATOR, "Add S&eparator\tCtrl+E");
+    Append(MenuADD_MENU_SEPARATOR, "Add S&eparator\tCtrl+E");
 
     Bind(wxEVT_MENU, &NavPopupMenu::OnMenuEvent, this);
     Bind(wxEVT_UPDATE_UI, &NavPopupMenu::OnUpdateEvent, this);
@@ -1059,8 +1065,6 @@ void NavPopupMenu::CreateMenuMenu(Node* /* node */)
         [](wxCommandEvent&)
         {
             wxGetFrame().CreateToolNode(gen_wxMenuItem);
-            ;
-            ;
         },
         MenuADD_MENUITEM);
 
@@ -1069,7 +1073,6 @@ void NavPopupMenu::CreateMenuMenu(Node* /* node */)
         [](wxCommandEvent&)
         {
             wxGetFrame().CreateToolNode(gen_submenu);
-            ;
         },
         MenuADD_SUBMENU);
 
@@ -1078,9 +1081,8 @@ void NavPopupMenu::CreateMenuMenu(Node* /* node */)
         [](wxCommandEvent&)
         {
             wxGetFrame().CreateToolNode(gen_separator);
-            ;
         },
-        MenuADD_SEPARATOR);
+        MenuADD_MENU_SEPARATOR);
 }
 
 void NavPopupMenu::CreateBarMenu(Node* node)
@@ -1095,7 +1097,8 @@ void NavPopupMenu::CreateBarMenu(Node* node)
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
 
     AppendSeparator();
-    menu_item = Append(MenuEXPAND_ALL, "Expand All");
+    if (!node->isGen(gen_tool))
+        menu_item = Append(MenuEXPAND_ALL, "Expand All");
 
     if (!node->isGen(gen_wxStatusBar))
     {
@@ -1108,6 +1111,27 @@ void NavPopupMenu::CreateBarMenu(Node* node)
     {
         AppendSeparator();
         Append(MenuADD_MENU, "Add Menu\tCtrl+M");
+    }
+    else if (node->isGen(gen_wxToolBar) || node->isGen(gen_ToolBar))
+    {
+        AppendSeparator();
+        m_tool_name = gen_tool;
+        Append(MenuNEW_ITEM, "Add Tool");
+        Append(MenuADD_TOOL_SEPARATOR, "Add Separator");
+    }
+    else if (node->isGen(gen_tool))
+    {
+        AppendSeparator();
+        menu_item = Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
+        menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)));
+        menu_item = Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
+        menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)));
+
+        m_child = node->GetParent();
+        AppendSeparator();
+        m_tool_name = gen_tool;
+        Append(MenuNEW_ITEM, "Add Tool");
+        Append(MenuADD_TOOL_SEPARATOR, "Add Separator");
     }
     else if (node->isGen(gen_wxRibbonBar) || node->isGen(gen_RibbonBar))
     {
@@ -1129,6 +1153,7 @@ void NavPopupMenu::CreateBarMenu(Node* node)
     }
     else if (node->isGen(gen_ribbonTool))
     {
+        // This differs from the above gen_wxRibbonPanel by setting the child node to add the tool to
         m_child = node->GetParent();
         AppendSeparator();
         m_tool_name = gen_ribbonTool;

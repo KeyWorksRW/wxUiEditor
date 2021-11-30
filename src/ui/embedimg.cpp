@@ -74,6 +74,7 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
         dir = "./";
     dir.make_absolute();
     m_fileOriginal->SetInitialDirectory(dir);
+    m_fileOutput->SetInitialDirectory(dir);
 
 #if defined(_WIN32)
 
@@ -85,14 +86,6 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
     // By setting the path, the user can start typing and immediately get a drop-down list of matchning filenames.
     m_fileOriginal->SetPath(dir);
 #endif  // _WIN32
-
-    dir_property = wxGetApp().GetProject()->prop_as_string(prop_converted_art);
-    if (dir_property.size())
-        dir = dir_property;
-    else
-        dir = "./";
-    dir.make_absolute();
-    m_fileOutput->SetInitialDirectory(dir);
 
     m_btnClose->SetLabel("Close");
 
@@ -328,7 +321,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
         // Now that we have a loaded image, set the output file.
         ttString outFilename;
-        auto dir_property = wxGetApp().GetProject()->prop_as_string(prop_converted_art);
+        auto dir_property = wxGetApp().GetProject()->prop_as_string(prop_original_art);
         if (dir_property.size())
         {
             outFilename = dir_property;

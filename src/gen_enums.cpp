@@ -116,7 +116,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_column_sizes, "column_sizes" },
     { prop_context_help, "context_help" },
     { prop_context_menu, "context_menu" },
-    { prop_converted_art, "converted_art" },
     { prop_current, "current" },
     { prop_default, "default" },
     { prop_default_button, "default_button" },

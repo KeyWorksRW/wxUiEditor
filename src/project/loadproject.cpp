@@ -279,6 +279,18 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
             if (auto value = iter.value(); *value)
             {
+                {
+                    // REVIEW: [KeyWorks - 11-30-2021] This code block deals with changes to the 1.2 project format prior to it being released
+                    // in beta. Once we make a full release, we should be able to safely remove all of this.
+
+                    if (ttlib::is_sameas(iter.name(), "converted_art"))
+                    {
+                        // If original_art supports multiple directories, then we can add this to that property
+                        continue;
+                    }
+
+                }
+
                 // We get here if a property is specified that we don't recognize. While we can continue to load
                 // just fine, if the user attempts to save the project than the property will be lost.
 

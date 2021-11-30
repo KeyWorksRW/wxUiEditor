@@ -147,7 +147,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     {
         if (!path.file_exists())
         {
-            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_converted_art);
+            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art);
             path.append_filename(parts[IndexImage]);
 
             if (result = m_images.find(path); result != m_images.end())

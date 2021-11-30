@@ -116,7 +116,6 @@ namespace GenEnum
         prop_column_sizes,
         prop_context_help,
         prop_context_menu,
-        prop_converted_art,
         prop_current,
         prop_default,
         prop_default_button,

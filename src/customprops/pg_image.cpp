@@ -222,21 +222,8 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                     ttString name(childValue.GetString());
                     if (!name.file_exists())
                     {
-                        if (img_props.type == "Header" || img_props.type == "XPM")
-                        {
-                            name = wxGetApp().GetConvertedArtDir();
-                            name.append_filename_wx(childValue.GetString());
-                            if (!name.file_exists())
-                            {
-                                name = wxGetApp().GetOriginalArtDir();
-                                name.append_filename_wx(childValue.GetString());
-                            }
-                        }
-                        else
-                        {
-                            name = wxGetApp().GetOriginalArtDir();
-                            name.append_filename_wx(childValue.GetString());
-                        }
+                        name = wxGetApp().GetOriginalArtDir();
+                        name.append_filename_wx(childValue.GetString());
                     }
                     name.make_relative_wx(wxGetApp().GetProjectPath());
                     name.backslashestoforward();

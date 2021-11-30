@@ -64,11 +64,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("Header"))
     {
         ttSaveCwd cwd;
-        if (wxGetApp().GetProject()->HasValue(prop_converted_art) && wxGetApp().GetOriginalArtDir().dir_exists())
-        {
-            wxFileName::SetCwd(wxGetApp().GetConvertedArtDir());
-        }
-        else if (wxGetApp().GetProject()->HasValue(prop_original_art) && wxGetApp().GetOriginalArtDir().dir_exists())
+        if (wxGetApp().GetProject()->HasValue(prop_original_art) && wxGetApp().GetOriginalArtDir().dir_exists())
         {
             wxFileName::SetCwd(wxGetApp().GetOriginalArtDir());
         }

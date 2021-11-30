@@ -46,14 +46,46 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCod
     Bind(wxEVT_FIND, &BasePanel::OnFind, this);
     Bind(wxEVT_FIND_NEXT, &BasePanel::OnFind, this);
 
-    Bind(EVT_EventHandlerChanged, [this](wxEvent&) { GenerateBaseClass(); });
-    Bind(EVT_GridBagAction, [this](wxEvent&) { GenerateBaseClass(); });
-    Bind(EVT_NodeCreated, [this](wxEvent&) { GenerateBaseClass(); });
-    Bind(EVT_NodeDeleted, [this](wxEvent&) { GenerateBaseClass(); });
-    Bind(EVT_NodePropChange, [this](wxEvent&) { GenerateBaseClass(); });
-    Bind(EVT_ParentChanged, [this](wxEvent&) { GenerateBaseClass(); });
-    Bind(EVT_PositionChanged, [this](wxEvent&) { GenerateBaseClass(); });
-    Bind(EVT_ProjectUpdated, [this](wxEvent&) { GenerateBaseClass(); });
+    Bind(EVT_EventHandlerChanged,
+         [this](wxEvent&)
+         {
+             GenerateBaseClass();
+         });
+    Bind(EVT_GridBagAction,
+         [this](wxEvent&)
+         {
+             GenerateBaseClass();
+         });
+    Bind(EVT_NodeCreated,
+         [this](wxEvent&)
+         {
+             GenerateBaseClass();
+         });
+    Bind(EVT_NodeDeleted,
+         [this](wxEvent&)
+         {
+             GenerateBaseClass();
+         });
+    Bind(EVT_NodePropChange,
+         [this](wxEvent&)
+         {
+             GenerateBaseClass();
+         });
+    Bind(EVT_ParentChanged,
+         [this](wxEvent&)
+         {
+             GenerateBaseClass();
+         });
+    Bind(EVT_PositionChanged,
+         [this](wxEvent&)
+         {
+             GenerateBaseClass();
+         });
+    Bind(EVT_ProjectUpdated,
+         [this](wxEvent&)
+         {
+             GenerateBaseClass();
+         });
 
     Bind(EVT_NodeSelected, &BasePanel::OnNodeSelected, this);
 

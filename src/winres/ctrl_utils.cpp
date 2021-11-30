@@ -289,7 +289,7 @@ ttlib::cview resCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
     if (!ttlib::is_found(pos))
         return ttlib::emptystring;
 
-    if (pos +1 >= line.size())
+    if (pos + 1 >= line.size())
     {
         // This is an invalid control line
         line.remove_prefix(line.size());

@@ -78,26 +78,54 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     Bind(EVT_ParentChanged, &NavigationPanel::OnParentChange, this);
     Bind(EVT_PositionChanged, &NavigationPanel::OnPositionChange, this);
 
-    Bind(EVT_ProjectUpdated, [this](CustomEvent&) { OnProjectUpdated(); });
+    Bind(EVT_ProjectUpdated,
+         [this](CustomEvent&)
+         {
+             OnProjectUpdated();
+         });
 
     Bind(EVT_NodeCreated, &NavigationPanel::OnNodeCreated, this);
-    Bind(EVT_NodeDeleted, [this](CustomEvent& event) { DeleteNode(event.GetNode()); });
+    Bind(EVT_NodeDeleted,
+         [this](CustomEvent& event)
+         {
+             DeleteNode(event.GetNode());
+         });
 
     Bind(wxEVT_MENU, &NavigationPanel::OnExpand, this, NavToolbar::id_NavExpand);
     Bind(wxEVT_MENU, &NavigationPanel::OnCollapse, this, NavToolbar::id_NavCollapse);
     Bind(wxEVT_MENU, &NavigationPanel::OnCollExpand, this, NavToolbar::id_NavCollExpand);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Down); }, NavToolbar::id_NavMoveDown);
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            m_pMainFrame->MoveNode(MoveDirection::Down);
+        },
+        NavToolbar::id_NavMoveDown);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Left); }, NavToolbar::id_NavMoveLeft);
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            m_pMainFrame->MoveNode(MoveDirection::Left);
+        },
+        NavToolbar::id_NavMoveLeft);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Right); }, NavToolbar::id_NavMoveRight);
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            m_pMainFrame->MoveNode(MoveDirection::Right);
+        },
+        NavToolbar::id_NavMoveRight);
 
     Bind(
-        wxEVT_MENU, [this](wxCommandEvent&) { m_pMainFrame->MoveNode(MoveDirection::Up); }, NavToolbar::id_NavMoveUp);
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            m_pMainFrame->MoveNode(MoveDirection::Up);
+        },
+        NavToolbar::id_NavMoveUp);
 
     Bind(wxEVT_UPDATE_UI, &NavigationPanel::OnUpdateEvent, this);
 

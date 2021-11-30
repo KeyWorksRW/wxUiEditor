@@ -39,8 +39,10 @@ if (NOT isMultiConfig)
     endif()
 endif()
 
+# This will build wxCLib.lib and wxWidgets.lib
+add_subdirectory(wxSnapshot)
+
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
-add_compile_definitions($<$<CONFIG:Debug>:WXUSINGDLL>)
 
 # Comment the following line out for a non-beta Release
 add_compile_definitions(BETA)
@@ -205,6 +207,8 @@ add_executable(wxUiEditor WIN32
     $<$<CONFIG:Debug>:ttLib/src/winsrc/ttdebug_min.cpp>  # ttAssertionMsg
 )
 
+target_link_libraries(wxUiEditor PRIVATE wxCLib wxWidgets)
+
 if (MSVC)
     # /GL -- combined with the Linker flag /LTCG to perform whole program optimization in Release build
     # /FC -- Full path to source code file in diagnostics
@@ -220,6 +224,7 @@ endif()
 target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")
 
 target_include_directories(wxUiEditor PRIVATE
+    wxSnapshot/include
     src/
     src/nodes
     src/generate

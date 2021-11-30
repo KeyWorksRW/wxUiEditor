@@ -233,7 +233,7 @@ namespace GenEnum
         prop_normal_color,
         prop_note,
         prop_orientation,
-        prop_original_art,
+        prop_art_directory,
         prop_packing,
         prop_page_size,
         prop_pagesize,

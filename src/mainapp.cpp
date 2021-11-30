@@ -271,9 +271,9 @@ wxImage App::GetImage(const ttlib::cstr& description)
         return GetInternalImage("unknown");
 }
 
-ttString App::GetOriginalArtDir()
+ttString App::GetArtDirectory()
 {
-    return m_project->prop_as_string(prop_original_art).wx_str();
+    return m_project->prop_as_string(prop_art_directory).wx_str();
 }
 
 #if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)

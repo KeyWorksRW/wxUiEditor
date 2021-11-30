@@ -36,9 +36,9 @@ ttlib::cstr ImageProperties::CombineValues()
 {
     if (type.size() && type != "Art")
     {
-        if (!image.file_exists() && wxGetApp().GetProject()->HasValue(prop_original_art))
+        if (!image.file_exists() && wxGetApp().GetProject()->HasValue(prop_art_directory))
         {
-            auto path = wxGetApp().GetProject()->prop_as_string(prop_original_art);
+            auto path = wxGetApp().GetProject()->prop_as_string(prop_art_directory);
             path.append_filename(image);
             path.make_relative(wxGetApp().getProjectPath());
             if (path.file_exists())

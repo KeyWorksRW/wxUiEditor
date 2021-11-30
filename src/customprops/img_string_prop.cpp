@@ -30,9 +30,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("Embed"))
     {
         ttSaveCwd cwd;
-        if (wxGetApp().GetProject()->HasValue(prop_original_art))
+        if (wxGetApp().GetProject()->HasValue(prop_art_directory))
         {
-            auto dir = wxGetApp().GetOriginalArtDir();
+            auto dir = wxGetApp().GetArtDirectory();
             if (dir.dir_exists())
             {
                 wxFileName::SetCwd(dir);
@@ -64,9 +64,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("Header"))
     {
         ttSaveCwd cwd;
-        if (wxGetApp().GetProject()->HasValue(prop_original_art) && wxGetApp().GetOriginalArtDir().dir_exists())
+        if (wxGetApp().GetProject()->HasValue(prop_art_directory) && wxGetApp().GetArtDirectory().dir_exists())
         {
-            wxFileName::SetCwd(wxGetApp().GetOriginalArtDir());
+            wxFileName::SetCwd(wxGetApp().GetArtDirectory());
         }
 
         wxString pattern;

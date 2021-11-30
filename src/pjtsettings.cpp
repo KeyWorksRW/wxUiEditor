@@ -124,7 +124,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     {
         if (!path.file_exists())
         {
-            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art);
+            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
             path.append_filename(parts[IndexImage]);
         }
         auto embed = GetEmbeddedImage(path);
@@ -147,7 +147,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     {
         if (!path.file_exists())
         {
-            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art);
+            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
             path.append_filename(parts[IndexImage]);
 
             if (result = m_images.find(path); result != m_images.end())
@@ -229,7 +229,7 @@ wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description
     ttlib::cstr path = parts[IndexImage];
     if (!path.file_exists())
     {
-        path = wxGetApp().GetProjectPtr()->prop_as_string(prop_original_art);
+        path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
         path.append_filename(parts[IndexImage]);
     }
 
@@ -273,9 +273,9 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
 
     if (!path.file_exists())
     {
-        if (wxGetApp().GetProject()->HasValue(prop_original_art))
+        if (wxGetApp().GetProject()->HasValue(prop_art_directory))
         {
-            ttlib::cstr art_path = wxGetApp().GetProject()->prop_as_string(prop_original_art);
+            ttlib::cstr art_path = wxGetApp().GetProject()->prop_as_string(prop_art_directory);
             art_path.append_filename(path);
             if (!art_path.file_exists())
                 return false;

@@ -285,7 +285,12 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
                     if (ttlib::is_sameas(iter.name(), "converted_art"))
                     {
-                        // If original_art supports multiple directories, then we can add this to that property
+                        // Just ignore it
+                        continue;
+                    }
+                    else if (ttlib::is_sameas(iter.name(), "original_art"))
+                    {
+                        new_node->prop_set_value(prop_art_directory, value);
                         continue;
                     }
 

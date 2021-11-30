@@ -1,6 +1,6 @@
 # ![logo](src/art_src/logo64.png) wxUiEditor
 
-This Windows GUI tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.), generating C++ output code. Minimal requirement for compiling output files is a c++11 compliant compiler and **wxWidgets** 3.0 (version 3.1 needed for full functionality).
+This Windows GUI tool is used to create and maintain [wxWidgets](https://docs.wxwidgets.org/trunk/index.html) UI elements (dialogs, menus, etc.), generating C++ output code. Minimal requirement for compiling output files is a C++11 compliant compiler and **wxWidgets** 3.0 (version 3.1 needed for full functionality).
 
 In addition to creating new projects, the following project types can be imported:
 
@@ -12,14 +12,14 @@ In addition to creating new projects, the following project types can be importe
 
 ## Building
 
-Currently, you will need wxWidgets 3.15 installed somewhere with the `wx/` directory in your $INCLUDE environment variable, and a path to the wxWidgets libraries in your $LIB environment variable. Note that the Debug build uses the wxWidgets dlls, but the Release build expects static libraries. Currently, it's not possible to use vcpkg for the Release build because it also requires static versions of the CRT.
-
-The easiest way to build the libraries is to run the following commands:
+To build the Windows version of **wxUiEditor**, run the following two commands from the root of the repository:
 
 ```
     cmake -G "Ninja Multi-Config" . -B build
     cmake.exe --build build --config Release
 ```
+
+Note that the linking stage of the Release build will take quite a bit of time.
 
 See [Developer notes](docs/DEV_NOTES.md) for more information about the code.
 

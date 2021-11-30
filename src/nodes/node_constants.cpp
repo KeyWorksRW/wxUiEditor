@@ -5,6 +5,12 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#ifdef _MSC_VER
+    #pragma warning(push)
+
+    #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
+#endif
+
 #include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
 #include <wx/anybutton.h>              // wxAnyButtonBase class
 #include <wx/aui/auibar.h>             // wxaui: wx advanced user interface - docking window manager
@@ -47,6 +53,10 @@
 #include <wx/treelist.h>               // wxTreeListCtrl class declaration.
 #include <wx/wizard.h>                 // wxWizard class: a GUI control presenting the user with a
 #include <wx/wrapsizer.h>              // provide wrapping sizer for layout (wxWrapSizer)
+
+#ifdef _MSC_VER
+    #pragma warning(pop)
+#endif
 
 #include "node_creator.h"
 

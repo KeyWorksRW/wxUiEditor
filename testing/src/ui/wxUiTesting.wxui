@@ -3,9 +3,8 @@
   data_version="12">
   <node
     class="Project"
-    converted_art="../art"
+    art_directory="../art"
     local_pch_file="pch.h"
-    original_art="../art"
     generate_cmake="true">
     <node
       class="wxFrame"

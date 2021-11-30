@@ -62,7 +62,7 @@ void PropertyGrid_Animation::RefreshChildren()
     if (m_old_type != m_img_props.type)
     {
         wxArrayString array_art_ids;
-        auto art_dir = wxGetApp().GetOriginalArtDir();
+        auto art_dir = wxGetApp().GetArtDirectory();
         if (art_dir.empty())
             art_dir = "./";
         wxDir dir;
@@ -116,7 +116,7 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
                 ttString name(childValue.GetString());
                 if (!name.file_exists())
                 {
-                    name = wxGetApp().GetOriginalArtDir();
+                    name = wxGetApp().GetArtDirectory();
                     name.append_filename_wx(childValue.GetString());
                 }
                 name.make_relative_wx(wxGetApp().GetProjectPath());

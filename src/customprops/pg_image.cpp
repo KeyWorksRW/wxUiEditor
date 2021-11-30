@@ -156,7 +156,7 @@ void PropertyGrid_Image::SetAutoComplete()
     }
     else
     {
-        auto art_dir = wxGetApp().GetProject()->prop_as_string(prop_original_art);
+        auto art_dir = wxGetApp().GetProject()->prop_as_string(prop_art_directory);
         if (art_dir.empty())
             art_dir = "./";
         wxDir dir;
@@ -222,21 +222,8 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                     ttString name(childValue.GetString());
                     if (!name.file_exists())
                     {
-                        if (img_props.type == "Header" || img_props.type == "XPM")
-                        {
-                            name = wxGetApp().GetConvertedArtDir();
-                            name.append_filename_wx(childValue.GetString());
-                            if (!name.file_exists())
-                            {
-                                name = wxGetApp().GetOriginalArtDir();
-                                name.append_filename_wx(childValue.GetString());
-                            }
-                        }
-                        else
-                        {
-                            name = wxGetApp().GetOriginalArtDir();
-                            name.append_filename_wx(childValue.GetString());
-                        }
+                        name = wxGetApp().GetArtDirectory();
+                        name.append_filename_wx(childValue.GetString());
                     }
                     name.make_relative_wx(wxGetApp().GetProjectPath());
                     name.backslashestoforward();

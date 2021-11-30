@@ -3,8 +3,7 @@
   data_version="12">
   <node
     class="Project"
-    converted_art="../art_headers"
-    original_art="../art_src"
+    art_directory="../art_src"
     generate_cmake="true">
     <node
       class="Images"

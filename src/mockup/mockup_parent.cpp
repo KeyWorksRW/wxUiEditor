@@ -84,12 +84,36 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
     Bind(EVT_NodeSelected, &MockupParent::OnNodeSelected, this);
     Bind(EVT_NodePropChange, &MockupParent::OnNodePropModified, this);
 
-    Bind(EVT_GridBagAction, [this](CustomEvent&) { CreateContent(); });
-    Bind(EVT_NodeCreated, [this](CustomEvent&) { CreateContent(); });
-    Bind(EVT_NodeDeleted, [this](CustomEvent&) { CreateContent(); });
-    Bind(EVT_ParentChanged, [this](CustomEvent&) { CreateContent(); });
-    Bind(EVT_PositionChanged, [this](CustomEvent&) { CreateContent(); });
-    Bind(EVT_ProjectUpdated, [this](CustomEvent&) { CreateContent(); });
+    Bind(EVT_GridBagAction,
+         [this](CustomEvent&)
+         {
+             CreateContent();
+         });
+    Bind(EVT_NodeCreated,
+         [this](CustomEvent&)
+         {
+             CreateContent();
+         });
+    Bind(EVT_NodeDeleted,
+         [this](CustomEvent&)
+         {
+             CreateContent();
+         });
+    Bind(EVT_ParentChanged,
+         [this](CustomEvent&)
+         {
+             CreateContent();
+         });
+    Bind(EVT_PositionChanged,
+         [this](CustomEvent&)
+         {
+             CreateContent();
+         });
+    Bind(EVT_ProjectUpdated,
+         [this](CustomEvent&)
+         {
+             CreateContent();
+         });
 
     frame->AddCustomEventHandler(GetEventHandler());
 }

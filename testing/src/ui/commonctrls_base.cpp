@@ -256,7 +256,6 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
         {
             m_infoBar->ShowMessage("wxEVT_TEXT_ENTER event");
             Fit();
-
         } );
     m_checkBox->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
@@ -270,7 +269,6 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
         {
             m_infoBar->ShowMessage("wxEVT_BUTTON event");
             Fit();
-
         } );
     btn2->Bind(wxEVT_BUTTON, &CommonCtrlsBase::OnPopupBtn, this);
     m_radioBtn->Bind(wxEVT_RADIOBUTTON,
@@ -278,7 +276,6 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
         {
             m_infoBar->ShowMessage("wxEVT_RADIOBUTTON event");
             Fit();
-
         } );
     m_radioBtn2->Bind(wxEVT_RADIOBUTTON, &CommonCtrlsBase::OnRadio, this);
     m_checkBox2->Bind(wxEVT_CHECKBOX, &CommonCtrlsBase::OnCheckBox, this);
@@ -287,7 +284,6 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
         {
             m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
             Fit();
-
         } );
     m_comboBox2->Bind(wxEVT_COMBOBOX,
         [this](wxCommandEvent&)
@@ -300,14 +296,12 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
         {
             m_infoBar->ShowMessage("wxEVT_COMBOBOX_CLOSEUP event");
             Fit();
-
         } );
     m_choice->Bind(wxEVT_CHOICE,
         [this](wxCommandEvent&)
         {
             m_infoBar->ShowMessage("wxEVT_CHOICE event");
             Fit();
-
         } );
     m_choice2->Bind(wxEVT_CHOICE, &CommonCtrlsBase::OnChoice, this);
     m_listbox->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);
@@ -325,6 +319,10 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
             {  
                 m_animation_ctrl->Stop();
             }
+
+            m_infoBar->ShowMessage("wxEVT_TOGGLEBUTTON event");
+            Fit();
+
         } );
     m_slider->Bind(wxEVT_SLIDER, &CommonCtrlsBase::OnSlider, this);
 

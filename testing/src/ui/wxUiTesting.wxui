@@ -147,7 +147,7 @@
             style="wxTE_PROCESS_ENTER"
             value="Text &quot;ctrl&quot;"
             validator_variable="m_textCtrlValidate"
-            wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp;)@@{@@    m_infoBar->ShowMessage(&quot;wxEVT_TEXT_ENTER event&quot;);@@    Fit();@@@@}" />
+            wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_TEXT_ENTER event&quot;);@@Fit();@@}" />
           <node
             class="wxStaticText"
             label="More text:"
@@ -171,7 +171,7 @@
           <node
             class="wxButton"
             label="First btn"
-            wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@    m_infoBar->ShowMessage(&quot;wxEVT_BUTTON event&quot;);@@    Fit();@@@@}" />
+            wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_BUTTON event&quot;);@@Fit();@@}" />
           <node
             class="wxButton"
             class_access="none"
@@ -183,7 +183,7 @@
             label="First radio"
             style="wxRB_GROUP"
             alignment="wxALIGN_CENTER"
-            wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@    m_infoBar->ShowMessage(&quot;wxEVT_RADIOBUTTON event&quot;);@@    Fit();@@@@}" />
+            wxEVT_RADIOBUTTON="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_RADIOBUTTON event&quot;);@@Fit();@@}" />
           <node
             class="wxRadioButton"
             label="Second radio"
@@ -221,7 +221,7 @@
                 selection_string="item #2"
                 tooltip="Item #0 should be selected by default"
                 flags="wxEXPAND"
-                wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@    m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX event&quot;);@@    Fit();@@@@}" />
+                wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX event&quot;);@@Fit();@@}" />
               <node
                 class="wxStaticText"
                 label="Sorted"
@@ -234,8 +234,8 @@
                 style="wxCB_SORT"
                 var_name="m_comboBox2"
                 tooltip="Item #2 should be selected by default"
-                wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@    m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX event&quot;);@@    Fit();@@}"
-                wxEVT_COMBOBOX_CLOSEUP="[this](wxCommandEvent&amp;)@@{@@    m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX_CLOSEUP event&quot;);@@    Fit();@@@@}" />
+                wxEVT_COMBOBOX="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX event&quot;);@@Fit();@@}"
+                wxEVT_COMBOBOX_CLOSEUP="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_COMBOBOX_CLOSEUP event&quot;);@@Fit();@@}" />
             </node>
             <node
               class="wxStaticBoxSizer"
@@ -251,7 +251,7 @@
                 choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                 selection_int="2"
                 tooltip="Item #0 should be selected by default"
-                wxEVT_CHOICE="[this](wxCommandEvent&amp;)@@{@@    m_infoBar->ShowMessage(&quot;wxEVT_CHOICE event&quot;);@@    Fit();@@@@}" />
+                wxEVT_CHOICE="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_CHOICE event&quot;);@@Fit();@@}" />
               <node
                 class="wxStaticText"
                 label="Sorted"
@@ -341,7 +341,7 @@
             class="wxToggleButton"
             label="Play Animation"
             style="wxBU_EXACTFIT"
-            wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@}" />
+            wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@@@m_infoBar->ShowMessage(&quot;wxEVT_TOGGLEBUTTON event&quot;);@@Fit();@@@@}" />
           <node
             class="wxAnimationCtrl"
             animation="Header; ..\art\clr_hourglass_gif.hxx"

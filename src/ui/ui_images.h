@@ -55,6 +55,7 @@ namespace wxue_img
     extern const unsigned char wxChoice_png[330];
     extern const unsigned char wxComboBox_png[233];
     extern const unsigned char wxCommandLinkButton_png[582];
+    extern const unsigned char wxEditListBox_png[707];
     extern const unsigned char wxListBox_png[310];
     extern const unsigned char wxListView_png[356];
     extern const unsigned char wxRearrangeCtrl_png[332];

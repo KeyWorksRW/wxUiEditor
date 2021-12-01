@@ -124,6 +124,7 @@ static const ImageMap png_headers[] = {
     { "wxDialog", wxDialog_png, sizeof(wxDialog_png) },
     { "wxFileCtrl", wxfileCtrl_png, sizeof(wxfileCtrl_png) },
     { "wxFrame", wxFrame_png, sizeof(wxFrame_png) },
+    { "wxEditListBox", wxEditListBox_png, sizeof(wxEditListBox_png) },
     { "wxListBox", wxListBox_png, sizeof(wxListBox_png) },
     { "wxListView", wxListView_png, sizeof(wxListView_png) },
     { "wxListbook", wxListbook_png, sizeof(wxListbook_png) },

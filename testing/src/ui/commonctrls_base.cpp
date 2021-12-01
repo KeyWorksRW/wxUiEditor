@@ -55,7 +55,14 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer->Add(m_staticText, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, "Text \"ctrl\"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+    {
+        wxArrayString tmp_array;
+        tmp_array.push_back(wxString::FromUTF8("foo"));
+        tmp_array.push_back(wxString::FromUTF8("bar"));
+        m_textCtrl->AutoComplete(tmp_array);
+    }
     m_textCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_textCtrlValidate));
+    m_textCtrl->SetToolTip("Auto-complete contains \"foo\" and \"bar\"");
     box_sizer->Add(m_textCtrl, wxSizerFlags().Border(wxALL));
 
     m_staticText2 = new wxStaticText(this, wxID_ANY, "More text:");
@@ -251,16 +258,58 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
 
     // Event handlers
     Bind(wxEVT_CONTEXT_MENU, &CommonCtrlsBase::OnContextMenu, this);
-    m_textCtrl->Bind(wxEVT_TEXT_ENTER, &CommonCtrlsBase::OnProcessEnter, this);
-    m_checkBox->Bind(wxEVT_CHECKBOX, &CommonCtrlsBase::OnCheckBox, this);
-    m_btn->Bind(wxEVT_BUTTON, &CommonCtrlsBase::OnFirstBtn, this);
+    m_textCtrl->Bind(wxEVT_TEXT_ENTER,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_TEXT_ENTER event");
+            Fit();
+        } );
+    m_checkBox->Bind(wxEVT_CHECKBOX,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_CHECKBOX event");
+            Fit();
+
+        } );
+    m_btn->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_BUTTON event");
+            Fit();
+        } );
     btn2->Bind(wxEVT_BUTTON, &CommonCtrlsBase::OnPopupBtn, this);
-    m_radioBtn->Bind(wxEVT_RADIOBUTTON, &CommonCtrlsBase::OnRadio, this);
+    m_radioBtn->Bind(wxEVT_RADIOBUTTON,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_RADIOBUTTON event");
+            Fit();
+        } );
     m_radioBtn2->Bind(wxEVT_RADIOBUTTON, &CommonCtrlsBase::OnRadio, this);
     m_checkBox2->Bind(wxEVT_CHECKBOX, &CommonCtrlsBase::OnCheckBox, this);
-    m_comboBox->Bind(wxEVT_COMBOBOX, &CommonCtrlsBase::OnCombo, this);
-    m_comboBox2->Bind(wxEVT_COMBOBOX_CLOSEUP, &CommonCtrlsBase::OnComboClose, this);
-    m_choice->Bind(wxEVT_CHOICE, &CommonCtrlsBase::OnChoice, this);
+    m_comboBox->Bind(wxEVT_COMBOBOX,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
+            Fit();
+        } );
+    m_comboBox2->Bind(wxEVT_COMBOBOX,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
+            Fit();
+        } );
+    m_comboBox2->Bind(wxEVT_COMBOBOX_CLOSEUP,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_COMBOBOX_CLOSEUP event");
+            Fit();
+        } );
+    m_choice->Bind(wxEVT_CHOICE,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_CHOICE event");
+            Fit();
+        } );
     m_choice2->Bind(wxEVT_CHOICE, &CommonCtrlsBase::OnChoice, this);
     m_listbox->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);
     m_listBox2->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);
@@ -277,6 +326,16 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
             {  
                 m_animation_ctrl->Stop();
             }
+
+            m_infoBar->ShowMessage("wxEVT_TOGGLEBUTTON event");
+            Fit();
+
+        } );
+    m_edit_listbox->Bind(wxEVT_LIST_BEGIN_DRAG,
+        [this](wxListEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_LIST_BEGIN_DRAG event");
+            Fit();
         } );
     m_slider->Bind(wxEVT_SLIDER, &CommonCtrlsBase::OnSlider, this);
 

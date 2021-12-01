@@ -82,11 +82,13 @@ endif()
 target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")
 target_precompile_headers(check_build PRIVATE "src/pch.h")
 
+if (WIN32)
+    set(setup_dir wxSnapshot/win)
+endif()
+
 target_include_directories(wxUiEditor PRIVATE
     wxSnapshot/include
-    if (WIN32)
-        wxSnapshot/win
-    endif()
+    ${setup_dir}
     src/
     src/nodes
     src/generate
@@ -99,9 +101,7 @@ target_include_directories(wxUiEditor PRIVATE
 
 target_include_directories(check_build PRIVATE
     wxSnapshot/include
-    if (WIN32)
-        wxSnapshot/win
-    endif()
+    ${setup_dir}
     src/
     src/nodes
     src/generate

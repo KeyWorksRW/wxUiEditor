@@ -95,13 +95,9 @@ protected:
 
     virtual void OnCheckBox(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoice(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCombo(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnComboClose(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFirstBtn(wxCommandEvent& event) { event.Skip(); }
     virtual void OnListBox(wxCommandEvent& event) { event.Skip(); }
     virtual void OnListChecked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPopupBtn(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnProcessEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRadio(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRadioBox(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSlider(wxCommandEvent& event) { event.Skip(); }

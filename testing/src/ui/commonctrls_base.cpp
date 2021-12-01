@@ -251,16 +251,64 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
 
     // Event handlers
     Bind(wxEVT_CONTEXT_MENU, &CommonCtrlsBase::OnContextMenu, this);
-    m_textCtrl->Bind(wxEVT_TEXT_ENTER, &CommonCtrlsBase::OnProcessEnter, this);
-    m_checkBox->Bind(wxEVT_CHECKBOX, &CommonCtrlsBase::OnCheckBox, this);
-    m_btn->Bind(wxEVT_BUTTON, &CommonCtrlsBase::OnFirstBtn, this);
+    m_textCtrl->Bind(wxEVT_TEXT_ENTER,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_TEXT_ENTER event");
+            Fit();
+
+        } );
+    m_checkBox->Bind(wxEVT_CHECKBOX,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_CHECKBOX event");
+            Fit();
+
+        } );
+    m_btn->Bind(wxEVT_BUTTON,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_BUTTON event");
+            Fit();
+
+        } );
     btn2->Bind(wxEVT_BUTTON, &CommonCtrlsBase::OnPopupBtn, this);
-    m_radioBtn->Bind(wxEVT_RADIOBUTTON, &CommonCtrlsBase::OnRadio, this);
+    m_radioBtn->Bind(wxEVT_RADIOBUTTON,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_RADIOBUTTON event");
+            Fit();
+
+        } );
     m_radioBtn2->Bind(wxEVT_RADIOBUTTON, &CommonCtrlsBase::OnRadio, this);
     m_checkBox2->Bind(wxEVT_CHECKBOX, &CommonCtrlsBase::OnCheckBox, this);
-    m_comboBox->Bind(wxEVT_COMBOBOX, &CommonCtrlsBase::OnCombo, this);
-    m_comboBox2->Bind(wxEVT_COMBOBOX_CLOSEUP, &CommonCtrlsBase::OnComboClose, this);
-    m_choice->Bind(wxEVT_CHOICE, &CommonCtrlsBase::OnChoice, this);
+    m_comboBox->Bind(wxEVT_COMBOBOX,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
+            Fit();
+
+        } );
+    m_comboBox2->Bind(wxEVT_COMBOBOX,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_COMBOBOX event");
+            Fit();
+        } );
+    m_comboBox2->Bind(wxEVT_COMBOBOX_CLOSEUP,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_COMBOBOX_CLOSEUP event");
+            Fit();
+
+        } );
+    m_choice->Bind(wxEVT_CHOICE,
+        [this](wxCommandEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_CHOICE event");
+            Fit();
+
+        } );
     m_choice2->Bind(wxEVT_CHOICE, &CommonCtrlsBase::OnChoice, this);
     m_listbox->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);
     m_listBox2->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);

@@ -22,13 +22,15 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menuDialogs = new wxMenu();
 
-    auto menuItem = new wxMenuItem(menuDialogs, wxID_ANY, "DlgMulitTest...",
-        "Launch DlgMultiTest Dialog", wxITEM_NORMAL);
-    menuDialogs->Append(menuItem);
-
     auto menuItem_2 = new wxMenuItem(menuDialogs, wxID_ANY, "Common Controls...",
         "Common controls", wxITEM_NORMAL);
+    menuItem_2->SetBitmap(wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_MENU));
     menuDialogs->Append(menuItem_2);
+
+    auto menuItem = new wxMenuItem(menuDialogs, wxID_ANY, "DlgMulitTest...",
+        "Launch DlgMultiTest Dialog", wxITEM_NORMAL);
+    menuItem->SetBitmap(wxArtProvider::GetBitmap(wxART_REPORT_VIEW, wxART_MENU));
+    menuDialogs->Append(menuItem);
 
     auto menuItem1 = new wxMenuItem(menuDialogs, wxID_ANY, "Other Controls Dialog...");
     menuDialogs->Append(menuItem1);
@@ -66,7 +68,9 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     SetMenuBar(menubar);
 
     m_toolBar = CreateToolBar();
-    auto tool = m_toolBar->AddTool(wxID_ANY, "DlgMulitTest...", wxArtProvider::GetBitmap(wxART_REPORT_VIEW, wxART_OTHER), wxNullBitmap, wxITEM_NORMAL, 
+    auto tool_2 = m_toolBar->AddTool(wxID_ANY, "Common Controls...", wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_TOOLBAR));
+
+    auto tool = m_toolBar->AddTool(wxID_ANY, "DlgMulitTest...", wxArtProvider::GetBitmap(wxART_REPORT_VIEW, wxART_TOOLBAR), wxNullBitmap, wxITEM_NORMAL, 
             "Launch DlgMultiTest Dialog", "Launch DlgMultiTest Dialog");
 
     m_toolBar->Realize();
@@ -76,8 +80,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_MENU, &MainFrameBase::OnMultiTestDialog, this, menuItem->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnCommonDialog, this, menuItem_2->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnMultiTestDialog, this, menuItem->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnOtherCtrls, this, menuItem1->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnRibbonDialog, this, menuItem2->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnWizard, this, menuItem3->GetId());
@@ -87,5 +91,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnToolbook, this, menu_toolbook->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnTreebook, this, menu_treebook->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnQuit, this, wxID_EXIT);
+    Bind(wxEVT_TOOL, &MainFrameBase::OnCommonDialog, this, tool_2->GetId());
     Bind(wxEVT_TOOL, &MainFrameBase::OnMultiTestDialog, this, tool->GetId());
 }

@@ -26,16 +26,18 @@
           var_name="menuDialogs">
           <node
             class="wxMenuItem"
-            help="Launch DlgMultiTest Dialog"
-            label="DlgMulitTest..."
-            var_name="menuItem"
-            wxEVT_MENU="OnMultiTestDialog" />
-          <node
-            class="wxMenuItem"
+            bitmap="Art;wxART_LIST_VIEW|wxART_MENU;[-1,-1]"
             help="Common controls"
             label="Common Controls..."
             var_name="menuItem_2"
             wxEVT_MENU="OnCommonDialog" />
+          <node
+            class="wxMenuItem"
+            bitmap="Art;wxART_REPORT_VIEW|wxART_MENU;[-1,-1]"
+            help="Launch DlgMultiTest Dialog"
+            label="DlgMulitTest..."
+            var_name="menuItem"
+            wxEVT_MENU="OnMultiTestDialog" />
           <node
             class="wxMenuItem"
             label="Other Controls Dialog..."
@@ -94,7 +96,13 @@
         class="wxToolBar">
         <node
           class="tool"
-          bitmap="Art;wxART_REPORT_VIEW|wxART_OTHER;[-1,-1]"
+          bitmap="Art;wxART_LIST_VIEW|wxART_TOOLBAR;[-1,-1]"
+          label="Common Controls..."
+          var_name="tool_2"
+          wxEVT_TOOL="OnCommonDialog" />
+        <node
+          class="tool"
+          bitmap="Art;wxART_REPORT_VIEW|wxART_TOOLBAR;[-1,-1]"
           label="DlgMulitTest..."
           statusbar="Launch DlgMultiTest Dialog"
           tooltip="Launch DlgMultiTest Dialog"

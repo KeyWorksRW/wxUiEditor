@@ -35,11 +35,12 @@
 
 // Various customized wxPGProperty classes
 
-#include "../customprops/evt_string_prop.h"  // EventStringProperty -- dialog for editing event handlers
-#include "../customprops/pg_animation.h"     // PropertyGrid_Animation -- Custom property grid class for animations
-#include "../customprops/pg_image.h"         // PropertyGrid_Image -- Custom property grid class for images
-#include "../customprops/pg_point.h"         // CustomPointProperty -- custom wxPGProperty for handling wxPoint
-#include "../customprops/txt_string_prop.h"  // EditStringProperty -- dialog for editing single-line strings
+#include "../customprops/code_string_prop.h"  // EditCodeDialogAdapter -- Derived wxStringProperty class for code
+#include "../customprops/evt_string_prop.h"   // EventStringProperty -- dialog for editing event handlers
+#include "../customprops/pg_animation.h"      // PropertyGrid_Animation -- Custom property grid class for animations
+#include "../customprops/pg_image.h"          // PropertyGrid_Image -- Custom property grid class for images
+#include "../customprops/pg_point.h"          // CustomPointProperty -- custom wxPGProperty for handling wxPoint
+#include "../customprops/txt_string_prop.h"   // EditStringProperty -- dialog for editing single-line strings
 
 #include "wx_id_list.cpp"  // wxID_ strings
 
@@ -267,6 +268,10 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
         case type_string_edit_single:
             // This includes a button that triggers a small single-line custom text editor dialog
             return new EditStringProperty(prop->DeclName().wx_str(), prop);
+
+        case type_code_edit:
+            // This includes a button that triggers a small single-line custom text editor dialog
+            return new EditCodeProperty(prop->DeclName().wx_str(), prop);
 
         case type_bool:
             return new wxBoolProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string() == "1");
@@ -614,8 +619,6 @@ void PropGridPanel::AddEvents(ttlib::cview name, Node* node, NodeCategory& categ
                                                                      << node->DeclName());
         if (event_set.find(eventName) == event_set.end())
         {
-            // auto grid_property = new wxLongStringProperty(eventInfo->get_name(), wxPG_LABEL,
-            // CreateEscapedText(event->get_value()).wx_str());
             auto grid_property = new EventStringProperty(event->get_name(), event);
 
             auto id = m_event_grid->Append(grid_property);
@@ -752,6 +755,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 break;
             }
 
+        case type_code_edit:
         case type_string_edit:
         case type_id:
         case type_int:

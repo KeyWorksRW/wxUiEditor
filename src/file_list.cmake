@@ -23,6 +23,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/wakatime.cpp          # Updates WakaTime metrics
     ${CMAKE_CURRENT_LIST_DIR}/xpm.cpp               # All xpm files
 
+    ${CMAKE_CURRENT_LIST_DIR}/customprops/code_string_prop.cpp  # Derived wxStringProperty class for code
     ${CMAKE_CURRENT_LIST_DIR}/customprops/evt_string_prop.cpp   # Derived wxStringProperty class for event function
     ${CMAKE_CURRENT_LIST_DIR}/customprops/img_string_prop.cpp   # Derived wxStringProperty class for handling wxImage files or art
     ${CMAKE_CURRENT_LIST_DIR}/customprops/txt_string_prop.cpp   # Derived wxStringProperty class for single-line text

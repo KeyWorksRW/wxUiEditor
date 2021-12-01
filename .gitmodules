@@ -1,3 +1,7 @@
 [submodule "ttLib"]
 	path = ttLib
 	url = https://github.com/KeyWorksRW/ttLib.git
+
+[submodule "wxSnapshot"]
+	path = wxSnapshot
+	url = https://github.com/KeyWorksRW/wxSnapshot.git

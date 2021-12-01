@@ -80,6 +80,7 @@ if (MSVC)
 endif()
 
 target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")
+target_precompile_headers(check_build PRIVATE "src/pch.h")
 
 target_include_directories(wxUiEditor PRIVATE
     wxSnapshot/include

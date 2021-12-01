@@ -5,7 +5,7 @@ inline const char* listview_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
-		<property name="var_name" type="string">m_lstview</property>
+		<property name="var_name" type="string">m_listview</property>
 		<property name="mode" type="option">
 			<option name="wxLC_ICON"
 				help="Large icon view, with optional labels." />
@@ -15,7 +15,7 @@ inline const char* listview_xml = R"===(<?xml version="1.0"?>
 				help="Multicolumn list view, with optional small icons. Columns are computed automatically, i.e. you don't set columns as in wxLC_REPORT. In other words, the list wraps, unlike a wxListBox." />
 			<option name="wxLC_REPORT"
 				help="Single or multicolumn report view, with optional header." />
-				wxLC_REPORT
+			wxLC_REPORT
 		</property>
 		<property name="style" type="bitlist">
 			<option name="wxLC_VIRTUAL"
@@ -82,4 +82,69 @@ inline const char* listview_xml = R"===(<?xml version="1.0"?>
 		<event name="wxEVT_LIST_CACHE_HINT" class="wxListEvent"
 			help="Prepare cache for a virtual list control." />
 	</gen>
+
+	<gen class="wxEditableListBox" image="wxEditListBox" type="widget">
+		<inherits class="wxWindow" />
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">m_edit_listbox</property>
+		<property name="label" type="string_escapes"
+			help="The text shown just before the list control.">My Editable ListBox</property>
+		<property name="choices" type="stringlist"
+			help="Array of strings used to initialise the choice control." />
+		<property name="style" type="bitlist">
+			<option name="wxEL_ALLOW_NEW"
+				help="Allows the user to enter new strings." />
+			<option name="wxEL_ALLOW_EDIT"
+				help="Allows the user to edit existing strings." />
+			<option name="wxEL_ALLOW_DELETE"
+				help="Allows the user to delete existing strings." />
+			<option name="wxEL_NO_REORDER"
+				help="Does not allow the user to reorder the strings. " />
+			wxEL_ALLOW_NEW|wxEL_ALLOW_EDIT|wxEL_ALLOW_DELETE
+		</property>
+		<property name="strings" type="stringlist"
+			help="Specifies the initial strings to populate the listbox with." />
+		<event name="wxEVT_LIST_BEGIN_DRAG" class="wxListEvent"
+			help="Begin dragging with the left mouse button." />
+		<event name="wxEVT_LIST_BEGIN_RDRAG" class="wxListEvent"
+			help="Begin dragging with the right mouse button." />
+		<event name="wxEVT_LIST_BEGIN_LABEL_EDIT" class="wxListEvent"
+			help="Begin editing a label. This can be prevented by calling Veto()." />
+		<event name="wxEVT_LIST_END_LABEL_EDIT" class="wxListEvent"
+			help="Finish editing a label. This can be prevented by calling Veto()." />
+		<event name="wxEVT_LIST_DELETE_ITEM" class="wxListEvent"
+			help="Delete an item." />
+		<event name="wxEVT_LIST_DELETE_ALL_ITEMS" class="wxListEvent"
+			help="Delete all items." />
+		<event name="wxEVT_LIST_ITEM_SELECTED" class="wxListEvent"
+			help="The item has been selected." />
+		<event name="wxEVT_LIST_ITEM_DESELECTED" class="wxListEvent"
+			help="The item has been deselected." />
+		<event name="wxEVT_LIST_ITEM_ACTIVATED" class="wxListEvent"
+			help="The item has been activated (ENTER or double click)." />
+		<event name="wxEVT_LIST_ITEM_FOCUSED" class="wxListEvent"
+			help="The currently focused item has changed." />
+		<event name="wxEVT_LIST_ITEM_MIDDLE_CLICK" class="wxListEvent"
+			help="The middle mouse button has been clicked on an item." />
+		<event name="wxEVT_LIST_ITEM_RIGHT_CLICK" class="wxListEvent"
+			help="The right mouse button has been clicked on an item." />
+		<event name="wxEVT_LIST_KEY_DOWN" class="wxListEvent"
+			help="A key has been pressed." />
+		<event name="wxEVT_LIST_INSERT_ITEM" class="wxListEvent"
+			help="An item has been inserted." />
+		<event name="wxEVT_LIST_COL_CLICK" class="wxListEvent"
+			help="A column (m_col) has been left-clicked." />
+		<event name="wxEVT_LIST_COL_RIGHT_CLICK" class="wxListEvent"
+			help="A column (m_col) has been right-clicked." />
+		<event name="wxEVT_LIST_COL_BEGIN_DRAG" class="wxListEvent"
+			help="The user started resizing a column - can be vetoed." />
+		<event name="wxEVT_LIST_COL_DRAGGING" class="wxListEvent"
+			help="The divider between columns is being dragged." />
+		<event name="wxEVT_LIST_COL_END_DRAG" class="wxListEvent"
+			help="A column has been resized by the user." />
+		<event name="wxEVT_LIST_CACHE_HINT" class="wxListEvent"
+			help="Prepare cache for a virtual list control." />
+	</gen>
+
 </GeneratorDefinitions>)===";

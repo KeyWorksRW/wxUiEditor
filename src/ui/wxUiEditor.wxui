@@ -122,6 +122,9 @@
       <node
         class="embedded_image"
         bitmap="Embed;../art_src/wxStaticRadioBtnSizer.png;[-1,-1]" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/wxEditListBox.png;[-1,-1]" />
     </node>
     <node
       class="wxDialog"
@@ -2000,6 +2003,12 @@
         id="gen_wxCheckListBox"
         label="Insert wxCheckListBox"
         var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxEditListBox.png;[-1,-1]"
+        id="gen_wxEditableListBox"
+        label="wxEditableListBox"
+        var_name="menu_item_6" />
       <node
         class="wxMenuItem"
         bitmap="Embed;../art_src/wxListView.png;[-1,-1]"

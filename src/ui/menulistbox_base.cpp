@@ -29,6 +29,7 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 namespace wxue_img
 {
     extern const unsigned char wxCheckListBox_png[498];
+    extern const unsigned char wxEditListBox_png[707];
     extern const unsigned char wxListBox_png[310];
     extern const unsigned char wxListView_png[356];
     extern const unsigned char wxRearrangeCtrl_png[332];
@@ -45,6 +46,9 @@ MenuListbox::MenuListbox() : wxMenu()
 
     auto menu_item_2 = Append(gen_wxCheckListBox, "Insert wxCheckListBox");
     menu_item_2->SetBitmap(GetImageFromArray(wxue_img::wxCheckListBox_png, sizeof(wxue_img::wxCheckListBox_png)));
+
+    auto menu_item_6 = Append(gen_wxEditableListBox, "wxEditableListBox");
+    menu_item_6->SetBitmap(GetImageFromArray(wxue_img::wxEditListBox_png, sizeof(wxue_img::wxEditListBox_png)));
 
     auto menu_item_3 = Append(gen_wxListView, "Insert wxListView");
     menu_item_3->SetBitmap(GetImageFromArray(wxue_img::wxListView_png, sizeof(wxue_img::wxListView_png)));

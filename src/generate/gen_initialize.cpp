@@ -98,6 +98,7 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_wxGenericDirCtrl, GenericDirCtrlGenerator)
     SET_GENERATOR(gen_wxSearchCtrl, SearchCtrlGenerator)
     SET_GENERATOR(gen_wxListView, ListViewGenerator)
+    SET_GENERATOR(gen_wxEditableListBox, EditListBoxGenerator)
     SET_GENERATOR(gen_wxGrid, GridGenerator)
 
     SET_GENERATOR(gen_wxColourPickerCtrl, ColourPickerGenerator)

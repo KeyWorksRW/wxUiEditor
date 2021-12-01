@@ -15,6 +15,7 @@
 #include <wx/choice.h>
 #include <wx/combobox.h>
 #include <wx/dialog.h>
+#include <wx/editlbox.h>
 #include <wx/event.h>
 #include <wx/gauge.h>
 #include <wx/gdicmn.h>
@@ -64,10 +65,11 @@ protected:
     wxChoice* m_choice;
     wxComboBox* m_comboBox2;
     wxComboBox* m_comboBox;
+    wxEditableListBox* m_edit_listbox;
     wxGauge* m_gauge;
     wxInfoBar* m_infoBar;
     wxListBox* m_listBox2;
-    wxListBox* m_listBox;
+    wxListBox* m_listbox;
     wxRadioBox* m_radioBox;
     wxRadioButton* m_radioBtn2;
     wxRadioButton* m_radioBtn;

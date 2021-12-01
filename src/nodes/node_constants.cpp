@@ -24,6 +24,7 @@
 #include <wx/datectrl.h>               // implements wxDatePickerCtrl
 #include <wx/defs.h>                   // Declarations/definitions common to all wx source files
 #include <wx/dirctrl.h>                // Directory control base header
+#include <wx/editlbox.h>               // ListBox with editable items
 #include <wx/filectrl.h>               // Header for wxFileCtrlBase and other common functions used by
 #include <wx/filepicker.h>             // wxFilePickerCtrl, wxDirPickerCtrl base header
 #include <wx/fontpicker.h>             // wxFontPickerCtrl base header
@@ -146,6 +147,12 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxLB_NEEDED_SB)
     ADD_CONSTANT(wxLB_NO_SB)
     ADD_CONSTANT(wxLB_SORT)
+
+    // wxEditableListBox
+    ADD_CONSTANT(wxEL_ALLOW_NEW)
+    ADD_CONSTANT(wxEL_ALLOW_EDIT)
+    ADD_CONSTANT(wxEL_ALLOW_DELETE)
+    ADD_CONSTANT(wxEL_NO_REORDER)
 
     // wxSimpleHtmlListBox
     ADD_CONSTANT(wxHLB_DEFAULT_STYLE)

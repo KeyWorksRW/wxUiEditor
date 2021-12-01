@@ -44,7 +44,7 @@ The files `gen_enums.h` and `gen_enums.cpp` _must_ be updated any time you add a
 
 While testing, you can use any existing image, and insert the control using the Edit menu's `Insert Widget` command. Once ready for release, then take the following steps:
 
-- Create a new graphic for the class -- if it won't be embedded, then you must use the `Convert Image...` tool to create a _file_.h_img.
-- Add the header file (if not embedded) and name matching to xpm.cpp -- the name must match to declaration at the top of this list of todo items
+- Create a new graphic for the class and add it to the `(images)` node in the **wxUiEditor.wxue** project.
+- Add the name to xpm.cpp
 - Change the name of the bitmap in the XML declaration to match the shortname you specified in xpm.cpp.
-- Add the control to ribbon.wxui. If it's part of a dropdown list of controls, add it to ribbon_tools.
+- If the control isn't part of a drop-down, add it to `RibbonPanelBase` in `wxUiEditor.wxue`. If it's part of a dropdown list of controls, add it to the matching drop-down menu in `wxUiEditor.wxue`.

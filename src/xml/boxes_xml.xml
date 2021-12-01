@@ -90,7 +90,7 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
-		<property name="var_name" type="string">m_listBox</property>
+		<property name="var_name" type="string">m_listbox</property>
 		<property name="choices" type="stringlist"
 			help="Contents of the List Box." />
 		<property name="selection_string" type="string_escapes"

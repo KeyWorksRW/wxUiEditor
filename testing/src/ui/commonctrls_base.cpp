@@ -147,11 +147,11 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     m_staticText7 = new wxStaticText(static_box_sizer4->GetStaticBox(), wxID_ANY, "Unsorted");
     static_box_sizer4->Add(m_staticText7, wxSizerFlags().Border(wxALL));
 
-    m_listBox = new wxListBox(static_box_sizer4->GetStaticBox(), wxID_ANY);
-    m_listBox->Append("item #1");
-    m_listBox->Append("item #2");
-    m_listBox->Append("item #0");
-    static_box_sizer4->Add(m_listBox, wxSizerFlags().Border(wxALL));
+    m_listbox = new wxListBox(static_box_sizer4->GetStaticBox(), wxID_ANY);
+    m_listbox->Append("item #1");
+    m_listbox->Append("item #2");
+    m_listbox->Append("item #0");
+    static_box_sizer4->Add(m_listbox, wxSizerFlags().Border(wxALL));
 
     m_staticText8 = new wxStaticText(static_box_sizer4->GetStaticBox(), wxID_ANY, "Sorted");
     static_box_sizer4->Add(m_staticText8, wxSizerFlags().Border(wxALL));
@@ -213,6 +213,19 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     m_animation_ctrl->SetInactiveBitmap(wxImage(empty_xpm));
     flex_grid_sizer->Add(m_animation_ctrl, wxSizerFlags().Border(wxALL));
 
+    flex_grid_sizer->AddSpacer(0);
+
+    m_edit_listbox = new wxEditableListBox(this, wxID_ANY, "My Editable ListBox", wxDefaultPosition, wxDefaultSize,
+        wxEL_ALLOW_NEW|wxEL_ALLOW_EDIT|wxEL_ALLOW_DELETE);
+    {
+        wxArrayString tmp_array;
+        tmp_array.push_back(wxString::FromUTF8("item #1"));
+        tmp_array.push_back(wxString::FromUTF8("item #2"));
+        tmp_array.push_back(wxString::FromUTF8("item #3"));
+        m_edit_listbox->SetStrings(tmp_array);
+    }
+    flex_grid_sizer->Add(m_edit_listbox, wxSizerFlags().Border(wxALL));
+
     auto box_sizer5 = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer5, wxSizerFlags().Expand().Border(wxALL));
 
@@ -249,7 +262,7 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     m_comboBox2->Bind(wxEVT_COMBOBOX_CLOSEUP, &CommonCtrlsBase::OnComboClose, this);
     m_choice->Bind(wxEVT_CHOICE, &CommonCtrlsBase::OnChoice, this);
     m_choice2->Bind(wxEVT_CHOICE, &CommonCtrlsBase::OnChoice, this);
-    m_listBox->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);
+    m_listbox->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);
     m_listBox2->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);
     m_checkList->Bind(wxEVT_CHECKLISTBOX, &CommonCtrlsBase::OnListChecked, this);
     m_radioBox->Bind(wxEVT_RADIOBOX, &CommonCtrlsBase::OnRadioBox, this);

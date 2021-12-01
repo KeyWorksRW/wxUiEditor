@@ -33,7 +33,7 @@ protected:
 
     // Class member variables
 
-    wxListBox* m_listBox;
+    wxListBox* m_listbox;
     wxStdDialogButtonSizer* m_stdBtn;
     wxButton* m_stdBtnOK;
     wxButton* m_stdBtnCancel;

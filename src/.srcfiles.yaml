@@ -1,25 +1,26 @@
-# Requires ttBld.exe version 1.8.1 or higher to process -- see https://github.com/KeyWorksRW/ttBld
+# Updated by ttBld.exe version 1.8.1 -- see https://github.com/KeyWorksRW/ttBld
 
 Options:
-    Project:     wxUiEditor   # project name
-    Exe_type:    window       # [window | console | lib | dll]
-    Pch:         pch.h        # name of precompiled header file, or "none" if not using precompiled headers
-    Ms_linker:   true         # true means use link.exe even when compiling with clang-cl
+    Project:          wxUiEditor # project name
+    Exe_type:         window   # [window | console | lib | dll]
+    Pch:              pch.h    # name of precompiled header file, or "none" if not using precompiled headers
+    Ms_linker:        true     # true means use link.exe even when compiling with clang-cl
 
-    Optimize:    space        # [space | speed] optimization to use in release builds
-    Warn:        4            # [1-4] warning level
-    Crt_rel:     dll          # [static | dll] type of CRT to link to in release builds
-    Crt_dbg:     dll          # [static | dll] type of CRT to link to in debug builds
+    Optimize:         space    # [space | speed] optimization to use in release builds
+    Warn:             4        # [1-4] warning level
+    Crt_rel:          dll      # [static | dll] type of CRT to link to in release builds
+    Crt_dbg:          dll      # [static | dll] type of CRT to link to in debug builds
 
-    CFlags_cmn:  /std:c++17 /Zc:__cplusplus /utf-8
-    CFlags_rel:  /DNDEBUG     # static wxWidgets libraries in release build
-    CFlags_dbg:  -DWXUSINGDLL # dll wxWidgets libraries in debug build
+    CFlags_cmn:       /std:c++17 /Zc:__cplusplus /utf-8 /DUNICODE
+    CFlags_rel:       /DNDEBUG # static wxWidgets libraries in release build
 
-    TargetDir:   ../bin       # target directory
-    TargetDir32: ../bin       # 32-bit target directory
-    Natvis:      wxui.natvis  # MSVC Debug visualizer
+    TargetDir:        ../bin   # target directory
+    Natvis:           wxui.natvis # MSVC Debug visualizer
 
-    IncDirs:     ./;nodes;generate;utils;customprops;ui;../ttLib/include;../pugixml
+    IncDirs:          ./;nodes;generate;utils;customprops;ui;../wxSnapshot/include;../wxSnapshot/win;../ttLib/include;../pugixml
+
+    Libs_dbg:         ../build/wxSnapshot/Debug/wxCLib.lib;../build/wxSnapshot/Debug/wxWidgets.lib
+    Libs_rel:         ../build/wxSnapshot/Release/wxCLib.lib;../build/wxSnapshot/Release/wxWidgets.lib
 
 Files:
     wxUiEditor.rc         # Only processed when compiling for Windows, ignored otherwise

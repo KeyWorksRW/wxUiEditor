@@ -47,7 +47,7 @@ MenuListbox::MenuListbox() : wxMenu()
     auto menu_item_2 = Append(gen_wxCheckListBox, "Insert wxCheckListBox");
     menu_item_2->SetBitmap(GetImageFromArray(wxue_img::wxCheckListBox_png, sizeof(wxue_img::wxCheckListBox_png)));
 
-    auto menu_item_6 = Append(gen_wxEditableListBox, "wxEditableListBox");
+    auto menu_item_6 = Append(gen_wxEditableListBox, "Insert wxEditableListBox");
     menu_item_6->SetBitmap(GetImageFromArray(wxue_img::wxEditListBox_png, sizeof(wxue_img::wxEditListBox_png)));
 
     auto menu_item_3 = Append(gen_wxListView, "Insert wxListView");

@@ -337,6 +337,11 @@
             class="wxAnimationCtrl"
             animation="Header; ..\art\clr_hourglass_gif.hxx"
             inactive_bitmap="XPM; ..\art\empty.xpm; [-1,-1]" />
+          <node
+            class="spacer" />
+          <node
+            class="wxEditableListBox"
+            strings="&quot;item #1&quot; &quot;item #2&quot; &quot;item #3&quot;" />
         </node>
         <node
           class="wxBoxSizer"

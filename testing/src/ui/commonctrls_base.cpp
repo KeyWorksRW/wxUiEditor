@@ -55,7 +55,14 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer->Add(m_staticText, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, "Text \"ctrl\"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+    {
+        wxArrayString tmp_array;
+        tmp_array.push_back(wxString::FromUTF8("foo"));
+        tmp_array.push_back(wxString::FromUTF8("bar"));
+        m_textCtrl->AutoComplete(tmp_array);
+    }
     m_textCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_textCtrlValidate));
+    m_textCtrl->SetToolTip("Auto-complete contains \"foo\" and \"bar\"");
     box_sizer->Add(m_textCtrl, wxSizerFlags().Border(wxALL));
 
     m_staticText2 = new wxStaticText(this, wxID_ANY, "More text:");

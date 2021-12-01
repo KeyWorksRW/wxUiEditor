@@ -144,9 +144,11 @@
             borders="wxLEFT|wxTOP|wxBOTTOM" />
           <node
             class="wxTextCtrl"
+            auto_complete="&quot;foo&quot; &quot;bar&quot;"
             style="wxTE_PROCESS_ENTER"
             value="Text &quot;ctrl&quot;"
             validator_variable="m_textCtrlValidate"
+            tooltip="Auto-complete contains &quot;foo&quot; and &quot;bar&quot;"
             wxEVT_TEXT_ENTER="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_TEXT_ENTER event&quot;);@@Fit();@@}" />
           <node
             class="wxStaticText"

@@ -20,7 +20,7 @@ void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
 void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
 {
     ttlib::cstr name = m_text_name->GetValue().utf8_str().data();
-    m_listBox->Clear();
+    m_listbox->Clear();
     for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
     {
         if (!iter)
@@ -39,7 +39,7 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
 #endif  // not defined(_DEBUG)
 
         if (iter->DeclName().contains(name, tt::CASE::either))
-            m_listBox->AppendString(iter->DeclName().wx_str());
+            m_listbox->AppendString(iter->DeclName().wx_str());
     }
 
 #if !defined(_DEBUG)
@@ -50,40 +50,40 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
 
     if (name.contains("box", tt::CASE::either))
     {
-        m_listBox->AppendString("VerticalBoxSizer");
-        m_listBox->AppendString("Check3State");
+        m_listbox->AppendString("VerticalBoxSizer");
+        m_listbox->AppendString("Check3State");
     }
     else if (name.contains("static", tt::CASE::either))
     {
-        m_listBox->AppendString("StaticCheckboxBoxSizer");
-        m_listBox->AppendString("StaticRadioBtnBoxSizer");
+        m_listbox->AppendString("StaticCheckboxBoxSizer");
+        m_listbox->AppendString("StaticRadioBtnBoxSizer");
     }
     else if (name.contains("sizer", tt::CASE::either))
     {
-        m_listBox->AppendString("StaticCheckboxBoxSizer");
-        m_listBox->AppendString("StaticRadioBtnBoxSizer");
+        m_listbox->AppendString("StaticCheckboxBoxSizer");
+        m_listbox->AppendString("StaticRadioBtnBoxSizer");
     }
     else if (name.contains("check", tt::CASE::either))
     {
-        m_listBox->AppendString("Check3State");
+        m_listbox->AppendString("Check3State");
     }
     else if (name.contains("custom", tt::CASE::either))
     {
-        m_listBox->AppendString("CustomControl");
+        m_listbox->AppendString("CustomControl");
     }
     else if (name.contains("book", tt::CASE::either))
     {
-        m_listBox->AppendString("BookPage");
+        m_listbox->AppendString("BookPage");
     }
     else if (name.contains("page", tt::CASE::either))
     {
-        m_listBox->AppendString("BookPage");
+        m_listbox->AppendString("BookPage");
     }
 #endif  // not defined(_DEBUG)
 
-    if (m_listBox->GetCount() > 0)
+    if (m_listbox->GetCount() > 0)
     {
-        m_listBox->Select(0);
+        m_listbox->Select(0);
         m_stdBtn->GetAffirmativeButton()->Enable();
     }
     else
@@ -100,6 +100,6 @@ void InsertWidget::OnListBoxDblClick(wxCommandEvent& WXUNUSED(event))
 
 void InsertWidget::OnOK(wxCommandEvent& event)
 {
-    m_widget << m_listBox->GetStringSelection().wx_str();
+    m_widget << m_listbox->GetStringSelection().wx_str();
     event.Skip();
 }

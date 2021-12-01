@@ -29,8 +29,8 @@ bool InsertWidgetBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_listBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 300), 0, nullptr, wxLB_SINGLE|wxLB_SORT);
-    box_sizer_3->Add(m_listBox, wxSizerFlags(1).Expand().Border(wxALL));
+    m_listbox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 300), 0, nullptr, wxLB_SINGLE|wxLB_SORT);
+    box_sizer_3->Add(m_listbox, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     box_sizer->Add(CreateSeparatedSizer(m_stdBtn), wxSizerFlags().Expand().Border(wxALL));
@@ -41,12 +41,12 @@ bool InsertWidgetBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &InsertWidgetBase::OnInit, this);
     m_text_name->Bind(wxEVT_TEXT, &InsertWidgetBase::OnNameText, this);
-    m_listBox->Bind(wxEVT_LISTBOX,
+    m_listbox->Bind(wxEVT_LISTBOX,
         [this](wxCommandEvent&)
         {
             m_stdBtn->GetAffirmativeButton()->Enable();
         } );
-    m_listBox->Bind(wxEVT_LISTBOX_DCLICK, &InsertWidgetBase::OnListBoxDblClick, this);
+    m_listbox->Bind(wxEVT_LISTBOX_DCLICK, &InsertWidgetBase::OnListBoxDblClick, this);
     Bind(wxEVT_BUTTON, &InsertWidgetBase::OnOK, this, wxID_OK);
 
     return true;

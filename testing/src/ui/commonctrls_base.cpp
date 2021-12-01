@@ -331,6 +331,12 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
             Fit();
 
         } );
+    m_edit_listbox->Bind(wxEVT_LIST_BEGIN_DRAG,
+        [this](wxListEvent&)
+        {
+            m_infoBar->ShowMessage("wxEVT_LIST_BEGIN_DRAG event");
+            Fit();
+        } );
     m_slider->Bind(wxEVT_SLIDER, &CommonCtrlsBase::OnSlider, this);
 
     return true;

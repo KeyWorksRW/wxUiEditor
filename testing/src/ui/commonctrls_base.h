@@ -22,6 +22,7 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/infobar.h>
+#include <wx/listbase.h>
 #include <wx/listbox.h>
 #include <wx/radiobox.h>
 #include <wx/radiobut.h>

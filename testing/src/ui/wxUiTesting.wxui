@@ -352,7 +352,8 @@
             class="spacer" />
           <node
             class="wxEditableListBox"
-            strings="&quot;item #1&quot; &quot;item #2&quot; &quot;item #3&quot;" />
+            strings="&quot;item #1&quot; &quot;item #2&quot; &quot;item #3&quot;"
+            wxEVT_LIST_BEGIN_DRAG="[this](wxListEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_LIST_BEGIN_DRAG event&quot;);@@Fit();@@}" />
         </node>
         <node
           class="wxBoxSizer"

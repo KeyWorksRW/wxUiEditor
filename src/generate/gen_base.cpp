@@ -1409,6 +1409,16 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
             m_source->writeLine(code);
         }
+        else if (parent->IsToolBar() && !node->isType(type_tool))
+        {
+            ttlib::cstr code;
+            if (parent->isType(type_toolbar_form))
+                code << "AddControl(" << node->prop_as_string(prop_var_name) << ");";
+            else
+                code << parent->prop_as_string(prop_var_name) << "->AddControl(" << node->prop_as_string(prop_var_name)
+                     << ");";
+            m_source->writeLine(code);
+        }
         else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
         {
             ttlib::cstr code;

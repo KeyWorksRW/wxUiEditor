@@ -56,3 +56,6 @@ XPM:
     art/english.png: art/english.xpm
     art/french.png: art/french.xpm
     art/japanese.png: art/japanese.xpm
+
+Other:
+    ui/wxui_code.cmake

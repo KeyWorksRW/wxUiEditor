@@ -102,7 +102,8 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
                     alignment.contains("wxALIGN_CENTER_HORIZONTAL") || alignment.contains("wxALIGN_TOP") ||
                     alignment.contains("wxALIGN_BOTTOM") || alignment.contains("wxALIGN_CENTER_VERTICAL"))
                 {
-                    wxMessageBox("You can't set the wxEXPAND flag if you have either horizontal or vertical alignment set.", "Invalid alignment");
+                    wxMessageBox("You can't set the wxEXPAND flag if you have either horizontal or vertical alignment set.",
+                                 "Invalid alignment");
                     event->Veto();
                     return false;
                 }

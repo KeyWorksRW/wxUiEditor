@@ -447,64 +447,23 @@ void NavPopupMenu::CreateNormalMenu(Node* node)
     AppendSubMenu(sub_menu, "Borders");
 
     AppendSeparator();
-    if (node->gen_type() == type_sizer)
-    {
-#if 0
-// See TODO comment in OnAddNew below
-            Append(MenuNEW_SIBLING_SPACER, "Add spacer");
-#endif
-        sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
-        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
+    Append(MenuNEW_CHILD_SPACER, "Add spacer");
 
-        AppendSubMenu(sub_menu, "Add child sizer");
+    sub_menu = new wxMenu;
+    menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
+    menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+    menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
+    menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+    menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
+    menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+    menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
+    menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+    menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
+    menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+    menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+    menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
 
-        sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(MenuNEW_SIBLING_BOX_SIZER, "wxBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
-        menu_item = sub_menu->Append(MenuNEW_SIBLING_STATIC_SIZER, "wxStaticBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
-        menu_item = sub_menu->Append(MenuNEW_SIBLING_WRAP_SIZER, "wxWrapSizer");
-        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
-        menu_item = sub_menu->Append(MenuNEW_SIBLING_GRID_SIZER, "wxGridSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
-        menu_item = sub_menu->Append(MenuNEW_SIBLING_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
-        menu_item = sub_menu->Append(MenuNEW_SIBLING_GRIDBAG_SIZER, "wxGridBagSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
-
-        AppendSubMenu(sub_menu, "Add sibling sizer");
-    }
-    else
-    {
-        Append(MenuNEW_CHILD_SPACER, "Add spacer");
-
-        sub_menu = new wxMenu;
-        menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
-        menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
-        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
-        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
-        menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
-        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
-
-        AppendSubMenu(sub_menu, "Add sizer");
-    }
+    AppendSubMenu(sub_menu, "Add sizer");
 
     sub_menu = new wxMenu;
     menu_item = sub_menu->Append(MenuNEW_PARENT_BOX_SIZER, "wxBoxSizer");
@@ -543,21 +502,7 @@ void NavPopupMenu::CreateNormalMenu(Node* node)
     // child
     m_child = node->GetParent();
 
-    if (node->gen_type() == type_sizer)
-    {
-        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_BOX_SIZER);
-        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_STATIC_SIZER);
-        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_WRAP_SIZER);
-        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_GRID_SIZER);
-        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_FLEX_GRID_SIZER);
-        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_GRIDBAG_SIZER);
-        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_SIBLING_SPACER);
-    }
-    else
-    {
-        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_SPACER);
-    }
-
+    Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_SPACER);
     Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_BOX_SIZER);
     Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_STATIC_SIZER);
     Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_WRAP_SIZER);
@@ -650,15 +595,9 @@ void NavPopupMenu::OnAddNew(wxCommandEvent& event)
             m_child->CreateToolNode(gen_wxStdDialogButtonSizer);
             break;
 
-#if 0
-        // TODO: [KeyWorks - 08-17-2020] This should work the same way as adding a sibling when a sizer is selected, but what
-        // actually happens is that the spacer is added above rather than below the sizer. All other sizers get added below, so
-        // need to figure out why before this gets enabled.
-
         case MenuNEW_SIBLING_SPACER:
-            m_child->CreateToolNode("spacer");
+            m_child->CreateToolNode(gen_spacer);
             break;
-#endif
 
         case MenuNEW_CHILD_BOX_SIZER:
             wxGetFrame().CreateToolNode(gen_wxBoxSizer);

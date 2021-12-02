@@ -22,37 +22,12 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxListView(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-#if 0
-// REVIEW: [KeyWorks - 12-13-2020] This is the original code, but we should be able to do much better by making it possible for the user
-// to set up column headers, etc.
-
-        // Refilling
-        int i, j;
-        wxString buf;
-        if ((lc->GetWindowStyle() & wxLC_REPORT) != 0)
-        {
-            for (i = 0; i < 4; i++)
-            {
-                buf.Printf("Label %d", i);
-                lc->InsertColumn(i, buf, wxLIST_FORMAT_LEFT, 80);
-            }
-        }
-
-        for (j = 0; j < 10; j++)
-        {
-            long temp;
-            buf.Printf("Cell (0,%d)", j);
-            temp = lc->InsertItem(j, buf);
-            if ((lc->GetWindowStyle() & wxLC_REPORT) != 0)
-            {
-                for (i = 1; i < 4; i++)
-                {
-                    buf.Printf("Cell (%d,%d)", i, j);
-                    lc->SetItem(temp, i, buf);
-                }
-            }
-        }
-#endif
+    if (node->prop_as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
+    {
+        auto array = ConvertToArrayString(node->prop_as_string(prop_column_labels));
+        for (auto& iter: array)
+            widget->AppendColumn(iter.wx_str());
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -71,6 +46,25 @@ std::optional<ttlib::cstr> ListViewGenerator::GenConstruction(Node* node)
     // easier to understand since you know exactly which type of list view is being created instead of having to know what
     // the default is.
     GeneratePosSizeFlags(node, code);
+
+    return code;
+}
+
+std::optional<ttlib::cstr> ListViewGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    if (node->prop_as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
+    {
+
+        auto array = ConvertToArrayString(node->prop_as_string(prop_column_labels));
+        for (auto& iter: array)
+        {
+            if (code.size())
+                code << "\n";
+            code << node->get_node_name() << "->AppendColumn(" << GenerateQuotedString(iter) << ");";
+        }
+    }
 
     return code;
 }

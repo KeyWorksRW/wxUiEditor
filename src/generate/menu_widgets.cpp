@@ -337,14 +337,6 @@ std::optional<ttlib::cstr> MenuGenerator::GenAdditionalCode(GenEnum::GenCodeType
                 code << "\tBind(wxEVT_RIGHT_DOWN, &" << node->get_parent_name() << "::" << node->get_parent_name()
                      << "OnContextMenu, this);";
             }
-            else if (parent_type == type_tool)
-            {
-                // REVIEW: [KeyWorks - 12-08-2020] I have no idea if this actually works since the original template code
-                // used: Connect(#parent $name->GetId(), wxEVT_AUITOOLBAR_TOOL_DROPDOWN...
-
-                code << "\tBind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &" << node->get_parent_name()
-                     << "::" << node->get_parent_name() << "OnDropDownMenu, this);";
-            }
             else
             {
                 code << "\t" << node->get_parent_name() << "->Bind(wxEVT_RIGHT_DOWN, &" << node->get_form_name()

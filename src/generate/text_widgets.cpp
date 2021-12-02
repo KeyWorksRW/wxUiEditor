@@ -424,8 +424,6 @@ bool WebViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 
 wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    // REVIEW: [KeyWorks - 12-10-2020] This is the original code which needs to be replaced as part of issue #512
-
     auto scintilla =
         new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                              DlgSize(parent, node, prop_size), GetStyleInt(node), node->prop_as_wxString(prop_var_name));
@@ -582,22 +580,4 @@ bool StyledTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 {
     InsertGeneratorInclude(node, "#include <wx/stc/stc.h>", set_src, set_hdr);
     return true;
-}
-
-// REVIEW: [KeyWorks - 12-10-2020] This was in the original code, but it's not hooked up yet.
-void StyledTextGenerator::OnMarginClick(wxStyledTextEvent& event)
-{
-    if (auto scintilla = wxStaticCast(event.GetEventObject(), wxStyledTextCtrl); scintilla)
-    {
-        if (event.GetMargin() == 1)
-        {
-            int lineClick = scintilla->LineFromPosition(event.GetPosition());
-            int levelClick = scintilla->GetFoldLevel(lineClick);
-            if ((levelClick & wxSTC_FOLDLEVELHEADERFLAG) > 0)
-            {
-                scintilla->ToggleFold(lineClick);
-            }
-        }
-    }
-    event.Skip();
 }

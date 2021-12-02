@@ -15,5 +15,6 @@ public:
     DlgMultiTest(wxWindow* parent = nullptr);
 
 protected:
+    void OnInit(wxInitDialogEvent& event) override;
     // Handlers for DlgMultiTestBase events
 };

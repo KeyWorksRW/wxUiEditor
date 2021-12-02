@@ -6,6 +6,10 @@ inline const char* listview_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_listview</property>
+		<property name="column_labels" type="stringlist"
+			help="Labels to use as column headers. Only used if the mode is set to wxLC_REPORT." />
+		<property name="strings" type="stringlist"
+			help="Array of strings used to initialize the list view. Each string is a row, with text for individual columns separated by a ';' character. Only valid if column_labels has been initialized and the mode is set to wxLC_REPORT." />
 		<property name="mode" type="option">
 			<option name="wxLC_ICON"
 				help="Large icon view, with optional labels." />
@@ -90,8 +94,8 @@ inline const char* listview_xml = R"===(<?xml version="1.0"?>
 		<property name="var_name" type="string">m_edit_listbox</property>
 		<property name="label" type="string_escapes"
 			help="The text shown just before the list control.">My Editable ListBox</property>
-		<property name="choices" type="stringlist"
-			help="Array of strings used to initialise the choice control." />
+		<property name="strings" type="stringlist"
+			help="Array of strings used to initialize the list box." />
 		<property name="style" type="bitlist">
 			<option name="wxEL_ALLOW_NEW"
 				help="Allows the user to enter new strings." />

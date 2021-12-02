@@ -258,8 +258,6 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenSettings(Node* node, size_t& /
 bool FrameFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/frame.h>", set_src, set_hdr);
-    // if (node->prop_as_bool("aui_managed"))
-    // InsertGeneratorInclude(node, "#include <wx/aui/aui.h>", set_src, set_hdr);
 
     return true;
 }

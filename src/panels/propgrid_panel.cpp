@@ -1226,7 +1226,6 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
             break;
 
         case type_bool:
-            // REVIEW: [KeyWorks - 07-03-2020] Any way to use "true" or "false" to be a bit more standard?
             grid_property->SetValueFromInt(prop->as_string() == "0" ? 0 : 1, 0);
             break;
 

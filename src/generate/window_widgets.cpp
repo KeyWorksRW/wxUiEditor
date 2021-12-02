@@ -65,12 +65,6 @@ wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     // Always have a child so it is drawn consistently
     splitter->Initialize(new wxPanel(splitter));
 
-    // REVIEW: [KeyWorks - 12-19-2020] I removed this because this would cause a redraw on every idle event.
-
-    // Used to ensure sash position is correct
-    // splitter->m_initialSashPos = node->prop_as_int("sashpos");
-    // splitter->Connect(wxEVT_IDLE, wxIdleEventHandler(wxCustomSplitterWindow::OnIdle));
-
     return splitter;
 }
 

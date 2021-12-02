@@ -5,9 +5,10 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/event.h>     // Event classes
-#include <wx/scrolbar.h>  // wxScrollBar base header
-#include <wx/spinctrl.h>  // wxSpinCtrlBase class
+#include <wx/event.h>              // Event classes
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+#include <wx/scrolbar.h>           // wxScrollBar base header
+#include <wx/spinctrl.h>           // wxSpinCtrlBase class
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
@@ -72,8 +73,7 @@ std::optional<ttlib::cstr> SpinCtrlGenerator::GenConstruction(Node* node)
 
     if (code.contains("wxEmptyString"))
     {
-        // REVIEW: [KeyWorks - 07-08-2021] This would be nice, but currently line breaks aren't supported in GenConstruction
-        // calls code.Replace("wxEmptyString, ", "wxEmptyString,\n\t\t\t");
+        code.Replace("wxEmptyString, ", "wxEmptyString,\n\t\t\t");
         code.insert(0, 1, '\t');
     }
 
@@ -114,7 +114,10 @@ wxObject* SpinCtrlDoubleGenerator::CreateMockup(Node* node, wxObject* parent)
                                        node->prop_as_double(prop_min), node->prop_as_double(prop_max),
                                        node->prop_as_double(prop_initial), node->prop_as_double(prop_inc));
 
-    widget->SetDigits(node->prop_as_int(prop_digits));
+    if (node->prop_as_int(prop_digits) > 0)
+    {
+        widget->SetDigits(node->prop_as_int(prop_digits));
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -158,8 +161,10 @@ std::optional<ttlib::cstr> SpinCtrlDoubleGenerator::GenSettings(Node* node, size
 {
     ttlib::cstr code;
 
-    // REVIEW: [KeyWorks - 12-09-2020] What is the default behaviour if this isn't set?
-    code << node->get_node_name() << "->SetDigits(" << node->prop_as_string(prop_digits) << ");";
+    if (node->prop_as_int(prop_digits) > 0)
+    {
+        code << node->get_node_name() << "->SetDigits(" << node->prop_as_string(prop_digits) << ");";
+    }
 
     return code;
 }
@@ -173,6 +178,26 @@ bool SpinCtrlDoubleGenerator::GetIncludes(Node* node, std::set<std::string>& set
 {
     InsertGeneratorInclude(node, "#include <wx/spinctrl.h>", set_src, set_hdr);
     return true;
+}
+
+bool SpinCtrlDoubleGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+{
+    if (prop->isProp(prop_digits))
+    {
+        auto newValue = event->GetValue();
+        if (newValue.GetInteger() > 20)
+        {
+            wxMessageBox("You can't specify more than 20 digits.", "Invalid digts");
+            event->Veto();
+            event->GetProperty()->SetValue(0, 0);
+            return false;
+        }
+        return true;
+    }
+    else
+    {
+        return BaseGenerator::AllowPropertyChange(event, prop, node);
+    }
 }
 
 //////////////////////////////////////////  SpinButtonGenerator  //////////////////////////////////////////

@@ -5,9 +5,12 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+
 #include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
+#include "node_prop.h"   // NodeProperty -- NodeProperty class
 #include "utils.h"       // Utility functions that work with properties
 #include "write_code.h"  // WriteCode -- Write code to Scintilla or file
 
@@ -257,6 +260,34 @@ bool FrameFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     InsertGeneratorInclude(node, "#include <wx/frame.h>", set_src, set_hdr);
     // if (node->prop_as_bool("aui_managed"))
     // InsertGeneratorInclude(node, "#include <wx/aui/aui.h>", set_src, set_hdr);
+
+    return true;
+}
+
+bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+{
+    if (prop->isProp(prop_extra_style))
+    {
+        auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
+        auto variant = event->GetPropertyValue();
+        ttString newValue = property->ValueToString(variant);
+        if (newValue.IsEmpty())
+            return true;
+
+        if (newValue.contains("wxFRAME_EX_CONTEXTHELP"))
+        {
+            auto& style = node->prop_as_string(prop_style);
+            if (style.contains("wxDEFAULT_FRAME_STYLE") || style.contains("wxMINIMIZE_BOX") ||
+                style.contains("wxMINIMIZE_BOX"))
+            {
+                wxMessageBox("You can't add a context help button if there is a minimize or maximize button "
+                             "(wxDEFAULT_FRAME_STYLE contains these).",
+                             "Invalid button");
+                event->Veto();
+                return false;
+            }
+        }
+    }
 
     return true;
 }

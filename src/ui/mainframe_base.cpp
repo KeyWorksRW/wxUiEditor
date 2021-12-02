@@ -410,12 +410,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         },
         wxID_CUT);
     Bind(wxEVT_MENU, &MainFrameBase::OnCopy, this, wxID_COPY);
-    Bind(wxEVT_UPDATE_UI,
-        [](wxUpdateUIEvent& event)
-        {
-            event.Enable(wxGetFrame().CanCopyNode());
-        },
-        wxID_COPY);
     Bind(wxEVT_MENU, &MainFrameBase::OnPaste, this, wxID_PASTE);
     Bind(wxEVT_UPDATE_UI,
         [](wxUpdateUIEvent& event)

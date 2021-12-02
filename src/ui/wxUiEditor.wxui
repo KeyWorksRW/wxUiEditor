@@ -1109,8 +1109,7 @@
             id="wxID_COPY"
             label=""
             var_name="menu_copy"
-            wxEVT_MENU="OnCopy"
-            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
+            wxEVT_MENU="OnCopy" />
           <node
             class="wxMenuItem"
             bitmap="Art; wxART_PASTE|wxART_MENU; [-1,-1]"

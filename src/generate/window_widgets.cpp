@@ -25,24 +25,6 @@ public:
     {
     }
 
-    // REVIEW: [KeyWorks - 12-19-2020]  I removed this because this would cause a redraw on every idle event.
-
-#if 0
-    // Used to ensure sash position is correct
-    void OnIdle(wxIdleEvent&)
-    {
-        Disconnect(wxEVT_IDLE, wxIdleEventHandler(wxCustomSplitterWindow::OnIdle));
-
-        // So the selection of the sizer at its initial position is cleared, then shown at the correct position
-        Freeze();
-        SetSashPosition(m_initialSashPos);
-        Layout();
-        Refresh();
-        Update();
-        Thaw();
-    }
-#endif
-
     void SetCustomMinPaneSize(int pane_size) { m_customMinPaneSize = pane_size; }
 
 protected:

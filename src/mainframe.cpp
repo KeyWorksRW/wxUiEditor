@@ -1253,10 +1253,10 @@ void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
     if (!wasExpanded)
     {
         auto alignment = m_selected_node->get_prop_ptr(prop_alignment);
-        if (alignment && isPropFlagSet("wxALIGN_RIGHT", alignment->as_cview()))
+        if (alignment && alignment->as_cview().size())
         {
-            auto new_value = ClearPropFlag("wxALIGN_RIGHT", alignment->as_cview());
-            ModifyProperty(alignment, new_value);
+            // All alignment flags are invalid if wxEXPAND is set
+            ModifyProperty(alignment, "");
         }
     }
 

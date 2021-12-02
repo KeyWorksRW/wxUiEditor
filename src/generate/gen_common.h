@@ -17,6 +17,8 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
+class wxPropertyGridEvent;
+
 // Common component functions
 
 // Flags are added with no space around '|' character.

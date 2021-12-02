@@ -18,7 +18,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="local_pch_file" type="file"
 			help="The filename of a local precompiled header file. The file will be included in quotes." />
-		<property name="src_preamble" type="string_edit"
+		<property name="src_preamble" type="code_edit"
 			help="Code to generate at the top of the source file after the inclusion of any local precompiled header file. This can include er files, comments, macros, etc." />
 		<property name="art_directory" type="path"
 			help="The directory containing your images (png, ico, xpm, etc.)." />

@@ -19,6 +19,7 @@ namespace GenEnum
         type_bitlist,
         type_bitmap,
         type_bool,
+        type_code_edit,   // includes a button that triggers a dialog with a scintilla editor
         type_editoption,  // same as option, except that property grid uses wxEditEnumProperty instead of wxEnumProperty
         type_file,
         type_float,

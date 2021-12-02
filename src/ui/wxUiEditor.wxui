@@ -189,6 +189,31 @@
     </node>
     <node
       class="wxDialog"
+      base_file="editcodedialog_base"
+      class_name="EditCodeDialogBase"
+      derived_class_name="EditCodeDialog"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer">
+        <node
+          class="wxStyledTextCtrl"
+          line_numbers="false"
+          use_tabs="false"
+          var_name="m_stc"
+          minimum_size="400,200d"
+          border_size="10"
+          wxEVT_STC_CHANGE="OnChange" />
+        <node
+          class="wxStdDialogButtonSizer"
+          var_name="stdBtn_2"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
       base_file="editstringdialog_base"
       class_name="EditStringDialogBase"
       derived_class_name="EditStringDialog">
@@ -207,8 +232,6 @@
           class="wxStdDialogButtonSizer"
           var_name="stdBtn_2"
           flags="wxEXPAND" />
-        <node
-          class="spacer" />
       </node>
     </node>
     <node

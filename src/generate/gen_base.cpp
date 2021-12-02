@@ -259,16 +259,30 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     if (project->HasValue(prop_src_preamble))
     {
-        ttlib::cstr code = project->prop_as_string(prop_src_preamble);
+        ttlib::cstr convert(project->prop_as_string(prop_src_preamble));
+        convert.Replace("@@", "\n", tt::REPLACE::all);
+        ttlib::multistr lines(convert, '\n');
+        bool initial_bracket = false;
+        for (auto& code: lines)
+        {
+            if (code.contains("}"))
+            {
+                m_source->Unindent();
+            }
+            else if (!initial_bracket && code.contains("["))
+            {
+                initial_bracket = true;
+                m_source->Indent();
+            }
 
-        // The multi-line editor may have been used in which case there are escaped newlines and tabs -- we convert
-        // those to the actual characters before generating the code. It's common with that editor to have a trailing
-        // EOL -- so we remove that if needed.
-        code.Replace("\\n", "\n", true);
-        code.Replace("\\t", "\t", true);
-        if (code.back() == '\n')
-            code.erase(code.size() - 1, 1);
-        m_source->writeLine(code);
+            m_source->writeLine(code, indent::auto_no_whitespace);
+
+            if (code.contains("{"))
+            {
+                m_source->Indent();
+            }
+        }
+        m_source->Unindent();
         m_source->writeLine();
     }
 

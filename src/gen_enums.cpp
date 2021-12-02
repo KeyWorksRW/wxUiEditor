@@ -20,6 +20,7 @@ std::map<PropType, const char*> GenEnum::map_PropTypes = {
     { type_bitlist, "bitlist" },
     { type_bitmap, "bitmap" },
     { type_bool, "bool" },
+    { type_code_edit, "code_edit" },
     { type_editoption, "editoption" },
     { type_file, "file" },
     { type_float, "float" },

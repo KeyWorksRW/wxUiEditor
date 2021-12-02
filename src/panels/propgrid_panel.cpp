@@ -20,18 +20,19 @@
 
 #include "propgrid_panel.h"
 
-#include "appoptions.h"   // AppOptions -- Application-wide options
-#include "auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
-#include "bitmaps.h"      // Map of bitmaps accessed by name
-#include "category.h"     // NodeCategory class
-#include "cstm_event.h"   // CustomEvent -- Custom Event class
-#include "font_prop.h"    // FontProperty -- FontProperty class
-#include "mainframe.h"    // MainFrame -- Main window frame
-#include "node.h"         // Node class
-#include "node_decl.h"    // NodeDeclaration class
-#include "node_prop.h"    // NodeProperty -- NodeProperty class
-#include "prop_decl.h"    // PropChildDeclaration and PropDeclaration classes
-#include "utils.h"        // Utility functions that work with properties
+#include "appoptions.h"      // AppOptions -- Application-wide options
+#include "auto_freeze.h"     // AutoFreeze -- Automatically Freeze/Thaw a window
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "bitmaps.h"         // Map of bitmaps accessed by name
+#include "category.h"        // NodeCategory class
+#include "cstm_event.h"      // CustomEvent -- Custom Event class
+#include "font_prop.h"       // FontProperty -- FontProperty class
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "node.h"            // Node class
+#include "node_decl.h"       // NodeDeclaration class
+#include "node_prop.h"       // NodeProperty -- NodeProperty class
+#include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
+#include "utils.h"           // Utility functions that work with properties
 
 // Various customized wxPGProperty classes
 
@@ -716,6 +717,15 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
 
     auto prop = it->second;
     auto node = prop->GetNode();
+    auto generator = node->GetGenerator();
+    if (generator)
+    {
+        if (!generator->AllowPropertyChange(&event, prop, node))
+        {
+            m_failure_handled = true;
+            return;
+        }
+    }
 
     switch (prop->type())
     {

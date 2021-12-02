@@ -13,12 +13,13 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-class wxObject;
-class MockupParent;
-class wxWindow;
-class wxMouseEvent;
-class WriteCode;
 class BaseCodeGenerator;
+class MockupParent;
+class WriteCode;
+class wxMouseEvent;
+class wxObject;
+class wxPropertyGridEvent;
+class wxWindow;
 
 namespace pugi
 {
@@ -76,6 +77,9 @@ public:
 
     // Return true if the widget was changed which will resize and repaint the Mockup window
     virtual bool OnPropertyChange(wxObject*, Node*, NodeProperty*) { return false; }
+
+    // Called while processing an wxEVT_PG_CHANGING event.
+    virtual bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*);
 
     // Bind wxEVT_LEFT_DOWN to this so that clicking on the widget will select it in the navigation panel
     void OnLeftClick(wxMouseEvent& event);

@@ -53,8 +53,7 @@ static const ClassGenPair lst_class_gen[] = {
     { "\"MfcShellList\"", gen_wxGenericDirCtrl },
     { "\"MfcShellTree\"", gen_wxGenericDirCtrl },
 
-    // TODO: [KeyWorks - 11-22-2021] Uncomment once wxUiEditor can link with 3.1.16
-    // { "\"MfcVSListBox\"", gen_wxEditableListBox },
+    { "\"MfcVSListBox\"", gen_wxEditableListBox },
 
     // TODO: [KeyWorks - 11-22-2021] Supporting this would mean creating a custom control that has a wxMenu as a child
     // { "\"MfcMenuButton\"", ??? },

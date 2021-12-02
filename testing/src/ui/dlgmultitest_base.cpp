@@ -128,13 +128,53 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     page_3->SetSizerAndFit(box_sizer_4);
 
     auto page_4 = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(page_4, "Tab 3");
+    m_notebook->AddPage(page_4, "Lists");
 
     auto box_sizer_5 = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText_4 = new wxStaticText(page_4, wxID_ANY, "TODO: replace this control with something more useful...");
-    m_staticText_4->Wrap(200);
-    box_sizer_5->Add(m_staticText_4, wxSizerFlags().Border(wxALL));
+    auto box_sizer_10 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_5->Add(box_sizer_10, wxSizerFlags().Border(wxALL));
+
+    m_staticText_2 = new wxStaticText(page_4, wxID_ANY, "wxRearrangeCtrl");
+    box_sizer_10->Add(m_staticText_2, wxSizerFlags().Expand().Border(wxALL));
+
+    m_rearrange = new wxRearrangeCtrl(page_4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxArrayInt(), wxArrayString());
+    box_sizer_10->Add(m_rearrange, wxSizerFlags().Border(wxALL));
+
+    auto box_sizer_11 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_5->Add(box_sizer_11, wxSizerFlags().Border(wxALL));
+
+    auto staticText_3 = new wxStaticText(page_4, wxID_ANY, "wxCheckListBox");
+    box_sizer_11->Add(staticText_3, wxSizerFlags().Expand().Border(wxALL));
+
+    m_checkList = new wxCheckListBox(page_4, wxID_ANY);
+    box_sizer_11->Add(m_checkList, wxSizerFlags().Border(wxALL));
+
+    auto box_sizer_12 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_5->Add(box_sizer_12, wxSizerFlags().Border(wxALL));
+
+    m_staticText_3 = new wxStaticText(page_4, wxID_ANY, "wxListView");
+    box_sizer_5->Add(m_staticText_3, wxSizerFlags().Border(wxALL));
+
+    m_listview = new wxListView(page_4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_SINGLE_SEL|wxLC_REPORT);
+    {
+        m_listview->AppendColumn("name");
+        m_listview->AppendColumn("value");
+
+        wxListItem info;
+        info.Clear();
+
+        info.SetId(0);
+        auto index = m_listview->InsertItem(info);
+        m_listview->SetItem(index, 0, "foo");
+        m_listview->SetItem(index, 1, "bar");
+
+        info.SetId(1);
+        index = m_listview->InsertItem(info);
+        m_listview->SetItem(index, 0, "meaning");
+        m_listview->SetItem(index, 1, "42");
+    }
+    box_sizer_5->Add(m_listview, wxSizerFlags().Border(wxALL));
 
     page_4->SetSizerAndFit(box_sizer_5);
 
@@ -168,6 +208,7 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_INIT_DIALOG, &DlgMultiTestBase::OnInit, this);
     disable_bitmaps->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent& event)
         {

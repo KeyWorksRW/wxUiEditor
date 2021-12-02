@@ -9,6 +9,7 @@
 #include <wx/bannerwindow.h>
 #include <wx/bitmap.h>
 #include <wx/button.h>
+#include <wx/checklst.h>
 #include <wx/colour.h>
 #include <wx/commandlinkbutton.h>
 #include <wx/dialog.h>
@@ -16,7 +17,9 @@
 #include <wx/gdicmn.h>
 #include <wx/icon.h>
 #include <wx/image.h>
+#include <wx/listctrl.h>
 #include <wx/notebook.h>
+#include <wx/rearrangectrl.h>
 #include <wx/settings.h>
 #include <wx/stattext.h>
 #include <wx/tglbtn.h>
@@ -48,12 +51,20 @@ protected:
     wxButton* m_btn_2;
     wxButton* m_btn_4;
     wxButton* m_btn_bitmaps;
+    wxCheckListBox* m_checkList;
     wxCommandLinkButton* m_btn_5;
+    wxListView* m_listview;
     wxNotebook* m_notebook;
+    wxRearrangeCtrl* m_rearrange;
     wxStaticText* m_staticText;
-    wxStaticText* m_staticText_4;
+    wxStaticText* m_staticText_2;
+    wxStaticText* m_staticText_3;
     wxStaticText* m_staticText_5;
     wxToggleButton* m_toggleBtn;
+
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
 };
 
 namespace wxue_img

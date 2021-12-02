@@ -10,3 +10,12 @@
 #include "dlgmultitest.h"  // auto-generated: dlgmultitest_base.h and dlgmultitest_base.cpp
 
 DlgMultiTest::DlgMultiTest(wxWindow* parent) : DlgMultiTestBase(parent) {}
+
+void DlgMultiTest::OnInit(wxInitDialogEvent& event)
+{
+    auto sel = m_listview->FindItem(-1, "meaning");
+    if (sel >= 0)
+        m_listview->Select(sel);
+
+    event.Skip();
+}

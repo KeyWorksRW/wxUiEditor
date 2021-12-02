@@ -1272,7 +1272,8 @@
       minimum_size="-1,-1"
       size="-1,-1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
-      title="Widgets Testing">
+      title="Widgets Testing"
+      wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -1395,18 +1396,49 @@
           </node>
           <node
             class="BookPage"
-            label="Tab 3"
+            label="Lists"
             var_name="page_4"
             window_style="wxTAB_TRAVERSAL">
             <node
               class="wxBoxSizer"
               orientation="wxVERTICAL"
-              var_name="box_sizer_5">
+              var_name="box_sizer_5"
+              flags="wxEXPAND">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_10">
+                <node
+                  class="wxStaticText"
+                  label="wxRearrangeCtrl"
+                  var_name="m_staticText_2"
+                  flags="wxEXPAND" />
+                <node
+                  class="wxRearrangeCtrl" />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_11">
+                <node
+                  class="wxStaticText"
+                  class_access="none"
+                  label="wxCheckListBox"
+                  var_name="staticText_3"
+                  flags="wxEXPAND" />
+                <node
+                  class="wxCheckListBox" />
+              </node>
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_12" />
               <node
                 class="wxStaticText"
-                label="TODO: replace this control with something more useful..."
-                var_name="m_staticText_4"
-                wrap="200" />
+                label="wxListView"
+                var_name="m_staticText_3" />
+              <node
+                class="wxListView"
+                column_labels="&quot;name&quot; &quot;value&quot;"
+                strings="&quot;foo;bar&quot; &quot;meaning ; 42 &quot;"
+                style="wxLC_SINGLE_SEL" />
             </node>
           </node>
           <node

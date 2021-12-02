@@ -9,9 +9,12 @@
 #include <wx/event.h>     // Event classes
 #include <wx/listctrl.h>  // wxSearchCtrlBase class
 
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
+#include "write_code.h"  // WriteCode -- Write code to Scintilla or file
 
 #include "listctrl_widgets.h"
 
@@ -24,9 +27,28 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->prop_as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_column_labels));
-        for (auto& iter: array)
-            widget->AppendColumn(iter.wx_str());
+        auto headers = ConvertToArrayString(node->prop_as_string(prop_column_labels));
+        for (auto& label: headers)
+            widget->AppendColumn(label.wx_str());
+
+        if (node->HasValue(prop_strings))
+        {
+            wxListItem info;
+            info.Clear();
+
+            auto strings = ConvertToArrayString(node->prop_as_string(prop_strings));
+            long row_id = -1;
+            for (auto& row: strings)
+            {
+                info.SetId(++row_id);
+                auto index = widget->InsertItem(info);
+                ttlib::multistr columns(row, ';', tt::TRIM::both);
+                for (size_t column = 0; column < columns.size() && column < headers.size(); ++column)
+                {
+                    widget->SetItem(index, static_cast<int>(column), columns[column].wx_str());
+                }
+            }
+        }
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -50,19 +72,48 @@ std::optional<ttlib::cstr> ListViewGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> ListViewGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> ListViewGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
 
     if (node->prop_as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
     {
-
-        auto array = ConvertToArrayString(node->prop_as_string(prop_column_labels));
-        for (auto& iter: array)
+        if (node->HasValue(prop_strings))
+        {
+            auto_indent = indent::auto_keep_whitespace;
+            code << "{";
+        }
+        auto headers = ConvertToArrayString(node->prop_as_string(prop_column_labels));
+        for (auto& iter: headers)
         {
             if (code.size())
-                code << "\n";
+                code << "\n\t";
             code << node->get_node_name() << "->AppendColumn(" << GenerateQuotedString(iter) << ");";
+        }
+        if (node->HasValue(prop_strings))
+        {
+            code << "\n\n"
+                 << "\twxListItem info;\n"
+                 << "\tinfo.Clear();\n\n";
+            auto strings = ConvertToArrayString(node->prop_as_string(prop_strings));
+            int row_id = -1;
+            for (auto& row: strings)
+            {
+                ++row_id;
+                code << "\n\tinfo.SetId(" << row_id << ");\n";
+                if (row_id == 0)
+                    code << "\tauto index = ";
+                else
+                    code << "\tindex = ";
+                code << node->get_node_name() << "->InsertItem(info);\n";
+                ttlib::multistr columns(row, ';', tt::TRIM::both);
+                for (size_t column = 0; column < columns.size() && column < headers.size(); ++column)
+                {
+                    code << '\t' << node->get_node_name() << "->SetItem(index, " << column << ", "
+                         << GenerateQuotedString(columns[column]) << ");\n";
+                }
+            }
+            code << "}";
         }
     }
 

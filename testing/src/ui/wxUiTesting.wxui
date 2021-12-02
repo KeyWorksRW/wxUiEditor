@@ -651,10 +651,31 @@
         class="wxMenu" />
     </node>
     <node
-      class="ToolBar">
+      class="ToolBar"
+      base_file="form_toolbar"
+      size="-1,32">
       <node
         class="tool"
-        label="" />
+        bitmap="Embed;../art/english.png;[32,32]"
+        kind="wxITEM_RADIO"
+        label=""
+        var_name="english" />
+      <node
+        class="tool"
+        bitmap="Embed;../art/french.png;[32,32]"
+        kind="wxITEM_RADIO"
+        label=""
+        var_name="french" />
+      <node
+        class="tool"
+        bitmap="Embed;../art/japanese.png;[32,32]"
+        kind="wxITEM_RADIO"
+        label=""
+        var_name="Japanese" />
+      <node
+        class="wxComboBox"
+        choices="&quot;English&quot; &quot;French&quot; &quot;Japanese&quot;"
+        selection_string="English" />
     </node>
     <node
       class="wxDialog"

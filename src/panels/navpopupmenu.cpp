@@ -35,6 +35,7 @@ static const auto lstBarGenerators = {
 
     gen_wxRibbonBar,
     gen_wxRibbonPage,
+    gen_wxRibbonPanel,
     gen_wxRibbonToolBar,
     gen_ribbonTool,
 
@@ -1036,7 +1037,7 @@ void NavPopupMenu::CreateBarMenu(Node* node)
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
 
     AppendSeparator();
-    if (!node->isGen(gen_tool))
+    if (node->isGen(gen_wxRibbonBar) || node->isGen(gen_RibbonBar))
         menu_item = Append(MenuEXPAND_ALL, "Expand All");
 
     if (!node->isGen(gen_wxStatusBar))
@@ -1044,6 +1045,15 @@ void NavPopupMenu::CreateBarMenu(Node* node)
         menu_item = Append(wxID_PASTE);
         menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
         AppendSeparator();
+    }
+
+    if (node->isGen(gen_wxRibbonPanel) || node->isGen(gen_wxRibbonPage) || node->isGen(gen_ribbonTool))
+    {
+        AppendSeparator();
+        menu_item = Append(MenuMOVE_UP, "Up\tAlt+Up", "Moves selected item up");
+        menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_moveup_png, sizeof(wxue_img::nav_moveup_png)));
+        menu_item = Append(MenuMOVE_DOWN, "Down\tAlt+Down", "Moves selected item down");
+        menu_item->SetBitmap(GetImageFromArray(wxue_img::nav_movedown_png, sizeof(wxue_img::nav_movedown_png)));
     }
 
     if (node->isGen(gen_wxMenuBar) || node->isGen(gen_MenuBar))

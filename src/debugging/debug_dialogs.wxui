@@ -340,7 +340,8 @@
                 <node
                   class="wxHyperlinkCtrl"
                   label="wxWidgets Documentation"
-                  url="https://docs.wxwidgets.org/trunk/" />
+                  url="https://docs.wxwidgets.org/trunk/"
+                  flags="wxEXPAND" />
               </node>
               <node
                 class="wxStaticBoxSizer"

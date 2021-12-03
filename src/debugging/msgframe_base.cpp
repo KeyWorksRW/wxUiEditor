@@ -112,7 +112,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_hyperlink = new wxHyperlinkCtrl(static_box_2->GetStaticBox(), wxID_ANY, "wxWidgets Documentation", "https://docs.wxwidgets.org/trunk/", wxDefaultPosition, wxDefaultSize,
         wxHL_DEFAULT_STYLE);
-    static_box_2->Add(m_hyperlink, wxSizerFlags().Border(wxALL));
+    static_box_2->Add(m_hyperlink, wxSizerFlags().Expand().Border(wxALL));
 
     auto static_box = new wxStaticBoxSizer(wxVERTICAL, m_page_node, "Memory Usage");
     node_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));

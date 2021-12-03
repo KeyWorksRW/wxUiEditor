@@ -281,6 +281,56 @@ void MsgFrame::UpdateNodeInfo()
         label.Format("Memory: %kzu (%kzu node%s)", node_memory.size, node_memory.children,
                      node_memory.children == 1 ? "" : "s");
         m_txt_memory->SetLabel(label);
+
+        ttlib::cstr class_name(map_GenNames[cur_sel->gen_name()]);
+        if (class_name.is_sameprefix("wx"))
+        {
+            class_name.erase(0, 2);
+            class_name.MakeLower();
+
+            if (!class_name.is_sameprefix("panel"))
+                class_name.Replace("panel", "_panel");
+            if (!class_name.is_sameprefix("text"))
+                class_name.Replace("text", "_text");
+            if (!class_name.is_sameprefix("button"))
+                class_name.Replace("button", "_button");
+            if (!class_name.is_sameprefix("box"))
+                class_name.Replace("box", "_box");
+            if (!class_name.is_sameprefix("list"))
+                class_name.Replace("list", "_list");
+            if (!class_name.is_sameprefix("window"))
+                class_name.Replace("window", "_window");
+            if (!class_name.is_sameprefix("simple"))
+                class_name.Replace("simple", "_simple");
+            if (!class_name.is_sameprefix("page"))
+                class_name.Replace("page", "_page");
+            if (!class_name.is_sameprefix("event"))
+                class_name.Replace("event", "_event");
+            if (!class_name.is_sameprefix("combo"))
+                class_name.Replace("combo", "_combo");
+            if (!class_name.is_sameprefix("list"))
+                class_name.Replace("list", "_list");
+            if (!class_name.is_sameprefix("menu"))
+                class_name.Replace("menu", "_menu");
+
+            class_name.Replace("bar", "_bar");
+            class_name.Replace("page", "_page");
+            class_name.Replace("sizer", "_sizer");
+            class_name.Replace("ctrl", "_ctrl");
+            class_name.Replace("item", "_item");
+
+            class_name.Replace("stddialog", "std_dialog");
+
+            ttlib::cstr url = "https://docs.wxwidgets.org/trunk/classwx_";
+            url << class_name << ".html";
+            m_hyperlink->SetLabel(ttlib::cstr() << map_GenNames[cur_sel->gen_name()] << " Documentation");
+            m_hyperlink->SetURL(url);
+        }
+        else
+        {
+            m_hyperlink->SetLabel("wxWidgets Documentation");
+            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/");
+        }
     }
 
     auto project = wxGetApp().GetProject();

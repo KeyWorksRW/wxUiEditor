@@ -14,14 +14,14 @@ class NodeInfoBase : public wxDialog
 {
 public:
     NodeInfoBase() {}
-    NodeInfoBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Node Information"),
+    NodeInfoBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Node Information"),
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 

@@ -3,7 +3,7 @@
   data_version="12">
   <node
     class="Project"
-    original_art="../art_src">
+    art_directory="../art_src">
     <node
       class="wxDialog"
       base_file="..\debugging\nodeinfo_base"
@@ -337,6 +337,10 @@
                   class="wxStaticText"
                   label="Memory:"
                   var_name="m_txt_memory" />
+                <node
+                  class="wxHyperlinkCtrl"
+                  label="wxWidgets Documentation"
+                  url="https://docs.wxwidgets.org/trunk/" />
               </node>
               <node
                 class="wxStaticBoxSizer"

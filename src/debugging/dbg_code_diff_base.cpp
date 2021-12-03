@@ -21,11 +21,11 @@ bool DbgCodeDiffBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
-    m_staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.\n"));
+    m_staticText = new wxStaticText(this, wxID_ANY, "If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.\n");
     m_staticText->Wrap(250);
     box_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("&Changed Classes:"));
+    auto staticText = new wxStaticText(this, wxID_ANY, "&Changed Classes:");
     box_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_list_changes = new wxListBox(this, wxID_ANY);
@@ -33,7 +33,7 @@ bool DbgCodeDiffBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     m_list_changes->SetMinSize(wxSize(250, 200));
     box_sizer->Add(m_list_changes, wxSizerFlags().Border(wxALL));
 
-    m_btn = new wxButton(this, wxID_ANY, wxString::FromUTF8("&WinMerge..."));
+    m_btn = new wxButton(this, wxID_ANY, "&WinMerge...");
     m_btn->SetBitmap(wxImage(WinMerge_xpm));
     m_btn->Enable(false);
     box_sizer->Add(m_btn, wxSizerFlags().Border(wxALL));

@@ -20,14 +20,14 @@ class DbgCodeDiffBase : public wxDialog
 {
 public:
     DbgCodeDiffBase() {}
-    DbgCodeDiffBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Compare Code Generation"),
+    DbgCodeDiffBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Compare Code Generation",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxString::FromUTF8("Compare Code Generation"),
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Compare Code Generation",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 

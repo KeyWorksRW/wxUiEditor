@@ -22,11 +22,6 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
     return image;
 };
 
-namespace wxue_img
-{
-    extern const unsigned char hide_png[242];
-}
-
 MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style) :
     wxFrame(parent, id, title, pos, size, style)
@@ -48,19 +43,19 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     menu_item_clear->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU));
     menu_file->Append(menu_item_clear);
 
-    auto menu_item_hide = new wxMenuItem(menu_file, id_hide, wxString::FromUTF8("&Hide"));
+    auto menu_item_hide = new wxMenuItem(menu_file, id_hide, "&Hide");
     menu_item_hide->SetBitmap(GetImageFromArray(wxue_img::hide_png, sizeof(wxue_img::hide_png)).Scale(16, 15, wxIMAGE_QUALITY_HIGH));
     menu_file->Append(menu_item_hide);
-    menubar->Append(menu_file, wxString::FromUTF8("&File"));
+    menubar->Append(menu_file, "&File");
 
     auto menu_view = new wxMenu();
 
-    m_menu_item_warnings = new wxMenuItem(menu_view, id_warning_msgs, wxString::FromUTF8("Warnings"),
+    m_menu_item_warnings = new wxMenuItem(menu_view, id_warning_msgs, "Warnings",
         wxEmptyString, wxITEM_CHECK);
     m_menu_item_warnings->SetBitmap(wxArtProvider::GetBitmap(wxART_WARNING, wxART_MENU));
     menu_view->Append(m_menu_item_warnings);
 
-    m_menu_item_events = new wxMenuItem(menu_view, id_event_msgs, wxString::FromUTF8("Events"),
+    m_menu_item_events = new wxMenuItem(menu_view, id_event_msgs, "Events",
         wxEmptyString, wxITEM_CHECK);
     m_menu_item_events->SetBitmap(wxArtProvider::GetBitmap(wxART_TIP, wxART_MENU));
     menu_view->Append(m_menu_item_events);
@@ -69,7 +64,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
         wxEmptyString, wxITEM_CHECK);
     m_menu_item_info->SetBitmap(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_MENU));
     menu_view->Append(m_menu_item_info);
-    menubar->Append(menu_view, wxString::FromUTF8("&View"));
+    menubar->Append(menu_view, "&View");
 
     SetMenuBar(menubar);
 
@@ -80,7 +75,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     parent_sizer->Add(m_notebook, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_page_log = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_page_log, wxString::FromUTF8("Log"));
+    m_notebook->AddPage(m_page_log, "Log");
     m_page_log->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto log_sizer = new wxBoxSizer(wxVERTICAL);
@@ -92,36 +87,40 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_page_log->SetSizerAndFit(log_sizer);
 
     m_page_node = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_page_node, wxString::FromUTF8("Node"));
+    m_notebook->AddPage(m_page_node, "Node");
     m_page_node->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     auto node_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto static_box_2 = new wxStaticBoxSizer(wxVERTICAL, m_page_node, wxString::FromUTF8("Selected Node"));
+    auto static_box_2 = new wxStaticBoxSizer(wxVERTICAL, m_page_node, "Selected Node");
     node_sizer->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
     static_box_2->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    m_txt_generator = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Name:"));
+    m_txt_generator = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Name:");
     box_sizer->Add(m_txt_generator, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto btn = new wxButton(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Parent..."));
+    auto btn = new wxButton(static_box_2->GetStaticBox(), wxID_ANY, "Parent...");
     box_sizer->Add(btn, wxSizerFlags().Center().Border(wxALL));
 
-    m_txt_type = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Type:"));
+    m_txt_type = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Type:");
     static_box_2->Add(m_txt_type, wxSizerFlags().Border(wxALL));
 
-    m_txt_memory = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Memory:"));
+    m_txt_memory = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Memory:");
     static_box_2->Add(m_txt_memory, wxSizerFlags().Border(wxALL));
 
-    auto static_box = new wxStaticBoxSizer(wxVERTICAL, m_page_node, wxString::FromUTF8("Memory Usage"));
+    m_hyperlink = new wxHyperlinkCtrl(static_box_2->GetStaticBox(), wxID_ANY, "wxWidgets Documentation", "https://docs.wxwidgets.org/trunk/", wxDefaultPosition, wxDefaultSize,
+        wxHL_DEFAULT_STYLE);
+    static_box_2->Add(m_hyperlink, wxSizerFlags().Border(wxALL));
+
+    auto static_box = new wxStaticBoxSizer(wxVERTICAL, m_page_node, "Memory Usage");
     node_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
-    m_txt_project = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Project:"));
+    m_txt_project = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Project:");
     static_box->Add(m_txt_project, wxSizerFlags().Border(wxALL));
 
-    m_txt_clipboard = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Clipboard:"));
+    m_txt_clipboard = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Clipboard:");
     static_box->Add(m_txt_clipboard, wxSizerFlags().Border(wxALL));
 
     m_page_node->SetSizerAndFit(node_sizer);

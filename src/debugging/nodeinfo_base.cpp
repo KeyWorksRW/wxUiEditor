@@ -18,25 +18,25 @@ bool NodeInfoBase::Create(wxWindow *parent, wxWindowID id, const wxString &title
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto static_box_2 = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("Selected Node"));
+    auto static_box_2 = new wxStaticBoxSizer(wxVERTICAL, this, "Selected Node");
     parent_sizer->Add(static_box_2, wxSizerFlags().Border(wxALL));
 
-    m_txt_generator = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Name:"));
+    m_txt_generator = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Name:");
     static_box_2->Add(m_txt_generator, wxSizerFlags().Border(wxALL));
 
-    m_txt_type = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Type:"));
+    m_txt_type = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Type:");
     static_box_2->Add(m_txt_type, wxSizerFlags().Border(wxALL));
 
-    m_txt_memory = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Memory:"));
+    m_txt_memory = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Memory:");
     static_box_2->Add(m_txt_memory, wxSizerFlags().Border(wxALL));
 
-    auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromUTF8("Memory Usage"));
+    auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, "Memory Usage");
     parent_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
-    m_txt_project = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Project:"));
+    m_txt_project = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Project:");
     static_box->Add(m_txt_project, wxSizerFlags().Border(wxALL));
 
-    m_txt_clipboard = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Clipboard:"));
+    m_txt_clipboard = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Clipboard:");
     static_box->Add(m_txt_clipboard, wxSizerFlags().Border(wxALL));
 
     auto stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);

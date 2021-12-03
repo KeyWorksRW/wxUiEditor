@@ -11,6 +11,7 @@
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
+#include <wx/hyperlink.h>
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/menu.h>
@@ -24,7 +25,7 @@ class MsgFrameBase : public wxFrame
 {
 public:
     MsgFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-        const wxString& title = wxString::FromUTF8("wxUiEditor Messages"),
+        const wxString& title = "wxUiEditor Messages",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL);
 
@@ -39,6 +40,7 @@ protected:
 
     // Class member variables
 
+    wxHyperlinkCtrl* m_hyperlink;
     wxMenuItem* m_menu_item_events;
     wxMenuItem* m_menu_item_info;
     wxMenuItem* m_menu_item_warnings;

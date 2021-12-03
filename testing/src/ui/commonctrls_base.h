@@ -60,6 +60,7 @@ protected:
     wxButton* m_btn;
     wxCheckBox* m_checkBox2;
     wxCheckBox* m_checkBox;
+    wxCheckBox* m_checkPlayAnimation;
     wxCheckListBox* m_checkList2;
     wxCheckListBox* m_checkList;
     wxChoice* m_choice2;

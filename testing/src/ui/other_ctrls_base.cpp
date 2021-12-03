@@ -72,12 +72,12 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     m_scrollBar->SetScrollbar(0, 1, 100, 1);
     parent_sizer3->Add(m_scrollBar, wxSizerFlags().Expand().Border(wxALL));
 
-    m_spinCtrl = new wxSpinCtrl(m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 4);
+    m_spinCtrl = new wxSpinCtrl(m_panel2, wxID_ANY, wxEmptyString,
+            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 4);
     m_spinCtrl->SetValidator(wxGenericValidator(&m_spinValidate));
     parent_sizer3->Add(m_spinCtrl, wxSizerFlags().Border(wxALL));
 
     m_spinCtrlDouble = new wxSpinCtrlDouble(m_panel2);
-    m_spinCtrlDouble->SetDigits(0);
     parent_sizer3->Add(m_spinCtrlDouble, wxSizerFlags().Border(wxALL));
 
     m_spinBtn = new wxSpinButton(m_panel2);

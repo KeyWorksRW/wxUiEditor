@@ -107,8 +107,6 @@ inline const char* listview_xml = R"===(<?xml version="1.0"?>
 				help="Does not allow the user to reorder the strings. " />
 			wxEL_ALLOW_NEW|wxEL_ALLOW_EDIT|wxEL_ALLOW_DELETE
 		</property>
-		<property name="strings" type="stringlist"
-			help="Specifies the initial strings to populate the listbox with." />
 		<event name="wxEVT_LIST_BEGIN_DRAG" class="wxListEvent"
 			help="Begin dragging with the left mouse button." />
 		<event name="wxEVT_LIST_BEGIN_RDRAG" class="wxListEvent"

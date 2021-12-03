@@ -202,6 +202,12 @@ int App::OnRun()
     {
         m_frame->Show();
         SetTopWindow(m_frame);
+
+#if defined(_DEBUG)
+        if (AutoMsgWindow())
+            ShowMsgWindow();
+#endif  // _DEBUG
+
         if (!projectFile.extension().is_sameas(".wxui", tt::CASE::either) &&
             !projectFile.extension().is_sameas(".wxue", tt::CASE::either))
         {

@@ -97,6 +97,7 @@ public:
 
     void DbgCurrentTest(wxCommandEvent& event);
     void ShowMsgWindow();
+    bool AutoMsgWindow() { return (m_prefs.flags & PREFS_MSG_WINDOW); }
 
 #endif
 

@@ -73,7 +73,8 @@ enum
     id_DebugPreferences,
     id_ShowLogger,
     id_NodeMemory,
-    id_CodeDiffDlg
+    id_CodeDiffDlg,
+    id_FindWidget
 };
 
 MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
@@ -98,6 +99,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
     menuDebug->AppendSeparator();
     menuDebug->Append(id_CodeDiffDlg, "Compare Code &Generation...",
                       "Dialog showing what class have changed, and optional viewing in WinMerge");
+    menuDebug->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
     menuDebug->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
 
     menuDebug->AppendSeparator();
@@ -232,6 +234,7 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
         id_ShowLogger);
 
     Bind(wxEVT_MENU, &MainFrame::OnDbgCodeDiff, this, id_CodeDiffDlg);
+    Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 
@@ -1532,12 +1535,61 @@ void MainFrame::UpdateWakaTime(bool FileSavedEvent)
 
 #if defined(_DEBUG)
 
-    #include "debugging/dbg_code_diff.h"
+    #include "debugging/dbg_code_diff.h"  // DbgCodeDiff -- Compare code generation
+    #include "insertwidget.h"             // InsertWidget -- Dialog to lookup and insert a widget
 
 void MainFrame::OnDbgCodeDiff(wxCommandEvent& WXUNUSED(event))
 {
     DbgCodeDiff dlg(this);
     dlg.ShowModal();
+}
+
+Node* FindChildNode(Node* node, GenEnum::GenName name)
+{
+    for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+    {
+        if (node->GetChild(idx_child)->isGen(name))
+        {
+            return node->GetChild(idx_child);
+        }
+        else if (node->GetChild(idx_child)->GetChildCount() > 0)
+        {
+            if (auto child_node = FindChildNode(node->GetChild(idx_child), name); child_node)
+            {
+                return child_node;
+            }
+        }
+    }
+    return nullptr;
+}
+
+void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
+{
+    InsertWidget dlg(this);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        if (auto result = rmap_GenNames.find(dlg.GetWidget()); result != rmap_GenNames.end())
+        {
+            auto start_node = GetSelectedNode();
+            if (!start_node)
+            {
+                start_node = App().GetProject();
+            }
+            auto found_node = FindChildNode(start_node, result->second);
+            if (found_node)
+            {
+                SelectNode(found_node, true);
+            }
+            else
+            {
+                wxMessageBox(wxString() << "Unable to find " << dlg.GetWidget().wx_str());
+            }
+        }
+        else
+        {
+            wxMessageBox(wxString() << "Cannot find a generator for " << dlg.GetWidget().wx_str());
+        }
+    }
 }
 
 #endif  // _DEBUG

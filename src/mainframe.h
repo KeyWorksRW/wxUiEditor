@@ -209,7 +209,6 @@ protected:
     void OnClose(wxCloseEvent& event) override;
     void OnCopy(wxCommandEvent& event) override;
     void OnCut(wxCommandEvent& event) override;
-    void OnDbgCodeDiff(wxCommandEvent& event);
     void OnDelete(wxCommandEvent& event) override;
     void OnEmbedImageConverter(wxCommandEvent& event) override;
     void OnGenInhertedClass(wxCommandEvent& event) override;
@@ -236,6 +235,8 @@ protected:
 
 #if defined(_DEBUG)  // Starts debug section.
 
+    void OnDbgCodeDiff(wxCommandEvent& event);
+    void OnFindWidget(wxCommandEvent& event);
     void OnDebugCurrentTest(wxCommandEvent& e);
 
 #endif

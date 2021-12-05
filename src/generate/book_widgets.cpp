@@ -52,10 +52,24 @@ static int GetTreebookImageIndex(Node* node);
 
 wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                              DlgSize(parent, node, prop_size), GetStyleInt(node));
-
+    wxPanel* widget;
     auto node_parent = node->GetParent();
+
+    if (node->GetParent()->isGen(gen_BookPage))
+    {
+        auto grandparent = node_parent->GetParent();
+        ASSERT(grandparent);
+        ASSERT(grandparent->isGen(gen_wxTreebook));
+
+        auto grand_window = GetMockup()->GetMockupContent()->Get_wxObject(grandparent);
+        widget = new wxPanel(wxStaticCast(grand_window, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                             DlgSize(parent, node, prop_size), GetStyleInt(node));
+    }
+    else
+    {
+        widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                             DlgSize(parent, node, prop_size), GetStyleInt(node));
+    }
 
     if (node_parent->isGen(gen_BookPage))
     {
@@ -103,7 +117,8 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     else if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
     {
-        if (node->HasValue(prop_bitmap) && (node_parent->prop_as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
+        if (node->HasValue(prop_bitmap) &&
+            (node_parent->prop_as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
         {
             int idx_image = 0;
             bool is_image_found { false };
@@ -243,7 +258,8 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
         if (node->prop_as_bool(prop_select))
             code << ", true";
 
-        if (node->HasValue(prop_bitmap) && (node->GetParent()->prop_as_bool(prop_display_images) || node->GetParent()->isGen(gen_wxToolbook)))
+        if (node->HasValue(prop_bitmap) &&
+            (node->GetParent()->prop_as_bool(prop_display_images) || node->GetParent()->isGen(gen_wxToolbook)))
         {
             auto node_parent = node->GetParent();
             int idx_image = 0;

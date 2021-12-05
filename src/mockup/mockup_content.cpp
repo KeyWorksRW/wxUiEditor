@@ -446,6 +446,29 @@ void MockupContent::OnNodeSelected(Node* node)
             return;
 
         size_t sel_pos = 0;
+
+        if (parent->isGen(gen_BookPage))
+        {
+            parent = parent->GetParent();
+            if (parent->isGen(gen_wxTreebook))
+            {
+                auto tree_book = wxDynamicCast(Get_wxObject(parent), wxBookCtrlBase);
+                if (tree_book)
+                {
+                    auto this_book = m_node_obj_pair[node];
+                    if (this_book)
+                    {
+                        if (auto index = tree_book->FindPage(wxStaticCast(this_book, wxWindow)); index >= 0)
+                        {
+                            tree_book->SetSelection(index);
+                            m_mockupParent->ClearIgnoreSelection();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         for (size_t idx_child = 0; idx_child < parent->GetChildCount(); ++idx_child)
         {
             auto child = parent->GetChildNodePtrs()[idx_child].get();
@@ -459,6 +482,26 @@ void MockupContent::OnNodeSelected(Node* node)
                 }
                 break;
             }
+            else if (parent->isGen(gen_wxTreebook))
+            {
+                if (child->isGen(gen_BookPage))
+                {
+                    bool is_node_found { false };
+                    for (auto& grand_child: child->GetChildNodePtrs())
+                    {
+                        if (grand_child.get() == node)
+                        {
+                            is_node_found = true;
+                            break;
+                        }
+                        if (grand_child->isGen(gen_BookPage))
+                            ++sel_pos;
+                    }
+                    if (is_node_found)
+                        break;
+                }
+            }
+
             else if (child->gen_type() == type_widget)
                 continue;
             else if (child->gen_type() == type_page && !child->GetChildCount())
@@ -476,13 +519,16 @@ void MockupContent::OnNodeSelected(Node* node)
             }
             ++sel_pos;
         }
+
         if (parent->isGen(gen_wxAuiNotebook))
         {
             wxStaticCast(Get_wxObject(parent), wxAuiNotebook)->SetSelection(sel_pos);
         }
         else
         {
-            wxStaticCast(Get_wxObject(parent), wxBookCtrlBase)->SetSelection(sel_pos);
+            auto book = wxDynamicCast(Get_wxObject(parent), wxBookCtrlBase);
+            if (book)
+                book->SetSelection(sel_pos);
         }
         m_mockupParent->ClearIgnoreSelection();
 

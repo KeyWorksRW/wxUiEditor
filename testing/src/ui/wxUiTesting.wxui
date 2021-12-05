@@ -340,14 +340,22 @@
             class="wxBitmapComboBox"
             style="wxCB_READONLY" />
           <node
-            class="wxToggleButton"
+            class="StaticCheckboxBoxSizer"
+            checkbox_var_name="m_checkPlayAnimation"
+            checked="false"
             label="Play Animation"
-            style="wxBU_EXACTFIT"
-            wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@@@m_infoBar->ShowMessage(&quot;wxEVT_TOGGLEBUTTON event&quot;);@@Fit();@@@@}" />
-          <node
-            class="wxAnimationCtrl"
-            animation="Header; ..\art\clr_hourglass_gif.hxx"
-            inactive_bitmap="XPM; ..\art\empty.xpm; [-1,-1]" />
+            var_name="static_box_2"
+            wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@if (m_checkPlayAnimation->GetValue()) @@{@@    m_animation_ctrl->Play();@@}@@else @@{  @@    m_animation_ctrl->Stop();@@}@@@@}">
+            <node
+              class="wxToggleButton"
+              label="Play Animation"
+              style="wxBU_EXACTFIT"
+              wxEVT_TOGGLEBUTTON="[this](wxCommandEvent&amp;)@@{@@if (m_toggleBtn->GetValue()) @@{@@    m_animation_ctrl->Play();@@    m_checkPlayAnimation->SetValue(true);@@}@@else @@{  @@    m_animation_ctrl->Stop();@@    m_checkPlayAnimation->SetValue(false);@@}@@@@m_infoBar->ShowMessage(&quot;wxEVT_TOGGLEBUTTON event&quot;);@@Fit();@@}" />
+            <node
+              class="wxAnimationCtrl"
+              animation="Header; ..\art\clr_hourglass_gif.hxx"
+              inactive_bitmap="XPM; ..\art\empty.xpm; [-1,-1]" />
+          </node>
           <node
             class="spacer" />
           <node
@@ -963,6 +971,40 @@
               <node
                 class="wxStaticText"
                 label="This is a sentence in English." />
+            </node>
+            <node
+              class="BookPage"
+              bitmap="Embed;../art/re.png;[-1,-1]"
+              label="British"
+              var_name="page_4"
+              background_colour="wxSYS_COLOUR_BTNFACE"
+              window_style="wxTAB_TRAVERSAL">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="page_sizer">
+                <node
+                  class="wxStaticText"
+                  label="Theatre"
+                  var_name="m_staticText_2" />
+              </node>
+            </node>
+            <node
+              class="BookPage"
+              bitmap="Embed;../art/er.png;[-1,-1]"
+              label="United States"
+              var_name="page_5"
+              background_colour="wxSYS_COLOUR_BTNFACE"
+              window_style="wxTAB_TRAVERSAL">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="page_sizer_2">
+                <node
+                  class="wxStaticText"
+                  label="Theater"
+                  var_name="m_staticText_3" />
+              </node>
             </node>
           </node>
           <node

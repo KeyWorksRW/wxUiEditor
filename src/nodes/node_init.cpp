@@ -147,6 +147,7 @@ static const ParentChild lstParentChild[] = {
 
     { type_bookpage, type_gbsizer, one },
     { type_bookpage, type_sizer, one },
+    { type_bookpage, type_bookpage, infinite },  // only valid when grandparent is a wxTreebook
 
     { type_page, type_auinotebook, one },
     { type_page, type_choicebook, one },

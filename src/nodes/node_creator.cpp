@@ -130,6 +130,14 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
         if (grand_parent->isGen(gen_wxToolBar) && node_decl->isType(type_menu))
             return NodeSharedPtr();
     }
+    else if (name == gen_BookPage && parent->isType(type_bookpage))
+    {
+        auto grand_parent = parent->GetParent();
+        if (!grand_parent || !grand_parent->isGen(gen_wxTreebook))
+        {
+            return NodeSharedPtr();
+        }
+    }
 
     auto max_children = parent->GetAllowableChildren(node_decl->gen_type());
 

@@ -15,9 +15,12 @@
 #include <wx/toolbook.h>     // wxToolbook: wxToolBar and wxNotebook combination
 #include <wx/treebook.h>     // wxTreebook: wxNotebook-like control presenting pages in a tree
 
+#include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
+
 #include "bitmaps.h"     // Map of bitmaps accessed by name
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "mainapp.h"     // App -- Main application class
+#include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
@@ -30,39 +33,116 @@
 constexpr const int DEF_TAB_IMG_WIDTH = 16;
 constexpr const int DEF_TAB_IMG_HEIGHT = 16;
 
-static void AddBookImageList(Node* node, wxObject* widget);
+// Walks up the parent tree until it finds a Book and returns whether or not the book is
+// supposed to display images. This function will handle wxTreeBook with any depth of sub
+// pages.
+static bool isBookDisplayImages(Node* node);
+
+// This will walk through all of a book's pages to see if any of them have an image. This
+// will handle wxTreebook with an unlimited number of nested sub pages.
+static bool isBookHasImage(Node* node);
+
+static void AddBookImageList(Node* node_book, wxObject* widget);
 static void BookCtorAddImagelist(ttlib::cstr& code, Node* node);
+static void AddTreebookSubImages(Node* node, wxImageList* img_list, wxSize& size);
+static void AddTreebookImageCode(ttlib::cstr& code, Node* node, size_t& image_index, wxSize& size);
+static int GetTreebookImageIndex(Node* node);
 
 //////////////////////////////////////////  BookPageGenerator  //////////////////////////////////////////
 
 wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
-                              DlgSize(parent, node, prop_size), GetStyleInt(node));
-
+    wxPanel* widget;
     auto node_parent = node->GetParent();
 
-    if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
+    if (node->GetParent()->isGen(gen_BookPage))
     {
-        if (node_parent->isGen(gen_wxToolbook))
+        auto grandparent = node_parent->GetParent();
+        ASSERT(grandparent);
+        ASSERT(grandparent->isGen(gen_wxTreebook));
+
+        auto grand_window = GetMockup()->GetMockupContent()->Get_wxObject(grandparent);
+        widget = new wxPanel(wxStaticCast(grand_window, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                             DlgSize(parent, node, prop_size), GetStyleInt(node));
+    }
+    else
+    {
+        widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                             DlgSize(parent, node, prop_size), GetStyleInt(node));
+    }
+
+    if (node_parent->isGen(gen_BookPage))
+    {
+        auto grandparent = node_parent->GetParent();
+        ASSERT(grandparent);
+        ASSERT(grandparent->isGen(gen_wxTreebook));
+
+        parent = GetMockup()->GetMockupContent()->Get_wxObject(grandparent);
+        ASSERT(parent);
+        auto tree = wxDynamicCast(parent, wxTreebook);
+        ASSERT(tree);
+
+        // To find an image previously added to the treebook's image list, we need to iterate through treebooks's pages and
+        // sub-pages until we find the matching node.
+
+        if (node->HasValue(prop_bitmap) && isBookDisplayImages(node))
         {
             int idx_image = 0;
-            for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child, ++idx_image)
+            bool is_image_found { false };
+            for (auto& child: grandparent->GetChildNodePtrs())
             {
-                if (node_parent->GetChild(idx_child) == node)
+                if (child->HasValue(prop_bitmap))
+                    ++idx_image;
+                for (auto& grand_child: child->GetChildNodePtrs())
+                {
+                    if (grand_child.get() == node)
+                    {
+                        is_image_found = true;
+                        break;
+                    }
+
+                    // The parent bookpage can contain regular widgets along with child BookPages
+                    if (grand_child->isGen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
+                        ++idx_image;
+                }
+                if (is_image_found)
                     break;
             }
-            book->AddPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
+            tree->AddSubPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
         }
-        else if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
+        else
+        {
+            tree->AddSubPage(widget, node->prop_as_wxString(prop_label), false, -1);
+        }
+    }
+    else if (auto book = wxDynamicCast(parent, wxBookCtrlBase); book)
+    {
+        if (node->HasValue(prop_bitmap) &&
+            (node_parent->prop_as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
         {
             int idx_image = 0;
-            for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+            bool is_image_found { false };
+            for (auto& child: node_parent->GetChildNodePtrs())
             {
-                if (node_parent->GetChild(idx_child) == node)
+                if (child.get() == node)
                     break;
-                if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap) || node_parent->isGen(gen_wxToolbook))
+                if (child->HasValue(prop_bitmap))
                     ++idx_image;
+                if (child->GetParent()->isGen(gen_wxTreebook))
+                {
+                    for (auto& grand_child: child->GetChildNodePtrs())
+                    {
+                        if (grand_child.get() == node)
+                        {
+                            is_image_found = true;
+                            break;
+                        }
+                        if (grand_child->isGen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
+                            ++idx_image;
+                    }
+                    if (is_image_found)
+                        break;
+                }
             }
 
             book->AddPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
@@ -134,38 +214,74 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = new wxPanel(";
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
-
-    GeneratePosSizeFlags(node, code);
-
-    code << '\n';
-    code << GetParentName(node) << "->AddPage(" << node->get_node_name() << ", ";
-    code << GenerateQuotedString(node, prop_label);
-
-    // Default is false, so only add parameter if it is true.
-    if (node->prop_as_bool(prop_select))
-        code << ", true";
-
-    if (node->HasValue(prop_bitmap) &&
-        (node->GetParent()->prop_as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
+    if (node->GetParent()->isGen(gen_BookPage))
     {
-        auto node_parent = node->GetParent();
-        int idx_image = 0;
-        for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+        bool is_display_images = isBookDisplayImages(node);
+        auto treebook = node->GetParent()->GetParent();
+        while (treebook->isGen(gen_BookPage))
         {
-            if (node_parent->GetChild(idx_child) == node)
-                break;
-            if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
-                ++idx_image;
+            treebook = treebook->GetParent();
         }
 
-        if (!node->prop_as_bool(prop_select))
-            code << ", false";
-        code << ", " << idx_image;
+        code << treebook->get_node_name() << ", " << node->prop_as_string(prop_id);
+
+        GeneratePosSizeFlags(node, code);
+
+        code << '\n';
+        code << treebook->get_node_name() << "->AddSubPage(" << node->get_node_name() << ", ";
+        code << GenerateQuotedString(node, prop_label);
+
+        // Default is false, so only add parameter if it is true.
+        if (node->prop_as_bool(prop_select))
+            code << ", true";
+
+        if (node->HasValue(prop_bitmap) && is_display_images)
+        {
+            int idx_image = GetTreebookImageIndex(node);
+            if (!node->prop_as_bool(prop_select))
+                code << ", false";
+            code << ", " << idx_image;
+        }
+        code << ");";
     }
+    else
+    {
+        code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
-    code << ");";
+        GeneratePosSizeFlags(node, code);
 
+        code << '\n';
+        code << GetParentName(node) << "->AddPage(" << node->get_node_name() << ", ";
+        code << GenerateQuotedString(node, prop_label);
+
+        // Default is false, so only add parameter if it is true.
+        if (node->prop_as_bool(prop_select))
+            code << ", true";
+
+        if (node->HasValue(prop_bitmap) &&
+            (node->GetParent()->prop_as_bool(prop_display_images) || node->GetParent()->isGen(gen_wxToolbook)))
+        {
+            auto node_parent = node->GetParent();
+            int idx_image = 0;
+            if (node_parent->isGen(gen_wxTreebook))
+                idx_image = GetTreebookImageIndex(node);
+            else
+            {
+                for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+                {
+                    if (node_parent->GetChild(idx_child) == node)
+                        break;
+                    if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                        ++idx_image;
+                }
+            }
+            if (!node->prop_as_bool(prop_select))
+                code << ", false";
+            code << ", " << idx_image;
+        }
+
+        code << ");";
+    }
     return code;
 }
 
@@ -495,8 +611,8 @@ bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 wxObject* ListbookGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    // Note the currently, wxListbook does not have a "style" property since the only thing that can be set is the label
-    // (tab) position
+    // Note the currently, wxListbook does not have a "style" property since the only thing that can be set is the
+    // label (tab) position
     auto widget = new wxListbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
 
@@ -734,102 +850,194 @@ bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 
 //////////////////////////////////////////  Book utility functions  //////////////////////////////////////////
 
-static void AddBookImageList(Node* node, wxObject* widget)
+static void AddBookImageList(Node* node_book, wxObject* widget)
 {
-    if (node->prop_as_bool(prop_display_images))
+    if (isBookDisplayImages(node_book) && isBookHasImage(node_book))
     {
-        bool has_bitmaps = false;
-        for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+        auto size = node_book->prop_as_wxSize(prop_bitmapsize);
+        if (size.x == -1)
         {
-            if (node->GetChild(idx_child)->HasValue(prop_bitmap))
+            size.x = DEF_TAB_IMG_WIDTH;
+        }
+        if (size.y == -1)
+        {
+            size.y = DEF_TAB_IMG_HEIGHT;
+        }
+        wxImageList* img_list = new wxImageList(size.x, size.y);
+
+        for (auto& child_node: node_book->GetChildNodePtrs())
+        {
+            if (child_node->HasValue(prop_bitmap))
             {
-                has_bitmaps = true;
-                break;
+                auto img = wxGetApp().GetImage(child_node->prop_as_string(prop_bitmap));
+                ASSERT(img.IsOk());
+                img_list->Add(img.Scale(size.x, size.y));
+            }
+
+            if (node_book->isGen(gen_wxTreebook))
+            {
+                AddTreebookSubImages(child_node.get(), img_list, size);
             }
         }
 
-        if (has_bitmaps)
-        {
-            auto size = node->prop_as_wxSize(prop_bitmapsize);
-            if (size.x == -1)
-            {
-                size.x = DEF_TAB_IMG_WIDTH;
-            }
-            if (size.y == -1)
-            {
-                size.y = DEF_TAB_IMG_HEIGHT;
-            }
-
-            auto img_list = new wxImageList(size.x, size.y);
-
-            for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
-            {
-                if (node->GetChild(idx_child)->HasValue(prop_bitmap))
-                {
-                    auto img = wxGetApp().GetImage(node->GetChild(idx_child)->prop_as_string(prop_bitmap));
-                    ASSERT(img.IsOk());
-                    img_list->Add(img.Scale(size.x, size.y));
-                }
-            }
-
-            auto book = wxStaticCast(widget, wxBookCtrlBase);
-            book->AssignImageList(img_list);
-        }
+        auto book = wxStaticCast(widget, wxBookCtrlBase);
+        book->AssignImageList(img_list);
     }
 }
 
 static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
 {
-    if (node->prop_as_bool(prop_display_images) || node->isGen(gen_wxToolbook))
+    if ((node->prop_as_bool(prop_display_images) || node->isGen(gen_wxToolbook)) && isBookHasImage(node))
     {
-        bool has_bitmaps = false;
-        for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+        code.insert(0, "\t");
+        auto size = node->prop_as_wxSize(prop_bitmapsize);
+        if (size.x == -1)
         {
-            if (node->GetChild(idx_child)->HasValue(prop_bitmap))
-            {
-                has_bitmaps = true;
-                break;
-            }
+            size.x = DEF_TAB_IMG_WIDTH;
+        }
+        if (size.y == -1)
+        {
+            size.y = DEF_TAB_IMG_HEIGHT;
         }
 
-        if (has_bitmaps)
+        // Enclose the code in braces to allow using "img_list" and "bmp" as variable names, as well as making the
+        // code more readable.
+
+        code << "\n\t{";
+        code << "\n\t\tauto img_list = new wxImageList(";
+        code << size.x << ", " << size.y << ");";
+
+        size_t image_index = 0;
+        for (auto& child_node: node->GetChildNodePtrs())
         {
-            code.insert(0, "\t");
-            auto size = node->prop_as_wxSize(prop_bitmapsize);
-            if (size.x == -1)
+            // Note: when we generate the code, we could look at the actual image and determine whether it's already
+            // the correct size and only scale it if needed. However, that requires the user to know to regenerate
+            // the code any time the image is changed to ensure it has the correct dimensions.
+
+            if (child_node->HasValue(prop_bitmap))
             {
-                size.x = DEF_TAB_IMG_WIDTH;
+                code << "\n\t\tauto img_" << image_index << " = ";
+                code << GenerateBitmapCode(child_node->prop_as_string(prop_bitmap)) << ";";
+                code << "\n\t\timg_list->Add(img_" << image_index;
+                if (child_node->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
+                    code << ".ConvertToImage()";
+                code << ".Scale(" << size.x << ", " << size.y << "));";
+                ++image_index;
             }
-            if (size.y == -1)
+            if (node->isGen(gen_wxTreebook))
             {
-                size.y = DEF_TAB_IMG_HEIGHT;
+                // This is a recursive function that will handle unlimited nesting
+                AddTreebookImageCode(code, child_node.get(), image_index, size);
             }
+        }
+        code << "\n\t\t" << node->get_node_name() << "->AssignImageList(img_list);";
+        code << "\n\t}";
+    }
+}
 
-            // Enclose the code in braces to allow using "img_list" and "bmp" as variable names, as well as making the code
-            // more readable.
+static bool isBookDisplayImages(Node* node)
+{
+    if (!node->isGen(gen_BookPage))
+        return node->prop_as_bool(prop_display_images);
+    for (auto node_parent = node->GetParent(); node_parent; node_parent = node_parent->GetParent())
+    {
+        if (!node_parent->isGen(gen_BookPage))
+            return node_parent->prop_as_bool(prop_display_images);
+    }
+    return false;
+}
 
-            code << "\n\t{";
-            code << "\n\t\tauto img_list = new wxImageList(";
-            code << size.x << ", " << size.y << ");";
+static bool isBookHasImage(Node* node)
+{
+    bool is_book = !node->isGen(gen_BookPage);
 
-            for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+    for (auto& child_node: node->GetChildNodePtrs())
+    {
+        if (child_node->isGen(gen_BookPage))
+        {
+            if (child_node->HasValue(prop_bitmap))
+                return true;
+            if (is_book && !node->isGen(gen_wxTreebook))
+                continue;
+
+            for (auto& grand_child: child_node->GetChildNodePtrs())
             {
-                // Note: when we generate the code, we could look at the actual image and determine whether it's already the
-                // correct size and only scale it if needed. However, that requires the user to know to regenerate the code
-                // any time the image is changed to ensure it has the correct dimensions.
-
-                if (node->GetChild(idx_child)->HasValue(prop_bitmap))
+                if (grand_child->isGen(gen_BookPage))
                 {
-                    code << "\n\t\tauto img_" << idx_child << " = ";
-                    code << GenerateBitmapCode(node->GetChild(idx_child)->prop_as_string(prop_bitmap)) << ";";
-                    code << "\n\t\timg_list->Add(img_" << idx_child;
-                    if (node->GetChild(idx_child)->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
-                        code << ".ConvertToImage()";
-                    code << ".Scale(" << size.x << ", " << size.y << "));";
+                    auto result = isBookHasImage(grand_child.get());
+                    if (result)
+                        return true;
                 }
             }
-            code << "\n\t\t" << node->get_node_name() << "->AssignImageList(img_list);";
-            code << "\n\t}";
         }
     }
+    return false;
+}
+
+static void AddTreebookSubImages(Node* node, wxImageList* img_list, wxSize& size)
+{
+    for (auto& child_node: node->GetChildNodePtrs())
+    {
+        if (child_node->isGen(gen_BookPage))
+        {
+            if (child_node->HasValue(prop_bitmap))
+            {
+                auto img = wxGetApp().GetImage(child_node->prop_as_string(prop_bitmap));
+                ASSERT(img.IsOk());
+                img_list->Add(img.Scale(size.x, size.y));
+            }
+            AddTreebookSubImages(child_node.get(), img_list, size);
+        }
+    }
+}
+
+static void AddTreebookImageCode(ttlib::cstr& code, Node* child_node, size_t& image_index, wxSize& size)
+{
+    for (auto& grand_child: child_node->GetChildNodePtrs())
+    {
+        if (grand_child->isGen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
+        {
+            code << "\n\t\tauto img_" << image_index << " = ";
+            code << GenerateBitmapCode(grand_child->prop_as_string(prop_bitmap)) << ";";
+            code << "\n\t\timg_list->Add(img_" << image_index;
+            if (grand_child->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
+                code << ".ConvertToImage()";
+            code << ".Scale(" << size.x << ", " << size.y << "));";
+            ++image_index;
+            AddTreebookImageCode(code, grand_child.get(), image_index, size);
+        }
+    }
+}
+
+static int GetTreebookImageIndex(Node* node)
+{
+    int idx_image = 0;
+
+    auto treebook = node->GetParent();
+    while (treebook->isGen(gen_BookPage))
+    {
+        treebook = treebook->GetParent();
+    }
+
+    for (auto& child_node: treebook->GetChildNodePtrs())
+    {
+        if (child_node.get() == node)
+            return idx_image;
+        if (child_node->HasValue(prop_bitmap))
+            ++idx_image;
+        for (auto& grand_child: child_node->GetChildNodePtrs())
+        {
+            if (grand_child->isGen(gen_BookPage))
+            {
+                if (grand_child.get() == node)
+                {
+                    return idx_image;
+                }
+                if (grand_child->HasValue(prop_bitmap))
+                    ++idx_image;
+            }
+        }
+    }
+
+    return idx_image;
 }

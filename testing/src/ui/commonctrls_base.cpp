@@ -213,12 +213,17 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     m_bmpComboBox = new wxBitmapComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
     flex_grid_sizer->Add(m_bmpComboBox, wxSizerFlags().Border(wxALL));
 
-    m_toggleBtn = new wxToggleButton(this, wxID_ANY, "Play Animation", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-    flex_grid_sizer->Add(m_toggleBtn, wxSizerFlags().Border(wxALL));
+    m_checkPlayAnimation = new wxCheckBox(this, wxID_ANY, "Play Animation");
+    auto static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_checkPlayAnimation), wxVERTICAL);
+    flex_grid_sizer->Add(static_box_2, wxSizerFlags().Border(wxALL));
 
-    m_animation_ctrl = new wxAnimationCtrl(this, wxID_ANY, GetAnimFromHdr(clr_hourglass_gif, sizeof(clr_hourglass_gif)));
+    m_toggleBtn = new wxToggleButton(static_box_2->GetStaticBox(), wxID_ANY, "Play Animation", wxDefaultPosition, wxDefaultSize,
+        wxBU_EXACTFIT);
+    static_box_2->Add(m_toggleBtn, wxSizerFlags().Border(wxALL));
+
+    m_animation_ctrl = new wxAnimationCtrl(static_box_2->GetStaticBox(), wxID_ANY, GetAnimFromHdr(clr_hourglass_gif, sizeof(clr_hourglass_gif)));
     m_animation_ctrl->SetInactiveBitmap(wxImage(empty_xpm));
-    flex_grid_sizer->Add(m_animation_ctrl, wxSizerFlags().Border(wxALL));
+    static_box_2->Add(m_animation_ctrl, wxSizerFlags().Border(wxALL));
 
     flex_grid_sizer->AddSpacer(0);
 
@@ -315,10 +320,10 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     m_listBox2->Bind(wxEVT_LISTBOX, &CommonCtrlsBase::OnListBox, this);
     m_checkList->Bind(wxEVT_CHECKLISTBOX, &CommonCtrlsBase::OnListChecked, this);
     m_radioBox->Bind(wxEVT_RADIOBOX, &CommonCtrlsBase::OnRadioBox, this);
-    m_toggleBtn->Bind(wxEVT_TOGGLEBUTTON,
+    m_checkPlayAnimation->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
         {
-            if (m_toggleBtn->GetValue()) 
+            if (m_checkPlayAnimation->GetValue()) 
             {
                 m_animation_ctrl->Play();
             }
@@ -327,9 +332,23 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
                 m_animation_ctrl->Stop();
             }
 
+        } );
+    m_toggleBtn->Bind(wxEVT_TOGGLEBUTTON,
+        [this](wxCommandEvent&)
+        {
+            if (m_toggleBtn->GetValue()) 
+            {
+                m_animation_ctrl->Play();
+                m_checkPlayAnimation->SetValue(true);
+            }
+            else 
+            {  
+                m_animation_ctrl->Stop();
+                m_checkPlayAnimation->SetValue(false);
+            }
+
             m_infoBar->ShowMessage("wxEVT_TOGGLEBUTTON event");
             Fit();
-
         } );
     m_edit_listbox->Bind(wxEVT_LIST_BEGIN_DRAG,
         [this](wxListEvent&)

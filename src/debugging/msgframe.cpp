@@ -320,11 +320,42 @@ void MsgFrame::UpdateNodeInfo()
             class_name.Replace("item", "_item");
 
             class_name.Replace("stddialog", "std_dialog");
+            class_name.Replace("bookpage", "book_ctrl_base");
 
             ttlib::cstr url = "https://docs.wxwidgets.org/trunk/classwx_";
             url << class_name << ".html";
             m_hyperlink->SetLabel(ttlib::cstr() << map_GenNames[cur_sel->gen_name()] << " Documentation");
             m_hyperlink->SetURL(url);
+        }
+        else if (class_name == "BookPage")
+        {
+            m_hyperlink->SetLabel("wxBookCtrlBase Documentation");
+            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_book_ctrl_base.html");
+        }
+        else if (class_name == "PanelForm")
+        {
+            m_hyperlink->SetLabel("wxPanel Documentation");
+            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_panel.html");
+        }
+        else if (class_name == "RibbonBar")
+        {
+            m_hyperlink->SetLabel("wxRibbonBar Documentation");
+            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_ribbon_bar.html");
+        }
+        else if (class_name == "PopupMenu" || class_name == "submenu")
+        {
+            m_hyperlink->SetLabel("wxMenu Documentation");
+            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_menu.html");
+        }
+        else if (class_name == "ToolBar")
+        {
+            m_hyperlink->SetLabel("wxToolBar Documentation");
+            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_tool_bar.html");
+        }
+        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
+        {
+            m_hyperlink->SetLabel("wxStaticBoxSizer Documentation");
+            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_static_box_sizer.html");
         }
         else
         {

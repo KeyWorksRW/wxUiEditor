@@ -31,5 +31,15 @@ protected:
     // Class member variables
 
     wxStaticText* m_staticText;
+    wxStaticText* m_staticText_2;
+    wxStaticText* m_staticText_3;
     wxTreebook* m_treebook;
 };
+
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char er_png[302];
+    extern const unsigned char re_png[305];
+}

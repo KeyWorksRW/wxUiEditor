@@ -43,7 +43,7 @@ const auto g_lstIgnoreProps = {
 
     "event_handler",  // all events are now declared as virtual
 
-    // The following are AUI properties. Until AUI gets re-implemented, these will all be ignored
+    // The following are AUI properties. Unless AUI frame windows gets implemented, these will all be ignored
 
     "BottomDockable",
     "LeftDockable",
@@ -467,7 +467,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (newobject->isGen(gen_wxGridSizer))
+    if (newobject->isGen(gen_wxGridSizer) || newobject->isGen(gen_wxFlexGridSizer))
     {
         if (newobject->prop_as_int(prop_rows) > 0 && newobject->prop_as_int(prop_cols) > 0)
             newobject->prop_set_value(prop_rows, 0);

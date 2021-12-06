@@ -318,6 +318,7 @@ void MsgFrame::UpdateNodeInfo()
             class_name.Replace("sizer", "_sizer");
             class_name.Replace("ctrl", "_ctrl");
             class_name.Replace("item", "_item");
+            class_name.Replace("view", "_view");
 
             class_name.Replace("stddialog", "std_dialog");
             class_name.Replace("bookpage", "book_ctrl_base");

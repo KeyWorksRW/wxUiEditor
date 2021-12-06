@@ -32,6 +32,7 @@ constexpr const IMPORT_NAME_PAIR prop_pair[] = {
     { "bitmapsize", "image_size" },
     { "hover", "current" },
     { "settings", "settings_code" },
+    { "tab_ctrl_height", "tab_height" },
     { "class", "class_name" },
 
     { nullptr, nullptr },
@@ -43,6 +44,12 @@ const auto g_lstIgnoreProps = {
     "class_decoration", // used for adding a DLL export macro
 
     "event_handler",  // all events are now declared as virtual
+
+    // The following are wxFormBuilder properties for wxAuiToolBar
+
+    "label_visible",
+    "toolbar_label",
+    "use_explicit_ids",
 
     // The following are AUI properties. Unless AUI frame windows gets implemented, these will all be ignored
 
@@ -308,6 +315,9 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             }
         }
     }
+
+    // if (class_name.is_sameas("wxPanel"))
+        // wxTrap();
 
     auto newobject = g_NodeCreator.CreateNode(class_name, parent);
     if (!newobject)
@@ -830,6 +840,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     {
         if (xml_prop.text().as_cview().size())
         {
+            if (xml_prop.text().as_cview().is_sameas("wxWS_EX_VALIDATE_RECURSIVELY"))
+                return;
             MSG_INFO(ttlib::cstr() << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name
                                    << " class not supported");
         }
@@ -879,7 +891,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
     {
         ttlib::cstr value(xml_prop.text().as_cview());
         value.Replace("Load From Art Provider", "Art", false, tt::CASE::either);
-        value << "; [-1,-1]";
+        value << ";[-1,-1]";
         prop->set_value(value);
     }
 }

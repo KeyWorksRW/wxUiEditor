@@ -598,7 +598,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
         bitmap << xml_obj.attribute("stock_id").value() << "; ";
         if (!xml_obj.attribute("stock_client").empty())
             bitmap << xml_obj.attribute("stock_client").value();
-        bitmap << "; [-1; -1]";
+        bitmap << "[-1,-1]";
 
         if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
         {
@@ -612,7 +612,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
         {
             ttlib::cstr bitmap("XPM; ");
             bitmap << file;
-            bitmap << "; ; [-1; -1]";
+            bitmap << ";[-1,-1]";
 
             if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
             {

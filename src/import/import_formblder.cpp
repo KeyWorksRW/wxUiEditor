@@ -803,17 +803,17 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
         if (filename.has_extension(".xpm"))
         {
             ttlib::cstr value("XPM; ");
-            value << filename << "; ; [-1; -1]";
+            value << filename << ";[-1,-1]";
             prop->set_value(value);
         }
         else
         {
-            ttlib::cstr bitmap("Embed; ");
+            ttlib::cstr bitmap("Embed;");
             ttString relative(filename.wx_str());
             relative.make_relative_wx(wxGetCwd());
             relative.backslashestoforward();
             bitmap << relative.wx_str();
-            bitmap << "; ; [-1; -1]";
+            bitmap << ";[-1,-1]";
             prop->set_value(bitmap);
         }
     }
@@ -821,7 +821,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
     {
         ttlib::cstr value(xml_prop.text().as_cview());
         value.Replace("Load From Art Provider", "Art", false, tt::CASE::either);
-        value << "; [-1; -1]";
+        value << "; [-1,-1]";
         prop->set_value(value);
     }
 }

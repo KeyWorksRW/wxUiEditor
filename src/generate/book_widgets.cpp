@@ -496,6 +496,9 @@ wxObject* AuiNotebookGenerator::CreateMockup(Node* node, wxObject* parent)
     else if (node->prop_as_string(prop_art_provider).is_sameas("wxAuiSimpleTabArt"))
         widget->SetArtProvider(new wxAuiSimpleTabArt());
 
+    if (node->prop_as_int(prop_tab_height) > 0)
+        widget->SetTabCtrlHeight(node->prop_as_int(prop_tab_height));
+
     AddBookImageList(node, widget);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -533,6 +536,17 @@ std::optional<ttlib::cstr> AuiNotebookGenerator::GenConstruction(Node* node)
     }
 
     return code;
+}
+
+std::optional<ttlib::cstr> AuiNotebookGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    if (node->prop_as_int(prop_tab_height) > 0)
+    {
+        ttlib::cstr code;
+        code << node->get_node_name() << "->SetTabCtrlHeight(" << node->prop_as_string(prop_tab_height) << ");";
+        return code;
+    }
+    return {};
 }
 
 std::optional<ttlib::cstr> AuiNotebookGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

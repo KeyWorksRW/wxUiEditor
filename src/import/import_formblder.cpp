@@ -28,7 +28,7 @@
 constexpr const IMPORT_NAME_PAIR prop_pair[] = {
 
     { "bg", "background_colour" },
-    { "fg", "background_colour" },
+    { "fg", "foreground_colour" },
     { "bitmapsize", "image_size" },
     { "hover", "current" },
     { "settings", "settings_code" },

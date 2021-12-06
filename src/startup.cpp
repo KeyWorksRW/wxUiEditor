@@ -26,7 +26,7 @@ static const char* txtContents = {
     "<par><br>"
     "Open an <a href=\"$existing\">existing</a> project."
     "<h2>Create New Project</h2>"
-    "<a href=\"$convert\">Convert</a> from a different type of project (Windows Resource file, <b>wxFormBuilder</b>, etc.).<br>"
+    "<a href=\"$convert\">Import</a> from a different type of project (<b>wxFormBuilder</b>, <b>wxGlade</b>, <b>wxSmith</b>, <b>XRC</b> or <b>Windows Resource</b>).<br>"
     "<br>"
     "Create an <a href=\"$empty\">empty</a> project."
     "</font>"

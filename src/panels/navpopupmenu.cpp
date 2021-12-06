@@ -1124,6 +1124,8 @@ void NavPopupMenu::CreateWizardMenu(Node* /* node */)
 {
     wxMenuItem* menu_item;
 
+    menu_item = Append(wxID_COPY);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
     menu_item = Append(wxID_PASTE);
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
     AppendSeparator();
@@ -1144,6 +1146,8 @@ void NavPopupMenu::CreateBookMenu(Node* /* node */)
 {
     wxMenuItem* menu_item;
 
+    menu_item = Append(wxID_COPY);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
     menu_item = Append(wxID_PASTE);
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
     AppendSeparator();

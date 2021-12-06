@@ -1,16 +1,12 @@
 # Developer notes
 
-The following sections contain information about the code that might not be immediately obvious. Reading these sections may make the code easier to understand, as well as ensuring that PR's are written in a way that matches the rest of the code base.
+If you are planning on contributing code, the following sections contain information about the code that might not be immediately obvious. Reading these sections may make the code easier to understand, as well as ensuring that PR's are written in a way that matches the rest of the code base.
 
 Note that the code requires a C++17 compliant compiler -- which means you should be using C++17 coding conventions. That includes using `std::string_view` (or `ttlib::cview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
 
 ## Debug builds
 
-When you create a debug build, there will be an additional **Debug** menu to the right of the **Help** menu that will give you access to additional functionality for easier debugging. In addition most items in the Navigation pane will have one or more additional context menu commands available under Debug builds.
-
-## ART files
-
-Original art images are in the `art_src/` directory. All art is automatically converted into XPM or PNG header files as part of the build process. The converted art is _not_ part of the repository, so to change artwork, only the original needs to be changed.
+When you create a debug build, there will be an additional **Debug** menu to the right of the **Help** menu that will give you access to additional functionality for easier debugging.
 
 ## Strings
 
@@ -37,10 +33,6 @@ The `THROW()` macro will generate an assertion message in debug builds. The same
 The `MSG_...` macros allow for display information in the custom logging window. The custom logging window has filters so that you can limit which messages are displayed. Unlike the `wxLog...` macros, none of these messages will ever be displayed to the user -- they are for your debugging use only.
 
 If you are fairly certain a condition will be fixed before shipping a release version, then use the ASSERT/FAIL macros. If it's possible that the condition could occur in a release build, and you have a catch setup to handle it, use THROW (in debug builds, this will assert first).
-
-### MessageBox
-
-The `appMsgBox` is the preferred method for displaying warning messages to the user since it can use localized strings that don't require any special tools to create (see the **Localization** section above). Since the msg parameter is `ttlib::cstr` the message string will be converted to UTF16 when compiled for Windows before being displayed. It will be displayed normally (no conversion needed) on non-Windows platforms.
 
 ## Testing
 

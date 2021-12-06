@@ -511,7 +511,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             newobject->prop_set_value(prop_alignment, "");
         }
     }
-
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {
@@ -564,8 +563,28 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         {
             return newobject;
         }
+
         if (newobject->isGen(gen_wxStdDialogButtonSizer))
-            newobject->get_prop_ptr(prop_static_line)->set_value(false);
+        {
+            // wxFormBuilder isn't able to add a sizer using CreateSeparatedSizer(), so the user has to add a static line
+            // above wxStdDialogButtonSizer. The problem with that approach is that if the program is compiled for MAC then
+            // there should *not* be a line above the standard buttons. We fix that be removing the static line -- wxUE
+            // defaults to adding the line via CreateSeparatedSizer().
+
+            auto pos = parent->GetChildPosition(newobject.get());
+            if (pos > 0)
+            {
+                auto prior_sibling = parent->GetChild(pos - 1);
+                if (prior_sibling->isGen(gen_wxStaticLine))
+                {
+                    parent->RemoveChild(pos - 1);
+                }
+                else
+                {
+                    newobject->get_prop_ptr(prop_static_line)->set_value(false);
+                }
+            }
+        }
         child = child.next_sibling("object");
     }
     else if (sizeritem)

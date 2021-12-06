@@ -109,6 +109,18 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
     else
         node_decl = m_a_declarations[name];
 
+    if (!node_decl)
+    {
+        // Unless the toolbar is a child of a wxAui frame window, there's little to no difference between a wxAuiToolBar and
+        // a wxToolBar. Checking it here allows us to automatically convert imported projects, and then if we ever do decide
+        // to support wxAuiToolBar, imports will immediately switch without having to touch the import code.
+
+        if (name == gen_wxAuiToolBar)
+            node_decl = m_a_declarations[gen_wxToolBar];
+        else
+            return NodeSharedPtr();
+    }
+
     if (!parent)
         return NewNode(node_decl);
 

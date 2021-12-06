@@ -464,6 +464,15 @@ void GetScaleInfo(wxSize& size, ttlib::sview description)
     else
         scale.SetString(description, ',');
 
+    ASSERT(scale.size())
+    ASSERT(scale[0].size())
+
+    if (scale.empty())
+    {
+        size.x = -1;
+        size.y = -1;
+        return;
+    }
     size_t start = scale[0].front() == '[' ? 1 : 0;
     size.x = scale[0].atoi(start);
     if (scale.size() > 1)

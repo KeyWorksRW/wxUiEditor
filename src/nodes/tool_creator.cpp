@@ -31,7 +31,8 @@ bool Node::CreateToolNode(GenName name)
             wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
         }
     }
-    else if (name == gen_wxNotebook || name == gen_wxSimplebook || name == gen_wxChoicebook || name == gen_wxListbook)
+    else if (name == gen_wxNotebook || name == gen_wxSimplebook || name == gen_wxChoicebook || name == gen_wxListbook ||
+             name == gen_wxAuiNotebook)
     {
         PostProcessBook(new_node);
     }

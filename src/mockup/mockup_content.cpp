@@ -152,8 +152,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         return;  // means the component doesn't create any UI element, and cannot have children
     }
 
-    wxWindow* created_window = nullptr;
-    wxSizer* created_sizer = nullptr;
+    wxWindow* created_window { nullptr };
+    wxSizer* created_sizer { nullptr };
 
     if (node->isGen(gen_wxMenuBar) || node->isGen(gen_MenuBar))
     {
@@ -285,7 +285,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     if (parent_sizer)
     {
-        if (created_window)
+        if (created_window && !node->IsStaticBoxSizer())
             parent_sizer->Add(created_window, wxSizerFlags().Expand());
         else if (created_sizer)
             parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());

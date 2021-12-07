@@ -779,6 +779,12 @@ void MainFrame::OnPaste(wxCommandEvent&)
     }
 }
 
+void MainFrame::OnDuplicate(wxCommandEvent& WXUNUSED(event))
+{
+    ASSERT(m_selected_node);
+    DuplicateNode(m_selected_node.get());
+}
+
 void MainFrame::OnChangeAlignment(wxCommandEvent& event)
 {
     int align = 0;

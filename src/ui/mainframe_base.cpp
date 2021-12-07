@@ -132,6 +132,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     menu_delete->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
     m_menuEdit->Append(menu_delete);
 
+    auto menu_duplicate = new wxMenuItem(m_menuEdit, wxID_ANY, "Duplicate",
+        "Delete selected object without using clipboard.", wxITEM_NORMAL);
+    m_menuEdit->Append(menu_duplicate);
+
     m_menuEdit->AppendSeparator();
 
     auto menu_find = new wxMenuItem(m_menuEdit, wxID_FIND, wxEmptyString,
@@ -424,6 +428,13 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
             event.Enable(wxGetFrame().CanCopyNode());
         },
         wxID_DELETE);
+    Bind(wxEVT_MENU, &MainFrameBase::OnDuplicate, this, menu_duplicate->GetId());
+    Bind(wxEVT_UPDATE_UI,
+        [](wxUpdateUIEvent& event)
+        {
+            event.Enable(wxGetFrame().CanCopyNode());
+        },
+        menu_duplicate->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnFindDialog, this, wxID_FIND);
     Bind(wxEVT_MENU, &MainFrameBase::OnInsertWidget, this, id_insert_widget);
     Bind(wxEVT_MENU,

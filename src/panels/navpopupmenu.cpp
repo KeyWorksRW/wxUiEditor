@@ -657,21 +657,21 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU));
     menu_item = Append(wxID_COPY);
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
-    if (wxGetFrame().GetClipboard())
-    {
-        auto clipboard = wxGetFrame().GetClipboard();
+    auto paste_item = Append(wxID_PASTE);
+    paste_item->Enable(false);
+    paste_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
+    menu_item = Append(wxID_DELETE);
+    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
 
+    if (auto clipboard = wxGetFrame().GetClipboard(); clipboard)
+    {
         // The selected node is a container, so there aren't very many things you can paste into it.
 
         if (clipboard->IsForm() || clipboard->IsContainer() || (clipboard->IsSizer() && node->GetChildCount() == 0))
         {
-            menu_item = Append(wxID_PASTE);
-            menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
+            paste_item->Enable(true);
         }
     }
-
-    menu_item = Append(wxID_DELETE);
-    menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
     AppendSeparator();
 
     auto sub_menu = new wxMenu;
@@ -1038,15 +1038,16 @@ void NavPopupMenu::CreateBarMenu(Node* node)
     menu_item = Append(wxID_COPY);
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
 
-    AppendSeparator();
-    if (node->isGen(gen_wxRibbonBar) || node->isGen(gen_RibbonBar))
-        menu_item = Append(MenuEXPAND_ALL, "Expand All");
-
     if (!node->isGen(gen_wxStatusBar))
     {
         menu_item = Append(wxID_PASTE);
         menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
-        AppendSeparator();
+    }
+
+    AppendSeparator();
+    if (node->isGen(gen_wxRibbonBar) || node->isGen(gen_RibbonBar))
+    {
+        menu_item = Append(MenuEXPAND_ALL, "Expand All");
     }
 
     if (node->isGen(gen_wxRibbonPanel) || node->isGen(gen_wxRibbonPage) || node->isGen(gen_ribbonTool))

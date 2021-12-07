@@ -552,17 +552,6 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     if (node->prop_as_bool(prop_read_only))
         code << "\n\t\t" << node->get_node_name() << "->SetReadOnly(true);";
 
-    ttlib::cstr win_settings;
-
-    // BUGBUG: [KeyWorks - 12-19-2020] This will also be generated in gen_base if we don't special-case it
-    GenerateWindowSettings(node, win_settings);
-    if (win_settings.size())
-    {
-        // Need to increase indentation of all lines by one tab
-        win_settings.Replace("\n\t", "\n\t\t");
-        code << "\n\t\t" << win_settings;
-    }
-
     code << "\n\t}";
 
     if (code.is_sameas("\t{\n\t}"))

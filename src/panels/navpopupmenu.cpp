@@ -662,6 +662,7 @@ void NavPopupMenu::CreateContainerMenu(Node* node)
     paste_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
     menu_item = Append(wxID_DELETE);
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
+    Append(MenuDUPLICATE, "Duplicate");
 
     if (auto clipboard = wxGetFrame().GetClipboard(); clipboard)
     {
@@ -1044,9 +1045,17 @@ void NavPopupMenu::CreateBarMenu(Node* node)
         menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
     }
 
-    AppendSeparator();
+    if (node->isGen(gen_wxRibbonPanel) || node->isGen(gen_wxRibbonPage) || node->isGen(gen_ribbonTool) ||
+        node->isGen(gen_tool))
+    {
+        menu_item = Append(wxID_DELETE);
+        menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
+        Append(MenuDUPLICATE, "Duplicate");
+    }
+
     if (node->isGen(gen_wxRibbonBar) || node->isGen(gen_RibbonBar))
     {
+        AppendSeparator();
         menu_item = Append(MenuEXPAND_ALL, "Expand All");
     }
 

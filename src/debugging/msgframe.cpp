@@ -290,6 +290,8 @@ void MsgFrame::UpdateNodeInfo()
 
             if (!class_name.is_sameprefix("panel"))
                 class_name.Replace("panel", "_panel");
+            if (!class_name.is_sameprefix("notebook"))
+                class_name.Replace("panel", "_notebook");
             if (!class_name.is_sameprefix("text"))
                 class_name.Replace("text", "_text");
             if (!class_name.is_sameprefix("button"))

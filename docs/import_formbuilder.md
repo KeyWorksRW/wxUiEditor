@@ -15,4 +15,6 @@ The code that **wxUiEditor** generates will often look quite different than the 
 - **wxUiEditor** will connect to events using **Bind()** rather than **Connect()**
 - **wxUiEditor** will not disconnect events in a destructor since **wxWidgets** already does this
 
-If you import a **wxFormBuilder** project, **wxUiEditor** will default to generating the same filename that was generated before. If you would like to compare the differences, then in **wxUiEditor** change the default source and header extensions to `.cc/.hh` or `.cxx/.hxx` so that the new code won't overwrite the old code that **wxFormBuilder** generated.
+If you inserted a static line before a **wxStdDialogButtonSizer**, the import will remove that line and instead generate the code in a platform independent way (on Mac, there should not be a line above the standard buttons).
+
+When you import **wxFormBuilder** projects, **wxUiEditor** will default to generating the same filename that was generated before. If you would like to compare the differences, then in **wxUiEditor** change the default source and header extensions to `.cc/.hh` or `.cxx/.hxx` so that the new code won't overwrite the old code that **wxFormBuilder** generated.

@@ -271,7 +271,7 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
 void MainFrame::OnSaveAsProject(wxCommandEvent&)
 {
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
-    wxFileDialog dialog(this, "Save Project As", wxEmptyString, wxEmptyString,
+    wxFileDialog dialog(this, "Save Project As", wxGetApp().GetProjectPath(), wxGetApp().GetProjectFileName().filename(),
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
@@ -1573,7 +1573,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
             auto start_node = GetSelectedNode();
             if (!start_node)
             {
-                start_node = App().GetProject();
+                start_node = wxGetApp().GetProject();
             }
             auto found_node = FindChildNode(start_node, result->second);
             if (found_node)

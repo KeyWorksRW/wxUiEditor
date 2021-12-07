@@ -485,6 +485,18 @@ bool App::NewProject(bool create_empty)
                 // silently continue with the next project file
             }
         }
+
+        // Set the current working directory to the first file imported.
+        ttString path(file_list[0]);
+        if (path.size())
+        {
+            path.replace_extension_wx(".wxui");
+            path.make_absolute();
+            path.backslashestoforward();
+            m_pjtSettings->SetProjectFile(path);
+            path.remove_filename();
+            m_pjtSettings->SetProjectPath(path);
+        }
         m_frame->SetImportedFlag();
     }
 

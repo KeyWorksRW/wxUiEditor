@@ -292,6 +292,7 @@ namespace GenEnum
         prop_strings,
         prop_style,
         prop_tab_behaviour,
+        prop_tab_height,
         prop_tab_indents,
         prop_tab_position,
         prop_tab_width,

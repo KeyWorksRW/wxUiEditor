@@ -91,6 +91,41 @@ void MockupContent::CreateAllGenerators()
             // In this case, the form itself is created as a child
             CreateChildren(form, this, this, m_parent_sizer);
         }
+        else if (form->isGen(gen_wxFrame))
+        {
+            // In a frame window, a menu, toolbar and statusbar can appear anywhere, but they need to be created in our
+            // Mockup window in a specific order to match what the real window will look like.
+
+            size_t pos_menu { tt::npos };
+            size_t pos_toolbar { tt::npos };
+            size_t pos_statusbar { tt::npos };
+            for (size_t i = 0; i < form->GetChildCount(); i++)
+            {
+                if (form->GetChild(i)->isGen(gen_wxMenuBar))
+                    pos_menu = i;
+                else if (form->GetChild(i)->isGen(gen_wxToolBar))
+                    pos_toolbar = i;
+                else if (form->GetChild(i)->isGen(gen_wxStatusBar))
+                    pos_statusbar = i;
+            }
+
+            // First create the menu and toolbar if they exist
+
+            if (ttlib::is_found(pos_menu))
+                CreateChildren(form->GetChild(pos_menu), this, this, m_parent_sizer);
+            if (ttlib::is_found(pos_toolbar))
+                CreateChildren(form->GetChild(pos_toolbar), this, this, m_parent_sizer);
+
+            for (size_t i = 0; i < form->GetChildCount(); i++)
+            {
+                if (i != pos_menu && i != pos_toolbar && i != pos_statusbar)
+                    CreateChildren(form->GetChild(i), this, this, m_parent_sizer);
+            }
+
+            if (ttlib::is_found(pos_statusbar))
+                CreateChildren(form->GetChild(pos_statusbar), this, this, m_parent_sizer);
+        }
+
         else
         {
             for (size_t i = 0; i < form->GetChildCount(); i++)
@@ -152,8 +187,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         return;  // means the component doesn't create any UI element, and cannot have children
     }
 
-    wxWindow* created_window = nullptr;
-    wxSizer* created_sizer = nullptr;
+    wxWindow* created_window { nullptr };
+    wxSizer* created_sizer { nullptr };
 
     if (node->isGen(gen_wxMenuBar) || node->isGen(gen_MenuBar))
     {
@@ -285,7 +320,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
     if (parent_sizer)
     {
-        if (created_window)
+        if (created_window && !node->IsStaticBoxSizer())
             parent_sizer->Add(created_window, wxSizerFlags().Expand());
         else if (created_sizer)
             parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());

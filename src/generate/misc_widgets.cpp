@@ -832,7 +832,7 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 
     if (node->prop_as_string(prop_class_access) != "none" && node->HasValue(prop_class_name))
     {
-        set_hdr.insert(ttlib::cstr() << "class " << node->prop_as_string(prop_class_name));
+        set_hdr.insert(ttlib::cstr() << "class " << node->prop_as_string(prop_class_name) << ';');
     }
     return true;
 }

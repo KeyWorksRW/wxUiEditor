@@ -20,6 +20,7 @@
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"         // Utility functions that work with properties
 
 #include "import_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs
 
@@ -27,10 +28,11 @@
 constexpr const IMPORT_NAME_PAIR prop_pair[] = {
 
     { "bg", "background_colour" },
-    { "fg", "background_colour" },
+    { "fg", "foreground_colour" },
     { "bitmapsize", "image_size" },
     { "hover", "current" },
     { "settings", "settings_code" },
+    { "tab_ctrl_height", "tab_height" },
     { "class", "class_name" },
 
     { nullptr, nullptr },
@@ -43,7 +45,13 @@ const auto g_lstIgnoreProps = {
 
     "event_handler",  // all events are now declared as virtual
 
-    // The following are AUI properties. Until AUI gets re-implemented, these will all be ignored
+    // The following are wxFormBuilder properties for wxAuiToolBar
+
+    "label_visible",
+    "toolbar_label",
+    "use_explicit_ids",
+
+    // The following are AUI properties. Unless AUI frame windows gets implemented, these will all be ignored
 
     "BottomDockable",
     "LeftDockable",
@@ -467,12 +475,49 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (newobject->isGen(gen_wxGridSizer))
+    // At this point, all properties have been processed.
+
+    if (newobject->isGen(gen_wxGridSizer) || newobject->isGen(gen_wxFlexGridSizer))
     {
         if (newobject->prop_as_int(prop_rows) > 0 && newobject->prop_as_int(prop_cols) > 0)
             newobject->prop_set_value(prop_rows, 0);
     }
 
+    // wxFormBuilder allows the users to create settings that will generate an assert if compiled on a debug version of
+    // wxWidgets. We fix some of the more common invalid settings here.
+
+    if (parent && parent->IsSizer())
+    {
+        if (parent->prop_as_string(prop_orientation).contains("wxHORIZONTAL"))
+        {
+            auto currentValue = newobject->prop_as_string(prop_alignment);
+            if (currentValue.size() && (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
+                                        currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
+            {
+                auto fixed = ClearMultiplePropFlags("wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", currentValue);
+                newobject->prop_set_value(prop_alignment, fixed);
+            }
+        }
+        else if (parent->prop_as_string(prop_orientation).contains("wxVERTICAL"))
+        {
+            auto currentValue = newobject->prop_as_string(prop_alignment);
+            if (currentValue.size() && (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
+                                        currentValue.contains("wxALIGN_CENTER_VERTICAL")))
+            {
+                auto fixed = ClearMultiplePropFlags("wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", currentValue);
+                newobject->prop_set_value(prop_alignment, fixed);
+            }
+        }
+    }
+
+    if (newobject->HasValue(prop_flags) && newobject->prop_as_string(prop_flags).contains("wxEXPAND"))
+    {
+        if (newobject->HasValue(prop_alignment))
+        {
+            // wxWidgets will ignore all alignment flags if wxEXPAND is set.
+            newobject->prop_set_value(prop_alignment, "");
+        }
+    }
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {
@@ -525,8 +570,28 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         {
             return newobject;
         }
+
         if (newobject->isGen(gen_wxStdDialogButtonSizer))
-            newobject->get_prop_ptr(prop_static_line)->set_value(false);
+        {
+            // wxFormBuilder isn't able to add a sizer using CreateSeparatedSizer(), so the user has to add a static line
+            // above wxStdDialogButtonSizer. The problem with that approach is that if the program is compiled for MAC then
+            // there should *not* be a line above the standard buttons. We fix that be removing the static line -- wxUE
+            // defaults to adding the line via CreateSeparatedSizer().
+
+            auto pos = parent->GetChildPosition(newobject.get());
+            if (pos > 0)
+            {
+                auto prior_sibling = parent->GetChild(pos - 1);
+                if (prior_sibling->isGen(gen_wxStaticLine))
+                {
+                    parent->RemoveChild(pos - 1);
+                }
+                else
+                {
+                    newobject->get_prop_ptr(prop_static_line)->set_value(false);
+                }
+            }
+        }
         child = child.next_sibling("object");
     }
     else if (sizeritem)
@@ -772,6 +837,8 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     {
         if (xml_prop.text().as_cview().size())
         {
+            if (xml_prop.text().as_cview().is_sameas("wxWS_EX_VALIDATE_RECURSIVELY"))
+                return;
             MSG_INFO(ttlib::cstr() << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name
                                    << " class not supported");
         }
@@ -803,17 +870,17 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
         if (filename.has_extension(".xpm"))
         {
             ttlib::cstr value("XPM; ");
-            value << filename << "; ; [-1; -1]";
+            value << filename << ";[-1,-1]";
             prop->set_value(value);
         }
         else
         {
-            ttlib::cstr bitmap("Embed; ");
+            ttlib::cstr bitmap("Embed;");
             ttString relative(filename.wx_str());
             relative.make_relative_wx(wxGetCwd());
             relative.backslashestoforward();
             bitmap << relative.wx_str();
-            bitmap << "; ; [-1; -1]";
+            bitmap << ";[-1,-1]";
             prop->set_value(bitmap);
         }
     }
@@ -821,7 +888,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
     {
         ttlib::cstr value(xml_prop.text().as_cview());
         value.Replace("Load From Art Provider", "Art", false, tt::CASE::either);
-        value << "; [-1; -1]";
+        value << ";[-1,-1]";
         prop->set_value(value);
     }
 }

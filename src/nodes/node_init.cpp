@@ -195,18 +195,18 @@ static const ParentChild lstParentChild[] = {
     { type_frame_form, type_gbsizer, one },
     { type_frame_form, type_sizer, one },
 
-    { type_frame_form, type_container, one },
-    { type_frame_form, type_splitter, one },
+    { type_frame_form, type_container, infinite },
+    { type_frame_form, type_splitter, infinite },
 
     { type_frame_form, type_statusbar, one },
     { type_frame_form, type_toolbar, one },
     { type_frame_form, type_menubar, one },
     { type_frame_form, type_ctx_menu, one },
 
-    { type_frame_form, type_choicebook, one },
-    { type_frame_form, type_listbook, one },
-    { type_frame_form, type_simplebook, one },
-    { type_frame_form, type_notebook, one },
+    { type_frame_form, type_choicebook, infinite },
+    { type_frame_form, type_listbook, infinite },
+    { type_frame_form, type_simplebook, infinite },
+    { type_frame_form, type_notebook, infinite },
 
     { type_form, type_ctx_menu, one },
     { type_form, type_gbsizer, one },

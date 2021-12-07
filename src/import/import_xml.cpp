@@ -324,7 +324,18 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         if (style.size())
             prop->set_value(style);
     }
-
+    else if (node->isGen(gen_wxToolBar))
+    {
+        ttlib::cstr style(xml_prop.text().as_string());
+        style.Replace("wxAUI_TB_DEFAULT_STYLE", "wxTB_HORIZONTAL");
+        style.Replace("wxAUI_TB_HORZ_LAYOUT", "wxTB_HORZ_LAYOUT");
+        style.Replace("wxAUI_TB_TEXT", "wxTB_TEXT");
+        style.Replace("wxAUI_TB_VERTICAL", "wxTB_VERTICAL");
+        style.Replace("wxAUI_TB_NO_TOOLTIPS", "wxTB_NO_TOOLTIPS");
+        style.Replace("wxAUI_TB_NO_TOOLTIPS", "wxTB_NO_TOOLTIPS");
+        if (style.size())
+            prop->set_value(style);
+    }
     else
     {
         prop->set_value(xml_prop.text().as_cview());
@@ -598,7 +609,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
         bitmap << xml_obj.attribute("stock_id").value() << "; ";
         if (!xml_obj.attribute("stock_client").empty())
             bitmap << xml_obj.attribute("stock_client").value();
-        bitmap << "; [-1; -1]";
+        bitmap << "[-1,-1]";
 
         if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
         {
@@ -612,7 +623,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
         {
             ttlib::cstr bitmap("XPM; ");
             bitmap << file;
-            bitmap << "; ; [-1; -1]";
+            bitmap << ";[-1,-1]";
 
             if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
             {

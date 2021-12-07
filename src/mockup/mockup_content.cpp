@@ -355,13 +355,19 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
     {
         if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
         {
-            window->SetMinSize(minsize);
+            if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
+                window->SetMinSize(m_mockupParent->ConvertPixelsToDialog(minsize));
+            else
+                window->SetMinSize(minsize);
         }
     }
 
     if (auto maxsize = node->prop_as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
     {
-        window->SetMaxSize(maxsize);
+        if (node->prop_as_string(prop_maximum_size).contains("d", tt::CASE::either))
+            window->SetMaxSize(m_mockupParent->ConvertPixelsToDialog(maxsize));
+        else
+            window->SetMaxSize(maxsize);
     }
 
     if (!node->isPropValue(prop_variant, "normal"))

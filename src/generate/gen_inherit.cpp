@@ -212,24 +212,38 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (!is_smart_size && allow_minmax)
     {
         size = node->prop_as_wxSize(prop_minimum_size);
-        if (size.x != -1 || size.y != -1)
+        if (size != wxDefaultSize)
         {
             if (code.size())
                 code << "\n";
             code << node->get_node_name() << "->";
-            code << "SetMinSize(wxSize(" << size.x << ", " << size.y << "));";
+            code << "SetMinSize(";
+            if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
+                code << "ConvertPixelsToDialog(";
+
+            code << "wxSize(" << size.x << ", " << size.y;
+            if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
+                code << ')';  // close the ConvertPixelsToDialog function call
+            code << "));";
         }
     }
 
     size = node->prop_as_wxSize(prop_maximum_size);
-    if (size.x != -1 || size.y != -1)
+    if (size != wxDefaultSize)
     {
         if (allow_minmax)
         {
             if (code.size())
                 code << "\n";
             code << node->get_node_name() << "->";
-            code << "SetMaxSize(wxSize(" << size.x << ", " << size.y << "));";
+            code << "SetMaxSize(";
+            if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
+                code << "ConvertPixelsToDialog(";
+
+            code << "wxSize(" << size.x << ", " << size.y;
+            if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
+                code << ')';  // close the ConvertPixelsToDialog function call
+            code << "));";
         }
     }
 

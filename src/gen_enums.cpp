@@ -283,6 +283,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_show_effect, "show_effect" },
     { prop_show_hidden, "show_hidden" },
     { prop_size, "size" },
+    { prop_smart_size, "smart_size" },
     { prop_source_ext, "source_ext" },
     { prop_splitmode, "splitmode" },
     { prop_src_preamble, "src_preamble" },

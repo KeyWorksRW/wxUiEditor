@@ -30,15 +30,10 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="wxWindow" type="interface">
 		<property name="id" type="id">wxID_ANY</property>
-		<property name="pos" type="wxPoint"
-			help="Window position. The default is (-1, -1) which indicates that wxWidgets should generate a default position for the window." />
-		<property name="size" type="wxSize"
-			help="Window size. The default is (-1, -1) which indicates that wxWidgets should generate a default size for the window." />
-		<property name="minimum_size" type="wxSize"
-			help="Sets the minimum size of the window, to indicate to the sizer layout mechanism that this is the minimum required size." />
-		<property name="maximum_size" type="wxSize"
-			help="Sets the maximum size of the window, to indicate to the sizer layout mechanism that this is the maximum allowable size." />
-		<property name="variant" type="option">
+		<property name="smart_size" type="wxSize"
+			help="If a positive value is used, the minimum size of the window will be set to that if it is larger then what automatic layout would have calculated. A -1 indicates that the value should always be calculated automatically." />
+		<property name="variant" type="option"
+			help="Chooses a different variant of the window display to use (calls SetWindowVariant).">
 			<option name="normal"
 				help="Normal size" />
 			<option name="small"
@@ -49,6 +44,8 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 				help="About 35% larger than normal." />
 			normal
 		</property>
+		<property name="maximum_size" type="wxSize"
+			help="Sets the maximum allowable size of the window." />
 		<property name="window_style" type="bitlist">
 			<option name="wxBORDER_DEFAULT"
 				help="The window class will decide the kind of border to show, if any." />
@@ -99,19 +96,25 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 			help="Disable the window for user input. Note that when a parent window is disabled, all of its children are disabled as well and they are reenabled again when the parent is.">0</property>
 		<property name="hidden" type="bool"
 			help="Shows or hides the window.">0</property>
-		<property name="font" type="wxFont"
-			help="Sets the font for this window. This should not be use for a parent window if you don't want its font to be inherited by its children" />
 		<property name="foreground_colour" type="wxColour"
 			help="Sets the foreground colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
 		<property name="background_colour" type="wxColour"
 			help="Sets the background colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
 		<property name="context_help" type="string_escapes"
 			help="Sets the help text to be used as context-sensitive help for this window." />
-		<property name="window_name" type="string_escapes"
-			help="The name of the window. This parameter is used to associate a name with the item, allowing the application user to set Motif resource values for individual windows." />
+		<property name="font" type="wxFont"
+			help="Sets the font for this window. This should not be use for a parent window if you don't want its font to be inherited by its children" />
+		<property name="pos" type="wxPoint"
+			help="Specifies the position to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically." />
+		<property name="size" type="wxSize"
+			help="Specifies the size to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically. Automatic layout (such as calling SetSizerAndFit) may override these values." />
+		<property name="minimum_size" type="wxSize"
+			help="Sets the minimum size of the window. Any positive value will override the automatic size calculation that would normally be done. This property is ignored if the smart_size property is used." />
 		<property name="derived_class" type="string"
 			help="If you have derived a class from a wxWidget class and you want this component to use your derived class, then specify that class name here. You will need to add the header file for your class to the derived_header property." />
 		<property name="derived_header" type="file"
 			help="Specify the name of the header file that declares your derived class." />
+		<property name="window_name" type="string_escapes"
+			help="The name of the window. This parameter is used to associate a name with the item, allowing the application user to set Motif resource values for individual windows." />
 	</gen>
 </GeneratorDefinitions>)===";

@@ -9,16 +9,15 @@
 
 #pragma once
 
-#define wxUSE_UNICODE     1
 #define wxUSE_GUI         1
-#define wxUSE_NO_MANIFEST 1  // This is required for compiling using CLANG 9 and earlier
-
-// This *IS* a legitimate warning, however while wxWidgets 3.1.15 has made some progress, there are still header files that
-// do this, and of course we can't assume the user is compiling with a version of wxWidgets where it has been fixed.
+#define wxUSE_NO_MANIFEST 1
+#define wxUSE_UNICODE     1
 
 #if (wxMAJOR_VERSION < 4) && (wxMINOR_VERSION < 2) && (wxRELEASE_NUMBER < 6)
     #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
         #ifdef _MSC_VER
+            // This *IS* a legitimate warning, however while wxWidgets 3.1.15 has made some progress, there are still header
+            // files that do this.
             #pragma warning(disable : 5054)  // operator '|': deprecated between enumerations of different types
         #endif
     #endif
@@ -51,10 +50,20 @@
 
 #if (wxMAJOR_VERSION < 4) && (wxMINOR_VERSION < 2) && (wxRELEASE_NUMBER < 16)
 
+    #ifdef _MSC_VER
+        #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
+        #pragma warning(disable : 4244)  // conversion from 'size_t' to 'int', possible loss of data
+    #endif
+
+    #if !defined(_WIN32) || defined(__clang__)
+        // warning: unused typedef 'complete' in scopedptr.h
+        #pragma clang diagnostic ignored "-Wunused-local-typedef"
+    #endif
+
     // We include these here so that C4244 and C4267 get disabled
-    #include <wx/choicebk.h>                 // conversion from 'int' to 'wxTextAttrDimensionFlags', possible loss of data
-    #include <wx/htmllbox.h>                 // conversion from 'int' to 'wxTextAttrDimensionFlags', possible loss of data
-    #include <wx/richtext/richtextbuffer.h>  // conversion from 'int' to 'wxTextAttrDimensionFlags', possible loss of data
+    #include <wx/choicebk.h>
+    #include <wx/htmllbox.h>
+    #include <wx/richtext/richtextbuffer.h>
 
 #endif
 

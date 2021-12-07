@@ -335,19 +335,39 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
 
 void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
 {
-    if (auto size = node->prop_as_wxSize(prop_size); size != wxDefaultSize)
+    bool is_smart_size { false };  // true means prop_size and prop_minimum_size will be ignored
+
+    if (auto size = node->prop_as_wxSize(prop_smart_size); size != wxDefaultSize)
     {
-        window->SetSize(size);
+        is_smart_size = true;
+        if (size.x > 0)
+            size.x = (size.x > window->GetBestSize().x ? size.x : -1);
+        if (size.y > 0)
+            size.y = (size.y > window->GetBestSize().y ? size.y : -1);
+
+        if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
+            window->SetInitialSize(m_mockupParent->ConvertPixelsToDialog(size));
+        else
+            window->SetInitialSize(size);
     }
 
-    if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
+    if (!is_smart_size)
     {
-        window->SetMinSize(minsize);
+        if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
+        {
+            if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
+                window->SetMinSize(m_mockupParent->ConvertPixelsToDialog(minsize));
+            else
+                window->SetMinSize(minsize);
+        }
     }
 
     if (auto maxsize = node->prop_as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
     {
-        window->SetMaxSize(maxsize);
+        if (node->prop_as_string(prop_maximum_size).contains("d", tt::CASE::either))
+            window->SetMaxSize(m_mockupParent->ConvertPixelsToDialog(maxsize));
+        else
+            window->SetMaxSize(maxsize);
     }
 
     if (!node->isPropValue(prop_variant, "normal"))

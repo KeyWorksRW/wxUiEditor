@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <wx/bitmap.h>  // wxBitmap class interface
+
 #include "font_prop.h"     // FontProperty class
 #include "node_classes.h"  // Forward defintions of Node classes
 #include "prop_decl.h"     // PropDeclaration -- PropChildDeclaration and PropDeclaration classes

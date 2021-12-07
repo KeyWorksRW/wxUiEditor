@@ -210,13 +210,14 @@ protected:
     void OnCopy(wxCommandEvent& event) override;
     void OnCut(wxCommandEvent& event) override;
     void OnDelete(wxCommandEvent& event) override;
+    void OnDuplicate(wxCommandEvent& event) override;
     void OnEmbedImageConverter(wxCommandEvent& event) override;
     void OnGenInhertedClass(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
+    void OnImportProject(wxCommandEvent& event);
     void OnImportWindowsResource(wxCommandEvent& event) override;
     void OnInsertWidget(wxCommandEvent&) override;
     void OnNewProject(wxCommandEvent& event);
-    void OnImportProject(wxCommandEvent& event);
     void OnOpenProject(wxCommandEvent& event) override;
     void OnOpenRecentProject(wxCommandEvent& event);
     void OnOptionsDlg(wxCommandEvent& event) override;

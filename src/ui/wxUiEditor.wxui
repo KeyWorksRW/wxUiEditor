@@ -1131,6 +1131,13 @@
             wxEVT_MENU="OnDelete"
             wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
           <node
+            class="wxMenuItem"
+            help="Delete selected object without using clipboard."
+            label="Duplicate"
+            var_name="menu_duplicate"
+            wxEVT_MENU="OnDuplicate"
+            wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
+          <node
             class="separator"
             var_name="separator6" />
           <node

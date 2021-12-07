@@ -79,6 +79,7 @@ protected:
     virtual void OnCopy(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCut(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDuplicate(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEmbedImageConverter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindDialog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenInhertedClass(wxCommandEvent& event) { event.Skip(); }

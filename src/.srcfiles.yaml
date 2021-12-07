@@ -2,7 +2,8 @@
 
 Options:
     Project:          wxUiEditor # project name
-    Exe_type:         window   # [window | console | lib | dll]
+    # Exe_type:         window   # [window | console | lib | dll]
+    Exe_type:         lib   # This is just for clang-cl to verify compilation, so we don't need a full link
     Pch:              pch.h    # name of precompiled header file, or "none" if not using precompiled headers
     Ms_linker:        true     # true means use link.exe even when compiling with clang-cl
 
@@ -14,7 +15,8 @@ Options:
     CFlags_cmn:       /std:c++17 /Zc:__cplusplus /utf-8 /DUNICODE
     CFlags_rel:       /DNDEBUG # static wxWidgets libraries in release build
 
-    TargetDir:        ../bin   # target directory
+    # TargetDir:        ../bin   # target directory
+    TargetDir:        ../build/CMakeFiles/CMakeTmp   # just a temporary location for the library
     Natvis:           wxui.natvis # MSVC Debug visualizer
 
     IncDirs:          ./;nodes;generate;utils;customprops;ui;../wxSnapshot/include;../wxSnapshot/win;../ttLib/include;../pugixml

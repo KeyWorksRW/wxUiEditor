@@ -12,7 +12,7 @@
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "lambdas.h"             // Functions for formatting and storage of lamda events
 
-#include "../ui/EditCodeDialog_base.h"  // auto-generated: ../ui/EditCodeDialog_base.cpp
+#include "../ui/editcodedialog_base.h"  // auto-generated: ../ui/editcodedialog_base.cpp
 
 EditCodeProperty::EditCodeProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)

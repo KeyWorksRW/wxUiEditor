@@ -52,7 +52,8 @@ bool ChoiceBookBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     parent_sizer_2->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
     m_staticText_2 = new wxStaticText(page, wxID_ANY, "The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control.");
-    m_staticText_2->Wrap(390);
+    m_staticText_2->Wrap(380);
+    m_staticText_2->SetInitialSize(wxSize(-1, 400> GetBestSize().y ? 400 : -1));
     box_sizer->Add(m_staticText_2, wxSizerFlags().Expand().Border(wxALL));
 
     page->SetSizerAndFit(parent_sizer_2);

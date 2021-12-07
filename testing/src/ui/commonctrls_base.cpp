@@ -78,6 +78,7 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     parent_sizer->Add(box_sizer2, wxSizerFlags().Expand().Border(wxALL));
 
     m_btn = new wxButton(this, wxID_ANY, "First btn");
+    m_btn->SetInitialSize(wxSize(120 > GetBestSize().x ? 120 : -1, -1));
     box_sizer2->Add(m_btn, wxSizerFlags().Border(wxALL));
 
     auto btn2 = new wxButton(this, wxID_ANY, "Popup");

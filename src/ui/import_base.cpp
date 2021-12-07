@@ -41,7 +41,7 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     m_combo_recent_dirs = new wxComboBox(m_import_staticbox->GetStaticBox(), wxID_ANY, wxEmptyString);
     m_combo_recent_dirs->Hide();
-    m_combo_recent_dirs->SetMinSize(wxSize(240, -1));
+    m_combo_recent_dirs->SetInitialSize(wxSize(240 > GetBestSize().x ? 240 : -1, -1));
     box_sizer->Add(m_combo_recent_dirs, wxSizerFlags().Border(wxALL));
 
     m_btnRemove = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "Remove");

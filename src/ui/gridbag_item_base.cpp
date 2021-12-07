@@ -24,25 +24,29 @@ bool GridBagItemBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     auto staticText = new wxStaticText(this, wxID_ANY, "&Column:");
     flex_grid_sizer->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
-    m_spin_column = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 0);
+    m_spin_column = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
+            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 0);
     flex_grid_sizer->Add(m_spin_column, wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     auto staticText_2 = new wxStaticText(this, wxID_ANY, "Span c&olumns:");
     flex_grid_sizer->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
-    m_spin_span_column = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 1);
+    m_spin_span_column = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
+            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 1);
     flex_grid_sizer->Add(m_spin_span_column, wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     auto staticText_3 = new wxStaticText(this, wxID_ANY, "&Row:");
     flex_grid_sizer->Add(staticText_3, wxSizerFlags().Center().Border(wxALL));
 
-    m_spin_row = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 0);
+    m_spin_row = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
+            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 0);
     flex_grid_sizer->Add(m_spin_row, wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     auto staticText_4 = new wxStaticText(this, wxID_ANY, "Span ro&ws:");
     flex_grid_sizer->Add(staticText_4, wxSizerFlags().Center().Border(wxALL));
 
-    m_spin_span_row = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 1);
+    m_spin_span_row = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
+            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 1);
     flex_grid_sizer->Add(m_spin_span_row, wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_infoBar = new wxInfoBar(this);

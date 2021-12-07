@@ -202,7 +202,8 @@
           line_numbers="false"
           use_tabs="false"
           var_name="m_stc"
-          minimum_size="400,200d"
+          minimum_size="-1,-1"
+          smart_size="600,400d"
           border_size="10"
           wxEVT_STC_CHANGE="OnChange" />
         <node
@@ -596,7 +597,8 @@
               line_numbers="false"
               use_tabs="false"
               var_name="m_stc"
-              minimum_size="400,200d"
+              minimum_size="-1,-1"
+              smart_size="600,400d"
               border_size="10"
               wxEVT_STC_CHANGE="OnChange" />
           </node>
@@ -758,7 +760,8 @@
               class="wxComboBox"
               var_name="m_combo_recent_dirs"
               hidden="true"
-              minimum_size="240,-1d"
+              minimum_size="-1,-1"
+              smart_size="240,-1"
               wxEVT_COMBOBOX="OnRecentDir" />
             <node
               class="wxButton"

@@ -173,6 +173,7 @@
           <node
             class="wxButton"
             label="First btn"
+            smart_size="120,-1"
             wxEVT_BUTTON="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_BUTTON event&quot;);@@Fit();@@}" />
           <node
             class="wxButton"
@@ -731,7 +732,8 @@
                   class="wxStaticText"
                   label="The First and Last buttons above are children of the wcChoicebook. They are added using choicebook->GetControlSizer() which allows them to share the layout space for the wxChoice control."
                   var_name="m_staticText_2"
-                  wrap="390"
+                  wrap="380"
+                  smart_size="-1,400"
                   flags="wxEXPAND" />
               </node>
             </node>
@@ -1241,7 +1243,8 @@
               var_name="parent_sizer5">
               <node
                 class="wxRichTextCtrl"
-                minimum_size="200,100d"
+                minimum_size="-1,-1"
+                smart_size="200,100"
                 window_style="wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS"
                 flags="wxEXPAND"
                 proportion="1" />

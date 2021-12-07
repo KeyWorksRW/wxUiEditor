@@ -62,9 +62,11 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
         m_stc->SetUseTabs(false);
         m_stc->SetTabWidth(4);
         m_stc->SetBackSpaceUnIndents(true);
-        m_stc->SetMinSize(wxSize(400, 200));
+        m_stc->SetInitialSize(ConvertPixelsToDialog(
+        wxSize(600 > GetBestSize().x ? 600 : -1, 400> GetBestSize().y ? 400 : -1)));
     }
-    m_stc->SetMinSize(wxSize(400, 200));
+    m_stc->SetInitialSize(ConvertPixelsToDialog(
+        wxSize(600 > GetBestSize().x ? 600 : -1, 400> GetBestSize().y ? 400 : -1)));
     m_lambda_box->Add(m_stc, wxSizerFlags().DoubleBorder(wxALL));
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());

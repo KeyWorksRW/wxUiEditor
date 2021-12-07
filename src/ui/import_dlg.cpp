@@ -10,6 +10,10 @@
 #include <wx/dirdlg.h>   // wxDirDialog base class
 #include <wx/filedlg.h>  // wxFileDialog base header
 
+#if defined(_DEBUG)
+    #include <wx/filename.h>
+#endif
+
 #include "pugixml.hpp"   // xml processing
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 

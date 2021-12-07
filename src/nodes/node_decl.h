@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <wx/image.h>  // wxImage class
+
 #include <map>
 #include <optional>
 #include <set>

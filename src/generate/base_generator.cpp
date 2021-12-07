@@ -104,12 +104,83 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
                 {
                     wxMessageBox("You can't set the wxEXPAND flag if you have either horizontal or vertical alignment set.",
                                  "Invalid alignment");
-                    event->Veto();
                     return false;
                 }
             }
         }
     }
+    else if (prop->isProp(prop_var_name) || prop->isProp(prop_validator_variable) || prop->isProp(prop_checkbox_var_name) ||
+             prop->isProp(prop_radiobtn_var_name))
+    {
+        auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
+        auto variant = event->GetPropertyValue();
+        ttlib::cstr newValue = property->ValueToString(variant).utf8_string();
+        if (newValue.empty())
+            return true;
+        auto unique_name = node->GetUniqueName(newValue);
+        // GetUniqueName() won't check the current node so if the name is unique, we still need to check within the same node
+        bool is_duplicate = !newValue.is_sameas(unique_name);
+        if (!is_duplicate)
+        {
+            if (prop->isProp(prop_var_name))
+            {
+                if (node->HasValue(prop_validator_variable) &&
+                    newValue.is_sameas(node->prop_as_string(prop_validator_variable)))
+                    is_duplicate = true;
+                else if (node->HasValue(prop_checkbox_var_name) &&
+                         newValue.is_sameas(node->prop_as_string(prop_checkbox_var_name)))
+                    is_duplicate = true;
+                else if (node->HasValue(prop_radiobtn_var_name) &&
+                         newValue.is_sameas(node->prop_as_string(prop_radiobtn_var_name)))
+                    is_duplicate = true;
+            }
+            else if (prop->isProp(prop_validator_variable))
+            {
+                if (node->HasValue(prop_var_name) && newValue.is_sameas(node->prop_as_string(prop_var_name)))
+                    is_duplicate = true;
+                else if (node->HasValue(prop_checkbox_var_name) &&
+                         newValue.is_sameas(node->prop_as_string(prop_checkbox_var_name)))
+                    is_duplicate = true;
+                else if (node->HasValue(prop_radiobtn_var_name) &&
+                         newValue.is_sameas(node->prop_as_string(prop_radiobtn_var_name)))
+                    is_duplicate = true;
+            }
+            else if (prop->isProp(prop_checkbox_var_name))
+            {
+                if (node->HasValue(prop_var_name) && newValue.is_sameas(node->prop_as_string(prop_var_name)))
+                    is_duplicate = true;
+                else if (node->HasValue(prop_validator_variable) &&
+                         newValue.is_sameas(node->prop_as_string(prop_validator_variable)))
+                    is_duplicate = true;
+                else if (node->HasValue(prop_radiobtn_var_name) &&
+                         newValue.is_sameas(node->prop_as_string(prop_radiobtn_var_name)))
+                    is_duplicate = true;
+            }
+            else if (prop->isProp(prop_radiobtn_var_name))
+            {
+                if (node->HasValue(prop_var_name) && newValue.is_sameas(node->prop_as_string(prop_var_name)))
+                    is_duplicate = true;
+                else if (node->HasValue(prop_validator_variable) &&
+                         newValue.is_sameas(node->prop_as_string(prop_validator_variable)))
+                    is_duplicate = true;
+                else if (node->HasValue(prop_checkbox_var_name) &&
+                         newValue.is_sameas(node->prop_as_string(prop_checkbox_var_name)))
+                    is_duplicate = true;
+            }
+        }
 
+        if (is_duplicate)
+        {
+            wxMessageBox("The name you have chosen is already in use by another variable.", "Duplicate name");
+            event->Veto();
+            event->GetProperty()->SetValue(newValue.wx_str());
+            return false;
+        }
+
+        // If the event was previously veto'd, and the user corrected the name, then we have to set it here,
+        // otherwise it will revert back to the original name before the Veto.
+
+        event->GetProperty()->SetValueFromString(newValue, 0);
+    }
     return true;
 }

@@ -316,9 +316,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    // if (class_name.is_sameas("wxPanel"))
-        // wxTrap();
-
     auto newobject = g_NodeCreator.CreateNode(class_name, parent);
     if (!newobject)
     {

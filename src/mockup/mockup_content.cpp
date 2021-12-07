@@ -93,8 +93,8 @@ void MockupContent::CreateAllGenerators()
         }
         else if (form->isGen(gen_wxFrame))
         {
-            // In a frame window, a menu, toolbar and statusbar can appear anywhere, but they need to be created in our Mockup window in
-            // a specific order to match what the real window will look like.
+            // In a frame window, a menu, toolbar and statusbar can appear anywhere, but they need to be created in our
+            // Mockup window in a specific order to match what the real window will look like.
 
             size_t pos_menu { tt::npos };
             size_t pos_toolbar { tt::npos };

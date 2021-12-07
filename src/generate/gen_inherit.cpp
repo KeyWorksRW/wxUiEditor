@@ -201,7 +201,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         else
             code << "-1, ";
         if (size.y != -1)
-            code << size.y << "> GetBestSize().y ? " << size.y << " : -1";
+            code << size.y << " > GetBestSize().y ? " << size.y << " : -1";
         else
             code << "-1";
         if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))

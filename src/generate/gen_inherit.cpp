@@ -154,7 +154,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_bool(prop_disabled))
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "Enable(false);";
@@ -163,13 +163,14 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_bool(prop_hidden))
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "Hide();";
     }
 
-    bool allow_minmax = true;
+    bool allow_minmax { true };
+    bool is_smart_size { false };
 
     // REVIEW: [KeyWorks - 05-20-2021] Because of issue #242, this was shut off for all forms.
 
@@ -178,25 +179,55 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->IsForm() && !node->isGen(gen_PanelForm) && !node->isGen(gen_wxToolBar))
         allow_minmax = false;
 
-    auto size = node->prop_as_wxPoint(prop_minimum_size);
-    if (size.x != -1 || size.y != -1)
+    auto size = node->prop_as_wxSize(prop_smart_size);
+    if (size != wxDefaultSize)
     {
-        if (allow_minmax)
+        is_smart_size = true;  // Set to true means prop_size and prop_minimum_size will be ignored
+
+        // REVIEW: [KeyWorks - 12-07-2021] Do we need to block if allow_minmax is false?
+
+        if (code.size())
+            code << "\n";
+        code << node->get_node_name() << "->SetInitialSize(";
+        if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
+            code << "ConvertPixelsToDialog(";
+
+        if (size.IsFullySpecified())
+            code << "\n\t";
+        code << "wxSize(";
+
+        if (size.x != -1)
+            code << size.x << " > GetBestSize().x ? " << size.x << " : -1, ";
+        else
+            code << "-1, ";
+        if (size.y != -1)
+            code << size.y << "> GetBestSize().y ? " << size.y << " : -1";
+        else
+            code << "-1";
+        if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
+            code << ')';  // close the ConvertPixelsToDialog function call
+        code << "));";
+    }
+
+    if (!is_smart_size && allow_minmax)
+    {
+        size = node->prop_as_wxSize(prop_minimum_size);
+        if (size.x != -1 || size.y != -1)
         {
             if (code.size())
-                code << "\n\t";
+                code << "\n";
             code << node->get_node_name() << "->";
             code << "SetMinSize(wxSize(" << size.x << ", " << size.y << "));";
         }
     }
 
-    size = node->prop_as_wxPoint(prop_maximum_size);
+    size = node->prop_as_wxSize(prop_maximum_size);
     if (size.x != -1 || size.y != -1)
     {
         if (allow_minmax)
         {
             if (code.size())
-                code << "\n\t";
+                code << "\n";
             code << node->get_node_name() << "->";
             code << "SetMaxSize(wxSize(" << size.x << ", " << size.y << "));";
         }
@@ -205,7 +236,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (!node->IsForm() && !node->isPropValue(prop_variant, "normal"))
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         code << node->get_node_name() << "->SetWindowVariant(";
 
         if (node->isPropValue(prop_variant, "small"))
@@ -219,7 +250,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_string(prop_tooltip).size())
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "SetToolTip(" << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
@@ -228,7 +259,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     if (node->prop_as_string(prop_context_help).size())
     {
         if (code.size())
-            code << "\n\t";
+            code << "\n";
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "SetHelpText(" << GenerateQuotedString(node->prop_as_string(prop_context_help)) << ");";

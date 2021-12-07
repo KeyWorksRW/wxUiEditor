@@ -1594,7 +1594,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
 
         GenerateWindowSettings(node, code);
         if (code.size())
-            m_source->writeLine(code);
+            m_source->writeLine(code, indent::auto_keep_whitespace);
     }
 }
 

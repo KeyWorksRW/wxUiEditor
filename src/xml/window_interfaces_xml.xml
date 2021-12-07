@@ -107,7 +107,7 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 		<property name="pos" type="wxPoint"
 			help="Specifies the position to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically." />
 		<property name="size" type="wxSize"
-			help="Specifies the size to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically. Automatic layout (such as calling SetSizerAndFit) may override these values. This property is ignored if the smart_size property is used." />
+			help="Specifies the size to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically. Automatic layout (such as calling SetSizerAndFit) may override these values." />
 		<property name="minimum_size" type="wxSize"
 			help="Sets the minimum size of the window. Any positive value will override the automatic size calculation that would normally be done. This property is ignored if the smart_size property is used." />
 		<property name="derived_class" type="string"

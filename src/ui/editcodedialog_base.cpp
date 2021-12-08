@@ -29,11 +29,9 @@ bool EditCodeDialogBase::Create(wxWindow *parent, wxWindowID id, const wxString 
         m_stc->SetUseTabs(false);
         m_stc->SetTabWidth(4);
         m_stc->SetBackSpaceUnIndents(true);
-        m_stc->SetInitialSize(ConvertPixelsToDialog(
-        wxSize(600 > GetBestSize().x ? 600 : -1, 400> GetBestSize().y ? 400 : -1)));
     }
     m_stc->SetInitialSize(ConvertPixelsToDialog(
-        wxSize(600 > GetBestSize().x ? 600 : -1, 400> GetBestSize().y ? 400 : -1)));
+        wxSize(600 > GetBestSize().x ? 600 : -1, 400 > GetBestSize().y ? 400 : -1)));
     parent_sizer->Add(m_stc, wxSizerFlags().DoubleBorder(wxALL));
 
     auto stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

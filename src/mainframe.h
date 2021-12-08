@@ -204,6 +204,7 @@ protected:
     void OnAppendGlade(wxCommandEvent& event) override;
     void OnAppendSmith(wxCommandEvent& event) override;
     void OnAppendXRC(wxCommandEvent& event) override;
+    void OnBrowseDocs(wxCommandEvent& event) override;
     void OnChangeAlignment(wxCommandEvent& event) override;
     void OnChangeBorder(wxCommandEvent& event) override;
     void OnClose(wxCloseEvent& event) override;
@@ -225,6 +226,7 @@ protected:
     void OnSaveAsProject(wxCommandEvent& event) override;
     void OnSaveProject(wxCommandEvent& event) override;
     void OnToggleExpandLayout(wxCommandEvent&) override;
+    void OnUpdateBrowseDocs(wxUpdateUIEvent& event) override;
 
     void OnFindDialog(wxCommandEvent& event) override;
     void OnFind(wxFindDialogEvent& event);

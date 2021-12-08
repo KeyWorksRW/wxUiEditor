@@ -32,6 +32,9 @@ public:
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
+    ttlib::cstr GetHelpText(Node*) override { return ttlib::cstr("wxPopupTransientWindow"); }
+    ttlib::cstr GetHelpURL(Node*) override { return ttlib::cstr("wx_popup_transient_window.html"); }
+
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 };
 

@@ -13,10 +13,11 @@
 
 #include "msgframe.h"  // auto-generated: msgframe_base.h and msgframe_base.cpp
 
-#include "mainapp.h"    // App -- Main application class
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
-#include "nodeinfo.h"   // NodeInfo -- Node memory usage dialog
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "mainapp.h"         // App -- Main application class
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "node.h"            // Node class
+#include "nodeinfo.h"        // NodeInfo -- Node memory usage dialog
 
 struct NodeMemory
 {
@@ -282,106 +283,39 @@ void MsgFrame::UpdateNodeInfo()
                      node_memory.children == 1 ? "" : "s");
         m_txt_memory->SetLabel(label);
 
-        ttlib::cstr class_name(map_GenNames[cur_sel->gen_name()]);
-        if (class_name.is_sameprefix("wx"))
+        if (auto generator = cur_sel->GetGenerator(); generator)
         {
-            class_name.erase(0, 2);
-            class_name.MakeLower();
-
-            if (!class_name.is_sameprefix("panel"))
-                class_name.Replace("panel", "_panel");
-            if (!class_name.is_sameprefix("notebook"))
-                class_name.Replace("panel", "_notebook");
-            if (!class_name.is_sameprefix("text"))
-                class_name.Replace("text", "_text");
-            if (!class_name.is_sameprefix("button"))
-                class_name.Replace("button", "_button");
-            if (!class_name.is_sameprefix("box"))
-                class_name.Replace("box", "_box");
-            if (!class_name.is_sameprefix("list"))
-                class_name.Replace("list", "_list");
-            if (!class_name.is_sameprefix("window"))
-                class_name.Replace("window", "_window");
-            if (!class_name.is_sameprefix("simple"))
-                class_name.Replace("simple", "_simple");
-            if (!class_name.is_sameprefix("page"))
-                class_name.Replace("page", "_page");
-            if (!class_name.is_sameprefix("event"))
-                class_name.Replace("event", "_event");
-            if (!class_name.is_sameprefix("combo"))
-                class_name.Replace("combo", "_combo");
-            if (!class_name.is_sameprefix("list"))
-                class_name.Replace("list", "_list");
-            if (!class_name.is_sameprefix("menu"))
-                class_name.Replace("menu", "_menu");
-
-            class_name.Replace("bar", "_bar");
-            class_name.Replace("page", "_page");
-            class_name.Replace("sizer", "_sizer");
-            class_name.Replace("ctrl", "_ctrl");
-            class_name.Replace("item", "_item");
-            class_name.Replace("view", "_view");
-
-            class_name.Replace("stddialog", "std_dialog");
-            class_name.Replace("bookpage", "book_ctrl_base");
-
-            ttlib::cstr url = "https://docs.wxwidgets.org/trunk/classwx_";
-            url << class_name << ".html";
-            m_hyperlink->SetLabel(ttlib::cstr() << map_GenNames[cur_sel->gen_name()] << " Documentation");
+            auto gen_label = generator->GetHelpText(cur_sel);
+            if (gen_label.empty())
+            {
+                gen_label << "wxWidgets";
+            }
+            m_hyperlink->SetLabel(gen_label.wx_str());
+            wxString url("https://docs.wxwidgets.org/trunk/");
+            auto file = generator->GetHelpURL(cur_sel);
+            if (file.size())
+            {
+                url << "class" << file.wx_str();
+            }
             m_hyperlink->SetURL(url);
         }
-        else if (class_name == "BookPage")
-        {
-            m_hyperlink->SetLabel("wxBookCtrlBase Documentation");
-            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_book_ctrl_base.html");
-        }
-        else if (class_name == "PanelForm")
-        {
-            m_hyperlink->SetLabel("wxPanel Documentation");
-            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_panel.html");
-        }
-        else if (class_name == "RibbonBar")
-        {
-            m_hyperlink->SetLabel("wxRibbonBar Documentation");
-            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_ribbon_bar.html");
-        }
-        else if (class_name == "PopupMenu" || class_name == "submenu")
-        {
-            m_hyperlink->SetLabel("wxMenu Documentation");
-            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_menu.html");
-        }
-        else if (class_name == "ToolBar")
-        {
-            m_hyperlink->SetLabel("wxToolBar Documentation");
-            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_tool_bar.html");
-        }
-        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
-        {
-            m_hyperlink->SetLabel("wxStaticBoxSizer Documentation");
-            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/classwx_static_box_sizer.html");
-        }
-        else
-        {
-            m_hyperlink->SetLabel("wxWidgets Documentation");
-            m_hyperlink->SetURL("https://docs.wxwidgets.org/trunk/");
-        }
-    }
 
-    auto project = wxGetApp().GetProject();
-    CalcNodeMemory(project, node_memory);
+        auto project = wxGetApp().GetProject();
+        CalcNodeMemory(project, node_memory);
 
-    label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
-    m_txt_project->SetLabel(label);
+        label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
+        m_txt_project->SetLabel(label);
 
-    auto clipboard = wxGetFrame().GetClipboard();
-    if (clipboard)
-    {
-        node_memory.size = 0;
-        node_memory.children = 0;
-        CalcNodeMemory(clipboard, node_memory);
-        label.clear();
-        label.Format("Clipboard: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
-        m_txt_clipboard->SetLabel(label);
+        auto clipboard = wxGetFrame().GetClipboard();
+        if (clipboard)
+        {
+            node_memory.size = 0;
+            node_memory.children = 0;
+            CalcNodeMemory(clipboard, node_memory);
+            label.clear();
+            label.Format("Clipboard: %kzu (%kzu nodes)", node_memory.size, node_memory.children);
+            m_txt_clipboard->SetLabel(label);
+        }
     }
 }
 

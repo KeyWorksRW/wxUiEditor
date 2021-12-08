@@ -83,4 +83,10 @@ public:
 
     // Bind wxEVT_LEFT_DOWN to this so that clicking on the widget will select it in the navigation panel
     void OnLeftClick(wxMouseEvent& event);
+
+    // Get the Help menu item text
+    virtual ttlib::cstr GetHelpText(Node*);
+
+    // Get the HTML filename to browse to. Caller needs to supply the prefix.
+    virtual ttlib::cstr GetHelpURL(Node*);
 };

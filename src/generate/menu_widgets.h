@@ -14,6 +14,8 @@ class MenuBarBase : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
+    ttlib::cstr GetHelpText(Node*) override { return ttlib::cstr("wxMenuBar"); }
+    ttlib::cstr GetHelpURL(Node*) override { return ttlib::cstr("wx_menu_bar.html"); }
 
 protected:
     wxMenu* MakeSubMenu(Node* node);

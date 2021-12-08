@@ -184,3 +184,117 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
     }
     return true;
 }
+
+ttlib::cstr BaseGenerator::GetHelpText(Node* node)
+{
+    ttlib::cstr class_name(map_GenNames[node->gen_name()]);
+    if (!class_name.is_sameprefix("wx"))
+    {
+        if (class_name == "BookPage")
+            class_name = "wxBookCtrl";
+        else if (class_name == "PanelForm")
+            class_name = "wxPanel";
+        else if (class_name == "RibbonBar")
+            class_name = "wxRibbonBar";
+        else if (class_name == "PopupMenu")
+            class_name = "wxMenu";
+        else if (class_name == "ToolBar")
+            class_name = "wxToolBar";
+        else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
+            class_name = "wxStaticBoxSizer";
+        else
+            class_name.clear();  // Don't return a non-wxWidgets class name
+    }
+
+#if defined(_DEBUG)
+    if (class_name.size())
+    {
+        class_name << " (" << GetHelpURL(node) << ')';
+    }
+#endif  // _DEBUG
+
+    return class_name;
+}
+
+// clang-format off
+static std::map<const char*, const char*> prefix_pair = {
+
+    { "bag", "_bag" },
+    { "bar", "_bar" },
+    { "bitmap", "_bitmap" },
+    { "bookpage", "book_ctrl_base" },
+    { "box", "_box" },
+    { "button", "_button" },
+    { "combo", "_combo" },
+    { "ctrl", "_ctrl" },
+    { "dialog", "_dialog" },  // stddialog becomes std_dialog
+    { "event", "_event" },
+    { "double", "_double" },
+    { "item", "_item" },
+    { "list", "_list" },
+    { "menu", "_menu" },
+    { "notebook", "_notebook" },
+    { "page", "_page" },
+    { "panel", "_panel" },
+    { "picker", "_picker" },
+    { "simple", "_simple" },
+    { "sizer", "_sizer" },
+    { "text", "_text" },
+    { "view", "_view" },
+    { "window", "_window" },
+
+};
+// clang-format on
+
+ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
+{
+    ttlib::cstr class_name(map_GenNames[node->gen_name()]);
+    if (class_name.is_sameprefix("wx"))
+    {
+        class_name.erase(0, 2);
+        class_name.MakeLower();
+
+        if (class_name == "contextmenuevent")
+        {
+            class_name = "context_menu_event";
+        }
+        else
+        {
+            for (const auto& [key, value]: prefix_pair)
+            {
+                if (!class_name.is_sameprefix(key))
+                    class_name.Replace(key, value);
+            }
+        }
+
+        ttlib::cstr url = "wx_";
+        url << class_name << ".html";
+        return url;
+    }
+    else if (class_name == "BookPage")
+    {
+        return ttlib::cstr("wx_book_ctrl_base.html");
+    }
+    else if (class_name == "PanelForm")
+    {
+        return ttlib::cstr("wx_panel.html");
+    }
+    else if (class_name == "RibbonBar")
+    {
+        return ttlib::cstr("wx_ribbon_bar.html");
+    }
+    else if (class_name == "PopupMenu" || class_name == "submenu")
+    {
+        return ttlib::cstr("wx_menu.html");
+    }
+    else if (class_name == "ToolBar")
+    {
+        return ttlib::cstr("wx_tool_bar.html");
+    }
+    else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
+    {
+        return ttlib::cstr("wx_static_box_sizer.html");
+    }
+
+    return ttlib::cstr();
+}

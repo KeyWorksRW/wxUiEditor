@@ -1362,6 +1362,13 @@
             label=""
             var_name="menu_help"
             wxEVT_MENU="OnAbout" />
+          <node
+            class="wxMenuItem"
+            help="Open wxWidgets documentation in your default browser."
+            label="wxWidgets Documentation"
+            var_name="menu_item_6"
+            wxEVT_MENU="OnBrowseDocs"
+            wxEVT_UPDATE_UI="OnUpdateBrowseDocs" />
         </node>
       </node>
       <node

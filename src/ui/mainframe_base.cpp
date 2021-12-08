@@ -261,6 +261,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     auto menu_help = new wxMenuItem(m_menuHelp, wxID_ABOUT, wxEmptyString);
     menu_help->SetBitmap(wxArtProvider::GetBitmap(wxART_HELP, wxART_MENU));
     m_menuHelp->Append(menu_help);
+
+    auto menu_item_6 = new wxMenuItem(m_menuHelp, wxID_ANY, "wxWidgets Documentation",
+        "Open wxWidgets documentation in your default browser.", wxITEM_NORMAL);
+    m_menuHelp->Append(menu_item_6);
     m_menubar->Append(m_menuHelp, "&Help");
 
     SetMenuBar(m_menubar);
@@ -476,6 +480,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnGenInhertedClass, this, id_GenerateDerived);
     Bind(wxEVT_MENU, &MainFrameBase::OnEmbedImageConverter, this, id_ConvertImage);
     Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
+    Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());
+    Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseDocs, this, menu_item_6->GetId());
     Bind(wxEVT_TOOL, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
 }
 

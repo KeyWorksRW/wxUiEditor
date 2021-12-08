@@ -21,27 +21,29 @@
 #include <wx/splitter.h>          // Base header for wxSplitterWindow
 #include <wx/stc/stc.h>           // Scintilla
 #include <wx/toolbar.h>           // wxToolBar interface declaration
+#include <wx/utils.h>             // Miscellaneous utilities
 
 // auto-generated: ui/mainframe_base.h and ui/mainframe_base.cpp
 
 #include "mainframe.h"
 
-#include "appoptions.h"    // AppOptions -- Application-wide options
-#include "auto_freeze.h"   // AutoFreeze -- Automatically Freeze/Thaw a window
-#include "bitmaps.h"       // Map of bitmaps accessed by name
-#include "clipboard.h"     // wxUiEditorData -- Handles reading and writing OS clipboard data
-#include "cstm_event.h"    // CustomEvent -- Custom Event class
-#include "gen_base.h"      // Generate Base class
-#include "gen_enums.h"     // Enumerations for generators
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
-#include "node_prop.h"     // NodeProperty -- NodeProperty class
-#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
-#include "utils.h"         // Utility functions that work with properties
-#include "wakatime.h"      // WakaTime -- Updates WakaTime metrics
-#include "write_code.h"    // Write code to Scintilla or file
+#include "appoptions.h"      // AppOptions -- Application-wide options
+#include "auto_freeze.h"     // AutoFreeze -- Automatically Freeze/Thaw a window
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "bitmaps.h"         // Map of bitmaps accessed by name
+#include "clipboard.h"       // wxUiEditorData -- Handles reading and writing OS clipboard data
+#include "cstm_event.h"      // CustomEvent -- Custom Event class
+#include "gen_base.h"        // Generate Base class
+#include "gen_enums.h"       // Enumerations for generators
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator class
+#include "node_gridbag.h"    // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "node_prop.h"       // NodeProperty -- NodeProperty class
+#include "pjtsettings.h"     // ProjectSettings -- Hold data for currently loaded project
+#include "undo_cmds.h"       // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "utils.h"           // Utility functions that work with properties
+#include "wakatime.h"        // WakaTime -- Updates WakaTime metrics
+#include "write_code.h"      // Write code to Scintilla or file
 
 #include "panels/base_panel.h"      // BasePanel -- C++ panel
 #include "panels/nav_panel.h"       // NavigationPanel -- Node tree class
@@ -785,6 +787,45 @@ void MainFrame::OnDuplicate(wxCommandEvent& WXUNUSED(event))
     DuplicateNode(m_selected_node.get());
 }
 
+void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
+{
+    if (m_selected_node)
+    {
+        if (auto generator = m_selected_node->GetGenerator(); generator)
+        {
+            auto file = generator->GetHelpURL(m_selected_node.get());
+            if (file.size())
+            {
+                wxString url("https://docs.wxwidgets.org/trunk/class");
+                url << file.wx_str();
+                wxLaunchDefaultBrowser(url);
+                return;
+            }
+        }
+    }
+    wxLaunchDefaultBrowser("https://docs.wxwidgets.org/trunk/");
+}
+
+void MainFrame::OnUpdateBrowseDocs(wxUpdateUIEvent& event)
+{
+    if (m_selected_node)
+    {
+        if (auto generator = m_selected_node->GetGenerator(); generator)
+        {
+            auto label = generator->GetHelpText(m_selected_node.get());
+            if (label.empty())
+            {
+                label << "wxWidgets";
+            }
+            label << " Documentation";
+            event.SetText(label.wx_str());
+            return;
+        }
+    }
+
+    event.SetText("wxWidgets Documentation");
+}
+
 void MainFrame::OnChangeAlignment(wxCommandEvent& event)
 {
     int align = 0;
@@ -974,7 +1015,8 @@ void MainFrame::CreateSplitters()
     m_MainSplitter->UpdateSize();
     m_MainSplitter->SetMinimumPaneSize(2);
 
-    // Set to zero because we don't need this to change relative size when the main window is resized. Fixes issue #90
+    // Set to zero because we don't need this to change relative size when the main window is resized. Fixes issue
+    // #90
     m_SecondarySplitter->SetSashGravity(0);
     m_SecondarySplitter->SetMinimumPaneSize(2);
 

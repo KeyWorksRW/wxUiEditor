@@ -458,6 +458,8 @@ bool App::NewProject(bool create_empty)
 
     m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
 
+    ttlib::cstr imported_from;
+
     auto& file_list = dlg.GetFileList();
     if (file_list.size())
     {
@@ -485,11 +487,24 @@ bool App::NewProject(bool create_empty)
                     WinResource winres;
                     Import(winres, iter, true);
                 }
+
+                if (imported_from.size())
+                    imported_from << "@@";
+                imported_from << "// Imported file: " << iter.filename().wx_str();
             }
             catch (const std::exception& /* e */)
             {
                 // silently continue with the next project file
             }
+        }
+
+        if (imported_from.size())
+        {
+            ttlib::cstr preamble = m_project->prop_as_string(prop_src_preamble);
+            if (preamble.size())
+                preamble << "@@@@";
+            preamble << imported_from;
+            m_project->prop_set_value(prop_src_preamble, preamble);
         }
 
         // Set the current working directory to the first file imported.

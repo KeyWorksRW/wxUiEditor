@@ -588,9 +588,12 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         {
             node->prop_set_value(prop_select, iter.text().as_bool());
         }
-        else if (iter.cname().is_sameas("flag") && (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem)))
+        else if (iter.cname().is_sameas("flag"))
         {
-            HandleSizerItemProperty(iter, node, parent);
+            if (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem))
+                HandleSizerItemProperty(iter, node, parent);
+            else if (!node->isGen(gen_spacer)) // spacer's don't use alignment or border styles
+                MSG_INFO(ttlib::cstr() << iter.cname() << " not supported for " << node->DeclName());
         }
         else if (iter.cname().is_sameas("handler"))
         {

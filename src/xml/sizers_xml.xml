@@ -2,11 +2,13 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
 
+	<!-- This class is only used for XML imports -->
 	<gen class="sizeritem" type="sizeritem">
 		<inherits class="sizeritem_settings" />
 		<property name="proportion" type="uint">0</property>
 	</gen>
 
+	<!-- This class is only used for XML imports -->
 	<gen class="gbsizeritem" type="gbsizeritem">
 		<inherits class="sizeritem_settings" />
 		<property name="row" type="int">0</property>

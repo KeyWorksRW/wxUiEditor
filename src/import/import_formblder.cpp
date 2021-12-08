@@ -486,6 +486,15 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     // wxFormBuilder allows the users to create settings that will generate an assert if compiled on a debug version of
     // wxWidgets. We fix some of the more common invalid settings here.
 
+    if (newobject->HasValue(prop_flags) && newobject->prop_as_string(prop_flags).contains("wxEXPAND"))
+    {
+        if (newobject->HasValue(prop_alignment))
+        {
+            // wxWidgets will ignore all alignment flags if wxEXPAND is set.
+            newobject->prop_set_value(prop_alignment, "");
+        }
+    }
+
     if (parent && parent->IsSizer())
     {
         if (parent->prop_as_string(prop_orientation).contains("wxHORIZONTAL"))
@@ -510,14 +519,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (newobject->HasValue(prop_flags) && newobject->prop_as_string(prop_flags).contains("wxEXPAND"))
-    {
-        if (newobject->HasValue(prop_alignment))
-        {
-            // wxWidgets will ignore all alignment flags if wxEXPAND is set.
-            newobject->prop_set_value(prop_alignment, "");
-        }
-    }
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {
@@ -902,6 +903,9 @@ inline bool is_numeric(unsigned char ch)
 {
     return (ch >= '0' && ch <= '9');
 }
+
+// BUGBUG: [KeyWorks - 12-08-2021] This is almost identical to ImportXML::HandleSizerItemProperty() -- the two functions need
+// to be sychronized, and this one removed.
 
 void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object, Node* parent, NodeProperty* prop)
 {

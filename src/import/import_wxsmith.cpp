@@ -106,6 +106,20 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
                 return CreateXrcNode(xml_obj, page.get(), sizeritem);
             }
         }
+        else if (parent && parent->isGen(gen_wxPanel))
+        {
+            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, parent);
+            if (sizer)
+            {
+                new_node = g_NodeCreator.CreateNode(gen_name, sizer.get());
+                if (new_node)
+                {
+                    parent->Adopt(sizer);
+                    parent = sizer.get();
+                    continue;
+                }
+            }
+        }
 
         // parent will be null if pasting from the clipboard
         if (parent)
@@ -211,10 +225,48 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
         ProcessProperties(xml_obj, new_node.get());
     }
 
-    if (new_node->isGen(gen_wxGridSizer))
+    // At this point, all properties have been processed.
+
+    if (new_node->isGen(gen_wxGridSizer) || new_node->isGen(gen_wxFlexGridSizer))
     {
         if (new_node->prop_as_int(prop_rows) > 0 && new_node->prop_as_int(prop_cols) > 0)
             new_node->prop_set_value(prop_rows, 0);
+    }
+
+    // Various designers allow the users to create settings that will generate an assert if compiled on a debug version of
+    // wxWidgets. We fix some of the more common invalid settings here.
+
+    if (new_node->HasValue(prop_flags) && new_node->prop_as_string(prop_flags).contains("wxEXPAND"))
+    {
+        if (new_node->HasValue(prop_alignment))
+        {
+            // wxWidgets will ignore all alignment flags if wxEXPAND is set.
+            new_node->prop_set_value(prop_alignment, "");
+        }
+    }
+
+    if (parent && parent->IsSizer())
+    {
+        if (parent->prop_as_string(prop_orientation).contains("wxHORIZONTAL"))
+        {
+            auto currentValue = new_node->prop_as_string(prop_alignment);
+            if (currentValue.size() && (currentValue.contains("wxALIGN_LEFT") || currentValue.contains("wxALIGN_RIGHT") ||
+                                        currentValue.contains("wxALIGN_CENTER_HORIZONTAL")))
+            {
+                auto fixed = ClearMultiplePropFlags("wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_CENTER_HORIZONTAL", currentValue);
+                new_node->prop_set_value(prop_alignment, fixed);
+            }
+        }
+        else if (parent->prop_as_string(prop_orientation).contains("wxVERTICAL"))
+        {
+            auto currentValue = new_node->prop_as_string(prop_alignment);
+            if (currentValue.size() && (currentValue.contains("wxALIGN_TOP") || currentValue.contains("wxALIGN_BOTTOM") ||
+                                        currentValue.contains("wxALIGN_CENTER_VERTICAL")))
+            {
+                auto fixed = ClearMultiplePropFlags("wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_VERTICAL", currentValue);
+                new_node->prop_set_value(prop_alignment, fixed);
+            }
+        }
     }
 
     while (child)

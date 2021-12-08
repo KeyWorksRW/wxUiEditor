@@ -373,13 +373,26 @@ std::optional<GenName> ImportXML::ConvertToGenName(const ttlib::cstr& object_nam
     {
         return gen_oldbookpage;
     }
+    else if (object_name.is_sameas("wxListCtrl"))
+    {
+        return gen_wxListView;
+    }
+    else if (object_name.is_sameas("panewindow"))
+    {
+        // In an XRC file, panewindow is a pseudo-class type between the wxCollapsiblePane and it's child
+        return gen_VerticalBoxSizer;
+    }
     else if (object_name.is_sameas("wxScintilla"))
     {
         return gen_wxStyledTextCtrl;
     }
-    else if (object_name.is_sameas("wxListCtrl"))
+    else if (object_name.is_sameas("wxGenericAnimationCtrl"))
     {
-        return gen_wxListView;
+        return gen_wxAnimationCtrl;
+    }
+    else if (object_name.is_sameas("sizeritem") && parent && parent->isGen(gen_wxGridBagSizer))
+    {
+        return gen_gbsizeritem;
     }
     else if (object_name.is_sameas("Dialog") || object_name.is_sameas("wxDialog"))
     {
@@ -404,6 +417,11 @@ std::optional<GenName> ImportXML::ConvertToGenName(const ttlib::cstr& object_nam
     else if (object_name.contains("Panel") && parent && parent->isGen(gen_Project))
     {
         return gen_PanelForm;
+    }
+    else if (object_name.contains("separator") && parent &&
+             (parent->isGen(gen_wxToolBar) || parent->isGen(gen_ToolBar) || parent->isGen(gen_wxAuiToolBar)))
+    {
+        return gen_toolSeparator;
     }
 
     if (auto result = rmap_GenNames.find(object_name); result != rmap_GenNames.end())
@@ -529,6 +547,12 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                 prop->set_value(iter.text().as_string());
                 continue;
             }
+            else
+            {
+                MSG_INFO(ttlib::cstr() << "option specified for node that doesn't have prop_proportion: " << node->DeclName());
+                continue;
+            }
+
         }
 
         // Now process names that are identical.
@@ -556,6 +580,14 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         {
             node->prop_set_value(prop_border_size, iter.text().as_string());
         }
+        else if (iter.cname().is_sameas("selection") && node->isGen(gen_wxChoice))
+        {
+            node->prop_set_value(prop_selection_int, iter.text().as_int());
+        }
+        else if (iter.cname().is_sameas("selected") && node->isGen(gen_oldbookpage))
+        {
+            node->prop_set_value(prop_select, iter.text().as_bool());
+        }
         else if (iter.cname().is_sameas("flag") && (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem)))
         {
             HandleSizerItemProperty(iter, node, parent);
@@ -563,6 +595,55 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         else if (iter.cname().is_sameas("handler"))
         {
             ProcessHandler(iter, node);
+        }
+        else if (iter.cname().is_sameas("exstyle") &&  node->isGen(gen_wxDialog))
+        {
+            node->prop_set_value(prop_extra_style, iter.text().as_string());
+        }
+        else if (iter.cname().is_sameas("cellpos"))
+        {
+            ttlib::multistr mstr(iter.text().as_string(), ',');
+            if (mstr.size())
+            {
+                if (mstr[0].size())
+                    node->prop_set_value(prop_column, mstr[0]);
+                if (mstr.size() > 1 && mstr[1].size())
+                    node->prop_set_value(prop_row, mstr[1]);
+            }
+        }
+        else if (iter.cname().is_sameas("cellspan"))
+        {
+            ttlib::multistr mstr(iter.text().as_string(), ',');
+            if (mstr.size())
+            {
+                if (mstr[0].size() && ttlib::atoi(mstr[0]) > 0)
+                    node->prop_set_value(prop_rowspan, mstr[0]);
+                if (mstr.size() > 1 && mstr[1].size() && ttlib::atoi(mstr[1]) > 0)
+                    node->prop_set_value(prop_colspan, mstr[1]);
+            }
+        }
+        else if (iter.cname().is_sameas("size") && node->isGen(gen_spacer))
+        {
+            ttlib::multistr mstr(iter.text().as_string(), ',');
+            if (mstr.size())
+            {
+                if (mstr[0].size())
+                    node->prop_set_value(prop_width, mstr[0]);
+                if (mstr.size() > 1 && mstr[1].size())
+                    node->prop_set_value(prop_height, mstr[1]);
+            }
+        }
+        else if (iter.cname().is_sameas("centered") &&  node->isGen(gen_wxDialog))
+        {
+            return;  // we always center dialogs
+        }
+        else if (iter.cname().is_sameas("focused") &&  node->isGen(gen_wxTreeCtrl))
+        {
+            return;  // since we don't add anything to a wxTreeCtrl, we can't set something as the focus
+        }
+        else
+        {
+            MSG_INFO(ttlib::cstr() << "Unrecognized property: " << iter.cname() << " for " << node->DeclName());
         }
     }
 }
@@ -606,10 +687,12 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
     if (!xml_obj.attribute("stock_id").empty())
     {
         ttlib::cstr bitmap("Art; ");
-        bitmap << xml_obj.attribute("stock_id").value() << "; ";
+        bitmap << xml_obj.attribute("stock_id").value() << "|";
         if (!xml_obj.attribute("stock_client").empty())
             bitmap << xml_obj.attribute("stock_client").value();
-        bitmap << "[-1,-1]";
+        else
+            bitmap << "wxART_OTHER";
+        bitmap << ";[-1,-1]";
 
         if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
         {

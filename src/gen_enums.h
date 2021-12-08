@@ -331,6 +331,7 @@ namespace GenEnum
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
+        prop_unknown = prop_name_array_size
     };
     extern std::map<GenEnum::PropName, const char*> map_PropNames;
     extern std::unordered_map<std::string, GenEnum::PropName> rmap_PropNames;
@@ -558,6 +559,7 @@ namespace GenEnum
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         gen_name_array_size,
+        gen_unknown = gen_name_array_size
 
     };
     extern std::map<GenEnum::GenName, const char*> map_GenNames;

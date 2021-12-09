@@ -758,7 +758,7 @@ void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
 }
 
 // clang-format off
-static std::map<std::string, GenEnum::PropName> property_mapping = {
+static std::vector<std::pair<const char*, GenEnum::PropName>> property_mapping = {
 
     { "bg", prop_background_colour },
     { "fg", prop_foreground_colour },
@@ -772,7 +772,7 @@ static std::map<std::string, GenEnum::PropName> property_mapping = {
 
 };
 
-static std::map<std::string, GenEnum::GenName> class_mapping = {
+static std::vector<std::pair<const char*, GenEnum::GenName>> class_mapping = {
 
     { "Dialog", gen_wxDialog },
     { "Frame", gen_wxFrame },
@@ -786,28 +786,40 @@ static std::map<std::string, GenEnum::GenName> class_mapping = {
 };
 // clang-format on
 
-GenEnum::PropName ImportXML::MapPropName(const std::string& name)
+GenEnum::PropName ImportXML::MapPropName(std::string_view name) const
 {
     if (name.size())
     {
-        if (auto result = rmap_PropNames.find(name); result != rmap_PropNames.end())
-            return result->second;
+        for (auto& iter: map_PropNames)
+        {
+            if (name == iter.second)
+                return iter.first;
+        }
 
-        if (auto result = property_mapping.find(name); result != property_mapping.end())
-            return result->second;
+        for (auto& iter: property_mapping)
+        {
+            if (iter.first == name)
+                return iter.second;
+        }
     }
     return prop_unknown;
 }
 
-GenEnum::GenName ImportXML::MapClassName(const std::string& name)
+GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
 {
     if (name.size())
     {
-        if (auto result = rmap_GenNames.find(name); result != rmap_GenNames.end())
-            return result->second;
+        for (auto& iter: map_GenNames)
+        {
+            if (name == iter.second)
+                return iter.first;
+        }
 
-        if (auto result = class_mapping.find(name); result != class_mapping.end())
-            return result->second;
+        for (auto& iter: class_mapping)
+        {
+            if (iter.first == name)
+                return iter.second;
+        }
     }
     return gen_unknown;
 }

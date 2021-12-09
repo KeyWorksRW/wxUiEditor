@@ -37,10 +37,10 @@ protected:
     void ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent = nullptr);
 
     // Returns prop_unknown if the property name has not equivalent in wxUiEditor
-    GenEnum::PropName ImportXML::MapPropName(const std::string& name);
+    GenEnum::PropName MapPropName(std::string_view name) const;
 
     // Returns gen_unknown if the property name has not equivalent in wxUiEditor
-    GenEnum::GenName ImportXML::MapClassName(const std::string& name);
+    GenEnum::GenName MapClassName(std::string_view name) const;
 
     pugi::xml_document m_docOut;
     ttString m_importProjectFile;

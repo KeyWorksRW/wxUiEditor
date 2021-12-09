@@ -771,6 +771,19 @@ static std::map<std::string, GenEnum::PropName> property_mapping = {
     { "class", prop_class_name },
 
 };
+
+static std::map<std::string, GenEnum::GenName> class_mapping = {
+
+    { "Dialog", gen_wxDialog },
+    { "Frame", gen_wxFrame },
+    { "Panel", gen_PanelForm },
+    { "Wizard", gen_wxWizard },
+    { "bookpage", gen_oldbookpage },
+    { "wxBitmapButton", gen_wxButton },
+    { "wxListCtrl", gen_wxListView },
+    { "wxScintilla", gen_wxStyledTextCtrl },
+
+};
 // clang-format on
 
 GenEnum::PropName ImportXML::MapPropName(const std::string& name)
@@ -784,4 +797,17 @@ GenEnum::PropName ImportXML::MapPropName(const std::string& name)
             return result->second;
     }
     return prop_unknown;
+}
+
+GenEnum::GenName ImportXML::MapClassName(const std::string& name)
+{
+    if (name.size())
+    {
+        if (auto result = rmap_GenNames.find(name); result != rmap_GenNames.end())
+            return result->second;
+
+        if (auto result = class_mapping.find(name); result != class_mapping.end())
+            return result->second;
+    }
+    return gen_unknown;
 }

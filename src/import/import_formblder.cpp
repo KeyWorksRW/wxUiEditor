@@ -78,6 +78,9 @@ const auto g_lstIgnoreProps = {
     "resize",
     "show",
     "toolbar_pane",
+
+    // This are miscellanious properties that we don't support
+
     "two_step_creation",
     "use_enum",
 
@@ -160,6 +163,7 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
     if (m_errors.size())
     {
         ttlib::cstr errMsg("Not everything in the wxFormBuilder project could be converted:\n\n");
+        MSG_ERROR(ttlib::cstr() << "------  " << m_importProjectFile.filename().wx_str() <<  "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);
@@ -227,19 +231,19 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     if (class_name.empty())
         return NodeSharedPtr();
 
-    if (class_name.is_sameas("wxScintilla"))
+    auto gen_name = MapClassName(xml_obj.attribute("class").value());
+    if (gen_name == gen_unknown)
     {
-        class_name = "wxStyledTextCtrl";
+        if (class_name.contains("bookpage"))
+            gen_name = gen_oldbookpage;
+        else
+        {
+            m_errors.emplace(ttlib::cstr() << class_name << " is not supported in wxUiEditor");
+            return {};
+        }
     }
-    else if (class_name.is_sameas("wxListCtrl"))
-    {
-        class_name = "wxListView";
-    }
-    else if (class_name.is_sameas("wxBitmapButton"))
-    {
-        class_name = "wxButton";
-    }
-    else if (class_name.is_sameas("wxPanel"))
+
+    if (gen_name == gen_wxPanel)
     {
         if (!parent)
         {
@@ -248,54 +252,29 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 owner = owner->GetParent();
             if (owner->DeclName().contains("book"))
             {
-                class_name = "BookPage";
+                gen_name = gen_BookPage;
             }
         }
         else if (parent->DeclName().contains("book"))
         {
-            class_name = "BookPage";
+            gen_name = gen_BookPage;
         }
     }
-    else if (class_name.contains("bookpage"))
-    {
-        class_name = "oldbookpage";
-    }
-    else if (class_name.is_sameas("Dialog"))
-    {
-        class_name = "wxDialog";
-    }
-    else if (class_name.is_sameas("Wizard"))
-    {
-        class_name = "wxWizard";
-    }
-    else if (class_name.is_sameas("Frame"))
-    {
-        class_name = "wxFrame";
-    }
-    else if (class_name.is_sameas("Panel"))
-    {
-        class_name = "PanelForm";
-    }
-    else if (class_name.is_sameas("CustomCode"))
-    {
-        m_errors.emplace(ttlib::cstr() << "Custom code is not supported in wxUiEditor");
-        return {};
-    }
 
-    if (class_name.is_sameas("wxCheckBox"))
+    if (gen_name == gen_wxCheckBox)
     {
         for (auto& iter: xml_obj.children())
         {
             if (iter.attribute("name").as_cview().is_sameas("style"))
             {
                 if (iter.text().as_cview().contains("wxCHK_3STATE"))
-                    class_name = "Check3State";
+                    gen_name = gen_Check3State;
                 break;
             }
         }
     }
 
-    auto newobject = g_NodeCreator.CreateNode(class_name, parent);
+    auto newobject = g_NodeCreator.CreateNode(gen_name, parent);
     if (!newobject)
     {
         m_errors.emplace(ttlib::cstr() << "Unable to create " << class_name);

@@ -23,6 +23,8 @@ public:
 
     NodeSharedPtr GetProjectPtr() { return m_project; }
 
+    auto GetErrors() { return m_errors; }
+
 protected:
     std::optional<pugi::xml_document> LoadDocFile(const ttString& file);
     std::optional<GenName> ConvertToGenName(const ttlib::cstr& object_name, Node* parent);
@@ -46,4 +48,6 @@ protected:
     ttString m_importProjectFile;
     NodeSharedPtr m_project;
     std::map<std::string, std::string> m_notebook_tabs;
+
+    std::set<ttlib::cstr> m_errors;
 };

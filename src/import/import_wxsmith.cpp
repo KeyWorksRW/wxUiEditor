@@ -60,6 +60,19 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
         return false;
     }
 
+    if (m_errors.size())
+    {
+        ttlib::cstr errMsg("Not everything in the wxSmith project could be converted:\n\n");
+        MSG_ERROR(ttlib::cstr() << "------  " << m_importProjectFile.filename().wx_str() << "------");
+        for (auto& iter: m_errors)
+        {
+            MSG_ERROR(iter);
+            errMsg << iter << '\n';
+        }
+
+        wxMessageBox(errMsg, "Import wxSmith project");
+    }
+
     return true;
 }
 
@@ -121,17 +134,28 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
             }
         }
 
-        // parent will be null if pasting from the clipboard
+        ttlib::cstr msg("Unable to create ");
+        msg << object_name;
         if (parent)
         {
-            MSG_INFO(ttlib::cstr() << "Unable to create " << map_GenNames[gen_name] << " as a child of "
-                                   << parent->DeclName());
+            // We can't use the class name because that won't necessarily be the wxWidgets class name. E.g., PanelForm might
+            // be the class name, but what we want to display to the user is wxPanel. GetHelpText() will give us something
+            // that makes sense to the user.
+
+            auto name = parent->GetGenerator()->GetHelpText(parent);
+            if (name.size() && name != "wxWidgets")
+            {
+#if defined(_DEBUG)
+                // Currently, Debug builds also include the filename that gets passed to the browser if Help is requested.
+                // That's not useful in a message box, so we remove it.
+
+                name.erase_from('(');
+#endif  // _DEBUG
+                msg << " as a child of " << name;
+            }
         }
-        else
-        {
-            MSG_INFO(ttlib::cstr() << "Unable to create " << map_GenNames[gen_name]);
-        }
-        return NodeSharedPtr();
+        m_errors.emplace(msg);
+        return {};
     }
 
     if (isBitmapButton)

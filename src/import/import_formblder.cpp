@@ -15,12 +15,13 @@
 
 #include "import_formblder.h"
 
-#include "mainapp.h"       // App -- Main application class
-#include "mainframe.h"     // Main window frame
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"         // Utility functions that work with properties
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "mainapp.h"         // App -- Main application class
+#include "mainframe.h"       // Main window frame
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator class
+#include "pjtsettings.h"     // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"           // Utility functions that work with properties
 
 #include "import_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs
 
@@ -163,7 +164,7 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
     if (m_errors.size())
     {
         ttlib::cstr errMsg("Not everything in the wxFormBuilder project could be converted:\n\n");
-        MSG_ERROR(ttlib::cstr() << "------  " << m_importProjectFile.filename().wx_str() <<  "------");
+        MSG_ERROR(ttlib::cstr() << "------  " << m_importProjectFile.filename().wx_str() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);
@@ -243,10 +244,11 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (gen_name == gen_wxPanel)
+    if (gen_name == gen_PanelForm)
     {
         if (!parent)
         {
+            // This gets called when pasting a formbuilder node from the clipboard
             auto owner = wxGetFrame().GetSelectedNode();
             while (owner->gen_type() == type_sizer)
                 owner = owner->GetParent();
@@ -277,7 +279,27 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     auto newobject = g_NodeCreator.CreateNode(gen_name, parent);
     if (!newobject)
     {
-        m_errors.emplace(ttlib::cstr() << "Unable to create " << class_name);
+        ttlib::cstr msg("Unable to create ");
+        msg << class_name;
+        if (parent)
+        {
+            // We can't use the class name because that won't necessarily be the wxWidgets class name. E.g., PanelForm might
+            // be the class name, but what we want to display to the user is wxPanel. GetHelpText() will give us something
+            // that makes sense to the user.
+
+            auto name = parent->GetGenerator()->GetHelpText(parent);
+            if (name.size() && name != "wxWidgets")
+            {
+#if defined(_DEBUG)
+                // Currently, Debug builds also include the filename that gets passed to the browser if Help is requested.
+                // That's not useful in a message box, so we remove it.
+
+                name.erase_from('(');
+#endif  // _DEBUG
+                msg << " as a child of " << name;
+            }
+        }
+        m_errors.emplace(msg);
         return {};
     }
 

@@ -493,6 +493,8 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 {
     for (auto& iter: xml_obj.children())
     {
+        auto wxue_prop = MapPropName(iter.name());
+
         if (iter.cname().is_sameas("object"))
         {
             continue;
@@ -500,22 +502,17 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 
         // Start by processing names that wxUiEditor might use but that need special processing when importing.
 
-        if (iter.cname().is_sameas("bitmap"))
+        if (wxue_prop == prop_bitmap)
         {
             ProcessBitmap(iter, node);
             continue;
         }
-        else if (iter.cname().is_sameas("content"))
+        else if (wxue_prop == prop_contents)
         {
             ProcessContent(iter, node);
             continue;
         }
-        else if (iter.cname().is_sameas("tabs"))
-        {
-            ProcessNotebookTabs(iter, node);
-            continue;
-        }
-        else if (iter.cname().is_sameas("value"))
+        else if (wxue_prop == prop_value)
         {
             auto escaped = ConvertEscapeSlashes(iter.text().as_string());
             if (auto prop = node->get_prop_ptr(prop_value); prop)
@@ -524,7 +521,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             }
             continue;
         }
-        else if (iter.cname().is_sameas("label"))
+        else if (wxue_prop == prop_label)
         {
             ttlib::cstr label = ConvertEscapeSlashes(iter.text().as_string());
             label.Replace("_", "&");
@@ -540,6 +537,11 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             }
             continue;
         }
+        else if (iter.cname().is_sameas("tabs"))
+        {
+            ProcessNotebookTabs(iter, node);
+            continue;
+        }
         else if (iter.cname().is_sameas("option"))
         {
             if (auto prop = node->get_prop_ptr(prop_proportion); prop)
@@ -549,17 +551,15 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             }
             else
             {
-                MSG_INFO(ttlib::cstr() << "option specified for node that doesn't have prop_proportion: " << node->DeclName());
+                MSG_INFO(ttlib::cstr() << "option specified for node that doesn't have prop_proportion: "
+                                       << node->DeclName());
                 continue;
             }
-
         }
 
         // Now process names that are identical.
 
-        NodeProperty* prop = nullptr;
-        if (auto find_prop = rmap_PropNames.find(iter.cname().c_str()); find_prop != rmap_PropNames.end())
-            prop = node->get_prop_ptr(find_prop->second);
+        NodeProperty* prop = node->get_prop_ptr(wxue_prop);
         if (prop)
         {
             prop->set_value(iter.text().as_string());
@@ -592,14 +592,14 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         {
             if (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem))
                 HandleSizerItemProperty(iter, node, parent);
-            else if (!node->isGen(gen_spacer)) // spacer's don't use alignment or border styles
+            else if (!node->isGen(gen_spacer))  // spacer's don't use alignment or border styles
                 MSG_INFO(ttlib::cstr() << iter.cname() << " not supported for " << node->DeclName());
         }
         else if (iter.cname().is_sameas("handler"))
         {
             ProcessHandler(iter, node);
         }
-        else if (iter.cname().is_sameas("exstyle") &&  node->isGen(gen_wxDialog))
+        else if (iter.cname().is_sameas("exstyle") && node->isGen(gen_wxDialog))
         {
             node->prop_set_value(prop_extra_style, iter.text().as_string());
         }
@@ -636,11 +636,11 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                     node->prop_set_value(prop_height, mstr[1]);
             }
         }
-        else if (iter.cname().is_sameas("centered") &&  node->isGen(gen_wxDialog))
+        else if (iter.cname().is_sameas("centered") && node->isGen(gen_wxDialog))
         {
             return;  // we always center dialogs
         }
-        else if (iter.cname().is_sameas("focused") &&  node->isGen(gen_wxTreeCtrl))
+        else if (iter.cname().is_sameas("focused") && node->isGen(gen_wxTreeCtrl))
         {
             return;  // since we don't add anything to a wxTreeCtrl, we can't set something as the focus
         }
@@ -755,4 +755,33 @@ void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
         event->set_value(xml_obj.attribute("function").value());
         return;
     }
+}
+
+// clang-format off
+static std::map<std::string, GenEnum::PropName> property_mapping = {
+
+    { "bg", prop_background_colour },
+    { "fg", prop_foreground_colour },
+    { "bitmapsize", prop_image_size },
+    { "hover", prop_current },
+    { "choices", prop_contents },
+    { "content", prop_contents },
+    { "settings", prop_settings_code },
+    { "tab_ctrl_height", prop_tab_height },
+    { "class", prop_class_name },
+
+};
+// clang-format on
+
+GenEnum::PropName ImportXML::MapPropName(const std::string& name)
+{
+    if (name.size())
+    {
+        if (auto result = rmap_PropNames.find(name); result != rmap_PropNames.end())
+            return result->second;
+
+        if (auto result = property_mapping.find(name); result != property_mapping.end())
+            return result->second;
+    }
+    return prop_unknown;
 }

@@ -25,18 +25,6 @@
 #include "import_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs
 
 // clang-format off
-constexpr const IMPORT_NAME_PAIR prop_pair[] = {
-
-    { "bg", "background_colour" },
-    { "fg", "foreground_colour" },
-    { "bitmapsize", "image_size" },
-    { "hover", "current" },
-    { "settings", "settings_code" },
-    { "tab_ctrl_height", "tab_height" },
-    { "class", "class_name" },
-
-    { nullptr, nullptr },
-};
 
 const auto g_lstIgnoreProps = {
 
@@ -99,7 +87,6 @@ const auto g_lstIgnoreProps = {
 // The following gets initialized once if FormBuilder is constructed. They do not get destroyed since they are a) quite
 // small, and b) might be used again. This is in contrast to m_mapEventNames which is part of the FormBuilder class.
 
-std::unordered_map<std::string, const char*> g_PropMap;
 std::unordered_set<std::string> g_setIgnoreProps;
 
 FormBuilder::FormBuilder()
@@ -107,14 +94,6 @@ FormBuilder::FormBuilder()
     for (size_t pos = 0; evt_pair[pos].wxfb_name; ++pos)
     {
         m_mapEventNames[evt_pair[pos].wxfb_name] = evt_pair[pos].wxui_name;
-    }
-
-    if (g_PropMap.empty())
-    {
-        for (size_t pos = 0; prop_pair[pos].wxfb_name; ++pos)
-        {
-            g_PropMap[prop_pair[pos].wxfb_name] = prop_pair[pos].wxui_name;
-        }
     }
 
     if (g_setIgnoreProps.empty())
@@ -327,17 +306,34 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     {
         if (auto prop_name = xml_prop.attribute("name").as_cview(); prop_name.size())
         {
-            NodeProperty* prop = nullptr;
-            if (auto result = rmap_PropNames.find(prop_name.c_str()); result != rmap_PropNames.end())
+            auto wxue_prop = MapPropName(xml_prop.attribute("name").value());
+            auto prop_ptr = newobject->get_prop_ptr(wxue_prop);
+
+            if (prop_ptr)
             {
-                prop = newobject->get_prop_ptr(result->second);
-            }
-            if (prop)
-            {
-                if (prop->isProp(prop_bitmap))
+                if (wxue_prop == prop_bitmap)
                 {
                     if (!xml_prop.text().empty())
-                        BitmapProperty(xml_prop, prop);
+                        BitmapProperty(xml_prop, prop_ptr);
+                }
+                else if (wxue_prop == prop_bitmapsize)
+                {
+                    if (class_name.contains("book"))
+                    {
+                        if (prop_ptr = newobject->get_prop_ptr(prop_image_size); prop_ptr)
+                        {
+                            prop_ptr->set_value(xml_prop.text().as_cview());
+                            auto size = prop_ptr->as_size();
+                            if (size != wxDefaultSize)
+                            {
+                                if (prop_ptr = newobject->get_prop_ptr(prop_display_images); prop_ptr)
+                                {
+                                    prop_ptr->set_value(true);
+                                }
+                            }
+                            continue;
+                        }
+                    }
                 }
                 else
                 {
@@ -371,49 +367,32 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     else if (value.contains("wxNB_FLAT"))
                         value.Replace("wxNB_FLAT", "");  // this style is obsolete
 
-                    if (prop->isProp(prop_style))
+                    if (prop_ptr->isProp(prop_style))
                     {
-                        ProcessStyle(xml_prop, newobject.get(), prop);
+                        ProcessStyle(xml_prop, newobject.get(), prop_ptr);
                     }
                     else
                     {
-                        prop->set_value(value);
+                        prop_ptr->set_value(value);
                     }
                 }
                 continue;
             }
 
-            if (prop_name.is_sameas("bitmapsize"))
-            {
-                if (class_name.contains("book"))
-                {
-                    if (prop = newobject->get_prop_ptr(prop_image_size); prop)
-                    {
-                        prop->set_value(xml_prop.text().as_cview());
-                        auto size = prop->as_size();
-                        if (size.x != -1 || size.y != -1)
-                        {
-                            if (prop = newobject->get_prop_ptr(prop_display_images); prop)
-                            {
-                                prop->set_value(true);
-                            }
-                        }
-                        continue;
-                    }
-                }
-            }
-            else if (prop_name.is_sameas("name"))
+            // If we get here, wxue_prop will be prop_unknown and prop_ptr will be null.
+
+            if (prop_name.is_sameas("name"))
             {
                 if (newobject->IsForm())
                 {
-                    prop = newobject->get_prop_ptr(prop_class_name);
+                    prop_ptr = newobject->get_prop_ptr(prop_class_name);
                 }
                 else
                 {
-                    prop = newobject->get_prop_ptr(prop_var_name);
+                    prop_ptr = newobject->get_prop_ptr(prop_var_name);
                 }
 
-                prop->set_value(xml_prop.text().as_cview());
+                prop_ptr->set_value(xml_prop.text().as_cview());
                 continue;
             }
             else if (prop_name.is_sameas("declaration"))
@@ -445,25 +424,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     newobject->prop_set_value(prop_header, header);
                 }
                 continue;
-            }
-
-            // We get here if the object doesn't have a property with the same name as the wxFormBuilder version.
-
-            if (auto result = g_PropMap.find(prop_name.c_str()); result != g_PropMap.end())
-            {
-                // Some properties do the same thing but have a different name in wxUiEditor, so we just need to
-                // change the name.
-                prop_name = result->second;
-                if (auto find_prop = rmap_PropNames.find(prop_name.c_str()); find_prop != rmap_PropNames.end())
-                {
-                    if (prop = newobject->get_prop_ptr(find_prop->second); prop)
-                    {
-                        // In some cases, there is no equivalent -- for example, form builder has a permissions property for
-                        // spacers. Since these aren't an actual widget, wxUE does not have that property
-                        prop->set_value(xml_prop.text().as_cview());
-                    }
-                    continue;
-                }
             }
 
             // If the property actually has a value, then we need to see if we can convert it. We ignore unknown

@@ -36,6 +36,9 @@ protected:
     void ProcessHandler(const pugi::xml_node& xml_obj, Node* node);
     void ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent = nullptr);
 
+    // Returns prop_unknown if the property name has not equivalent in wxUiEditor
+    GenEnum::PropName ImportXML::MapPropName(const std::string& name);
+
     pugi::xml_document m_docOut;
     ttString m_importProjectFile;
     NodeSharedPtr m_project;

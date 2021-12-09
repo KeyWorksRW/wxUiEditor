@@ -212,6 +212,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
         if (auto find_prop = rmap_PropNames.find(iter.name()); find_prop != rmap_PropNames.end())
         {
             prop = new_node->get_prop_ptr(find_prop->second);
+
             if (prop)
             {
                 if (prop->type() == type_bool)
@@ -292,6 +293,11 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                     else if (ttlib::is_sameas(iter.name(), "original_art"))
                     {
                         new_node->prop_set_value(prop_art_directory, value);
+                        continue;
+                    }
+                    else if (ttlib::is_sameas(iter.name(), "choices") || ttlib::is_sameas(iter.name(), "strings"))
+                    {
+                        new_node->prop_set_value(prop_contents, value);
                         continue;
                     }
                 }

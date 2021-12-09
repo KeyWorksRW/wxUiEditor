@@ -112,7 +112,7 @@ bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
 wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto choices = node->prop_as_wxArrayString(prop_choices);
+    auto choices = node->prop_as_wxArrayString(prop_contents);
     if (!choices.Count())
     {
         choices.Add("at least one choice required");
@@ -164,7 +164,7 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
         choice_name.erase(0, 2);
     choice_name << "_choices";
     code << "\twxString " << choice_name << "[] = {";
-    auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+    auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
     for (auto& iter: array)
     {
         code << "\n\t\t" << GenerateQuotedString(iter) << ",";

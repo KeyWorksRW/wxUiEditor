@@ -1052,7 +1052,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         grid_property->SetValueFromString(newValue, 0);
                     }
                 }
-                else if (prop->isProp(prop_choices))
+                else if (prop->isProp(prop_contents))
                 {
 #if defined(_WIN32)
                     // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped. Adding

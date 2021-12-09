@@ -25,7 +25,7 @@ wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                       DlgSize(parent, node, prop_size), 0, nullptr, node->prop_as_int(prop_type) | GetStyleInt(node));
 
-    auto& items = node->prop_as_string(prop_choices);
+    auto& items = node->prop_as_string(prop_contents);
     if (items.size())
     {
         auto array = ConvertToArrayString(items);
@@ -107,9 +107,9 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenSettings(Node* node, size_t& /* 
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(prop_choices).size())
+    if (node->prop_as_string(prop_contents).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
             if (code.size())
@@ -156,7 +156,7 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                            DlgSize(parent, node, prop_size), 0, nullptr, node->prop_as_int(prop_type) | GetStyleInt(node));
 
-    auto& items = node->prop_as_string(prop_choices);
+    auto& items = node->prop_as_string(prop_contents);
     if (items.size())
     {
         auto array = ConvertToArrayString(items);
@@ -238,9 +238,9 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(prop_choices).size())
+    if (node->prop_as_string(prop_contents).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
             if (code.size())
@@ -287,7 +287,7 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                                       DlgSize(parent, node, prop_size), wxArrayInt(), wxArrayString(),
                                       node->prop_as_int(prop_type) | GetStyleInt(node));
 
-    auto& items = node->prop_as_string(prop_choices);
+    auto& items = node->prop_as_string(prop_contents);
     if (items.size())
     {
         auto array = ConvertToArrayString(items);
@@ -362,9 +362,9 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(prop_choices).size())
+    if (node->prop_as_string(prop_contents).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
             if (code.size())
@@ -411,7 +411,7 @@ wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                           DlgSize(parent, node, prop_size), 0, nullptr, GetStyleInt(node));
 
-    auto& items = node->prop_as_string(prop_choices);
+    auto& items = node->prop_as_string(prop_contents);
     if (items.size())
     {
         auto array = ConvertToArrayString(items);
@@ -482,9 +482,9 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenSettings(Node* node, size_t&
 {
     ttlib::cstr code;
 
-    if (node->prop_as_string(prop_choices).size())
+    if (node->prop_as_string(prop_contents).size())
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
             if (code.size())

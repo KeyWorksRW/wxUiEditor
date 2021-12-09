@@ -31,12 +31,12 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
         for (auto& label: headers)
             widget->AppendColumn(label.wx_str());
 
-        if (node->HasValue(prop_strings))
+        if (node->HasValue(prop_contents))
         {
             wxListItem info;
             info.Clear();
 
-            auto strings = ConvertToArrayString(node->prop_as_string(prop_strings));
+            auto strings = ConvertToArrayString(node->prop_as_string(prop_contents));
             long row_id = -1;
             for (auto& row: strings)
             {
@@ -78,7 +78,7 @@ std::optional<ttlib::cstr> ListViewGenerator::GenSettings(Node* node, size_t& au
 
     if (node->prop_as_string(prop_mode) == "wxLC_REPORT" && node->HasValue(prop_column_labels))
     {
-        if (node->HasValue(prop_strings))
+        if (node->HasValue(prop_contents))
         {
             auto_indent = indent::auto_keep_whitespace;
             code << "{";
@@ -90,12 +90,12 @@ std::optional<ttlib::cstr> ListViewGenerator::GenSettings(Node* node, size_t& au
                 code << "\n\t";
             code << node->get_node_name() << "->AppendColumn(" << GenerateQuotedString(iter) << ");";
         }
-        if (node->HasValue(prop_strings))
+        if (node->HasValue(prop_contents))
         {
             code << "\n\n"
                  << "\twxListItem info;\n"
                  << "\tinfo.Clear();\n\n";
-            auto strings = ConvertToArrayString(node->prop_as_string(prop_strings));
+            auto strings = ConvertToArrayString(node->prop_as_string(prop_contents));
             int row_id = -1;
             for (auto& row: strings)
             {
@@ -139,9 +139,9 @@ wxObject* EditListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxEditableListBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                               DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->HasValue(prop_strings))
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToWxArrayString(node->prop_as_string(prop_strings));
+        auto array = ConvertToWxArrayString(node->prop_as_string(prop_contents));
         widget->SetStrings(array);
     }
 
@@ -154,11 +154,11 @@ std::optional<ttlib::cstr> EditListBoxGenerator::GenSettings(Node* node, size_t&
 {
     ttlib::cstr code;
 
-    if (node->HasValue(prop_strings))
+    if (node->HasValue(prop_contents))
     {
         auto_indent = false;
         code << "\t{\n\t\twxArrayString tmp_array;\n";
-        auto array = ConvertToArrayString(node->prop_as_string(prop_strings));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
             code << "\t\ttmp_array.push_back(wxString::FromUTF8(\"" << iter << "\"));\n";

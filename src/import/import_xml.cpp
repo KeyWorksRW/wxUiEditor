@@ -583,7 +583,7 @@ void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
     }
 
     if (choices.size())
-        node->prop_set_value(prop_choices, choices);
+        node->prop_set_value(prop_contents, choices);
 }
 
 void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node */)

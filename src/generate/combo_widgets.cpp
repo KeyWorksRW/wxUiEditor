@@ -20,9 +20,9 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), 0, nullptr, GetStyleInt(node));
 
-    if (node->HasValue(prop_choices))
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
             widget->Append(iter.wx_str());
 
@@ -48,7 +48,7 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool ComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    if (!node->HasValue(prop_choices))
+    if (!node->HasValue(prop_contents))
         return false;
 
     if (prop->isProp(prop_selection_string))
@@ -107,9 +107,9 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenSettings(Node* node, size_t& /*
 {
     ttlib::cstr code;
 
-    if (node->HasValue(prop_choices))
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
             if (code.size())
@@ -163,9 +163,9 @@ wxObject* ChoiceGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxChoice(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                DlgSize(parent, node, prop_size), 0, nullptr, GetStyleInt(node));
 
-    if (node->HasValue(prop_choices))
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
             widget->Append(iter.wx_str());
 
@@ -188,7 +188,7 @@ wxObject* ChoiceGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool ChoiceGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    if (!node->HasValue(prop_choices))
+    if (!node->HasValue(prop_contents))
         return false;
 
     if (prop->isProp(prop_selection_string))
@@ -243,9 +243,9 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenSettings(Node* node, size_t& /* a
 {
     ttlib::cstr code;
 
-    if (node->HasValue(prop_choices))
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
             if (code.size())
@@ -300,9 +300,9 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
                                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), 0, nullptr,
                                        GetStyleInt(node));
 
-    if (node->HasValue(prop_choices))
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
             widget->Append(iter.wx_str());
 
@@ -325,7 +325,7 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool BitmapComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
-    if (!node->HasValue(prop_choices))
+    if (!node->HasValue(prop_contents))
         return false;
 
     if (prop->isProp(prop_selection_string))
@@ -386,9 +386,9 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenSettings(Node* node, size
 {
     ttlib::cstr code;
 
-    if (node->HasValue(prop_choices))
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_choices));
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
             if (code.size())

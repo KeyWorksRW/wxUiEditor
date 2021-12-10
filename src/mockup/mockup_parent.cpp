@@ -256,6 +256,9 @@ void MockupParent::MagnifyWindow(bool show)
 
 void MockupParent::SelectNode(wxObject* wxobject)
 {
+    if (m_isPropertyChanging)
+        return;
+
     // Setting this to true will ignore the next selection event, and clear the flag
     m_isIgnoreSelection = true;
 
@@ -399,7 +402,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
         }
     }
 
-    // Some properties can be changed after the widget is created. We call the component to update the widget, and if returns
+    // Some properties can be changed after the widget is created. We call the generator to update the widget, and if returns
     // true then we resize and repaint the entire Mockup window. There are cases where the resize isn't necessary, but since
     // the updating happens in a Freeze/Thaw section, there shouldn't be any noticeable effect to the user with a resize that
     // doesn't actually change the size.
@@ -424,8 +427,8 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
             return;
         }
 
-        auto comp = node->GetGenerator();
-        if (comp && comp->OnPropertyChange(Get_wxObject(node), node, prop))
+        auto generator = node->GetGenerator();
+        if (generator && generator->OnPropertyChange(Get_wxObject(node), node, prop))
         {
             AutoFreeze freeze(this);
             // You have to reset minimum size to allow the window to shrink
@@ -459,7 +462,10 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
 
     if (!is_updated)
     {
+        // We set m_isPropertyChanging so that we ignore generators calling our SelectNode() because a page changed
+        m_isPropertyChanging = true;
         CreateContent();
         m_panelContent->OnNodeSelected(wxGetFrame().GetSelectedNode());
+        m_isPropertyChanging = false;
     }
 }

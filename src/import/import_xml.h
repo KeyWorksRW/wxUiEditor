@@ -27,7 +27,7 @@ public:
 
 protected:
     std::optional<pugi::xml_document> LoadDocFile(const ttString& file);
-    std::optional<GenName> ConvertToGenName(const ttlib::cstr& object_name, Node* parent);
+    GenEnum::GenName ConvertToGenName(const ttlib::cstr& object_name, Node* parent);
 
     void HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent = nullptr);
     void ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty* prop);

@@ -142,18 +142,15 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
     }
     if (align_value.size())
     {
-        auto prop = node->get_prop_ptr(prop_alignment);
-        prop->set_value(align_value);
+        node->prop_set_value(prop_alignment, align_value);
     }
 
     ttlib::cstr flags_value;
     if (flag_value.contains("wxEXPAND") || flag_value.contains("wxGROW"))
     {
-        // Only add the flag if the expansion will happen in at least one of the directions.
-
-        if (!(flag_value.contains("wxALIGN_BOTTOM") || flag_value.contains("wxALIGN_CENTER_VERTICAL")) &&
-            !(flag_value.contains("wxALIGN_RIGHT") || flag_value.contains("wxALIGN_CENTER_HORIZONTAL")))
-            flags_value << "wxEXPAND";
+        // You can't use wxEXPAND with any alignment flags
+        node->prop_set_value(prop_alignment, "");
+        flags_value << "wxEXPAND";
     }
     if (flag_value.contains("wxSHAPED"))
     {
@@ -342,13 +339,11 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
 }
 
-std::optional<GenName> ImportXML::ConvertToGenName(const ttlib::cstr& object_name, Node* parent)
+GenEnum::GenName ImportXML::ConvertToGenName(const ttlib::cstr& object_name, Node* parent)
 {
-    if (object_name == "wxBitmapButton")
-    {
-        return gen_wxButton;
-    }
-    else if (object_name.is_sameas("wxPanel"))
+    auto gen_name = MapClassName(object_name);
+
+    if (gen_name == gen_wxPanel)
     {
         if (!parent)
         {
@@ -369,65 +364,21 @@ std::optional<GenName> ImportXML::ConvertToGenName(const ttlib::cstr& object_nam
         else if (parent->isGen(gen_Project))
             return gen_PanelForm;
     }
-    else if (object_name.contains("bookpage"))
-    {
-        return gen_oldbookpage;
-    }
-    else if (object_name.is_sameas("wxListCtrl"))
-    {
-        return gen_wxListView;
-    }
-    else if (object_name.is_sameas("panewindow"))
-    {
-        // In an XRC file, panewindow is a pseudo-class type between the wxCollapsiblePane and it's child
-        return gen_VerticalBoxSizer;
-    }
-    else if (object_name.is_sameas("wxScintilla"))
-    {
-        return gen_wxStyledTextCtrl;
-    }
-    else if (object_name.is_sameas("wxGenericAnimationCtrl"))
-    {
-        return gen_wxAnimationCtrl;
-    }
-    else if (object_name.is_sameas("sizeritem") && parent && parent->isGen(gen_wxGridBagSizer))
+    else if (gen_name == gen_sizeritem && parent && parent->isGen(gen_wxGridBagSizer))
     {
         return gen_gbsizeritem;
-    }
-    else if (object_name.is_sameas("Dialog") || object_name.is_sameas("wxDialog"))
-    {
-        return gen_wxDialog;
-    }
-    else if (object_name.contains("Wizard") && parent && parent->isGen(gen_Project))
-    {
-        return gen_wxWizard;
-    }
-    else if (object_name.is_sameas("wxMenuBar") && parent && parent->isGen(gen_Project))
-    {
-        return gen_MenuBar;
-    }
-    else if (object_name.is_sameas("wxToolBar") && parent && parent->isGen(gen_Project))
-    {
-        return gen_ToolBar;
-    }
-    else if (object_name.is_sameas("Frame") || object_name.is_sameas("wxFrame"))
-    {
-        return gen_wxFrame;
     }
     else if (object_name.contains("Panel") && parent && parent->isGen(gen_Project))
     {
         return gen_PanelForm;
     }
-    else if (object_name.contains("separator") && parent &&
+    else if (gen_name == gen_separator && parent &&
              (parent->isGen(gen_wxToolBar) || parent->isGen(gen_ToolBar) || parent->isGen(gen_wxAuiToolBar)))
     {
         return gen_toolSeparator;
     }
 
-    if (auto result = rmap_GenNames.find(object_name); result != rmap_GenNames.end())
-        return result->second;
-
-    return {};
+    return gen_name;
 }
 
 // Call this AFTER the node has been hooked up to it's parent to prevent duplicate var_names.
@@ -485,6 +436,10 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
                 auto new_name = new_node->GetUniqueName(org_name);
                 prop->set_value(new_name);
             }
+        }
+        else if (iter.cname().is_sameas("subclass"))
+        {
+            new_node->prop_set_value(prop_derived_class, iter.value());
         }
     }
 }
@@ -584,9 +539,54 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         {
             node->prop_set_value(prop_selection_int, iter.text().as_int());
         }
-        else if (iter.cname().is_sameas("selected") && node->isGen(gen_oldbookpage))
+        else if (iter.cname().is_sameas("selected"))
         {
-            node->prop_set_value(prop_select, iter.text().as_bool());
+            if (node->isGen(gen_oldbookpage))
+                node->prop_set_value(prop_select, iter.text().as_bool());
+            else if (prop = node->get_prop_ptr(prop_checked); prop)
+            {
+                node->prop_set_value(prop_checked, iter.text().as_bool());
+            }
+        }
+        else if (iter.cname().is_sameas("enabled"))
+        {
+            if (!iter.text().as_bool())
+                node->prop_set_value(prop_disabled, true);
+        }
+        else if (iter.cname().is_sameas("subclass"))
+        {
+            // wxFormBuilder and XRC use the same name, but but it has different meanings.
+            auto value = iter.text().as_cview();
+            if (value.empty())
+                continue;
+            if (value.contains(";"))
+            {
+                // wxFormBuilder breaks this into three fields: class, header, forward_declare. Or at least it is supposed
+                // to. In version 3.10, it doesn't properly handle an empty class name, so the header file can appear first.
+                ttlib::multistr parts(value, ';', tt::TRIM::both);
+                if (parts.size() > 0)
+                {
+                    if (parts[0].contains(".h"))
+                    {
+                        node->prop_set_value(prop_derived_header, parts[0]);
+                    }
+                    else if (parts.size() > 1)
+                    {
+                        node->prop_set_value(prop_derived_class, parts[0]);
+                        if (parts[1].size())
+                            node->prop_set_value(prop_derived_header, parts[1]);
+                    }
+                }
+            }
+            else
+            {
+                node->prop_set_value(prop_derived_class, value);
+            }
+        }
+        else if (iter.cname().is_sameas("creating_code"))
+        {
+            // TODO: [KeyWorks - 12-09-2021] This consists of macros that allow the user to override one or more macros with
+            // their own parameter.
         }
         else if (iter.cname().is_sameas("flag"))
         {
@@ -769,16 +769,21 @@ static std::vector<std::pair<const char*, GenEnum::PropName>> property_mapping =
     { "settings", prop_settings_code },
     { "tab_ctrl_height", prop_tab_height },
     { "class", prop_class_name },
+    { "include_file", prop_derived_header },
 
 };
 
 static std::vector<std::pair<const char*, GenEnum::GenName>> class_mapping = {
 
+    { "Custom", gen_CustomControl },
     { "Dialog", gen_wxDialog },
     { "Frame", gen_wxFrame },
     { "Panel", gen_PanelForm },
     { "Wizard", gen_wxWizard },
+    { "WizardPageSimple", gen_wxWizardPageSimple },
+    { "WizardPageSimple", gen_wxWizardPageSimple },
     { "bookpage", gen_oldbookpage },
+    { "panewindow", gen_VerticalBoxSizer },
     { "wxBitmapButton", gen_wxButton },
     { "wxListCtrl", gen_wxListView },
     { "wxScintilla", gen_wxStyledTextCtrl },

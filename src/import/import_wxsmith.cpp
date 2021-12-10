@@ -83,13 +83,12 @@ NodeSharedPtr WxSmith::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node
         return NodeSharedPtr();
 
     bool isBitmapButton = (object_name == "wxBitmapButton");
-    auto result = ConvertToGenName(object_name, parent);
-    if (!result)
+    auto gen_name = ConvertToGenName(object_name, parent);
+    if (gen_name == gen_unknown)
     {
         MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
         return NodeSharedPtr();
     }
-    auto gen_name = result.value();
 
     if (gen_name == gen_wxCheckBox)
     {

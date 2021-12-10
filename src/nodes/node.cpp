@@ -197,6 +197,9 @@ bool Node::IsChildAllowed(Node* child)
     if (max_children == child_count::infinite)
         return true;
 
+    if (isGen(gen_wxSplitterWindow))
+        return (GetChildCount() < 2);
+
     // Because m_children contains shared_ptrs, we don't want to use an iteration loop which will get/release the shared
     // ptr. Using an index into the vector lets us access the raw pointer.
 

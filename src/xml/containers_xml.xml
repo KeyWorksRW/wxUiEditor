@@ -27,9 +27,9 @@ inline const char* containers_xml = R"===(<?xml version="1.0"?>
 		<property name="sashsize" type="int"
 			help="Overrides platform metrics if greater than -1">-1</property>
 		<property name="sashgravity" type="float"
-			help="Sets the sash gravity. Gravity is real factor which controls position of sash while resizing wxSplitterWindow. Gravity tells wxSplitterWindow how much will left/top window grow while resizing.">0.0</property>
+			help="Gravity determines how much the left or top pane will grow while resizing.">0.0</property>
 		<property name="min_pane_size" type="uint"
-			help="Minimum size for the panes. A minimum less than 1 is not allowed in the designer, because the designer prevents un-splitting.">0</property>
+			help="Minimum size for the panes.">150</property>
 		<property name="persist_name" type="string"
 			help="If a name is specified, wxPersistenceManager will be used to save/restore the sash position." />
 		<property name="style" type="bitlist">
@@ -50,7 +50,7 @@ inline const char* containers_xml = R"===(<?xml version="1.0"?>
 			<option name="wxSP_NO_XP_THEME"
 				help="Under Windows XP, switches off the attempt to draw the splitter using Windows XP theming, so the borders and sash will take on the pre-XP look." />
 			<option name="wxSP_PERMIT_UNSPLIT"
-				help="Always allow to unsplit, even with the minimum pane size other than zero. Note: The designer prevents un-splitting." />
+				help="Always allow to unsplit, even with the minimum pane size other than zero." />
 			<option name="wxSP_LIVE_UPDATE"
 				help="Don't draw XOR line but resize the child windows immediately." />
 			wxSP_3D

@@ -258,6 +258,12 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
         return;
     }
 
+    if (node_dst->isGen(gen_wxSplitterWindow) && node_dst->GetChildCount() > 1)
+    {
+        wxMessageBox("A wxSplitterWindow can't have more than two windows.");
+        return;
+    }
+
     auto dst_parent = node_dst;
     while (!dst_parent->IsChildAllowed(node_src))
     {

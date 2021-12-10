@@ -211,6 +211,7 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
 void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
 {
     auto result = m_combo_recent_dirs->GetValue();
+    m_FileHistory.AddFileToHistory(result);
     ttlib::ChangeDir(result.utf8_str().data());
 
     ttString cwd;

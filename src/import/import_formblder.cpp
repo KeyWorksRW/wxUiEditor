@@ -15,28 +15,17 @@
 
 #include "import_formblder.h"
 
-#include "mainapp.h"       // App -- Main application class
-#include "mainframe.h"     // Main window frame
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"         // Utility functions that work with properties
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "mainapp.h"         // App -- Main application class
+#include "mainframe.h"       // Main window frame
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator class
+#include "pjtsettings.h"     // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"           // Utility functions that work with properties
 
 #include "import_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs
 
 // clang-format off
-constexpr const IMPORT_NAME_PAIR prop_pair[] = {
-
-    { "bg", "background_colour" },
-    { "fg", "foreground_colour" },
-    { "bitmapsize", "image_size" },
-    { "hover", "current" },
-    { "settings", "settings_code" },
-    { "tab_ctrl_height", "tab_height" },
-    { "class", "class_name" },
-
-    { nullptr, nullptr },
-};
 
 const auto g_lstIgnoreProps = {
 
@@ -90,6 +79,9 @@ const auto g_lstIgnoreProps = {
     "resize",
     "show",
     "toolbar_pane",
+
+    // This are miscellanious properties that we don't support
+
     "two_step_creation",
     "use_enum",
 
@@ -99,7 +91,6 @@ const auto g_lstIgnoreProps = {
 // The following gets initialized once if FormBuilder is constructed. They do not get destroyed since they are a) quite
 // small, and b) might be used again. This is in contrast to m_mapEventNames which is part of the FormBuilder class.
 
-std::unordered_map<std::string, const char*> g_PropMap;
 std::unordered_set<std::string> g_setIgnoreProps;
 
 FormBuilder::FormBuilder()
@@ -107,14 +98,6 @@ FormBuilder::FormBuilder()
     for (size_t pos = 0; evt_pair[pos].wxfb_name; ++pos)
     {
         m_mapEventNames[evt_pair[pos].wxfb_name] = evt_pair[pos].wxui_name;
-    }
-
-    if (g_PropMap.empty())
-    {
-        for (size_t pos = 0; prop_pair[pos].wxfb_name; ++pos)
-        {
-            g_PropMap[prop_pair[pos].wxfb_name] = prop_pair[pos].wxui_name;
-        }
     }
 
     if (g_setIgnoreProps.empty())
@@ -181,6 +164,7 @@ bool FormBuilder::Import(const ttString& filename, bool write_doc)
     if (m_errors.size())
     {
         ttlib::cstr errMsg("Not everything in the wxFormBuilder project could be converted:\n\n");
+        MSG_ERROR(ttlib::cstr() << "------  " << m_importProjectFile.filename().wx_str() << "------");
         for (auto& iter: m_errors)
         {
             MSG_ERROR(iter);
@@ -248,78 +232,74 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     if (class_name.empty())
         return NodeSharedPtr();
 
-    if (class_name.is_sameas("wxScintilla"))
+    auto gen_name = MapClassName(xml_obj.attribute("class").value());
+    if (gen_name == gen_unknown)
     {
-        class_name = "wxStyledTextCtrl";
+        if (class_name.contains("bookpage"))
+            gen_name = gen_oldbookpage;
+        else
+        {
+            m_errors.emplace(ttlib::cstr() << class_name << " is not supported in wxUiEditor");
+            return {};
+        }
     }
-    else if (class_name.is_sameas("wxListCtrl"))
-    {
-        class_name = "wxListView";
-    }
-    else if (class_name.is_sameas("wxBitmapButton"))
-    {
-        class_name = "wxButton";
-    }
-    else if (class_name.is_sameas("wxPanel"))
+
+    if (gen_name == gen_PanelForm)
     {
         if (!parent)
         {
+            // This gets called when pasting a formbuilder node from the clipboard
             auto owner = wxGetFrame().GetSelectedNode();
             while (owner->gen_type() == type_sizer)
                 owner = owner->GetParent();
             if (owner->DeclName().contains("book"))
             {
-                class_name = "BookPage";
+                gen_name = gen_BookPage;
             }
         }
         else if (parent->DeclName().contains("book"))
         {
-            class_name = "BookPage";
+            gen_name = gen_BookPage;
         }
     }
-    else if (class_name.contains("bookpage"))
-    {
-        class_name = "oldbookpage";
-    }
-    else if (class_name.is_sameas("Dialog"))
-    {
-        class_name = "wxDialog";
-    }
-    else if (class_name.is_sameas("Wizard"))
-    {
-        class_name = "wxWizard";
-    }
-    else if (class_name.is_sameas("Frame"))
-    {
-        class_name = "wxFrame";
-    }
-    else if (class_name.is_sameas("Panel"))
-    {
-        class_name = "PanelForm";
-    }
-    else if (class_name.is_sameas("CustomCode"))
-    {
-        m_errors.emplace(ttlib::cstr() << "Custom code is not supported in wxUiEditor");
-        return {};
-    }
 
-    if (class_name.is_sameas("wxCheckBox"))
+    if (gen_name == gen_wxCheckBox)
     {
         for (auto& iter: xml_obj.children())
         {
             if (iter.attribute("name").as_cview().is_sameas("style"))
             {
                 if (iter.text().as_cview().contains("wxCHK_3STATE"))
-                    class_name = "Check3State";
+                    gen_name = gen_Check3State;
                 break;
             }
         }
     }
 
-    auto newobject = g_NodeCreator.CreateNode(class_name, parent);
+    auto newobject = g_NodeCreator.CreateNode(gen_name, parent);
     if (!newobject)
     {
-        m_errors.emplace(ttlib::cstr() << "Unable to create " << class_name);
+        ttlib::cstr msg("Unable to create ");
+        msg << class_name;
+        if (parent)
+        {
+            // We can't use the class name because that won't necessarily be the wxWidgets class name. E.g., PanelForm might
+            // be the class name, but what we want to display to the user is wxPanel. GetHelpText() will give us something
+            // that makes sense to the user.
+
+            auto name = parent->GetGenerator()->GetHelpText(parent);
+            if (name.size() && name != "wxWidgets")
+            {
+#if defined(_DEBUG)
+                // Currently, Debug builds also include the filename that gets passed to the browser if Help is requested.
+                // That's not useful in a message box, so we remove it.
+
+                name.erase_from('(');
+#endif  // _DEBUG
+                msg << " as a child of " << name;
+            }
+        }
+        m_errors.emplace(msg);
         return {};
     }
 
@@ -327,17 +307,34 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     {
         if (auto prop_name = xml_prop.attribute("name").as_cview(); prop_name.size())
         {
-            NodeProperty* prop = nullptr;
-            if (auto result = rmap_PropNames.find(prop_name.c_str()); result != rmap_PropNames.end())
+            auto wxue_prop = MapPropName(xml_prop.attribute("name").value());
+            auto prop_ptr = newobject->get_prop_ptr(wxue_prop);
+
+            if (prop_ptr)
             {
-                prop = newobject->get_prop_ptr(result->second);
-            }
-            if (prop)
-            {
-                if (prop->isProp(prop_bitmap))
+                if (wxue_prop == prop_bitmap)
                 {
                     if (!xml_prop.text().empty())
-                        BitmapProperty(xml_prop, prop);
+                        BitmapProperty(xml_prop, prop_ptr);
+                }
+                else if (wxue_prop == prop_bitmapsize)
+                {
+                    if (class_name.contains("book"))
+                    {
+                        if (prop_ptr = newobject->get_prop_ptr(prop_image_size); prop_ptr)
+                        {
+                            prop_ptr->set_value(xml_prop.text().as_cview());
+                            auto size = prop_ptr->as_size();
+                            if (size != wxDefaultSize)
+                            {
+                                if (prop_ptr = newobject->get_prop_ptr(prop_display_images); prop_ptr)
+                                {
+                                    prop_ptr->set_value(true);
+                                }
+                            }
+                            continue;
+                        }
+                    }
                 }
                 else
                 {
@@ -371,49 +368,32 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     else if (value.contains("wxNB_FLAT"))
                         value.Replace("wxNB_FLAT", "");  // this style is obsolete
 
-                    if (prop->isProp(prop_style))
+                    if (prop_ptr->isProp(prop_style))
                     {
-                        ProcessStyle(xml_prop, newobject.get(), prop);
+                        ProcessStyle(xml_prop, newobject.get(), prop_ptr);
                     }
                     else
                     {
-                        prop->set_value(value);
+                        prop_ptr->set_value(value);
                     }
                 }
                 continue;
             }
 
-            if (prop_name.is_sameas("bitmapsize"))
-            {
-                if (class_name.contains("book"))
-                {
-                    if (prop = newobject->get_prop_ptr(prop_image_size); prop)
-                    {
-                        prop->set_value(xml_prop.text().as_cview());
-                        auto size = prop->as_size();
-                        if (size.x != -1 || size.y != -1)
-                        {
-                            if (prop = newobject->get_prop_ptr(prop_display_images); prop)
-                            {
-                                prop->set_value(true);
-                            }
-                        }
-                        continue;
-                    }
-                }
-            }
-            else if (prop_name.is_sameas("name"))
+            // If we get here, wxue_prop will be prop_unknown and prop_ptr will be null.
+
+            if (prop_name.is_sameas("name"))
             {
                 if (newobject->IsForm())
                 {
-                    prop = newobject->get_prop_ptr(prop_class_name);
+                    prop_ptr = newobject->get_prop_ptr(prop_class_name);
                 }
                 else
                 {
-                    prop = newobject->get_prop_ptr(prop_var_name);
+                    prop_ptr = newobject->get_prop_ptr(prop_var_name);
                 }
 
-                prop->set_value(xml_prop.text().as_cview());
+                prop_ptr->set_value(xml_prop.text().as_cview());
                 continue;
             }
             else if (prop_name.is_sameas("declaration"))
@@ -447,25 +427,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 continue;
             }
 
-            // We get here if the object doesn't have a property with the same name as the wxFormBuilder version.
-
-            if (auto result = g_PropMap.find(prop_name.c_str()); result != g_PropMap.end())
-            {
-                // Some properties do the same thing but have a different name in wxUiEditor, so we just need to
-                // change the name.
-                prop_name = result->second;
-                if (auto find_prop = rmap_PropNames.find(prop_name.c_str()); find_prop != rmap_PropNames.end())
-                {
-                    if (prop = newobject->get_prop_ptr(find_prop->second); prop)
-                    {
-                        // In some cases, there is no equivalent -- for example, form builder has a permissions property for
-                        // spacers. Since these aren't an actual widget, wxUE does not have that property
-                        prop->set_value(xml_prop.text().as_cview());
-                    }
-                    continue;
-                }
-            }
-
             // If the property actually has a value, then we need to see if we can convert it. We ignore unknown
             // properties that don't have a value.
             if (auto value = xml_prop.text().as_cview(); value.size())
@@ -485,6 +446,15 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
 
     // wxFormBuilder allows the users to create settings that will generate an assert if compiled on a debug version of
     // wxWidgets. We fix some of the more common invalid settings here.
+
+    if (newobject->HasValue(prop_flags) && newobject->prop_as_string(prop_flags).contains("wxEXPAND"))
+    {
+        if (newobject->HasValue(prop_alignment))
+        {
+            // wxWidgets will ignore all alignment flags if wxEXPAND is set.
+            newobject->prop_set_value(prop_alignment, "");
+        }
+    }
 
     if (parent && parent->IsSizer())
     {
@@ -510,14 +480,6 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (newobject->HasValue(prop_flags) && newobject->prop_as_string(prop_flags).contains("wxEXPAND"))
-    {
-        if (newobject->HasValue(prop_alignment))
-        {
-            // wxWidgets will ignore all alignment flags if wxEXPAND is set.
-            newobject->prop_set_value(prop_alignment, "");
-        }
-    }
     auto xml_event = xml_obj.child("event");
     while (xml_event)
     {
@@ -902,6 +864,9 @@ inline bool is_numeric(unsigned char ch)
 {
     return (ch >= '0' && ch <= '9');
 }
+
+// BUGBUG: [KeyWorks - 12-08-2021] This is almost identical to ImportXML::HandleSizerItemProperty() -- the two functions need
+// to be sychronized, and this one removed.
 
 void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object, Node* parent, NodeProperty* prop)
 {

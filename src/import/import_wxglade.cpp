@@ -69,40 +69,36 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         return NodeSharedPtr();
 
     bool isBitmapButton = (object_name == "wxBitmapButton");
-    auto result = ConvertToGenName(object_name, parent);
-    while (!result)
+    auto gen_name = ConvertToGenName(object_name, parent);
+    if (gen_name == gen_unknown)
     {
         // If we don't recognize the class, then try the base= attribute
         auto base = xml_obj.attribute("base").as_cview();
         if (base.is_sameas("EditFrame"))
         {
-            result = ConvertToGenName("wxFrame", parent);
-            if (result)
-                break;
+            gen_name = ConvertToGenName("wxFrame", parent);
         }
         else if (base.is_sameas("EditDialog"))
         {
-            result = ConvertToGenName("wxDialog", parent);
-            if (result)
-                break;
+            gen_name = ConvertToGenName("wxDialog", parent);
         }
         else if (base.is_sameas("EditTopLevelPanel"))
         {
-            result = ConvertToGenName("Panel", parent);
-            if (result)
-                break;
+            gen_name = ConvertToGenName("Panel", parent);
         }
 
-        // TODO: [KeyWorks - 08-10-2021] wxGlade supports wxMDIChildFrame using a base name of "EditMDIChildFrame"
+        if (gen_name == gen_unknown)
+        {
+            // TODO: [KeyWorks - 08-10-2021] wxGlade supports wxMDIChildFrame using a base name of "EditMDIChildFrame"
 
-        // This appears to be a placeholder to reserve a spot. We just ignore it.
-        if (object_name == "sizerslot")
+            // This appears to be a placeholder to reserve a spot. We just ignore it.
+            if (object_name == "sizerslot")
+                return NodeSharedPtr();
+
+            MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
             return NodeSharedPtr();
-
-        MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
-        return NodeSharedPtr();
+        }
     }
-    auto gen_name = result.value();
 
     if (gen_name == gen_wxCheckBox)
     {

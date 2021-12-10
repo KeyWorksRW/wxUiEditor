@@ -75,14 +75,38 @@ NodeSharedPtr GetClipboardNode()
         else if (wxTheClipboard->IsSupported(wxDataFormat("wxFormBuilderDataFormat")))
         {
             FormBuilder fb;
-            return fb.CreateFbpNode(root, nullptr);
+            auto new_node = fb.CreateFbpNode(root, nullptr);
+            if (fb.GetErrors().size())
+            {
+                ttlib::cstr errMsg("Not everything from the wxFormBuilder object could be converted:\n\n");
+                for (auto& iter: fb.GetErrors())
+                {
+                    errMsg << iter << '\n';
+                    MSG_INFO(ttlib::cstr("Paste import problem: ") << iter);
+                }
+
+                wxMessageBox(errMsg, "Paste wxFormBuilder object");
+            }
+            return new_node;
         }
         else if (ttlib::is_sameas(root.name(), "resource", tt::CASE::either))
         {
             // wxSmith encloses the object with "<resource>"
             auto child = root.first_child();
             WxSmith smith;
-            return smith.CreateXrcNode(child, nullptr);
+            auto new_node = smith.CreateXrcNode(child, nullptr);
+            if (smith.GetErrors().size())
+            {
+                ttlib::cstr errMsg("Not everything from the wxSmith object could be converted:\n\n");
+                for (auto& iter: smith.GetErrors())
+                {
+                    errMsg << iter << '\n';
+                    MSG_INFO(ttlib::cstr("Paste import problem: ") << iter);
+                }
+
+                wxMessageBox(errMsg, "Paste wxSmith object");
+            }
+            return new_node;
         }
     }
 

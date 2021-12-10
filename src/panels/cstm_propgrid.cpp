@@ -2,7 +2,7 @@
 // Purpose:   Derived wxPropertyGrid class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
-// License:   Apache License -- see ../../LICENSE
+// License:   wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/msgdlg.h>
@@ -12,7 +12,9 @@
 #include "mainframe.h"       // Main window frame
 #include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 
-// Most of this code is copied from wxWidgets/src/propgrid/propgrid.cpp, updated to Modern C++ coding practices. The call to
+// The primary reason for this is to fix the broken English used for the message in the wxWidgets code.
+
+// Most of this code originates from wxWidgets/src/propgrid/propgrid.cpp, updated to Modern C++ coding practices. The call to
 // WasFailureHandled is specific to wxUiEditor, so remove if you use this code in another project. Also note that because the
 // message text has been converted to proper English grammar, it will not be automatically translated by wxWidgets in
 // non-English languages.

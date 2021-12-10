@@ -175,6 +175,12 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
         {
             node = NewNode(node_decl);
         }
+        else if (parent->isGen(gen_wxSplitterWindow))
+        {
+            // for splitters, we only care if the type is allowed, and if the splitter only has one child so far.
+            if (parent->GetChildCount() < 2)
+                node = NewNode(node_decl);
+        }
         else
         {
             auto count = CountChildrenWithSameType(parent, node_decl->gen_type());

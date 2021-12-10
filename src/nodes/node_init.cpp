@@ -283,6 +283,18 @@ static const ParentChild lstParentChild[] = {
     // Misc
 
     { type_splitter, type_container, two },
+    { type_splitter, type_auinotebook, two },
+    { type_splitter, type_choicebook, two },
+    { type_splitter, type_listbook, two },
+    { type_splitter, type_notebook, two },
+    { type_splitter, type_simplebook, two },
+    { type_splitter, type_dataviewctrl, two },
+    { type_splitter, type_dataviewlistctrl, two },
+    { type_splitter, type_dataviewtreectrl, two },
+    { type_splitter, type_propgrid, two },
+    { type_splitter, type_propgridman, two },
+    { type_splitter, type_splitter, two },
+    { type_splitter, type_treelistctrl, two },
 
     { type_toolbar, type_tool, infinite },
     { type_toolbar, type_widget, infinite },

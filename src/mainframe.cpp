@@ -1204,6 +1204,12 @@ void MainFrame::PasteNode(Node* parent)
         parent = m_selected_node.get();
     }
 
+    if (parent->isGen(gen_wxSplitterWindow) && parent->GetChildCount() > 1)
+    {
+        wxMessageBox("A wxSplitterWindow can't have more than two windows.");
+        return;
+    }
+
     auto new_node = g_NodeCreator.MakeCopy(m_clipboard);
 
     if (!parent->IsChildAllowed(new_node))

@@ -31,10 +31,6 @@ The pugixml code uses the MIT [LICENSE](pugixml/LICENSE.md).
 
 ## Screen shots
 
-The following is a screen shot of **wxUiEditor** being used to edit one of it's own dialogs:
+The following is a screen shot of **wxUiEditor**:
 
 ![image](screenshot.jpg)
-
-The following is a screen shot of the code that wxUiEditor would generate for the same dialog:
-
-![image](code_screenshot.jpg)

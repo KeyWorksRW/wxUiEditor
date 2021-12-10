@@ -593,7 +593,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         GenEnum::PropType property_type { type_unknown };
         for (auto& iter: map_PropTypes)
         {
-            if (prop_type.is_sameprefix(iter.second))
+            if (prop_type.is_sameas(iter.second))
             {
                 property_type = iter.first;
                 break;

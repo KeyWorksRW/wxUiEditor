@@ -592,8 +592,10 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         {
             if (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem))
                 HandleSizerItemProperty(iter, node, parent);
-            else if (!node->isGen(gen_spacer))  // spacer's don't use alignment or border styles
+            else if (!node->isGen(gen_spacer))
+            {  // spacer's don't use alignment or border styles
                 MSG_INFO(ttlib::cstr() << iter.cname() << " not supported for " << node->DeclName());
+            }
         }
         else if (iter.cname().is_sameas("handler"))
         {

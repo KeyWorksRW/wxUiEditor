@@ -217,7 +217,7 @@ ttlib::cstr BaseGenerator::GetHelpText(Node* node)
 }
 
 // clang-format off
-static std::map<const char*, const char*> prefix_pair = {
+static std::vector<std::pair<const char*, const char*>> prefix_pair = {
 
     { "bag", "_bag" },
     { "bar", "_bar" },
@@ -228,10 +228,12 @@ static std::map<const char*, const char*> prefix_pair = {
     { "combo", "_combo" },
     { "ctrl", "_ctrl" },
     { "dialog", "_dialog" },  // stddialog becomes std_dialog
-    { "event", "_event" },
     { "double", "_double" },
+    { "event", "_event" },
+    { "grid", "_grid" },
     { "item", "_item" },
     { "list", "_list" },
+    { "manager", "_manager" },
     { "menu", "_menu" },
     { "notebook", "_notebook" },
     { "page", "_page" },
@@ -240,6 +242,7 @@ static std::map<const char*, const char*> prefix_pair = {
     { "simple", "_simple" },
     { "sizer", "_sizer" },
     { "text", "_text" },
+    { "tree", "_tree" },
     { "view", "_view" },
     { "window", "_window" },
 
@@ -258,6 +261,10 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
         {
             class_name = "context_menu_event";
         }
+        if (class_name == "activityindicator")
+        {
+            class_name = "activity_indicator";
+        }
         else
         {
             for (const auto& [key, value]: prefix_pair)
@@ -275,25 +282,45 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
     {
         return ttlib::cstr("wx_book_ctrl_base.html");
     }
+    else if (class_name == "dataViewColumn")
+    {
+        return ttlib::cstr("wx_data_view_ctrl.html");
+    }
+    else if (class_name == "dataViewListColumn")
+    {
+        return ttlib::cstr("wx_data_view_list_ctrl.html");
+    }
     else if (class_name == "PanelForm")
     {
         return ttlib::cstr("wx_panel.html");
-    }
-    else if (class_name == "RibbonBar")
-    {
-        return ttlib::cstr("wx_ribbon_bar.html");
     }
     else if (class_name == "PopupMenu" || class_name == "submenu")
     {
         return ttlib::cstr("wx_menu.html");
     }
-    else if (class_name == "ToolBar")
+    else if (class_name == "propGridItem")
     {
-        return ttlib::cstr("wx_tool_bar.html");
+        return ttlib::cstr("wx_pg_property.html");
+    }
+    else if (class_name == "propGridPage")
+    {
+        return ttlib::cstr("wx_property_grid_page.html");
+    }
+    else if (class_name == "RibbonBar")
+    {
+        return ttlib::cstr("wx_ribbon_bar.html");
     }
     else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
     {
         return ttlib::cstr("wx_static_box_sizer.html");
+    }
+    else if (class_name == "ToolBar")
+    {
+        return ttlib::cstr("wx_tool_bar.html");
+    }
+    else if (class_name == "TreeListCtrlColumn")
+    {
+        return ttlib::cstr("wx_tree_list_ctrl.html");
     }
 
     return ttlib::cstr();

@@ -43,7 +43,6 @@ std::map<PropType, const char*> GenEnum::map_PropTypes = {
     { type_wxSize, "wxSize" },
 
 };
-std::unordered_map<std::string, PropType> GenEnum::rmap_PropTypes;
 
 std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
 
@@ -330,7 +329,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_wrap_flags, "wrap_flags" },
 
 };
-std::unordered_map<std::string, GenEnum::PropName> GenEnum::rmap_PropNames;
+std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
 std::map<GenType, const char*> GenEnum::map_GenTypes = {
 
@@ -394,7 +393,6 @@ std::map<GenType, const char*> GenEnum::map_GenTypes = {
     { type_wizardpagesimple, "wizardpagesimple" },
 
 };
-std::unordered_map<std::string, GenType> GenEnum::rmap_GenTypes;
 
 std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
@@ -546,4 +544,4 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxWrapSizer, "wxWrapSizer" },
 
 };
-std::unordered_map<std::string, GenEnum::GenName> GenEnum::rmap_GenNames;
+std::map<std::string_view, GenEnum::GenName, std::less<>> GenEnum::rmap_GenNames;

@@ -28,12 +28,12 @@ NodeCreator::~NodeCreator()
 
 NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
 {
-    auto result = rmap_GenNames.find(className.c_str());
+    auto result = rmap_GenNames.find(className);
     ASSERT_MSG(result != rmap_GenNames.end(), ttlib::cstr()
                                                   << "Attempt to get non-existant node declaration for " << className);
     if (result == rmap_GenNames.end())
         return nullptr;
-    return m_a_declarations[rmap_GenNames[className.c_str()]];
+    return m_a_declarations[result->second];
 }
 
 NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
@@ -202,7 +202,7 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
 // Called when the GenName isn't availalble
 NodeSharedPtr NodeCreator::CreateNode(ttlib::cview name, Node* parent)
 {
-    auto result = rmap_GenNames.find(name.c_str());
+    auto result = rmap_GenNames.find(name);
     if (result == rmap_GenNames.end())
     {
         FAIL_MSG(ttlib::cstr() << "No component definition for " << name);

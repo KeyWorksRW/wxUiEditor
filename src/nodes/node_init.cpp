@@ -319,19 +319,9 @@ static constexpr const char* fb_ImportTypes[] = {
 
 void NodeCreator::Initialize()
 {
-    for (auto& iter: GenEnum::map_PropTypes)
-    {
-        GenEnum::rmap_PropTypes[iter.second] = iter.first;
-    }
-
     for (auto& iter: GenEnum::map_PropNames)
     {
         GenEnum::rmap_PropNames[iter.second] = iter.first;
-    }
-
-    for (auto& iter: GenEnum::map_GenTypes)
-    {
-        GenEnum::rmap_GenTypes[iter.second] = iter.first;
     }
 
     for (auto& iter: GenEnum::map_GenNames)
@@ -440,11 +430,21 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
         }
 #endif  // _DEBUG
 
-        auto type = generator.attribute("type").as_cview();
-#if defined(_DEBUG)
-        if (rmap_GenTypes.find(type.c_str()) == rmap_GenTypes.end())
+        auto type_name = generator.attribute("type").as_cview();
+        GenType type { gen_type_unknown };
+        for (auto& iter: map_GenTypes)
         {
-            MSG_WARNING(ttlib::cstr("Unrecognized class type -- ") << type);
+            if (type_name.is_sameas(iter.second))
+            {
+                type = iter.first;
+                break;
+            }
+        }
+
+#if defined(_DEBUG)
+        if (type == gen_type_unknown)
+        {
+            MSG_WARNING(ttlib::cstr("Unrecognized class type -- ") << type_name);
         }
 #endif  // _DEBUG
 
@@ -453,7 +453,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
             m_interfaces[class_name] = generator;
         }
 
-        auto declaration = new NodeDeclaration(class_name, GetNodeType(rmap_GenTypes[type.c_str()]));
+        auto declaration = new NodeDeclaration(class_name, GetNodeType(type));
         m_a_declarations[declaration->gen_name()] = declaration;
 
         if (auto flags = generator.attribute("flags").as_cview(); flags.size())
@@ -516,6 +516,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
                         {
                             MSG_ERROR(ttlib::cstr("Unrecognized inherited property name -- ")
                                       << inheritedProperty.attribute("name").as_string());
+                            inheritedProperty = inheritedProperty.next_sibling("property");
                             continue;
                         }
                         class_info->SetOverRideDefValue(lookup_name->second, inheritedProperty.text().as_cview());
@@ -530,6 +531,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
                         {
                             MSG_ERROR(ttlib::cstr("Unrecognized inherited property name -- ")
                                       << inheritedProperty.attribute("name").as_string());
+                            inheritedProperty = inheritedProperty.next_sibling("hide");
                             continue;
                         }
                         class_info->HideProperty(lookup_name->second);
@@ -588,15 +590,22 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         auto prop_type = elem_prop.attribute("type").as_cview();
 
-        GenEnum::PropType property_type;
-        auto lookup_type = rmap_PropTypes.find(prop_type.c_str());
-        if (lookup_type == rmap_PropTypes.end())
+        GenEnum::PropType property_type { type_unknown };
+        for (auto& iter: map_PropTypes)
+        {
+            if (prop_type.is_sameprefix(iter.second))
+            {
+                property_type = iter.first;
+                break;
+            }
+        }
+
+        if (property_type == type_unknown)
         {
             MSG_ERROR(ttlib::cstr("Unrecognized property type -- ") << prop_type);
             elem_prop = elem_prop.next_sibling("property");
             continue;
         }
-        property_type = lookup_type->second;
 
         ttlib::cstr def_value;
         if (auto lastChild = elem_prop.last_child(); lastChild && !lastChild.text().empty())

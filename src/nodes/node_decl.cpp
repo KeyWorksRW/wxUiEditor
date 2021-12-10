@@ -13,7 +13,7 @@
 
 NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) : m_type(type), m_category(class_name)
 {
-    m_gen_name = rmap_GenNames[class_name.c_str()];
+    m_gen_name = rmap_GenNames[class_name];
     m_gen_type = type->gen_type();
     m_name = GenEnum::map_GenNames[m_gen_name];
 }

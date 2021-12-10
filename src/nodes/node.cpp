@@ -648,7 +648,7 @@ void Node::ModifyProperty(PropName name, ttlib::cview value)
 void Node::ModifyProperty(ttlib::cview name, int value)
 {
     NodeProperty* prop = nullptr;
-    if (auto find_prop = rmap_PropNames.find(name.c_str()); find_prop != rmap_PropNames.end())
+    if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
         prop = get_prop_ptr(find_prop->second);
 
     if (prop && value != prop->as_int())
@@ -660,7 +660,7 @@ void Node::ModifyProperty(ttlib::cview name, int value)
 void Node::ModifyProperty(ttlib::cview name, ttlib::cview value)
 {
     NodeProperty* prop = nullptr;
-    if (auto find_prop = rmap_PropNames.find(name.c_str()); find_prop != rmap_PropNames.end())
+    if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
         prop = get_prop_ptr(find_prop->second);
 
     if (prop && value != prop->as_cview())

@@ -41,9 +41,10 @@ namespace GenEnum
         type_wxPoint,
         type_wxSize,
 
+        type_unknown,
+
     };
     extern std::map<PropType, const char*> map_PropTypes;
-    extern std::unordered_map<std::string, PropType> rmap_PropTypes;
 
     enum PropName : size_t
     {
@@ -334,7 +335,7 @@ namespace GenEnum
         prop_unknown = prop_name_array_size
     };
     extern std::map<GenEnum::PropName, const char*> map_PropNames;
-    extern std::unordered_map<std::string, GenEnum::PropName> rmap_PropNames;
+    extern std::map<std::string_view, GenEnum::PropName, std::less<>> rmap_PropNames;
 
     enum GenType : size_t
     {
@@ -400,9 +401,9 @@ namespace GenEnum
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         gen_type_array_size,
+        gen_type_unknown = gen_type_array_size
     };
     extern std::map<GenType, const char*> map_GenTypes;
-    extern std::unordered_map<std::string, GenType> rmap_GenTypes;
 
     enum GenName : size_t
     {
@@ -563,6 +564,6 @@ namespace GenEnum
 
     };
     extern std::map<GenEnum::GenName, const char*> map_GenNames;
-    extern std::unordered_map<std::string, GenEnum::GenName> rmap_GenNames;
+    extern std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;
 
 }  // namespace GenEnum

@@ -65,7 +65,6 @@ protected:
 
     wxPGProperty* GetProperty(NodeProperty* prop);
 
-
     void ReselectItem();
 
     void ModifyProperty(NodeProperty* prop, const wxString& str);

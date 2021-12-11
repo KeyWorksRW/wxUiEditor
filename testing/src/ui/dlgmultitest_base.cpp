@@ -132,8 +132,11 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
 
     auto box_sizer_5 = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer_10 = new wxBoxSizer(wxHORIZONTAL);
-    box_sizer_5->Add(box_sizer_10, wxSizerFlags().Border(wxALL));
+    auto flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
+    box_sizer_5->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));
+
+    auto box_sizer_10 = new wxBoxSizer(wxVERTICAL);
+    flex_grid_sizer->Add(box_sizer_10, wxSizerFlags().Border(wxALL));
 
     m_staticText_2 = new wxStaticText(page_4, wxID_ANY, "wxRearrangeCtrl");
     box_sizer_10->Add(m_staticText_2, wxSizerFlags().Expand().Border(wxALL));
@@ -141,8 +144,8 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     m_rearrange = new wxRearrangeCtrl(page_4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxArrayInt(), wxArrayString());
     box_sizer_10->Add(m_rearrange, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_11 = new wxBoxSizer(wxHORIZONTAL);
-    box_sizer_5->Add(box_sizer_11, wxSizerFlags().Border(wxALL));
+    auto box_sizer_11 = new wxBoxSizer(wxVERTICAL);
+    flex_grid_sizer->Add(box_sizer_11, wxSizerFlags().Border(wxALL));
 
     auto staticText_3 = new wxStaticText(page_4, wxID_ANY, "wxCheckListBox");
     box_sizer_11->Add(staticText_3, wxSizerFlags().Expand().Border(wxALL));
@@ -150,11 +153,11 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     m_checkList = new wxCheckListBox(page_4, wxID_ANY);
     box_sizer_11->Add(m_checkList, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_12 = new wxBoxSizer(wxHORIZONTAL);
-    box_sizer_5->Add(box_sizer_12, wxSizerFlags().Border(wxALL));
+    auto box_sizer_12 = new wxBoxSizer(wxVERTICAL);
+    flex_grid_sizer->Add(box_sizer_12, wxSizerFlags().Border(wxALL));
 
     m_staticText_3 = new wxStaticText(page_4, wxID_ANY, "wxListView");
-    box_sizer_5->Add(m_staticText_3, wxSizerFlags().Border(wxALL));
+    box_sizer_12->Add(m_staticText_3, wxSizerFlags().Border(wxALL));
 
     m_listview = new wxListView(page_4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_SINGLE_SEL|wxLC_REPORT);
     {
@@ -166,15 +169,18 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
 
         info.SetId(0);
         auto index = m_listview->InsertItem(info);
-        m_listview->SetItem(index, 0, "foo");
-        m_listview->SetItem(index, 1, "bar");
-
-        info.SetId(1);
-        index = m_listview->InsertItem(info);
         m_listview->SetItem(index, 0, "meaning");
         m_listview->SetItem(index, 1, "42");
     }
-    box_sizer_5->Add(m_listview, wxSizerFlags().Border(wxALL));
+    m_listview->SetToolTip("Separate content columns with a semi-colon (;)");
+    box_sizer_12->Add(m_listview, wxSizerFlags().Border(wxALL));
+
+    auto box_sizer_13 = new wxBoxSizer(wxHORIZONTAL);
+    flex_grid_sizer->Add(box_sizer_13, wxSizerFlags().Border(wxALL));
+
+    m_edit_listbox = new wxEditableListBox(page_4, wxID_ANY, "My Editable ListBox", wxDefaultPosition, wxDefaultSize,
+        wxEL_ALLOW_NEW|wxEL_ALLOW_EDIT|wxEL_ALLOW_DELETE);
+    box_sizer_13->Add(m_edit_listbox, wxSizerFlags().Border(wxALL));
 
     page_4->SetSizerAndFit(box_sizer_5);
 

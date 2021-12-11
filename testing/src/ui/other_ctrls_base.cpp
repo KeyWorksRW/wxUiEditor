@@ -102,7 +102,7 @@ bool OtherCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
 
     m_richText = new wxRichTextCtrl(m_panel4, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxRE_MULTILINE|wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS);
     m_richText->SetInitialSize(
-        wxSize(200 > GetBestSize().x ? 200 : -1, 100> GetBestSize().y ? 100 : -1));
+        wxSize(200 > GetBestSize().x ? 200 : -1, 100 > GetBestSize().y ? 100 : -1));
     parent_sizer5->Add(m_richText, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_panel4->SetSizerAndFit(parent_sizer5);

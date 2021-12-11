@@ -219,7 +219,7 @@
                 var_name="m_staticText3" />
               <node
                 class="wxComboBox"
-                choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                 selection_int="2"
                 selection_string="item #2"
                 tooltip="Item #0 should be selected by default"
@@ -231,7 +231,7 @@
                 var_name="m_staticText4" />
               <node
                 class="wxComboBox"
-                choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                 selection_int="2"
                 selection_string="item #2"
                 style="wxCB_SORT"
@@ -251,7 +251,7 @@
                 var_name="m_staticText5" />
               <node
                 class="wxChoice"
-                choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                 selection_int="2"
                 tooltip="Item #0 should be selected by default"
                 wxEVT_CHOICE="[this](wxCommandEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_CHOICE event&quot;);@@Fit();@@}" />
@@ -261,7 +261,7 @@
                 var_name="m_staticText6" />
               <node
                 class="wxChoice"
-                choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                 selection_int="2"
                 style="wxCB_SORT"
                 var_name="m_choice2"
@@ -279,7 +279,7 @@
                 var_name="m_staticText7" />
               <node
                 class="wxListBox"
-                choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                 wxEVT_LISTBOX="OnListBox" />
               <node
                 class="wxStaticText"
@@ -287,7 +287,7 @@
                 var_name="m_staticText8" />
               <node
                 class="wxListBox"
-                choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                 style="wxLB_SORT"
                 var_name="m_listBox2"
                 wxEVT_LISTBOX="OnListBox" />
@@ -303,7 +303,7 @@
                 var_name="m_staticText9" />
               <node
                 class="wxCheckListBox"
-                choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                 wxEVT_CHECKLISTBOX="OnListChecked" />
               <node
                 class="wxStaticText"
@@ -311,7 +311,7 @@
                 var_name="m_staticText10" />
               <node
                 class="wxCheckListBox"
-                choices="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
+                contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #0&quot;"
                 style="wxLB_SORT"
                 var_name="m_checkList2" />
             </node>
@@ -328,7 +328,7 @@
             wrap="200" />
           <node
             class="wxRadioBox"
-            choices="&quot;Button zero &quot; &quot;Button one &quot; &quot;Button two &quot;"
+            contents="&quot;Button zero &quot; &quot;Button one &quot; &quot;Button two &quot;"
             label="Radio Box"
             selection="1"
             style="wxRA_SPECIFY_ROWS"
@@ -361,7 +361,7 @@
             class="spacer" />
           <node
             class="wxEditableListBox"
-            strings="&quot;item #1&quot; &quot;item #2&quot; &quot;item #3&quot;"
+            contents="&quot;item #1&quot; &quot;item #2&quot; &quot;item #3&quot;"
             wxEVT_LIST_BEGIN_DRAG="[this](wxListEvent&amp;)@@{@@m_infoBar->ShowMessage(&quot;wxEVT_LIST_BEGIN_DRAG event&quot;);@@Fit();@@}" />
         </node>
         <node
@@ -683,7 +683,7 @@
         var_name="Japanese" />
       <node
         class="wxComboBox"
-        choices="&quot;English&quot; &quot;French&quot; &quot;Japanese&quot;"
+        contents="&quot;English&quot; &quot;French&quot; &quot;Japanese&quot;"
         selection_string="English" />
     </node>
     <node
@@ -1450,40 +1450,54 @@
               var_name="box_sizer_5"
               flags="wxEXPAND">
               <node
-                class="wxBoxSizer"
-                var_name="box_sizer_10">
+                class="wxFlexGridSizer">
                 <node
-                  class="wxStaticText"
-                  label="wxRearrangeCtrl"
-                  var_name="m_staticText_2"
-                  flags="wxEXPAND" />
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer_10">
+                  <node
+                    class="wxStaticText"
+                    label="wxRearrangeCtrl"
+                    var_name="m_staticText_2"
+                    flags="wxEXPAND" />
+                  <node
+                    class="wxRearrangeCtrl" />
+                </node>
                 <node
-                  class="wxRearrangeCtrl" />
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer_11">
+                  <node
+                    class="wxStaticText"
+                    class_access="none"
+                    label="wxCheckListBox"
+                    var_name="staticText_3"
+                    flags="wxEXPAND" />
+                  <node
+                    class="wxCheckListBox" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  orientation="wxVERTICAL"
+                  var_name="box_sizer_12">
+                  <node
+                    class="wxStaticText"
+                    label="wxListView"
+                    var_name="m_staticText_3" />
+                  <node
+                    class="wxListView"
+                    column_labels="&quot;name&quot; &quot;value&quot;"
+                    contents="&quot;meaning ; 42 &quot;"
+                    style="wxLC_SINGLE_SEL"
+                    tooltip="Separate content columns with a semi-colon (;)" />
+                </node>
+                <node
+                  class="wxBoxSizer"
+                  var_name="box_sizer_13">
+                  <node
+                    class="wxEditableListBox" />
+                </node>
               </node>
-              <node
-                class="wxBoxSizer"
-                var_name="box_sizer_11">
-                <node
-                  class="wxStaticText"
-                  class_access="none"
-                  label="wxCheckListBox"
-                  var_name="staticText_3"
-                  flags="wxEXPAND" />
-                <node
-                  class="wxCheckListBox" />
-              </node>
-              <node
-                class="wxBoxSizer"
-                var_name="box_sizer_12" />
-              <node
-                class="wxStaticText"
-                label="wxListView"
-                var_name="m_staticText_3" />
-              <node
-                class="wxListView"
-                column_labels="&quot;name&quot; &quot;value&quot;"
-                strings="&quot;foo;bar&quot; &quot;meaning ; 42 &quot;"
-                style="wxLC_SINGLE_SEL" />
             </node>
           </node>
           <node

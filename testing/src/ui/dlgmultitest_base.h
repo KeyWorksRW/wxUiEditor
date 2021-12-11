@@ -13,10 +13,12 @@
 #include <wx/colour.h>
 #include <wx/commandlinkbutton.h>
 #include <wx/dialog.h>
+#include <wx/editlbox.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/icon.h>
 #include <wx/image.h>
+#include <wx/listbase.h>
 #include <wx/listctrl.h>
 #include <wx/notebook.h>
 #include <wx/rearrangectrl.h>
@@ -53,6 +55,7 @@ protected:
     wxButton* m_btn_bitmaps;
     wxCheckListBox* m_checkList;
     wxCommandLinkButton* m_btn_5;
+    wxEditableListBox* m_edit_listbox;
     wxListView* m_listview;
     wxNotebook* m_notebook;
     wxRearrangeCtrl* m_rearrange;

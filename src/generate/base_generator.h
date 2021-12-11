@@ -75,7 +75,7 @@ public:
     };
     virtual OptionalIncludes GetEventIncludes(Node*) { return {}; }
 
-    // Return true if the widget was changed which will resize and repaint the Mockup window
+    // Return false if the entire Mockup contents should be recreated due to the property change
     virtual bool OnPropertyChange(wxObject*, Node*, NodeProperty*) { return false; }
 
     // Called while processing an wxEVT_PG_CHANGING event.

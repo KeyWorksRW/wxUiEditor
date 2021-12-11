@@ -62,4 +62,5 @@ private:
     bool m_IsMagnifyWindow { false };
     bool m_ShowHiddenControls { false };
     bool m_isIgnoreSelection { false };
+    bool m_isPropertyChanging { false };
 };

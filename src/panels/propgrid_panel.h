@@ -36,6 +36,15 @@ public:
     // Returns true if a validation failure message has already been displayed to the user
     bool WasFailureHandled() { return m_failure_handled; }
 
+    // Prevents creation of node's properties until UnLock() is called.
+    void Lock() { m_locked = true; }
+
+    // Allows creation of node properties
+    void UnLock() { m_locked = false; }
+
+    // Creates properties for currently selected node.
+    void Create();
+
 protected:
     wxString GetCategoryDisplayName(const wxString& original);
 
@@ -56,7 +65,6 @@ protected:
 
     wxPGProperty* GetProperty(NodeProperty* prop);
 
-    void Create();
 
     void ReselectItem();
 
@@ -106,4 +114,6 @@ private:
 
     // Set to true if a VerifyChangeFile() function already disaplayed a message to the user.
     bool m_failure_handled { false };
+
+    bool m_locked { false };
 };

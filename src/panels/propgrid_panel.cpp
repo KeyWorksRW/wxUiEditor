@@ -126,8 +126,10 @@ void PropGridPanel::SaveDescBoxHeight()
 
 void PropGridPanel::Create()
 {
-    auto node = wxGetFrame().GetSelectedNode();
-    if (node)
+    if (m_locked)
+        return;
+
+    if (auto node = wxGetFrame().GetSelectedNode(); node)
     {
         AutoFreeze freeze(this);
 
@@ -154,8 +156,7 @@ void PropGridPanel::Create()
         m_property_map.clear();
         m_event_map.clear();
 
-        auto declaration = node->GetNodeDeclaration();
-        if (declaration)
+        if (auto declaration = node->GetNodeDeclaration(); declaration)
         {
             // These sets are used to prevent trying to add a duplicate property or event to the property grid. In Debug
             // builds, attempting to do so will generate an assert message telling you the name of the duplicate and the node

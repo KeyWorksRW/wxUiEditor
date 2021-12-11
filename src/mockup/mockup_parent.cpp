@@ -225,6 +225,9 @@ void MockupParent::CreateContent()
 
 void MockupParent::OnNodeSelected(CustomEvent& event)
 {
+    if (wxGetFrame().GetSelectedForm() != m_form)
+        m_isIgnoreSelection = false;
+
     if (m_isIgnoreSelection)
     {
         m_isIgnoreSelection = false;

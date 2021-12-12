@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(wxUiEditor
     LANGUAGES CXX
-    VERSION 0.5.0
+    VERSION 0.9.0
     DESCRIPTION "wxWidgets UI designer"
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 
@@ -117,18 +117,35 @@ target_include_directories(check_build PRIVATE
 set(CPACK_PACKAGE_VENDOR "KeyWorks Software")
 set(CPACK_VERBATIM_VARIABLES YES)
 set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/EULA.TXT)
-set(CPACK_PACKAGE_INSTALL_DIRECTORY wxUiEditor)
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "wxUiEditor")
+set(CPACK_PACKAGE_EXECUTABLES "wxUiEditor" "wxUiEditor")
 
-set(CPACK_WIX_UPGRADE_GUID 67974CB4-5812-40A7-8031-8FA861ED303E)
-set(CPACK_WIX_PRODUCT_ICON ${CMAKE_CURRENT_LIST_DIR}/src/wxUiEditor.ico)
+set(CPACK_NSIS_MUI_ICON ${CMAKE_CURRENT_LIST_DIR}/src/wxUiEditor.ico)
+set(CPACK_NSIS_MUI_UNIICO ${CMAKE_CURRENT_LIST_DIR}/src/wxUiEditor.ico)
+set(CPACK_NSIS_INSTALLED_ICON_NAME bin/wxUiEditor.exe)
+set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL YES)
+set(CPACK_NSIS_MUI_FINISHPAGE_RUN wxUiEditor.exe)
+set(CPACK_NSIS_BRANDING_TEXT "KeyWorks Software")
+set(CPACK_NSIS_BRANDING_TEXT_TRIM_POSITION CENTER)
+set(CPACK_NSIS_MUI_HEADERIMAGE ${CMAKE_CURRENT_LIST_DIR}/src/art_src\\logo64.png)
+set(CPACK_NSIS_MODIFY_PATH YES)
+set(CPACK_CREATE_DESKTOP_LINKS wxUiEditor)
+
+# Register .wxui file extension with wxUiEditor
+
+configure_file ("${CMAKE_CURRENT_LIST_DIR}/nsis_options.cmake.in"
+                "${PROJECT_BINARY_DIR}/nsis_options.cmake"
+                @ONLY)
+set (CPACK_PROJECT_CONFIG_FILE
+     "${PROJECT_BINARY_DIR}/nsis_options.cmake")
 
 if (WIN32)
-    set(CPACK_GENERATOR ZIP WIX)
+    set(CPACK_GENERATOR ZIP NSIS)
 else()
     set(CPACK_GENERATOR TGZ)
 endif()
 
-include(GNUInstallDirs)
+# include(GNUInstallDirs)
 include(CPack)
 
 install(TARGETS wxUiEditor
@@ -136,5 +153,5 @@ install(TARGETS wxUiEditor
 )
 
 set_property(INSTALL "bin/$<TARGET_FILE_NAME:wxUiEditor>"
-  PROPERTY CPACK_START_MENU_SHORTCUTS "wxUiEditor"
+   PROPERTY CPACK_START_MENU_SHORTCUTS "wxUiEditor"
 )

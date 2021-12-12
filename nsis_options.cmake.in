@@ -1,0 +1,16 @@
+
+set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+  WriteRegStr HKCR '.wxui' '' 'wxUiEditor'
+  WriteRegStr HKCR 'wxUiEditor' '' 'wxUiEditor Project File'
+  WriteRegStr HKCR 'wxUiEditor\\shell' '' 'open'
+  WriteRegStr HKCR 'wxUiEditor\\DefaultIcon' '' '$INSTDIR\\bin\\wxUiEditor.exe,0'
+  WriteRegStr HKCR 'wxUiEditor\\shell\\open\\command' '' '$INSTDIR\\bin\\wxUiEditor.exe \"%1\"'
+  WriteRegStr HKCR 'wxUiEditor\\shell\\edit' '' 'Edit wxUiEditor Project'
+  WriteRegStr HKCR 'wxUiEditor\\shell\\edit\\command' '' '$INSTDIR\\bin\\wxUiEditor.exe \"%1\"'
+  System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+")
+
+set (CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+  DeleteRegKey HKCR '.wxui'
+  DeleteRegKey HKCR 'wxUiEditor'
+")

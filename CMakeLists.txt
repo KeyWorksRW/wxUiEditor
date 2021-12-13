@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(wxUiEditor
     LANGUAGES CXX
-    VERSION 0.9.0
+    VERSION 0.9.1
     DESCRIPTION "wxWidgets UI designer"
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 
@@ -127,7 +127,6 @@ set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL YES)
 set(CPACK_NSIS_MUI_FINISHPAGE_RUN wxUiEditor.exe)
 set(CPACK_NSIS_BRANDING_TEXT "KeyWorks Software")
 set(CPACK_NSIS_BRANDING_TEXT_TRIM_POSITION CENTER)
-set(CPACK_NSIS_MUI_HEADERIMAGE ${CMAKE_CURRENT_LIST_DIR}/src/art_src\\logo64.png)
 set(CPACK_NSIS_MODIFY_PATH YES)
 set(CPACK_CREATE_DESKTOP_LINKS wxUiEditor)
 

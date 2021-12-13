@@ -844,3 +844,8 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std:
     }
     return true;
 }
+
+std::optional<ttlib::cstr> CustomControl::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}

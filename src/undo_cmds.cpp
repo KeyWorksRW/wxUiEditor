@@ -215,6 +215,20 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
     ASSERT(m_node);
     if (m_node)
     {
+        if (m_new_gen_sizer == gen_wxFlexGridSizer &&
+            (m_old_node->isGen(gen_wxBoxSizer) || m_old_node->isGen(gen_VerticalBoxSizer)))
+        {
+            if (m_old_node->prop_as_string(prop_orientation) == "wxHORIZONTAL")
+            {
+                m_node->prop_set_value(prop_cols, static_cast<int>(m_old_node->GetChildCount()));
+            }
+            else
+            {
+                m_node->prop_set_value(prop_cols, 0);
+                m_node->prop_set_value(prop_rows, static_cast<int>(m_old_node->GetChildCount()));
+            }
+        }
+
         for (auto& iter: m_old_node->GetChildNodePtrs())
         {
             m_node->Adopt(g_NodeCreator.MakeCopy(iter.get()));

@@ -30,6 +30,7 @@ std::map<PropType, const char*> GenEnum::map_PropTypes = {
     { type_option, "option" },
     { type_path, "path" },
     { type_string, "string" },
+    { type_string_code_single, "string_code_single" },
     { type_string_edit, "string_edit" },
     { type_string_edit_escapes, "string_edit_escapes" },
     { type_string_edit_single, "string_edit_single" },

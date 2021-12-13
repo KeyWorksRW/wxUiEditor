@@ -36,12 +36,13 @@
 
 // Various customized wxPGProperty classes
 
-#include "../customprops/code_string_prop.h"  // EditCodeDialogAdapter -- Derived wxStringProperty class for code
-#include "../customprops/evt_string_prop.h"   // EventStringProperty -- dialog for editing event handlers
-#include "../customprops/pg_animation.h"      // PropertyGrid_Animation -- Custom property grid class for animations
-#include "../customprops/pg_image.h"          // PropertyGrid_Image -- Custom property grid class for images
-#include "../customprops/pg_point.h"          // CustomPointProperty -- custom wxPGProperty for handling wxPoint
-#include "../customprops/txt_string_prop.h"   // EditStringProperty -- dialog for editing single-line strings
+#include "../customprops/code_string_prop.h"   // EditCodeDialogAdapter -- Derived wxStringProperty class for code
+#include "../customprops/custom_param_prop.h"  // EditParamProperty -- dialog for editing CustomControl parameter
+#include "../customprops/evt_string_prop.h"    // EventStringProperty -- dialog for editing event handlers
+#include "../customprops/pg_animation.h"       // PropertyGrid_Animation -- Custom property grid class for animations
+#include "../customprops/pg_image.h"           // PropertyGrid_Image -- Custom property grid class for images
+#include "../customprops/pg_point.h"           // CustomPointProperty -- custom wxPGProperty for handling wxPoint
+#include "../customprops/txt_string_prop.h"    // EditStringProperty -- dialog for editing single-line strings
 
 #include "wx_id_list.cpp"  // wxID_ strings
 
@@ -250,6 +251,10 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
 
         case type_uint:
             return new wxUIntProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_int());
+
+        case type_string_code_single:
+            // This includes a button that triggers a small single-line custom text editor dialog
+            return new EditParamProperty(prop->DeclName().wx_str(), prop);
 
         case type_string_escapes:
             // This first doubles the backslash in escaped characters: \n, \t, \r, and \.

@@ -14,6 +14,9 @@
 
 #include "../ui/editcodedialog_base.h"  // auto-generated: ../ui/editcodedialog_base.cpp
 
+// Defined in base_panel.cpp
+extern wxString g_cpp_keywords;
+
 EditCodeProperty::EditCodeProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
 {
@@ -26,18 +29,7 @@ EditCodeDialog::EditCodeDialog(wxWindow* parent, NodeProperty* prop) : EditCodeD
 
     m_stc->SetLexer(wxSTC_LEX_CPP);
 
-    m_stc->SetKeyWords(0, "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto \
-                              bitand bitor bool break case catch char char8_t char16_t char32_t \
-                              class compl concept const consteval constexpr constinit const_cast \
-                              continue co_await co_return co_yield \
-	                          decltype default delete do double dynamic_cast else enum explicit \
-	                          export extern false float for friend goto if inline int long \
-	                          mutable namespace new noexcept not not_eq nullptr operator private or or_eq \
-                              private protected public reflexpr register reinterpret_cast requires \
-	                          return short signed sizeof static static_assert static_cast \
-	                          struct switch synchronized template this thread_local throw true try typedef typeid \
-	                          typename union unsigned using virtual void volatile wchar_t \
-	                          while xor xor_eq");
+    m_stc->SetKeyWords(0, g_cpp_keywords);
 
     m_stc->StyleSetBold(wxSTC_C_WORD, true);
     m_stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);

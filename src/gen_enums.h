@@ -29,6 +29,7 @@ namespace GenEnum
         type_option,
         type_path,
         type_string,
+        type_string_code_single,   // includes single-line custom editor, does not process escapes
         type_string_edit,          // includes a button that triggers a small text editor dialog
         type_string_edit_escapes,  // includes editor dialog and also escapes characters
         type_string_edit_single,   // includes single-line text editor, does not process escapes

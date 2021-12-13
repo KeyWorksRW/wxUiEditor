@@ -63,7 +63,7 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			help="The header file that declares the class." />
 		<property name="namespace" type="string"
 			help="The namespace the class is declared in." />
-		<property name="parameters" type="string"
+		<property name="parameters" type="string_code_single"
 			help="The parameters to use when the class is constructed.">(this)</property>
 		<property name="settings_code" type="string_edit_escapes"
 			help="Additional code to include after the class is constructed." />

@@ -227,6 +227,8 @@
           label=""
           var_name="m_static_hdr_text"
           hidden="true"
+          border_size="15"
+          borders="wxTOP|wxRIGHT|wxLEFT"
           flags="wxEXPAND" />
         <node
           class="wxTextCtrl"

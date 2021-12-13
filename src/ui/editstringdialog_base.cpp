@@ -21,7 +21,7 @@ bool EditStringDialogBase::Create(wxWindow *parent, wxWindowID id, const wxStrin
 
     m_static_hdr_text = new wxStaticText(this, wxID_ANY, wxEmptyString);
     m_static_hdr_text->Hide();
-    parent_sizer->Add(m_static_hdr_text, wxSizerFlags().Expand().Border(wxALL));
+    parent_sizer->Add(m_static_hdr_text, wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxTOP, 15));
 
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
     m_textCtrl->SetValidator(wxTextValidator(wxFILTER_NONE, &m_value));

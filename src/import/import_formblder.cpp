@@ -416,6 +416,10 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 newobject->prop_set_value(prop_parameters, copy);
                 continue;
             }
+            else if (prop_name.is_sameas("settings"))
+            {
+                newobject->prop_set_value(prop_settings_code, xml_prop.text().as_string());
+            }
             else if (prop_name.is_sameas("include"))
             {
                 ttlib::cstr header;

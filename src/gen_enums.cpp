@@ -229,6 +229,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_model_column, "model_column" },
     { prop_moveable, "moveable" },
     { prop_name_space, "name_space" },
+    { prop_namespace, "namespace" },
     { prop_native_col_header, "native_col_header" },
     { prop_native_col_labels, "native_col_labels" },
     { prop_non_flexible_grow_mode, "non_flexible_grow_mode" },

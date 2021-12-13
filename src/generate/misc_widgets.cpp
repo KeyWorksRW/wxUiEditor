@@ -803,8 +803,10 @@ std::optional<ttlib::cstr> CustomControl::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new " << node->prop_as_string(prop_class_name)
-         << node->prop_as_string(prop_parameters) << ';';
+    code << node->get_node_name() << " = new ";
+    if (node->HasValue(prop_namespace))
+        code << node->prop_as_string(prop_namespace) << "::";
+    code << node->prop_as_string(prop_class_name) << node->prop_as_string(prop_parameters) << ';';
 
     return code;
 }
@@ -832,7 +834,18 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 
     if (node->prop_as_string(prop_class_access) != "none" && node->HasValue(prop_class_name))
     {
-        set_hdr.insert(ttlib::cstr() << "class " << node->prop_as_string(prop_class_name) << ';');
+        if (node->HasValue(prop_namespace))
+        {
+            set_hdr.insert(ttlib::cstr("namespace ") << node->prop_as_string(prop_namespace) << "\n{\n\t"
+                                                     << "class " << node->prop_as_string(prop_class_name) << ";\n}");
+        }
+        else
+            set_hdr.insert(ttlib::cstr() << "class " << node->prop_as_string(prop_class_name) << ';');
     }
     return true;
+}
+
+std::optional<ttlib::cstr> CustomControl::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
 }

@@ -231,6 +231,7 @@ namespace GenEnum
         prop_model_column,
         prop_moveable,
         prop_name_space,
+        prop_namespace,
         prop_native_col_header,
         prop_native_col_labels,
         prop_non_flexible_grow_mode,

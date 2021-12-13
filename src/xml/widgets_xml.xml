@@ -50,18 +50,23 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="CustomControl" image="CustomControl" type="widget">
-		<inherits class="wxWindow" />
+		<inherits class="wxWindow">
+			<hide name="derived_class" />
+			<hide name="derived_header" />
+		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_custom</property>
 		<property name="class_name" type="string"
 			help="The name of the custom class.">CustomClass</property>
+		<property name="header" type="file"
+			help="The header file that declares the class." />
+		<property name="namespace" type="string"
+			help="The namespace the class is declared in." />
 		<property name="parameters" type="string"
 			help="The parameters to use when the class is constructed.">(this)</property>
-		<property name="header" type="file"
-			help="The header file that declares the class."></property>
 		<property name="settings_code" type="string_edit_escapes"
-			help="Additional code to include after the class is constructed."></property>
+			help="Additional code to include after the class is constructed." />
 	</gen>
 
 	<gen class="wxRearrangeCtrl" image="wxRearrangeCtrl" type="widget">
@@ -238,8 +243,7 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 				help="Display the value of the gauge in the application taskbar button under Windows 7 and later and the dock icon under OS X. Ignored under the other platforms. Requires wxWidgets 3.1 or higher." />
 		</property>
 	</gen>
-)==="
-R"===(
+	)===" R"===(
 	<gen class="wxScrollBar" image="scrollbar" type="widget">
 		<inherits class="Integer Validator" />
 		<inherits class="wxWindow" />
@@ -371,8 +375,7 @@ R"===(
 		<event name="wxEVT_HTML_LINK_CLICKED" class="wxHtmlLinkEvent"
 			help="" />
 	</gen>
-)==="
-R"===(
+	)===" R"===(
 	<gen class="wxWebView" image="webview" type="widget">
 		<inherits class="wxWindow">
 			<property name="proportion" type="uint">1</property>

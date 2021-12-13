@@ -1053,6 +1053,8 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name.is_sameas("CustomControl"))
     {
+        if (node->HasValue(prop_namespace))
+            code << node->prop_as_string(prop_namespace) << "::";
         code << node->prop_as_string(prop_class_name) << "* " << node->get_node_name() << ';';
     }
 

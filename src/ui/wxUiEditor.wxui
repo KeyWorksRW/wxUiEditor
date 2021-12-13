@@ -223,11 +223,17 @@
         orientation="wxVERTICAL"
         var_name="parent_sizer">
         <node
+          class="wxStaticText"
+          label=""
+          var_name="m_static_hdr_text"
+          hidden="true"
+          flags="wxEXPAND" />
+        <node
           class="wxTextCtrl"
           get_function="GetResults"
           validator_variable="m_value"
           minimum_size="500,-1"
-          border_size="20"
+          border_size="15"
           flags="wxEXPAND" />
         <node
           class="wxStdDialogButtonSizer"
@@ -1839,7 +1845,7 @@
             alignment="wxALIGN_CENTER_VERTICAL" />
           <node
             class="wxComboBox"
-            choices="&quot;Tool&quot; &quot;Button&quot; &quot;Gallery&quot;"
+            contents="&quot;Tool&quot; &quot;Button&quot; &quot;Gallery&quot;"
             selection_string="Tool"
             validator_variable="m_panel_type" />
         </node>

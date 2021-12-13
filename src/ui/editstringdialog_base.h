@@ -8,6 +8,7 @@
 
 #include <wx/dialog.h>
 #include <wx/gdicmn.h>
+#include <wx/stattext.h>
 #include <wx/textctrl.h>
 
 class EditStringDialogBase : public wxDialog
@@ -35,5 +36,6 @@ protected:
 
     // Class member variables
 
+    wxStaticText* m_static_hdr_text;
     wxTextCtrl* m_textCtrl;
 };

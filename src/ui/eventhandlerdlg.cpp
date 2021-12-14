@@ -249,8 +249,6 @@ void EventHandlerDlg::FormatBindText()
     }
 
     m_static_bind_text->SetLabel(code.wx_str());
-
-    Fit();
 }
 
 void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& variables)

@@ -5,6 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/button.h>
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
 
 #include "eventhandlerdlg_base.h"
 
@@ -17,7 +19,7 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
-    parent_sizer->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
+    parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_static_bind_text = new wxStaticText(this, wxID_ANY, "...");
     m_static_bind_text->Wrap(400);
@@ -36,7 +38,7 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
 
     m_radio_use_lambda = new wxRadioButton(this, wxID_ANY, "Use lambda");
     m_lambda_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_use_lambda), wxVERTICAL);
-    box_sizer->Add(m_lambda_box, wxSizerFlags().Expand().Border(wxALL));
+    box_sizer->Add(m_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     m_lambda_box->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
@@ -65,7 +67,7 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
     }
     m_stc->SetInitialSize(ConvertPixelsToDialog(
         wxSize(600 > GetBestSize().x ? 600 : -1, 400 > GetBestSize().y ? 400 : -1)));
-    m_lambda_box->Add(m_stc, wxSizerFlags().DoubleBorder(wxALL));
+    m_lambda_box->Add(m_stc, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
@@ -74,6 +76,8 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
 
     SetSizerAndFit(parent_sizer);
     Centre(wxBOTH);
+
+    wxPersistentRegisterAndRestore(this, "EventHandlerDlgBase");
 
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &EventHandlerDlgBase::OnInit, this);

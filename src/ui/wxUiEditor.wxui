@@ -538,6 +538,8 @@
       base_file="eventhandlerdlg_base"
       class_name="EventHandlerDlgBase"
       derived_class_name="EventHandlerDlg"
+      persist="true"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Event Handler"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -548,7 +550,8 @@
         <node
           class="wxBoxSizer"
           orientation="wxVERTICAL"
-          flags="wxEXPAND">
+          flags="wxEXPAND"
+          proportion="1">
           <node
             class="wxStaticText"
             label="..."
@@ -584,6 +587,7 @@
             radiobtn_var_name="m_radio_use_lambda"
             var_name="m_lambda_box"
             flags="wxEXPAND"
+            proportion="1"
             wxEVT_RADIOBUTTON="OnUseLambda">
             <node
               class="wxBoxSizer"
@@ -612,6 +616,8 @@
               minimum_size="-1,-1"
               smart_size="600,400d"
               border_size="10"
+              flags="wxEXPAND"
+              proportion="1"
               wxEVT_STC_CHANGE="OnChange" />
           </node>
         </node>

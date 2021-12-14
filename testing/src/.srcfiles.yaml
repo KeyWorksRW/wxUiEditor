@@ -2,7 +2,8 @@
 
 Options:
     Project:      wxUiTesting  # project name
-    Exe_type:     window       # [window | console | lib | dll]
+    # Exe_type:     window       # [window | console | lib | dll]
+    Exe_type:     lib       # [window | console | lib | dll]
     Pch:          pch.h        # name of precompiled header file, or "none" if not using precompiledheaders
     Optimize:     space        # [space | speed] optimization to use in release builds
     Warn:         4            # [1-4] warning level
@@ -17,40 +18,28 @@ Options:
     Clang_cmn:    -std:c++17
 
     CFlags_rel:  /DNDEBUG       # static wxWidgets libraries in release build
-    CFlags_dbg:  -DWXUSINGDLL   # dll wxWidgets libraries in debug build
 
-    IncDirs:       ./;ui
-    TargetDir:   ../bin              # target directory
-    TargetDir32: ../build/Debug       # 32-bit target directory
+    IncDirs:       ./;ui;../../wxSnapshot/include;../../wxSnapshot/win
+    TargetDir:   ../build/Debug              # target directory
     Natvis:      ../../src/wxui.natvis  # Use Natvis from wxUiEditor
 
 Files:
     wxUiTesting.rc
     mainapp.cpp
 
+    custom_ctrls/split_button.cpp  # Split Button Custom widget (button + menu)
+
     ui/mainframe.cpp       # Main window
     ui/mainframe_base.cpp  # wxUiEditor generated file
 
     ui/commonctrls.cpp
-    ui/commonctrls_base.cpp
     ui/dlgmultitest.cpp
-    ui/dlgmultitest_base.cpp
     ui/other_ctrls.cpp
-    ui/other_ctrls_base.cpp
     ui/popupwin.cpp
-    ui/popupwin_base.cpp
     ui/ribbondlg.cpp
-    ui/ribbondlg_base.cpp
-    ui/wizard_base.cpp
     ui/wizard.cpp
 
-    # The following only have a base class, they don't use a derived class
-
-    ui/choicebook_base.cpp
-    ui/listbook_base.cpp
-    ui/notebook_base.cpp
-    ui/toolbook_base.cpp
-    ui/treebook_base.cpp
+    ui/wxui_code.cmake
 
 XPM:
     art/english.png: art/english.xpm

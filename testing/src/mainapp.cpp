@@ -6,9 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #ifdef _MSC_VER
-    #define wxMSVC_VERSION_ABI_COMPAT
-    #include <msvc/wx/setup.h>  // This will add #pragmas for the wxWidgets libraries
-
     #if defined(_WIN32)
 
         #pragma comment(lib, "kernel32.lib")

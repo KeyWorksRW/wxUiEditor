@@ -617,6 +617,41 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
     }
 }
 
+// clang-format off
+inline constexpr const char* lst_key_events[] = {
+
+    "wxEVT_CHAR",
+    "wxEVT_CHAR_HOOK",
+    "wxEVT_KEY_DOWN",
+    "wxEVT_KEY_UP",
+
+};
+
+inline constexpr const char* lst_mouse_events[] = {
+
+    "wxEVT_ENTER_WINDOW",
+    "wxEVT_LEAVE_WINDOW",
+    "wxEVT_LEFT_DCLICK",
+    "wxEVT_LEFT_DOWN",
+    "wxEVT_LEFT_UP",
+    "wxEVT_MIDDLE_DCLICK",
+    "wxEVT_MIDDLE_DOWN",
+    "wxEVT_MIDDLE_UP",
+    "wxEVT_RIGHT_DCLICK",
+    "wxEVT_RIGHT_DOWN",
+    "wxEVT_RIGHT_UP",
+    "wxEVT_AUX1_DCLICK",
+    "wxEVT_AUX1_DOWN",
+    "wxEVT_AUX1_UP",
+    "wxEVT_AUX2_DCLICK",
+    "wxEVT_AUX2_DOWN",
+    "wxEVT_AUX2_UP",
+    "wxEVT_MOTION",
+    "wxEVT_MOUSEWHEEL",
+
+};
+// clang-format on
+
 void PropGridPanel::AddEvents(ttlib::cview name, Node* node, NodeCategory& category, EventSet& event_set)
 {
     auto& eventList = category.GetEvents();
@@ -703,9 +738,36 @@ void PropGridPanel::AddEvents(ttlib::cview name, Node* node, NodeCategory& categ
         {
             // Keyboard and Mouse events aren't used a lot, but are quite lengthy, so we collapse them by default.
 
-            if (nextCat.getName() == "Keyboard Events" || nextCat.getName() == "Mouse Events")
+            if (nextCat.getName() == "Keyboard Events")
             {
-                m_event_grid->Collapse(catId);
+                bool has_event { false };
+                for (auto& iter: lst_key_events)
+                {
+                    if (auto event = node->GetEvent(iter); event && event->get_value().size())
+                    {
+                        has_event = true;
+                        break;
+                    }
+                }
+
+                if (!has_event)
+                    m_event_grid->Collapse(catId);
+            }
+
+            else if (nextCat.getName() == "Mouse Events")
+            {
+                bool has_event { false };
+                for (auto& iter: lst_mouse_events)
+                {
+                    if (auto event = node->GetEvent(iter); event && event->get_value().size())
+                    {
+                        has_event = true;
+                        break;
+                    }
+                }
+
+                if (!has_event)
+                    m_event_grid->Collapse(catId);
             }
         }
     }

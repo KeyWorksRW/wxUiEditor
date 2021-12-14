@@ -192,6 +192,8 @@
       base_file="editcodedialog_base"
       class_name="EditCodeDialogBase"
       derived_class_name="EditCodeDialog"
+      persist="true"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -205,6 +207,8 @@
           minimum_size="-1,-1"
           smart_size="600,400d"
           border_size="10"
+          flags="wxEXPAND"
+          proportion="1"
           wxEVT_STC_CHANGE="OnChange" />
         <node
           class="wxStdDialogButtonSizer"

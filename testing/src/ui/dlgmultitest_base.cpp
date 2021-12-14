@@ -79,7 +79,7 @@ bool DlgMultiTestBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     grid_bag_sizer->Add(m_toggleBtn, wxGBPosition(0, 4), wxGBSpan(1, 1), wxALL, 5);
 
     auto disable_bitmaps = new wxCheckBox(page_2, wxID_ANY, "Disable");
-    grid_bag_sizer->Add(disable_bitmaps, wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
+    grid_bag_sizer->Add(disable_bitmaps, wxGBPosition(2, 2), wxGBSpan(1, 1), wxALL, 5);
 
     auto box_sizer_7 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_3->Add(box_sizer_7, wxSizerFlags().Border(wxALL));

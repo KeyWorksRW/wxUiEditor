@@ -811,12 +811,14 @@ std::optional<ttlib::cstr> CustomControl::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> CustomControl::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> CustomControl::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
     if (node->HasValue(prop_settings_code))
     {
+        auto_indent = indent::auto_keep_whitespace;
         code << node->prop_as_string(prop_settings_code);
+        code.Replace("@@", "\n", tt::REPLACE::all);
         return code;
     }
     else

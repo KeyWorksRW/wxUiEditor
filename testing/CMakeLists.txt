@@ -36,13 +36,14 @@ if (NOT isMultiConfig)
 endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
-add_compile_definitions($<$<CONFIG:Debug>:WXUSINGDLL>)
 
 include(src/ui/wxui_code.cmake)  # This will set ${wxue_generated_code} with list of generated files
 
 add_executable(wxUiTesting WIN32
     src/wxUiTesting.rc
     src/mainapp.cpp
+
+    src/custom_ctrls/split_button.cpp  # Split Button Custom widget (button + menu)
 
     src/ui/mainframe.cpp       # Main window
     src/ui/mainframe_base.cpp  # wxUiEditor generated file
@@ -73,6 +74,14 @@ endif()
 target_precompile_headers(wxUiTesting PRIVATE "src/pch.h")
 
 target_include_directories(wxUiTesting PRIVATE
+    ../../wxSnapshot/include
     src/
     src/ui
+)
+
+target_link_libraries(wxUiTesting PRIVATE wxCLib wxWidgets)
+
+target_link_directories(wxUiTesting PRIVATE
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/../../wxSnapshot/build/Debug>
+    $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/../../wxSnapshot/build/Release>
 )

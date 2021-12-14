@@ -358,6 +358,18 @@
               inactive_bitmap="XPM; ..\art\empty.xpm; [-1,-1]" />
           </node>
           <node
+            class="CustomControl"
+            class_name="SplitButton"
+            header="../custom_ctrls/split_button.h"
+            namespace="wxue_ctrl"
+            parameters="(this, wxID_ANY, &quot;Play&quot;)"
+            settings_code="{@@    const int ID_PLAY { 100 };@@    const int ID_STOP { 101 };@@    m_split_button->GetMenu().Append(ID_PLAY, &quot;Play&quot;);@@    m_split_button->GetMenu().Append(ID_STOP, &quot;Stop&quot;);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        }, ID_PLAY);@@@@    m_split_button->Bind(wxEVT_MENU,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Stop();@@            m_checkPlayAnimation->SetValue(false);@@        }, ID_STOP);@@@@    m_split_button->Bind(wxEVT_BUTTON,@@        [this](wxCommandEvent&amp;)@@        {@@            m_animation_ctrl->Play();@@            m_checkPlayAnimation->SetValue(true);@@        } );@@}"
+            var_comment="control with button + menu"
+            var_name="m_split_button"
+            border_size="10"
+            column="3"
+            row="4" />
+          <node
             class="spacer" />
           <node
             class="wxEditableListBox"
@@ -1379,7 +1391,7 @@
                   label="Disable"
                   var_name="disable_bitmaps"
                   column="2"
-                  row="1"
+                  row="2"
                   wxEVT_CHECKBOX="[this](wxCommandEvent&amp; event)@@{@@m_btn_bitmaps->Enable(!event.IsChecked());@@}" />
               </node>
               <node

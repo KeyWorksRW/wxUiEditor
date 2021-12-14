@@ -947,7 +947,8 @@
             class="wxTextCtrl"
             var_name="m_text_name"
             proportion="1"
-            wxEVT_TEXT="OnNameText" />
+            wxEVT_TEXT="OnNameText"
+            wxEVT_KEY_DOWN="OnKeyDown" />
         </node>
         <node
           class="wxBoxSizer"

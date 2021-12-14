@@ -17,6 +17,7 @@ public:
 protected:
     // Handlers for InsertWidgetBase events
     void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
+    void OnKeyDown(wxKeyEvent& event) override;
     void OnNameText(wxCommandEvent& WXUNUSED(event)) override;
     void OnListBoxDblClick(wxCommandEvent& WXUNUSED(event)) override;
     void OnOK(wxCommandEvent& WXUNUSED(event)) override;

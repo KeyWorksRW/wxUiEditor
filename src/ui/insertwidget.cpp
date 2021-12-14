@@ -103,3 +103,24 @@ void InsertWidget::OnOK(wxCommandEvent& event)
     m_widget << m_listbox->GetStringSelection().wx_str();
     event.Skip();
 }
+
+void InsertWidget::OnKeyDown(wxKeyEvent& event)
+{
+    auto keycode = event.GetKeyCode();
+    if (keycode == WXK_DOWN || keycode == WXK_NUMPAD_DOWN)
+    {
+        auto sel = m_listbox->GetSelection() + 1;
+        if (sel < static_cast<int>(m_listbox->GetCount()))
+            m_listbox->SetSelection(sel);
+    }
+    else if (keycode == WXK_UP || keycode == WXK_NUMPAD_UP)
+    {
+        auto sel = m_listbox->GetSelection() - 1;
+        if (sel >= 0)
+            m_listbox->SetSelection(sel);
+    }
+    else
+    {
+        event.Skip();
+    }
+}

@@ -41,6 +41,7 @@ bool InsertWidgetBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &InsertWidgetBase::OnInit, this);
     m_text_name->Bind(wxEVT_TEXT, &InsertWidgetBase::OnNameText, this);
+    m_text_name->Bind(wxEVT_KEY_DOWN, &InsertWidgetBase::OnKeyDown, this);
     m_listbox->Bind(wxEVT_LISTBOX,
         [this](wxCommandEvent&)
         {

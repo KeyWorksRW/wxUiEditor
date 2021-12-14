@@ -16,6 +16,8 @@
 #include <wx/valtext.h>
 #include <wx/window.h>
 
+#include "../custom_ctrls/split_button.h"
+
 #include "commonctrls_base.h"
 
 #include "../art/clr_hourglass_gif.hxx"
@@ -225,6 +227,36 @@ bool CommonCtrlsBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     m_animation_ctrl = new wxAnimationCtrl(static_box_2->GetStaticBox(), wxID_ANY, GetAnimFromHdr(clr_hourglass_gif, sizeof(clr_hourglass_gif)));
     m_animation_ctrl->SetInactiveBitmap(wxImage(empty_xpm));
     static_box_2->Add(m_animation_ctrl, wxSizerFlags().Border(wxALL));
+
+    m_split_button = new wxue_ctrl::SplitButton(this, wxID_ANY, "Play");
+    {
+        const int ID_PLAY { 100 };
+        const int ID_STOP { 101 };
+        m_split_button->GetMenu().Append(ID_PLAY, "Play");
+        m_split_button->GetMenu().Append(ID_STOP, "Stop");
+
+        m_split_button->Bind(wxEVT_MENU,
+            [this](wxCommandEvent&)
+            {
+                m_animation_ctrl->Play();
+                m_checkPlayAnimation->SetValue(true);
+            }, ID_PLAY);
+
+        m_split_button->Bind(wxEVT_MENU,
+            [this](wxCommandEvent&)
+            {
+                m_animation_ctrl->Stop();
+                m_checkPlayAnimation->SetValue(false);
+            }, ID_STOP);
+
+        m_split_button->Bind(wxEVT_BUTTON,
+            [this](wxCommandEvent&)
+            {
+                m_animation_ctrl->Play();
+                m_checkPlayAnimation->SetValue(true);
+            } );
+    }
+    flex_grid_sizer->Add(m_split_button, wxSizerFlags().DoubleBorder(wxALL));
 
     flex_grid_sizer->AddSpacer(0);
 

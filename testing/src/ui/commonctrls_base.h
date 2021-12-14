@@ -31,6 +31,11 @@
 #include <wx/textctrl.h>
 #include <wx/tglbtn.h>
 
+namespace wxue_ctrl
+{
+class SplitButton;
+}
+
 class CommonCtrlsBase : public wxDialog
 {
 public:
@@ -92,6 +97,7 @@ protected:
     wxTextCtrl* m_textCtrl2;
     wxTextCtrl* m_textCtrl;
     wxToggleButton* m_toggleBtn;
+    wxue_ctrl::SplitButton* m_split_button;  // control with button + menu
 
     // Virtual event handlers -- override them in your derived class
 

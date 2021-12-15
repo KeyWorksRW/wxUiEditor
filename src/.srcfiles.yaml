@@ -59,6 +59,8 @@ Files:
     customprops/pg_animation.cpp   # Custom property grid class for animations
     customprops/pg_point.cpp       # Custom wxPGProperty for wxPoint
 
+    custom_ctrls/colour_rect_ctrl.cpp  # Control that displays a solid color
+
     generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
     generate/gen_cmake.cpp         # Auto-generate a .cmake file
     generate/gen_codefiles.cpp     # Generate code files

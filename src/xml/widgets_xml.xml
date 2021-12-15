@@ -2,15 +2,24 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
 	<gen class="wxActivityIndicator" image="wxActivityIndicator" type="widget">
-		<inherits class="wxWindow" />
+		<inherits class="wxWindow">
+			<hide name="foreground_colour" />
+			<hide name="font" />
+		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_indicator</property>
 	</gen>
 
 	<gen class="wxAnimationCtrl" image="wxAnimation" type="widget">
-		<inherits class="wxWindow" />
-		<inherits class="Window Events" />
+		<inherits class="wxWindow">
+			<hide name="variant" />
+			<hide name="window_style" />
+			<hide name="window_extra_style" />
+			<hide name="disabled" />
+			<hide name="foreground_colour" />
+			<hide name="font" />
+		</inherits>
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_animation_ctrl</property>
 		<property name="style" type="bitlist">
@@ -24,8 +33,13 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<property name="inactive_bitmap" type="image" />
 	</gen>
 
-	<gen class="wxBannerWindow" image="wxBannerWindow" type="widget">
-		<inherits class="wxWindow" />
+	<gen class="wxBannerWindow" image="wxBannerWindow" type="widget" flags="no_focus_events no_key_events">
+		<inherits class="wxWindow">
+			<hide name="window_style" />
+			<hide name="window_extra_style" />
+			<hide name="disabled" />
+			<hide name="background_colour" />
+		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_banner</property>
@@ -110,8 +124,14 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			help="Generated when the listbox is double-clicked." />
 	</gen>
 
-	<gen class="wxStaticBitmap" image="static_bitmap" type="widget">
-		<inherits class="wxWindow" />
+	<gen class="wxStaticBitmap" image="static_bitmap" type="widget" flags="no_focus_events no_key_events">
+		<inherits class="wxWindow">
+			<hide name="variant" />
+			<hide name="window_extra_style" />
+			<hide name="disabled" />
+			<hide name="foreground_colour" />
+			<hide name="font" />
+		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">bmp</property>
@@ -130,9 +150,18 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="wxStaticLine" image="static_line" type="widget"
-		flags="no_win_events">
-		<inherits class="wxWindow" />
-		<inherits class="Window Events" />
+	>
+		<inherits class="wxWindow">
+			<hide name="variant" />
+			<hide name="tooltip" />
+			<hide name="window_style" />
+			<hide name="window_extra_style" />
+			<hide name="disabled" />
+			<hide name="foreground_colour" />
+			<hide name="background_colour" />
+			<hide name="context_help" />
+			<hide name="font" />
+		</inherits>
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">static_line</property>
 		<property name="style" type="option">
@@ -217,9 +246,15 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			help="Generated on Windows only." />
 	</gen>
 
-	<gen class="wxGauge" image="gauge" type="widget">
+	<gen class="wxGauge" image="gauge" type="widget" flags="no_focus_events no_key_events">
 		<inherits class="Integer Validator" />
-		<inherits class="wxWindow" />
+		<inherits class="wxWindow">
+			<hide name="variant" />
+			<hide name="disabled" />
+			<hide name="foreground_colour" />
+			<hide name="background_colour" />
+			<hide name="font" />
+		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_gauge</property>
@@ -287,7 +322,7 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			help="Generated on Windows only." />
 	</gen>
 
-	<gen class="wxHyperlinkCtrl" image="hyperlink_ctrl" type="widget">
+	<gen class="wxHyperlinkCtrl" image="hyperlink_ctrl" type="widget" flags="no_focus_events no_key_events">
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
@@ -403,7 +438,11 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="wxCalendarCtrl" image="calendar" type="widget">
-		<inherits class="wxWindow" />
+		<inherits class="wxWindow">
+			<hide name="variant" />
+			<hide name="foreground_colour" />
+			<hide name="font" />
+		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_calendar</property>
@@ -445,7 +484,11 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="wxGenericDirCtrl" image="genericdir_ctrl" type="widget">
-		<inherits class="wxWindow" />
+		<inherits class="wxWindow">
+			<hide name="variant" />
+			<hide name="foreground_colour" />
+			<hide name="font" />
+		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_genericDirCtrl</property>
@@ -479,7 +522,11 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="wxFileCtrl" image="wxFileCtrl" type="widget">
-		<inherits class="wxWindow" />
+		<inherits class="wxWindow">
+			<hide name="variant" />
+			<hide name="foreground_colour" />
+			<hide name="font" />
+		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_fileCtrl</property>

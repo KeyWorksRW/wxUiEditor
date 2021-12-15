@@ -78,22 +78,27 @@ inline const char* pickers_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="wxColourPickerCtrl" image="colourPickerIcon" type="widget">
-		<inherits class="wxWindow" />
+		<inherits class="wxWindow">
+			<hide name="variant" />
+		</inherits>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_colourPicker</property>
-		<property name="colour" type="wxColour" />
+		<property name="colour" type="wxColour" help="Sets the initial colour." />
 		<property name="style" type="bitlist">
-			<option name="wxCLRP_DEFAULT_STYLE"
-				help="The default style: 0." />
 			<option name="wxCLRP_USE_TEXTCTRL"
 				help="Creates a text control to the left of the picker button which is completely managed by the wxColourPickerCtrl and which can be used by the user to specify a colour. The text control is automatically synchronized with button's value. Use functions defined in wxPickerBase to modify the text control." />
 			<option name="wxCLRP_SHOW_LABEL"
 				help="Shows the colour in HTML form (AABBCC) as colour button label (instead of no label at all)." />
-			wxCLRP_DEFAULT_STYLE
+			<option name="wxCLRP_SHOW_ALPHA"
+				help="Allows selecting opacity in the colour-chooser (effective under wxGTK and wxOSX). " />
 		</property>
 		<event name="wxEVT_COLOURPICKER_CHANGED" class="wxColourPickerEvent"
-			help="Generated when the user changes the colour selected in the control either using the button or using text control (see wxCLRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable)." />
+			help="Generated when the user changes the colour selected in the control either using the button or the text control (see wxCLRP_USE_TEXTCTRL. Note that in this case the event is fired only if the user's input is valid)." />
+		<event name="wxEVT_COLOURPICKER_CURRENT_CHANGED" class="wxColourPickerEvent"
+			help="Generated when the user changes the currently selected colour in the dialog associated with the control. Requires wxWidgets 3.1.3 or later, and currently only works on Windows." />
+		<event name="EVT_COLOURPICKER_DIALOG_CANCELLED" class="wxColourPickerEvent"
+			help="Generated if the user cancles the dialog associated with the control. Requires wxWidgets 3.1.3 or later, and currently only works on Windows." />
 	</gen>
 
 	<gen class="wxDatePickerCtrl" image="datepicker" type="widget">

@@ -642,7 +642,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             category.AddProperty(prop_var_comment);
             prop_info = std::make_shared<PropDeclaration>(prop_var_comment, type_string_edit_single, tt_empty_cstr,
                                                           "Comment to add to the variable name in the generated header file "
-                                                          "if the class access is set to protected of public",
+                                                          "if the class access is set to protected or public",
                                                           "");
             obj_info->GetPropInfoMap()[map_PropNames[prop_var_comment]] = prop_info;
 

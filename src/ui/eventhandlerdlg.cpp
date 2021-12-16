@@ -255,11 +255,7 @@ void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& 
 {
     if (node->HasValue(prop_class_access) && node->prop_as_string(prop_class_access) != "none")
     {
-        if (node->HasValue(prop_checkbox_var_name))
-        {
-            variables.insert(node->prop_as_string(prop_checkbox_var_name));
-        }
-        else if (node->HasValue(prop_var_name))
+        if (node->HasValue(prop_var_name))
         {
             variables.insert(node->prop_as_string(prop_var_name));
         }
@@ -268,6 +264,15 @@ void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& 
     if (node->HasValue(prop_validator_variable))
     {
         variables.insert(node->prop_as_string(prop_validator_variable));
+    }
+
+    if (node->HasValue(prop_checkbox_var_name))
+    {
+        variables.insert(node->prop_as_string(prop_checkbox_var_name));
+    }
+    else if (node->HasValue(prop_radiobtn_var_name))
+    {
+        variables.insert(node->prop_as_string(prop_radiobtn_var_name));
     }
 
     for (size_t i = 0; i < node->GetChildCount(); i++)

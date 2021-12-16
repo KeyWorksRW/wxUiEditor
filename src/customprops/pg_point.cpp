@@ -105,7 +105,7 @@ void CustomPointProperty::InitValues(ttlib::cview value)
     {
         m_point.x = -1;
         m_point.y = -1;
-        m_dialog_units = false;
+        m_dialog_units = true;
     }
     else
     {

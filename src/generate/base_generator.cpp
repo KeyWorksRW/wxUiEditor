@@ -299,10 +299,6 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
     {
         return ttlib::cstr("wx_menu.html");
     }
-    else if (class_name == "propGridItem")
-    {
-        return ttlib::cstr("wx_pg_property.html");
-    }
     else if (class_name == "propGridPage")
     {
         return ttlib::cstr("wx_property_grid_page.html");

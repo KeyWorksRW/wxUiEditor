@@ -511,6 +511,48 @@ std::optional<ttlib::cstr> PropertyGridItemGenerator::GenConstruction(Node* node
     return code;
 }
 
+ttlib::cstr PropertyGridItemGenerator::GetHelpURL(Node* node)
+{
+    ttlib::cstr type = node->prop_as_string(prop_type);
+    type.MakeLower();
+    ttlib::cstr url = "wx_";
+
+    if (type == "category")
+    {
+        url << "property_category.html";
+    }
+
+    else
+    {
+        if (!type.is_sameprefix("string"))
+            type.Replace("string", "_string");
+        if (!type.is_sameprefix("choice"))
+            type.Replace("choice", "_choice");
+        if (!type.is_sameprefix("colour"))
+            type.Replace("colour", "_colour");
+        if (!type.is_sameprefix("enum"))
+            type.Replace("enum", "_enum");
+        if (!type.is_sameprefix("int"))
+            type.Replace("int", "_int");
+        if (!type.is_sameprefix("file"))
+            type.Replace("file", "_file");
+
+        url << type << "_property.html";
+    }
+
+    return url;
+}
+
+ttlib::cstr PropertyGridItemGenerator::GetHelpText(Node* node)
+{
+    ttlib::cstr help_text("wx");
+    if (node->prop_as_string(prop_type) == "Category")
+        help_text << "PropertyCategory";
+    else
+        help_text << node->prop_as_string(prop_type) << "Property";
+    return help_text;
+}
+
 //////////////////////////////////////////  PropertyGridPageGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node)

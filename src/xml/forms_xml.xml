@@ -86,9 +86,9 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 		<property name="font" type="wxFont"
 			help="Sets the font for this window. This should not be use for a parent window if you don't want its font to be inherited by its children" />
 		<property name="foreground_colour" type="wxColour"
-			help="Sets the foreground colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
+			help="Sets the foreground colour of the window." />
 		<property name="background_colour" type="wxColour"
-			help="Sets the background colour of the window. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
+			help="Sets the background colour of the window." />
 		<event name="wxEVT_CONTEXT_MENU" class="wxContextMenuEvent"
 			help="Either provide your own handler function, or add a wxContextMenuEvent to create a popup menu." />
 		<event name="wxEVT_DESTROY" class="wxWindowDestroyEvent"

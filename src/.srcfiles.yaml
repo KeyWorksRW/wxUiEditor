@@ -46,11 +46,12 @@ Files:
     wakatime.cpp          # Updates WakaTime metrics
     xpm.cpp               # All xpm files
 
-    customprops/code_string_prop.cpp  # Derived wxStringProperty class for code
-    customprops/custom_param_prop.cpp # Derived wxStringProperty class for custom control parameters
-    customprops/evt_string_prop.cpp   # Derived wxStringProperty class for event function
-    customprops/img_string_prop.cpp   # Derived wxStringProperty class for handling wxImage files or art
-    customprops/txt_string_prop.cpp   # Derived wxStringProperty class for single-line text
+    customprops/code_string_prop.cpp    # Derived wxStringProperty class for code
+    customprops/custom_param_prop.cpp   # Derived wxStringProperty class for custom control parameters
+    customprops/evt_string_prop.cpp     # Derived wxStringProperty class for event function
+    customprops/img_string_prop.cpp     # Derived wxStringProperty class for handling wxImage files or art
+    customprops/txt_string_prop.cpp     # Derived wxStringProperty class for single-line text
+    customprops/custom_colour_prop.cpp  # Property editor for colour
 
     customprops/art_prop_dlg.cpp   # Art Property Dialog for image property
     customprops/img_props.cpp      # Handles property grid image properties

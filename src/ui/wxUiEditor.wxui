@@ -2986,5 +2986,113 @@
         </node>
       </node>
     </node>
+    <node
+      class="wxDialog"
+      base_file="colourprop_base"
+      class_name="ColourPropBase"
+      derived_class_name="ColourPropDialog"
+      title="Colour Property"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_3"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            alignment="wxALIGN_CENTER_HORIZONTAL">
+            <node
+              class="CustomControl"
+              class_name="ColourRectCtrl"
+              header="../custom_ctrls/colour_rect_ctrl.h"
+              namespace="wxue_ctrl"
+              var_name="m_colour_rect"
+              maximum_size="32,32d" />
+            <node
+              class="wxStaticText"
+              label="Sample Text"
+              var_name="m_static_sample_text"
+              alignment="wxALIGN_CENTER_VERTICAL" />
+          </node>
+        </node>
+        <node
+          class="spacer"
+          add_default_border="true"
+          height="5" />
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_2"
+          flags="wxEXPAND">
+          <node
+            class="wxRadioButton"
+            checked="true"
+            label="Let wxWidgets choose the colour"
+            var_name="m_radio_default"
+            border_size="10"
+            wxEVT_RADIOBUTTON="OnSetDefault" />
+        </node>
+        <node
+          class="spacer"
+          add_default_border="true"
+          height="5" />
+        <node
+          class="StaticRadioBtnBoxSizer"
+          checked="false"
+          class_access="protected:"
+          disabled="true"
+          label="Custom Colour"
+          radiobtn_var_name="m_radio_custom"
+          var_name="m_staticbox_custom"
+          flags="wxEXPAND"
+          wxEVT_RADIOBUTTON="OnRadioCustomColour">
+          <node
+            class="wxColourPickerCtrl"
+            style="wxCLRP_USE_TEXTCTRL"
+            disabled="true"
+            wxEVT_COLOURPICKER_CHANGED="OnColourChanged" />
+        </node>
+        <node
+          class="spacer"
+          add_default_border="true"
+          height="5" />
+        <node
+          class="StaticRadioBtnBoxSizer"
+          checked="false"
+          class_access="protected:"
+          disabled="true"
+          label="System Colour"
+          radiobtn_var_name="m_radio_system"
+          var_name="m_staticbox_system"
+          flags="wxEXPAND"
+          wxEVT_RADIOBUTTON="OnRadioSystemColour">
+          <node
+            class="wxComboBox"
+            var_name="m_combo_system"
+            disabled="true"
+            smart_size="250,-1d"
+            wxEVT_COMBOBOX="OnSystemColourChange" />
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Caution: On Windows, these are classic colours. They may not be the colours the user has set via a Theme or Dark Mode."
+            var_name="staticText"
+            wrap="250" />
+        </node>
+        <node
+          class="spacer"
+          add_default_border="true"
+          height="5" />
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

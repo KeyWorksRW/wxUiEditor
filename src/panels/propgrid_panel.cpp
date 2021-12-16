@@ -36,13 +36,14 @@
 
 // Various customized wxPGProperty classes
 
-#include "../customprops/code_string_prop.h"   // EditCodeDialogAdapter -- Derived wxStringProperty class for code
-#include "../customprops/custom_param_prop.h"  // EditParamProperty -- dialog for editing CustomControl parameter
-#include "../customprops/evt_string_prop.h"    // EventStringProperty -- dialog for editing event handlers
-#include "../customprops/pg_animation.h"       // PropertyGrid_Animation -- Custom property grid class for animations
-#include "../customprops/pg_image.h"           // PropertyGrid_Image -- Custom property grid class for images
-#include "../customprops/pg_point.h"           // CustomPointProperty -- custom wxPGProperty for handling wxPoint
-#include "../customprops/txt_string_prop.h"    // EditStringProperty -- dialog for editing single-line strings
+#include "../customprops/code_string_prop.h"    // EditCodeDialogAdapter -- Derived wxStringProperty class for code
+#include "../customprops/custom_colour_prop.h"  // EditColourDialogAdapter -- Property editor for colour
+#include "../customprops/custom_param_prop.h"   // EditParamProperty -- dialog for editing CustomControl parameter
+#include "../customprops/evt_string_prop.h"     // EventStringProperty -- dialog for editing event handlers
+#include "../customprops/pg_animation.h"        // PropertyGrid_Animation -- Custom property grid class for animations
+#include "../customprops/pg_image.h"            // PropertyGrid_Image -- Custom property grid class for images
+#include "../customprops/pg_point.h"            // CustomPointProperty -- custom wxPGProperty for handling wxPoint
+#include "../customprops/txt_string_prop.h"     // EditStringProperty -- dialog for editing single-line strings
 
 #include "wx_id_list.cpp"  // wxID_ strings
 
@@ -396,6 +397,9 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
     else if (type == type_wxColour)
     {
         auto value = prop->as_string();
+#if 1
+        new_pg_property = new EditColourProperty(prop->DeclName().wx_str(), prop);
+#else
         if (value.empty())  // Default Colour
         {
             wxColourPropertyValue colProp;
@@ -416,6 +420,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
                 new_pg_property = new wxSystemColourProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_color());
             }
         }
+#endif
     }
     else if (type == type_file)
     {
@@ -1034,6 +1039,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             }
             break;
 
+#if 0
         case type_wxColour:
             {
                 wxColourPropertyValue colour;
@@ -1059,6 +1065,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 }
                 break;
             }
+#endif
 
         case type_animation:
         case type_image:

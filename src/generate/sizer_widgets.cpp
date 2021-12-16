@@ -420,6 +420,11 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     }
     code << ");\n";
 
+    if (auto result = GenInheritSettings(node); result)
+    {
+        code << result.value() << '\n';
+    }
+
     if (node->IsLocal())
         code << "auto ";
 

@@ -107,6 +107,8 @@ license you like.
 
 namespace Json
 {
+    // REVIEW: [KeyWorks - 12-17-2021] clang-cl complains that this function is unused
+#if 0
     static inline char getDecimalPoint()
     {
     #ifdef JSONCPP_NO_LOCALE_SUPPORT
@@ -116,6 +118,7 @@ namespace Json
         return lc ? *(lc->decimal_point) : '\0';
     #endif
     }
+#endif
 
     /// Converts a unicode code-point to UTF-8.
     static inline String codePointToUTF8(unsigned int cp)
@@ -292,7 +295,7 @@ namespace Json
 #endif      //_MSC_VER
 
 #if defined(_MSC_VER)
-    // Disable warning about strdup being deprecated.
+   // Disable warning about strdup being deprecated.
     #pragma warning(disable : 4996)
 #endif
 
@@ -3454,7 +3457,7 @@ namespace Json
 #if !defined(JSON_USE_INT64_DOUBLE_CONVERSION)
                 return static_cast<float>(value_.uint_);
 #else   // if !defined(JSON_USE_INT64_DOUBLE_CONVERSION)
-                // This can fail (silently?) if the value is bigger than MAX_FLOAT.
+        // This can fail (silently?) if the value is bigger than MAX_FLOAT.
                 return static_cast<float>(integerToDouble(value_.uint_));
 #endif  // if !defined(JSON_USE_INT64_DOUBLE_CONVERSION)
             case realValue:
@@ -3922,6 +3925,22 @@ namespace Json
             members.push_back(String((*it).first.data(), (*it).first.length()));
         }
         return members;
+    }
+
+    // [KeyWorks - 12-17-2021] Creates a map of member names with a boolean flag to indicate if it has been processed.
+    std::map<std::string, bool> Value::GetMemberMap() const
+    {
+        std::map<std::string, bool> map;
+        ASSERT_MSG(type() == nullValue || type() == objectValue, "Value type must be objectValue");
+
+        if (type() != nullValue)
+        {
+            for (auto it = value_.map_->begin(); it != value_.map_->end(); ++it)
+            {
+                map[it->first.data()] = false;
+            }
+        }
+        return map;
     }
 
     static bool IsIntegral(double d)
@@ -4431,7 +4450,7 @@ namespace Json
     #endif
 
     #if !defined(isnan)
-        // IEEE standard states that NaN values will not compare to themselves
+   // IEEE standard states that NaN values will not compare to themselves
         #define isnan(x) ((x) != (x))
     #endif
 
@@ -4443,7 +4462,7 @@ namespace Json
 #endif
 
 #if defined(_MSC_VER)
-    // Disable warning about strdup being deprecated.
+   // Disable warning about strdup being deprecated.
     #pragma warning(disable : 4996)
 #endif
 

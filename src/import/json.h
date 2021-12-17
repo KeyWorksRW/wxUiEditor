@@ -1083,6 +1083,10 @@ namespace Json
         /// \post if type() was nullValue, it remains nullValue
         Members getMemberNames() const;
 
+        // [KeyWorks - 12-17-2021] Creates a map of member names with a boolean flag to
+        // indicate if it has been processed.
+        std::map<std::string, bool> GetMemberMap() const;
+
         /// \deprecated Always pass len.
         JSONCPP_DEPRECATED("Use setComment(String const&) instead.")
         void setComment(const char* comment, CommentPlacement placement)

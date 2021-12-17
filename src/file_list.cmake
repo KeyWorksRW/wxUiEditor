@@ -75,9 +75,11 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/wizard_form.cpp       # Wizard form class
 
     ${CMAKE_CURRENT_LIST_DIR}/import/import_formblder.cpp    # Import a wxFormBuider project
+    ${CMAKE_CURRENT_LIST_DIR}/import/import_wxcrafter.cpp    # Import a wxCrafter project
     ${CMAKE_CURRENT_LIST_DIR}/import/import_wxglade.cpp      # Import a Import a wxGlade file
     ${CMAKE_CURRENT_LIST_DIR}/import/import_wxsmith.cpp      # Process XRC files
     ${CMAKE_CURRENT_LIST_DIR}/import/import_xml.cpp          # Base class for XML importing
+    ${CMAKE_CURRENT_LIST_DIR}/import/jsoncpp.cpp             # Used to import wxCrafter projects
 
     ${CMAKE_CURRENT_LIST_DIR}/mockup/mockup_parent.cpp    # Top-level MockUp Parent window
     ${CMAKE_CURRENT_LIST_DIR}/mockup/mockup_content.cpp   # Mockup of a form's contents

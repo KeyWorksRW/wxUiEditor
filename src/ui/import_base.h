@@ -42,6 +42,7 @@ protected:
     wxComboBox* m_combo_recent_dirs;
     wxRadioButton* m_radio_WindowsResource;
     wxRadioButton* m_radio_XRC;
+    wxRadioButton* m_radio_wxCrafter;
     wxRadioButton* m_radio_wxFormBuilder;
     wxRadioButton* m_radio_wxGlade;
     wxRadioButton* m_radio_wxSmith;
@@ -55,6 +56,7 @@ protected:
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnCheckFiles(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCrafter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDirectory(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFormBuilder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInitDialog(wxInitDialogEvent& event) { event.Skip(); }

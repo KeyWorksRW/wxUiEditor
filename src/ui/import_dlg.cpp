@@ -23,11 +23,12 @@ ImportDlg::ImportDlg(wxWindow* parent) : ImportBase(parent) {}
 
 enum
 {
-    DBG_IMPORT_FB,
-    DBG_IMPORT_WINRES,
-    DBG_IMPORT_GLADE,
-    DBG_IMPORT_SMITH,
-    DBG_IMPORT_XRC,
+    IMPORT_CRAFTER,
+    IMPORT_FB,
+    IMPORT_WINRES,
+    IMPORT_GLADE,
+    IMPORT_SMITH,
+    IMPORT_XRC,
 };
 
 void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
@@ -46,7 +47,7 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
 
     auto config = wxConfig::Get();
     config->SetPath("/preferences");
-    auto import_type = config->Read("import_type", DBG_IMPORT_FB);
+    auto import_type = config->Read("import_type", IMPORT_FB);
 
 #if defined(_DEBUG)
     m_FileHistory.Load(*config);
@@ -65,24 +66,28 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     config->SetPath("/");
     switch (import_type)
     {
-        case DBG_IMPORT_WINRES:
+        case IMPORT_CRAFTER:
+            m_radio_wxCrafter->SetValue(true);
+            break;
+
+        case IMPORT_WINRES:
             m_radio_WindowsResource->SetValue(true);
             m_staticImportList->SetLabel("&Files containing Dialogs or Menus:");
             break;
 
-        case DBG_IMPORT_GLADE:
+        case IMPORT_GLADE:
             m_radio_wxGlade->SetValue(true);
             break;
 
-        case DBG_IMPORT_SMITH:
+        case IMPORT_SMITH:
             m_radio_wxSmith->SetValue(true);
             break;
 
-        case DBG_IMPORT_XRC:
+        case IMPORT_XRC:
             m_radio_XRC->SetValue(true);
             break;
 
-        case DBG_IMPORT_FB:
+        case IMPORT_FB:
             [[fallthrough]];
         default:
             m_radio_wxFormBuilder->SetValue(true);
@@ -94,7 +99,9 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
 
     m_checkListProjects->Clear();
 
-    if (m_radio_wxFormBuilder->GetValue())
+    if (m_radio_wxCrafter->GetValue())
+        dir.GetAllFiles(".", &files, "*.wxcp");
+    else if (m_radio_wxFormBuilder->GetValue())
         dir.GetAllFiles(".", &files, "*.fbp");
     else if (m_radio_wxSmith->GetValue())
         dir.GetAllFiles(".", &files, "*.wxs");
@@ -144,16 +151,18 @@ void ImportDlg::OnOK(wxCommandEvent& event)
 
     auto config = wxConfig::Get();
     config->SetPath("/preferences");
-    if (m_radio_wxSmith->GetValue())
-        config->Write("import_type", static_cast<long>(DBG_IMPORT_SMITH));
+    if (m_radio_wxCrafter->GetValue())
+        config->Write("import_type", static_cast<long>(IMPORT_CRAFTER));
+    else if (m_radio_wxSmith->GetValue())
+        config->Write("import_type", static_cast<long>(IMPORT_SMITH));
     else if (m_radio_wxGlade->GetValue())
-        config->Write("import_type", static_cast<long>(DBG_IMPORT_GLADE));
+        config->Write("import_type", static_cast<long>(IMPORT_GLADE));
     else if (m_radio_XRC->GetValue())
-        config->Write("import_type", static_cast<long>(DBG_IMPORT_XRC));
+        config->Write("import_type", static_cast<long>(IMPORT_XRC));
     else if (m_radio_WindowsResource->GetValue())
-        config->Write("import_type", static_cast<long>(DBG_IMPORT_WINRES));
+        config->Write("import_type", static_cast<long>(IMPORT_WINRES));
     else
-        config->Write("import_type", static_cast<long>(DBG_IMPORT_FB));
+        config->Write("import_type", static_cast<long>(IMPORT_FB));
 
 #if defined(_DEBUG)
     m_FileHistory.Save(*config);
@@ -188,7 +197,9 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
 
     wxBusyCursor wait;
 
-    if (m_radio_wxFormBuilder->GetValue())
+    if (m_radio_wxCrafter->GetValue())
+        dir.GetAllFiles(".", &files, "*.wxcp");
+    else if (m_radio_wxFormBuilder->GetValue())
         dir.GetAllFiles(".", &files, "*.fbp");
     else if (m_radio_wxSmith->GetValue())
         dir.GetAllFiles(".", &files, "*.wxs");
@@ -225,7 +236,9 @@ void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
 
     wxBusyCursor wait;
 
-    if (m_radio_wxFormBuilder->GetValue())
+    if (m_radio_wxCrafter->GetValue())
+        dir.GetAllFiles(".", &files, "*.wxcp");
+    else if (m_radio_wxFormBuilder->GetValue())
         dir.GetAllFiles(".", &files, "*.fbp");
     else if (m_radio_wxSmith->GetValue())
         dir.GetAllFiles(".", &files, "*.wxs");
@@ -273,6 +286,19 @@ void ImportDlg::OnRemove(wxCommandEvent& event)
 }
 
 #endif  // _DEBUG
+
+void ImportDlg::OnCrafter(wxCommandEvent& WXUNUSED(event))
+{
+    m_checkListProjects->Clear();
+    m_staticImportList->SetLabel("&Files:");
+
+    wxDir dir;
+    wxArrayString files;
+    dir.GetAllFiles(".", &files, "*.wxcp");
+
+    if (files.size())
+        m_checkListProjects->InsertItems(files, 0);
+}
 
 void ImportDlg::OnFormBuilder(wxCommandEvent& WXUNUSED(event))
 {

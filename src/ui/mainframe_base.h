@@ -69,6 +69,7 @@ protected:
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAppendCrafter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAppendFormBuilder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAppendGlade(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAppendSmith(wxCommandEvent& event) { event.Skip(); }

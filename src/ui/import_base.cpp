@@ -20,21 +20,25 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     auto flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
     m_import_staticbox->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));
 
+    m_radio_wxCrafter = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Crafter Project(s)", wxDefaultPosition, wxDefaultSize,
+        wxRB_GROUP);
+    flex_grid_sizer->Add(m_radio_wxCrafter, wxSizerFlags().Border(wxALL));
+
     m_radio_wxFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&FormBuilder Project(s)", wxDefaultPosition, wxDefaultSize,
         wxRB_GROUP);
     flex_grid_sizer->Add(m_radio_wxFormBuilder, wxSizerFlags().Border(wxALL));
+
+    m_radio_wxGlade = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Glade Project(s)");
+    flex_grid_sizer->Add(m_radio_wxGlade, wxSizerFlags().Border(wxALL));
+
+    m_radio_wxSmith = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Smith Project(s)");
+    flex_grid_sizer->Add(m_radio_wxSmith, wxSizerFlags().Border(wxALL));
 
     m_radio_WindowsResource = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Windows Resource");
     flex_grid_sizer->Add(m_radio_WindowsResource, wxSizerFlags().Border(wxALL));
 
     m_radio_XRC = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&XRC File(s)");
     flex_grid_sizer->Add(m_radio_XRC, wxSizerFlags().Border(wxALL));
-
-    m_radio_wxSmith = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Smith Project(s)");
-    flex_grid_sizer->Add(m_radio_wxSmith, wxSizerFlags().Border(wxALL));
-
-    m_radio_wxGlade = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Glade Project(s)");
-    flex_grid_sizer->Add(m_radio_wxGlade, wxSizerFlags().Border(wxALL));
 
     auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
     m_import_staticbox->Add(box_sizer, wxSizerFlags().Border(wxALL));
@@ -86,11 +90,12 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &ImportBase::OnInitDialog, this);
+    m_radio_wxCrafter->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnCrafter, this);
     m_radio_wxFormBuilder->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnFormBuilder, this);
+    m_radio_wxGlade->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxGlade, this);
+    m_radio_wxSmith->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxSmith, this);
     m_radio_WindowsResource->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWindowsResource, this);
     m_radio_XRC->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnXRC, this);
-    m_radio_wxSmith->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxSmith, this);
-    m_radio_wxGlade->Bind(wxEVT_RADIOBUTTON, &ImportBase::OnWxGlade, this);
     m_combo_recent_dirs->Bind(wxEVT_COMBOBOX, &ImportBase::OnRecentDir, this);
     m_btnRemove->Bind(wxEVT_BUTTON, &ImportBase::OnRemove, this);
     m_btnAddFile->Bind(wxEVT_BUTTON, &ImportBase::OnDirectory, this);

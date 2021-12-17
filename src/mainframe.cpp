@@ -342,7 +342,8 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
     wxFileDialog dialog(this, "Open or Import Project", wxEmptyString, wxEmptyString,
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue"
                         "|Windows Resource File (*.rc)|*.rc"
-                        "|WxFormBuilder Project File (*.fbp)|*.fbp"
+                        "|wxCrafter Project File (*.wxcp)|*.wxcp"
+                        "|wxFormBuilder Project File (*.fbp)|*.fbp"
                         "|wxGlade File (*.wxg)|*.wxg"
                         "|wxSmith File (*.wxs)|*.wxs"
                         "|XRC File (*.xrc)|*.xrc||",
@@ -364,10 +365,23 @@ void MainFrame::OnOpenProject(wxCommandEvent&)
     };
 }
 
+void MainFrame::OnAppendCrafter(wxCommandEvent&)
+{
+    ttSaveCwd cwd;
+    wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "wxCrafter Project File (*.wxcp)|*.wxcp||",
+                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        wxArrayString files;
+        dlg.GetPaths(files);
+        wxGetApp().AppendFormBuilder(files);
+    }
+}
+
 void MainFrame::OnAppendFormBuilder(wxCommandEvent&)
 {
     ttSaveCwd cwd;
-    wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "WxFormBuilder Project File (*.fbp)|*.fbp||",
+    wxFileDialog dlg(this, "Open or Import Project", cwd, wxEmptyString, "wxFormBuilder Project File (*.fbp)|*.fbp||",
                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {

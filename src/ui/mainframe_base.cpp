@@ -69,9 +69,9 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto submenu = new wxMenu();
 
-    auto menu_item_5 = new wxMenuItem(submenu, id_AppendWinRes, "Windows Resource...",
-        "Append Windows Resource into current project", wxITEM_NORMAL);
-    submenu->Append(menu_item_5);
+    auto menu_item_7 = new wxMenuItem(submenu, id_AppendFormBuilder, "wxCrafter Project...",
+        "Append wxFormBuilder project into current project", wxITEM_NORMAL);
+    submenu->Append(menu_item_7);
 
     auto menu_item_1 = new wxMenuItem(submenu, id_AppendFormBuilder, "wxFormBuilder Project...",
         "Append wxFormBuilder project into current project", wxITEM_NORMAL);
@@ -84,6 +84,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     auto menu_item_3 = new wxMenuItem(submenu, id_AppendSmith, "wxSmith Project...",
         "Append wxSmith project into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_3);
+
+    auto menu_item_5 = new wxMenuItem(submenu, id_AppendWinRes, "Windows Resource...",
+        "Append Windows Resource into current project", wxITEM_NORMAL);
+    submenu->Append(menu_item_5);
 
     auto menu_item_4 = new wxMenuItem(submenu, id_AppendXRC, "XRC Project...",
         "Append XRC project into current project", wxITEM_NORMAL);
@@ -380,10 +384,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         },
         wxID_SAVE);
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
-    Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendCrafter, this, id_AppendFormBuilder);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);
+    Bind(wxEVT_MENU, &MainFrameBase::OnImportWindowsResource, this, id_AppendWinRes);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendXRC, this, id_AppendXRC);
     Bind(wxEVT_MENU, &MainFrameBase::OnOptionsDlg, this, id_OptionsDlg);
     Bind(wxEVT_MENU,

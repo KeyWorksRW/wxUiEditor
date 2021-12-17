@@ -73,7 +73,10 @@ if (MSVC)
     target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/LTCG>")
 
-    target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Debug>:/natvis:../src/wxui.natvis>")
+    target_link_options(wxUiEditor PRIVATE
+        "$<$<CONFIG:Debug>:/natvis:../src/wxui.natvis>"
+        "$<$<CONFIG:Debug>:/OPT:REF>"
+    )
 
     # Assume the manifest is in the resource file
     target_link_options(wxUiEditor PRIVATE "/manifest:no")

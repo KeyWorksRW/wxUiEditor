@@ -20,6 +20,9 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), 0, nullptr, GetStyleInt(node));
 
+    if (node->HasValue(prop_hint))
+        widget->SetHint(node->prop_as_wxString(prop_hint));
+
     if (node->HasValue(prop_contents))
     {
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
@@ -106,6 +109,13 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> ComboBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
+
+    if (node->HasValue(prop_hint))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+    }
 
     if (node->HasValue(prop_contents))
     {
@@ -300,6 +310,9 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
                                        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), 0, nullptr,
                                        GetStyleInt(node));
 
+    if (node->HasValue(prop_hint))
+        widget->SetHint(node->prop_as_wxString(prop_hint));
+
     if (node->HasValue(prop_contents))
     {
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
@@ -385,6 +398,13 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
+
+    if (node->HasValue(prop_hint))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+    }
 
     if (node->HasValue(prop_contents))
     {

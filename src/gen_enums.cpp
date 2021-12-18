@@ -179,6 +179,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_hgap, "hgap" },
     { prop_hidden, "hidden" },
     { prop_hide_effect, "hide_effect" },
+    { prop_hint, "hint" },
     { prop_hover_color, "hover_color" },
     { prop_icon, "icon" },
     { prop_id, "id" },

@@ -37,6 +37,8 @@ inline const char* textctrls_xml = R"===(<?xml version="1.0"?>
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_textCtrl</property>
 		<property name="value" type="string_escapes" />
+		<property name="hint" type="string_escapes"
+			help="Sets a hint to be shown when the control is empty and does not have the focus." />
 		<property name="maxlength" type="string"
 			help="The maximum length of user-entered text. 0 means no limit. Note that in wxGTK this function may only be used with single line text controls." />
 		<property name="style" type="bitlist">
@@ -91,7 +93,7 @@ inline const char* textctrls_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow">
 			<property name="window_style" type="bitlist">wxVSCROLL | wxHSCROLL | wxNO_BORDER | wxWANTS_CHARS</property>
 			<property name="minimum_size" type="wxSize"
-			help="Sets the minimum size of the window, to indicate to the sizer layout mechanism that this is the minimum required size." >200,100d</property>
+				help="Sets the minimum size of the window, to indicate to the sizer layout mechanism that this is the minimum required size.">200,100d</property>
 		</inherits>
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_richText</property>

@@ -7,6 +7,8 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_comboBox</property>
+		<property name="hint" type="string_escapes"
+			help="Sets a hint to be shown when the text field is empty and does not have the focus." />
 		<property name="contents" type="stringlist"
 			help="Contents of the Combo Box" />
 		<property name="selection_string" type="string_escapes"
@@ -43,6 +45,8 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_bmpComboBox</property>
+		<property name="hint" type="string_escapes"
+			help="Sets a hint to be shown when the text field is empty and does not have the focus." />
 		<property name="contents" type="stringlist"
 			help="Contents of the Combo Box" />
 		<property name="selection_string" type="string_escapes"

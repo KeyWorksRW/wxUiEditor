@@ -151,6 +151,9 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->AutoComplete(array);
     }
 
+    if (node->HasValue(prop_hint))
+        widget->SetHint(node->prop_as_wxString(prop_hint));
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -204,6 +207,14 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> TextCtrlGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
+
+    if (node->HasValue(prop_hint))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+    }
+
     if (node->prop_as_bool(prop_maxlength))
     {
         if (code.size())
@@ -428,6 +439,9 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                              DlgSize(parent, node, prop_size), GetStyleInt(node), node->prop_as_wxString(prop_var_name));
 
+    if (node->HasValue(prop_hint))
+        scintilla->SetHint(node->prop_as_wxString(prop_hint));
+
     if (node->prop_as_int(prop_line_numbers) != 0)
     {
         scintilla->SetMarginType(0, wxSTC_MARGIN_NUMBER);
@@ -465,7 +479,6 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, node->prop_as_font(prop_font));
     }
-    scintilla->SetText("Sample text...");
 
     scintilla->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -493,6 +506,13 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     auto_indent = false;
     code << "\t{";
+
+    if (node->HasValue(prop_hint))
+    {
+        if (code.size())
+            code << "\n\t\t";
+        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+    }
 
     if (node->prop_as_bool(prop_folding))
     {

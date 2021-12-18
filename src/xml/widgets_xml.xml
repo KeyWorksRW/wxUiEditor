@@ -361,6 +361,8 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<property name="var_name" type="string">m_searchCtrl</property>
 		<property name="value" type="string_escapes"
 			help="Initial value" />
+		<property name="hint" type="string_escapes"
+			help="Sets a hint to be shown when the control is empty and does not have the focus." />
 		<property name="search_button" type="bool"
 			help="Shows or hides the search button.">1</property>
 		<property name="cancel_button" type="bool"

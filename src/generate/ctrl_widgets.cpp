@@ -210,6 +210,9 @@ wxObject* SearchCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxSearchCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
                                    DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
+    if (node->HasValue(prop_hint))
+        widget->SetHint(node->prop_as_wxString(prop_hint));
+
     if (node->HasValue(prop_search_button))
     {
         widget->ShowSearchButton(node->prop_as_bool(prop_search_button));
@@ -248,6 +251,13 @@ std::optional<ttlib::cstr> SearchCtrlGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> SearchCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
+
+    if (node->HasValue(prop_hint))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+    }
 
     if (node->prop_as_bool(prop_search_button))
     {

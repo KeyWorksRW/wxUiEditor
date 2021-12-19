@@ -339,6 +339,13 @@ namespace GenEnum
     };
     extern std::map<GenEnum::PropName, const char*> map_PropNames;
     extern std::map<std::string_view, GenEnum::PropName, std::less<>> rmap_PropNames;
+    inline GenEnum::PropName FindProp(std::string_view name)
+    {
+        if (auto result = rmap_PropNames.find(name); result != rmap_PropNames.end())
+            return result->second;
+        else
+            return prop_unknown;
+    }
 
     enum GenType : size_t
     {

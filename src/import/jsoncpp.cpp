@@ -68,7 +68,19 @@ license you like.
 // End of content of file: LICENSE
 // //////////////////////////////////////////////////////////////////////
 
-#include "json.h"
+//////////////// KeyWorks Software Notes /////////////////////
+/*
+
+    The original code would throw an exception in both Debug and Release builds if an assertion encountered a logic error. If
+   you were running the code through a debugger, there was no stack trace to find what function incorrectly called a Json
+   function. The asserts in jsoncpp.h have been replaced with the standard macros used by all KeyWorks Software projects. In
+   Debug builds, an assert gives the developer the option to break into a debugger with a full stack trace. The assert is an
+   empty macro in Release builds -- which means the function must take some action to deal with the problem. For the as<T>
+   functions, that means returning the same value that would be returned if the Json::Value was null.
+
+*/
+
+#include "jsoncpp.h"
 
 #ifndef JSON_IS_AMALGAMATION
     #error "Compile with -I PATH_TO_JSON_DIRECTORY"
@@ -107,18 +119,18 @@ license you like.
 
 namespace Json
 {
-    // REVIEW: [KeyWorks - 12-17-2021] clang-cl complains that this function is unused
-#if 0
+    // [KeyWorks - 12-17-2021] clang-cl complains that this function is unused
+    #if 0
     static inline char getDecimalPoint()
     {
-    #ifdef JSONCPP_NO_LOCALE_SUPPORT
+        #ifdef JSONCPP_NO_LOCALE_SUPPORT
         return '\0';
-    #else
+        #else
         struct lconv* lc = localeconv();
         return lc ? *(lc->decimal_point) : '\0';
-    #endif
+        #endif
     }
-#endif
+    #endif
 
     /// Converts a unicode code-point to UTF-8.
     static inline String codePointToUTF8(unsigned int cp)
@@ -2942,7 +2954,11 @@ namespace Json
         unsigned this_len = this->storage_.length_;
         unsigned other_len = other.storage_.length_;
         unsigned min_len = std::min<unsigned>(this_len, other_len);
+
         JSON_ASSERT(this->cstr_ && other.cstr_);
+        if (!this->cstr_ || !other.cstr_)
+            return false;
+
         int comp = memcmp(this->cstr_, other.cstr_, min_len);
         if (comp < 0)
             return true;
@@ -2961,7 +2977,10 @@ namespace Json
         unsigned other_len = other.storage_.length_;
         if (this_len != other_len)
             return false;
+
         JSON_ASSERT(this->cstr_ && other.cstr_);
+        if (!this->cstr_ || !other.cstr_)
+            return false;
         int comp = memcmp(this->cstr_, other.cstr_, this_len);
         return comp == 0;
     }
@@ -3174,7 +3193,11 @@ namespace Json
                     decodePrefixedString(this->isAllocated(), this->value_.string_, &this_len, &this_str);
                     decodePrefixedString(other.isAllocated(), other.value_.string_, &other_len, &other_str);
                     unsigned min_len = std::min<unsigned>(this_len, other_len);
+
                     JSON_ASSERT(this_str && other_str);
+                    if (!this_str || !other_str)
+                        return false;
+
                     int comp = memcmp(this_str, other_str, min_len);
                     if (comp < 0)
                         return true;
@@ -3233,7 +3256,11 @@ namespace Json
                     decodePrefixedString(other.isAllocated(), other.value_.string_, &other_len, &other_str);
                     if (this_len != other_len)
                         return false;
+
                     JSON_ASSERT(this_str && other_str);
+                    if (!this_str || !other_str)
+                        return false;
+
                     int comp = memcmp(this_str, other_str, this_len);
                     return comp == 0;
                 }
@@ -3251,7 +3278,7 @@ namespace Json
     const char* Value::asCString() const
     {
         JSON_ASSERT_MESSAGE(type() == stringValue, "in Json::Value::asCString(): requires stringValue");
-        if (value_.string_ == nullptr)
+        if (type() != stringValue || value_.string_ == nullptr)
             return nullptr;
         unsigned this_len;
         char const* this_str;
@@ -3263,7 +3290,7 @@ namespace Json
     unsigned Value::getCStringLength() const
     {
         JSON_ASSERT_MESSAGE(type() == stringValue, "in Json::Value::asCString(): requires stringValue");
-        if (value_.string_ == 0)
+        if (type() == stringValue || value_.string_ == nullptr)
             return 0;
         unsigned this_len;
         char const* this_str;
@@ -3309,6 +3336,7 @@ namespace Json
                 return valueToString(value_.real_);
             default:
                 JSON_FAIL_MESSAGE("Type is not convertible to string");
+                return "";
         }
     }
 
@@ -3330,9 +3358,9 @@ namespace Json
             case booleanValue:
                 return value_.bool_ ? 1 : 0;
             default:
-                break;
+                JSON_FAIL_MESSAGE("Value is not convertible to Int.");
+                return 0;
         }
-        JSON_FAIL_MESSAGE("Value is not convertible to Int.");
     }
 
     Value::UInt Value::asUInt() const
@@ -3353,9 +3381,9 @@ namespace Json
             case booleanValue:
                 return value_.bool_ ? 1 : 0;
             default:
-                break;
+                JSON_FAIL_MESSAGE("Value is not convertible to UInt.");
+                return 0;
         }
-        JSON_FAIL_MESSAGE("Value is not convertible to UInt.");
     }
 
 #if defined(JSON_HAS_INT64)
@@ -3377,9 +3405,9 @@ namespace Json
             case booleanValue:
                 return value_.bool_ ? 1 : 0;
             default:
-                break;
+                JSON_FAIL_MESSAGE("Value is not convertible to Int64.");
+                return 0;
         }
-        JSON_FAIL_MESSAGE("Value is not convertible to Int64.");
     }
 
     Value::UInt64 Value::asUInt64() const
@@ -3399,9 +3427,9 @@ namespace Json
             case booleanValue:
                 return value_.bool_ ? 1 : 0;
             default:
-                break;
+                JSON_FAIL_MESSAGE("Value is not convertible to UInt64.");
+                return 0;
         }
-        JSON_FAIL_MESSAGE("Value is not convertible to UInt64.");
     }
 #endif  // if defined(JSON_HAS_INT64)
 
@@ -3442,9 +3470,9 @@ namespace Json
             case booleanValue:
                 return value_.bool_ ? 1.0 : 0.0;
             default:
-                break;
+                JSON_FAIL_MESSAGE("Value is not convertible to double.");
+                return 0.0;
         }
-        JSON_FAIL_MESSAGE("Value is not convertible to double.");
     }
 
     float Value::asFloat() const
@@ -3467,9 +3495,9 @@ namespace Json
             case booleanValue:
                 return value_.bool_ ? 1.0F : 0.0F;
             default:
-                break;
+                JSON_FAIL_MESSAGE("Value is not convertible to float.");
+                return 0.0;
         }
-        JSON_FAIL_MESSAGE("Value is not convertible to float.");
     }
 
     bool Value::asBool() const
@@ -3491,9 +3519,9 @@ namespace Json
                     return value_classification != FP_ZERO && value_classification != FP_NAN;
                 }
             default:
-                break;
+                JSON_FAIL_MESSAGE("Value is not convertible to bool.");
+                return false;
         }
-        JSON_FAIL_MESSAGE("Value is not convertible to bool.");
     }
 
     bool Value::isConvertibleTo(ValueType other) const
@@ -3581,8 +3609,11 @@ namespace Json
     void Value::resize(ArrayIndex newSize)
     {
         JSON_ASSERT_MESSAGE(type() == nullValue || type() == arrayValue, "in Json::Value::resize(): requires arrayValue");
+
         if (type() == nullValue)
             *this = Value(arrayValue);
+        else if (type() != arrayValue)
+            return;
         ArrayIndex oldSize = size();
         if (newSize == 0)
             clear();
@@ -3605,6 +3636,8 @@ namespace Json
                             "in Json::Value::operator[](ArrayIndex): requires arrayValue");
         if (type() == nullValue)
             *this = Value(arrayValue);
+        else if (type() != arrayValue)
+            return (Value&) nullSingleton();
         CZString key(index);
         auto it = value_.map_->lower_bound(key);
         if (it != value_.map_->end() && (*it).first == key)
@@ -3625,7 +3658,7 @@ namespace Json
     {
         JSON_ASSERT_MESSAGE(type() == nullValue || type() == arrayValue,
                             "in Json::Value::operator[](ArrayIndex)const: requires arrayValue");
-        if (type() == nullValue)
+        if (type() == nullValue || type() != arrayValue)
             return nullSingleton();
         CZString key(index);
         ObjectValues::const_iterator it = value_.map_->find(key);
@@ -3637,6 +3670,8 @@ namespace Json
     const Value& Value::operator[](int index) const
     {
         JSON_ASSERT_MESSAGE(index >= 0, "in Json::Value::operator[](int index) const: index cannot be negative");
+        if (index < 0)
+            return nullSingleton();
         return (*this)[ArrayIndex(index)];
     }
 
@@ -3724,6 +3759,8 @@ namespace Json
                             "in Json::Value::resolveReference(): requires objectValue");
         if (type() == nullValue)
             *this = Value(objectValue);
+        else if (type() != objectValue)
+            return (Value&) nullSingleton();
         CZString actualKey(key, static_cast<unsigned>(strlen(key)),
                            CZString::noDuplication);  // NOTE!
         auto it = value_.map_->lower_bound(actualKey);
@@ -3743,6 +3780,8 @@ namespace Json
                             "in Json::Value::resolveReference(key, end): requires objectValue");
         if (type() == nullValue)
             *this = Value(objectValue);
+        else if (type() != objectValue)
+            return (Value&) nullSingleton();
         CZString actualKey(key, static_cast<unsigned>(end - key), CZString::duplicateOnCopy);
         auto it = value_.map_->lower_bound(actualKey);
         if (it != value_.map_->end() && (*it).first == actualKey)
@@ -3766,7 +3805,7 @@ namespace Json
     {
         JSON_ASSERT_MESSAGE(type() == nullValue || type() == objectValue, "in Json::Value::find(begin, end): requires "
                                                                           "objectValue or nullValue");
-        if (type() == nullValue)
+        if (type() == nullValue || type() != objectValue)
             return nullptr;
         CZString actualKey(begin, static_cast<unsigned>(end - begin), CZString::noDuplication);
         ObjectValues::const_iterator it = value_.map_->find(actualKey);
@@ -3778,6 +3817,8 @@ namespace Json
     {
         JSON_ASSERT_MESSAGE(type() == nullValue || type() == objectValue, "in Json::Value::demand(begin, end): requires "
                                                                           "objectValue or nullValue");
+        if (type() != nullValue || type() != objectValue)
+            return nullptr;
         return &resolveReference(begin, end);
     }
     const Value& Value::operator[](const char* key) const
@@ -3807,9 +3848,9 @@ namespace Json
     {
         JSON_ASSERT_MESSAGE(type() == nullValue || type() == arrayValue, "in Json::Value::append: requires arrayValue");
         if (type() == nullValue)
-        {
             *this = Value(arrayValue);
-        }
+        else if (type() != arrayValue)
+            return (Value&) nullSingleton();
         return this->value_.map_->emplace(size(), std::move(value)).first->second;
     }
 
@@ -3818,6 +3859,9 @@ namespace Json
     bool Value::insert(ArrayIndex index, Value&& newValue)
     {
         JSON_ASSERT_MESSAGE(type() == nullValue || type() == arrayValue, "in Json::Value::insert: requires arrayValue");
+        if (type() != nullValue || type() != arrayValue)
+            return false;
+
         ArrayIndex length = size();
         if (index > length)
         {
@@ -3866,7 +3910,7 @@ namespace Json
     {
         JSON_ASSERT_MESSAGE(type() == nullValue || type() == objectValue,
                             "in Json::Value::removeMember(): requires objectValue");
-        if (type() == nullValue)
+        if (type() == nullValue || type() != objectValue)
             return;
 
         CZString actualKey(key, unsigned(strlen(key)), CZString::noDuplication);
@@ -3914,7 +3958,7 @@ namespace Json
     {
         JSON_ASSERT_MESSAGE(type() == nullValue || type() == objectValue,
                             "in Json::Value::getMemberNames(), value must be objectValue");
-        if (type() == nullValue)
+        if (type() == nullValue || type() != objectValue)
             return Value::Members();
         Members members;
         members.reserve(value_.map_->size());
@@ -3925,22 +3969,6 @@ namespace Json
             members.push_back(String((*it).first.data(), (*it).first.length()));
         }
         return members;
-    }
-
-    // [KeyWorks - 12-17-2021] Creates a map of member names with a boolean flag to indicate if it has been processed.
-    std::map<std::string, bool> Value::GetMemberMap() const
-    {
-        std::map<std::string, bool> map;
-        ASSERT_MSG(type() == nullValue || type() == objectValue, "Value type must be objectValue");
-
-        if (type() != nullValue)
-        {
-            for (auto it = value_.map_->begin(); it != value_.map_->end(); ++it)
-            {
-                map[it->first.data()] = false;
-            }
-        }
-        return map;
     }
 
     static bool IsIntegral(double d)

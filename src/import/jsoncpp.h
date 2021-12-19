@@ -1083,10 +1083,6 @@ namespace Json
         /// \post if type() was nullValue, it remains nullValue
         Members getMemberNames() const;
 
-        // [KeyWorks - 12-17-2021] Creates a map of member names with a boolean flag to
-        // indicate if it has been processed.
-        std::map<std::string, bool> GetMemberMap() const;
-
         /// \deprecated Always pass len.
         JSONCPP_DEPRECATED("Use setComment(String const&) instead.")
         void setComment(const char* comment, CommentPlacement placement)
@@ -2361,6 +2357,14 @@ namespace Json
      */
     #if JSON_USE_EXCEPTION
 
+        // [KeyWorks - 12-18-2021] Use our own asserts to get function, file, and line number as well as the option to break into the
+        // debugger and look at the stack trace. Note that these are only available in Debug builds, so the calling function *MUST* handle
+        // the problem since these replacements do not throw an exception unless requested to.
+
+#if 1
+        #define JSON_ASSERT(condition) ASSERT(condition)
+        #define JSON_FAIL_MESSAGE(message)  FAIL_MSG(message)
+#else
         // @todo <= add detail about condition in exception
         #define JSON_ASSERT(condition)                           \
             do                                                   \
@@ -2379,7 +2383,7 @@ namespace Json
                 Json::throwLogicError(oss.str()); \
                 abort();                          \
             } while (0)
-
+#endif
     #else  // JSON_USE_EXCEPTION
 
         #define JSON_ASSERT(condition) assert(condition)

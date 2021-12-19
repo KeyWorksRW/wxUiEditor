@@ -139,6 +139,9 @@ public:
     // wxDefaultPosition, or non-sepcified bitmap)
     bool HasValue(PropName name) const;
 
+    // Returns true if the property exists
+    bool HasProp(PropName name) const { return (m_prop_indices.find(name) != m_prop_indices.end()); }
+
     // Returns true only if the property exists and it's value is equal to the parameter
     // value.
     bool isPropValue(PropName name, const char* value) const noexcept;
@@ -177,6 +180,11 @@ public:
     double prop_as_double(PropName name) const;
 
     const ttlib::cstr& prop_as_string(PropName name) const;
+
+    // Use with caution! This allows you to modify the property string directly.
+    //
+    // Returns nullptr if the property doesn't exist.
+    ttlib::cstr* prop_as_raw_ptr(PropName name);
 
     // This will convert the string from UTF8 to UTF16 on Windows
     wxString prop_as_wxString(PropName name) const;

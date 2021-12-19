@@ -58,9 +58,22 @@ bool WxCrafter::Import(const ttString& filename, bool write_doc)
             {
                 if (include_files.isArray() && include_files.size() > 0)
                 {
-                    // TODO: [KeyWorks - 12-16-2021]
+                    auto preamble_ptr = m_project->prop_as_raw_ptr(prop_src_preamble);
+                    for (Json::Value::ArrayIndex idx = 0; idx < include_files.size(); ++idx)
+                    {
+                        auto header_file = include_files[idx].asCString();
+                        if (header_file)
+                        {
+                            if (preamble_ptr->size())
+                                *preamble_ptr << "@@";
+                            *preamble_ptr << "#include \"" << header_file << "\"";
+                        }
+                    }
                 }
             }
+
+            if (auto& internationalize = metadata["m_useUnderscoreMacro"]; internationalize.isBool())
+                m_project->prop_set_value(prop_internationalize, internationalize.asBool());
         }
 
         if (auto& windows = json_doc["windows"]; !windows.isNull())

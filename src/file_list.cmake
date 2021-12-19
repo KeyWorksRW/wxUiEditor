@@ -74,6 +74,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/window_widgets.cpp    # Splitter and Scroll generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/wizard_form.cpp       # Wizard form class
 
+    ${CMAKE_CURRENT_LIST_DIR}/import/import_crafter_maps.cpp # wxCrafter mappings
     ${CMAKE_CURRENT_LIST_DIR}/import/import_formblder.cpp    # Import a wxFormBuider project
     ${CMAKE_CURRENT_LIST_DIR}/import/import_wxcrafter.cpp    # Import a wxCrafter project
     ${CMAKE_CURRENT_LIST_DIR}/import/import_wxglade.cpp      # Import a Import a wxGlade file

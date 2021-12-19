@@ -101,6 +101,7 @@ Files:
     generate/window_widgets.cpp    # Splitter and Scroll generation classes
     generate/wizard_form.cpp       # Wizard form class
 
+    import/import_crafter_maps.cpp # wxCrafter mappings
     import/import_formblder.cpp    # Import a wxFormBuider project
     import/import_wxcrafter.cpp    # Import a wxCrafter project
     import/import_wxglade.cpp      # Import a Import a wxGlade file

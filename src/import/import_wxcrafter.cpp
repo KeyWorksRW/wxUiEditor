@@ -48,32 +48,44 @@ bool WxCrafter::Import(const ttString& filename, bool write_doc)
 
     m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
 
-    if (auto& metadata = json_doc["metadata"]; !metadata.isNull())
+    try
     {
-        m_generate_ids = GetBoolValue(metadata, "m_useEnum", true);
-
-        if (auto& include_files = metadata["m_includeFiles"]; !include_files.isNull())
+        if (auto& metadata = json_doc["metadata"]; !metadata.isNull())
         {
-            if (include_files.isArray() && include_files.size() > 0)
+            m_generate_ids = GetBoolValue(metadata, "m_useEnum", true);
+
+            if (auto& include_files = metadata["m_includeFiles"]; !include_files.isNull())
             {
-                // TODO: [KeyWorks - 12-16-2021]
+                if (include_files.isArray() && include_files.size() > 0)
+                {
+                    // TODO: [KeyWorks - 12-16-2021]
+                }
             }
+        }
+
+        if (auto& windows = json_doc["windows"]; !windows.isNull())
+        {
+            if (windows.isArray())
+            {
+                for (Json::ArrayIndex idx = 0; idx < windows.size(); ++idx)
+                {
+                    auto& item = windows[idx];
+                    ProcessForm(item);
+                }
+            }
+
+            if (write_doc)
+                m_project->CreateDoc(m_docOut);
         }
     }
-
-    if (auto& windows = json_doc["windows"]; !windows.isNull())
+    catch (const std::exception& e)
     {
-        if (windows.isArray())
-        {
-            for (Json::ArrayIndex idx = 0; idx < windows.size(); ++idx)
-            {
-                auto& item = windows[idx];
-                ProcessForm(item);
-            }
-        }
-
-        if (write_doc)
-            m_project->CreateDoc(m_docOut);
+        FAIL_MSG(e.what())
+        MSG_ERROR(e.what());
+        wxMessageBox(ttlib::cstr("Internal error: ") << e.what(), "Import wxCrafter project");
+        wxMessageBox(wxString("This wxCrafter project file is invalid and cannot be loaded: ") << filename,
+                     "Import wxCrafter project");
+        return false;
     }
 
     if (m_errors.size())
@@ -119,30 +131,19 @@ void WxCrafter::ProcessForm(const Json::Value& form)
 
     auto new_node = g_NodeCreator.CreateNode(gen_name, m_project.get());
     m_project->Adopt(new_node);
-    try
+    if (auto& children = form["m_children"]; children.isArray())
     {
-        if (auto& children = form["m_children"]; children.isArray())
+        for (Json::Value::ArrayIndex idx = 0; idx < children.size(); ++idx)
         {
-            for (Json::Value::ArrayIndex idx = 0; idx < children.size(); ++idx)
+            if (!children[idx].isObject())
             {
-                if (!children[idx].isObject())
-                {
-                    m_errors.emplace(ttlib::cstr() << "Invalid wxCrafter file -- child of " << map_GenNames.at(gen_name)
-                                                   << " is not a JSON object.");
-                    continue;
-                }
-
-                ProcessChild(new_node.get(), children[idx]);
+                m_errors.emplace(ttlib::cstr() << "Invalid wxCrafter file -- child of " << map_GenNames.at(gen_name)
+                                               << " is not a JSON object.");
+                continue;
             }
-        }
-    }
 
-    catch (const std::exception& e)
-    {
-        FAIL_MSG(e.what())
-        MSG_ERROR(e.what());
-        wxMessageBox(ttlib::cstr("Internal error: ") << e.what(), "Import wxCrafter project");
-        return;
+            ProcessChild(new_node.get(), children[idx]);
+        }
     }
 }
 
@@ -195,247 +196,223 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value object)
 
 void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value sizer_flags)
 {
-    try
+    std::set<std::string> all_flags;
+    for (Json::Value::ArrayIndex idx = 0; idx < sizer_flags.size(); ++idx)
     {
-        std::set<std::string> all_flags;
-        for (Json::Value::ArrayIndex idx = 0; idx < sizer_flags.size(); ++idx)
+        all_flags.insert(sizer_flags[idx].asCString());
+    }
+
+    // If the node has porp_alignment, then it will also have prop_borders and prop_flags
+    if (node->HasProp(prop_alignment))
+    {
+        if (all_flags.find("wxEXPAND") != all_flags.end())
         {
-            all_flags.insert(sizer_flags[idx].asCString());
+            node->prop_set_value(prop_flags, "wxEXPAND");
         }
-
-        // If the node has porp_alignment, then it will also have prop_borders and prop_flags
-        if (node->HasProp(prop_alignment))
+        else
         {
-            if (all_flags.find("wxEXPAND") != all_flags.end())
-            {
-                node->prop_set_value(prop_flags, "wxEXPAND");
-            }
-            else
-            {
-                auto alignment = node->prop_as_raw_ptr(prop_alignment);
+            auto alignment = node->prop_as_raw_ptr(prop_alignment);
 
-                if (all_flags.find("wxALIGN_CENTER") != all_flags.end())
+            if (all_flags.find("wxALIGN_CENTER") != all_flags.end())
+            {
+                if (alignment->size())
+                    *alignment << '|';
+                *alignment << "wxALIGN_CENTER";
+            }
+            else if (all_flags.find("wxALIGN_CENTER_HORIZONTAL") != all_flags.end())
+            {
+                if (alignment->size())
+                    *alignment << '|';
+                *alignment << "wxALIGN_CENTER_HORIZONTAL";
+            }
+            else if (all_flags.find("wxALIGN_CENTER_VERTICAL") != all_flags.end())
+            {
+                if (alignment->size())
+                    *alignment << '|';
+                *alignment << "wxALIGN_CENTER_VERTICAL";
+            }
+
+            if (all_flags.find("wxALIGN_RIGHT") != all_flags.end())
+            {
+                if (!alignment->contains("wxALIGN_CENTER"))
                 {
                     if (alignment->size())
                         *alignment << '|';
-                    *alignment << "wxALIGN_CENTER";
+                    *alignment << "wxALIGN_RIGHT";
                 }
-                else if (all_flags.find("wxALIGN_CENTER_HORIZONTAL") != all_flags.end())
+            }
+            else if (all_flags.find("wxALIGN_LEFT") != all_flags.end())
+            {
+                if (!alignment->contains("wxALIGN_CENTER"))
                 {
                     if (alignment->size())
                         *alignment << '|';
-                    *alignment << "wxALIGN_CENTER_HORIZONTAL";
+                    *alignment << "wxALIGN_LEFT";
                 }
-                else if (all_flags.find("wxALIGN_CENTER_VERTICAL") != all_flags.end())
+            }
+            else if (all_flags.find("wxALIGN_TOP") != all_flags.end())
+            {
+                if (!alignment->contains("wxALIGN_CENTER"))
                 {
                     if (alignment->size())
                         *alignment << '|';
-                    *alignment << "wxALIGN_CENTER_VERTICAL";
-                }
-
-                if (all_flags.find("wxALIGN_RIGHT") != all_flags.end())
-                {
-                    if (!alignment->contains("wxALIGN_CENTER"))
-                    {
-                        if (alignment->size())
-                            *alignment << '|';
-                        *alignment << "wxALIGN_RIGHT";
-                    }
-                }
-                else if (all_flags.find("wxALIGN_LEFT") != all_flags.end())
-                {
-                    if (!alignment->contains("wxALIGN_CENTER"))
-                    {
-                        if (alignment->size())
-                            *alignment << '|';
-                        *alignment << "wxALIGN_LEFT";
-                    }
-                }
-                else if (all_flags.find("wxALIGN_TOP") != all_flags.end())
-                {
-                    if (!alignment->contains("wxALIGN_CENTER"))
-                    {
-                        if (alignment->size())
-                            *alignment << '|';
-                        *alignment << "wxALIGN_TOP";
-                    }
-                }
-                else if (all_flags.find("wxALIGN_BOTTOM") != all_flags.end())
-                {
-                    if (!alignment->contains("wxALIGN_CENTER"))
-                    {
-                        if (alignment->size())
-                            *alignment << '|';
-                        *alignment << "wxALIGN_BOTTOM";
-                    }
+                    *alignment << "wxALIGN_TOP";
                 }
             }
-        }
-
-        if (node->HasProp(prop_border))
-        {
-            if (all_flags.find("wxALL") != all_flags.end())
+            else if (all_flags.find("wxALIGN_BOTTOM") != all_flags.end())
             {
-                node->prop_set_value(prop_border, "wxALL");
-            }
-            else
-            {
-                auto border_ptr = node->prop_as_raw_ptr(prop_border);
-                border_ptr->clear();
-
-                if (all_flags.find("wxLEFT") != all_flags.end())
+                if (!alignment->contains("wxALIGN_CENTER"))
                 {
-                    if (border_ptr->size())
-                        *border_ptr << ',';
-                    *border_ptr << "wxLEFT";
-                }
-                if (all_flags.find("wxRIGHT") != all_flags.end())
-                {
-                    if (border_ptr->size())
-                        *border_ptr << ',';
-                    *border_ptr << "wxRIGHT";
-                }
-                if (all_flags.find("wxTOP") != all_flags.end())
-                {
-                    if (border_ptr->size())
-                        *border_ptr << ',';
-                    *border_ptr << "wxTOP";
-                }
-                if (all_flags.find("wxBOTTOM") != all_flags.end())
-                {
-                    if (border_ptr->size())
-                        *border_ptr << ',';
-                    *border_ptr << "wxBOTTOM";
+                    if (alignment->size())
+                        *alignment << '|';
+                    *alignment << "wxALIGN_BOTTOM";
                 }
             }
         }
     }
-    catch (const std::exception& e)
+
+    if (node->HasProp(prop_border))
     {
-#if defined(_DEBUG)
-        FAIL_MSG(e.what())
-        MSG_ERROR(e.what());
-#else
-        wxMessageBox(ttlib::cstr("Internal error: ") << e.what(), "Import wxCrafter project");
-#endif
+        if (all_flags.find("wxALL") != all_flags.end())
+        {
+            node->prop_set_value(prop_border, "wxALL");
+        }
+        else
+        {
+            auto border_ptr = node->prop_as_raw_ptr(prop_border);
+            border_ptr->clear();
+
+            if (all_flags.find("wxLEFT") != all_flags.end())
+            {
+                if (border_ptr->size())
+                    *border_ptr << ',';
+                *border_ptr << "wxLEFT";
+            }
+            if (all_flags.find("wxRIGHT") != all_flags.end())
+            {
+                if (border_ptr->size())
+                    *border_ptr << ',';
+                *border_ptr << "wxRIGHT";
+            }
+            if (all_flags.find("wxTOP") != all_flags.end())
+            {
+                if (border_ptr->size())
+                    *border_ptr << ',';
+                *border_ptr << "wxTOP";
+            }
+            if (all_flags.find("wxBOTTOM") != all_flags.end())
+            {
+                if (border_ptr->size())
+                    *border_ptr << ',';
+                *border_ptr << "wxBOTTOM";
+            }
+        }
     }
 }
 
 void WxCrafter::ProcessProperties(Node* node, const Json::Value properties)
 {
-    try
+    for (Json::Value::ArrayIndex idx = 0; idx < properties.size(); ++idx)
     {
-        for (Json::Value::ArrayIndex idx = 0; idx < properties.size(); ++idx)
+        const auto& value = properties[idx];
+        ttlib::cstr name;
+        if (value["m_label"].isString())
         {
-            const auto& value = properties[idx];
-            ttlib::cstr name;
-            if (value["m_label"].isString())
+            name = value["m_label"].asCString();
+            if (name.back() == ':')
+                name.pop_back();
+            name.MakeLower();
+            auto prop_name = FindProp(name);
+            if (prop_name == prop_unknown)
             {
-                name = value["m_label"].asCString();
-                if (name.back() == ':')
-                    name.pop_back();
-                name.MakeLower();
-                auto prop_name = FindProp(name);
-                if (prop_name == prop_unknown)
+                if (name.is_sameas("minimum size"))
+                    prop_name = prop_min_size;
+                else if (name.is_sameas("name"))
+                    prop_name = (node->IsForm() ? prop_class_name : prop_var_name);
+                else if (name.is_sameas("bg colour"))
+                    prop_name = prop_background_colour;
+                else if (name.is_sameas("fg colour"))
+                    prop_name = prop_foreground_colour;
+                else if (name.is_sameas("class name"))
+                    prop_name = prop_derived_class;
+                else if (name.is_sameas("class name"))
+                    prop_name = prop_derived_class;
+                else if (name.is_sameas("include file"))
+                    prop_name = prop_derived_header;
+                else if (name.is_sameas("enable window persistency"))
+                    prop_name = prop_persist;
+                else if (name.is_sameas("inherited class"))
+                    prop_name = prop_class_name;
+                else if (name.is_sameas("file"))
+                    prop_name = prop_base_file;
+
+                else if (name.is_sameas("centre"))
                 {
-                    if (name.is_sameas("minimum size"))
-                        prop_name = prop_min_size;
-                    else if (name.is_sameas("name"))
-                        prop_name = (node->IsForm() ? prop_class_name : prop_var_name);
-                    else if (name.is_sameas("bg colour"))
-                        prop_name = prop_background_colour;
-                    else if (name.is_sameas("fg colour"))
-                        prop_name = prop_foreground_colour;
-                    else if (name.is_sameas("class name"))
-                        prop_name = prop_derived_class;
-                    else if (name.is_sameas("class name"))
-                        prop_name = prop_derived_class;
-                    else if (name.is_sameas("include file"))
-                        prop_name = prop_derived_header;
-                    else if (name.is_sameas("enable window persistency"))
-                        prop_name = prop_persist;
-                    else if (name.is_sameas("inherited class"))
-                        prop_name = prop_class_name;
-                    else if (name.is_sameas("file"))
-                        prop_name = prop_base_file;
-
-                    else if (name.is_sameas("centre"))
+                    if (value["m_selection"].isNumeric())
                     {
-                        if (value["m_selection"].isNumeric())
+                        switch (value["m_selection"].asInt())
                         {
-                            switch (value["m_selection"].asInt())
-                            {
-                                case 0:
-                                    node->prop_set_value(prop_center, "no");
-                                    break;
+                            case 0:
+                                node->prop_set_value(prop_center, "no");
+                                break;
 
-                                case 1:
-                                    node->prop_set_value(prop_center, "wxBOTH");
-                                    break;
+                            case 1:
+                                node->prop_set_value(prop_center, "wxBOTH");
+                                break;
 
-                                case 2:
-                                    node->prop_set_value(prop_center, "wxVERTICAL");
-                                    break;
+                            case 2:
+                                node->prop_set_value(prop_center, "wxVERTICAL");
+                                break;
 
-                                case 3:
-                                    node->prop_set_value(prop_center, "wxHORIZONTAL");
-                                    break;
+                            case 3:
+                                node->prop_set_value(prop_center, "wxHORIZONTAL");
+                                break;
 
-                                default:
-                                    break;
-                            }
+                            default:
+                                break;
                         }
+                    }
+                    continue;
+                }
+
+                else if (name.is_sameas("virtual folder"))
+                    continue;  // this doesn't apply to wxUiEditor
+            }
+
+            if (prop_name == prop_background_colour || prop_name == prop_foreground_colour)
+            {
+                if (auto& prop_value = value["colour"]; !prop_value.isNull())
+                {
+                    ttlib::cstr color = prop_value.asString();
+                    if (color.contains("Default"))
                         continue;
-                    }
-
-                    else if (name.is_sameas("virtual folder"))
-                        continue;  // this doesn't apply to wxUiEditor
-                }
-
-                if (prop_name == prop_background_colour || prop_name == prop_foreground_colour)
-                {
-                    if (auto& prop_value = value["colour"]; !prop_value.isNull())
+                    else if (color.at(0) == '(')
                     {
-                        ttlib::cstr color = prop_value.asString();
-                        if (color.contains("Default"))
-                            continue;
-                        else if (color.at(0) == '(')
-                        {
-                            color.erase(0, 1);
-                            color.pop_back();
-                            node->prop_set_value(prop_name, color);
-                        }
-                    }
-                }
-                else if (prop_name == prop_id)
-                {
-                    if (auto& prop_value = value["m_winid"]; !prop_value.isNull())
-                    {
-                        node->prop_set_value(prop_name, prop_value.asString());
-                    }
-                }
-
-                else if (prop_name != prop_unknown)
-                {
-                    if (auto& prop_value = value["m_value"]; !prop_value.isNull())
-                    {
-                        if (prop_value.isBool())
-                            node->prop_set_value(prop_name, prop_value.asBool());
-                        else
-                            node->prop_set_value(prop_name, prop_value.asString());
+                        color.erase(0, 1);
+                        color.pop_back();
+                        node->prop_set_value(prop_name, color);
                     }
                 }
             }
+            else if (prop_name == prop_id)
+            {
+                if (auto& prop_value = value["m_winid"]; !prop_value.isNull())
+                {
+                    node->prop_set_value(prop_name, prop_value.asString());
+                }
+            }
+
+            else if (prop_name != prop_unknown)
+            {
+                if (auto& prop_value = value["m_value"]; !prop_value.isNull())
+                {
+                    if (prop_value.isBool())
+                        node->prop_set_value(prop_name, prop_value.asBool());
+                    else
+                        node->prop_set_value(prop_name, prop_value.asString());
+                }
+            }
         }
-    }
-    catch (const std::exception& e)
-    {
-#if defined(_DEBUG)
-        FAIL_MSG(e.what())
-        MSG_ERROR(e.what());
-#else
-        wxMessageBox(ttlib::cstr("Internal error: ") << e.what(), "Import wxCrafter project");
-#endif
     }
 }
 

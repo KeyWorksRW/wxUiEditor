@@ -35,15 +35,18 @@ public:
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
-    void ProcessSizerFlags(Node* node, const Json::Value array);
-    void ProcessProperties(Node* node, const Json::Value array);
-    void ProcessChild(Node* parent, const Json::Value object);
-    void ProcessStyles(Node* parent, const Json::Value array);
-    void ProcessEvents(Node* parent, const Json::Value array);
+    void ProcessSizerFlags(Node* node, const Json::Value& array);
+    void ProcessProperties(Node* node, const Json::Value& array);
+    void ProcessChild(Node* parent, const Json::Value& object);
+    void ProcessStyles(Node* parent, const Json::Value& array);
+    void ProcessEvents(Node* parent, const Json::Value& array);
+    void ProcessStdBtnChildren(Node* parent, const Json::Value array);
+
+    void ProcessForm(const Json::Value& value);
 
     bool GetBoolValue(const Json::Value& value, ttlib::cview name, bool def_return = false);
     GenEnum::GenName GetGenName(const Json::Value& value);
-    void ProcessForm(const Json::Value& value);
+    const Json::Value& FindObject(ttlib::cview key, ttlib::sview value, const Json::Value& array);
 
 private:
     ttlib::cstr m_output_name;

@@ -176,7 +176,7 @@ void WxCrafter::ProcessForm(const Json::Value& form)
     }
 }
 
-void WxCrafter::ProcessChild(Node* parent, const Json::Value object)
+void WxCrafter::ProcessChild(Node* parent, const Json::Value& object)
 {
     auto& value = object["m_type"];
     if (!value.isNumeric())
@@ -250,21 +250,97 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value object)
 
     if (auto& children = object["m_children"]; children.isArray())
     {
-        for (Json::Value::ArrayIndex idx = 0; idx < children.size(); ++idx)
+        if (gen_name == gen_wxStdDialogButtonSizer)
         {
-            if (!children[idx].isObject())
+            ProcessStdBtnChildren(new_node.get(), children);
+        }
+        else
+        {
+            for (Json::Value::ArrayIndex idx = 0; idx < children.size(); ++idx)
             {
-                m_errors.emplace(ttlib::cstr() << "Invalid wxCrafter file -- child of " << map_GenNames.at(gen_name)
-                                               << " is not a JSON object.");
-                continue;
-            }
+                if (!children[idx].isObject())
+                {
+                    m_errors.emplace(ttlib::cstr() << "Invalid wxCrafter file -- child of " << map_GenNames.at(gen_name)
+                                                   << " is not a JSON object.");
+                    continue;
+                }
 
-            ProcessChild(new_node.get(), children[idx]);
+                ProcessChild(new_node.get(), children[idx]);
+            }
         }
     }
 }
 
-void WxCrafter::ProcessStyles(Node* node, const Json::Value array)
+void WxCrafter::ProcessStdBtnChildren(Node* node, const Json::Value array)
+{
+    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    {
+        if (auto& properties = array[idx]["m_properties"]; properties.isArray())
+        {
+            if (auto& object = FindObject("m_label", "ID:", properties); !object.isNull())
+            {
+                if (auto& selection = object["m_selection"]; selection.isInt())
+                {
+                    if (auto& ids = object["m_options"]; ids.isArray() && selection.asUInt() < ids.size())
+                    {
+                        ttlib::cview id(ids[selection.asInt()].asCString());
+                        if (id.is_sameprefix("wxID_OK"))
+                        {
+                            node->prop_set_value(prop_OK, true);
+                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                                node->prop_set_value(prop_default_button, "OK");
+                        }
+                        else if (id.is_sameprefix("wxID_YES"))
+                        {
+                            node->prop_set_value(prop_Yes, true);
+                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                                node->prop_set_value(prop_default_button, "Yes");
+                        }
+                        else if (id.is_sameprefix("wxID_SAVE"))
+                        {
+                            node->prop_set_value(prop_Save, true);
+                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                                node->prop_set_value(prop_default_button, "Save");
+                        }
+                        else if (id.is_sameprefix("wxID_CLOSE"))
+                        {
+                            node->prop_set_value(prop_Close, true);
+                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                                node->prop_set_value(prop_default_button, "Close");
+                        }
+                        else if (id.is_sameprefix("wxID_CANCEL"))
+                        {
+                            node->prop_set_value(prop_Cancel, true);
+                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                                node->prop_set_value(prop_default_button, "Cancel");
+                        }
+                        else if (id.is_sameprefix("wxID_NO"))
+                        {
+                            node->prop_set_value(prop_No, true);
+                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                                node->prop_set_value(prop_default_button, "No");
+                        }
+                        else if (id.is_sameprefix("wxID_APPLY"))
+                        {
+                            node->prop_set_value(prop_Apply, true);
+                        }
+                        else if (id.is_sameprefix("wxID_HELP"))
+                        {
+                            node->prop_set_value(prop_Help, true);
+                        }
+                        else if (id.is_sameprefix("wxID_CONTEXT_HELP"))
+                        {
+                            node->prop_set_value(prop_ContextHelp, true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+void WxCrafter::ProcessStyles(Node* node, const Json::Value& array)
 {
     // Caution: any of these property options could be a null ptr
 
@@ -312,7 +388,7 @@ void WxCrafter::ProcessStyles(Node* node, const Json::Value array)
     }
 }
 
-void WxCrafter::ProcessEvents(Node* node, const Json::Value array)
+void WxCrafter::ProcessEvents(Node* node, const Json::Value& array)
 {
     for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
     {
@@ -334,7 +410,7 @@ void WxCrafter::ProcessEvents(Node* node, const Json::Value array)
     }
 }
 
-void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value array)
+void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value& array)
 {
     std::set<std::string> all_items;
     for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
@@ -450,7 +526,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value array)
     }
 }
 
-void WxCrafter::ProcessProperties(Node* node, const Json::Value array)
+void WxCrafter::ProcessProperties(Node* node, const Json::Value& array)
 {
     for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
     {
@@ -591,4 +667,21 @@ GenEnum::GenName WxCrafter::GetGenName(const Json::Value& value)
         return result->second;
     else
         return gen_unknown;
+}
+
+const Json::Value& WxCrafter::FindObject(ttlib::cview key, ttlib::sview value, const Json::Value& array)
+{
+    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    {
+        if (auto& object = array[idx]; object.isObject())
+        {
+            if (auto& pair = object[key.c_str()]; pair.isString())
+            {
+                if (value.is_sameas(pair.asCString()))
+                    return object;
+            }
+        }
+    }
+
+    return Json::Value::nullSingleton();
 }

@@ -74,6 +74,8 @@ bool WxCrafter::Import(const ttString& filename, bool write_doc)
 
             if (auto& internationalize = metadata["m_useUnderscoreMacro"]; internationalize.isBool())
                 m_project->prop_set_value(prop_internationalize, internationalize.asBool());
+            if (auto& out_file = metadata["m_outputFileName"]; out_file.isString())
+                m_output_name = out_file.asCString();
         }
 
         if (auto& windows = json_doc["windows"]; !windows.isNull())
@@ -144,6 +146,20 @@ void WxCrafter::ProcessForm(const Json::Value& form)
 
     auto new_node = g_NodeCreator.CreateNode(gen_name, m_project.get());
     m_project->Adopt(new_node);
+
+    if (!m_is_output_name_used && m_output_name.size())
+    {
+        new_node->prop_set_value(prop_base_file, m_output_name);
+        m_is_output_name_used = true;
+    }
+
+    if (auto& array = form["m_properties"]; array.isArray())
+        ProcessProperties(new_node.get(), array);
+    if (auto& array = form["m_styles"]; array.isArray())
+        ProcessStyles(new_node.get(), array);
+    if (auto& array = form["m_events"]; array.isArray())
+        ProcessEvents(new_node.get(), array);
+
     if (auto& children = form["m_children"]; children.isArray())
     {
         for (Json::Value::ArrayIndex idx = 0; idx < children.size(); ++idx)
@@ -190,6 +206,10 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value object)
         ProcessSizerFlags(new_node.get(), array);
     if (auto& array = object["m_properties"]; array.isArray())
         ProcessProperties(new_node.get(), array);
+    if (auto& array = object["m_styles"]; array.isArray())
+        ProcessStyles(new_node.get(), array);
+    if (auto& array = object["m_events"]; array.isArray())
+        ProcessEvents(new_node.get(), array);
 
     if (auto& children = object["m_children"]; children.isArray())
     {
@@ -207,18 +227,88 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value object)
     }
 }
 
-void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value sizer_flags)
+void WxCrafter::ProcessStyles(Node* node, const Json::Value array)
 {
-    std::set<std::string> all_flags;
-    for (Json::Value::ArrayIndex idx = 0; idx < sizer_flags.size(); ++idx)
+    // Caution: any of these property options could be a null ptr
+
+    auto style = node->get_prop_ptr(prop_style);
+    if (style)
+        style->set_value("");
+    auto win_style = node->get_prop_ptr(prop_style);
+    if (win_style)
+        win_style->set_value("");
+
+    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
     {
-        all_flags.insert(sizer_flags[idx].asCString());
+        auto style_bit = array[idx].asCString();
+        if (style)
+        {
+            bool bit_found { false };
+            for (auto& iter: style->GetPropDeclaration()->GetOptions())
+            {
+                if (iter.name == style_bit)
+                {
+                    if (style->get_value().size())
+                        style->get_value() << '|';
+                    style->get_value() << style_bit;
+                    bit_found = true;
+                    break;
+                }
+            }
+            if (bit_found)
+                continue;
+        }
+
+        if (win_style)
+        {
+            for (auto& iter: win_style->GetPropDeclaration()->GetOptions())
+            {
+                if (iter.name == style_bit)
+                {
+                    if (win_style->get_value().size())
+                        win_style->get_value() << '|';
+                    win_style->get_value() << style_bit;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void WxCrafter::ProcessEvents(Node* node, const Json::Value array)
+{
+    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    {
+        if (auto& event = array[idx]; event.isObject())
+        {
+            if (auto name = event["m_eventName"]; name.isString())
+            {
+                if (auto node_event = node->GetEvent(name.asCString()); node_event)
+                {
+                    if (auto& handler = event["m_functionNameAndSignature"]; handler.isString())
+                    {
+                        ttlib::cstr function = handler.asCString();
+                        function.erase_from('(');
+                        node_event->set_value(function);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value array)
+{
+    std::set<std::string> all_items;
+    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    {
+        all_items.insert(array[idx].asCString());
     }
 
     // If the node has porp_alignment, then it will also have prop_borders and prop_flags
     if (node->HasProp(prop_alignment))
     {
-        if (all_flags.find("wxEXPAND") != all_flags.end())
+        if (all_items.find("wxEXPAND") != all_items.end())
         {
             node->prop_set_value(prop_flags, "wxEXPAND");
         }
@@ -226,26 +316,26 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value sizer_flags)
         {
             auto alignment = node->prop_as_raw_ptr(prop_alignment);
 
-            if (all_flags.find("wxALIGN_CENTER") != all_flags.end())
+            if (all_items.find("wxALIGN_CENTER") != all_items.end())
             {
                 if (alignment->size())
                     *alignment << '|';
                 *alignment << "wxALIGN_CENTER";
             }
-            else if (all_flags.find("wxALIGN_CENTER_HORIZONTAL") != all_flags.end())
+            else if (all_items.find("wxALIGN_CENTER_HORIZONTAL") != all_items.end())
             {
                 if (alignment->size())
                     *alignment << '|';
                 *alignment << "wxALIGN_CENTER_HORIZONTAL";
             }
-            else if (all_flags.find("wxALIGN_CENTER_VERTICAL") != all_flags.end())
+            else if (all_items.find("wxALIGN_CENTER_VERTICAL") != all_items.end())
             {
                 if (alignment->size())
                     *alignment << '|';
                 *alignment << "wxALIGN_CENTER_VERTICAL";
             }
 
-            if (all_flags.find("wxALIGN_RIGHT") != all_flags.end())
+            if (all_items.find("wxALIGN_RIGHT") != all_items.end())
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -254,7 +344,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value sizer_flags)
                     *alignment << "wxALIGN_RIGHT";
                 }
             }
-            else if (all_flags.find("wxALIGN_LEFT") != all_flags.end())
+            else if (all_items.find("wxALIGN_LEFT") != all_items.end())
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -263,7 +353,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value sizer_flags)
                     *alignment << "wxALIGN_LEFT";
                 }
             }
-            else if (all_flags.find("wxALIGN_TOP") != all_flags.end())
+            else if (all_items.find("wxALIGN_TOP") != all_items.end())
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -272,7 +362,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value sizer_flags)
                     *alignment << "wxALIGN_TOP";
                 }
             }
-            else if (all_flags.find("wxALIGN_BOTTOM") != all_flags.end())
+            else if (all_items.find("wxALIGN_BOTTOM") != all_items.end())
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -286,7 +376,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value sizer_flags)
 
     if (node->HasProp(prop_border))
     {
-        if (all_flags.find("wxALL") != all_flags.end())
+        if (all_items.find("wxALL") != all_items.end())
         {
             node->prop_set_value(prop_border, "wxALL");
         }
@@ -295,25 +385,25 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value sizer_flags)
             auto border_ptr = node->prop_as_raw_ptr(prop_border);
             border_ptr->clear();
 
-            if (all_flags.find("wxLEFT") != all_flags.end())
+            if (all_items.find("wxLEFT") != all_items.end())
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
                 *border_ptr << "wxLEFT";
             }
-            if (all_flags.find("wxRIGHT") != all_flags.end())
+            if (all_items.find("wxRIGHT") != all_items.end())
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
                 *border_ptr << "wxRIGHT";
             }
-            if (all_flags.find("wxTOP") != all_flags.end())
+            if (all_items.find("wxTOP") != all_items.end())
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
                 *border_ptr << "wxTOP";
             }
-            if (all_flags.find("wxBOTTOM") != all_flags.end())
+            if (all_items.find("wxBOTTOM") != all_items.end())
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
@@ -323,11 +413,11 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value sizer_flags)
     }
 }
 
-void WxCrafter::ProcessProperties(Node* node, const Json::Value properties)
+void WxCrafter::ProcessProperties(Node* node, const Json::Value array)
 {
-    for (Json::Value::ArrayIndex idx = 0; idx < properties.size(); ++idx)
+    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
     {
-        const auto& value = properties[idx];
+        const auto& value = array[idx];
         ttlib::cstr name;
         if (value["m_label"].isString())
         {
@@ -357,7 +447,11 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value properties)
                 else if (name.is_sameas("inherited class"))
                     prop_name = prop_class_name;
                 else if (name.is_sameas("file"))
-                    prop_name = prop_base_file;
+                    prop_name = prop_derived_file;
+                else if (name.is_sameas("text hint"))
+                    prop_name = prop_hint;
+                else if (name.is_sameas("max length"))
+                    prop_name = prop_maxlength;
 
                 else if (name.is_sameas("centre"))
                 {
@@ -422,7 +516,13 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value properties)
                     if (prop_value.isBool())
                         node->prop_set_value(prop_name, prop_value.asBool());
                     else
-                        node->prop_set_value(prop_name, prop_value.asString());
+                    {
+                        auto val = prop_value.asString();
+                        if (val == "-1,-1" && (prop_name == prop_size || prop_name == prop_min_size || prop_name == prop_pos))
+                            continue;  // Don't set if it is a default value
+
+                        node->prop_set_value(prop_name, val);
+                    }
                 }
             }
         }

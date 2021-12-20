@@ -35,17 +35,20 @@ public:
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
-    void ProcessSizerFlags(Node* node, const Json::Value value);
-    void ProcessProperties(Node* node, const Json::Value value);
+    void ProcessSizerFlags(Node* node, const Json::Value array);
+    void ProcessProperties(Node* node, const Json::Value array);
     void ProcessChild(Node* parent, const Json::Value object);
-
+    void ProcessStyles(Node* parent, const Json::Value array);
+    void ProcessEvents(Node* parent, const Json::Value array);
 
     bool GetBoolValue(const Json::Value& value, ttlib::cview name, bool def_return = false);
     GenEnum::GenName GetGenName(const Json::Value& value);
     void ProcessForm(const Json::Value& value);
 
 private:
-    ImportNameMap m_mapEventNames;
+    ttlib::cstr m_output_name;
+
+    bool m_is_output_name_used { false };
 
     // wxCrafter sets this for everything in the entire project
     bool m_generate_ids { true };

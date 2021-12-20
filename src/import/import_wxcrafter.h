@@ -44,8 +44,14 @@ protected:
 
     void ProcessForm(const Json::Value& value);
 
-    bool GetBoolValue(const Json::Value& value, ttlib::cview name, bool def_return = false);
+    bool GetBoolValue(const Json::Value& object, ttlib::cview name, bool def_return = false);
+
+    // Converts a m_type numeric id into the equivalent gen_ value. Returns gen_unknown if
+    // there is no equivalent.
     GenEnum::GenName GetGenName(const Json::Value& value);
+
+    // If array contains objects, then this can find an object containing both the key and
+    // value specified.
     const Json::Value& FindObject(ttlib::cview key, ttlib::sview value, const Json::Value& array);
 
 private:

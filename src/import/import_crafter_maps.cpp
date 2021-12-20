@@ -79,7 +79,7 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4465, gen_CustomControl },
     { 4466, gen_wxStyledTextCtrl },
     { 4467, gen_wxStdDialogButtonSizer },
-    { 4468, gen_unknown /* WXSTDBUTTON */ },
+    { 4468, gen_unknown },  // Theses are the buttons to enable in gen_wxStdDialogButtonSizer
     { 4469, gen_wxDataViewListCtrl },
     { 4470, gen_wxDataViewTreeCtrl },
     { 4471, gen_wxBannerWindow },

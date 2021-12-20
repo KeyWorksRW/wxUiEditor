@@ -26,7 +26,7 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4412, gen_wxListBox },
     { 4413, gen_wxListView },
     { 4414, gen_unknown /* WXLISTCTRL_COL */ },
-    { 4415, gen_wxChoice },
+    { 4415, gen_wxCheckBox },
     { 4416, gen_wxRadioBox },
     { 4417, gen_wxRadioButton },
     { 4418, gen_wxStaticLine },

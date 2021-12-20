@@ -194,6 +194,21 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value object)
         return;
     }
 
+    if (gen_name == gen_wxCheckBox)
+    {
+        if (auto& array = object["m_styles"]; array.isArray())
+        {
+            for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+            {
+                if (ttlib::is_sameas(array[idx].asCString(), "wxCHK_3STATE"))
+                {
+                    gen_name = gen_Check3State;
+                    break;
+                }
+            }
+        }
+    }
+
     auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
     if (!new_node)
     {
@@ -256,7 +271,7 @@ void WxCrafter::ProcessStyles(Node* node, const Json::Value array)
     auto style = node->get_prop_ptr(prop_style);
     if (style)
         style->set_value("");
-    auto win_style = node->get_prop_ptr(prop_style);
+    auto win_style = node->get_prop_ptr(prop_window_style);
     if (win_style)
         win_style->set_value("");
 
@@ -530,7 +545,13 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value array)
                     node->prop_set_value(prop_name, prop_value.asString());
                 }
             }
-
+            else if (prop_name == prop_orientation)
+            {
+                if (auto& prop_value = value["m_selection"]; prop_value.isInt())
+                {
+                    node->prop_set_value(prop_orientation, prop_value.asInt() == 0 ? "wxVERTICAL" : "wxHORIZONTAL");
+                }
+            }
             else if (prop_name != prop_unknown)
             {
                 if (auto& prop_value = value["m_value"]; !prop_value.isNull())
@@ -540,7 +561,8 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value array)
                     else
                     {
                         auto val = prop_value.asString();
-                        if (val == "-1,-1" && (prop_name == prop_size || prop_name == prop_min_size || prop_name == prop_pos))
+                        if (val == "-1,-1" &&
+                            (prop_name == prop_size || prop_name == prop_min_size || prop_name == prop_pos))
                             continue;  // Don't set if it is a default value
 
                         node->prop_set_value(prop_name, val);

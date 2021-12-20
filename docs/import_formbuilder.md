@@ -1,6 +1,6 @@
 # Importing wxFormBUilder projects
 
-**wxUiEditor** can import most **wxFormBuilder** project files. Because **wxUiEditor** generates source code for each top level form, you can import multiple **wxFormBuilder** files into a single **wxUiEditor** file. You may need to make some changes after a project is imported due to the differences in the way forms and widgets are handled.
+**wxUiEditor** can import most **wxFormBuilder** project files. Because **wxUiEditor** generates source code for each top level form, you can import multiple **wxFormBuilder** files into a single **wxUiEditor** file. If multiple forms are specified in a single **wxFormBuilder** project, only the first form will have the generated filename set. All additional forms will use a placeholder name (`filename_base`) -- you will not be able to generate code for the additional forms until you specify a filename to generate.
 
 Note that **wxUiEditor** projects are roughly 90% smaller than a **wxFormBuilder** project due to optimization in what gets written to the project file.
 

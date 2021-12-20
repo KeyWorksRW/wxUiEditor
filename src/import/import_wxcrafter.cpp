@@ -202,6 +202,28 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value object)
     }
     parent->Adopt(new_node);
 
+    if (auto& proportion = object["proportion"]; proportion.isInt() && proportion.asInt() > 0)
+        new_node->prop_set_value(prop_proportion, proportion.asInt());
+    if (auto& border = object["border"]; border.isInt() && border.asInt() != 5)
+        new_node->prop_set_value(prop_border_size, border.asInt());
+
+    if (auto& gbSpan = object["gbSpan"]; gbSpan.isString() && !ttlib::is_sameas(gbSpan.asCString(), "1,1"))
+    {
+        ttlib::cview positions = gbSpan.asCString();
+        new_node->prop_set_value(prop_rowspan, positions.atoi());
+        positions.moveto_nondigit();
+        positions.moveto_digit();
+        new_node->prop_set_value(prop_colspan, positions.atoi());
+    }
+    if (auto& gbPosition = object["gbPosition"]; gbPosition.isString() && !ttlib::is_sameas(gbPosition.asCString(), "0,0"))
+    {
+        ttlib::cview positions = gbPosition.asCString();
+        new_node->prop_set_value(prop_row, positions.atoi());
+        positions.moveto_nondigit();
+        positions.moveto_digit();
+        new_node->prop_set_value(prop_column, positions.atoi());
+    }
+
     if (auto& array = object["m_sizerFlags"]; array.isArray())
         ProcessSizerFlags(new_node.get(), array);
     if (auto& array = object["m_properties"]; array.isArray())

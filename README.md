@@ -4,6 +4,7 @@ This Windows GUI tool is used to create and maintain [wxWidgets](https://docs.wx
 
 In addition to creating new projects, the following project types can be imported:
 
+<!-- - **wxCrafter** (Click [here](docs/import_crafter.md) for more information) -->
 - **wxFormBuilder** (Click [here](docs/import_formbuilder.md) for more information)
 - **wxGlade**
 - **wxSmith**
@@ -16,7 +17,7 @@ To build the Windows version of **wxUiEditor**, run the following two commands f
 
 ```
     cmake -G "Ninja Multi-Config" . -B build
-    cmake.exe --build build --config Release
+    cmake --build build --config Release
 ```
 
 Note that the linking stage of the Release build will take quite a bit of time.
@@ -27,7 +28,7 @@ See [Developer notes](docs/DEV_NOTES.md) for more information about the code.
 
 All KeyWorks Software code uses the Apache License 2.0 [LICENSE](LICENSE).
 
-The pugixml code uses the MIT [LICENSE](pugixml/LICENSE.md).
+The pugixml code uses a MIT [LICENSE](pugixml/LICENSE.md). The rapidjson code also uses a MIT [LICENSE](src/import/rapidjson/license.txt).
 
 ## Screen shots
 

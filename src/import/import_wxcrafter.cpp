@@ -271,7 +271,7 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value& object)
     }
 }
 
-void WxCrafter::ProcessStdBtnChildren(Node* node, const Json::Value array)
+void WxCrafter::ProcessStdBtnChildren(Node* node, const Json::Value& array)
 {
     for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
     {
@@ -338,7 +338,6 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Json::Value array)
         }
     }
 }
-
 
 void WxCrafter::ProcessStyles(Node* node, const Json::Value& array)
 {
@@ -595,9 +594,18 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value& array)
                     }
                     continue;
                 }
-
+                else if (name.is_sameas("bitmap file") || name.is_sameas("disabled-bitmap file"))
+                {
+                    ProcessBitmapPropety(node, value);
+                    continue;
+                }
                 else if (name.is_sameas("virtual folder"))
                     continue;  // this doesn't apply to wxUiEditor
+                else
+                {
+                    MSG_WARNING(ttlib::cstr("Unknown property: \"") << value["m_label"].asCView() << '"');
+                    continue;
+                }
             }
 
             if (prop_name == prop_background_colour || prop_name == prop_foreground_colour)
@@ -646,6 +654,37 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value& array)
                     }
                 }
             }
+        }
+    }
+}
+
+void WxCrafter::ProcessBitmapPropety(Node* node, const Json::Value& object)
+{
+    if (auto path = object["m_path"].asCView(); path.size())
+    {
+        ttlib::cstr bitmap;
+        if (path.is_sameprefix("wxART"))
+        {
+            ttlib::multiview parts(path, ',');
+            if (parts.size() > 1)
+            {
+                bitmap << "Art;" << parts[0] << '|' << parts[1] << ";[-1,-1]";
+            }
+        }
+        else
+        {
+            bitmap << "Embed;" << path << ";[-1,-1]";
+        }
+
+        if (object["m_label"].asCView().is_sameas("Bitmap File:"))
+        {
+            if (node->HasProp(prop_bitmap))
+                node->prop_set_value(prop_bitmap, bitmap);
+        }
+        else if (object["m_label"].asCView().is_sameas("Disabled-Bitmap File"))
+        {
+            if (node->HasProp(prop_disabled_bmp))
+                node->prop_set_value(prop_disabled_bmp, bitmap);
         }
     }
 }

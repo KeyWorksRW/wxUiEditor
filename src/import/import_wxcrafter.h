@@ -40,7 +40,8 @@ protected:
     void ProcessChild(Node* parent, const Json::Value& object);
     void ProcessStyles(Node* parent, const Json::Value& array);
     void ProcessEvents(Node* parent, const Json::Value& array);
-    void ProcessStdBtnChildren(Node* parent, const Json::Value array);
+    void ProcessStdBtnChildren(Node* parent, const Json::Value& array);
+    void ProcessBitmapPropety(Node* parent, const Json::Value& object);
 
     void ProcessForm(const Json::Value& value);
 

@@ -192,15 +192,21 @@ int FileCodeWriter::WriteFile(bool test_only)
     hasWriteFileBeenCalled = true;
 #endif
 
-    ttlib::cstr filename = m_filename.utf8_str().data();
-
-    std::ifstream fileOriginal(filename, std::ios::binary | std::ios::in);
-    if (fileOriginal.is_open())
+    if (m_filename.file_exists())
     {
-        std::string buf(std::istreambuf_iterator<char>(fileOriginal), {});
-        if (m_buffer.size() == buf.size() && m_buffer == buf)
+        wxFile file_original(m_filename, wxFile::read);
+        if (file_original.IsOpened())
         {
-            return 0;  // origianal file is the same as current file
+            auto in_size = file_original.Length();
+            if (m_buffer.size() == static_cast<size_t>(in_size))
+            {
+                auto buffer = std::make_unique<unsigned char[]>(in_size);
+                if (file_original.Read(buffer.get(), in_size) == in_size)
+                {
+                    if (std::memcmp(buffer.get(), m_buffer.data(), in_size) == 0)
+                        return 0;  // origianal file is the same as current file
+                }
+            }
         }
     }
 

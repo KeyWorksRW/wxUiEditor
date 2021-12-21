@@ -54,6 +54,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         results.emplace_back() << project->prop_as_string(prop_cmake_file) << " saved" << '\n';
     }
 
+    bool generate_result = true;
     for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
     {
         auto form = project->GetChild(pos);
@@ -111,6 +112,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             else if (retval < 0)
             {
                 results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                generate_result = false;
             }
             else  // retval == result::exists)
             {
@@ -135,7 +137,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
                     }
                     else
                     {
-                        return true;
+                        return generate_result;
                     }
                 }
             }
@@ -162,7 +164,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
     if (NeedsGenerateCheck)
     {
         if (pClassList && pClassList->size())
-            return true;
+            return generate_result;
         else
             return false;
     }
@@ -188,7 +190,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         msg << '\n' << "All " << currentFiles << " generated files are current";
         wxMessageBox(msg, "Code Generation", wxOK, parent);
     }
-    return true;
+    return generate_result;
 }
 
 void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))

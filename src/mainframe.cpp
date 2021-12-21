@@ -494,10 +494,11 @@ void MainFrame::OnImportProject(wxCommandEvent&)
 void MainFrame::OnGenerateCode(wxCommandEvent&)
 {
     wxGetApp().GetProjectSettings()->UpdateEmbedNodes();
-    GenerateCodeFiles(this);
+    m_isProject_generated = GenerateCodeFiles(this);
     UpdateWakaTime();
 
-    m_isProject_generated = true;
+    // m_isProject_generated = true;
+    // m_isProject_generated = true;
 
     m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
     m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
@@ -574,7 +575,7 @@ void MainFrame::ProjectLoaded()
         Bind(wxEVT_ACTIVATE,
              [this](wxActivateEvent&)
              {
-                 if (m_wakatime && wxTheApp->IsActive())
+                 if (m_wakatime)
                      m_wakatime->ResetHeartbeat();
              });
     }

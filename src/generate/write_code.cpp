@@ -14,6 +14,7 @@
 
 #include "write_code.h"
 
+#include "mainapp.h"       // App -- Main application class
 #include "node_creator.h"  // NodeCreator class
 
 void WriteCode::WriteCodeLine(ttlib::sview code, size_t indentation)
@@ -192,15 +193,22 @@ int FileCodeWriter::WriteFile(bool test_only)
     hasWriteFileBeenCalled = true;
 #endif
 
-    ttlib::cstr filename = m_filename.utf8_str().data();
-
-    std::ifstream fileOriginal(filename, std::ios::binary | std::ios::in);
-    if (fileOriginal.is_open())
+    bool file_exists = m_filename.file_exists();
+    if (file_exists)
     {
-        std::string buf(std::istreambuf_iterator<char>(fileOriginal), {});
-        if (m_buffer.size() == buf.size() && m_buffer == buf)
+        wxFile file_original(m_filename, wxFile::read);
+        if (file_original.IsOpened())
         {
-            return 0;  // origianal file is the same as current file
+            auto in_size = file_original.Length();
+            if (m_buffer.size() == static_cast<size_t>(in_size))
+            {
+                auto buffer = std::make_unique<unsigned char[]>(in_size);
+                if (file_original.Read(buffer.get(), in_size) == in_size)
+                {
+                    if (std::memcmp(buffer.get(), m_buffer.data(), in_size) == 0)
+                        return 0;  // origianal file is the same as current file
+                }
+            }
         }
     }
 
@@ -208,8 +216,24 @@ int FileCodeWriter::WriteFile(bool test_only)
     if (test_only)
         return 1;
 
-    // TODO: [KeyWorks - 05-31-2020] Since we require C++17 compiler, it would make sense to write using std::ifstream
-    // instead of wxFile
+    if (!file_exists)
+    {
+        ttString copy(m_filename);
+        copy.remove_filename();
+        if (!copy.dir_exists() && !wxGetApp().AskedAboutMissingDir(copy))
+        {
+            if (wxMessageBox(wxString() << "The directory " << copy << " doesn't exist.\n\nWould you like it to be created?",
+                             "Generate Files", wxICON_WARNING | wxYES_NO) == wxYES)
+            {
+                wxFileName fn(copy);
+                fn.Mkdir();
+            }
+            else
+            {
+                wxGetApp().AddMissingDir(copy);
+            }
+        }
+    }
 
     wxFile fileOut;
     if (!fileOut.Create(m_filename, true))

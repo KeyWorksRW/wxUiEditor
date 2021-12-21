@@ -94,7 +94,7 @@ protected:
     ttlib::cstr m_buffer;
 
 private:
-    wxString m_filename;
+    ttString m_filename;
 
 #if defined(_DEBUG)
     bool hasWriteFileBeenCalled { false };

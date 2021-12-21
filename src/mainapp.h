@@ -109,6 +109,9 @@ public:
 
     auto GetProjectVersion() { return m_ProjectVersion; }
 
+    bool AskedAboutMissingDir(const wxString path) { return (m_missing_dirs.find(path) != m_missing_dirs.end()); }
+    void AddMissingDir(const wxString path) { m_missing_dirs.insert(path); }
+
 protected:
     bool OnInit() override;
     bool Import(ImportXML& import, ttString& file, bool append = false);
@@ -124,6 +127,11 @@ protected:
 
 private:
     std::shared_ptr<Node> m_project;
+
+    // Every time we try to write to a directory that doesn't exist, we ask the user if they
+    // want to create it. If they choose No then we store the path here and never ask again
+    // for the current session.
+    std::set<wxString> m_missing_dirs;
 
     ProjectSettings* m_pjtSettings { nullptr };
 

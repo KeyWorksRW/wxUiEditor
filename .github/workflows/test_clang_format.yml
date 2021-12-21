@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - src/art_src
       - src/xml
+      - src/import/rapidjson
       - pugixml
       - ttLib
       - testing

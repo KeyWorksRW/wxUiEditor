@@ -742,10 +742,28 @@
             class="wxFlexGridSizer">
             <node
               class="wxRadioButton"
+              label="wx&amp;Crafter Project(s)"
+              style="wxRB_GROUP"
+              var_name="m_radio_wxCrafter"
+              wxEVT_RADIOBUTTON="OnCrafter" />
+            <node
+              class="wxRadioButton"
               label="wx&amp;FormBuilder Project(s)"
               style="wxRB_GROUP"
               var_name="m_radio_wxFormBuilder"
               wxEVT_RADIOBUTTON="OnFormBuilder" />
+            <node
+              class="wxRadioButton"
+              label="wx&amp;Glade Project(s)"
+              var_name="m_radio_wxGlade"
+              column="1"
+              wxEVT_RADIOBUTTON="OnWxGlade" />
+            <node
+              class="wxRadioButton"
+              label="wx&amp;Smith Project(s)"
+              var_name="m_radio_wxSmith"
+              column="1"
+              wxEVT_RADIOBUTTON="OnWxSmith" />
             <node
               class="wxRadioButton"
               label="&amp;Windows Resource"
@@ -759,18 +777,6 @@
               column="1"
               row="1"
               wxEVT_RADIOBUTTON="OnXRC" />
-            <node
-              class="wxRadioButton"
-              label="wx&amp;Smith Project(s)"
-              var_name="m_radio_wxSmith"
-              column="1"
-              wxEVT_RADIOBUTTON="OnWxSmith" />
-            <node
-              class="wxRadioButton"
-              label="wx&amp;Glade Project(s)"
-              var_name="m_radio_wxGlade"
-              column="1"
-              wxEVT_RADIOBUTTON="OnWxGlade" />
           </node>
           <node
             class="wxBoxSizer">
@@ -1040,11 +1046,11 @@
             label="&amp;Append">
             <node
               class="wxMenuItem"
-              help="Append Windows Resource into current project"
-              id="id_AppendWinRes"
-              label="Windows Resource..."
-              var_name="menu_item_5"
-              wxEVT_MENU="OnImportWindowsResource" />
+              help="Append wxFormBuilder project into current project"
+              id="id_AppendFormBuilder"
+              label="wxCrafter Project..."
+              var_name="menu_item_7"
+              wxEVT_MENU="OnAppendCrafter" />
             <node
               class="wxMenuItem"
               help="Append wxFormBuilder project into current project"
@@ -1066,6 +1072,13 @@
               label="wxSmith Project..."
               var_name="menu_item_3"
               wxEVT_MENU="OnAppendSmith" />
+            <node
+              class="wxMenuItem"
+              help="Append Windows Resource into current project"
+              id="id_AppendWinRes"
+              label="Windows Resource..."
+              var_name="menu_item_5"
+              wxEVT_MENU="OnImportWindowsResource" />
             <node
               class="wxMenuItem"
               help="Append XRC project into current project"

@@ -60,22 +60,6 @@
         </Expand>
     </Type>
 
-    <!-- pugixml visualizers -->
-
-    <Type Name="pugi::xml_node">
-        <DisplayString>name:{_root->name,s} value:{_root->value,s} attr:{_root->first_attribute->name,s} = {_root->first_attribute->value,s}</DisplayString>
-        <Expand>
-            <Item Name="parent: ">_root->parent->name,s</Item>
-            <Item Name="1st child: ">_root->first_child->name,s</Item>
-            <Item Name="1st attr name: ">_root->first_attribute->name,s</Item>
-            <Item Name="1st attr value: ">_root->first_attribute->value,s</Item>
-        </Expand>
-    </Type>
-
-    <Type Name="pugi::xml_attribute">
-        <DisplayString>name:{_attr->name,s} value:{_attr->value,s}</DisplayString>
-    </Type>
-
     <!-- ttLib visualizers -->
 
     <Type Name="ttlib::winff">
@@ -113,6 +97,52 @@
             </ArrayItems>
         </Expand>
     </Type>
+
+    <!-- pugixml visualizers -->
+
+    <Type Name="pugi::xml_node">
+        <DisplayString>name:{_root->name,s} value:{_root->value,s} attr:{_root->first_attribute->name,s} = {_root->first_attribute->value,s}</DisplayString>
+        <Expand>
+            <Item Name="parent: ">_root->parent->name,s</Item>
+            <Item Name="1st child: ">_root->first_child->name,s</Item>
+            <Item Name="1st attr name: ">_root->first_attribute->name,s</Item>
+            <Item Name="1st attr value: ">_root->first_attribute->value,s</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="pugi::xml_attribute">
+        <DisplayString>name:{_attr->name,s} value:{_attr->value,s}</DisplayString>
+    </Type>
+
+	<!-- rapidjson visualizer -->
+	<Type Name="rapidjson::GenericValue&lt;*,*&gt;">
+		<DisplayString Condition="(data_.f.flags &amp; kTypeMask) == kNullType">null</DisplayString>
+		<DisplayString Condition="data_.f.flags == kTrueFlag">true</DisplayString>
+		<DisplayString Condition="data_.f.flags == kFalseFlag">false</DisplayString>
+		<DisplayString Condition="data_.f.flags == kShortStringFlag">{(const Ch*)data_.ss.str,na}</DisplayString>
+		<DisplayString Condition="(data_.f.flags &amp; kTypeMask) == kStringType">{(const Ch*)((size_t)data_.s.str &amp; 0x0000FFFFFFFFFFFF),na}</DisplayString>
+		<DisplayString Condition="(data_.f.flags &amp; kNumberIntFlag) == kNumberIntFlag">{data_.n.i.i}</DisplayString>
+		<DisplayString Condition="(data_.f.flags &amp; kNumberUintFlag) == kNumberUintFlag">{data_.n.u.u}</DisplayString>
+		<DisplayString Condition="(data_.f.flags &amp; kNumberInt64Flag) == kNumberInt64Flag">{data_.n.i64}</DisplayString>
+		<DisplayString Condition="(data_.f.flags &amp; kNumberUint64Flag) == kNumberUint64Flag">{data_.n.u64}</DisplayString>
+		<DisplayString Condition="(data_.f.flags &amp; kNumberDoubleFlag) == kNumberDoubleFlag">{data_.n.d}</DisplayString>
+		<DisplayString Condition="data_.f.flags == kObjectType">Object members={data_.o.size}</DisplayString>
+		<DisplayString Condition="data_.f.flags == kArrayType">Array members={data_.a.size}</DisplayString>
+		<Expand>
+			<Item Condition="data_.f.flags == kObjectType" Name="[size]">data_.o.size</Item>
+			<Item Condition="data_.f.flags == kObjectType" Name="[capacity]">data_.o.capacity</Item>
+			<ArrayItems Condition="data_.f.flags == kObjectType">
+				<Size>data_.o.size</Size>
+				<ValuePointer>(rapidjson::GenericMember&lt;$T1,$T2&gt;*)(((size_t)data_.o.members) &amp; 0x0000FFFFFFFFFFFF)</ValuePointer>
+			</ArrayItems>
+			<Item Condition="data_.f.flags == kArrayType" Name="[size]">data_.a.size</Item>
+			<Item Condition="data_.f.flags == kArrayType" Name="[capacity]">data_.a.capacity</Item>
+			<ArrayItems Condition="data_.f.flags == kArrayType">
+				<Size>data_.a.size</Size>
+				<ValuePointer>(rapidjson::GenericValue&lt;$T1,$T2&gt;*)(((size_t)data_.a.elements) &amp; 0x0000FFFFFFFFFFFF)</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
 
     <!-- wxWidgets visualizers -->
 

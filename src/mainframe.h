@@ -200,6 +200,7 @@ public:
 
 protected:
     void OnAbout(wxCommandEvent& event) override;
+    void OnAppendCrafter(wxCommandEvent& event) override;
     void OnAppendFormBuilder(wxCommandEvent& event) override;
     void OnAppendGlade(wxCommandEvent& event) override;
     void OnAppendSmith(wxCommandEvent& event) override;

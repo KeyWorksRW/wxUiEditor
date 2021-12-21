@@ -174,6 +174,7 @@ int App::OnRun()
 
                     wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
                                         "wxUiEditor Project File (*.wxui)|*.wxui"
+                                        "|wxCrafter Project File (*.wxcp)|*.wxcp"
                                         "|wxFormBuilder Project File (*.fbp)|*.fbp"
                                         "|wxGlade File (*.wxg)|*.wxg"
                                         "|wxSmith File (*.wxs)|*.wxs"

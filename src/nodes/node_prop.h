@@ -41,6 +41,9 @@ public:
     const auto& as_string() const { return m_value; }
     auto as_cview() const { return ttlib::cview(m_value.c_str(), m_value.length()); }
 
+    // Use with caution! This allows you to modify the property string directly.
+    auto as_raw_ptr() { return &m_value; }
+
     wxAnimation as_animation() const;
     wxBitmap as_bitmap() const;
     wxColour as_color() const;

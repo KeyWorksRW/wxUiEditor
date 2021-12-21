@@ -29,11 +29,13 @@ public:
 
 protected:
     void CheckResourceFiles(wxArrayString& files);
-    void OnWxGlade(wxCommandEvent& event) override;
+
     void OnCheckFiles(wxCommandEvent& event) override;
+    void OnCrafter(wxCommandEvent& event) override;
     void OnDirectory(wxCommandEvent& event) override;
     void OnFormBuilder(wxCommandEvent& event) override;
     void OnInitDialog(wxInitDialogEvent& event) override;
+    void OnWxGlade(wxCommandEvent& event) override;
 
     void OnSelectAll(wxCommandEvent& event) override;
     void OnSelectNone(wxCommandEvent& event) override;

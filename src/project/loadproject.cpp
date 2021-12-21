@@ -18,6 +18,7 @@
 using namespace GenEnum;
 
 #include "../import/import_formblder.h"  // FormBuilder -- Import a wxFormBuider project
+#include "../import/import_wxcrafter.h"  // WxCrafter -- Import a wxCrafter project
 #include "../import/import_wxglade.h"    // WxGlade -- Import a wxGlade file
 #include "../import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
 #include "../ui/import_dlg.h"            // ImportDlg -- Dialog to create a new project
@@ -343,7 +344,12 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
 bool App::ImportProject(ttString& file)
 {
-    if (file.has_extension(".fbp"))
+    if (file.has_extension(".wxcp"))
+    {
+        WxCrafter crafter;
+        return Import(crafter, file);
+    }
+    else if (file.has_extension(".fbp"))
     {
         FormBuilder fb;
         return Import(fb, file);
@@ -467,7 +473,12 @@ bool App::NewProject(bool create_empty)
         {
             try
             {
-                if (iter.has_extension(".fbp"))
+                if (iter.has_extension(".wxcp"))
+                {
+                    WxCrafter crafter;
+                    Import(crafter, iter, true);
+                }
+                else if (iter.has_extension(".fbp"))
                 {
                     FormBuilder fb;
                     Import(fb, iter, true);
@@ -545,6 +556,36 @@ void App::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dia
         wxGetFrame().FireProjectUpdatedEvent();
         wxGetFrame().SetModified();
     }
+}
+
+void App::AppendCrafter(wxArrayString& files)
+{
+    for (size_t pos = 0; pos < files.size(); ++pos)
+    {
+        WxCrafter crafter;
+
+        if (crafter.Import(files[pos]))
+        {
+            auto& doc = crafter.GetDocument();
+            auto root = doc.first_child();
+            auto project = root.child("node");
+            if (!project || project.attribute("class").as_cstr() != "Project")
+            {
+                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                             "Import wxCrafter project");
+                return;
+            }
+
+            auto form = project.child("node");
+            while (form)
+            {
+                g_NodeCreator.CreateNode(form, m_project.get());
+                form = form.next_sibling("node");
+            }
+        }
+    }
+    wxGetFrame().FireProjectUpdatedEvent();
+    wxGetFrame().SetModified();
 }
 
 void App::AppendFormBuilder(wxArrayString& files)

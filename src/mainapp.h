@@ -29,11 +29,12 @@ class App : public wxApp
 public:
     App();
 
+    void AppendCrafter(wxArrayString& files);
     void AppendFormBuilder(wxArrayString& files);
     void AppendGlade(wxArrayString& files);
     void AppendSmith(wxArrayString& files);
-    void AppendXRC(wxArrayString& files);
     void AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& m_dialogs);
+    void AppendXRC(wxArrayString& files);
 
     bool LoadProject(const ttString& file);
     bool NewProject(bool create_empty = false);

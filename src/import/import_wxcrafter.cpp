@@ -27,10 +27,11 @@ namespace rapidjson
 
     // If array contains objects, then this can find an object containing both the key and
     // value specified.
-    const Value& FindObject(ttlib::cview key, ttlib::sview value, const Value& array);
+    const Value& FindObject(const char* key, std::string_view value, const Value& array);
 
     inline bool IsSame(const rapidjson::Value& value, std::string_view str)
     {
+        ASSERT(value.IsString())
         return ttlib::is_sameas(value.GetString(), str);
     }
 
@@ -719,21 +720,23 @@ void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
 
 GenEnum::GenName rapidjson::GetGenName(const Value& value)
 {
+    ASSERT(value.IsInt())
     if (auto result = g_map_id_generator.find(value.GetInt()); result != g_map_id_generator.end())
         return result->second;
     else
         return gen_unknown;
 }
 
-const Value& rapidjson::FindObject(ttlib::cview key, ttlib::sview value, const rapidjson::Value& array)
+const Value& rapidjson::FindObject(const char* key, std::string_view value, const rapidjson::Value& array)
 {
+    ASSERT(array.IsArray())
     for (auto& iter: array.GetArray())
     {
         if (iter.IsObject())
         {
-            if (auto& pair = iter[key.c_str()]; pair.IsString())
+            if (auto& pair = iter[key]; pair.IsString())
             {
-                if (value.is_sameas(pair.GetString()))
+                if (ttlib::is_sameas(pair.GetString(), value))
                     return iter;
             }
         }

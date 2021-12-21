@@ -11,10 +11,39 @@
 
 #include <wx/mstream.h>  // Memory stream classes
 
-#include "jsoncpp.h"     // json parser
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+#define RAPIDJSON_HAS_STDSTRING 1
+#define RAPIDJSON_ASSERT(x)     ASSERT(x)
+
+// #include "rapidjson/document.h"
+#include "rapidjson/rapidjson.h"
 
 #include "import_wxcrafter.h"
+
+namespace rapidjson
+{
+    // If object contains the specified key, this returns the Value. Otherwise, it returns
+    // the address of Value::empty_value.
+    const Value& FindValue(const Value& object, const char* key);
+
+    // If array contains objects, then this can find an object containing both the key and
+    // value specified.
+    const Value& FindObject(ttlib::cview key, ttlib::sview value, const Value& array);
+
+    inline bool IsSame(const rapidjson::Value& value, std::string_view str)
+    {
+        return ttlib::is_sameas(value.GetString(), str);
+    }
+
+    // Converts a m_type numeric id into the equivalent gen_ value. Returns gen_unknown if
+    // there is no equivalent.
+    GenEnum::GenName GetGenName(const Value& value);
+
+    static const Value empty_value;
+}  // namespace rapidjson
+
+using namespace rapidjson;
+
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "mainapp.h"         // App -- Main application class
@@ -30,17 +59,22 @@ WxCrafter::WxCrafter() {}
 
 bool WxCrafter::Import(const ttString& filename, bool write_doc)
 {
-    std::ifstream istrm(filename.wx_str(), std::ifstream::binary);
-    if (!istrm.is_open())
+    std::ifstream input(filename.wx_str(), std::ifstream::binary);
+    if (!input.is_open())
     {
         wxMessageBox(wxString() << "Cannot open " << filename, "Import wxCrafter project");
         return false;
     }
+    std::string buffer(std::istreambuf_iterator<char>(input), {});
+    input.close();
 
-    Json::Value json_doc;
-    istrm >> json_doc;
-
-    if (!json_doc.isObject())
+    Document document;
+    if (document.Parse(buffer).HasParseError())
+    {
+        wxMessageBox(wxString() << filename << " is not a valid wxCrafter file", "Import wxCrafter project");
+        return false;
+    }
+    if (!document.IsObject())
     {
         wxMessageBox(wxString() << filename << " is not a valid wxCrafter file", "Import wxCrafter project");
         return false;
@@ -50,43 +84,36 @@ bool WxCrafter::Import(const ttString& filename, bool write_doc)
 
     try
     {
-        if (auto& metadata = json_doc["metadata"]; !metadata.isNull())
+        if (auto& metadata = FindValue(document, "metadata"); metadata.IsObject())
         {
-            m_generate_ids = GetBoolValue(metadata, "m_useEnum", true);
+            if (auto& result = FindValue(metadata, "m_useEnum"); result.IsBool())
+                m_generate_ids = result.GetBool();
 
-            if (auto& include_files = metadata["m_includeFiles"]; !include_files.isNull())
+            if (auto& include_files = FindValue(metadata, "m_includeFiles"); include_files.IsArray())
             {
-                if (include_files.isArray() && include_files.size() > 0)
+                auto preamble_ptr = m_project->prop_as_raw_ptr(prop_src_preamble);
+                for (auto& iter: include_files.GetArray())
                 {
-                    auto preamble_ptr = m_project->prop_as_raw_ptr(prop_src_preamble);
-                    for (Json::Value::ArrayIndex idx = 0; idx < include_files.size(); ++idx)
+                    if (iter.IsString())
                     {
-                        auto header_file = include_files[idx].asCView();
-                        if (header_file)
-                        {
-                            if (preamble_ptr->size())
-                                *preamble_ptr << "@@";
-                            *preamble_ptr << "#include \"" << header_file << "\"";
-                        }
+                        if (preamble_ptr->size())
+                            *preamble_ptr << "@@";
+                        *preamble_ptr << "#include \"" << iter.GetString() << "\"";
                     }
                 }
             }
 
-            if (auto& internationalize = metadata["m_useUnderscoreMacro"]; internationalize.isBool())
-                m_project->prop_set_value(prop_internationalize, internationalize.asBool());
-            if (auto& out_file = metadata["m_outputFileName"]; out_file.isString())
-                m_output_name = out_file.asCView();
+            if (auto& internationalize = FindValue(metadata, "m_useUnderscoreMacro"); internationalize.IsBool())
+                m_project->prop_set_value(prop_internationalize, internationalize.GetBool());
+            if (auto& out_file = FindValue(metadata, "m_outputFileName"); out_file.IsString())
+                m_output_name = out_file.GetString();
         }
 
-        if (auto& windows = json_doc["windows"]; !windows.isNull())
+        if (auto& windows = FindValue(document, "windows"); windows.IsArray())
         {
-            if (windows.isArray())
+            for (auto& iter: windows.GetArray())
             {
-                for (Json::ArrayIndex idx = 0; idx < windows.size(); ++idx)
-                {
-                    auto& item = windows[idx];
-                    ProcessForm(item);
-                }
+                ProcessForm(iter);
             }
 
             if (write_doc)
@@ -119,17 +146,17 @@ bool WxCrafter::Import(const ttString& filename, bool write_doc)
     return true;
 }
 
-void WxCrafter::ProcessForm(const Json::Value& form)
+void WxCrafter::ProcessForm(const Value& form)
 {
-    ASSERT_MSG(form.isObject(), "Expected the form to be an object!");
-    if (!form.isObject())
+    ASSERT_MSG(form.IsObject(), "Expected the form to be an object!");
+    if (!form.IsObject())
     {
         m_errors.emplace("Invalid wxCrafter file -- top level window is not a JSON object.");
         return;
     }
 
     auto& value = form["m_type"];
-    if (!value.isNumeric())
+    if (!value.IsNumber())
     {
         m_errors.emplace("Invalid wxCrafter file -- top level window is missing a numeric m_type key to indicate what type "
                          "of window it is.");
@@ -153,33 +180,33 @@ void WxCrafter::ProcessForm(const Json::Value& form)
         m_is_output_name_used = true;
     }
 
-    if (auto& array = form["m_properties"]; array.isArray())
+    if (auto& array = form["m_properties"]; array.IsArray())
         ProcessProperties(new_node.get(), array);
-    if (auto& array = form["m_styles"]; array.isArray())
+    if (auto& array = form["m_styles"]; array.IsArray())
         ProcessStyles(new_node.get(), array);
-    if (auto& array = form["m_events"]; array.isArray())
+    if (auto& array = form["m_events"]; array.IsArray())
         ProcessEvents(new_node.get(), array);
 
-    if (auto& children = form["m_children"]; children.isArray())
+    if (auto& children = form["m_children"]; children.IsArray())
     {
-        for (Json::Value::ArrayIndex idx = 0; idx < children.size(); ++idx)
+        for (auto& child: children.GetArray())
         {
-            if (!children[idx].isObject())
+            if (!child.IsObject())
             {
                 m_errors.emplace(ttlib::cstr() << "Invalid wxCrafter file -- child of " << map_GenNames.at(gen_name)
                                                << " is not a JSON object.");
                 continue;
             }
 
-            ProcessChild(new_node.get(), children[idx]);
+            ProcessChild(new_node.get(), child);
         }
     }
 }
 
-void WxCrafter::ProcessChild(Node* parent, const Json::Value& object)
+void WxCrafter::ProcessChild(Node* parent, const Value& object)
 {
     auto& value = object["m_type"];
-    if (!value.isNumeric())
+    if (!value.IsNumber())
     {
         m_errors.emplace("Invalid wxCrafter file -- child is missing a numeric m_type key to indicate what type "
                          "of child it is.");
@@ -196,11 +223,11 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value& object)
 
     if (gen_name == gen_wxCheckBox)
     {
-        if (auto& array = object["m_styles"]; array.isArray())
+        if (auto& array = FindValue(object, "m_styles"); array.IsArray())
         {
-            for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+            for (auto& iter: array.GetArray())
             {
-                if (array[idx].asCView().is_sameas("wxCHK_3STATE"))
+                if (ttlib::is_sameas(iter.GetString(), "wxCHK_3STATE"))
                 {
                     gen_name = gen_Check3State;
                     break;
@@ -217,38 +244,38 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value& object)
     }
     parent->Adopt(new_node);
 
-    if (auto& proportion = object["proportion"]; proportion.isInt() && proportion.asInt() > 0)
-        new_node->prop_set_value(prop_proportion, proportion.asInt());
-    if (auto& border = object["border"]; border.isInt() && border.asInt() != 5)
-        new_node->prop_set_value(prop_border_size, border.asInt());
+    if (auto& proportion = FindValue(object, "proportion"); proportion.IsInt() && proportion.GetInt() > 0)
+        new_node->prop_set_value(prop_proportion, proportion.GetInt());
+    if (auto& border = FindValue(object, "border"); border.IsInt() && border.GetInt() != 5)
+        new_node->prop_set_value(prop_border_size, border.GetInt());
 
-    if (auto& gbSpan = object["gbSpan"]; gbSpan.isString() && !gbSpan.asCView().is_sameas("1,1"))
+    if (auto& gbSpan = FindValue(object, "gbSpan"); gbSpan.IsString() && !IsSame(gbSpan, "1,1"))
     {
-        auto positions = gbSpan.asCView();
+        ttlib::cview positions = gbSpan.GetString();
         new_node->prop_set_value(prop_rowspan, positions.atoi());
         positions.moveto_nondigit();
         positions.moveto_digit();
         new_node->prop_set_value(prop_colspan, positions.atoi());
     }
-    if (auto& gbPosition = object["gbPosition"]; gbPosition.isString() && !gbPosition.asCView().is_sameas("0,0"))
+    if (auto& gbPosition = FindValue(object, "gbPosition"); gbPosition.IsString() && !IsSame(gbPosition, "0,0"))
     {
-        auto positions = gbPosition.asCView();
+        ttlib::cview positions = gbPosition.GetString();
         new_node->prop_set_value(prop_row, positions.atoi());
         positions.moveto_nondigit();
         positions.moveto_digit();
         new_node->prop_set_value(prop_column, positions.atoi());
     }
 
-    if (auto& array = object["m_sizerFlags"]; array.isArray())
+    if (auto& array = FindValue(object, "m_sizerFlags"); array.IsArray())
         ProcessSizerFlags(new_node.get(), array);
-    if (auto& array = object["m_properties"]; array.isArray())
+    if (auto& array = FindValue(object, "m_properties"); array.IsArray())
         ProcessProperties(new_node.get(), array);
-    if (auto& array = object["m_styles"]; array.isArray())
+    if (auto& array = FindValue(object, "m_styles"); array.IsArray())
         ProcessStyles(new_node.get(), array);
-    if (auto& array = object["m_events"]; array.isArray())
+    if (auto& array = FindValue(object, "m_events"); array.IsArray())
         ProcessEvents(new_node.get(), array);
 
-    if (auto& children = object["m_children"]; children.isArray())
+    if (auto& children = FindValue(object, "m_children"); children.IsArray())
     {
         if (gen_name == gen_wxStdDialogButtonSizer)
         {
@@ -256,68 +283,69 @@ void WxCrafter::ProcessChild(Node* parent, const Json::Value& object)
         }
         else
         {
-            for (Json::Value::ArrayIndex idx = 0; idx < children.size(); ++idx)
+            for (auto& child: children.GetArray())
             {
-                if (!children[idx].isObject())
+                /* code */
+                if (!child.IsObject())
                 {
                     m_errors.emplace(ttlib::cstr() << "Invalid wxCrafter file -- child of " << map_GenNames.at(gen_name)
                                                    << " is not a JSON object.");
                     continue;
                 }
 
-                ProcessChild(new_node.get(), children[idx]);
+                ProcessChild(new_node.get(), child);
             }
         }
     }
 }
 
-void WxCrafter::ProcessStdBtnChildren(Node* node, const Json::Value& array)
+void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
 {
-    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    for (auto& iter: array.GetArray())
     {
-        if (auto& properties = array[idx]["m_properties"]; properties.isArray())
+        if (auto& properties = FindValue(iter, "m_properties"); properties.IsArray())
         {
-            if (auto& object = FindObject("m_label", "ID:", properties); !object.isNull())
+            if (auto& object = FindObject("m_label", "ID:", properties); !object.IsNull())
             {
-                if (auto& selection = object["m_selection"]; selection.isInt())
+                if (auto& selection = FindValue(object, "m_selection"); selection.IsInt())
                 {
-                    if (auto& ids = object["m_options"]; ids.isArray() && selection.asUInt() < ids.size())
+                    if (auto& ids = FindValue(object, "m_options"); ids.IsArray() && selection.GetUint() < ids.Size())
                     {
-                        auto id = ids[selection.asInt()].asCView();
+                        ttlib::cview id = ids[selection.GetInt()].GetString();
                         if (id.is_sameas("wxID_OK"))
                         {
                             node->prop_set_value(prop_OK, true);
-                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                            if (!FindObject("m_label", "Default Button", properties).IsNull())
                                 node->prop_set_value(prop_default_button, "OK");
                         }
                         else if (id.is_sameas("wxID_YES"))
                         {
                             node->prop_set_value(prop_Yes, true);
-                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                            if (!FindObject("m_label", "Default Button", properties).IsNull())
                                 node->prop_set_value(prop_default_button, "Yes");
                         }
                         else if (id.is_sameas("wxID_SAVE"))
                         {
                             node->prop_set_value(prop_Save, true);
-                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                            if (!FindObject("m_label", "Default Button", properties).IsNull())
                                 node->prop_set_value(prop_default_button, "Save");
                         }
                         else if (id.is_sameas("wxID_CLOSE"))
                         {
                             node->prop_set_value(prop_Close, true);
-                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                            if (!FindObject("m_label", "Default Button", properties).IsNull())
                                 node->prop_set_value(prop_default_button, "Close");
                         }
                         else if (id.is_sameas("wxID_CANCEL"))
                         {
                             node->prop_set_value(prop_Cancel, true);
-                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                            if (!FindObject("m_label", "Default Button", properties).IsNull())
                                 node->prop_set_value(prop_default_button, "Cancel");
                         }
                         else if (id.is_sameas("wxID_NO"))
                         {
                             node->prop_set_value(prop_No, true);
-                            if (!FindObject("m_label", "Default Button", properties).isNull())
+                            if (!FindObject("m_label", "Default Button", properties).IsNull())
                                 node->prop_set_value(prop_default_button, "No");
                         }
                         else if (id.is_sameas("wxID_APPLY"))
@@ -339,7 +367,7 @@ void WxCrafter::ProcessStdBtnChildren(Node* node, const Json::Value& array)
     }
 }
 
-void WxCrafter::ProcessStyles(Node* node, const Json::Value& array)
+void WxCrafter::ProcessStyles(Node* node, const Value& array)
 {
     // Caution: any of these property options could be a null ptr
 
@@ -350,15 +378,15 @@ void WxCrafter::ProcessStyles(Node* node, const Json::Value& array)
     if (win_style)
         win_style->set_value("");
 
-    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    for (auto& iter: array.GetArray())
     {
-        auto style_bit = array[idx].asCView();
+        auto style_bit = iter.GetString();
         if (style)
         {
             bool bit_found { false };
-            for (auto& iter: style->GetPropDeclaration()->GetOptions())
+            for (auto& option: style->GetPropDeclaration()->GetOptions())
             {
-                if (iter.name == style_bit)
+                if (option.name == style_bit)
                 {
                     if (style->get_value().size())
                         style->get_value() << '|';
@@ -373,9 +401,9 @@ void WxCrafter::ProcessStyles(Node* node, const Json::Value& array)
 
         if (win_style)
         {
-            for (auto& iter: win_style->GetPropDeclaration()->GetOptions())
+            for (auto& option: win_style->GetPropDeclaration()->GetOptions())
             {
-                if (iter.name == style_bit)
+                if (option.name == style_bit)
                 {
                     if (win_style->get_value().size())
                         win_style->get_value() << '|';
@@ -387,19 +415,19 @@ void WxCrafter::ProcessStyles(Node* node, const Json::Value& array)
     }
 }
 
-void WxCrafter::ProcessEvents(Node* node, const Json::Value& array)
+void WxCrafter::ProcessEvents(Node* node, const Value& array)
 {
-    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    for (auto& iter: array.GetArray())
     {
-        if (auto& event = array[idx]; event.isObject())
+        if (auto& event = iter; event.IsObject())
         {
-            if (auto name = event["m_eventName"]; name.isString())
+            if (auto& name = event["m_eventName"]; name.IsString())
             {
-                if (auto node_event = node->GetEvent(name.asCView()); node_event)
+                if (auto node_event = node->GetEvent(name.GetString()); node_event)
                 {
-                    if (auto& handler = event["m_functionNameAndSignature"]; handler.isString())
+                    if (auto& handler = event["m_functionNameAndSignature"]; handler.IsString())
                     {
-                        auto function = handler.asCView();
+                        ttlib::cview function = handler.GetString();
                         if (auto pos = function.find('('); ttlib::is_found(pos))
                             function.remove_prefix(pos + 1);
                         node_event->set_value(function);
@@ -410,12 +438,12 @@ void WxCrafter::ProcessEvents(Node* node, const Json::Value& array)
     }
 }
 
-void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value& array)
+void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
 {
     std::set<std::string> all_items;
-    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    for (auto& iter: array.GetArray())
     {
-        all_items.insert(std::move(array[idx].asString()));
+        all_items.insert(std::move(iter.GetString()));
     }
 
     // If the node has porp_alignment, then it will also have prop_borders and prop_flags
@@ -526,15 +554,15 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Json::Value& array)
     }
 }
 
-void WxCrafter::ProcessProperties(Node* node, const Json::Value& array)
+void WxCrafter::ProcessProperties(Node* node, const Value& array)
 {
-    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    for (auto& iter: array.GetArray())
     {
-        const auto& value = array[idx];
+        const auto& value = iter;
         ttlib::cstr name;
-        if (value["m_label"].isString())
+        if (value["m_label"].IsString())
         {
-            name = value["m_label"].asCView();
+            name = value["m_label"].GetString();
             if (name.back() == ':')
                 name.pop_back();
             name.MakeLower();
@@ -568,9 +596,9 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value& array)
 
                 else if (name.is_sameas("centre"))
                 {
-                    if (value["m_selection"].isNumeric())
+                    if (value["m_selection"].IsNumber())
                     {
-                        switch (value["m_selection"].asInt())
+                        switch (value["m_selection"].GetInt())
                         {
                             case 0:
                                 node->prop_set_value(prop_center, "no");
@@ -603,16 +631,16 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value& array)
                     continue;  // this doesn't apply to wxUiEditor
                 else
                 {
-                    MSG_WARNING(ttlib::cstr("Unknown property: \"") << value["m_label"].asCView() << '"');
+                    MSG_WARNING(ttlib::cstr("Unknown property: \"") << value["m_label"].GetString() << '"');
                     continue;
                 }
             }
 
             if (prop_name == prop_background_colour || prop_name == prop_foreground_colour)
             {
-                if (auto& prop_value = value["colour"]; !prop_value.isNull())
+                if (auto& prop_value = FindValue(value, "colour"); !prop_value.IsString())
                 {
-                    ttlib::cstr color = prop_value.asString();
+                    ttlib::cstr color = prop_value.GetString();
                     if (color.contains("Default"))
                         continue;
                     else if (color.at(0) == '(')
@@ -625,27 +653,27 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value& array)
             }
             else if (prop_name == prop_id)
             {
-                if (auto& prop_value = value["m_winid"]; !prop_value.isNull())
+                if (auto& prop_value = FindValue(value, "m_winid"); prop_value.IsString())
                 {
-                    node->prop_set_value(prop_name, prop_value.asCView());
+                    node->prop_set_value(prop_name, prop_value.GetString());
                 }
             }
             else if (prop_name == prop_orientation)
             {
-                if (auto& prop_value = value["m_selection"]; prop_value.isInt())
+                if (auto& prop_value = value["m_selection"]; prop_value.IsInt())
                 {
-                    node->prop_set_value(prop_orientation, prop_value.asInt() == 0 ? "wxVERTICAL" : "wxHORIZONTAL");
+                    node->prop_set_value(prop_orientation, prop_value.GetInt() == 0 ? "wxVERTICAL" : "wxHORIZONTAL");
                 }
             }
             else if (prop_name != prop_unknown)
             {
-                if (auto& prop_value = value["m_value"]; !prop_value.isNull())
+                if (auto& prop_value = FindValue(value, "m_value"); !prop_value.IsNull())
                 {
-                    if (prop_value.isBool())
-                        node->prop_set_value(prop_name, prop_value.asBool());
+                    if (prop_value.IsBool())
+                        node->prop_set_value(prop_name, prop_value.GetBool());
                     else
                     {
-                        auto val = prop_value.asCView();
+                        ttlib::cview val = prop_value.GetString();
                         if (val.is_sameas("-1,-1") &&
                             (prop_name == prop_size || prop_name == prop_min_size || prop_name == prop_pos))
                             continue;  // Don't set if it is a default value
@@ -658,9 +686,9 @@ void WxCrafter::ProcessProperties(Node* node, const Json::Value& array)
     }
 }
 
-void WxCrafter::ProcessBitmapPropety(Node* node, const Json::Value& object)
+void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
 {
-    if (auto path = object["m_path"].asCView(); path.size())
+    if (ttlib::cview path = object["m_path"].GetString(); path.size())
     {
         ttlib::cstr bitmap;
         if (path.is_sameprefix("wxART"))
@@ -676,12 +704,12 @@ void WxCrafter::ProcessBitmapPropety(Node* node, const Json::Value& object)
             bitmap << "Embed;" << path << ";[-1,-1]";
         }
 
-        if (object["m_label"].asCView().is_sameas("Bitmap File:"))
+        if (IsSame(object["m_label"], "Bitmap File:"))
         {
             if (node->HasProp(prop_bitmap))
                 node->prop_set_value(prop_bitmap, bitmap);
         }
-        else if (object["m_label"].asCView().is_sameas("Disabled-Bitmap File"))
+        else if (IsSame(object["m_label"], "Disabled-Bitmap File"))
         {
             if (node->HasProp(prop_disabled_bmp))
                 node->prop_set_value(prop_disabled_bmp, bitmap);
@@ -689,40 +717,35 @@ void WxCrafter::ProcessBitmapPropety(Node* node, const Json::Value& object)
     }
 }
 
-bool WxCrafter::GetBoolValue(const Json::Value& object, ttlib::cview name, bool def_return)
+GenEnum::GenName rapidjson::GetGenName(const Value& value)
 {
-    ASSERT_MSG(object.isObject(), "GetBoolValue() only works on Objects!")
-    if (auto& result = object[name.c_str()]; !result.isNull())
-    {
-        return result.asBool();
-    }
-    else
-    {
-        return def_return;
-    }
-}
-
-GenEnum::GenName WxCrafter::GetGenName(const Json::Value& value)
-{
-    if (auto result = g_map_id_generator.find(value.asInt()); result != g_map_id_generator.end())
+    if (auto result = g_map_id_generator.find(value.GetInt()); result != g_map_id_generator.end())
         return result->second;
     else
         return gen_unknown;
 }
 
-const Json::Value& WxCrafter::FindObject(ttlib::cview key, ttlib::sview value, const Json::Value& array)
+const Value& rapidjson::FindObject(ttlib::cview key, ttlib::sview value, const rapidjson::Value& array)
 {
-    for (Json::Value::ArrayIndex idx = 0; idx < array.size(); ++idx)
+    for (auto& iter: array.GetArray())
     {
-        if (auto& object = array[idx]; object.isObject())
+        if (iter.IsObject())
         {
-            if (auto& pair = object[key.c_str()]; pair.isString())
+            if (auto& pair = iter[key.c_str()]; pair.IsString())
             {
-                if (value.is_sameas(pair.asCView()))
-                    return object;
+                if (value.is_sameas(pair.GetString()))
+                    return iter;
             }
         }
     }
 
-    return Json::Value::nullSingleton();
+    return empty_value;
+}
+
+const Value& rapidjson::FindValue(const rapidjson::Value& object, const char* key)
+{
+    if (auto result = object.FindMember(key); result != object.MemberEnd())
+        return result->value;
+    else
+        return empty_value;
 }

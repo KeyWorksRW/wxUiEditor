@@ -107,7 +107,6 @@ Files:
     import/import_wxglade.cpp      # Import a Import a wxGlade file
     import/import_wxsmith.cpp      # Process XRC files
     import/import_xml.cpp          # Base class for XML importing
-    import/jsoncpp.cpp             # Used to import wxCrafter projects
 
     mockup/mockup_parent.cpp    # Top-level MockUp Parent window
     mockup/mockup_content.cpp   # Mockup of a form's contents
@@ -196,6 +195,7 @@ Docs:
 
     ../README.md
     ../docs/DEV_NOTES.md
+    ../docs/import_crafter.md
     ../docs/import_formbuilder.md
     ../docs/import_winres.md
     nodes/README.md

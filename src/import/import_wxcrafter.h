@@ -16,12 +16,9 @@
 
 #include "import_xml.h"  // ImportXML -- Base class for XML importing
 
-class wxImage;
+#include "rapidjson/document.h"
 
-namespace Json
-{
-    class Value;
-}
+class wxImage;
 
 using ImportNameMap = std::unordered_map<std::string, const char*>;
 
@@ -35,25 +32,15 @@ public:
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
-    void ProcessSizerFlags(Node* node, const Json::Value& array);
-    void ProcessProperties(Node* node, const Json::Value& array);
-    void ProcessChild(Node* parent, const Json::Value& object);
-    void ProcessStyles(Node* parent, const Json::Value& array);
-    void ProcessEvents(Node* parent, const Json::Value& array);
-    void ProcessStdBtnChildren(Node* parent, const Json::Value& array);
-    void ProcessBitmapPropety(Node* parent, const Json::Value& object);
+    void ProcessSizerFlags(Node* node, const rapidjson::Value& array);
+    void ProcessProperties(Node* node, const rapidjson::Value& array);
+    void ProcessChild(Node* parent, const rapidjson::Value& object);
+    void ProcessStyles(Node* parent, const rapidjson::Value& array);
+    void ProcessEvents(Node* parent, const rapidjson::Value& array);
+    void ProcessStdBtnChildren(Node* parent, const rapidjson::Value& array);
+    void ProcessBitmapPropety(Node* parent, const rapidjson::Value& object);
 
-    void ProcessForm(const Json::Value& value);
-
-    bool GetBoolValue(const Json::Value& object, ttlib::cview name, bool def_return = false);
-
-    // Converts a m_type numeric id into the equivalent gen_ value. Returns gen_unknown if
-    // there is no equivalent.
-    GenEnum::GenName GetGenName(const Json::Value& value);
-
-    // If array contains objects, then this can find an object containing both the key and
-    // value specified.
-    const Json::Value& FindObject(ttlib::cview key, ttlib::sview value, const Json::Value& array);
+    void ProcessForm(const rapidjson::Value& value);
 
 private:
     ttlib::cstr m_output_name;

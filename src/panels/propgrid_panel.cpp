@@ -1590,6 +1590,8 @@ void PropGridPanel::ReplaceBaseFile(const wxString& newValue, NodeProperty* prop
         baseName.Replace("Base", wxEmptyString);
     baseName.MakeLower();
     baseName << "_base";
+    if (wxGetApp().GetProject()->HasValue(prop_base_directory))
+        baseName.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');
     auto grid_property = m_prop_grid->GetPropertyByLabel("base_file");
     grid_property->SetValueFromString(baseName, 0);
     ModifyProperty(propType, baseName);
@@ -1603,6 +1605,8 @@ void PropGridPanel::ReplaceDrvFile(const wxString& newValue, NodeProperty* propT
     else
         drvName << "_drv";
     drvName.MakeLower();
+    if (wxGetApp().GetProject()->HasValue(prop_base_directory))
+        drvName.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
     grid_property->SetValueFromString(drvName, 0);
     ModifyProperty(propType, drvName);
@@ -1634,9 +1638,9 @@ void PropGridPanel::VerifyChangeFile(wxPropertyGridEvent& event, NodeProperty* p
         {
             if (project->GetChild(child_idx) == node)
                 continue;
-            if (project->GetChild(child_idx)->prop_as_string(prop_base_file) == filename)
+            if (project->GetChild(child_idx)->prop_as_string(prop_base_file).filename() == filename)
             {
-                wxMessageBox(wxString() << "The base filename " << newValue << " is already in use by "
+                wxMessageBox(wxString() << "The base filename " << filename << " is already in use by "
                                         << project->GetChild(child_idx)->prop_as_string(prop_class_name)
                                         << "\n\nEither change the name, or press ESC to restore the original name.");
                 m_failure_handled = true;

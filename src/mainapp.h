@@ -52,6 +52,8 @@ public:
     ttString GetProjectFileName();
     ttString GetProjectPath();
     ttString GetArtDirectory();
+    ttString GetBaseDirectory();
+    ttString GetDerivedDirectory();
 
     wxImage GetImage(const ttlib::cstr& description);
 

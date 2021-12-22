@@ -280,7 +280,26 @@ wxImage App::GetImage(const ttlib::cstr& description)
 
 ttString App::GetArtDirectory()
 {
-    return m_project->prop_as_string(prop_art_directory).wx_str();
+    if (m_project->HasValue(prop_art_directory))
+        return m_project->prop_as_wxString(prop_art_directory);
+    else
+        return GetProjectPath();
+}
+
+ttString App::GetBaseDirectory()
+{
+    if (m_project->HasValue(prop_base_directory))
+        return m_project->prop_as_wxString(prop_base_directory);
+    else
+        return GetProjectPath();
+}
+
+ttString App::GetDerivedDirectory()
+{
+    if (m_project->HasValue(prop_derived_directory))
+        return m_project->prop_as_wxString(prop_derived_directory);
+    else
+        return GetProjectPath();
 }
 
 #if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)

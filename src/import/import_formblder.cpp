@@ -204,7 +204,11 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
 
                 else if (prop_name.as_cview().is_sameas("embedded_files_path"))
                 {
-                    m_embedPath = xml_prop.text().as_string();
+                    ttString path(xml_prop.text().as_cstr().wx_str());
+                    ttString root(m_importProjectFile);
+                    root.remove_filename();
+                    path.make_relative_wx(root);
+                    m_project->prop_set_value(prop_art_directory, path);
                 }
                 else if (prop_name.as_cview().is_sameas("path"))
                 {
@@ -213,8 +217,6 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                     root.remove_filename();
                     path.make_relative_wx(root);
                     m_project->prop_set_value(prop_base_directory, path);
-
-                    m_embedPath = xml_prop.text().as_string();
                 }
                 else if (prop_name.as_cview().is_sameas("file"))
                 {

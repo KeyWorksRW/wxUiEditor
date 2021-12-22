@@ -10,6 +10,7 @@
 #include <wx/arrstr.h>             // wxArrayString class
 #include <wx/aui/auibook.h>        // wxaui: wx advanced user interface - notebook
 #include <wx/config.h>             // wxConfig base header
+#include <wx/dirdlg.h>             // wxDirDialog base class
 #include <wx/filedlg.h>            // wxFileDialog base header
 #include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/propgrid/advprops.h>  // wxPropertyGrid Advanced Properties (font, colour, etc.)
@@ -39,6 +40,7 @@
 #include "../customprops/code_string_prop.h"    // EditCodeDialogAdapter -- Derived wxStringProperty class for code
 #include "../customprops/custom_colour_prop.h"  // EditColourDialogAdapter -- Property editor for colour
 #include "../customprops/custom_param_prop.h"   // EditParamProperty -- dialog for editing CustomControl parameter
+#include "../customprops/directory_prop.h"      // DirectoryDialogAdapter
 #include "../customprops/evt_string_prop.h"     // EventStringProperty -- dialog for editing event handlers
 #include "../customprops/pg_animation.h"        // PropertyGrid_Animation -- Custom property grid class for animations
 #include "../customprops/pg_image.h"            // PropertyGrid_Image -- Custom property grid class for images
@@ -301,7 +303,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             }
 
         case type_path:
-            return new wxDirProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_wxString());
+            return new DirectoryProperty(prop->DeclName().wx_str(), prop);
 
         case type_animation:
             return new PropertyGrid_Animation(prop->DeclName().wx_str(), prop);
@@ -397,30 +399,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
     else if (type == type_wxColour)
     {
         auto value = prop->as_string();
-#if 1
         new_pg_property = new EditColourProperty(prop->DeclName().wx_str(), prop);
-#else
-        if (value.empty())  // Default Colour
-        {
-            wxColourPropertyValue colProp;
-            colProp.m_type = wxSYS_COLOUR_WINDOW;
-            colProp.m_colour = ConvertToSystemColour("wxSYS_COLOUR_WINDOW");
-            new_pg_property = new wxSystemColourProperty(prop->DeclName().wx_str(), wxPG_LABEL, colProp);
-        }
-        else
-        {
-            if (value.find_first_of("wx") == 0)
-            {
-                wxColourPropertyValue def;  // System Colour
-                def.m_type = ConvertToSystemColour(value);
-                new_pg_property = new wxSystemColourProperty(prop->DeclName().wx_str(), wxPG_LABEL, def);
-            }
-            else
-            {
-                new_pg_property = new wxSystemColourProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_color());
-            }
-        }
-#endif
     }
     else if (type == type_file)
     {
@@ -428,16 +407,16 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
         if (prop->isProp(prop_base_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Base class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().getProjectPath().wx_str());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().getProjectPath().wx_str());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetBaseDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().GetProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
         else if (prop->isProp(prop_derived_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().getProjectPath().wx_str());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().getProjectPath().wx_str());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetDerivedDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().GetProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
@@ -445,8 +424,8 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Custom Control Header");
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().getProjectPath().wx_str());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().getProjectPath().wx_str());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().GetProjectPath());
         }
         else if (prop->isProp(prop_local_pch_file))
         {
@@ -457,13 +436,13 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             // directory. If we can find a standard precompiled header filename in the parent directory, then use that
             // as the starting directory.
 
-            ttlib::cstr pch(wxGetApp().getProjectPath());
+            ttString pch(wxGetApp().GetProjectPath());
             pch.append_filename("../");
             pch.append_filename("pch.h");
             if (pch.file_exists())
             {
                 pch.remove_filename();
-                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch.wx_str());
+                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
                 return new_pg_property;
             }
 
@@ -471,7 +450,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             if (pch.file_exists())
             {
                 pch.remove_filename();
-                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch.wx_str());
+                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
                 return new_pg_property;
             }
 
@@ -479,11 +458,11 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             if (pch.file_exists())
             {
                 pch.remove_filename();
-                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch.wx_str());
+                new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, pch);
                 return new_pg_property;
             }
 
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().getProjectPath().wx_str());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetProjectPath());
         }
     }
     else if (type == type_stringlist)
@@ -1038,34 +1017,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 }
             }
             break;
-
-#if 0
-        case type_wxColour:
-            {
-                wxColourPropertyValue colour;
-                colour << event.GetPropertyValue();
-                switch (colour.m_type)
-                {
-                        // When we create the property, we convert an empty value to wxSYS_COLOUR_WINDOW, effectively using
-                        // that as the default. An empty string will tell the code generator not to create any special code
-                        // for setting the color, letting wxWidgets use whatever it's default is.
-
-                    case wxSYS_COLOUR_WINDOW:
-                    case wxSYS_COLOUR_MAX:
-                        modifyProperty(prop, "");
-                        break;
-
-                    case wxPG_COLOUR_CUSTOM:
-                        modifyProperty(prop, ConvertColourToString(colour.m_colour));
-                        break;
-
-                    default:
-                        modifyProperty(prop, ConvertSystemColourToString(colour.m_type));
-                        break;
-                }
-                break;
-            }
-#endif
 
         case type_animation:
         case type_image:

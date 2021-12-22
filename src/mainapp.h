@@ -22,7 +22,7 @@ class ImportXML;
 
 // Current version of wxUiEditor project files
 constexpr const auto curWxuiMajorVer = 1;
-constexpr const auto curWxuiMinorVer = 2;
+constexpr const auto curWxuiMinorVer = 3;
 
 class App : public wxApp
 {

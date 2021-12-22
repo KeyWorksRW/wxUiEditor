@@ -108,6 +108,8 @@ bool WxCrafter::Import(const ttString& filename, bool write_doc)
                 m_project->prop_set_value(prop_internationalize, internationalize.GetBool());
             if (auto& out_file = FindValue(metadata, "m_outputFileName"); out_file.IsString())
                 m_output_name = out_file.GetString();
+            if (auto& out_dir = FindValue(metadata, "m_generatedFilesDir"); out_dir.IsString())
+                m_project->prop_set_value(prop_base_directory, out_dir.GetString());
         }
 
         if (auto& windows = FindValue(document, "windows"); windows.IsArray())
@@ -623,10 +625,8 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                     }
                     continue;
                 }
-                else if (name.is_sameas("bitmap file") || name.is_sameas("disabled-bitmap file"))
+                else if (name.is_sameas("centre"))
                 {
-                    ProcessBitmapPropety(node, value);
-                    continue;
                 }
                 else if (name.is_sameas("virtual folder"))
                     continue;  // this doesn't apply to wxUiEditor

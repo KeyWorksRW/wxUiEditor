@@ -206,6 +206,16 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 {
                     m_embedPath = xml_prop.text().as_string();
                 }
+                else if (prop_name.as_cview().is_sameas("path"))
+                {
+                    ttString path(xml_prop.text().as_cstr().wx_str());
+                    ttString root(m_importProjectFile);
+                    root.remove_filename();
+                    path.make_relative_wx(root);
+                    m_project->prop_set_value(prop_base_directory, path);
+
+                    m_embedPath = xml_prop.text().as_string();
+                }
                 else if (prop_name.as_cview().is_sameas("file"))
                 {
                     m_baseFile = xml_prop.text().as_string();

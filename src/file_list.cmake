@@ -20,11 +20,12 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/xpm.cpp               # All xpm files
 
     ${CMAKE_CURRENT_LIST_DIR}/customprops/code_string_prop.cpp   # Derived wxStringProperty class for code
+    ${CMAKE_CURRENT_LIST_DIR}/customprops/custom_colour_prop.cpp # Property editor for colour
     ${CMAKE_CURRENT_LIST_DIR}/customprops/custom_param_prop.cpp  # Derived wxStringProperty class for custom control parameters
+    ${CMAKE_CURRENT_LIST_DIR}/customprops/directory_prop.cpp     # Derived wxStringProperty class for choosing a directory
     ${CMAKE_CURRENT_LIST_DIR}/customprops/evt_string_prop.cpp    # Derived wxStringProperty class for event function
     ${CMAKE_CURRENT_LIST_DIR}/customprops/img_string_prop.cpp    # Derived wxStringProperty class for handling wxImage files or art
     ${CMAKE_CURRENT_LIST_DIR}/customprops/txt_string_prop.cpp    # Derived wxStringProperty class for single-line text
-    ${CMAKE_CURRENT_LIST_DIR}/customprops/custom_colour_prop.cpp # Property editor for colour
 
     ${CMAKE_CURRENT_LIST_DIR}/customprops/art_prop_dlg.cpp   # Art Property Dialog for image property
     ${CMAKE_CURRENT_LIST_DIR}/customprops/img_props.cpp      # Handles property grid image properties

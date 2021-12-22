@@ -42,9 +42,16 @@ void NewDialog::CreateNode()
             ttString base_file = derived_class;
             base_file.MakeLower();
             base_file << "_base";
+            if (wxGetApp().GetProject()->HasValue(prop_base_directory))
+                base_file.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');
             form_node->prop_set_value(prop_base_file, base_file);
 
             base_file.Replace("_base", "");
+            if (wxGetApp().GetProject()->HasValue(prop_base_directory))
+            {
+                base_file.erase(0, (wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/').size());
+                base_file.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_derived_directory) << '/');
+            }
             form_node->prop_set_value(prop_derived_file, base_file);
         }
     }

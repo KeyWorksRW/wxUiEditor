@@ -501,7 +501,7 @@ bool App::NewProject(bool create_empty)
 
                 if (imported_from.size())
                     imported_from << "@@";
-                imported_from << "// Imported file: " << iter.filename().wx_str();
+                imported_from << "// Imported from " << iter.wx_str();
             }
             catch (const std::exception& /* e */)
             {

@@ -109,6 +109,9 @@ private:
     // List of wxID_ strings
     wxArrayString m_astr_wx_ids;
 
+    // Class decorations
+    wxArrayString m_astr_wx_decorations;
+
     bool m_isPropChangeSuspended { false };
 
     // Set to true if a VerifyChangeFile() function already disaplayed a message to the user.

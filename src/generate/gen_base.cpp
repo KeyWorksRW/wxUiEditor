@@ -64,8 +64,6 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 // clang-format on
 
-extern std::unordered_set<std::string> set_wx_ids;
-
 std::map<wxBitmapType, std::string> g_map_handlers;
 std::map<wxBitmapType, std::string> g_map_types;
 
@@ -1089,8 +1087,11 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
 
     if (auto result = generator->GenAdditionalCode(code_base_class, form_node); result)
     {
-        m_header->writeLine(ttlib::cstr() << "class " << form_node->prop_as_string(prop_class_name) << " : public "
-                                          << result.value());
+        ttlib::cstr declaration("class ");
+        if (form_node->HasValue(prop_class_decoration))
+            declaration << form_node->prop_as_string(prop_class_decoration) << ' ';
+        declaration << form_node->prop_as_string(prop_class_name) << " : public " << result.value();
+        m_header->writeLine(declaration);
     }
     else
     {

@@ -56,10 +56,12 @@ constexpr auto EVENT_ID = PROPERTY_ID + 1;
 
 PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(parent)
 {
-    for (auto& iter: set_wx_ids)
+    for (auto& iter: list_wx_ids)
     {
         m_astr_wx_ids.Add(iter);
     }
+
+    m_astr_wx_decorations.Add("__declspec(dllexport)");
 
     m_notebook_parent = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook_parent->SetArtProvider(new wxAuiSimpleTabArt());
@@ -513,7 +515,7 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
                 m_prop_grid->SetPropertyHelpString(pg, propInfo->GetDescription());
                 if (propType == type_id)
                 {
-                    if (prop->GetPropDeclaration()->isProp(prop_id))
+                    if (prop->isProp(prop_id))
                     {
                         m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_ids);
                     }
@@ -525,6 +527,13 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
 
                     // This causes it to display the bitmap in the image/id property
                     pg->RefreshChildren();
+                }
+                else if (propType == type_string)
+                {
+                    if (prop->isProp(prop_class_decoration))
+                    {
+                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_AUTOCOMPLETE, m_astr_wx_decorations);
+                    }
                 }
             }
 

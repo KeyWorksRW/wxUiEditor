@@ -129,6 +129,8 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files." />
 		<property name="derived_class_name" type="string"
 			help="The name of the derived class.">DerivedClass</property>
+		<property name="class_decoration" type="string"
+			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )." />
 		<property name="derived_file" type="file"
 			help="The filename of the derived class." />
 		<property name="generate_ids" type="bool"
@@ -144,4 +146,4 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="The variable name to set in the .cmake file. This will contain paths to every generated class.">wxue_generated_code</property>
 	</gen>
 
-	</GeneratorDefinitions>)===";
+</GeneratorDefinitions>)===";

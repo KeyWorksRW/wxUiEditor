@@ -20,12 +20,12 @@
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 #include "write_code.h"    // Write code to Scintilla or file
 
-// These are use everywhere we use scintilla to edit C++ code
+// These are used everywhere we use scintilla to edit C++ code
 wxString g_cpp_keywords = "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto \
                               bitand bitor bool break case catch char char8_t char16_t char32_t \
                               class compl concept const consteval constexpr constinit const_cast \
-                              continue co_await co_return co_yield \
-	                          decltype default delete do double dynamic_cast else enum explicit \
+                              continue co_await co_return co_yield __declspec \
+	                          decltype default delete dllexport do double dynamic_cast else enum explicit \
 	                          export extern false float for friend goto if inline int long \
 	                          mutable namespace new noexcept not not_eq nullptr operator private or or_eq \
                               private protected public reflexpr register reinterpret_cast requires \

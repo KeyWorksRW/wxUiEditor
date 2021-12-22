@@ -8,7 +8,7 @@
 // This file is designed to be #included into propgrid_panel.cpp, so it doesn't have the normal precompiled header.
 
 // clang-format off
-std::unordered_set<std::string> set_wx_ids = {
+inline const char*  list_wx_ids[] = {
 
     "wxID_ABORT",
     "wxID_ABOUT",

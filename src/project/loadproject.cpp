@@ -377,6 +377,8 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
 {
     if (import.Import(file))
     {
+        wxGetFrame().GetAppendImportHistory()->AddFileToHistory(file);
+
         auto& doc = import.GetDocument();
         auto root = doc.first_child();
         auto project = root.child("node");

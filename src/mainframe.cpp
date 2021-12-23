@@ -79,7 +79,12 @@ enum
     id_FindWidget
 };
 
-MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
+MainFrame::MainFrame() :
+    MainFrameBase(nullptr), m_findData(wxFR_DOWN)
+#if defined(_DEBUG)
+    ,
+    m_ImportHistory(9, wxID_FILE1 + 1000)
+#endif  // _DEBUG
 {
     wxIconBundle bundle;
 
@@ -94,6 +99,13 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
         m_wakatime = std::make_unique<WakaTime>();
     }
 
+    auto config = wxConfig::Get();
+    config->SetPath(txt_main_window_config);
+    m_FileHistory.Load(*config);
+    m_FileHistory.UseMenu(m_submenu_recent);
+    m_FileHistory.AddFilesToMenu();
+    config->SetPath("/");
+
 #if defined(_DEBUG)
     auto menuDebug = new wxMenu;
     menuDebug->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
@@ -107,15 +119,20 @@ MainFrame::MainFrame() : MainFrameBase(nullptr), m_findData(wxFR_DOWN)
     menuDebug->AppendSeparator();
     menuDebug->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
-    m_menubar->Append(menuDebug, "&Debug");
-#endif  // _DEBUG
+    m_submenu_import_recent = new wxMenu();
+    m_menuFile->AppendSeparator();
+    m_menuFile->AppendSubMenu(m_submenu_import_recent, "Import &Recent");
 
-    auto config = wxConfig::Get();
-    config->SetPath(txt_main_window_config);
-    m_FileHistory.Load(*config);
-    m_FileHistory.UseMenu(m_submenu_recent);
-    m_FileHistory.AddFilesToMenu();
+    m_menubar->Append(menuDebug, "&Debug");
+    config = wxConfig::Get();
+    config->SetPath("debug_history/");
+    m_ImportHistory.Load(*config);
+    m_ImportHistory.UseMenu(m_submenu_import_recent);
+    m_ImportHistory.AddFilesToMenu();
     config->SetPath("/");
+
+    Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, wxID_FILE1 + 1000, wxID_FILE9 + 1000);
+#endif  // _DEBUG
 
     CreateStatusBar(StatusPanels);
     SetStatusBarPane(1);  // specifies where menu and toolbar help content is displayed
@@ -474,6 +491,26 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     }
 }
 
+#if defined(_DEBUG)
+void MainFrame::OnImportRecent(wxCommandEvent& event)
+{
+    ttString file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000));
+    wxArrayString files;
+    files.Add(file);
+    auto extension = file.extension();
+    if (extension == ".wxcp")
+        wxGetApp().AppendCrafter(files);
+    else if (extension == ".fbp")
+        wxGetApp().AppendFormBuilder(files);
+    else if (extension == ".wxg")
+        wxGetApp().AppendGlade(files);
+    else if (extension == ".wxs")
+        wxGetApp().AppendSmith(files);
+    else if (extension == ".xrc")
+        wxGetApp().AppendXRC(files);
+}
+#endif  // _DEBUG
+
 void MainFrame::OnNewProject(wxCommandEvent&)
 {
     if (!SaveWarning())
@@ -543,6 +580,9 @@ void MainFrame::OnClose(wxCloseEvent& event)
         wxTheClipboard->Flush();
 
 #if defined(_DEBUG)
+    config->SetPath("debug_history/");
+    m_ImportHistory.Save(*config);
+
     g_pMsgLogging->CloseLogger();
 #endif
 

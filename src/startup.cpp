@@ -75,6 +75,22 @@ CStartup::CStartup() :
                       << " (" << path << ")<br>";
     }
 
+#if defined(_DEBUG)
+    auto append_history_ptr = wxGetFrame().GetAppendImportHistory();
+    if (append_history_ptr->GetCount())
+        ReplaceRecent << "<br>";
+
+    for (size_t pos = 0; pos < append_history_ptr->GetCount(); ++pos)
+    {
+        file.utf(append_history_ptr->GetHistoryFile(pos).wx_str());
+        file.backslashestoforward();
+        ttlib::cstr path = file;
+        path.remove_filename();
+        ReplaceRecent << "<b><a href=\"" << file << "\">" << file.filename() << "</a></b>"
+                      << " (" << path << ")<br>";
+    }
+#endif  // _DEBUG
+
     ttlib::cstr page(txtContents);
     if (ReplaceRecent.size())
         page.Replace("%recent%", ReplaceRecent);

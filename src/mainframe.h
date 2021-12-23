@@ -32,6 +32,7 @@ class wxAuiNotebook;
 class wxAuiNotebookEvent;
 class wxInfoBar;
 class wxSplitterWindow;
+class wxFileHistroy;
 
 class ueStatusBar;
 class NavigationPanel;
@@ -193,6 +194,10 @@ public:
 
     wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 
+#if defined(_DEBUG)
+    wxFileHistory* GetAppendImportHistory() { return &m_ImportHistory; }
+#endif  // _DEBUG
+
     void ProjectLoaded();
     void ProjectSaved();
 
@@ -200,6 +205,7 @@ public:
 
 protected:
     void OnAbout(wxCommandEvent& event) override;
+    void OnImportRecent(wxCommandEvent& event);
     void OnAppendCrafter(wxCommandEvent& event) override;
     void OnAppendFormBuilder(wxCommandEvent& event) override;
     void OnAppendGlade(wxCommandEvent& event) override;
@@ -281,6 +287,11 @@ private:
     wxFindReplaceDialog* m_findDialog { nullptr };
 
     wxFileHistory m_FileHistory;
+#if defined(_DEBUG)
+    wxFileHistory m_ImportHistory;
+    wxMenu* m_submenu_import_recent;
+
+#endif  // _DEBUG
 
     wxInfoBar* m_info_bar { nullptr };
 

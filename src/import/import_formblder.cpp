@@ -30,7 +30,6 @@
 const auto g_lstIgnoreProps = {
 
     "xrc_skip_sizer",   // used for XRC code generation which we don't support
-    "class_decoration", // used for adding a DLL export macro
 
     "event_handler",  // all events are now declared as virtual
 
@@ -222,6 +221,10 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 {
                     m_baseFile = xml_prop.text().as_string();
                 }
+                else if (prop_name.as_cview().is_sameas("class_decoration"))
+                {
+                    m_class_decoration = xml_prop.text().as_string();
+                }
                 else if (prop_name.as_cview().is_sameas("namespace") && xml_prop.text().as_cview().size())
                 {
                     ConvertNameSpaceProp(new_node->get_prop_ptr(prop_name_space), xml_prop.text().as_cview());
@@ -314,6 +317,8 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         m_errors.emplace(msg);
         return {};
     }
+    if (m_class_decoration.size() && newobject->IsForm())
+        newobject->prop_set_value(prop_class_decoration, m_class_decoration);
 
     for (auto xml_prop = xml_obj.child("property"); xml_prop; xml_prop = xml_prop.next_sibling("property"))
     {

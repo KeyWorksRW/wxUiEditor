@@ -45,6 +45,7 @@ private:
     ttlib::cstr m_embedPath;
     ttlib::cstr m_eventGeneration;
     ttlib::cstr m_baseFile;
+    ttlib::cstr m_class_decoration;
 
     int m_VerMinor { 0 };
 };

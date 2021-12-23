@@ -596,6 +596,8 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                     prop_name = prop_hint;
                 else if (name.is_sameas("max length"))
                     prop_name = prop_maxlength;
+                else if (name.is_sameas("class decorator"))
+                    prop_name = prop_class_decoration;
 
                 else if (name.is_sameas("centre"))
                 {
@@ -627,6 +629,11 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                 }
                 else if (name.is_sameas("centre"))
                 {
+                }
+                else if (name.is_sameas("focused"))
+                {
+                    // Currently we don't support this.
+                    continue;
                 }
                 else if (name.is_sameas("virtual folder"))
                     continue;  // this doesn't apply to wxUiEditor

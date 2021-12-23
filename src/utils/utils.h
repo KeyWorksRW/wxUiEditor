@@ -71,3 +71,6 @@ wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
 
 // Convert the parts[IndexScale] or equivalent string into wxSize dimensions
 void GetScaleInfo(wxSize& size, ttlib::sview description);
+
+// Friendly name/wxSYS_COLOUR_ pairs (e.g. "tooltip"/wxSYS_COLOUR_INFOBK)
+extern std::map<std::string, const char*> g_sys_colour_pair;

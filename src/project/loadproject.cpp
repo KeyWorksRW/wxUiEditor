@@ -377,7 +377,11 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
 {
     if (import.Import(file))
     {
-        wxGetFrame().GetAppendImportHistory()->AddFileToHistory(file);
+#if defined(_DEBUG)
+        ttString full_path(file);
+        full_path.make_absolute();
+        wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path);
+#endif  // _DEBUG
 
         auto& doc = import.GetDocument();
         auto root = doc.first_child();

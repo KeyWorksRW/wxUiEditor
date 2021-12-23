@@ -14,10 +14,9 @@
 #define RAPIDJSON_HAS_STDSTRING 1
 #define RAPIDJSON_ASSERT(x)     ASSERT(x)
 
-// #include "rapidjson/document.h"
 #include "rapidjson/rapidjson.h"
 
-#include "import_wxcrafter.h"
+#include "import_wxcrafter.h"  // This will include rapidjson/document.h
 
 namespace rapidjson
 {
@@ -39,6 +38,13 @@ namespace rapidjson
     // there is no equivalent.
     GenEnum::GenName GetGenName(const Value& value);
 
+    // Convert a colour value into a string that can be stored in a colour property
+    ttlib::cstr ConvertColour(const rapidjson::Value& colour);
+
+    // If object contains m_selection(int) and m_options(array), this will return a pointer
+    // to the string in the array
+    std::string_view GetSelectedString(const rapidjson::Value& object);
+
     static const Value empty_value;
 }  // namespace rapidjson
 
@@ -55,6 +61,7 @@ using namespace rapidjson;
 #include "utils.h"           // Utility functions that work with properties
 
 extern std::map<int, GenEnum::GenName> g_map_id_generator;
+extern std::map<std::string, GenEnum::PropName> g_map_crafter_props;
 
 WxCrafter::WxCrafter() {}
 
@@ -170,6 +177,7 @@ void WxCrafter::ProcessForm(const Value& form)
     gen_name = GetGenName(value);
     if (gen_name == gen_unknown)
     {
+        MSG_ERROR(ttlib::cstr("Unrecognized window type: ") << value.GetInt())
         m_errors.emplace("Unrecognized window type!");
         return;
     }
@@ -220,7 +228,8 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
     gen_name = GetGenName(value);
     if (gen_name == gen_unknown)
     {
-        m_errors.emplace("Unrecognized child type!");
+        MSG_ERROR(ttlib::cstr("Unrecognized child type: ") << value.GetInt());
+        // m_errors.emplace("Unrecognized child type!");
         return;
     }
 
@@ -283,6 +292,10 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
         if (gen_name == gen_wxStdDialogButtonSizer)
         {
             ProcessStdBtnChildren(new_node.get(), children);
+            if (new_node->prop_as_string(prop_alignment).size())
+            {
+                new_node->prop_set_value(prop_static_line, false);
+            }
         }
         else
         {
@@ -304,64 +317,152 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
 
 void WxCrafter::ProcessStdBtnChildren(Node* node, const Value& array)
 {
+    bool is_default_cleared { false };
     for (auto& iter: array.GetArray())
     {
         if (auto& properties = FindValue(iter, "m_properties"); properties.IsArray())
         {
             if (auto& object = FindObject("m_label", "ID:", properties); !object.IsNull())
             {
-                if (auto& selection = FindValue(object, "m_selection"); selection.IsInt())
+                ttlib::sview id = GetSelectedString(object);
+                if (id.size())
                 {
-                    if (auto& ids = FindValue(object, "m_options"); ids.IsArray() && selection.GetUint() < ids.Size())
+                    // If there is at least one valid id, then clear all of the default settings
+                    if (!is_default_cleared)
                     {
-                        ttlib::cview id = ids[selection.GetInt()].GetString();
-                        if (id.is_sameas("wxID_OK"))
+                        is_default_cleared = true;
+                        node->prop_set_value(prop_OK, false);
+                        node->prop_set_value(prop_Cancel, false);
+                        node->prop_set_value(prop_default_button, "");
+                    }
+
+                    if (id.is_sameas("wxID_OK"))
+                    {
+                        node->prop_set_value(prop_OK, true);
+                        if (!FindObject("m_label", "Default Button", properties).IsNull())
+                            node->prop_set_value(prop_default_button, "OK");
+                        if (auto& name = FindValue(iter, "m_events"); name.IsArray() && name.Size())
                         {
-                            node->prop_set_value(prop_OK, true);
-                            if (!FindObject("m_label", "Default Button", properties).IsNull())
-                                node->prop_set_value(prop_default_button, "OK");
+                            if (auto& handler = FindValue(name[0], "m_functionNameAndSignature"); handler.IsString())
+                            {
+                                ttlib::cstr function = handler.GetString();
+                                function.erase_from('(');
+                                node->GetEvent("OKButtonClicked")->set_value(function);
+                            }
                         }
-                        else if (id.is_sameas("wxID_YES"))
+                    }
+                    else if (id.is_sameas("wxID_YES"))
+                    {
+                        node->prop_set_value(prop_Yes, true);
+                        if (!FindObject("m_label", "Default Button", properties).IsNull())
+                            node->prop_set_value(prop_default_button, "Yes");
+                        if (auto& name = FindValue(iter, "m_events"); name.IsArray() && name.Size())
                         {
-                            node->prop_set_value(prop_Yes, true);
-                            if (!FindObject("m_label", "Default Button", properties).IsNull())
-                                node->prop_set_value(prop_default_button, "Yes");
+                            if (auto& handler = FindValue(name[0], "m_functionNameAndSignature"); handler.IsString())
+                            {
+                                ttlib::cstr function = handler.GetString();
+                                function.erase_from('(');
+                                node->GetEvent("YesButtonClicked")->set_value(function);
+                            }
                         }
-                        else if (id.is_sameas("wxID_SAVE"))
+                    }
+                    else if (id.is_sameas("wxID_SAVE"))
+                    {
+                        node->prop_set_value(prop_Save, true);
+                        if (!FindObject("m_label", "Default Button", properties).IsNull())
+                            node->prop_set_value(prop_default_button, "Save");
+                        if (auto& name = FindValue(iter, "m_events"); name.IsArray() && name.Size())
                         {
-                            node->prop_set_value(prop_Save, true);
-                            if (!FindObject("m_label", "Default Button", properties).IsNull())
-                                node->prop_set_value(prop_default_button, "Save");
+                            if (auto& handler = FindValue(name[0], "m_functionNameAndSignature"); handler.IsString())
+                            {
+                                ttlib::cstr function = handler.GetString();
+                                function.erase_from('(');
+                                node->GetEvent("SaveButtonClicked")->set_value(function);
+                            }
                         }
-                        else if (id.is_sameas("wxID_CLOSE"))
+                    }
+                    else if (id.is_sameas("wxID_CLOSE"))
+                    {
+                        node->prop_set_value(prop_Close, true);
+                        if (!FindObject("m_label", "Default Button", properties).IsNull())
+                            node->prop_set_value(prop_default_button, "Close");
+                        if (auto& name = FindValue(iter, "m_events"); name.IsArray() && name.Size())
                         {
-                            node->prop_set_value(prop_Close, true);
-                            if (!FindObject("m_label", "Default Button", properties).IsNull())
-                                node->prop_set_value(prop_default_button, "Close");
+                            if (auto& handler = FindValue(name[0], "m_functionNameAndSignature"); handler.IsString())
+                            {
+                                ttlib::cstr function = handler.GetString();
+                                function.erase_from('(');
+                                node->GetEvent("CloseButtonClicked")->set_value(function);
+                            }
                         }
-                        else if (id.is_sameas("wxID_CANCEL"))
+                    }
+                    else if (id.is_sameas("wxID_CANCEL"))
+                    {
+                        node->prop_set_value(prop_Cancel, true);
+                        if (!FindObject("m_label", "Default Button", properties).IsNull())
+                            node->prop_set_value(prop_default_button, "Cancel");
+                        if (auto& name = FindValue(iter, "m_events"); name.IsArray() && name.Size())
                         {
-                            node->prop_set_value(prop_Cancel, true);
-                            if (!FindObject("m_label", "Default Button", properties).IsNull())
-                                node->prop_set_value(prop_default_button, "Cancel");
+                            if (auto& handler = FindValue(name[0], "m_functionNameAndSignature"); handler.IsString())
+                            {
+                                ttlib::cstr function = handler.GetString();
+                                function.erase_from('(');
+                                node->GetEvent("CancelButtonClicked")->set_value(function);
+                            }
                         }
-                        else if (id.is_sameas("wxID_NO"))
+                    }
+                    else if (id.is_sameas("wxID_NO"))
+                    {
+                        node->prop_set_value(prop_No, true);
+                        if (!FindObject("m_label", "Default Button", properties).IsNull())
+                            node->prop_set_value(prop_default_button, "No");
+                        if (auto& name = FindValue(iter, "m_events"); name.IsArray() && name.Size())
                         {
-                            node->prop_set_value(prop_No, true);
-                            if (!FindObject("m_label", "Default Button", properties).IsNull())
-                                node->prop_set_value(prop_default_button, "No");
+                            if (auto& handler = FindValue(name[0], "m_functionNameAndSignature"); handler.IsString())
+                            {
+                                ttlib::cstr function = handler.GetString();
+                                function.erase_from('(');
+                                node->GetEvent("NoButtonClicked")->set_value(function);
+                            }
                         }
-                        else if (id.is_sameas("wxID_APPLY"))
+                    }
+                    else if (id.is_sameas("wxID_APPLY"))
+                    {
+                        node->prop_set_value(prop_Apply, true);
+                        if (auto& name = FindValue(iter, "m_events"); name.IsArray() && name.Size())
                         {
-                            node->prop_set_value(prop_Apply, true);
+                            if (auto& handler = FindValue(name[0], "m_functionNameAndSignature"); handler.IsString())
+                            {
+                                ttlib::cstr function = handler.GetString();
+                                function.erase_from('(');
+                                node->GetEvent("ApplyButtonClicked")->set_value(function);
+                            }
                         }
-                        else if (id.is_sameas("wxID_HELP"))
+                    }
+                    else if (id.is_sameas("wxID_HELP"))
+                    {
+                        node->prop_set_value(prop_Help, true);
+                        if (auto& name = FindValue(iter, "m_events"); name.IsArray() && name.Size())
                         {
-                            node->prop_set_value(prop_Help, true);
+                            if (auto& handler = FindValue(name[0], "m_functionNameAndSignature"); handler.IsString())
+                            {
+                                ttlib::cstr function = handler.GetString();
+                                function.erase_from('(');
+                                node->GetEvent("HelpButtonClicked")->set_value(function);
+                            }
                         }
-                        else if (id.is_sameas("wxID_CONTEXT_HELP"))
+                    }
+                    else if (id.is_sameas("wxID_CONTEXT_HELP"))
+                    {
+                        node->prop_set_value(prop_ContextHelp, true);
+                        if (auto& name = FindValue(iter, "m_events"); name.IsArray() && name.Size())
                         {
-                            node->prop_set_value(prop_ContextHelp, true);
+                            if (auto& handler = FindValue(name[0], "m_functionNameAndSignature"); handler.IsString())
+                            {
+                                ttlib::cstr function = handler.GetString();
+                                function.erase_from('(');
+                                node->GetEvent("ContextHelpButtonClicked")->set_value(function);
+                            }
                         }
                     }
                 }
@@ -572,105 +673,179 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
             auto prop_name = FindProp(name);
             if (prop_name == prop_unknown)
             {
-                if (name.is_sameas("minimum size"))
-                    prop_name = prop_min_size;
-                else if (name.is_sameas("name"))
-                    prop_name = (node->IsForm() ? prop_class_name : prop_var_name);
-                else if (name.is_sameas("bg colour"))
-                    prop_name = prop_background_colour;
-                else if (name.is_sameas("fg colour"))
-                    prop_name = prop_foreground_colour;
-                else if (name.is_sameas("class name"))
-                    prop_name = prop_derived_class;
-                else if (name.is_sameas("class name"))
-                    prop_name = prop_derived_class;
-                else if (name.is_sameas("include file"))
-                    prop_name = prop_derived_header;
-                else if (name.is_sameas("enable window persistency"))
-                    prop_name = prop_persist;
-                else if (name.is_sameas("inherited class"))
-                    prop_name = prop_class_name;
-                else if (name.is_sameas("file"))
-                    prop_name = prop_derived_file;
-                else if (name.is_sameas("text hint"))
-                    prop_name = prop_hint;
-                else if (name.is_sameas("max length"))
-                    prop_name = prop_maxlength;
-                else if (name.is_sameas("class decorator"))
-                    prop_name = prop_class_decoration;
-
-                else if (name.is_sameas("centre"))
+                if (auto result = g_map_crafter_props.find(name); result != g_map_crafter_props.end())
                 {
-                    if (value["m_selection"].IsNumber())
-                    {
-                        switch (value["m_selection"].GetInt())
-                        {
-                            case 0:
-                                node->prop_set_value(prop_center, "no");
-                                break;
-
-                            case 1:
-                                node->prop_set_value(prop_center, "wxBOTH");
-                                break;
-
-                            case 2:
-                                node->prop_set_value(prop_center, "wxVERTICAL");
-                                break;
-
-                            case 3:
-                                node->prop_set_value(prop_center, "wxHORIZONTAL");
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                    continue;
+                    prop_name = result->second;
                 }
-                else if (name.is_sameas("centre"))
-                {
-                }
-                else if (name.is_sameas("focused"))
-                {
-                    // Currently we don't support this.
-                    continue;
-                }
-                else if (name.is_sameas("virtual folder"))
-                    continue;  // this doesn't apply to wxUiEditor
                 else
                 {
-                    MSG_WARNING(ttlib::cstr("Unknown property: \"") << value["m_label"].GetString() << '"');
-                    continue;
+                    if (name.is_sameas("name"))
+                        prop_name = (node->IsForm() ? prop_class_name : prop_var_name);
+
+                    else if (name.is_sameas("centre"))
+                    {
+                        if (value["m_selection"].IsNumber())
+                        {
+                            switch (value["m_selection"].GetInt())
+                            {
+                                case 0:
+                                    node->prop_set_value(prop_center, "no");
+                                    break;
+
+                                case 1:
+                                    node->prop_set_value(prop_center, "wxBOTH");
+                                    break;
+
+                                case 2:
+                                    node->prop_set_value(prop_center, "wxVERTICAL");
+                                    break;
+
+                                case 3:
+                                    node->prop_set_value(prop_center, "wxHORIZONTAL");
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
+                        continue;
+                    }
+                    else if (name.is_sameas("construct the dropdown menu"))
+                    {
+                        if (node->isGen(gen_tool))
+                        {
+                            if (auto& tool_kind = FindValue(value, "m_value"); tool_kind.IsBool())
+                            {
+                                if (tool_kind.GetBool())
+                                    node->prop_set_value(prop_kind, "wxITEM_DROPDOWN");
+                            }
+                        }
+                    }
+                    else if (name.is_sameas("gradient start"))
+                    {
+                        if (auto& colour = FindValue(value, "colour"); colour.IsString())
+                        {
+                            node->prop_set_value(prop_start_colour, ConvertColour(colour));
+                            continue;
+                        }
+                    }
+                    else if (name.is_sameas("gradient end"))
+                    {
+                        if (auto& colour = FindValue(value, "colour"); colour.IsString())
+                        {
+                            node->prop_set_value(prop_end_colour, ConvertColour(colour));
+                            continue;
+                        }
+                    }
+                    else if (name.is_sameas("bitmap file"))
+                    {
+                        ProcessBitmapPropety(node, value);
+                        continue;
+                    }
+
+                    else if (name.is_sameprefix("bitmap file ("))
+                    {
+                        continue;  // These are different icon sizes
+                    }
+                    else if (name.is_sameprefix("bitmap file ("))
+                    {
+                        continue;  // These are different icon sizes
+                    }
+                    else if (name.is_sameas("auto complete directories") || name.is_sameas("auto complete files"))
+                    {
+                        // [KeyWorks - 12-23-2021]
+                        // These are only valid on Windows -- using them means the app will not work correctly on other
+                        // platforms. Since the user can add them to their derived class, or even in a lambda OnInit event
+                        // handler, I don't see a reason to support them.
+                        continue;
+                    }
+                    else if (name.is_sameas("disabled-bitmap file"))
+                    {
+                        // Currently we don't support this.
+                        continue;
+                    }
+                    else if (name.is_sameas("focused"))
+                    {
+                        // Currently we don't support this.
+                        continue;
+                    }
+                    else if (name.is_sameas("virtual folder"))
+                        continue;  // this doesn't apply to wxUiEditor
+                    else
+                    {
+                        MSG_WARNING(ttlib::cstr("Unknown property: \"") << value["m_label"].GetString() << '"');
+                        continue;
+                    }
                 }
             }
 
             if (prop_name == prop_background_colour || prop_name == prop_foreground_colour)
             {
-                if (auto& prop_value = FindValue(value, "colour"); !prop_value.IsString())
+                if (auto& colour = FindValue(value, "colour"); colour.IsString())
                 {
-                    ttlib::cstr color = prop_value.GetString();
-                    if (color.contains("Default"))
-                        continue;
-                    else if (color.at(0) == '(')
-                    {
-                        color.erase(0, 1);
-                        color.pop_back();
-                        node->prop_set_value(prop_name, color);
-                    }
+                    node->prop_set_value(prop_name, ConvertColour(colour));
                 }
             }
             else if (prop_name == prop_id)
             {
-                if (auto& prop_value = FindValue(value, "m_winid"); prop_value.IsString())
+                if (auto& setting = FindValue(value, "m_winid"); setting.IsString())
                 {
-                    node->prop_set_value(prop_name, prop_value.GetString());
+                    node->prop_set_value(prop_name, setting.GetString());
                 }
+            }
+            else if (prop_name == prop_selection && !FindValue(value, "m_value").IsNull())
+            {
+                auto& setting = FindValue(value, "m_value");
+                // This is a bug in version 2.9 of wxCrafter -- the value should be an int, not a string. We add the GetInt()
+                // variant in case they ever fix it.
+                if (setting.IsString())
+                    node->prop_set_value(prop_selection_int, FindValue(value, "m_value").GetString());
+                else if (setting.IsString())
+                    node->prop_set_value(prop_selection_int, FindValue(value, "m_value").GetInt());
             }
             else if (prop_name == prop_orientation)
             {
-                if (auto& prop_value = value["m_selection"]; prop_value.IsInt())
+                if (auto& setting = value["m_selection"]; setting.IsInt())
                 {
-                    node->prop_set_value(prop_orientation, prop_value.GetInt() == 0 ? "wxVERTICAL" : "wxHORIZONTAL");
+                    node->prop_set_value(prop_orientation, setting.GetInt() == 0 ? "wxVERTICAL" : "wxHORIZONTAL");
+                }
+            }
+            else if (prop_name == prop_value)
+            {
+                if (auto& setting = FindValue(value, "m_value"); !setting.IsNull())
+                {
+                    if (node->isGen(gen_wxSpinCtrl))
+                        node->prop_set_value(prop_initial, setting.GetString());
+                    else if (node->isGen(gen_wxFilePickerCtrl))
+                        node->prop_set_value(prop_initial_path, setting.GetString());
+                    else if (node->isGen(gen_wxGauge))
+                        node->prop_set_value(prop_position, setting.GetString());
+                    else if (node->HasProp(prop_value))
+                    {
+                        node->prop_set_value(prop_name, setting.GetString());
+                    }
+                    else
+                    {
+                        MSG_ERROR(ttlib::cstr("Json sets value, but ")
+                                  << map_GenNames[node->gen_name()] << " doesn't support that property!");
+                    }
+                }
+            }
+            else if (prop_name == prop_contents)
+            {
+                if (auto& setting = FindValue(value, "m_value"); setting.IsString())
+                {
+                    ttlib::multistr contents(setting.GetString(), ';');
+                    auto str_ptr = node->get_prop_ptr(prop_contents)->as_raw_ptr();
+                    for (auto& item: contents)
+                    {
+                        if (item.size())
+                        {
+                            if (str_ptr->size())
+                                *str_ptr << ' ';
+                            *str_ptr << '"' << item << '"';
+                        }
+                    }
                 }
             }
             else if (prop_name != prop_unknown)
@@ -684,9 +859,18 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                         ttlib::cview val = prop_value.GetString();
                         if (val.is_sameas("-1,-1") &&
                             (prop_name == prop_size || prop_name == prop_min_size || prop_name == prop_pos))
+                        {
                             continue;  // Don't set if it is a default value
-
-                        node->prop_set_value(prop_name, val);
+                        }
+                        else if (prop_name == prop_message)
+                        {
+                            auto escape_removal = ConvertEscapeSlashes(val);
+                            node->prop_set_value(prop_name, escape_removal);
+                        }
+                        else
+                        {
+                            node->prop_set_value(prop_name, val);
+                        }
                     }
                 }
             }
@@ -758,4 +942,34 @@ const Value& rapidjson::FindValue(const rapidjson::Value& object, const char* ke
         return result->value;
     else
         return empty_value;
+}
+
+ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
+{
+    ttlib::cstr result;
+    if (colour.IsString() && !ttlib::is_sameprefix(colour.GetString(), "Default"))
+    {
+        if (colour.GetString()[0] == '(')
+        {
+            result = colour.GetString() + 1;
+            result.pop_back();
+        }
+        else if (auto colour_pair = g_sys_colour_pair.find(colour.GetString()); colour_pair != g_sys_colour_pair.end())
+            result = colour_pair->second;
+    }
+
+    return result;
+}
+
+std::string_view rapidjson::GetSelectedString(const rapidjson::Value& object)
+{
+    if (auto& sel_value = FindValue(object, "m_selection"); sel_value.IsInt())
+    {
+        auto sel = sel_value.GetUint();
+        if (auto& array = FindValue(object, "m_options"); array.IsArray() && array.Size() > sel)
+        {
+            return array[sel].GetString();
+        }
+    }
+    return nullptr;
 }

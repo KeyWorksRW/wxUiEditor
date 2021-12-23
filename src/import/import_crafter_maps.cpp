@@ -18,7 +18,7 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4404, gen_unknown /* WXBITMAPBUTTON */ },
     { 4405, gen_wxStaticText },
     { 4406, gen_wxTextCtrl },
-    { 4407, gen_unknown /* WXPANEL_TOPLEVEL */ },
+    { 4407, gen_PanelForm /* WXPANEL_TOPLEVEL */ },
     { 4408, gen_wxPanel },
     { 4409, gen_wxStaticBitmap },
     { 4410, gen_wxComboBox },
@@ -59,7 +59,7 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4445, gen_wxChoicebook },
     { 4446, gen_wxTreebook },
     { 4447, gen_wxSplitterWindow },
-    { 4448, gen_unknown /* WXSPLITTERWINDOW_PAGE */ },
+    { 4448, gen_wxPanel /* used as a child of a wxSplitterWindow */ },
     { 4449, gen_wxStaticBoxSizer },
     { 4450, gen_wxWizard },
     { 4451, gen_wxWizardPageSimple },
@@ -115,7 +115,7 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4501, gen_unknown /* WXRIBBONDROPDOWNTOOL */ },
     { 4502, gen_unknown /* WXRIBBONTOGGLETOOL */ },
     { 4503, gen_unknown /* WXRIBBONTOOLSEPARATOR */ },
-    { 4504, gen_unknown /* WXTOOLBARITEM_SEPARATOR */ },
+    { 4504, gen_toolSeparator },
     { 4505, gen_unknown /* WXGLCANVAS */ },
     { 4506, gen_unknown /* WXGRIDCOL */ },
     { 4507, gen_unknown /* WXGRIDROW */ },
@@ -136,5 +136,34 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4522, gen_wxSimpleHtmlListBox },
     { 4523, gen_wxActivityIndicator },
     { 4524, gen_wxTimePickerCtrl },
+
+};
+
+std::map<std::string, GenEnum::PropName> g_map_crafter_props = {
+
+    { "choices", prop_contents },
+    { "# columns", prop_cols },
+    { "# rows", prop_rows },
+    { "help string", prop_statusbar },
+    { "bg colour", prop_background_colour },
+    { "class decorator", prop_class_decoration },
+    { "class name", prop_derived_class },
+    { "enable window persistency", prop_persist },
+    { "fg colour", prop_foreground_colour },
+    { "file", prop_derived_file },
+    { "growable columns", prop_growablecols },
+    { "growable rows", prop_growablerows },
+    { "horizontal gap", prop_hgap },
+    { "include file", prop_derived_header },
+    { "inherited class", prop_class_name },
+    { "max length", prop_maxlength },
+    { "max value", prop_max },
+    { "min value", prop_min },
+    { "minimum size", prop_min_size },
+    { "text hint", prop_hint },
+    { "vertical gap", prop_vgap },
+    { "bitmap size", prop_bitmapsize },
+
+    // { "minimum", prop_min_size},
 
 };

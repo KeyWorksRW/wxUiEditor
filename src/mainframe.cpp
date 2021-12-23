@@ -374,7 +374,7 @@ void MainFrame::OnAppendCrafter(wxCommandEvent&)
     {
         wxArrayString files;
         dlg.GetPaths(files);
-        wxGetApp().AppendFormBuilder(files);
+        wxGetApp().AppendCrafter(files);
     }
 }
 

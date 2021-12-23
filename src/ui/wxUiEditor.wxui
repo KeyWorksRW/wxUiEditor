@@ -1046,8 +1046,8 @@
             label="&amp;Append">
             <node
               class="wxMenuItem"
-              help="Append wxFormBuilder project into current project"
-              id="id_AppendFormBuilder"
+              help="Append wxCrafter project into current project"
+              id="id_AppendCrafter"
               label="wxCrafter Project..."
               var_name="menu_item_7"
               wxEVT_MENU="OnAppendCrafter" />

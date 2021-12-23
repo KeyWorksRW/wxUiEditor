@@ -28,6 +28,7 @@ public:
         id_AlignLeft,
         id_AlignRight,
         id_AlignTop,
+        id_AppendCrafter,
         id_AppendFormBuilder,
         id_AppendGlade,
         id_AppendSmith,

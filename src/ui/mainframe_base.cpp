@@ -69,8 +69,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto submenu = new wxMenu();
 
-    auto menu_item_7 = new wxMenuItem(submenu, id_AppendFormBuilder, "wxCrafter Project...",
-        "Append wxFormBuilder project into current project", wxITEM_NORMAL);
+    auto menu_item_7 = new wxMenuItem(submenu, id_AppendCrafter, "wxCrafter Project...",
+        "Append wxCrafter project into current project", wxITEM_NORMAL);
     submenu->Append(menu_item_7);
 
     auto menu_item_1 = new wxMenuItem(submenu, id_AppendFormBuilder, "wxFormBuilder Project...",
@@ -384,7 +384,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         },
         wxID_SAVE);
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
-    Bind(wxEVT_MENU, &MainFrameBase::OnAppendCrafter, this, id_AppendFormBuilder);
+    Bind(wxEVT_MENU, &MainFrameBase::OnAppendCrafter, this, id_AppendCrafter);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendSmith, this, id_AppendSmith);

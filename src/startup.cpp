@@ -24,11 +24,11 @@ static const char* txtContents = {
     "<h2>Open Recent Project</h2>"
     "%recent%"
     "<par><br>"
-    "Open an <a href=\"$existing\">existing</a> project."
+    "Open an <b><a href=\"$existing\">existing</a></b> project."
     "<h2>Create New Project</h2>"
-    "<a href=\"$convert\">Import</a> from a different type of project (<b>wxFormBuilder</b>, <b>wxGlade</b>, <b>wxSmith</b>, <b>XRC</b> or <b>Windows Resource</b>).<br>"
+    "<b><a href=\"$convert\">Import</a></b> from a different type of project (<b>wxFormBuilder</b>, <b>wxGlade</b>, <b>wxSmith</b>, <b>XRC</b> or <b>Windows Resource</b>).<br>"
     "<br>"
-    "Create an <a href=\"$empty\">empty</a> project."
+    "Create an <b><a href=\"$empty\">empty</a></b> project."
     "</font>"
     "</body>"
     "</html>"
@@ -53,7 +53,8 @@ private:
 };
 
 CStartup::CStartup() :
-    wxDialog(nullptr, wxID_ANY, txtAppname, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+    // wxDialog(nullptr, wxID_ANY, txtAppname, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+    wxDialog(nullptr, wxID_ANY, txtAppname, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
     SetIcon(GetIconImage("logo32"));
 
@@ -98,9 +99,15 @@ CStartup::CStartup() :
         page.Replace("%recent%", "There are no recently opened projects.");
 
     htmlWindow->SetPage(page);
-    htmlWindow->SetMinSize(wxSize(600, 500));
+#if defined(_DEBUG)
+    // Debug has another row of up to 10 items, so add some extra space.
+    htmlWindow->SetInitialSize(ConvertPixelsToDialog(wxSize(1000 > GetBestSize().x ? 1000 : -1, 1200 > GetBestSize().x ? 1200 : -1)));
+#else
+    htmlWindow->SetInitialSize(ConvertPixelsToDialog(wxSize(1000 > GetBestSize().x ? 1000 : -1, 1000 > GetBestSize().x ? 1000 : -1)));
+#endif  // _DEBUG
+    // htmlWindow->SetMinSize(wxSize(600, 500));
 
-    sizer->Add(htmlWindow, wxSizerFlags(1).Expand().Border(wxALL, 8));
+    sizer->Add(htmlWindow, wxSizerFlags(1).Expand().Border(wxALL, 10));
     sizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), wxSizerFlags().Center().Border(wxBOTTOM, 8));
 
     SetSizerAndFit(sizer);

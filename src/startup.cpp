@@ -101,9 +101,11 @@ CStartup::CStartup() :
     htmlWindow->SetPage(page);
 #if defined(_DEBUG)
     // Debug has another row of up to 10 items, so add some extra space.
-    htmlWindow->SetInitialSize(ConvertPixelsToDialog(wxSize(1000 > GetBestSize().x ? 1000 : -1, 1200 > GetBestSize().x ? 1200 : -1)));
+    htmlWindow->SetInitialSize(
+        ConvertPixelsToDialog(wxSize(1000 > GetBestSize().x ? 1000 : -1, 1200 > GetBestSize().x ? 1200 : -1)));
 #else
-    htmlWindow->SetInitialSize(ConvertPixelsToDialog(wxSize(1000 > GetBestSize().x ? 1000 : -1, 1000 > GetBestSize().x ? 1000 : -1)));
+    htmlWindow->SetInitialSize(
+        ConvertPixelsToDialog(wxSize(1000 > GetBestSize().x ? 1000 : -1, 1000 > GetBestSize().x ? 1000 : -1)));
 #endif  // _DEBUG
     // htmlWindow->SetMinSize(wxSize(600, 500));
 

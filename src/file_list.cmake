@@ -69,6 +69,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/ribbon_widgets.cpp    # Ribbon generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/sizer_widgets.cpp     # Sizer generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/spin_widgets.cpp      # Spin and ScrollBar generation classes
+    ${CMAKE_CURRENT_LIST_DIR}/generate/styled_text.cpp       # wxStyledText (scintilla) generate
     ${CMAKE_CURRENT_LIST_DIR}/generate/text_widgets.cpp      # Text generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/toolbar_widgets.cpp   # Toolbar generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/tree_widgets.cpp      # wxTreeCtrl generation classes

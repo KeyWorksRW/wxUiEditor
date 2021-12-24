@@ -28,6 +28,7 @@
 #include "ribbon_widgets.h"    // RibbonBarGenerator -- Ribbon component classes
 #include "sizer_widgets.h"     // Sizer component classes
 #include "spin_widgets.h"      // Spin component classes
+#include "styled_text.h"       // StyledTextGenerator -- wxStyledText (scintilla) generate
 #include "text_widgets.h"      // Text component classes
 #include "toolbar_widgets.h"   // Toolbar component classes
 #include "tree_widgets.h"      // TreeCtrlGenerator -- wxTreeCtrl component classes

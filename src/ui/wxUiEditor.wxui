@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <wxUiEditorData
-  data_version="12">
+  data_version="13">
   <node
     class="Project"
     art_directory="../art_src"
@@ -749,7 +749,6 @@
             <node
               class="wxRadioButton"
               label="wx&amp;FormBuilder Project(s)"
-              style="wxRB_GROUP"
               var_name="m_radio_wxFormBuilder"
               wxEVT_RADIOBUTTON="OnFormBuilder" />
             <node

@@ -24,8 +24,7 @@ bool ImportBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
         wxRB_GROUP);
     flex_grid_sizer->Add(m_radio_wxCrafter, wxSizerFlags().Border(wxALL));
 
-    m_radio_wxFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&FormBuilder Project(s)", wxDefaultPosition, wxDefaultSize,
-        wxRB_GROUP);
+    m_radio_wxFormBuilder = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&FormBuilder Project(s)");
     flex_grid_sizer->Add(m_radio_wxFormBuilder, wxSizerFlags().Border(wxALL));
 
     m_radio_wxGlade = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Glade Project(s)");

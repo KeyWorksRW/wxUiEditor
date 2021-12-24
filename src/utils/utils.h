@@ -74,3 +74,6 @@ void GetScaleInfo(wxSize& size, ttlib::sview description);
 
 // Friendly name/wxSYS_COLOUR_ pairs (e.g. "tooltip"/wxSYS_COLOUR_INFOBK)
 extern std::map<std::string, const char*> g_sys_colour_pair;
+
+// Friendly name/wxSTC_WRAP_ constant
+extern std::map<std::string, const char*> g_stc_wrap_mode;

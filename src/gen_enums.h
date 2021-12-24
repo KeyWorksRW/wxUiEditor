@@ -336,6 +336,12 @@ namespace GenEnum
         prop_wrap,
         prop_wrap_flags,
 
+        prop_stc_wrap_mode,
+        prop_stc_wrap_visual_flag,
+        prop_stc_wrap_indent_mode,
+        prop_stc_wrap_visual_location,
+        prop_stc_wrap_start_indent,
+
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
         prop_unknown = prop_name_array_size

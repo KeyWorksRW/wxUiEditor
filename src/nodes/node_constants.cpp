@@ -46,6 +46,7 @@
 #include <wx/splitter.h>               // Base header for wxSplitterWindow
 #include <wx/stattext.h>               // wxStaticText base header
 #include <wx/statusbr.h>               // wxStatusBar class interface
+#include <wx/stc/stc.h>                // A wxWidgets implementation of Scintilla.  This class is the
 #include <wx/textctrl.h>               // wxTextAttr and wxTextCtrlBase class - the interface of wxTextCtrl
 #include <wx/timectrl.h>               // Declaration of wxTimePickerCtrl class.
 #include <wx/toolbar.h>                // wxToolBar interface declaration
@@ -616,6 +617,21 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxWIZARD_HALIGN_CENTRE)
     ADD_CONSTANT(wxWIZARD_HALIGN_RIGHT)
     ADD_CONSTANT(wxWIZARD_TILE)
+
+    // wxStyledText (Scintilla)
+
+    ADD_CONSTANT(wxSTC_WRAP_NONE)
+    ADD_CONSTANT(wxSTC_WRAP_WORD)
+    ADD_CONSTANT(wxSTC_WRAP_CHAR)
+    ADD_CONSTANT(wxSTC_WRAP_WHITESPACE)
+    ADD_CONSTANT(wxSTC_WRAPVISUALFLAG_END)
+    ADD_CONSTANT(wxSTC_WRAPVISUALFLAG_START)
+    ADD_CONSTANT(wxSTC_WRAPVISUALFLAG_MARGIN)
+    ADD_CONSTANT(wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT)
+    ADD_CONSTANT(wxSTC_WRAPVISUALFLAGLOC_START_BY_TEXT)
+    ADD_CONSTANT(wxSTC_WRAPINDENT_FIXED)
+    ADD_CONSTANT(wxSTC_WRAPINDENT_SAME)
+    ADD_CONSTANT(wxSTC_WRAPINDENT_INDENT)
 
     // Ribbon macros
     ADD_CONSTANT(wxRIBBON_BUTTON_NORMAL)

@@ -75,7 +75,7 @@ bool EditColourDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGPropert
 }
 
 // clang-format off
-static std::vector<std::pair<const char*, const char*>> sys_colour_pair = {
+std::map<std::string, const char*> g_sys_colour_pair = {
 
     { "App Workspace", "wxSYS_COLOUR_APPWORKSPACE" },
     { "Active Border", "wxSYS_COLOUR_ACTIVEBORDER" },
@@ -192,7 +192,7 @@ EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : Colou
 
     m_colourPicker->GetTextCtrl()->AutoComplete(tmp_array);
 
-    for (auto& iter: sys_colour_pair)
+    for (auto& iter: g_sys_colour_pair)
     {
         m_combo_system->AppendString(wxString(iter.first));
     }
@@ -215,7 +215,7 @@ EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : Colou
         m_colourPicker->Enable(false);
         m_combo_system->Enable(true);
 
-        for (auto& iter: sys_colour_pair)
+        for (auto& iter: g_sys_colour_pair)
         {
             if (prop->as_string() == iter.second)
             {
@@ -259,7 +259,7 @@ wxString EditColourDialog::GetResults()
     else
     {
         auto str = m_combo_system->GetStringSelection().utf8_string();
-        for (auto& iter: sys_colour_pair)
+        for (auto& iter: g_sys_colour_pair)
         {
             if (str == iter.first)
             {
@@ -275,7 +275,7 @@ wxString EditColourDialog::GetResults()
 void EditColourDialog::OnSystemColourChange(wxCommandEvent& /* event */)
 {
     auto str = m_combo_system->GetStringSelection().utf8_string();
-    for (auto& iter: sys_colour_pair)
+    for (auto& iter: g_sys_colour_pair)
     {
         if (str == iter.first)
         {

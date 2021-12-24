@@ -70,12 +70,7 @@ bool App::LoadProject(const ttString& file)
             wxMessageBox(wxString() << "The data file " << file << " is invalid and cannot be opened.");
             return false;
         }
-        else if (m_ProjectVersion == 11)
-        {
-            // This version has a slightly different property for bitmaps, and we have code in place to convert it
-            project = LoadProject(doc);
-        }
-        else
+        else if (m_ProjectVersion < 11)
         {
             if (wxMessageBox(ttlib::cstr() << "Project version " << m_ProjectVersion / 10 << '.' << m_ProjectVersion % 10
                                            << " is not supported.\n\nDo you want to attempt to load it anyway?",
@@ -83,8 +78,8 @@ bool App::LoadProject(const ttString& file)
             {
                 return false;
             }
-            project = LoadProject(doc);
         }
+        project = LoadProject(doc);
     }
 
     else
@@ -377,7 +372,11 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
 {
     if (import.Import(file))
     {
-        wxGetFrame().GetAppendImportHistory()->AddFileToHistory(file);
+#if defined(_DEBUG)
+        ttString full_path(file);
+        full_path.make_absolute();
+        wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path);
+#endif  // _DEBUG
 
         auto& doc = import.GetDocument();
         auto root = doc.first_child();

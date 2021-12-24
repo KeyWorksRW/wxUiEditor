@@ -576,6 +576,11 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
         }
     }
 
+    for (size_t i = 0; i < propCount; i++)
+    {
+        ChangeEnableState(node->get_prop_ptr(category.GetPropName(i)));
+    }
+
     for (auto& nextCat: category.GetCategories())
     {
         if (!nextCat.GetCategoryCount() && !nextCat.GetPropNameCount())
@@ -1163,6 +1168,24 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         {
             event_prop->set_value(node->prop_as_string(prop_handler_name));
         }
+    }
+
+    ChangeEnableState(prop);
+}
+
+void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
+{
+    auto changed_node = changed_prop->GetNode();
+    if (changed_node->isGen(gen_wxStyledTextCtrl))
+    {
+        if (changed_prop->isProp(prop_stc_wrap_indent_mode))
+        {
+            if (auto pg_wrap_start_indent = m_prop_grid->GetProperty("wrap_start_indent"); pg_wrap_start_indent)
+            {
+                pg_wrap_start_indent->Enable(changed_prop->as_string() == "fixed");
+            }
+        }
+        return;
     }
 }
 

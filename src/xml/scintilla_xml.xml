@@ -26,6 +26,49 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			help="Show end of line characters.">0</property>
 		<property name="view_whitespace" type="bool"
 			help="Show whitespace characters.">0</property>
+
+		<category name="Wrapping">
+			<property name="wrap_mode" type="option">
+				<option name="no wrapping"
+					help="Lines are not wrapped." />
+				<option name="word"
+					help="Wrap on word or style boundaries." />
+				<option name="character"
+					help="Wrap between any characters. This is the preferred mode to use Asian languages where there is no white space between words." />
+				<option name="whitespace"
+					help="Wrap on any whitespace" />
+				no wrapping
+			</property>
+			<property name="wrap_visual_flag" type="bitlist">
+				<option name="end"
+					help="Visual flag at end of subline of a wrapped line." />
+				<option name="start"
+					help="Visual flag at begin of subline of a wrapped line. Subline is indented by at least 1 to make room for the flag." />
+				<option name="margin"
+					help="Visual flag in line number margin." />
+			</property>
+			<property name="wrap_visual_location" type="bitlist">
+				<option name="end_text"
+					help="Visual flag at end of subline drawn near text." />
+				<option name="start_text"
+					help="Visual flag at beginning of subline drawn near text." />
+			</property>
+			<property name="wrap_indent_mode" type="option">
+				<option name="fixed"
+					help="Wrapped sublines aligned to left of window plus amount set by wrap_start_indent" />
+				<option name="same"
+					help="Wrapped sublines are aligned to first subline indent." />
+				<option name="indent"
+					help="Wrapped sublines are aligned to first subline indent plus one more level of indentation." />
+				<!-- SC_WRAPINDENT_DEEPINDENT is not supported in 3.1.15
+					<option name="deep_indent"
+					help="Wrapped sublines are aligned to first subline indent plus two more levels of indentation." /> -->
+				fixed
+			</property>
+			<property name="wrap_start_indent" type="int"
+				help="If wrap_indent_mode is set to &quot;fixed&quot; this sets the size of indentation of sublines for wrapped lines in terms of the average character width. There are no limits on indent sizes, but values less than 0 or large values may have undesirable effects. The indention of sublines is independent of visual flags, but if wrap_visual_flag is set to str start then an indent of at least 1 is used. " />
+		</category>
+
 		<property name="read_only" type="bool"
 			help="Set ReadOnly Mode. Disables editing if set to true.">0</property>
 		<event name="wxEVT_STC_AUTOCOMP_CANCELLED" class="wxStyledTextEvent" />

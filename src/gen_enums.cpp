@@ -334,6 +334,12 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_wrap, "wrap" },
     { prop_wrap_flags, "wrap_flags" },
 
+    { prop_stc_wrap_mode, "wrap_mode" },
+    { prop_stc_wrap_visual_flag, "wrap_visual_flag" },
+    { prop_stc_wrap_indent_mode, "wrap_indent_mode" },
+    { prop_stc_wrap_visual_location, "wrap_visual_location" },
+    { prop_stc_wrap_start_indent, "wrap_start_indent" },
+
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 

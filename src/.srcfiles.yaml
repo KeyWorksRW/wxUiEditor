@@ -96,6 +96,7 @@ Files:
     generate/ribbon_widgets.cpp    # Ribbon generation classes
     generate/sizer_widgets.cpp     # Sizer generation classes
     generate/spin_widgets.cpp      # Spin and ScrollBar generation classes
+    generate/styled_text.cpp       # wxStyledText (scintilla) generate
     generate/text_widgets.cpp      # Text generation classes
     generate/toolbar_widgets.cpp   # Toolbar generation classes
     generate/tree_widgets.cpp      # wxTreeCtrl generation classes

@@ -65,6 +65,11 @@ protected:
 
     wxPGProperty* GetProperty(NodeProperty* prop);
 
+    // Called after a property has been modified, this checks to see if various property
+    // items need to be enabled or disabled based on the current value of the changed
+    // property.
+    void ChangeEnableState(NodeProperty* changed_prop);
+
     void ReselectItem();
 
     void ModifyProperty(NodeProperty* prop, const wxString& str);

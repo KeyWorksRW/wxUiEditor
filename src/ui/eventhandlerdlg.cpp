@@ -19,7 +19,11 @@
 extern const std::unordered_map<std::string, const char*> s_EventNames;
 
 // Defined in base_panel.cpp
-extern wxString g_cpp_keywords;
+extern const char* g_u8_cpp_keywords;
+
+#ifndef SCI_SETKEYWORDS
+    #define SCI_SETKEYWORDS 4005
+#endif
 
 EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHandlerDlgBase(parent), m_event(event)
 {
@@ -27,7 +31,8 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
 
     m_stc->SetLexer(wxSTC_LEX_CPP);
 
-    m_stc->SetKeyWords(0, g_cpp_keywords);
+    // On Windows, this saves converting the UTF16 characters to ANSI.
+    m_stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
 
     auto form = event->GetNode()->IsForm() ? event->GetNode() : event->GetNode()->FindParentForm();
     if (form)

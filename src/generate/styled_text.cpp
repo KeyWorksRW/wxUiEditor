@@ -51,11 +51,142 @@ std::map<std::string, const char*> g_stc_flags = {
     // { "deep_indent", "SC_WRAPINDENT_DEEPINDENT" }, // not supported in 3.1.15
 };
 
+// To get the constant, prefix the name with "wxSTC_LEX_"
+std::map<std::string, int> g_stc_lexers = {
+
+    { "A68K", 100 },
+    { "ABAQUS", 84 },
+    { "ADA", 20 },
+    { "APDL", 61 },
+    { "AS", 113 },
+    { "ASM", 34 },
+    { "ASN1", 63 },
+    { "ASYMPTOTE", 85 },
+    { "AU3", 60 },
+    { "AVE", 19 },
+    { "AVS", 104 },
+    { "BAAN", 31 },
+    { "BASH", 62 },
+    { "BATCH", 12 },
+    { "BIBTEX", 116 },
+    { "BLITZBASIC", 66 },
+    { "BULLANT", 27 },
+    { "CAML", 65 },
+    { "CLW", 45 },
+    { "CLWNOCASE", 46 },
+    { "CMAKE", 80 },
+    { "COBOL", 92 },
+    { "COFFEESCRIPT", 102 },
+    { "CONF", 17 },
+    { "CONTAINER", 0 },
+    { "CPP", 3 },
+    { "CPPNOCASE", 35 },
+    { "CSOUND", 74 },
+    { "CSS", 38 },
+    { "D", 79 },
+    { "DIFF", 16 },
+    { "DMAP", 112 },
+    { "DMIS", 114 },
+    { "ECL", 105 },
+    { "EDIFACT", 121 },
+    { "EIFFEL", 23 },
+    { "EIFFELKW", 24 },
+    { "ERLANG", 53 },
+    { "ERRORLIST", 10 },
+    { "ESCRIPT", 41 },
+    { "F77", 37 },
+    { "FLAGSHIP", 73 },
+    { "FORTH", 52 },
+    { "FORTRAN", 36 },
+    { "FREEBASIC", 75 },
+    { "GAP", 81 },
+    { "GUI4CLI", 58 },
+    { "HASKELL", 68 },
+    { "HTML", 4 },
+    { "IHEX", 118 },
+    { "INNOSETUP", 76 },
+    { "JSON", 120 },
+    { "KIX", 57 },
+    { "KVIRC", 110 },
+    { "LATEX", 14 },
+    { "LISP", 21 },
+    { "LITERATEHASKELL", 108 },
+    { "LOT", 47 },
+    { "LOUT", 40 },
+    { "LUA", 15 },
+    { "MAGIK", 87 },
+    { "MAKEFILE", 11 },
+    { "MARKDOWN", 98 },
+    { "MATLAB", 32 },
+    { "METAPOST", 50 },
+    { "MMIXAL", 44 },
+    { "MODULA", 101 },
+    { "MSSQL", 55 },
+    { "MYSQL", 89 },
+    { "NIMROD", 96 },
+    { "NNCRONTAB", 26 },
+    { "NSIS", 43 },
+    { "NULL", 1 },
+    { "OCTAVE", 54 },
+    { "OPAL", 77 },
+    { "OSCRIPT", 106 },
+    { "PASCAL", 18 },
+    { "PERL", 6 },
+    { "PHPSCRIPT", 69 },
+    { "PLM", 82 },
+    { "PO", 90 },
+    { "POV", 39 },
+    { "POWERBASIC", 51 },
+    { "POWERPRO", 95 },
+    { "POWERSHELL", 88 },
+    { "PROGRESS", 83 },
+    { "PROPERTIES", 9 },
+    { "PS", 42 },
+    { "PUREBASIC", 67 },
+    { "PYTHON", 2 },
+    { "R", 86 },
+    { "REBOL", 71 },
+    { "REGISTRY", 115 },
+    { "RUBY", 22 },
+    { "RUST", 111 },
+    { "SCRIPTOL", 33 },
+    { "SMALLTALK", 72 },
+    { "SML", 97 },
+    { "SORCUS", 94 },
+    { "SPECMAN", 59 },
+    { "SPICE", 78 },
+    { "SQL", 7 },
+    { "SREC", 117 },
+    { "STTXT", 109 },
+    { "TACL", 93 },
+    { "TADS3", 70 },
+    { "TAL", 91 },
+    { "TCL", 25 },
+    { "TCMD", 103 },
+    { "TEHEX", 119 },
+    { "TEX", 49 },
+    { "TXT2TAGS", 99 },
+    { "VB", 8 },
+    { "VBSCRIPT", 28 },
+    { "VERILOG", 56 },
+    { "VHDL", 64 },
+    { "VISUALPROLOG", 107 },
+    { "XCODE", 13 },
+    { "XML", 5 },
+    { "YAML", 48 },
+
+};
+
 wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto scintilla =
         new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                              DlgSize(parent, node, prop_size), GetStyleInt(node), node->prop_as_wxString(prop_var_name));
+
+    if (node->HasValue(prop_stc_lexer))
+    {
+        scintilla->SetLexer(g_stc_lexers.at(node->prop_as_string(prop_stc_lexer)));
+    }
 
     if (node->HasValue(prop_hint))
     {
@@ -257,6 +388,13 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     auto_indent = false;
     code << "\t{";
+
+    if (node->HasValue(prop_stc_lexer))
+    {
+        ttlib::cstr name("wxSTC_LEX_");
+        name << node->prop_as_string(prop_stc_lexer);
+        code << "\n\t\t" << node->get_node_name() << "->SetLexer(" << name << ");";
+    }
 
     if (node->HasValue(prop_hint))
     {

@@ -336,6 +336,7 @@ namespace GenEnum
         prop_wrap,
         prop_wrap_flags,
 
+        prop_stc_lexer,
         prop_stc_wrap_mode,
         prop_stc_wrap_visual_flag,
         prop_stc_wrap_indent_mode,
@@ -361,7 +362,6 @@ namespace GenEnum
         prop_stc_margin_2_colour,
         prop_stc_margin_2_mask_folders,
         prop_stc_margin_2_mouse,
-
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,

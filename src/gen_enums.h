@@ -342,6 +342,27 @@ namespace GenEnum
         prop_stc_wrap_visual_location,
         prop_stc_wrap_start_indent,
 
+        prop_stc_left_margin_width,
+        prop_stc_right_margin_width,
+        prop_stc_select_wrapped_line,
+
+        prop_stc_margin_0_width,
+        prop_stc_margin_0_type,
+        prop_stc_margin_0_colour,
+        prop_stc_margin_0_mask_folders,
+        prop_stc_margin_0_mouse,
+        prop_stc_margin_1_width,
+        prop_stc_margin_1_type,
+        prop_stc_margin_1_colour,
+        prop_stc_margin_1_mask_folders,
+        prop_stc_margin_1_mouse,
+        prop_stc_margin_2_width,
+        prop_stc_margin_2_type,
+        prop_stc_margin_2_colour,
+        prop_stc_margin_2_mask_folders,
+        prop_stc_margin_2_mouse,
+
+
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
         prop_unknown = prop_name_array_size

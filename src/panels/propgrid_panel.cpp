@@ -601,7 +601,13 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
 
         AddProperties(name, node, nextCat, prop_set, true);
 
-        if (auto it = m_expansion_map.find(nextCat.getName()); it != m_expansion_map.end())
+        // wxStyledTextCtrl has several categories most of which are rarely used, so it makes sense to collapse them
+        // initially.
+        if (nextCat.GetName() == "Margins" || nextCat.GetName() == "Wrapping")
+        {
+            m_prop_grid->Collapse(catId);
+        }
+        else if (auto it = m_expansion_map.find(nextCat.getName()); it != m_expansion_map.end())
         {
             if (it->second)
             {
@@ -1173,18 +1179,105 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
     ChangeEnableState(prop);
 }
 
+static const char* lst_margins[] = {
+
+    "margin_0_type",
+    "margin_0_colour",
+    "margin_0_mask_folders",
+    "margin_0_mouse",
+
+};
+
 void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
 {
     auto changed_node = changed_prop->GetNode();
     if (changed_node->isGen(gen_wxStyledTextCtrl))
     {
-        if (changed_prop->isProp(prop_stc_wrap_indent_mode))
+        if (changed_prop->isProp(prop_stc_wrap_mode))
         {
-            if (auto pg_wrap_start_indent = m_prop_grid->GetProperty("wrap_start_indent"); pg_wrap_start_indent)
+            bool is_wrapped = (changed_prop->as_string() != "no wrapping");
+
+            if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_visual_flag"); pg_wrap_setting)
             {
-                pg_wrap_start_indent->Enable(changed_prop->as_string() == "fixed");
+                pg_wrap_setting->Enable(is_wrapped);
+            }
+            if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_indent_mode"); pg_wrap_setting)
+            {
+                pg_wrap_setting->Enable(is_wrapped);
+            }
+            if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
+            {
+                if (is_wrapped)
+                {
+                    pg_wrap_setting->Enable(changed_prop->as_string() == "fixed");
+                }
+                else
+                {
+                    pg_wrap_setting->Enable(false);
+                }
+            }
+            if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_visual_location"); pg_wrap_setting)
+            {
+                pg_wrap_setting->Enable(is_wrapped);
+            }
+            if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
+            {
+                pg_wrap_setting->Enable(is_wrapped);
             }
         }
+
+        else if (changed_prop->isProp(prop_stc_margin_0_width))
+        {
+            bool is_enabled = (changed_prop->as_int() != 0);
+            for (auto& iter: lst_margins)
+            {
+                if (auto pg_margin_setting = m_prop_grid->GetProperty(iter); pg_margin_setting)
+                {
+                    pg_margin_setting->Enable(is_enabled);
+                }
+            }
+        }
+        else if (changed_prop->isProp(prop_stc_margin_1_width))
+        {
+            bool is_enabled = (changed_prop->as_int() != 0);
+            for (auto& iter: lst_margins)
+            {
+                ttlib::cstr property(iter);
+                property.Replace("0", "1");
+                if (auto pg_margin_setting = m_prop_grid->GetProperty(property); pg_margin_setting)
+                {
+                    pg_margin_setting->Enable(is_enabled);
+                }
+            }
+        }
+        else if (changed_prop->isProp(prop_stc_margin_2_width))
+        {
+            for (auto& iter: lst_margins)
+            {
+                bool is_enabled = (changed_prop->as_int() != 0);
+                ttlib::cstr property(iter);
+                property.Replace("0", "2");
+                if (auto pg_margin_setting = m_prop_grid->GetProperty(property); pg_margin_setting)
+                {
+                    pg_margin_setting->Enable(is_enabled);
+                }
+            }
+        }
+        else if (changed_prop->isProp(prop_stc_margin_0_type))
+        {
+            if (auto pg_margin_setting = m_prop_grid->GetProperty("margin_0_colour"); pg_margin_setting)
+            {
+                if (changed_prop->as_string() != "colour")
+                {
+                    pg_margin_setting->Enable(false);
+                }
+                else
+                {
+                    pg_margin_setting->Enable(changed_node->prop_as_int(prop_stc_margin_0_width) != 0);
+                }
+            }
+        }
+
         return;
     }
 }

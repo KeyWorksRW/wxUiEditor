@@ -27,6 +27,69 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 		<property name="view_whitespace" type="bool"
 			help="Show whitespace characters.">0</property>
 
+		<category name="Margins">
+			<property name="left_margin_width" type="int"
+				help="Sets the width of the blank margin to the left of the text.">1</property>
+			<property name="right_margin_width" type="int"
+				help="Sets the width of the blank margin to the right of the text.">1</property>
+			<property name="select_wrapped_line" type="bool"
+				help="If checked, the entire wrapped line is selected when clicking in the margin. If not checked, only the subline will be selected.">1</property>
+
+			<property name="margin_0_width" type="int" help="A margin with zero width is invisible. A negative number will indicate you want the width calculated based on the number of digits. For example, -5 would calculate the width of &quot;99999&quot;">-5</property>
+			<property name="margin_0_type" type="option">
+				<option name="symbol" help="Symbol" />
+				<option name="number" help="Line number" />
+				<option name="background" help="Symbol using background colour" />
+				<option name="foreground" help="Symbol using foreground colour" />
+				<option name="text" help="Application defined text" />
+				<option name="right-aligned text" help="Right aligned application text" />
+				<option name="colour" />
+				number
+			</property>
+			<property name="margin_0_colour" type="wxColour"
+				help="Sets the margin colour if margin_0_type is set to &quot;colour&quot;." />
+			<property name="margin_0_mask_folders" type="bool"
+				help="If checked, a mask for the 7 logical symbols used to denote folding is used. Otherwise, a mask for all non-folding symbols is used.">0</property>
+			<property name="margin_0_mouse" type="bool"
+				help="If checked, clicking in the margin will send a wxEVT_STC_MARGINCLICK or wxEVT_STC_MARGIN_RIGHT_CLICK event. If not checked, the margin can be used to select a range of lines.">0</property>
+
+			<property name="margin_1_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;.">0</property>
+			<property name="margin_1_type" type="option">
+				<option name="symbol" help="Symbol" />
+				<option name="number" help="Line number" />
+				<option name="background" help="Symbol using background colour" />
+				<option name="foreground" help="Symbol using foreground colour" />
+				<option name="text" help="Application defined text" />
+				<option name="right-aligned text" help="Right aligned application text" />
+				<option name="colour" />
+				symbol
+			</property>
+			<property name="margin_1_colour" type="wxColour"
+				help="Sets the margin colour if margin_1_type is set to &quot;colour&quot;." />
+			<property name="margin_1_mask_folders" type="bool"
+				help="If checked, a mask for the 7 logical symbols used to denote folding is used. Otherwise, a mask for all non-folding symbols is used.">1</property>
+			<property name="margin_1_mouse" type="bool"
+				help="If checked, clicking in the margin will send a wxEVT_STC_MARGINCLICK or wxEVT_STC_MARGIN_RIGHT_CLICK event. If not checked, the margin can be used to select a range of lines.">0</property>
+
+			<property name="margin_2_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;.">0</property>
+			<property name="margin_2_type" type="option">
+				<option name="symbol" help="Symbol" />
+				<option name="number" help="Line number" />
+				<option name="background" help="Symbol using background colour" />
+				<option name="foreground" help="Symbol using foreground colour" />
+				<option name="text" help="Application defined text" />
+				<option name="right-aligned text" help="Right aligned application text" />
+				<option name="colour" />
+				symbol
+			</property>
+			<property name="margin_2_colour" type="wxColour"
+				help="Sets the margin colour if margin_2_type is set to &quot;colour&quot;." />
+			<property name="margin_2_mask_folders" type="bool"
+				help="If checked, a mask for the 7 logical symbols used to denote folding is used. Otherwise, a mask for all non-folding symbols is used.">0</property>
+			<property name="margin_2_mouse" type="bool"
+				help="If checked, clicking in the margin will send a wxEVT_STC_MARGINCLICK or wxEVT_STC_MARGIN_RIGHT_CLICK event. If not checked, the margin can be used to select a range of lines.">0</property>
+		</category>
+
 		<category name="Wrapping">
 			<property name="wrap_mode" type="option">
 				<option name="no wrapping"
@@ -40,18 +103,14 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 				no wrapping
 			</property>
 			<property name="wrap_visual_flag" type="bitlist">
-				<option name="end"
-					help="Visual flag at end of subline of a wrapped line." />
+				<option name="end" help="Visual flag at end of subline of a wrapped line." />
 				<option name="start"
 					help="Visual flag at begin of subline of a wrapped line. Subline is indented by at least 1 to make room for the flag." />
-				<option name="margin"
-					help="Visual flag in line number margin." />
+				<option name="margin" help="Visual flag in line number margin." />
 			</property>
 			<property name="wrap_visual_location" type="bitlist">
-				<option name="end_text"
-					help="Visual flag at end of subline drawn near text." />
-				<option name="start_text"
-					help="Visual flag at beginning of subline drawn near text." />
+				<option name="end_text" help="Visual flag at end of subline drawn near text." />
+				<option name="start_text" help="Visual flag at beginning of subline drawn near text." />
 			</property>
 			<property name="wrap_indent_mode" type="option">
 				<option name="fixed"

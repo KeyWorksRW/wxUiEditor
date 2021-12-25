@@ -340,6 +340,26 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_stc_wrap_visual_location, "wrap_visual_location" },
     { prop_stc_wrap_start_indent, "wrap_start_indent" },
 
+    { prop_stc_left_margin_width, "left_margin_width" },
+    { prop_stc_right_margin_width, "right_margin_width" },
+    { prop_stc_select_wrapped_line, "select_wrapped_line" },
+
+    { prop_stc_margin_0_width, "margin_0_width" },
+    { prop_stc_margin_0_type, "margin_0_type" },
+    { prop_stc_margin_0_colour, "margin_0_colour" },
+    { prop_stc_margin_0_mask_folders, "margin_0_mask_folders" },
+    { prop_stc_margin_0_mouse, "margin_0_mouse" },
+    { prop_stc_margin_1_width, "margin_1_width" },
+    { prop_stc_margin_1_type, "margin_1_type" },
+    { prop_stc_margin_1_colour, "margin_1_colour" },
+    { prop_stc_margin_1_mask_folders, "margin_1_mask_folders" },
+    { prop_stc_margin_1_mouse, "margin_1_mouse" },
+    { prop_stc_margin_2_width, "margin_2_width" },
+    { prop_stc_margin_2_type, "margin_2_type" },
+    { prop_stc_margin_2_colour, "margin_2_colour" },
+    { prop_stc_margin_2_mask_folders, "margin_2_mask_folders" },
+    { prop_stc_margin_2_mouse, "margin_2_mouse" },
+
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 

@@ -603,7 +603,8 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
 
         // wxStyledTextCtrl has several categories most of which are rarely used, so it makes sense to collapse them
         // initially.
-        if (nextCat.GetName() == "Margins" || nextCat.GetName() == "Wrapping")
+        if (nextCat.GetName() == "Margins" || nextCat.GetName() == "Selections" ||
+            nextCat.GetName() == "Tabs and Indentation" || nextCat.GetName() == "Wrapping")
         {
             m_prop_grid->Collapse(catId);
         }
@@ -1205,6 +1206,25 @@ void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
             {
                 pg_wrap_setting->Enable(is_wrapped);
             }
+            if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_visual_location"); pg_wrap_setting)
+            {
+                pg_wrap_setting->Enable(is_wrapped);
+            }
+            if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
+            {
+                if (is_wrapped)
+                {
+                    pg_wrap_setting->Enable(changed_node->prop_as_string(prop_stc_wrap_indent_mode) == "fixed");
+                }
+                else
+                {
+                    pg_wrap_setting->Enable(false);
+                }
+            }
+        }
+        else if (changed_prop->isProp(prop_stc_wrap_indent_mode))
+        {
+            bool is_wrapped = (changed_node->prop_as_string(prop_stc_wrap_mode) != "no wrapping");
             if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
             {
                 if (is_wrapped)
@@ -1216,13 +1236,36 @@ void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
                     pg_wrap_setting->Enable(false);
                 }
             }
-            if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_visual_location"); pg_wrap_setting)
+        }
+        else if (changed_prop->isProp(prop_multiple_selections))
+        {
+            bool is_multiple = changed_prop->as_bool();
+            if (auto pg_property = m_prop_grid->GetProperty("multiple_selection_typing"); pg_property)
             {
-                pg_wrap_setting->Enable(is_wrapped);
+                pg_property->Enable(is_multiple);
             }
-            if (auto pg_wrap_setting = m_prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
+            if (auto pg_property = m_prop_grid->GetProperty("additional_carets_visible"); pg_property)
             {
-                pg_wrap_setting->Enable(is_wrapped);
+                pg_property->Enable(is_multiple);
+            }
+            if (auto pg_property = m_prop_grid->GetProperty("additional_carets_blink"); pg_property)
+            {
+                pg_property->Enable(is_multiple);
+            }
+            if (auto pg_property = m_prop_grid->GetProperty("paste_multiple"); pg_property)
+            {
+                pg_property->Enable(is_multiple);
+            }
+        }
+        else if (changed_prop->isProp(prop_additional_carets_visible))
+        {
+            bool is_multiple = changed_node->prop_as_bool(prop_multiple_selections);
+            if (is_multiple)
+            {
+                if (auto pg_property = m_prop_grid->GetProperty("additional_carets_blink"); pg_property)
+                {
+                    pg_property->Enable(changed_prop->as_bool());
+                }
             }
         }
 

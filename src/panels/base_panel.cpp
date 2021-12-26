@@ -145,8 +145,9 @@ void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
         widget_keywords << ' ' << iter->DeclName();
     }
 
+    const int SETKEYWORDS_MSG = 4005;  // SCI_SETKEYWORDS in Scintilla.h
     // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-    stc->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
+    stc->SendMsg(SETKEYWORDS_MSG, 1, (wxIntPtr) widget_keywords.c_str());
 
     wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     stc->StyleSetFont(wxSTC_STYLE_DEFAULT, font);

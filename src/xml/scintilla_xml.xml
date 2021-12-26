@@ -133,22 +133,12 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			help="Sets a hint to be shown when the control is empty and does not have the focus." />
 		<property name="folding" type="bool"
 			help="Enable folding.">1</property>
-		<property name="line_numbers" type="bool"
-			help="Show line numbers.">1</property>
-		<property name="indentation_guides" type="bool"
-			help="Show indentation guides.">1</property>
-		<property name="use_tabs" type="bool"
-			help="Use tabs for indenting, instead of spaces.">1</property>
-		<property name="tab_width" type="string"
-			help="The number of spaces per tab character.">4</property>
-		<property name="tab_indents" type="bool"
-			help="The tab key always indents, use tabs or spaces, instead of always inserting a tab character.">1</property>
-		<property name="backspace_unindents" type="bool"
-			help="The backspace key unindents, instead of just deleting one space.">1</property>
 		<property name="view_eol" type="bool"
 			help="Show end of line characters.">0</property>
 		<property name="view_whitespace" type="bool"
 			help="Show whitespace characters.">0</property>
+		<property name="read_only" type="bool"
+			help="Set ReadOnly Mode. Disables editing if set to true.">0</property>
 
 		<category name="Margins">
 			<property name="left_margin_width" type="int"
@@ -158,7 +148,7 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			<property name="select_wrapped_line" type="bool"
 				help="If checked, the entire wrapped line is selected when clicking in the margin. If not checked, only the subline will be selected.">1</property>
 
-			<property name="margin_0_width" type="int" help="A margin with zero width is invisible. A negative number will indicate you want the width calculated based on the number of digits. For example, -5 would calculate the width of &quot;99999&quot;">-5</property>
+			<property name="margin_0_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;. A negative number will indicate you want the width calculated based on the number of digits. For example, -5 would calculate the width of &quot;99999&quot;">0</property>
 			<property name="margin_0_type" type="option">
 				<option name="symbol" help="Symbol" />
 				<option name="number" help="Line number" />
@@ -176,7 +166,7 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			<property name="margin_0_mouse" type="bool"
 				help="If checked, clicking in the margin will send a wxEVT_STC_MARGINCLICK or wxEVT_STC_MARGIN_RIGHT_CLICK event. If not checked, the margin can be used to select a range of lines.">0</property>
 
-			<property name="margin_1_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;.">0</property>
+			<property name="margin_1_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;. A negative number will indicate you want the width calculated based on the number of digits. For example, -5 would calculate the width of &quot;99999&quot;">0</property>
 			<property name="margin_1_type" type="option">
 				<option name="symbol" help="Symbol" />
 				<option name="number" help="Line number" />
@@ -194,7 +184,7 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			<property name="margin_1_mouse" type="bool"
 				help="If checked, clicking in the margin will send a wxEVT_STC_MARGINCLICK or wxEVT_STC_MARGIN_RIGHT_CLICK event. If not checked, the margin can be used to select a range of lines.">0</property>
 
-			<property name="margin_2_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;.">0</property>
+			<property name="margin_2_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;. A negative number will indicate you want the width calculated based on the number of digits. For example, -5 would calculate the width of &quot;99999&quot;">0</property>
 			<property name="margin_2_type" type="option">
 				<option name="symbol" help="Symbol" />
 				<option name="number" help="Line number" />
@@ -213,6 +203,45 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 				help="If checked, clicking in the margin will send a wxEVT_STC_MARGINCLICK or wxEVT_STC_MARGIN_RIGHT_CLICK event. If not checked, the margin can be used to select a range of lines.">0</property>
 		</category>
 
+		<category name="Selections">
+			<property name="allow_mouse_rectangle" type="bool"
+				help="Sets whether switching to rectangular mode while selecting with the mouse is allowed.">0</property>
+			<property name="multiple_selections" type="bool"
+				help="Sets whether multiple selections can be made.">0</property>
+			<property name="multiple_selection_typing" type="bool"
+				help="Sets whether typing can be performed into multiple selections.">0</property>
+			<property name="additional_carets_visible" type="bool"
+				help="Sets whether additional carets in a multiple selection are visible.">1</property>
+			<property name="additional_carets_blink" type="bool"
+				help="Sets whether multiple selection carets blink.">0</property>
+			<property name="paste_multiple" type="bool"
+				help="If checked, pasted text will be added to each multiple section.">0</property>
+		</category>
+
+		<category name="Tabs and Indentation">
+			<property name="use_tabs" type="bool"
+				help="Use tabs for indenting, instead of spaces.">1</property>
+			<property name="tab_width" type="string"
+				help="The number of spaces per tab character.">4</property>
+			<property name="indentation_guides" type="option">
+				<option name="no guides"
+					help="No indentation guides are shown." />
+				<option name="real"
+					help="Indentation guides are shown inside real indentation white space." />
+				<option name="forward"
+					help="Indentation guides are shown beyond the actual indentation up to the level of the next non-empty line. If the previous non-empty line was a fold header then indentation guides are shown for one more level of indent than that line. This setting is good for Python." />
+				<option name="both"
+					help=" 	Indentation guides are shown beyond the actual indentation up to the level of the next non-empty line or previous non-empty line whichever is the greater. This setting is good for most languages." />
+			</property>
+			<property name="indentation_size" type="int"
+				help="Sets the size of indentation in terms of the width of a space. If you set a width of 0, the indent size is the same as the tab size. There are no limits on indent sizes, but values less than 0 or large values may have undesirable effects."
+			 />
+			<property name="tab_indents" type="bool"
+				help="If checked, then inside indentation white space, the tab key will indent rather than insert a tab character.">1</property>
+			<property name="backspace_unindents" type="bool"
+				help="If checked, then inside indentation white space the backspace key will unindent rather than deleting one space.">1</property>
+		</category>
+		)===" R"===(
 		<category name="Wrapping">
 			<property name="wrap_mode" type="option">
 				<option name="no wrapping"
@@ -250,9 +279,6 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			<property name="wrap_start_indent" type="int"
 				help="If wrap_indent_mode is set to &quot;fixed&quot; this sets the size of indentation of sublines for wrapped lines in terms of the average character width. There are no limits on indent sizes, but values less than 0 or large values may have undesirable effects. The indention of sublines is independent of visual flags, but if wrap_visual_flag is set to str start then an indent of at least 1 is used. " />
 		</category>
-
-		<property name="read_only" type="bool"
-			help="Set ReadOnly Mode. Disables editing if set to true.">0</property>
 		<event name="wxEVT_STC_AUTOCOMP_CANCELLED" class="wxStyledTextEvent" />
 		<event name="wxEVT_STC_AUTOCOMP_CHAR_DELETED" class="wxStyledTextEvent"
 			help="Generated when the user deleted a character while autocompletion list was active." />

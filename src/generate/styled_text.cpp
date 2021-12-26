@@ -48,6 +48,11 @@ std::map<std::string, const char*> g_stc_flags = {
     { "right-aligned text", "wxSTC_MARGIN_RTEXT" },
     { "colour", "wxSTC_MARGIN_COLOUR" },
 
+    { "no guides", "wxSTC_IV_NONE" },
+    { "real", "wxSTC_IV_REAL" },
+    { "forward", "wxSTC_IV_LOOKFORWARD" },
+    { "both", "wxSTC_IV_LOOKBOTH" },
+
     // { "deep_indent", "SC_WRAPINDENT_DEEPINDENT" }, // not supported in 3.1.15
 };
 
@@ -192,12 +197,15 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         scintilla->SetHint(node->prop_as_wxString(prop_hint));
     }
+#if defined(_DEBUG)
     else
     {
-        scintilla->SetHint("To turn off line numbers, expand Margins and set margin_0_width to zero");
+        scintilla->SetHint("// Debug build hint text used when hint property is empty. This is used to easily view effects "
+                           "of wrapping, margins, etc.");
     }
+#endif  // _DEBUG
 
-    // Wrap category settings
+    //////////// Wrap category settings ////////////
 
     if (!node->prop_as_string(prop_stc_wrap_mode).is_sameas("no wrapping"))
         scintilla->SetWrapMode(g_NodeCreator.GetConstantAsInt(g_stc_flags.at(node->prop_as_string(prop_stc_wrap_mode))));
@@ -237,7 +245,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetWrapStartIndent(node->prop_as_int(prop_stc_wrap_start_indent));
     }
 
-    // Margin category settings
+    //////////// Margin category settings ////////////
 
     if (node->prop_as_int(prop_stc_left_margin_width) != 1)
     {
@@ -340,6 +348,31 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetMarginSensitive(2, node->prop_as_bool(prop_stc_margin_2_mouse));
     }
 
+    //////////// Selection category settings ////////////
+
+    scintilla->SetMouseSelectionRectangularSwitch(node->prop_as_bool(prop_allow_mouse_rectangle));
+    scintilla->SetMultipleSelection(node->prop_as_bool(prop_multiple_selections));
+    scintilla->SetMultiPaste(node->prop_as_bool(prop_paste_multiple) ? wxSTC_MULTIPASTE_EACH : wxSTC_MULTIPASTE_ONCE);
+    scintilla->SetAdditionalCaretsVisible(node->prop_as_bool(prop_additional_carets_visible));
+    scintilla->SetAdditionalCaretsBlink(node->prop_as_bool(prop_additional_carets_blink));
+    scintilla->SetAdditionalSelectionTyping(node->prop_as_bool(prop_multiple_selection_typing));
+
+    //////////// Tabs and Indentation settings ////////////
+
+    if (node->HasValue(prop_indentation_guides))
+    {
+        scintilla->SetIndentationGuides(
+            g_NodeCreator.GetConstantAsInt(g_stc_flags.at(node->prop_as_string(prop_indentation_guides))));
+    }
+    scintilla->SetIndent(node->prop_as_int(prop_stc_indentation_size));
+    scintilla->SetUseTabs((node->prop_as_int(prop_use_tabs)));
+    scintilla->SetTabWidth(node->prop_as_int(prop_tab_width));
+    scintilla->SetTabIndents((node->prop_as_int(prop_tab_indents)));
+    scintilla->SetBackSpaceUnIndents((node->prop_as_int(prop_backspace_unindents)));
+    scintilla->SetIndent(node->prop_as_int(prop_tab_width));
+
+    //////////// General settings ////////////
+
     if (node->prop_as_int(prop_folding) != 0)
     {
         // scintilla->SetMarginSensitive(1, true);
@@ -348,12 +381,6 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
     }
 
-    scintilla->SetIndentationGuides(node->prop_as_int(prop_indentation_guides));
-    scintilla->SetUseTabs((node->prop_as_int(prop_use_tabs)));
-    scintilla->SetTabWidth(node->prop_as_int(prop_tab_width));
-    scintilla->SetTabIndents((node->prop_as_int(prop_tab_indents)));
-    scintilla->SetBackSpaceUnIndents((node->prop_as_int(prop_backspace_unindents)));
-    scintilla->SetIndent(node->prop_as_int(prop_tab_width));
     scintilla->SetViewEOL((node->prop_as_int(prop_view_eol)));
     scintilla->SetViewWhiteSpace(node->prop_as_int(prop_view_whitespace));
 
@@ -581,23 +608,49 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
         }
     }
 
-    //////////// Other settings ////////////
+    //////////// Selection category settings ////////////
 
-    // Default is true, so only set if false
-    if (!node->prop_as_bool(prop_line_numbers))
+    if (node->prop_as_bool(prop_multiple_selections))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(0, 0);";
-    }
-    else
-    {
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginType(0, wxSTC_MARGIN_NUMBER);";
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(0, " << node->get_node_name()
-             << "->TextWidth(wxSTC_STYLE_LINENUMBER, \"_99999\"));";
+        code << "\n\t\t" << node->get_node_name() << "->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);";
+        if (node->prop_as_bool(prop_paste_multiple))
+        {
+            code << "\n\t\t" << node->get_node_name() << "->SetMultiPaste(wxSTC_MULTIPASTE_EACH);";
+        }
+        if (node->prop_as_bool(prop_paste_multiple))
+        {
+            code << "\n\t\t" << node->get_node_name() << "->SetMultiPaste(wxSTC_MULTIPASTE_EACH);";
+        }
+        code << "\n\t\t" << node->get_node_name() << "->SetAdditionalSelectionTyping("
+             << (node->prop_as_bool(prop_additional_carets_blink) ? "true" : "false") << ");";
+
+        if (!node->prop_as_bool(prop_additional_carets_visible))
+        {
+            code << "\n\t\t" << node->get_node_name() << "->SetAdditionalCaretsVisible(false);";
+        }
+        else
+        {
+            code << "\n\t\t" << node->get_node_name() << "->SetAdditionalCaretsBlink("
+                 << (node->prop_as_bool(prop_additional_carets_blink) ? "true" : "false") << ");";
+        }
     }
 
-    // BUGBUG: [KeyWorks - 12-10-2020] Indentation is not a boolean -- there are 4 possible values
-    if (!node->prop_as_bool(prop_indentation_guides))
-        code << "\n\t\t" << node->get_node_name() << "->SetIndentationGuides(0);";
+    if (node->prop_as_bool(prop_allow_mouse_rectangle))
+    {
+        code << "\n\t\t" << node->get_node_name() << "->SetMouseSelectionRectangularSwitch(true);";
+    }
+
+    //////////// Tabs and Indentation settings ////////////
+
+    if (node->HasValue(prop_indentation_guides))
+    {
+        code << "\n\t\t" << node->get_node_name() << "->SetIndentationGuides("
+             << g_stc_flags.at(node->prop_as_string(prop_indentation_guides)) << ");";
+    }
+    if (node->prop_as_int(prop_stc_indentation_size) != 0)
+    {
+        code << "\n\t\t" << node->get_node_name() << "->SetIndent(" << node->prop_as_int(prop_stc_indentation_size) << ");";
+    }
 
     // Default is true, so only set if false
     if (!node->prop_as_bool(prop_use_tabs))
@@ -615,6 +668,10 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_backspace_unindents))
         code << "\n\t\t" << node->get_node_name() << "->SetBackSpaceUnIndents(true);";
+
+    //////////// Other settings ////////////
+
+    // BUGBUG: [KeyWorks - 12-10-2020] Indentation is not a boolean -- there are 4 possible values
 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_view_eol))

@@ -187,10 +187,21 @@ void EventHandlerDlg::OnOK(wxCommandEvent& event)
         if (m_check_include_event->GetValue())
             handler << " event";
 
-        ttlib::cstr body(m_stc->GetTextRaw().data());
+        // We could just call m_stc->GetTextRaw() however this method minimizes both the amount of memory copying done as
+        // well as the amount of memory moving.
 
-        CompressLambda(body);
-        handler << ")@@{" << body << "@@}";
+        const int SCI_GETTEXT_MSG = 2182;
+
+        // We use \r\n because it allows us to convert them in place to @@
+        m_stc->ConvertEOLs(wxSTC_EOL_CRLF);
+
+        auto len = m_stc->GetTextLength() + 1;
+        auto buf = std::make_unique<char[]>(len);
+        m_stc->SendMsg(SCI_GETTEXT_MSG, len, (wxIntPtr) buf.get());
+        handler << ")@@{" << std::string_view(buf.get(), len - 1);
+        handler.Replace("\r\n", "@@", tt::REPLACE::all);
+        handler.RightTrim();
+        handler << "@@}";
         m_value = handler.wx_str();
     }
 

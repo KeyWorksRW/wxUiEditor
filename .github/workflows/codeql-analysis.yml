@@ -1,0 +1,61 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - src/art_src
+      - docs
+      - import_tests
+      - testing
+      - ttLib
+      - wxSnapshot
+
+  pull_request:
+    paths-ignore:
+      - src/art_src
+      - docs
+      - import_tests
+      - testing
+      - ttLib
+      - wxSnapshot
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: windows-2019
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'cpp' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - run: mkdir ${{github.workspace}}/build/Debug
+    - run: mkdir ${{github.workspace}}/build/wxSnapshot/Debug
+
+    - name: Configure CMake
+      run: cmake -G "Visual Studio 16 2019" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
+
+    - run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check_build
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1

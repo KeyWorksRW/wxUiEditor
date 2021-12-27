@@ -11,6 +11,10 @@ In addition to creating new projects, the following project types can be importe
 - **XRC** (including exports from **DialogBlocks**)
 - **Windows Resource Dialogs** (Click [here](docs/import_winres.md) for more information)
 
+## Status
+
+[![CodeQL](https://github.com/KeyWorksRW/wxUiEditor/workflows/CodeQL/badge.svg)](https://github.com/KeyWorksRW/wxUiEditor/actions?query=workflow:"CodeQL") [![GitHub tag](https://img.shields.io/github/tag/KeyWorksRW/wxUiEditor?include_prereleases=&sort=semver&color=blue)](https://github.com/KeyWorksRW/wxUiEditor/releases/)
+
 ## Building
 
 To build the Windows version of **wxUiEditor**, run the following two commands from the root of the repository:

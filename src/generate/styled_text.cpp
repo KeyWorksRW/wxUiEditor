@@ -384,6 +384,11 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
     }
 
+    if (node->HasValue(prop_eol_mode))
+    {
+        scintilla->SetEOLMode(node->prop_as_int(prop_eol_mode));
+    }
+
     scintilla->SetViewEOL((node->prop_as_int(prop_view_eol)));
     scintilla->SetViewWhiteSpace(node->prop_as_int(prop_view_whitespace));
 
@@ -680,22 +685,34 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
              << "->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);";
     }
 
+    if (node->HasValue(prop_eol_mode))
+    {
+        code << "\n\t\t" << node->get_node_name() << "->SetEOLMode(" << node->prop_as_string(prop_eol_mode) << ");";
+    }
+
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_view_eol))
+    {
         code << "\n\t\t" << node->get_node_name() << "->SetViewEOL(true);";
+    }
 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_view_whitespace))
+    {
         code << "\n\t\t" << node->get_node_name() << "->SetViewWhiteSpace(true);";
+    }
 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_read_only))
+    {
         code << "\n\t\t" << node->get_node_name() << "->SetReadOnly(true);";
-
+    }
     code << "\n\t}";
 
     if (code.is_sameas("\t{\n\t}"))
+    {
         code.clear();  // means there were no settings
+    }
 
     return code;
 }

@@ -133,6 +133,13 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			help="Sets a hint to be shown when the control is empty and does not have the focus." />
 		<property name="read_only" type="bool"
 			help="Set ReadOnly Mode. Disables editing if set to true.">0</property>
+		<property name="eol_mode" type="option"
+			help="Sets the characters that are added into the document when the user presses the Enter key.">
+			<option name="wxSTC_EOL_CRLF" />
+			<option name="wxSTC_EOL_CR" />
+			<option name="wxSTC_EOL_LF" />
+			wxSTC_EOL_LF
+		</property>
 		<property name="view_eol" type="bool"
 			help="Show end of line characters.">0</property>
 		<property name="view_whitespace" type="bool"

@@ -47,7 +47,6 @@ std::map<PropType, const char*> GenEnum::map_PropTypes = {
 
 std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
 
-    { prop_automatic_folding, "automatic_folding" },
     { prop_Apply, "Apply" },
     { prop_BottomDockable, "BottomDockable" },
     { prop_Cancel, "Cancel" },
@@ -76,6 +75,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_aui_row, "aui_row" },
     { prop_auth_needed, "auth_needed" },
     { prop_auto_complete, "auto_complete" },
+    { prop_automatic_folding, "automatic_folding" },
     { prop_autosize_cols, "autosize_cols" },
     { prop_autosize_rows, "autosize_rows" },
     { prop_background_colour, "background_colour" },
@@ -156,6 +156,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_empty_cell_size, "empty_cell_size" },
     { prop_enable_user_code, "enable_user_code" },
     { prop_end_colour, "end_colour" },
+    { prop_eol_mode, "eol_mode" },
     { prop_extra_style, "extra_style" },
     { prop_fields, "fields" },
     { prop_filter, "filter" },

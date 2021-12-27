@@ -49,7 +49,6 @@ namespace GenEnum
 
     enum PropName : size_t
     {
-        prop_automatic_folding,
         prop_Apply,
         prop_BottomDockable,
         prop_Cancel,
@@ -78,6 +77,7 @@ namespace GenEnum
         prop_aui_row,
         prop_auth_needed,
         prop_auto_complete,
+        prop_automatic_folding,
         prop_autosize_cols,
         prop_autosize_rows,
         prop_background_colour,
@@ -158,6 +158,7 @@ namespace GenEnum
         prop_empty_cell_size,
         prop_enable_user_code,
         prop_end_colour,
+        prop_eol_mode,
         prop_extra_style,
         prop_fields,
         prop_filter,

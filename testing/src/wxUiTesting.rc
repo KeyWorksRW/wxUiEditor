@@ -1,3 +1,0 @@
-#include "winres.h"
-
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "wxUiTesting.manifest"

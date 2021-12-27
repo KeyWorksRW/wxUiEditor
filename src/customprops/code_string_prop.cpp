@@ -15,12 +15,16 @@
 #include "../ui/editcodedialog_base.h"  // auto-generated: ../ui/editcodedialog_base.cpp
 
 // Defined in base_panel.cpp
-extern wxString g_cpp_keywords;
+extern const char* g_u8_cpp_keywords;
 
 EditCodeProperty::EditCodeProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)
 {
 }
+
+#ifndef SCI_SETKEYWORDS
+    #define SCI_SETKEYWORDS 4005
+#endif
 
 EditCodeDialog::EditCodeDialog(wxWindow* parent, NodeProperty* prop) : EditCodeDialogBase(parent)
 {
@@ -29,7 +33,8 @@ EditCodeDialog::EditCodeDialog(wxWindow* parent, NodeProperty* prop) : EditCodeD
 
     m_stc->SetLexer(wxSTC_LEX_CPP);
 
-    m_stc->SetKeyWords(0, g_cpp_keywords);
+    // On Windows, this saves converting the UTF16 characters to ANSI.
+    m_stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
 
     m_stc->StyleSetBold(wxSTC_C_WORD, true);
     m_stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);

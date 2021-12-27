@@ -21,7 +21,7 @@
 #include "write_code.h"    // Write code to Scintilla or file
 
 // These are used everywhere we use scintilla to edit C++ code
-wxString g_cpp_keywords = "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto \
+const char* g_u8_cpp_keywords = "alignas alignof and and_eq atomic_cancel atomic_commit atomic_noexcept auto \
                               bitand bitor bool break case catch char char8_t char16_t char32_t \
                               class compl concept const consteval constexpr constinit const_cast \
                               continue co_await co_return co_yield __declspec \
@@ -108,11 +108,16 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCod
 
 BasePanel::~BasePanel() {}
 
+#ifndef SCI_SETKEYWORDS
+    #define SCI_SETKEYWORDS 4005
+#endif
+
 void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
 {
     stc->SetLexer(wxSTC_LEX_CPP);
 
-    stc->SetKeyWords(0, g_cpp_keywords);
+    // On Windows, this saves converting the UTF16 characters to ANSI.
+    stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
 
     // clang-format off
 
@@ -139,7 +144,10 @@ void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
             continue;
         widget_keywords << ' ' << iter->DeclName();
     }
-    stc->SetKeyWords(1, widget_keywords);
+
+    const int SETKEYWORDS_MSG = 4005;  // SCI_SETKEYWORDS in Scintilla.h
+    // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+    stc->SendMsg(SETKEYWORDS_MSG, 1, (wxIntPtr) widget_keywords.c_str());
 
     wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     stc->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
@@ -159,6 +167,11 @@ void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
     stc->SetTabWidth(4);
     stc->SetTabIndents(true);
     stc->SetReadOnly(true);
+
+    stc->SetWrapMode(wxSTC_WRAP_WHITESPACE);
+    stc->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+    stc->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT);
+    stc->SetWrapVisualFlagsLocation(wxSTC_WRAPVISUALFLAG_END);
 }
 
 void BasePanel::OnFind(wxFindDialogEvent& event)

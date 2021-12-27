@@ -131,14 +131,19 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="hint" type="string_escapes"
 			help="Sets a hint to be shown when the control is empty and does not have the focus." />
-		<property name="folding" type="bool"
-			help="Enable folding.">1</property>
+		<property name="read_only" type="bool"
+			help="Set ReadOnly Mode. Disables editing if set to true.">0</property>
 		<property name="view_eol" type="bool"
 			help="Show end of line characters.">0</property>
 		<property name="view_whitespace" type="bool"
 			help="Show whitespace characters.">0</property>
-		<property name="read_only" type="bool"
-			help="Set ReadOnly Mode. Disables editing if set to true.">0</property>
+		<property name="folding" type="bool"
+			help="Enable folding. This requires one margin to have a width of 16 or higher with a folders mask set.">0</property>
+		<property name="automatic_folding" type="bitlist">
+			<option name="wxSTC_AUTOMATICFOLD_SHOW" help="Automatically show lines as needed." />
+			<option name="wxSTC_AUTOMATICFOLD_CLICK" help="Handle clicks in fold margin automatically." />
+			<option name="wxSTC_AUTOMATICFOLD_CHANGE" help="Show lines as needed when fold structure is changed." />
+		</property>
 
 		<category name="Margins">
 			<property name="left_margin_width" type="int"

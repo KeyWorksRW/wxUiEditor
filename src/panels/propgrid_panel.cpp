@@ -1268,7 +1268,13 @@ void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
                 }
             }
         }
-
+        else if (changed_prop->isProp(prop_folding))
+        {
+            if (auto pg_property = m_prop_grid->GetProperty("automatic_folding"); pg_property)
+            {
+                pg_property->Enable(changed_prop->as_bool());
+            }
+        }
         else if (changed_prop->isProp(prop_stc_margin_0_width))
         {
             bool is_enabled = (changed_prop->as_int() != 0);

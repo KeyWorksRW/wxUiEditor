@@ -49,6 +49,7 @@ namespace GenEnum
 
     enum PropName : size_t
     {
+        prop_automatic_folding,
         prop_Apply,
         prop_BottomDockable,
         prop_Cancel,

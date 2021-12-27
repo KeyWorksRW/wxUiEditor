@@ -188,7 +188,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxStyledTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                              DlgSize(parent, node, prop_size), GetStyleInt(node), node->prop_as_wxString(prop_var_name));
 
-    if (node->HasValue(prop_stc_lexer))
+    if (node->HasValue(prop_stc_lexer) && node->prop_as_string(prop_stc_lexer) != "NULL")
     {
         scintilla->SetLexer(g_stc_lexers.at(node->prop_as_string(prop_stc_lexer)));
     }
@@ -375,9 +375,12 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->prop_as_int(prop_folding) != 0)
     {
-        // scintilla->SetMarginSensitive(1, true);
-
         scintilla->SetProperty("fold", "1");
+        if (node->HasValue(prop_automatic_folding))
+        {
+            scintilla->SetAutomaticFold(node->prop_as_int(prop_automatic_folding));
+        }
+
         scintilla->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
     }
 
@@ -416,7 +419,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     auto_indent = false;
     code << "\t{";
 
-    if (node->HasValue(prop_stc_lexer))
+    if (node->HasValue(prop_stc_lexer) && node->prop_as_string(prop_stc_lexer) != "NULL")
     {
         ttlib::cstr name("wxSTC_LEX_");
         name << node->prop_as_string(prop_stc_lexer);
@@ -427,13 +430,6 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     {
         code << "\n\t\t" << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint))
              << ");";
-    }
-
-    if (node->prop_as_bool(prop_folding))
-    {
-        code << "\n\t\t" << node->get_node_name() << "->SetProperty(\"fold\", \"1\");";
-        code << "\n\t\t" << node->get_node_name()
-             << "->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);";
     }
 
     //////////// Wrap category settings ////////////
@@ -671,7 +667,18 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     //////////// Other settings ////////////
 
-    // BUGBUG: [KeyWorks - 12-10-2020] Indentation is not a boolean -- there are 4 possible values
+    if (node->prop_as_bool(prop_folding))
+    {
+        code << "\n\t\t" << node->get_node_name() << "->SetProperty(\"fold\", \"1\");";
+        if (node->HasValue(prop_automatic_folding))
+        {
+            code << "\n\t\t" << node->get_node_name() << "->SetAutomaticFold("
+                 << node->prop_as_string(prop_automatic_folding) << ");";
+        }
+
+        code << "\n\t\t" << node->get_node_name()
+             << "->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);";
+    }
 
     // Default is false, so only set if true
     if (node->prop_as_bool(prop_view_eol))

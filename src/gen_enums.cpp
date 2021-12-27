@@ -47,6 +47,7 @@ std::map<PropType, const char*> GenEnum::map_PropTypes = {
 
 std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
 
+    { prop_automatic_folding, "automatic_folding" },
     { prop_Apply, "Apply" },
     { prop_BottomDockable, "BottomDockable" },
     { prop_Cancel, "Cancel" },

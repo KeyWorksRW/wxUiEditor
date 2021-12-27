@@ -166,6 +166,9 @@ public:
     }
 
     bool prop_as_bool(PropName name) const;
+
+    // If type is option, id, or bitlist, this will convert that constant name to it's value
+    // (see g_NodeCreator.GetConstantAsInt()). Otherwise, it calls atoi().
     int prop_as_int(PropName name) const;
 
     wxColour prop_as_wxColour(PropName name) const;

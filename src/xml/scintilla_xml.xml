@@ -127,7 +127,7 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			<option name="XCODE" />
 			<option name="XML" />
 			<option name="YAML" />
-			NULL
+			CPP
 		</property>
 		<property name="hint" type="string_escapes"
 			help="Sets a hint to be shown when the control is empty and does not have the focus." />
@@ -140,78 +140,131 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			<option name="wxSTC_EOL_LF" />
 			wxSTC_EOL_LF
 		</property>
+		<property name="left_margin_width" type="int"
+			help="Sets the width of the blank margin to the left of the text.">1</property>
+		<property name="right_margin_width" type="int"
+			help="Sets the width of the blank margin to the right of the text.">1</property>
 		<property name="view_eol" type="bool"
 			help="Show end of line characters.">0</property>
-		<property name="view_whitespace" type="bool"
-			help="Show whitespace characters.">0</property>
-		<property name="folding" type="bool"
-			help="Enable folding. This requires one margin to have a width of 16 or higher with a folders mask set.">0</property>
-		<property name="automatic_folding" type="bitlist">
-			<option name="wxSTC_AUTOMATICFOLD_SHOW" help="Automatically show lines as needed." />
-			<option name="wxSTC_AUTOMATICFOLD_CLICK" help="Handle clicks in fold margin automatically." />
-			<option name="wxSTC_AUTOMATICFOLD_CHANGE" help="Show lines as needed when fold structure is changed." />
+		<property name="view_whitespace" type="option"
+			help="Set whether white space is visible. Space characters appear as small centered dots and tab characters as light arrows pointing to the right.">
+			<option name="wxSTC_WS_INVISIBLE" />
+			<option name="wxSTC_WS_VISIBLEALWAYS" />
+			<option name="wxSTC_WS_VISIBLEAFTERINDENT" />
+			<option name="wxSTC_WS_VISIBLEONLYININDENT" />
+			wxSTC_WS_INVISIBLE
 		</property>
+		<property name="view_tab_strikeout" type="bool"
+			help="By default, if whitespace is visible, tab charcers are drawn as light arrows pointing to the right. If strikeout is checked, then tabs are drawn as a horizontal line stretching until the tabstop.">0</property>
 
-		<category name="Margins">
-			<property name="left_margin_width" type="int"
-				help="Sets the width of the blank margin to the left of the text.">1</property>
-			<property name="right_margin_width" type="int"
-				help="Sets the width of the blank margin to the right of the text.">1</property>
+		<category name="Margin Columns">
 			<property name="select_wrapped_line" type="bool"
 				help="If checked, the entire wrapped line is selected when clicking in the margin. If not checked, only the subline will be selected.">1</property>
 
-			<property name="margin_0_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;. A negative number will indicate you want the width calculated based on the number of digits. For example, -5 would calculate the width of &quot;99999&quot;">0</property>
-			<property name="margin_0_type" type="option">
-				<option name="symbol" help="Symbol" />
-				<option name="number" help="Line number" />
-				<option name="background" help="Symbol using background colour" />
-				<option name="foreground" help="Symbol using foreground colour" />
-				<option name="text" help="Application defined text" />
-				<option name="right-aligned text" help="Right aligned application text" />
-				<option name="colour" />
-				number
+			<property name="line_margin" type="option" help="Specify the margin you want line numbers to appear in.">
+				<option name="none" />
+				<option name="0" />
+				<option name="1" />
+				<option name="2" />
+				<option name="3" />
+				<option name="4" />
+				none
 			</property>
-			<property name="margin_0_colour" type="wxColour"
-				help="Sets the margin colour if margin_0_type is set to &quot;colour&quot;." />
-			<property name="margin_0_mask_folders" type="bool"
-				help="If checked, a mask for the 7 logical symbols used to denote folding is used. Otherwise, a mask for all non-folding symbols is used.">0</property>
-			<property name="margin_0_mouse" type="bool"
+			<property name="line_digits" type="option" help="The number of digits needed to display the largest line. The  width of the margin will be calculated based on this number of digits.">
+				<option name="2" />
+				<option name="3" />
+				<option name="4" />
+				<option name="5" />
+				<option name="6" />
+				5
+			</property>
+
+			<property name="fold_margin" type="option" help="Specify the margin you want folding symbols to appear in.">
+				<option name="none" />
+				<option name="0" />
+				<option name="1" />
+				<option name="2" />
+				<option name="3" />
+				<option name="4" />
+				none
+			</property>
+			<property name="fold_width" type="int"
+				help="A margin with zero width is invisible.">16</property>
+			<property name="fold_marker_style" type="option" help="Specify the style of marker to use for folders.">
+				<option name="arrow" />
+				<option name="plus/minus" />
+				<option name="circle tree" />
+				<option name="box tree" />
+				arrow
+			</property>
+			<property name="fold_marker_colour" type="wxColour"
+				help="Sets the background colour of the markers." />
+
+			<property name="automatic_folding" type="bitlist">
+				<option name="wxSTC_AUTOMATICFOLD_SHOW" help="Automatically show lines as needed." />
+				<option name="wxSTC_AUTOMATICFOLD_CLICK" help="Handle clicks in fold margin automatically." />
+				<option name="wxSTC_AUTOMATICFOLD_CHANGE" help="Show lines as needed when fold structure is changed." />
+			</property>
+			<property name="fold_flags" type="bitlist"
+				help="In addition to showing markers in the folding margin, you can indicate folds to the user by drawing lines in the text area.">
+				<option name="wxSTC_FOLDFLAG_LINEBEFORE_EXPANDED" help="Draw above if expanded." />
+				<option name="wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED" help="Draw above if not expanded." />
+				<option name="wxSTC_FOLDFLAG_LINEAFTER_EXPANDED" help="Draw below if expanded." />
+				<option name="wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED" help="Draw below if not expanded." />
+				<option name="wxSTC_FOLDFLAG_LEVELNUMBERS" help="Display hexadecimal fold levels in line margin to aid debugging of folding." />
+				<option name="wxSTC_FOLDFLAG_LINESTATE" help="Display hexadecimal line state in line margin to aid debugging of lexing and folding." />
+			</property>
+
+			<property name="separator_margin" type="option" help="Specify the margin you want a vertical separator line to appear in.">
+				<option name="none" />
+				<option name="0" />
+				<option name="1" />
+				<option name="2" />
+				<option name="3" />
+				<option name="4" />
+				none
+			</property>
+			<property name="separator_width" type="int"
+				help="Note: a margin with zero width is invisible.">1</property>
+
+			<property name="symbol_margin" type="option" help="Specify the margin you want non-folding symbols to appear in.">
+				<option name="none" />
+				<option name="0" />
+				<option name="1" />
+				<option name="2" />
+				<option name="3" />
+				<option name="4" />
+				none
+			</property>
+			<property name="symbol_mouse_sensitive" type="bool"
 				help="If checked, clicking in the margin will send a wxEVT_STC_MARGINCLICK or wxEVT_STC_MARGIN_RIGHT_CLICK event. If not checked, the margin can be used to select a range of lines.">0</property>
 
-			<property name="margin_1_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;. A negative number will indicate you want the width calculated based on the number of digits. For example, -5 would calculate the width of &quot;99999&quot;">0</property>
-			<property name="margin_1_type" type="option">
+			<property name="custom_margin" type="option" help="Specify the margin you want to fully customize">
+				<option name="none" />
+				<option name="0" />
+				<option name="1" />
+				<option name="2" />
+				<option name="3" />
+				<option name="4" />
+				none
+			</property>
+			<property name="custom_width" type="int"
+				help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;.">16</property>
+			<property name="custom_type" type="option">
 				<option name="symbol" help="Symbol" />
 				<option name="number" help="Line number" />
 				<option name="background" help="Symbol using background colour" />
 				<option name="foreground" help="Symbol using foreground colour" />
 				<option name="text" help="Application defined text" />
 				<option name="right-aligned text" help="Right aligned application text" />
-				<option name="colour" />
+				<option name="colour" help="Use a custom colour for the background of the margin." />
 				symbol
 			</property>
-			<property name="margin_1_colour" type="wxColour"
-				help="Sets the margin colour if margin_1_type is set to &quot;colour&quot;." />
-			<property name="margin_1_mask_folders" type="bool"
-				help="If checked, a mask for the 7 logical symbols used to denote folding is used. Otherwise, a mask for all non-folding symbols is used.">1</property>
-			<property name="margin_1_mouse" type="bool"
-				help="If checked, clicking in the margin will send a wxEVT_STC_MARGINCLICK or wxEVT_STC_MARGIN_RIGHT_CLICK event. If not checked, the margin can be used to select a range of lines.">0</property>
-
-			<property name="margin_2_width" type="int" help="A margin with zero width is invisible. 16 is normally used if the margin type is set to &quot;symbol&quot;. A negative number will indicate you want the width calculated based on the number of digits. For example, -5 would calculate the width of &quot;99999&quot;">0</property>
-			<property name="margin_2_type" type="option">
-				<option name="symbol" help="Symbol" />
-				<option name="number" help="Line number" />
-				<option name="background" help="Symbol using background colour" />
-				<option name="foreground" help="Symbol using foreground colour" />
-				<option name="text" help="Application defined text" />
-				<option name="right-aligned text" help="Right aligned application text" />
-				<option name="colour" />
-				symbol
-			</property>
-			<property name="margin_2_colour" type="wxColour"
-				help="Sets the margin colour if margin_2_type is set to &quot;colour&quot;." />
-			<property name="margin_2_mask_folders" type="bool"
-				help="If checked, a mask for the 7 logical symbols used to denote folding is used. Otherwise, a mask for all non-folding symbols is used.">0</property>
-			<property name="margin_2_mouse" type="bool"
+			<property name="custom_colour" type="wxColour"
+				help="Sets the margin colour if custom_type is set to &quot;colour&quot;." />
+			<property name="custom_mask_folders" type="bool"
+				help="Only used if custom_type is set to &quot;symbol&quot;. If checked, a mask for the 7 logical symbols used to denote folding is used. Otherwise, a mask for all non-folding symbols is used.">0</property>
+			<property name="custom_mouse_sensitive" type="bool"
 				help="If checked, clicking in the margin will send a wxEVT_STC_MARGINCLICK or wxEVT_STC_MARGIN_RIGHT_CLICK event. If not checked, the margin can be used to select a range of lines.">0</property>
 		</category>
 

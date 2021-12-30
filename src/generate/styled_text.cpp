@@ -763,13 +763,13 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
             if (node->HasValue(prop_fold_marker_colour))
             {
                 code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDER, " << symbol_folder
-                     << ", wxNullColour, " << ConvertColourToString(node->prop_as_wxColour(prop_fold_marker_colour)) << ");";
+                     << ", wxNullColour, " << GenerateColourCode(node, prop_fold_marker_colour) << ";";
                 code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, " << symbol_open
-                     << ", wxNullColour, " << ConvertColourToString(node->prop_as_wxColour(prop_fold_marker_colour)) << ");";
+                     << ", wxNullColour, " << GenerateColourCode(node, prop_fold_marker_colour) << ";";
                 code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, " << symbol_open
-                     << ", wxNullColour, " << ConvertColourToString(node->prop_as_wxColour(prop_fold_marker_colour)) << ");";
+                     << ", wxNullColour, " << GenerateColourCode(node, prop_fold_marker_colour) << ";";
                 code << "\n\t\t" << node->get_node_name() << "->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, " << symbol_folder
-                     << ", wxNullColour, " << ConvertColourToString(node->prop_as_wxColour(prop_fold_marker_colour)) << ");";
+                     << ", wxNullColour, " << GenerateColourCode(node, prop_fold_marker_colour) << ";";
             }
             else
             {
@@ -796,7 +796,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
             code << "\n\t\t\tauto clr_background = ";
             if (node->HasValue(prop_fold_marker_colour))
             {
-                code << ConvertColourToString(node->prop_as_wxColour(prop_fold_marker_colour)) << ");";
+                code << GenerateColourCode(node, prop_fold_marker_colour) << ";";
             }
             else
             {
@@ -872,7 +872,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (node->prop_as_string(prop_custom_margin) != "none" && node->prop_as_int(prop_custom_width))
     {
-        auto margin = node->prop_as_string(prop_separator_margin).atoi();
+        auto margin = node->prop_as_string(prop_custom_margin).atoi();
         code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", "
              << node->prop_as_int(prop_custom_width) << ");";
 
@@ -884,7 +884,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
         if (node->prop_as_string(prop_custom_type) == "colour" && node->HasValue(prop_custom_colour))
         {
             code << "\n\t\t" << node->get_node_name() << "->SetMarginBackground(" << margin << ", "
-                 << ConvertColourToString(node->prop_as_wxColour(prop_custom_colour)) << ");";
+                 << GenerateColourCode(node, prop_custom_colour) << ");";
         }
         else
         {

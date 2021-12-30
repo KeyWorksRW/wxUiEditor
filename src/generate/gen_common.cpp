@@ -153,6 +153,30 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
     }
 }
 
+ttlib::cstr GenerateColourCode(Node* node, GenEnum::PropName prop_name)
+{
+    ttlib::cstr code;
+
+    if (!node->HasValue(prop_name))
+    {
+        code = "wxNullColour";
+    }
+    else
+    {
+        if (node->prop_as_string(prop_name).contains("wx"))
+        {
+            code << "wxSystemSettings::GetColour(" << node->prop_as_string(prop_name) << ")";
+        }
+        else
+        {
+            auto colour = node->prop_as_wxColour(prop_name);
+            code << ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
+        }
+    }
+
+    return code;
+}
+
 ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
 {
     ttlib::cstr code;

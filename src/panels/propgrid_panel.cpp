@@ -603,7 +603,7 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
 
         // wxStyledTextCtrl has several categories most of which are rarely used, so it makes sense to collapse them
         // initially.
-        if (nextCat.GetName() == "Margins" || nextCat.GetName() == "Selections" ||
+        if (nextCat.GetName() == "Margin Columns" || nextCat.GetName() == "Selections" ||
             nextCat.GetName() == "Tabs and Indentation" || nextCat.GetName() == "Wrapping")
         {
             m_prop_grid->Collapse(catId);
@@ -1182,10 +1182,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
 static const char* lst_margins[] = {
 
-    "margin_0_type",
-    "margin_0_colour",
-    "margin_0_mask_folders",
-    "margin_0_mouse",
+    "custom_width", "custom_type", "custom_colour", "custom_mask_folders", "custom_mouse_sensitive",
 
 };
 
@@ -1268,16 +1265,45 @@ void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
                 }
             }
         }
-        else if (changed_prop->isProp(prop_folding))
+        else if (changed_prop->isProp(prop_fold_margin))
         {
             if (auto pg_property = m_prop_grid->GetProperty("automatic_folding"); pg_property)
             {
-                pg_property->Enable(changed_prop->as_bool());
+                pg_property->Enable(changed_prop->as_string() != "none");
+            }
+            if (auto pg_property = m_prop_grid->GetProperty("fold_width"); pg_property)
+            {
+                pg_property->Enable(changed_prop->as_string() != "none");
+            }
+            if (auto pg_property = m_prop_grid->GetProperty("fold_flags"); pg_property)
+            {
+                pg_property->Enable(changed_prop->as_string() != "none");
             }
         }
-        else if (changed_prop->isProp(prop_stc_margin_0_width))
+        else if (changed_prop->isProp(prop_line_margin))
         {
-            bool is_enabled = (changed_prop->as_int() != 0);
+            if (auto pg_margin_setting = m_prop_grid->GetProperty("line_digits"); pg_margin_setting)
+            {
+                pg_margin_setting->Enable((changed_prop->as_string() != "none"));
+            }
+        }
+        else if (changed_prop->isProp(prop_symbol_margin))
+        {
+            if (auto pg_margin_setting = m_prop_grid->GetProperty("symbol_mouse_sensitive"); pg_margin_setting)
+            {
+                pg_margin_setting->Enable((changed_prop->as_string() != "none"));
+            }
+        }
+        else if (changed_prop->isProp(prop_separator_margin))
+        {
+            if (auto pg_margin_setting = m_prop_grid->GetProperty("separator_width"); pg_margin_setting)
+            {
+                pg_margin_setting->Enable((changed_prop->as_string() != "none"));
+            }
+        }
+        else if (changed_prop->isProp(prop_custom_margin))
+        {
+            bool is_enabled = (changed_prop->as_string() != "none");
             for (auto& iter: lst_margins)
             {
                 if (auto pg_margin_setting = m_prop_grid->GetProperty(iter); pg_margin_setting)
@@ -1285,36 +1311,18 @@ void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
                     pg_margin_setting->Enable(is_enabled);
                 }
             }
-        }
-        else if (changed_prop->isProp(prop_stc_margin_1_width))
-        {
-            bool is_enabled = (changed_prop->as_int() != 0);
-            for (auto& iter: lst_margins)
+
+            // Hack alert! To prevent duplicating the code below, we change the changed_prop pointer.
+            if (is_enabled)
             {
-                ttlib::cstr property(iter);
-                property.Replace("0", "1");
-                if (auto pg_margin_setting = m_prop_grid->GetProperty(property); pg_margin_setting)
-                {
-                    pg_margin_setting->Enable(is_enabled);
-                }
+                changed_prop = changed_node->get_prop_ptr(prop_custom_type);
             }
         }
-        else if (changed_prop->isProp(prop_stc_margin_2_width))
+
+        if (changed_prop->isProp(prop_custom_type))
         {
-            for (auto& iter: lst_margins)
-            {
-                bool is_enabled = (changed_prop->as_int() != 0);
-                ttlib::cstr property(iter);
-                property.Replace("0", "2");
-                if (auto pg_margin_setting = m_prop_grid->GetProperty(property); pg_margin_setting)
-                {
-                    pg_margin_setting->Enable(is_enabled);
-                }
-            }
-        }
-        else if (changed_prop->isProp(prop_stc_margin_0_type))
-        {
-            if (auto pg_margin_setting = m_prop_grid->GetProperty("margin_0_colour"); pg_margin_setting)
+            bool is_enabled = (changed_node->prop_as_string(prop_custom_margin) != "none");
+            if (auto pg_margin_setting = m_prop_grid->GetProperty("custom_colour"); pg_margin_setting)
             {
                 if (changed_prop->as_string() != "colour")
                 {
@@ -1322,7 +1330,18 @@ void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
                 }
                 else
                 {
-                    pg_margin_setting->Enable(changed_node->prop_as_int(prop_stc_margin_0_width) != 0);
+                    pg_margin_setting->Enable(is_enabled);
+                }
+            }
+            if (auto pg_margin_setting = m_prop_grid->GetProperty("custom_mask_folders"); pg_margin_setting)
+            {
+                if (changed_prop->as_string() != "symbol" && changed_prop->as_string() != "number")
+                {
+                    pg_margin_setting->Enable(false);
+                }
+                else
+                {
+                    pg_margin_setting->Enable(is_enabled);
                 }
             }
         }

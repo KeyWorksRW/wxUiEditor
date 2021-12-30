@@ -47,6 +47,10 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str);
 // Will return "wxEmptyString" if prop_name is empty.
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name);
 
+// Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
+// Generates wxNullColour if the property is empty.
+ttlib::cstr GenerateColourCode(Node* node, GenEnum::PropName prop_name);
+
 // Insert a required include file into either src or hdr set (depending on prop_class_access)
 void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std::string>& set_src,
                             std::set<std::string>& set_hdr);

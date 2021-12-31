@@ -54,7 +54,7 @@ bool App::LoadProject(const ttString& file)
 
     m_ProjectVersion = root.attribute("data_version").as_int((curWxuiMajorVer * 10) + curWxuiMinorVer);
 
-    if (m_ProjectVersion > (curWxuiMajorVer * 10) + curWxuiMinorVer)
+    if (m_ProjectVersion > curCombinedVer)
     {
         if (wxMessageBox("wxUiEditor does not recognize this version of the data file.\n"
                          "You may be able to load the file, but if you then save it you could lose data.\n\n"
@@ -63,7 +63,7 @@ bool App::LoadProject(const ttString& file)
             return false;
     }
 
-    else if (m_ProjectVersion < (curWxuiMajorVer * 10) + curWxuiMinorVer)
+    else if (m_ProjectVersion < curCombinedVer)
     {
         if (!root.child("object") && !root.child("node"))
         {
@@ -112,7 +112,7 @@ bool App::LoadProject(const ttString& file)
     wxGetFrame().SetImportedFlag(false);
     wxGetFrame().FireProjectLoadedEvent();
 
-    if (m_isProject_updated || m_ProjectVersion == 11)
+    if (m_isProject_updated || m_ProjectVersion < curCombinedVer)
         wxGetFrame().SetModified();
 
     return true;

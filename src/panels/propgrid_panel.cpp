@@ -1189,6 +1189,13 @@ static const char* lst_margins[] = {
 void PropGridPanel::ChangeEnableState(NodeProperty* changed_prop)
 {
     auto changed_node = changed_prop->GetNode();
+
+    // Project properties don't have a generator, so always check first
+    if (auto gen = changed_node->GetGenerator(); gen)
+    {
+        gen->ChangeEnableState(m_prop_grid, changed_prop);
+    }
+
     if (changed_node->isGen(gen_wxStyledTextCtrl))
     {
         if (changed_prop->isProp(prop_stc_wrap_mode))
@@ -1700,6 +1707,10 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
             m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
 
             m_property_map[id_prop] = prop;
+            if (prop->isProp(prop_alignment))
+            {
+                prop->GetNode()->GetGenerator()->ChangeEnableState(m_prop_grid, prop);
+            }
         }
 
         if (auto prop = node->get_prop_ptr(prop_proportion); prop)

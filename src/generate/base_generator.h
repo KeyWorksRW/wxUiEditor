@@ -19,6 +19,7 @@ class WriteCode;
 class wxMouseEvent;
 class wxObject;
 class wxPropertyGridEvent;
+class wxPropertyGridManager;
 class wxWindow;
 
 namespace pugi
@@ -89,4 +90,13 @@ public:
 
     // Get the HTML filename to browse to. Caller needs to supply the prefix.
     virtual ttlib::cstr GetHelpURL(Node*);
+
+    // Change the enable/disable states in the Property Grid Panel based on the current
+    // property.
+    virtual void ChangeEnableState(wxPropertyGridManager*, NodeProperty*);
+
+    // Call this to convert wxWidgets constants to friendly names, and to fix conflicting bit
+    // flags. Returns true if a change was made. Note that the change is *not* pushed to the
+    // undo stack.
+    virtual bool VerifyProperty(NodeProperty*);
 };

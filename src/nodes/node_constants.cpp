@@ -822,7 +822,10 @@ std::unordered_map<std::string, const char*> g_friend_constant = {
     { "info_slide to right", "wxSHOW_EFFECT_SLIDE_TO_RIGHT" },
     { "info_slide to top", "wxSHOW_EFFECT_SLIDE_TO_TOP" },
     { "info_slide to bottom", "wxSHOW_EFFECT_SLIDE_TO_BOTTOM" },
-    { "info_", "blend" },
-    { "info_", "expand" },
+    { "info_blend", "wxSHOW_EFFECT_BLEND" },
+    { "info_expand", "wxSHOW_EFFECT_EXPAND" },
+
+    { "rb_rows", "wxRA_SPECIFY_ROWS" },
+    { "rb_columns", "wxRA_SPECIFY_COLS" },
 
 };

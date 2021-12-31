@@ -215,38 +215,71 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                 {
                     prop->set_value(iter.as_bool());
                 }
-                else if (wxGetApp().GetProjectVersion() == 11)
+
+                // TODO: [KeyWorks - 12-30-2021] Using 14 is temporary -- it should be 13
+                else if (wxGetApp().GetProjectVersion() < 14)
                 {
-                    if (prop->type() == type_image)
+                    switch (prop->type())
                     {
-                        // Old style conversion -- remove once we're certain all projects have been updated
+                        case type_editoption:
+                        case type_option:
+                            {
+                                bool found = false;
+                                for (auto& friendly_pair: g_friend_constant)
+                                {
+                                    if (ttlib::is_sameas(friendly_pair.second, iter.value()))
+                                    {
+                                        prop->set_value(friendly_pair.first.c_str() + friendly_pair.first.find('_') + 1);
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (!found)
+                                {
+                                    prop->set_value(iter.value());
+                                }
+                            }
+                            break;
 
-                        ttlib::multiview parts(iter.value(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                        case type_bitlist:
+                            {
+                                ttlib::multistr mstr(iter.value(), '|', tt::TRIM::both);
+                                bool found = false;
+                                ttlib::cstr new_value;
+                                for (auto& bit_value: mstr)
+                                {
+                                    for (auto& friendly_pair: g_friend_constant)
+                                    {
+                                        if (ttlib::is_sameas(friendly_pair.second, bit_value))
+                                        {
+                                            if (new_value.size())
+                                            {
+                                                new_value << '|';
+                                            }
 
-                        ttlib::cstr bitmap(parts[IndexType]);
-                        bitmap << "; " << parts[IndexImage];
-                        if (parts[IndexType] == "Art" && parts[2].size())
-                        {
-                            bitmap << '|' << parts[2];
-                        }
-                        if (parts.size() > 3)
-                        {
-                            bitmap << "; " << parts[3] << "," << parts[4];
-                        }
-                        prop->set_value(bitmap);
-                    }
-                    else if (prop->type() == type_animation && prop->isProp(prop_animation))
-                    {
-                        ttlib::cstr bitmap("Header; ");
-                        bitmap << iter.value();
-                        bitmap.RightTrim();
-                        if (bitmap.back() == ';')
-                            bitmap.pop_back();
-                        prop->set_value(bitmap);
-                    }
-                    else
-                    {
-                        prop->set_value(iter.value());
+                                            new_value << (friendly_pair.first.c_str() + friendly_pair.first.find('_') + 1);
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!found)
+                                    {
+                                        break;
+                                    }
+                                }
+                                if (found)
+                                {
+                                    prop->set_value(new_value);
+                                }
+                                else
+                                {
+                                    prop->set_value(iter.value());
+                                }
+                            }
+                            break;
+
+                        default:
+                            prop->set_value(iter.value());
                     }
                 }
                 else

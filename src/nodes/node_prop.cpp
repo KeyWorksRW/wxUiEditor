@@ -95,7 +95,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
 
         case type_bitlist:
             {
-                ttlib::multistr mstr(m_value, '|');
+                ttlib::multistr mstr(m_value, '|', tt::TRIM::both);
                 int value = 0;
                 for (auto& iter: mstr)
                 {
@@ -165,7 +165,7 @@ const ttlib::cstr& NodeProperty::as_constant(std::string_view prefix)
 
         case type_bitlist:
             {
-                ttlib::multistr mstr(m_value, '|');
+                ttlib::multistr mstr(m_value, '|', tt::TRIM::both);
                 m_constant.clear();
                 for (auto& iter: mstr)
                 {

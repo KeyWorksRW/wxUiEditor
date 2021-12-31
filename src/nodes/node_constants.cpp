@@ -759,3 +759,36 @@ void NodeCreator::AddAllConstants()
     m_map_constants["Tab_Wrap"] = wxGrid::Tab_Wrap;
     m_map_constants["Tab_Leave"] = wxGrid::Tab_Leave;
 }
+
+std::unordered_map<std::string, const char*> g_friend_constant = {
+
+    { "stc_end_text", "wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT" },
+    { "stc_start_text", "wxSTC_WRAPVISUALFLAGLOC_START_BY_TEXT" },
+
+    { "stc_end", "wxSTC_WRAPVISUALFLAG_END" },
+    { "stc_start", "wxSTC_WRAPVISUALFLAG_START" },
+    { "stc_margin", "wxSTC_WRAPVISUALFLAG_MARGIN" },
+
+    { "stc_no wrapping", "wxSTC_WRAP_NONE" },
+    { "stc_word", "wxSTC_WRAP_WORD" },
+    { "stc_character", "wxSTC_WRAP_CHAR" },
+    { "stc_whitespace", "wxSTC_WRAP_WHITESPACE" },
+
+    { "stc_fixed", "wxSTC_WRAPINDENT_FIXED" },
+    { "stc_same", "wxSTC_WRAPINDENT_SAME" },
+    { "stc_indent", "wxSTC_WRAPINDENT_INDENT" },
+
+    { "stc_symbol", "wxSTC_MARGIN_SYMBOL" },
+    { "stc_number", "wxSTC_MARGIN_NUMBER" },
+    { "stc_background", "wxSTC_MARGIN_BACK" },
+    { "stc_foreground", "wxSTC_MARGIN_FORE" },
+    { "stc_text", "wxSTC_MARGIN_TEXT" },
+    { "stc_right-aligned text", "wxSTC_MARGIN_RTEXT" },
+    { "stc_colour", "wxSTC_MARGIN_COLOUR" },
+
+    { "stc_no guides", "wxSTC_IV_NONE" },
+    { "stc_real", "wxSTC_IV_REAL" },
+    { "stc_forward", "wxSTC_IV_LOOKFORWARD" },
+    { "stc_both", "wxSTC_IV_LOOKBOTH" },
+
+};

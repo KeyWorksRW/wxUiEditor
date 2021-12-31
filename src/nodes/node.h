@@ -170,6 +170,7 @@ public:
     // If type is option, id, or bitlist, this will convert that constant name to it's value
     // (see g_NodeCreator.GetConstantAsInt()). Otherwise, it calls atoi().
     int prop_as_int(PropName name) const;
+    int prop_as_mockup(PropName name, std::string_view prefix) const;
 
     wxColour prop_as_wxColour(PropName name) const;
     wxFont prop_as_font(PropName name) const;
@@ -183,6 +184,7 @@ public:
     double prop_as_double(PropName name) const;
 
     const ttlib::cstr& prop_as_string(PropName name) const;
+    const ttlib::cstr& prop_as_constant(PropName name, std::string_view prefix);
 
     // Use with caution! This allows you to modify the property string directly.
     //

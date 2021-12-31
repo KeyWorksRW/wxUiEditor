@@ -99,3 +99,6 @@ private:
 };
 
 extern NodeCreator g_NodeCreator;
+
+// Map of friendly name to wxWidgets constant string
+extern std::unordered_map<std::string, const char*> g_friend_constant;

@@ -317,6 +317,14 @@ int Node::prop_as_int(PropName name) const
         return 0;
 }
 
+int Node::prop_as_mockup(PropName name, std::string_view prefix) const
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_mockup(prefix);
+    else
+        return 0;
+}
+
 wxColour Node::prop_as_wxColour(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
@@ -401,6 +409,14 @@ const ttlib::cstr& Node::prop_as_string(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
         return m_properties[result->second].as_string();
+    else
+        return tt_empty_cstr;
+}
+
+const ttlib::cstr& Node::prop_as_constant(PropName name, std::string_view prefix)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_constant(prefix);
     else
         return tt_empty_cstr;
 }

@@ -732,8 +732,8 @@ wxObject* InfoBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
     m_infobar->ShowMessage("Message ...", wxICON_INFORMATION);
 
-    m_infobar->SetShowHideEffects((wxShowEffect) node->prop_as_int(prop_show_effect),
-                                  (wxShowEffect) node->prop_as_int(prop_hide_effect));
+    m_infobar->SetShowHideEffects((wxShowEffect) node->prop_as_mockup(prop_show_effect, "info_"),
+                                  (wxShowEffect) node->prop_as_mockup(prop_hide_effect, "info_"));
     m_infobar->SetEffectDuration(node->prop_as_int(prop_duration));
 
     m_infobar->Bind(wxEVT_BUTTON, &InfoBarGenerator::OnButton, this);
@@ -757,8 +757,8 @@ std::optional<ttlib::cstr> InfoBarGenerator::GenSettings(Node* node, size_t& /* 
 {
     ttlib::cstr code;
 
-    code << '\t' << node->get_node_name() << "->SetShowHideEffects(" << node->prop_as_string(prop_show_effect) << ", "
-         << node->prop_as_string(prop_hide_effect) << ");";
+    code << '\t' << node->get_node_name() << "->SetShowHideEffects(" << node->prop_as_constant(prop_show_effect, "info_")
+         << ", " << node->prop_as_constant(prop_hide_effect, "info_") << ");";
 
     if (node->prop_as_int(prop_duration) != 500)
     {

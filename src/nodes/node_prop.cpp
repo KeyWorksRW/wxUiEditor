@@ -61,6 +61,146 @@ int NodeProperty::as_int() const
     }
 }
 
+int NodeProperty::as_mockup(std::string_view prefix) const
+{
+    switch (type())
+    {
+        case type_editoption:
+        case type_option:
+        case type_id:
+            if (m_value.is_sameprefix("wx"))
+            {
+                return g_NodeCreator.GetConstantAsInt(m_value, 0);
+            }
+            else
+            {
+                if (prefix.size())
+                {
+                    ttlib::cstr name;
+                    name << prefix << m_value;
+                    if (auto result = g_friend_constant.find(name); result != g_friend_constant.end())
+                    {
+                        return g_NodeCreator.GetConstantAsInt(result->second, 0);
+                    }
+                }
+                else
+                {
+                    if (auto result = g_friend_constant.find(m_value); result != g_friend_constant.end())
+                    {
+                        return g_NodeCreator.GetConstantAsInt(result->second, 0);
+                    }
+                }
+            }
+            return 0;
+
+        case type_bitlist:
+            {
+                ttlib::multistr mstr(m_value, '|', tt::TRIM::both);
+                int value = 0;
+                for (auto& iter: mstr)
+                {
+                    if (iter.is_sameprefix("wx"))
+                    {
+                        value |= g_NodeCreator.GetConstantAsInt(iter);
+                    }
+                    else
+                    {
+                        if (prefix.size())
+                        {
+                            iter.insert(0, prefix);
+                        }
+                        if (auto result = g_friend_constant.find(iter); result != g_friend_constant.end())
+                        {
+                            value |= g_NodeCreator.GetConstantAsInt(result->second);
+                        }
+                    }
+                }
+                return value;
+            }
+
+        default:
+            return m_value.atoi();  // this will return 0 if the m_value is an empty string
+    }
+}
+
+const ttlib::cstr& NodeProperty::as_constant(std::string_view prefix)
+{
+    switch (type())
+    {
+        case type_editoption:
+        case type_option:
+        case type_id:
+            if (m_value.is_sameprefix("wx"))
+            {
+                return m_value;
+            }
+            else
+            {
+                if (prefix.size())
+                {
+                    m_constant.clear();
+                    m_constant << prefix << m_value;
+                    if (auto result = g_friend_constant.find(m_constant); result != g_friend_constant.end())
+                    {
+                        m_constant = result->second;
+                    }
+                    else
+                    {
+                        m_constant.clear();
+                    }
+                }
+                else
+                {
+                    if (auto result = g_friend_constant.find(m_value); result != g_friend_constant.end())
+                    {
+                        m_constant = result->second;
+                    }
+                    else
+                    {
+                        m_constant.clear();
+                    }
+                }
+                return m_constant;
+            }
+
+        case type_bitlist:
+            {
+                ttlib::multistr mstr(m_value, '|', tt::TRIM::both);
+                m_constant.clear();
+                for (auto& iter: mstr)
+                {
+                    if (iter.is_sameprefix("wx"))
+                    {
+                        if (m_constant.size())
+                        {
+                            m_constant << '|';
+                        }
+                        m_constant << iter;
+                    }
+                    else
+                    {
+                        if (prefix.size())
+                        {
+                            iter.insert(0, prefix);
+                        }
+                        if (auto result = g_friend_constant.find(iter); result != g_friend_constant.end())
+                        {
+                            if (m_constant.size())
+                            {
+                                m_constant << " | ";
+                            }
+                            m_constant << result->second;
+                        }
+                    }
+                }
+                return m_constant;
+            }
+
+        default:
+            return m_value;  // this will return 0 if the m_value is an empty string
+    }
+}
+
 wxPoint NodeProperty::as_point() const
 {
     wxPoint result { -1, -1 };

@@ -38,7 +38,7 @@ public:
     bool as_bool() const { return (as_int() != 0); };
     double as_float() const;
 
-    const auto& as_string() const { return m_value; }
+    // REVIEW: [KeyWorks - 12-30-2021] Why do we need this? This just adds ctor/dtor code.
     auto as_cview() const { return ttlib::cview(m_value.c_str(), m_value.length()); }
 
     // Use with caution! This allows you to modify the property string directly.
@@ -53,6 +53,15 @@ public:
     wxSize as_size() const;
     auto as_wxString() const { return m_value.wx_str(); }
     wxArrayString as_wxArrayString() const;
+
+    const ttlib::cstr& as_string() const { return m_value; }
+
+    // Converts friendly name to wxWidgets constant
+    const ttlib::cstr& as_constant(std::string_view prefix);
+
+    // Converts friendly name to wxWidgets constant, and then returns the integer value of
+    // that constant.
+    int as_mockup(std::string_view prefix) const;
 
     auto as_vector() const -> std::vector<ttlib::cstr>;
 
@@ -98,4 +107,5 @@ private:
     PropDeclaration* m_declaration;
     Node* m_node;  // node this property is a child of
     ttlib::cstr m_value;
+    ttlib::cstr m_constant;  // filled in by as_constant() if m_value is a friendly name
 };

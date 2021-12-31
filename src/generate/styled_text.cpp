@@ -21,41 +21,6 @@
 
 // Call g_NodeCreator->GetConstantAsInt("wx_define") to get the #defined integer value -- see node_creator.h
 
-std::map<std::string, const char*> g_stc_flags = {
-
-    { "no wrapping", "wxSTC_WRAP_NONE" },
-    { "word", "wxSTC_WRAP_WORD" },
-    { "character", "wxSTC_WRAP_CHAR" },
-    { "whitespace", "wxSTC_WRAP_WHITESPACE" },
-
-    // Visual flags
-    { "end", "wxSTC_WRAPVISUALFLAG_END" },
-    { "start", "wxSTC_WRAPVISUALFLAG_START" },
-    { "margin", "wxSTC_WRAPVISUALFLAG_MARGIN" },
-
-    { "end_text", "wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT" },
-    { "start_text", "wxSTC_WRAPVISUALFLAGLOC_START_BY_TEXT" },
-
-    { "fixed", "wxSTC_WRAPINDENT_FIXED" },
-    { "same", "wxSTC_WRAPINDENT_SAME" },
-    { "indent", "wxSTC_WRAPINDENT_INDENT" },
-
-    { "symbol", "wxSTC_MARGIN_SYMBOL" },
-    { "number", "wxSTC_MARGIN_NUMBER" },
-    { "background", "wxSTC_MARGIN_BACK" },
-    { "foreground", "wxSTC_MARGIN_FORE" },
-    { "text", "wxSTC_MARGIN_TEXT" },
-    { "right-aligned text", "wxSTC_MARGIN_RTEXT" },
-    { "colour", "wxSTC_MARGIN_COLOUR" },
-
-    { "no guides", "wxSTC_IV_NONE" },
-    { "real", "wxSTC_IV_REAL" },
-    { "forward", "wxSTC_IV_LOOKFORWARD" },
-    { "both", "wxSTC_IV_LOOKBOTH" },
-
-    // { "deep_indent", "SC_WRAPINDENT_DEEPINDENT" }, // not supported in 3.1.15
-};
-
 // To get the constant, prefix the name with "wxSTC_LEX_"
 std::map<std::string, int> g_stc_lexers = {
 
@@ -223,37 +188,20 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     //////////// Wrap category settings ////////////
 
     if (!node->prop_as_string(prop_stc_wrap_mode).is_sameas("no wrapping"))
-        scintilla->SetWrapMode(g_NodeCreator.GetConstantAsInt(g_stc_flags.at(node->prop_as_string(prop_stc_wrap_mode))));
+    {
+        scintilla->SetWrapMode(node->prop_as_mockup(prop_stc_wrap_mode, "stc_"));
+    }
     if (node->HasValue(prop_stc_wrap_visual_flag))
     {
-        ttlib::multistr flags(node->prop_as_string(prop_stc_wrap_visual_flag), '|');
-        int value = 0;
-        for (auto& iter: flags)
-        {
-            value |= g_NodeCreator.GetConstantAsInt(g_stc_flags.at(iter));
-        }
-        if (value)
-        {
-            scintilla->SetWrapVisualFlags(value);
-        }
+        scintilla->SetWrapVisualFlags(node->prop_as_mockup(prop_stc_wrap_visual_flag, "stc_"));
     }
     if (node->HasValue(prop_stc_wrap_visual_location))
     {
-        ttlib::multistr flags(node->prop_as_string(prop_stc_wrap_visual_location), '|');
-        int value = 0;
-        for (auto& iter: flags)
-        {
-            value |= g_NodeCreator.GetConstantAsInt(g_stc_flags.at(iter));
-        }
-        if (value)
-        {
-            scintilla->SetWrapVisualFlagsLocation(value);
-        }
+        scintilla->SetWrapVisualFlagsLocation(node->prop_as_mockup(prop_stc_wrap_visual_location, "stc_"));
     }
     if (!node->prop_as_string(prop_stc_wrap_indent_mode).is_sameas("fixed"))
     {
-        scintilla->SetWrapIndentMode(
-            g_NodeCreator.GetConstantAsInt(g_stc_flags.at(node->prop_as_string(prop_stc_wrap_indent_mode))));
+        scintilla->SetWrapIndentMode(node->prop_as_mockup(prop_stc_wrap_indent_mode, "stc_"));
     }
     if (node->HasValue(prop_stc_wrap_start_indent))
     {
@@ -379,11 +327,11 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetMarginSensitive(margin, true);
         if (node->HasValue(prop_automatic_folding))
         {
-            scintilla->SetAutomaticFold(node->prop_as_int(prop_automatic_folding));
+            scintilla->SetAutomaticFold(node->prop_as_mockup(prop_automatic_folding, "stc_"));
         }
         if (node->HasValue(prop_fold_flags))
         {
-            scintilla->SetFoldFlags(node->prop_as_int(prop_fold_flags));
+            scintilla->SetFoldFlags(node->prop_as_mockup(prop_fold_flags, "stc_"));
         }
     }
 
@@ -409,8 +357,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         auto margin = node->prop_as_string(prop_custom_margin).atoi();
         scintilla->SetMarginWidth(margin, node->prop_as_int(prop_custom_width));
 
-        if (auto result = g_stc_flags.find(node->prop_as_string(prop_custom_type)); result != g_stc_flags.end())
-            scintilla->SetMarginType(margin, g_NodeCreator.GetConstantAsInt(result->second));
+        scintilla->SetMarginType(margin, node->prop_as_mockup(prop_custom_type, "stc_"));
 
         if (node->prop_as_string(prop_custom_type) == "colour" && node->HasValue(prop_custom_colour))
         {
@@ -438,8 +385,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_indentation_guides))
     {
-        scintilla->SetIndentationGuides(
-            g_NodeCreator.GetConstantAsInt(g_stc_flags.at(node->prop_as_string(prop_indentation_guides))));
+        scintilla->SetIndentationGuides(node->prop_as_mockup(prop_indentation_guides, "stc_"));
     }
     scintilla->SetIndent(node->prop_as_int(prop_stc_indentation_size));
     scintilla->SetUseTabs((node->prop_as_int(prop_use_tabs)));
@@ -461,11 +407,14 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_eol_mode))
     {
-        scintilla->SetEOLMode(node->prop_as_int(prop_eol_mode));
+        scintilla->SetEOLMode(node->prop_as_mockup(prop_eol_mode, "stc_"));
     }
 
-    scintilla->SetViewEOL((node->prop_as_int(prop_view_eol)));
-    scintilla->SetViewWhiteSpace(g_NodeCreator.GetConstantAsInt(node->prop_as_string(prop_view_whitespace)));
+    scintilla->SetViewEOL(node->prop_as_bool(prop_view_eol));
+    if (node->isPropValue(prop_view_whitespace, "invisible"))
+    {
+        scintilla->SetViewWhiteSpace(node->prop_as_mockup(prop_view_whitespace, "stc_"));
+    }
     if (node->prop_as_bool(prop_view_tab_strikeout))
     {
         scintilla->SetTabDrawMode(wxSTC_TD_STRIKEOUT);
@@ -564,7 +513,8 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (node->HasValue(prop_eol_mode))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetEOLMode(" << node->prop_as_string(prop_eol_mode) << ");";
+        code << "\n\t\t" << node->get_node_name() << "->SetEOLMode(" << node->prop_as_constant(prop_eol_mode, "stc_")
+             << ");";
     }
 
     // Default is false, so only set if true
@@ -574,10 +524,10 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     }
 
     // Default is false, so only set if true
-    if (node->HasValue(prop_view_whitespace))
+    if (!node->isPropValue(prop_view_whitespace, "invisible"))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetViewWhiteSpace(" << node->prop_as_string(prop_view_whitespace)
-             << ");";
+        code << "\n\t\t" << node->get_node_name() << "->SetViewWhiteSpace("
+             << node->prop_as_constant(prop_view_whitespace, "stc_") << ");";
         if (node->prop_as_bool(prop_view_tab_strikeout))
         {
             code << "\n\t\t" << node->get_node_name() << "->SetTabDrawMode(wxSTC_TD_STRIKEOUT);";
@@ -588,39 +538,27 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (!node->prop_as_string(prop_stc_wrap_mode).is_sameas("no wrapping"))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetWrapMode("
-             << g_stc_flags.at(node->prop_as_string(prop_stc_wrap_mode)) << ");";
+        code << "\n\t\t" << node->get_node_name() << "->SetWrapMode(" << node->prop_as_constant(prop_stc_wrap_mode, "stc_")
+             << ");";
     }
     if (node->HasValue(prop_stc_wrap_visual_flag))
     {
-        ttlib::multistr flags(node->prop_as_string(prop_stc_wrap_visual_flag), '|');
-        ttlib::cstr value;
-        for (auto& iter: flags)
+        if (auto result = node->prop_as_constant(prop_stc_wrap_visual_flag, "stc_"); result.size())
         {
-            if (value.size())
-                value << '|';
-            value << g_stc_flags.at(iter);
+            code << "\n\t\t" << node->get_node_name() << "->SetWrapVisualFlags(" << result << ");";
         }
-        if (value.size())
-            code << "\n\t\t" << node->get_node_name() << "->SetWrapVisualFlags(" << value << ");";
     }
     if (node->HasValue(prop_stc_wrap_visual_location))
     {
-        ttlib::multistr flags(node->prop_as_string(prop_stc_wrap_visual_location), '|');
-        ttlib::cstr value;
-        for (auto& iter: flags)
+        if (auto result = node->prop_as_constant(prop_stc_wrap_visual_location, "stc_"); result.size())
         {
-            if (value.size())
-                value << '|';
-            value << g_stc_flags.at(iter);
+            code << "\n\t\t" << node->get_node_name() << "->SetWrapVisualFlagsLocation(" << result << ");";
         }
-        if (value.size())
-            code << "\n\t\t" << node->get_node_name() << "->SetWrapVisualFlagsLocation(" << value << ");";
     }
     if (!node->prop_as_string(prop_stc_wrap_indent_mode).is_sameas("fixed"))
     {
         code << "\n\t\t" << node->get_node_name() << "->SetWrapIndentMode("
-             << g_stc_flags.at(node->prop_as_string(prop_stc_wrap_indent_mode)) << ");";
+             << node->prop_as_constant(prop_stc_wrap_indent_mode, "stc_") << ");";
     }
     if (node->HasValue(prop_stc_wrap_start_indent))
     {
@@ -736,11 +674,12 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
         if (node->HasValue(prop_automatic_folding))
         {
             code << "\n\t\t" << node->get_node_name() << "->SetAutomaticFold("
-                 << node->prop_as_string(prop_automatic_folding) << ");";
+                 << node->prop_as_constant(prop_automatic_folding, "stc_") << ");";
         }
         if (node->HasValue(prop_fold_flags))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetFoldFlags(" << node->prop_as_string(prop_fold_flags) << ");";
+            code << "\n\t\t" << node->get_node_name() << "->SetFoldFlags(" << node->prop_as_constant(prop_fold_flags, "stc_")
+                 << ");";
         }
 
         if (node->prop_as_string(prop_fold_marker_style) == "arrow" ||
@@ -876,10 +815,8 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
         code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", "
              << node->prop_as_int(prop_custom_width) << ");";
 
-        if (auto result = g_stc_flags.find(node->prop_as_string(prop_custom_type)); result != g_stc_flags.end())
-        {
-            code << "\n\t\t" << node->get_node_name() << "->SetMarginType(" << margin << ", " << result->second << ");";
-        }
+        code << "\n\t\t" << node->get_node_name() << "->SetMarginType(" << margin << ", "
+             << node->prop_as_constant(prop_custom_type, "stc_") << ");";
 
         if (node->prop_as_string(prop_custom_type) == "colour" && node->HasValue(prop_custom_colour))
         {
@@ -902,7 +839,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     if (node->HasValue(prop_indentation_guides))
     {
         code << "\n\t\t" << node->get_node_name() << "->SetIndentationGuides("
-             << g_stc_flags.at(node->prop_as_string(prop_indentation_guides)) << ");";
+             << node->prop_as_constant(prop_indentation_guides, "stc_") << ");";
     }
     if (node->prop_as_int(prop_stc_indentation_size) != 0)
     {

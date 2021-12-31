@@ -759,3 +759,73 @@ void NodeCreator::AddAllConstants()
     m_map_constants["Tab_Wrap"] = wxGrid::Tab_Wrap;
     m_map_constants["Tab_Leave"] = wxGrid::Tab_Leave;
 }
+
+std::unordered_map<std::string, const char*> g_friend_constant = {
+
+    // CAUTION! All entries *must* have a prefix!
+
+    { "stc_end_text", "wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT" },
+    { "stc_start_text", "wxSTC_WRAPVISUALFLAGLOC_START_BY_TEXT" },
+
+    { "stc_end", "wxSTC_WRAPVISUALFLAG_END" },
+    { "stc_start", "wxSTC_WRAPVISUALFLAG_START" },
+    { "stc_margin", "wxSTC_WRAPVISUALFLAG_MARGIN" },
+
+    { "stc_no wrapping", "wxSTC_WRAP_NONE" },
+    { "stc_word", "wxSTC_WRAP_WORD" },
+    { "stc_character", "wxSTC_WRAP_CHAR" },
+    { "stc_whitespace", "wxSTC_WRAP_WHITESPACE" },
+
+    { "stc_fixed", "wxSTC_WRAPINDENT_FIXED" },
+    { "stc_same", "wxSTC_WRAPINDENT_SAME" },
+    { "stc_indent", "wxSTC_WRAPINDENT_INDENT" },
+
+    { "stc_symbol", "wxSTC_MARGIN_SYMBOL" },
+    { "stc_number", "wxSTC_MARGIN_NUMBER" },
+    { "stc_background", "wxSTC_MARGIN_BACK" },
+    { "stc_foreground", "wxSTC_MARGIN_FORE" },
+    { "stc_text", "wxSTC_MARGIN_TEXT" },
+    { "stc_right-aligned text", "wxSTC_MARGIN_RTEXT" },
+    { "stc_colour", "wxSTC_MARGIN_COLOUR" },
+
+    { "stc_no guides", "wxSTC_IV_NONE" },
+    { "stc_real", "wxSTC_IV_REAL" },
+    { "stc_forward", "wxSTC_IV_LOOKFORWARD" },
+    { "stc_both", "wxSTC_IV_LOOKBOTH" },
+
+    { "stc_show lines as needed", "wxSTC_AUTOMATICFOLD_SHOW" },
+    { "stc_handle margin clicks", "wxSTC_AUTOMATICFOLD_CLICK" },
+    { "stc_show changes", "wxSTC_AUTOMATICFOLD_CHANGE" },
+
+    { "stc_before if expanded changes", "wxSTC_FOLDFLAG_LINEBEFORE_EXPANDED" },
+    { "stc_before if contracted", "wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED" },
+    { "stc_after if expanded", "wxSTC_FOLDFLAG_LINEAFTER_EXPANDED" },
+    { "stc_after if contracted", "wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED" },
+    { "stc_debug hex levels", "wxSTC_FOLDFLAG_LEVELNUMBERS" },
+    { "stc_debug line state", "wxSTC_FOLDFLAG_LINESTATE" },
+
+    { "stc_\\r\\n (CR/LF)", "wxSTC_EOL_CRLF" },
+    { "stc_\\r (CR)", "wxSTC_EOL_CR" },
+    { "stc_\\n (LF)", "wxSTC_EOL_LF" },
+
+    { "stc_invisible", "wxSTC_WS_INVISIBLE" },
+    { "stc_always visible", "wxSTC_WS_VISIBLEALWAYS" },
+    { "stc_visible after indent", "wxSTC_WS_VISIBLEAFTERINDENT" },
+    { "stc_only indent visible", "wxSTC_WS_VISIBLEONLYININDENT" },
+
+    { "info_no effects", "wxSHOW_EFFECT_NONE" },
+    { "info_roll to left", "wxSHOW_EFFECT_ROLL_TO_LEFT" },
+    { "info_roll to right", "wxSHOW_EFFECT_ROLL_TO_RIGHT" },
+    { "info_roll to top", "wxSHOW_EFFECT_ROLL_TO_TOP" },
+    { "info_roll to bottom", "wxSHOW_EFFECT_ROLL_TO_BOTTOM" },
+    { "info_slide to left", "wxSHOW_EFFECT_SLIDE_TO_LEFT" },
+    { "info_slide to right", "wxSHOW_EFFECT_SLIDE_TO_RIGHT" },
+    { "info_slide to top", "wxSHOW_EFFECT_SLIDE_TO_TOP" },
+    { "info_slide to bottom", "wxSHOW_EFFECT_SLIDE_TO_BOTTOM" },
+    { "info_blend", "wxSHOW_EFFECT_BLEND" },
+    { "info_expand", "wxSHOW_EFFECT_EXPAND" },
+
+    { "rb_rows", "wxRA_SPECIFY_ROWS" },
+    { "rb_columns", "wxRA_SPECIFY_COLS" },
+
+};

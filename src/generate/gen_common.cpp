@@ -323,7 +323,7 @@ void GenSize(Node* node, ttlib::cstr& code)
         code << "wxDefaultSize";
 }
 
-void GenStyle(Node* node, ttlib::cstr& code)
+void GenStyle(Node* node, ttlib::cstr& code, const char* prefix)
 {
     ttlib::cstr all_styles;
 
@@ -351,8 +351,17 @@ void GenStyle(Node* node, ttlib::cstr& code)
     if (node->HasValue(prop_style))
     {
         if (all_styles.size())
+        {
             all_styles << '|';
-        all_styles << node->prop_as_string(prop_style);
+        }
+        if (prefix)
+        {
+            all_styles << node->prop_as_constant(prop_style, prefix);
+        }
+        else
+        {
+            all_styles << node->prop_as_string(prop_style);
+        }
     }
 
     if (node->HasValue(prop_window_style))
@@ -482,16 +491,19 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
     code << ");";
 }
 
-int GetStyleInt(Node* node)
+int GetStyleInt(Node* node, const char* prefix)
 {
     ttlib::cstr styles;
-    GenStyle(node, styles);
+
+    // If prefix is non-null, this will convert friendly names to wxWidgets constants
+    GenStyle(node, styles, prefix);
 
     int result = 0;
-    // GetConstantAsInt() searches an unordered_map, so we need a std::string to pass to it
+    // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to it
     ttlib::multistr mstr(styles, '|');
     for (auto& iter: mstr)
     {
+        // Friendly names will have already been converted, so normal lookup works fine.
         result |= g_NodeCreator.GetConstantAsInt(iter);
     }
     return result;

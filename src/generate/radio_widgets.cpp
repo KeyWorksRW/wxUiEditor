@@ -120,7 +120,7 @@ wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 
     auto widget = new wxRadioBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), choices,
-                                 node->prop_as_int(prop_majorDimension), GetStyleInt(node));
+                                 node->prop_as_int(prop_majorDimension), GetStyleInt(node, "rb_"));
 
     if (int selection = node->prop_as_int(prop_selection); static_cast<size_t>(selection) < choices.Count())
     {
@@ -205,17 +205,17 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
         code << ", ";
         if (!isDimSet)
             code << "0, ";
-        GenStyle(node, code);
+        GenStyle(node, code, "rb_");
         code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name) << ");";
     }
     else
     {
-        if (node->prop_as_string(prop_window_style).size() || node->prop_as_string(prop_style) != "wxRA_SPECIFY_COLS")
+        if (node->prop_as_string(prop_window_style).size() || node->prop_as_string(prop_style) != "columns")
         {
             code << ", ";
             if (!isDimSet)
                 code << "0, ";
-            GenStyle(node, code);
+            GenStyle(node, code, "rb_");
         }
         code << ");";
     }

@@ -791,4 +791,24 @@ std::unordered_map<std::string, const char*> g_friend_constant = {
     { "stc_forward", "wxSTC_IV_LOOKFORWARD" },
     { "stc_both", "wxSTC_IV_LOOKBOTH" },
 
+    { "stc_show lines as needed", "wxSTC_AUTOMATICFOLD_SHOW" },
+    { "stc_handle margin clicks", "wxSTC_AUTOMATICFOLD_CLICK" },
+    { "stc_show changes", "wxSTC_AUTOMATICFOLD_CHANGE" },
+
+    { "stc_before if expanded changes", "wxSTC_FOLDFLAG_LINEBEFORE_EXPANDED" },
+    { "stc_before if contracted", "wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED" },
+    { "stc_after if expanded", "wxSTC_FOLDFLAG_LINEAFTER_EXPANDED" },
+    { "stc_after if contracted", "wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED" },
+    { "stc_debug hex levels", "wxSTC_FOLDFLAG_LEVELNUMBERS" },
+    { "stc_debug line state", "wxSTC_FOLDFLAG_LINESTATE" },
+
+    { "stc_\\r\\n (CR/LF)", "wxSTC_EOL_CRLF" },
+    { "stc_\\r (CR)", "wxSTC_EOL_CR" },
+    { "stc_\\n (LF)", "wxSTC_EOL_LF" },
+
+    { "stc_invisible", "wxSTC_WS_INVISIBLE" },
+    { "stc_always visible", "wxSTC_WS_VISIBLEALWAYS" },
+    { "stc_visible after indent", "wxSTC_WS_VISIBLEAFTERINDENT" },
+    { "stc_only indent visible", "wxSTC_WS_VISIBLEONLYININDENT" },
+
 };

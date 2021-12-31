@@ -135,10 +135,10 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			help="Set ReadOnly Mode. Disables editing if set to true.">0</property>
 		<property name="eol_mode" type="option"
 			help="Sets the characters that are added into the document when the user presses the Enter key.">
-			<option name="wxSTC_EOL_CRLF" />
-			<option name="wxSTC_EOL_CR" />
-			<option name="wxSTC_EOL_LF" />
-			wxSTC_EOL_LF
+			<option name="\r\n (CR/LF)" />
+			<option name="\r (CR)" />
+			<option name="\n (LF)" />
+			\n (LF)
 		</property>
 		<property name="left_margin_width" type="int"
 			help="Sets the width of the blank margin to the left of the text.">1</property>
@@ -148,11 +148,11 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			help="Show end of line characters.">0</property>
 		<property name="view_whitespace" type="option"
 			help="Set whether white space is visible. Space characters appear as small centered dots and tab characters as light arrows pointing to the right.">
-			<option name="wxSTC_WS_INVISIBLE" />
-			<option name="wxSTC_WS_VISIBLEALWAYS" />
-			<option name="wxSTC_WS_VISIBLEAFTERINDENT" />
-			<option name="wxSTC_WS_VISIBLEONLYININDENT" />
-			wxSTC_WS_INVISIBLE
+			<option name="invisible" />
+			<option name="always visible" />
+			<option name="visible after indent" />
+			<option name="only indent visible" />
+			invisible
 		</property>
 		<property name="view_tab_strikeout" type="bool"
 			help="By default, if whitespace is visible, tab charcers are drawn as light arrows pointing to the right. If strikeout is checked, then tabs are drawn as a horizontal line stretching until the tabstop.">0</property>
@@ -201,18 +201,18 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 				help="Sets the background colour of the markers." />
 
 			<property name="automatic_folding" type="bitlist">
-				<option name="wxSTC_AUTOMATICFOLD_SHOW" help="Automatically show lines as needed." />
-				<option name="wxSTC_AUTOMATICFOLD_CLICK" help="Handle clicks in fold margin automatically." />
-				<option name="wxSTC_AUTOMATICFOLD_CHANGE" help="Show lines as needed when fold structure is changed." />
+				<option name="show lines as needed" help="Automatically show lines as needed." />
+				<option name="handle margin clicks" help="Handle clicks in fold margin automatically." />
+				<option name="show changes" help="Show lines as needed when fold structure is changed." />
 			</property>
 			<property name="fold_flags" type="bitlist"
 				help="In addition to showing markers in the folding margin, you can indicate folds to the user by drawing lines in the text area.">
-				<option name="wxSTC_FOLDFLAG_LINEBEFORE_EXPANDED" help="Draw above if expanded." />
-				<option name="wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED" help="Draw above if not expanded." />
-				<option name="wxSTC_FOLDFLAG_LINEAFTER_EXPANDED" help="Draw below if expanded." />
-				<option name="wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED" help="Draw below if not expanded." />
-				<option name="wxSTC_FOLDFLAG_LEVELNUMBERS" help="Display hexadecimal fold levels in line margin to aid debugging of folding." />
-				<option name="wxSTC_FOLDFLAG_LINESTATE" help="Display hexadecimal line state in line margin to aid debugging of lexing and folding." />
+				<option name="before if expanded" help="Draw above if expanded." />
+				<option name="before if contracted" help="Draw above if not expanded." />
+				<option name="after if expanded" help="Draw below if expanded." />
+				<option name="after if contracted" help="Draw below if not expanded." />
+				<option name="debug hex levels" help="Display hexadecimal fold levels in line margin to aid debugging of folding." />
+				<option name="debug line state" help="Display hexadecimal line state in line margin to aid debugging of lexing and folding. Cannot be used with &quot;debug hex levels&quot;." />
 			</property>
 
 			<property name="separator_margin" type="option" help="Specify the margin you want a vertical separator line to appear in.">

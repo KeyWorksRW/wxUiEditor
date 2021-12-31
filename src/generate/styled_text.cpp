@@ -327,11 +327,11 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetMarginSensitive(margin, true);
         if (node->HasValue(prop_automatic_folding))
         {
-            scintilla->SetAutomaticFold(node->prop_as_int(prop_automatic_folding));
+            scintilla->SetAutomaticFold(node->prop_as_mockup(prop_automatic_folding, "stc_"));
         }
         if (node->HasValue(prop_fold_flags))
         {
-            scintilla->SetFoldFlags(node->prop_as_int(prop_fold_flags));
+            scintilla->SetFoldFlags(node->prop_as_mockup(prop_fold_flags, "stc_"));
         }
     }
 
@@ -407,11 +407,14 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_eol_mode))
     {
-        scintilla->SetEOLMode(node->prop_as_int(prop_eol_mode));
+        scintilla->SetEOLMode(node->prop_as_mockup(prop_eol_mode, "stc_"));
     }
 
-    scintilla->SetViewEOL((node->prop_as_int(prop_view_eol)));
-    scintilla->SetViewWhiteSpace(g_NodeCreator.GetConstantAsInt(node->prop_as_string(prop_view_whitespace)));
+    scintilla->SetViewEOL(node->prop_as_bool(prop_view_eol));
+    if (node->isPropValue(prop_view_whitespace, "invisible"))
+    {
+        scintilla->SetViewWhiteSpace(node->prop_as_mockup(prop_view_whitespace, "stc_"));
+    }
     if (node->prop_as_bool(prop_view_tab_strikeout))
     {
         scintilla->SetTabDrawMode(wxSTC_TD_STRIKEOUT);
@@ -510,7 +513,8 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (node->HasValue(prop_eol_mode))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetEOLMode(" << node->prop_as_string(prop_eol_mode) << ");";
+        code << "\n\t\t" << node->get_node_name() << "->SetEOLMode(" << node->prop_as_constant(prop_eol_mode, "stc_")
+             << ");";
     }
 
     // Default is false, so only set if true
@@ -520,10 +524,10 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     }
 
     // Default is false, so only set if true
-    if (node->HasValue(prop_view_whitespace))
+    if (!node->isPropValue(prop_view_whitespace, "invisible"))
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetViewWhiteSpace(" << node->prop_as_string(prop_view_whitespace)
-             << ");";
+        code << "\n\t\t" << node->get_node_name() << "->SetViewWhiteSpace("
+             << node->prop_as_constant(prop_view_whitespace, "stc_") << ");";
         if (node->prop_as_bool(prop_view_tab_strikeout))
         {
             code << "\n\t\t" << node->get_node_name() << "->SetTabDrawMode(wxSTC_TD_STRIKEOUT);";
@@ -670,11 +674,12 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
         if (node->HasValue(prop_automatic_folding))
         {
             code << "\n\t\t" << node->get_node_name() << "->SetAutomaticFold("
-                 << node->prop_as_string(prop_automatic_folding) << ");";
+                 << node->prop_as_constant(prop_automatic_folding, "stc_") << ");";
         }
         if (node->HasValue(prop_fold_flags))
         {
-            code << "\n\t\t" << node->get_node_name() << "->SetFoldFlags(" << node->prop_as_string(prop_fold_flags) << ");";
+            code << "\n\t\t" << node->get_node_name() << "->SetFoldFlags(" << node->prop_as_constant(prop_fold_flags, "stc_")
+                 << ");";
         }
 
         if (node->prop_as_string(prop_fold_marker_style) == "arrow" ||

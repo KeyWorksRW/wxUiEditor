@@ -74,7 +74,7 @@ if (MSVC)
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/LTCG>")
 
     target_link_options(wxUiEditor PRIVATE
-        "$<$<CONFIG:Debug>:/natvis:../src/wxui.natvis>"
+        "$<$<CONFIG:Debug>:/natvis:${CMAKE_SOURCE_DIR}/src/wxui.natvis>"
         "$<$<CONFIG:Debug>:/OPT:REF>"
     )
 

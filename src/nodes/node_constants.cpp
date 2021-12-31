@@ -762,6 +762,8 @@ void NodeCreator::AddAllConstants()
 
 std::unordered_map<std::string, const char*> g_friend_constant = {
 
+    // CAUTION! All entries *must* have a prefix!
+
     { "stc_end_text", "wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT" },
     { "stc_start_text", "wxSTC_WRAPVISUALFLAGLOC_START_BY_TEXT" },
 
@@ -810,5 +812,17 @@ std::unordered_map<std::string, const char*> g_friend_constant = {
     { "stc_always visible", "wxSTC_WS_VISIBLEALWAYS" },
     { "stc_visible after indent", "wxSTC_WS_VISIBLEAFTERINDENT" },
     { "stc_only indent visible", "wxSTC_WS_VISIBLEONLYININDENT" },
+
+    { "info_no effects", "wxSHOW_EFFECT_NONE" },
+    { "info_roll to left", "wxSHOW_EFFECT_ROLL_TO_LEFT" },
+    { "info_roll to right", "wxSHOW_EFFECT_ROLL_TO_RIGHT" },
+    { "info_roll to top", "wxSHOW_EFFECT_ROLL_TO_TOP" },
+    { "info_roll to bottom", "wxSHOW_EFFECT_ROLL_TO_BOTTOM" },
+    { "info_slide to left", "wxSHOW_EFFECT_SLIDE_TO_LEFT" },
+    { "info_slide to right", "wxSHOW_EFFECT_SLIDE_TO_RIGHT" },
+    { "info_slide to top", "wxSHOW_EFFECT_SLIDE_TO_TOP" },
+    { "info_slide to bottom", "wxSHOW_EFFECT_SLIDE_TO_BOTTOM" },
+    { "info_", "blend" },
+    { "info_", "expand" },
 
 };

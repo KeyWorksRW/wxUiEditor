@@ -84,11 +84,15 @@ void GenPos(Node* node, ttlib::cstr& code);
 void GenSize(Node* node, ttlib::cstr& code);
 
 // This will output "0" if there are no styles (style, window_style, tab_position etc.)
-void GenStyle(Node* node, ttlib::cstr& code);
+//
+// If style is a friendly name, add the prefix parameter to prefix lookups.
+void GenStyle(Node* node, ttlib::cstr& code, const char* prefix = nullptr);
 
 // Returns the integer value of all style properties for the node. Includes style,
 // window_style, tab_position etc.
-int GetStyleInt(Node* node);
+//
+// If style is a friendly name, add the prefix parameter to prefix lookups.
+int GetStyleInt(Node* node, const char* prefix = nullptr);
 
 // Version of GenAdditionalCode() specifically for forms
 ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node);

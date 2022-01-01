@@ -19,6 +19,11 @@ if (MSVC)
     # This can considerably speed up build times at the cost of larger object files.
     string(REPLACE "/Zi" "/Z7" z_seven ${CMAKE_CXX_FLAGS_DEBUG})
     set(CMAKE_CXX_FLAGS_DEBUG ${z_seven} CACHE STRING "C++ Debug flags" FORCE)
+else()
+    # This should work for gcc and clang (including xcode which is based on clang)
+    # -O2 can result in faster code than -O3 due to CPU caching.
+    string(REPLACE "-O3" "-O2" cl_optimize ${CMAKE_CXX_FLAGS_RELEASE})
+    set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 endif()
 
 get_property(isMultiConfig GLOBAL
@@ -65,7 +70,11 @@ add_library(check_build STATIC EXCLUDE_FROM_ALL
     ${wxue_generated_code}
 )
 
-target_link_libraries(wxUiEditor PRIVATE wxCLib wxWidgets)
+if (WIN32)
+    target_link_libraries(wxUiEditor PRIVATE wxWidgets wxCLib comctl32 Imm32 Shlwapi Version UxTheme)
+else()
+    target_link_libraries(wxUiEditor PRIVATE wxWidgets wxCLib)
+endif()
 
 if (MSVC)
     # /GL -- combined with the Linker flag /LTCG to perform whole program optimization in Release build

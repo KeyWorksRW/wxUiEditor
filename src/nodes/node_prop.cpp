@@ -7,6 +7,7 @@
 
 #include <array>
 #include <charconv>
+#include <cstdlib>
 
 #include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
 #include <wx/propgrid/propgriddefs.h>  // wxPropertyGrid miscellaneous definitions
@@ -370,12 +371,7 @@ wxArrayString NodeProperty::as_wxArrayString() const
 
 double NodeProperty::as_float() const
 {
-    double result;
-
-    if (auto [p, ec] = std::from_chars(m_value.data(), m_value.data() + m_value.size(), result); ec == std::errc())
-        return result;
-    else
-        return 0;
+    return std::atof(m_value.c_str());
 }
 
 void NodeProperty::set_value(double value)

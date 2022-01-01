@@ -9,6 +9,7 @@
 #include <wx/cshelp.h>   // Context-sensitive help support classes
 #include <wx/filedlg.h>  // wxFileDialog base header
 #include <wx/sysopt.h>   // wxSystemOptions
+#include <wx/utils.h>    // Miscellaneous utilities
 
 #include "ttparser.h"  // cmd -- Command line parser
 
@@ -85,8 +86,10 @@ bool App::OnInit()
     // images.
     wxTheColourDatabase->AddColour("Grey94", wxColour(240, 240, 240));
 
-#if defined(wxUSE_ON_FATAL_EXCEPTION)
+#ifdef _MSC_VER
+    #if defined(wxUSE_ON_FATAL_EXCEPTION)
     ::wxHandleFatalExceptions(true);
+    #endif
 #endif
 
 #if defined(_WIN32)
@@ -353,11 +356,15 @@ protected:
 
 #endif  // defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
 
+// clang-format off
+
+#if defined(_MSC_VER)
+
 #if defined(wxUSE_ON_FATAL_EXCEPTION)
 
 void App::OnFatalException()
 {
-    #if defined(_DEBUG)
+#if defined(_DEBUG)
 
     StackLogger logger;
     logger.WalkFromException();
@@ -373,13 +380,16 @@ void App::OnFatalException()
     // We now have the relevant call stack displayed in the debugger, so break into it.
     wxTrap();
 
-    #endif  // _DEBUG
+#endif  // _DEBUG
 
     // Let the user know something terrible happened.
     wxMessageBox("An internal error has occurred!", txtVersion);
 }
 
-#endif
+#endif  // defined(wxUSE_ON_FATAL_EXCEPTION)
+#endif  // defined(_MSC_VER)
+
+// clang-format on
 
 #if defined(_DEBUG)
 

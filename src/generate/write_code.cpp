@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <fstream>
+#include <cstring>
 
 #include <wx/file.h>     // wxFile - encapsulates low-level "file descriptor"
 #include <wx/stc/stc.h>  // Scintilla

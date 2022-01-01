@@ -5,8 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <fstream>
 #include <cstring>
+#include <fstream>
 
 #include <wx/file.h>     // wxFile - encapsulates low-level "file descriptor"
 #include <wx/stc/stc.h>  // Scintilla

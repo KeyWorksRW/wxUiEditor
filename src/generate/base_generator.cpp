@@ -8,11 +8,16 @@
 #include "node.h"                  // Node class
 #include "node_prop.h"             // NodeProperty -- NodeProperty class
 #include <wx/event.h>              // Event classes
+#include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
 #include "base_generator.h"
 
-#include "../mainframe.h"             // MainFrame -- Main window frame
+#include "mainframe.h"  // MainFrame -- Main window frame
+#include "node.h"       // Node class
+#include "node_decl.h"  // NodeDeclaration class
+#include "node_prop.h"  // NodeProperty -- NodeProperty class
+
 #include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 
 MockupParent* BaseGenerator::GetMockup()
@@ -214,6 +219,96 @@ ttlib::cstr BaseGenerator::GetHelpText(Node* node)
 #endif  // _DEBUG
 
     return class_name;
+}
+
+void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+{
+    // auto changed_node = changed_prop->GetNode();
+    if (changed_prop->isProp(prop_alignment))
+    {
+        if (auto pg_parent = prop_grid->GetProperty("alignment"); pg_parent)
+        {
+            for (unsigned int idx = 0; idx < pg_parent->GetChildCount(); ++idx)
+            {
+                if (auto pg_setting = pg_parent->Item(idx); pg_setting)
+                {
+                    auto label = pg_setting->GetLabel();
+                    if (label == "wxALIGN_LEFT")
+                    {
+                        pg_setting->Enable(!changed_prop->as_string().contains("wxALIGN_RIGHT") &&
+                                           !changed_prop->as_string().contains("wxALIGN_CENTER"));
+                    }
+                    else if (label == "wxALIGN_RIGHT")
+                    {
+                        pg_setting->Enable(!changed_prop->as_string().contains("wxALIGN_LEFT") &&
+                                           !changed_prop->as_string().contains("wxALIGN_CENTER"));
+                    }
+                    else if (label == "wxALIGN_TOP")
+                    {
+                        pg_setting->Enable(!changed_prop->as_string().contains("wxALIGN_BOTTOM") &&
+                                           !changed_prop->as_string().contains("wxALIGN_CENTER"));
+                    }
+                    else if (label == "wxALIGN_BOTTOM")
+                    {
+                        pg_setting->Enable(!changed_prop->as_string().contains("wxALIGN_BOTTOM") &&
+                                           !changed_prop->as_string().contains("wxALIGN_CENTER"));
+                    }
+                    else if (label == "wxALIGN_CENTER")
+                    {
+                        pg_setting->Enable(changed_prop->as_string().empty() ||
+                                           changed_prop->as_string().is_sameas("wxALIGN_CENTER"));
+                    }
+                    else if (label == "wxALIGN_CENTER_HORIZONTAL" || label == "wxALIGN_CENTER_VERTICAL")
+                    {
+                        pg_setting->Enable(!changed_prop->as_string().contains("wxALIGN_RIGHT") &&
+                                           !changed_prop->as_string().contains("wxALIGN_LEFT") &&
+                                           !changed_prop->as_string().contains("wxALIGN_BOTTOM") &&
+                                           !changed_prop->as_string().contains("wxALIGN_TOP") &&
+                                           !changed_prop->as_string().is_sameas("wxALIGN_CENTER"));
+                    }
+                }
+            }
+        }
+    }
+}
+
+bool BaseGenerator::VerifyProperty(NodeProperty* prop)
+{
+    if (!prop->isProp(prop_alignment))
+        return false;
+
+    bool is_modified = false;
+    auto value = prop->as_raw_ptr();
+    if (value->contains("wxALIGN_LEFT") &&
+        (value->contains("wxALIGN_RIGHT") || value->contains("wxALIGN_CENTER_HORIZONTAL")))
+    {
+        value->Replace("wxALIGN_LEFT|", "");
+        is_modified = true;
+    }
+    if (value->contains("wxALIGN_TOP") && (value->contains("wxALIGN_BOTTOM") || value->contains("wxALIGN_CENTER_VERTICAL")))
+    {
+        value->Replace("wxALIGN_TOP|", "");
+        is_modified = true;
+    }
+    if (value->contains("wxALIGN_RIGHT") && value->contains("wxALIGN_CENTER_HORIZONTAL"))
+    {
+        value->Replace("wxALIGN_RIGHT|", "");
+        is_modified = true;
+    }
+    if (value->contains("wxALIGN_BOTTOM") && value->contains("wxALIGN_CENTER_VERTICAL"))
+    {
+        value->Replace("wxALIGN_BOTTOM|", "");
+        is_modified = true;
+    }
+
+    // wxALIGN_CENTER can't be combined with anything
+    if (value->contains("wxALIGN_CENTER|"))
+    {
+        value->Replace("wxALIGN_CENTER|", "");
+        is_modified = true;
+    }
+
+    return is_modified;
 }
 
 // clang-format off

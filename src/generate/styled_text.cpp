@@ -8,7 +8,9 @@
 // See https://docs.wxwidgets.org/trunk/classwx_styled_text_ctrl.html for wxWidgets documentation
 // See https://www.scintilla.org/ScintillaDoc.html for Scintilla documentation
 
-#include <wx/stc/stc.h>  // A wxWidgets implementation of Scintilla.
+#include <wx/propgrid/manager.h>   // wxPropertyGridManager
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+#include <wx/stc/stc.h>            // A wxWidgets implementation of Scintilla.
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
@@ -881,4 +883,171 @@ bool StyledTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 {
     InsertGeneratorInclude(node, "#include <wx/stc/stc.h>", set_src, set_hdr);
     return true;
+}
+
+static const char* lst_margins[] = {
+
+    "custom_width", "custom_type", "custom_colour", "custom_mask_folders", "custom_mouse_sensitive",
+
+};
+
+void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+{
+    BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
+    auto changed_node = changed_prop->GetNode();
+
+    if (changed_prop->isProp(prop_stc_wrap_mode))
+    {
+        bool is_wrapped = (changed_prop->as_string() != "no wrapping");
+
+        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_visual_flag"); pg_wrap_setting)
+        {
+            pg_wrap_setting->Enable(is_wrapped);
+        }
+        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_indent_mode"); pg_wrap_setting)
+        {
+            pg_wrap_setting->Enable(is_wrapped);
+        }
+        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_visual_location"); pg_wrap_setting)
+        {
+            pg_wrap_setting->Enable(is_wrapped);
+        }
+        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
+        {
+            if (is_wrapped)
+            {
+                pg_wrap_setting->Enable(changed_node->prop_as_string(prop_stc_wrap_indent_mode) == "fixed");
+            }
+            else
+            {
+                pg_wrap_setting->Enable(false);
+            }
+        }
+    }
+    else if (changed_prop->isProp(prop_stc_wrap_indent_mode))
+    {
+        bool is_wrapped = (changed_node->prop_as_string(prop_stc_wrap_mode) != "no wrapping");
+        if (auto pg_wrap_setting = prop_grid->GetProperty("wrap_start_indent"); pg_wrap_setting)
+        {
+            if (is_wrapped)
+            {
+                pg_wrap_setting->Enable(changed_prop->as_string() == "fixed");
+            }
+            else
+            {
+                pg_wrap_setting->Enable(false);
+            }
+        }
+    }
+    else if (changed_prop->isProp(prop_multiple_selections))
+    {
+        bool is_multiple = changed_prop->as_bool();
+        if (auto pg_property = prop_grid->GetProperty("multiple_selection_typing"); pg_property)
+        {
+            pg_property->Enable(is_multiple);
+        }
+        if (auto pg_property = prop_grid->GetProperty("additional_carets_visible"); pg_property)
+        {
+            pg_property->Enable(is_multiple);
+        }
+        if (auto pg_property = prop_grid->GetProperty("additional_carets_blink"); pg_property)
+        {
+            pg_property->Enable(is_multiple);
+        }
+        if (auto pg_property = prop_grid->GetProperty("paste_multiple"); pg_property)
+        {
+            pg_property->Enable(is_multiple);
+        }
+    }
+    else if (changed_prop->isProp(prop_additional_carets_visible))
+    {
+        bool is_multiple = changed_node->prop_as_bool(prop_multiple_selections);
+        if (is_multiple)
+        {
+            if (auto pg_property = prop_grid->GetProperty("additional_carets_blink"); pg_property)
+            {
+                pg_property->Enable(changed_prop->as_bool());
+            }
+        }
+    }
+    else if (changed_prop->isProp(prop_fold_margin))
+    {
+        if (auto pg_property = prop_grid->GetProperty("automatic_folding"); pg_property)
+        {
+            pg_property->Enable(changed_prop->as_string() != "none");
+        }
+        if (auto pg_property = prop_grid->GetProperty("fold_width"); pg_property)
+        {
+            pg_property->Enable(changed_prop->as_string() != "none");
+        }
+        if (auto pg_property = prop_grid->GetProperty("fold_flags"); pg_property)
+        {
+            pg_property->Enable(changed_prop->as_string() != "none");
+        }
+    }
+    else if (changed_prop->isProp(prop_line_margin))
+    {
+        if (auto pg_margin_setting = prop_grid->GetProperty("line_digits"); pg_margin_setting)
+        {
+            pg_margin_setting->Enable((changed_prop->as_string() != "none"));
+        }
+    }
+    else if (changed_prop->isProp(prop_symbol_margin))
+    {
+        if (auto pg_margin_setting = prop_grid->GetProperty("symbol_mouse_sensitive"); pg_margin_setting)
+        {
+            pg_margin_setting->Enable((changed_prop->as_string() != "none"));
+        }
+    }
+    else if (changed_prop->isProp(prop_separator_margin))
+    {
+        if (auto pg_margin_setting = prop_grid->GetProperty("separator_width"); pg_margin_setting)
+        {
+            pg_margin_setting->Enable((changed_prop->as_string() != "none"));
+        }
+    }
+    else if (changed_prop->isProp(prop_custom_margin))
+    {
+        bool is_enabled = (changed_prop->as_string() != "none");
+        for (auto& iter: lst_margins)
+        {
+            if (auto pg_margin_setting = prop_grid->GetProperty(iter); pg_margin_setting)
+            {
+                pg_margin_setting->Enable(is_enabled);
+            }
+        }
+
+        // Hack alert! To prevent duplicating the code below, we change the changed_prop pointer.
+        if (is_enabled)
+        {
+            changed_prop = changed_node->get_prop_ptr(prop_custom_type);
+        }
+    }
+
+    if (changed_prop->isProp(prop_custom_type))
+    {
+        bool is_enabled = (changed_node->prop_as_string(prop_custom_margin) != "none");
+        if (auto pg_margin_setting = prop_grid->GetProperty("custom_colour"); pg_margin_setting)
+        {
+            if (changed_prop->as_string() != "colour")
+            {
+                pg_margin_setting->Enable(false);
+            }
+            else
+            {
+                pg_margin_setting->Enable(is_enabled);
+            }
+        }
+        if (auto pg_margin_setting = prop_grid->GetProperty("custom_mask_folders"); pg_margin_setting)
+        {
+            if (changed_prop->as_string() != "symbol" && changed_prop->as_string() != "number")
+            {
+                pg_margin_setting->Enable(false);
+            }
+            else
+            {
+                pg_margin_setting->Enable(is_enabled);
+            }
+        }
+    }
 }

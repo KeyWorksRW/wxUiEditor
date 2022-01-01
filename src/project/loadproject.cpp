@@ -9,6 +9,7 @@
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "../nodes/node_creator.h"  // NodeCreator class
+#include "base_generator.h"         // BaseGenerator -- Base widget generator class
 #include "gen_enums.h"              // Enumerations for generators
 #include "mainapp.h"                // App -- Main application class
 #include "mainframe.h"              // MainFrame -- Main window frame
@@ -108,6 +109,12 @@ bool App::LoadProject(const ttString& file)
 
     // Start a thread to collect all of the embedded images
     m_pjtSettings->ParseEmbeddedImages();
+
+    // Imported projects should be set to version 13 to so that they pass through the old project fixups.
+    if (m_ProjectVersion == 13)
+    {
+        m_ProjectVersion = curCombinedVer;
+    }
 
     wxGetFrame().SetImportedFlag(false);
     wxGetFrame().FireProjectLoadedEvent();
@@ -216,7 +223,9 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                     prop->set_value(iter.as_bool());
                 }
 
-                // TODO: [KeyWorks - 12-30-2021] Using 14 is temporary -- it should be 13
+                // Imported projects should be set as version 13 to get the fixups of constant to friendly name, and bit flag
+                // conflict resolution.
+
                 else if (wxGetApp().GetProjectVersion() < 14)
                 {
                     switch (prop->type())
@@ -274,6 +283,11 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                                 else
                                 {
                                     prop->set_value(iter.value());
+                                }
+
+                                if (auto gen = new_node->GetGenerator(); gen)
+                                {
+                                    gen->VerifyProperty(prop);
                                 }
                             }
                             break;
@@ -410,6 +424,9 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
         full_path.make_absolute();
         wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path);
 #endif  // _DEBUG
+
+        // By having the importer create an XML document, we can pass it through g_NodeCreator.CreateNode() which will
+        // fix bitflag conflicts, convert wxWidgets constants to friendly names, and handle old-project style conversions.
 
         auto& doc = import.GetDocument();
         auto root = doc.first_child();

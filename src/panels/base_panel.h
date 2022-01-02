@@ -43,7 +43,5 @@ private:
     std::unique_ptr<PanelCodeWriter> m_hdr_display;
     std::unique_ptr<PanelCodeWriter> m_src_display;
 
-    void InitStyledTextCtrl(wxStyledTextCtrl* stc);
-
     bool m_GenerateDerivedCode;
 };

@@ -9,21 +9,19 @@
 
 #include <wx/panel.h>
 
-class wxStyledTextCtrl;
+#include "../ui/codedisplay_base.h"
 
 class wxFindDialogEvent;
 
-class CodeDisplay : public wxPanel
+class CodeDisplay : public CodeDisplayBase
 {
 public:
-    CodeDisplay(wxWindow* parent, int id);
+    CodeDisplay(wxWindow* parent);
 
     void FindItemName(const wxString& name);
 
-    wxStyledTextCtrl* GetTextCtrl() { return m_code; };
+    wxStyledTextCtrl* GetTextCtrl() { return m_scintilla; };
 
+protected:
     void OnFind(wxFindDialogEvent& event);
-
-private:
-    wxStyledTextCtrl* m_code;
 };

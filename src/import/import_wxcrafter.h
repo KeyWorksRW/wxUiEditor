@@ -32,6 +32,7 @@ public:
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
+    bool ProcessedScintillaProperty(Node* node, const rapidjson::Value& object);
     void ProcessSizerFlags(Node* node, const rapidjson::Value& array);
     void ProcessProperties(Node* node, const rapidjson::Value& array);
     void ProcessChild(Node* parent, const rapidjson::Value& object);

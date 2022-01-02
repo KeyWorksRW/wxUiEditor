@@ -413,7 +413,7 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     scintilla->SetViewEOL(node->prop_as_bool(prop_view_eol));
-    if (node->isPropValue(prop_view_whitespace, "invisible"))
+    if (!node->isPropValue(prop_view_whitespace, "invisible"))
     {
         scintilla->SetViewWhiteSpace(node->prop_as_mockup(prop_view_whitespace, "stc_"));
     }

@@ -7,18 +7,66 @@
 
 #include <wx/fdrepdlg.h>  // wxFindReplaceDialog class
 #include <wx/msgdlg.h>    // common header and base class for wxMessageDialog
-#include <wx/sizer.h>     // provide wxSizer class for layout
-#include <wx/stc/stc.h>   // A wxWidgets implementation of Scintilla.  This class is the
 
-#include "code_display.h"
+#include "code_display.h"  // auto-generated: ../ui/codedisplay_base.h and ../ui/codedisplay_base.cpp
+#include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
-CodeDisplay::CodeDisplay(wxWindow* parent, int id) : wxPanel(parent, id)
+#ifndef SCI_SETKEYWORDS
+    #define SCI_SETKEYWORDS 4005
+#endif
+
+extern const char* g_u8_cpp_keywords;
+
+CodeDisplay::CodeDisplay(wxWindow* parent) : CodeDisplayBase(parent)
 {
-    auto sizer = new wxBoxSizer(wxVERTICAL);
+    // On Windows, this saves converting the UTF16 characters to ANSI.
+    m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
 
-    m_code = new wxStyledTextCtrl(this);
-    sizer->Add(m_code, wxSizerFlags(1).Expand().Border());
-    SetSizer(sizer);
+    // clang-format off
+
+    // Add regular classes that have different generator class names
+
+    ttlib::cstr widget_keywords("\
+        wxToolBar \
+        wxMenuBar \
+        wxWindow"
+
+        );
+
+    // clang-format on
+
+    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
+    {
+        if (!iter)
+        {
+            // This will happen if there is an enumerated value but no generator for it
+            continue;
+        }
+
+        if (!iter->DeclName().is_sameprefix("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
+            continue;
+        widget_keywords << ' ' << iter->DeclName();
+    }
+
+    // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+    m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
+
+    // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not cross-platform.
+    // See issue #597.
+    wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+
+    m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
+    m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
+    m_scintilla->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
+    m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
+    m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
 
     Bind(wxEVT_FIND, &CodeDisplay::OnFind, this);
     Bind(wxEVT_FIND_NEXT, &CodeDisplay::OnFind, this);
@@ -41,15 +89,15 @@ void CodeDisplay::OnFind(wxFindDialogEvent& event)
     int result;
     if (wxflags & wxFR_DOWN)
     {
-        m_code->SetSelectionStart(m_code->GetSelectionEnd());
-        m_code->SearchAnchor();
-        result = m_code->SearchNext(sciflags, event.GetFindString());
+        m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
+        m_scintilla->SearchAnchor();
+        result = m_scintilla->SearchNext(sciflags, event.GetFindString());
     }
     else
     {
-        m_code->SetSelectionEnd(m_code->GetSelectionStart());
-        m_code->SearchAnchor();
-        result = m_code->SearchPrev(sciflags, event.GetFindString());
+        m_scintilla->SetSelectionEnd(m_scintilla->GetSelectionStart());
+        m_scintilla->SearchAnchor();
+        result = m_scintilla->SearchPrev(sciflags, event.GetFindString());
     }
 
     if (result == wxSTC_INVALID_POSITION)
@@ -59,14 +107,14 @@ void CodeDisplay::OnFind(wxFindDialogEvent& event)
     }
     else
     {
-        m_code->EnsureCaretVisible();
+        m_scintilla->EnsureCaretVisible();
     }
 }
 
 void CodeDisplay::FindItemName(const wxString& name)
 {
-    m_code->SetSelectionStart(m_code->GetSelectionEnd());
-    m_code->SearchAnchor();
-    if (m_code->SearchNext(wxSTC_FIND_WHOLEWORD | wxSTC_FIND_MATCHCASE, name) != wxSTC_INVALID_POSITION)
-        m_code->EnsureCaretVisible();
+    m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
+    m_scintilla->SearchAnchor();
+    if (m_scintilla->SearchNext(wxSTC_FIND_WHOLEWORD | wxSTC_FIND_MATCHCASE, name) != wxSTC_INVALID_POSITION)
+        m_scintilla->EnsureCaretVisible();
 }

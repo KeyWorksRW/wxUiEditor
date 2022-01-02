@@ -201,9 +201,17 @@
         var_name="parent_sizer">
         <node
           class="wxStyledTextCtrl"
-          line_numbers="false"
+          additional_carets_blink="true"
+          indentation_guides="forward"
+          multiple_selection_typing="true"
+          multiple_selections="true"
+          paste_multiple="true"
+          symbol_margin="0"
           use_tabs="false"
           var_name="m_stc"
+          wrap_indent_mode="indent"
+          wrap_mode="word"
+          wrap_visual_flag="end"
           minimum_size="-1,-1"
           smart_size="600,400d"
           border_size="10"
@@ -610,9 +618,17 @@
               var_name="staticText" />
             <node
               class="wxStyledTextCtrl"
-              line_numbers="false"
+              additional_carets_blink="true"
+              indentation_guides="forward"
+              multiple_selection_typing="true"
+              multiple_selections="true"
+              paste_multiple="true"
+              symbol_margin="0"
               use_tabs="false"
               var_name="m_stc"
+              wrap_indent_mode="indent"
+              wrap_mode="word"
+              wrap_visual_flag="end"
               minimum_size="-1,-1"
               smart_size="600,400d"
               border_size="10"
@@ -3104,6 +3120,30 @@
           class="wxStdDialogButtonSizer"
           flags="wxEXPAND"
           OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="PanelForm"
+      base_file="codedisplay_base"
+      class_name="CodeDisplayBase"
+      derived_class_name="CodeDisplay"
+      derived_file="../panels/code_display.cpp">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer">
+        <node
+          class="wxStyledTextCtrl"
+          indentation_guides="real"
+          read_only="true"
+          symbol_margin="0"
+          use_tabs="false"
+          wrap_indent_mode="indent"
+          wrap_mode="whitespace"
+          wrap_visual_flag="end"
+          wrap_visual_location="end_text"
+          flags="wxEXPAND"
+          proportion="1" />
       </node>
     </node>
   </node>

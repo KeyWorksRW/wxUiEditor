@@ -141,9 +141,9 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 			\n (LF)
 		</property>
 		<property name="left_margin_width" type="int"
-			help="Sets the width of the blank margin to the left of the text.">1</property>
+			help="Sets the width of the blank margin to the left of the text. If this is set to 5, then it will automatically scale on high DPI displays.">5</property>
 		<property name="right_margin_width" type="int"
-			help="Sets the width of the blank margin to the right of the text.">1</property>
+			help="Sets the width of the blank margin to the right of the text. If this is set to 5, then it will automatically scale on high DPI displays.">5</property>
 		<property name="view_eol" type="bool"
 			help="Show end of line characters.">0</property>
 		<property name="view_whitespace" type="option"

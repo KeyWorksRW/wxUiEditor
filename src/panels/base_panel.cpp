@@ -42,12 +42,10 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCod
     m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook->SetArtProvider(new wxAuiGenericTabArt());
 
-    m_cppPanel = new CodeDisplay(m_notebook, wxID_ANY);
-    InitStyledTextCtrl(m_cppPanel->GetTextCtrl());
+    m_cppPanel = new CodeDisplay(m_notebook);
     m_notebook->AddPage(m_cppPanel, "source", false, 0);
 
-    m_hPanel = new CodeDisplay(m_notebook, wxID_ANY);
-    InitStyledTextCtrl(m_hPanel->GetTextCtrl());
+    m_hPanel = new CodeDisplay(m_notebook);
     m_notebook->AddPage(m_hPanel, "header", false, 1);
 
     top_sizer->Add(m_notebook, wxSizerFlags(1).Expand());
@@ -107,72 +105,6 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCod
 }
 
 BasePanel::~BasePanel() {}
-
-#ifndef SCI_SETKEYWORDS
-    #define SCI_SETKEYWORDS 4005
-#endif
-
-void BasePanel::InitStyledTextCtrl(wxStyledTextCtrl* stc)
-{
-    stc->SetLexer(wxSTC_LEX_CPP);
-
-    // On Windows, this saves converting the UTF16 characters to ANSI.
-    stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
-
-    // clang-format off
-
-    // Add a regular classes that have different generator class names
-
-    ttlib::cstr widget_keywords("\
-        wxToolBar \
-        wxMenuBar \
-        wxWindow"
-
-        );
-
-    // clang-format on
-
-    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
-    {
-        if (!iter)
-        {
-            // This will happen if there is an enumerated value but no generator for it
-            continue;
-        }
-
-        if (!iter->DeclName().is_sameprefix("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
-            continue;
-        widget_keywords << ' ' << iter->DeclName();
-    }
-
-    const int SETKEYWORDS_MSG = 4005;  // SCI_SETKEYWORDS in Scintilla.h
-    // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-    stc->SendMsg(SETKEYWORDS_MSG, 1, (wxIntPtr) widget_keywords.c_str());
-
-    wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    stc->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
-
-    stc->StyleSetBold(wxSTC_C_WORD, true);
-    stc->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-    stc->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
-    stc->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
-    stc->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
-    stc->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-    stc->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
-    stc->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
-    stc->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
-    stc->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-    stc->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
-
-    stc->SetTabWidth(4);
-    stc->SetTabIndents(true);
-    stc->SetReadOnly(true);
-
-    stc->SetWrapMode(wxSTC_WRAP_WHITESPACE);
-    stc->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
-    stc->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT);
-    stc->SetWrapVisualFlagsLocation(wxSTC_WRAPVISUALFLAG_END);
-}
 
 void BasePanel::OnFind(wxFindDialogEvent& event)
 {

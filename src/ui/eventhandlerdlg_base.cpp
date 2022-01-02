@@ -54,13 +54,24 @@ bool EventHandlerDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString
 
     m_stc = new wxStyledTextCtrl(m_lambda_box->GetStaticBox(), wxID_ANY);
     {
-        m_stc->SetProperty("fold", "1");
-        m_stc->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
-        m_stc->SetMarginMask(1, wxSTC_MASK_FOLDERS);
-        m_stc->SetMarginWidth(1, 16);
-        m_stc->SetMarginSensitive(1, true);
-        m_stc->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
-        m_stc->SetMarginWidth(0, 0);
+        m_stc->SetLexer(wxSTC_LEX_CPP);
+        m_stc->SetEOLMode(wxSTC_EOL_LF);
+        m_stc->SetWrapMode(wxSTC_WRAP_WORD);
+        m_stc->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+        m_stc->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+        m_stc->SetMultipleSelection(wxSTC_MULTIPASTE_EACH);
+        m_stc->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_stc->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
+        m_stc->SetAdditionalSelectionTyping(true);
+        m_stc->SetAdditionalCaretsBlink(true);
+        m_stc->SetMarginLeft(5);   // sets text margin
+        m_stc->SetMarginRight(5);  // sets text margin
+        m_stc->SetMarginWidth(1, 0);  // Remove default margin
+        m_stc->SetMarginWidth(0, 16);
+        m_stc->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+        m_stc->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+        m_stc->SetMarginSensitive(0, false);
+        m_stc->SetIndentationGuides(wxSTC_IV_LOOKFORWARD);
         m_stc->SetUseTabs(false);
         m_stc->SetTabWidth(4);
         m_stc->SetBackSpaceUnIndents(true);

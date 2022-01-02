@@ -334,6 +334,15 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     if (!xml_prop.text().empty())
                         BitmapProperty(xml_prop, prop_ptr);
                 }
+                else if (wxue_prop == prop_view_whitespace)
+                {
+                    // There are 4 possible values, but wxFormBuilder only supports this as a bool
+                    if (xml_prop.text().as_bool())
+                    {
+                        prop_ptr->set_value("always visible");
+                    }
+                    continue;
+                }
                 else if (wxue_prop == prop_bitmapsize)
                 {
                     if (class_name.contains("book"))
@@ -816,6 +825,22 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
             }
         }
     }
+    else if (prop_name.is_sameas("folding"))
+    {
+        if (xml_prop.text().as_bool())
+        {
+            newobject->prop_set_value(prop_fold_margin, "1");
+            newobject->prop_set_value(prop_fold_width, "16");
+        }
+    }
+    else if (prop_name.is_sameas("line_numbers"))
+    {
+        if (xml_prop.text().as_bool())
+        {
+            newobject->prop_set_value(prop_line_margin, "1");
+        }
+    }
+
     else
     {
         if (xml_prop.text().as_cview().size())

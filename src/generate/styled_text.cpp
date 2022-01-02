@@ -10,6 +10,7 @@
 
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+#include <wx/sizer.h>              // provide wxSizer class for layout
 #include <wx/stc/stc.h>            // A wxWidgets implementation of Scintilla.
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
@@ -398,11 +399,20 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
 
     //////////// General settings ////////////
 
-    if (node->prop_as_int(prop_stc_left_margin_width) != 1)
+    if (node->prop_as_int(prop_stc_left_margin_width) == 5)
+    {
+        scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+    }
+    else
     {
         scintilla->SetMarginLeft(node->prop_as_int(prop_stc_left_margin_width));
     }
-    if (node->prop_as_int(prop_stc_right_margin_width) != 1)
+
+    if (node->prop_as_int(prop_stc_right_margin_width) == 5)
+    {
+        scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+    }
+    else
     {
         scintilla->SetMarginRight(node->prop_as_int(prop_stc_right_margin_width));
     }
@@ -602,15 +612,41 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     //////////// Margin category settings ////////////
 
+    // The default margin is 1, so if that's what it is set to, then don't output any code
     if (node->prop_as_int(prop_stc_left_margin_width) != 1)
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginLeft(" << node->prop_as_int(prop_stc_left_margin_width)
-             << ");   // sets text margin";
+        if (node->prop_as_int(prop_stc_left_margin_width) == 5)
+        {
+            code << "\n\t\t// Sets text margin scaled appropriately for the current DPI on Windows,\n\t\t// 5 on wxGTK or "
+                    "wxOSX";
+        }
+        code << "\n\t\t" << node->get_node_name() << "->SetMarginLeft(";
+        if (node->prop_as_int(prop_stc_left_margin_width) == 5)
+        {
+            code << "wxSizerFlags::GetDefaultBorder());";
+        }
+        else
+        {
+            code << node->prop_as_int(prop_stc_left_margin_width) << ");";
+        }
     }
+
     if (node->prop_as_int(prop_stc_right_margin_width) != 1)
     {
-        code << "\n\t\t" << node->get_node_name() << "->SetMarginRight(" << node->prop_as_int(prop_stc_right_margin_width)
-             << ");  // sets text margin";
+        if (node->prop_as_int(prop_stc_left_margin_width) != 5 && node->prop_as_int(prop_stc_right_margin_width) == 5)
+        {
+            code << "\n\t\t// Sets text margin scaled appropriately for the current DPI on Windows,\n\t\t// 5 on wxGTK or "
+                    "wxOSX";
+        }
+        code << "\n\t\t" << node->get_node_name() << "->SetMarginRight(";
+        if (node->prop_as_int(prop_stc_right_margin_width) == 5)
+        {
+            code << "wxSizerFlags::GetDefaultBorder());";
+        }
+        else
+        {
+            code << node->prop_as_int(prop_stc_right_margin_width) << ");";
+        }
     }
 
     if (!node->prop_as_bool(prop_stc_select_wrapped_line))

@@ -31,8 +31,10 @@ bool EditCodeDialogBase::Create(wxWindow *parent, wxWindowID id, const wxString 
         m_stc->SetMultiPaste(wxSTC_MULTIPASTE_EACH);
         m_stc->SetAdditionalSelectionTyping(true);
         m_stc->SetAdditionalCaretsBlink(true);
-        m_stc->SetMarginLeft(5);   // sets text margin
-        m_stc->SetMarginRight(5);  // sets text margin
+        // Sets text margin scaled appropriately for the current DPI on Windows,
+        // 5 on wxGTK or wxOSX
+        m_stc->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_stc->SetMarginRight(wxSizerFlags::GetDefaultBorder());
         m_stc->SetMarginWidth(1, 0);  // Remove default margin
         m_stc->SetMarginWidth(0, 16);
         m_stc->SetMarginType(0, wxSTC_MARGIN_SYMBOL);

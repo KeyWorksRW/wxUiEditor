@@ -45,6 +45,9 @@ namespace rapidjson
     // to the string in the array
     std::string_view GetSelectedString(const rapidjson::Value& object);
 
+    // If the array contains strings, this will collect them into a vector.
+    std::vector<std::string> GetStringVector(const rapidjson::Value& array);
+
     static const Value empty_value;
 }  // namespace rapidjson
 
@@ -680,7 +683,13 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                 else
                 {
                     if (name.is_sameas("name"))
+                    {
                         prop_name = (node->IsForm() ? prop_class_name : prop_var_name);
+                    }
+                    else if (node->isGen(gen_wxStyledTextCtrl) && ProcessedScintillaProperty(node, iter))
+                    {
+                        continue;
+                    }
 
                     else if (name.is_sameas("centre"))
                     {
@@ -848,6 +857,10 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                     }
                 }
             }
+            else if (prop_name == prop_stc_lexer)
+            {
+                ProcessedScintillaProperty(node, iter);
+            }
             else if (prop_name != prop_unknown)
             {
                 if (auto& prop_value = FindValue(value, "m_value"); !prop_value.IsNull())
@@ -907,6 +920,138 @@ void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
                 node->prop_set_value(prop_disabled_bmp, bitmap);
         }
     }
+}
+
+bool WxCrafter::ProcessedScintillaProperty(Node* node, const Value& object)
+{
+    // wxCrafter hard-codes margin numbers. line:0, symbol:2, separator:3, fold:4,
+
+    ttlib::cstr name = object["m_label"].GetString();
+    name.MakeLower();
+    if (name == "fold margin")
+    {
+        if (object["m_value"].GetBool())
+        {
+            node->prop_set_value(prop_fold_margin, "4");
+            node->prop_set_value(prop_fold_width, "16");
+        }
+        return true;
+    }
+    else if (name == "line number margin")
+    {
+        if (object["m_value"].GetBool())
+        {
+            node->prop_set_value(prop_line_margin, "0");
+            node->prop_set_value(prop_line_digits, "5");
+        }
+        return true;
+    }
+    else if (name == "separator margin")
+    {
+        if (object["m_value"].GetBool())
+        {
+            node->prop_set_value(prop_separator_margin, "3");
+            node->prop_set_value(prop_separator_width, 1);
+        }
+        return true;
+    }
+    else if (name == "symbol margin")
+    {
+        if (object["m_value"].GetBool())
+        {
+            node->prop_set_value(prop_symbol_margin, "2");
+            node->prop_set_value(prop_symbol_mouse_sensitive, true);
+        }
+        return true;
+    }
+    else if (name == "wrap text")
+    {
+        if (object["m_selection"].IsNumber())
+        {
+            switch (object["m_selection"].GetInt())
+            {
+                case 1:
+                    node->prop_set_value(prop_stc_wrap_mode, "word");
+                    break;
+
+                case 2:
+                    node->prop_set_value(prop_stc_wrap_mode, "character");
+                    break;
+            }
+        }
+        return true;
+    }
+    else if (name == "indentation guides")
+    {
+        if (object["m_selection"].IsNumber())
+        {
+            switch (object["m_selection"].GetInt())
+            {
+                case 1:
+                    node->prop_set_value(prop_indentation_guides, "real");
+                    break;
+
+                case 2:
+                    node->prop_set_value(prop_indentation_guides, "forward");
+                    break;
+
+                case 3:
+                    node->prop_set_value(prop_indentation_guides, "both");
+                    break;
+            }
+        }
+        return true;
+    }
+    else if (name == "eol mode")
+    {
+        if (object["m_selection"].IsNumber())
+        {
+            switch (object["m_selection"].GetInt())
+            {
+                case 0:
+                    node->prop_set_value(prop_eol_mode, "\r\n (CR/LF)");
+                    break;
+
+                case 1:
+                    node->prop_set_value(prop_indentation_guides, "\r (CR)");
+                    break;
+
+                case 2:
+                default:
+                    node->prop_set_value(prop_indentation_guides, "\n (LF)");
+                    break;
+            }
+        }
+        return true;
+    }
+    else if (name == "display eol markers")
+    {
+        if (object["m_value"].GetBool())
+        {
+            node->prop_set_value(prop_view_eol, true);
+        }
+        return true;
+    }
+    else if (name == "lexer")
+    {
+        if (object["m_selection"].IsNumber())
+        {
+            auto items = GetStringVector(object["m_options"]);
+            auto index = object["m_selection"].GetInt();
+            if (index < items.size())
+            {
+                node->prop_set_value(prop_stc_lexer, items[index].data() + (sizeof("wxSTC_LEX_") - 1));
+            }
+        }
+        return true;
+    }
+    else if (name.contains("keywords set"))
+    {
+        // We don't currently support keyword sets since fully supporting them would require processing every possible Lexer
+        // to figure out what constants to use.
+        return true;
+    }
+    return false;
 }
 
 GenEnum::GenName rapidjson::GetGenName(const Value& value)
@@ -972,4 +1117,25 @@ std::string_view rapidjson::GetSelectedString(const rapidjson::Value& object)
         }
     }
     return nullptr;
+}
+
+std::vector<std::string> rapidjson::GetStringVector(const rapidjson::Value& array)
+{
+    ASSERT(array.IsArray())
+
+    std::vector<std::string> items;
+    for (auto& iter: array.GetArray())
+    {
+        if (iter.IsString())
+        {
+            items.emplace_back(iter.GetString());
+        }
+        else
+        {
+            // This is so that a "m_selection" name will correctly index.
+            items.emplace_back("");
+        }
+    }
+
+    return items;
 }

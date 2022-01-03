@@ -7,7 +7,8 @@
 
 #pragma once
 
-class wxFont;
+#include "wx/font.h"  // wxFontBase class: the interface of wxFont
+
 class wxVariant;
 
 class FontProperty
@@ -17,39 +18,38 @@ public:
     FontProperty(ttlib::cview font);
     FontProperty(wxVariant font);
 
+    ~FontProperty();
+
     wxFont GetFont() const;
 
     void Convert(ttlib::cview font);
     wxString as_wxString() const;
     ttlib::cstr as_string() const;
 
-    int GetPointSize() const { return m_pointSize; }
-    wxFontFamily GetFamily() const { return m_family; }
-    int GetStyle() const { return m_style; }
-    int GetWeight() const { return m_weight; }
-    bool isUnderlined() const { return m_underlined; }
-    const wxString& GetFaceName() const { return m_face; }
+    bool isDefGuiFont() const { return m_isDefGuiFont; }
 
-    void SetPointSize(int value) { m_pointSize = value; }
-    void SetFamily(int value) { m_family = static_cast<wxFontFamily>(value); }
-    void SetStyle(int value) { m_style = static_cast<wxFontStyle>(value); }
-    void SetWeight(int value) { m_weight = static_cast<wxFontWeight>(value); }
-    void SetUnderlined(bool value) { m_underlined = value; }
-    void SetFacename(const wxString& value) { m_face = value; }
+    // True if default gui font but with a different point size
+    bool isNonDefSize() const { return m_isDefGuiFont; }
+
+    // All constructors will have created m_info, so it is safe to use
+
+    const wxFontInfo* GetFontInfo() const { return m_info; }
+
+    int GetPointSize() const { return m_info->GetPointSize(); }
+    double GetFractionalPointSize() const { return m_info->GetFractionalPointSize(); }
+    wxFontFamily GetFamily() const { return m_info->GetFamily(); }
+    int GetStyle() const { return m_info->GetStyle(); }
+    int GetWeight() const { return m_info->GetWeight(); }
+    const wxString& GetFaceName() const { return m_info->GetFaceName(); }
+
+    bool isUnderlined() const { return m_info->IsUnderlined(); }
+    bool isStrikeThrough() const { return m_info->IsStrikethrough(); }
 
     operator wxFont() const { return GetFont(); }
 
 private:
-    // REVIEW: [KeyWorks - 12-15-2020] Starting with 3.1.2, pointsize can be a float
-    int m_pointSize { -1 };
-
-    wxFontFamily m_family { wxFONTFAMILY_DEFAULT };
-    wxFontStyle m_style { wxFONTSTYLE_NORMAL };
-    wxFontWeight m_weight { wxFONTWEIGHT_NORMAL };
-    wxString m_face;
-    wxFontEncoding m_encoding { wxFONTENCODING_DEFAULT };
-
-    bool m_underlined { false };
-    bool m_strikethrough { false };
-    bool m_aliased { false };
+    // We need to know the point size before we construct it.
+    wxFontInfo* m_info { nullptr };
+    bool m_isDefGuiFont { true };
+    bool m_isNonDefSize { false };
 };

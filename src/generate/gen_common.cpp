@@ -870,7 +870,7 @@ ttlib::cstr GenFormSettings(Node* node)
         else
             code << pointSize << ", ";
         code << ConvertFontFamilyToString(fontprop.GetFamily()) << ", " << font.GetStyleString().wx_str();
-        code << ", " << font.GetWeightString().wx_str() << ", " << (fontprop.isUnderlined() ? "true" : "false");
+        code << ", " << font.GetWeightString().wx_str() << ", " << (fontprop.IsUnderlined() ? "true" : "false");
         if (fontprop.GetFaceName().empty())
             code << ", wxEmptyString";
         else

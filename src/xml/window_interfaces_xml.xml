@@ -103,7 +103,7 @@ inline const char* window_interfaces_xml = R"===(<?xml version="1.0"?>
 		<property name="context_help" type="string_escapes"
 			help="Sets the help text to be used as context-sensitive help for this window." />
 		<property name="font" type="wxFont"
-			help="Sets the font for this window. This should not be use for a parent window if you don't want its font to be inherited by its children" />
+			help="Sets the font for this window. This should not be used for a parent window if you don't want its font to be inherited by its children" />
 		<property name="pos" type="wxPoint"
 			help="Specifies the position to pass to the constructor for the window. A -1 indicates that the value should be calculated automatically." />
 		<property name="size" type="wxSize"

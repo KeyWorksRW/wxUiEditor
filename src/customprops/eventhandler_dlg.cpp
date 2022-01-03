@@ -9,7 +9,7 @@
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
-#include "eventhandlerdlg.h"  // auto-generated: eventhandlerdlg_base.h and eventhandlerdlg_base.cpp
+#include "eventhandler_dlg.h"  // auto-generated: eventhandlerdlg_base.h and eventhandlerdlg_base.cpp
 
 #include "../nodes/node.h"        // Node class
 #include "../nodes/node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes

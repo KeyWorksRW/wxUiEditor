@@ -30,14 +30,6 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer_11->Add(staticText_7, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_comboSymbolSize = new wxComboBox(m_system_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-    m_comboSymbolSize->Append("tiny");
-    m_comboSymbolSize->Append("extra small");
-    m_comboSymbolSize->Append("small");
-    m_comboSymbolSize->Append("normal");
-    m_comboSymbolSize->Append("large");
-    m_comboSymbolSize->Append("extra large");
-    m_comboSymbolSize->Append("huge");
-    m_comboSymbolSize->SetStringSelection("normal");
     box_sizer_11->Add(m_comboSymbolSize, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_15 = new wxBoxSizer(wxVERTICAL);
@@ -47,10 +39,6 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer_15->Add(staticText_8, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_comboSystemStyles = new wxComboBox(m_system_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-    m_comboSystemStyles->Append("normal");
-    m_comboSystemStyles->Append("italic");
-    m_comboSystemStyles->Append("slant");
-    m_comboSystemStyles->SetSelection(0);
     box_sizer_15->Add(m_comboSystemStyles, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_16 = new wxBoxSizer(wxVERTICAL);
@@ -60,24 +48,12 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer_16->Add(staticText_9, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_comboSystemWeight = new wxComboBox(m_system_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-    m_comboSystemWeight->Append("thin");
-    m_comboSystemWeight->Append("extra light");
-    m_comboSystemWeight->Append("light");
-    m_comboSystemWeight->Append("normal");
-    m_comboSystemWeight->Append("medium");
-    m_comboSystemWeight->Append("semi-bold");
-    m_comboSystemWeight->Append("bold");
-    m_comboSystemWeight->Append("extra bold");
-    m_comboSystemWeight->Append("heavy");
-    m_comboSystemWeight->Append("extra heavy");
-    m_comboSystemWeight->SetStringSelection("normal");
     box_sizer_16->Add(m_comboSystemWeight, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_12 = new wxBoxSizer(wxVERTICAL);
     box_sizer_10->Add(box_sizer_12, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_staticSystemSample = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Sample\n樣品\nобразец"));
-    m_staticSystemSample->Wrap(50);
+    m_staticSystemSample = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, "Sample");
     m_staticSystemSample->SetToolTip("This sample text will show you how the text will look on the current operating system. The font will be different when your program is used on a different operating systems.");
     box_sizer_12->Add(m_staticSystemSample, wxSizerFlags(1).Center().Border(wxALL));
 
@@ -109,15 +85,6 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer->Add(staticText, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_comboFamily = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-    m_comboFamily->Append("default");
-    m_comboFamily->Append("decorative");
-    m_comboFamily->Append("roman");
-    m_comboFamily->Append("script");
-    m_comboFamily->Append("swiss");
-    m_comboFamily->Append("modern");
-    m_comboFamily->Append("teletype");
-    m_comboFamily->Append(wxEmptyString);
-    m_comboFamily->SetSelection(0);
     box_sizer->Add(m_comboFamily, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
@@ -127,10 +94,6 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer_2->Add(staticText_2, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_comboCustomStyles = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-    m_comboCustomStyles->Append("normal");
-    m_comboCustomStyles->Append("italic");
-    m_comboCustomStyles->Append("slant");
-    m_comboCustomStyles->SetSelection(0);
     box_sizer_2->Add(m_comboCustomStyles, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_4 = new wxBoxSizer(wxVERTICAL);
@@ -140,17 +103,6 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     box_sizer_4->Add(staticText_3, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_comboCustomWeight = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-    m_comboCustomWeight->Append("thin");
-    m_comboCustomWeight->Append("extra light");
-    m_comboCustomWeight->Append("light");
-    m_comboCustomWeight->Append("normal");
-    m_comboCustomWeight->Append("medium");
-    m_comboCustomWeight->Append("semi-bold");
-    m_comboCustomWeight->Append("bold");
-    m_comboCustomWeight->Append("extra bold");
-    m_comboCustomWeight->Append("heavy");
-    m_comboCustomWeight->Append("extra heavy");
-    m_comboCustomWeight->SetStringSelection("normal");
     box_sizer_4->Add(m_comboCustomWeight, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_8 = new wxBoxSizer(wxVERTICAL);
@@ -197,8 +149,7 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     auto box_sizer_9 = new wxBoxSizer(wxVERTICAL);
     box_sizer_5->Add(box_sizer_9, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_staticCustomSample = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Sample\n樣品\nобразец"));
-    m_staticCustomSample->Wrap(50);
+    m_staticCustomSample = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "Sample");
     box_sizer_9->Add(m_staticCustomSample, wxSizerFlags(1).Center().Border(wxALL));
 
     dlg_sizer->AddSpacer(20);

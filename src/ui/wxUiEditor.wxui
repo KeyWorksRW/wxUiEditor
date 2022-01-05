@@ -3184,8 +3184,6 @@
                 borders="wxTOP|wxRIGHT|wxLEFT" />
               <node
                 class="wxComboBox"
-                contents="&quot;tiny&quot; &quot;extra small&quot; &quot;small&quot; &quot;normal&quot; &quot;large&quot; &quot;extra large&quot; &quot;huge&quot;"
-                selection_string="normal"
                 style="wxCB_READONLY"
                 var_name="m_comboSymbolSize"
                 wxEVT_COMBOBOX="OnSymbolSize" />
@@ -3202,8 +3200,6 @@
                 borders="wxTOP|wxRIGHT|wxLEFT" />
               <node
                 class="wxComboBox"
-                contents="&quot;normal&quot; &quot;italic&quot; &quot;slant&quot;"
-                selection_int="0"
                 style="wxCB_READONLY"
                 var_name="m_comboSystemStyles"
                 wxEVT_COMBOBOX="OnStyle" />
@@ -3220,8 +3216,6 @@
                 borders="wxTOP|wxRIGHT|wxLEFT" />
               <node
                 class="wxComboBox"
-                contents="&quot;thin&quot; &quot;extra light&quot; &quot;light&quot; &quot;normal&quot; &quot;medium&quot; &quot;semi-bold&quot; &quot;bold&quot; &quot;extra bold&quot; &quot;heavy&quot; &quot;extra heavy&quot;"
-                selection_string="normal"
                 style="wxCB_READONLY"
                 var_name="m_comboSystemWeight"
                 wxEVT_COMBOBOX="OnWeight" />
@@ -3234,9 +3228,8 @@
               proportion="1">
               <node
                 class="wxStaticText"
-                label="Sample&#10;樣品&#10;образец"
+                label="Sample"
                 var_name="m_staticSystemSample"
-                wrap="50"
                 tooltip="This sample text will show you how the text will look on the current operating system. The font will be different when your program is used on a different operating systems."
                 alignment="wxALIGN_CENTER"
                 proportion="1" />
@@ -3291,8 +3284,6 @@
                 borders="wxTOP|wxRIGHT|wxLEFT" />
               <node
                 class="wxComboBox"
-                contents="&quot;default&quot; &quot;decorative&quot; &quot;roman&quot; &quot;script&quot; &quot;swiss&quot; &quot;modern&quot; &quot;teletype&quot; &quot;&quot;"
-                selection_int="0"
                 style="wxCB_READONLY"
                 var_name="m_comboFamily"
                 wxEVT_COMBOBOX="OnFamily" />
@@ -3309,8 +3300,6 @@
                 borders="wxTOP|wxRIGHT|wxLEFT" />
               <node
                 class="wxComboBox"
-                contents="&quot;normal&quot; &quot;italic&quot; &quot;slant&quot;"
-                selection_int="0"
                 style="wxCB_READONLY"
                 var_name="m_comboCustomStyles"
                 wxEVT_COMBOBOX="OnStyle" />
@@ -3327,8 +3316,6 @@
                 borders="wxTOP|wxRIGHT|wxLEFT" />
               <node
                 class="wxComboBox"
-                contents="&quot;thin&quot; &quot;extra light&quot; &quot;light&quot; &quot;normal&quot; &quot;medium&quot; &quot;semi-bold&quot; &quot;bold&quot; &quot;extra bold&quot; &quot;heavy&quot; &quot;extra heavy&quot;"
-                selection_string="normal"
                 style="wxCB_READONLY"
                 var_name="m_comboCustomWeight"
                 wxEVT_COMBOBOX="OnWeight" />
@@ -3414,9 +3401,8 @@
               proportion="1">
               <node
                 class="wxStaticText"
-                label="Sample&#10;樣品&#10;образец"
+                label="Sample"
                 var_name="m_staticCustomSample"
-                wrap="50"
                 alignment="wxALIGN_CENTER"
                 proportion="1" />
             </node>

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   FontProperty class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2019-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2019-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 //////////////////////////////////////////////////////////////////////////
 
@@ -201,7 +201,7 @@ struct FontSymbolPairs
         return wxFONTSIZE_MEDIUM;
     }
 
-    const std::string& GetKey(wxFontSymbolicSize symbol_size) const
+    const std::string& GetName(wxFontSymbolicSize symbol_size) const
     {
         for (const auto& [key, value]: pairs)
         {
@@ -243,7 +243,7 @@ struct FontFamilyPairs
         return wxFONTFAMILY_DEFAULT;
     }
 
-    const std::string& GetKey(wxFontFamily family) const
+    const std::string& GetName(wxFontFamily family) const
     {
         for (const auto& [key, value]: pairs)
         {
@@ -288,7 +288,7 @@ struct FontWeightPairs
         return wxFONTWEIGHT_NORMAL;
     }
 
-    const std::string& GetKey(wxFontWeight weight) const
+    const std::string& GetName(wxFontWeight weight) const
     {
         for (const auto& [key, value]: pairs)
         {
@@ -326,7 +326,7 @@ struct FontStylePairs
         return wxFONTSTYLE_NORMAL;
     }
 
-    const std::string& GetKey(wxFontStyle style) const
+    const std::string& GetName(wxFontStyle style) const
     {
         for (const auto& [key, value]: pairs)
         {

@@ -36,56 +36,6 @@
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 #include "node_prop.h"     // NodeProperty class
 
-// clang-format off
-
-std::unordered_map<std::string, wxFontFamily> font_family_pairs = {
-
-    { "default", wxFONTFAMILY_DEFAULT },
-    { "decorative", wxFONTFAMILY_DECORATIVE },
-    { "roman", wxFONTFAMILY_ROMAN },
-    { "script", wxFONTFAMILY_SCRIPT },
-    { "swiss", wxFONTFAMILY_SWISS },
-    { "modern", wxFONTFAMILY_MODERN },
-    { "teletype", wxFONTFAMILY_TELETYPE },
-
-};
-
-std::unordered_map<std::string, wxFontSymbolicSize> font_symbol_pairs = {
-
-    { "tiny", wxFONTSIZE_XX_SMALL },
-    { "extra small", wxFONTSIZE_X_SMALL },
-    { "small", wxFONTSIZE_SMALL },
-    { "normal", wxFONTSIZE_MEDIUM },
-    { "large", wxFONTSIZE_LARGE },
-    { "extra large", wxFONTSIZE_X_LARGE },
-    { "huge", wxFONTSIZE_XX_LARGE },
-
-};
-
-std::unordered_map<std::string, wxFontWeight> font_weight_pairs = {
-
-    { "thin", wxFONTWEIGHT_THIN },
-    { "extra light", wxFONTWEIGHT_EXTRALIGHT },
-    { "light", wxFONTWEIGHT_LIGHT },
-    { "normal", wxFONTWEIGHT_NORMAL },
-    { "medium", wxFONTWEIGHT_MEDIUM },
-    { "semi-bold", wxFONTWEIGHT_SEMIBOLD },
-    { "bold", wxFONTWEIGHT_BOLD },
-    { "extra bold", wxFONTWEIGHT_EXTRABOLD },
-    { "heavy", wxFONTWEIGHT_HEAVY },
-    { "extra heavy", wxFONTWEIGHT_EXTRAHEAVY },
-
-};
-
-std::unordered_map<std::string, wxFontStyle> font_style_pairs = {
-
-    { "normal", wxFONTSTYLE_NORMAL },
-    { "italic", wxFONTSTYLE_ITALIC },
-    { "slant", wxFONTSTYLE_SLANT },
-
-};
-// clang-format on
-
 namespace font
 {
     enum
@@ -109,6 +59,11 @@ namespace font
     };
 
 };
+
+FontSymbolPairs font_symbol_pairs;
+FontFamilyPairs font_family_pairs;
+FontWeightPairs font_weight_pairs;
+FontStylePairs font_style_pairs;
 
 FontProperty::FontProperty()
 {

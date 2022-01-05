@@ -36,6 +36,56 @@
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 #include "node_prop.h"     // NodeProperty class
 
+// clang-format off
+
+std::unordered_map<std::string, wxFontFamily> font_family_pairs = {
+
+    { "default", wxFONTFAMILY_DEFAULT },
+    { "decorative", wxFONTFAMILY_DECORATIVE },
+    { "roman", wxFONTFAMILY_ROMAN },
+    { "script", wxFONTFAMILY_SCRIPT },
+    { "swiss", wxFONTFAMILY_SWISS },
+    { "modern", wxFONTFAMILY_MODERN },
+    { "teletype", wxFONTFAMILY_TELETYPE },
+
+};
+
+std::unordered_map<std::string, wxFontSymbolicSize> font_symbol_pairs = {
+
+    { "tiny", wxFONTSIZE_XX_SMALL },
+    { "extra small", wxFONTSIZE_X_SMALL },
+    { "small", wxFONTSIZE_SMALL },
+    { "normal", wxFONTSIZE_MEDIUM },
+    { "large", wxFONTSIZE_LARGE },
+    { "extra large", wxFONTSIZE_X_LARGE },
+    { "huge", wxFONTSIZE_XX_LARGE },
+
+};
+
+std::unordered_map<std::string, wxFontWeight> font_weight_pairs = {
+
+    { "thin", wxFONTWEIGHT_THIN },
+    { "extra light", wxFONTWEIGHT_EXTRALIGHT },
+    { "light", wxFONTWEIGHT_LIGHT },
+    { "normal", wxFONTWEIGHT_NORMAL },
+    { "medium", wxFONTWEIGHT_MEDIUM },
+    { "semi-bold", wxFONTWEIGHT_SEMIBOLD },
+    { "bold", wxFONTWEIGHT_BOLD },
+    { "extra bold", wxFONTWEIGHT_EXTRABOLD },
+    { "heavy", wxFONTWEIGHT_HEAVY },
+    { "extra heavy", wxFONTWEIGHT_EXTRAHEAVY },
+
+};
+
+std::unordered_map<std::string, wxFontStyle> font_style_pairs = {
+
+    { "normal", wxFONTSTYLE_NORMAL },
+    { "italic", wxFONTSTYLE_ITALIC },
+    { "slant", wxFONTSTYLE_SLANT },
+
+};
+// clang-format on
+
 namespace font
 {
     enum
@@ -59,6 +109,13 @@ namespace font
     };
 
 };
+
+FontProperty::FontProperty()
+{
+    auto def_gui = wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT);
+    Family(def_gui.GetFamily()).FaceName(def_gui.GetFaceName()).Style(def_gui.GetStyle()).Weight(def_gui.GetWeight());
+    m_pointSize = def_gui.GetFractionalPointSize();
+}
 
 FontProperty::FontProperty(const wxFont& font)
 {
@@ -91,6 +148,7 @@ void FontProperty::Convert(ttlib::cview font)
 {
     if (font.empty())
     {
+        m_isDefGuiFont = true;
         auto def_gui = wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT);
         Family(def_gui.GetFamily()).FaceName(def_gui.GetFaceName()).Style(def_gui.GetStyle()).Weight(def_gui.GetWeight());
         m_pointSize = def_gui.GetFractionalPointSize();
@@ -98,42 +156,34 @@ void FontProperty::Convert(ttlib::cview font)
         return;
     }
 
-    // face name, style, weight, point size, family, underlined, aliased, encoding
-    //      or
-    // family, point size, style, weight, underlined
+    // If the first digit is numeric:
+    //     family, point size, style, weight, underlined, strikethrough
+    // else
+    //     face name, style, weight, point size, family, underlined, strikethrough
+    //
+    // If the first digit is 0, then use wxSYS_DEFAULT_GUI_FONT and only non-zero values will change that field from the
+    // default.
 
     ttlib::multiview mstr(font, ',');
 
     // If font was empty, then we would have already returned, so we know that mstr[0] is valid.
-    bool is_system_font = mstr[0].is_sameprefix("wx");
+    bool is_family_font = std::isdigit(mstr[0][0]);
 
-    if (is_system_font)
+    if (is_family_font)
     {
-        m_isDefGuiFont = (mstr[0] == "wxSYS_DEFAULT_GUI_FONT");
+        m_isDefGuiFont = (mstr[0].atoi() == 0);
+        if (!m_isDefGuiFont)
+        {
+            auto family = mstr[0].atoi();
+            if (family >= wxFONTFAMILY_DEFAULT && family < wxFONTFAMILY_MAX)
+            {
+                Family(static_cast<wxFontFamily>(family));
+            }
+        }
+
         if (mstr.size() > font::idx_wx_point)
         {
-            m_isNonDefSize = true;
             m_pointSize = std::atof(std::string(mstr[font::idx_wx_point]).c_str());
-        }
-
-        auto def_gui = wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT);
-        Family(def_gui.GetFamily()).FaceName(def_gui.GetFaceName()).Style(def_gui.GetStyle()).Weight(def_gui.GetWeight());
-    }
-    else
-    {
-        m_isDefGuiFont = false;
-        if (mstr.size() > font::idx_point)
-        {
-            m_pointSize = std::atof(std::string(mstr[font::idx_point]).c_str());
-        }
-    }
-
-    if (is_system_font)
-    {
-        auto value = g_NodeCreator.GetConstantAsInt(std::string(mstr[0]));
-        if (value >= wxFONTFAMILY_DEFAULT && value < wxFONTFAMILY_MAX)
-        {
-            Family(static_cast<wxFontFamily>(value));
         }
 
         if (mstr.size() > font::idx_wx_style)
@@ -159,11 +209,22 @@ void FontProperty::Convert(ttlib::cview font)
             Underlined(mstr[font::idx_wx_underlined].atoi() != 0);
         }
 
+        if (mstr.size() > font::idx_wx_strikethrough)
+        {
+            Underlined(mstr[font::idx_wx_strikethrough].atoi() != 0);
+        }
+
         return;
     }
     else
     {
+        m_isDefGuiFont = false;
         FaceName(mstr[0].wx_str());
+
+        if (mstr.size() > font::idx_point)
+        {
+            m_pointSize = std::atof(std::string(mstr[font::idx_point]).c_str());
+        }
     }
 
     if (mstr.size() > font::idx_style)
@@ -197,14 +258,32 @@ void FontProperty::Convert(ttlib::cview font)
     {
         Underlined(mstr[font::idx_underlined].atoi() != 0);
     }
+
+    if (mstr.size() > font::idx_strikethrough)
+    {
+        Underlined(mstr[font::idx_strikethrough].atoi() != 0);
+    }
 }
 
 wxFont FontProperty::GetFont() const
 {
-    wxFontInfo info(m_pointSize);
-    info.Family(GetFamily()).Style(GetStyle()).Weight(GetNumericWeight()).FaceName(GetFaceName());
-    info.Underlined(IsUnderlined()).Strikethrough(IsStrikethrough());
-    return wxFont(info);
+    if (m_isDefGuiFont)
+    {
+        wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+        font.SetFractionalPointSize(GetFractionalPointSize());
+        font.SetStyle(GetStyle());
+        font.SetWeight(GetWeight());
+        font.SetUnderlined(IsUnderlined());
+        font.SetStrikethrough(IsStrikethrough());
+        return font;
+    }
+    else
+    {
+        wxFontInfo info(m_pointSize);
+        info.Family(GetFamily()).Style(GetStyle()).Weight(GetNumericWeight()).FaceName(GetFaceName());
+        info.Underlined(IsUnderlined()).Strikethrough(IsStrikethrough());
+        return wxFont(info);
+    }
 }
 
 wxString FontProperty::as_wxString() const
@@ -212,14 +291,29 @@ wxString FontProperty::as_wxString() const
     wxString str;
     if (m_isDefGuiFont)
     {
-        if (m_isNonDefSize)
-        {
-            str.Format("wxSYS_DEFAULT_GUI_FONT, %f", GetFractionalPointSize());
-        }
+        // 0, point size, style, weight, underlined, strikethrough
+        // Any value set to 0 means use the default value
+
+        auto def_gui_font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        str << 0 << ',';
+        if (def_gui_font.GetFractionalPointSize() != GetFractionalPointSize())
+            str << GetFractionalPointSize();
         else
-        {
-            str = "wxSYS_DEFAULT_GUI_FONT";
-        }
+            str << "0.0";
+        str << ',';
+        if (def_gui_font.GetStyle() != GetStyle())
+            str << GetStyle();
+        else
+            str << 0;
+        str << ',';
+        if (def_gui_font.GetWeight() != GetWeight())
+            str << GetWeight();
+        else
+            str << 0;
+        str << ',' << (IsUnderlined() ? 1 : 0) << ',' << (IsStrikethrough() ? 1 : 0);
+
+        if (str == "0,0.0,0,0,0,0")
+            str.clear();
     }
     else if (GetFaceName().empty())
     {

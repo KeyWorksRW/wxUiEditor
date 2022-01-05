@@ -17,9 +17,15 @@ class NodeProperty;
 // Storing everything in a wxFontInfo class would be ideal, but that class requires the point size in the constructor and
 // doesn't allow you to change it after the fact.
 
+extern std::unordered_map<std::string, wxFontFamily> font_family_pairs;
+extern std::unordered_map<std::string, wxFontSymbolicSize> font_symbol_pairs;
+extern std::unordered_map<std::string, wxFontWeight> font_weight_pairs;
+extern std::unordered_map<std::string, wxFontStyle> font_style_pairs;
+
 class FontProperty
 {
 public:
+    FontProperty();
     FontProperty(const wxFont& font);
     FontProperty(ttlib::cview font);
     FontProperty(NodeProperty* prop);
@@ -32,9 +38,7 @@ public:
     ttlib::cstr as_string() const;
 
     bool isDefGuiFont() const { return m_isDefGuiFont; }
-
-    // True if default gui font but with a different point size
-    bool isNonDefSize() const { return m_isDefGuiFont; }
+    void setDefGuiFont(bool use_default = true) { m_isDefGuiFont = use_default; }
 
     int GetPointSize() const { return std::lround(m_pointSize); }
     double GetFractionalPointSize() const { return m_pointSize; }
@@ -46,8 +50,10 @@ public:
                                              wxFONTSTYLE_NORMAL;
     }
 
-    int GetWeight() const { return m_weight; }
-    int GetNumericWeight() const { return m_weight; }
+    wxFontWeight GetWeight() const { return m_weight; }
+    wxFontWeight GetNumericWeight() const { return m_weight; }
+
+    wxFontSymbolicSize GetSymbolSize() const { return m_symbolic_size; }
 
     bool HasFaceName() const { return m_faceName.size(); }
     wxFontFamily GetFamily() const { return m_family; }
@@ -64,8 +70,20 @@ public:
 
     operator wxFont() const { return GetFont(); }
 
+    FontProperty& PointSize(double point_size)
+    {
+        m_pointSize = point_size;
+        return *this;
+    }
+
+    FontProperty& SymbolicSize(wxFontSymbolicSize symbolic_size)
+    {
+        m_symbolic_size = symbolic_size;
+        return *this;
+    }
+
     // The following setters match the names in wxFontInfo so that code written for wxFontInfo or FontProperty can be used
-    // interchangeably (at least for as setters and getters)
+    // interchangeably (at least for setters and getters)
 
     FontProperty& Family(wxFontFamily family)
     {
@@ -78,7 +96,7 @@ public:
         return *this;
     }
 
-    FontProperty& Weight(int weight)
+    FontProperty& Weight(wxFontWeight weight)
     {
         m_weight = weight;
         return *this;
@@ -98,12 +116,8 @@ public:
     }
     FontProperty& Style(wxFontStyle style)
     {
-        if (style == wxFONTSTYLE_ITALIC)
-            return Italic();
-
-        if (style == wxFONTSTYLE_SLANT)
-            return Slant();
-
+        SetFlag(wxFONTFLAG_ITALIC, style == wxFONTSTYLE_ITALIC);
+        SetFlag(wxFONTFLAG_SLANT, style == wxFONTSTYLE_SLANT);
         return *this;
     }
 
@@ -154,9 +168,10 @@ private:
     wxString m_faceName;
     wxFontEncoding m_encoding { wxFONTENCODING_DEFAULT };
     double m_pointSize { wxSystemSettings().GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize() };
-    int m_weight { wxFONTWEIGHT_NORMAL };
+    wxFontWeight m_weight { wxFONTWEIGHT_NORMAL };
     int m_flags { wxFONTFLAG_DEFAULT };
 
+    wxFontSymbolicSize m_symbolic_size { wxFONTSIZE_MEDIUM };
+
     bool m_isDefGuiFont { true };
-    bool m_isNonDefSize { false };
 };

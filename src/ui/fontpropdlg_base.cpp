@@ -5,8 +5,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/button.h>
-#include <wx/sizer.h>
-#include <wx/statbox.h>
 
 #include "fontpropdlg_base.h"
 
@@ -18,25 +16,99 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
 
     auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_radioCustom = new wxRadioButton(this, wxID_ANY, "Custom Font");
-    auto static_box_2 = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioCustom), wxVERTICAL);
-    dlg_sizer->Add(static_box_2, wxSizerFlags().Expand().DoubleBorder(wxALL));
+    m_radioSystem = new wxRadioButton(this, wxID_ANY, "Default GUI Font");
+    m_system_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioSystem), wxVERTICAL);
+    dlg_sizer->Add(m_system_box, wxSizerFlags().Expand().DoubleBorder(wxALL));
 
-    m_staticText = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString);
-    m_staticText->SetLabelMarkup("Leave Facename set to <b>default</b> to create a font that isn't dependent on a user's installed fonts.");
-    m_staticText->Wrap(300);
-    static_box_2->Add(m_staticText, wxSizerFlags().Center().Border(wxALL));
+    auto box_sizer_10 = new wxBoxSizer(wxHORIZONTAL);
+    m_system_box->Add(box_sizer_10, wxSizerFlags().Expand().Border(wxALL));
+
+    auto box_sizer_11 = new wxBoxSizer(wxVERTICAL);
+    box_sizer_10->Add(box_sizer_11, wxSizerFlags().Border(wxALL));
+
+    auto staticText_7 = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, "Si&ze:");
+    box_sizer_11->Add(staticText_7, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    m_comboSymbolSize = new wxComboBox(m_system_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboSymbolSize->Append("tiny");
+    m_comboSymbolSize->Append("extra small");
+    m_comboSymbolSize->Append("small");
+    m_comboSymbolSize->Append("normal");
+    m_comboSymbolSize->Append("large");
+    m_comboSymbolSize->Append("extra large");
+    m_comboSymbolSize->Append("huge");
+    m_comboSymbolSize->SetStringSelection("normal");
+    box_sizer_11->Add(m_comboSymbolSize, wxSizerFlags().Border(wxALL));
+
+    auto box_sizer_15 = new wxBoxSizer(wxVERTICAL);
+    box_sizer_10->Add(box_sizer_15, wxSizerFlags().Border(wxALL));
+
+    auto staticText_8 = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, "&Style:");
+    box_sizer_15->Add(staticText_8, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    m_comboSystemStyles = new wxComboBox(m_system_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboSystemStyles->Append("normal");
+    m_comboSystemStyles->Append("italic");
+    m_comboSystemStyles->Append("slant");
+    m_comboSystemStyles->SetSelection(0);
+    box_sizer_15->Add(m_comboSystemStyles, wxSizerFlags().Border(wxALL));
+
+    auto box_sizer_16 = new wxBoxSizer(wxVERTICAL);
+    box_sizer_10->Add(box_sizer_16, wxSizerFlags().Border(wxALL));
+
+    auto staticText_9 = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, "&Weight:");
+    box_sizer_16->Add(staticText_9, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
+
+    m_comboSystemWeight = new wxComboBox(m_system_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboSystemWeight->Append("thin");
+    m_comboSystemWeight->Append("extra light");
+    m_comboSystemWeight->Append("light");
+    m_comboSystemWeight->Append("normal");
+    m_comboSystemWeight->Append("medium");
+    m_comboSystemWeight->Append("semi-bold");
+    m_comboSystemWeight->Append("bold");
+    m_comboSystemWeight->Append("extra bold");
+    m_comboSystemWeight->Append("heavy");
+    m_comboSystemWeight->Append("extra heavy");
+    m_comboSystemWeight->SetStringSelection("normal");
+    box_sizer_16->Add(m_comboSystemWeight, wxSizerFlags().Border(wxALL));
+
+    auto box_sizer_12 = new wxBoxSizer(wxVERTICAL);
+    box_sizer_10->Add(box_sizer_12, wxSizerFlags(1).Expand().Border(wxALL));
+
+    m_staticSystemSample = new wxStaticText(m_system_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Sample\n樣品\nобразец"));
+    m_staticSystemSample->Wrap(50);
+    m_staticSystemSample->SetToolTip("This sample text will show you how the text will look on the current operating system. The font will be different when your program is used on a different operating systems.");
+    box_sizer_12->Add(m_staticSystemSample, wxSizerFlags(1).Center().Border(wxALL));
+
+    auto box_sizer_19 = new wxBoxSizer(wxHORIZONTAL);
+    m_system_box->Add(box_sizer_19, wxSizerFlags().Expand().Border(wxALL));
+
+    auto box_sizer_17 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_19->Add(box_sizer_17, wxSizerFlags().Expand().Border(wxALL));
+
+    m_checkSystemUnderlined = new wxCheckBox(m_system_box->GetStaticBox(), wxID_ANY, "&Underlined");
+    box_sizer_17->Add(m_checkSystemUnderlined, wxSizerFlags().Border(wxALL));
+
+    m_checkSystemStrikeThrough = new wxCheckBox(m_system_box->GetStaticBox(), wxID_ANY, "S&trikethrough");
+    box_sizer_17->Add(m_checkSystemStrikeThrough, wxSizerFlags().Border(wxALL));
+
+    dlg_sizer->AddSpacer(20);
+
+    m_radioCustom = new wxRadioButton(this, wxID_ANY, "Custom Font");
+    m_custom_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioCustom), wxVERTICAL);
+    dlg_sizer->Add(m_custom_box, wxSizerFlags().Expand().DoubleBorder(wxALL));
 
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
-    static_box_2->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
+    m_custom_box->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
     box_sizer_3->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
-    auto staticText = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "&Family:");
+    auto staticText = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "F&amily:");
     box_sizer->Add(staticText, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboFamily = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboFamily = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
     m_comboFamily->Append("default");
     m_comboFamily->Append("decorative");
     m_comboFamily->Append("roman");
@@ -51,114 +123,85 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
     box_sizer_3->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
-    auto staticText_2 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "&Style:");
+    auto staticText_2 = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "Styl&e:");
     box_sizer_2->Add(staticText_2, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboStyles = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-    m_comboStyles->Append("normal");
-    m_comboStyles->Append("italic");
-    m_comboStyles->Append("slant");
-    m_comboStyles->SetSelection(0);
-    box_sizer_2->Add(m_comboStyles, wxSizerFlags().Border(wxALL));
+    m_comboCustomStyles = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboCustomStyles->Append("normal");
+    m_comboCustomStyles->Append("italic");
+    m_comboCustomStyles->Append("slant");
+    m_comboCustomStyles->SetSelection(0);
+    box_sizer_2->Add(m_comboCustomStyles, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_4 = new wxBoxSizer(wxVERTICAL);
     box_sizer_3->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
-    auto staticText_3 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "&Weight:");
+    auto staticText_3 = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "We&ight:");
     box_sizer_4->Add(staticText_3, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboWeight = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-    m_comboWeight->Append("thin");
-    m_comboWeight->Append("extra light");
-    m_comboWeight->Append("light");
-    m_comboWeight->Append("normal");
-    m_comboWeight->Append("medium");
-    m_comboWeight->Append("semi-bold");
-    m_comboWeight->Append("bold");
-    m_comboWeight->Append("extra bold");
-    m_comboWeight->Append("heavy");
-    m_comboWeight->Append("extra heavy");
-    m_comboWeight->SetStringSelection("normal");
-    box_sizer_4->Add(m_comboWeight, wxSizerFlags().Border(wxALL));
+    m_comboCustomWeight = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboCustomWeight->Append("thin");
+    m_comboCustomWeight->Append("extra light");
+    m_comboCustomWeight->Append("light");
+    m_comboCustomWeight->Append("normal");
+    m_comboCustomWeight->Append("medium");
+    m_comboCustomWeight->Append("semi-bold");
+    m_comboCustomWeight->Append("bold");
+    m_comboCustomWeight->Append("extra bold");
+    m_comboCustomWeight->Append("heavy");
+    m_comboCustomWeight->Append("extra heavy");
+    m_comboCustomWeight->SetStringSelection("normal");
+    box_sizer_4->Add(m_comboCustomWeight, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_8 = new wxBoxSizer(wxVERTICAL);
     box_sizer_3->Add(box_sizer_8, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto staticText_5 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Face&name:");
+    auto staticText_5 = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "Face&name:");
     box_sizer_8->Add(staticText_5, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_comboFacenames = new wxComboBox(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    m_comboFacenames = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY|wxCB_SORT);
     m_comboFacenames->Append("default");
     m_comboFacenames->SetStringSelection("default");
+    m_comboFacenames->SetInitialSize(ConvertPixelsToDialog(wxSize(300 > GetBestSize().x ? 300 : -1, -1)));
+    m_comboFacenames->SetToolTip("Leave Facename set to default to create a font that isn't dependent on a user's installed fonts.");
     box_sizer_8->Add(m_comboFacenames, wxSizerFlags().Expand().Border(wxALL));
 
     auto box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
-    static_box_2->Add(box_sizer_5, wxSizerFlags().Expand().Border(wxALL));
+    m_custom_box->Add(box_sizer_5, wxSizerFlags().Expand().Border(wxALL));
 
     auto box_sizer_6 = new wxBoxSizer(wxVERTICAL);
     box_sizer_5->Add(box_sizer_6, wxSizerFlags().Border(wxALL));
 
-    auto staticText_4 = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "&Point Size:");
+    auto staticText_4 = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, "&Point Size:");
     box_sizer_6->Add(staticText_4, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    m_spinCtrlPointSIze = new wxSpinCtrlDouble(static_box_2->GetStaticBox(), wxID_ANY, wxEmptyString,
+    m_spinCustomPointSize = new wxSpinCtrlDouble(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString,
             wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 4, 72, 9, 0.5);
-    m_spinCtrlPointSIze->SetDigits(1);
-    box_sizer_6->Add(m_spinCtrlPointSIze, wxSizerFlags().Border(wxALL));
+    m_spinCustomPointSize->SetDigits(1);
+    box_sizer_6->Add(m_spinCustomPointSize, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_7 = new wxBoxSizer(wxVERTICAL);
-    box_sizer_5->Add(box_sizer_7, wxSizerFlags().Border(wxALL));
+    auto box_sizer_13 = new wxBoxSizer(wxVERTICAL);
+    box_sizer_5->Add(box_sizer_13, wxSizerFlags().Border(wxALL));
 
-    box_sizer_7->AddSpacer(4);
+    box_sizer_13->AddSpacer(20);
 
-    m_checkUnderlined = new wxCheckBox(static_box_2->GetStaticBox(), wxID_ANY, "&Underlined");
-    box_sizer_7->Add(m_checkUnderlined, wxSizerFlags().Border(wxALL));
+    auto box_sizer_7 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer_13->Add(box_sizer_7, wxSizerFlags().Border(wxALL));
 
-    m_checkStrikethrough = new wxCheckBox(static_box_2->GetStaticBox(), wxID_ANY, "S&trikethrough");
-    box_sizer_7->Add(m_checkStrikethrough, wxSizerFlags().Border(wxALL));
+    m_checkCustomUnderlined = new wxCheckBox(m_custom_box->GetStaticBox(), wxID_ANY, "Un&derlined");
+    box_sizer_7->Add(m_checkCustomUnderlined, wxSizerFlags().Border(wxALL));
+
+    m_checkCustomStrikeThrough = new wxCheckBox(m_custom_box->GetStaticBox(), wxID_ANY, "Striket&hrough");
+    box_sizer_7->Add(m_checkCustomStrikeThrough, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_9 = new wxBoxSizer(wxVERTICAL);
     box_sizer_5->Add(box_sizer_9, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_staticCustomSample = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Sample");
+    m_staticCustomSample = new wxStaticText(m_custom_box->GetStaticBox(), wxID_ANY, wxString::FromUTF8("Sample\n樣品\nобразец"));
+    m_staticCustomSample->Wrap(50);
     box_sizer_9->Add(m_staticCustomSample, wxSizerFlags(1).Center().Border(wxALL));
 
-    m_radioSystem = new wxRadioButton(this, wxID_ANY, "System Font");
-    auto static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radioSystem), wxHORIZONTAL);
-    dlg_sizer->Add(static_box, wxSizerFlags().Expand().DoubleBorder(wxALL));
-
-    auto box_sizer_10 = new wxBoxSizer(wxVERTICAL);
-    static_box->Add(box_sizer_10, wxSizerFlags().Border(wxALL));
-
-    auto staticText_6 = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "F&ont:");
-    box_sizer_10->Add(staticText_6, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
-
-    m_comboFonts = new wxComboBox(static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
-    m_comboFonts->Append("Default GUI");
-    m_comboFonts->Append("ANSI fixed");
-    m_comboFonts->Append("OEM fixed");
-    m_comboFonts->Append("ANSI variable");
-    m_comboFonts->Append("system");
-    m_comboFonts->Append("device default");
-    m_comboFonts->SetStringSelection("Default GUI");
-    box_sizer_10->Add(m_comboFonts, wxSizerFlags().Border(wxALL));
-
-    auto box_sizer_11 = new wxBoxSizer(wxVERTICAL);
-    static_box->Add(box_sizer_11, wxSizerFlags().Border(wxALL));
-
-    auto staticText_7 = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Point Si&ze:");
-    box_sizer_11->Add(staticText_7, wxSizerFlags().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
-
-    m_spinCtrlSystem = new wxSpinCtrlDouble(static_box->GetStaticBox(), wxID_ANY, wxEmptyString,
-            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 4, 72, 9, 0.5);
-    m_spinCtrlSystem->SetDigits(1);
-    box_sizer_11->Add(m_spinCtrlSystem, wxSizerFlags().Border(wxALL));
-
-    auto box_sizer_12 = new wxBoxSizer(wxVERTICAL);
-    static_box->Add(box_sizer_12, wxSizerFlags(1).Expand().Border(wxALL));
-
-    m_staticSystemSample = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Sample");
-    box_sizer_12->Add(m_staticSystemSample, wxSizerFlags(1).Center().Border(wxALL));
+    dlg_sizer->AddSpacer(20);
 
     auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
@@ -167,17 +210,22 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     Centre(wxBOTH);
 
     // Event handlers
+    Bind(wxEVT_INIT_DIALOG, &FontPropDlgBase::OnInit, this);
+    m_radioSystem->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnSystemRadio, this);
+    m_comboSymbolSize->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnSymbolSize, this);
+    m_comboSystemStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
+    m_comboSystemWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
+    m_checkSystemUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
+    m_checkSystemStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
     m_radioCustom->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnCustomRadio, this);
     m_comboFamily->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnFamily, this);
-    m_comboStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
-    m_comboWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
+    m_comboCustomStyles->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnStyle, this);
+    m_comboCustomWeight->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnWeight, this);
     m_comboFacenames->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnFacename, this);
-    m_spinCtrlPointSIze->Bind(wxEVT_SPINCTRLDOUBLE, &FontPropDlgBase::OnPointSize, this);
-    m_checkUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
-    m_checkStrikethrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
-    m_radioSystem->Bind(wxEVT_RADIOBUTTON, &FontPropDlgBase::OnSystemRadio, this);
-    m_comboFonts->Bind(wxEVT_COMBOBOX, &FontPropDlgBase::OnSysFont, this);
-    m_spinCtrlSystem->Bind(wxEVT_SPINCTRLDOUBLE, &FontPropDlgBase::OnSysPointSize, this);
+    m_spinCustomPointSize->Bind(wxEVT_SPINCTRLDOUBLE, &FontPropDlgBase::OnPointSize, this);
+    m_spinCustomPointSize->Bind(wxEVT_TEXT, &FontPropDlgBase::OnEditPointSize, this);
+    m_checkCustomUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
+    m_checkCustomStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
 
     return true;
 }

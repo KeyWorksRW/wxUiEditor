@@ -12,7 +12,9 @@
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/radiobut.h>
+#include <wx/sizer.h>
 #include <wx/spinctrl.h>
+#include <wx/statbox.h>
 #include <wx/stattext.h>
 
 class FontPropDlgBase : public wxDialog
@@ -34,31 +36,36 @@ protected:
 
     // Class member variables
 
-    wxCheckBox* m_checkStrikethrough;
-    wxCheckBox* m_checkUnderlined;
+    wxCheckBox* m_checkCustomStrikeThrough;
+    wxCheckBox* m_checkCustomUnderlined;
+    wxCheckBox* m_checkSystemStrikeThrough;
+    wxCheckBox* m_checkSystemUnderlined;
+    wxComboBox* m_comboCustomStyles;
+    wxComboBox* m_comboCustomWeight;
     wxComboBox* m_comboFacenames;
     wxComboBox* m_comboFamily;
-    wxComboBox* m_comboFonts;
-    wxComboBox* m_comboStyles;
-    wxComboBox* m_comboWeight;
+    wxComboBox* m_comboSymbolSize;
+    wxComboBox* m_comboSystemStyles;
+    wxComboBox* m_comboSystemWeight;
     wxRadioButton* m_radioCustom;
+    wxStaticBoxSizer* m_custom_box;
     wxRadioButton* m_radioSystem;
-    wxSpinCtrlDouble* m_spinCtrlPointSIze;
-    wxSpinCtrlDouble* m_spinCtrlSystem;
+    wxStaticBoxSizer* m_system_box;
+    wxSpinCtrlDouble* m_spinCustomPointSize;
     wxStaticText* m_staticCustomSample;
     wxStaticText* m_staticSystemSample;
-    wxStaticText* m_staticText;
 
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnCustomRadio(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditPointSize(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFacename(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFamily(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnPointSize(wxSpinDoubleEvent& event) { event.Skip(); }
     virtual void OnStrikeThrough(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStyle(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSysFont(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSysPointSize(wxSpinDoubleEvent& event) { event.Skip(); }
+    virtual void OnSymbolSize(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSystemRadio(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUnderlined(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWeight(wxCommandEvent& event) { event.Skip(); }

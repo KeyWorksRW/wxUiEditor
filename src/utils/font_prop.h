@@ -179,7 +179,7 @@ struct FontSymbolPairs
         { "tiny", wxFONTSIZE_XX_SMALL },
         { "extra small", wxFONTSIZE_X_SMALL },
         { "small", wxFONTSIZE_SMALL },
-        { "normal", wxFONTSIZE_MEDIUM },
+        { "normal size", wxFONTSIZE_MEDIUM },
         { "large", wxFONTSIZE_LARGE },
         { "extra large", wxFONTSIZE_X_LARGE },
         { "huge", wxFONTSIZE_XX_LARGE },
@@ -190,7 +190,7 @@ struct FontSymbolPairs
 
     auto GetValue(ttlib::sview name) const
     {
-        if (name.empty() || name.is_sameas("normal"))
+        if (name.empty())
             return wxFONTSIZE_MEDIUM;
 
         for (const auto& [key, value]: pairs)
@@ -199,6 +199,19 @@ struct FontSymbolPairs
                 return value;
         }
         return wxFONTSIZE_MEDIUM;
+    }
+
+    bool HasName(ttlib::sview name) const
+    {
+        if (name.empty())
+            return false;
+
+        for (const auto& [key, value]: pairs)
+        {
+            if (name.is_sameas(key))
+                return true;
+        }
+        return false;
     }
 
     const std::string& GetName(wxFontSymbolicSize symbol_size) const
@@ -218,7 +231,7 @@ struct FontFamilyPairs
 {
     // clang-format off
     std::vector<std::pair<std::string, wxFontFamily>> pairs = {
-        { "default", wxFONTFAMILY_DEFAULT },
+        { "default family", wxFONTFAMILY_DEFAULT },
         { "decorative", wxFONTFAMILY_DECORATIVE },
         { "roman", wxFONTFAMILY_ROMAN },
         { "script", wxFONTFAMILY_SCRIPT },
@@ -232,7 +245,7 @@ struct FontFamilyPairs
 
     auto GetValue(ttlib::sview name) const
     {
-        if (name.empty() || name.is_sameas("default"))
+        if (name.empty())
             return wxFONTFAMILY_DEFAULT;
 
         for (const auto& [key, value]: pairs)
@@ -241,6 +254,19 @@ struct FontFamilyPairs
                 return value;
         }
         return wxFONTFAMILY_DEFAULT;
+    }
+
+    bool HasName(ttlib::sview name) const
+    {
+        if (name.empty())
+            return false;
+
+        for (const auto& [key, value]: pairs)
+        {
+            if (name.is_sameas(key))
+                return true;
+        }
+        return false;
     }
 
     const std::string& GetName(wxFontFamily family) const
@@ -263,7 +289,7 @@ struct FontWeightPairs
         { "thin", wxFONTWEIGHT_THIN },
         { "extra light", wxFONTWEIGHT_EXTRALIGHT },
         { "light", wxFONTWEIGHT_LIGHT },
-        { "normal", wxFONTWEIGHT_NORMAL },
+        { "normal weight", wxFONTWEIGHT_NORMAL },
         { "medium", wxFONTWEIGHT_MEDIUM },
         { "semi-bold", wxFONTWEIGHT_SEMIBOLD },
         { "bold", wxFONTWEIGHT_BOLD },
@@ -277,7 +303,7 @@ struct FontWeightPairs
 
     auto GetValue(ttlib::sview name) const
     {
-        if (name.empty() || name.is_sameas("normal"))
+        if (name.empty())
             return wxFONTWEIGHT_NORMAL;
 
         for (const auto& [key, value]: pairs)
@@ -305,7 +331,7 @@ struct FontStylePairs
 {
     // clang-format off
     std::vector<std::pair<std::string, wxFontStyle>> pairs = {
-        { "normal", wxFONTSTYLE_NORMAL },
+        { "normal style", wxFONTSTYLE_NORMAL },
         { "italic", wxFONTSTYLE_ITALIC },
         { "slant", wxFONTSTYLE_SLANT },
     };
@@ -315,7 +341,7 @@ struct FontStylePairs
 
     auto GetValue(ttlib::sview name) const
     {
-        if (name.empty() || name.is_sameas("normal"))
+        if (name.empty())
             return wxFONTSTYLE_NORMAL;
 
         for (const auto& [key, value]: pairs)

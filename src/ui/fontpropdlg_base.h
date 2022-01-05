@@ -62,6 +62,7 @@ protected:
     virtual void OnFacename(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFamily(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPointSize(wxSpinDoubleEvent& event) { event.Skip(); }
     virtual void OnStrikeThrough(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStyle(wxCommandEvent& event) { event.Skip(); }

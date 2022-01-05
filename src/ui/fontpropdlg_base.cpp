@@ -177,6 +177,7 @@ bool FontPropDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     m_spinCustomPointSize->Bind(wxEVT_TEXT, &FontPropDlgBase::OnEditPointSize, this);
     m_checkCustomUnderlined->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnUnderlined, this);
     m_checkCustomStrikeThrough->Bind(wxEVT_CHECKBOX, &FontPropDlgBase::OnStrikeThrough, this);
+    Bind(wxEVT_BUTTON, &FontPropDlgBase::OnOK, this, wxID_OK);
 
     return true;
 }

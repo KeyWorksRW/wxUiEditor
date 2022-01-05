@@ -39,10 +39,11 @@ protected:
     void OnUnderlined(wxCommandEvent& WXUNUSED(event)) override;
     void OnWeight(wxCommandEvent& WXUNUSED(event)) override;
 
+    void OnOK(wxCommandEvent& WXUNUSED(event)) override;
+
     wxString m_value;
 
 private:
-    NodeProperty* m_prop;
     wxFontEnumerator m_font_enum;
     FontProperty m_system_font;
     FontProperty m_custom_font;

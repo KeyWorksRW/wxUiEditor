@@ -215,3 +215,34 @@ void FontPropDlg::UpdateFontInfo()
     m_staticSystemSample->SetFont(font);
     Fit();
 }
+
+void FontPropDlg::OnOK(wxCommandEvent& event)
+{
+    if (m_radioSystem->GetValue())
+    {
+        m_system_font.SymbolicSize(
+            font_symbol_pairs.GetValue((const char*) m_comboSymbolSize->GetStringSelection().mb_str()));
+        m_system_font.Style(font_style_pairs.GetValue((const char*) m_comboSystemStyles->GetStringSelection().mb_str()));
+        m_system_font.Weight(font_weight_pairs.GetValue((const char*) m_comboSystemWeight->GetStringSelection().mb_str()));
+        m_system_font.Underlined(m_checkSystemUnderlined->GetValue());
+        m_system_font.Strikethrough(m_checkSystemStrikeThrough->GetValue());
+        m_value = m_system_font.as_wxString();
+    }
+    else
+    {
+        m_custom_font.Family(font_family_pairs.GetValue((const char*) m_comboFamily->GetValue().mb_str()));
+        m_custom_font.PointSize(m_spinCustomPointSize->GetValue());
+        m_custom_font.Style(font_style_pairs.GetValue((const char*) m_comboCustomStyles->GetValue().mb_str()));
+        m_custom_font.Weight(font_weight_pairs.GetValue((const char*) m_comboCustomWeight->GetStringSelection().mb_str()));
+        m_custom_font.Underlined(m_checkCustomUnderlined->GetValue());
+        m_custom_font.Strikethrough(m_checkCustomStrikeThrough->GetValue());
+        auto facename = m_comboFacenames->GetStringSelection();
+        if (facename == "default")
+            m_custom_font.FaceName("");
+        else
+            m_custom_font.FaceName(facename);
+        m_value = m_custom_font.as_wxString();
+    }
+
+    event.Skip();
+}

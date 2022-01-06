@@ -99,6 +99,10 @@ ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node);
 
 ttlib::cstr GenFormSettings(Node* node);
 
+// Called for a child, generates font, foreground, and background settings if any of them
+// have been specified.
+ttlib::cstr GenFontColourSettings(Node* node);
+
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
 

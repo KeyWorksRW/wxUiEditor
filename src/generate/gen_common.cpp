@@ -1,9 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Common component functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include <charconv>  // for std::to_chars
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
@@ -860,24 +862,73 @@ ttlib::cstr GenFormSettings(Node* node)
 
     if (node->prop_as_string(prop_font).size())
     {
-        code << "\nSetFont(wxFont(";
-        auto fontprop = node->prop_as_font_prop(prop_font);
-        wxFont font = fontprop.GetFont();
-        auto pointSize = fontprop.GetPointSize();
+        FontProperty fontprop(node->get_prop_ptr(prop_font));
+        if (fontprop.isDefGuiFont())
+        {
+            code << "\n{\n\twxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));";
+            if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
+                code << "\n\tfont.SetSymbolicSize(" << font_symbol_pairs.GetValue(fontprop.GetSymbolSize()) << ')';
+            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+                code << "\n\tfont.SetStyle(" << font_style_pairs.GetValue(fontprop.GetStyle()) << ')';
+            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+                code << "\n\tfont.SetWeight(" << font_weight_pairs.GetValue(fontprop.GetWeight()) << ')';
+            if (fontprop.IsUnderlined())
+                code << "\n\tfont.SetUnderlined(true)";
+            if (fontprop.IsStrikethrough())
+                code << "\n\tfont.SetStrikethrough(true)";
 
-        if (pointSize <= 0)
-            code << "wxNORMAL_FONT->GetPointSize(), ";
+            code << "\n\tSetFont(font);\n}";
+        }
         else
-            code << pointSize << ", ";
-        code << ConvertFontFamilyToString(fontprop.GetFamily()) << ", " << font.GetStyleString().wx_str();
-        code << ", " << font.GetWeightString().wx_str() << ", " << (fontprop.IsUnderlined() ? "true" : "false");
-        if (fontprop.GetFaceName().empty())
-            code << ", wxEmptyString";
-        else
-            code << ", \"" << fontprop.GetFaceName().wx_str() << "\"";
-        code << ");";
+        {
+            auto point_size = fontprop.GetFractionalPointSize();
+            if (point_size != static_cast<int>(point_size))
+            {
+                code << "#if (wxMAJOR_VERSION < 4) && (wxMINOR_VERSION < 2) && (wxRELEASE_NUMBER < 2)\n";
+                code << "\n{\n\twxFontInfo font_info(";
+                if (point_size <= 0)
+                {
+                    code << "wxSystemSettings::GetFont()->GetPointSize());";
+                }
+                else
+                {
+                    // GetPointSize() will round the result rather than truncating the decimal
+                    code << fontprop.GetPointSize() << ");";
+                }
+                code << "#else// fractional point sizes are new to wxWidgets 3.1.2\n";
+                code << "\n{\n\twxFontInfo font_info(";
+                {
+                    std::array<char, 10> float_str;
+                    if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
+                        ec == std::errc())
+                    {
+                        code << std::string_view(float_str.data(), ptr - float_str.data());
+                    }
+                }
+
+                // leave a trailing dot -- we'll remove the final dot after all the params are added
+                code << "\n#endif\n\tfont_info.";
+            }
+
+            if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
+                code << ".FaceName(" << fontprop.GetFaceName().wx_str() << ").";
+            if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+                code << ".Family(" << font_family_pairs.GetValue(fontprop.GetFamily()) << ").";
+            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+                code << ".Style(" << font_style_pairs.GetValue(fontprop.GetStyle()) << ").";
+            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+                code << ".Weight(" << font_weight_pairs.GetValue(fontprop.GetWeight()) << ").";
+            if (fontprop.IsUnderlined())
+                code << ".Underlined().";
+            if (fontprop.IsStrikethrough())
+                code << ".Strikethrough()";
+
+            if (code.back() == '.')
+                code.pop_back();
+
+            code << ";\n\tSetFont(wxFont(font_info));\n}";
+        }
     }
-
     auto& fg_clr = node->prop_as_string(prop_foreground_colour);
     if (fg_clr.size())
     {
@@ -909,6 +960,124 @@ ttlib::cstr GenFormSettings(Node* node)
 
     if (node->prop_as_bool(prop_hidden))
         code << "\nHide();";
+
+    return code;
+}
+
+ttlib::cstr GenFontColourSettings(Node* node)
+{
+    ttlib::cstr code;
+
+    if (node->prop_as_string(prop_font).size())
+    {
+        FontProperty fontprop(node->get_prop_ptr(prop_font));
+        if (fontprop.isDefGuiFont())
+        {
+            code << "\n{\n\twxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));";
+            if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
+                code << "\n\tfont.SetSymbolicSize(" << font_symbol_pairs.GetValue(fontprop.GetSymbolSize()) << ')';
+            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+                code << "\n\tfont.SetStyle(" << font_style_pairs.GetValue(fontprop.GetStyle()) << ')';
+            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+                code << "\n\tfont.SetWeight(" << font_weight_pairs.GetValue(fontprop.GetWeight()) << ')';
+            if (fontprop.IsUnderlined())
+                code << "\n\tfont.SetUnderlined(true)";
+            if (fontprop.IsStrikethrough())
+                code << "\n\tfont.SetStrikethrough(true)";
+
+            code << "\n\t" << node->get_node_name() << "->SetFont(font);\n}";
+        }
+        else
+        {
+            auto point_size = fontprop.GetFractionalPointSize();
+            code << "\n{\n\twxFontInfo font_info(";
+            if (point_size != static_cast<int>(point_size))
+            {
+                code << "\n#if (wxMAJOR_VERSION < 4) && (wxMINOR_VERSION < 2) && (wxRELEASE_NUMBER < 2)\n\t";
+                if (point_size <= 0)
+                {
+                    code << "wxSystemSettings::GetFont()->GetPointSize());";
+                }
+                else
+                {
+                    // GetPointSize() will round the result rather than truncating the decimal
+                    code << fontprop.GetPointSize() << ");";
+                }
+                code << "\n#else  // fractional point sizes are new to wxWidgets 3.1.2\n\t";
+                {
+                    std::array<char, 10> float_str;
+                    if (auto [ptr, ec] = std::to_chars(float_str.data(), float_str.data() + float_str.size(), point_size);
+                        ec == std::errc())
+                    {
+                        code << std::string_view(float_str.data(), ptr - float_str.data()) << ");";
+                    }
+                }
+
+                // leave a trailing dot -- we'll remove the final dot after all the params are added
+                code << "\n#endif";
+            }
+            else
+            {
+                if (point_size <= 0)
+                {
+                    code << "wxSystemSettings::GetFont()->GetPointSize());";
+                }
+                else
+                {
+                    // GetPointSize() will round the result rather than truncating the decimal
+                    code << fontprop.GetPointSize() << ");";
+                }
+            }
+
+            ttlib::cstr info_code("\n\tfont_info.");
+
+            if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
+                info_code << "FaceName(" << fontprop.GetFaceName().wx_str() << ").";
+            if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
+                info_code << "Family(" << font_family_pairs.GetValue(fontprop.GetFamily()) << ").";
+            if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
+                info_code << "Style(" << font_style_pairs.GetValue(fontprop.GetStyle()) << ").";
+            if (fontprop.GetWeight() != wxFONTWEIGHT_NORMAL)
+                info_code << "Weight(" << font_weight_pairs.GetValue(fontprop.GetWeight()) << ").";
+            if (fontprop.IsUnderlined())
+                info_code << "Underlined().";
+            if (fontprop.IsStrikethrough())
+                info_code << "Strikethrough()";
+
+            if (info_code.back() == '.')
+                info_code.pop_back();
+
+            if (!info_code.is_sameas("font_info"))
+                code << info_code << ';';
+
+            code << "\n\t" << node->get_node_name() << "->SetFont(wxFont(font_info));\n}";
+        }
+    }
+    auto& fg_clr = node->prop_as_string(prop_foreground_colour);
+    if (fg_clr.size())
+    {
+        code << "\n" << node->get_node_name() << "->SetForegroundColour(";
+        if (fg_clr.contains("wx"))
+            code << "wxSystemSettings::GetColour(" << fg_clr << "));";
+        else
+        {
+            wxColour colour = ConvertToColour(fg_clr);
+            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
+        }
+    }
+
+    auto& bg_clr = node->prop_as_string(prop_background_colour);
+    if (bg_clr.size())
+    {
+        code << "\n" << node->get_node_name() << "->SetBackgroundColour(";
+        if (bg_clr.contains("wx"))
+            code << "wxSystemSettings::GetColour(" << bg_clr << "));";
+        else
+        {
+            wxColour colour = ConvertToColour(bg_clr);
+            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
+        }
+    }
 
     return code;
 }

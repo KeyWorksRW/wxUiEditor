@@ -201,6 +201,29 @@ struct FontSymbolPairs
         return wxFONTSIZE_MEDIUM;
     }
 
+    std::string GetValue(wxFontSymbolicSize symbol_size) const
+    {
+        switch (symbol_size)
+        {
+            case wxFONTSIZE_XX_SMALL:
+                return "wxFONTSIZE_XX_SMALL";
+            case wxFONTSIZE_X_SMALL:
+                return "wxFONTSIZE_X_SMALL";
+            case wxFONTSIZE_SMALL:
+                return "wxFONTSIZE_SMALL";
+            case wxFONTSIZE_LARGE:
+                return "wxFONTSIZE_LARGE";
+            case wxFONTSIZE_X_LARGE:
+                return "wxFONTSIZE_X_LARGE";
+            case wxFONTSIZE_XX_LARGE:
+                return "wxFONTSIZE_XX_LARGE";
+
+            case wxFONTSIZE_MEDIUM:
+            default:
+                return "wxFONTSIZE_MEDIUM";
+        }
+    }
+
     bool HasName(ttlib::sview name) const
     {
         if (name.empty())
@@ -254,6 +277,29 @@ struct FontFamilyPairs
                 return value;
         }
         return wxFONTFAMILY_DEFAULT;
+    }
+
+    std::string GetValue(wxFontFamily family) const
+    {
+        switch (family)
+        {
+            case wxFONTFAMILY_DECORATIVE:
+                return "wxFONTFAMILY_DECORATIVE";
+            case wxFONTFAMILY_ROMAN:
+                return "wxFONTFAMILY_ROMAN";
+            case wxFONTFAMILY_SCRIPT:
+                return "wxFONTFAMILY_SCRIPT";
+            case wxFONTFAMILY_SWISS:
+                return "wxFONTFAMILY_SWISS";
+            case wxFONTFAMILY_MODERN:
+                return "wxFONTFAMILY_MODERN";
+            case wxFONTFAMILY_TELETYPE:
+                return "wxFONTFAMILY_TELETYPE";
+
+            case wxFONTFAMILY_DEFAULT:
+            default:
+                return "wxFONTFAMILY_DEFAULT";
+        }
     }
 
     bool HasName(ttlib::sview name) const
@@ -314,6 +360,36 @@ struct FontWeightPairs
         return wxFONTWEIGHT_NORMAL;
     }
 
+    std::string GetValue(wxFontWeight weight) const
+    {
+        switch (weight)
+        {
+            case wxFONTWEIGHT_THIN:
+                return "wxFONTWEIGHT_THIN";
+            case wxFONTWEIGHT_EXTRALIGHT:
+                return "wxFONTWEIGHT_EXTRALIGHT";
+            case wxFONTWEIGHT_LIGHT:
+                return "wxFONTWEIGHT_LIGHT";
+            case wxFONTWEIGHT_MEDIUM:
+                return "wxFONTWEIGHT_MEDIUM";
+            case wxFONTWEIGHT_SEMIBOLD:
+                return "wxFONTWEIGHT_SEMIBOLD";
+            case wxFONTWEIGHT_BOLD:
+                return "wxFONTWEIGHT_BOLD";
+            case wxFONTWEIGHT_EXTRABOLD:
+                return "wxFONTWEIGHT_EXTRABOLD";
+            case wxFONTWEIGHT_HEAVY:
+                return "wxFONTWEIGHT_HEAVY";
+            case wxFONTWEIGHT_EXTRAHEAVY:
+                return "wxFONTWEIGHT_EXTRAHEAVY";
+
+            case wxFONTWEIGHT_NORMAL:
+            default:
+                return "wxFONTWEIGHT_NORMAL";
+        }
+
+    }
+
     const std::string& GetName(wxFontWeight weight) const
     {
         for (const auto& [key, value]: pairs)
@@ -350,6 +426,22 @@ struct FontStylePairs
                 return value;
         }
         return wxFONTSTYLE_NORMAL;
+    }
+
+    std::string GetValue(wxFontStyle style) const
+    {
+        switch (style)
+        {
+            case wxFONTSTYLE_ITALIC:
+                return "wxFONTSTYLE_ITALIC";
+
+            case wxFONTSTYLE_SLANT:
+                return "wxFONTSTYLE_SLANT";
+
+            default:
+            case wxFONTSTYLE_NORMAL:
+                return "wxFONTSTYLE_NORMAL";
+        }
     }
 
     const std::string& GetName(wxFontStyle style) const

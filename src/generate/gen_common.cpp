@@ -1021,20 +1021,6 @@ ttlib::cstr GenFontColourSettings(Node* node)
     return code;
 }
 
-ttlib::cstr GenerateColorCode(Node* node, PropName prop_name)
-{
-    ttlib::cstr code;
-    auto& clr = node->prop_as_string(prop_name);
-    if (clr.contains("wx"))
-        code << "wxSystemSettings::GetColour(" << clr << ")";
-    else
-    {
-        wxColour colour = ConvertToColour(clr);
-        code << ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
-    }
-
-    return code;
-}
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string. Used when generating
 // code.

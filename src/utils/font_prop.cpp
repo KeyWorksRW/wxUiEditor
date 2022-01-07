@@ -19,29 +19,29 @@ namespace font
 {
     enum
     {
-        // use idx_gui when working with a default GUI font
+        // use idx_gui... when working with a default GUI font
         idx_gui_symbol_size = 0,
         idx_gui_style,
         idx_gui_weight,
         idx_gui_underlined,
         idx_gui_strikethrough,
 
-        // use idx_wx when working with a family font
-        idx_wx_family = 0,
-        idx_wx_point,
-        idx_wx_style,
-        idx_wx_weight,
-        idx_wx_underlined,
-        idx_wx_strikethrough,
+        // use idx_family... when working with a family font
+        idx_family_family = 0,
+        idx_family_point,
+        idx_family_style,
+        idx_family_weight,
+        idx_family_underlined,
+        idx_family_strikethrough,
 
-        // Use these when working with a custom font
+        // Use idx_facename... when working with a font that has a non-default facename
         idx_facename = 0,
-        idx_style,
-        idx_weight,
-        idx_point,
-        idx_family,
-        idx_underlined,
-        idx_strikethrough,
+        idx_facename_style,
+        idx_facename_weight,
+        idx_facename_point,
+        idx_facename_family,
+        idx_facename_underlined,
+        idx_facename_strikethrough,
     };
 
 };
@@ -150,29 +150,29 @@ void FontProperty::Convert(ttlib::cview font)
         m_isDefGuiFont = false;
         FaceName("default");
         Family(font_family_pairs.GetValue(mstr[0]));
-        if (mstr.size() > font::idx_wx_point)
+        if (mstr.size() > font::idx_family_point)
         {
-            m_pointSize = std::atof(std::string(mstr[font::idx_wx_point]).c_str());
+            m_pointSize = std::atof(std::string(mstr[font::idx_family_point]).c_str());
         }
 
-        if (mstr.size() > font::idx_wx_style)
+        if (mstr.size() > font::idx_family_style)
         {
-            Style(font_style_pairs.GetValue(mstr[font::idx_wx_style]));
+            Style(font_style_pairs.GetValue(mstr[font::idx_family_style]));
         }
 
-        if (mstr.size() > font::idx_wx_weight)
+        if (mstr.size() > font::idx_family_weight)
         {
-            Weight(font_weight_pairs.GetValue(mstr[font::idx_wx_weight]));
+            Weight(font_weight_pairs.GetValue(mstr[font::idx_family_weight]));
         }
 
-        if (mstr.size() > font::idx_wx_underlined)
+        if (mstr.size() > font::idx_family_underlined)
         {
-            Underlined(mstr[font::idx_wx_underlined].is_sameas("underlined"));
+            Underlined(mstr[font::idx_family_underlined].is_sameas("underlined"));
         }
 
-        if (mstr.size() > font::idx_wx_strikethrough)
+        if (mstr.size() > font::idx_family_strikethrough)
         {
-            Strikethrough(mstr[font::idx_wx_strikethrough].is_sameas("strikethrough"));
+            Strikethrough(mstr[font::idx_family_strikethrough].is_sameas("strikethrough"));
         }
 
         return;
@@ -185,78 +185,80 @@ void FontProperty::Convert(ttlib::cview font)
     // wxFB-like style which used numbers. The second value for the wxFB-style is the font style which will be 90 or higher
     // -- too high to be a point size. So, we look at that number, and if it's less than 90, then assume it's the new style.
 
-    if (mstr.size() > font::idx_style)
+    if (mstr.size() > font::idx_facename_style)
     {
-        auto value = std::atof(std::string(mstr[font::idx_style]).c_str());
+        auto value = std::atof(std::string(mstr[font::idx_facename_style]).c_str());
         if (value < wxFONTSTYLE_NORMAL)  // wxFONTSTYLE_NORMAL == 90, so too large to be a point size
         {
             m_pointSize = value;
 
-            if (mstr.size() > font::idx_wx_style)
+            // With the new style, point size, style and weight have different indexes.
+
+            if (mstr.size() > font::idx_facename_style + 1)
             {
-                Style(font_style_pairs.GetValue(mstr[font::idx_wx_style]));
+                Style(font_style_pairs.GetValue(mstr[font::idx_facename_style + 1]));
             }
 
-            if (mstr.size() > font::idx_wx_weight)
+            if (mstr.size() > font::idx_facename_weight + 1)
             {
-                Weight(font_weight_pairs.GetValue(mstr[font::idx_wx_weight]));
+                Weight(font_weight_pairs.GetValue(mstr[font::idx_facename_weight + 1]));
             }
 
-            if (mstr.size() > font::idx_wx_underlined)
+            if (mstr.size() > font::idx_facename_underlined)
             {
-                Underlined(mstr[font::idx_wx_underlined].is_sameas("underlined"));
+                Underlined(mstr[font::idx_facename_underlined].is_sameas("underlined"));
             }
 
-            if (mstr.size() > font::idx_wx_strikethrough)
+            if (mstr.size() > font::idx_facename_strikethrough)
             {
-                Strikethrough(mstr[font::idx_wx_strikethrough].is_sameas("strikethrough"));
+                Strikethrough(mstr[font::idx_facename_strikethrough].is_sameas("strikethrough"));
             }
 
             return;
         }
         else
         {
-            m_pointSize = std::atof(std::string(mstr[font::idx_point]).c_str());
+            m_pointSize = std::atof(std::string(mstr[font::idx_facename_point]).c_str());
         }
     }
 
     // If we get here, this is an old-style and/or wxFormBuilder property
 
-    if (mstr.size() > font::idx_style)
+    if (mstr.size() > font::idx_facename_style)
     {
-        auto style = mstr[font::idx_style].atoi();
+        auto style = mstr[font::idx_facename_style].atoi();
         if (style >= wxFONTSTYLE_NORMAL && style < wxFONTSTYLE_MAX)
         {
             Style(static_cast<wxFontStyle>(style));
         }
     }
 
-    if (mstr.size() > font::idx_weight)
+    if (mstr.size() > font::idx_facename_weight)
     {
-        auto weight = mstr[font::idx_weight].atoi();
+        auto weight = mstr[font::idx_facename_weight].atoi();
         if (weight >= wxFONTWEIGHT_NORMAL && weight < wxFONTWEIGHT_MAX)
         {
             Weight(static_cast<wxFontWeight>(weight));
         }
     }
 
-    if (mstr.size() > font::idx_family)
+    if (mstr.size() > font::idx_facename_family)
     {
-        auto value = mstr[font::idx_family].atoi();
+        auto value = mstr[font::idx_facename_family].atoi();
         if (value >= wxFONTFAMILY_DEFAULT && value < wxFONTFAMILY_MAX)
         {
             Family(static_cast<wxFontFamily>(value));
         }
     }
 
-    if (mstr.size() > font::idx_underlined)
+    if (mstr.size() > font::idx_facename_underlined)
     {
-        Underlined(mstr[font::idx_underlined].atoi() != 0);
+        Underlined(mstr[font::idx_facename_underlined].atoi() != 0);
     }
 
-    if (mstr.size() > font::idx_strikethrough)
+    if (mstr.size() > font::idx_facename_strikethrough)
     {
-        Strikethrough(mstr[font::idx_strikethrough].atoi() != 0);
+        Strikethrough(mstr[font::idx_facename_strikethrough].atoi() != 0);
     }
 }
 
@@ -268,17 +270,16 @@ wxString FontProperty::as_wxString() const
         // symbol size, style, weight, underlined, strikethrough
 
         ttlib::cstr prop_str(font_symbol_pairs.GetName(GetSymbolSize()));
-        prop_str << "," << font_style_pairs.GetName(GetStyle());
-        prop_str << "," << font_weight_pairs.GetName(GetWeight());
+        prop_str << "," << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
+        prop_str << "," << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" : font_weight_pairs.GetName(GetWeight()));
         prop_str.Replace(",normal", ",", true);
         if (!IsUnderlined() && !IsStrikethrough())
         {
-            if (prop_str != "normal size,,")
-            {
-                while (prop_str.back() == ',')
-                    prop_str.pop_back();
-                str = prop_str;
-            }
+            while (prop_str.back() == ',')
+                prop_str.pop_back();
+            str = prop_str;
+            if (str == font_symbol_pairs.GetName(GetSymbolSize()))
+                str.clear();
             return str;
         }
         prop_str << "," << (IsUnderlined() ? "underlined" : "");
@@ -311,17 +312,13 @@ wxString FontProperty::as_wxString() const
                 prop_str << ",9";
             }
         }
-        prop_str << "," << font_style_pairs.GetName(GetStyle());
-        prop_str << "," << font_weight_pairs.GetName(GetWeight());
-        prop_str.Replace(",normal", ",", true);
+        prop_str << "," << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
+        prop_str << "," << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" : font_weight_pairs.GetName(GetWeight()));
         if (!IsUnderlined() && !IsStrikethrough())
         {
-            if (prop_str != "normal size,,")
-            {
-                while (prop_str.back() == ',')
-                    prop_str.pop_back();
-                str = prop_str;
-            }
+            while (prop_str.back() == ',')
+                prop_str.pop_back();
+            str = prop_str;
             return str;
         }
         prop_str << "," << (IsUnderlined() ? "underlined" : "");
@@ -330,7 +327,6 @@ wxString FontProperty::as_wxString() const
             str = prop_str;
             return str;
         }
-        prop_str.Replace(",normal", ",", true);
         prop_str << ",strikethrough";
         str = prop_str;
     }
@@ -351,18 +347,14 @@ wxString FontProperty::as_wxString() const
                 prop_str << ",9";
             }
         }
-        prop_str << "," << font_style_pairs.GetName(GetStyle());
-        prop_str << "," << font_weight_pairs.GetName(GetWeight());
-        prop_str << "," << font_family_pairs.GetName(GetFamily());
-        prop_str.Replace(",normal", ",", true);
+        prop_str << "," << (GetStyle() == wxFONTSTYLE_NORMAL ? "" : font_style_pairs.GetName(GetStyle()));
+        prop_str << "," << (GetWeight() == wxFONTWEIGHT_NORMAL ? "" : font_weight_pairs.GetName(GetWeight()));
+        prop_str << "," << (GetFamily() == wxFONTFAMILY_DEFAULT ? "" : font_family_pairs.GetName(GetFamily()));
         if (!IsUnderlined() && !IsStrikethrough())
         {
-            if (prop_str != "normal size,,")
-            {
-                while (prop_str.back() == ',')
-                    prop_str.pop_back();
-                str = prop_str;
-            }
+            while (prop_str.back() == ',')
+                prop_str.pop_back();
+            str = prop_str;
             return str;
         }
         prop_str << "," << (IsUnderlined() ? "underlined" : "");
@@ -371,7 +363,6 @@ wxString FontProperty::as_wxString() const
             str = prop_str;
             return str;
         }
-        prop_str.Replace(",normal", ",", true);
         prop_str << ",strikethrough";
         str = prop_str;
     }

@@ -17,6 +17,7 @@ public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
+    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
 

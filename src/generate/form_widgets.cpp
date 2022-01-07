@@ -250,6 +250,11 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenEvents(NodeEvent* event, const
     return GenEventCode(event, class_name);
 }
 
+std::optional<ttlib::cstr> FrameFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    return GenFormSettings(node);
+}
+
 bool FrameFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/frame.h>", set_src, set_hdr);

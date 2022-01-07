@@ -145,16 +145,7 @@ static void AddPropIfUsed(PropName prop_name, ttlib::cview func_name, Node* node
 void GenerateWindowSettings(Node* node, ttlib::cstr& code)
 {
     AddPropIfUsed(prop_window_extra_style, "SetExtraStyle(", node, code);
-    if (node->IsForm())
-    {
-        AddPropIfUsed(prop_font, "SetFont(", node, code);
-        AddPropIfUsed(prop_foreground_colour, "SetForegroundColour(", node, code);
-        AddPropIfUsed(prop_background_colour, "SetBackgroundColour(", node, code);
-    }
-    else
-    {
-        code << GenFontColourSettings(node);
-    }
+    code << GenFontColourSettings(node);
 
     // Note that \t is added after the \n in case the caller needs to keep indents
 

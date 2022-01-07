@@ -1228,7 +1228,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         {
             if (result.value().size())
             {
-                m_source->writeLine(result.value(), auto_indent);
+                m_source->writeLine(result.value(), indent::auto_keep_whitespace);
                 m_source->writeLine();
             }
         }
@@ -1245,7 +1245,10 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         ttlib::cstr code;
         GenerateWindowSettings(form_node, code);
         if (code.size())
-            m_source->writeLine(code);
+        {
+            // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.
+            m_source->writeLine(code, indent::auto_keep_whitespace);
+        }
     }
 
     m_source->SetLastLineBlank();

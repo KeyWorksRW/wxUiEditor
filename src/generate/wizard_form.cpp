@@ -153,11 +153,6 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCo
     return code;
 }
 
-std::optional<ttlib::cstr> WizardFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    return GenFormSettings(node);
-}
-
 std::optional<ttlib::cstr> WizardFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);

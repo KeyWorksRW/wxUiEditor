@@ -250,11 +250,6 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenEvents(NodeEvent* event, const
     return GenEventCode(event, class_name);
 }
 
-std::optional<ttlib::cstr> FrameFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    return GenFormSettings(node);
-}
-
 bool FrameFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/frame.h>", set_src, set_hdr);
@@ -330,57 +325,7 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenEvents(NodeEvent* event, const 
 
 std::optional<ttlib::cstr> PopupWinGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_string(prop_font).size())
-    {
-        code << "SetFont(wxFont(";
-        auto fontprop = node->prop_as_font_prop(prop_font);
-        wxFont font = fontprop.GetFont();
-        auto pointSize = fontprop.GetPointSize();
-
-        if (pointSize <= 0)
-            code << "wxNORMAL_FONT->GetPointSize(), ";
-        else
-            code << pointSize << ", ";
-        code << ConvertFontFamilyToString(fontprop.GetFamily()) << ", " << font.GetStyleString().wx_str();
-        code << ", " << font.GetWeightString().wx_str() << ", " << (fontprop.IsUnderlined() ? "true" : "false");
-        if (fontprop.GetFaceName().empty())
-            code << ", wxEmptyString";
-        else
-            code << ", \"" << fontprop.GetFaceName().wx_str() << "\"";
-        code << ");";
-    }
-
-    auto& fg_clr = node->prop_as_string(prop_foreground_colour);
-    if (fg_clr.size())
-    {
-        if (code.size())
-            code << '\n';
-        code << "SetForegroundColour(";
-        if (fg_clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << fg_clr << "));";
-        else
-        {
-            wxColour colour = ConvertToColour(fg_clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
-        }
-    }
-
-    auto& bg_clr = node->prop_as_string(prop_background_colour);
-    if (bg_clr.size())
-    {
-        if (code.size())
-            code << '\n';
-        code << "SetBackgroundColour(";
-        if (bg_clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << bg_clr << "));";
-        else
-        {
-            wxColour colour = ConvertToColour(bg_clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
-        }
-    }
+    auto code = GenFontColourSettings(node);
 
     if (code.empty())
     {

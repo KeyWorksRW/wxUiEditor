@@ -18,6 +18,8 @@
 
 #include "import_wxcrafter.h"  // This will include rapidjson/document.h
 
+#include "font_prop.h"  // FontProperty class
+
 namespace rapidjson
 {
     // If object contains the specified key, this returns the Value. Otherwise, it returns
@@ -686,7 +688,7 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                     {
                         prop_name = (node->IsForm() ? prop_class_name : prop_var_name);
                     }
-                    else if (node->isGen(gen_wxStyledTextCtrl) && ProcessedScintillaProperty(node, iter))
+                    else if (node->isGen(gen_wxStyledTextCtrl) && ProcessScintillaProperty(node, iter))
                     {
                         continue;
                     }
@@ -859,7 +861,11 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
             }
             else if (prop_name == prop_stc_lexer)
             {
-                ProcessedScintillaProperty(node, iter);
+                ProcessScintillaProperty(node, iter);
+            }
+            else if (prop_name == prop_font)
+            {
+                ProcessFont(node, iter);
             }
             else if (prop_name != prop_unknown)
             {
@@ -922,7 +928,55 @@ void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
     }
 }
 
-bool WxCrafter::ProcessedScintillaProperty(Node* node, const Value& object)
+// For system fonts, wxCrafter doesn't support size or weigth -- you are limited to italic, bold, and underlined.
+// Note that wxCrafter supports ALL of the system fonts, not just wxSYS_DEFAULT_GUI_FONT.
+//
+// For custom fonts, wxCrafter uses the system font picker, but ignores some of the results. wxCrafter supports integer point
+// size, italic, bold, underlines, family and facename.
+
+bool WxCrafter::ProcessFont(Node* node, const Value& object)
+{
+    if (object.HasMember("m_value"))
+    {
+        ttlib::cstr crafter_str = object["m_value"].GetString();
+        if (crafter_str.empty())
+            return true;
+
+        FontProperty font_info;
+        if (crafter_str.contains("italic"))
+            font_info.Italic(wxFONTFLAG_ITALIC);
+        if (crafter_str.contains("bold"))
+            font_info.Bold(wxFONTFLAG_ITALIC);
+        if (crafter_str.contains("underlined"))
+            font_info.Underlined();
+
+        if (!crafter_str.is_sameprefix("wxSYS_DEFAULT_GUI_FONT"))
+        {
+            font_info.setDefGuiFont(false);
+            font_info.FaceName("");
+            ttlib::multiview mstr(crafter_str, ',', tt::TRIM::left);
+
+            if (mstr[0].is_sameas("wxSYS_OEM_FIXED_FONT") || mstr[0].is_sameas("wxSYS_ANSI_FIXED_FONT"))
+                font_info.Family(wxFONTFAMILY_TELETYPE);
+
+            if (ttlib::is_digit(mstr[0][0]))
+            {
+                font_info.PointSize(mstr[0].atoi());
+
+                if (mstr.size() > 3 && mstr[3] != "default")
+                    font_info.Family(font_family_pairs.GetValue(mstr[3]));
+                if (mstr.size() > 4 && mstr[4] == "1")
+                    font_info.Underlined();
+                if (mstr.size() > 5)
+                    font_info.FaceName(mstr[5].wx_str());
+            }
+        }
+        node->prop_set_value(prop_font, font_info.as_string());
+    }
+    return true;
+}
+
+bool WxCrafter::ProcessScintillaProperty(Node* node, const Value& object)
 {
     // wxCrafter hard-codes margin numbers. line:0, symbol:2, separator:3, fold:4,
 
@@ -1047,8 +1101,8 @@ bool WxCrafter::ProcessedScintillaProperty(Node* node, const Value& object)
     }
     else if (name.contains("keywords set"))
     {
-        // We don't currently support keyword sets since fully supporting them would require processing every possible Lexer
-        // to figure out what constants to use.
+        // We don't currently support keyword sets since fully supporting them would require processing every possible
+        // Lexer to figure out what constants to use.
         return true;
     }
     return false;

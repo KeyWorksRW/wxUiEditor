@@ -220,6 +220,7 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
 {
     if (m_radioSystem->GetValue())
     {
+        m_system_font.setDefGuiFont(true);
         m_system_font.SymbolicSize(
             font_symbol_pairs.GetValue((const char*) m_comboSymbolSize->GetStringSelection().mb_str()));
         m_system_font.Style(font_style_pairs.GetValue((const char*) m_comboSystemStyles->GetStringSelection().mb_str()));
@@ -230,6 +231,7 @@ void FontPropDlg::OnOK(wxCommandEvent& event)
     }
     else
     {
+        m_custom_font.setDefGuiFont(false);
         m_custom_font.Family(font_family_pairs.GetValue((const char*) m_comboFamily->GetValue().mb_str()));
         m_custom_font.PointSize(m_spinCustomPointSize->GetValue());
         m_custom_font.Style(font_style_pairs.GetValue((const char*) m_comboCustomStyles->GetValue().mb_str()));

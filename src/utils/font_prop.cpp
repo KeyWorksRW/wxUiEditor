@@ -278,7 +278,7 @@ wxString FontProperty::as_wxString() const
             while (prop_str.back() == ',')
                 prop_str.pop_back();
             str = prop_str;
-            if (str == font_symbol_pairs.GetName(GetSymbolSize()))
+            if (str == font_symbol_pairs.GetName(wxFONTSIZE_MEDIUM))
                 str.clear();
             return str;
         }
@@ -380,7 +380,7 @@ wxFont FontProperty::GetFont() const
     if (m_isDefGuiFont)
     {
         wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-        font.SetFractionalPointSize(GetFractionalPointSize());
+        font.SetSymbolicSize(GetSymbolSize());
         font.SetStyle(GetStyle());
         font.SetWeight(GetWeight());
         font.SetUnderlined(IsUnderlined());

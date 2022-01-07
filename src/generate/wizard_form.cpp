@@ -44,7 +44,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
         if (node->prop_as_int(prop_bmp_min_width) > 0)
             code << "\n\tSetMinimumBitmapWidth(" << node->prop_as_string(prop_bmp_min_width) << ");";
         if (node->HasValue(prop_bmp_background_colour))
-            code << "\n\tSetBitmapBackgroundColour(" << GenerateColorCode(node, prop_bmp_background_colour) << ");";
+            code << "\n\tSetBitmapBackgroundColour(" << GenerateColourCode(node, prop_bmp_background_colour) << ");";
     }
 
     code << "\n\tCreate(parent, id, title, ";
@@ -151,11 +151,6 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCo
     }
 
     return code;
-}
-
-std::optional<ttlib::cstr> WizardFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
-{
-    return GenFormSettings(node);
 }
 
 std::optional<ttlib::cstr> WizardFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

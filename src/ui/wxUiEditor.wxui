@@ -3146,5 +3146,276 @@
           proportion="1" />
       </node>
     </node>
+    <node
+      class="wxDialog"
+      base_file="fontpropdlg_base"
+      class_name="FontPropDlgBase"
+      derived_class_name="FontPropDlg"
+      derived_file="../customprops/font_prop_dlg.cpp"
+      title="Font Property"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="StaticRadioBtnBoxSizer"
+          class_access="protected:"
+          label="Default GUI Font"
+          radiobtn_var_name="m_radioSystem"
+          var_name="m_system_box"
+          border_size="10"
+          flags="wxEXPAND"
+          wxEVT_RADIOBUTTON="OnSystemRadio">
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_10"
+            flags="wxEXPAND">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_11">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="Si&amp;ze:"
+                var_name="staticText_7"
+                borders="wxTOP|wxRIGHT|wxLEFT" />
+              <node
+                class="wxComboBox"
+                style="wxCB_READONLY"
+                var_name="m_comboSymbolSize"
+                wxEVT_COMBOBOX="OnSymbolSize" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_15">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="&amp;Style:"
+                var_name="staticText_8"
+                borders="wxTOP|wxRIGHT|wxLEFT" />
+              <node
+                class="wxComboBox"
+                style="wxCB_READONLY"
+                var_name="m_comboSystemStyles"
+                wxEVT_COMBOBOX="OnStyle" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_16">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="&amp;Weight:"
+                var_name="staticText_9"
+                borders="wxTOP|wxRIGHT|wxLEFT" />
+              <node
+                class="wxComboBox"
+                style="wxCB_READONLY"
+                var_name="m_comboSystemWeight"
+                wxEVT_COMBOBOX="OnWeight" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_12"
+              flags="wxEXPAND"
+              proportion="1">
+              <node
+                class="wxStaticText"
+                label="Sample"
+                var_name="m_staticSystemSample"
+                tooltip="This sample text will show you how the text will look on the current operating system. The font will be different when your program is used on a different operating systems."
+                alignment="wxALIGN_CENTER"
+                proportion="1" />
+            </node>
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_19"
+            flags="wxEXPAND">
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_17"
+              flags="wxEXPAND">
+              <node
+                class="wxCheckBox"
+                label="&amp;Underlined"
+                var_name="m_checkSystemUnderlined"
+                wxEVT_CHECKBOX="OnUnderlined" />
+              <node
+                class="wxCheckBox"
+                label="S&amp;trikethrough"
+                var_name="m_checkSystemStrikeThrough"
+                wxEVT_CHECKBOX="OnStrikeThrough" />
+            </node>
+          </node>
+        </node>
+        <node
+          class="spacer"
+          height="20" />
+        <node
+          class="StaticRadioBtnBoxSizer"
+          checked="false"
+          class_access="protected:"
+          label="Custom Font"
+          radiobtn_var_name="m_radioCustom"
+          var_name="m_custom_box"
+          border_size="10"
+          flags="wxEXPAND"
+          wxEVT_RADIOBUTTON="OnCustomRadio">
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_3"
+            flags="wxEXPAND">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="F&amp;amily:"
+                var_name="staticText"
+                borders="wxTOP|wxRIGHT|wxLEFT" />
+              <node
+                class="wxComboBox"
+                style="wxCB_READONLY"
+                var_name="m_comboFamily"
+                wxEVT_COMBOBOX="OnFamily" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_2">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="Styl&amp;e:"
+                var_name="staticText_2"
+                borders="wxTOP|wxRIGHT|wxLEFT" />
+              <node
+                class="wxComboBox"
+                style="wxCB_READONLY"
+                var_name="m_comboCustomStyles"
+                wxEVT_COMBOBOX="OnStyle" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_4">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="We&amp;ight:"
+                var_name="staticText_3"
+                borders="wxTOP|wxRIGHT|wxLEFT" />
+              <node
+                class="wxComboBox"
+                style="wxCB_READONLY"
+                var_name="m_comboCustomWeight"
+                wxEVT_COMBOBOX="OnWeight" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_8"
+              flags="wxEXPAND"
+              proportion="1">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="Face&amp;name:"
+                var_name="staticText_5"
+                smart_size="-1,-1d"
+                borders="wxTOP|wxRIGHT|wxLEFT" />
+              <node
+                class="wxComboBox"
+                contents="&quot;default&quot;"
+                selection_string="default"
+                style="wxCB_READONLY|wxCB_SORT"
+                var_name="m_comboFacenames"
+                minimum_size="-1,-1d"
+                smart_size="300,-1d"
+                tooltip="Leave Facename set to default to create a font that isn't dependent on a user's installed fonts."
+                flags="wxEXPAND"
+                wxEVT_COMBOBOX="OnFacename" />
+            </node>
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_5"
+            flags="wxEXPAND">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_6">
+              <node
+                class="wxStaticText"
+                class_access="none"
+                label="&amp;Point Size:"
+                var_name="staticText_4"
+                borders="wxTOP|wxRIGHT|wxLEFT" />
+              <node
+                class="wxSpinCtrlDouble"
+                digits="1"
+                inc="0.5"
+                initial="9"
+                max="72"
+                min="4"
+                var_name="m_spinCustomPointSize"
+                wxEVT_SPINCTRLDOUBLE="OnPointSize"
+                wxEVT_TEXT="OnEditPointSize" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_13">
+              <node
+                class="spacer"
+                height="20" />
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_7">
+                <node
+                  class="wxCheckBox"
+                  label="Un&amp;derlined"
+                  var_name="m_checkCustomUnderlined"
+                  wxEVT_CHECKBOX="OnUnderlined" />
+                <node
+                  class="wxCheckBox"
+                  label="Striket&amp;hrough"
+                  var_name="m_checkCustomStrikeThrough"
+                  wxEVT_CHECKBOX="OnStrikeThrough" />
+              </node>
+            </node>
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="box_sizer_9"
+              flags="wxEXPAND"
+              proportion="1">
+              <node
+                class="wxStaticText"
+                label="Sample"
+                var_name="m_staticCustomSample"
+                alignment="wxALIGN_CENTER"
+                proportion="1" />
+            </node>
+          </node>
+        </node>
+        <node
+          class="spacer"
+          height="20" />
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

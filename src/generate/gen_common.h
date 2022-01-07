@@ -74,9 +74,6 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code);
 // returns GetImageFromArray() (which is a wxImage).
 ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description);
 
-// Converts color text into code.
-ttlib::cstr GenerateColorCode(Node* node, PropName prop_name);
-
 ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name);
 
 // Will generate "wxDefaultPosition" if prop_pos is -1;-1
@@ -98,6 +95,9 @@ int GetStyleInt(Node* node, const char* prefix = nullptr);
 ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node);
 
 ttlib::cstr GenFormSettings(Node* node);
+
+// Generates font, foreground, and background settings if any of them have been specified.
+ttlib::cstr GenFontColourSettings(Node* node);
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);

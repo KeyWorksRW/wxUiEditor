@@ -9,8 +9,9 @@
 
 #include "evt_string_prop.h"
 
-#include "../nodes/node_event.h"    // NodeEventInfo -- NodeEvent and NodeEventInfo classes
-#include "../ui/eventhandlerdlg.h"  // Dialog for editing event handlers
+#include "eventhandler_dlg.h"  // Dialog for editing event handlers
+
+#include "../nodes/node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
 
 EventStringProperty::EventStringProperty(const wxString& label, NodeEvent* event) :
     wxStringProperty(label, wxPG_LABEL, event->get_value()), m_event(event)

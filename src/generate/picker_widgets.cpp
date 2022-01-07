@@ -311,7 +311,7 @@ std::optional<ttlib::cstr> FontPickerGenerator::GenConstruction(Node* node)
             code << fontprop.GetPointSize();
 
         code << ", " << ConvertFontFamilyToString(fontprop.GetFamily()) << ", " << font.GetStyleString().wx_str();
-        code << ", " << font.GetWeightString().wx_str() << ", " << (fontprop.isUnderlined() ? "true" : "false") << ", ";
+        code << ", " << font.GetWeightString().wx_str() << ", " << (fontprop.IsUnderlined() ? "true" : "false") << ", ";
         if (fontprop.GetFaceName().size())
             code << '\"' << fontprop.GetFaceName().wx_str() << '\"';
         else

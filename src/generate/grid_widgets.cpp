@@ -159,7 +159,7 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
         code << braced_indent << node->get_node_name() << "->EnableGridLines(false);";
     if (node->HasValue(prop_grid_line_color))
         code << braced_indent << node->get_node_name() << "->SetGridLineColour("
-             << GenerateColorCode(node, prop_grid_line_color) << ");";
+             << GenerateColourCode(node, prop_grid_line_color) << ");";
 
     code << braced_indent << node->get_node_name() << "->EnableDragGridSize("
          << (node->prop_as_bool(prop_drag_grid_size) ? "true" : "false") << ");";
@@ -182,7 +182,7 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
     if (node->HasValue(prop_label_bg))
     {
         code << braced_indent << node->get_node_name() << "->SetLabelBackgroundColour("
-             << GenerateColorCode(node, prop_label_bg) << ");";
+             << GenerateColourCode(node, prop_label_bg) << ");";
     }
 
     // TODO: [KeyWorks - 02-27-2021] GenerateFontCode() was removed because it was obsolete and broken. It needs to be
@@ -193,17 +193,17 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
         code << braced_indent << node->get_node_name() << "->SetLabelFont(" << GenerateFontCode(node, "label_font") << ");";
 #endif
     if (node->HasValue(prop_label_text))
-        code << braced_indent << node->get_node_name() << "->SetLabelTextColour(" << GenerateColorCode(node, prop_label_text)
-             << ");";
+        code << braced_indent << node->get_node_name() << "->SetLabelTextColour("
+             << GenerateColourCode(node, prop_label_text) << ");";
 
     // Cell category
 
     if (node->HasValue(prop_cell_bg))
         code << braced_indent << node->get_node_name() << "->SetDefaultCellBackgroundColour("
-             << GenerateColorCode(node, prop_cell_bg) << ");";
+             << GenerateColourCode(node, prop_cell_bg) << ");";
     if (node->HasValue(prop_cell_text))
         code << braced_indent << node->get_node_name() << "->SetDefaultCellTextColour("
-             << GenerateColorCode(node, prop_cell_text) << ");";
+             << GenerateColourCode(node, prop_cell_text) << ");";
 #if 0
     if (node->HasValue(prop_cell_font))
         code << braced_indent << node->get_node_name() << "->SetDefaultCellFont(" << GenerateFontCode(node, "cell_font")

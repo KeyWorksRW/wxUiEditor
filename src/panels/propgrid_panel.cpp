@@ -42,10 +42,11 @@
 #include "../customprops/custom_param_prop.h"   // EditParamProperty -- dialog for editing CustomControl parameter
 #include "../customprops/directory_prop.h"      // DirectoryDialogAdapter
 #include "../customprops/evt_string_prop.h"     // EventStringProperty -- dialog for editing event handlers
-#include "../customprops/pg_animation.h"        // PropertyGrid_Animation -- Custom property grid class for animations
-#include "../customprops/pg_image.h"            // PropertyGrid_Image -- Custom property grid class for images
-#include "../customprops/pg_point.h"            // CustomPointProperty -- custom wxPGProperty for handling wxPoint
-#include "../customprops/txt_string_prop.h"     // EditStringProperty -- dialog for editing single-line strings
+#include "../customprops/font_string_prop.h"  // FontStringDialogAdapter -- Derived wxStringProperty class for font property
+#include "../customprops/pg_animation.h"      // PropertyGrid_Animation -- Custom property grid class for animations
+#include "../customprops/pg_image.h"          // PropertyGrid_Image -- Custom property grid class for images
+#include "../customprops/pg_point.h"          // CustomPointProperty -- custom wxPGProperty for handling wxPoint
+#include "../customprops/txt_string_prop.h"   // EditStringProperty -- dialog for editing single-line strings
 
 #include "wx_id_list.cpp"  // wxID_ strings
 
@@ -295,14 +296,8 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
             return new CustomPointProperty(prop->DeclName().wx_str(), prop, CustomPointProperty::type_size);
 
         case type_wxFont:
-            if (prop->as_string().empty())
-            {
-                return new wxFontProperty(prop->DeclName().wx_str(), wxPG_LABEL);
-            }
-            else
-            {
-                return new wxFontProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_font());
-            }
+            // This includes a button that triggers a custom font selector dialog
+            return new FontStringProperty(prop->DeclName().wx_str(), prop);
 
         case type_path:
             return new DirectoryProperty(prop->DeclName().wx_str(), prop);
@@ -846,6 +841,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             }
 
         case type_code_edit:
+        case type_wxFont:
         case type_string_edit:
         case type_id:
         case type_int:
@@ -1024,18 +1020,6 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             {
                 auto value = event.GetPropertyValue().GetString();
                 modifyProperty(prop, value.utf8_string());
-            }
-            break;
-
-        case type_wxFont:
-            {
-                wxFont font;
-                font << event.GetPropertyValue();
-                if (font.IsOk())
-                {
-                    FontProperty font_prop(font);
-                    modifyProperty(prop, font_prop.as_string());
-                }
             }
             break;
 
@@ -1320,12 +1304,6 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
                 aux.Replace(",", ";");
                 grid_property->SetValueFromString(aux, 0);
             }
-            break;
-
-        case type_wxFont:
-            // REVIEW: [KeyWorks - 07-03-2020] Why not just use SetValueFromString like the others? And for that matter,
-            // when is this being called?
-            grid_property->SetValue(WXVARIANT(prop->as_string()));
             break;
 
         case type_wxColour:

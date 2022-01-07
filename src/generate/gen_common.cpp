@@ -880,7 +880,7 @@ ttlib::cstr GenFontColourSettings(Node* node)
         FontProperty fontprop(node->get_prop_ptr(prop_font));
         if (fontprop.isDefGuiFont())
         {
-            code << "\n{\n\twxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));";
+            code << "{\n\twxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));";
             if (fontprop.GetSymbolSize() != wxFONTSIZE_MEDIUM)
                 code << "\n\tfont.SetSymbolicSize(" << font_symbol_pairs.GetValue(fontprop.GetSymbolSize()) << ");";
             if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
@@ -905,7 +905,7 @@ ttlib::cstr GenFontColourSettings(Node* node)
         else
         {
             auto point_size = fontprop.GetFractionalPointSize();
-            code << "\n{\n\twxFontInfo font_info(";
+            code << "{\n\twxFontInfo font_info(";
             if (point_size != static_cast<int>(point_size))
             {
                 code << "\n#if (wxMAJOR_VERSION < 4) && (wxMINOR_VERSION < 2) && (wxRELEASE_NUMBER < 2)\n\t";
@@ -979,14 +979,16 @@ ttlib::cstr GenFontColourSettings(Node* node)
     auto& fg_clr = node->prop_as_string(prop_foreground_colour);
     if (fg_clr.size())
     {
+        if (code.size())
+            code << '\n';
+
         if (node->IsForm())
         {
-            code << "\n"
-                 << "SetForegroundColour(";
+            code << "SetForegroundColour(";
         }
         else
         {
-            code << "\n" << node->get_node_name() << "->SetForegroundColour(";
+            code << node->get_node_name() << "->SetForegroundColour(";
         }
         if (fg_clr.contains("wx"))
             code << "wxSystemSettings::GetColour(" << fg_clr << "));";
@@ -1002,12 +1004,11 @@ ttlib::cstr GenFontColourSettings(Node* node)
     {
         if (node->IsForm())
         {
-            code << "\n"
-                 << "SetBackgroundColour(";
+            code << "SetBackgroundColour(";
         }
         else
         {
-            code << "\n" << node->get_node_name() << "->SetBackgroundColour(";
+            code << node->get_node_name() << "->SetBackgroundColour(";
         }
         if (bg_clr.contains("wx"))
             code << "wxSystemSettings::GetColour(" << bg_clr << "));";
@@ -1020,7 +1021,6 @@ ttlib::cstr GenFontColourSettings(Node* node)
 
     return code;
 }
-
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string. Used when generating
 // code.

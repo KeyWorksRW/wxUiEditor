@@ -1037,7 +1037,7 @@ bool WxCrafter::ProcessedScintillaProperty(Node* node, const Value& object)
         if (object["m_selection"].IsNumber())
         {
             auto items = GetStringVector(object["m_options"]);
-            auto index = object["m_selection"].GetInt();
+            size_t index = object["m_selection"].GetInt();
             if (index < items.size())
             {
                 node->prop_set_value(prop_stc_lexer, items[index].data() + (sizeof("wxSTC_LEX_") - 1));

@@ -193,8 +193,8 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
         code << braced_indent << node->get_node_name() << "->SetLabelFont(" << GenerateFontCode(node, "label_font") << ");";
 #endif
     if (node->HasValue(prop_label_text))
-        code << braced_indent << node->get_node_name() << "->SetLabelTextColour(" << GenerateColourCode(node, prop_label_text)
-             << ");";
+        code << braced_indent << node->get_node_name() << "->SetLabelTextColour("
+             << GenerateColourCode(node, prop_label_text) << ");";
 
     // Cell category
 

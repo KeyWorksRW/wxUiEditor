@@ -387,7 +387,6 @@ struct FontWeightPairs
             default:
                 return "wxFONTWEIGHT_NORMAL";
         }
-
     }
 
     const std::string& GetName(wxFontWeight weight) const

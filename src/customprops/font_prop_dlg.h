@@ -13,7 +13,7 @@
 
 #include "../ui/fontpropdlg_base.h"
 
-#include "../utils/font_prop.h"   // FontProperty class
+#include "../utils/font_prop.h"  // FontProperty class
 
 class NodeProperty;
 

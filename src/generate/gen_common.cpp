@@ -908,7 +908,8 @@ ttlib::cstr GenFontColourSettings(Node* node)
             code << "{\n\twxFontInfo font_info(";
             if (point_size != static_cast<int>(point_size))
             {
-                code << "\n#if (wxMAJOR_VERSION < 3) || ((wxMAJOR_VERSION == 3) && (wxMINOR_VERSION < 2) && (wxRELEASE_NUMBER < 2))\n\t";
+                code << "\n#if (wxMAJOR_VERSION < 3) || ((wxMAJOR_VERSION == 3) && (wxMINOR_VERSION < 2) && "
+                        "(wxRELEASE_NUMBER < 2))\n\t";
                 if (point_size <= 0)
                 {
                     code << "wxSystemSettings::GetFont()->GetPointSize());";

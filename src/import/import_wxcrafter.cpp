@@ -100,7 +100,10 @@ bool WxCrafter::Import(const ttString& filename, bool write_doc)
         if (auto& metadata = FindValue(document, "metadata"); metadata.IsObject())
         {
             if (auto& result = FindValue(metadata, "m_useEnum"); result.IsBool())
+            {
+                // wxCrafter is project wide, wxUiEditor is per-form.
                 m_generate_ids = result.GetBool();
+            }
 
             if (auto& include_files = FindValue(metadata, "m_includeFiles"); include_files.IsArray())
             {
@@ -189,6 +192,11 @@ void WxCrafter::ProcessForm(const Value& form)
 
     auto new_node = g_NodeCreator.CreateNode(gen_name, m_project.get());
     m_project->Adopt(new_node);
+
+    if (!m_generate_ids)
+    {
+        new_node->prop_set_value(prop_generate_ids, false);
+    }
 
     if (!m_is_output_name_used && m_output_name.size())
     {

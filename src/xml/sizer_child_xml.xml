@@ -108,10 +108,10 @@ inline const char* sizer_child_xml = R"===(<?xml version="1.0"?>
 			help="The vertical gap (in pixels) between the cells in the sizer.">0</property>
 		<property name="hgap" type="uint"
 			help="The horizontal gap (in pixels) between cells in the sizer.">0</property>
-		<property name="growablerows" type="uintpairlist"
-			help="Comma separated list of row indices (starting from zero, optional proportion appended after a colon) that should be grown if there is extra space available to the sizer." />
 		<property name="growablecols" type="uintpairlist"
 			help="Comma separated list of column indices (starting from zero, optional proportion appended after a colon) that should be grown if there is extra space available to the sizer." />
+		<property name="growablerows" type="uintpairlist"
+			help="Comma separated list of row indices (starting from zero, optional proportion appended after a colon) that should be grown if there is extra space available to the sizer." />
 		<property name="flexible_direction" type="option"
 			help="wxFlexGridSizer can size items equally in one direction but unequally ('flexibly') in the other">
 			<option name="wxVERTICAL"

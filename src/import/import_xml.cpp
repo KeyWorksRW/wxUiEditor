@@ -830,3 +830,47 @@ GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
     }
     return gen_unknown;
 }
+
+// clang-format off
+std::unordered_map<std::string, std::string> s_map_old_events = {
+
+
+    { "wxEVT_COMMAND_THREAD",                  "wxEVT_THREAD" },
+    { "wxEVT_COMMAND_BUTTON_CLICKED",          "wxEVT_BUTTON" },
+    { "wxEVT_COMMAND_CHECKBOX_CLICKED",        "wxEVT_CHECKBOX" },
+    { "wxEVT_COMMAND_CHOICE_SELECTED",         "wxEVT_CHOICE" },
+    { "wxEVT_COMMAND_LISTBOX_SELECTED",        "wxEVT_LISTBOX" },
+    { "wxEVT_COMMAND_LISTBOX_DOUBLECLICKED",   "wxEVT_LISTBOX_DCLICK" },
+    { "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED",    "wxEVT_CHECKLISTBOX" },
+    { "wxEVT_COMMAND_MENU_SELECTED",           "wxEVT_MENU" },
+    { "wxEVT_COMMAND_TOOL_CLICKED",            "wxEVT_TOOL" },
+    { "wxEVT_COMMAND_SLIDER_UPDATED",          "wxEVT_SLIDER" },
+    { "wxEVT_COMMAND_RADIOBOX_SELECTED",       "wxEVT_RADIOBOX" },
+    { "wxEVT_COMMAND_RADIOBUTTON_SELECTED",    "wxEVT_RADIOBUTTON" },
+    { "wxEVT_COMMAND_SCROLLBAR_UPDATED",       "wxEVT_SCROLLBAR" },
+    { "wxEVT_COMMAND_VLBOX_SELECTED",          "wxEVT_VLBOX" },
+    { "wxEVT_COMMAND_COMBOBOX_SELECTED",       "wxEVT_COMBOBOX" },
+    { "wxEVT_COMMAND_TOOL_RCLICKED",           "wxEVT_TOOL_RCLICKED" },
+    { "wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED",   "wxEVT_TOOL_DROPDOWN" },
+    { "wxEVT_COMMAND_TOOL_ENTER",              "wxEVT_TOOL_ENTER" },
+    { "wxEVT_COMMAND_COMBOBOX_DROPDOWN",       "wxEVT_COMBOBOX_DROPDOWN" },
+    { "wxEVT_COMMAND_COMBOBOX_CLOSEUP",        "wxEVT_COMBOBOX_CLOSEUP" },
+    { "wxEVT_COMMAND_TEXT_COPY",               "wxEVT_TEXT_COPY" },
+    { "wxEVT_COMMAND_TEXT_CUT",                "wxEVT_TEXT_CUT" },
+    { "wxEVT_COMMAND_TEXT_PASTE",              "wxEVT_TEXT_PASTE" },
+    { "wxEVT_COMMAND_TEXT_UPDATED",            "wxEVT_TEXT" },
+
+};
+// clang-format on
+
+ttlib::cview ImportXML::GetCorrectEventName(ttlib::cview name)
+{
+    if (auto result = s_map_old_events.find(name.c_str()); result != s_map_old_events.end())
+    {
+        return result->second;
+    }
+    else
+    {
+        return name;
+    }
+}

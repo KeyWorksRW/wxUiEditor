@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxCrafter project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -532,13 +532,12 @@ void WxCrafter::ProcessEvents(Node* node, const Value& array)
         {
             if (auto& name = event["m_eventName"]; name.IsString())
             {
-                if (auto node_event = node->GetEvent(name.GetString()); node_event)
+                if (auto node_event = node->GetEvent(GetCorrectEventName(name.GetString())); node_event)
                 {
                     if (auto& handler = event["m_functionNameAndSignature"]; handler.IsString())
                     {
-                        ttlib::cview function = handler.GetString();
-                        if (auto pos = function.find('('); ttlib::is_found(pos))
-                            function.remove_prefix(pos + 1);
+                        ttlib::cstr function = handler.GetString();
+                        function.erase_from('(');
                         node_event->set_value(function);
                     }
                 }

@@ -150,6 +150,10 @@ public:
 
     wxFileHistory& GetFileHistory() { return m_FileHistory; }
 
+    // This does an exact comparison, so file needs to be identical to what was added to the
+    // history.
+    void RemoveFileFromHistory(ttString file);
+
     // Display the text in a specific field of the status bar -- the default is the field
     // that aligns with the PropertyGrid panel.
     void SetStatusField(const ttlib::cstr text, int position = -1);

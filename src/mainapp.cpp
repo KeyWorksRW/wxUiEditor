@@ -149,108 +149,122 @@ int App::OnRun()
 
     // Create the frame before the dialog so that file history is initialized.
     m_frame = new MainFrame();
-    bool EmptyProject { true };
 
-    if (projectFile.empty())
+    bool is_project_loaded = false;
+    do
     {
-        CStartup dlg;
-        if (auto result = dlg.ShowModal(); result != wxID_OK)
+        bool EmptyProject = true;
+        if (projectFile.empty())
         {
-            return 1;
-        }
-
-        switch (dlg.GetCommandType())
-        {
-            case CStartup::START_MRU:
-                projectFile = dlg.GetMruFilename();
-                break;
-
-            case CStartup::START_CONVERT:
-                EmptyProject = false;
-                break;
-
-            case CStartup::START_OPEN:
-                {
-                    // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it
-                    // would actually make sense to process it since we can combine all of those resources into our single
-                    // project file.
-
-                    wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
-                                        "wxUiEditor Project File (*.wxui)|*.wxui"
-                                        "|wxCrafter Project File (*.wxcp)|*.wxcp"
-                                        "|wxFormBuilder Project File (*.fbp)|*.fbp"
-                                        "|wxGlade File (*.wxg)|*.wxg"
-                                        "|wxSmith File (*.wxs)|*.wxs"
-                                        "|XRC File (*.xrc)|*.xrc"
-                                        "|Windows Resource File (*.rc)|*.rc||",
-                                        wxFD_OPEN);
-
-                    if (dialog.ShowModal() == wxID_OK)
-                    {
-                        projectFile.utf(dialog.GetPath().wx_str());
-                    }
-                    else
-                    {
-                        return 1;
-                    }
-                }
-                break;
-
-            case CStartup::START_EMPTY:
-            default:
-                break;
-        }
-    }
-
-    if (projectFile.size())
-    {
-        m_frame->Show();
-        SetTopWindow(m_frame);
-
-#if defined(_DEBUG)
-        if (AutoMsgWindow())
-            ShowMsgWindow();
-#endif  // _DEBUG
-
-        if (!projectFile.extension().is_sameas(".wxui", tt::CASE::either) &&
-            !projectFile.extension().is_sameas(".wxue", tt::CASE::either))
-        {
-            // TODO: [KeyWorks - 10-23-2020] Temp until projectFile gets changed to ttString
-            ttString Temp(projectFile.wx_str());
-            if (ImportProject(Temp))
+            CStartup dlg;
+            if (auto result = dlg.ShowModal(); result != wxID_OK)
             {
-                return wxApp::OnRun();
+                m_frame->Close();
+                wxApp::OnRun();  // Make sure all events get handled
+                return 1;
+            }
+
+            switch (dlg.GetCommandType())
+            {
+                case CStartup::START_MRU:
+                    projectFile = dlg.GetMruFilename();
+                    break;
+
+                case CStartup::START_CONVERT:
+                    EmptyProject = false;
+                    break;
+
+                case CStartup::START_OPEN:
+                    {
+                        // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it
+                        // would actually make sense to process it since we can combine all of those resources into our
+                        // single project file.
+
+                        wxFileDialog dialog(nullptr, "Open or Import Project", wxEmptyString, wxEmptyString,
+                                            "wxUiEditor Project File (*.wxui)|*.wxui"
+                                            "|wxCrafter Project File (*.wxcp)|*.wxcp"
+                                            "|wxFormBuilder Project File (*.fbp)|*.fbp"
+                                            "|wxGlade File (*.wxg)|*.wxg"
+                                            "|wxSmith File (*.wxs)|*.wxs"
+                                            "|XRC File (*.xrc)|*.xrc"
+                                            "|Windows Resource File (*.rc)|*.rc||",
+                                            wxFD_OPEN);
+
+                        if (dialog.ShowModal() == wxID_OK)
+                        {
+                            projectFile.utf(dialog.GetPath().wx_str());
+                        }
+                        else
+                        {
+                            m_frame->Close();
+                            wxApp::OnRun();  // Make sure all events get handled
+                            return 1;
+                        }
+                    }
+                    break;
+
+                case CStartup::START_EMPTY:
+                default:
+                    break;
             }
         }
 
-        else if (LoadProject(wxString::FromUTF8(projectFile)))
+        // If projectFile cannot be loaded or imported, clear it so that the startup dialog will run again
+        if (projectFile.size())
         {
-            return wxApp::OnRun();
+            if (!projectFile.file_exists())
+            {
+                wxMessageBox((ttlib::cstr() << "The file " << projectFile << "does not exist.").wx_str(), "Load Project");
+
+                // BUGBUG: [KeyWorks - 01-09-2022] If the file doesn't exist, it needs to be removed from the file history.
+                // However, we can't do that until projectFile is the exact same string as the MRU file,
+                projectFile.clear();
+            }
+            else
+            {
+                if (!projectFile.extension().is_sameas(".wxui", tt::CASE::either) &&
+                    !projectFile.extension().is_sameas(".wxue", tt::CASE::either))
+                {
+                    // TODO: [KeyWorks - 10-23-2020] Temp until projectFile gets changed to ttString
+                    ttString Temp(projectFile.wx_str());
+                    is_project_loaded = ImportProject(Temp);
+                    if (!is_project_loaded)
+                    {
+                        projectFile.clear();
+                    }
+                }
+                else
+                {
+                    is_project_loaded = LoadProject(wxString::FromUTF8(projectFile));
+                }
+
+                if (!is_project_loaded)
+                {
+                    wxMessageBox((ttlib::cstr() << "Cannot load project file: " << projectFile).wx_str(), "Load Project");
+                    projectFile.clear();
+                }
+            }
+        }
+        else
+        {
+            is_project_loaded = NewProject(EmptyProject);
+            if (!is_project_loaded)
+            {
+                m_frame->Close();
+                wxApp::OnRun();  // Make sure all events get handled
+                return 2;
+            }
         }
 
-        auto answer = wxMessageBox(
-            (ttlib::cstr() << "Cannot load project file: " << projectFile << "\n\nDo you want to create an empty project?")
-                .wx_str(),
-            "Load Project", wxYES_NO);
-        if (answer != wxYES)
-        {
-            m_frame->Close();
-            wxApp::OnRun();  // Make sure all events get handled
-            return 2;
-        }
-    }
-    else
-    {
-        if (!NewProject(EmptyProject))
-        {
-            m_frame->Close();
-            wxApp::OnRun();  // Make sure all events get handled
-            return 2;
-        }
+    } while (!is_project_loaded);
 
-        m_frame->Show();
-        SetTopWindow(m_frame);
-    }
+    m_frame->Show();
+    SetTopWindow(m_frame);
+
+#if defined(_DEBUG)
+    if (AutoMsgWindow())
+        ShowMsgWindow();
+#endif  // _DEBUG
 
     return wxApp::OnRun();
 }

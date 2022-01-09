@@ -1642,6 +1642,21 @@ void MainFrame::UpdateWakaTime(bool FileSavedEvent)
     }
 }
 
+void MainFrame::RemoveFileFromHistory(ttString file)
+{
+    if (file.empty())
+        return;
+
+    for (size_t idx = 0; idx < m_FileHistory.GetCount(); ++idx)
+    {
+        if (file == m_FileHistory.GetHistoryFile(idx))
+        {
+            m_FileHistory.RemoveFileFromHistory(idx);
+            break;
+        }
+    }
+}
+
 #if defined(_DEBUG)
 
     #include "debugging/dbg_code_diff.h"  // DbgCodeDiff -- Compare code generation

@@ -153,9 +153,17 @@ void BasePanel::GenerateBaseClass()
     if (!m_cur_form)
     {
         if (project->GetChildCount() > 0)
+        {
             m_cur_form = project->GetChild(0);
+        }
         else
+        {
+            m_cppPanel->GetTextCtrl()->SetReadOnly(false);
+            m_cppPanel->GetTextCtrl()->ClearAll();
+            m_hPanel->GetTextCtrl()->SetReadOnly(false);
+            m_hPanel->GetTextCtrl()->ClearAll();
             return;
+        }
     }
 
     BaseCodeGenerator codegen;

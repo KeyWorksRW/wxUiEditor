@@ -268,6 +268,11 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
         return;
     }
     parent->Adopt(new_node);
+    if (value == 4404)  // Originally, this was a wxBitmapButton
+    {
+        new_node->prop_set_value(prop_style, "wxBU_EXACTFIT");
+        new_node->prop_set_value(prop_label, "");
+    }
 
     if (auto& proportion = FindValue(object, "proportion"); proportion.IsInt() && proportion.GetInt() > 0)
         new_node->prop_set_value(prop_proportion, proportion.GetInt());
@@ -489,8 +494,14 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
     // Caution: any of these property options could be a null ptr
 
     auto style = node->get_prop_ptr(prop_style);
+
     if (style)
-        style->set_value("");
+    {
+        if (!node->isGen(gen_wxButton))  // if this was a wxBitmapButton, then wxBU_EXACTFIT will have been set
+        {
+            style->set_value("");
+        }
+    }
     auto win_style = node->get_prop_ptr(prop_window_style);
     if (win_style)
         win_style->set_value("");
@@ -895,7 +906,10 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                         }
                         else
                         {
-                            node->prop_set_value(prop_name, val);
+                            if (val.size())
+                            {
+                                node->prop_set_value(prop_name, val);
+                            }
                         }
                     }
                 }

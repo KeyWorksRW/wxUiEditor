@@ -491,7 +491,7 @@ bool App::NewProject(bool create_empty)
         m_pjtSettings = new ProjectSettings;
         ttString file;
         file.assignCwd();
-        file.append_filename("MyNewProject");
+        file.append_filename(txtEmptyProject);
         m_pjtSettings->SetProjectFile(file);
         m_pjtSettings->SetProjectPath(file);
 

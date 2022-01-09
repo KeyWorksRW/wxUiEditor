@@ -79,6 +79,8 @@ enum
     id_FindWidget
 };
 
+const char* txtEmptyProject = "Empty Project";
+
 MainFrame::MainFrame() :
     MainFrameBase(nullptr), m_findData(wxFR_DOWN)
 #if defined(_DEBUG)
@@ -269,7 +271,8 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnSaveProject(wxCommandEvent& event)
 {
-    if (m_isImported || wxGetApp().getProjectFileName().empty())
+    if (m_isImported || wxGetApp().GetProjectFileName().empty() ||
+        wxGetApp().GetProjectFileName().filename().is_sameas(txtEmptyProject))
         OnSaveAsProject(event);
     else
     {
@@ -289,13 +292,19 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
 
 void MainFrame::OnSaveAsProject(wxCommandEvent&)
 {
+    auto filename = wxGetApp().GetProjectFileName().filename();
+    if (filename.is_sameas(txtEmptyProject))
+    {
+        filename = "MyProject";
+    }
+
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
-    wxFileDialog dialog(this, "Save Project As", wxGetApp().GetProjectPath(), wxGetApp().GetProjectFileName().filename(),
+    wxFileDialog dialog(this, "Save Project As", wxGetApp().GetProjectPath(), filename,
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        ttString filename = dialog.GetPath();
+        filename = dialog.GetPath();
         if (filename.extension().empty())
         {
             filename.replace_extension(".wxui");
@@ -596,7 +605,10 @@ void MainFrame::ProjectLoaded()
     if (!m_isImported)
     {
         m_isProject_generated = !GenerateCodeFiles(this, true);
-        m_FileHistory.AddFileToHistory(wxGetApp().GetProjectFileName());
+        if (!wxGetApp().GetProjectFileName().filename().is_sameas(txtEmptyProject))
+        {
+            m_FileHistory.AddFileToHistory(wxGetApp().GetProjectFileName());
+        }
         m_isProject_modified = false;
     }
     else

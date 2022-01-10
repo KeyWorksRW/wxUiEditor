@@ -667,45 +667,21 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetHoverColour(";
-        auto& clr = node->prop_as_string(prop_hover_color);
-        if (clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << clr << ");";
-        else
-        {
-            wxColour colour = ConvertToColour(clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
-        }
+        code << node->get_node_name() << "->SetHoverColour(" << GenerateColourCode(node, prop_hover_color) << ");";
     }
 
     if (node->HasValue(prop_normal_color))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetHoverColour(";
-        auto& clr = node->prop_as_string(prop_normal_color);
-        if (clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << clr << ");";
-        else
-        {
-            wxColour colour = ConvertToColour(clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
-        }
+        code << node->get_node_name() << "->SetNormalColour(" << GenerateColourCode(node, prop_normal_color) << ");";
     }
 
     if (node->HasValue(prop_visited_color))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetHoverColour(";
-        auto& clr = node->prop_as_string(prop_visited_color);
-        if (clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << clr << ");";
-        else
-        {
-            wxColour colour = ConvertToColour(clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
-        }
+        code << node->get_node_name() << "->SetVisitedColour(" << GenerateColourCode(node, prop_visited_color) << ");";
     }
     return code;
 }

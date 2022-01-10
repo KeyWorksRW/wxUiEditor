@@ -1164,6 +1164,37 @@ const Value& rapidjson::FindValue(const rapidjson::Value& object, const char* ke
         return empty_value;
 }
 
+// wxCrafter doesn't put a space between the words
+
+std::map<std::string, const char*> s_sys_colour_pair = {
+
+    { "AppWorkspace", "wxSYS_COLOUR_APPWORKSPACE" },
+    { "ActiveBorder", "wxSYS_COLOUR_ACTIVEBORDER" },
+    { "ActiveCaption", "wxSYS_COLOUR_ACTIVECAPTION" },
+    { "ButtonFace", "wxSYS_COLOUR_BTNFACE" },
+    { "ButtonHighlight", "wxSYS_COLOUR_BTNHIGHLIGHT" },
+    { "ButtonShadow", "wxSYS_COLOUR_BTNSHADOW" },
+    { "ButtonText", "wxSYS_COLOUR_BTNTEXT" },
+    { "CaptionText", "wxSYS_COLOUR_CAPTIONTEXT" },
+    { "ControlDark", "wxSYS_COLOUR_3DDKSHADOW" },
+    { "ControlLight", "wxSYS_COLOUR_3DLIGHT" },
+    { "Desktop", "wxSYS_COLOUR_BACKGROUND" },
+    { "GrayText", "wxSYS_COLOUR_GRAYTEXT" },
+    { "Highlight", "wxSYS_COLOUR_HIGHLIGHT" },
+    { "HighlightText", "wxSYS_COLOUR_HIGHLIGHTTEXT" },
+    { "InactiveBorder", "wxSYS_COLOUR_INACTIVEBORDER" },
+    { "InactiveCaption", "wxSYS_COLOUR_INACTIVECAPTION" },
+    { "InactiveCaptionText", "wxSYS_COLOUR_INACTIVECAPTIONTEXT" },
+    { "Menu", "wxSYS_COLOUR_MENU" },
+    { "Scrollbar", "wxSYS_COLOUR_SCROLLBAR" },
+    { "Tooltip", "wxSYS_COLOUR_INFOBK" },
+    { "TooltipText", "wxSYS_COLOUR_INFOTEXT" },
+    { "Window", "wxSYS_COLOUR_WINDOW" },
+    { "WindowFrame", "wxSYS_COLOUR_WINDOWFRAME" },
+    { "WindowText", "wxSYS_COLOUR_WINDOWTEXT" },
+
+};
+
 ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
 {
     ttlib::cstr result;
@@ -1174,8 +1205,11 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
             result = colour.GetString() + 1;
             result.pop_back();
         }
-        else if (auto colour_pair = g_sys_colour_pair.find(colour.GetString()); colour_pair != g_sys_colour_pair.end())
-            result = colour_pair->second;
+        else
+        {
+            if (auto colour_pair = s_sys_colour_pair.find(colour.GetString()); colour_pair != s_sys_colour_pair.end())
+                result = colour_pair->second;
+        }
     }
 
     return result;

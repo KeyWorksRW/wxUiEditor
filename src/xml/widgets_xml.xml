@@ -328,15 +328,19 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_hyperlink</property>
 		<property name="label" type="string_escapes"
-			help="Text of the hyperlink">GitHub Website</property>
+			help="Text of the hyperlink">Hyperlink</property>
 		<property name="url" type="string_escapes"
-			help="Target of the hyperlink">https://github.com/</property>
+			help="Target of the hyperlink"></property>
 		<property name="hover_color" type="wxColour"
 			help="The colour used to print the label of the hyperlink when the mouse is over the control." />
 		<property name="normal_color" type="wxColour"
 			help="The colour used to print the label when the link has never been clicked before (i.e. the link has not been visited) and the mouse is not over the control." />
 		<property name="visited_color" type="wxColour"
 			help="The colour used to print the label when the mouse is not over the control and the link has already been clicked before (i.e. the link has been visited)." />
+		<property name="underlined" type="bool"
+			help="If checked, the text will be underlined. If not checked, a wxGenericHyperlinkCtrl is used instead, and a non-underlined default GUI font will be used to display the text.">1</property>
+		<property name="sync_hover_colour" type="bool"
+			help="If checked, hover colour will be set to the same value as normal colour. If the above underlined property is unchecked, then check this to prevent the hover colour from being set to red. Ignored if hover_colour is already set.">0</property>
 		<property name="style" type="bitlist">
 			<option name="wxHL_ALIGN_LEFT"
 				help="Align the text to the left." />

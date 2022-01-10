@@ -77,7 +77,6 @@ public:
     {
         return false;
     };
-    virtual OptionalIncludes GetEventIncludes(Node*) { return {}; }
 
     // Return false if the entire Mockup contents should be recreated due to the property change
     virtual bool OnPropertyChange(wxObject*, Node*, NodeProperty*) { return false; }

@@ -63,6 +63,9 @@ public:
     // Return true if all construction and settings code was written to src_code
     virtual bool GenConstruction(Node*, BaseCodeGenerator* /* code_gen */) { return false; }
 
+    // Return true if the Generic version of the control is being used.
+    virtual bool IsGeneric(Node*) { return false; }
+
     // Generate specific additional code
     virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }
 

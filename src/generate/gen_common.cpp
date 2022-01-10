@@ -1061,12 +1061,18 @@ ttlib::cstr ConvertToCodeString(const ttlib::cstr& text)
     return result;
 }
 
-ttlib::cstr GenerateNewAssignment(Node* node)
+ttlib::cstr GenerateNewAssignment(Node* node, bool use_generic)
 {
     ttlib::cstr code(" = new ");
     if (node->HasValue(prop_derived_class))
     {
         code << node->prop_as_string(prop_derived_class);
+    }
+    else if (use_generic)
+    {
+        ttlib::cstr class_name = node->DeclName();
+        class_name.Replace("wx", "wxGeneric");
+        code << class_name;
     }
     else
     {

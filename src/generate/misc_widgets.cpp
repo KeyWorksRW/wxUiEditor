@@ -604,14 +604,34 @@ bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, st
 
 wxObject* HyperlinkGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
-                                      node->prop_as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
-                                      DlgSize(parent, node, prop_size), GetStyleInt(node));
+    wxHyperlinkCtrlBase* widget;
+    if (node->prop_as_bool(prop_underlined))
+    {
+        widget = new wxHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+                                     node->prop_as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
+                                     DlgSize(parent, node, prop_size), GetStyleInt(node));
+    }
+    else
+    {
+        widget = new wxGenericHyperlinkCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+                                            node->prop_as_wxString(prop_url), DlgPoint(parent, node, prop_pos),
+                                            DlgSize(parent, node, prop_size), GetStyleInt(node));
+
+        if (!node->HasValue(prop_font))
+        {
+            widget->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+        }
+    }
 
     if (node->HasValue(prop_hover_color))
     {
         widget->SetHoverColour(node->prop_as_wxColour(prop_hover_color));
     }
+    else if (node->prop_as_bool(prop_sync_hover_colour))
+    {
+        widget->SetHoverColour(widget->GetNormalColour());
+    }
+
     if (node->HasValue(prop_normal_color))
     {
         widget->SetNormalColour(node->prop_as_wxColour(prop_normal_color));
@@ -631,7 +651,7 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
+    code << node->get_node_name() << GenerateNewAssignment(node, !node->prop_as_bool(prop_underlined));
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
@@ -663,51 +683,43 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
+    if (!node->prop_as_bool(prop_underlined) && !node->HasValue(prop_font))
+    {
+        code << node->get_node_name() << "->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));";
+    }
+
     if (node->HasValue(prop_hover_color))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetHoverColour(";
-        auto& clr = node->prop_as_string(prop_hover_color);
-        if (clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << clr << ");";
-        else
-        {
-            wxColour colour = ConvertToColour(clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
-        }
+        code << node->get_node_name() << "->SetHoverColour(" << GenerateColourCode(node, prop_hover_color) << ");";
+    }
+    else if (node->prop_as_bool(prop_sync_hover_colour))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetHoverColour(" << node->get_node_name() << "->GetNormalColour());";
     }
 
     if (node->HasValue(prop_normal_color))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetHoverColour(";
-        auto& clr = node->prop_as_string(prop_normal_color);
-        if (clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << clr << ");";
-        else
-        {
-            wxColour colour = ConvertToColour(clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
-        }
+        code << node->get_node_name() << "->SetNormalColour(" << GenerateColourCode(node, prop_normal_color) << ");";
     }
 
     if (node->HasValue(prop_visited_color))
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetHoverColour(";
-        auto& clr = node->prop_as_string(prop_visited_color);
-        if (clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << clr << ");";
-        else
-        {
-            wxColour colour = ConvertToColour(clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
-        }
+        code << node->get_node_name() << "->SetVisitedColour(" << GenerateColourCode(node, prop_visited_color) << ");";
     }
     return code;
+}
+
+bool HyperlinkGenerator::IsGeneric(Node* node)
+{
+    return (!node->prop_as_bool(prop_underlined));
 }
 
 std::optional<ttlib::cstr> HyperlinkGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

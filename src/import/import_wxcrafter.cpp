@@ -551,7 +551,24 @@ void WxCrafter::ProcessEvents(Node* node, const Value& array)
         {
             if (auto& name = event["m_eventName"]; name.IsString())
             {
-                if (auto node_event = node->GetEvent(GetCorrectEventName(name.GetString())); node_event)
+                auto node_event = node->GetEvent(GetCorrectEventName(name.GetString()));
+                if (!node_event)
+                {
+                    ttlib::cstr modified_name(name.GetString());
+                    modified_name.Replace("_COMMAND", "");
+                    node_event = node->GetEvent(GetCorrectEventName(modified_name));
+                    if (!node_event)
+                    {
+                        auto pos = modified_name.find_last_of('_');
+                        if (ttlib::is_found(pos))
+                        {
+                            modified_name.erase(pos);
+                            node_event = node->GetEvent(GetCorrectEventName(modified_name));
+                        }
+                    }
+                }
+
+                if (node_event)
                 {
                     if (auto& handler = event["m_functionNameAndSignature"]; handler.IsString())
                     {

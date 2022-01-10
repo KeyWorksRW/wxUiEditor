@@ -26,6 +26,10 @@ wxObject* PanelGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                               DlgSize(parent, node, prop_size), GetStyleInt(node));
 
+    if (node->HasValue(prop_background_colour))
+    {
+        widget->SetBackgroundColour(node->prop_as_wxColour(prop_background_colour));
+    }
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;

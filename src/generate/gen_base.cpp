@@ -950,9 +950,18 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     if (class_name.is_sameprefix("wx"))
     {
         if (node->HasValue(prop_derived_class))
+        {
             code << node->prop_as_string(prop_derived_class) << "* " << node->get_node_name() << ';';
+        }
         else
+        {
+            if (node->GetGenerator()->IsGeneric(node))
+            {
+                class_name = node->DeclName();
+                class_name.Replace("wx", "wxGeneric");
+            }
             code << class_name << "* " << node->get_node_name() << ';';
+        }
 
         if (class_name == "wxStdDialogButtonSizer")
         {

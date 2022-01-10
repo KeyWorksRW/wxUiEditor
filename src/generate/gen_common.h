@@ -103,5 +103,5 @@ ttlib::cstr GenFontColourSettings(Node* node);
 ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
 
 // Generates " = new class(" -- with class being the derived_class (if specified) or the
-// normal class name.
-ttlib::cstr GenerateNewAssignment(Node* node);
+// normal class name. If use_generic specified, Generic will be inserted into the class name.
+ttlib::cstr GenerateNewAssignment(Node* node, bool use_generic = false);

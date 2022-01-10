@@ -31,6 +31,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/newribbon_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/optionsdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/startupdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui_images.cpp
 
 )

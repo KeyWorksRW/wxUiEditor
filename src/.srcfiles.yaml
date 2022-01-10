@@ -40,7 +40,7 @@ Files:
     gen_enums.cpp         # Enumerations for generators
     lambdas.cpp           # Functions for formatting and storage of lamda events
     pjtsettings.cpp       # Hold data for currently loaded project
-    startup.cpp           # Dialog to display is wxUE is launched with no arguments
+    startup_dlg.cpp       # Startup dialog
     undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     undo_stack.cpp        # Maintain an undo and redo stack
     wakatime.cpp          # Updates WakaTime metrics
@@ -161,6 +161,7 @@ Files:
     ui/newframe.cpp             # Dialog for creating a new project wxFrame
     ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
+    ui/startupdlg_base.cpp      # Startup dialog
 
     # wxUiEditor generated files
     ui/wxui_code.cmake

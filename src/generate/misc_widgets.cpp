@@ -727,9 +727,10 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenEvents(NodeEvent* event, const
     return GenEventCode(event, class_name);
 }
 
-bool HyperlinkGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool HyperlinkGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */, std::set<std::string>& set_hdr)
 {
-    InsertGeneratorInclude(node, "#include <wx/hyperlink.h>", set_src, set_hdr);
+    // If there's an event, then this has to be in the header file.
+    set_hdr.insert("#include <wx/hyperlink.h>");
     return true;
 }
 

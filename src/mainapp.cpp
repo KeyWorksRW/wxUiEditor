@@ -5,13 +5,12 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/cmdline.h>  // wxCmdLineParser and related classes for parsing the command
 #include <wx/config.h>   // wxConfig base header
 #include <wx/cshelp.h>   // Context-sensitive help support classes
 #include <wx/filedlg.h>  // wxFileDialog base header
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
-
-#include "ttparser.h"  // cmd -- Command line parser
 
 #include "mainapp.h"
 
@@ -21,7 +20,7 @@
 #include "node.h"          // Node -- Node class
 #include "node_creator.h"  // NodeCreator class
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "startup.h"       // CStartup -- Dialog to display is wxUE is launched with no arguments
+#include "startup_dlg.h"   // CStartup -- Dialog to display is wxUE is launched with no arguments
 
 #include "pugixml.hpp"
 
@@ -126,55 +125,59 @@ bool App::OnInit()
 int App::OnRun()
 {
     g_NodeCreator.Initialize();
+    m_frame = new MainFrame();
+    bool is_project_loaded = false;
 
-    ttlib::cmd cmdLine;
-#if defined(_WIN32)
-    // This will call Windows API to get utf16 version of command line, then convert it to utf8 strings
-    cmdLine.parse();
-#else
-    cmdLine.parse(argc, argv);
-#endif  // _WIN32
-
-    ttlib::cstr projectFile;
-    if (cmdLine.getExtras().size())
+    wxCmdLineParser parser(argc, argv);
+    OnInitCmdLine(parser);
+    parser.AddParam("Filename", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+    parser.Parse();
+    if (parser.GetParamCount())
     {
-        projectFile.assign(cmdLine.getExtras().at(0));
-        projectFile.make_absolute();
-        if (!projectFile.file_exists())
+        ttString filename = parser.GetParam(0);
+        filename.make_absolute();
+        if (filename.file_exists())
         {
-            wxMessageBox((ttlib::cstr("Cannot open ") << projectFile).wx_str(), "Load Project");
-            projectFile.clear();
+            if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
+                !filename.extension().is_sameas(".wxue", tt::CASE::either))
+            {
+                is_project_loaded = ImportProject(filename);
+            }
+            else
+            {
+                is_project_loaded = LoadProject(filename);
+            }
         }
     }
 
-    // Create the frame before the dialog so that file history is initialized.
-    m_frame = new MainFrame();
-
-    bool is_project_loaded = false;
-    do
+    if (!is_project_loaded)
     {
-        bool EmptyProject = true;
-        if (projectFile.empty())
+        StartupDlg start_dlg(nullptr);
+        if (auto result = start_dlg.ShowModal(); result == wxID_OK)
         {
-            CStartup dlg;
-            if (auto result = dlg.ShowModal(); result != wxID_OK)
+            switch (start_dlg.GetCommandType())
             {
-                m_frame->Close();
-                wxApp::OnRun();  // Make sure all events get handled
-                return 1;
-            }
-
-            switch (dlg.GetCommandType())
-            {
-                case CStartup::START_MRU:
-                    projectFile = dlg.GetMruFilename();
+                case StartupDlg::START_MRU:
+                    if (!start_dlg.GetProjectFile().extension().is_sameas(".wxui", tt::CASE::either) &&
+                        !start_dlg.GetProjectFile().extension().is_sameas(".wxue", tt::CASE::either))
+                    {
+                        is_project_loaded = ImportProject(start_dlg.GetProjectFile());
+                    }
+                    else
+                    {
+                        is_project_loaded = LoadProject(start_dlg.GetProjectFile());
+                    }
                     break;
 
-                case CStartup::START_CONVERT:
-                    EmptyProject = false;
+                case StartupDlg::START_EMPTY:
+                    is_project_loaded = NewProject(true);
                     break;
 
-                case CStartup::START_OPEN:
+                case StartupDlg::START_CONVERT:
+                    is_project_loaded = NewProject(false);
+                    break;
+
+                case StartupDlg::START_OPEN:
                     {
                         // TODO: [KeyWorks - 02-21-2021] A CodeBlocks file will contain all of the wxSmith resources -- so it
                         // would actually make sense to process it since we can combine all of those resources into our
@@ -192,81 +195,40 @@ int App::OnRun()
 
                         if (dialog.ShowModal() == wxID_OK)
                         {
-                            projectFile.utf(dialog.GetPath().wx_str());
-                        }
-                        else
-                        {
-                            m_frame->Close();
-                            wxApp::OnRun();  // Make sure all events get handled
-                            return 1;
+                            ttString filename = dialog.GetPath();
+                            if (!filename.extension().is_sameas(".wxui", tt::CASE::either) &&
+                                !filename.extension().is_sameas(".wxue", tt::CASE::either))
+                            {
+                                is_project_loaded = ImportProject(filename);
+                            }
+                            else
+                            {
+                                is_project_loaded = LoadProject(dialog.GetPath());
+                            }
                         }
                     }
                     break;
-
-                case CStartup::START_EMPTY:
-                default:
-                    break;
             }
         }
+    }
 
-        // If projectFile cannot be loaded or imported, clear it so that the startup dialog will run again
-        if (projectFile.size())
-        {
-            if (!projectFile.file_exists())
-            {
-                wxMessageBox((ttlib::cstr() << "The file " << projectFile << "does not exist.").wx_str(), "Load Project");
-
-                // BUGBUG: [KeyWorks - 01-09-2022] If the file doesn't exist, it needs to be removed from the file history.
-                // However, we can't do that until projectFile is the exact same string as the MRU file,
-                projectFile.clear();
-            }
-            else
-            {
-                if (!projectFile.extension().is_sameas(".wxui", tt::CASE::either) &&
-                    !projectFile.extension().is_sameas(".wxue", tt::CASE::either))
-                {
-                    // TODO: [KeyWorks - 10-23-2020] Temp until projectFile gets changed to ttString
-                    ttString Temp(projectFile.wx_str());
-                    is_project_loaded = ImportProject(Temp);
-                    if (!is_project_loaded)
-                    {
-                        projectFile.clear();
-                    }
-                }
-                else
-                {
-                    is_project_loaded = LoadProject(wxString::FromUTF8(projectFile));
-                }
-
-                if (!is_project_loaded)
-                {
-                    wxMessageBox((ttlib::cstr() << "Cannot load project file: " << projectFile).wx_str(), "Load Project");
-                    projectFile.clear();
-                }
-            }
-        }
-        else
-        {
-            is_project_loaded = NewProject(EmptyProject);
-            if (!is_project_loaded)
-            {
-                m_frame->Close();
-                wxApp::OnRun();  // Make sure all events get handled
-                return 2;
-            }
-        }
-
-    } while (!is_project_loaded);
-
-    m_frame->Show();
-    SetTopWindow(m_frame);
+    if (is_project_loaded)
+    {
+        m_frame->Show();
+        SetTopWindow(m_frame);
 
 #if defined(_DEBUG)
-    if (AutoMsgWindow())
-        ShowMsgWindow();
+        if (AutoMsgWindow())
+            ShowMsgWindow();
 #endif  // _DEBUG
 
-    return wxApp::OnRun();
+        return wxApp::OnRun();
+    }
+    else
+    {
+        m_frame->Close();
+        return 1;
+    }
 }
 
 int App::OnExit()

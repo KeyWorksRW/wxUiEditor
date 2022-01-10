@@ -13,7 +13,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/gen_enums.cpp         # Enumerations for generators
     ${CMAKE_CURRENT_LIST_DIR}/lambdas.cpp           # Functions for formatting and storage of lamda events
     ${CMAKE_CURRENT_LIST_DIR}/pjtsettings.cpp       # Hold data for currently loaded project
-    ${CMAKE_CURRENT_LIST_DIR}/startup.cpp           # Dialog to display is wxUE is launched with no arguments
+    ${CMAKE_CURRENT_LIST_DIR}/startup_dlg.cpp       # Startup dialog
     ${CMAKE_CURRENT_LIST_DIR}/undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     ${CMAKE_CURRENT_LIST_DIR}/undo_stack.cpp        # Maintain an undo and redo stack
     ${CMAKE_CURRENT_LIST_DIR}/wakatime.cpp          # Updates WakaTime metrics

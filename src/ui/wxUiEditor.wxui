@@ -3417,5 +3417,152 @@
           OKButtonClicked="OnOK" />
       </node>
     </node>
+    <node
+      class="wxDialog"
+      base_file="startupdlg_base"
+      class_name="StartupDlgBase"
+      derived_class_name="StartupDlg"
+      derived_file="../startup_dlg.cpp"
+      icon="Embed;../art_src/logo16.png;[-1,-1]"
+      title="Open, Import, or Create Project"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_6"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="wxStaticBitmap"
+            bitmap="Embed;../art_src/logo64.png;[-1,-1]"
+            var_name="bmp_4" />
+          <node
+            class="spacer"
+            add_default_border="true"
+            width="10" />
+          <node
+            class="wxStaticText"
+            label="wxUiEditor 0.9.1"
+            font="extra large"
+            alignment="wxALIGN_CENTER_VERTICAL"
+            proportion="1" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_8">
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="Recent"
+              var_name="staticText"
+              font="extra large,,semi-bold" />
+            <node
+              class="wxStaticText"
+              label="Recent projects you have opened will appear here"
+              var_comment="// This should be hidden if there actually are any recent projects"
+              var_name="m_staticTextRecentProjects"
+              wrap="200" />
+            <node
+              class="wxFlexGridSizer"
+              class_access="protected:"
+              var_name="m_recent_flex_grid"
+              flexible_direction="wxHORIZONTAL"
+              growablecols="1:1" />
+          </node>
+          <node
+            class="wxStaticLine"
+            style="wxLI_VERTICAL"
+            var_name="static_line_2"
+            border_size="20"
+            flags="wxEXPAND" />
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer_2"
+            border_size="15"
+            borders="wxRIGHT|wxLEFT">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="Start"
+              var_name="staticText_2"
+              font="extra large,,semi-bold" />
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_4">
+              <node
+                class="wxStaticBitmap"
+                bitmap="Embed;../art_src/open.png;[-1,-1]"
+                var_name="bmp_2" />
+              <node
+                class="wxHyperlinkCtrl"
+                class_access="none"
+                label="Open..."
+                sync_hover_colour="true"
+                underlined="false"
+                var_name="hyperlink_2"
+                alignment="wxALIGN_CENTER_VERTICAL"
+                wxEVT_HYPERLINK="OnOpen" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_3">
+              <node
+                class="wxStaticBitmap"
+                bitmap="Embed;../art_src/pagectrl.png;[-1,-1]" />
+              <node
+                class="wxHyperlinkCtrl"
+                class_access="none"
+                label="Import..."
+                sync_hover_colour="true"
+                underlined="false"
+                var_name="hyperlink"
+                alignment="wxALIGN_CENTER_VERTICAL"
+                wxEVT_HYPERLINK="OnImport" />
+            </node>
+            <node
+              class="wxBoxSizer"
+              var_name="box_sizer_5">
+              <node
+                class="wxStaticBitmap"
+                bitmap="Embed;../art_src/new.png;[-1,-1]"
+                var_name="bmp_3" />
+              <node
+                class="wxHyperlinkCtrl"
+                class_access="none"
+                label="New"
+                sync_hover_colour="true"
+                underlined="false"
+                var_name="hyperlink_3"
+                alignment="wxALIGN_CENTER_VERTICAL"
+                wxEVT_HYPERLINK="OnNew" />
+            </node>
+          </node>
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_7"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticLine"
+            flags="wxEXPAND" />
+          <node
+            class="wxStdDialogButtonSizer"
+            OK="false"
+            default_button="Cancel"
+            static_line="false"
+            alignment="wxALIGN_CENTER"
+            proportion="1" />
+        </node>
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

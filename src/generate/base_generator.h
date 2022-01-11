@@ -97,6 +97,12 @@ public:
     // property.
     virtual void ChangeEnableState(wxPropertyGridManager*, NodeProperty*);
 
+    // Call this to retrieve hint text for the property
+    virtual std::optional<ttlib::cstr> GetHint(NodeProperty*) { return {}; }
+
+    // Call this to use different help text then GetPropDeclaration()->GetDescription()
+    virtual std::optional<ttlib::cstr> GetPropertyDescription(NodeProperty*) { return {}; }
+
     // Call this to convert wxWidgets constants to friendly names, and to fix conflicting bit
     // flags. Returns true if a change was made. Note that the change is *not* pushed to the
     // undo stack.

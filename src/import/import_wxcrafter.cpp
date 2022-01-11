@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Import a wxCrafter project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +17,8 @@
 #include "rapidjson/rapidjson.h"
 
 #include "import_wxcrafter.h"  // This will include rapidjson/document.h
+
+#include "font_prop.h"  // FontProperty class
 
 namespace rapidjson
 {
@@ -98,7 +100,10 @@ bool WxCrafter::Import(const ttString& filename, bool write_doc)
         if (auto& metadata = FindValue(document, "metadata"); metadata.IsObject())
         {
             if (auto& result = FindValue(metadata, "m_useEnum"); result.IsBool())
+            {
+                // wxCrafter is project wide, wxUiEditor is per-form.
                 m_generate_ids = result.GetBool();
+            }
 
             if (auto& include_files = FindValue(metadata, "m_includeFiles"); include_files.IsArray())
             {
@@ -188,6 +193,11 @@ void WxCrafter::ProcessForm(const Value& form)
     auto new_node = g_NodeCreator.CreateNode(gen_name, m_project.get());
     m_project->Adopt(new_node);
 
+    if (!m_generate_ids)
+    {
+        new_node->prop_set_value(prop_generate_ids, false);
+    }
+
     if (!m_is_output_name_used && m_output_name.size())
     {
         new_node->prop_set_value(prop_base_file, m_output_name);
@@ -231,6 +241,38 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
     gen_name = GetGenName(value);
     if (gen_name == gen_unknown)
     {
+        if (value.GetInt() == 4414)
+        {
+            // This is a column header for a wxListCtrl
+            if (parent->isGen(gen_wxListView))
+            {
+                ttlib::cstr cur_headers = parent->prop_as_string(prop_column_labels);
+                if (auto& properties = object["m_properties"]; properties.IsArray())
+                {
+                    for (auto& iter: properties.GetArray())
+                    {
+                        if (iter.IsObject())
+                        {
+                            // TODO: [KeyWorks - 01-10-2022] A width can also be specified -- wxUE doesn't currently support
+                            // that, but when it does, it should be processed here as well.
+                            if (auto& label_type = FindValue(iter, "m_label");
+                                label_type.IsString() && ttlib::is_sameas(label_type.GetString(), "Name:"))
+                            {
+                                if (auto& label = FindValue(iter, "m_value"); label.IsString())
+                                {
+                                    if (cur_headers.size())
+                                        cur_headers << ' ';
+                                    cur_headers << '"' << label.GetString() << '"';
+                                    parent->prop_set_value(prop_column_labels, cur_headers);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         MSG_ERROR(ttlib::cstr("Unrecognized child type: ") << value.GetInt());
         // m_errors.emplace("Unrecognized child type!");
         return;
@@ -258,6 +300,11 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
         return;
     }
     parent->Adopt(new_node);
+    if (value == 4404)  // Originally, this was a wxBitmapButton
+    {
+        new_node->prop_set_value(prop_style, "wxBU_EXACTFIT");
+        new_node->prop_set_value(prop_label, "");
+    }
 
     if (auto& proportion = FindValue(object, "proportion"); proportion.IsInt() && proportion.GetInt() > 0)
         new_node->prop_set_value(prop_proportion, proportion.GetInt());
@@ -479,8 +526,14 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
     // Caution: any of these property options could be a null ptr
 
     auto style = node->get_prop_ptr(prop_style);
+
     if (style)
-        style->set_value("");
+    {
+        if (!node->isGen(gen_wxButton))  // if this was a wxBitmapButton, then wxBU_EXACTFIT will have been set
+        {
+            style->set_value("");
+        }
+    }
     auto win_style = node->get_prop_ptr(prop_window_style);
     if (win_style)
         win_style->set_value("");
@@ -504,6 +557,14 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
             }
             if (bit_found)
                 continue;
+            else if (node->isGen(gen_wxRadioBox))
+            {
+                if (ttlib::is_sameas(style_bit, "wxRA_SPECIFY_ROWS"))
+                {
+                    node->prop_set_value(prop_style, "rows");
+                }
+                continue;
+            }
         }
 
         if (win_style)
@@ -530,13 +591,29 @@ void WxCrafter::ProcessEvents(Node* node, const Value& array)
         {
             if (auto& name = event["m_eventName"]; name.IsString())
             {
-                if (auto node_event = node->GetEvent(name.GetString()); node_event)
+                auto node_event = node->GetEvent(GetCorrectEventName(name.GetString()));
+                if (!node_event)
+                {
+                    ttlib::cstr modified_name(name.GetString());
+                    modified_name.Replace("_COMMAND", "");
+                    node_event = node->GetEvent(GetCorrectEventName(modified_name));
+                    if (!node_event)
+                    {
+                        auto pos = modified_name.find_last_of('_');
+                        if (ttlib::is_found(pos))
+                        {
+                            modified_name.erase(pos);
+                            node_event = node->GetEvent(GetCorrectEventName(modified_name));
+                        }
+                    }
+                }
+
+                if (node_event)
                 {
                     if (auto& handler = event["m_functionNameAndSignature"]; handler.IsString())
                     {
-                        ttlib::cview function = handler.GetString();
-                        if (auto pos = function.find('('); ttlib::is_found(pos))
-                            function.remove_prefix(pos + 1);
+                        ttlib::cstr function = handler.GetString();
+                        function.erase_from('(');
                         node_event->set_value(function);
                     }
                 }
@@ -686,7 +763,7 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                     {
                         prop_name = (node->IsForm() ? prop_class_name : prop_var_name);
                     }
-                    else if (node->isGen(gen_wxStyledTextCtrl) && ProcessedScintillaProperty(node, iter))
+                    else if (node->isGen(gen_wxStyledTextCtrl) && ProcessScintillaProperty(node, iter))
                     {
                         continue;
                     }
@@ -735,6 +812,25 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                         if (auto& colour = FindValue(value, "colour"); colour.IsString())
                         {
                             node->prop_set_value(prop_start_colour, ConvertColour(colour));
+                            continue;
+                        }
+                    }
+                    else if (name.is_sameas("combobox choices"))
+                    {
+                        if (auto& choices = FindValue(value, "m_value"); choices.IsString())
+                        {
+                            ttlib::multiview mview(choices.GetString(), "\\n");
+                            ttlib::cstr contents;
+                            for (auto& choice: mview)
+                            {
+                                if (choice.size())
+                                {
+                                    if (contents.size())
+                                        contents << ' ';
+                                    contents << '"' << choice << '"';
+                                }
+                            }
+                            node->prop_set_value(prop_contents, contents);
                             continue;
                         }
                     }
@@ -808,7 +904,20 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                 // This is a bug in version 2.9 of wxCrafter -- the value should be an int, not a string. We add the GetInt()
                 // variant in case they ever fix it.
                 if (setting.IsString())
-                    node->prop_set_value(prop_selection_int, FindValue(value, "m_value").GetString());
+                {
+                    ttlib::cstr result = setting.GetString();
+                    if (ttlib::is_digit(result[0]))
+                    {
+                        if (node->HasProp(prop_selection_int))
+                            node->prop_set_value(prop_selection_int, result.atoi());
+                        else if (node->HasProp(prop_selection))
+                            node->prop_set_value(prop_selection, result.atoi());
+                    }
+                    else
+                    {
+                        node->prop_set_value(prop_selection_string, FindValue(value, "m_value").GetString());
+                    }
+                }
                 else if (setting.IsString())
                     node->prop_set_value(prop_selection_int, FindValue(value, "m_value").GetInt());
             }
@@ -829,6 +938,17 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                         node->prop_set_value(prop_initial_path, setting.GetString());
                     else if (node->isGen(gen_wxGauge))
                         node->prop_set_value(prop_position, setting.GetString());
+                    else if (node->isGen(gen_wxComboBox))
+                        node->prop_set_value(prop_selection_string, setting.GetString());
+                    else if (node->isGen(gen_wxCheckBox) || node->isGen(gen_wxRadioButton))
+                        node->prop_set_value(prop_checked, setting.GetBool());
+                    else if (node->isGen(gen_Check3State))
+                    {
+                        if (setting.GetBool())
+                            node->prop_set_value(prop_initial_state, "wxCHK_CHECKED");
+                    }
+                    else if (node->isGen(gen_wxSlider))
+                        node->prop_set_value(prop_position, setting.GetString());
                     else if (node->HasProp(prop_value))
                     {
                         node->prop_set_value(prop_name, setting.GetString());
@@ -846,6 +966,7 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                 {
                     ttlib::multistr contents(setting.GetString(), ';');
                     auto str_ptr = node->get_prop_ptr(prop_contents)->as_raw_ptr();
+                    str_ptr->clear();  // remove any default string
                     for (auto& item: contents)
                     {
                         if (item.size())
@@ -859,12 +980,34 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
             }
             else if (prop_name == prop_stc_lexer)
             {
-                ProcessedScintillaProperty(node, iter);
+                ProcessScintillaProperty(node, iter);
+            }
+            else if (prop_name == prop_font)
+            {
+                ProcessFont(node, iter);
             }
             else if (prop_name != prop_unknown)
             {
                 if (auto& prop_value = FindValue(value, "m_value"); !prop_value.IsNull())
                 {
+                    if (!node->HasProp(prop_name))
+                    {
+                        if (prop_name == prop_min && node->HasProp(prop_minValue))
+                            prop_name = prop_minValue;
+                        else if (prop_name == prop_max && node->HasProp(prop_maxValue))
+                            prop_name = prop_maxValue;
+                        else
+                        {
+#if defined(_DEBUG)
+                            if ((prop_value.IsString() && prop_value.GetStringLength()) ||
+                                (prop_value.IsBool() && prop_value.GetBool()))
+                            {
+                                MSG_INFO(ttlib::cstr() << node->DeclName() << " doesn't have a property called "
+                                                       << GenEnum::map_PropNames[prop_name]);
+                            }
+#endif  // _DEBUG
+                        }
+                    }
                     if (prop_value.IsBool())
                         node->prop_set_value(prop_name, prop_value.GetBool());
                     else
@@ -882,7 +1025,10 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                         }
                         else
                         {
-                            node->prop_set_value(prop_name, val);
+                            if (val.size())
+                            {
+                                node->prop_set_value(prop_name, val);
+                            }
                         }
                     }
                 }
@@ -922,7 +1068,55 @@ void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
     }
 }
 
-bool WxCrafter::ProcessedScintillaProperty(Node* node, const Value& object)
+// For system fonts, wxCrafter doesn't support size or weigth -- you are limited to italic, bold, and underlined.
+// Note that wxCrafter supports ALL of the system fonts, not just wxSYS_DEFAULT_GUI_FONT.
+//
+// For custom fonts, wxCrafter uses the system font picker, but ignores some of the results. wxCrafter supports integer point
+// size, italic, bold, underlines, family and facename.
+
+bool WxCrafter::ProcessFont(Node* node, const Value& object)
+{
+    if (object.HasMember("m_value"))
+    {
+        ttlib::cstr crafter_str = object["m_value"].GetString();
+        if (crafter_str.empty())
+            return true;
+
+        FontProperty font_info;
+        if (crafter_str.contains("italic"))
+            font_info.Italic(wxFONTFLAG_ITALIC);
+        if (crafter_str.contains("bold"))
+            font_info.Bold(wxFONTFLAG_ITALIC);
+        if (crafter_str.contains("underlined"))
+            font_info.Underlined();
+
+        if (!crafter_str.is_sameprefix("wxSYS_DEFAULT_GUI_FONT"))
+        {
+            font_info.setDefGuiFont(false);
+            font_info.FaceName("");
+            ttlib::multiview mstr(crafter_str, ',', tt::TRIM::left);
+
+            if (mstr[0].is_sameas("wxSYS_OEM_FIXED_FONT") || mstr[0].is_sameas("wxSYS_ANSI_FIXED_FONT"))
+                font_info.Family(wxFONTFAMILY_TELETYPE);
+
+            if (ttlib::is_digit(mstr[0][0]))
+            {
+                font_info.PointSize(mstr[0].atoi());
+
+                if (mstr.size() > 3 && mstr[3] != "default")
+                    font_info.Family(font_family_pairs.GetValue(mstr[3]));
+                if (mstr.size() > 4 && mstr[4] == "1")
+                    font_info.Underlined();
+                if (mstr.size() > 5)
+                    font_info.FaceName(mstr[5].wx_str());
+            }
+        }
+        node->prop_set_value(prop_font, font_info.as_string());
+    }
+    return true;
+}
+
+bool WxCrafter::ProcessScintillaProperty(Node* node, const Value& object)
 {
     // wxCrafter hard-codes margin numbers. line:0, symbol:2, separator:3, fold:4,
 
@@ -1047,8 +1241,8 @@ bool WxCrafter::ProcessedScintillaProperty(Node* node, const Value& object)
     }
     else if (name.contains("keywords set"))
     {
-        // We don't currently support keyword sets since fully supporting them would require processing every possible Lexer
-        // to figure out what constants to use.
+        // We don't currently support keyword sets since fully supporting them would require processing every possible
+        // Lexer to figure out what constants to use.
         return true;
     }
     return false;
@@ -1089,6 +1283,37 @@ const Value& rapidjson::FindValue(const rapidjson::Value& object, const char* ke
         return empty_value;
 }
 
+// wxCrafter doesn't put a space between the words
+
+std::map<std::string, const char*> s_sys_colour_pair = {
+
+    { "AppWorkspace", "wxSYS_COLOUR_APPWORKSPACE" },
+    { "ActiveBorder", "wxSYS_COLOUR_ACTIVEBORDER" },
+    { "ActiveCaption", "wxSYS_COLOUR_ACTIVECAPTION" },
+    { "ButtonFace", "wxSYS_COLOUR_BTNFACE" },
+    { "ButtonHighlight", "wxSYS_COLOUR_BTNHIGHLIGHT" },
+    { "ButtonShadow", "wxSYS_COLOUR_BTNSHADOW" },
+    { "ButtonText", "wxSYS_COLOUR_BTNTEXT" },
+    { "CaptionText", "wxSYS_COLOUR_CAPTIONTEXT" },
+    { "ControlDark", "wxSYS_COLOUR_3DDKSHADOW" },
+    { "ControlLight", "wxSYS_COLOUR_3DLIGHT" },
+    { "Desktop", "wxSYS_COLOUR_BACKGROUND" },
+    { "GrayText", "wxSYS_COLOUR_GRAYTEXT" },
+    { "Highlight", "wxSYS_COLOUR_HIGHLIGHT" },
+    { "HighlightText", "wxSYS_COLOUR_HIGHLIGHTTEXT" },
+    { "InactiveBorder", "wxSYS_COLOUR_INACTIVEBORDER" },
+    { "InactiveCaption", "wxSYS_COLOUR_INACTIVECAPTION" },
+    { "InactiveCaptionText", "wxSYS_COLOUR_INACTIVECAPTIONTEXT" },
+    { "Menu", "wxSYS_COLOUR_MENU" },
+    { "Scrollbar", "wxSYS_COLOUR_SCROLLBAR" },
+    { "Tooltip", "wxSYS_COLOUR_INFOBK" },
+    { "TooltipText", "wxSYS_COLOUR_INFOTEXT" },
+    { "Window", "wxSYS_COLOUR_WINDOW" },
+    { "WindowFrame", "wxSYS_COLOUR_WINDOWFRAME" },
+    { "WindowText", "wxSYS_COLOUR_WINDOWTEXT" },
+
+};
+
 ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
 {
     ttlib::cstr result;
@@ -1099,8 +1324,11 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
             result = colour.GetString() + 1;
             result.pop_back();
         }
-        else if (auto colour_pair = g_sys_colour_pair.find(colour.GetString()); colour_pair != g_sys_colour_pair.end())
-            result = colour_pair->second;
+        else
+        {
+            if (auto colour_pair = s_sys_colour_pair.find(colour.GetString()); colour_pair != s_sys_colour_pair.end())
+                result = colour_pair->second;
+        }
     }
 
     return result;

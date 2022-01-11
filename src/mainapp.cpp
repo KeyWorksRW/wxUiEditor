@@ -218,8 +218,8 @@ int App::OnRun()
         SetTopWindow(m_frame);
 
 #if defined(_DEBUG)
-        if (AutoMsgWindow())
-            ShowMsgWindow();
+        // if (AutoMsgWindow())
+        // ShowMsgWindow();
 #endif  // _DEBUG
 
         return wxApp::OnRun();

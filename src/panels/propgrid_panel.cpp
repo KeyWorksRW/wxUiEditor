@@ -470,7 +470,7 @@ wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
     }
     else if (type == type_uintpairlist)
     {
-        new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL);
+        new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string());
     }
     else  // Unknown property
     {

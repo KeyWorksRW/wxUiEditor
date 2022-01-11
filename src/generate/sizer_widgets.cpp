@@ -508,16 +508,42 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
     wxFlexGridSizer* sizer = new wxFlexGridSizer(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols),
                                                  node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
 
-#if 0
-    for (auto& col: node->GetPropertyAsVectorIntPair("growablecols"))
+    if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
     {
-        sizer->AddGrowableCol(col.first, col.second);
+        auto num_cols = node->prop_as_int(prop_cols);
+        ttlib::multiview values(growable, ',');
+        for (auto& iter: values)
+        {
+            auto value = iter.atoi();
+            if (value <= num_cols)
+            {
+                int proportion = 0;
+                if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                {
+                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                }
+                sizer->AddGrowableCol(value, proportion);
+            }
+        }
     }
-    for (auto& row: node->GetPropertyAsVectorIntPair("growablerows"))
+    if (auto& growable = node->prop_as_string(prop_growablerows); growable.size())
     {
-        sizer->AddGrowableRow(row.first, row.second);
+        auto num_rows = node->prop_as_int(prop_rows);
+        ttlib::multiview values(growable, ',');
+        for (auto& iter: values)
+        {
+            auto value = iter.atoi();
+            if (value <= num_rows)
+            {
+                int proportion = 0;
+                if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                {
+                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                }
+                sizer->AddGrowableRow(value, proportion);
+            }
+        }
     }
-#endif
 
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
     sizer->SetFlexibleDirection(node->prop_as_int(prop_flexible_direction));
@@ -555,21 +581,24 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
         ttlib::multiview values(growable, ',');
         for (auto& iter: values)
         {
-            if (!isExpanded)
-            {
-                code << "\n\t{";
-                isExpanded = true;
-            }
             auto val = iter.atoi();
-            int proportion = 0;
-            if (auto pos = iter.find(':'); ttlib::is_found(pos))
+            if (val <= cols)
             {
-                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                if (!isExpanded)
+                {
+                    code << "\n\t{";
+                    isExpanded = true;
+                }
+                int proportion = 0;
+                if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                {
+                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                }
+                code << "\n\t    " << node->get_node_name() << "->AddGrowableCol(" << val;
+                if (proportion > 0)
+                    code << ", " << proportion;
+                code << ");";
             }
-            code << "\n\t    " << node->get_node_name() << "->AddGrowableCol(" << val;
-            if (proportion > 0)
-                code << ", " << proportion;
-            code << ");";
         }
     }
 
@@ -578,21 +607,24 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
         ttlib::multiview values(growable, ',');
         for (auto& iter: values)
         {
-            if (!isExpanded)
-            {
-                code << "\n\t{";
-                isExpanded = true;
-            }
             auto val = iter.atoi();
-            int proportion = 0;
-            if (auto pos = iter.find(':'); ttlib::is_found(pos))
+            if (val <= rows)
             {
-                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                if (!isExpanded)
+                {
+                    code << "\n\t{";
+                    isExpanded = true;
+                }
+                int proportion = 0;
+                if (auto pos = iter.find(':'); ttlib::is_found(pos))
+                {
+                    proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+                }
+                code << "\n\t    " << node->get_node_name() << "->AddGrowableRow(" << val;
+                if (proportion > 0)
+                    code << ", " << proportion;
+                code << ");";
             }
-            code << "\n\t    " << node->get_node_name() << "->AddGrowableRow(" << val;
-            if (proportion > 0)
-                code << ", " << proportion;
-            code << ");";
         }
     }
 
@@ -633,16 +665,32 @@ wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
 {
     auto sizer = new wxGridBagSizer(node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
 
-#if 0
-    for (auto& col: node->GetPropertyAsVectorIntPair(map_PropNames[prop_growablecols]))
+    if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
     {
-        sizer->AddGrowableCol(col.first, col.second);
+        ttlib::multiview values(growable, ',');
+        for (auto& iter: values)
+        {
+            int proportion = 0;
+            if (auto pos = iter.find(':'); ttlib::is_found(pos))
+            {
+                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+            }
+            sizer->AddGrowableCol(iter.atoi(), proportion);
+        }
     }
-    for (auto& row: node->GetPropertyAsVectorIntPair(map_PropNames[prop_growablerows]))
+    if (auto& growable = node->prop_as_string(prop_growablerows); growable.size())
     {
-        sizer->AddGrowableRow(row.first, row.second);
+        ttlib::multiview values(growable, ',');
+        for (auto& iter: values)
+        {
+            int proportion = 0;
+            if (auto pos = iter.find(':'); ttlib::is_found(pos))
+            {
+                proportion = ttlib::atoi(ttlib::find_nonspace(iter.data() + pos + 1));
+            }
+            sizer->AddGrowableRow(iter.atoi(), proportion);
+        }
     }
-#endif
 
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
     sizer->SetFlexibleDirection(node->prop_as_int(prop_flexible_direction));
@@ -742,8 +790,8 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
     }
     code << ");";
 
-    // If growable settings are used, there can be a lot of lines of code generated. To make it a bit clearer, we put it in
-    // braces
+    // If growable settings are used, there can be a lot of lines of code generated. To make it a bit clearer, we put it
+    // in braces
     bool isExpanded = false;
 
     if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
@@ -848,8 +896,8 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
     }
     else
     {
-        FAIL_MSG(
-            "The GBSizerItem component's child is not a wxWindow or a wxSizer or a Spacer - this should not be possible!");
+        FAIL_MSG("The GBSizerItem component's child is not a wxWindow or a wxSizer or a Spacer - this should not be "
+                 "possible!");
         return nullptr;
     }
 }

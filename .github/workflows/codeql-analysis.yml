@@ -12,15 +12,6 @@ on:
       - ttLib
       - wxSnapshot
 
-  pull_request:
-    paths-ignore:
-      - src/art_src
-      - docs
-      - import_tests
-      - testing
-      - ttLib
-      - wxSnapshot
-
 env:
   BUILD_TYPE: Debug
 

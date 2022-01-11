@@ -508,6 +508,20 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
             if (propType != type_option)
             {
                 m_prop_grid->SetPropertyHelpString(pg, propInfo->GetDescription());
+                if (auto gen = node->GetGenerator(); gen)
+                {
+                    if (auto result = gen->GetPropertyDescription(prop); result)
+                    {
+                        wxString help_test(result->wx_str());
+                        m_prop_grid->SetPropertyHelpString(pg, help_test);
+                    }
+
+                    if (auto result = gen->GetHint(prop); result)
+                    {
+                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT, result->wx_str());
+                    }
+                }
+
                 if (propType == type_id)
                 {
                     if (prop->isProp(prop_id))

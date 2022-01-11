@@ -139,7 +139,6 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4517, gen_unknown /* WXTOOLBARITEM_STRETCHSPACE */ },
     { 4518, gen_unknown /* WXAUITOOLBARTOPLEVEL */ },
 
-
 };
 
 std::map<std::string, GenEnum::PropName> g_map_crafter_props = {

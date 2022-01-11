@@ -240,7 +240,7 @@ int PropGridPanel::GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flag
     return value;
 }
 
-wxPGProperty* PropGridPanel::GetProperty(NodeProperty* prop)
+wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 {
     auto type = prop->type();
 
@@ -503,11 +503,25 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
                 continue;
 
             auto propInfo = prop->GetPropDeclaration();
-            auto pg = m_prop_grid->Append(GetProperty(prop));
+            auto pg = m_prop_grid->Append(CreatePGProperty(prop));
             auto propType = prop->type();
             if (propType != type_option)
             {
                 m_prop_grid->SetPropertyHelpString(pg, propInfo->GetDescription());
+                if (auto gen = node->GetGenerator(); gen)
+                {
+                    if (auto result = gen->GetPropertyDescription(prop); result)
+                    {
+                        wxString help_test(result->wx_str());
+                        m_prop_grid->SetPropertyHelpString(pg, help_test);
+                    }
+
+                    if (auto result = gen->GetHint(prop); result)
+                    {
+                        m_prop_grid->SetPropertyAttribute(pg, wxPG_ATTR_HINT, result->wx_str());
+                    }
+                }
+
                 if (propType == type_id)
                 {
                     if (prop->isProp(prop_id))
@@ -1511,7 +1525,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
             if (!prop)
                 continue;
 
-            auto id_prop = m_prop_grid->Append(GetProperty(prop));
+            auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
             auto propInfo = prop->GetPropDeclaration();
             m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
@@ -1525,7 +1539,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
 
         if (auto prop = node->get_prop_ptr(prop_proportion); prop)
         {
-            auto id_prop = m_prop_grid->Append(GetProperty(prop));
+            auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
             auto propInfo = prop->GetPropDeclaration();
             m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
@@ -1541,7 +1555,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
             if (!prop)
                 continue;
 
-            auto id_prop = m_prop_grid->Append(GetProperty(prop));
+            auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
             auto propInfo = prop->GetPropDeclaration();
             m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());

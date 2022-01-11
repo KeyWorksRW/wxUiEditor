@@ -183,6 +183,18 @@ std::vector<Node*> WizardFormGenerator::GetChildPanes(Node* parent)
     return panes;
 }
 
+std::optional<ttlib::cstr> WizardFormGenerator::GetHint(NodeProperty* prop)
+{
+    if (prop->isProp(prop_title) && !prop->GetNode()->HasValue(prop_title))
+    {
+        return (ttlib::cstr() << "Title bar text");
+    }
+    else
+    {
+        return {};
+    }
+}
+
 //////////////////////////////////////////  WizardPageGenerator  //////////////////////////////////////////
 
 wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent)

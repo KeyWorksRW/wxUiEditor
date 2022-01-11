@@ -63,7 +63,7 @@ protected:
     void ReplaceBaseFile(const wxString& formName, NodeProperty* propType);
     void ReplaceDrvFile(const wxString& formName, NodeProperty* propType);
 
-    wxPGProperty* GetProperty(NodeProperty* prop);
+    wxPGProperty* CreatePGProperty(NodeProperty* prop);
 
     // Called after a property has been modified, this checks to see if various property
     // items need to be enabled or disabled based on the current value of the changed

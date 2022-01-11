@@ -175,7 +175,8 @@ std::optional<ttlib::cstr> FilePickerGenerator::GetPropertyDescription(NodePrope
 {
     if (prop->isProp(prop_message))
     {
-        return (ttlib::cstr() << "Title bar text for the file picker dialog. If not specified, \"Select a file\" will be used.");
+        return (
+            ttlib::cstr() << "Title bar text for the file picker dialog. If not specified, \"Select a file\" will be used.");
     }
     else
     {

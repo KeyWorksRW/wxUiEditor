@@ -241,6 +241,38 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
     gen_name = GetGenName(value);
     if (gen_name == gen_unknown)
     {
+        if (value.GetInt() == 4414)
+        {
+            // This is a column header for a wxListCtrl
+            if (parent->isGen(gen_wxListView))
+            {
+                ttlib::cstr cur_headers = parent->prop_as_string(prop_column_labels);
+                if (auto& properties = object["m_properties"]; properties.IsArray())
+                {
+                    for (auto& iter: properties.GetArray())
+                    {
+                        if (iter.IsObject())
+                        {
+                            // TODO: [KeyWorks - 01-10-2022] A width can also be specified -- wxUE doesn't currently support
+                            // that, but when it does, it should be processed here as well.
+                            if (auto& label_type = FindValue(iter, "m_label");
+                                label_type.IsString() && ttlib::is_sameas(label_type.GetString(), "Name:"))
+                            {
+                                if (auto& label = FindValue(iter, "m_value"); label.IsString())
+                                {
+                                    if (cur_headers.size())
+                                        cur_headers << ' ';
+                                    cur_headers << '"' << label.GetString() << '"';
+                                    parent->prop_set_value(prop_column_labels, cur_headers);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         MSG_ERROR(ttlib::cstr("Unrecognized child type: ") << value.GetInt());
         // m_errors.emplace("Unrecognized child type!");
         return;
@@ -525,6 +557,14 @@ void WxCrafter::ProcessStyles(Node* node, const Value& array)
             }
             if (bit_found)
                 continue;
+            else if (node->isGen(gen_wxRadioBox))
+            {
+                if (ttlib::is_sameas(style_bit, "wxRA_SPECIFY_ROWS"))
+                {
+                    node->prop_set_value(prop_style, "rows");
+                }
+                continue;
+            }
         }
 
         if (win_style)
@@ -775,6 +815,25 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                             continue;
                         }
                     }
+                    else if (name.is_sameas("combobox choices"))
+                    {
+                        if (auto& choices = FindValue(value, "m_value"); choices.IsString())
+                        {
+                            ttlib::multiview mview(choices.GetString(), "\\n");
+                            ttlib::cstr contents;
+                            for (auto& choice: mview)
+                            {
+                                if (choice.size())
+                                {
+                                    if (contents.size())
+                                        contents << ' ';
+                                    contents << '"' << choice << '"';
+                                }
+                            }
+                            node->prop_set_value(prop_contents, contents);
+                            continue;
+                        }
+                    }
                     else if (name.is_sameas("gradient end"))
                     {
                         if (auto& colour = FindValue(value, "colour"); colour.IsString())
@@ -845,7 +904,20 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                 // This is a bug in version 2.9 of wxCrafter -- the value should be an int, not a string. We add the GetInt()
                 // variant in case they ever fix it.
                 if (setting.IsString())
-                    node->prop_set_value(prop_selection_int, FindValue(value, "m_value").GetString());
+                {
+                    ttlib::cstr result = setting.GetString();
+                    if (ttlib::is_digit(result[0]))
+                    {
+                        if (node->HasProp(prop_selection_int))
+                            node->prop_set_value(prop_selection_int, result.atoi());
+                        else if (node->HasProp(prop_selection))
+                            node->prop_set_value(prop_selection, result.atoi());
+                    }
+                    else
+                    {
+                        node->prop_set_value(prop_selection_string, FindValue(value, "m_value").GetString());
+                    }
+                }
                 else if (setting.IsString())
                     node->prop_set_value(prop_selection_int, FindValue(value, "m_value").GetInt());
             }
@@ -866,6 +938,17 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                         node->prop_set_value(prop_initial_path, setting.GetString());
                     else if (node->isGen(gen_wxGauge))
                         node->prop_set_value(prop_position, setting.GetString());
+                    else if (node->isGen(gen_wxComboBox))
+                        node->prop_set_value(prop_selection_string, setting.GetString());
+                    else if (node->isGen(gen_wxCheckBox) || node->isGen(gen_wxRadioButton))
+                        node->prop_set_value(prop_checked, setting.GetBool());
+                    else if (node->isGen(gen_Check3State))
+                    {
+                        if (setting.GetBool())
+                            node->prop_set_value(prop_initial_state, "wxCHK_CHECKED");
+                    }
+                    else if (node->isGen(gen_wxSlider))
+                        node->prop_set_value(prop_position, setting.GetString());
                     else if (node->HasProp(prop_value))
                     {
                         node->prop_set_value(prop_name, setting.GetString());
@@ -883,6 +966,7 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                 {
                     ttlib::multistr contents(setting.GetString(), ';');
                     auto str_ptr = node->get_prop_ptr(prop_contents)->as_raw_ptr();
+                    str_ptr->clear();  // remove any default string
                     for (auto& item: contents)
                     {
                         if (item.size())
@@ -906,6 +990,20 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
             {
                 if (auto& prop_value = FindValue(value, "m_value"); !prop_value.IsNull())
                 {
+                    if (!node->HasProp(prop_name))
+                    {
+                        if (prop_name == prop_min && node->HasProp(prop_minValue))
+                            prop_name = prop_minValue;
+                        else if (prop_name == prop_max && node->HasProp(prop_maxValue))
+                            prop_name = prop_maxValue;
+                        else
+                        {
+                            if ((prop_value.IsString() && prop_value.GetStringLength()) ||
+                                (prop_value.IsBool() && prop_value.GetBool()))
+                                MSG_INFO(ttlib::cstr() << node->DeclName() << " doesn't have a property called "
+                                                       << GenEnum::map_PropNames[prop_name]);
+                        }
+                    }
                     if (prop_value.IsBool())
                         node->prop_set_value(prop_name, prop_value.GetBool());
                     else

@@ -30,7 +30,7 @@ namespace wxue_img
     extern const unsigned char pagectrl_png[601];
 }
 
-bool StartupDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+bool StartupDlg::Create(wxWindow *parent, wxWindowID id, const wxString &title,
         const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
@@ -154,10 +154,10 @@ bool StartupDlgBase::Create(wxWindow *parent, wxWindowID id, const wxString &tit
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &StartupDlgBase::OnInit, this);
-    hyperlink_2->Bind(wxEVT_HYPERLINK, &StartupDlgBase::OnOpen, this);
-    hyperlink->Bind(wxEVT_HYPERLINK, &StartupDlgBase::OnImport, this);
-    hyperlink_3->Bind(wxEVT_HYPERLINK, &StartupDlgBase::OnNew, this);
+    Bind(wxEVT_INIT_DIALOG, &StartupDlg::OnInit, this);
+    hyperlink_2->Bind(wxEVT_HYPERLINK, &StartupDlg::OnOpen, this);
+    hyperlink->Bind(wxEVT_HYPERLINK, &StartupDlg::OnImport, this);
+    hyperlink_3->Bind(wxEVT_HYPERLINK, &StartupDlg::OnNew, this);
 
     return true;
 }

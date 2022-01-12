@@ -9,17 +9,11 @@
 
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
-#include "importwinresdlg.h"  // auto-generated: importwinres_base.h and importwinres_base.cpp
+#include "importwinres_base.h"  // auto-generated: importwinres_base.h and importwinres_base.cpp
 
 #include "mainapp.h"  // App -- App class
 
-ImportWinResDlg::ImportWinResDlg(wxWindow* parent, ttString filename) : ImportWinResBase(parent)
-{
-    if (filename.size())
-        m_rcFilename.utf(filename.wx_str());
-}
-
-void ImportWinResDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void ImportWinRes::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
     if (m_rcFilename.empty())
     {
@@ -38,7 +32,7 @@ void ImportWinResDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
     }
 }
 
-void ImportWinResDlg::ReadRcFile()
+void ImportWinRes::ReadRcFile()
 {
     m_rcFilename.utf(m_fileResource->GetPath().wx_str());
     ttlib::textfile rc_file;
@@ -72,12 +66,12 @@ void ImportWinResDlg::ReadRcFile()
     }
 }
 
-void ImportWinResDlg::OnResourceFile(wxFileDirPickerEvent& WXUNUSED(event))
+void ImportWinRes::OnResourceFile(wxFileDirPickerEvent& WXUNUSED(event))
 {
     ReadRcFile();
 }
 
-void ImportWinResDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
+void ImportWinRes::OnSelectAll(wxCommandEvent& WXUNUSED(event))
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)
@@ -86,7 +80,7 @@ void ImportWinResDlg::OnSelectAll(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ImportWinResDlg::OnClearAll(wxCommandEvent& WXUNUSED(event))
+void ImportWinRes::OnClearAll(wxCommandEvent& WXUNUSED(event))
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)
@@ -95,7 +89,7 @@ void ImportWinResDlg::OnClearAll(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ImportWinResDlg::OnOk(wxCommandEvent& event)
+void ImportWinRes::OnOk(wxCommandEvent& event)
 {
     auto count = m_checkListResUI->GetCount();
     for (unsigned int pos = 0; pos < count; ++pos)

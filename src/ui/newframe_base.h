@@ -12,11 +12,11 @@
 #include <wx/gdicmn.h>
 #include <wx/textctrl.h>
 
-class NewFrameBase : public wxDialog
+class NewFrame : public wxDialog
 {
 public:
-    NewFrameBase() {}
-    NewFrameBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New wxFrame window",
+    NewFrame() {}
+    NewFrame(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New wxFrame window",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -27,11 +27,15 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    void CreateNode();
+
 protected:
 
-    // Virtual event handlers -- override them in your derived class
+    // Event handlers
 
-    virtual void OnCheckMainFrame(wxCommandEvent& event) { event.Skip(); }
+    void OnCheckMainFrame(wxCommandEvent& event);
+
+private:
 
     // Validator variables
 

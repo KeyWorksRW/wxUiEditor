@@ -14,11 +14,11 @@
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
 
-class InsertWidgetBase : public wxDialog
+class InsertWidget : public wxDialog
 {
 public:
-    InsertWidgetBase() {}
-    InsertWidgetBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert widget",
+    InsertWidget() {}
+    InsertWidget(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Insert widget",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -29,15 +29,22 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    ttlib::cstr GetWidget() { return m_widget; }
+
+private:
+    ttlib::cstr m_widget;
+
 protected:
 
-    // Virtual event handlers -- override them in your derived class
+    // Event handlers
 
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnListBoxDblClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnNameText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    void OnInit(wxInitDialogEvent& event);
+    void OnKeyDown(wxKeyEvent& event);
+    void OnListBoxDblClick(wxCommandEvent& event);
+    void OnNameText(wxCommandEvent& event);
+    void OnOK(wxCommandEvent& event);
+
+private:
 
     // Class member variables
 

@@ -12,11 +12,11 @@
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
 
-class NewRibbonBase : public wxDialog
+class NewRibbon : public wxDialog
 {
 public:
-    NewRibbonBase() {}
-    NewRibbonBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar",
+    NewRibbon() {}
+    NewRibbon(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -27,7 +27,18 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    // Checks current selected node to see if it accepts a wxRibbonBar as a child
+    bool IsCreatable(bool notify_user = true);
+
+    void WantFormVersion() { m_is_form = true; }
+    void CreateNode();
+
+private:
+    bool m_is_form { false };
+
 protected:
+
+private:
 
     // Validator variables
 

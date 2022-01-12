@@ -5,11 +5,9 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "insertwidget.h"  // auto-generated: insertwidget_base.h and insertwidget_base.cpp
+#include "insertwidget_base.h"  // auto-generated: insertwidget_base.h and insertwidget_base.cpp
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
-
-InsertWidget::InsertWidget(wxWindow* parent) : InsertWidgetBase(parent) {}
 
 void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {

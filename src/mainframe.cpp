@@ -50,8 +50,8 @@
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
-#include "importwinresdlg.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
-#include "insertwidget.h"     // InsertWidget -- Dialog to lookup and insert a widget
+#include "ui/importwinres_base.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
+#include "ui/insertwidget_base.h"  // InsertWidget -- Dialog to lookup and insert a widget
 
 #if defined(_DEBUG)
     #include "debugging/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
@@ -458,7 +458,7 @@ void MainFrame::OnAppendXRC(wxCommandEvent&)
 
 void MainFrame::OnImportWindowsResource(wxCommandEvent&)
 {
-    ImportWinResDlg dlg(this);
+    ImportWinRes dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
         wxGetApp().AppendWinRes(dlg.GetRcFilename(), dlg.GetDlgNames());
@@ -1672,7 +1672,6 @@ void MainFrame::RemoveFileFromHistory(ttString file)
 #if defined(_DEBUG)
 
     #include "debugging/dbg_code_diff.h"  // DbgCodeDiff -- Compare code generation
-    #include "insertwidget.h"             // InsertWidget -- Dialog to lookup and insert a widget
 
 void MainFrame::OnDbgCodeDiff(wxCommandEvent& WXUNUSED(event))
 {

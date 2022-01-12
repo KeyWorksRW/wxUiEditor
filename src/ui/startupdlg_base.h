@@ -17,11 +17,11 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
-class StartupDlgBase : public wxDialog
+class StartupDlg : public wxDialog
 {
 public:
-    StartupDlgBase() {}
-    StartupDlgBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Open, Import, or Create Project",
+    StartupDlg() {}
+    StartupDlg(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Open, Import, or Create Project",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -32,14 +32,34 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    enum : size_t
+    {
+        START_MRU,
+        START_CONVERT,
+        START_OPEN,
+        START_EMPTY,
+    };
+
+    auto GetCommandType() const { return m_cmdType; }
+    ttString& GetProjectFile() { return m_value; }
+
+protected:
+    void OnHyperlink(wxHyperlinkEvent& event);
+
+private:
+    ttString m_value;
+    size_t m_cmdType { START_EMPTY };
+
 protected:
 
-    // Virtual event handlers -- override them in your derived class
+    // Event handlers
 
-    virtual void OnImport(wxHyperlinkEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnNew(wxHyperlinkEvent& event) { event.Skip(); }
-    virtual void OnOpen(wxHyperlinkEvent& event) { event.Skip(); }
+    void OnImport(wxHyperlinkEvent& event);
+    void OnInit(wxInitDialogEvent& event);
+    void OnNew(wxHyperlinkEvent& event);
+    void OnOpen(wxHyperlinkEvent& event);
+
+private:
 
     // Class member variables
 

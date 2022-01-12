@@ -11,6 +11,7 @@
 
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "lambdas.h"             // Functions for formatting and storage of lamda events
+#include "mainframe.h"           // MainFrame -- Main window frame
 
 #include "../ui/editcodedialog_base.h"  // auto-generated: ../ui/editcodedialog_base.cpp
 
@@ -71,7 +72,7 @@ void EditCodeDialog::OnOK(wxCommandEvent& event)
 
 bool EditCodeDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
 {
-    EditCodeDialog dlg(propGrid->GetPanel(), m_prop);
+    EditCodeDialog dlg(wxGetFrame().GetWindow(), m_prop);
     if (dlg.ShowModal() == wxID_OK)
     {
         SetValue(dlg.GetResults());

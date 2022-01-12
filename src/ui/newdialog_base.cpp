@@ -12,7 +12,7 @@
 
 #include "newdialog_base.h"
 
-bool NewDialogBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
         const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
@@ -78,7 +78,7 @@ bool NewDialogBase::Create(wxWindow *parent, wxWindowID id, const wxString &titl
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &NewDialogBase::OnInit, this);
+    Bind(wxEVT_INIT_DIALOG, &NewDialog::OnInit, this);
     m_check_tabs->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
         {

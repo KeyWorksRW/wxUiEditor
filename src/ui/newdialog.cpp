@@ -1,19 +1,17 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for creating a new project dialog
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "newdialog.h"  // auto-generated: newdialog_base.h and newdialog_base.cpp
+#include "newdialog_base.h"  // auto-generated: newdialog_base.h and newdialog_base.cpp
 
 #include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
 #include "mainframe.h"            // MainFrame -- Main window frame
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
-
-NewDialog::NewDialog(wxWindow* parent) : NewDialogBase(parent) {}
 
 void NewDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {

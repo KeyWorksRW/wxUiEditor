@@ -12,9 +12,7 @@
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
 
-#include "newframe.h"  // auto-generated: newframe_base.h and newframe_base.cpp
-
-NewFrame::NewFrame(wxWindow* parent) : NewFrameBase(parent) {}
+#include "newframe_base.h"  // auto-generated: newframe_base.h and newframe_base.cpp
 
 void NewFrame::OnCheckMainFrame(wxCommandEvent& WXUNUSED(event))
 {

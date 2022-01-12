@@ -58,11 +58,13 @@ void EditCodeDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
 void EditCodeDialog::OnOK(wxCommandEvent& event)
 {
-    ttlib::cstr body(m_stc->GetTextRaw().data());
-    body.Replace("\r", "", tt::REPLACE::all);  // Remove Windows EOL
-    body.Replace("\n", "@@", tt::REPLACE::all);
-    body.RightTrim();
-    m_value = body.wx_str();
+    // We use \r\n because it allows us to convert them in place to @@
+    m_stc->ConvertEOLs(wxSTC_EOL_CRLF);
+
+    m_value = m_stc->GetText();
+    m_value.Replace(" \r", "\r");  // trim trailing space in lines
+    m_value.Replace("\r\n", "@@");
+    m_value.Trim();
 
     event.Skip();
 }

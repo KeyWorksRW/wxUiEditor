@@ -340,11 +340,16 @@ std::optional<ttlib::cstr> BaseGenerator::GetHint(NodeProperty* prop)
     if (prop->isProp(prop_derived_class_name) && !prop->HasValue())
     {
         // Note that once set, this won't change until the property grid gets recreated.
-        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" : "");
+        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" :
+                                                                                 "change class_name first");
     }
     else if (prop->isProp(prop_derived_file) && !prop->HasValue())
     {
         return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" : "");
+    }
+    else if (prop->isProp(prop_base_file) && !prop->HasValue())
+    {
+        return ttlib::cstr("change class_name first");
     }
     else
     {

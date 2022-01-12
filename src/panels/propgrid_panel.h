@@ -59,9 +59,9 @@ protected:
     void AddProperties(ttlib::cview name, Node* node, NodeCategory& category, PropNameSet& prop_set,
                        bool is_child_cat = false);
 
-    void ReplaceDrvName(const wxString& formName, NodeProperty* propType);
+    void ReplaceDerivedName(const wxString& formName, NodeProperty* propType);
     void ReplaceBaseFile(const wxString& formName, NodeProperty* propType);
-    void ReplaceDrvFile(const wxString& formName, NodeProperty* propType);
+    void ReplaceDerivedFile(const wxString& formName, NodeProperty* propType);
 
     wxPGProperty* CreatePGProperty(NodeProperty* prop);
 

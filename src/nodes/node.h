@@ -57,6 +57,7 @@ public:
 
     Node* LocateAncestorType(GenEnum::GenType type) const noexcept;
     Node* FindParentForm() const noexcept;
+    Node* GetForm() const noexcept { return FindParentForm(); }  // alias
 
     // Equivalent to AddChild(child); child->SetParent(this);
     // Returns false if child is not allowed for this node.

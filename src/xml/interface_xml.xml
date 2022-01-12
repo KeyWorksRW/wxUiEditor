@@ -122,7 +122,7 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="Code Generation" type="interface">
 		<property name="base_file" type="file"
-			help="The filename of the base class.">filename_base</property>
+			help="The filename of the base class." />
 		<property name="base_src_includes" type="code_edit"
 			help="This preamble is added in addition to any src_preamble specified for the entire project. It will be placed unchanged at the top of the generated base src file after any (optional) precompiled header file. It is typically used to add header files needed for lambdas used as event handlers." />
 		<property name="base_hdr_includes" type="code_edit"

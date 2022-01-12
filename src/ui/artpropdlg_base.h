@@ -31,15 +31,15 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnChooseClient(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSelectItem(wxListEvent& event) { event.Skip(); }
+
     // Class member variables
 
     wxChoice* m_choice_client;
     wxListView* m_list;
     wxStaticBitmap* m_canvas;
     wxStaticText* m_text;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnChooseClient(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectItem(wxListEvent& event) { event.Skip(); }
 };

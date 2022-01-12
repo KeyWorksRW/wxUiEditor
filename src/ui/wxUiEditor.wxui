@@ -1969,7 +1969,7 @@
       class_name="MenuButton"
       label="MenuButton"
       base_file="menubutton_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuButton"
       generate_ids="false">
       <node
@@ -2001,7 +2001,7 @@
       class_name="MenuCheckbox"
       label="MenuCheckbox"
       base_file="menucheckbox_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuCheckbox"
       generate_ids="false">
       <node
@@ -2023,7 +2023,7 @@
       class_name="MenuCombobox"
       label="MenuCombobox"
       base_file="menucombobox_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuCombobox"
       generate_ids="false">
       <node
@@ -2049,7 +2049,7 @@
       class_name="MenuDataCtrl"
       label="MenuDataCtrl"
       base_file="menudatactrl_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuDataCtrl"
       generate_ids="false">
       <node
@@ -2075,7 +2075,7 @@
       class_name="MenuListbox"
       label="MenuListbox"
       base_file="menulistbox_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuListbox"
       generate_ids="false">
       <node
@@ -2119,7 +2119,7 @@
       class_name="MenuRibbonType"
       label="MenuRibbonType"
       base_file="menuribbontype_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuRibbonType"
       generate_ids="false">
       <node
@@ -2145,7 +2145,7 @@
       class_name="MenuStaticSizer"
       label="MenuStaticSizer"
       base_file="menustaticsizer_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuStaticSizer"
       generate_ids="false">
       <node
@@ -2171,7 +2171,7 @@
       class_name="MenuSpin"
       label="MenuSpin"
       base_file="menuspin_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuSpin"
       generate_ids="false">
       <node
@@ -2195,7 +2195,7 @@
     <node
       class="PanelForm"
       base_file="ribbonpanel_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       class_name="RibbonPanelBase"
       derived_class_name="RibbonPanel"
       generate_ids="false"

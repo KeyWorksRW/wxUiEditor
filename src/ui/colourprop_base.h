@@ -38,6 +38,16 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnColourChanged(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRadioCustomColour(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRadioSystemColour(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSetDefault(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSystemColourChange(wxCommandEvent& event) { event.Skip(); }
+
     // Class member variables
 
     wxColourPickerCtrl* m_colourPicker;
@@ -49,14 +59,4 @@ protected:
     wxStaticBoxSizer* m_staticbox_system;
     wxStaticText* m_static_sample_text;
     wxue_ctrl::ColourRectCtrl* m_colour_rect;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnColourChanged(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRadioCustomColour(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRadioSystemColour(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSetDefault(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSystemColourChange(wxCommandEvent& event) { event.Skip(); }
 };

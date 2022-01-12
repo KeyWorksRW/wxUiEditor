@@ -31,6 +31,14 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnClearAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnOk(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnResourceFile(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnSelectAll(wxCommandEvent& event) { event.Skip(); }
+
     // Class member variables
 
     wxButton* m_btnClearAll;
@@ -39,12 +47,4 @@ protected:
     wxFilePickerCtrl* m_fileResource;
     wxStaticText* m_staticResFile;
     wxStaticText* m_staticText;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnClearAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnOk(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnResourceFile(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnSelectAll(wxCommandEvent& event) { event.Skip(); }
 };

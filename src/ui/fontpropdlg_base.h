@@ -34,6 +34,22 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnCustomRadio(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditPointSize(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFacename(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFamily(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPointSize(wxSpinDoubleEvent& event) { event.Skip(); }
+    virtual void OnStrikeThrough(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStyle(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSymbolSize(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSystemRadio(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUnderlined(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnWeight(wxCommandEvent& event) { event.Skip(); }
+
     // Class member variables
 
     wxCheckBox* m_checkCustomStrikeThrough;
@@ -54,20 +70,4 @@ protected:
     wxSpinCtrlDouble* m_spinCustomPointSize;
     wxStaticText* m_staticCustomSample;
     wxStaticText* m_staticSystemSample;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnCustomRadio(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEditPointSize(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFacename(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFamily(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPointSize(wxSpinDoubleEvent& event) { event.Skip(); }
-    virtual void OnStrikeThrough(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnStyle(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSymbolSize(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSystemRadio(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUnderlined(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWeight(wxCommandEvent& event) { event.Skip(); }
 };

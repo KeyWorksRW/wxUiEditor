@@ -29,6 +29,10 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnCheckMainFrame(wxCommandEvent& event) { event.Skip(); }
+
     // Validator variables
 
     bool m_has_mainframe { true };
@@ -44,8 +48,4 @@ protected:
     wxCheckBox* m_checkBox_statusbar;
     wxCheckBox* m_checkBox_toolbar;
     wxTextCtrl* m_classname;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnCheckMainFrame(wxCommandEvent& event) { event.Skip(); }
 };

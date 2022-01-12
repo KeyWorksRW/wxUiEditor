@@ -57,16 +57,6 @@ public:
 
 protected:
 
-    // Class member variables
-
-    wxMenu* m_menuEdit;
-    wxMenu* m_menuFile;
-    wxMenu* m_menuHelp;
-    wxMenu* m_menuTools;
-    wxMenu* m_submenu_recent;
-    wxMenuBar* m_menubar;
-    wxToolBar* m_toolbar;
-
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
@@ -96,6 +86,16 @@ protected:
     virtual void OnSaveProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnToggleExpandLayout(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateBrowseDocs(wxUpdateUIEvent& event) { event.Skip(); }
+
+    // Class member variables
+
+    wxMenu* m_menuEdit;
+    wxMenu* m_menuFile;
+    wxMenu* m_menuHelp;
+    wxMenu* m_menuTools;
+    wxMenu* m_submenu_recent;
+    wxMenuBar* m_menubar;
+    wxToolBar* m_toolbar;
 };
 
 namespace wxue_img

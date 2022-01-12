@@ -30,6 +30,10 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+
     // Validator variables
 
     bool m_has_std_btns { true };
@@ -43,8 +47,4 @@ protected:
     wxCheckBox* m_check_tabs;
     wxSpinCtrl* m_spinCtrlTabs;
     wxTextCtrl* m_textCtrl_title;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
 };

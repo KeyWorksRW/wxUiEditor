@@ -34,18 +34,18 @@ public:
 
 protected:
 
-    // Class member variables
-
-    wxFlexGridSizer* m_recent_flex_grid;
-    wxStaticText* m_staticText;
-    wxStaticText* m_staticTextRecentProjects;  // // This should be hidden if there actually are any recent projects
-
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnImport(wxHyperlinkEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnNew(wxHyperlinkEvent& event) { event.Skip(); }
     virtual void OnOpen(wxHyperlinkEvent& event) { event.Skip(); }
+
+    // Class member variables
+
+    wxFlexGridSizer* m_recent_flex_grid;
+    wxStaticText* m_staticText;
+    wxStaticText* m_staticTextRecentProjects;  // // This should be hidden if there actually are any recent projects
 };
 
 namespace wxue_img

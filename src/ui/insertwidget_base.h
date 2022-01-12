@@ -31,14 +31,6 @@ public:
 
 protected:
 
-    // Class member variables
-
-    wxListBox* m_listbox;
-    wxStdDialogButtonSizer* m_stdBtn;
-    wxButton* m_stdBtnOK;
-    wxButton* m_stdBtnCancel;
-    wxTextCtrl* m_text_name;
-
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
@@ -46,4 +38,12 @@ protected:
     virtual void OnListBoxDblClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNameText(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+
+    // Class member variables
+
+    wxListBox* m_listbox;
+    wxStdDialogButtonSizer* m_stdBtn;
+    wxButton* m_stdBtnOK;
+    wxButton* m_stdBtnCancel;
+    wxTextCtrl* m_text_name;
 };

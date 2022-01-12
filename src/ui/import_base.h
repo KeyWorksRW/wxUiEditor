@@ -34,6 +34,23 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnCheckFiles(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCrafter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDirectory(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFormBuilder(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInitDialog(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRecentDir(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRemove(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSelectAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSelectNone(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnWindowsResource(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnWxGlade(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnWxSmith(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnXRC(wxCommandEvent& event) { event.Skip(); }
+
     // Class member variables
 
     wxButton* m_btnAddFile;
@@ -52,21 +69,4 @@ protected:
     wxStdDialogButtonSizer* m_stdBtn;
     wxButton* m_stdBtnOK;
     wxButton* m_stdBtnCancel;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnCheckFiles(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCrafter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDirectory(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFormBuilder(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInitDialog(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRecentDir(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRemove(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectNone(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWindowsResource(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWxGlade(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWxSmith(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnXRC(wxCommandEvent& event) { event.Skip(); }
 };

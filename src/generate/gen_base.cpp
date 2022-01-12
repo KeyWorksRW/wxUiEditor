@@ -267,9 +267,19 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         header_ext = hdr_extension;
     }
 
-    file.replace_extension(header_ext);
-    m_source->writeLine();
-    m_source->writeLine(ttlib::cstr() << "#include \"" << file.filename() << "\"");
+    if (file.empty())
+    {
+        m_source->writeLine();
+        m_source->writeLine("// Specify the filename to use in the base_file property");
+        m_source->writeLine("#include \"Your filename here\"");
+    }
+    else
+    {
+        file.replace_extension(header_ext);
+        m_source->writeLine();
+        m_source->writeLine(ttlib::cstr() << "#include \"" << file.filename() << "\"");
+    }
+
     m_source->writeLine();
 
     thrd_collect_img_headers.join();

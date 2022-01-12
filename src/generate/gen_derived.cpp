@@ -86,14 +86,14 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             return result::exists;
     }
 
-    if (m_is_derived_class && derived_file.empty())
-        derived_file = "My Derived File";
-
-    if (m_is_derived_class)
+    if (m_is_derived_class && panel_type == NOT_PANEL)
     {
+        if (derived_file.empty())
+            return result::exists;
+
         derived_file.replace_extension(source_ext);
 
-        if (panel_type == NOT_PANEL && derived_file.file_exists())
+        if (derived_file.file_exists())
             return result::exists;  // We never allow writing over an existing derived class file
 
         derived_file.remove_extension();
@@ -175,9 +175,17 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         m_header->writeLine("\n#pragma once");
         m_header->writeLine();
 
-        baseFile.replace_extension(header_ext);
-        m_header->writeLine(ttlib::cstr().Format("#include %ks", baseFile.c_str()));
-        baseFile.remove_extension();
+        if (baseFile.empty())
+        {
+            m_header->writeLine("// Specify the filename to use in the base_file property");
+            m_header->writeLine("#include \"Your filename here\"");
+        }
+        else
+        {
+            baseFile.replace_extension(header_ext);
+            m_header->writeLine(ttlib::cstr().Format("#include %ks", baseFile.c_str()));
+            baseFile.remove_extension();
+        }
         m_header->writeLine();
 
         ttlib::cstr line;
@@ -245,15 +253,21 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
 
         if (m_is_derived_class)
         {
-            ttlib::cstr inc;
-
-            // Add a comment to the header that specifies the generated header and source filenames
-            baseFile.replace_extension(header_ext);
-            derived_file.replace_extension(header_ext);
-            inc.Format("#include %kv", derived_file.subview());
-
-            if (m_form_node->HasValue(prop_derived_file))
+            if (derived_file.empty())
             {
+                m_source->writeLine();
+                m_source->writeLine("// Specify the filename to use in the derived_file property");
+                m_source->writeLine("#include \"Your filename here\"");
+            }
+            else
+            {
+                ttlib::cstr inc;
+
+                // Add a comment to the header that specifies the generated header and source filenames
+                baseFile.replace_extension(header_ext);
+                derived_file.replace_extension(header_ext);
+                inc.Format("#include %kv", derived_file.subview());
+
                 ttlib::cstr comment(ttlib::cstr(header_ext) << "\"  // auto-generated: ");
                 comment << baseFile << " and ";
                 baseFile.replace_extension(source_ext);
@@ -265,25 +279,28 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
                 m_source->writeLine();
                 m_source->writeLine(inc);
             }
-            else
-            {
-                m_source->writeLine();
-                m_source->writeLine("// Specify the actual filenmae to create in derived_file property");
-                m_source->writeLine(inc);
-            }
 
             m_source->writeLine();
         }
         else
         {
-            baseFile.replace_extension(header_ext);
-            ttlib::cstr inc;
-            inc.Format("#include %kv", baseFile.subview());
-            m_source->writeLine("// Non-generated additions to base class (virtual events is unchecked)");
-            m_source->writeLine("// Copy and paste into your own code as needed.");
-            m_source->writeLine();
-            m_source->writeLine(inc);
-            m_source->writeLine();
+            if (baseFile.empty())
+            {
+                m_source->writeLine();
+                m_source->writeLine("// Specify the filename to use in the base_file property");
+                m_source->writeLine("#include \"Your filename here\"");
+            }
+            else
+            {
+                baseFile.replace_extension(header_ext);
+                ttlib::cstr inc;
+                inc.Format("#include %kv", baseFile.subview());
+                m_source->writeLine("// Non-generated additions to base class (virtual events is unchecked)");
+                m_source->writeLine("// Copy and paste into your own code as needed.");
+                m_source->writeLine();
+                m_source->writeLine(inc);
+                m_source->writeLine();
+            }
         }
 
         if (namespace_using_name.size())

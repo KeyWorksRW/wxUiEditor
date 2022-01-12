@@ -5,6 +5,21 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+/*
+
+    There are several situations we need to deal with here:
+
+    This could be a non-derived class (prop_virtual_events is false) in which case the header file is empty, and we don't use
+   the derived class name or derived filename even if specified.
+
+    This could be a derived class, but either the class name or the filename is empty. In that case, we can't write to disk,
+   but we can mockup a temporary class name if needed as well as a temporary filename.
+
+    If we are trying to write to disk, we have to return result::exists if a non-derived class, result::ignored if filename
+   or classname is empty.
+
+*/
+
 #include <thread>
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
@@ -41,6 +56,9 @@ static constexpr const char* lst_close_type_button[] = {
 
 int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYPE panel_type)
 {
+    m_form_node = form;
+    m_is_derived_class = m_form_node->prop_as_bool(prop_virtual_events);
+
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
 
@@ -55,35 +73,39 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
     }
 
     ttlib::cstr derived_file;
-    if (auto& file_prop = form->prop_as_string(prop_derived_file); file_prop.size())
+    if (m_is_derived_class && m_form_node->HasValue(prop_derived_file))
     {
-        derived_file = file_prop;
-        if ((derived_file.empty() || derived_file.is_sameas("filename")) && panel_type == NOT_PANEL)
-            return result::ignored;
+        derived_file = m_form_node->prop_as_string(prop_derived_file);
         derived_file.make_relative(wxGetApp().getProjectPath());
         derived_file.backslashestoforward();
     }
     else
     {
-        // If there is no derived_file property, then there's nothing we can write to
-        return result::ignored;
+        // If we're writing to disk, return as if the file already exists
+        if (panel_type == NOT_PANEL)
+            return result::exists;
     }
 
-    // If the user cleared the property, change the name to a default value for displaying in the derived panel.
-    if (derived_file.empty())
-        derived_file = "derived_file";
+    if (m_is_derived_class && derived_file.empty())
+        derived_file = "My Derived File";
+
+    if (m_is_derived_class)
+    {
+        derived_file.replace_extension(source_ext);
+
+        if (panel_type == NOT_PANEL && derived_file.file_exists())
+            return result::exists;  // We never allow writing over an existing derived class file
+
+        derived_file.remove_extension();
+    }
+
+    // Caution! Don't return until thrd_get_events.join(); is called.
 
     EventVector events;
-    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form, std::ref(events));
-
-    derived_file.replace_extension(source_ext);
-    if (panel_type == NOT_PANEL && derived_file.file_exists())
-        return result::exists;  // We never allow writing over an existing derived class file
-
-    derived_file.remove_extension();
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, m_form_node, std::ref(events));
 
     ttlib::cstr baseFile;
-    if (auto& file = form->prop_as_string(prop_base_file); file.size())
+    if (auto& file = m_form_node->prop_as_string(prop_base_file); file.size())
     {
         baseFile = file;
         baseFile.replace_extension(header_ext);
@@ -119,15 +141,35 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         }
     }
 
-    auto derived_name = form->prop_as_string(prop_derived_class_name);
+    ttlib::cstr derived_name = m_form_node->prop_as_string(prop_derived_class_name);
+    if (!m_is_derived_class)
+    {
+        // If this is not a derived class, then use the base class name
+        derived_name = m_form_node->prop_as_string(prop_class_name);
+    }
+    else if (derived_name.empty())
+    {
+        ttlib::cstr base_name(m_form_node->prop_as_string(prop_class_name));
+        base_name.Replace("My", "");
+        base_name.Replace("Base", "");
+        derived_name << "MyDerived" << base_name;
+    }
 
     m_header->Clear();
     m_source->Clear();
 
-    m_source->writeLine(txt_DerivedCmtBlock);
+    if (m_is_derived_class)
+        m_source->writeLine(txt_DerivedCmtBlock);
 
     if (panel_type != CPP_PANEL)
     {
+        if (!m_is_derived_class)
+        {
+            m_header->writeLine(
+                "\n// No header needed when not creating a derived class\n// (virtual_events property is unchecked)");
+            thrd_get_events.join();
+            return result::created;
+        }
         m_header->writeLine(txt_DerivedCmtBlock);
 
         m_header->writeLine("\n#pragma once");
@@ -145,7 +187,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             line << namespace_using_name << "::";
         }
 
-        line << form->get_node_name();
+        line << m_form_node->get_node_name();
 
         m_header->writeLine(line);
         m_header->writeLine("{");
@@ -201,22 +243,44 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             m_source->writeLine();
         }
 
+        if (m_is_derived_class)
         {
             ttlib::cstr inc;
 
-            // Add a comment to the header the specifies the generated header and source filenames
+            // Add a comment to the header that specifies the generated header and source filenames
             baseFile.replace_extension(header_ext);
             derived_file.replace_extension(header_ext);
             inc.Format("#include %kv", derived_file.subview());
 
-            ttlib::cstr comment(ttlib::cstr(header_ext) << "\"  // auto-generated: ");
-            comment << baseFile << " and ";
-            baseFile.replace_extension(source_ext);
-            comment << baseFile;
-            inc.Replace(ttlib::cstr(header_ext) << '"', comment);
+            if (m_form_node->HasValue(prop_derived_file))
+            {
+                ttlib::cstr comment(ttlib::cstr(header_ext) << "\"  // auto-generated: ");
+                comment << baseFile << " and ";
+                baseFile.replace_extension(source_ext);
+                comment << baseFile;
+                inc.Replace(ttlib::cstr(header_ext) << '"', comment);
 
-            if (header_ext != ".h")
-                inc.Replace(".h", header_ext);
+                if (header_ext != ".h")
+                    inc.Replace(".h", header_ext);
+                m_source->writeLine();
+                m_source->writeLine(inc);
+            }
+            else
+            {
+                m_source->writeLine();
+                m_source->writeLine("// Specify the actual filenmae to create in derived_file property");
+                m_source->writeLine(inc);
+            }
+
+            m_source->writeLine();
+        }
+        else
+        {
+            baseFile.replace_extension(header_ext);
+            ttlib::cstr inc;
+            inc.Format("#include %kv", baseFile.subview());
+            m_source->writeLine("// Non-generated additions to base class (virtual events is unchecked)");
+            m_source->writeLine("// Copy and paste into your own code as needed.");
             m_source->writeLine();
             m_source->writeLine(inc);
             m_source->writeLine();
@@ -228,9 +292,10 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             m_source->writeLine();
         }
 
+        if (m_is_derived_class)  // non-derived class doesn't have a constructor
         {
             ttlib::cstr code;
-            if (form->isGen(gen_wxDialog))
+            if (m_form_node->isGen(gen_wxDialog))
             {
                 code << "// If this constructor is used, the caller must call Create(parent)\n";
                 code << derived_name << "::" << derived_name << "() {}\n\n";
@@ -239,7 +304,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
             else
             {
                 code << derived_name << "::" << derived_name << "(wxWindow* parent) : ";
-                code << form->get_node_name() << "(parent) {}";
+                code << m_form_node->get_node_name() << "(parent) {}";
             }
 
             m_source->writeLine(code);
@@ -254,7 +319,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         m_header->writeLine("protected:");
         m_header->Indent();
         m_header->SetLastLineBlank();
-        m_header->writeLine(ttlib::cstr() << "// Handlers for " << form->get_node_name() << " events");
+        m_header->writeLine(ttlib::cstr() << "// Handlers for " << m_form_node->get_node_name() << " events");
 
         std::set<std::string> generatedHandlers;
         for (size_t i = 0; i < events.size(); i++)
@@ -282,7 +347,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
                 // If this is a button that closes a dialog, and the dialog is marked as persist, then event.Skip() must be
                 // called.
                 if (event->GetEventInfo()->get_name().is_sameas("wxEVT_INIT_DIALOG") ||
-                    (close_type_button && form->prop_as_bool(prop_persist)))
+                    (close_type_button && m_form_node->prop_as_bool(prop_persist)))
                 {
                     // OnInitDialog needs to call event.Skip() in order to initialize validators and update the UI
                     prototype.Format("%s(%s& event)", event->get_value().c_str(),
@@ -329,7 +394,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
 
                         m_source->writeLine("}");
 
-                        if (form->prop_as_bool(prop_persist))
+                        if (m_form_node->prop_as_bool(prop_persist))
                         {
                             m_source->writeLine();
                             m_source->writeLine("event.Skip();  // This must be called for wxPersistenceManager to work");

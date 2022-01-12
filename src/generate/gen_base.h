@@ -150,4 +150,5 @@ private:
     bool m_NeedArtProviderHeader { false };
     bool m_NeedHeaderFunction { false };
     bool m_NeedAnimationFunction { false };
+    bool m_is_derived_class { true };
 };

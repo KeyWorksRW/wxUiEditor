@@ -9,10 +9,10 @@
 
 #include "import_winres.h"
 
-#include "mainapp.h"                // App -- App class
-#include "mainframe.h"              // Main window frame
-#include "node.h"                   // Node class
-#include "node_creator.h"           // NodeCreator class
+#include "mainapp.h"       // App -- App class
+#include "mainframe.h"     // Main window frame
+#include "node.h"          // Node class
+#include "node_creator.h"  // NodeCreator class
 
 WinResource::WinResource() {}
 

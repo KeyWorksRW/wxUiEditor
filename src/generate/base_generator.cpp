@@ -350,8 +350,6 @@ std::optional<ttlib::cstr> BaseGenerator::GetHint(NodeProperty* prop)
     {
         return {};
     }
-
-
 }
 
 // clang-format off

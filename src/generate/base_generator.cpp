@@ -277,6 +277,23 @@ void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
             pg_setting->Enable(!changed_prop->GetNode()->isPropValue(prop_class_access, "none"));
         }
     }
+    if (changed_prop->isProp(prop_virtual_events))
+    {
+        if (auto pg_setting = prop_grid->GetProperty("private_members"); pg_setting)
+        {
+            pg_setting->Enable(!changed_prop->as_bool());
+        }
+
+        if (auto pg_setting = prop_grid->GetProperty("derived_class_name"); pg_setting)
+        {
+            pg_setting->Enable(changed_prop->as_bool());
+        }
+
+        if (auto pg_setting = prop_grid->GetProperty("derived_file"); pg_setting)
+        {
+            pg_setting->Enable(changed_prop->as_bool());
+        }
+    }
 }
 
 bool BaseGenerator::VerifyProperty(NodeProperty* prop)
@@ -316,6 +333,25 @@ bool BaseGenerator::VerifyProperty(NodeProperty* prop)
     }
 
     return is_modified;
+}
+
+std::optional<ttlib::cstr> BaseGenerator::GetHint(NodeProperty* prop)
+{
+    if (prop->isProp(prop_derived_class_name) && !prop->HasValue())
+    {
+        // Note that once set, this won't change until the property grid gets recreated.
+        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" : "");
+    }
+    else if (prop->isProp(prop_derived_file) && !prop->HasValue())
+    {
+        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" : "");
+    }
+    else
+    {
+        return {};
+    }
+
+
 }
 
 // clang-format off

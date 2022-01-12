@@ -373,6 +373,10 @@ namespace GenEnum
         prop_wrap,
         prop_wrap_flags,
 
+        prop_virtual_events,
+        prop_private_members,
+        prop_inserted_hdr_code,
+
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
         prop_unknown = prop_name_array_size

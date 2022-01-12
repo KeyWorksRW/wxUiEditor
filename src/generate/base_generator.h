@@ -98,7 +98,7 @@ public:
     virtual void ChangeEnableState(wxPropertyGridManager*, NodeProperty*);
 
     // Call this to retrieve hint text for the property
-    virtual std::optional<ttlib::cstr> GetHint(NodeProperty*) { return {}; }
+    virtual std::optional<ttlib::cstr> GetHint(NodeProperty*);
 
     // Call this to use different help text then GetPropDeclaration()->GetDescription()
     virtual std::optional<ttlib::cstr> GetPropertyDescription(NodeProperty*) { return {}; }

@@ -371,6 +371,10 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_wrap, "wrap" },
     { prop_wrap_flags, "wrap_flags" },
 
+    { prop_virtual_events, "virtual_events" },
+    { prop_private_members, "private_members" },
+    { prop_inserted_hdr_code, "inserted_hdr_code" },
+
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 

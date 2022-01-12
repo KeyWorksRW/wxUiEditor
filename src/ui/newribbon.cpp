@@ -1,11 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog for creating a new wxRibbonBar
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "newribbon.h"  // auto-generated: newribbon_base.h and newribbon_base.cpp
+#include "newribbon_base.h"  // auto-generated: newribbon_base.h and newribbon_base.cpp
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
@@ -13,12 +13,6 @@
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
-
-NewRibbon::NewRibbon(wxWindow* parent) : NewRibbonBase(parent)
-{
-    // TODO: [KeyWorks - 05-09-2021] Remove once issue #212 is fixed.
-    m_panel_type = "Tool";
-}
 
 void NewRibbon::CreateNode()
 {

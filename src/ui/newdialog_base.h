@@ -13,11 +13,11 @@
 #include <wx/spinctrl.h>
 #include <wx/textctrl.h>
 
-class NewDialogBase : public wxDialog
+class NewDialog : public wxDialog
 {
 public:
-    NewDialogBase() {}
-    NewDialogBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Dialog",
+    NewDialog() {}
+    NewDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Dialog",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -28,7 +28,15 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    void CreateNode();
+
 protected:
+
+    // Event handlers
+
+    void OnInit(wxInitDialogEvent& event);
+
+private:
 
     // Validator variables
 
@@ -43,8 +51,4 @@ protected:
     wxCheckBox* m_check_tabs;
     wxSpinCtrl* m_spinCtrlTabs;
     wxTextCtrl* m_textCtrl_title;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
 };

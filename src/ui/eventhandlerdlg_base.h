@@ -34,6 +34,17 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnCapture(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChange(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnFunctionText(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnIncludeEvent(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseFunction(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseLambda(wxCommandEvent& event) { event.Skip(); }
+
     // Class member variables
 
     wxCheckBox* m_check_capture_this;
@@ -45,15 +56,4 @@ protected:
     wxStaticText* m_static_bind_text;
     wxStyledTextCtrl* m_stc;
     wxTextCtrl* m_text_function;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnCapture(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnChange(wxStyledTextEvent& event) { event.Skip(); }
-    virtual void OnFunctionText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnIncludeEvent(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseFunction(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUseLambda(wxCommandEvent& event) { event.Skip(); }
 };

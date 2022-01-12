@@ -14,11 +14,11 @@
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 
-class ImportWinResBase : public wxDialog
+class ImportWinRes : public wxDialog
 {
 public:
-    ImportWinResBase() {}
-    ImportWinResBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Import Windows Resource Dialogs",
+    ImportWinRes() {}
+    ImportWinRes(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Import Windows Resource Dialogs",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -29,7 +29,27 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    const ttlib::cstr& GetRcFilename() { return m_rcFilename; }
+    std::vector<ttlib::cstr>& GetDlgNames() { return m_dialogs; }
+
 protected:
+    void ReadRcFile();
+
+private:
+    ttlib::cstr m_rcFilename;
+    std::vector<ttlib::cstr> m_dialogs;
+
+protected:
+
+    // Event handlers
+
+    void OnClearAll(wxCommandEvent& event);
+    void OnInit(wxInitDialogEvent& event);
+    void OnOk(wxCommandEvent& event);
+    void OnResourceFile(wxFileDirPickerEvent& event);
+    void OnSelectAll(wxCommandEvent& event);
+
+private:
 
     // Class member variables
 
@@ -39,12 +59,4 @@ protected:
     wxFilePickerCtrl* m_fileResource;
     wxStaticText* m_staticResFile;
     wxStaticText* m_staticText;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnClearAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnOk(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnResourceFile(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnSelectAll(wxCommandEvent& event) { event.Skip(); }
 };

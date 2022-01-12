@@ -8,7 +8,7 @@
 
 #include "importwinres_base.h"
 
-bool ImportWinResBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+bool ImportWinRes::Create(wxWindow *parent, wxWindowID id, const wxString &title,
         const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
@@ -55,11 +55,11 @@ bool ImportWinResBase::Create(wxWindow *parent, wxWindowID id, const wxString &t
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &ImportWinResBase::OnInit, this);
-    m_fileResource->Bind(wxEVT_FILEPICKER_CHANGED, &ImportWinResBase::OnResourceFile, this);
-    m_btnSelectAll->Bind(wxEVT_BUTTON, &ImportWinResBase::OnSelectAll, this);
-    m_btnClearAll->Bind(wxEVT_BUTTON, &ImportWinResBase::OnClearAll, this);
-    Bind(wxEVT_BUTTON, &ImportWinResBase::OnOk, this, wxID_OK);
+    Bind(wxEVT_INIT_DIALOG, &ImportWinRes::OnInit, this);
+    m_fileResource->Bind(wxEVT_FILEPICKER_CHANGED, &ImportWinRes::OnResourceFile, this);
+    m_btnSelectAll->Bind(wxEVT_BUTTON, &ImportWinRes::OnSelectAll, this);
+    m_btnClearAll->Bind(wxEVT_BUTTON, &ImportWinRes::OnClearAll, this);
+    Bind(wxEVT_BUTTON, &ImportWinRes::OnOk, this, wxID_OK);
 
     return true;
 }

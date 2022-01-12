@@ -10,7 +10,7 @@
 
 #include "newribbon_base.h"
 
-bool NewRibbonBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+bool NewRibbon::Create(wxWindow *parent, wxWindowID id, const wxString &title,
         const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))

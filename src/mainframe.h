@@ -66,6 +66,8 @@ public:
     MainFrame();
     ~MainFrame() override;
 
+    wxWindow* GetWindow() { return wxDynamicCast(this, wxWindow); }
+
     MockupParent* GetMockup() { return m_mockupPanel; }
     PropGridPanel* GetPropPanel() { return m_property_panel; }
     NavigationPanel* GetNavigationPanel() { return m_nav_panel; }

@@ -876,9 +876,11 @@
     <node
       class="wxDialog"
       base_file="importwinres_base"
-      class_name="ImportWinResBase"
-      derived_class_name="ImportWinResDlg"
+      class_name="ImportWinRes"
+      inserted_hdr_code="const ttlib::cstr&amp; GetRcFilename() { return m_rcFilename; }@@std::vector&lt;ttlib::cstr>&amp; GetDlgNames() { return m_dialogs; }@@@@protected:@@void ReadRcFile();@@@@private:@@ttlib::cstr m_rcFilename;@@std::vector&lt;ttlib::cstr> m_dialogs;"
+      private_members="true"
       title="Import Windows Resource Dialogs"
+      virtual_events="false"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -943,11 +945,12 @@
     <node
       class="wxDialog"
       base_file="insertwidget_base"
-      class_name="InsertWidgetBase"
-      derived_class_name="InsertWidget"
-      derived_file="insertwidget"
+      class_name="InsertWidget"
+      inserted_hdr_code="ttlib::cstr GetWidget() { return m_widget; }@@@@private:@@ttlib::cstr m_widget;"
       minimum_size="-1,-1"
+      private_members="true"
       title="Insert widget"
+      virtual_events="false"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1679,10 +1682,11 @@
     <node
       class="wxDialog"
       base_file="newdialog_base"
-      class_name="NewDialogBase"
-      derived_class_name="NewDialog"
-      derived_file="newdialog"
+      class_name="NewDialog"
+      inserted_hdr_code="void CreateNode();"
+      private_members="true"
       title="New Dialog"
+      virtual_events="false"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1778,10 +1782,11 @@
     <node
       class="wxDialog"
       base_file="newframe_base"
-      class_name="NewFrameBase"
-      derived_class_name="NewFrame"
-      derived_file="newframe"
+      class_name="NewFrame"
+      inserted_hdr_code="void CreateNode();@@"
+      private_members="true"
       title="New wxFrame window"
+      virtual_events="false"
       wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event)@@{@@m_classname->SetFocus();@@event.Skip();@@}">
       <node
         class="wxBoxSizer"
@@ -1859,10 +1864,11 @@
     <node
       class="wxDialog"
       base_file="newribbon_base"
-      class_name="NewRibbonBase"
-      derived_class_name="NewRibbon"
-      derived_file="newribbon"
-      title="New Ribbon Bar">
+      class_name="NewRibbon"
+      inserted_hdr_code="// Checks current selected node to see if it accepts a wxRibbonBar as a child@@bool IsCreatable(bool notify_user = true);@@@@void WantFormVersion() { m_is_form = true; }@@void CreateNode();@@@@private:@@bool m_is_form { false };@@"
+      private_members="true"
+      title="New Ribbon Bar"
+      virtual_events="false">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -1969,7 +1975,7 @@
       class_name="MenuButton"
       label="MenuButton"
       base_file="menubutton_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuButton"
       generate_ids="false">
       <node
@@ -2001,7 +2007,7 @@
       class_name="MenuCheckbox"
       label="MenuCheckbox"
       base_file="menucheckbox_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuCheckbox"
       generate_ids="false">
       <node
@@ -2023,7 +2029,7 @@
       class_name="MenuCombobox"
       label="MenuCombobox"
       base_file="menucombobox_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuCombobox"
       generate_ids="false">
       <node
@@ -2049,7 +2055,7 @@
       class_name="MenuDataCtrl"
       label="MenuDataCtrl"
       base_file="menudatactrl_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuDataCtrl"
       generate_ids="false">
       <node
@@ -2075,7 +2081,7 @@
       class_name="MenuListbox"
       label="MenuListbox"
       base_file="menulistbox_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuListbox"
       generate_ids="false">
       <node
@@ -2119,7 +2125,7 @@
       class_name="MenuRibbonType"
       label="MenuRibbonType"
       base_file="menuribbontype_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuRibbonType"
       generate_ids="false">
       <node
@@ -2145,7 +2151,7 @@
       class_name="MenuStaticSizer"
       label="MenuStaticSizer"
       base_file="menustaticsizer_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuStaticSizer"
       generate_ids="false">
       <node
@@ -2171,7 +2177,7 @@
       class_name="MenuSpin"
       label="MenuSpin"
       base_file="menuspin_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuSpin"
       generate_ids="false">
       <node
@@ -2195,7 +2201,7 @@
     <node
       class="PanelForm"
       base_file="ribbonpanel_base"
-      base_src_includes="#include &quot;ribbon_ids.h&quot;\n#include &quot;gen_enums.h&quot;     // Enumerations for generators\n\nusing namespace GenEnum;"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       class_name="RibbonPanelBase"
       derived_class_name="RibbonPanel"
       generate_ids="false"
@@ -3420,11 +3426,12 @@
     <node
       class="wxDialog"
       base_file="startupdlg_base"
-      class_name="StartupDlgBase"
-      derived_class_name="StartupDlg"
-      derived_file="../startup_dlg.cpp"
+      class_name="StartupDlg"
       icon="Embed;../art_src/logo16.png;[-1,-1]"
+      inserted_hdr_code="enum : size_t@@{@@    START_MRU,@@    START_CONVERT,@@    START_OPEN,@@    START_EMPTY,@@};@@@@auto GetCommandType() const { return m_cmdType; }@@ttString&amp; GetProjectFile() { return m_value; }@@@@protected:@@void OnHyperlink(wxHyperlinkEvent&amp; event);@@@@private:@@ttString m_value;@@size_t m_cmdType { START_EMPTY };"
+      private_members="true"
       title="Open, Import, or Create Project"
+      virtual_events="false"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

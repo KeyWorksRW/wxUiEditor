@@ -26,16 +26,16 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnDropDown(wxRibbonToolBarEvent& event) { event.Skip(); }
+    virtual void OnToolClick(wxRibbonToolBarEvent& event) { event.Skip(); }
+
     // Class member variables
 
     wxBoxSizer* parent_sizer;
     wxRibbonBar* m_rbnBar;
     wxRibbonPage* m_page_bars;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnDropDown(wxRibbonToolBarEvent& event) { event.Skip(); }
-    virtual void OnToolClick(wxRibbonToolBarEvent& event) { event.Skip(); }
 };
 
 namespace wxue_img

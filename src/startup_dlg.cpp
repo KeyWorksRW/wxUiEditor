@@ -5,18 +5,12 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "startup_dlg.h"  // auto-generated: ui/startupdlg_base.h and ui/startupdlg_base.cpp
+#include "ui/startupdlg_base.h"  // auto-generated: ui/startupdlg_base.h and ui/startupdlg_base.cpp
 
 #include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame
 
 // If this constructor is used, the caller must call Create(parent)
-StartupDlg::StartupDlg() {}
-
-StartupDlg::StartupDlg(wxWindow* parent)
-{
-    Create(parent);
-}
 
 void StartupDlg::OnInit(wxInitDialogEvent& event)
 {

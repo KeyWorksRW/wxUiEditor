@@ -34,6 +34,19 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnCheckPngConversion(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnComboHdrMask(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnComboXpmMask(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnConvert(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnConvertAlpha(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnForceHdrMask(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnForceXpmMask(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInputChange(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnOutputChange(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
+
     // Class member variables
 
     wxButton* m_btnClose;
@@ -58,17 +71,4 @@ protected:
     wxStaticText* m_staticSave;
     wxStaticText* m_staticSize;
     wxStaticText* m_staticXpmRGB;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnCheckPngConversion(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnComboHdrMask(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnComboXpmMask(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnConvert(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnConvertAlpha(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnForceHdrMask(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnForceXpmMask(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInputChange(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnOutputChange(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
 };

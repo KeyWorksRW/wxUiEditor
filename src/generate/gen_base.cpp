@@ -201,12 +201,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
         if (form_node->HasValue(prop_base_hdr_includes))
         {
-            m_header->writeLine();
-            ttlib::cstr text = form_node->prop_as_string(prop_base_hdr_includes);
-            text.Replace("\\n", "\n", true);
-            if (text.back() == '\n')
-                text.erase(text.size() - 1, 1);
-            m_header->writeLine(text);
+            WritePropHdrCode(form_node, prop_base_hdr_includes);
         }
     }
 
@@ -257,46 +252,12 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     if (project->HasValue(prop_src_preamble))
     {
-        ttlib::cstr convert(project->prop_as_string(prop_src_preamble));
-        convert.Replace("@@", "\n", tt::REPLACE::all);
-        ttlib::multistr lines(convert, '\n');
-        bool initial_bracket = false;
-        for (auto& code: lines)
-        {
-            if (code.contains("}"))
-            {
-                m_source->Unindent();
-            }
-            else if (!initial_bracket && code.contains("["))
-            {
-                initial_bracket = true;
-                m_source->Indent();
-            }
-
-            m_source->writeLine(code, indent::auto_no_whitespace);
-
-            if (code.contains("{"))
-            {
-                m_source->Indent();
-            }
-        }
-        m_source->Unindent();
-        m_source->writeLine();
+        WritePropSourceCode(project, prop_src_preamble);
     }
 
     if (form_node->HasValue(prop_base_src_includes))
     {
-        ttlib::cstr code = form_node->prop_as_string(prop_base_src_includes);
-
-        // The multi-line editor may have been used in which case there are escaped newlines and tabs -- we convert
-        // those to the actual characters before generating the code. It's common with that editor to have a trailing
-        // EOL -- so we remove that if needed.
-        code.Replace("\\n", "\n", true);
-        code.Replace("\\t", "\t", true);
-        if (code.back() == '\n')
-            code.erase(code.size() - 1, 1);
-        m_source->writeLine(code);
-        m_source->writeLine();
+        WritePropSourceCode(form_node, prop_base_src_includes);
     }
 
     ttlib::cstr header_ext(".h");
@@ -633,14 +594,21 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
                 if (has_handler)
                 {
-                    code << " void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                    code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
                     code_lines.insert(code);
                     continue;
                 }
             }
 
-            code << " virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
-                 << "& event) { event.Skip(); }";
+            if (m_form_node->prop_as_bool(prop_virtual_events))
+            {
+                code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
+                     << "& event) { event.Skip(); }";
+            }
+            else
+            {
+                code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+            }
             code_lines.insert(code);
         }
 
@@ -657,17 +625,32 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
             ttlib::cstr code;
 
-            code << " virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
-                 << "& event) { event.Skip(); }";
+            if (m_form_node->prop_as_bool(prop_virtual_events))
+            {
+                code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
+                     << "& event) { event.Skip(); }";
+            }
+            else
+            {
+                code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+            }
+
             code_lines.insert(code);
         }
 
         if (code_lines.size())
         {
             m_header->writeLine();
-            m_header->writeLine("// Virtual event handlers -- override them in your derived class");
-            m_header->writeLine();
-
+            if (m_form_node->prop_as_bool(prop_virtual_events))
+            {
+                m_header->writeLine("// Virtual event handlers -- override them in your derived class");
+                m_header->writeLine();
+            }
+            else
+            {
+                m_header->writeLine("// Event handlers");
+                m_header->writeLine();
+            }
             for (auto& iter: code_lines)
             {
                 m_header->writeLine(iter.subview());
@@ -1136,9 +1119,24 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
 
     GenEnumIds(form_node);
 
+    if (m_form_node->HasValue(prop_inserted_hdr_code))
+    {
+        WritePropHdrCode(m_form_node, prop_inserted_hdr_code);
+    }
+
     m_header->Unindent();
     m_header->writeLine("protected:");
     m_header->Indent();
+
+    GenHdrEvents(events);
+
+    if (!m_form_node->prop_as_bool(prop_virtual_events) && form_node->prop_as_bool(prop_private_members))
+    {
+        m_header->Unindent();
+        m_header->writeLine();
+        m_header->writeLine("private:");
+        m_header->Indent();
+    }
 
     CollectValidatorVariables(form_node, code_lines);
     if (code_lines.size())
@@ -1157,8 +1155,6 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
         m_header->writeLine();
         WriteSetLines(m_header, code_lines);
     }
-
-    GenHdrEvents(events);
 
     m_header->Unindent();
     m_header->writeLine("};");
@@ -1839,4 +1835,71 @@ void BaseCodeGenerator::GenerateHandlers()
         }
         m_source->writeLine();
     }
+}
+
+void BaseCodeGenerator::WritePropSourceCode(Node* node, GenEnum::PropName prop)
+{
+    ttlib::cstr convert(node->prop_as_string(prop));
+    convert.Replace("@@", "\n", tt::REPLACE::all);
+    ttlib::multistr lines(convert, '\n');
+    bool initial_bracket = false;
+    for (auto& code: lines)
+    {
+        if (code.contains("}"))
+        {
+            m_source->Unindent();
+        }
+        else if (!initial_bracket && code.contains("["))
+        {
+            initial_bracket = true;
+            m_source->Indent();
+        }
+
+        m_source->writeLine(code, indent::auto_no_whitespace);
+
+        if (code.contains("{"))
+        {
+            m_source->Indent();
+        }
+    }
+    m_source->Unindent();
+    m_source->writeLine();
+}
+
+void BaseCodeGenerator::WritePropHdrCode(Node* node, GenEnum::PropName prop)
+{
+    ttlib::cstr convert(node->prop_as_string(prop));
+    convert.Replace("@@", "\n", tt::REPLACE::all);
+    ttlib::multistr lines(convert, '\n', tt::TRIM::right);
+    bool initial_bracket = false;
+    for (auto& code: lines)
+    {
+        if (code.contains("}") && !code.contains("{"))
+        {
+            m_header->Unindent();
+        }
+        else if (!initial_bracket && code.contains("["))
+        {
+            initial_bracket = true;
+            m_header->Indent();
+        }
+
+        if (code.is_sameas("public:") || code.is_sameas("protected:") || code.is_sameas("private:"))
+        {
+            m_header->Unindent();
+            m_header->writeLine(code, indent::auto_no_whitespace);
+            m_header->Indent();
+        }
+        else
+        {
+            m_header->writeLine(code, indent::auto_no_whitespace);
+        }
+
+        if (code.contains("{") && !code.contains("}"))
+        {
+            m_header->Indent();
+        }
+    }
+    m_header->Unindent();
+    m_header->writeLine();
 }

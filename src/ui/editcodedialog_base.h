@@ -28,13 +28,13 @@ public:
 
 protected:
 
-    // Class member variables
-
-    wxStyledTextCtrl* m_stc;
-
     // Virtual event handlers -- override them in your derived class
 
     virtual void OnChange(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+
+    // Class member variables
+
+    wxStyledTextCtrl* m_stc;
 };

@@ -27,14 +27,14 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnAffirmative(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+
     // Validator variables
 
     bool m_isWakaTimeEnabled { true };
     bool m_sizers_all_borders { true };
     bool m_sizers_always_expand { true };
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnAffirmative(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
 };

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main application class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,13 +14,13 @@
 
 #include "mainapp.h"
 
-#include "appoptions.h"    // AppOptions -- Application-wide options
-#include "bitmaps.h"       // Contains various images handling functions
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node -- Node class
-#include "node_creator.h"  // NodeCreator class
-#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "startup_dlg.h"   // CStartup -- Dialog to display is wxUE is launched with no arguments
+#include "appoptions.h"          // AppOptions -- Application-wide options
+#include "bitmaps.h"             // Contains various images handling functions
+#include "mainframe.h"           // MainFrame -- Main window frame
+#include "node.h"                // Node -- Node class
+#include "node_creator.h"        // NodeCreator class
+#include "pjtsettings.h"         // ProjectSettings -- Hold data for currently loaded project
+#include "ui/startupdlg_base.h"  // CStartup -- Dialog to display is wxUE is launched with no arguments
 
 #include "pugixml.hpp"
 

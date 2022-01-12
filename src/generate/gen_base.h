@@ -11,6 +11,8 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
+#include "gen_enums.h"  // Enumerations for generators
+
 class ProjectSettings;
 class NodeCreator;
 class WriteCode;
@@ -78,6 +80,8 @@ public:
     void GenerateHandlers();
 
 protected:
+    void WritePropSourceCode(Node* node, GenEnum::PropName prop);
+    void WritePropHdrCode(Node* node, GenEnum::PropName prop);
     void GenCtxConstruction(Node* node);
     void AddPersistCode(Node* node);
     enum Permission

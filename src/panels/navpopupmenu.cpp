@@ -18,8 +18,8 @@
 #include "undo_cmds.h"       // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"           // Utility functions that work with properties
 
-#include "newdialog.h"  // NewDialog -- Dialog for creating a new project dialog
-#include "newframe.h"   // NewFrame -- Dialog for creating a new project wxFrame
+#include "newdialog_base.h"  // NewDialog -- Dialog for creating a new project dialog
+#include "newframe_base.h"   // NewFrame -- Dialog for creating a new project wxFrame
 
 // clang-format off
 static const auto lstBarGenerators = {
@@ -1184,7 +1184,7 @@ void NavPopupMenu::CreateBookMenu(Node* /* node */)
 
 void NavPopupMenu::OnCreateNewDialog(wxCommandEvent& WXUNUSED(event))
 {
-    NewDialog dlg;
+    NewDialog dlg(wxGetFrame().GetWindow());
     if (dlg.ShowModal() == wxID_OK)
     {
         dlg.CreateNode();
@@ -1193,7 +1193,7 @@ void NavPopupMenu::OnCreateNewDialog(wxCommandEvent& WXUNUSED(event))
 
 void NavPopupMenu::OnCreateNewFrame(wxCommandEvent& WXUNUSED(event))
 {
-    NewFrame dlg;
+    NewFrame dlg(wxGetFrame().GetWindow());
     if (dlg.ShowModal() == wxID_OK)
     {
         dlg.CreateNode();

@@ -52,13 +52,10 @@ int WriteCMakeFile(bool test_only)
 
     for (auto& iter: project->GetChildNodePtrs())
     {
-        ttlib::cstr base_file = iter->prop_as_string(prop_base_file);
-        // "filename_base" is the default filename given to all form files. Unless it's changed, no code will be
-        // generated.
-        if (base_file == "filename_base")
+        if (!iter->HasValue(prop_base_file))
             continue;
 
-        base_files.emplace(base_file);
+        base_files.emplace(iter->prop_as_string(prop_base_file));
     }
 
     for (auto base_file: base_files)

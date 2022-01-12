@@ -1148,18 +1148,20 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
                     if (selected_node->IsForm())
                     {
-                        if (newValue.Right(4) != "Base")
-                            return;
+                        if (!selected_node->HasValue(prop_base_file))
+                        {
+                            ReplaceBaseFile(newValue, selected_node->get_prop_ptr(prop_base_file));
+                        }
 
-                        if (auto propType = selected_node->get_prop_ptr(prop_derived_class_name);
-                            propType && propType->as_string() == "DerivedClass")
-                            ReplaceDrvName(newValue, propType);
-                        if (auto propType = selected_node->get_prop_ptr(prop_base_file);
-                            propType && propType->as_string() == "filename_base")
-                            ReplaceBaseFile(newValue, propType);
-                        if (auto propType = selected_node->get_prop_ptr(prop_derived_file);
-                            propType && propType->as_string().empty())
-                            ReplaceDrvFile(newValue, propType);
+                        if (!selected_node->prop_as_bool(prop_virtual_events))
+                            return;  // no derived class if no virtual events
+
+                        if (!selected_node->HasValue(prop_derived_class_name))
+                        {
+                            ReplaceDerivedName(newValue, selected_node->get_prop_ptr(prop_derived_class_name));
+                            ReplaceDerivedFile(selected_node->prop_as_wxString(prop_derived_class_name),
+                                               selected_node->get_prop_ptr(prop_derived_file));
+                        }
                     }
                 }
             }
@@ -1602,10 +1604,18 @@ void PropGridPanel::CreateEventCategory(ttlib::cview name, Node* node, NodeDecla
     }
 }
 
-void PropGridPanel::ReplaceDrvName(const wxString& newValue, NodeProperty* propType)
+void PropGridPanel::ReplaceDerivedName(const wxString& newValue, NodeProperty* propType)
 {
     wxString drvName = newValue;
-    drvName.Replace("Base", wxEmptyString);
+    if (drvName.Right(4) == "Base")
+    {
+        drvName.Replace("Base", wxEmptyString);
+    }
+    else
+    {
+        drvName << "Derived";
+    }
+
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_class_name");
     grid_property->SetValueFromString(drvName, 0);
     ModifyProperty(propType, drvName);
@@ -1625,13 +1635,18 @@ void PropGridPanel::ReplaceBaseFile(const wxString& newValue, NodeProperty* prop
     ModifyProperty(propType, baseName);
 }
 
-void PropGridPanel::ReplaceDrvFile(const wxString& newValue, NodeProperty* propType)
+void PropGridPanel::ReplaceDerivedFile(const wxString& newValue, NodeProperty* propType)
 {
     ttString drvName = newValue;
-    if (drvName.contains("Base"))
+    if (drvName.Right(4) == "Base")
         drvName.Replace("Base", wxEmptyString);
-    else
-        drvName << "_drv";
+    else if (drvName.Right(7) == "Derived")
+        drvName.Replace("Derived", "_derived");
+    else if (propType->GetNode()->prop_as_wxString(prop_base_file).Right(5) != "_base")
+    {
+        drvName << "_derived";
+    }
+
     drvName.MakeLower();
     if (wxGetApp().GetProject()->HasValue(prop_base_directory))
         drvName.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');

@@ -187,6 +187,30 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
         event->GetProperty()->SetValueFromString(newValue, 0);
     }
+    else if (prop->isProp(prop_class_name) && prop->GetNode()->IsForm())
+    {
+        auto property = wxStaticCast(event->GetProperty(), wxStringProperty);
+        auto variant = event->GetPropertyValue();
+        ttlib::cstr newValue = property->ValueToString(variant).utf8_string();
+        if (newValue.empty())
+            return true;
+
+        for (auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
+        {
+            if (iter.get() == prop->GetNode())
+            {
+                continue;
+            }
+            else if (iter.get()->prop_as_string(prop_class_name).is_sameas(newValue))
+            {
+                wxMessageBox("The name you have chosen is already in use by another class.", "Duplicate class name");
+                event->Veto();
+                event->GetProperty()->SetValue(newValue.wx_str());
+                return false;
+            }
+        }
+    }
+
     return true;
 }
 
@@ -298,41 +322,43 @@ void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
 
 bool BaseGenerator::VerifyProperty(NodeProperty* prop)
 {
-    if (!prop->isProp(prop_alignment))
-        return false;
+    bool result = false;
 
-    bool is_modified = false;
-    auto value = prop->as_raw_ptr();
-    if (value->contains("wxALIGN_LEFT") &&
-        (value->contains("wxALIGN_RIGHT") || value->contains("wxALIGN_CENTER_HORIZONTAL")))
+    if (prop->isProp(prop_alignment))
     {
-        value->Replace("wxALIGN_LEFT|", "");
-        is_modified = true;
-    }
-    if (value->contains("wxALIGN_TOP") && (value->contains("wxALIGN_BOTTOM") || value->contains("wxALIGN_CENTER_VERTICAL")))
-    {
-        value->Replace("wxALIGN_TOP|", "");
-        is_modified = true;
-    }
-    if (value->contains("wxALIGN_RIGHT") && value->contains("wxALIGN_CENTER_HORIZONTAL"))
-    {
-        value->Replace("wxALIGN_RIGHT|", "");
-        is_modified = true;
-    }
-    if (value->contains("wxALIGN_BOTTOM") && value->contains("wxALIGN_CENTER_VERTICAL"))
-    {
-        value->Replace("wxALIGN_BOTTOM|", "");
-        is_modified = true;
+        auto value = prop->as_raw_ptr();
+        if (value->contains("wxALIGN_LEFT") &&
+            (value->contains("wxALIGN_RIGHT") || value->contains("wxALIGN_CENTER_HORIZONTAL")))
+        {
+            value->Replace("wxALIGN_LEFT|", "");
+            result = true;
+        }
+        if (value->contains("wxALIGN_TOP") &&
+            (value->contains("wxALIGN_BOTTOM") || value->contains("wxALIGN_CENTER_VERTICAL")))
+        {
+            value->Replace("wxALIGN_TOP|", "");
+            result = true;
+        }
+        if (value->contains("wxALIGN_RIGHT") && value->contains("wxALIGN_CENTER_HORIZONTAL"))
+        {
+            value->Replace("wxALIGN_RIGHT|", "");
+            result = true;
+        }
+        if (value->contains("wxALIGN_BOTTOM") && value->contains("wxALIGN_CENTER_VERTICAL"))
+        {
+            value->Replace("wxALIGN_BOTTOM|", "");
+            result = true;
+        }
+
+        // wxALIGN_CENTER can't be combined with anything
+        if (value->contains("wxALIGN_CENTER|"))
+        {
+            value->Replace("wxALIGN_CENTER|", "");
+            result = true;
+        }
     }
 
-    // wxALIGN_CENTER can't be combined with anything
-    if (value->contains("wxALIGN_CENTER|"))
-    {
-        value->Replace("wxALIGN_CENTER|", "");
-        is_modified = true;
-    }
-
-    return is_modified;
+    return result;
 }
 
 std::optional<ttlib::cstr> BaseGenerator::GetHint(NodeProperty* prop)
@@ -340,11 +366,16 @@ std::optional<ttlib::cstr> BaseGenerator::GetHint(NodeProperty* prop)
     if (prop->isProp(prop_derived_class_name) && !prop->HasValue())
     {
         // Note that once set, this won't change until the property grid gets recreated.
-        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" : "");
+        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" :
+                                                                                 "change class_name first");
     }
     else if (prop->isProp(prop_derived_file) && !prop->HasValue())
     {
         return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" : "");
+    }
+    else if (prop->isProp(prop_base_file) && !prop->HasValue())
+    {
+        return ttlib::cstr("change class_name first");
     }
     else
     {

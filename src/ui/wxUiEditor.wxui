@@ -880,7 +880,7 @@
       inserted_hdr_code="const ttlib::cstr&amp; GetRcFilename() { return m_rcFilename; }@@std::vector&lt;ttlib::cstr>&amp; GetDlgNames() { return m_dialogs; }@@@@protected:@@void ReadRcFile();@@@@private:@@ttlib::cstr m_rcFilename;@@std::vector&lt;ttlib::cstr> m_dialogs;"
       private_members="true"
       title="Import Windows Resource Dialogs"
-      virtual_events="false"
+      use_derived_class="false"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -950,7 +950,7 @@
       minimum_size="-1,-1"
       private_members="true"
       title="Insert widget"
-      virtual_events="false"
+      use_derived_class="false"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1683,10 +1683,10 @@
       class="wxDialog"
       base_file="newdialog_base"
       class_name="NewDialog"
-      inserted_hdr_code="void CreateNode();"
+      inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
       private_members="true"
-      title="New Dialog"
-      virtual_events="false"
+      title="Create New Dialog"
+      use_derived_class="false"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -1695,6 +1695,7 @@
         flags="wxEXPAND">
         <node
           class="wxBoxSizer"
+          orientation="wxVERTICAL"
           var_name="box_sizer_3">
           <node
             class="wxStaticText"
@@ -1702,6 +1703,29 @@
             label="These are initial values -- all of them can be changed after the dialog is created."
             var_name="staticText_3"
             wrap="300" />
+          <node
+            class="wxInfoBar"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_2"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Base class name:"
+            var_name="staticText"
+            tooltip="Change this to something unique to your project."
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxTextCtrl"
+            value="MyDialogBase"
+            var_name="m_classname"
+            validator_variable="m_base_class"
+            tooltip="Change this to something unique to your project."
+            proportion="1"
+            wxEVT_TEXT="OnClassName" />
         </node>
         <node
           class="wxBoxSizer"
@@ -1717,25 +1741,8 @@
             class="wxTextCtrl"
             var_name="m_textCtrl_title"
             validator_variable="m_title"
-            proportion="1" />
-        </node>
-        <node
-          class="wxBoxSizer"
-          var_name="box_sizer_2"
-          flags="wxEXPAND">
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="&amp;Base class name:"
-            var_name="staticText"
-            alignment="wxALIGN_CENTER_VERTICAL" />
-          <node
-            class="wxTextCtrl"
-            class_access="none"
-            value="MyDialogBase"
-            var_name="classname"
-            validator_variable="m_base_class"
-            proportion="1" />
+            proportion="1"
+            wxEVT_TEXT="OnClassName" />
         </node>
         <node
           class="wxBoxSizer"
@@ -1749,6 +1756,7 @@
               label="Tabbed &amp;Dialog"
               var_name="m_check_tabs"
               validator_variable="m_has_tabs"
+              alignment="wxALIGN_CENTER_VERTICAL"
               wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@m_spinCtrlTabs->Enable(m_check_tabs->GetValue());@@}" />
             <node
               class="wxStaticText"
@@ -1764,7 +1772,8 @@
               min="1"
               var_name="m_spinCtrlTabs"
               validator_variable="m_num_tabs"
-              disabled="true" />
+              disabled="true"
+              alignment="wxALIGN_CENTER_VERTICAL" />
           </node>
           <node
             class="wxCheckBox"
@@ -1786,7 +1795,7 @@
       inserted_hdr_code="void CreateNode();@@"
       private_members="true"
       title="New wxFrame window"
-      virtual_events="false"
+      use_derived_class="false"
       wxEVT_INIT_DIALOG="[this](wxInitDialogEvent&amp; event)@@{@@m_classname->SetFocus();@@event.Skip();@@}">
       <node
         class="wxBoxSizer"
@@ -1868,7 +1877,7 @@
       inserted_hdr_code="// Checks current selected node to see if it accepts a wxRibbonBar as a child@@bool IsCreatable(bool notify_user = true);@@@@void WantFormVersion() { m_is_form = true; }@@void CreateNode();@@@@private:@@bool m_is_form { false };@@"
       private_members="true"
       title="New Ribbon Bar"
-      virtual_events="false">
+      use_derived_class="false">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -3431,7 +3440,7 @@
       inserted_hdr_code="enum : size_t@@{@@    START_MRU,@@    START_CONVERT,@@    START_OPEN,@@    START_EMPTY,@@};@@@@auto GetCommandType() const { return m_cmdType; }@@ttString&amp; GetProjectFile() { return m_value; }@@@@protected:@@void OnHyperlink(wxHyperlinkEvent&amp; event);@@@@private:@@ttString m_value;@@size_t m_cmdType { START_EMPTY };"
       private_members="true"
       title="Open, Import, or Create Project"
-      virtual_events="false"
+      use_derived_class="false"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"

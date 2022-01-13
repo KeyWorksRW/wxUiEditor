@@ -20,12 +20,28 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    auto box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
     auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the dialog is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
+
+    m_infoBar = new wxInfoBar(this);
+    m_infoBar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+    box_sizer_3->Add(m_infoBar, wxSizerFlags().Expand().Border(wxALL));
+
+    auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    parent_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
+
+    auto staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
+    staticText->SetToolTip("Change this to something unique to your project.");
+    box_sizer_2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
+
+    m_classname = new wxTextCtrl(this, wxID_ANY, "MyDialogBase");
+    m_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_base_class));
+    m_classname->SetToolTip("Change this to something unique to your project.");
+    box_sizer_2->Add(m_classname, wxSizerFlags(1).Border(wxALL));
 
     auto box_sizer__2 = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer__2, wxSizerFlags().Expand().Border(wxALL));
@@ -37,16 +53,6 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     m_textCtrl_title->SetValidator(wxTextValidator(wxFILTER_NONE, &m_title));
     box_sizer__2->Add(m_textCtrl_title, wxSizerFlags(1).Border(wxALL));
 
-    auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
-    parent_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
-
-    auto staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
-    box_sizer_2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
-
-    auto classname = new wxTextCtrl(this, wxID_ANY, "MyDialogBase");
-    classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_base_class));
-    box_sizer_2->Add(classname, wxSizerFlags(1).Border(wxALL));
-
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
@@ -55,7 +61,7 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     m_check_tabs = new wxCheckBox(this, wxID_ANY, "Tabbed &Dialog");
     m_check_tabs->SetValidator(wxGenericValidator(&m_has_tabs));
-    box_sizer_4->Add(m_check_tabs, wxSizerFlags().Border(wxALL));
+    box_sizer_4->Add(m_check_tabs, wxSizerFlags().Center().Border(wxALL));
 
     auto staticText_4 = new wxStaticText(this, wxID_ANY, "Tab&s:");
     box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
@@ -64,7 +70,7 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
             wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 7, 3);
     m_spinCtrlTabs->SetValidator(wxGenericValidator(&m_num_tabs));
     m_spinCtrlTabs->Enable(false);
-    box_sizer_4->Add(m_spinCtrlTabs, wxSizerFlags().Border(wxALL));
+    box_sizer_4->Add(m_spinCtrlTabs, wxSizerFlags().Center().Border(wxALL));
 
     auto checkBox_2 = new wxCheckBox(this, wxID_ANY, "&Standard Buttons");
     checkBox_2->SetValue(true);
@@ -79,6 +85,8 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &NewDialog::OnInit, this);
+    m_classname->Bind(wxEVT_TEXT, &NewDialog::OnClassName, this);
+    m_textCtrl_title->Bind(wxEVT_TEXT, &NewDialog::OnClassName, this);
     m_check_tabs->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
         {

@@ -10,6 +10,7 @@
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/infobar.h>
 #include <wx/spinctrl.h>
 #include <wx/textctrl.h>
 
@@ -17,23 +18,28 @@ class NewDialog : public wxDialog
 {
 public:
     NewDialog() {}
-    NewDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Dialog",
+    NewDialog(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Dialog",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Dialog",
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Dialog",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
     void CreateNode();
+    void VerifyClassName();
+
+private:
+    bool m_is_info_shown { false };
 
 protected:
 
     // Event handlers
 
+    void OnClassName(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
 
 private:
@@ -49,6 +55,8 @@ private:
     // Class member variables
 
     wxCheckBox* m_check_tabs;
+    wxInfoBar* m_infoBar;
     wxSpinCtrl* m_spinCtrlTabs;
+    wxTextCtrl* m_classname;
     wxTextCtrl* m_textCtrl_title;
 };

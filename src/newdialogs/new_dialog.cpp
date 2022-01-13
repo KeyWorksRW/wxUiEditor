@@ -13,9 +13,18 @@
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
 
-void NewDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+void NewDialog::OnInit(wxInitDialogEvent& event)
 {
-    m_textCtrl_title->SetFocus();
+    // BUGBUG: [KeyWorks - 01-13-2022] Remove once issue #616 is fixed
+    m_classname->SetFocus();
+    VerifyClassName();
+
+    event.Skip();  // transfer all validator data to their windows and update UI
+}
+
+void NewDialog::OnClassName(wxCommandEvent& WXUNUSED(event))
+{
+    VerifyClassName();
 }
 
 void NewDialog::CreateNode()
@@ -152,4 +161,31 @@ void NewDialog::CreateNode()
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, true, true);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);
+}
+
+void NewDialog::VerifyClassName()
+{
+    auto new_classname = m_classname->GetValue().utf8_string();
+    for (auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
+    {
+        if (iter.get()->prop_as_string(prop_class_name).is_sameas(new_classname))
+        {
+            if (!m_is_info_shown)
+            {
+                m_infoBar->ShowMessage("This class name is already in use.", wxICON_WARNING);
+                FindWindow(GetAffirmativeId())->Disable();
+                Fit();
+                m_is_info_shown = true;
+            }
+            return;
+        }
+    }
+
+    if (m_is_info_shown)
+    {
+        m_is_info_shown = false;
+        m_infoBar->Dismiss();
+        FindWindow(GetAffirmativeId())->Enable();
+        Fit();
+    }
 }

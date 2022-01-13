@@ -1669,6 +1669,15 @@ void MainFrame::RemoveFileFromHistory(ttString file)
     }
 }
 
+void MainFrame::PushUndoAction(UndoActionPtr cmd, bool add_to_stack)
+{
+    m_isProject_modified = true;
+    if (!add_to_stack)
+        cmd->Change();
+    else
+        m_undo_stack.Push(cmd);
+}
+
 #if defined(_DEBUG)
 
     #include "debugging/dbg_code_diff.h"  // DbgCodeDiff -- Compare code generation

@@ -22,6 +22,7 @@ wxDEFINE_EVENT(EVT_NodeDeleted, CustomEvent);
 wxDEFINE_EVENT(EVT_NodeSelected, CustomEvent);
 
 wxDEFINE_EVENT(EVT_NodePropChange, CustomEvent);
+wxDEFINE_EVENT(EVT_MultiPropChange, CustomEvent);
 
 wxDEFINE_EVENT(EVT_GridBagAction, CustomEvent);
 
@@ -66,6 +67,15 @@ void MainFrame::FireDeletedEvent(Node* node)
 void MainFrame::FirePropChangeEvent(NodeProperty* prop)
 {
     CustomEvent node_event(EVT_NodePropChange, prop);
+    for (auto handler: m_custom_event_handlers)
+    {
+        handler->ProcessEvent(node_event);
+    }
+}
+
+void MainFrame::FireMultiPropEvent(ModifyProperties* undo_cmd)
+{
+    CustomEvent node_event(EVT_MultiPropChange, undo_cmd);
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(node_event);

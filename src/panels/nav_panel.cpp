@@ -75,6 +75,7 @@ NavigationPanel::NavigationPanel(wxWindow* parent, MainFrame* frame) : wxPanel(p
     Bind(wxEVT_TREE_END_DRAG, &NavigationPanel::OnEndDrag, this);
 
     Bind(EVT_NodePropChange, &NavigationPanel::OnNodePropChange, this);
+    Bind(EVT_MultiPropChange, &NavigationPanel::OnMultiPropChange, this);
     Bind(EVT_NodeSelected, &NavigationPanel::OnNodeSelected, this);
     Bind(EVT_ParentChanged, &NavigationPanel::OnParentChange, this);
     Bind(EVT_PositionChanged, &NavigationPanel::OnPositionChange, this);
@@ -521,6 +522,16 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
                  << node->DeclName() << "\n\tName: " << node->prop_as_string(prop_var_name).wx_str());
         BETA_ERROR(ttlib::cstr("\nThere is no tree item associated with this object.\n\tClass: ")
                    << node->DeclName() << "\n\tName: " << node->prop_as_string(prop_var_name).wx_str());
+    }
+}
+
+void NavigationPanel::OnMultiPropChange(CustomEvent& event)
+{
+    auto& vector = static_cast<ModifyProperties*>(event.GetUndoCmd())->GetVector();
+    for (auto& iter: vector)
+    {
+        CustomEvent prop_event(EVT_NodePropChange, iter.property);
+        OnNodePropChange(prop_event);
     }
 }
 

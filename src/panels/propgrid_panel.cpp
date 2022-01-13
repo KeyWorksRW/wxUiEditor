@@ -106,6 +106,11 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
          {
              Create();
          });
+    Bind(EVT_MultiPropChange,
+         [this](CustomEvent&)
+         {
+             Create();
+         });
 
     frame->AddCustomEventHandler(GetEventHandler());
 }

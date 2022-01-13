@@ -40,6 +40,7 @@ class RibbonPanel;
 
 class ChangeParentAction;
 class ChangePositionAction;
+class ModifyProperties;
 
 // Warning! This MUST be at least 3!
 constexpr const size_t StatusPanels = 3;
@@ -84,6 +85,7 @@ public:
     void FireProjectLoadedEvent();
     void FireProjectUpdatedEvent();
     void FirePropChangeEvent(NodeProperty* prop);
+    void FireMultiPropEvent(ModifyProperties* undo_cmd);
     void FireSelectedEvent(Node* node);
 
     // These are just here for convenience so you don't have to remember whether you have the raw pointer or the shared
@@ -96,11 +98,7 @@ public:
     void ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value);
 
     // This will first call cmd->Change() and then push cmd onto the undo stack.
-    inline void PushUndoAction(UndoActionPtr cmd)
-    {
-        m_isProject_modified = true;
-        m_undo_stack.Push(cmd);
-    }
+    void PushUndoAction(UndoActionPtr cmd, bool add_to_stack = true);
 
     void Undo();
     void Redo();

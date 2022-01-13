@@ -114,6 +114,11 @@ MockupParent::MockupParent(wxWindow* parent, MainFrame* frame) : wxScrolled<wxPa
          {
              CreateContent();
          });
+    Bind(EVT_MultiPropChange,
+         [this](CustomEvent&)
+         {
+             CreateContent();
+         });
 
     frame->AddCustomEventHandler(GetEventHandler());
 }

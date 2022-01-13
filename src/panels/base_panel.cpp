@@ -98,6 +98,11 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCod
          {
              GenerateBaseClass();
          });
+    Bind(EVT_MultiPropChange,
+         [this](wxEvent&)
+         {
+             GenerateBaseClass();
+         });
 
     Bind(EVT_NodeSelected, &BasePanel::OnNodeSelected, this);
 

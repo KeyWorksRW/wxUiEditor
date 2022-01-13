@@ -45,5 +45,6 @@ wxDECLARE_EVENT(EVT_NodeDeleted, CustomEvent);
 wxDECLARE_EVENT(EVT_NodeSelected, CustomEvent);
 
 wxDECLARE_EVENT(EVT_NodePropChange, CustomEvent);
+wxDECLARE_EVENT(EVT_MultiPropChange, CustomEvent);
 
 wxDECLARE_EVENT(EVT_GridBagAction, CustomEvent);

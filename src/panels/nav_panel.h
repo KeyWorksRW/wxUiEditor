@@ -67,6 +67,7 @@ protected:
     void OnNodeCreated(CustomEvent& event);
     void OnNodeSelected(CustomEvent& event);
     void OnNodePropChange(CustomEvent& event);
+    void OnMultiPropChange(CustomEvent& event);
     void OnParentChange(CustomEvent& event);
     void OnPositionChange(CustomEvent& event);
 

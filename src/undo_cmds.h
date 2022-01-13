@@ -11,6 +11,7 @@
 #include "node_classes.h"  // Forward defintions of Node classes
 #include "undo_stack.h"    // UndoAction -- Maintain a undo and redo stack
 
+// Specify node, parent node, undo string, and optional position
 class InsertNodeAction : public UndoAction
 {
 public:
@@ -30,6 +31,7 @@ private:
     bool m_fix_duplicate_names { true };
 };
 
+// Specify node, undo string, and whether or not to add to the clipboard.
 class RemoveNodeAction : public UndoAction
 {
 public:
@@ -49,6 +51,7 @@ private:
     bool m_AddToClipboard;
 };
 
+// Specify property and value (string or int).
 class ModifyPropertyAction : public UndoAction
 {
 public:
@@ -63,6 +66,35 @@ private:
     ttlib::cstr m_change_value;
 };
 
+// Used to modify multiple properties as a single undo/redo command.
+//
+// Specify undo string, and whether or not to fire events.
+class ModifyProperties : public UndoAction
+{
+public:
+    ModifyProperties(ttlib::cview undo_string, bool fire_events = true);
+
+    void AddProperty(NodeProperty* prop, ttlib::cview value);
+    void AddProperty(NodeProperty* prop, int value);
+
+    void Change() override;
+    void Revert() override;
+
+    struct MULTI_PROP
+    {
+        NodeProperty* property;
+        // All properties are stored as a string, no matter what their original data type
+        ttlib::cstr revert_value;
+        ttlib::cstr change_value;
+    };
+    auto& GetVector() { return m_properties; }
+
+private:
+    std::vector<MULTI_PROP> m_properties;
+    bool m_fire_events { true };
+};
+
+// Specify event and value.
 class ModifyEventAction : public UndoAction
 {
 public:
@@ -76,6 +108,7 @@ private:
     ttlib::cstr m_change_value;
 };
 
+// Specify node and position.
 class ChangePositionAction : public UndoAction
 {
 public:
@@ -93,6 +126,7 @@ private:
     size_t m_revert_pos;
 };
 
+// Specify node and parent node.
 class ChangeParentAction : public UndoAction
 {
 public:
@@ -114,6 +148,7 @@ private:
     int m_revert_col;
 };
 
+// Specify node and new sizer gen_ name.
 class ChangeSizerType : public UndoAction
 {
 public:
@@ -131,6 +166,7 @@ private:
     GenEnum::GenName m_new_gen_sizer;
 };
 
+// Specify node and parent node, and optional position
 class AppendGridBagAction : public UndoAction
 {
 public:
@@ -150,6 +186,8 @@ private:
 
 // Use this when the entire wxGridBagSizer node needs to be saved. You *MUST* call Update()
 // or the Navigation Panel will be frozen!
+//
+// Specify gridbag sizer node and undo string
 class GridBagAction : public UndoAction
 {
 public:

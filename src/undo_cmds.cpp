@@ -145,6 +145,53 @@ void ModifyPropertyAction::Revert()
     wxGetFrame().FirePropChangeEvent(m_property);
 }
 
+///////////////////////////////// ModifyProperties ////////////////////////////////////
+
+ModifyProperties::ModifyProperties(ttlib::cview undo_string, bool fire_events) : UndoAction(undo_string)
+{
+    m_fire_events = fire_events;
+    m_RedoEventGenerated = true;
+    m_UndoEventGenerated = true;
+}
+
+void ModifyProperties::AddProperty(NodeProperty* prop, ttlib::cview value)
+{
+    auto& entry = m_properties.emplace_back();
+    entry.property = prop;
+    entry.change_value = value;
+    entry.revert_value = prop->as_string();
+}
+
+void ModifyProperties::AddProperty(NodeProperty* prop, int value)
+{
+    auto& entry = m_properties.emplace_back();
+    entry.property = prop;
+    entry.change_value << value;
+    entry.revert_value = prop->as_string();
+}
+
+void ModifyProperties::Change()
+{
+    for (auto& iter: m_properties)
+    {
+        iter.property->set_value(iter.change_value);
+    }
+
+    if (m_fire_events)
+        wxGetFrame().FireMultiPropEvent(this);
+}
+
+void ModifyProperties::Revert()
+{
+    for (auto& iter: m_properties)
+    {
+        iter.property->set_value(iter.revert_value);
+    }
+
+    if (m_fire_events)
+        wxGetFrame().FireMultiPropEvent(this);
+}
+
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
 ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event), m_change_value(value)

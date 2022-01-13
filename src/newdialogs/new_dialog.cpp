@@ -102,6 +102,53 @@ void NewDialog::CreateNode()
 
     auto pos = parent->FindInsertionPos(parent);
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), parent, undo_str, pos));
+
+    if (form_node->prop_as_string(prop_class_name) != form_node->prop_default_value(prop_class_name))
+    {
+        bool is_base_class = false;
+        ttString baseName = form_node->prop_as_wxString(prop_class_name);
+        if (baseName.Right(4) == "Base")
+        {
+            baseName.Replace("Base", wxEmptyString);
+            is_base_class = true;
+        }
+        baseName.MakeLower();
+        baseName << "_base";
+        if (wxGetApp().GetProject()->HasValue(prop_base_directory))
+            baseName.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');
+
+        form_node->prop_set_value(prop_base_file, baseName);
+        if (is_base_class)
+        {
+            form_node->prop_set_value(prop_base_file, baseName);
+
+            wxString class_name = form_node->prop_as_wxString(prop_class_name);
+            if (class_name.Right(4) == "Base")
+            {
+                class_name.Replace("Base", wxEmptyString);
+            }
+            else
+            {
+                class_name << "Derived";
+            }
+            form_node->prop_set_value(prop_derived_class_name, class_name);
+
+            ttString drvName = form_node->prop_as_wxString(prop_derived_class_name);
+            if (drvName.Right(7) == "Derived")
+                drvName.Replace("Derived", "_derived");
+            else if (!is_base_class)
+            {
+                drvName << "_derived";
+            }
+
+            drvName.MakeLower();
+            if (wxGetApp().GetProject()->HasValue(prop_base_directory))
+                drvName.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');
+
+            form_node->prop_set_value(prop_derived_file, drvName);
+        }
+    }
+
     wxGetFrame().FireCreatedEvent(form_node);
     wxGetFrame().SelectNode(form_node, true, true);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);

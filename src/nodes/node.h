@@ -192,6 +192,8 @@ public:
     // Returns nullptr if the property doesn't exist.
     ttlib::cstr* prop_as_raw_ptr(PropName name);
 
+    const ttlib::cstr& prop_default_value(PropName name);
+
     // This will convert the string from UTF8 to UTF16 on Windows
     wxString prop_as_wxString(PropName name) const;
 

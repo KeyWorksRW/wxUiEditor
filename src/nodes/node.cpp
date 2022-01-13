@@ -429,6 +429,18 @@ ttlib::cstr* Node::prop_as_raw_ptr(PropName name)
         return nullptr;
 }
 
+const ttlib::cstr& Node::prop_default_value(PropName name)
+{
+    auto prop = get_prop_ptr(name);
+
+    ASSERT_MSG(prop, ttlib::cstr(get_node_name()) << " doesn't have the property " << map_PropNames[name]);
+
+    if (prop)
+        return prop->GetDefaultValue();
+    else
+        return tt_empty_cstr;
+}
+
 const ttlib::cstr& Node::get_node_name() const
 {
     if (auto it = m_prop_indices.find(prop_var_name); it != m_prop_indices.end())

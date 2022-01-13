@@ -79,6 +79,7 @@ public:
     operator wxSize() const { return as_size(); }
 
     bool IsDefaultValue() const;
+    const ttlib::cstr& GetDefaultValue() const noexcept { return m_declaration->GetDefaultValue(); }
 
     // Returns false if the property is empty. For size, point, and Bitmap properties,
     // returns false if the default value is used.

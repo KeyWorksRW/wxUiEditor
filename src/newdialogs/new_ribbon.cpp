@@ -10,9 +10,23 @@
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
 #include "mainframe.h"               // MainFrame -- Main window frame
+#include "new_common.h"              // Contains code common between all new_ dialogs
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
+
+void NewRibbon::OnInit(wxInitDialogEvent& event)
+{
+    if (!m_is_form)
+    {
+        for (size_t idx = 0; idx < m_class_sizer->GetItemCount(); ++idx)
+        {
+            m_class_sizer->GetItem(idx)->GetWindow()->Hide();
+        }
+    }
+
+    event.Skip();  // transfer all validator data to their windows and update UI
+}
 
 void NewRibbon::CreateNode()
 {
@@ -68,11 +82,28 @@ void NewRibbon::CreateNode()
         }
     }
 
-    ttlib::cstr undo_str("New wxRibbonBar");
+    if (!m_is_form)
+    {
+        auto parent = wxGetFrame().GetSelectedNode();
+        auto pos = parent->FindInsertionPos(parent);
+        ttlib::cstr undo_str("New wxRibbonBar");
+        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), parent, undo_str, pos));
+    }
+    else
+    {
+        bar_node->prop_set_value(prop_class_name, m_base_class.utf8_string());
+        if (bar_node->prop_as_string(prop_class_name) != bar_node->prop_default_value(prop_class_name))
+        {
+            UpdateFormClass(bar_node.get());
+        }
 
-    auto parent = wxGetFrame().GetSelectedNode();
-    auto pos = parent->FindInsertionPos(parent);
-    wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), parent, undo_str, pos));
+        auto project = wxGetApp().GetProject();
+        wxGetFrame().SelectNode(project);
+
+        ttlib::cstr undo_str("New wxRibbonBar");
+        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(bar_node.get(), project, undo_str, -1));
+    }
+
     wxGetFrame().FireCreatedEvent(bar_node);
     wxGetFrame().SelectNode(bar_node, true, true);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(bar_node.get(), true, true);
@@ -93,4 +124,31 @@ bool NewRibbon::IsCreatable(bool notify_user)
     }
 
     return false;
+}
+
+// Called whenever m_classname changes
+void NewRibbon::VerifyClassName()
+{
+    if (!m_is_form)
+        return;
+
+    if (!IsClassNameUnique(m_classname->GetValue()))
+    {
+        if (!m_is_info_shown)
+        {
+            m_infoBar->ShowMessage("This class name is already in use.", wxICON_WARNING);
+            FindWindow(GetAffirmativeId())->Disable();
+            Fit();
+            m_is_info_shown = true;
+        }
+        return;
+    }
+
+    else if (m_is_info_shown)
+    {
+        m_is_info_shown = false;
+        m_infoBar->Dismiss();
+        FindWindow(GetAffirmativeId())->Enable();
+        Fit();
+    }
 }

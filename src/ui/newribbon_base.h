@@ -8,9 +8,13 @@
 
 #include <wx/combobox.h>
 #include <wx/dialog.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/infobar.h>
+#include <wx/sizer.h>
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
 
 class NewRibbon : public wxDialog
 {
@@ -32,22 +36,32 @@ public:
 
     void WantFormVersion() { m_is_form = true; }
     void CreateNode();
+    void VerifyClassName();
 
 private:
     bool m_is_form { false };
+    bool m_is_info_shown { false };
 
 protected:
+
+    // Event handlers
+
+    void OnInit(wxInitDialogEvent& event);
 
 private:
 
     // Validator variables
 
     int m_num_pages { 3 };
+    wxString m_base_class { "MyRibbonBarBase" };
     wxString m_panel_type;
 
     // Class member variables
 
+    wxBoxSizer* m_class_sizer;
     wxComboBox* m_comboBox;
+    wxInfoBar* m_infoBar;
     wxSpinCtrl* m_spinCtrlPages;
     wxStaticText* m_staticText;
+    wxTextCtrl* m_classname;
 };

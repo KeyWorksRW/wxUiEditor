@@ -117,6 +117,7 @@ Files:
     mockup/mockup_content.cpp   # Mockup of a form's contents
     mockup/mockup_wizard.cpp    # Emulate a wxWizard
 
+    newdialogs/new_common.cpp    # Contains code common between all new_ dialogs
     newdialogs/new_dialog.cpp    # Dialog for creating a new project dialog
     newdialogs/new_frame.cpp     # Dialog for creating a new project wxFrame
     newdialogs/new_ribbon.cpp    # Dialog for creating a new wxRibbonBar

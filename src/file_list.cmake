@@ -90,6 +90,10 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/mockup/mockup_content.cpp   # Mockup of a form's contents
     ${CMAKE_CURRENT_LIST_DIR}/mockup/mockup_wizard.cpp    # Emulate a wxWizard
 
+    ${CMAKE_CURRENT_LIST_DIR}/newdialogs/new_dialog.cpp   # Dialog for creating a new project dialog
+    ${CMAKE_CURRENT_LIST_DIR}/newdialogs/new_frame.cpp    # Dialog for creating a new project wxFrame
+    ${CMAKE_CURRENT_LIST_DIR}/newdialogs/new_ribbon.cpp   # Dialog for creating a new wxRibbonBar
+
     ${CMAKE_CURRENT_LIST_DIR}/nodes/node.cpp              # Contains user-modifiable node
     ${CMAKE_CURRENT_LIST_DIR}/nodes/node_constants.cpp    # Maps wxWidgets constants to their numerical value
     ${CMAKE_CURRENT_LIST_DIR}/nodes/node_creator.cpp      # Class used to create nodes
@@ -130,9 +134,6 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/ui/import_dlg.cpp           # Dialog to import one or more projects
     ${CMAKE_CURRENT_LIST_DIR}/ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ${CMAKE_CURRENT_LIST_DIR}/ui/insertwidget.cpp         # Dialog to lookup and insert a widget
-    ${CMAKE_CURRENT_LIST_DIR}/ui/newdialog.cpp            # Dialog for creating a new project dialog
-    ${CMAKE_CURRENT_LIST_DIR}/ui/newframe.cpp             # Dialog for creating a new project wxFrame
-    ${CMAKE_CURRENT_LIST_DIR}/ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
     ${CMAKE_CURRENT_LIST_DIR}/ui/optionsdlg.cpp           # Dialog containing special Debugging commands
 
     # ttLib submodule files

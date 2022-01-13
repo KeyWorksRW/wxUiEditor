@@ -117,6 +117,10 @@ Files:
     mockup/mockup_content.cpp   # Mockup of a form's contents
     mockup/mockup_wizard.cpp    # Emulate a wxWizard
 
+    newdialogs/new_dialog.cpp    # Dialog for creating a new project dialog
+    newdialogs/new_frame.cpp     # Dialog for creating a new project wxFrame
+    newdialogs/new_ribbon.cpp    # Dialog for creating a new wxRibbonBar
+
     nodes/node.cpp              # Contains user-modifiable node
     nodes/node_constants.cpp    # Maps wxWidgets constants to their numerical value
     nodes/node_creator.cpp      # Class used to create nodes
@@ -157,9 +161,6 @@ Files:
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ui/insertwidget.cpp         # Dialog to lookup and insert a widget
-    ui/newdialog.cpp            # Dialog for creating a new project dialog
-    ui/newframe.cpp             # Dialog for creating a new project wxFrame
-    ui/newribbon.cpp            # Dialog for creating a new wxRibbonBar
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
     ui/startupdlg_base.cpp      # Startup dialog
 

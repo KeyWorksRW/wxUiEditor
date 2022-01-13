@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "newribbon_base.h"  // auto-generated: newribbon_base.h and newribbon_base.cpp
+#include "../ui/newribbon_base.h"  // auto-generated: ../ui/newribbon_base.h and ../ui/newribbon_base.cpp
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar

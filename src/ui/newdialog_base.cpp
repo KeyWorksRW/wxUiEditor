@@ -50,6 +50,7 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     box_sizer__2->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
     m_textCtrl_title = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    m_textCtrl_title->SetHint("Text for dialog's Title Bar");
     m_textCtrl_title->SetValidator(wxTextValidator(wxFILTER_NONE, &m_title));
     box_sizer__2->Add(m_textCtrl_title, wxSizerFlags(1).Border(wxALL));
 
@@ -61,6 +62,7 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     m_check_tabs = new wxCheckBox(this, wxID_ANY, "Tabbed &Dialog");
     m_check_tabs->SetValidator(wxGenericValidator(&m_has_tabs));
+    m_check_tabs->SetToolTip("If checked, creates a wxNotebook");
     box_sizer_4->Add(m_check_tabs, wxSizerFlags().Center().Border(wxALL));
 
     auto staticText_4 = new wxStaticText(this, wxID_ANY, "Tab&s:");
@@ -85,8 +87,10 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     // Event handlers
     Bind(wxEVT_INIT_DIALOG, &NewDialog::OnInit, this);
-    m_classname->Bind(wxEVT_TEXT, &NewDialog::OnClassName, this);
-    m_textCtrl_title->Bind(wxEVT_TEXT, &NewDialog::OnClassName, this);
+    m_classname->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent&)
+        {VerifyClassName();
+        } );
     m_check_tabs->Bind(wxEVT_CHECKBOX,
         [this](wxCommandEvent&)
         {

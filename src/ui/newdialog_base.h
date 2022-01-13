@@ -39,7 +39,6 @@ protected:
 
     // Event handlers
 
-    void OnClassName(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
 
 private:

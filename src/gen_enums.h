@@ -366,7 +366,7 @@ namespace GenEnum
         prop_view_eol,
         prop_view_tab_strikeout,
         prop_view_whitespace,
-        prop_virtual_events,
+        prop_use_derived_class,
         prop_visited_color,
         prop_width,
         prop_wildcard,

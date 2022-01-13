@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate the derived class source and header file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,8 +9,8 @@
 
     There are several situations we need to deal with here:
 
-    This could be a non-derived class (prop_virtual_events is false) in which case the header file is empty, and we don't use
-   the derived class name or derived filename even if specified.
+    This could be a non-derived class (prop_use_derived_class is false) in which case the header file is empty, and we don't
+   use the derived class name or derived filename even if specified.
 
     This could be a derived class, but either the class name or the filename is empty. In that case, we can't write to disk,
    but we can mockup a temporary class name if needed as well as a temporary filename.
@@ -57,7 +57,7 @@ static constexpr const char* lst_close_type_button[] = {
 int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYPE panel_type)
 {
     m_form_node = form;
-    m_is_derived_class = m_form_node->prop_as_bool(prop_virtual_events);
+    m_is_derived_class = m_form_node->prop_as_bool(prop_use_derived_class);
 
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
@@ -166,7 +166,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         if (!m_is_derived_class)
         {
             m_header->writeLine(
-                "\n// No header needed when not creating a derived class\n// (virtual_events property is unchecked)");
+                "\n// No header needed when not creating a derived class\n// (use_derived_class property is unchecked)");
             thrd_get_events.join();
             return result::created;
         }

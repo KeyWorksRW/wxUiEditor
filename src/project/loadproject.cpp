@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Load wxUiEditor project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -336,6 +336,11 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                     else if (ttlib::is_sameas(iter.name(), "original_art"))
                     {
                         new_node->prop_set_value(prop_art_directory, value);
+                        continue;
+                    }
+                    else if (ttlib::is_sameas(iter.name(), "virtual_events"))
+                    {
+                        new_node->prop_set_value(prop_use_derived_class, value);
                         continue;
                     }
                     else if (ttlib::is_sameas(iter.name(), "choices") || ttlib::is_sameas(iter.name(), "strings"))

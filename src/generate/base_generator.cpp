@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base widget generator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -301,7 +301,7 @@ void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
             pg_setting->Enable(!changed_prop->GetNode()->isPropValue(prop_class_access, "none"));
         }
     }
-    if (changed_prop->isProp(prop_virtual_events))
+    if (changed_prop->isProp(prop_use_derived_class))
     {
         if (auto pg_setting = prop_grid->GetProperty("private_members"); pg_setting)
         {
@@ -366,12 +366,13 @@ std::optional<ttlib::cstr> BaseGenerator::GetHint(NodeProperty* prop)
     if (prop->isProp(prop_derived_class_name) && !prop->HasValue())
     {
         // Note that once set, this won't change until the property grid gets recreated.
-        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" :
-                                                                                 "change class_name first");
+        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires checked use_derived_class" :
+                                                                                    "change class_name first");
     }
     else if (prop->isProp(prop_derived_file) && !prop->HasValue())
     {
-        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_virtual_events) ? "requires virtual events" : "");
+        return ttlib::cstr(!prop->GetNode()->prop_as_bool(prop_use_derived_class) ? "requires checked use_derived_class" :
+                                                                                    "");
     }
     else if (prop->isProp(prop_base_file) && !prop->HasValue())
     {

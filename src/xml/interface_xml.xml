@@ -129,14 +129,14 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="This preamble is placed unchanged in the generated base file after all wx/ include files. It is normally used to include additional header files." />
 		<property name="inserted_hdr_code" type="code_edit"
 			help="Specify code to insert into the header file at the end of the public: section. You may add protected: and private: sections as needed for additional methods and member variables." />
-		<property name="virtual_events" type="bool"
+		<property name="use_derived_class" type="bool"
 			help="Check this if you will be creating a derived class. If not checked, you will need to create a source file implementing any event handlers.">1</property>
-		<property name="private_members" type="bool"
-			help="Check this to make all protected: members private:. This can only be done if you are NOT creating a derived class (virtual_events is unchecked)." />
 		<property name="derived_class_name" type="string"
-			help="The name of the derived class. Ignored if virtual_events is unchecked." />
+			help="The name of the derived class. Ignored if use_derived_class is unchecked." />
 		<property name="derived_file" type="file"
-			help="The filename of the derived class. You can leave this empty if you have already generated the file. Ignored if virtual_events is unchecked." />
+			help="The filename of the derived class. You can leave this empty if you have already generated the file. Ignored if use_derived_class is unchecked." />
+		<property name="private_members" type="bool"
+			help="Check this to make all protected: members private:. This can only be done if you are NOT creating a derived class (use_derived_class is unchecked)." />
 		<property name="class_decoration" type="string"
 			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )." />
 		<property name="generate_ids" type="bool"

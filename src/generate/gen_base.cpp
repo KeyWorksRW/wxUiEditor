@@ -610,7 +610,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
                 }
             }
 
-            if (m_form_node->prop_as_bool(prop_virtual_events))
+            if (m_form_node->prop_as_bool(prop_use_derived_class))
             {
                 code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
                      << "& event) { event.Skip(); }";
@@ -635,7 +635,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 
             ttlib::cstr code;
 
-            if (m_form_node->prop_as_bool(prop_virtual_events))
+            if (m_form_node->prop_as_bool(prop_use_derived_class))
             {
                 code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
                      << "& event) { event.Skip(); }";
@@ -651,7 +651,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
         if (code_lines.size())
         {
             m_header->writeLine();
-            if (m_form_node->prop_as_bool(prop_virtual_events))
+            if (m_form_node->prop_as_bool(prop_use_derived_class))
             {
                 m_header->writeLine("// Virtual event handlers -- override them in your derived class");
                 m_header->writeLine();
@@ -1140,7 +1140,7 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
 
     GenHdrEvents(events);
 
-    if (!m_form_node->prop_as_bool(prop_virtual_events) && form_node->prop_as_bool(prop_private_members))
+    if (!m_form_node->prop_as_bool(prop_use_derived_class) && form_node->prop_as_bool(prop_private_members))
     {
         m_header->Unindent();
         m_header->writeLine();

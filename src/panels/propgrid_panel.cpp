@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropertyGrid class for node properties and events
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1153,8 +1153,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                             ReplaceBaseFile(newValue, selected_node->get_prop_ptr(prop_base_file));
                         }
 
-                        if (!selected_node->prop_as_bool(prop_virtual_events))
-                            return;  // no derived class if no virtual events
+                        if (!selected_node->prop_as_bool(prop_use_derived_class))
+                            return;
 
                         if (!selected_node->HasValue(prop_derived_class_name))
                         {

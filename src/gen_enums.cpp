@@ -364,7 +364,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_view_eol, "view_eol" },
     { prop_view_tab_strikeout, "view_tab_strikeout" },
     { prop_view_whitespace, "view_whitespace" },
-    { prop_virtual_events, "virtual_events" },
+    { prop_use_derived_class, "use_derived_class" },
     { prop_visited_color, "visited_color" },
     { prop_width, "width" },
     { prop_wildcard, "wildcard" },

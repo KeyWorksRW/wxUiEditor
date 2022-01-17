@@ -17,7 +17,6 @@
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "gen_common.h"   // GeneratorLibrary -- Generator classes
-#include "gen_inherit.h"  // Inherited class code generation
 #include "node.h"         // Node class
 
 #include "sizer_widgets.h"
@@ -288,7 +287,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
 
     code << ");\n";
 
-    if (auto result = GenInheritSettings(node); result)
+    if (auto result = GenValidatorSettings(node); result)
     {
         code << result.value() << '\n';
     }
@@ -420,7 +419,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     }
     code << ");\n";
 
-    if (auto result = GenInheritSettings(node); result)
+    if (auto result = GenValidatorSettings(node); result)
     {
         code << result.value() << '\n';
     }

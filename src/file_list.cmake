@@ -43,7 +43,6 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_cmake.cpp         # Auto-generate a .cmake file
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_codefiles.cpp     # Generate code files
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_derived.cpp       # Generate Derived class code
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_inherit.cpp       # Generate Inherited class code
     ${CMAKE_CURRENT_LIST_DIR}/generate/write_code.cpp        # Write code to Scintilla or file
 
     ${CMAKE_CURRENT_LIST_DIR}/generate/base_generator.cpp    # Base widget generator class

@@ -18,7 +18,6 @@
 #include "gen_base.h"
 
 #include "gen_common.h"    // GeneratorLibrary -- Generator classes
-#include "gen_inherit.h"   // Inherited class code generation
 #include "mainapp.h"       // App -- Main application class
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
@@ -1608,7 +1607,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
     if (node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
-        if (auto result = GenInheritSettings(node); result)
+        if (auto result = GenValidatorSettings(node); result)
         {
             m_source->writeLine(result.value());
         }

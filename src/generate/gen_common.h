@@ -1,13 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Common component functions
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
 #include <map>
+#include <optional>
 #include <vector>
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
@@ -105,3 +106,9 @@ ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
 // Generates " = new class(" -- with class being the derived_class (if specified) or the
 // normal class name. If use_generic specified, Generic will be inserted into the class name.
 ttlib::cstr GenerateNewAssignment(Node* node, bool use_generic = false);
+
+// This generates code for the header file for Get() and Set() functions using function names
+// specified by the user in the project file.
+std::optional<ttlib::cstr> GenGetSetCode(Node* node);
+
+std::optional<ttlib::cstr> GenValidatorSettings(Node* node);

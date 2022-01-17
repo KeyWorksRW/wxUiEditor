@@ -21,7 +21,7 @@ public:
     CustomEvent(wxEventType commandType, NodeEvent* event) : wxEvent(0, commandType), m_event(event) {}
     CustomEvent(wxEventType commandType, UndoAction* undo_cmd) : wxEvent(0, commandType), m_undo_cmd(undo_cmd) {}
 
-    Node* GetNode() { return m_node; }
+    Node* GetNode();
     NodeProperty* GetNodeProperty() { return m_property; }
     NodeEvent* GetEventNode() { return m_event; }
     UndoAction* GetUndoCmd() { return m_undo_cmd; }

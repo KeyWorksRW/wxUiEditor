@@ -26,6 +26,8 @@ inline const char* pickers_xml = R"===(<?xml version="1.0"?>
 				help="Use smaller version of the control with a small &quot;...&quot; button instead of the normal &quot;Browse&quot; one." />
 			wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_FILEPICKER_CHANGED" class="wxFileDirPickerEvent"
 			help="Generated when the user changes the file selected in the control either using the button or using text control (see wxFLP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, e.g. an existing file path if wxFLP_FILE_MUST_EXIST was given)." />
 	</gen>
@@ -50,6 +52,8 @@ inline const char* pickers_xml = R"===(<?xml version="1.0"?>
 				help="Use smaller version of the control with a small &quot;...&quot; button instead of the normal &quot;Browse&quot; one." />
 			wxDIRP_DEFAULT_STYLE
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_DIRPICKER_CHANGED" class="wxFileDirPickerEvent"
 			help="Generated when the user changes the directory selected in the control either using the button or using text control (see wxDIRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, e.g. an existing directory path)." />
 	</gen>

@@ -107,6 +107,13 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenSettings(Node* node, size_t& /* 
 {
     ttlib::cstr code;
 
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
     if (node->prop_as_string(prop_contents).size())
     {
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
@@ -238,6 +245,13 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
 {
     ttlib::cstr code;
 
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
     if (node->prop_as_string(prop_contents).size())
     {
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
@@ -362,6 +376,13 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_
 {
     ttlib::cstr code;
 
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
     if (node->prop_as_string(prop_contents).size())
     {
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
@@ -481,6 +502,13 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> HtmlListBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
+
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
 
     if (node->prop_as_string(prop_contents).size())
     {

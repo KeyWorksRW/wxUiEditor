@@ -160,6 +160,23 @@ std::optional<ttlib::cstr> FilePickerGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::cstr> FilePickerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
+    if (code.size())
+        return code;
+    else
+
+        return {};
+}
 std::optional<ttlib::cstr> FilePickerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
@@ -235,6 +252,23 @@ std::optional<ttlib::cstr> DirPickerGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::cstr> DirPickerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
+    if (code.size())
+        return code;
+    else
+
+        return {};
+}
 std::optional<ttlib::cstr> DirPickerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);

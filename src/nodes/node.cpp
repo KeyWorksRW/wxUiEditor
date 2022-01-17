@@ -961,3 +961,27 @@ void Node::CalcNodeHash(size_t& hash) const
         child->CalcNodeHash(hash);
     }
 }
+
+std::vector<NodeProperty*> Node::FindAllChildProperties(PropName name)
+{
+    std::vector<NodeProperty*> result;
+
+    FindAllChildProperties(result, name);
+
+    return result;
+}
+
+void Node::FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name)
+{
+    for (size_t idx = 0; idx < m_children.size(); ++idx)
+    {
+        if (m_children[idx]->HasValue(name))
+        {
+            list.emplace_back(m_children[idx]->get_prop_ptr(name));
+        }
+        if (m_children[idx]->GetChildCount())
+        {
+            m_children[idx]->FindAllChildProperties(list, name);
+        }
+    }
+}

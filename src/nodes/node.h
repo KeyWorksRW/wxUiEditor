@@ -259,9 +259,15 @@ public:
 
     int_t GetAllowableChildren(GenType child_gen_type) const { return m_declaration->GetAllowableChildren(child_gen_type); }
 
+    // Collect a vector of pointers to all children having the specified property with a
+    // non-empty value.
+    std::vector<NodeProperty*> FindAllChildProperties(PropName name);
+
 protected:
     void PostProcessBook(Node* book_node);
     void PostProcessPage(Node* page_node);
+
+    void FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name);
 
     // wxPanel only, not FormPanel
     void PostProcessPanel(Node* panel_node);

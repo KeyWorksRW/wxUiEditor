@@ -116,6 +116,8 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			<option name="wxLB_SORT"
 				help="The listbox contents are sorted in alphabetical order." />
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_CHECKLISTBOX" class="wxCommandEvent"
 			help="Generated when an item in the check list box is checked or unchecked." />
 		<event name="wxEVT_LISTBOX" class="wxCommandEvent"
@@ -330,7 +332,7 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<property name="label" type="string_escapes"
 			help="Text of the hyperlink">Hyperlink</property>
 		<property name="url" type="string_escapes"
-			help="Target of the hyperlink"></property>
+			help="Target of the hyperlink" />
 		<property name="hover_color" type="wxColour"
 			help="The colour used to print the label of the hyperlink when the mouse is over the control." />
 		<property name="normal_color" type="wxColour"
@@ -385,6 +387,8 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			<option name="wxTE_RIGHT"
 				help="The text in the control will be right-justified (currently wxMSW and wxGTK2 only)." />
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_TEXT" class="wxCommandEvent"
 			help="Generated when the text changes. Notice that this event will always be sent when the text controls contents changes - whether this is due to user input or comes from the program itself (for example, if SetValue() is called)" />
 		<event name="wxEVT_TEXT_ENTER" class="wxCommandEvent"
@@ -471,6 +475,8 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 				help="Show week numbers on the left side of the calendar (not in generic)" />
 			wxCAL_SHOW_HOLIDAYS
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_CALENDAR_DOUBLECLICKED" class="wxCalendarEvent"
 			help="A day was double clicked in the calendar." />
 		<event name="wxEVT_CALENDAR_SEL_CHANGED" class="wxCalendarEvent"
@@ -521,6 +527,8 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 				help="Allows multiple files and folders to be selected simultaneously" />
 			wxDIRCTRL_3D_INTERNAL
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_DIRCTRL_SELECTIONCHANGED" class="wxCommandEvent"
 			help="Selected directory has changed. Notice that this event is generated even for the changes done by the program itself and not only those done by the user." />
 		<event name="wxEVT_DIRCTRL_FILEACTIVATED" class="wxCommandEvent"
@@ -544,6 +552,8 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			help="Sets the wildcard, which can contain multiple file types, for example: &quot;BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif&quot;." />
 		<property name="filter_index" type="uint"
 			help="Sets the current filter (wildcard) index, starting from zero." />
+		<property name="show_hidden" type="bool"
+			help="Show hidden files">0</property>
 		<property name="style" type="bitlist">
 			<option name="wxFC_OPEN"
 				help="Creates a file control suitable for opening files. Cannot be used with wxFC_SAVE." />
@@ -555,8 +565,8 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 				help="Hides the &quot;Show Hidden Files&quot; checkbox. Ignored on wxGTK" />
 			wxFC_OPEN
 		</property>
-		<property name="show_hidden" type="bool"
-			help="Show hidden files">0</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_FILECTRL_FILEACTIVATED" class="wxCommandEvent"
 			help="The user activated a file(by double-clicking or pressing Enter)." />
 		<event name="wxEVT_FILECTRL_SELECTIONCHANGED" class="wxCommandEvent"

@@ -46,8 +46,8 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
         if (node->HasValue(prop_pressed_bmp))
             widget->SetBitmapPressed(node->prop_as_wxBitmap(prop_pressed_bmp));
 
-        if (node->HasValue(prop_focus))
-            widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus));
+        if (node->HasValue(prop_focus_bmp))
+            widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus_bmp));
 
         if (node->HasValue(prop_current))
             widget->SetBitmapCurrent(node->prop_as_wxBitmap(prop_current));
@@ -209,11 +209,11 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
                  << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp)) << ");";
         }
 
-        if (node->HasValue(prop_focus))
+        if (node->HasValue(prop_focus_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus))
+            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp))
                  << ");";
         }
 
@@ -257,8 +257,8 @@ wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->HasValue(prop_pressed_bmp))
         widget->SetBitmapPressed(node->prop_as_wxBitmap(prop_pressed_bmp));
 
-    if (node->HasValue(prop_focus))
-        widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus));
+    if (node->HasValue(prop_focus_bmp))
+        widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus_bmp));
 
     if (node->HasValue(prop_current))
         widget->SetBitmapCurrent(node->prop_as_wxBitmap(prop_current));
@@ -396,11 +396,11 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t
                  << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp)) << ");";
         }
 
-        if (node->HasValue(prop_focus))
+        if (node->HasValue(prop_focus_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus))
+            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp))
                  << ");";
         }
 
@@ -446,8 +446,8 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
         if (node->HasValue(prop_pressed_bmp))
             widget->SetBitmapPressed(node->prop_as_wxBitmap(prop_pressed_bmp));
 
-        if (node->HasValue(prop_focus))
-            widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus));
+        if (node->HasValue(prop_focus_bmp))
+            widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus_bmp));
 
         if (node->HasValue(prop_current))
             widget->SetBitmapCurrent(node->prop_as_wxBitmap(prop_current));
@@ -514,11 +514,11 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenSettings(Node* node, size
                  << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp)) << ");";
         }
 
-        if (node->HasValue(prop_focus))
+        if (node->HasValue(prop_focus_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus))
+            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp))
                  << ");";
         }
 

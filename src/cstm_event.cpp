@@ -10,6 +10,7 @@
 #include "mainapp.h"     // App -- Main application class
 #include "mainframe.h"   // MainFrame -- Main window frame
 #include "node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
+#include "node_prop.h"   // NodeProperty class
 #include "undo_cmds.h"   // Undoable command classes derived from UndoAction
 
 wxDEFINE_EVENT(EVT_ProjectUpdated, CustomEvent);
@@ -124,5 +125,25 @@ void MainFrame::FireGridBagActionEvent(GridBagAction* undo_cmd)
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(event);
+    }
+}
+
+Node* CustomEvent::GetNode()
+{
+    if (m_node)
+    {
+        return m_node;
+    }
+    else if (m_property)
+    {
+        return m_property->GetNode();
+    }
+    else if (m_event)
+    {
+        return m_event->GetNode();
+    }
+    else
+    {
+        return nullptr;
     }
 }

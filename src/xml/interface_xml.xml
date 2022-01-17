@@ -87,7 +87,7 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="Bitmap shown when the button is disabled." />
 		<property name="pressed_bmp" type="image"
 			help="Bitmap shown when the button is pushed (e.g. while the user keeps the mouse button pressed on it)." />
-		<property name="focus" type="image"
+		<property name="focus_bmp" type="image"
 			help="Bitmap shown when the button has keyboard focus but is not pressed." />
 		<property name="current" type="image"
 			help="Bitmap shown when the mouse is over the button (but it is not pressed). Notice that if hover bitmap is not specified but the current platform UI uses hover images for the buttons (such as Windows XP or GTK+), then the focus bitmap is used for hover state as well. This makes it possible to set focus bitmap only to get reasonably good behaviour on all platforms." />
@@ -114,7 +114,7 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="Bitmap shown when the button is disabled." />
 		<property name="pressed_bmp" type="image"
 			help="Bitmap shown when the button is pushed (e.g. while the user keeps the mouse button pressed on it)." />
-		<property name="focus" type="image"
+		<property name="focus_bmp" type="image"
 			help="Bitmap shown when the button has keyboard focus but is not pressed." />
 		<property name="current" type="image"
 			help="Bitmap shown when the mouse is over the button (but it is not pressed). Notice that if hover bitmap is not specified but the current platform UI uses hover images for the buttons (such as Windows XP or GTK+), then the focus bitmap is used for hover state as well. This makes it possible to set focus bitmap only to get reasonably good behaviour on all platforms." />

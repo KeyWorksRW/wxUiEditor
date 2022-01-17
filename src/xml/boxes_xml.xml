@@ -27,6 +27,8 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 			<option name="wxTE_PROCESS_ENTER"
 				help="The control will generate the event wxEVT_TEXT_ENTER (otherwise pressing Enter key is either processed internally by the control or used for navigation between dialog controls)." />
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_COMBOBOX" class="wxCommandEvent"
 			help="Generated when an item on the list is selected. Call GetValue() to return the new value of the selection." />
 		<event name="wxEVT_TEXT" class="wxCommandEvent"
@@ -61,6 +63,8 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 			<option name="wxTE_PROCESS_ENTER"
 				help="The control will generate the event wxEVT_TEXT_ENTER (otherwise pressing Enter key is either processed internally by the control or used for navigation between dialog controls). Windows only." />
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_COMBOBOX" class="wxCommandEvent"
 			help="Generated when an item in the list is selected. Calling GetValue() to return the new value of the selection." />
 		<event name="wxEVT_TEXT" class="wxCommandEvent"
@@ -85,6 +89,8 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 			<option name="wxCB_SORT"
 				help="Sorts the entries alphabetically." />
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_CHOICE" class="wxCommandEvent"
 			help="Generated when an item in the list is selected." />
 	</gen>
@@ -122,6 +128,8 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 			<option name="wxLB_SORT"
 				help="The listbox contents are sorted in alphabetical order." />
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_LISTBOX" class="wxCommandEvent"
 			help="Generated when an item in the list is selected." />
 		<event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent"
@@ -145,6 +153,8 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 				help="Multiple-selection list: the user can toggle multiple items on and off." />
 			wxHLB_DEFAULT_STYLE
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_LISTBOX" class="wxCommandEvent"
 			help="Generated when an item in the list is selected." />
 		<event name="wxEVT_LISTBOX_DCLICK" class="wxCommandEvent"
@@ -190,6 +200,8 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 			<option name="wxLB_SORT"
 				help="The listbox contents are sorted in alphabetical order." />
 		</property>
+		<property name="focus" type="bool"
+			help="When checked, this control will be set to receive keyboard input when the parent form is first created.">0</property>
 		<event name="wxEVT_CHECKLISTBOX" class="wxCommandEvent"
 			help="Generated when an item in the check list box is checked or unchecked." />
 		<event name="wxEVT_LISTBOX" class="wxCommandEvent"

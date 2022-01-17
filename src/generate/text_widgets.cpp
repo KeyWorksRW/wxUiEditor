@@ -215,6 +215,13 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenSettings(Node* node, size_t& au
         code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
     }
 
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
     if (node->prop_as_bool(prop_maxlength))
     {
         if (code.size())
@@ -306,6 +313,24 @@ std::optional<ttlib::cstr> RichTextCtrlGenerator::GenConstruction(Node* node)
     }
 
     return code;
+}
+
+std::optional<ttlib::cstr> RichTextCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
+    if (code.size())
+        return code;
+    else
+
+        return {};
 }
 
 std::optional<ttlib::cstr> RichTextCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

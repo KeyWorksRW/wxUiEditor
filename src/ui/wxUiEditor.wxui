@@ -2046,6 +2046,101 @@
     </node>
     <node
       class="wxDialog"
+      base_file="newwizard_base"
+      class_name="NewWizard"
+      inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
+      private_members="true"
+      title="Create New Wizard"
+      use_derived_class="false"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_3">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="These are initial values -- all of them can be changed after the wizard is created."
+            var_name="staticText_3"
+            wrap="300" />
+          <node
+            class="wxInfoBar"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_2"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Base class name:"
+            var_name="staticText"
+            tooltip="Change this to something unique to your project."
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxTextCtrl"
+            value="MyWizardBase"
+            var_name="m_classname"
+            validator_variable="m_base_class"
+            tooltip="Change this to something unique to your project."
+            proportion="1"
+            wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer__2"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Title:"
+            var_name="staticText_2"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxTextCtrl"
+            hint="Text for wizard's Title Bar"
+            var_name="m_textCtrl_title"
+            validator_variable="m_title"
+            proportion="1" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL">
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_4"
+            borders="wxTOP|wxBOTTOM|wxRIGHT">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="&amp;Initial Pages:"
+              var_name="staticText_4"
+              alignment="wxALIGN_CENTER_VERTICAL"
+              borders="wxTOP|wxBOTTOM|wxLEFT" />
+            <node
+              class="wxSpinCtrl"
+              initial="3"
+              max="7"
+              min="1"
+              var_name="m_spinCtrlTabs"
+              validator_variable="m_num_pages"
+              disabled="true"
+              alignment="wxALIGN_CENTER_VERTICAL" />
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
       base_file="optionsdlg_base"
       class_name="OptionsDlgBase"
       derived_class_name="OptionsDlg"
@@ -2387,7 +2482,7 @@
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxWizard.png;[-1,-1]"
                   help="wxWizard"
-                  id="gen_wxWizard" />
+                  id="CreateNewWizard" />
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxWizardPageSimple.png;[-1,-1]"

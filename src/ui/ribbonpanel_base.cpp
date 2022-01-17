@@ -67,7 +67,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
 
     auto forms_bar_wizard = new wxRibbonToolBar(panel_wizard, wxID_ANY);
     {
-        forms_bar_wizard->AddTool(gen_wxWizard, GetImageFromArray(wxue_img::wxWizard_png, sizeof(wxue_img::wxWizard_png)), "wxWizard", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_wizard->AddTool(CreateNewWizard, GetImageFromArray(wxue_img::wxWizard_png, sizeof(wxue_img::wxWizard_png)), "wxWizard", wxRIBBON_BUTTON_NORMAL);
         forms_bar_wizard->AddTool(gen_wxWizardPageSimple, GetImageFromArray(wxue_img::wxWizardPageSimple_png, sizeof(wxue_img::wxWizardPageSimple_png)), "wxWizardPageSimple", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_wizard->Realize();

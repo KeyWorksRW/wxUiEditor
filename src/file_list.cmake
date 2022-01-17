@@ -95,6 +95,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/newdialogs/new_frame.cpp    # Dialog for creating a new project wxFrame
     ${CMAKE_CURRENT_LIST_DIR}/newdialogs/new_panel.cpp     # Dialog for creating a new form panel
     ${CMAKE_CURRENT_LIST_DIR}/newdialogs/new_ribbon.cpp   # Dialog for creating a new wxRibbonBar
+    ${CMAKE_CURRENT_LIST_DIR}/newdialogs/new_wizard.cpp    # Dialog for creating a new wxWizard
 
     ${CMAKE_CURRENT_LIST_DIR}/nodes/node.cpp              # Contains user-modifiable node
     ${CMAKE_CURRENT_LIST_DIR}/nodes/node_constants.cpp    # Maps wxWidgets constants to their numerical value

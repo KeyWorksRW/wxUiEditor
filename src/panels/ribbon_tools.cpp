@@ -20,6 +20,7 @@
 #include "newframe_base.h"   // NewFrame -- Dialog for creating a new project wxFrame
 #include "newpanel_base.h"   // NewPanel -- Dialog for creating a new form panel
 #include "newribbon_base.h"  // NewRibbon -- Dialog for creating a new wxRibbonBar
+#include "newwizard_base.h"  // NewWizard -- Dialog for creating a new wizard
 
 #include "ribbon_ids.h"
 
@@ -106,6 +107,18 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     return;
                 }
                 break;
+
+            case CreateNewWizard:
+                {
+                    NewWizard dlg(wxGetFrame().GetWindow());
+                    if (dlg.ShowModal() == wxID_OK)
+                    {
+                        dlg.CreateNode();
+                    }
+                    return;
+                }
+                break;
+
         }
 
         FAIL_MSG("This will only happen if the tool is a) not a dropdown, or b) doesn't have a valid id.");

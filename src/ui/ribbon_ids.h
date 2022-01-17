@@ -18,5 +18,6 @@ enum
     CreateNewPanel,
     CreateNewRibbon,
     CreateNewFormRibbon,
+    CreateNewWizard,
 
 };

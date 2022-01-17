@@ -120,6 +120,7 @@ Files:
     newdialogs/new_common.cpp    # Contains code common between all new_ dialogs
     newdialogs/new_dialog.cpp    # Dialog for creating a new project dialog
     newdialogs/new_frame.cpp     # Dialog for creating a new project wxFrame
+    newdialogs/new_panel.cpp     # Dialog for creating a new form panel
     newdialogs/new_ribbon.cpp    # Dialog for creating a new wxRibbonBar
 
     nodes/node.cpp              # Contains user-modifiable node

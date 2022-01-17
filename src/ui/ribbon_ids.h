@@ -15,6 +15,7 @@ enum
     NewStaticSizer,
     CreateNewDialog,
     CreateNewFrame,
+    CreateNewPanel,
     CreateNewRibbon,
     CreateNewFormRibbon,
 

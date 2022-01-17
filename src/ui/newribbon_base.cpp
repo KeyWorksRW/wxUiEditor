@@ -21,7 +21,7 @@ bool NewRibbon::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     auto box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the ribbon bar\n is created.");
+    auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the ribbon bar is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 

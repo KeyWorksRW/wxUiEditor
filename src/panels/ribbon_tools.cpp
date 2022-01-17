@@ -118,7 +118,6 @@ void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
                     return;
                 }
                 break;
-
         }
 
         FAIL_MSG("This will only happen if the tool is a) not a dropdown, or b) doesn't have a valid id.");

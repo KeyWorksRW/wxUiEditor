@@ -907,6 +907,13 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
         code.clear();  // means there were no settings
     }
 
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
     return code;
 }
 

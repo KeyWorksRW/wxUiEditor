@@ -117,6 +117,13 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenSettings(Node* node, size_t& /*
         code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
     }
 
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
     if (node->HasValue(prop_contents))
     {
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
@@ -252,6 +259,13 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> ChoiceGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
+
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
 
     if (node->HasValue(prop_contents))
     {
@@ -404,6 +418,13 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenSettings(Node* node, size
         if (code.size())
             code << '\n';
         code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+    }
+
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
     }
 
     if (node->HasValue(prop_contents))

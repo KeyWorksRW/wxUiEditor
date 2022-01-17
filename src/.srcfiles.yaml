@@ -117,9 +117,12 @@ Files:
     mockup/mockup_content.cpp   # Mockup of a form's contents
     mockup/mockup_wizard.cpp    # Emulate a wxWizard
 
+    newdialogs/new_common.cpp    # Contains code common between all new_ dialogs
     newdialogs/new_dialog.cpp    # Dialog for creating a new project dialog
     newdialogs/new_frame.cpp     # Dialog for creating a new project wxFrame
+    newdialogs/new_panel.cpp     # Dialog for creating a new form panel
     newdialogs/new_ribbon.cpp    # Dialog for creating a new wxRibbonBar
+    newdialogs/new_wizard.cpp    # Dialog for creating a new wxWizard
 
     nodes/node.cpp              # Contains user-modifiable node
     nodes/node_constants.cpp    # Maps wxWidgets constants to their numerical value

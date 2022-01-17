@@ -57,7 +57,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     auto forms_bar_windows = new wxRibbonToolBar(panel_form_windows, wxID_ANY);
     {
         forms_bar_windows->AddTool(CreateNewDialog, GetImageFromArray(wxue_img::wxDialog_png, sizeof(wxue_img::wxDialog_png)), "wxDialog", wxRIBBON_BUTTON_NORMAL);
-        forms_bar_windows->AddTool(gen_PanelForm, GetImageFromArray(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)), "wxPanel", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_windows->AddTool(CreateNewPanel, GetImageFromArray(wxue_img::wxPanel_png, sizeof(wxue_img::wxPanel_png)), "wxPanel", wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(CreateNewFrame, GetImageFromArray(wxue_img::wxFrame_png, sizeof(wxue_img::wxFrame_png)), "wxFrame", wxRIBBON_BUTTON_NORMAL);
         forms_bar_windows->AddTool(gen_wxPopupTransientWindow, GetImageFromArray(wxue_img::WXPOPupTransientWindow_png, sizeof(wxue_img::WXPOPupTransientWindow_png)), "wxPopupTransientWindow", wxRIBBON_BUTTON_NORMAL);
     }
@@ -67,7 +67,7 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
 
     auto forms_bar_wizard = new wxRibbonToolBar(panel_wizard, wxID_ANY);
     {
-        forms_bar_wizard->AddTool(gen_wxWizard, GetImageFromArray(wxue_img::wxWizard_png, sizeof(wxue_img::wxWizard_png)), "wxWizard", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_wizard->AddTool(CreateNewWizard, GetImageFromArray(wxue_img::wxWizard_png, sizeof(wxue_img::wxWizard_png)), "wxWizard", wxRIBBON_BUTTON_NORMAL);
         forms_bar_wizard->AddTool(gen_wxWizardPageSimple, GetImageFromArray(wxue_img::wxWizardPageSimple_png, sizeof(wxue_img::wxWizardPageSimple_png)), "wxWizardPageSimple", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_wizard->Realize();

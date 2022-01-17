@@ -10,9 +10,9 @@
 #include <wx/valgen.h>
 #include <wx/valtext.h>
 
-#include "newdialog_base.h"
+#include "newwizard_base.h"
 
-bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
+bool NewWizard::Create(wxWindow *parent, wxWindowID id, const wxString &title,
         const wxPoint&pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
@@ -23,7 +23,7 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     auto box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the dialog is created.");
+    auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the wizard is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
@@ -38,7 +38,7 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     staticText->SetToolTip("Change this to something unique to your project.");
     box_sizer_2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
-    m_classname = new wxTextCtrl(this, wxID_ANY, "MyDialogBase");
+    m_classname = new wxTextCtrl(this, wxID_ANY, "MyWizardBase");
     m_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_base_class));
     m_classname->SetToolTip("Change this to something unique to your project.");
     box_sizer_2->Add(m_classname, wxSizerFlags(1).Border(wxALL));
@@ -50,7 +50,7 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     box_sizer__2->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
     m_textCtrl_title = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_textCtrl_title->SetHint("Text for dialog's Title Bar");
+    m_textCtrl_title->SetHint("Text for wizard's Title Bar");
     m_textCtrl_title->SetValidator(wxTextValidator(wxFILTER_NONE, &m_title));
     box_sizer__2->Add(m_textCtrl_title, wxSizerFlags(1).Border(wxALL));
 
@@ -60,24 +60,14 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    m_check_tabs = new wxCheckBox(this, wxID_ANY, "Tabbed &Dialog");
-    m_check_tabs->SetValidator(wxGenericValidator(&m_has_tabs));
-    m_check_tabs->SetToolTip("If checked, creates a wxNotebook");
-    box_sizer_4->Add(m_check_tabs, wxSizerFlags().Center().Border(wxALL));
-
-    auto staticText_4 = new wxStaticText(this, wxID_ANY, "Tab&s:");
+    auto staticText_4 = new wxStaticText(this, wxID_ANY, "&Initial Pages:");
     box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
             wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 7, 3);
-    m_spinCtrlTabs->SetValidator(wxGenericValidator(&m_num_tabs));
+    m_spinCtrlTabs->SetValidator(wxGenericValidator(&m_num_pages));
     m_spinCtrlTabs->Enable(false);
     box_sizer_4->Add(m_spinCtrlTabs, wxSizerFlags().Center().Border(wxALL));
-
-    auto checkBox_2 = new wxCheckBox(this, wxID_ANY, "&Standard Buttons");
-    checkBox_2->SetValue(true);
-    checkBox_2->SetValidator(wxGenericValidator(&m_has_std_btns));
-    box_sizer->Add(checkBox_2, wxSizerFlags().Border(wxALL));
 
     auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
@@ -86,15 +76,10 @@ bool NewDialog::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &NewDialog::OnInit, this);
+    Bind(wxEVT_INIT_DIALOG, &NewWizard::OnInit, this);
     m_classname->Bind(wxEVT_TEXT,
         [this](wxCommandEvent&)
         {VerifyClassName();
-        } );
-    m_check_tabs->Bind(wxEVT_CHECKBOX,
-        [this](wxCommandEvent&)
-        {
-            m_spinCtrlTabs->Enable(m_check_tabs->GetValue());
         } );
 
     return true;

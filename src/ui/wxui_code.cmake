@@ -28,7 +28,9 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/navtoolbar_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newdialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/newpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/newribbon_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/newwizard_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/optionsdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ribbonpanel_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/startupdlg_base.cpp

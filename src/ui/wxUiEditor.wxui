@@ -1725,7 +1725,7 @@
             validator_variable="m_base_class"
             tooltip="Change this to something unique to your project."
             proportion="1"
-            wxEVT_TEXT="OnClassName" />
+            wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
         </node>
         <node
           class="wxBoxSizer"
@@ -1739,10 +1739,10 @@
             alignment="wxALIGN_CENTER_VERTICAL" />
           <node
             class="wxTextCtrl"
+            hint="Text for dialog's Title Bar"
             var_name="m_textCtrl_title"
             validator_variable="m_title"
-            proportion="1"
-            wxEVT_TEXT="OnClassName" />
+            proportion="1" />
         </node>
         <node
           class="wxBoxSizer"
@@ -1756,6 +1756,7 @@
               label="Tabbed &amp;Dialog"
               var_name="m_check_tabs"
               validator_variable="m_has_tabs"
+              tooltip="If checked, creates a wxNotebook"
               alignment="wxALIGN_CENTER_VERTICAL"
               wxEVT_CHECKBOX="[this](wxCommandEvent&amp;)@@{@@m_spinCtrlTabs->Enable(m_check_tabs->GetValue());@@}" />
             <node
@@ -1792,7 +1793,7 @@
       class="wxDialog"
       base_file="newframe_base"
       class_name="NewFrame"
-      inserted_hdr_code="void CreateNode();@@"
+      inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
       private_members="true"
       title="New wxFrame window"
       use_derived_class="false"
@@ -1803,6 +1804,7 @@
         flags="wxEXPAND">
         <node
           class="wxBoxSizer"
+          orientation="wxVERTICAL"
           var_name="box_sizer_3">
           <node
             class="wxStaticText"
@@ -1810,10 +1812,13 @@
             label="These are initial values -- all of them can be changed after the window is created."
             var_name="staticText_3"
             wrap="300" />
+          <node
+            class="wxInfoBar"
+            flags="wxEXPAND" />
         </node>
         <node
           class="wxBoxSizer"
-          var_name="box_sizer__2"
+          var_name="class_sizer"
           flags="wxEXPAND">
           <node
             class="wxStaticText"
@@ -1826,7 +1831,8 @@
             value="MyFrameBase"
             var_name="m_classname"
             validator_variable="m_base_class"
-            proportion="1" />
+            proportion="1"
+            wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
         </node>
         <node
           class="StaticCheckboxBoxSizer"
@@ -1872,25 +1878,134 @@
     </node>
     <node
       class="wxDialog"
+      base_file="newpanel_base"
+      class_name="NewPanel"
+      derived_class_name="NewPanel"
+      inserted_hdr_code="void WantFormVersion() { m_is_form = true; }@@void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_form { false };@@bool m_is_info_shown { false };"
+      title="Create New Panel"
+      use_derived_class="false"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_3">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="These are initial values -- all of them can be changed after the panel is created."
+            var_name="staticText_3"
+            wrap="300" />
+          <node
+            class="wxInfoBar"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          class_access="protected:"
+          var_name="m_class_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Base class name:"
+            var_name="staticText"
+            tooltip="Change this to something unique to your project."
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxTextCtrl"
+            value="MyPanelBase"
+            var_name="m_classname"
+            validator_variable="m_base_class"
+            tooltip="Change this to something unique to your project."
+            proportion="1"
+            wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
+        </node>
+        <node
+          class="wxBoxSizer">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Parent sizer type:"
+            var_name="staticText_2"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxComboBox"
+            class_access="none"
+            contents="&quot;Box&quot; &quot;FlexGrid&quot; &quot;Grid&quot; &quot;GridBag&quot; &quot;StaticBox&quot; &quot;Wrap&quot;"
+            selection_string="Box"
+            style="wxCB_READONLY"
+            var_name="comboBox"
+            validator_variable="m_sizer_type" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_2">
+          <node
+            class="wxCheckBox"
+            checked="true"
+            class_access="none"
+            label="&amp;Tab traversal"
+            var_name="checkTabTraversal"
+            validator_variable="m_tab_traversal"
+            tooltip="Checking this will cause the tab key to traverse child windows." />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
       base_file="newribbon_base"
       class_name="NewRibbon"
-      inserted_hdr_code="// Checks current selected node to see if it accepts a wxRibbonBar as a child@@bool IsCreatable(bool notify_user = true);@@@@void WantFormVersion() { m_is_form = true; }@@void CreateNode();@@@@private:@@bool m_is_form { false };@@"
+      inserted_hdr_code="// Checks current selected node to see if it accepts a wxRibbonBar as a child@@bool IsCreatable(bool notify_user = true);@@@@void WantFormVersion() { m_is_form = true; }@@void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_form { false };@@bool m_is_info_shown { false };"
       private_members="true"
       title="New Ribbon Bar"
-      use_derived_class="false">
+      use_derived_class="false"
+      wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
         flags="wxEXPAND">
         <node
           class="wxBoxSizer"
+          orientation="wxVERTICAL"
           var_name="box_sizer_3">
           <node
             class="wxStaticText"
             class_access="none"
-            label="These are initial values -- all of them can be changed after the ribbon bar&#10; is created."
+            label="These are initial values -- all of them can be changed after the ribbon bar is created."
             var_name="staticText_3"
             wrap="300" />
+          <node
+            class="wxInfoBar"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          class_access="protected:"
+          var_name="m_class_sizer"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Base class name:"
+            var_name="staticText"
+            tooltip="Change this to something unique to your project."
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxTextCtrl"
+            value="MyRibbonBarBase"
+            var_name="m_classname"
+            validator_variable="m_base_class"
+            tooltip="Change this to something unique to your project."
+            proportion="1"
+            wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
         </node>
         <node
           class="wxBoxSizer"
@@ -1923,6 +2038,101 @@
             var_name="m_spinCtrlPages"
             validator_variable="m_num_pages"
             disabled="true" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      base_file="newwizard_base"
+      class_name="NewWizard"
+      inserted_hdr_code="void CreateNode();@@void VerifyClassName();@@@@private:@@bool m_is_info_shown { false };"
+      private_members="true"
+      title="Create New Wizard"
+      use_derived_class="false"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_3">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="These are initial values -- all of them can be changed after the wizard is created."
+            var_name="staticText_3"
+            wrap="300" />
+          <node
+            class="wxInfoBar"
+            flags="wxEXPAND" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_2"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Base class name:"
+            var_name="staticText"
+            tooltip="Change this to something unique to your project."
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxTextCtrl"
+            value="MyWizardBase"
+            var_name="m_classname"
+            validator_variable="m_base_class"
+            tooltip="Change this to something unique to your project."
+            proportion="1"
+            wxEVT_TEXT="[this](wxCommandEvent&amp;)@@{VerifyClassName();@@}" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer__2"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="&amp;Title:"
+            var_name="staticText_2"
+            alignment="wxALIGN_CENTER_VERTICAL" />
+          <node
+            class="wxTextCtrl"
+            hint="Text for wizard's Title Bar"
+            var_name="m_textCtrl_title"
+            validator_variable="m_title"
+            proportion="1" />
+        </node>
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL">
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_4"
+            borders="wxTOP|wxBOTTOM|wxRIGHT">
+            <node
+              class="wxStaticText"
+              class_access="none"
+              label="&amp;Initial Pages:"
+              var_name="staticText_4"
+              alignment="wxALIGN_CENTER_VERTICAL"
+              borders="wxTOP|wxBOTTOM|wxLEFT" />
+            <node
+              class="wxSpinCtrl"
+              initial="3"
+              max="7"
+              min="1"
+              var_name="m_spinCtrlTabs"
+              validator_variable="m_num_pages"
+              disabled="true"
+              alignment="wxALIGN_CENTER_VERTICAL" />
+          </node>
         </node>
         <node
           class="wxStdDialogButtonSizer"
@@ -2247,7 +2457,7 @@
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxPanel.png;[-1,-1]"
                   help="wxPanel"
-                  id="gen_PanelForm" />
+                  id="CreateNewPanel" />
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxFrame.png;[-1,-1]"
@@ -2272,7 +2482,7 @@
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxWizard.png;[-1,-1]"
                   help="wxWizard"
-                  id="gen_wxWizard" />
+                  id="CreateNewWizard" />
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxWizardPageSimple.png;[-1,-1]"

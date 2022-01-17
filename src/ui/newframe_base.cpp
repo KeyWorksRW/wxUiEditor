@@ -21,22 +21,26 @@ bool NewFrame::Create(wxWindow *parent, wxWindowID id, const wxString &title,
 
     auto box_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    auto box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
     auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the window is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer__2 = new wxBoxSizer(wxHORIZONTAL);
-    box_sizer->Add(box_sizer__2, wxSizerFlags().Expand().Border(wxALL));
+    m_infoBar = new wxInfoBar(this);
+    m_infoBar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+    box_sizer_3->Add(m_infoBar, wxSizerFlags().Expand().Border(wxALL));
+
+    auto class_sizer = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer->Add(class_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     auto staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
-    box_sizer__2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
+    class_sizer->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
     m_classname = new wxTextCtrl(this, wxID_ANY, "MyFrameBase");
     m_classname->SetValidator(wxTextValidator(wxFILTER_NONE, &m_base_class));
-    box_sizer__2->Add(m_classname, wxSizerFlags(1).Border(wxALL));
+    class_sizer->Add(m_classname, wxSizerFlags(1).Border(wxALL));
 
     m_checkBox_mainframe = new wxCheckBox(this, wxID_ANY, "Main Frame Window");
     m_checkBox_mainframe->SetValidator(wxGenericValidator(&m_has_mainframe));
@@ -73,6 +77,10 @@ bool NewFrame::Create(wxWindow *parent, wxWindowID id, const wxString &title,
         {
             m_classname->SetFocus();
             event.Skip();
+        } );
+    m_classname->Bind(wxEVT_TEXT,
+        [this](wxCommandEvent&)
+        {VerifyClassName();
         } );
     m_checkBox_mainframe->Bind(wxEVT_CHECKBOX, &NewFrame::OnCheckMainFrame, this);
 

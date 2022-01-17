@@ -6,33 +6,27 @@
 
 #pragma once
 
-#include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/infobar.h>
 #include <wx/sizer.h>
-#include <wx/spinctrl.h>
-#include <wx/stattext.h>
 #include <wx/textctrl.h>
 
-class NewRibbon : public wxDialog
+class NewPanel : public wxDialog
 {
 public:
-    NewRibbon() {}
-    NewRibbon(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar",
+    NewPanel() {}
+    NewPanel(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Panel",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "New Ribbon Bar",
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Create New Panel",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
-
-    // Checks current selected node to see if it accepts a wxRibbonBar as a child
-    bool IsCreatable(bool notify_user = true);
 
     void WantFormVersion() { m_is_form = true; }
     void CreateNode();
@@ -48,20 +42,15 @@ protected:
 
     void OnInit(wxInitDialogEvent& event);
 
-private:
-
     // Validator variables
 
-    int m_num_pages { 3 };
-    wxString m_base_class { "MyRibbonBarBase" };
-    wxString m_panel_type;
+    bool m_tab_traversal { true };
+    wxString m_base_class { "MyPanelBase" };
+    wxString m_sizer_type;
 
     // Class member variables
 
     wxBoxSizer* m_class_sizer;
-    wxComboBox* m_comboBox;
     wxInfoBar* m_infoBar;
-    wxSpinCtrl* m_spinCtrlPages;
-    wxStaticText* m_staticText;
     wxTextCtrl* m_classname;
 };

@@ -10,6 +10,7 @@
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/infobar.h>
 #include <wx/textctrl.h>
 
 class NewFrame : public wxDialog
@@ -28,6 +29,10 @@ public:
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
     void CreateNode();
+    void VerifyClassName();
+
+private:
+    bool m_is_info_shown { false };
 
 protected:
 
@@ -51,5 +56,6 @@ private:
     wxCheckBox* m_checkBox_menu;
     wxCheckBox* m_checkBox_statusbar;
     wxCheckBox* m_checkBox_toolbar;
+    wxInfoBar* m_infoBar;
     wxTextCtrl* m_classname;
 };

@@ -9,7 +9,7 @@
 
 class Node;
 
-// Updates prop_base_file and possibly prop_derived_class_name and prop_derived_class_name
+// Updates prop_base_file and possibly prop_derived_class_name and prop_derived_file
 // depending on value of prop_class_name
 void UpdateFormClass(Node* form_node);
 

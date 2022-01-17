@@ -1251,15 +1251,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
         // has already been changed. We don't need to process it since we already saw it, but we can use the oppoprtunity to
         // do some additional processing, such as notifying the user that the Mockup can't display the property change.
 
-        if (event.GetNodeProperty()->isProp(prop_border))
-        {
-            auto info = wxGetFrame().GetPropInfoBar();
-            info->Dismiss();
-            if (event.GetNodeProperty()->as_string() == "wxBORDER_RAISED")
-            {
-                info->ShowMessage("The Mockup panel is not able to show a mockup of the raised border.", wxICON_INFORMATION);
-            }
-        }
+        OnPostPropChange(event);
         return;
     }
 
@@ -1701,5 +1693,41 @@ void PropGridPanel::VerifyChangeFile(wxPropertyGridEvent& event, NodeProperty* p
         // otherwise it will revert back to the original name before the Veto.
 
         event.GetProperty()->SetValueFromString(newValue, 0);
+    }
+}
+
+void PropGridPanel::OnPostPropChange(CustomEvent& event)
+{
+    if (event.GetNodeProperty()->isProp(prop_border))
+    {
+        auto info = wxGetFrame().GetPropInfoBar();
+        info->Dismiss();
+        if (event.GetNodeProperty()->as_string() == "wxBORDER_RAISED")
+        {
+            info->ShowMessage("The Mockup panel is not able to show a mockup of the raised border.", wxICON_INFORMATION);
+        }
+    }
+    else if (event.GetNodeProperty()->isProp(prop_focus))
+    {
+        auto node = event.GetNode();
+        auto form = node->GetForm();
+        auto list = form->FindAllChildProperties(prop_focus);
+        size_t count = 0;
+        for (auto iter: list)
+        {
+            if (iter->as_bool())
+            {
+                ++count;
+            }
+        }
+
+        if (count > 1)
+        {
+            wxGetFrame().GetPropInfoBar()->ShowMessage("More than one control has focus set.", wxICON_INFORMATION);
+        }
+        else
+        {
+            wxGetFrame().GetPropInfoBar()->Dismiss();
+        }
     }
 }

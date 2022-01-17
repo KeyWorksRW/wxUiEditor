@@ -51,6 +51,10 @@ protected:
     // Called to determine if a property should be displayed or not
     bool IsPropAllowed(Node* node, NodeProperty* prop);
 
+    // Called after a property has been changed. Used to display info-bar notification if
+    // needed.
+    void OnPostPropChange(CustomEvent& event);
+
     void CreatePropCategory(ttlib::cview name, Node* node, NodeDeclaration* obj_info, PropNameSet& prop_set);
     void CreateEventCategory(ttlib::cview name, Node* node, NodeDeclaration* obj_info, EventSet& event_set);
     void CreateLayoutCategory(Node* node);

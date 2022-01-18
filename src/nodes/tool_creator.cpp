@@ -111,6 +111,12 @@ bool Node::CreateToolNode(GenName name)
         // Create an initial menu item
         new_node->CreateChildNode(gen_wxMenuItem);
     }
+    else if (name == gen_wxHtmlWindow || name == gen_wxStyledTextCtrl || name == gen_wxRichTextCtrl)
+    {
+        new_node->prop_set_value(prop_flags, "wxEXPAND");
+        new_node->prop_set_value(prop_proportion, 1);
+    }
+
     return true;
 }
 

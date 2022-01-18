@@ -227,6 +227,54 @@
     </node>
     <node
       class="wxDialog"
+      base_file="edit_html_dialog_base"
+      class_name="EditHtmlDialogBase"
+      derived_class_name="EditHtmlDialog"
+      persist="true"
+      size="500,400d"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="parent_sizer">
+        <node
+          class="wxSplitterWindow"
+          min_pane_size="250"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="wxStyledTextCtrl"
+            additional_carets_blink="true"
+            indentation_guides="forward"
+            lexer="HTML"
+            multiple_selection_typing="true"
+            multiple_selections="true"
+            paste_multiple="true"
+            symbol_margin="0"
+            use_tabs="false"
+            wrap_indent_mode="indent"
+            wrap_mode="word"
+            wrap_visual_flag="end"
+            font="large"
+            minimum_size="-1,-1"
+            smart_size="600,400d"
+            border_size="10"
+            flags="wxEXPAND"
+            proportion="1"
+            wxEVT_STC_CHANGE="OnTextChange" />
+          <node
+            class="wxHtmlWindow" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          var_name="stdBtn_2"
+          flags="wxEXPAND"
+          OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
       base_file="editstringdialog_base"
       class_name="EditStringDialogBase"
       derived_class_name="EditStringDialog">

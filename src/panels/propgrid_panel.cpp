@@ -43,6 +43,7 @@
 #include "../customprops/directory_prop.h"      // DirectoryDialogAdapter
 #include "../customprops/evt_string_prop.h"     // EventStringProperty -- dialog for editing event handlers
 #include "../customprops/font_string_prop.h"  // FontStringDialogAdapter -- Derived wxStringProperty class for font property
+#include "../customprops/html_string_prop.h"  // EditHtmlDialogAdapter -- Derived wxStringProperty class for HTML
 #include "../customprops/pg_animation.h"      // PropertyGrid_Animation -- Custom property grid class for animations
 #include "../customprops/pg_image.h"          // PropertyGrid_Image -- Custom property grid class for images
 #include "../customprops/pg_point.h"          // CustomPointProperty -- custom wxPGProperty for handling wxPoint
@@ -290,6 +291,10 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_code_edit:
             // This includes a button that triggers a small single-line custom text editor dialog
             return new EditCodeProperty(prop->DeclName().wx_str(), prop);
+
+        case type_html_edit:
+            // This includes a button that triggers a small single-line custom text editor dialog
+            return new EditHtmlProperty(prop->DeclName().wx_str(), prop);
 
         case type_bool:
             return new wxBoolProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string() == "1");
@@ -860,6 +865,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             }
 
         case type_code_edit:
+        case type_html_edit:
         case type_wxFont:
         case type_string_edit:
         case type_id:

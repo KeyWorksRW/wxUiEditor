@@ -23,6 +23,7 @@ namespace GenEnum
         type_editoption,  // same as option, except that property grid uses wxEditEnumProperty instead of wxEnumProperty
         type_file,
         type_float,
+        type_html_edit,  // includes a button that triggers a dialog with a scintilla editor
         type_id,
         type_image,
         type_int,
@@ -202,6 +203,9 @@ namespace GenEnum
         prop_hide_effect,
         prop_hint,
         prop_hover_color,
+        prop_html_content,
+        prop_html_file,
+        prop_html_url,
         prop_icon,
         prop_id,
         prop_image_size,

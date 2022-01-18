@@ -897,6 +897,10 @@ ttlib::cstr GenFontColourSettings(Node* node)
                 code << "\n\t"
                      << "SetFont(font);\n}";
             }
+            else if (node->isGen(gen_wxStyledTextCtrl))
+            {
+                code << "\n\t" << node->get_node_name() << "->StyleSetFont(wxSTC_STYLE_DEFAULT, font);\n}";
+            }
             else
             {
                 code << "\n\t" << node->get_node_name() << "->SetFont(font);\n}";

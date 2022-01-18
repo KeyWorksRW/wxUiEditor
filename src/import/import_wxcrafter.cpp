@@ -871,7 +871,10 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                     }
                     else if (name.is_sameas("focused"))
                     {
-                        // Currently we don't support this.
+                        if (auto& setting = FindValue(value, "m_value"); setting.IsBool())
+                        {
+                            node->prop_set_value(prop_focus, setting.GetBool());
+                        }
                         continue;
                     }
                     else if (name.is_sameas("virtual folder"))

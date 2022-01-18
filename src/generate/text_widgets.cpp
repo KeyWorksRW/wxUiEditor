@@ -276,9 +276,12 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 //////////////////////////////////////////  RichTextCtrlGenerator  //////////////////////////////////////////
 wxObject* RichTextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget =
-        new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
-                           DlgSize(parent, node, prop_size), GetStyleInt(node) | wxRE_MULTILINE);
+    auto widget = new wxRichTextCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_value),
+                                     DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
+                                     GetStyleInt(node) | wxRE_MULTILINE);
+
+    if (node->HasValue(prop_hint))
+        widget->SetHint(node->prop_as_wxString(prop_hint));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -293,7 +296,10 @@ std::optional<ttlib::cstr> RichTextCtrlGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << GenerateNewAssignment(node);
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-    code << "wxEmptyString";
+    if (node->prop_as_string(prop_value).size())
+        code << GenerateQuotedString(node->prop_as_string(prop_value));
+    else
+        code << "wxEmptyString";
 
     if (node->prop_as_string(prop_window_name).empty())
         GeneratePosSizeFlags(node, code);
@@ -318,6 +324,13 @@ std::optional<ttlib::cstr> RichTextCtrlGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> RichTextCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
+
+    if (node->HasValue(prop_hint))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
+    }
 
     if (node->prop_as_bool(prop_focus))
     {

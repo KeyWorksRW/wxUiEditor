@@ -295,6 +295,7 @@ static const ParentChild lstParentChild[] = {
     { type_splitter, type_propgridman, two },
     { type_splitter, type_splitter, two },
     { type_splitter, type_treelistctrl, two },
+    { type_splitter, type_widget, two },
 
     { type_toolbar, type_tool, infinite },
     { type_toolbar, type_widget, infinite },

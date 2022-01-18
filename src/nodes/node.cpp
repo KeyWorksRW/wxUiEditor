@@ -620,8 +620,16 @@ Node* Node::CreateChildNode(GenName name)
             auto cur_children = g_NodeCreator.CountChildrenWithSameType(this, decl->gen_type());
             if (max_children > 0 && cur_children >= static_cast<size_t>(max_children))
             {
-                wxMessageBox(ttlib::cstr() << "You can only add " << static_cast<size_t>(max_children) << ' '
-                                           << map_GenNames[name] << " as a child of " << DeclName());
+                if (isGen(gen_wxSplitterWindow))
+                {
+                    wxMessageBox("You cannot add more than two windows to a splitter window.", "Cannot add control");
+                }
+                else
+                {
+                    wxMessageBox(ttlib::cstr() << "You can only add " << static_cast<size_t>(max_children) << ' '
+                                               << map_GenNames[name] << " as a child of " << DeclName());
+                }
+
                 return nullptr;
             }
 

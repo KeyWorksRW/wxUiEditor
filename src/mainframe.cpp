@@ -1205,6 +1205,11 @@ void MainFrame::CreateToolNode(GenName name)
 
     if (!m_selected_node->CreateToolNode(name))
     {
+        if (m_selected_node->isGen(gen_wxSplitterWindow))
+        {
+            return;  // The user has already been notified of the problem
+        }
+
         wxMessageBox(ttlib::cstr() << "Unable to create " << map_GenNames[name] << " as a child of "
                                    << m_selected_node->DeclName());
     }
@@ -1551,7 +1556,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
         auto pos = parent->GetChildPosition(node) - 1;
         if (pos < parent->GetChildCount())
         {
-            parent = FindChildSizerItem(parent->GetChild(pos));
+            parent = FindChildSizerItem(parent->GetChild(pos), true);
 
             if (check_only)
                 return (parent ? true : false);
@@ -1629,15 +1634,17 @@ void MainFrame::ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value)
     }
 }
 
-Node* MainFrame::FindChildSizerItem(Node* node)
+Node* MainFrame::FindChildSizerItem(Node* node, bool include_splitter)
 {
-    if (node->GetNodeDeclaration()->isSubclassOf(gen_sizer_dimension))
+    if (include_splitter && node->isGen(gen_wxSplitterWindow) && node->GetChildCount() < 2)
+        return node;
+    else if (node->GetNodeDeclaration()->isSubclassOf(gen_sizer_dimension))
         return node;
     else
     {
         for (size_t i = 0; i < node->GetChildCount(); ++i)
         {
-            auto result = FindChildSizerItem(node->GetChild(i));
+            auto result = FindChildSizerItem(node->GetChild(i), include_splitter);
             if (result)
                 return result;
         }

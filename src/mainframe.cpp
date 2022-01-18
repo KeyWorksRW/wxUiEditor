@@ -1205,6 +1205,11 @@ void MainFrame::CreateToolNode(GenName name)
 
     if (!m_selected_node->CreateToolNode(name))
     {
+        if (m_selected_node->isGen(gen_wxSplitterWindow))
+        {
+            return;  // The user has already been notified of the problem
+        }
+
         wxMessageBox(ttlib::cstr() << "Unable to create " << map_GenNames[name] << " as a child of "
                                    << m_selected_node->DeclName());
     }

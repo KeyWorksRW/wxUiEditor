@@ -413,6 +413,9 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 				help="Don't allow the user to select text." />
 			wxHW_SCROLLBAR_AUTO
 		</property>
+		<property name="html_content" help="The HTML contents to be displayed." type="html_edit" />
+		<property name="html_file" help="The HTML file to load and display." type="file" />
+		<property name="html_url" help="The URL to load and display." type="string_edit_single" />
 		<event name="wxEVT_HTML_CELL_CLICKED" class="wxHtmlCellEvent"
 			help="" />
 		<event name="wxEVT_HTML_CELL_HOVER" class="wxHtmlCellEvent"

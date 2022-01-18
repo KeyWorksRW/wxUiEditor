@@ -351,7 +351,14 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->SetPage("<b>wxHtmlWindow</b><br/><br/>This is a dummy page.</body></html>");
+    if (node->HasValue(prop_html_content))
+    {
+        widget->SetPage(node->prop_as_wxString(prop_html_content));
+    }
+    else
+    {
+        widget->SetPage("<b>wxHtmlWindow</b><br/><br/>This is a dummy page.</body></html>");
+    }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -371,6 +378,25 @@ std::optional<ttlib::cstr> HtmlWindowGenerator::GenConstruction(Node* node)
     code.Replace(", wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO)", ")");
 
     return code;
+}
+
+std::optional<ttlib::cstr> HtmlWindowGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    if (node->HasValue(prop_html_content))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetPage(" << GenerateQuotedString(node->prop_as_string(prop_html_content))
+             << ");\n";
+    }
+
+    if (code.size())
+        return code;
+    else
+
+        return {};
 }
 
 std::optional<ttlib::cstr> HtmlWindowGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

@@ -25,6 +25,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/customprops/directory_prop.cpp     # Derived wxStringProperty class for choosing a directory
     ${CMAKE_CURRENT_LIST_DIR}/customprops/evt_string_prop.cpp    # Derived wxStringProperty class for event function
     ${CMAKE_CURRENT_LIST_DIR}/customprops/font_string_prop.cpp   # Derived wxStringProperty class for font property
+    ${CMAKE_CURRENT_LIST_DIR}/customprops/html_string_prop.cpp    # Derived wxStringProperty class for HTML
     ${CMAKE_CURRENT_LIST_DIR}/customprops/img_string_prop.cpp    # Derived wxStringProperty class for handling wxImage files or art
     ${CMAKE_CURRENT_LIST_DIR}/customprops/txt_string_prop.cpp    # Derived wxStringProperty class for single-line text
 

@@ -183,11 +183,6 @@ wxObject* StyledTextGenerator::CreateMockup(Node* node, wxObject* parent)
         scintilla->SetLexer(g_stc_lexers.at(node->prop_as_string(prop_stc_lexer)));
     }
 
-    if (node->HasValue(prop_hint))
-    {
-        scintilla->SetHint(node->prop_as_wxString(prop_hint));
-    }
-
     //////////// Wrap category settings ////////////
 
     if (!node->prop_as_string(prop_stc_wrap_mode).is_sameas("no wrapping"))
@@ -509,12 +504,6 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
         ttlib::cstr name("wxSTC_LEX_");
         name << node->prop_as_string(prop_stc_lexer);
         code << "\n\t\t" << node->get_node_name() << "->SetLexer(" << name << ");";
-    }
-
-    if (node->HasValue(prop_hint))
-    {
-        code << "\n\t\t" << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint))
-             << ");";
     }
 
     // Default is false, so only set if true

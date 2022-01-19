@@ -294,14 +294,7 @@ void BaseGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProp
             }
         }
     }
-    else if (changed_prop->isProp(prop_var_comment))
-    {
-        if (auto pg_setting = prop_grid->GetProperty("var_comment"); pg_setting)
-        {
-            pg_setting->Enable(!changed_prop->GetNode()->isPropValue(prop_class_access, "none"));
-        }
-    }
-    if (changed_prop->isProp(prop_use_derived_class))
+    else if (changed_prop->isProp(prop_use_derived_class))
     {
         if (auto pg_setting = prop_grid->GetProperty("private_members"); pg_setting)
         {

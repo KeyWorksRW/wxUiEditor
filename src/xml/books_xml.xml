@@ -154,6 +154,60 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<inherits class="wxWindow" />
 		<inherits class="Window Events" />
 		<property name="var_name" type="string">m_simplebook</property>
+		<property name="show_effect" type="option"
+			help="Set the effects to use when showing a page.">
+			<option name="no effects"
+				help="No effect, equivalent to normal wxWindow::Show() or Hide() call." />
+			<option name="roll to left"
+				help="Roll window to the left." />
+			<option name="roll to right"
+				help="Roll window to the right." />
+			<option name="roll to top"
+				help="Roll window to the top." />
+			<option name="roll to bottom"
+				help="Roll window to the bottom." />
+			<option name="slide to left"
+				help="Slide window to the left." />
+			<option name="slide to right"
+				help="Slide window to the right." />
+			<option name="slide to top"
+				help="Slide window to the top." />
+			<option name="slide to bottom"
+				help="Slide window to the bottom." />
+			<option name="blend"
+				help="Fade in or out effect." />
+			<option name="expand"
+				help="Expanding or collapsing effect." />
+				no effects
+		</property>
+		<property name="hide_effect" type="option"
+			help="Set the effects to use when hiding a page. ">
+			<option name="no effects"
+				help="No effect, equivalent to normal wxWindow::Show() or Hide() call." />
+			<option name="roll to left"
+				help="Roll window to the left." />
+			<option name="roll to right"
+				help="Roll window to the right." />
+			<option name="roll to top"
+				help="Roll window to the top." />
+			<option name="roll to bottom"
+				help="Roll window to the bottom." />
+			<option name="slide to left"
+				help="Slide window to the left." />
+			<option name="slide to right"
+				help="Slide window to the right." />
+			<option name="slide to top"
+				help="Slide window to the top." />
+			<option name="slide to bottom"
+				help="Slide window to the bottom." />
+			<option name="blend"
+				help="Fade in or out effect." />
+			<option name="expand"
+				help="Expanding or collapsing effect." />
+				no effects
+		</property>
+		<property name="duration" type="int"
+			help="Set the duration of the animation (in milliseconds) used when showing or hiding a page."></property>
 		<event name="wxEVT_BOOKCTRL_PAGE_CHANGED" class="wxBookCtrlEvent"
 			help="The page selection was changed." />
 		<event name="wxEVT_BOOKCTRL_PAGE_CHANGING" class="wxBookCtrlEvent"

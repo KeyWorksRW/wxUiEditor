@@ -823,6 +823,13 @@ wxObject* SimplebookGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxSimplebook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
 
+    widget->SetEffects((wxShowEffect) node->prop_as_mockup(prop_show_effect, "info_"),
+                       (wxShowEffect) node->prop_as_mockup(prop_hide_effect, "info_"));
+    if (node->HasValue(prop_duration))
+    {
+        widget->SetEffectTimeout(node->prop_as_int(prop_duration));
+    }
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_BOOKCTRL_PAGE_CHANGED, &SimplebookGenerator::OnPageChanged, this);
 
@@ -848,6 +855,27 @@ std::optional<ttlib::cstr> SimplebookGenerator::GenConstruction(Node* node)
     GeneratePosSizeFlags(node, code);
 
     return code;
+}
+
+std::optional<ttlib::cstr> SimplebookGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    if (node->prop_as_string(prop_show_effect) != "no effects" || node->prop_as_string(prop_hide_effect) != "no effects")
+    {
+        ttlib::cstr code;
+        code << '\t' << node->get_node_name() << "->SetEffects(" << node->prop_as_constant(prop_show_effect, "info_") << ", "
+             << node->prop_as_constant(prop_hide_effect, "info_") << ");";
+
+        if (node->prop_as_int(prop_duration))
+        {
+            code << "\n\t" << node->get_node_name() << "->SetEffectTimeout(" << node->prop_as_string(prop_duration) << ");";
+        }
+
+        return code;
+    }
+    else
+    {
+        return {};
+    }
 }
 
 std::optional<ttlib::cstr> SimplebookGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

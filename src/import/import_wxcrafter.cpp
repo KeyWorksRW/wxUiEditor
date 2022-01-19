@@ -1000,7 +1000,8 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     else if (prop_name == prop_size && node->isGen(gen_spacer))
     {
         ttlib::multiview mview(FindValue(value, "m_value").GetString(), ',');
-        if (mview.size() > 1) {
+        if (mview.size() > 1)
+        {
             node->prop_set_value(prop_width, mview[0].atoi());
             node->prop_set_value(prop_height, mview[1].atoi());
         }

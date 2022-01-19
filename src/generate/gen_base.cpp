@@ -1688,6 +1688,23 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 // wx/artprov.h header is needed
 void BaseCodeGenerator::ParseImageProperties(Node* node)
 {
+    if (node->IsForm() && node->HasValue(prop_icon))
+    {
+        ttlib::multiview parts(node->prop_as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
+        if (parts.size() >= IndexImage + 1)
+        {
+            if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header"))
+            {
+                if (!parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
+                    m_NeedHeaderFunction = true;
+            }
+            else if ((parts[IndexType] == "Art"))
+            {
+                m_NeedArtProviderHeader = true;
+            }
+        }
+    }
+
     for (size_t i = 0; i < node->GetChildCount(); i++)
     {
         auto child = node->GetChild(i);

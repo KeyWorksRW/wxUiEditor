@@ -66,6 +66,13 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
         code.clear();
     }
 
+    code << GenFontColourSettings(node);
+    if (code.size())
+    {
+        src_code->writeLine(code);
+        code.clear();
+    }
+
     src_code->Unindent();
     src_code->writeLine();
 

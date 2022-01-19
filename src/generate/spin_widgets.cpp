@@ -207,6 +207,9 @@ wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxSpinButton(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
 
+    widget->SetRange(node->prop_as_int(prop_min), node->prop_as_int(prop_max));
+    widget->SetValue(node->prop_as_int(prop_initial));
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -222,6 +225,20 @@ std::optional<ttlib::cstr> SpinButtonGenerator::GenConstruction(Node* node)
     GeneratePosSizeFlags(node, code, false, "wxSP_VERTICAL");
 
     code.Replace(", wxID_ANY);", ");");
+
+    return code;
+}
+
+std::optional<ttlib::cstr> SpinButtonGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+    code << node->get_node_name() << "->SetRange(" << node->prop_as_int(prop_min) << ", " << node->prop_as_int(prop_max)
+         << ");";
+
+    if (node->prop_as_int(prop_initial))
+    {
+        code << '\n' << node->get_node_name() << "->SetValue(" << node->prop_as_int(prop_initial) << ");";
+    }
 
     return code;
 }

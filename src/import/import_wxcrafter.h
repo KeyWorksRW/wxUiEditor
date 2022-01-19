@@ -32,17 +32,28 @@ public:
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
-    bool ProcessScintillaProperty(Node* node, const rapidjson::Value& object);
     bool ProcessFont(Node* node, const rapidjson::Value& object);
-    void ProcessSizerFlags(Node* node, const rapidjson::Value& array);
-    void ProcessProperties(Node* node, const rapidjson::Value& array);
-    void ProcessChild(Node* parent, const rapidjson::Value& object);
-    void ProcessStyles(Node* parent, const rapidjson::Value& array);
-    void ProcessEvents(Node* parent, const rapidjson::Value& array);
-    void ProcessStdBtnChildren(Node* parent, const rapidjson::Value& array);
+    bool ProcessScintillaProperty(Node* node, const rapidjson::Value& object);
     void ProcessBitmapPropety(Node* parent, const rapidjson::Value& object);
-
+    void ProcessChild(Node* parent, const rapidjson::Value& object);
+    void ProcessEvents(Node* parent, const rapidjson::Value& array);
     void ProcessForm(const rapidjson::Value& value);
+    void ProcessProperties(Node* node, const rapidjson::Value& array);
+    void ProcessSizerFlags(Node* node, const rapidjson::Value& array);
+    void ProcessStdBtnChildren(Node* parent, const rapidjson::Value& array);
+    void ProcessStyles(Node* parent, const rapidjson::Value& array);
+
+    // Called when the property isn't recognized. Will return prop_processed if it was
+    // processed, or a valid prop_name if it was converted, but needs further handling.
+    GenEnum::PropName UnknownProperty(Node* node, const rapidjson::Value& value, ttlib::cstr& name);
+
+    // Called when prop_name is a valid property. This will set the property's value after
+    // any possible additional processing.
+    void WxCrafter::KnownProperty(Node* node, const rapidjson::Value& value, GenEnum::PropName prop_name);
+
+    // Called to handle prop_value which may get converted to a different property before
+    // saving.
+    void WxCrafter::ValueProperty(Node* node, const rapidjson::Value& value);
 
 private:
     ttlib::cstr m_output_name;

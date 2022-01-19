@@ -220,13 +220,16 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 else
                 {
                     ttString name(childValue.GetString());
-                    if (!name.file_exists())
+                    if (name.size())
                     {
-                        name = wxGetApp().GetArtDirectory();
-                        name.append_filename_wx(childValue.GetString());
+                        if (!name.file_exists())
+                        {
+                            name = wxGetApp().GetArtDirectory();
+                            name.append_filename_wx(childValue.GetString());
+                        }
+                        name.make_relative_wx(wxGetApp().GetProjectPath());
+                        name.backslashestoforward();
                     }
-                    name.make_relative_wx(wxGetApp().GetProjectPath());
-                    name.backslashestoforward();
                     img_props.image.assign_wx(name);
                 }
             }

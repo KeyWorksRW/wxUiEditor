@@ -796,6 +796,36 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                         }
                         continue;
                     }
+                    else if (name.is_sameas("show effect"))
+                    {
+                        int index = 0;
+                        if (value["m_selection"].IsNumber())
+                        {
+                            index = value["m_selection"].GetInt();
+                            if (index)
+                            {
+                                auto list_effects = GetStringVector(FindValue(value, "m_options"));
+                                if (index < list_effects.size())
+                                {
+                                    bool found = false;
+                                    for (auto& friendly_pair: g_friend_constant)
+                                    {
+                                        if (ttlib::is_sameas(friendly_pair.second, list_effects[index]))
+                                        {
+                                            node->prop_set_value(prop_show_effect, friendly_pair.first.c_str() +
+                                                                                       friendly_pair.first.find('_') + 1);
+                                            node->prop_set_value(prop_hide_effect, friendly_pair.first.c_str() +
+                                                                                       friendly_pair.first.find('_') + 1);
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        continue;
+                    }
+
                     else if (name.is_sameas("construct the dropdown menu"))
                     {
                         if (node->isGen(gen_tool))
@@ -877,6 +907,14 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                         }
                         continue;
                     }
+                    else if (name.is_sameas("selected") && node->isGen(gen_BookPage))
+                    {
+                        if (auto& setting = FindValue(value, "m_value"); setting.IsBool())
+                        {
+                            node->prop_set_value(prop_select, setting.GetBool());
+                        }
+                        continue;
+                    }
                     else if (name.is_sameas("virtual folder"))
                         continue;  // this doesn't apply to wxUiEditor
                     else
@@ -887,7 +925,8 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                 }
             }
 
-            if (prop_name == prop_background_colour || prop_name == prop_foreground_colour)
+            if (prop_name == prop_background_colour || prop_name == prop_foreground_colour ||
+                prop_name == prop_normal_color || prop_name == prop_visited_color || prop_name == prop_hover_color)
             {
                 if (auto& colour = FindValue(value, "colour"); colour.IsString())
                 {
@@ -935,23 +974,47 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
             {
                 if (auto& setting = FindValue(value, "m_value"); !setting.IsNull())
                 {
-                    if (node->isGen(gen_wxSpinCtrl))
+                    if (node->isGen(gen_wxSpinCtrl) || node->isGen(gen_wxSpinButton))
+                    {
                         node->prop_set_value(prop_initial, setting.GetString());
+                    }
                     else if (node->isGen(gen_wxFilePickerCtrl))
+                    {
                         node->prop_set_value(prop_initial_path, setting.GetString());
+                    }
                     else if (node->isGen(gen_wxGauge))
+                    {
                         node->prop_set_value(prop_position, setting.GetString());
+                    }
                     else if (node->isGen(gen_wxComboBox))
+                    {
                         node->prop_set_value(prop_selection_string, setting.GetString());
+                    }
                     else if (node->isGen(gen_wxCheckBox) || node->isGen(gen_wxRadioButton))
+                    {
                         node->prop_set_value(prop_checked, setting.GetBool());
+                    }
+                    else if (node->isGen(gen_wxDirPickerCtrl))
+                    {
+                        node->prop_set_value(prop_initial_path, setting.GetString());
+                    }
+                    else if (node->isGen(gen_wxScrollBar))
+                    {
+                        node->prop_set_value(prop_position, setting.GetString());
+                    }
                     else if (node->isGen(gen_Check3State))
                     {
                         if (setting.GetBool())
                             node->prop_set_value(prop_initial_state, "wxCHK_CHECKED");
                     }
+                    else if (node->isGen(gen_wxFontPickerCtrl))
+                    {
+                        ProcessFont(node, value);
+                    }
                     else if (node->isGen(gen_wxSlider))
+                    {
                         node->prop_set_value(prop_position, setting.GetString());
+                    }
                     else if (node->HasProp(prop_value))
                     {
                         node->prop_set_value(prop_name, setting.GetString());
@@ -961,6 +1024,10 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                         MSG_ERROR(ttlib::cstr("Json sets value, but ")
                                   << map_GenNames[node->gen_name()] << " doesn't support that property!");
                     }
+                }
+                else if (auto& colour = FindValue(value, "colour"); !colour.IsNull())
+                {
+                    node->prop_set_value(prop_colour, ConvertColour(colour));
                 }
             }
             else if (prop_name == prop_contents)
@@ -997,6 +1064,8 @@ void WxCrafter::ProcessProperties(Node* node, const Value& array)
                     {
                         if (prop_name == prop_min && node->HasProp(prop_minValue))
                             prop_name = prop_minValue;
+                        else if (prop_name == prop_checked && node->HasProp(prop_pressed))
+                            prop_name = prop_pressed;
                         else if (prop_name == prop_max && node->HasProp(prop_maxValue))
                             prop_name = prop_maxValue;
                         else
@@ -1114,7 +1183,11 @@ bool WxCrafter::ProcessFont(Node* node, const Value& object)
                     font_info.FaceName(mstr[5].wx_str());
             }
         }
-        node->prop_set_value(prop_font, font_info.as_string());
+
+        if (node->isGen(gen_wxFontPickerCtrl))
+            node->prop_set_value(prop_initial_font, font_info.as_string());
+        else
+            node->prop_set_value(prop_font, font_info.as_string());
     }
     return true;
 }
@@ -1326,6 +1399,11 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
         {
             result = colour.GetString() + 1;
             result.pop_back();
+        }
+        else if (colour.GetString()[0] == '#')
+        {
+            wxColour clr(colour.GetString());
+            return ConvertColourToString(clr);
         }
         else
         {

@@ -383,7 +383,8 @@ namespace GenEnum
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
-        prop_unknown = prop_name_array_size
+        prop_unknown = prop_name_array_size,
+        prop_processed  // special value used by some importers
     };
     extern std::map<GenEnum::PropName, const char*> map_PropNames;
     extern std::map<std::string_view, GenEnum::PropName, std::less<>> rmap_PropNames;

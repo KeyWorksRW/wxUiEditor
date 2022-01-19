@@ -302,8 +302,6 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 				help="Specifies a vertical scrollbar." />
 			wxSB_HORIZONTAL
 		</property>
-		<event name="AllScrollEvents" class="wxScrollEvent"
-			help="Process all scroll events." />
 		<event name="wxEVT_SCROLL_TOP" class="wxScrollEvent"
 			help="" />
 		<event name="wxEVT_SCROLL_BOTTOM" class="wxScrollEvent"

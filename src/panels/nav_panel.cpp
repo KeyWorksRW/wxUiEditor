@@ -14,6 +14,7 @@
 
 #include "nav_panel.h"
 
+#include "auto_freeze.h"      // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "bitmaps.h"          // Contains various images handling functions
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
 #include "mainframe.h"        // MainFrame -- Main window frame
@@ -25,8 +26,7 @@
 #include "node_decl.h"        // NodeDeclaration class
 #include "propgrid_panel.h"   // PropGridPanel -- PropertyGrid class for node properties and events
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
-
-#include "../utils/auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
+#include "utils.h"            // Utility functions that work with properties
 
 constexpr size_t MaxLabelLength = 24;
 
@@ -402,7 +402,7 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
         display_name = node->prop_as_string(prop_label);
     else if (node->HasValue(prop_main_label))  // used by wxCommandLinkButton
         display_name = node->prop_as_string(prop_main_label);
-    else if (node->HasValue(prop_var_name))
+    else if (node->HasValue(prop_var_name) && !node->isGen(gen_wxStaticBitmap))
         display_name = node->prop_as_string(prop_var_name);
     else if (node->HasValue(prop_class_name))
         display_name = node->prop_as_string(prop_class_name);
@@ -412,9 +412,30 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
     {
         ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
 
-        if (mstr.size() > 1)
+        if (mstr.size() > IndexImage)
         {
-            display_name = mstr[1].filename();
+            display_name = mstr[IndexImage].filename();
+        }
+    }
+    else if (node->isGen(gen_wxStaticBitmap))
+    {
+        if (!node->HasValue(prop_bitmap))
+        {
+            if (node->HasValue(prop_var_name))
+                display_name = node->prop_as_string(prop_var_name);
+        }
+        else
+        {
+            ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
+            if (mstr.size() > IndexImage)
+            {
+                display_name = mstr[IndexImage].filename();
+
+                if (mstr[IndexType].is_sameas("Art"))
+                {
+                    display_name.erase_from('|');
+                }
+            }
         }
     }
 
@@ -539,7 +560,8 @@ void NavigationPanel::OnNodePropChange(CustomEvent& event)
 {
     auto prop = event.GetNodeProperty();
 
-    if (prop->isProp(prop_var_name) || prop->isProp(prop_label) || prop->isProp(prop_class_name))
+    if (prop->isProp(prop_var_name) || prop->isProp(prop_label) || prop->isProp(prop_class_name) ||
+        prop->isProp(prop_bitmap))
     {
         auto class_name = prop->GetNode()->DeclName();
         if (class_name.contains("bookpage"))

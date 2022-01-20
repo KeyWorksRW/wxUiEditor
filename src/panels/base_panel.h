@@ -29,9 +29,9 @@ public:
 
     void OnFind(wxFindDialogEvent& event);
 
-protected:
     void OnNodeSelected(CustomEvent& event);
 
+protected:
 private:
     CodeDisplay* m_cppPanel;
     CodeDisplay* m_hPanel;

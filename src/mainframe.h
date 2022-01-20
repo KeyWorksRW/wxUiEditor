@@ -73,6 +73,7 @@ public:
     PropGridPanel* GetPropPanel() { return m_property_panel; }
     NavigationPanel* GetNavigationPanel() { return m_nav_panel; }
     RibbonPanel* GetRibbonPanel() { return m_ribbon_panel; }
+    BasePanel* GetGeneratedPanel() { return m_generatedPanel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
 

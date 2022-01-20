@@ -10,9 +10,10 @@
 
 #include "code_display.h"  // auto-generated: ../ui/codedisplay_base.h and ../ui/codedisplay_base.cpp
 
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator -- Class used to create nodes
+#include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 
 #ifndef SCI_SETKEYWORDS
     #define SCI_SETKEYWORDS 4005
@@ -145,12 +146,29 @@ void CodeDisplay::OnNodeSelected(Node* node)
     if (!node->HasProp(prop_var_name))
         return;  // probably a form, spacer, or image
 
+    auto is_event = wxGetFrame().GetPropPanel()->IsEventPageShowing();
+
     // Find where the node is created.
 
     ttlib::cstr name(" ");
     name << node->prop_as_string(prop_var_name);
-    name << " = ";
-    int line = static_cast<int>(m_view.FindLineContaining(name));
+    int line = 0;
+    if (is_event)
+    {
+        name << "->Bind";
+        line = static_cast<int>(m_view.FindLineContaining(name));
+        if (!ttlib::is_found(line))
+        {
+            name.Replace("->Bind", " = ");
+            line = static_cast<int>(m_view.FindLineContaining(name));
+        }
+    }
+    else
+    {
+        name << " = ";
+        line = static_cast<int>(m_view.FindLineContaining(name));
+    }
+
     if (!ttlib::is_found(line))
         return;
 

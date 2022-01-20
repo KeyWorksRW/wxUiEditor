@@ -24,6 +24,7 @@
 #include "appoptions.h"      // AppOptions -- Application-wide options
 #include "auto_freeze.h"     // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "base_panel.h"      // BasePanel -- Code generation panel
 #include "bitmaps.h"         // Map of bitmaps accessed by name
 #include "category.h"        // NodeCategory class
 #include "cstm_event.h"      // CustomEvent -- Custom Event class
@@ -112,6 +113,8 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
          {
              Create();
          });
+
+    m_notebook_parent->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &PropGridPanel::OnAuiNotebookPageChanged, this);
 
     frame->AddCustomEventHandler(GetEventHandler());
 }
@@ -1736,4 +1739,20 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
             wxGetFrame().GetPropInfoBar()->Dismiss();
         }
     }
+}
+
+bool PropGridPanel::IsEventPageShowing()
+{
+    if (auto page = m_notebook_parent->GetCurrentPage(); page)
+    {
+        return (page == m_event_grid);
+    }
+    return false;
+}
+
+void PropGridPanel::OnAuiNotebookPageChanged(wxAuiNotebookEvent& /* event */)
+{
+    CustomEvent custom_event(EVT_NodeSelected, wxGetFrame().GetSelectedNode());
+
+    wxGetFrame().GetGeneratedPanel()->OnNodeSelected(custom_event);
 }

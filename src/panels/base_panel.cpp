@@ -172,9 +172,14 @@ void BasePanel::GenerateBaseClass()
         codegen.GenerateBaseClass(project, m_cur_form, panel_type);
 
     if (panel_type == CPP_PANEL)
+    {
         m_cppPanel->CodeGenerationComplete();
+        m_cppPanel->OnNodeSelected(wxGetFrame().GetSelectedNode());
+    }
     else
+    {
         m_hPanel->CodeGenerationComplete();
+    }
 
     Thaw();
 }

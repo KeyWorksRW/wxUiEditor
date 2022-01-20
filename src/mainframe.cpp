@@ -666,9 +666,6 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
         }
     }
 
-    // If a code generation panel is open, then attempt to locate the node's name in that panel
-    FindItemName(sel_node);
-
 #if defined(_DEBUG)
     g_pMsgLogging->OnNodeSelected();
 #endif
@@ -1140,23 +1137,6 @@ void MainFrame::UpdateMoveMenu()
     m_menuEdit->Enable(id_MoveDown, MoveNode(node, MoveDirection::Down, true));
     m_menuEdit->Enable(id_MoveLeft, MoveNode(node, MoveDirection::Left, true));
     m_menuEdit->Enable(id_MoveRight, MoveNode(node, MoveDirection::Right, true));
-}
-
-void MainFrame::FindItemName(Node* node)
-{
-    if (auto& value = node->prop_as_string(prop_var_name); value.size())
-    {
-        m_generatedPanel->FindItemName(value);
-        return;
-    }
-
-    if (node->DeclName().is_sameprefix("ribbon"))
-    {
-        if (auto& value = node->prop_as_string(prop_id); value.size())
-        {
-            m_generatedPanel->FindItemName(value);
-        }
-    }
 }
 
 Node* MainFrame::GetSelectedForm()

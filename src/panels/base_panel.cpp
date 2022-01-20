@@ -124,25 +124,6 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
     }
 }
 
-void BasePanel::FindItemName(const wxString& name)
-{
-    if (!IsShown())
-        return;
-
-    auto notebook = wxStaticCast(m_cppPanel->GetParent(), wxAuiNotebook);
-    ASSERT(notebook);
-
-    auto text = notebook->GetPageText(notebook->GetSelection());
-    if (text == "source")
-    {
-        m_cppPanel->FindItemName(name);
-    }
-    else if (text == "header")
-    {
-        m_hPanel->FindItemName(name);
-    }
-}
-
 void BasePanel::GenerateBaseClass()
 {
     if (!IsShown())

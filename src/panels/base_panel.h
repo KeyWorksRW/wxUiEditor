@@ -28,7 +28,6 @@ public:
     void GenerateBaseClass();
 
     void OnFind(wxFindDialogEvent& event);
-    void FindItemName(const wxString& name);
 
 protected:
     void OnNodeSelected(CustomEvent& event);

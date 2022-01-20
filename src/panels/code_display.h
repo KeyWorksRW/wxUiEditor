@@ -37,8 +37,6 @@ public:
 
     void OnNodeSelected(Node* node);
 
-    void FindItemName(const wxString& name);
-
     wxStyledTextCtrl* GetTextCtrl() { return m_scintilla; };
 
 protected:

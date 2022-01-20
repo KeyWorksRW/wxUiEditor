@@ -20,6 +20,8 @@
 
 extern const char* g_u8_cpp_keywords;
 
+const int node_marker = 1;
+
 CodeDisplay::CodeDisplay(wxWindow* parent) : CodeDisplayBase(parent)
 {
     // On Windows, this saves converting the UTF16 characters to ANSI.
@@ -71,6 +73,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent) : CodeDisplayBase(parent)
     m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
     m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
 
+    m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
+
     Bind(wxEVT_FIND, &CodeDisplay::OnFind, this);
     Bind(wxEVT_FIND_NEXT, &CodeDisplay::OnFind, this);
 }
@@ -114,14 +118,6 @@ void CodeDisplay::OnFind(wxFindDialogEvent& event)
     }
 }
 
-void CodeDisplay::FindItemName(const wxString& name)
-{
-    m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
-    m_scintilla->SearchAnchor();
-    if (m_scintilla->SearchNext(wxSTC_FIND_WHOLEWORD | wxSTC_FIND_MATCHCASE, name) != wxSTC_INVALID_POSITION)
-        m_scintilla->EnsureCaretVisible();
-}
-
 void CodeDisplay::Clear()
 {
     m_view.clear();
@@ -153,10 +149,23 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     ttlib::cstr name(" ");
     name << node->prop_as_string(prop_var_name);
-    name << " new";
-    auto line = m_view.FindLineContaining(name);
+    name << " = new";
+    int line = static_cast<int>(m_view.FindLineContaining(name));
     if (!ttlib::is_found(line))
         return;
 
-    // TODO: [KeyWorks - 01-20-2022] set scintilla marker.
+    m_scintilla->MarkerDeleteAll(node_marker);
+    m_scintilla->MarkerAdd(line, node_marker);
+
+#if 0
+    // REVIEW: [KeyWorks - 01-20-2022] This would be great if it worked, but GetLineVisible() is returning true even if
+    // the line is not visible.
+    if (!m_scintilla->GetLineVisible(line))
+    {
+        m_scintilla->ScrollToLine(line);
+    }
+#endif
+
+    // Unlike GetLineVisible(), this function does ensure that the line is visible.
+    m_scintilla->ScrollToLine(line);
 }

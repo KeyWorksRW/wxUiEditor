@@ -52,9 +52,6 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCod
 
     SetSizerAndFit(top_sizer);
 
-    m_hdr_display = std::make_unique<PanelCodeWriter>(m_hPanel->GetTextCtrl());
-    m_src_display = std::make_unique<PanelCodeWriter>(m_cppPanel->GetTextCtrl());
-
     Bind(wxEVT_FIND, &BasePanel::OnFind, this);
     Bind(wxEVT_FIND_NEXT, &BasePanel::OnFind, this);
 
@@ -127,25 +124,6 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
     }
 }
 
-void BasePanel::FindItemName(const wxString& name)
-{
-    if (!IsShown())
-        return;
-
-    auto notebook = wxStaticCast(m_cppPanel->GetParent(), wxAuiNotebook);
-    ASSERT(notebook);
-
-    auto text = notebook->GetPageText(notebook->GetSelection());
-    if (text == "source")
-    {
-        m_cppPanel->FindItemName(name);
-    }
-    else if (text == "header")
-    {
-        m_hPanel->FindItemName(name);
-    }
-}
-
 void BasePanel::GenerateBaseClass()
 {
     if (!IsShown())
@@ -163,60 +141,44 @@ void BasePanel::GenerateBaseClass()
         }
         else
         {
-            m_cppPanel->GetTextCtrl()->SetReadOnly(false);
-            m_cppPanel->GetTextCtrl()->ClearAll();
-            m_hPanel->GetTextCtrl()->SetReadOnly(false);
-            m_hPanel->GetTextCtrl()->ClearAll();
+            m_cppPanel->Clear();
+            m_hPanel->Clear();
             return;
         }
     }
 
     BaseCodeGenerator codegen;
 
-    codegen.SetHdrWriteCode(m_hdr_display.get());
-    codegen.SetSrcWriteCode(m_src_display.get());
-
     Freeze();
 
-    try
+    PANEL_TYPE panel_type = CPP_PANEL;
+    if (auto page = m_notebook->GetCurrentPage(); page)
     {
-        wxStyledTextCtrl* cppEditor = m_cppPanel->GetTextCtrl();
-        wxStyledTextCtrl* hEditor = m_hPanel->GetTextCtrl();
-        cppEditor->SetReadOnly(false);
-        auto cppLine = cppEditor->GetFirstVisibleLine() + cppEditor->LinesOnScreen() - 1;
-        auto cppXOffset = cppEditor->GetXOffset();
-
-        hEditor->SetReadOnly(false);
-        auto hLine = hEditor->GetFirstVisibleLine() + hEditor->LinesOnScreen() - 1;
-        auto hXOffset = hEditor->GetXOffset();
-
-        PANEL_TYPE panel_type = CPP_PANEL;
-        if (auto page = m_notebook->GetCurrentPage(); page)
+        if (page == m_hPanel)
         {
-            if (page == m_hPanel)
-                panel_type = HDR_PANEL;
+            panel_type = HDR_PANEL;
         }
-
-        if (m_GenerateDerivedCode)
-            codegen.GenerateDerivedClass(project, m_cur_form, panel_type);
-        else
-            codegen.GenerateBaseClass(project, m_cur_form, panel_type);
-
-        cppEditor->SetReadOnly(true);
-        cppEditor->GotoLine(cppLine);
-        cppEditor->SetXOffset(cppXOffset);
-        cppEditor->SetAnchor(0);
-        cppEditor->SetCurrentPos(0);
-
-        hEditor->SetReadOnly(true);
-        hEditor->GotoLine(hLine);
-        hEditor->SetXOffset(hXOffset);
-        hEditor->SetAnchor(0);
-        hEditor->SetCurrentPos(0);
     }
-    catch (const std::exception& DBG_PARAM(e))
+
+    m_cppPanel->Clear();
+    codegen.SetSrcWriteCode(m_cppPanel);
+
+    m_hPanel->Clear();
+    codegen.SetHdrWriteCode(m_hPanel);
+
+    if (m_GenerateDerivedCode)
+        codegen.GenerateDerivedClass(project, m_cur_form, panel_type);
+    else
+        codegen.GenerateBaseClass(project, m_cur_form, panel_type);
+
+    if (panel_type == CPP_PANEL)
     {
-        MSG_ERROR(e.what());
+        m_cppPanel->CodeGenerationComplete();
+        m_cppPanel->OnNodeSelected(wxGetFrame().GetSelectedNode());
+    }
+    else
+    {
+        m_hPanel->CodeGenerationComplete();
     }
 
     Thaw();
@@ -235,5 +197,20 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
     {
         m_cur_form = form;
         GenerateBaseClass();
+    }
+
+    if (!m_GenerateDerivedCode)
+    {
+        if (auto page = m_notebook->GetCurrentPage(); page)
+        {
+            if (page == m_hPanel)
+            {
+                m_hPanel->OnNodeSelected(event.GetNode());
+            }
+            else
+            {
+                m_cppPanel->OnNodeSelected(event.GetNode());
+            }
+        }
     }
 }

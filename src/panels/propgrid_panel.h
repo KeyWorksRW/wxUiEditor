@@ -30,6 +30,8 @@ class PropGridPanel : public wxPanel
 public:
     PropGridPanel(wxWindow* parent, MainFrame* frame);
 
+    bool IsEventPageShowing();
+
     void RestoreDescBoxHeight();
     void SaveDescBoxHeight();
 
@@ -97,6 +99,7 @@ protected:
     void OnPropertyGridItemSelected(wxPropertyGridEvent& event);
     void OnNodePropChange(CustomEvent& event);
     void OnReCreateGrid(wxCommandEvent& event);
+    void OnAuiNotebookPageChanged(wxAuiNotebookEvent& event);
 
 private:
     std::map<wxPGProperty*, NodeProperty*> m_property_map;

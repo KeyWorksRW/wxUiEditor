@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Display code in scintilla control
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,13 +9,19 @@
 #include <wx/msgdlg.h>    // common header and base class for wxMessageDialog
 
 #include "code_display.h"  // auto-generated: ../ui/codedisplay_base.h and ../ui/codedisplay_base.cpp
-#include "node_creator.h"  // NodeCreator -- Class used to create nodes
+
+#include "mainframe.h"       // MainFrame -- Main window frame
+#include "node.h"            // Node class
+#include "node_creator.h"    // NodeCreator -- Class used to create nodes
+#include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 
 #ifndef SCI_SETKEYWORDS
     #define SCI_SETKEYWORDS 4005
 #endif
 
 extern const char* g_u8_cpp_keywords;
+
+const int node_marker = 1;
 
 CodeDisplay::CodeDisplay(wxWindow* parent) : CodeDisplayBase(parent)
 {
@@ -68,6 +74,8 @@ CodeDisplay::CodeDisplay(wxWindow* parent) : CodeDisplayBase(parent)
     m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
     m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
 
+    m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
+
     Bind(wxEVT_FIND, &CodeDisplay::OnFind, this);
     Bind(wxEVT_FIND_NEXT, &CodeDisplay::OnFind, this);
 }
@@ -111,10 +119,71 @@ void CodeDisplay::OnFind(wxFindDialogEvent& event)
     }
 }
 
-void CodeDisplay::FindItemName(const wxString& name)
+void CodeDisplay::Clear()
 {
-    m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
-    m_scintilla->SearchAnchor();
-    if (m_scintilla->SearchNext(wxSTC_FIND_WHOLEWORD | wxSTC_FIND_MATCHCASE, name) != wxSTC_INVALID_POSITION)
-        m_scintilla->EnsureCaretVisible();
+    m_view.clear();
+    m_view.GetBuffer().clear();
+
+    m_scintilla->SetReadOnly(false);
+    m_scintilla->ClearAll();
+}
+
+void CodeDisplay::doWrite(ttlib::sview code)
+{
+    m_view.GetBuffer() << code;
+}
+
+void CodeDisplay::CodeGenerationComplete()
+{
+    m_scintilla->AddTextRaw(m_view.GetBuffer().data(), static_cast<int>(m_view.GetBuffer().size()));
+    m_scintilla->SetReadOnly(true);
+
+    m_view.ParseBuffer();
+}
+
+void CodeDisplay::OnNodeSelected(Node* node)
+{
+    if (!node->HasProp(prop_var_name))
+        return;  // probably a form, spacer, or image
+
+    auto is_event = wxGetFrame().GetPropPanel()->IsEventPageShowing();
+
+    // Find where the node is created.
+
+    ttlib::cstr name(" ");
+    name << node->prop_as_string(prop_var_name);
+    int line = 0;
+    if (is_event)
+    {
+        name << "->Bind";
+        line = static_cast<int>(m_view.FindLineContaining(name));
+        if (!ttlib::is_found(line))
+        {
+            name.Replace("->Bind", " = ");
+            line = static_cast<int>(m_view.FindLineContaining(name));
+        }
+    }
+    else
+    {
+        name << " = ";
+        line = static_cast<int>(m_view.FindLineContaining(name));
+    }
+
+    if (!ttlib::is_found(line))
+        return;
+
+    m_scintilla->MarkerDeleteAll(node_marker);
+    m_scintilla->MarkerAdd(line, node_marker);
+
+#if 0
+    // REVIEW: [KeyWorks - 01-20-2022] This would be great if it worked, but GetLineVisible() is returning true even if
+    // the line is not visible.
+    if (!m_scintilla->GetLineVisible(line))
+    {
+        m_scintilla->ScrollToLine(line);
+    }
+#endif
+
+    // Unlike GetLineVisible(), this function does ensure that the line is visible.
+    m_scintilla->ScrollToLine(line);
 }

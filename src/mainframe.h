@@ -73,6 +73,7 @@ public:
     PropGridPanel* GetPropPanel() { return m_property_panel; }
     NavigationPanel* GetNavigationPanel() { return m_nav_panel; }
     RibbonPanel* GetRibbonPanel() { return m_ribbon_panel; }
+    BasePanel* GetGeneratedPanel() { return m_generatedPanel; }
 
     void AddCustomEventHandler(wxEvtHandler* handler) { m_custom_event_handlers.push_back(handler); }
 
@@ -176,8 +177,6 @@ public:
 
     // This does not use the internal clipboard
     void DuplicateNode(Node* node);
-
-    void FindItemName(Node* node);
 
     void setStatusText(const ttlib::cstr& txt, int pane = 1);
     wxStatusBar* OnCreateStatusBar(int number, long style, wxWindowID id, const wxString& name) override;

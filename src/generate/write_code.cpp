@@ -165,27 +165,6 @@ void WriteCode::write(ttlib::sview code, bool auto_indent)
     }
 }
 
-//////////////////////////////////////////// PanelCodeWriter class /////////////////////////////////////////////
-
-// PanelCodeWriter ctor and methods are implemented here, rather than in header filr to avoid having to include
-// wx/stc/stc.h in every app that includes the write_code.h header file.
-
-PanelCodeWriter::PanelCodeWriter(wxStyledTextCtrl* scintilla)
-{
-    ASSERT(scintilla);
-    m_Scintilla = scintilla;
-};
-
-void PanelCodeWriter::Clear()
-{
-    m_Scintilla->ClearAll();
-}
-
-void PanelCodeWriter::doWrite(ttlib::sview code)
-{
-    m_Scintilla->AddTextRaw(code.data(), static_cast<int>(code.length()));
-}
-
 //////////////////////////////////////////// FileCodeWriter class /////////////////////////////////////////////
 
 int FileCodeWriter::WriteFile(bool test_only)

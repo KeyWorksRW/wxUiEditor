@@ -149,7 +149,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
 
     ttlib::cstr name(" ");
     name << node->prop_as_string(prop_var_name);
-    name << " = new";
+    name << " = ";
     int line = static_cast<int>(m_view.FindLineContaining(name));
     if (!ttlib::is_found(line))
         return;

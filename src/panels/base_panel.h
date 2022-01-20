@@ -14,7 +14,6 @@
 class CodeDisplay;
 class CustomEvent;
 class MainFrame;
-class PanelCodeWriter;
 
 class wxAuiNotebook;
 class wxFindDialogEvent;
@@ -39,9 +38,6 @@ private:
     CodeDisplay* m_hPanel;
     wxAuiNotebook* m_notebook;
     Node* m_cur_form { nullptr };
-
-    std::unique_ptr<PanelCodeWriter> m_hdr_display;
-    std::unique_ptr<PanelCodeWriter> m_src_display;
 
     bool m_GenerateDerivedCode;
 };

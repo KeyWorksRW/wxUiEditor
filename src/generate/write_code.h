@@ -61,22 +61,6 @@ private:
     bool m_IsLastLineBlank { false };
 };
 
-class wxStyledTextCtrl;
-
-class PanelCodeWriter : public WriteCode
-{
-public:
-    PanelCodeWriter(wxStyledTextCtrl* scintilla);
-
-    void Clear() override;
-
-protected:
-    void doWrite(ttlib::sview code) override;
-
-private:
-    wxStyledTextCtrl* m_Scintilla;
-};
-
 class FileCodeWriter : public WriteCode
 {
 public:

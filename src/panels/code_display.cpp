@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Display code in scintilla control
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,6 +9,9 @@
 #include <wx/msgdlg.h>    // common header and base class for wxMessageDialog
 
 #include "code_display.h"  // auto-generated: ../ui/codedisplay_base.h and ../ui/codedisplay_base.cpp
+
+#include "mainframe.h"     // MainFrame -- Main window frame
+#include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
 #ifndef SCI_SETKEYWORDS
@@ -117,4 +120,43 @@ void CodeDisplay::FindItemName(const wxString& name)
     m_scintilla->SearchAnchor();
     if (m_scintilla->SearchNext(wxSTC_FIND_WHOLEWORD | wxSTC_FIND_MATCHCASE, name) != wxSTC_INVALID_POSITION)
         m_scintilla->EnsureCaretVisible();
+}
+
+void CodeDisplay::Clear()
+{
+    m_view.clear();
+    m_view.GetBuffer().clear();
+
+    m_scintilla->SetReadOnly(false);
+    m_scintilla->ClearAll();
+}
+
+void CodeDisplay::doWrite(ttlib::sview code)
+{
+    m_view.GetBuffer() << code;
+}
+
+void CodeDisplay::CodeGenerationComplete()
+{
+    m_scintilla->AddTextRaw(m_view.GetBuffer().data(), static_cast<int>(m_view.GetBuffer().size()));
+    m_scintilla->SetReadOnly(true);
+
+    m_view.ParseBuffer();
+}
+
+void CodeDisplay::OnNodeSelected(Node* node)
+{
+    if (!node->HasProp(prop_var_name))
+        return;  // probably a form, spacer, or image
+
+    // Find where the node is created.
+
+    ttlib::cstr name(" ");
+    name << node->prop_as_string(prop_var_name);
+    name << " new";
+    auto line = m_view.FindLineContaining(name);
+    if (!ttlib::is_found(line))
+        return;
+
+    // TODO: [KeyWorks - 01-20-2022] set scintilla marker.
 }

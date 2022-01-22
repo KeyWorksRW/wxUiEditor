@@ -391,20 +391,21 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
 
         new_pg_property->SetValueFromString(value, 0);
 
-        wxString desc = propInfo->GetDescription();
-        if (desc.empty())
+        wxString description = propInfo->GetDescription().wx_str();
+        if (description.empty())
         {
-            desc << value << ":\n";
+            description << value << ":\n";
         }
         else
         {
-            desc << "\n\n" << value << ":\n";
+            description.Replace("\\n", "\n", true);
+            description << "\n\n" << value << ":\n";
         }
 
         if (pHelp)
-            desc << *pHelp;
+            description << *pHelp;
 
-        new_pg_property->SetHelpString(desc);
+        new_pg_property->SetHelpString(description);
     }
     else if (type == type_wxColour)
     {
@@ -520,7 +521,9 @@ void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& c
             auto propType = prop->type();
             if (propType != type_option)
             {
-                m_prop_grid->SetPropertyHelpString(pg, propInfo->GetDescription());
+                auto description = propInfo->GetDescription();
+                description.Replace("\\n", "\n", true);
+                m_prop_grid->SetPropertyHelpString(pg, description.wx_str());
                 if (auto gen = node->GetGenerator(); gen)
                 {
                     if (auto result = gen->GetPropertyDescription(prop); result)
@@ -888,22 +891,23 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 // Update displayed description for the new selection
                 auto propInfo = prop->GetPropDeclaration();
 
-                wxString helpString = wxString::FromUTF8Unchecked(propInfo->GetDescription());
+                auto description = propInfo->GetDescription();
+                description.Replace("\\n", "\n", true);
 
                 for (auto& iter: propInfo->GetOptions())
                 {
                     if (iter.name == value)
                     {
                         if (iter.help.empty())
-                            helpString = value + ":\n";
+                            description = value + ":\n";
                         else
-                            helpString += "\n\n" + value + ":\n" + iter.help;
+                            description += "\n\n" + value + ":\n" + iter.help;
 
                         break;
                     }
                 }
 
-                wxString localized = wxGetTranslation(helpString);
+                wxString localized = wxGetTranslation(description);
                 m_prop_grid->SetPropertyHelpString(property, localized);
                 m_prop_grid->SetDescription(property->GetLabel(), localized);
 
@@ -1536,7 +1540,9 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
             auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
             auto propInfo = prop->GetPropDeclaration();
-            m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
+            auto description = propInfo->GetDescription();
+            description.Replace("\\n", "\n", true);
+            m_prop_grid->SetPropertyHelpString(id_prop, description.wx_str());
 
             m_property_map[id_prop] = prop;
             if (prop->isProp(prop_alignment))
@@ -1550,7 +1556,9 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
             auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
             auto propInfo = prop->GetPropDeclaration();
-            m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
+            auto description = propInfo->GetDescription();
+            description.Replace("\\n", "\n", true);
+            m_prop_grid->SetPropertyHelpString(id_prop, description.wx_str());
 
             m_property_map[id_prop] = prop;
         }
@@ -1566,7 +1574,9 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
             auto id_prop = m_prop_grid->Append(CreatePGProperty(prop));
 
             auto propInfo = prop->GetPropDeclaration();
-            m_prop_grid->SetPropertyHelpString(id_prop, propInfo->GetDescription());
+            auto description = propInfo->GetDescription();
+            description.Replace("\\n", "\n", true);
+            m_prop_grid->SetPropertyHelpString(id_prop, description.wx_str());
 
             m_property_map[id_prop] = prop;
         }

@@ -272,6 +272,42 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
                 }
             }
         }
+        if (value.GetInt() == 4476)
+        {
+            // wxCrafter puts a bogus window between collapsible pane and the actual content. We simply grab it's children
+            // and apply it directly (which is also the way wxCrafter generates the code for this).
+            //
+            // WARNING! wxCrafter allows multiple "panes", but only the last one is actually used. We use the first "pane"
+            // rather than the last "pane".
+
+            if (auto& children = FindValue(object, "m_children"); children.IsArray())
+            {
+                if (gen_name == gen_wxStdDialogButtonSizer)
+                {
+                    ProcessStdBtnChildren(parent, children);
+                    if (parent->prop_as_string(prop_alignment).size())
+                    {
+                        parent->prop_set_value(prop_static_line, false);
+                    }
+                }
+                else
+                {
+                    for (auto& child: children.GetArray())
+                    {
+                        /* code */
+                        if (!child.IsObject())
+                        {
+                            m_errors.emplace(ttlib::cstr() << "Invalid wxCrafter file -- child of "
+                                                           << map_GenNames.at(gen_name) << " is not a JSON object.");
+                            continue;
+                        }
+
+                        ProcessChild(parent, child);
+                    }
+                }
+            }
+            return;
+        }
 
         MSG_ERROR(ttlib::cstr("Unrecognized child type: ") << value.GetInt());
         // m_errors.emplace("Unrecognized child type!");
@@ -844,11 +880,8 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
         {
             if (node->isGen(gen_tool))
             {
-                if (auto& tool_kind = FindValue(value, "m_value"); tool_kind.IsBool())
-                {
-                    if (tool_kind.GetBool())
-                        node->prop_set_value(prop_kind, "wxITEM_DROPDOWN");
-                }
+                // wxCrafter seems to always set this to true, ignoring the value for Kind.
+                return prop_processed;
             }
         }
         else if (name.is_sameas("gradient start"))
@@ -943,6 +976,33 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
 
 void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName prop_name)
 {
+    if (node->isGen(gen_wxPopupTransientWindow))
+    {
+        if (prop_name == prop_size || prop_name == prop_minimum_size || prop_name == prop_title)
+            return;  // wxCrafter writes these, but doesn't use them (nor do we)
+    }
+
+    if (node->isGen(gen_ribbonTool) || node->isGen(gen_ribbonSeparator) || node->isGen(gen_ribbonButton))
+    {
+        if (prop_name == prop_kind)
+        {
+            node->prop_set_value(prop_kind, GetSelectedString(value));
+            return;
+        }
+        else if (prop_name == prop_statusbar)
+        {
+            if (auto& prop_value = FindValue(value, "m_value"); prop_value.IsString())
+            {
+                node->prop_set_value(prop_help, prop_value.GetString());
+            }
+            return;
+        }
+        else if (prop_name == prop_size || prop_name == prop_minimum_size || prop_name == prop_var_name)
+        {
+            return;
+        }
+    }
+
     if (prop_name == prop_background_colour || prop_name == prop_foreground_colour || prop_name == prop_normal_color ||
         prop_name == prop_visited_color || prop_name == prop_hover_color)
     {
@@ -993,9 +1053,10 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
         ValueProperty(node, value);
     }
 
-    else if (prop_name == prop_var_name && node->isGen(gen_spacer))
+    else if (prop_name == prop_var_name &&
+             (node->isGen(gen_spacer) || node->isGen(gen_toolSeparator) || node->isGen(gen_ribbonGalleryItem)))
     {
-        return;  // spaces don't have a var name in wxUiEditor
+        return;
     }
     else if (prop_name == prop_size && node->isGen(gen_spacer))
     {
@@ -1037,6 +1098,31 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     {
         ProcessFont(node, value);
     }
+    else if (prop_name == prop_statusbar && node->isGen(gen_ribbonButton))
+    {
+        if (auto& prop_value = FindValue(value, "m_value"); prop_value.IsString())
+        {
+            node->prop_set_value(prop_help, prop_value.GetString());
+        }
+    }
+
+    else if (prop_name == prop_kind && node->isGen(gen_tool))
+    {
+        ttlib::sview tool_kind = GetSelectedString(value);
+        if (tool_kind.is_sameas("checkable"))
+            node->prop_set_value(prop_kind, "wxITEM_CHECK");
+        else if (tool_kind.is_sameas("radio"))
+            node->prop_set_value(prop_kind, "wxITEM_RADIO");
+        else if (tool_kind.is_sameas("dropdown"))
+            node->prop_set_value(prop_kind, "wxITEM_DROPDOWN");
+        else
+            node->prop_set_value(prop_kind, "wxITEM_NORMAL");
+    }
+    else if (prop_name == prop_kind && node->isGen(gen_ribbonTool))
+    {
+        node->prop_set_value(prop_kind, GetSelectedString(value));
+    }
+
     else if (prop_name != prop_unknown)
     {
         if (auto& prop_value = FindValue(value, "m_value"); !prop_value.IsNull())
@@ -1063,6 +1149,8 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
             }
             if (prop_value.IsBool())
                 node->prop_set_value(prop_name, prop_value.GetBool());
+            else if (prop_value.IsInt())
+                node->prop_set_value(prop_name, prop_value.GetInt());
             else
             {
                 ttlib::cview val = prop_value.GetString();
@@ -1169,8 +1257,14 @@ void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
 
         if (IsSame(object["m_label"], "Bitmap File:"))
         {
-            if (node->HasProp(prop_bitmap))
+            if (node->isGen(gen_wxAnimationCtrl))
+            {
+                node->prop_set_value(prop_animation, bitmap);
+            }
+            else if (node->HasProp(prop_bitmap))
+            {
                 node->prop_set_value(prop_bitmap, bitmap);
+            }
         }
         else if (IsSame(object["m_label"], "Disabled-Bitmap File"))
         {

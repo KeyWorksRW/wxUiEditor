@@ -360,7 +360,7 @@ std::optional<ttlib::cstr> PropertyGridGenerator::GenConstruction(Node* node)
     code.Replace(", wxID_ANY);", ");");
 
     if (node->HasValue(prop_extra_style))
-        code << "\n\t" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ")";
+        code << "\n\t" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
 
     return code;
 }
@@ -465,7 +465,7 @@ std::optional<ttlib::cstr> PropertyGridManagerGenerator::GenConstruction(Node* n
     code.Replace(", wxID_ANY);", ");");
 
     if (node->HasValue(prop_extra_style))
-        code << "\n\t" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ")";
+        code << "\n\t" << node->get_node_name() << "->SetExtraStyle(" << node->prop_as_string(prop_extra_style) << ");";
 
     return code;
 }
@@ -499,13 +499,13 @@ std::optional<ttlib::cstr> PropertyGridItemGenerator::GenConstruction(Node* node
     {
         code << "->Append(new wxPropertyCategory(";
         code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-             << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
+             << GenerateQuotedString(node->prop_as_string(prop_label)) << "));";
     }
     else
     {
         code << "->Append(new wx" << node->prop_as_string(prop_type) << "Property(";
         code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-             << GenerateQuotedString(node->prop_as_string(prop_help)) << ");";
+             << GenerateQuotedString(node->prop_as_string(prop_help)) << "));";
     }
 
     return code;

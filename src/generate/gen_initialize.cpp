@@ -159,7 +159,7 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_ribbonGalleryItem, RibbonGalleryItemGenerator)
 
     SET_GENERATOR(gen_wxTreeCtrl, TreeCtrlGenerator)
-    SET_GENERATOR(gen_wxTreeListCtrl, TreeListViewGenerator)
+    SET_GENERATOR(gen_wxTreeListCtrl, TreeListCtrlGenerator)
     SET_GENERATOR(gen_TreeListCtrlColumn, TreeListCtrlColumnGenerator)
 
     SET_GENERATOR(gen_wxDialog, DialogFormGenerator)

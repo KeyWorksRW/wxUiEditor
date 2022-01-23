@@ -23,23 +23,6 @@ wxObject* TreeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxTreeCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-#if 0
-// REVIEW: [KeyWorks - 12-13-2020] This is the original code.
-
-        // dummy nodes
-        wxTreeItemId root = tc->AddRoot("root node");
-        wxTreeItemId node1 = tc->AppendItem(root, "node1");
-        wxTreeItemId node2 = tc->AppendItem(root, "node2");
-        wxTreeItemId node3 = tc->AppendItem(node2, "node3");
-        if ((style & wxTR_HIDE_ROOT) == 0)
-        {
-            tc->Expand(root);
-        }
-        tc->Expand(node1);
-        tc->Expand(node2);
-        tc->Expand(node3);
-#endif
-
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -70,9 +53,9 @@ bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     return true;
 }
 
-//////////////////////////////////////////  TreeListViewGenerator  //////////////////////////////////////////
+//////////////////////////////////////////  TreeListCtrlGenerator  //////////////////////////////////////////
 
-wxObject* TreeListViewGenerator::CreateMockup(Node* node, wxObject* parent)
+wxObject* TreeListCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto widget = new wxTreeListCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                      DlgSize(parent, node, prop_size), GetStyleInt(node));
@@ -82,7 +65,19 @@ wxObject* TreeListViewGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-std::optional<ttlib::cstr> TreeListViewGenerator::GenConstruction(Node* node)
+void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */)
+{
+    auto widget = wxStaticCast(wxobject, wxTreeListCtrl);
+    auto node = GetMockup()->GetNode(wxobject);
+
+    for (auto& iter: node->GetChildNodePtrs())
+    {
+        widget->AppendColumn(iter->prop_as_wxString(prop_label), iter->prop_as_int(prop_width),
+                             static_cast<wxAlignment>(iter->prop_as_int(prop_alignment)), iter->prop_as_int(prop_flags));
+    }
+}
+
+std::optional<ttlib::cstr> TreeListCtrlGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
@@ -94,12 +89,12 @@ std::optional<ttlib::cstr> TreeListViewGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> TreeListViewGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+std::optional<ttlib::cstr> TreeListCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
 }
 
-bool TreeListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+bool TreeListCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/treelist.h>", set_src, set_hdr);
     return true;
@@ -107,23 +102,32 @@ bool TreeListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 
 //////////////////////////////////////////  TreeListCtrlColumnGenerator  //////////////////////////////////////////
 
-void TreeListCtrlColumnGenerator::AfterCreation(wxObject* wxobject, wxWindow* wxparent)
-{
-    auto node = GetMockup()->GetNode(wxobject);
-    auto treeList = wxDynamicCast(wxparent, wxTreeListCtrl);
-    ASSERT(treeList);
-    ASSERT(node);
-
-    treeList->AppendColumn(node->prop_as_wxString(prop_var_name), node->prop_as_int(prop_width),
-                           static_cast<wxAlignment>(node->prop_as_int(prop_alignment)), node->GetSizerFlags().GetFlags());
-}
-
 std::optional<ttlib::cstr> TreeListCtrlColumnGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
-    code << node->get_parent_name() << "->AppendColumn(" << GenerateQuotedString(node->get_node_name()) << ", ";
-    code << node->prop_as_string(prop_width) << ", " << node->prop_as_string(prop_alignment) << ", "
-         << node->prop_as_string(prop_flag);
+    code << node->get_parent_name() << "->AppendColumn(" << GenerateQuotedString(node->prop_as_string(prop_label)) << ", ";
+    if (node->prop_as_int(prop_width) == -2)
+    {
+        code << "wxCOL_WIDTH_AUTOSIZE";
+    }
+    else
+    {
+        code << node->prop_as_int(prop_width);
+    }
+
+    if (node->prop_as_string(prop_alignment) != "wxALIGN_LEFT" || node->prop_as_string(prop_flags) != "wxCOL_RESIZABLE")
+    {
+        code << ", " << node->prop_as_string(prop_alignment) << ", ";
+        if (node->prop_as_string(prop_flags).size())
+        {
+            code << node->prop_as_string(prop_flags);
+        }
+        else
+        {
+            code << "0";
+        }
+    }
+
     code << ")";
 
     return code;

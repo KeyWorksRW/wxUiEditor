@@ -86,23 +86,23 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4479, gen_wxWebView },               // verified
     { 4484, gen_wxPopupTransientWindow },  // no way for wxCrafter to create this
     { 4485, gen_wxPropertyGridManager },   // verified
-    { 4486, gen_propGridItem },
-    { 4488, gen_wxRibbonBar },        // verified
-    { 4489, gen_wxRibbonPage },       // verified
-    { 4490, gen_wxRibbonPanel },      // verified
-    { 4491, gen_wxRibbonButtonBar },  // verified
-    { 4492, gen_ribbonButton },       // normal button
-    { 4493, gen_ribbonButton },       // hybrid button
-    { 4494, gen_ribbonButton },       // dropdown button
-    { 4495, gen_ribbonButton },       // toggle button
-    { 4496, gen_wxRibbonGallery },    // verified
-    { 4497, gen_ribbonGalleryItem },  // verified
-    { 4498, gen_wxRibbonToolBar },    // verified
-    { 4499, gen_ribbonTool },         // normal tool
-    { 4500, gen_ribbonTool },         // hybrid tool
-    { 4501, gen_ribbonTool },         // dropdown tool
-    { 4502, gen_ribbonTool },         // toggle tool
-    { 4503, gen_ribbonSeparator },    // verified
+    { 4486, gen_propGridItem },            // verified
+    { 4488, gen_wxRibbonBar },             // verified
+    { 4489, gen_wxRibbonPage },            // verified
+    { 4490, gen_wxRibbonPanel },           // verified
+    { 4491, gen_wxRibbonButtonBar },       // verified
+    { 4492, gen_ribbonButton },            // normal button
+    { 4493, gen_ribbonButton },            // hybrid button
+    { 4494, gen_ribbonButton },            // dropdown button
+    { 4495, gen_ribbonButton },            // toggle button
+    { 4496, gen_wxRibbonGallery },         // verified
+    { 4497, gen_ribbonGalleryItem },       // verified
+    { 4498, gen_wxRibbonToolBar },         // verified
+    { 4499, gen_ribbonTool },              // normal tool
+    { 4500, gen_ribbonTool },              // hybrid tool
+    { 4501, gen_ribbonTool },              // dropdown tool
+    { 4502, gen_ribbonTool },              // toggle tool
+    { 4503, gen_ribbonSeparator },         // verified
     { 4504, gen_toolSeparator },
     { 4509, gen_wxTreeListCtrl },      // verified
     { 4510, gen_TreeListCtrlColumn },  // verified

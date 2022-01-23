@@ -375,6 +375,21 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
 
     if (auto& children = FindValue(object, "m_children"); children.IsArray())
     {
+        if (gen_name == gen_wxPropertyGridManager)
+        {
+            // We always supply one page even if it's empty so that wxPropertyGridManager::Clear() will work correctly
+            gen_name = gen_propGridPage;
+            auto child_node = g_NodeCreator.CreateNode(gen_name, new_node.get());
+            if (!child_node)
+            {
+                m_errors.emplace(ttlib::cstr()
+                                 << map_GenNames.at(gen_name) << " cannot be a child of " << new_node->DeclName());
+                return;
+            }
+            new_node->Adopt(child_node);
+            new_node = child_node;
+        }
+
         if (gen_name == gen_wxStdDialogButtonSizer)
         {
             ProcessStdBtnChildren(new_node.get(), children);
@@ -973,7 +988,11 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
             return prop_processed;  // this doesn't apply to wxUiEditor
         else
         {
-            MSG_WARNING(ttlib::cstr("Unknown property: \"") << value["m_label"].GetString() << '"');
+            if (!node->isGen(gen_propGridItem))
+            {
+                // wxCrafter outputs a boatload of empty fields for property grid items
+                MSG_WARNING(ttlib::cstr("Unknown property: \"") << value["m_label"].GetString() << '"');
+            }
             return prop_processed;
         }
     }
@@ -1083,17 +1102,24 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
     {
         if (auto& setting = FindValue(value, "m_value"); setting.IsString())
         {
-            ttlib::multistr contents(setting.GetString(), ';');
-            auto str_ptr = node->get_prop_ptr(prop_contents)->as_raw_ptr();
-            str_ptr->clear();  // remove any default string
-            for (auto& item: contents)
+            if (node->HasProp(prop_contents))
             {
-                if (item.size())
+                ttlib::multistr contents(setting.GetString(), ';');
+                auto str_ptr = node->get_prop_ptr(prop_contents)->as_raw_ptr();
+                str_ptr->clear();  // remove any default string
+                for (auto& item: contents)
                 {
-                    if (str_ptr->size())
-                        *str_ptr << ' ';
-                    *str_ptr << '"' << item << '"';
+                    if (item.size())
+                    {
+                        if (str_ptr->size())
+                            *str_ptr << ' ';
+                        *str_ptr << '"' << item << '"';
+                    }
                 }
+            }
+            else
+            {
+                // typically this is a wxPGProperty -- we don't support strings for this
             }
         }
     }

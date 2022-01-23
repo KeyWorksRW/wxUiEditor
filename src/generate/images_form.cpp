@@ -14,9 +14,9 @@
 
 #include "images_form.h"
 
-#include "bitmaps.h"      // Contains various images handling functions
-#include "mainframe.h"    // MainFrame -- Main window frame
-#include "node.h"         // Node class
+#include "bitmaps.h"    // Contains various images handling functions
+#include "mainframe.h"  // MainFrame -- Main window frame
+#include "node.h"       // Node class
 
 #include "ui_images.h"
 

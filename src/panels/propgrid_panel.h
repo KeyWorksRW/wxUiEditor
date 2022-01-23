@@ -90,7 +90,6 @@ protected:
 
     // Event handlers
 
-    void OnChildFocus(wxChildFocusEvent& event);
     void OnEventGridChanged(wxPropertyGridEvent& event);
     void OnEventGridExpand(wxPropertyGridEvent& event);
     void OnPropertyGridChanged(wxPropertyGridEvent& event);

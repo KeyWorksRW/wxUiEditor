@@ -16,13 +16,13 @@
 #include <wx/propgrid/advprops.h>  // wxPropertyGrid Advanced Properties (font, colour, etc.)
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+#include <wx/wupdlock.h>           // wxWindowUpdateLocker prevents window redrawing
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "propgrid_panel.h"
 
 #include "appoptions.h"      // AppOptions -- Application-wide options
-#include "auto_freeze.h"     // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "base_panel.h"      // BasePanel -- Code generation panel
 #include "bitmaps.h"         // Map of bitmaps accessed by name
@@ -147,7 +147,7 @@ void PropGridPanel::Create()
 
     if (auto node = wxGetFrame().GetSelectedNode(); node)
     {
-        AutoFreeze freeze(this);
+        wxWindowUpdateLocker freeze(this);
 
 #if defined(_DEBUG)
         if (wxGetApp().isFireCreationMsgs())

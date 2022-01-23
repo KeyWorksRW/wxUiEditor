@@ -17,12 +17,12 @@
 #include <wx/mstream.h>  // Memory stream classes
 #include <wx/utils.h>
 #include <wx/wfstream.h>  // File stream classes
+#include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
 #include "embedimg.h"  // auto-generated: embedimg_base.h and embedimg_base.cpp
 
-#include "auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "bitmaps.h"      // Map of bitmaps accessed by name
 #include "mainframe.h"    // MainFrame -- Main window frame
 #include "node.h"         // Node class

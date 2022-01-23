@@ -14,7 +14,6 @@
 
 #include "images_form.h"
 
-#include "auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "bitmaps.h"      // Contains various images handling functions
 #include "mainframe.h"    // MainFrame -- Main window frame
 #include "node.h"         // Node class

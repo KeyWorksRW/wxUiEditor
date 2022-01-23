@@ -18,10 +18,10 @@
 #include <wx/sizer.h>        // provide wxSizer class for layout
 #include <wx/statbox.h>      // wxStaticBox base header
 #include <wx/statline.h>     // wxStaticLine class interface
+#include <wx/wupdlock.h>     // wxWindowUpdateLocker prevents window redrawing
 
 #include "mockup_content.h"
 
-#include "auto_freeze.h"     // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "mockup_parent.h"   // Top-level MockUp Parent window
@@ -51,7 +51,7 @@ void MockupContent::RemoveNodes()
 // This is called by MockupParent in order to create all child components
 void MockupContent::CreateAllGenerators()
 {
-    AutoFreeze(this);
+    wxWindowUpdateLocker(this);
 
     m_parent_sizer = new wxBoxSizer(wxVERTICAL);
 

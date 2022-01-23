@@ -9,12 +9,12 @@
 #include <wx/panel.h>     // Base header for wxPanel
 #include <wx/sizer.h>     // provide wxSizer class for layout
 #include <wx/toolbar.h>   // wxToolBar interface declaration
+#include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "nav_panel.h"
 
-#include "auto_freeze.h"      // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "bitmaps.h"          // Contains various images handling functions
 #include "cstm_event.h"       // CustomEvent -- Custom Event class
 #include "mainframe.h"        // MainFrame -- Main window frame
@@ -148,7 +148,7 @@ Node* NavigationPanel::GetNode(wxTreeItemId item)
 
 void NavigationPanel::OnProjectUpdated()
 {
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
 
 #if defined(_DEBUG)
     if (wxGetApp().isFireCreationMsgs())
@@ -335,7 +335,7 @@ void NavigationPanel::OnEndDrag(wxTreeEvent& event)
 
 void NavigationPanel::OnNodeCreated(CustomEvent& event)
 {
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
     InsertNode(event.GetNode());
 }
 
@@ -474,7 +474,7 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
 
 void NavigationPanel::ExpandAllNodes(Node* node)
 {
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
     if (auto item_it = m_node_tree_map.find(node); item_it != m_node_tree_map.end())
     {
         if (m_tree_ctrl->ItemHasChildren(item_it->second))
@@ -488,7 +488,7 @@ void NavigationPanel::ExpandAllNodes(Node* node)
 
 void NavigationPanel::DeleteNode(Node* node)
 {
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
     EraseAllMaps(node);
 }
 
@@ -654,7 +654,7 @@ void NavigationPanel::OnUpdateEvent(wxUpdateUIEvent& event)
 
 void NavigationPanel::OnParentChange(CustomEvent& event)
 {
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
 
     auto undo_cmd = static_cast<ChangeParentAction*>(event.GetUndoCmd());
 
@@ -673,7 +673,7 @@ void NavigationPanel::OnParentChange(CustomEvent& event)
 
 void NavigationPanel::OnPositionChange(CustomEvent& event)
 {
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
 
     auto undo_cmd = static_cast<ChangePositionAction*>(event.GetUndoCmd());
 
@@ -727,7 +727,7 @@ void NavigationPanel::OnExpand(wxCommandEvent&)
     if (!node)
         return;  // This is theoretically impossible
 
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
 
     ChangeExpansion(node, true, true);
 }
@@ -739,7 +739,7 @@ void NavigationPanel::OnCollapse(wxCommandEvent&)
     if (!node)
         return;  // This is theoretically impossible
 
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
 
     auto parent = node->GetParent();
     if (parent && parent->GetChildCount())
@@ -767,7 +767,7 @@ void NavigationPanel::OnCollExpand(wxCommandEvent&)
 
 void NavigationPanel::ExpandCollapse(Node* node)
 {
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
 
     auto parent = node->GetParent();
     if (parent && parent->GetChildCount())

@@ -5,14 +5,15 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
+
 #include "undo_cmds.h"
 
-#include "../panels/nav_panel.h"   // NavigationPanel -- Navigation Panel
-#include "../utils/auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
-#include "mainframe.h"             // MainFrame -- Main window frame
-#include "node.h"                  // Node class
-#include "node_creator.h"          // NodeCreator -- Class used to create nodes
-#include "node_gridbag.h"          // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
+#include "mainframe.h"            // MainFrame -- Main window frame
+#include "node.h"                 // Node class
+#include "node_creator.h"         // NodeCreator -- Class used to create nodes
+#include "node_gridbag.h"         // GridBag -- Create and modify a node containing a wxGridBagSizer
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -456,7 +457,7 @@ void GridBagAction::Change()
     if (m_isReverted)
     {
         auto nav_panel = wxGetFrame().GetNavigationPanel();
-        AutoFreeze freeze(nav_panel);
+        wxWindowUpdateLocker freeze(nav_panel);
 
         for (size_t idx = 0; idx < m_cur_gbsizer->GetChildCount(); idx++)
         {
@@ -483,7 +484,7 @@ void GridBagAction::Change()
 void GridBagAction::Revert()
 {
     auto nav_panel = wxGetFrame().GetNavigationPanel();
-    AutoFreeze freeze(nav_panel);
+    wxWindowUpdateLocker freeze(nav_panel);
 
     for (size_t idx = 0; idx < m_cur_gbsizer->GetChildCount(); idx++)
     {

@@ -12,12 +12,12 @@
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/statline.h>  // wxStaticLine class interface
 #include <wx/wizard.h>    // wxWizard class: a GUI control presenting the user with a
+#include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "mockup_wizard.h"
 
-#include "auto_freeze.h"  // AutoFreeze -- Automatically Freeze/Thaw a window
-#include "mainframe.h"    // App -- App class
-#include "node.h"         // Node class
+#include "mainframe.h"  // App -- App class
+#include "node.h"       // Node class
 
 MockupWizard::MockupWizard(wxWindow* parent, Node* node) : wxPanel(parent)
 {
@@ -105,7 +105,7 @@ void MockupWizard::AddButtonRow()
 
 void MockupWizard::SetSelection(size_t pageIndex)
 {
-    AutoFreeze(this);
+    wxWindowUpdateLocker(this);
 
     auto old_pageIndex = m_cur_page_index;
 
@@ -156,7 +156,7 @@ void MockupWizard::OnBackOrNext(wxCommandEvent& event)
     else if (event.GetId() == wxID_BACKWARD && m_cur_page_index == 0)
         return;
 
-    AutoFreeze(this);
+    wxWindowUpdateLocker(this);
 
     wxBitmap bmpPrev = m_pages[m_cur_page_index]->GetBitmap();
 

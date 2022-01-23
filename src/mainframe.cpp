@@ -22,13 +22,13 @@
 #include <wx/stc/stc.h>           // Scintilla
 #include <wx/toolbar.h>           // wxToolBar interface declaration
 #include <wx/utils.h>             // Miscellaneous utilities
+#include <wx/wupdlock.h>          // wxWindowUpdateLocker prevents window redrawing
 
 // auto-generated: ui/mainframe_base.h and ui/mainframe_base.cpp
 
 #include "mainframe.h"
 
 #include "appoptions.h"      // AppOptions -- Application-wide options
-#include "auto_freeze.h"     // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "bitmaps.h"         // Map of bitmaps accessed by name
 #include "clipboard.h"       // wxUiEditorData -- Handles reading and writing OS clipboard data
@@ -1319,7 +1319,7 @@ bool MainFrame::CanPasteNode()
 
 void MainFrame::Undo()
 {
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
 
     m_undo_stack.Undo();
     m_isProject_modified = (m_undo_stack_size != m_undo_stack.size());
@@ -1331,7 +1331,7 @@ void MainFrame::Undo()
 
 void MainFrame::Redo()
 {
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
 
     m_undo_stack.Redo();
     m_isProject_modified = (m_undo_stack_size != m_undo_stack.size());
@@ -1525,7 +1525,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 
         if (grandparent)
         {
-            AutoFreeze freeze(this);
+            wxWindowUpdateLocker freeze(this);
             PushUndoAction(std::make_shared<ChangeParentAction>(node, grandparent));
             return true;
         }
@@ -1543,7 +1543,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 
             if (parent)
             {
-                AutoFreeze freeze(this);
+                wxWindowUpdateLocker freeze(this);
                 PushUndoAction(std::make_shared<ChangeParentAction>(node, parent));
                 return true;
             }
@@ -1558,7 +1558,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             return (pos > 0);
         if (pos > 0)
         {
-            AutoFreeze freeze(this);
+            wxWindowUpdateLocker freeze(this);
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos - 1));
             return true;
         }
@@ -1571,7 +1571,7 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
             return (pos < parent->GetChildCount());
         if (pos < parent->GetChildCount())
         {
-            AutoFreeze freeze(this);
+            wxWindowUpdateLocker freeze(this);
             PushUndoAction(std::make_shared<ChangePositionAction>(node, pos));
             return true;
         }

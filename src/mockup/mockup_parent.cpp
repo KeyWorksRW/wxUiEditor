@@ -24,10 +24,10 @@
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/statbox.h>   // wxStaticBox base header
 #include <wx/stattext.h>  // wxStaticText base header
+#include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
 #include "mockup_parent.h"
 
-#include "auto_freeze.h"     // AutoFreeze -- Automatically Freeze/Thaw a window
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 #include "cstm_event.h"      // CustomEvent -- Custom Event class
 #include "mainframe.h"       // MainFrame -- Main window frame
@@ -150,7 +150,7 @@ void MockupParent::CreateContent()
     }
 #endif  // _DEBUG
 
-    AutoFreeze freeze(this);
+    wxWindowUpdateLocker freeze(this);
 
     // Note that we show the form even if it's property has it set to hidden
     m_MockupWindow->Show();
@@ -438,7 +438,7 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
         auto generator = node->GetGenerator();
         if (generator && generator->OnPropertyChange(Get_wxObject(node), node, prop))
         {
-            AutoFreeze freeze(this);
+            wxWindowUpdateLocker freeze(this);
             // You have to reset minimum size to allow the window to shrink
             m_panelContent->SetMinSize(wxSize(-1, -1));
             m_panelContent->Fit();

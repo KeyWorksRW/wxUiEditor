@@ -82,6 +82,7 @@ protected:
         MenuNEW_CHILD_SPACER,
         MenuNEW_SIBLING_SPACER,
 
+        MenuNEW_COLUMN,
         MenuNEW_ITEM,
 
         MenuNEW_NOTEBOOK,

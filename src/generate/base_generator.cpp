@@ -385,6 +385,7 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
     { "box", "_box" },
     { "button", "_button" },
     { "combo", "_combo" },
+    { "column", "_column" },
     { "ctrl", "_ctrl" },
     { "dialog", "_dialog" },  // stddialog becomes std_dialog
     { "double", "_double" },
@@ -398,14 +399,17 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
     { "notebook", "_notebook" },
     { "page", "_page" },
     { "panel", "_panel" },
-    { "pane", "_pane" },
     { "picker", "_picker" },
     { "simple", "_simple" },
     { "sizer", "_sizer" },
     { "text", "_text" },
     { "tree", "_tree" },
+    { "validator", "_validator" },
     { "view", "_view" },
     { "window", "_window" },
+
+    // Don't sort -- need to be sure "panel" is checked first
+    { "pane", "_pane" },
 
 };
 // clang-format on

@@ -20,10 +20,11 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 };
 
-class TreeListViewGenerator : public BaseGenerator
+class TreeListCtrlGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -34,7 +35,5 @@ public:
 class TreeListCtrlColumnGenerator : public BaseGenerator
 {
 public:
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
-
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
 };

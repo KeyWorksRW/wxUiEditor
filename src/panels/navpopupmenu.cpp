@@ -142,6 +142,16 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             }
             break;
 
+        case MenuNEW_COLUMN:
+            if (m_tool_name == gen_wxTreeListCtrl)
+            {
+                if (m_child)
+                    m_child->CreateToolNode(gen_TreeListCtrlColumn);
+                else
+                    wxGetFrame().CreateToolNode(gen_TreeListCtrlColumn);
+            }
+            break;
+
         case MenuADD_TOOL_SEPARATOR:
             if (m_child)
                 m_child->CreateToolNode(gen_toolSeparator);
@@ -447,24 +457,35 @@ void NavPopupMenu::CreateNormalMenu(Node* node)
     sub_menu->Append(MenuBORDERS_VERTICAL, "Vertical only", "Borders only on top and bottom", wxITEM_CHECK);
     AppendSubMenu(sub_menu, "Borders");
 
-    AppendSeparator();
-    Append(MenuNEW_CHILD_SPACER, "Add spacer");
+    if (node->isGen(gen_wxTreeListCtrl))
+    {
+        m_tool_name = gen_wxTreeListCtrl;
+        m_child = node;
 
-    sub_menu = new wxMenu;
-    menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
-    menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
-    menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
-    menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
-    menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
-    menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
-    menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
-    menu_item->SetBitmap(GetInternalImage("grid_sizer"));
-    menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
-    menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
-    menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
-    menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
+        AppendSeparator();
+        Append(MenuNEW_COLUMN, "Add column");
+    }
+    else
+    {
+        AppendSeparator();
+        Append(MenuNEW_CHILD_SPACER, "Add spacer");
 
-    AppendSubMenu(sub_menu, "Add sizer");
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuNEW_CHILD_BOX_SIZER, "wxBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("sizer_horizontal"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_STATIC_SIZER, "wxStaticBoxSizer");
+        menu_item->SetBitmap(GetInternalImage("wxStaticBoxSizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_WRAP_SIZER, "wxWrapSizer");
+        menu_item->SetBitmap(GetInternalImage("wrap_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_GRID_SIZER, "wxGridSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_FLEX_GRID_SIZER, "wxFlexGridSizer");
+        menu_item->SetBitmap(GetInternalImage("flex_grid_sizer"));
+        menu_item = sub_menu->Append(MenuNEW_CHILD_GRIDBAG_SIZER, "wxGridBagSizer");
+        menu_item->SetBitmap(GetInternalImage("grid_bag_sizer"));
+
+        AppendSubMenu(sub_menu, "Add sizer");
+    }
 
     sub_menu = new wxMenu;
     menu_item = sub_menu->Append(MenuNEW_PARENT_BOX_SIZER, "wxBoxSizer");
@@ -499,17 +520,20 @@ void NavPopupMenu::CreateNormalMenu(Node* node)
     Bind(wxEVT_MENU, &NavPopupMenu::OnBorders, this, MenuBORDERS_HORIZONTAL);
     Bind(wxEVT_MENU, &NavPopupMenu::OnBorders, this, MenuBORDERS_VERTICAL);
 
-    // The OnAddNew commands add to a child, so we need to "fake" the child to our parent in order to add a sibling or a
-    // child
-    m_child = node->GetParent();
+    if (!node->isGen(gen_wxTreeListCtrl))
+    {
+        // The OnAddNew commands add to a child, so we need to "fake" the child to our parent in order to add a sibling or a
+        // child
+        m_child = node->GetParent();
 
-    Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_SPACER);
-    Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_BOX_SIZER);
-    Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_STATIC_SIZER);
-    Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_WRAP_SIZER);
-    Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_GRID_SIZER);
-    Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_FLEX_GRID_SIZER);
-    Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_GRIDBAG_SIZER);
+        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_SPACER);
+        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_BOX_SIZER);
+        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_STATIC_SIZER);
+        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_WRAP_SIZER);
+        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_GRID_SIZER);
+        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_FLEX_GRID_SIZER);
+        Bind(wxEVT_MENU, &NavPopupMenu::OnAddNew, this, MenuNEW_CHILD_GRIDBAG_SIZER);
+    }
 }
 
 void NavPopupMenu::CreateProjectMenu(Node* node)

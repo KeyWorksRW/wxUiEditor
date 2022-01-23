@@ -811,7 +811,14 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
     {
         if (name.is_sameas("name"))
         {
-            prop_name = (node->IsForm() ? prop_class_name : prop_var_name);
+            if (node->isGen(gen_TreeListCtrlColumn))
+            {
+                prop_name = prop_label;
+            }
+            else
+            {
+                prop_name = (node->IsForm() ? prop_class_name : prop_var_name);
+            }
         }
         else if (node->isGen(gen_wxStyledTextCtrl) && ProcessScintillaProperty(node, value))
         {

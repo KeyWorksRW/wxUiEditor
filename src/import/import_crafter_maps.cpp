@@ -104,11 +104,11 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4502, gen_ribbonTool },         // toggle tool
     { 4503, gen_ribbonSeparator },    // verified
     { 4504, gen_toolSeparator },
-    { 4509, gen_wxTreeListCtrl },
-    { 4510, gen_TreeListCtrlColumn /* WXTREELISTCTRLCOL */ },
-    { 4511, gen_wxSimplebook },     // verified
-    { 4513, gen_wxToggleButton },   // verified
-    { 4519, gen_wxAnimationCtrl },  // needs support for load and play
+    { 4509, gen_wxTreeListCtrl },      // verified
+    { 4510, gen_TreeListCtrlColumn },  // verified
+    { 4511, gen_wxSimplebook },        // verified
+    { 4513, gen_wxToggleButton },      // verified
+    { 4519, gen_wxAnimationCtrl },     // needs support for load and play
     { 4520, gen_wxBitmapComboBox },
     { 4521, gen_wxRearrangeCtrl },      // verified
     { 4522, gen_wxSimpleHtmlListBox },  // verified

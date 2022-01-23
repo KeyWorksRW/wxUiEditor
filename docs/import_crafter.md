@@ -8,6 +8,8 @@ Note that **wxUiEditor** projects are roughly 90% smaller than a **wxCrafter** p
 
 When you import a **wxCrafter** project, **wxUiEditor** will `#include` XPM files in the generated source code. All other external images are first converted into a C++ array and generated in the source file of the first form in your project that uses it. All further references to the same image will use a `extern` reference.
 
+The way image lists are created in wxCrafter relies heavily on how wxCrafter uses those image lists. While wxUiEditor does support the use of image lists, it's handled in a more generic way. As such, it is not possible to import image lists from a wxCrafter project.
+
 ## Code Generation
 
 The code that **wxUiEditor** generates will often look quite different than the code that **wxCrafter** generates. Your UI will usually work the same in spite of the differences in the code. However, there are some differences you should be aware of:

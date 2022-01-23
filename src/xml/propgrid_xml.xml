@@ -138,7 +138,7 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 		<property name="var_name" type="string"
 			help="Instance name.">m_propertyGridPage</property>
 		<property name="label" type="string_escapes"
-			help="Label shown as a tooltip of the manager's tool button.">Page</property>
+			help="Label shown as a tooltip of the manager's tool button." />
 		<property name="bitmap" type="image"
 			help="Bitmap shown in the property manager's header." />
 	</gen>

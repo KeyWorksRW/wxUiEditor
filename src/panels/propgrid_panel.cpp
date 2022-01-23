@@ -166,8 +166,13 @@ void PropGridPanel::Create()
             pageName = m_prop_grid->GetPageName(pageNumber);
         }
 
+        // Note that AddPage() won't actually add a page, it simply sets an internal flag to indicate there is one page.
+        // That's required for m_prop_grid->Clear() to work -- because Clear() *only* clears pages.
+
         m_prop_grid->Clear();
+        m_prop_grid->AddPage();
         m_event_grid->Clear();
+        m_event_grid->AddPage();
 
         m_property_map.clear();
         m_event_map.clear();
@@ -1385,11 +1390,6 @@ void PropGridPanel::modifyProperty(NodeProperty* prop, ttlib::cview str)
     m_isPropChangeSuspended = false;
 }
 
-void PropGridPanel::OnChildFocus(wxChildFocusEvent&)
-{
-    // do nothing to avoid "scrollbar jump" if wx2.9 is used
-}
-
 void PropGridPanel::OnPropertyGridItemSelected(wxPropertyGridEvent& event)
 {
     auto property = event.GetProperty();
@@ -1460,8 +1460,6 @@ void PropGridPanel::CreatePropCategory(ttlib::cview name, Node* node, NodeDeclar
     if (!category.GetCategoryCount() && !category.GetPropNameCount())
         return;
 
-    m_prop_grid->AddPage();
-
     auto id = m_prop_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
     AddProperties(name, node, category, prop_set);
 
@@ -1525,8 +1523,6 @@ static constexpr std::initializer_list<PropName> lst_GridBagProps = {
 
 void PropGridPanel::CreateLayoutCategory(Node* node)
 {
-    m_prop_grid->AddPage();
-
     auto id = m_prop_grid->Append(new wxPropertyCategory("Layout"));
 
     if (!node->isParent(gen_wxGridBagSizer))
@@ -1599,8 +1595,6 @@ void PropGridPanel::CreateEventCategory(ttlib::cview name, Node* node, NodeDecla
         if (node->GetNodeDeclaration()->GetGeneratorFlags().contains("no_win_events"))
             return;
     }
-
-    m_event_grid->AddPage();
 
     auto id = m_event_grid->Append(new wxPropertyCategory(GetCategoryDisplayName(category.GetName())));
 

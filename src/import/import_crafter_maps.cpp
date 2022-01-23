@@ -66,72 +66,72 @@ std::map<int, GenEnum::GenName> g_map_id_generator = {
     { 4453, gen_wxGridBagSizer },      // verified
     { 4454, gen_spacer },              // verified
     { 4456, gen_wxAuiNotebook },       // verified
-    { 4457, gen_wxMenuBar },
-    { 4458, gen_wxMenu },
-    { 4459, gen_wxMenuItem },
-    { 4460, gen_submenu },
-    { 4461, gen_wxToolBar },
-    { 4462, gen_tool },
+    { 4457, gen_wxMenuBar },           // verified
+    { 4458, gen_wxMenu },              // verified
+    { 4459, gen_wxMenuItem },          // verified
+    { 4460, gen_submenu },             // verified
+    { 4461, gen_wxToolBar },           // verified
+    { 4462, gen_tool },                // verified
     { 4463, gen_wxAuiToolBar },
-    { 4464, gen_wxStatusBar },
-    { 4465, gen_CustomControl },
+    { 4464, gen_wxStatusBar },             // verified
+    { 4465, gen_CustomControl },           // verified
     { 4466, gen_wxStyledTextCtrl },        // verified
     { 4467, gen_wxStdDialogButtonSizer },  // verified
     { 4469, gen_wxDataViewListCtrl },
     { 4470, gen_wxDataViewTreeCtrl },
-    { 4471, gen_wxBannerWindow },
-    { 4474, gen_wxCommandLinkButton },
-    { 4475, gen_wxCollapsiblePane },
-    { 4477, gen_wxInfoBar },
-    { 4479, gen_wxWebView },
-    { 4484, gen_wxPopupTransientWindow },
-    { 4485, gen_wxPropertyGridManager },
+    { 4471, gen_wxBannerWindow },          // verified
+    { 4474, gen_wxCommandLinkButton },     // verified
+    { 4475, gen_wxCollapsiblePane },       // verified
+    { 4477, gen_wxInfoBar },               // verified
+    { 4479, gen_wxWebView },               // verified
+    { 4484, gen_wxPopupTransientWindow },  // no way for wxCrafter to create this
+    { 4485, gen_wxPropertyGridManager },   // verified
     { 4486, gen_propGridItem },
-    { 4488, gen_wxRibbonBar },
-    { 4489, gen_wxRibbonPage },
-    { 4490, gen_wxRibbonPanel },
+    { 4488, gen_wxRibbonBar },        // verified
+    { 4489, gen_wxRibbonPage },       // verified
+    { 4490, gen_wxRibbonPanel },      // verified
+    { 4491, gen_wxRibbonButtonBar },  // verified
+    { 4492, gen_ribbonButton },       // normal button
+    { 4493, gen_ribbonButton },       // hybrid button
+    { 4494, gen_ribbonButton },       // dropdown button
+    { 4495, gen_ribbonButton },       // toggle button
+    { 4496, gen_wxRibbonGallery },    // verified
+    { 4497, gen_ribbonGalleryItem },  // verified
+    { 4498, gen_wxRibbonToolBar },    // verified
+    { 4499, gen_ribbonTool },         // normal tool
+    { 4500, gen_ribbonTool },         // hybrid tool
+    { 4501, gen_ribbonTool },         // dropdown tool
+    { 4502, gen_ribbonTool },         // toggle tool
+    { 4503, gen_ribbonSeparator },    // verified
     { 4504, gen_toolSeparator },
     { 4509, gen_wxTreeListCtrl },
-    { 4511, gen_wxSimplebook },    // verified
-    { 4513, gen_wxToggleButton },  // verified
-    { 4519, gen_wxAnimationCtrl },
+    { 4510, gen_TreeListCtrlColumn /* WXTREELISTCTRLCOL */ },
+    { 4511, gen_wxSimplebook },     // verified
+    { 4513, gen_wxToggleButton },   // verified
+    { 4519, gen_wxAnimationCtrl },  // needs support for load and play
     { 4520, gen_wxBitmapComboBox },
-    { 4521, gen_wxRearrangeCtrl },
-    { 4522, gen_wxSimpleHtmlListBox },
-    { 4523, gen_wxActivityIndicator },
-    { 4524, gen_wxTimePickerCtrl },
+    { 4521, gen_wxRearrangeCtrl },      // verified
+    { 4522, gen_wxSimpleHtmlListBox },  // verified
+    { 4523, gen_wxActivityIndicator },  // verified
+    { 4524, gen_wxTimePickerCtrl },     // verified
 
     { 4414, gen_unknown },  // column header for wxListView, supported directly as a wxListView property
     { 4468, gen_unknown },  // Theses are the buttons to enable in gen_wxStdDialogButtonSizer
+    { 4476, gen_unknown },  // "pane" for gen_wxCollapsiblePane -- supported directly
 
     { 4455, gen_unknown /* WXTREEBOOK_SUB_PAGE */ },
     { 4472, gen_unknown /* WXDATAVIEWCOL */ },
     { 4473, gen_unknown /* WXDATAVIEWTREELISTCTRL */ },
-    { 4476, gen_unknown /* WXCOLLAPSIBLEPANE_PANE */ },
     { 4478, gen_unknown /* WXINFOBARBUTTON */ },
     { 4480, gen_unknown /* WXAUIMANAGER */ },
     { 4481, gen_unknown /* WXIMAGELIST */ },
     { 4482, gen_unknown /* WXBITMAP */ },
-    { 4483, gen_unknown /* WXTIMER */ },
+    { 4483, gen_unknown /* WXTIMER */ },  // doesn't seem to be used, even when imported from wxFB
     { 4487, gen_unknown /* WXPGPROPERTY_SUB */ },
-    { 4491, gen_unknown /* WXRIBBONBUTTONBAR */ },
-    { 4492, gen_unknown /* WXRIBBONBUTTON */ },
-    { 4493, gen_unknown /* WXRIBBONHYBRIDBUTTON */ },
-    { 4494, gen_unknown /* WXRIBBONDROPDOWNBUTTON */ },
-    { 4495, gen_unknown /* WXRIBBONTOGGLEBUTTON */ },
-    { 4496, gen_unknown /* WXRIBBONGALLERY */ },
-    { 4497, gen_unknown /* WXRIBBONGALLERYITME */ },
-    { 4498, gen_unknown /* WXRIBBONTOOLBAR */ },
-    { 4499, gen_unknown /* WXRIBBONTOOL */ },
-    { 4500, gen_unknown /* WXRIBBONHYBRIDTOOL */ },
-    { 4501, gen_unknown /* WXRIBBONDROPDOWNTOOL */ },
-    { 4502, gen_unknown /* WXRIBBONTOGGLETOOL */ },
-    { 4503, gen_unknown /* WXRIBBONTOOLSEPARATOR */ },
     { 4505, gen_unknown /* WXGLCANVAS */ },
     { 4506, gen_unknown /* WXGRIDCOL */ },
     { 4507, gen_unknown /* WXGRIDROW */ },
     { 4508, gen_unknown /* WXMEDIACTRL */ },
-    { 4510, gen_unknown /* WXTREELISTCTRLCOL */ },
     { 4512, gen_unknown /* WXTASKBARICON */ },
     { 4514, gen_unknown /* WXAUITOOLBARLABEL */ },
     { 4515, gen_unknown /* WXAUITOOLBARITEM_SPACE */ },
@@ -153,10 +153,12 @@ std::map<std::string, GenEnum::PropName> g_map_crafter_props = {
     { "choices", prop_contents },
     { "class decorator", prop_class_decoration },
     { "class name", prop_derived_class },
+    { "column flags", prop_flags },
     { "default button", prop_default },
     { "default path", prop_defaultfolder },
     { "enable window persistency", prop_persist },
     { "fg colour", prop_foreground_colour },
+    { "field count", prop_fields },
     { "file", prop_derived_file },
     { "filter index", prop_defaultfilter },
     { "growable columns", prop_growablecols },
@@ -170,15 +172,21 @@ std::map<std::string, GenEnum::PropName> g_map_crafter_props = {
     { "major dimension", prop_majorDimension },
     { "max length", prop_maxlength },
     { "max value", prop_max },
+    { "maximum #rows", prop_max_rows },
     { "min value", prop_min },
+    { "minimum #rows", prop_min_rows },
     { "minimum pane size", prop_min_pane_size },
     { "minimum size", prop_minimum_size },
     { "normal colour", prop_normal_color },
+    { "padding", prop_packing },
     { "page size", prop_pagesize },
+    { "ribbon theme", prop_theme },
     { "sash gravity", prop_sashgravity },
     { "sash position", prop_sashpos },
     { "scroll rate x", prop_scroll_rate_x },
     { "scroll rate y", prop_scroll_rate_y },
+    { "selected", prop_select },
+    { "separator size", prop_separation },
     { "show cancel button", prop_cancel_button },
     { "show hidden files", prop_show_hidden },
     { "show search button", prop_search_button },

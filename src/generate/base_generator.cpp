@@ -398,6 +398,7 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
     { "notebook", "_notebook" },
     { "page", "_page" },
     { "panel", "_panel" },
+    { "pane", "_pane" },
     { "picker", "_picker" },
     { "simple", "_simple" },
     { "sizer", "_sizer" },

@@ -42,6 +42,11 @@ class ChangeParentAction;
 class ChangePositionAction;
 class ModifyProperties;
 
+// Declared in clipboard.h. Returns true if the external clipboard condtains data that we can
+// paste. This will either be from a different instance of wxUiEditor, or from wxFormBuilder
+// or wxSmith.
+bool isClipboardDataAvailable();
+
 // Warning! This MUST be at least 3!
 constexpr const size_t StatusPanels = 3;
 
@@ -111,6 +116,7 @@ public:
     Node* GetSelectedNode() { return (m_selected_node ? m_selected_node.get() : nullptr); };
     Node* GetSelectedForm();
 
+    NodeSharedPtr GetClipboardPtr() { return (m_clipboard ? m_clipboard : nullptr); }
     Node* GetClipboard() { return (m_clipboard ? m_clipboard.get() : nullptr); }
     size_t GetClipHash() { return (m_clipboard ? m_clip_hash : 0); }
 
@@ -173,7 +179,13 @@ public:
     void PasteNode(Node* parent);
 
     bool CanCopyNode();
+
+    // Returns true if there is a selected node, and there is data in either the internal or
+    // external clipboard.
     bool CanPasteNode();
+
+    // Returns true if there is data in either the internal or external clipboard.
+    bool isPasteAvailable() { return (m_clipboard.get() || isClipboardDataAvailable()); }
 
     // This does not use the internal clipboard
     void DuplicateNode(Node* node);

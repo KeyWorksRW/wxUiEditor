@@ -2178,7 +2178,6 @@
               min="1"
               var_name="m_spinCtrlTabs"
               validator_variable="m_num_pages"
-              disabled="true"
               alignment="wxALIGN_CENTER_VERTICAL" />
           </node>
         </node>

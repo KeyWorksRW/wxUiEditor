@@ -12,6 +12,7 @@
 #include "utils.h"       // Utility functions that work with properties
 
 #include "../mockup/mockup_wizard.h"  // WizardPageSimple
+#include "../panels/navpopupmenu.h"   // NavPopupMenu -- Context-menu for Navigation Panel
 
 #include "wizard_form.h"
 
@@ -195,6 +196,20 @@ std::optional<ttlib::cstr> WizardFormGenerator::GetHint(NodeProperty* prop)
     }
 }
 
+bool WizardFormGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
+{
+    menu->Append(NavPopupMenu::MenuADD_WIZARD_PAGE, "Add Page");
+    menu->Bind(
+        wxEVT_MENU,
+        [=](wxCommandEvent&)
+        {
+            node->CreateToolNode(gen_wxWizardPageSimple);
+        },
+        NavPopupMenu::MenuADD_WIZARD_PAGE);
+
+    return true;
+}
+
 //////////////////////////////////////////  WizardPageGenerator  //////////////////////////////////////////
 
 wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent)
@@ -223,4 +238,23 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
     code << ");";
 
     return code;
+}
+
+bool WizardPageGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
+{
+    menu->Append(NavPopupMenu::MenuADD_WIZARD_PAGE, "Add Page");
+    menu->Bind(
+        wxEVT_MENU,
+        [=](wxCommandEvent&)
+        {
+            node->CreateToolNode(gen_wxWizardPageSimple);
+        },
+        NavPopupMenu::MenuADD_WIZARD_PAGE);
+
+    if (node->GetChildCount() && node->GetChild(0)->IsSizer())
+    {
+        menu->MenuAddChildSizerCommands(node->GetChild(0));
+    }
+
+    return true;
 }

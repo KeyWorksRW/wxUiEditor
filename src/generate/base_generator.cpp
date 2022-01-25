@@ -486,3 +486,42 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
 
     return ttlib::cstr();
 }
+
+// clang-format off
+
+// These are the control types that cannot have their parent changed
+static const auto parentless_types = {
+
+    type_bookpage,
+    type_ctx_menu,
+    type_dataviewcolumn,
+    type_dataviewlistcolumn,
+    type_embed_image,
+    type_images,
+    type_page,
+    type_ribbonbutton,
+    type_ribbongalleryitem,
+    type_ribbontool,
+    type_tool,
+    type_wizardpagesimple
+
+};
+// clang-format on
+
+bool BaseGenerator::CanChangeParent(Node* node)
+{
+    if (node->IsForm())
+    {
+        return false;
+    }
+
+    for (auto& iter: parentless_types)
+    {
+        if (node->isType(iter))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}

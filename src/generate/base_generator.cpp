@@ -398,7 +398,7 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
     { "menu", "_menu" },
     { "notebook", "_notebook" },
     { "page", "_page" },
-    { "panel", "_panel" },
+    { "pane", "_pane" },
     { "picker", "_picker" },
     { "simple", "_simple" },
     { "sizer", "_sizer" },
@@ -407,9 +407,6 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
     { "validator", "_validator" },
     { "view", "_view" },
     { "window", "_window" },
-
-    // Don't sort -- need to be sure "panel" is checked first
-    { "pane", "_pane" },
 
 };
 // clang-format on
@@ -485,4 +482,54 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
     }
 
     return ttlib::cstr();
+}
+
+// clang-format off
+
+// These are the control types that cannot have their parent changed
+static const auto parentless_types = {
+
+    type_bookpage,
+    type_ctx_menu,
+    type_dataviewcolumn,
+    type_dataviewlistcolumn,
+    type_embed_image,
+    type_images,
+    type_menu,
+    type_menubar,
+    type_menubar_form,
+    type_menuitem,
+    type_page,
+    type_ribbonbar,
+    type_ribbonbar_form,
+    type_ribbonbutton,
+    type_ribbonbuttonbar,
+    type_ribbongallery,
+    type_ribbongalleryitem,
+    type_ribbonpage,
+    type_ribbonpanel,
+    type_ribbontool,
+    type_ribbontoolbar,
+    type_tool,
+    type_wizardpagesimple
+
+};
+// clang-format on
+
+bool BaseGenerator::CanChangeParent(Node* node)
+{
+    if (node->IsForm())
+    {
+        return false;
+    }
+
+    for (auto& iter: parentless_types)
+    {
+        if (node->isType(iter))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }

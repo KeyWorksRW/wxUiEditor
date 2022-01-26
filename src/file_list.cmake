@@ -68,6 +68,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/misc_widgets.cpp      # Miscellaneous generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/panel_widgets.cpp     # Panel generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/picker_widgets.cpp    # Picker generation classes
+    ${CMAKE_CURRENT_LIST_DIR}/generate/project.cpp           # Project generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/radio_widgets.cpp     # Radio button and Radio box generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/ribbon_widgets.cpp    # Ribbon generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/sizer_widgets.cpp     # Sizer generation classes

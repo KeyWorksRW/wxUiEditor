@@ -14,8 +14,13 @@ constexpr const char* txt_OurClipboardFormat = "wxUiEditor";
 class Node;
 using NodeSharedPtr = std::shared_ptr<Node>;
 
+// Declared in clipboard.h. Returns true if the external clipboard condtains data that we can
+// paste. This will either be from a different instance of wxUiEditor, or from wxFormBuilder
+// or wxSmith.
 bool isClipboardDataAvailable();
-NodeSharedPtr GetClipboardNode();
+
+// Pass false as the parameter to prevent any error messages
+NodeSharedPtr GetClipboardNode(bool warn_if_problems = true);
 
 class wxUtf8DataObject : public wxDataObjectSimple
 {

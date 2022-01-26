@@ -24,6 +24,7 @@
 #include "misc_widgets.h"      // Miscellaneous component classes
 #include "panel_widgets.h"     // Panel component classes
 #include "picker_widgets.h"    // DatePickerCtrlGenerator -- Picker component classes
+#include "project.h"           // Project generator
 #include "radio_widgets.h"     // RadioButtonGenerator -- Radio button and Radio box component classes
 #include "ribbon_widgets.h"    // RibbonBarGenerator -- Ribbon component classes
 #include "sizer_widgets.h"     // Sizer component classes
@@ -181,6 +182,8 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_TextSizer, TextSizerGenerator)
 
     SET_GENERATOR(gen_CustomControl, CustomControl)
+
+    SET_GENERATOR(gen_Project, ProjectGenerator)
 
     AddAllConstants();
 }

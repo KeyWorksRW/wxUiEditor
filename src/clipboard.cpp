@@ -30,7 +30,7 @@ bool isClipboardDataAvailable()
     return false;
 }
 
-NodeSharedPtr GetClipboardNode()
+NodeSharedPtr GetClipboardNode(bool warn_if_problems)
 {
     SmartClipboard clip;
     if (clip.IsOpened())
@@ -62,7 +62,8 @@ NodeSharedPtr GetClipboardNode()
 
         if (!result)
         {
-            wxMessageBox("Unable to parse the object in the clipboard", "Paste Clipboard");
+            if (warn_if_problems)
+                wxMessageBox("Unable to parse the object in the clipboard", "Paste Clipboard");
             return {};
         }
 
@@ -76,7 +77,7 @@ NodeSharedPtr GetClipboardNode()
         {
             FormBuilder fb;
             auto new_node = fb.CreateFbpNode(root, nullptr);
-            if (fb.GetErrors().size())
+            if (fb.GetErrors().size() && warn_if_problems)
             {
                 ttlib::cstr errMsg("Not everything from the wxFormBuilder object could be converted:\n\n");
                 for (auto& iter: fb.GetErrors())
@@ -95,7 +96,7 @@ NodeSharedPtr GetClipboardNode()
             auto child = root.first_child();
             WxSmith smith;
             auto new_node = smith.CreateXrcNode(child, nullptr);
-            if (smith.GetErrors().size())
+            if (smith.GetErrors().size() && warn_if_problems)
             {
                 ttlib::cstr errMsg("Not everything from the wxSmith object could be converted:\n\n");
                 for (auto& iter: smith.GetErrors())

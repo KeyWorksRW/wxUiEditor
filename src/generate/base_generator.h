@@ -15,6 +15,7 @@
 
 class BaseCodeGenerator;
 class MockupParent;
+class NavPopupMenu;
 class WriteCode;
 class wxMouseEvent;
 class wxObject;
@@ -107,4 +108,13 @@ public:
     // flags. Returns true if a change was made. Note that the change is *not* pushed to the
     // undo stack.
     virtual bool VerifyProperty(NodeProperty*);
+
+    // If true, a control can be move left or right or into a new sizer. Override and return
+    // false if the control can't do this (such as a book page).
+    virtual bool CanChangeParent(Node* node);
+
+    // Return true to automatically add submenu command to add child sizers.
+    //
+    // You will need to Bind to any commands you add.
+    virtual bool PopupMenuAddCommands(NavPopupMenu*, Node*) { return false; }
 };

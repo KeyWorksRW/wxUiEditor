@@ -12,14 +12,16 @@
 class WizardFormGenerator : public BaseGenerator
 {
 public:
-    wxObject* CreateMockup(Node* /*node*/, wxObject* parent) override;
+    wxObject* CreateMockup(Node*, wxObject* parent) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
-    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
+    std::optional<ttlib::cstr> GenConstruction(Node*) override;
+    std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string& class_name) override;
+    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node*) override;
+
+    bool GetIncludes(Node*, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
     std::optional<ttlib::cstr> GetHint(NodeProperty*) override;
-
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+    bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;
 
     std::vector<Node*> GetChildPanes(Node* parent);
 };
@@ -27,7 +29,9 @@ public:
 class WizardPageGenerator : public BaseGenerator
 {
 public:
-    wxObject* CreateMockup(Node* /*node*/, wxObject* parent) override;
+    wxObject* CreateMockup(Node*, wxObject* parent) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenConstruction(Node*) override;
+
+    bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;
 };

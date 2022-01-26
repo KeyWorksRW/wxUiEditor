@@ -49,11 +49,11 @@ protected:
 
     // Called when prop_name is a valid property. This will set the property's value after
     // any possible additional processing.
-    void WxCrafter::KnownProperty(Node* node, const rapidjson::Value& value, GenEnum::PropName prop_name);
+    void KnownProperty(Node* node, const rapidjson::Value& value, GenEnum::PropName prop_name);
 
     // Called to handle prop_value which may get converted to a different property before
     // saving.
-    void WxCrafter::ValueProperty(Node* node, const rapidjson::Value& value);
+    void ValueProperty(Node* node, const rapidjson::Value& value);
 
 private:
     ttlib::cstr m_output_name;

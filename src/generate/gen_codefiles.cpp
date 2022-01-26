@@ -71,6 +71,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         else
         {
             results.emplace_back() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n';
+            continue;
         }
 
         try

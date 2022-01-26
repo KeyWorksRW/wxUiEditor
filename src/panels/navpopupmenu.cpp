@@ -409,7 +409,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         }
     }
 
-    if (node->isGen(gen_wxStatusBar))
+    if (node->isGen(gen_wxStatusBar) || node->isGen(gen_embedded_image))
     {
         return;
     }

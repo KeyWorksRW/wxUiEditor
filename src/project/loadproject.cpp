@@ -451,7 +451,7 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
             m_pjtSettings->getProjectFile().remove_extension();
         }
 
-        if (append)
+        if (append && m_project->GetChildCount())
         {
             auto form = project.child("node");
             while (form)
@@ -472,7 +472,7 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
         m_pjtSettings->SetProjectFile(file);
         m_pjtSettings->SetProjectPath(file);
 
-        // Start a thread to collect all of the embedded images
+        // Finish previous thread and start a new thread to collect all of the embedded images.
         m_pjtSettings->ParseEmbeddedImages();
 
         wxGetFrame().SetImportedFlag(true);

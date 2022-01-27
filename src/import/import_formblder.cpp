@@ -900,7 +900,12 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
     else if (org_value.contains("Load From Art"))
     {
         ttlib::cstr value(xml_prop.text().as_cview());
-        value.Replace("Load From Art Provider", "Art", false, tt::CASE::either);
+        value.Replace("Load From Art Provider; ", "Art;", false, tt::CASE::either);
+        value.Replace("; ", "|", false, tt::CASE::either);
+        if (value.back() == '|')
+        {
+            value << "wxART_OTHER";
+        }
         value << ";[-1,-1]";
         prop->set_value(value);
     }

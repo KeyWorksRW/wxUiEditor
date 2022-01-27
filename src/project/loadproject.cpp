@@ -475,6 +475,33 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
         // Finish previous thread and start a new thread to collect all of the embedded images.
         m_pjtSettings->ParseEmbeddedImages();
 
+#if defined(_DEBUG)
+        // If the file has been created once before, then for the first form, copy the old classname and base filename to the
+        // re-converted first form.
+
+        file.replace_extension(".wxui");
+        if (m_project->GetChildCount() && file.file_exists())
+        {
+            doc.reset();
+            auto result = doc.load_file(file.wx_str());
+            if (!result)
+            {
+                ASSERT_MSG(result, ttlib::cstr() << "pugi failed trying to load " << file.wx_str());
+                wxMessageBox(wxString("Cannot open ") << file << "\n\n" << result.description(), "Load Project");
+            }
+            else
+            {
+                if (auto old_project = LoadProject(doc); old_project && old_project->GetChildCount())
+                {
+                    auto old_form = old_project->GetChild(0);
+                    auto new_form = m_project->GetChild(0);
+                    new_form->prop_set_value(prop_class_name, old_form->prop_as_string(prop_class_name));
+                    new_form->prop_set_value(prop_base_file, old_form->prop_as_string(prop_base_file));
+                }
+            }
+        }
+#endif  // _DEBUG
+
         wxGetFrame().SetImportedFlag(true);
         wxGetFrame().FireProjectLoadedEvent();
         wxGetFrame().SetModified();

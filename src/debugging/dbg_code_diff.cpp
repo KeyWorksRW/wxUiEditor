@@ -21,6 +21,8 @@
 
 #include "dbg_code_diff.h"  // auto-generated: dbg_code_diff_base.h and dbg_code_diff_base.cpp
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainapp.h"        // App -- Main application class
+#include "pjtsettings.h"    // ProjectSettings -- Hold data for currently loaded project
 
 #include "pugixml.hpp"
 
@@ -41,6 +43,9 @@ DbgCodeDiff::~DbgCodeDiff()
 
 void DbgCodeDiff::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
+    // First make sure all embedded images have been parsed.
+    wxGetApp().GetProjectSettings()->FinishThreads();
+
     if (GenerateCodeFiles(this, true, &m_class_list))
     {
         for (auto& iter: m_class_list)

@@ -1078,6 +1078,10 @@ ttlib::cstr GenerateNewAssignment(Node* node, bool use_generic)
         class_name.Replace("wx", "wxGeneric");
         code << class_name;
     }
+    else if (node->isGen(gen_BookPage))
+    {
+        code << "wxPanel";
+    }
     else
     {
         code << node->DeclName();

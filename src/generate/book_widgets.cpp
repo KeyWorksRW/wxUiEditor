@@ -213,7 +213,8 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxPanel(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
+
     if (node->GetParent()->isGen(gen_BookPage))
     {
         bool is_display_images = isBookDisplayImages(node);

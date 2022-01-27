@@ -119,6 +119,13 @@ std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenSettings(Node* node, siz
 
         code << node->get_node_name() << "->Collapse();";
     }
+    else
+    {
+        if (code.size())
+            code << "\n";
+
+        code << node->get_node_name() << "->Expand();";
+    }
 
     return code;
 }

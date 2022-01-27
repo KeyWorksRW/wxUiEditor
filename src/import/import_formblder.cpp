@@ -264,7 +264,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (gen_name == gen_PanelForm)
+    if (gen_name == gen_wxPanel)
     {
         if (!parent)
         {

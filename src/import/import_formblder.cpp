@@ -224,6 +224,11 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 else if (prop_name.as_cview().is_sameas("class_decoration"))
                 {
                     m_class_decoration = xml_prop.text().as_string();
+                    // Current formbuild uses "; " as the default property value
+                    if (m_class_decoration.is_sameprefix((";")))
+                    {
+                        m_class_decoration.clear();
+                    }
                 }
                 else if (prop_name.as_cview().is_sameas("namespace") && xml_prop.text().as_cview().size())
                 {

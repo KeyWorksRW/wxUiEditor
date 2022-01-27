@@ -48,12 +48,7 @@ ProjectSettings::~ProjectSettings()
 {
     // If the thread is running, this will tell it to stop
     m_is_terminating = true;
-
-    if (m_collect_thread)
-    {
-        m_collect_thread->join();
-        delete m_collect_thread;
-    }
+    FinishThreads();
 }
 
 ttlib::cstr& ProjectSettings::SetProjectFile(const ttString& file)
@@ -397,11 +392,7 @@ EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
 
 void ProjectSettings::ParseEmbeddedImages()
 {
-    if (m_collect_thread)
-    {
-        m_collect_thread->join();
-        return;
-    }
+    FinishThreads();
 
     m_collect_thread = new std::thread(&ProjectSettings::CollectEmbeddedImages, this);
 }
@@ -473,6 +464,8 @@ void ProjectSettings::CollectNodeImages(Node* node, Node* form)
 
 bool ProjectSettings::UpdateEmbedNodes()
 {
+    FinishThreads();
+
     bool is_changed = false;
     auto project = wxGetApp().GetProject();
 
@@ -539,6 +532,19 @@ bool ProjectSettings::CheckNode(Node* node)
     }
 
     return is_changed;
+}
+
+void ProjectSettings::FinishThreads()
+{
+    if (m_collect_thread)
+    {
+        if (m_collect_thread->joinable())
+        {
+            m_collect_thread->join();
+        }
+        delete m_collect_thread;
+        m_collect_thread = nullptr;
+    }
 }
 
 namespace wxue_img

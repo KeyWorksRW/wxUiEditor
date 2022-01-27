@@ -31,6 +31,9 @@ public:
     ProjectSettings();
     ~ProjectSettings();
 
+    // Call this to ensure any background threads get completed
+    void FinishThreads();
+
     // This will parse the entire project, and ensure that each embedded image is associated
     // with the form node of the form it first appears in.
     //
@@ -59,7 +62,8 @@ public:
     bool AddEmbeddedImage(ttlib::cstr path, Node* form);
     EmbededImage* GetEmbeddedImage(ttlib::sview path);
 
-    // This will launch a thread to start collecting all the embedded images in the project
+    // This will finish any current thread and then launch a new thread to start collecting
+    // all the embedded images in the project
     void ParseEmbeddedImages();
 
 protected:

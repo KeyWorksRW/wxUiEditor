@@ -866,7 +866,9 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     {
         if (xml_prop.text().as_cview().size())
         {
-            if (xml_prop.text().as_cview().is_sameas("wxWS_EX_VALIDATE_RECURSIVELY"))
+            if (prop_name.is_sameas("hidden") && newobject->isGen(gen_ribbonTool))
+                return;
+            else if (xml_prop.text().as_cview().is_sameas("wxWS_EX_VALIDATE_RECURSIVELY"))
                 return;
             MSG_INFO(ttlib::cstr() << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name
                                    << " class not supported");

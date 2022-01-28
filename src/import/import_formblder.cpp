@@ -419,12 +419,24 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 {
                     prop_ptr = newobject->get_prop_ptr(prop_class_name);
                 }
+                else if (newobject->isGen(gen_ribbonTool) || newobject->isGen(gen_ribbonButton) ||
+                         newobject->isGen(gen_ribbonGalleryItem))
+                {
+                    // FormBuilder has a property for this but doesn't use it, nor do we.
+                    continue;
+                }
+
                 else
                 {
                     prop_ptr = newobject->get_prop_ptr(prop_var_name);
                 }
 
-                prop_ptr->set_value(xml_prop.text().as_cview());
+                ASSERT(prop_ptr);
+
+                if (prop_ptr)
+                {
+                    prop_ptr->set_value(xml_prop.text().as_cview());
+                }
                 continue;
             }
             else if (prop_name.is_sameas("declaration"))

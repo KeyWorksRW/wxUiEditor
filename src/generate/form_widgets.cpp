@@ -362,52 +362,25 @@ bool PanelFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen
     auto src_code = code_gen->GetSrcWriter();
 
     ttlib::cstr code;
-    code << node->prop_as_string(prop_class_name) << "::" << node->prop_as_string(prop_class_name);
+    code << "bool " << node->prop_as_string(prop_class_name) << "::Create";
 
-    code << "(wxWindow* parent, wxWindowID id) : wxPanel()\n{";
+    code << "(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString &name)\n{";
+    code << "\n\tif (!wxPanel::Create(parent, id, pos, size, style, name))\n\t\treturn false;\n\n";
+
     src_code->writeLine(code, indent::none);
+    code.clear();
     src_code->Indent();
-    code.clear();
-
-    code << "Create(parent, id";
-    auto position = node->prop_as_wxPoint(prop_pos);
-    if (position == wxDefaultPosition && node->prop_as_string(prop_window_style) == "wxTAB_TRAVERSAL")
-    {
-        code << ");";
-        src_code->writeLine(code);
-    }
-    else
-    {
-        code << ", ";
-        if (position != wxDefaultPosition)
-        {
-            code << "wxPoint(" << position.x << ", " << position.y << ")";
-        }
-        else
-        {
-            code << "wxDefaultPosition";
-        }
-        code << ", wxDefaultSize,";
-        if (node->HasValue(prop_window_style))
-        {
-            src_code->writeLine(code);
-            src_code->Indent();
-            code = node->prop_as_string(prop_window_style) + ");";
-            src_code->writeLine(code);
-            src_code->Unindent();
-        }
-        else
-        {
-            code << " 0);";
-            src_code->writeLine(code);
-        }
-    }
-
-    code.clear();
 
     if (node->HasValue(prop_extra_style))
     {
         code << "SetExtraStyle(GetExtraStyle() | " << node->prop_as_string(prop_extra_style) << ");";
+        src_code->writeLine(code);
+        code.clear();
+    }
+
+    code << GenFontColourSettings(node);
+    if (code.size())
+    {
         src_code->writeLine(code);
         code.clear();
     }
@@ -424,8 +397,69 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCod
     {
         ttlib::cstr code;
 
-        code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id);
+        code << node->get_node_name() << "() {}\n";
+
+        code << node->get_node_name() << "(wxWindow* parent, wxWindowID id = " << node->prop_as_string(prop_id) << ", ";
+        code << "const wxPoint& pos = ";
+
+        auto position = node->prop_as_wxPoint(prop_pos);
+        if (position == wxDefaultPosition)
+            code << "wxDefaultPosition, ";
+        else
+            code << "wxPoint(" << position.x << ", " << position.y << "), ";
+
+        code << "const wxSize& size = ";
+
+        auto size = node->prop_as_wxSize(prop_size);
+        if (size == wxDefaultSize)
+            code << "wxDefaultSize";
+        else
+            code << "wxSize(" << size.x << ", " << size.y << ")";
+
+        code << ",\n\tlong style = ";
+        if (node->HasValue(prop_style))
+            code << node->prop_as_string(prop_style);
+        else
+            code << "wxTAB_TRAVERSAL";
+
+        code << ", const wxString &name = ";
+        if (node->HasValue(prop_window_name))
+            code << GenerateQuotedString(node, prop_window_name);
+        else
+            code << "wxPanelNameStr";
+
+        code << ")\n{\n\tCreate(parent, id, pos, size, style, name);\n}\n";
+
+        code << "\nbool Create(wxWindow *parent, ";
+        code << "wxWindowID id = " << node->prop_as_string(prop_id) << ", ";
+        code << "const wxPoint& pos = ";
+
+        if (position == wxDefaultPosition)
+            code << "wxDefaultPosition, ";
+        else
+            code << "wxPoint(" << position.x << ", " << position.y << "), ";
+
+        code << "const wxSize& size = ";
+
+        if (size == wxDefaultSize)
+            code << "wxDefaultSize";
+        else
+            code << "wxSize(" << size.x << ", " << size.y << ")";
+
+        code << ",\n\tlong style = ";
+        if (node->HasValue(prop_style))
+            code << node->prop_as_string(prop_style);
+        else
+            code << "wxTAB_TRAVERSAL";
+
+        code << ", const wxString &name = ";
+        if (node->HasValue(prop_window_name))
+            code << GenerateQuotedString(node, prop_window_name);
+        else
+            code << "wxPanelNameStr";
+
         code << ");\n\n";
+
         return code;
     }
     else if (cmd == code_after_children)
@@ -474,6 +508,8 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCod
         {
             code << "\n\tSetSize(wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
         }
+
+        code << "\n\treturn true;";
 
         return code;
     }

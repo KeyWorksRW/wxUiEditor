@@ -42,7 +42,7 @@ std::optional<ttlib::cstr> PanelGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << " = new wxPanel(";
+    code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
     GeneratePosSizeFlags(node, code);
@@ -118,6 +118,13 @@ std::optional<ttlib::cstr> CollapsiblePaneGenerator::GenSettings(Node* node, siz
             code << "\n";
 
         code << node->get_node_name() << "->Collapse();";
+    }
+    else
+    {
+        if (code.size())
+            code << "\n";
+
+        code << node->get_node_name() << "->Expand();";
     }
 
     return code;

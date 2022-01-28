@@ -68,10 +68,8 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
         }
     }
 
-    if (border_value.size())
-    {
-        node->prop_set_value(prop_borders, border_value);
-    }
+    // Always set this even if it is empty
+    node->prop_set_value(prop_borders, border_value);
 
     bool is_VerticalSizer = false;
     bool is_HorizontalSizer = false;
@@ -140,6 +138,7 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
             align_value << "wxALIGN_CENTER";
         }
     }
+
     if (align_value.size())
     {
         node->prop_set_value(prop_alignment, align_value);
@@ -176,10 +175,10 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
             flags_value << '|';
         flags_value << "wxSHAPED|wxFIXED_MINSIZE";
     }
+
     if (flags_value.size())
     {
-        auto prop = node->get_prop_ptr(prop_flags);
-        prop->set_value(flags_value);
+        node->prop_set_value(prop_flags, flags_value);
     }
 }
 
@@ -335,7 +334,63 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else
     {
-        prop->set_value(xml_prop.text().as_cview());
+        auto view_value = xml_prop.text().as_cview();
+        if (view_value.contains("wxST_SIZEGRIP"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxST_SIZEGRIP", "wxSTB_SIZEGRIP");
+            prop->set_value(value);
+        }
+        else if (view_value.contains("wxTE_CENTRE"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxTE_CENTRE", "wxTE_CENTER");
+            prop->set_value(value);
+        }
+
+        // Eliminate obsolete styles
+
+        else if (view_value.contains("wxBU_AUTODRAW"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxBU_AUTODRAW", "");  // this style is obsolete
+            if (value.size())
+            {
+                prop->set_value(value);
+            }
+        }
+        else if (view_value.contains("wxRA_USE_CHECKBOX"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxRA_USE_CHECKBOX", "");  // this style is obsolete
+            if (value.size())
+            {
+                prop->set_value(value);
+            }
+        }
+        else if (view_value.contains("wxRB_USE_CHECKBOX"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxRB_USE_CHECKBOX", "");  // this style is obsolete
+            if (value.size())
+            {
+                prop->set_value(value);
+            }
+        }
+        else if (view_value.contains("wxNB_FLAT"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxNB_FLAT", "");  // this style is obsolete
+            if (value.size())
+            {
+                prop->set_value(value);
+            }
+        }
+
+        else
+        {
+            prop->set_value(view_value);
+        }
     }
 }
 
@@ -460,6 +515,11 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         if (wxue_prop == prop_bitmap)
         {
             ProcessBitmap(iter, node);
+            continue;
+        }
+        else if (wxue_prop == prop_inactive_bitmap)
+        {
+            ProcessBitmap(iter, node, prop_inactive_bitmap);
             continue;
         }
         else if (wxue_prop == prop_contents)
@@ -687,7 +747,7 @@ void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node
     }
 }
 
-void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
+void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum::PropName node_prop)
 {
     if (!xml_obj.attribute("stock_id").empty())
     {
@@ -699,7 +759,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
             bitmap << "wxART_OTHER";
         bitmap << ";[-1,-1]";
 
-        if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
+        if (auto prop = node->get_prop_ptr(node_prop); prop)
         {
             prop->set_value(bitmap);
         }

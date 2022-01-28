@@ -952,7 +952,7 @@ ttlib::cstr GenFontColourSettings(Node* node)
             ttlib::cstr info_code("\n\tfont_info.");
 
             if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-                info_code << "FaceName(" << fontprop.GetFaceName().wx_str() << ").";
+                info_code << "FaceName(" << GenerateQuotedString(ttlib::cstr() << fontprop.GetFaceName().wx_str()) << ").";
             if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
                 info_code << "Family(" << font_family_pairs.GetValue(fontprop.GetFamily()) << ").";
             if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)
@@ -1077,6 +1077,10 @@ ttlib::cstr GenerateNewAssignment(Node* node, bool use_generic)
         ttlib::cstr class_name = node->DeclName();
         class_name.Replace("wx", "wxGeneric");
         code << class_name;
+    }
+    else if (node->isGen(gen_BookPage))
+    {
+        code << "wxPanel";
     }
     else
     {

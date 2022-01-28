@@ -1414,11 +1414,18 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                          << "), ";
                     code << "wxGBSpan(" << node->prop_as_string(prop_rowspan) << ", " << node->prop_as_string(prop_colspan)
                          << "), ";
-                    if (node->prop_as_string(prop_borders).empty())
-                        code << "0";
-                    else
-                        code << node->prop_as_string(prop_borders);
-                    code << ", " << node->prop_as_string(prop_border_size) << ");";
+                    ttlib::cstr flags(node->prop_as_string(prop_borders));
+                    if (node->prop_as_string(prop_flags).size())
+                    {
+                        if (flags.size())
+                            flags << '|';
+                        flags << node->prop_as_string(prop_flags);
+                    }
+
+                    if (flags.empty())
+                        flags << '0';
+
+                    code << flags << ", " << node->prop_as_string(prop_border_size) << ");";
                     code.Replace(", 0, 0);", ");");
                 }
                 else

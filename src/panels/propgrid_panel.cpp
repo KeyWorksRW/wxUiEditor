@@ -443,6 +443,13 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().GetProjectPath());
         }
+        else if (prop->isProp(prop_derived_header))
+        {
+            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived Header");
+            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().GetProjectPath());
+        }
         else if (prop->isProp(prop_local_pch_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Precompiled header");

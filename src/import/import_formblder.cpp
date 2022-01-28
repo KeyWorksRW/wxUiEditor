@@ -16,6 +16,7 @@
 #include "import_formblder.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "font_prop.h"       // FontProperty class
 #include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
@@ -256,7 +257,21 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     if (gen_name == gen_unknown)
     {
         if (class_name.contains("bookpage"))
+        {
             gen_name = gen_oldbookpage;
+        }
+        else if (class_name.is_sameprefix("ribbon"))
+        {
+            if (class_name.contains("Tool"))
+            {
+                gen_name = gen_ribbonTool;
+            }
+            else
+            {
+                gen_name = gen_ribbonButton;
+            }
+        }
+
         else
         {
             m_errors.emplace(ttlib::cstr() << class_name << " is not supported in wxUiEditor");
@@ -264,7 +279,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
         }
     }
 
-    if (gen_name == gen_PanelForm)
+    if (gen_name == gen_wxPanel)
     {
         if (!parent)
         {
@@ -325,6 +340,25 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     if (m_class_decoration.size() && newobject->IsForm())
         newobject->prop_set_value(prop_class_decoration, m_class_decoration);
 
+    if (gen_name == gen_ribbonButton || gen_name == gen_ribbonTool)
+    {
+        // wxFormBuilder uses a control for each type (8 total controls). wxUiEditor only uses 2 controls, and instead
+        // uses prop_kind to specify the type of button to use.
+
+        if (class_name.contains("Dropdown"))
+        {
+            newobject->prop_set_value(prop_kind, "wxRIBBON_BUTTON_DROPDOWN");
+        }
+        else if (class_name.contains("Hybrid"))
+        {
+            newobject->prop_set_value(prop_kind, "wxRIBBON_BUTTON_HYBRID");
+        }
+        else if (class_name.contains("Toggle"))
+        {
+            newobject->prop_set_value(prop_kind, "wxRIBBON_BUTTON_TOGGLE");
+        }
+    }
+
     for (auto xml_prop = xml_obj.child("property"); xml_prop; xml_prop = xml_prop.next_sibling("property"))
     {
         if (auto prop_name = xml_prop.attribute("name").as_cview(); prop_name.size())
@@ -335,6 +369,11 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             if (prop_ptr)
             {
                 if (wxue_prop == prop_bitmap)
+                {
+                    if (!xml_prop.text().empty())
+                        BitmapProperty(xml_prop, prop_ptr);
+                }
+                else if (wxue_prop == prop_inactive_bitmap)
                 {
                     if (!xml_prop.text().empty())
                         BitmapProperty(xml_prop, prop_ptr);
@@ -367,46 +406,49 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                         }
                     }
                 }
-                else
+                else if (wxue_prop == prop_animation)
+                {
+                    if (!xml_prop.text().empty())
+                    {
+                        ttlib::cstr animation("Embed;");
+                        animation << xml_prop.text().as_cview() << ";[-1,-1]";
+                        prop_ptr->set_value(animation);
+                    }
+                }
+                else if (prop_ptr->isProp(prop_style))
+                {
+                    ProcessStyle(xml_prop, newobject.get(), prop_ptr);
+                }
+                else if (wxue_prop == prop_font)
+                {
+                    if (!xml_prop.text().empty())
+                    {
+                        FontProperty font_prop;
+                        font_prop.Convert(xml_prop.text().as_string());
+                        prop_ptr->set_value(font_prop.as_string());
+                    }
+                }
+                else if (wxue_prop == prop_window_style)
                 {
                     // wxFormBuilder uses older style names from wxWidgets 2.x. Rename them to the 3.x names, and remove
                     // the ones that are no longer used.
                     auto value = xml_prop.text().as_cstr();
-                    if (value.is_sameas("wxST_SIZEGRIP"))
-                        value = "wxSTB_SIZEGRIP";
-                    else if (value.contains("wxTE_CENTRE"))
-                        value.Replace("wxTE_CENTRE", "wxTE_CENTER");
-                    else if (value.contains("wxSIMPLE_BORDER"))
+                    if (value.contains("wxSIMPLE_BORDER"))
                         value.Replace("wxSIMPLE_BORDER", "wxBORDER_SIMPLE");
-                    else if (value.contains("wxSUNKEN_BORDER"))
-                        value.Replace("wxSUNKEN_BORDER", "wxBORDER_SUNKEN");
                     else if (value.contains("wxRAISED_BORDER"))
                         value.Replace("wxRAISED_BORDER", "wxBORDER_RAISED");
                     else if (value.contains("wxSTATIC_BORDER"))
                         value.Replace("wxSTATIC_BORDER", "wxBORDER_STATIC");
                     else if (value.contains("wxNO_BORDER"))
                         value.Replace("wxNO_BORDER", "wxBORDER_NONE");
-                    else if (value.contains("wxNO_BORDER"))
-                        value.Replace("wxNO_BORDER", "wxBORDER_NONE");
                     else if (value.contains("wxDOUBLE_BORDER"))
                         value.Replace("wxDOUBLE_BORDER", "");  // this style is obsolete
-                    else if (value.contains("wxBU_AUTODRAW"))
-                        value.Replace("wxBU_AUTODRAW", "");  // this style is obsolete
-                    else if (value.contains("wxRA_USE_CHECKBOX"))
-                        value.Replace("wxRA_USE_CHECKBOX", "");  // this style is obsolete
-                    else if (value.contains("wxRB_USE_CHECKBOX"))
-                        value.Replace("wxRB_USE_CHECKBOX", "");  // this style is obsolete
-                    else if (value.contains("wxNB_FLAT"))
-                        value.Replace("wxNB_FLAT", "");  // this style is obsolete
 
-                    if (prop_ptr->isProp(prop_style))
-                    {
-                        ProcessStyle(xml_prop, newobject.get(), prop_ptr);
-                    }
-                    else
-                    {
-                        prop_ptr->set_value(value);
-                    }
+                    prop_ptr->set_value(value);
+                }
+                else if (!xml_prop.text().empty())
+                {
+                    prop_ptr->set_value(xml_prop.text().as_string());
                 }
                 continue;
             }
@@ -419,12 +461,24 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 {
                     prop_ptr = newobject->get_prop_ptr(prop_class_name);
                 }
+                else if (newobject->isGen(gen_ribbonTool) || newobject->isGen(gen_ribbonButton) ||
+                         newobject->isGen(gen_ribbonGalleryItem))
+                {
+                    // FormBuilder has a property for this but doesn't use it, nor do we.
+                    continue;
+                }
+
                 else
                 {
                     prop_ptr = newobject->get_prop_ptr(prop_var_name);
                 }
 
-                prop_ptr->set_value(xml_prop.text().as_cview());
+                ASSERT(prop_ptr);
+
+                if (prop_ptr)
+                {
+                    prop_ptr->set_value(xml_prop.text().as_cview());
+                }
                 continue;
             }
             else if (prop_name.is_sameas("declaration"))
@@ -850,7 +904,9 @@ void FormBuilder::ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_n
     {
         if (xml_prop.text().as_cview().size())
         {
-            if (xml_prop.text().as_cview().is_sameas("wxWS_EX_VALIDATE_RECURSIVELY"))
+            if (prop_name.is_sameas("hidden") && newobject->isGen(gen_ribbonTool))
+                return;
+            else if (xml_prop.text().as_cview().is_sameas("wxWS_EX_VALIDATE_RECURSIVELY"))
                 return;
             MSG_INFO(ttlib::cstr() << prop_name << "(" << xml_prop.text().as_string() << ") property in " << class_name
                                    << " class not supported");
@@ -897,10 +953,15 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
             prop->set_value(bitmap);
         }
     }
-    else if (org_value.contains("Load From Art"))
+    else if (org_value.contains("Load From Art") && !xml_prop.text().as_cview().is_sameprefix("Load From Art Provider; ;"))
     {
         ttlib::cstr value(xml_prop.text().as_cview());
-        value.Replace("Load From Art Provider", "Art", false, tt::CASE::either);
+        value.Replace("Load From Art Provider; ", "Art;", false, tt::CASE::either);
+        value.Replace("; ", "|", false, tt::CASE::either);
+        if (value.back() == '|')
+        {
+            value << "wxART_OTHER";
+        }
         value << ";[-1,-1]";
         prop->set_value(value);
     }
@@ -914,148 +975,6 @@ inline bool is_printable(unsigned char ch)
 inline bool is_numeric(unsigned char ch)
 {
     return (ch >= '0' && ch <= '9');
-}
-
-// BUGBUG: [KeyWorks - 12-08-2021] This is almost identical to ImportXML::HandleSizerItemProperty() -- the two functions need
-// to be sychronized, and this one removed.
-
-void FormBuilder::ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object, Node* parent, NodeProperty* prop)
-{
-    auto flag_value = xml_prop.text().as_cview();
-
-    ttlib::cstr border_value;
-    if (flag_value.contains("wxALL"))
-        border_value = "wxALL";
-    else
-    {
-        if (flag_value.contains("wxLEFT"))
-        {
-            if (border_value.size())
-                border_value << '|';
-            border_value << "wxLEFT";
-        }
-        if (flag_value.contains("wxRIGHT"))
-        {
-            if (border_value.size())
-                border_value << '|';
-            border_value << "wxRIGHT";
-        }
-        if (flag_value.contains("wxTOP"))
-        {
-            if (border_value.size())
-                border_value << '|';
-            border_value << "wxTOP";
-        }
-        if (flag_value.contains("wxBOTTOM"))
-        {
-            if (border_value.size())
-                border_value << '|';
-            border_value << "wxBOTTOM";
-        }
-    }
-    if (border_value.size())
-    {
-        object->prop_set_value(prop_borders, border_value);
-    }
-
-    ttlib::cstr align_value;
-    if (flag_value.contains("wxALIGN_LEFT"))
-    {
-        align_value << "wxALIGN_LEFT";
-    }
-    if (flag_value.contains("wxALIGN_TOP"))
-    {
-        if (align_value.size())
-            align_value << '|';
-        align_value << "wxALIGN_TOP";
-    }
-    if (flag_value.contains("wxALIGN_RIGHT"))
-    {
-        if (align_value.size())
-            align_value << '|';
-        align_value << "wxALIGN_RIGHT";
-    }
-    if (flag_value.contains("wxALIGN_BOTTOM"))
-    {
-        if (align_value.size())
-            align_value << '|';
-        align_value << "wxALIGN_BOTTOM";
-    }
-
-    if (parent && (flag_value.contains("wxALIGN_CENTER") || flag_value.contains("wxALIGN_CENTRE")))
-    {
-        // wxFormBuilder allows the user to add alignment flags that conflict with a
-        // parent's orientation flags. We check for that here, and only add the flag if it
-        // is valid.
-        bool isIgnored = false;
-        if (flag_value.contains("wxALIGN_CENTER_VERTICAL") || flag_value.contains("wxALIGN_CENTRE_VERTICAL"))
-        {
-            if (!parent->IsSizer() || !parent->prop_as_string(prop_orientation).is_sameas("wxVERTICAL"))
-            {
-                if (align_value.size())
-                    align_value << '|';
-                align_value << "wxALIGN_CENTER_VERTICAL";
-            }
-            else
-                isIgnored = true;
-        }
-        else if (flag_value.contains("wxALIGN_CENTER_HORIZONTAL") || flag_value.contains("wxALIGN_CENTRE_HORIZONTAL"))
-        {
-            if (!parent->IsSizer() || !parent->prop_as_string(prop_orientation).is_sameas("wxHORIZONTAL"))
-            {
-                if (align_value.size())
-                    align_value << '|';
-                align_value << "wxALIGN_CENTER_HORIZONTAL";
-            }
-            else
-                isIgnored = true;
-        }
-
-        // Because we use contains(), all we know is that a CENTER flag was used, but not which one.
-        // If we get here and no CENTER flag has been added, then assume that "wxALIGN_CENTER" or
-        // "wxALIGN_CENTRE" was specified.
-
-        if (!isIgnored && !align_value.contains("wxALIGN_CENTER"))
-        {
-            if (align_value.size())
-                align_value << '|';
-            align_value << "wxALIGN_CENTER";
-        }
-    }
-    if (align_value.size())
-    {
-        prop = object->get_prop_ptr(prop_alignment);
-        prop->set_value(align_value);
-    }
-
-    ttlib::cstr flags_value;
-    if (flag_value.contains("wxEXPAND"))
-    {
-        flags_value << "wxEXPAND";
-    }
-    if (flag_value.contains("wxSHAPED"))
-    {
-        if (flags_value.size())
-            flags_value << '|';
-        flags_value << "wxSHAPED";
-    }
-    if (flag_value.contains("wxFIXED_MINSIZE"))
-    {
-        if (flags_value.size())
-            flags_value << '|';
-        flags_value << "wxFIXED_MINSIZE";
-    }
-    if (flag_value.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
-    {
-        if (flags_value.size())
-            flags_value << '|';
-        flags_value << "wxRESERVE_SPACE_EVEN_IF_HIDDEN";
-    }
-    if (flags_value.size())
-    {
-        prop = object->get_prop_ptr(prop_flags);
-        prop->set_value(flags_value);
-    }
 }
 
 void FormBuilder::ConvertNameSpaceProp(NodeProperty* prop, ttlib::cview org_names)

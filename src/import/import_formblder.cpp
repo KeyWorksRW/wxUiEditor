@@ -257,7 +257,21 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     if (gen_name == gen_unknown)
     {
         if (class_name.contains("bookpage"))
+        {
             gen_name = gen_oldbookpage;
+        }
+        else if (class_name.is_sameprefix("ribbon"))
+        {
+            if (class_name.contains("Tool"))
+            {
+                gen_name = gen_ribbonTool;
+            }
+            else
+            {
+                gen_name = gen_ribbonButton;
+            }
+        }
+
         else
         {
             m_errors.emplace(ttlib::cstr() << class_name << " is not supported in wxUiEditor");
@@ -325,6 +339,25 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
     }
     if (m_class_decoration.size() && newobject->IsForm())
         newobject->prop_set_value(prop_class_decoration, m_class_decoration);
+
+    if (gen_name == gen_ribbonButton || gen_name == gen_ribbonTool)
+    {
+        // wxFormBuilder uses a control for each type (8 total controls). wxUiEditor only uses 2 controls, and instead
+        // uses prop_kind to specify the type of button to use.
+
+        if (class_name.contains("Dropdown"))
+        {
+            newobject->prop_set_value(prop_kind, "wxRIBBON_BUTTON_DROPDOWN");
+        }
+        else if (class_name.contains("Hybrid"))
+        {
+            newobject->prop_set_value(prop_kind, "wxRIBBON_BUTTON_HYBRID");
+        }
+        else if (class_name.contains("Toggle"))
+        {
+            newobject->prop_set_value(prop_kind, "wxRIBBON_BUTTON_TOGGLE");
+        }
+    }
 
     for (auto xml_prop = xml_obj.child("property"); xml_prop; xml_prop = xml_prop.next_sibling("property"))
     {

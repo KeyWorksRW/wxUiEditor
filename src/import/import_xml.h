@@ -38,7 +38,7 @@ protected:
     void ProcessAttributes(const pugi::xml_node& xml_obj, Node* node);
     void ProcessContent(const pugi::xml_node& xml_obj, Node* node);
     void ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* node);
-    void ProcessBitmap(const pugi::xml_node& xml_obj, Node* node);
+    void ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum::PropName node_prop = prop_bitmap);
     void ProcessHandler(const pugi::xml_node& xml_obj, Node* node);
     void ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Node* parent = nullptr);
 

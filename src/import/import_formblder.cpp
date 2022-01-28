@@ -373,6 +373,11 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     if (!xml_prop.text().empty())
                         BitmapProperty(xml_prop, prop_ptr);
                 }
+                else if (wxue_prop == prop_inactive_bitmap)
+                {
+                    if (!xml_prop.text().empty())
+                        BitmapProperty(xml_prop, prop_ptr);
+                }
                 else if (wxue_prop == prop_view_whitespace)
                 {
                     // There are 4 possible values, but wxFormBuilder only supports this as a bool

@@ -517,6 +517,11 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             ProcessBitmap(iter, node);
             continue;
         }
+        else if (wxue_prop == prop_inactive_bitmap)
+        {
+            ProcessBitmap(iter, node, prop_inactive_bitmap);
+            continue;
+        }
         else if (wxue_prop == prop_contents)
         {
             ProcessContent(iter, node);
@@ -742,7 +747,7 @@ void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node
     }
 }
 
-void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
+void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node, GenEnum::PropName node_prop)
 {
     if (!xml_obj.attribute("stock_id").empty())
     {
@@ -754,7 +759,7 @@ void ImportXML::ProcessBitmap(const pugi::xml_node& xml_obj, Node* node)
             bitmap << "wxART_OTHER";
         bitmap << ";[-1,-1]";
 
-        if (auto prop = node->get_prop_ptr(prop_bitmap); prop)
+        if (auto prop = node->get_prop_ptr(node_prop); prop)
         {
             prop->set_value(bitmap);
         }

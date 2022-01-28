@@ -68,10 +68,8 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
         }
     }
 
-    if (border_value.size())
-    {
-        node->prop_set_value(prop_borders, border_value);
-    }
+    // Always set this even if it is empty
+    node->prop_set_value(prop_borders, border_value);
 
     bool is_VerticalSizer = false;
     bool is_HorizontalSizer = false;

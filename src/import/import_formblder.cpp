@@ -16,6 +16,7 @@
 #include "import_formblder.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "font_prop.h"       // FontProperty class
 #include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
@@ -376,7 +377,20 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                         prop_ptr->set_value(animation);
                     }
                 }
-                else
+                else if (prop_ptr->isProp(prop_style))
+                {
+                    ProcessStyle(xml_prop, newobject.get(), prop_ptr);
+                }
+                else if (wxue_prop == prop_font)
+                {
+                    if (!xml_prop.text().empty())
+                    {
+                        FontProperty font_prop;
+                        font_prop.Convert(xml_prop.text().as_string());
+                        prop_ptr->set_value(font_prop.as_string());
+                    }
+                }
+                else if (!xml_prop.text().empty())
                 {
                     // wxFormBuilder uses older style names from wxWidgets 2.x. Rename them to the 3.x names, and remove
                     // the ones that are no longer used.
@@ -408,14 +422,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                     else if (value.contains("wxNB_FLAT"))
                         value.Replace("wxNB_FLAT", "");  // this style is obsolete
 
-                    if (prop_ptr->isProp(prop_style))
-                    {
-                        ProcessStyle(xml_prop, newobject.get(), prop_ptr);
-                    }
-                    else
-                    {
-                        prop_ptr->set_value(value);
-                    }
+                    prop_ptr->set_value(value);
                 }
                 continue;
             }

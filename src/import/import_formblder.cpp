@@ -367,6 +367,15 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                         }
                     }
                 }
+                else if (wxue_prop == prop_animation)
+                {
+                    if (!xml_prop.text().empty())
+                    {
+                        ttlib::cstr animation("Embed;");
+                        animation << xml_prop.text().as_cview() << ";[-1,-1]";
+                        prop_ptr->set_value(animation);
+                    }
+                }
                 else
                 {
                     // wxFormBuilder uses older style names from wxWidgets 2.x. Rename them to the 3.x names, and remove

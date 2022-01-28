@@ -952,7 +952,7 @@ ttlib::cstr GenFontColourSettings(Node* node)
             ttlib::cstr info_code("\n\tfont_info.");
 
             if (fontprop.GetFaceName().size() && fontprop.GetFaceName() != "default")
-                info_code << "FaceName(" << fontprop.GetFaceName().wx_str() << ").";
+                info_code << "FaceName(" << GenerateQuotedString(ttlib::cstr() << fontprop.GetFaceName().wx_str()) << ").";
             if (fontprop.GetFamily() != wxFONTFAMILY_DEFAULT)
                 info_code << "Family(" << font_family_pairs.GetValue(fontprop.GetFamily()) << ").";
             if (fontprop.GetStyle() != wxFONTSTYLE_NORMAL)

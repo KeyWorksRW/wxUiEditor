@@ -35,7 +35,6 @@ protected:
     void ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_name, ttlib::cview class_name, Node* newobject);
     void ProcessStyleProperty(pugi::xml_node& xml_prop, ttlib::cview class_name, Node* newobject);
 
-    void ConvertSizerProperties(pugi::xml_node& xml_prop, Node* object, Node* parent, NodeProperty* prop);
     void BitmapProperty(pugi::xml_node& xml_obj, NodeProperty* prop);
     void CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node);
 

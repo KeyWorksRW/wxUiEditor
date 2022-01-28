@@ -334,7 +334,63 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else
     {
-        prop->set_value(xml_prop.text().as_cview());
+        auto view_value = xml_prop.text().as_cview();
+        if (view_value.contains("wxST_SIZEGRIP"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxST_SIZEGRIP", "wxSTB_SIZEGRIP");
+            prop->set_value(value);
+        }
+        else if (view_value.contains("wxTE_CENTRE"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxTE_CENTRE", "wxTE_CENTER");
+            prop->set_value(value);
+        }
+
+        // Eliminate obsolete styles
+
+        else if (view_value.contains("wxBU_AUTODRAW"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxBU_AUTODRAW", "");  // this style is obsolete
+            if (value.size())
+            {
+                prop->set_value(value);
+            }
+        }
+        else if (view_value.contains("wxRA_USE_CHECKBOX"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxRA_USE_CHECKBOX", "");  // this style is obsolete
+            if (value.size())
+            {
+                prop->set_value(value);
+            }
+        }
+        else if (view_value.contains("wxRB_USE_CHECKBOX"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxRB_USE_CHECKBOX", "");  // this style is obsolete
+            if (value.size())
+            {
+                prop->set_value(value);
+            }
+        }
+        else if (view_value.contains("wxNB_FLAT"))
+        {
+            auto value = xml_prop.text().as_cstr();
+            value.Replace("wxNB_FLAT", "");  // this style is obsolete
+            if (value.size())
+            {
+                prop->set_value(value);
+            }
+        }
+
+        else
+        {
+            prop->set_value(view_value);
+        }
     }
 }
 

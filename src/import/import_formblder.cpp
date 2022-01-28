@@ -390,39 +390,27 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                         prop_ptr->set_value(font_prop.as_string());
                     }
                 }
-                else if (!xml_prop.text().empty())
+                else if (wxue_prop == prop_window_style)
                 {
                     // wxFormBuilder uses older style names from wxWidgets 2.x. Rename them to the 3.x names, and remove
                     // the ones that are no longer used.
                     auto value = xml_prop.text().as_cstr();
-                    if (value.is_sameas("wxST_SIZEGRIP"))
-                        value = "wxSTB_SIZEGRIP";
-                    else if (value.contains("wxTE_CENTRE"))
-                        value.Replace("wxTE_CENTRE", "wxTE_CENTER");
-                    else if (value.contains("wxSIMPLE_BORDER"))
+                    if (value.contains("wxSIMPLE_BORDER"))
                         value.Replace("wxSIMPLE_BORDER", "wxBORDER_SIMPLE");
-                    else if (value.contains("wxSUNKEN_BORDER"))
-                        value.Replace("wxSUNKEN_BORDER", "wxBORDER_SUNKEN");
                     else if (value.contains("wxRAISED_BORDER"))
                         value.Replace("wxRAISED_BORDER", "wxBORDER_RAISED");
                     else if (value.contains("wxSTATIC_BORDER"))
                         value.Replace("wxSTATIC_BORDER", "wxBORDER_STATIC");
                     else if (value.contains("wxNO_BORDER"))
                         value.Replace("wxNO_BORDER", "wxBORDER_NONE");
-                    else if (value.contains("wxNO_BORDER"))
-                        value.Replace("wxNO_BORDER", "wxBORDER_NONE");
                     else if (value.contains("wxDOUBLE_BORDER"))
                         value.Replace("wxDOUBLE_BORDER", "");  // this style is obsolete
-                    else if (value.contains("wxBU_AUTODRAW"))
-                        value.Replace("wxBU_AUTODRAW", "");  // this style is obsolete
-                    else if (value.contains("wxRA_USE_CHECKBOX"))
-                        value.Replace("wxRA_USE_CHECKBOX", "");  // this style is obsolete
-                    else if (value.contains("wxRB_USE_CHECKBOX"))
-                        value.Replace("wxRB_USE_CHECKBOX", "");  // this style is obsolete
-                    else if (value.contains("wxNB_FLAT"))
-                        value.Replace("wxNB_FLAT", "");  // this style is obsolete
 
                     prop_ptr->set_value(value);
+                }
+                else if (!xml_prop.text().empty())
+                {
+                    prop_ptr->set_value(xml_prop.text().as_string());
                 }
                 continue;
             }

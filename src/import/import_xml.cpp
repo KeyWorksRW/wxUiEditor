@@ -140,6 +140,7 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
             align_value << "wxALIGN_CENTER";
         }
     }
+
     if (align_value.size())
     {
         node->prop_set_value(prop_alignment, align_value);
@@ -176,10 +177,10 @@ void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* no
             flags_value << '|';
         flags_value << "wxSHAPED|wxFIXED_MINSIZE";
     }
+
     if (flags_value.size())
     {
-        auto prop = node->get_prop_ptr(prop_flags);
-        prop->set_value(flags_value);
+        node->prop_set_value(prop_flags, flags_value);
     }
 }
 

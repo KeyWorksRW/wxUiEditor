@@ -897,7 +897,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
             prop->set_value(bitmap);
         }
     }
-    else if (org_value.contains("Load From Art"))
+    else if (org_value.contains("Load From Art") && !xml_prop.text().as_cview().is_sameprefix("Load From Art Provider; ;"))
     {
         ttlib::cstr value(xml_prop.text().as_cview());
         value.Replace("Load From Art Provider; ", "Art;", false, tt::CASE::either);

@@ -13,7 +13,15 @@
 class CodeDisplayBase : public wxPanel
 {
 public:
-    CodeDisplayBase(wxWindow* parent, wxWindowID id = wxID_ANY);
+    CodeDisplayBase() {}
+    CodeDisplayBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+        long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr)
+    {
+        Create(parent, id, pos, size, style, name);
+    }
+
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+        long style = wxTAB_TRAVERSAL, const wxString &name = wxPanelNameStr);
 
 protected:
 

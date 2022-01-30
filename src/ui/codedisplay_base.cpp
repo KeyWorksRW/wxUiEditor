@@ -8,9 +8,10 @@
 
 #include "codedisplay_base.h"
 
-CodeDisplayBase::CodeDisplayBase(wxWindow* parent, wxWindowID id) : wxPanel()
+bool CodeDisplayBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, id);
+    if (!wxPanel::Create(parent, id, pos, size, style, name))
+        return false;
 
     auto parent_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -40,4 +41,6 @@ CodeDisplayBase::CodeDisplayBase(wxWindow* parent, wxWindowID id) : wxPanel()
     parent_sizer->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);
+
+    return true;
 }

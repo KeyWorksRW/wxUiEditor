@@ -37,9 +37,10 @@ namespace wxue_img
     extern const unsigned char wxStaticBoxSizer_png[199];
 }
 
-RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
+bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
-    Create(parent, id);
+    if (!wxPanel::Create(parent, id, pos, size, style, name))
+        return false;
 
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
@@ -387,6 +388,8 @@ RibbonPanelBase::RibbonPanelBase(wxWindow* parent, wxWindowID id) : wxPanel()
     other_bar_editors->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     other_bar_ctrls->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
     other_bar_html->Bind(wxEVT_RIBBONTOOLBAR_CLICKED, &RibbonPanelBase::OnToolClick, this);
+
+    return true;
 }
 
 namespace wxue_img

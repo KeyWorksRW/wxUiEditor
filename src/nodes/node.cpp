@@ -557,12 +557,26 @@ Node* Node::CreateChildNode(GenName name)
 
     if (!new_node)
     {
-        if ((IsForm() || IsContainer()) && GetChildCount() && GetChild(0)->isGen(gen_wxBoxSizer))
+        if ((IsForm() || IsContainer()) && GetChildCount())
         {
-            new_node = g_NodeCreator.CreateNode(name, GetChild(0));
-            if (!new_node)
-                return nullptr;
-            parent = GetChild(0);
+            if (GetChild(0)->gen_type() == type_sizer || GetChild(0)->gen_type() == type_gbsizer)
+            {
+                new_node = g_NodeCreator.CreateNode(name, GetChild(0));
+                if (!new_node)
+                    return nullptr;
+                parent = GetChild(0);
+            }
+
+            if (parent->gen_type() == type_gbsizer)
+            {
+                GridBag grid_bag(parent);
+                if (grid_bag.InsertNode(parent, new_node.get()))
+                    return new_node.get();
+                else
+                {
+                    return nullptr;
+                }
+            }
         }
     }
 

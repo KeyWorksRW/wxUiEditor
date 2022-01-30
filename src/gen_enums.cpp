@@ -277,6 +277,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_persist, "persist" },
     { prop_persist_name, "persist_name" },
     { prop_pin_button, "pin_button" },
+    { prop_play, "play" },
     { prop_pos, "pos" },
     { prop_position, "position" },
     { prop_pressed, "pressed" },

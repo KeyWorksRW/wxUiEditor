@@ -117,6 +117,20 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::cstr> AnimationGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    if (node->prop_as_bool(prop_play))
+    {
+        ttlib::cstr code;
+        code << node->get_node_name() << "->Play();";
+        return code;
+    }
+    else
+    {
+        return {};
+    }
+}
+
 bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);

@@ -84,6 +84,7 @@ public:
     auto GetChildCount() const { return m_children.size(); }
 
     bool IsChildAllowed(Node* child);
+    bool IsChildAllowed(NodeDeclaration* child);
     bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
 
     auto gen_type() const { return m_declaration->gen_type(); }

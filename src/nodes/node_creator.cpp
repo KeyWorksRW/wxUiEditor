@@ -83,6 +83,14 @@ size_t NodeCreator::CountChildrenWithSameType(Node* parent, GenType type)
     {
         if (type == parent->GetChild(i)->gen_type())
             ++count;
+
+        // treat type-sizer and type_gbsizer as the same since forms and contains can only have one of them as the top level
+        // sizer.
+
+        else if (type == type_sizer && parent->GetChild(i)->gen_type() == type_gbsizer)
+            ++count;
+        else if (type == type_gbsizer && parent->GetChild(i)->gen_type() == type_sizer)
+            ++count;
     }
 
     return count;
@@ -165,15 +173,23 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
     {
         if (node_decl->isType(type_sizer))
         {
-            node = NewNode(node_decl);
-            if (name == gen_VerticalBoxSizer)
+            auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
+            if (count < static_cast<size_t>(max_children))
             {
-                node->prop_set_value(prop_orientation, "wxVERTICAL");
+                node = NewNode(node_decl);
+                if (name == gen_VerticalBoxSizer)
+                {
+                    node->prop_set_value(prop_orientation, "wxVERTICAL");
+                }
             }
         }
         else if (node_decl->isType(type_gbsizer))
         {
-            node = NewNode(node_decl);
+            auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
+            if (count < static_cast<size_t>(max_children))
+            {
+                node = NewNode(node_decl);
+            }
         }
         else if (parent->isGen(gen_wxSplitterWindow))
         {

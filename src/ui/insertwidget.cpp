@@ -7,18 +7,24 @@
 
 #include "insertwidget_base.h"  // auto-generated: insertwidget_base.h and insertwidget_base.cpp
 
+#include "mainframe.h"     // MainFrame -- Main window frame
+#include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
 
 void InsertWidget::OnInit(wxInitDialogEvent& WXUNUSED(event))
 {
     m_stdBtn->GetAffirmativeButton()->Disable();
     m_text_name->SetFocus();
+    wxCommandEvent dummy;
+    OnNameText(dummy);
 }
 
 void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
 {
     ttlib::cstr name = m_text_name->GetValue().utf8_str().data();
     m_listbox->Clear();
+    auto node = wxGetFrame().GetSelectedNode();
+
     for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
     {
         if (!iter)
@@ -27,57 +33,16 @@ void InsertWidget::OnNameText(wxCommandEvent& WXUNUSED(event))
             continue;
         }
 
-#if !defined(_DEBUG)
-        // In a DEBUG build, we show all components, including the abstract ones -- including some that are only used for
-        // importing a wxFormBuilder project and won't work in our own projects. So don't be surprised if something shows up
-        // in the list that doesn't work!
-
-        if (!iter->DeclName().is_sameprefix("wx"))
+        if (!node || !node->IsChildAllowed(iter))
+        {
             continue;
-#endif  // not defined(_DEBUG)
+        }
 
-        if (iter->DeclName().contains(name, tt::CASE::either))
+        if (name.empty() || iter->DeclName().contains(name, tt::CASE::either))
+        {
             m_listbox->AppendString(iter->DeclName().wx_str());
+        }
     }
-
-#if !defined(_DEBUG)
-    // There are some generators that we allow in a Release build even though they don't have a 'wx' prefix
-
-    // The various else clauses are to prevent adding the same name more than once -- e.g., static or sizer appends the same
-    // string, so the else {} prevents adding them twice.
-
-    if (name.contains("box", tt::CASE::either))
-    {
-        m_listbox->AppendString("VerticalBoxSizer");
-        m_listbox->AppendString("Check3State");
-    }
-    else if (name.contains("static", tt::CASE::either))
-    {
-        m_listbox->AppendString("StaticCheckboxBoxSizer");
-        m_listbox->AppendString("StaticRadioBtnBoxSizer");
-    }
-    else if (name.contains("sizer", tt::CASE::either))
-    {
-        m_listbox->AppendString("StaticCheckboxBoxSizer");
-        m_listbox->AppendString("StaticRadioBtnBoxSizer");
-    }
-    else if (name.contains("check", tt::CASE::either))
-    {
-        m_listbox->AppendString("Check3State");
-    }
-    else if (name.contains("custom", tt::CASE::either))
-    {
-        m_listbox->AppendString("CustomControl");
-    }
-    else if (name.contains("book", tt::CASE::either))
-    {
-        m_listbox->AppendString("BookPage");
-    }
-    else if (name.contains("page", tt::CASE::either))
-    {
-        m_listbox->AppendString("BookPage");
-    }
-#endif  // not defined(_DEBUG)
 
     if (m_listbox->GetCount() > 0)
     {

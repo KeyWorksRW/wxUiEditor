@@ -184,12 +184,11 @@ bool Node::AddChild(size_t idx, Node* node)
     return false;
 }
 
-bool Node::IsChildAllowed(Node* child)
+bool Node::IsChildAllowed(NodeDeclaration* child)
 {
     ASSERT(child);
 
-    auto child_type = child->gen_type();
-    auto max_children = m_declaration->GetAllowableChildren(child_type);
+    auto max_children = m_declaration->GetAllowableChildren(child->gen_type());
 
     if (max_children == child_count::none)
         return false;
@@ -206,7 +205,15 @@ bool Node::IsChildAllowed(Node* child)
     int_t children = 0;
     for (size_t i = 0; i < m_children.size() && children <= max_children; ++i)
     {
-        if (GetChild(i)->gen_type() == child_type)
+        if (GetChild(i)->gen_type() == child->gen_type())
+            ++children;
+
+        // treat type-sizer and type_gbsizer as the same since forms and contains can only have one of them as the top level
+        // sizer.
+
+        else if (child->gen_type() == type_sizer && GetChild(i)->gen_type() == type_gbsizer)
+            ++children;
+        else if (child->gen_type() == type_gbsizer && GetChild(i)->gen_type() == type_sizer)
             ++children;
     }
 
@@ -214,6 +221,13 @@ bool Node::IsChildAllowed(Node* child)
         return false;
 
     return true;
+}
+
+bool Node::IsChildAllowed(Node* child)
+{
+    ASSERT(child);
+
+    return IsChildAllowed(child->GetNodeDeclaration());
 }
 
 void Node::RemoveChild(NodeSharedPtr node)
@@ -543,12 +557,26 @@ Node* Node::CreateChildNode(GenName name)
 
     if (!new_node)
     {
-        if ((IsForm() || IsContainer()) && GetChildCount() && GetChild(0)->isGen(gen_wxBoxSizer))
+        if ((IsForm() || IsContainer()) && GetChildCount())
         {
-            new_node = g_NodeCreator.CreateNode(name, GetChild(0));
-            if (!new_node)
-                return nullptr;
-            parent = GetChild(0);
+            if (GetChild(0)->gen_type() == type_sizer || GetChild(0)->gen_type() == type_gbsizer)
+            {
+                new_node = g_NodeCreator.CreateNode(name, GetChild(0));
+                if (!new_node)
+                    return nullptr;
+                parent = GetChild(0);
+            }
+
+            if (parent->gen_type() == type_gbsizer)
+            {
+                GridBag grid_bag(parent);
+                if (grid_bag.InsertNode(parent, new_node.get()))
+                    return new_node.get();
+                else
+                {
+                    return nullptr;
+                }
+            }
         }
     }
 

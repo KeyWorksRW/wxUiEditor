@@ -290,7 +290,10 @@ void ChangeSizerType::Change()
     m_parent->RemoveChild(m_old_node);
     m_old_node->SetParent(NodeSharedPtr());
     m_parent->Adopt(m_node);
-    m_parent->FindParentForm()->FixDuplicateNodeNames();
+    if (auto parent_form = m_parent->FindParentForm(); parent_form)
+    {
+        parent_form->FixDuplicateNodeNames();
+    }
     m_parent->ChangeChildPosition(m_node, pos);
 
     wxGetFrame().FireDeletedEvent(m_old_node.get());

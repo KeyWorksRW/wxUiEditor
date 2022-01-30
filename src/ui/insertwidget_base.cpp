@@ -24,7 +24,16 @@ bool InsertWidget::Create(wxWindow *parent, wxWindowID id, const wxString &title
     box_sizer_2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
     m_text_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    m_text_name->SetHint("type a portion of the name to filter the list");
+    m_text_name->SetToolTip("Use Up/Down arrows to change list selection");
     box_sizer_2->Add(m_text_name, wxSizerFlags(1).Border(wxALL));
+
+    auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
+
+    auto staticText_2 = new wxStaticText(this, wxID_ANY, "Only widgets that can be a child of the currently selected widget are shown. If the list is empty, no children can be added.");
+    staticText_2->Wrap(300);
+    box_sizer_4->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));

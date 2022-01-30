@@ -281,6 +281,20 @@ ttString App::GetDerivedDirectory()
         return GetProjectPath();
 }
 
+compiler_standard App::GetCompilerVersion()
+{
+    if (!m_project)
+        return compiler_standard::c11;
+
+    auto& c_version = m_project->prop_as_string(prop_compiler_standard);
+    if (c_version.contains("17"))
+        return compiler_standard::c17;
+    else if (c_version.contains("20"))
+        return compiler_standard::c20;
+    else
+        return compiler_standard::c11;
+}
+
 #if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
 
     #include <wx/stackwalk.h>

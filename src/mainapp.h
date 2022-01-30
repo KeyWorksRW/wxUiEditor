@@ -25,6 +25,15 @@ constexpr const auto curWxuiMajorVer = 1;
 constexpr const auto curWxuiMinorVer = 3;
 constexpr const auto curCombinedVer = 13;
 
+enum class compiler_standard : size_t
+{
+
+    c11,
+    c17,
+    c20,
+
+};
+
 class App : public wxApp
 {
 public:
@@ -42,6 +51,8 @@ public:
 
     // Determines which import method to use based on the filename's extension
     bool ImportProject(ttString& file);
+
+    compiler_standard GetCompilerVersion();
 
     MainFrame* GetMainFrame() { return m_frame; }
 

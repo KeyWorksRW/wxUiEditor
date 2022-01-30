@@ -1317,7 +1317,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         GenSrcEventBinding(form_node, events);
     }
 
-    if (form_node->isGen(gen_wxDialog))
+    if (form_node->isGen(gen_wxDialog) || form_node->isGen(gen_PanelForm))
     {
         m_source->writeLine("\nreturn true;");
     }

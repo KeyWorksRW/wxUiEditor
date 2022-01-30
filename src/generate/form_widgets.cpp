@@ -509,8 +509,6 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCod
             code << "\n\tSetSize(wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
         }
 
-        code << "\n\treturn true;";
-
         return code;
     }
     else if (cmd == code_base_class)

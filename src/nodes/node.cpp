@@ -207,6 +207,14 @@ bool Node::IsChildAllowed(NodeDeclaration* child)
     {
         if (GetChild(i)->gen_type() == child->gen_type())
             ++children;
+
+        // treat type-sizer and type_gbsizer as the same since forms and contains can only have one of them as the top level
+        // sizer.
+
+        else if (child->gen_type() == type_sizer && GetChild(i)->gen_type() == type_gbsizer)
+            ++children;
+        else if (child->gen_type() == type_gbsizer && GetChild(i)->gen_type() == type_sizer)
+            ++children;
     }
 
     if (children >= max_children)
@@ -219,32 +227,7 @@ bool Node::IsChildAllowed(Node* child)
 {
     ASSERT(child);
 
-    auto child_type = child->gen_type();
-    auto max_children = m_declaration->GetAllowableChildren(child_type);
-
-    if (max_children == child_count::none)
-        return false;
-
-    if (max_children == child_count::infinite)
-        return true;
-
-    if (isGen(gen_wxSplitterWindow))
-        return (GetChildCount() < 2);
-
-    // Because m_children contains shared_ptrs, we don't want to use an iteration loop which will get/release the shared
-    // ptr. Using an index into the vector lets us access the raw pointer.
-
-    int_t children = 0;
-    for (size_t i = 0; i < m_children.size() && children <= max_children; ++i)
-    {
-        if (GetChild(i)->gen_type() == child_type)
-            ++children;
-    }
-
-    if (children >= max_children)
-        return false;
-
-    return true;
+    return IsChildAllowed(child->GetNodeDeclaration());
 }
 
 void Node::RemoveChild(NodeSharedPtr node)

@@ -301,7 +301,7 @@ std::optional<ttlib::cstr> ColourPickerGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     if (node->prop_as_string(prop_colour).size())
-        code << node->prop_as_string(prop_colour);
+        code << GenerateColourCode(node, prop_colour);
     else
         code << "*wxBLACK";
     GeneratePosSizeFlags(node, code, true, "wxCLRP_DEFAULT_STYLE");

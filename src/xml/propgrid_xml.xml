@@ -92,7 +92,7 @@ inline const char* propgrid_xml = R"===(<?xml version="1.0"?>
 			<option name="wxPG_COMPACTOR"
 				help="Show compactor button that toggles hidden state of low-priority properties." />
 			<option name="wxPGMAN_DEFAULT_STYLE"
-				help="Combines various styles." />
+				help="Currently the default is for no styles to be set." />
 			<option name="wxPG_DESCRIPTION"
 				help="Show adjustable text box showing description or help text, if available, for currently selected property." />
 			<option name="wxPG_TOOLBAR"

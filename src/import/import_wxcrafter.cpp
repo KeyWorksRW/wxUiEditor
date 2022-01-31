@@ -986,6 +986,8 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
         }
         else if (name.is_sameas("virtual folder"))
             return prop_processed;  // this doesn't apply to wxUiEditor
+        else if (name.is_sameas("null page"))
+            return prop_processed;  // unused
         else
         {
             if (!node->isGen(gen_propGridItem))
@@ -1168,6 +1170,8 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
                     prop_name = prop_pressed;
                 else if (prop_name == prop_max && node->HasProp(prop_maxValue))
                     prop_name = prop_maxValue;
+                else if (prop_name == prop_tooltip && node->isGen(gen_propGridItem))
+                    prop_name = prop_help;
                 else
                 {
 #if defined(_DEBUG)
@@ -1221,6 +1225,14 @@ void WxCrafter::ValueProperty(Node* node, const Value& value)
         {
             node->prop_set_value(prop_initial_path, setting.GetString());
         }
+        else if (node->isGen(gen_wxDirPickerCtrl))
+        {
+            node->prop_set_value(prop_initial_path, setting.GetString());
+        }
+        else if (node->isGen(gen_wxFontPickerCtrl))
+        {
+            ProcessFont(node, value);
+        }
         else if (node->isGen(gen_wxGauge))
         {
             node->prop_set_value(prop_position, setting.GetString());
@@ -1233,10 +1245,6 @@ void WxCrafter::ValueProperty(Node* node, const Value& value)
         {
             node->prop_set_value(prop_checked, setting.GetBool());
         }
-        else if (node->isGen(gen_wxDirPickerCtrl))
-        {
-            node->prop_set_value(prop_initial_path, setting.GetString());
-        }
         else if (node->isGen(gen_wxScrollBar))
         {
             node->prop_set_value(prop_position, setting.GetString());
@@ -1245,10 +1253,6 @@ void WxCrafter::ValueProperty(Node* node, const Value& value)
         {
             if (setting.GetBool())
                 node->prop_set_value(prop_initial_state, "wxCHK_CHECKED");
-        }
-        else if (node->isGen(gen_wxFontPickerCtrl))
-        {
-            ProcessFont(node, value);
         }
         else if (node->isGen(gen_wxSlider))
         {
@@ -1560,25 +1564,33 @@ std::map<std::string, const char*> s_sys_colour_pair = {
 ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
 {
     ttlib::cstr result;
-    if (colour.IsString() && !ttlib::is_sameprefix(colour.GetString(), "Default"))
+    if (colour.IsString())
     {
-        if (colour.GetString()[0] == '(')
+        ttlib::cview clr_string = colour.GetString();
+        if (!clr_string.is_sameprefix("Default"))
         {
-            result = colour.GetString() + 1;
-            result.pop_back();
-        }
-        else if (colour.GetString()[0] == '#')
-        {
-            wxColour clr(colour.GetString());
-            return ConvertColourToString(clr);
-        }
-        else
-        {
-            if (auto colour_pair = s_sys_colour_pair.find(colour.GetString()); colour_pair != s_sys_colour_pair.end())
-                result = colour_pair->second;
+            if (clr_string[0] == '(')
+            {
+                result = clr_string.substr(1);
+                result.pop_back();
+            }
+            else if (colour.GetString()[0] == '#')
+            {
+                wxColour clr(clr_string.c_str());
+                return ConvertColourToString(clr);
+            }
+            else if (clr_string.is_sameprefix("wx"))
+            {
+                result = clr_string;
+                return result;
+            }
+            else
+            {
+                if (auto colour_pair = s_sys_colour_pair.find(clr_string.c_str()); colour_pair != s_sys_colour_pair.end())
+                    result = colour_pair->second;
+            }
         }
     }
-
     return result;
 }
 

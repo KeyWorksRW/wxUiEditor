@@ -787,6 +787,8 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
                     prop = node->get_prop_ptr(prop_initial);
                 if (!prop)
                     prop = node->get_prop_ptr(prop_selection);
+                if (!prop)
+                    prop = node->get_prop_ptr(prop_position);
                 if (prop && prop->as_string().size())
                 {
                     code << " { " << prop->as_string() << " };";

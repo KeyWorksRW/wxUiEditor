@@ -33,6 +33,7 @@
 #include "node.h"            // Node class
 #include "node_decl.h"       // NodeDeclaration class
 #include "node_prop.h"       // NodeProperty -- NodeProperty class
+#include "paths.h"           // Handles *_directory properties
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 #include "utils.h"           // Utility functions that work with properties
 
@@ -818,8 +819,6 @@ void PropGridPanel::AddEvents(ttlib::cview name, Node* node, NodeCategory& categ
 // Only process property changes that we may need to cancel here.
 void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
 {
-    m_failure_handled = false;
-
     auto property = event.GetProperty();
 
     auto it = m_property_map.find(property);
@@ -839,7 +838,6 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
     {
         if (!generator->AllowPropertyChange(&event, prop, node))
         {
-            m_failure_handled = true;
             return;
         }
     }
@@ -847,7 +845,11 @@ void PropGridPanel::OnPropertyGridChanging(wxPropertyGridEvent& event)
     switch (prop->type())
     {
         case type_file:
-            VerifyChangeFile(event, prop, node);
+            AllowFileChange(event, prop, node);
+            break;
+
+        case type_path:
+            AllowDirectoryChange(event, prop, node);
             break;
 
         default:
@@ -1679,41 +1681,6 @@ bool PropGridPanel::IsPropAllowed(Node* /* node */, NodeProperty* /* prop */)
     // parent.
 
     return true;
-}
-
-void PropGridPanel::VerifyChangeFile(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
-{
-    if (prop->isProp(prop_base_file))
-    {
-        ttString newValue = event.GetPropertyValue().GetString();
-        if (newValue.empty())
-            return;
-
-        newValue.make_absolute();
-        newValue.make_relative_wx(wxGetApp().GetProjectPath());
-        newValue.backslashestoforward();
-        auto filename = newValue.sub_cstr();
-        auto project = wxGetApp().GetProject();
-        for (size_t child_idx = 0; child_idx < project->GetChildCount(); ++child_idx)
-        {
-            if (project->GetChild(child_idx) == node)
-                continue;
-            if (project->GetChild(child_idx)->prop_as_string(prop_base_file).filename() == filename)
-            {
-                wxMessageBox(wxString() << "The base filename " << filename << " is already in use by "
-                                        << project->GetChild(child_idx)->prop_as_string(prop_class_name)
-                                        << "\n\nEither change the name, or press ESC to restore the original name.");
-                m_failure_handled = true;
-                event.Veto();
-                return;
-            }
-        }
-
-        // If the event was previously veto'd, and the user corrected the file, then we have to set it here,
-        // otherwise it will revert back to the original name before the Veto.
-
-        event.GetProperty()->SetValueFromString(newValue, 0);
-    }
 }
 
 void PropGridPanel::OnPostPropChange(CustomEvent& event)

@@ -285,9 +285,9 @@ bool FrameFormGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodePro
             if (style.contains("wxDEFAULT_FRAME_STYLE") || style.contains("wxMINIMIZE_BOX") ||
                 style.contains("wxMINIMIZE_BOX"))
             {
-                wxMessageBox("You can't add a context help button if there is a minimize or maximize button "
-                             "(wxDEFAULT_FRAME_STYLE contains these).",
-                             "Invalid button");
+                event->SetValidationFailureMessage(
+                    "You can't add a context help button if there is a minimize or maximize button "
+                    "(wxDEFAULT_FRAME_STYLE contains these).");
                 event->Veto();
                 return false;
             }

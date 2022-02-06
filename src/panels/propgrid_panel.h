@@ -35,9 +35,6 @@ public:
     void RestoreDescBoxHeight();
     void SaveDescBoxHeight();
 
-    // Returns true if a validation failure message has already been displayed to the user
-    bool WasFailureHandled() { return m_failure_handled; }
-
     // Prevents creation of node's properties until UnLock() is called.
     void Lock() { m_locked = true; }
 
@@ -83,11 +80,6 @@ protected:
 
     int GetBitlistValue(const wxString& strVal, wxPGChoices& bit_flags);
 
-    // The VerifyChange...() functions are called when a property is changing. The function is used to verify that the change
-    // is valid, and if not, the user is warned and the wxEVT_PG_CHANGING event is vetoed.
-
-    void VerifyChangeFile(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
-
     // Event handlers
 
     void OnEventGridChanged(wxPropertyGridEvent& event);
@@ -124,9 +116,6 @@ private:
     wxArrayString m_astr_wx_decorations;
 
     bool m_isPropChangeSuspended { false };
-
-    // Set to true if a VerifyChangeFile() function already disaplayed a message to the user.
-    bool m_failure_handled { false };
 
     bool m_locked { false };
 };

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Derived wxPropertyGrid class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,63 +12,84 @@
 #include "mainframe.h"       // Main window frame
 #include "propgrid_panel.h"  // PropGridPanel -- PropertyGrid class for node properties and events
 
-// The primary reason for this is to fix the broken English used for the message in the wxWidgets code.
+// The primary reason for this is to fix the broken English used for the default error message in the wxWidgets code.
 
-// Most of this code originates from wxWidgets/src/propgrid/propgrid.cpp, updated to Modern C++ coding practices. The call to
-// WasFailureHandled is specific to wxUiEditor, so remove if you use this code in another project. Also note that because the
-// message text has been converted to proper English grammar, it will not be automatically translated by wxWidgets in
-// non-English languages.
+// Most of this code originates from wxWidgets/src/propgrid/propgrid.cpp, updated to Modern C++ coding practices. Note that
+// because the message text has been converted to proper English grammar, it will not be automatically translated by
+// wxWidgets in non-English languages.
 
 bool CustomPropertyGrid::DoOnValidationFailure(wxPGProperty* property, wxVariant& WXUNUSED(invalidValue))
 {
-    auto vfb = m_validationInfo.GetFailureBehavior();
+    auto validation_behaviour = m_validationInfo.GetFailureBehavior();
 
-    if (vfb & wxPG_VFB_BEEP)
+    if (validation_behaviour & wxPG_VFB_BEEP)
         ::wxBell();
 
-    if ((vfb & wxPG_VFB_MARK_CELL) && !property->HasFlag(wxPG_PROP_INVALID_VALUE))
+    if ((validation_behaviour & wxPG_VFB_MARK_CELL) && !property->HasFlag(wxPG_PROP_INVALID_VALUE))
     {
-        auto vfbFg = *wxWHITE;
-        auto vfbBg = *wxRED;
+        auto foreground_colour = *wxWHITE;
+        auto background_colour = *wxRED;
 
         for (unsigned int column = 0; column < m_pState->GetColumnCount(); ++column)
         {
-            wxPGCell& cell = property->GetCell(column);
-            cell.SetFgCol(vfbFg);
-            cell.SetBgCol(vfbBg);
+            auto& cell = property->GetCell(column);
+            cell.SetFgCol(foreground_colour);
+            cell.SetBgCol(background_colour);
         }
 
         if (property == GetSelection())
         {
             SetInternalFlag(wxPG_FL_CELL_OVERRIDES_SEL);
 
-            auto editor = GetEditorControl();
-            if (editor)
+            if (auto editor = GetEditorControl(); editor)
             {
-                editor->SetForegroundColour(vfbFg);
-                editor->SetBackgroundColour(vfbBg);
+                editor->SetForegroundColour(foreground_colour);
+                editor->SetBackgroundColour(background_colour);
             }
         }
 
         DrawItemAndChildren(property);
     }
 
-    if (wxGetFrame().GetPropPanel()->WasFailureHandled())
-    {
-        return (vfb & wxPG_VFB_STAY_IN_PROPERTY) ? false : true;
-    }
+    // Note that since this is already a customized wxPropertyGrid, we don't call DoShowPropertyError() if
+    // wxPG_VFB_SHOW_MESSAGE is set.
 
-    if (vfb & wxPG_VFB_SHOW_MESSAGEBOX)
+    if (validation_behaviour & wxPG_VFB_SHOW_MESSAGEBOX || validation_behaviour & wxPG_VFB_SHOW_MESSAGE ||
+        validation_behaviour & wxPG_VFB_SHOW_MESSAGE_ON_STATUSBAR)
     {
         auto msg = m_validationInfo.GetFailureMessage();
-
         if (msg.empty())
+        {
             msg =
                 _("You have entered an invalid value. Either change the value, or press ESC to restore the original value.");
+        }
 
-        /* TRANSLATORS: Caption of message box displaying any property error */
-        ::wxMessageBox(msg, _("Property Error"));
+        if (validation_behaviour & wxPG_VFB_SHOW_MESSAGE_ON_STATUSBAR)
+        {
+            if (!wxPGGlobalVars->m_offline)
+            {
+                if (auto pStatusBar = GetStatusBar(); pStatusBar)
+                {
+                    pStatusBar->SetStatusText(msg);
+                }
+            }
+        }
+
+        if (validation_behaviour & wxPG_VFB_SHOW_MESSAGEBOX)
+        {
+            // Displaying the message box can cause a focus change which will result in idle processing sending the
+            // validation event again. Preserving the focus window avoids validating twice.
+            auto focus_window = wxWindow::FindFocus();
+
+            /* TRANSLATORS: Caption of message box displaying any property error */
+            ::wxMessageBox(msg, _("Property Error"), wxOK, focus_window);
+
+            if (focus_window)
+            {
+                focus_window->SetFocus();
+            }
+        }
     }
 
-    return (vfb & wxPG_VFB_STAY_IN_PROPERTY) ? false : true;
+    return (validation_behaviour & wxPG_VFB_STAY_IN_PROPERTY) ? false : true;
 }

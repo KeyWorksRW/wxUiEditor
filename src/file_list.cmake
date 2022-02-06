@@ -12,12 +12,14 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/frame_status_bar.cpp  # MainFrame status bar functions
     ${CMAKE_CURRENT_LIST_DIR}/gen_enums.cpp         # Enumerations for generators
     ${CMAKE_CURRENT_LIST_DIR}/lambdas.cpp           # Functions for formatting and storage of lamda events
+    ${CMAKE_CURRENT_LIST_DIR}/paths.cpp             # Handles *_directory properties
     ${CMAKE_CURRENT_LIST_DIR}/pjtsettings.cpp       # Hold data for currently loaded project
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg.cpp       # Startup dialog
     ${CMAKE_CURRENT_LIST_DIR}/undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     ${CMAKE_CURRENT_LIST_DIR}/undo_stack.cpp        # Maintain an undo and redo stack
     ${CMAKE_CURRENT_LIST_DIR}/wakatime.cpp          # Updates WakaTime metrics
     ${CMAKE_CURRENT_LIST_DIR}/xpm.cpp               # All xpm files
+
 
     ${CMAKE_CURRENT_LIST_DIR}/customprops/code_string_prop.cpp   # Derived wxStringProperty class for code
     ${CMAKE_CURRENT_LIST_DIR}/customprops/custom_colour_prop.cpp # Property editor for colour

@@ -52,14 +52,14 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             if (parent && parent->IsSizer() && parent->prop_as_string(prop_orientation).contains("wxVERTICAL"))
             {
-                wxMessageBox("You can't set vertical alignment when the parent sizer is oriented vertically.",
-                             "Invalid alignment");
+                event->SetValidationFailureMessage(
+                    "You can't set vertical alignment when the parent sizer is oriented vertically.");
                 event->Veto();
                 return false;
             }
             else if (node->prop_as_string(prop_flags).contains("wxEXPAND"))
             {
-                wxMessageBox("You can't set vertical alignment if the wxEXPAND flag is set.", "Invalid alignment");
+                event->SetValidationFailureMessage("You can't set vertical alignment if the wxEXPAND flag is set.");
                 event->Veto();
                 return false;
             }
@@ -68,14 +68,14 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         {
             if (parent && parent->IsSizer() && parent->prop_as_string(prop_orientation).contains("wxHORIZONTAL"))
             {
-                wxMessageBox("You can't set horizontal alignment when the parent sizer is oriented horizontally.",
-                             "Invalid alignment");
+                event->SetValidationFailureMessage(
+                    "You can't set horizontal alignment when the parent sizer is oriented horizontally.");
                 event->Veto();
                 return false;
             }
             else if (node->prop_as_string(prop_flags).contains("wxEXPAND"))
             {
-                wxMessageBox("You can't set horizontal alignment if the wxEXPAND flag is set.", "Invalid alignment");
+                event->SetValidationFailureMessage("You can't set horizontal alignment if the wxEXPAND flag is set.");
                 event->Veto();
                 return false;
             }
@@ -107,8 +107,9 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
                     alignment.contains("wxALIGN_CENTER_HORIZONTAL") || alignment.contains("wxALIGN_TOP") ||
                     alignment.contains("wxALIGN_BOTTOM") || alignment.contains("wxALIGN_CENTER_VERTICAL"))
                 {
-                    wxMessageBox("You can't set the wxEXPAND flag if you have either horizontal or vertical alignment set.",
-                                 "Invalid alignment");
+                    event->SetValidationFailureMessage(
+                        "You can't set the wxEXPAND flag if you have either horizontal or vertical alignment set.");
+                    event->Veto();
                     return false;
                 }
             }
@@ -176,9 +177,9 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 
         if (is_duplicate)
         {
-            wxMessageBox("The name you have chosen is already in use by another variable.", "Duplicate name");
+            event->SetValidationFailureMessage("The name you have chosen is already in use by another variable.");
             event->Veto();
-            event->GetProperty()->SetValue(newValue.wx_str());
+            wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
             return false;
         }
 
@@ -203,9 +204,9 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
             }
             else if (iter.get()->prop_as_string(prop_class_name).is_sameas(newValue))
             {
-                wxMessageBox("The name you have chosen is already in use by another class.", "Duplicate class name");
+                event->SetValidationFailureMessage("The name you have chosen is already in use by another class.");
                 event->Veto();
-                event->GetProperty()->SetValue(newValue.wx_str());
+                wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
                 return false;
             }
         }

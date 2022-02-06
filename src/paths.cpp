@@ -54,7 +54,9 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
     event.GetProperty()->SetValueFromString(newValue, 0);
 }
 
-// Unlike the AllowDirectoryChange() above, this will *not* allow a duplicate prop_base_file filename since the generated code will create a linker error due to the duplicate filenames (and the risk of overwriting an already generated file for a different class).
+// Unlike the AllowDirectoryChange() above, this will *not* allow a duplicate prop_base_file filename since the generated
+// code will create a linker error due to the duplicate filenames (and the risk of overwriting an already generated file for
+// a different class).
 
 void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 {
@@ -80,7 +82,8 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 
                 wxMessageBox(wxString() << "The base filename \"" << filename << "\" is already in use by "
                                         << project->GetChild(child_idx)->prop_as_string(prop_class_name)
-                                        << "\n\nEither change the name, or press ESC to restore the original name.", "Duplicate base filename", wxICON_STOP);
+                                        << "\n\nEither change the name, or press ESC to restore the original name.",
+                             "Duplicate base filename", wxICON_STOP);
                 if (focus)
                 {
                     focus->SetFocus();

@@ -1105,17 +1105,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
 
         case type_path:
             {
-                ttString newValue = property->GetValueAsString();
-                newValue.make_absolute();
-                newValue.make_relative_wx(wxGetApp().GetProjectPath());
-                newValue.backslashestoforward();
-
-                // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
-                // with a backslash. However, ModifyProperty() will save our forward slash version, so even thought the
-                // display isn't correct, it will be stored in the project file correctly.
-
-                property->SetValueFromString(newValue, 0);
-                ModifyProperty(prop, newValue);
+                m_isPropChangeSuspended = true;
+                OnPathChanged(event, prop, node);
+                m_isPropChangeSuspended = false;
             }
             break;
 

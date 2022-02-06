@@ -9,8 +9,10 @@
 
 #include "../nodes/node_classes.h"  // Forward defintions of Node classes
 
-// Called by PropGridPanel when the user attempts to change art_directory, base_directory, or
-// derived_directory.
 void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
-
 void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
+
+void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* node);
+
+void ChangeDerivedDirectory(ttlib::cstr& path);
+void ChangeBaseDirectory(ttlib::cstr& path);

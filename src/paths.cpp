@@ -7,6 +7,7 @@
 
 // This module handles changes to art_directory, base_directory, and derived_directory
 
+#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
 #include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
 
 #include "paths.h"
@@ -14,6 +15,7 @@
 #include "mainapp.h"    // Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame
 #include "node.h"       // Node class
+#include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, Node* /* node */)
 {
@@ -24,6 +26,9 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
     newValue.make_absolute();
     newValue.make_relative_wx(wxGetApp().GetProjectPath());
     newValue.backslashestoforward();
+
+    ttSaveCwd cwd;
+    wxGetApp().GetProjectPath().ChangeDir();
 
     if (!newValue.dir_exists())
     {
@@ -101,4 +106,111 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 
         event.GetProperty()->SetValueFromString(newValue, 0);
     }
+}
+
+void OnPathChanged(wxPropertyGridEvent& event, NodeProperty* prop, Node* /* node */)
+{
+    // If the user clicked the path button, the current directory may have changed.
+    wxGetApp().GetProjectPath().ChangeDir();
+
+    ttString newValue = event.GetPropertyValue().GetString();
+    newValue.make_absolute();
+    newValue.make_relative_wx(wxGetApp().GetProjectPath());
+    newValue.backslashestoforward();
+
+    // Note that on Windows, even though we changed the property to a forward slash, it will still be displayed
+    // with a backslash. However, ModifyProperty() will save our forward slash version, so even thought the
+    // display isn't correct, it will be stored in the project file correctly.
+
+    event.GetProperty()->SetValueFromString(newValue, 0);
+    ttlib::cstr value(newValue.wx_str());
+    if (value != prop->as_string())
+    {
+        if (prop->isProp(prop_derived_directory))
+        {
+            ChangeDerivedDirectory(value);
+        }
+        else if (prop->isProp(prop_base_directory))
+        {
+            ChangeBaseDirectory(value);
+        }
+        else
+        {
+            wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
+        }
+    }
+}
+
+void ChangeDerivedDirectory(ttlib::cstr& path)
+{
+    auto& old_path = wxGetApp().GetProject()->prop_as_string(prop_derived_directory);
+    path.backslashestoforward();
+    if (path == "./")
+        path.clear();
+    if (path.size() && path.back() == '/')
+        path.pop_back();
+
+    auto undo_derived = std::make_shared<ModifyProperties>("Derived directory");
+    undo_derived->AddProperty(wxGetApp().GetProject()->get_prop_ptr(prop_derived_directory), path);
+
+    for (auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
+    {
+        if (form->prop_as_bool(prop_use_derived_class) && form->HasValue(prop_derived_file))
+        {
+            ttlib::cstr cur_path = form->prop_as_string(prop_derived_file);
+            cur_path.backslashestoforward();
+            cur_path.remove_filename();
+            if (cur_path.size() && cur_path.back() == '/')
+                cur_path.pop_back();
+
+            // if the current directory and the old directory aren't the same, then leave it alone
+            if (!old_path.is_sameas(cur_path, tt::CASE::either))
+            {
+                continue;
+            }
+
+            cur_path = path;
+            cur_path.append_filename(form->prop_as_string(prop_derived_file).filename());
+            undo_derived->AddProperty(form->get_prop_ptr(prop_derived_file), cur_path);
+        }
+    }
+
+    wxGetFrame().PushUndoAction(undo_derived);
+}
+
+void ChangeBaseDirectory(ttlib::cstr& path)
+{
+    auto& old_path = wxGetApp().GetProject()->prop_as_string(prop_base_directory);
+    path.backslashestoforward();
+    if (path == "./")
+        path.clear();
+    if (path.size() && path.back() == '/')
+        path.pop_back();
+
+    auto undo_derived = std::make_shared<ModifyProperties>("Base directory");
+    undo_derived->AddProperty(wxGetApp().GetProject()->get_prop_ptr(prop_base_directory), path);
+
+    for (auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
+    {
+        if (form->HasValue(prop_base_file))
+        {
+            ttlib::cstr cur_path = form->prop_as_string(prop_base_directory);
+            cur_path.backslashestoforward();
+            cur_path.remove_filename();
+            if (cur_path.size() && cur_path.back() == '/')
+                cur_path.pop_back();
+
+            // if the current directory and the old directory aren't the same, then leave it alone
+            if (!old_path.is_sameas(cur_path, tt::CASE::either))
+            {
+                continue;
+            }
+
+            cur_path = path;
+            cur_path.append_filename(form->prop_as_string(prop_base_file).filename());
+            undo_derived->AddProperty(form->get_prop_ptr(prop_base_file), cur_path);
+        }
+    }
+
+    wxGetFrame().PushUndoAction(undo_derived);
 }

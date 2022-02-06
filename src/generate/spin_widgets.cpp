@@ -187,9 +187,8 @@ bool SpinCtrlDoubleGenerator::AllowPropertyChange(wxPropertyGridEvent* event, No
         auto newValue = event->GetValue();
         if (newValue.GetInteger() > 20)
         {
-            wxMessageBox("You can't specify more than 20 digits.", "Invalid digts");
+            event->SetValidationFailureMessage("You can't specify more than 20 digits.");
             event->Veto();
-            event->GetProperty()->SetValue(0, 0);
             return false;
         }
         return true;

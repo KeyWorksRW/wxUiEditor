@@ -353,6 +353,7 @@ void NavigationPanel::InsertNode(Node* node)
     if (node->GetChildCount())
     {
         AddAllChildren(node);
+        ExpandAllNodes(node);
     }
 }
 

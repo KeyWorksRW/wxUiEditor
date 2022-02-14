@@ -7,6 +7,7 @@
 
 #include <wx/event.h>              // Event classes
 #include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
+#include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 #include <wx/radiobox.h>           // wxRadioBox declaration
 #include <wx/radiobut.h>           // wxRadioButton declaration
@@ -152,6 +153,35 @@ bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeP
     else
     {
         return BaseGenerator::AllowPropertyChange(event, prop, node);
+    }
+}
+
+void RadioButtonGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+{
+    if (changed_prop->isProp(prop_style))
+    {
+        if (auto pg_parent = prop_grid->GetProperty("style"); pg_parent)
+        {
+            for (unsigned int idx = 0; idx < pg_parent->GetChildCount(); ++idx)
+            {
+                if (auto pg_setting = pg_parent->Item(idx); pg_setting)
+                {
+                    auto label = pg_setting->GetLabel();
+                    if (label == "wxRB_GROUP")
+                    {
+                        pg_setting->Enable(!changed_prop->as_string().contains("wxRB_SINGLE"));
+                    }
+                    else if (label == "wxRB_SINGLE")
+                    {
+                        pg_setting->Enable(!changed_prop->as_string().contains("wxRB_GROUP"));
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
     }
 }
 

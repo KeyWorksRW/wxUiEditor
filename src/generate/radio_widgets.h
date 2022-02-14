@@ -22,6 +22,7 @@ public:
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*);
+    void ChangeEnableState(wxPropertyGridManager*, NodeProperty*);
 
 private:
     bool m_info_warning { false };

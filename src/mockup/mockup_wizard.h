@@ -45,33 +45,34 @@ public:
 
 protected:
     void OnBackOrNext(wxCommandEvent& event);
-    void AddBitmapRow();
-    void AddButtonRow();
+    void CreateBmpPageRow();
+    void CreateButtonRow();
 
     bool ResizeBitmap(wxBitmap& bmp);
 
 private:
     wxBoxSizer* m_window_sizer;  // Top level sizer for entire window
     wxBoxSizer* m_column_sizer;  // Contains bitmap row, static line, and buttons
-    wxBoxSizer* m_sizerBmpAndPage;
+    wxBoxSizer* m_bmp_page_sizer;
     wxBoxSizer* m_sizerPage { nullptr };
 
-    wxButton* m_btnPrev;
-    wxButton* m_btnNext;
+    wxButton* m_btnPrev { nullptr };
+    wxButton* m_btnNext { nullptr };
 
     size_t m_cur_page_index { tt::npos };
 
-    Node* m_wizard_node;
+    Node* m_wizard_node;  // set in constructor
 
     wxSize m_largest_page { 0, 0 };
     wxSize m_largest_nonbmp_page { 0, 0 };
+    wxSize m_button_row_size;
 
     wxSize m_size_bmp { 0, 0 };
     wxBitmap m_bitmap { wxNullBitmap };
-    wxStaticBitmap* m_statbmp { nullptr };
+    wxStaticBitmap* m_static_bitmap { nullptr };
 
     std::vector<MockupWizardPage*> m_pages;
 
     int m_bmp_placement;
-    int m_border { 5 };
+    int m_border;  // set in constructor
 };

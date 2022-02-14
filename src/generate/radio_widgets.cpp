@@ -5,13 +5,17 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/event.h>     // Event classes
-#include <wx/radiobox.h>  // wxRadioBox declaration
-#include <wx/radiobut.h>  // wxRadioButton declaration
+#include <wx/event.h>              // Event classes
+#include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
+#include <wx/propgrid/manager.h>   // wxPropertyGridManager
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+#include <wx/radiobox.h>           // wxRadioBox declaration
+#include <wx/radiobut.h>           // wxRadioButton declaration
 
 #include "radio_widgets.h"
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
@@ -106,6 +110,79 @@ bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
 
     return true;
+}
+
+bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+{
+    if (prop->isProp(prop_style))
+    {
+        if (m_info_warning)
+        {
+            wxGetFrame().GetPropInfoBar()->Dismiss();
+            m_info_warning = false;
+        }
+
+        auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
+        auto variant = event->GetPropertyValue();
+        ttString newValue = property->ValueToString(variant);
+
+        if (newValue.contains("wxRB_GROUP"))
+        {
+            auto parent = node->GetParent();
+            auto pos = parent->GetChildPosition(node);
+            if (pos > 0 && parent->GetChild(pos - 1)->isGen(gen_wxRadioButton) &&
+                parent->GetChild(pos - 1)->prop_as_string(prop_style).contains("wxRB_GROUP"))
+            {
+                auto info = wxGetFrame().GetPropInfoBar();
+                info->ShowMessage("The previous radio button is also set as the start of a group!", wxICON_INFORMATION);
+                m_info_warning = true;
+            }
+            else if (pos + 1 < parent->GetChildCount() && parent->GetChild(pos + 1)->isGen(gen_wxRadioButton) &&
+                     parent->GetChild(pos + 1)->prop_as_string(prop_style).contains("wxRB_GROUP"))
+            {
+                auto info = wxGetFrame().GetPropInfoBar();
+                info->ShowMessage("The next radio button is also set as the start of a group!", wxICON_INFORMATION);
+                m_info_warning = true;
+            }
+        }
+
+        // Note that we allow this property change since we don't know which radio button the user will want to change (none
+        // if they plan on adding more radio buttons in between the two groups)
+        return true;
+    }
+    else
+    {
+        return BaseGenerator::AllowPropertyChange(event, prop, node);
+    }
+}
+
+void RadioButtonGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+{
+    if (changed_prop->isProp(prop_style))
+    {
+        if (auto pg_parent = prop_grid->GetProperty("style"); pg_parent)
+        {
+            for (unsigned int idx = 0; idx < pg_parent->GetChildCount(); ++idx)
+            {
+                if (auto pg_setting = pg_parent->Item(idx); pg_setting)
+                {
+                    auto label = pg_setting->GetLabel();
+                    if (label == "wxRB_GROUP")
+                    {
+                        pg_setting->Enable(!changed_prop->as_string().contains("wxRB_SINGLE"));
+                    }
+                    else if (label == "wxRB_SINGLE")
+                    {
+                        pg_setting->Enable(!changed_prop->as_string().contains("wxRB_GROUP"));
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
+    }
 }
 
 //////////////////////////////////////////  RadioBoxGenerator  //////////////////////////////////////////

@@ -5,13 +5,16 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/event.h>     // Event classes
-#include <wx/radiobox.h>  // wxRadioBox declaration
-#include <wx/radiobut.h>  // wxRadioButton declaration
+#include <wx/event.h>              // Event classes
+#include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
+#include <wx/radiobox.h>           // wxRadioBox declaration
+#include <wx/radiobut.h>           // wxRadioButton declaration
 
 #include "radio_widgets.h"
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
@@ -106,6 +109,50 @@ bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
         InsertGeneratorInclude(node, "#include <wx/valgen.h>", set_src, set_hdr);
 
     return true;
+}
+
+bool RadioButtonGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+{
+    if (prop->isProp(prop_style))
+    {
+        if (m_info_warning)
+        {
+            wxGetFrame().GetPropInfoBar()->Dismiss();
+            m_info_warning = false;
+        }
+
+        auto property = wxStaticCast(event->GetProperty(), wxFlagsProperty);
+        auto variant = event->GetPropertyValue();
+        ttString newValue = property->ValueToString(variant);
+
+        if (newValue.contains("wxRB_GROUP"))
+        {
+            auto parent = node->GetParent();
+            auto pos = parent->GetChildPosition(node);
+            if (pos > 0 && parent->GetChild(pos - 1)->isGen(gen_wxRadioButton) &&
+                parent->GetChild(pos - 1)->prop_as_string(prop_style).contains("wxRB_GROUP"))
+            {
+                auto info = wxGetFrame().GetPropInfoBar();
+                info->ShowMessage("The previous radio button is also set as the start of a group!", wxICON_INFORMATION);
+                m_info_warning = true;
+            }
+            else if (pos + 1 < parent->GetChildCount() && parent->GetChild(pos + 1)->isGen(gen_wxRadioButton) &&
+                     parent->GetChild(pos + 1)->prop_as_string(prop_style).contains("wxRB_GROUP"))
+            {
+                auto info = wxGetFrame().GetPropInfoBar();
+                info->ShowMessage("The next radio button is also set as the start of a group!", wxICON_INFORMATION);
+                m_info_warning = true;
+            }
+        }
+
+        // Note that we allow this property change since we don't know which radio button the user will want to change (none
+        // if they plan on adding more radio buttons in between the two groups)
+        return true;
+    }
+    else
+    {
+        return BaseGenerator::AllowPropertyChange(event, prop, node);
+    }
 }
 
 //////////////////////////////////////////  RadioBoxGenerator  //////////////////////////////////////////

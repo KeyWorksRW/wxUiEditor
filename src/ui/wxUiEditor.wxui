@@ -2187,7 +2187,6 @@
               class="wxSpinCtrl"
               initial="3"
               max="7"
-              min="1"
               var_name="m_spinCtrlTabs"
               validator_variable="m_num_pages"
               alignment="wxALIGN_CENTER_VERTICAL" />

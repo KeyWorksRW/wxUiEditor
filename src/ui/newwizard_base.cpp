@@ -64,7 +64,7 @@ bool NewWizard::Create(wxWindow *parent, wxWindowID id, const wxString &title,
     box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
-            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 7, 3);
+            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 7, 3);
     m_spinCtrlTabs->SetValidator(wxGenericValidator(&m_num_pages));
     box_sizer_4->Add(m_spinCtrlTabs, wxSizerFlags().Center().Border(wxALL));
 

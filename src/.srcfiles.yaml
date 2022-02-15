@@ -1,11 +1,14 @@
 # Updated by ttBld.exe version 1.8.1 -- see https://github.com/KeyWorksRW/ttBld
 
+# This file is only used as a quick lookup for files, and to use ttBld.exe to generate ninja files that allow
+# clang-cl.exe to be used for additional code checking on Windows (clang-cl can spot different problems that
+# the msvc compiler doesn't warn about.)
+
 Options:
-    Project:          wxUiEditor # project name
-    # Exe_type:         window   # [window | console | lib | dll]
-    Exe_type:         lib   # This is just for clang-cl to verify compilation, so we don't need a full link
-    Pch:              pch.h    # name of precompiled header file, or "none" if not using precompiled headers
-    Ms_linker:        true     # true means use link.exe even when compiling with clang-cl
+    Project:          wxUiEditor
+    Exe_type:         lib         # This is just for clang-cl to verify compilation, so we don't need an executable
+    Pch:              pch.h       # will add -FI to force include if filename specified
+    Ms_linker:        true        # true means use link.exe even when compiling with clang-cl
 
     Optimize:         space    # [space | speed] optimization to use in release builds
     Warn:             4        # [1-4] warning level
@@ -15,7 +18,6 @@ Options:
     CFlags_cmn:       /std:c++17 /Zc:__cplusplus /utf-8 /DUNICODE
     CFlags_rel:       /DNDEBUG # static wxWidgets libraries in release build
 
-    # TargetDir:        ../bin   # target directory
     TargetDir:        ../build/CMakeFiles/CMakeTmp   # just a temporary location for the library
     Natvis:           wxui.natvis # MSVC Debug visualizer
 
@@ -62,9 +64,9 @@ Files:
     customprops/font_prop_dlg.cpp    # Dialog for editing Font Property
     customprops/img_props.cpp        # Handles property grid image properties
 
-    customprops/pg_image.cpp       # Custom property grid class for images
-    customprops/pg_animation.cpp   # Custom property grid class for animations
-    customprops/pg_point.cpp       # Custom wxPGProperty for wxPoint
+    customprops/pg_image.cpp         # Custom property grid class for images
+    customprops/pg_animation.cpp     # Custom property grid class for animations
+    customprops/pg_point.cpp         # Custom wxPGProperty for wxPoint
 
     custom_ctrls/colour_rect_ctrl.cpp  # Control that displays a solid color
 
@@ -174,14 +176,14 @@ Files:
 
     # ttLib submodule files (see https://github.com/KeyWorksRW/ttLib repository)
 
-    ../ttLib/src/ttcstr.cpp             # Class for handling zero-terminated char strings.
-    ../ttLib/src/ttcview.cpp            # string_view functionality on a zero-terminated char string.
-    ../ttLib/src/ttsview.cpp            # std::string_view with additional methods
-    ../ttLib/src/ttmultistr.cpp         # Breaks a single string into multiple strings
-    ../ttLib/src/ttparser.cpp           # Command line parser
-    ../ttLib/src/ttstr.cpp              # Enhanced version of wxString
-    ../ttLib/src/ttlibspace.cpp         # ttlib namespace functions
-    ../ttLib/src/tttextfile.cpp         # Classes for reading and writing text files.
+    ../ttLib/src/ttcstr.cpp      # Class for handling zero-terminated char strings.
+    ../ttLib/src/ttcview.cpp     # string_view functionality on a zero-terminated char string.
+    ../ttLib/src/ttsview.cpp     # std::string_view with additional methods
+    ../ttLib/src/ttmultistr.cpp  # Breaks a single string into multiple strings
+    ../ttLib/src/ttparser.cpp    # Command line parser
+    ../ttLib/src/ttstr.cpp       # Enhanced version of wxString
+    ../ttLib/src/ttlibspace.cpp  # ttlib namespace functions
+    ../ttLib/src/tttextfile.cpp  # Classes for reading and writing text files.
 
 DebugFiles:
     # Debug-only files

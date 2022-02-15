@@ -863,7 +863,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     //////////// Tabs and Indentation settings ////////////
 
-    if (node->HasValue(prop_indentation_guides) && node->prop_as_string(prop_indentation_guides).is_sameas("no guides"))
+    if (node->HasValue(prop_indentation_guides) && !node->prop_as_string(prop_indentation_guides).is_sameas("no guides"))
     {
         code << "\n\t\t" << node->get_node_name() << "->SetIndentationGuides("
              << node->prop_as_constant(prop_indentation_guides, "stc_") << ");";

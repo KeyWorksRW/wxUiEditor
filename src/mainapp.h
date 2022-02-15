@@ -22,8 +22,10 @@ class ImportXML;
 
 // Current version of wxUiEditor project files
 constexpr const auto curWxuiMajorVer = 1;
-constexpr const auto curWxuiMinorVer = 3;
-constexpr const auto curCombinedVer = 13;
+constexpr const auto curWxuiMinorVer = 4;
+constexpr const auto curCombinedVer = 14;
+
+constexpr const auto ImportProjectVersion = 13;
 
 enum class compiler_standard : size_t
 {

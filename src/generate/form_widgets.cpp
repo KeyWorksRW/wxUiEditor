@@ -25,7 +25,7 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
     ttlib::cstr code;
 
     code << "bool " << node->prop_as_string(prop_class_name)
-         << "::Create(wxWindow *parent, wxWindowID id, const wxString &title,\n\t\tconst wxPoint&pos, const wxSize& size, "
+         << "::Create(wxWindow* parent, wxWindowID id, const wxString& title,\n\t\tconst wxPoint& pos, const wxSize& size, "
             "long "
             "style, const wxString &name)\n{\n\tif (!wxDialog::Create(parent, id, title, pos, size, style, "
             "name))\n\t\treturn "

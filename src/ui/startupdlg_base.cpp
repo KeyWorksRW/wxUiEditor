@@ -30,8 +30,8 @@ namespace wxue_img
     extern const unsigned char pagectrl_png[601];
 }
 
-bool StartupDlg::Create(wxWindow *parent, wxWindowID id, const wxString &title,
-        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
+bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;

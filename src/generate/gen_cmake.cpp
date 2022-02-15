@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Auto-generate a .cmake file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -24,12 +24,25 @@ int WriteCMakeFile(bool test_only)
     }
 
     ttSaveCwd cwd;
-    ttlib::ChangeDir(wxGetApp().getProjectPath());
+
+    // The generated files make be in a different directory then the project file, and if so, we
+    // need to tread that directory as the root of the file.
+
+    ttlib::cstr cmake_file = project->prop_as_string(prop_cmake_file);
+    if (cmake_file.is_sameprefix(".."))
+    {
+        ttlib::cstr new_dir(cmake_file);
+        new_dir.remove_filename();
+        ttlib::ChangeDir(new_dir);
+    }
+    else
+    {
+        ttlib::ChangeDir(wxGetApp().getProjectPath());
+    }
 
     ttlib::cwd cur_dir;
     cur_dir.make_absolute();
 
-    ttlib::cstr cmake_file = project->prop_as_string(prop_cmake_file);
     cmake_file.make_relative(cur_dir);
 
     ttlib::viewfile current;
@@ -60,7 +73,7 @@ int WriteCMakeFile(bool test_only)
 
     for (auto base_file: base_files)
     {
-        base_file.make_relative(wxGetApp().getProjectPath());
+        base_file.make_relative(cur_dir);
         base_file.backslashestoforward();
         base_file.remove_extension();
 

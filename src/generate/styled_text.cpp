@@ -692,7 +692,7 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
 
     if (node->prop_as_string(prop_fold_margin) != "none" && node->prop_as_int(prop_fold_width))
     {
-        auto margin = node->prop_as_string(prop_line_margin).atoi();
+        auto margin = node->prop_as_string(prop_fold_margin).atoi();
         code << "\n\t\t" << node->get_node_name() << "->SetProperty(\"fold\", \"1\");";
         code << "\n\t\t" << node->get_node_name() << "->SetMarginWidth(" << margin << ", 16);";
         code << "\n\t\t" << node->get_node_name() << "->SetMarginType(" << margin << ", wxSTC_MARGIN_SYMBOL);";

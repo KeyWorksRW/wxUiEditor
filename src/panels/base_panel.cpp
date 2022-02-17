@@ -43,10 +43,10 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCod
     m_notebook->SetArtProvider(new wxAuiGenericTabArt());
 
     m_cppPanel = new CodeDisplay(m_notebook);
-    m_notebook->AddPage(m_cppPanel, "source", false, 0);
+    m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
     m_hPanel = new CodeDisplay(m_notebook);
-    m_notebook->AddPage(m_hPanel, "header", false, 1);
+    m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
 
     top_sizer->Add(m_notebook, wxSizerFlags(1).Expand());
 

@@ -77,8 +77,8 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
     m_event_grid = new wxPropertyGridManager(m_notebook_parent, EVENT_ID, wxDefaultPosition, wxDefaultSize,
                                              wxPG_BOLD_MODIFIED | wxPG_SPLITTER_AUTO_CENTER | wxPG_DESCRIPTION);
 
-    m_notebook_parent->AddPage(m_prop_grid, "Properties", false, 0);
-    m_notebook_parent->AddPage(m_event_grid, "Events", false, 1);
+    m_notebook_parent->AddPage(m_prop_grid, "Properties", false, wxWithImages::NO_IMAGE);
+    m_notebook_parent->AddPage(m_event_grid, "Events", false, wxWithImages::NO_IMAGE);
 
     RestoreDescBoxHeight();
 

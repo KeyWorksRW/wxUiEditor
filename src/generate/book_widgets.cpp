@@ -120,14 +120,22 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         if (node->HasValue(prop_bitmap) &&
             (node_parent->prop_as_bool(prop_display_images) || node_parent->isGen(gen_wxToolbook)))
         {
-            int idx_image = 0;
+            int idx_image = -1;
             bool is_image_found { false };
             for (auto& child: node_parent->GetChildNodePtrs())
             {
                 if (child.get() == node)
+                {
+                    if (idx_image < 0)
+                        idx_image = 0;
                     break;
+                }
                 if (child->HasValue(prop_bitmap))
+                {
+                    if (idx_image < 0)
+                        idx_image = 0;
                     ++idx_image;
+                }
                 if (child->GetParent()->isGen(gen_wxTreebook))
                 {
                     for (auto& grand_child: child->GetChildNodePtrs())
@@ -138,7 +146,11 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                             break;
                         }
                         if (grand_child->isGen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
+                        {
+                            if (idx_image < 0)
+                                idx_image = 0;
                             ++idx_image;
+                        }
                     }
                     if (is_image_found)
                         break;
@@ -169,13 +181,21 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
             {
-                int idx_image = 0;
+                int idx_image = -1;
                 for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
                 {
                     if (node_parent->GetChild(idx_child) == node)
+                    {
+                        if (idx_image < 0)
+                            idx_image = 0;
                         break;
+                    }
                     if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                    {
+                        if (idx_image < 0)
+                            idx_image = 0;
                         ++idx_image;
+                    }
                 }
 
                 aui_book->AddPage(widget, node->prop_as_wxString(prop_label), false, idx_image);
@@ -263,7 +283,7 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
             (node->GetParent()->prop_as_bool(prop_display_images) || node->GetParent()->isGen(gen_wxToolbook)))
         {
             auto node_parent = node->GetParent();
-            int idx_image = 0;
+            int idx_image = -1;
             if (node_parent->isGen(gen_wxTreebook))
                 idx_image = GetTreebookImageIndex(node);
             else
@@ -271,9 +291,18 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
                 for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
                 {
                     if (node_parent->GetChild(idx_child) == node)
+                    {
+                        if (idx_image < 0)
+                            idx_image = 0;
                         break;
+                    }
                     if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                    {
+                        if (idx_image < 0)
+                            idx_image = 0;
+
                         ++idx_image;
+                    }
                 }
             }
             if (!node->prop_as_bool(prop_select))
@@ -304,23 +333,36 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     {
         if (node_parent->isGen(gen_wxToolbook))
         {
-            int idx_image = 0;
+            int idx_image = -1;
             for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child, ++idx_image)
             {
                 if (node_parent->GetChild(idx_child) == node)
+                {
+                    if (idx_image < 0)
+                        idx_image = 0;
                     break;
+                }
             }
             book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
         }
         else if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
         {
-            int idx_image = 0;
+            int idx_image = -1;
             for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
             {
                 if (node_parent->GetChild(idx_child) == node)
+                {
+                    if (idx_image < 0)
+                        idx_image = 0;
                     break;
+                }
                 if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap) || node_parent->isGen(gen_wxToolbook))
+                {
+                    if (idx_image < 0)
+                        idx_image = 0;
+
                     ++idx_image;
+                }
             }
 
             book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
@@ -351,9 +393,18 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                 for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
                 {
                     if (node_parent->GetChild(idx_child) == node)
+                    {
+                        if (idx_image < 0)
+                            idx_image = 0;
+
                         break;
+                    }
                     if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                    {
+                        if (idx_image < 0)
+                            idx_image = 0;
                         ++idx_image;
+                    }
                 }
 
                 aui_book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
@@ -407,13 +458,23 @@ std::optional<ttlib::cstr> PageCtrlGenerator::GenConstruction(Node* node)
         (node->GetParent()->prop_as_bool(prop_display_images) || node->isParent(gen_wxToolbook)))
     {
         auto node_parent = node->GetParent();
-        int idx_image = 0;
+        int idx_image = -1;
         for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
         {
             if (node_parent->GetChild(idx_child) == node)
+            {
+                if (idx_image < 0)
+                    idx_image = 0;
+
                 break;
+            }
             if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+            {
+                if (idx_image < 0)
+                    idx_image = 0;
+
                 ++idx_image;
+            }
         }
 
         if (!node->prop_as_bool(prop_select))

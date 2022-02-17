@@ -26,9 +26,7 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 endif()
 
-get_property(isMultiConfig GLOBAL
-  PROPERTY GENERATOR_IS_MULTI_CONFIG
-)
+get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 
 if (NOT isMultiConfig)
     message("\nBecause you are using a single target generator, you MUST specify")
@@ -44,8 +42,30 @@ if (NOT isMultiConfig)
     endif()
 endif()
 
-# This will build wxCLib.lib and wxWidgets.lib
-add_subdirectory(wxSnapshot)
+option(INTERNAL_WIDGETS_SOURCES "Build with internal forked wxWidgets sources" )
+
+if (INTERNAL_WIDGETS_SOURCES)
+    # This uses a private forked version of wxWidgets containing current sources
+    message(NOTICE "Building with internal forked wxWidget libraries")
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
+    set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
+    set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
+
+    # This will build wxCLib.lib and wxWidgets.lib
+    add_subdirectory(../wxWidgets/bld ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
+
+    # Add preprocessor definition that can be used to conditionalize code based on whether the
+    # internal wxWidgets libraries are being used.
+    add_compile_definitions(INTERNAL_WIDGETS)
+else()
+    # wxSnapshot is dev release (currently 3.1.15)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
+    set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot/build)
+    set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
+
+    # This will build wxCLib.lib and wxWidgets.lib
+    add_subdirectory(${widget_cmake_dir})
+endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
@@ -95,11 +115,11 @@ target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")
 target_precompile_headers(check_build PRIVATE "src/pch.h")
 
 if (WIN32)
-    set(setup_dir wxSnapshot/win)
+    set(setup_dir ${widget_cmake_dir}/win)
 endif()
 
 target_include_directories(wxUiEditor PRIVATE
-    wxSnapshot/include
+    ${widget_dir}/include
     ${setup_dir}
     src/
     src/nodes
@@ -112,7 +132,7 @@ target_include_directories(wxUiEditor PRIVATE
 )
 
 target_include_directories(check_build PRIVATE
-    wxSnapshot/include
+    ${widget_dir}/include
     ${setup_dir}
     src/
     src/nodes

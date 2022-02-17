@@ -1031,13 +1031,13 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
     m_mockupPanel = new MockupParent(m_notebook, this);
 
-    m_notebook->AddPage(m_mockupPanel, "Mock Up", false, 0);
+    m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
 
     m_generatedPanel = new BasePanel(m_notebook, this, false);
-    m_notebook->AddPage(m_generatedPanel, "Generated", false, 1);
+    m_notebook->AddPage(m_generatedPanel, "Generated", false, wxWithImages::NO_IMAGE);
 
     m_derivedPanel = new BasePanel(m_notebook, this, true);
-    m_notebook->AddPage(m_derivedPanel, "Derived", false, 1);
+    m_notebook->AddPage(m_derivedPanel, "Derived", false, wxWithImages::NO_IMAGE);
 
     return m_notebook;
 }

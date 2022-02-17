@@ -110,8 +110,8 @@ bool App::LoadProject(const ttString& file)
     // Start a thread to collect all of the embedded images
     m_pjtSettings->ParseEmbeddedImages();
 
-    // Imported projects should be set to version 13 to so that they pass through the old project fixups.
-    if (m_ProjectVersion == 13)
+    // Imported projects start with an older version so that they pass through the old project fixups.
+    if (m_ProjectVersion == ImportProjectVersion)
     {
         m_ProjectVersion = curCombinedVer;
     }
@@ -223,10 +223,10 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                     prop->set_value(iter.as_bool());
                 }
 
-                // Imported projects should be set as version 13 to get the fixups of constant to friendly name, and bit flag
-                // conflict resolution.
+                // Imported projects will be set as version ImportProjectVersion to get the fixups of constant to friendly
+                // name, and bit flag conflict resolution.
 
-                else if (wxGetApp().GetProjectVersion() < 14)
+                else if (wxGetApp().GetProjectVersion() <= ImportProjectVersion)
                 {
                     switch (prop->type())
                     {
@@ -391,37 +391,39 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
 bool App::ImportProject(ttString& file)
 {
+    bool result = false;
     if (file.has_extension(".wxcp"))
     {
         WxCrafter crafter;
-        return Import(crafter, file);
+        result = Import(crafter, file);
     }
     else if (file.has_extension(".fbp"))
     {
         FormBuilder fb;
-        return Import(fb, file);
+        result = Import(fb, file);
     }
     else if (file.has_extension(".rc") || file.has_extension(".dlg"))
     {
         WinResource winres;
-        return Import(winres, file);
+        result = Import(winres, file);
     }
     else if (file.has_extension(".wxs") || file.has_extension(".xrc"))
     {
         WxSmith smith;
-        return Import(smith, file);
+        result = Import(smith, file);
     }
     else if (file.has_extension(".wxg"))
     {
         WxGlade glade;
-        return Import(glade, file);
+        result = Import(glade, file);
     }
 
-    return false;
+    return result;
 }
 
 bool App::Import(ImportXML& import, ttString& file, bool append)
 {
+    m_ProjectVersion = ImportProjectVersion;
     if (import.Import(file))
     {
 #if defined(_DEBUG)

@@ -55,11 +55,11 @@
 
 #if defined(INTERNAL_WIDGETS)
     #include "internal/code_compare_base.h"
+    #include "internal/nodeinfo_base.h"
 #endif
 
 #if defined(_DEBUG)
     #include "debugging/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
-    #include "debugging/nodeinfo.h"       // NodeInfo -- Node memory usage dialog
 #endif
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
@@ -116,7 +116,8 @@ MainFrame::MainFrame() :
     auto menuInternal = new wxMenu;
 
     menuInternal->Append(id_CodeDiffDlg, "Compare Code &Generation...",
-                      "Dialog showing what class have changed, and optional viewing in WinMerge");
+                         "Dialog showing what class have changed, and optional viewing in WinMerge");
+    menuInternal->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
     m_menubar->Append(menuInternal, "&Internal");
 #endif
 
@@ -126,7 +127,6 @@ MainFrame::MainFrame() :
     menuDebug->Append(id_DebugPreferences, "Debug &Settings...", "Settings to use in Debug build");
     menuDebug->AppendSeparator();
     menuDebug->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
-    menuDebug->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
 
     menuDebug->AppendSeparator();
     menuDebug->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
@@ -238,7 +238,23 @@ MainFrame::MainFrame() :
         id_Magnify);
 
 #if defined(INTERNAL_WIDGETS)
-    Bind(wxEVT_MENU, &MainFrame::OnCodeCompare, this, id_CodeDiffDlg);
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            CodeCompare dlg(this);
+            dlg.ShowModal();
+        },
+        id_CodeDiffDlg);
+
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            NodeInfo dlg(this);
+            dlg.ShowModal();
+        },
+        id_NodeMemory);
 #endif
 
 #if defined(_DEBUG)
@@ -250,15 +266,6 @@ MainFrame::MainFrame() :
             dlg.ShowModal();
         },
         id_DebugPreferences);
-
-    Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent&)
-        {
-            NodeInfo dlg(this, m_selected_node ? m_selected_node.get() : nullptr);
-            dlg.ShowModal();
-        },
-        id_NodeMemory);
 
     Bind(
         wxEVT_MENU,

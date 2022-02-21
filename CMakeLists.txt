@@ -79,9 +79,14 @@ include(src/ui/wxui_code.cmake)  # This will set ${wxue_generated_code} with lis
 include(src/file_list.cmake)     # This will set ${file_list} with a list of source files
 
 if (INTERNAL_WIDGETS_SOURCES)
+
     include(src/internal/wxui_internal.cmake)  # This will set ${wxui_internal} with a list of source files
 
-    set (wxui_internal ${wxui_internal} ${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp)
+    set (wxui_internal ${wxui_internal}
+        ${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/internal/nodeinfo.cpp
+    )
+
 endif()
 
 

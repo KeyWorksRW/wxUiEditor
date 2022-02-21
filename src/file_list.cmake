@@ -157,11 +157,8 @@ set (file_list
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msg_logging.cpp>    # Message logging class
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msgframe.cpp>       # Stores messages
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/nodeinfo.cpp>       # Node memory usage dialog
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msgframe_base.cpp>       # wxUiEditor generated file
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/nodeinfo_base.cpp>       # wxUiEditor generated file
-    # $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/dbg_code_diff_base.cpp>  # wxUiEditor generated file
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/debugsettingsBase.cpp>   # wxUiEditor generated file
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/winsrc/ttdebug_min.cpp>  # ttAssertionMsg

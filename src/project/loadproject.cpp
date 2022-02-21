@@ -426,7 +426,7 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
     m_ProjectVersion = ImportProjectVersion;
     if (import.Import(file))
     {
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
         ttString full_path(file);
         full_path.make_absolute();
         wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path);

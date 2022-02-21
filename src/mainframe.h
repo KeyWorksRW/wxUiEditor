@@ -210,7 +210,7 @@ public:
 
     wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
     wxFileHistory* GetAppendImportHistory() { return &m_ImportHistory; }
 #endif  // _DEBUG
 

@@ -13,23 +13,13 @@
 #define wxUSE_NO_MANIFEST 1
 #define wxUSE_UNICODE     1
 
-#if (wxMAJOR_VERSION < 4) && (wxMINOR_VERSION < 2) && (wxRELEASE_NUMBER < 6)
-    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
-        #ifdef _MSC_VER
-            // This *IS* a legitimate warning, however while wxWidgets 3.1.15 has made some progress, there are still header
-            // files that do this.
-            #pragma warning(disable : 5054)  // operator '|': deprecated between enumerations of different types
-        #endif
-    #endif
-#endif
-
 #ifdef _MSC_VER
     #pragma warning(push)
 #endif
 
 #include <wx/defs.h>  // Declarations/definitions common to all wx source files
 
-#if (wxMAJOR_VERSION < 3) || (wxMINOR_VERSION < 1) || (wxRELEASE_NUMBER < 5)
+#if !wxCHECK_VERSION(3, 1, 5)
     #error "You must have wxWidgets 3.1.5 or later to build this project."
 #endif
 
@@ -48,11 +38,13 @@
 
 #include <wx/debug.h>  // Misc debug functions and macros
 
-#if (wxMAJOR_VERSION < 4) && (wxMINOR_VERSION < 2) && (wxRELEASE_NUMBER < 16)
-
-    #ifdef _MSC_VER
-        #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
-        #pragma warning(disable : 4244)  // conversion from 'size_t' to 'int', possible loss of data
+#if !wxCHECK_VERSION(3, 1, 6)
+    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
+        #ifdef _MSC_VER
+            // This *IS* a legitimate warning, however while wxWidgets 3.1.15 has made some progress, there are still header
+            // files that do this.
+            #pragma warning(disable : 5054)  // operator '|': deprecated between enumerations of different types
+        #endif
     #endif
 
     #if !defined(_WIN32) || defined(__clang__)
@@ -60,12 +52,19 @@
         #pragma clang diagnostic ignored "-Wunused-local-typedef"
     #endif
 
-    // We include these here so that C4244 and C4267 get disabled
-    #include <wx/choicebk.h>
-    #include <wx/htmllbox.h>
-    #include <wx/richtext/richtextbuffer.h>
-
 #endif
+
+// These warnings are still generated in 3.1.16
+
+#ifdef _MSC_VER
+    #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
+    #pragma warning(disable : 4244)  // conversion from 'size_t' to 'int', possible loss of data
+#endif
+
+// We include these here so that C4244 and C4267 get disabled
+#include <wx/choicebk.h>
+#include <wx/htmllbox.h>
+#include <wx/richtext/richtextbuffer.h>
 
 #include <wx/gdicmn.h>  // Common GDI classes, types and declarations
 #include <wx/msgdlg.h>  // common header and base class for wxMessageDialog

@@ -101,6 +101,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_caption, "caption" },
     { prop_caption_visible, "caption_visible" },
     { prop_cell_bg, "cell_bg" },
+    { prop_cell_fit, "cell_fit" },
     { prop_cell_font, "cell_font" },
     { prop_cell_horiz_alignment, "cell_horiz_alignment" },
     { prop_cell_text, "cell_text" },

@@ -100,6 +100,7 @@ namespace GenEnum
         prop_caption,
         prop_caption_visible,
         prop_cell_bg,
+        prop_cell_fit,
         prop_cell_font,
         prop_cell_horiz_alignment,
         prop_cell_text,

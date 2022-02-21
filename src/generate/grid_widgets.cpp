@@ -40,6 +40,13 @@ wxObject* GridGenerator::CreateMockup(Node* node, wxObject* parent)
     }
     grid->EnableDragGridSize(node->prop_as_bool(prop_drag_grid_size));
     grid->SetMargins(node->prop_as_int(prop_margin_width), node->prop_as_int(prop_margin_height));
+    if (node->prop_as_string(prop_cell_fit) != "overflow")
+    {
+        if (node->prop_as_string(prop_cell_fit) == "clip")
+            grid->SetDefaultCellFitMode(wxGridFitMode::Clip());
+        else if (node->prop_as_string(prop_cell_fit) == "ellipsize")
+            grid->SetDefaultCellFitMode(wxGridFitMode::Ellipsize());
+    }
 
     if (node->prop_as_int(prop_selection_mode) != 0)
         grid->SetSelectionMode(static_cast<wxGrid::wxGridSelectionModes>(node->prop_as_int(prop_selection_mode)));
@@ -166,9 +173,52 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
     code << braced_indent << node->get_node_name() << "->SetMargins(" << node->prop_as_string(prop_margin_width) << ", "
          << node->prop_as_string(prop_margin_height) << ");";
 
+    if (node->prop_as_string(prop_cell_fit) != "overflow")
+    {
+        if (node->prop_as_string(prop_cell_fit) == "clip")
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#if wxCHECK_VERSION(3, 1, 4)";
+                code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Clip());";
+                code << "\n#endif";
+            }
+            else
+            {
+                code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Clip());";
+            }
+        }
+        else if (node->prop_as_string(prop_cell_fit) == "ellipsize")
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#if wxCHECK_VERSION(3, 1, 4)";
+                code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Ellipsize());";
+                code << "\n#endif";
+            }
+            else
+            {
+                code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Ellipsize());";
+            }
+        }
+    }
+
     if (node->prop_as_int(prop_selection_mode) != 0)
-        code << braced_indent << node->get_node_name() << "->SetSelectionMode(" << node->prop_as_string(prop_selection_mode)
-             << ");";
+    {
+        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1" &&
+            node->prop_as_string(prop_selection_mode) == "wxGridSelectNone")
+        {
+            code << "\n#if wxCHECK_VERSION(3, 1, 5)";
+            code << braced_indent << node->get_node_name() << "->SetSelectionMode("
+                 << node->prop_as_string(prop_selection_mode) << ");";
+            code << "\n#endif";
+        }
+        else
+        {
+            code << braced_indent << node->get_node_name() << "->SetSelectionMode("
+                 << node->prop_as_string(prop_selection_mode) << ");";
+        }
+    }
 
     code << '\n';
 

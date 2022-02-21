@@ -297,8 +297,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             gen_name = gen_BookPage;
         }
     }
-
-    if (gen_name == gen_wxCheckBox)
+    else if (gen_name == gen_wxCheckBox)
     {
         for (auto& iter: xml_obj.children())
         {
@@ -309,6 +308,10 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
                 break;
             }
         }
+    }
+    else if (gen_name == gen_tool && parent->isGen(gen_wxAuiToolBar))
+    {
+        gen_name = gen_auitool;
     }
 
     auto newobject = g_NodeCreator.CreateNode(gen_name, parent);

@@ -118,6 +118,27 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_CodeDiffDlg, "Compare Code &Generation...",
                          "Dialog showing what class have changed, and optional viewing in WinMerge");
     menuInternal->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
+
+#if !defined(_DEBUG)
+    // We want these available in internal Release builds
+
+    menuInternal->AppendSeparator();
+    menuInternal->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
+
+    m_submenu_import_recent = new wxMenu();
+    m_menuFile->AppendSeparator();
+    m_menuFile->AppendSubMenu(m_submenu_import_recent, "Import &Recent");
+
+    config = wxConfig::Get();
+    config->SetPath("debug_history/");
+    m_ImportHistory.Load(*config);
+    m_ImportHistory.UseMenu(m_submenu_import_recent);
+    m_ImportHistory.AddFilesToMenu();
+    config->SetPath("/");
+
+    Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, wxID_FILE1 + 1000, wxID_FILE9 + 1000);
+#endif
+
     m_menubar->Append(menuInternal, "&Internal");
 #endif
 
@@ -257,6 +278,10 @@ MainFrame::MainFrame() :
         id_NodeMemory);
 #endif
 
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+    Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
+#endif
+
 #if defined(_DEBUG)
     Bind(
         wxEVT_MENU,
@@ -275,7 +300,6 @@ MainFrame::MainFrame() :
         },
         id_ShowLogger);
 
-    Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 
@@ -520,7 +544,7 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     }
 }
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
 void MainFrame::OnImportRecent(wxCommandEvent& event)
 {
     ttString file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000));
@@ -538,7 +562,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
     else if (extension == ".xrc")
         wxGetApp().AppendXRC(files);
 }
-#endif  // _DEBUG
+#endif  // defined(_DEBUG) || defined(INTERNAL_WIDGETS)
 
 void MainFrame::OnNewProject(wxCommandEvent&)
 {
@@ -1717,7 +1741,7 @@ Node* FindChildNode(Node* node, GenEnum::GenName name)
     return nullptr;
 }
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
 
 void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
 {
@@ -1748,4 +1772,4 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-#endif  // _DEBUG
+#endif  // defined(_DEBUG) || defined(INTERNAL_WIDGETS)

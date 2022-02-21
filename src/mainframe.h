@@ -263,9 +263,12 @@ protected:
     void OnCodeCompare(wxCommandEvent& event);
 #endif
 
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+    void OnFindWidget(wxCommandEvent& event);
+#endif
+
 #if defined(_DEBUG)  // Starts debug section.
 
-    void OnFindWidget(wxCommandEvent& event);
     void OnDebugCurrentTest(wxCommandEvent& e);
 
 #endif
@@ -306,7 +309,7 @@ private:
     wxFindReplaceDialog* m_findDialog { nullptr };
 
     wxFileHistory m_FileHistory;
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
     wxFileHistory m_ImportHistory;
     wxMenu* m_submenu_import_recent;
 

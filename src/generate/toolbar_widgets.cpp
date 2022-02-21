@@ -416,14 +416,13 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
     {
         return;
     }
-
     auto node = GetMockup()->GetNode(wxobject);
     auto count = node->GetChildCount();
     for (size_t i = 0; i < count; ++i)
     {
         auto childObj = node->GetChild(i);
         auto child = GetMockup()->GetChild(wxobject, i);
-        if (childObj->isGen(gen_tool))
+        if (childObj->isGen(gen_auitool))
         {
             auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())

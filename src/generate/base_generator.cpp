@@ -404,6 +404,7 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
     { "simple", "_simple" },
     { "sizer", "_sizer" },
     { "text", "_text" },
+    { "tool_bar", "_tool_bar" },  // not that bar will already have been changed to _bar
     { "tree", "_tree" },
     { "validator", "_validator" },
     { "view", "_view" },
@@ -477,6 +478,10 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
     {
         return ttlib::cstr("wx_tool_bar.html");
     }
+    else if (class_name == "AuiToolBar")  // in case we add a form version
+    {
+        return ttlib::cstr("wx_aui_tool_bar.html");
+    }
     else if (class_name == "TreeListCtrlColumn")
     {
         return ttlib::cstr("wx_tree_list_ctrl.html");
@@ -490,6 +495,7 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
 // These are the control types that cannot have their parent changed
 static const auto parentless_types = {
 
+    type_aui_tool,
     type_bookpage,
     type_ctx_menu,
     type_dataviewcolumn,

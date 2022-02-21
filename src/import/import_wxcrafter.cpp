@@ -329,6 +329,11 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
         }
     }
 
+    if (gen_name == gen_tool && parent->isGen(gen_wxAuiToolBar))
+    {
+        gen_name = gen_auitool;
+    }
+
     auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
     if (!new_node)
     {
@@ -900,7 +905,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
 
         else if (name.is_sameas("construct the dropdown menu"))
         {
-            if (node->isGen(gen_tool))
+            if (node->isGen(gen_tool) || node->isGen(gen_auitool))
             {
                 // wxCrafter seems to always set this to true, ignoring the value for Kind.
                 return prop_processed;
@@ -1141,7 +1146,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
         }
     }
 
-    else if (prop_name == prop_kind && node->isGen(gen_tool))
+    else if (prop_name == prop_kind && (node->isGen(gen_tool) || node->isGen(gen_auitool)))
     {
         ttlib::sview tool_kind = GetSelectedString(value);
         if (tool_kind.is_sameas("checkable"))

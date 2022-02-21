@@ -1185,6 +1185,11 @@ void MainFrame::CreateToolNode(GenName name)
         return;
     }
 
+    if (name == gen_tool && (m_selected_node->isType(type_aui_toolbar) || m_selected_node->isType(type_aui_tool)))
+    {
+        name = gen_auitool;
+    }
+
     if (!m_selected_node->CreateToolNode(name))
     {
         if (m_selected_node->isGen(gen_wxSplitterWindow))

@@ -432,6 +432,10 @@ GenEnum::GenName ImportXML::ConvertToGenName(const ttlib::cstr& object_name, Nod
     {
         return gen_toolSeparator;
     }
+    else if (gen_name == gen_tool && parent->isGen(gen_wxAuiToolBar))
+    {
+        gen_name = gen_auitool;
+    }
 
     return gen_name;
 }

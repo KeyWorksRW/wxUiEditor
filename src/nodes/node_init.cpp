@@ -96,6 +96,7 @@ inline const char* lst_xml_generators[] = {
 // var_names for these generators will default to "none" for class access
 inline const GenName lst_no_class_access[] = {
 
+    gen_auitool,
     gen_BookPage,
     gen_StaticCheckboxBoxSizer,
     gen_StaticRadioBtnBoxSizer,
@@ -141,6 +142,11 @@ struct ParentChild
 static const ParentChild lstParentChild[] = {
 
     { type_aui_toolbar, type_aui_tool, infinite },
+
+    // This is a bit risky -- we need to allow this type to pickup gen_toolSeparator, However, gen_tool has the wrong events.
+    // It shouldn't happen, as we already have code to convert gen_tool to gen_auitool when appropriate. The only way around
+    // this would be to create a type_separator.
+    { type_aui_toolbar, type_tool, infinite },
     // { type_aui_toolbar, type_widget, infinite },
 
     // Books
@@ -261,7 +267,7 @@ static const ParentChild lstParentChild[] = {
     // Sizers
 
     { type_sizer, type_auinotebook, infinite },
-    // { type_sizer, type_aui_toolbar, infinite },
+    { type_sizer, type_aui_toolbar, infinite },
     { type_sizer, type_choicebook, infinite },
     { type_sizer, type_container, infinite },
     { type_sizer, type_dataviewctrl, infinite },

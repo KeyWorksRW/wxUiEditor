@@ -3111,6 +3111,11 @@
                   id="gen_wxToolBar" />
                 <node
                   class="ribbonTool"
+                  bitmap="Embed;../art_src/auitoolbar.png;[-1,-1]"
+                  help="wxToolBar"
+                  id="gen_wxAuiToolBar" />
+                <node
+                  class="ribbonTool"
                   bitmap="Embed;../art_src/tool.png;[-1,-1]"
                   help="Tool"
                   id="gen_tool" />

@@ -26,6 +26,7 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 
 namespace wxue_img
 {
+    extern const unsigned char auitoolbar_png[476];
     extern const unsigned char dataview_ctrl_png[231];
     extern const unsigned char ribbon_bar_png[844];
     extern const unsigned char ribbon_buttonbar_png[300];
@@ -287,6 +288,7 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto bars_bar_tool = new wxRibbonToolBar(panel_bars_tool, wxID_ANY);
     {
         bars_bar_tool->AddTool(gen_wxToolBar, GetImageFromArray(wxue_img::wxtoolBar_png, sizeof(wxue_img::wxtoolBar_png)), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_tool->AddTool(gen_wxAuiToolBar, GetImageFromArray(wxue_img::auitoolbar_png, sizeof(wxue_img::auitoolbar_png)), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(gen_tool, GetImageFromArray(wxue_img::tool_png, sizeof(wxue_img::tool_png)), "Tool", wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(gen_toolSeparator, GetImageFromArray(wxue_img::toolseparator_png, sizeof(wxue_img::toolseparator_png)), "Tool Separator", wxRIBBON_BUTTON_NORMAL);
     }

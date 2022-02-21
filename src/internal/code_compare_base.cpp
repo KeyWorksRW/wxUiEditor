@@ -6,12 +6,12 @@
 
 #include <wx/sizer.h>
 
-#include "dbg_code_diff_base.h"
+#include "code_compare_base.h"
 
-#include "WinMerge.xpm"
+#include "../debugging/WinMerge.xpm"
 
-bool DbgCodeDiffBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
-        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
+bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -46,8 +46,8 @@ bool DbgCodeDiffBase::Create(wxWindow *parent, wxWindowID id, const wxString &ti
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &DbgCodeDiffBase::OnInit, this);
-    m_btn->Bind(wxEVT_BUTTON, &DbgCodeDiffBase::OnWinMerge, this);
+    Bind(wxEVT_INIT_DIALOG, &CodeCompare::OnInit, this);
+    m_btn->Bind(wxEVT_BUTTON, &CodeCompare::OnWinMerge, this);
 
     return true;
 }

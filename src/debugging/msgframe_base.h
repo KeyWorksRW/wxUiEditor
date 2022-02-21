@@ -38,6 +38,18 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
+    virtual void OnEvents(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnHide(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInfo(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
+    virtual void OnParent(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSaveAs(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnWarnings(wxCommandEvent& event) { event.Skip(); }
+
     // Class member variables
 
     wxHyperlinkCtrl* m_hyperlink;
@@ -53,18 +65,6 @@ protected:
     wxStaticText* m_txt_project;
     wxStaticText* m_txt_type;
     wxTextCtrl* m_textCtrl;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
-    virtual void OnEvents(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnHide(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInfo(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
-    virtual void OnParent(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSaveAs(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWarnings(wxCommandEvent& event) { event.Skip(); }
 };
 
 namespace wxue_img

@@ -53,9 +53,13 @@
 #include "ui/importwinres_base.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
 #include "ui/insertwidget_base.h"  // InsertWidget -- Dialog to lookup and insert a widget
 
+#if defined(INTERNAL_WIDGETS)
+    #include "internal/code_compare_base.h"
+    #include "internal/nodeinfo_base.h"
+#endif
+
 #if defined(_DEBUG)
     #include "debugging/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
-    #include "debugging/nodeinfo.h"       // NodeInfo -- Node memory usage dialog
 #endif
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
@@ -108,15 +112,42 @@ MainFrame::MainFrame() :
     m_FileHistory.AddFilesToMenu();
     config->SetPath("/");
 
+#if defined(INTERNAL_WIDGETS)
+    auto menuInternal = new wxMenu;
+
+    menuInternal->Append(id_CodeDiffDlg, "Compare Code &Generation...",
+                         "Dialog showing what class have changed, and optional viewing in WinMerge");
+    menuInternal->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
+
+    #if !defined(_DEBUG)
+    // We want these available in internal Release builds
+
+    menuInternal->AppendSeparator();
+    menuInternal->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
+
+    m_submenu_import_recent = new wxMenu();
+    m_menuFile->AppendSeparator();
+    m_menuFile->AppendSubMenu(m_submenu_import_recent, "Import &Recent");
+
+    config = wxConfig::Get();
+    config->SetPath("debug_history/");
+    m_ImportHistory.Load(*config);
+    m_ImportHistory.UseMenu(m_submenu_import_recent);
+    m_ImportHistory.AddFilesToMenu();
+    config->SetPath("/");
+
+    Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, wxID_FILE1 + 1000, wxID_FILE9 + 1000);
+    #endif
+
+    m_menubar->Append(menuInternal, "&Internal");
+#endif
+
 #if defined(_DEBUG)
     auto menuDebug = new wxMenu;
     menuDebug->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
     menuDebug->Append(id_DebugPreferences, "Debug &Settings...", "Settings to use in Debug build");
     menuDebug->AppendSeparator();
-    menuDebug->Append(id_CodeDiffDlg, "Compare Code &Generation...",
-                      "Dialog showing what class have changed, and optional viewing in WinMerge");
     menuDebug->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
-    menuDebug->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
 
     menuDebug->AppendSeparator();
     menuDebug->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
@@ -227,6 +258,30 @@ MainFrame::MainFrame() :
         },
         id_Magnify);
 
+#if defined(INTERNAL_WIDGETS)
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            CodeCompare dlg(this);
+            dlg.ShowModal();
+        },
+        id_CodeDiffDlg);
+
+    Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&)
+        {
+            NodeInfo dlg(this);
+            dlg.ShowModal();
+        },
+        id_NodeMemory);
+#endif
+
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+    Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
+#endif
+
 #if defined(_DEBUG)
     Bind(
         wxEVT_MENU,
@@ -239,23 +294,12 @@ MainFrame::MainFrame() :
 
     Bind(
         wxEVT_MENU,
-        [this](wxCommandEvent&)
-        {
-            NodeInfo dlg(this, m_selected_node ? m_selected_node.get() : nullptr);
-            dlg.ShowModal();
-        },
-        id_NodeMemory);
-
-    Bind(
-        wxEVT_MENU,
         [](wxCommandEvent&)
         {
             g_pMsgLogging->ShowLogger();
         },
         id_ShowLogger);
 
-    Bind(wxEVT_MENU, &MainFrame::OnDbgCodeDiff, this, id_CodeDiffDlg);
-    Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 
@@ -500,7 +544,7 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     }
 }
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
 void MainFrame::OnImportRecent(wxCommandEvent& event)
 {
     ttString file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000));
@@ -518,7 +562,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
     else if (extension == ".xrc")
         wxGetApp().AppendXRC(files);
 }
-#endif  // _DEBUG
+#endif  // defined(_DEBUG) || defined(INTERNAL_WIDGETS)
 
 void MainFrame::OnNewProject(wxCommandEvent&)
 {
@@ -1672,13 +1716,9 @@ void MainFrame::PushUndoAction(UndoActionPtr cmd, bool add_to_stack)
         m_undo_stack.Push(cmd);
 }
 
-#if defined(_DEBUG)
-
-    #include "debugging/dbg_code_diff.h"  // DbgCodeDiff -- Compare code generation
-
-void MainFrame::OnDbgCodeDiff(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnCodeCompare(wxCommandEvent& WXUNUSED(event))
 {
-    DbgCodeDiff dlg(this);
+    CodeCompare dlg(this);
     dlg.ShowModal();
 }
 
@@ -1700,6 +1740,8 @@ Node* FindChildNode(Node* node, GenEnum::GenName name)
     }
     return nullptr;
 }
+
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
 
 void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
 {
@@ -1730,4 +1772,4 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-#endif  // _DEBUG
+#endif  // defined(_DEBUG) || defined(INTERNAL_WIDGETS)

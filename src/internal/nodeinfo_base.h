@@ -7,14 +7,15 @@
 #pragma once
 
 #include <wx/dialog.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 
-class NodeInfoBase : public wxDialog
+class NodeInfo : public wxDialog
 {
 public:
-    NodeInfoBase() {}
-    NodeInfoBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
+    NodeInfo() {}
+    NodeInfo(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -26,6 +27,12 @@ public:
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
 protected:
+
+    // Event handlers
+
+    void OnInit(wxInitDialogEvent& event);
+
+private:
 
     // Class member variables
 

@@ -16,11 +16,11 @@
 #include <wx/listbox.h>
 #include <wx/stattext.h>
 
-class DbgCodeDiffBase : public wxDialog
+class CodeCompare : public wxDialog
 {
 public:
-    DbgCodeDiffBase() {}
-    DbgCodeDiffBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Compare Code Generation",
+    CodeCompare() {}
+    CodeCompare(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Compare Code Generation",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -31,16 +31,23 @@ public:
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
+    ~CodeCompare();
+
+private:
+    std::vector<ttlib::cstr> m_class_list;
+
 protected:
+
+    // Event handlers
+
+    void OnInit(wxInitDialogEvent& event);
+    void OnWinMerge(wxCommandEvent& event);
+
+private:
 
     // Class member variables
 
     wxButton* m_btn;
     wxListBox* m_list_changes;
     wxStaticText* m_staticText;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnWinMerge(wxCommandEvent& event) { event.Skip(); }
 };

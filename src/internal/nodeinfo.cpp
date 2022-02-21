@@ -1,16 +1,21 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Node memory usage dialog
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "nodeinfo.h"  // auto-generated: nodeinfo_base.h and nodeinfo_base.cpp
+// clang-format off
+#if defined(INTERNAL_WIDGETS) || defined(_DEBUG)
+
+#include "nodeinfo_base.h"  // auto-generated: nodeinfo_base.h and nodeinfo_base.cpp
 
 #include "mainapp.h"     // App -- Main application class
 #include "mainframe.h"   // Main window frame
 #include "node.h"        // Node class
 #include "undo_stack.h"  // UndoAction -- Maintain a undo and redo stack
+
+// clang-format on
 
 struct NodeMemory
 {
@@ -18,7 +23,7 @@ struct NodeMemory
     size_t children { 0 };
 };
 
-void CalcNodeMemory(Node* node, NodeMemory& node_memory)
+static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
 {
     node_memory.size += node->GetNodeSize();
     ++node_memory.children;
@@ -29,19 +34,19 @@ void CalcNodeMemory(Node* node, NodeMemory& node_memory)
     }
 }
 
-NodeInfo::NodeInfo(wxWindow* parent, Node* cur_node) : NodeInfoBase(parent)
+void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 {
     ttlib::cstr label;
     NodeMemory node_memory;
 
-    auto cur_sel = cur_node ? cur_node : wxGetFrame().GetSelectedNode();
+    auto cur_sel = wxGetFrame().GetSelectedNode();
     if (cur_sel)
     {
         label.clear();
         label << "Generator: gen_" << cur_sel->DeclName();
         m_txt_generator->SetLabel(label);
         label.clear();
-        label << "Type: " << GenEnum::map_GenTypes.at(cur_sel->gen_type());
+        label << "Type: type_" << GenEnum::map_GenTypes.at(cur_sel->gen_type());
         m_txt_type->SetLabel(label);
 
         node_memory.size = 0;
@@ -72,3 +77,5 @@ NodeInfo::NodeInfo(wxWindow* parent, Node* cur_node) : NodeInfoBase(parent)
 
     Fit();
 }
+
+#endif  // defined(INTERNAL_WIDGETS) || defined(_DEBUG)

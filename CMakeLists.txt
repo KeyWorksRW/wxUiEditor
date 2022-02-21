@@ -78,10 +78,23 @@ add_compile_definitions(BETA)
 include(src/ui/wxui_code.cmake)  # This will set ${wxue_generated_code} with list of generated files
 include(src/file_list.cmake)     # This will set ${file_list} with a list of source files
 
+if (INTERNAL_WIDGETS_SOURCES)
+
+    include(src/internal/wxui_internal.cmake)  # This will set ${wxui_internal} with a list of source files
+
+    set (wxui_internal ${wxui_internal}
+        ${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/internal/nodeinfo.cpp
+    )
+
+endif()
+
+
 # Note the requirement that --config Debug is used to get the additional debug files
 add_executable(wxUiEditor WIN32
     ${file_list}
     ${wxue_generated_code}
+    ${wxui_internal}
 )
 
 # This is just used by a github action to confirm that all the source code can be compiled

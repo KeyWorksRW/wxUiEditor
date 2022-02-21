@@ -10,8 +10,8 @@
 
 #include "nodeinfo_base.h"
 
-bool NodeInfoBase::Create(wxWindow *parent, wxWindowID id, const wxString &title,
-        const wxPoint&pos, const wxSize& size, long style, const wxString &name)
+bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+        const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
@@ -45,6 +45,9 @@ bool NodeInfoBase::Create(wxWindow *parent, wxWindowID id, const wxString &title
 
     SetSizerAndFit(parent_sizer);
     Centre(wxBOTH);
+
+    // Event handlers
+    Bind(wxEVT_INIT_DIALOG, &NodeInfo::OnInit, this);
 
     return true;
 }

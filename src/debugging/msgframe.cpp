@@ -17,7 +17,10 @@
 #include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
-#include "nodeinfo.h"        // NodeInfo -- Node memory usage dialog
+
+#if defined(INTERNAL_WIDGETS)
+    #include "internal/nodeinfo_base.h"  // NodeInfo -- Node memory usage dialog
+#endif
 
 struct NodeMemory
 {
@@ -25,7 +28,16 @@ struct NodeMemory
     size_t children { 0 };
 };
 
-void CalcNodeMemory(Node* node, NodeMemory& node_memory);  // Defined in nodeinfo.cpp
+static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
+{
+    node_memory.size += node->GetNodeSize();
+    ++node_memory.children;
+
+    for (auto& iter: node->GetChildNodePtrs())
+    {
+        CalcNodeMemory(iter.get(), node_memory);
+    }
+}
 
 MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* parent) :
     MsgFrameBase(parent), m_pMsgs(pMsgs), m_pDestroyed(pDestroyed)
@@ -331,8 +343,10 @@ void MsgFrame::OnParent(wxCommandEvent& WXUNUSED(event))
         }
         else
         {
-            NodeInfo dlg(this, parent);
+#if defined(INTERNAL_WIDGETS)
+            NodeInfo dlg(this);
             dlg.ShowModal();
+#endif
         }
     }
 }

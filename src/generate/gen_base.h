@@ -54,9 +54,9 @@ int WriteCMakeFile(bool test_only = true);  // See gen_cmake.cpp
 // class name over every form that needs updating.
 bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
 
-#if defined(_DEBUG)
+#if defined(INTERNAL_WIDGETS)
 void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root);
-#endif  // _DEBUG
+#endif
 
 class BaseCodeGenerator
 {

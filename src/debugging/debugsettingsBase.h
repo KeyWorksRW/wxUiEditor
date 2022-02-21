@@ -29,6 +29,12 @@ public:
 
 protected:
 
+    // Virtual event handlers -- override them in your derived class
+
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnShowNow(wxCommandEvent& event) { event.Skip(); }
+
     // Validator variables
 
     bool m_DisplayMsgEvent { false };
@@ -43,10 +49,4 @@ protected:
     wxStdDialogButtonSizer* std_button_sizer;
     wxButton* std_button_sizerOK;
     wxButton* std_button_sizerCancel;
-
-    // Virtual event handlers -- override them in your derived class
-
-    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnShowNow(wxCommandEvent& event) { event.Skip(); }
 };

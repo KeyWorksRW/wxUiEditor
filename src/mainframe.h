@@ -259,9 +259,12 @@ protected:
 
     void OnNodeSelected(CustomEvent& event);
 
+#if defined(INTERNAL_WIDGETS)
+    void OnCodeCompare(wxCommandEvent& event);
+#endif
+
 #if defined(_DEBUG)  // Starts debug section.
 
-    void OnDbgCodeDiff(wxCommandEvent& event);
     void OnFindWidget(wxCommandEvent& event);
     void OnDebugCurrentTest(wxCommandEvent& e);
 

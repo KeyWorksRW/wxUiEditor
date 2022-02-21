@@ -53,6 +53,10 @@
 #include "ui/importwinres_base.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
 #include "ui/insertwidget_base.h"  // InsertWidget -- Dialog to lookup and insert a widget
 
+#if defined(INTERNAL_WIDGETS)
+    #include "internal/code_compare_base.h"
+#endif
+
 #if defined(_DEBUG)
     #include "debugging/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
     #include "debugging/nodeinfo.h"       // NodeInfo -- Node memory usage dialog
@@ -108,13 +112,19 @@ MainFrame::MainFrame() :
     m_FileHistory.AddFilesToMenu();
     config->SetPath("/");
 
+#if defined(INTERNAL_WIDGETS)
+    auto menuInternal = new wxMenu;
+
+    menuInternal->Append(id_CodeDiffDlg, "Compare Code &Generation...",
+                      "Dialog showing what class have changed, and optional viewing in WinMerge");
+    m_menubar->Append(menuInternal, "&Internal");
+#endif
+
 #if defined(_DEBUG)
     auto menuDebug = new wxMenu;
     menuDebug->Append(id_ShowLogger, "Show &Log Window", "Show window containing debug messages");
     menuDebug->Append(id_DebugPreferences, "Debug &Settings...", "Settings to use in Debug build");
     menuDebug->AppendSeparator();
-    menuDebug->Append(id_CodeDiffDlg, "Compare Code &Generation...",
-                      "Dialog showing what class have changed, and optional viewing in WinMerge");
     menuDebug->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
     menuDebug->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
 
@@ -227,6 +237,10 @@ MainFrame::MainFrame() :
         },
         id_Magnify);
 
+#if defined(INTERNAL_WIDGETS)
+    Bind(wxEVT_MENU, &MainFrame::OnCodeCompare, this, id_CodeDiffDlg);
+#endif
+
 #if defined(_DEBUG)
     Bind(
         wxEVT_MENU,
@@ -254,7 +268,6 @@ MainFrame::MainFrame() :
         },
         id_ShowLogger);
 
-    Bind(wxEVT_MENU, &MainFrame::OnDbgCodeDiff, this, id_CodeDiffDlg);
     Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
@@ -1672,13 +1685,9 @@ void MainFrame::PushUndoAction(UndoActionPtr cmd, bool add_to_stack)
         m_undo_stack.Push(cmd);
 }
 
-#if defined(_DEBUG)
-
-    #include "debugging/dbg_code_diff.h"  // DbgCodeDiff -- Compare code generation
-
-void MainFrame::OnDbgCodeDiff(wxCommandEvent& WXUNUSED(event))
+void MainFrame::OnCodeCompare(wxCommandEvent& WXUNUSED(event))
 {
-    DbgCodeDiff dlg(this);
+    CodeCompare dlg(this);
     dlg.ShowModal();
 }
 
@@ -1700,6 +1709,8 @@ Node* FindChildNode(Node* node, GenEnum::GenName name)
     }
     return nullptr;
 }
+
+#if defined(_DEBUG)
 
 void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
 {

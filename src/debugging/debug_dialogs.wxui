@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <wxUiEditorData
-  data_version="12">
+  data_version="14">
   <node
     class="Project"
     art_directory="../art_src">
@@ -45,52 +45,6 @@
             class="wxStaticText"
             label="Clipboard:"
             var_name="m_txt_clipboard" />
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          Cancel="false"
-          Close="true"
-          OK="false"
-          default_button="Close"
-          flags="wxEXPAND" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
-      base_file="..\debugging\dbg_code_diff_base"
-      class_name="DbgCodeDiffBase"
-      derived_class_name="DbgCodeDiff"
-      derived_file="../debugging/dbg_code_diff"
-      title="Compare Code Generation"
-      wxEVT_INIT_DIALOG="OnInit">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="dlg_sizer"
-        flags="wxEXPAND">
-        <node
-          class="wxBoxSizer"
-          orientation="wxVERTICAL">
-          <node
-            class="wxStaticText"
-            label="If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.&#10;"
-            wrap="250" />
-          <node
-            class="wxStaticText"
-            class_access="none"
-            label="&amp;Changed Classes:"
-            var_name="staticText" />
-          <node
-            class="wxListBox"
-            var_name="m_list_changes"
-            disabled="true"
-            minimum_size="250,200" />
-          <node
-            class="wxButton"
-            label="&amp;WinMerge..."
-            bitmap="XPM; ..\debugging\WinMerge.xpm; [-1,-1]"
-            disabled="true"
-            wxEVT_BUTTON="OnWinMerge" />
         </node>
         <node
           class="wxStdDialogButtonSizer"

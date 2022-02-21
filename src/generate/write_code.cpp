@@ -10,6 +10,7 @@
 
 #include <wx/file.h>     // wxFile - encapsulates low-level "file descriptor"
 #include <wx/stc/stc.h>  // Scintilla
+#include <wx/filename.h> // wxFileName - encapsulates a file path
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 

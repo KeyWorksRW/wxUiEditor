@@ -380,6 +380,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_window_style, "window_style" },
     { prop_wrap, "wrap" },
     { prop_wrap_flags, "wrap_flags" },
+    { prop_wxWidgets_version, "wxWidgets_version" },
 
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;

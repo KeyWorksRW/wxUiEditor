@@ -382,6 +382,7 @@ namespace GenEnum
         prop_window_style,
         prop_wrap,
         prop_wrap_flags,
+        prop_wxWidgets_version,
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,

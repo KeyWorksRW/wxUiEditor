@@ -443,10 +443,10 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			help="Generated when a new window is created." />
 		<event name="wxEVT_WEBVIEW_TITLE_CHANGED" class="wxWebViewEvent"
 			help="Generated when the page title changes." />
-		<event name="EVT_WEBVIEW_FULL_SCREEN_CHANGED" class="wxWebViewEvent"
-			help="Generated when the page wants to enter or leave fullscreen." />
+		<event name="wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" class="wxWebViewEvent"
+			help="Generated when the page wants to enter or leave fullscreen. Available since wxWidgets 3.1.5" />
 		<event name="wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED" class="wxWebViewEvent"
-			help="Only available in wxWidgets 3.1.5 or later." />
+			help="Available since wxWidgets 3.1.5" />
 	</gen>
 
 	<gen class="wxCalendarCtrl" image="calendar" type="widget">

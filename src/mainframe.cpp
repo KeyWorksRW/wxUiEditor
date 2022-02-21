@@ -1716,11 +1716,15 @@ void MainFrame::PushUndoAction(UndoActionPtr cmd, bool add_to_stack)
         m_undo_stack.Push(cmd);
 }
 
+#if defined(INTERNAL_WIDGETS)
+
 void MainFrame::OnCodeCompare(wxCommandEvent& WXUNUSED(event))
 {
     CodeCompare dlg(this);
     dlg.ShowModal();
 }
+
+#endif
 
 Node* FindChildNode(Node* node, GenEnum::GenName name)
 {

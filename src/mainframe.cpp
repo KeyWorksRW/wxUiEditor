@@ -119,7 +119,7 @@ MainFrame::MainFrame() :
                          "Dialog showing what class have changed, and optional viewing in WinMerge");
     menuInternal->Append(id_NodeMemory, "Node &Information...", "Show node memory usage");
 
-#if !defined(_DEBUG)
+    #if !defined(_DEBUG)
     // We want these available in internal Release builds
 
     menuInternal->AppendSeparator();
@@ -137,7 +137,7 @@ MainFrame::MainFrame() :
     config->SetPath("/");
 
     Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, wxID_FILE1 + 1000, wxID_FILE9 + 1000);
-#endif
+    #endif
 
     m_menubar->Append(menuInternal, "&Internal");
 #endif

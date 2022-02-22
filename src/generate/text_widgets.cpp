@@ -13,6 +13,8 @@
 
 #include <wx/event.h>                  // Event classes
 #include <wx/html/htmlwin.h>           // wxHtmlWindow class for parsing & displaying HTML
+#include <wx/propgrid/manager.h>       // wxPropertyGridManager
+#include <wx/propgrid/propgrid.h>      // wxPropertyGrid
 #include <wx/richtext/richtextctrl.h>  // A rich edit control
 #include <wx/stattext.h>               // wxStaticText base header
 #include <wx/stc/stc.h>                // A wxWidgets implementation of Scintilla.
@@ -154,6 +156,14 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->HasValue(prop_hint))
         widget->SetHint(node->prop_as_wxString(prop_hint));
 
+    if (node->prop_as_string(prop_spellcheck).contains("enabled"))
+    {
+        if (node->prop_as_string(prop_spellcheck).contains("grammar"))
+            widget->EnableProofCheck(wxTextProofOptions::Default().GrammarCheck());
+        else
+            widget->EnableProofCheck(wxTextProofOptions::Default());
+    }
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -251,6 +261,27 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenSettings(Node* node, size_t& au
         code << "\t\t" << node->get_node_name() << "->AutoComplete(tmp_array);\n";
         code << "\t}";
     }
+
+    if (node->prop_as_string(prop_spellcheck).contains("enabled"))
+    {
+        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        {
+            code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
+            code << node->get_node_name() << "->EnableProofCheck(wxTextProofOptions::Default()";
+            if (node->prop_as_string(prop_spellcheck).contains("grammar"))
+                code << ".GrammarCheck()";
+            code << ");";
+            code << "\n#endif";
+        }
+        else
+        {
+            code << node->get_node_name() << "->EnableProofCheck(wxTextProofOptions::Default()";
+            if (node->prop_as_string(prop_spellcheck).contains("grammar"))
+                code << ".GrammarCheck()";
+            code << ");";
+        }
+    }
+
     return code;
 }
 
@@ -271,6 +302,31 @@ bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     }
 
     return true;
+}
+
+void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
+{
+    if (changed_prop->isProp(prop_spellcheck))
+    {
+        if (auto pg_parent = prop_grid->GetProperty("spellcheck"); pg_parent)
+        {
+            for (unsigned int idx = 0; idx < pg_parent->GetChildCount(); ++idx)
+            {
+                if (auto pg_setting = pg_parent->Item(idx); pg_setting)
+                {
+                    auto label = pg_setting->GetLabel();
+                    if (label == "grammar")
+                    {
+                        pg_setting->Enable(changed_prop->as_string().contains("enabled"));
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        BaseGenerator::ChangeEnableState(prop_grid, changed_prop);
+    }
 }
 
 //////////////////////////////////////////  RichTextCtrlGenerator  //////////////////////////////////////////

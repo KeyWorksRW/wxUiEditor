@@ -35,6 +35,8 @@ public:
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;
 };
 
 class RichTextCtrlGenerator : public BaseGenerator

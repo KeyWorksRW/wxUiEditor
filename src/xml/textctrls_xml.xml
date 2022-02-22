@@ -43,6 +43,12 @@ inline const char* textctrls_xml = R"===(<?xml version="1.0"?>
 			help="The maximum length of user-entered text. 0 means no limit. Note that in wxGTK this function may only be used with single line text controls." />
 		<property name="auto_complete" type="stringlist"
 			help="If one or more strings are entered, they will be used to initialize autocomplete." />
+		<property name="spellcheck" type="bitlist">
+			<option name="enabled"
+				help="Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style.\n\nAvailable since 3.1.6" />
+			<option name="grammar"
+				help="Enables grammar checking in addition to spell checking. Currently this is supported in wxMSW (when running under Windows 8 or later), wxGTK when using GTK 3 and wxOSX. In addition, wxMSW requires that the text control has the wxTE_RICH2 style set, while wxOSX requires that the control has the wxTE_MULTILINE style.\n\nAvailable since 3.1.6" />
+		</property>
 		<property name="style" type="bitlist">
 			<option name="wxTE_PROCESS_ENTER"
 				help="The control will generate the event wxEVT_TEXT_ENTER (otherwise pressing Enter key is either processed internally by the control or used for navigation between dialog controls)." />

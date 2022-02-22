@@ -324,6 +324,7 @@ namespace GenEnum
         prop_size,
         prop_smart_size,
         prop_source_ext,
+        prop_spellcheck,
         prop_splitmode,
         prop_src_preamble,
         prop_start_colour,

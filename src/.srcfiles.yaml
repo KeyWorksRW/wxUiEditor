@@ -21,7 +21,9 @@ Options:
     TargetDir:        ../build/CMakeFiles/CMakeTmp   # just a temporary location for the library
     Natvis:           wxui.natvis # MSVC Debug visualizer
 
-    IncDirs:          ./;nodes;generate;utils;customprops;ui;../wxSnapshot/include;../wxSnapshot/win;../ttLib/include;../pugixml
+    # IncDirs:          ./;nodes;generate;utils;customprops;ui;../wxSnapshot/include;../wxSnapshot/win;../ttLib/include;../pugixml
+    IncDirs:          ./;nodes;generate;utils;customprops;ui;../../wxWidgets/include;../../wxWidgets/bld/win;../ttLib/include;../pugixml
+
 
     Libs_dbg:         ../build/wxSnapshot/Debug/wxCLib.lib;../build/wxSnapshot/Debug/wxWidgets.lib
     Libs_rel:         ../build/wxSnapshot/Release/wxCLib.lib;../build/wxSnapshot/Release/wxWidgets.lib

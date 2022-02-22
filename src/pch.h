@@ -46,12 +46,6 @@
             #pragma warning(disable : 5054)  // operator '|': deprecated between enumerations of different types
         #endif
     #endif
-
-    #if !defined(_WIN32) || defined(__clang__)
-        // warning: unused typedef 'complete' in scopedptr.h
-        #pragma clang diagnostic ignored "-Wunused-local-typedef"
-    #endif
-
 #endif
 
 // These warnings are still generated in 3.1.16
@@ -59,6 +53,11 @@
 #ifdef _MSC_VER
     #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
     #pragma warning(disable : 4244)  // conversion from 'size_t' to 'int', possible loss of data
+#endif
+
+#if !defined(_WIN32) || defined(__clang__)
+    // warning: unused typedef 'complete' in scopedptr.h
+    #pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
 
 // We include these here so that C4244 and C4267 get disabled

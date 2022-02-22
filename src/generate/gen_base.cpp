@@ -626,15 +626,33 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
                     continue;
                 }
             }
-
-            if (m_form_node->prop_as_bool(prop_use_derived_class))
+            if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
+                 event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
+                wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
             {
-                code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
-                     << "& event) { event.Skip(); }";
+                code << "\n#if wxCHECK_VERSION(3, 1, 5)\n";
+                if (m_form_node->prop_as_bool(prop_use_derived_class))
+                {
+                    code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
+                         << "& event) { event.Skip(); }";
+                }
+                else
+                {
+                    code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                }
+                code << "\n#endif";
             }
             else
             {
-                code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                if (m_form_node->prop_as_bool(prop_use_derived_class))
+                {
+                    code << "virtual void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class()
+                         << "& event) { event.Skip(); }";
+                }
+                else
+                {
+                    code << "void " << event->get_value() << "(" << event->GetEventInfo()->get_event_class() << "& event);";
+                }
             }
             code_lines.insert(code);
         }

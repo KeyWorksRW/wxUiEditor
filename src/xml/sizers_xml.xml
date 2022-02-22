@@ -66,7 +66,7 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 			help="" />
 	</gen>
 
-	<gen class="StaticCheckboxBoxSizer" image="wxStaticCheckBoxSizer" type="sizer">
+	<gen class="StaticCheckboxBoxSizer" image="wxStaticCheckBoxSizer" type="sizer" help="Available since wxWidgets 3.1.1">
 		<inherits class="sizer_dimension" />
 		<inherits class="sizer_child" />
 		<inherits class="Boolean Validator" />

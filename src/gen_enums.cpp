@@ -101,6 +101,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_caption, "caption" },
     { prop_caption_visible, "caption_visible" },
     { prop_cell_bg, "cell_bg" },
+    { prop_cell_fit, "cell_fit" },
     { prop_cell_font, "cell_font" },
     { prop_cell_horiz_alignment, "cell_horiz_alignment" },
     { prop_cell_text, "cell_text" },
@@ -380,6 +381,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_window_style, "window_style" },
     { prop_wrap, "wrap" },
     { prop_wrap_flags, "wrap_flags" },
+    { prop_wxWidgets_version, "wxWidgets_version" },
 
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;

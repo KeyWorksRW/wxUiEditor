@@ -601,7 +601,7 @@ const std::unordered_map<std::string, const char*> s_EventNames = {
     { "wxEVT_WEBVIEW_ERROR", "OnWebViewError" },
     { "wxEVT_WEBVIEW_NEWWINDOW", "OnWebViewWindow" },
     { "wxEVT_WEBVIEW_TITLE_CHANGED", "OnWebViewTitleChanged" },
-    { "EVT_WEBVIEW_FULL_SCREEN_CHANGED", "OnFullScreen" },
+    { "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED", "OnFullScreen" },
     { "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED", "OnScriptMessage" },
 
     { "ApplyButtonClicked", "OnApply" },

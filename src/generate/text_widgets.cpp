@@ -486,7 +486,19 @@ std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
 
 std::optional<ttlib::cstr> WebViewGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
-    return GenEventCode(event, class_name);
+    if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
+         event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
+        wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    {
+        ttlib::cstr code("\n#if wxCHECK_VERSION(3, 1, 5)\n");
+        code << GenEventCode(event, class_name);
+        code << "\n#endif";
+        return code;
+    }
+    else
+    {
+        return GenEventCode(event, class_name);
+    }
 }
 
 bool WebViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

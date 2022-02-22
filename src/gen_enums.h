@@ -100,6 +100,7 @@ namespace GenEnum
         prop_caption,
         prop_caption_visible,
         prop_cell_bg,
+        prop_cell_fit,
         prop_cell_font,
         prop_cell_horiz_alignment,
         prop_cell_text,
@@ -382,6 +383,7 @@ namespace GenEnum
         prop_window_style,
         prop_wrap,
         prop_wrap_flags,
+        prop_wxWidgets_version,
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,

@@ -32,7 +32,7 @@ inline const char* grid_xml = R"===(<?xml version="1.0"?>
 			<option name="wxGridSelectRowsOrColumns"
 				help="Select either the entire columns or the entire rows but not individual cells nor blocks." />
 			<option name="wxGridSelectNone"
-				help="No selections can be made. The user won't be able to select any cells in this mode. Available since dgets 3.1.5" />
+				help="No selections can be made. The user won't be able to select any cells in this mode. Available since wxWidgets 3.1.5" />
 			wxGridSelectCells
 		</property>
 
@@ -52,6 +52,13 @@ inline const char* grid_xml = R"===(<?xml version="1.0"?>
 		<category name="Cells">
 			<property name="cell_bg" type="wxColour"
 				help="Default cell background color." />
+			<property name="cell_fit" type="option"
+				help="Specifies the default behaviour of the cell contents if it doesn't fit into the available space. Available since wxWidgets 3.1.4.">
+				<option name="clip" />
+				<option name="ellipsize" />
+				<option name="overflow" />
+				overflow
+			</property>
 			<property name="cell_font" type="wxFont"
 				help="Default cell font." />
 			<property name="cell_text" type="wxColour"

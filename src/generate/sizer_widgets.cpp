@@ -317,8 +317,20 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
         }
     }
 
-    code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY, ";
-    code << node->prop_as_string(prop_checkbox_var_name) << "), " << node->prop_as_string(prop_orientation) << ");";
+    code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY,";
+    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    {
+        code << "\n#if wxCHECK_VERSION(3, 1, 1)\n\t";
+        code << node->prop_as_string(prop_checkbox_var_name) << "),";
+        code << "\n#else\n\t";
+        code << "wxEmptyString),";
+        code << "\n#endif\n";
+        code << node->prop_as_string(prop_orientation) << ");";
+    }
+    else
+    {
+        code << node->prop_as_string(prop_checkbox_var_name) << "), " << node->prop_as_string(prop_orientation) << ");";
+    }
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
@@ -449,8 +461,20 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
         }
     }
 
-    code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY, ";
-    code << node->prop_as_string(prop_radiobtn_var_name) << "), " << node->prop_as_string(prop_orientation) << ");";
+    code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY,";
+    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    {
+        code << "\n#if wxCHECK_VERSION(3, 1, 1)\n\t";
+        code << node->prop_as_string(prop_radiobtn_var_name) << "),";
+        code << "\n#else\n\t";
+        code << "wxEmptyString),";
+        code << "\n#endif\n";
+        code << node->prop_as_string(prop_orientation) << ");";
+    }
+    else
+    {
+        code << node->prop_as_string(prop_radiobtn_var_name) << "), " << node->prop_as_string(prop_orientation) << ");";
+    }
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)

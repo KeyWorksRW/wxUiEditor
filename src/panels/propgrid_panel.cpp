@@ -361,7 +361,12 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 {
                     if (iter.name == label)
                     {
-                        m_prop_grid->SetPropertyHelpString(id, iter.help);
+                        if (iter.help.size())
+                        {
+                            wxString description = iter.help;
+                            description.Replace("\\n", "\n", true);
+                            m_prop_grid->SetPropertyHelpString(id, description);
+                        }
                         break;
                     }
                 }

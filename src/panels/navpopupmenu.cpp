@@ -681,8 +681,11 @@ void NavPopupMenu::MenuAddStandardCommands(Node* node)
         if (node->isGen(gen_Project))
         {
             auto paste_menu_item = Append(wxID_PASTE);
+#if !wxCHECK_VERSION(3, 1, 6)
+            paste_menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU));
+#else
             paste_menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
-
+#endif
             if (!clip_node || !clip_node->IsForm())
             {
                 paste_menu_item->Enable(false);
@@ -697,23 +700,36 @@ void NavPopupMenu::MenuAddStandardCommands(Node* node)
 
     wxMenuItem* menu_item;
     menu_item = Append(wxID_CUT);
+#if !wxCHECK_VERSION(3, 1, 6)
+    menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU));
+#else
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU));
+#endif
     menu_item = Append(wxID_COPY);
+#if !wxCHECK_VERSION(3, 1, 6)
+    menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_MENU));
+#else
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
-
+#endif
     if (!node->isGen(gen_wxStatusBar))
     {
         auto paste_menu_item = Append(wxID_PASTE);
+#if !wxCHECK_VERSION(3, 1, 6)
+        paste_menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU));
+#else
         paste_menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
-
+#endif
         if (!m_isPasteAllowed)
         {
             paste_menu_item->Enable(false);
         }
     }
     menu_item = Append(wxID_DELETE);
+#if !wxCHECK_VERSION(3, 1, 6)
+    menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU));
+#else
     menu_item->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
-
+#endif
     if (!node->isGen(gen_wxStatusBar))
     {
         Append(MenuDUPLICATE, "Duplicate");

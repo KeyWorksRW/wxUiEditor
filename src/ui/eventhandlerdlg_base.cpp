@@ -28,7 +28,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     box_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
     m_radio_use_function = new wxRadioButton(this, wxID_ANY, "Use function");
-    m_function_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_use_function), wxVERTICAL);
+    m_function_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
+    #if wxCHECK_VERSION(3, 1, 1)
+    m_radio_use_function),
+    #else
+    wxEmptyString),
+    #endif
+    wxVERTICAL);
     box_sizer->Add(m_function_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_text_function = new wxTextCtrl(m_function_box->GetStaticBox(), wxID_ANY, wxEmptyString);
@@ -37,7 +43,13 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     box_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
     m_radio_use_lambda = new wxRadioButton(this, wxID_ANY, "Use lambda");
-    m_lambda_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, m_radio_use_lambda), wxVERTICAL);
+    m_lambda_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
+    #if wxCHECK_VERSION(3, 1, 1)
+    m_radio_use_lambda),
+    #else
+    wxEmptyString),
+    #endif
+    wxVERTICAL);
     box_sizer->Add(m_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);

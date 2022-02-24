@@ -45,11 +45,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     auto menuItem2 = new wxMenuItem(m_menuFile, id_OpenProject, "&Open Project...\tCtrl+O",
         "Open a project", wxITEM_NORMAL);
     menuItem2->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_MENU)
-    #endif
+#endif
     );
     m_menuFile->Append(menuItem2);
 
@@ -69,11 +69,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     auto menu_item2 = new wxMenuItem(m_menuFile, id_SaveProjectAs, "Save &As...\tCtrl-Shift+S",
         "Save current project to a different filename", wxITEM_NORMAL);
     menu_item2->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_FILE_SAVE_AS, wxART_MENU)
-    #endif
+#endif
     );
     m_menuFile->Append(menu_item2);
 
@@ -116,11 +116,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_quit = new wxMenuItem(m_menuFile, wxID_EXIT, wxEmptyString);
     menu_quit->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_QUIT, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_QUIT, wxART_MENU)
-    #endif
+#endif
     );
     m_menuFile->Append(menu_quit);
     m_menubar->Append(m_menuFile, "&File");
@@ -129,21 +129,21 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_undo = new wxMenuItem(m_menuEdit, wxID_UNDO, wxEmptyString);
     menu_undo->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_UNDO, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_UNDO, wxART_MENU)
-    #endif
+#endif
     );
     m_menuEdit->Append(menu_undo);
 
     auto menu_redo = new wxMenuItem(m_menuEdit, wxID_REDO, wxEmptyString);
     menu_redo->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_REDO, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_REDO, wxART_MENU)
-    #endif
+#endif
     );
     m_menuEdit->Append(menu_redo);
 
@@ -151,42 +151,42 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_cut = new wxMenuItem(m_menuEdit, wxID_CUT, wxEmptyString);
     menu_cut->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU)
-    #endif
+#endif
     );
     m_menuEdit->Append(menu_cut);
 
     auto menu_copy = new wxMenuItem(m_menuEdit, wxID_COPY, wxEmptyString);
     menu_copy->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU)
-    #endif
+#endif
     );
     m_menuEdit->Append(menu_copy);
 
     auto menu_paste = new wxMenuItem(m_menuEdit, wxID_PASTE, wxEmptyString);
     menu_paste->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU)
-    #endif
+#endif
     );
     m_menuEdit->Append(menu_paste);
 
     auto menu_delete = new wxMenuItem(m_menuEdit, wxID_DELETE, wxEmptyString,
         "Delete selected object without using clipboard.", wxITEM_NORMAL);
     menu_delete->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU)
-    #endif
+#endif
     );
     m_menuEdit->Append(menu_delete);
 
@@ -199,22 +199,22 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     auto menu_find = new wxMenuItem(m_menuEdit, wxID_FIND, wxEmptyString,
         "Find text in the active code viewer.", wxITEM_NORMAL);
     menu_find->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_FIND, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_FIND, wxART_MENU)
-    #endif
+#endif
     );
     m_menuEdit->Append(menu_find);
 
     auto menu_insert_widget = new wxMenuItem(m_menuEdit, id_insert_widget, "&Insert widget...",
         "Find text in the active code viewer.", wxITEM_NORMAL);
     menu_insert_widget->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_EDIT, wxART_MENU)
-    #endif
+#endif
     );
     m_menuEdit->Append(menu_insert_widget);
 
@@ -330,11 +330,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_help = new wxMenuItem(m_menuHelp, wxID_ABOUT, wxEmptyString);
     menu_help->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_HELP, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_HELP, wxART_MENU)
-    #endif
+#endif
     );
     m_menuHelp->Append(menu_help);
 

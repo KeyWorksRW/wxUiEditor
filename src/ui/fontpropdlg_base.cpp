@@ -18,11 +18,11 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_radioSystem = new wxRadioButton(this, wxID_ANY, "Default GUI Font");
     m_system_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
-    #if wxCHECK_VERSION(3, 1, 1)
+#if wxCHECK_VERSION(3, 1, 1)
     m_radioSystem),
-    #else
+#else
     wxEmptyString),
-    #endif
+#endif
     wxVERTICAL);
     dlg_sizer->Add(m_system_box, wxSizerFlags().Expand().DoubleBorder(wxALL));
 
@@ -79,11 +79,11 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_radioCustom = new wxRadioButton(this, wxID_ANY, "Custom Font");
     m_custom_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
-    #if wxCHECK_VERSION(3, 1, 1)
+#if wxCHECK_VERSION(3, 1, 1)
     m_radioCustom),
-    #else
+#else
     wxEmptyString),
-    #endif
+#endif
     wxVERTICAL);
     dlg_sizer->Add(m_custom_box, wxSizerFlags().Expand().DoubleBorder(wxALL));
 

@@ -44,11 +44,11 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     m_radio_custom = new wxRadioButton(this, wxID_ANY, "Custom Colour");
     m_staticbox_custom = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
-    #if wxCHECK_VERSION(3, 1, 1)
+#if wxCHECK_VERSION(3, 1, 1)
     m_radio_custom),
-    #else
+#else
     wxEmptyString),
-    #endif
+#endif
     wxVERTICAL);
     m_staticbox_custom->GetStaticBox()->Enable(false);
     dlg_sizer->Add(m_staticbox_custom, wxSizerFlags().Expand().Border(wxALL));
@@ -62,11 +62,11 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     m_radio_system = new wxRadioButton(this, wxID_ANY, "System Colour");
     m_staticbox_system = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
-    #if wxCHECK_VERSION(3, 1, 1)
+#if wxCHECK_VERSION(3, 1, 1)
     m_radio_system),
-    #else
+#else
     wxEmptyString),
-    #endif
+#endif
     wxVERTICAL);
     m_staticbox_system->GetStaticBox()->Enable(false);
     dlg_sizer->Add(m_staticbox_system, wxSizerFlags().Expand().Border(wxALL));

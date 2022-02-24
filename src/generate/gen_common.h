@@ -72,8 +72,10 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code);
 
 // Converts bitmap property into code. Code is set to wxNullBitmap if no bitmap. Art will
 // return either a bitmap or an image if scaling is requested. XPM returns wxImage and HDR
-// returns GetImageFromArray() (which is a wxImage).
-ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description);
+// returns GetImageFromArray() (which is a wxImage). pDpiWindow is the name of the window
+// to use for wxBitmapBundle::GetBitmapFrom()
+ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbundle = false,
+                               const ttlib::cstr* pDpiWindow = nullptr);
 
 ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name);
 

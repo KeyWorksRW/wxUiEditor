@@ -44,13 +44,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menuItem2 = new wxMenuItem(m_menuFile, id_OpenProject, "&Open Project...\tCtrl+O",
         "Open a project", wxITEM_NORMAL);
-    menuItem2->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_MENU)
-#endif
-    );
+    menuItem2->SetBitmap(wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_MENU));
     m_menuFile->Append(menuItem2);
 
     m_submenu_recent = new wxMenu();
@@ -68,13 +62,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item2 = new wxMenuItem(m_menuFile, id_SaveProjectAs, "Save &As...\tCtrl-Shift+S",
         "Save current project to a different filename", wxITEM_NORMAL);
-    menu_item2->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_FILE_SAVE_AS, wxART_MENU)
-#endif
-    );
+    menu_item2->SetBitmap(wxArtProvider::GetBitmap(wxART_FILE_SAVE_AS, wxART_MENU));
     m_menuFile->Append(menu_item2);
 
     m_menuFile->AppendSeparator();
@@ -115,79 +103,37 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuFile->AppendSeparator();
 
     auto menu_quit = new wxMenuItem(m_menuFile, wxID_EXIT, wxEmptyString);
-    menu_quit->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_QUIT, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_QUIT, wxART_MENU)
-#endif
-    );
+    menu_quit->SetBitmap(wxArtProvider::GetBitmap(wxART_QUIT, wxART_MENU));
     m_menuFile->Append(menu_quit);
     m_menubar->Append(m_menuFile, "&File");
 
     m_menuEdit = new wxMenu();
 
     auto menu_undo = new wxMenuItem(m_menuEdit, wxID_UNDO, wxEmptyString);
-    menu_undo->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_UNDO, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_UNDO, wxART_MENU)
-#endif
-    );
+    menu_undo->SetBitmap(wxArtProvider::GetBitmap(wxART_UNDO, wxART_MENU));
     m_menuEdit->Append(menu_undo);
 
     auto menu_redo = new wxMenuItem(m_menuEdit, wxID_REDO, wxEmptyString);
-    menu_redo->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_REDO, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_REDO, wxART_MENU)
-#endif
-    );
+    menu_redo->SetBitmap(wxArtProvider::GetBitmap(wxART_REDO, wxART_MENU));
     m_menuEdit->Append(menu_redo);
 
     m_menuEdit->AppendSeparator();
 
     auto menu_cut = new wxMenuItem(m_menuEdit, wxID_CUT, wxEmptyString);
-    menu_cut->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU)
-#endif
-    );
+    menu_cut->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU));
     m_menuEdit->Append(menu_cut);
 
     auto menu_copy = new wxMenuItem(m_menuEdit, wxID_COPY, wxEmptyString);
-    menu_copy->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU)
-#endif
-    );
+    menu_copy->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY, wxART_MENU));
     m_menuEdit->Append(menu_copy);
 
     auto menu_paste = new wxMenuItem(m_menuEdit, wxID_PASTE, wxEmptyString);
-    menu_paste->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU)
-#endif
-    );
+    menu_paste->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE, wxART_MENU));
     m_menuEdit->Append(menu_paste);
 
     auto menu_delete = new wxMenuItem(m_menuEdit, wxID_DELETE, wxEmptyString,
         "Delete selected object without using clipboard.", wxITEM_NORMAL);
-    menu_delete->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU)
-#endif
-    );
+    menu_delete->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_MENU));
     m_menuEdit->Append(menu_delete);
 
     auto menu_duplicate = new wxMenuItem(m_menuEdit, wxID_ANY, "Duplicate",
@@ -198,24 +144,12 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_find = new wxMenuItem(m_menuEdit, wxID_FIND, wxEmptyString,
         "Find text in the active code viewer.", wxITEM_NORMAL);
-    menu_find->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_FIND, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_FIND, wxART_MENU)
-#endif
-    );
+    menu_find->SetBitmap(wxArtProvider::GetBitmap(wxART_FIND, wxART_MENU));
     m_menuEdit->Append(menu_find);
 
     auto menu_insert_widget = new wxMenuItem(m_menuEdit, id_insert_widget, "&Insert widget...",
         "Find text in the active code viewer.", wxITEM_NORMAL);
-    menu_insert_widget->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_EDIT, wxART_MENU)
-#endif
-    );
+    menu_insert_widget->SetBitmap(wxArtProvider::GetBitmap(wxART_EDIT, wxART_MENU));
     m_menuEdit->Append(menu_insert_widget);
 
     m_menuEdit->AppendSeparator();
@@ -329,13 +263,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuHelp = new wxMenu();
 
     auto menu_help = new wxMenuItem(m_menuHelp, wxID_ABOUT, wxEmptyString);
-    menu_help->SetBitmap(
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_HELP, wxART_MENU)
-#else
-    wxArtProvider::GetBitmap(wxART_HELP, wxART_MENU)
-#endif
-    );
+    menu_help->SetBitmap(wxArtProvider::GetBitmap(wxART_HELP, wxART_MENU));
     m_menuHelp->Append(menu_help);
 
     auto menu_item_6 = new wxMenuItem(m_menuHelp, wxID_ANY, "wxWidgets Documentation",
@@ -349,13 +277,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_toolbar->AddTool(id_NewProject, "New", GetImageFromArray(wxue_img::new_png, sizeof(wxue_img::new_png)),
             "New Project (Ctrl+N)");
 
-    m_toolbar->AddTool(id_OpenProject, "Open", 
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_TOOLBAR)
-#else
-    wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR)
-#endif
-    ,
+    m_toolbar->AddTool(id_OpenProject, "Open", wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR),
             "Open Project (Ctrl+O)");
 
     m_toolbar->AddTool(wxID_SAVE, "Save", GetImageFromArray(wxue_img::save_png, sizeof(wxue_img::save_png)),
@@ -366,60 +288,24 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, 
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_UNDO, wxART_TOOLBAR)
-#else
-    wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR)
-#endif
-    ,
+    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR),
             "Undo");
 
-    m_toolbar->AddTool(wxID_REDO, wxEmptyString, 
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_REDO, wxART_TOOLBAR)
-#else
-    wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR)
-#endif
-    ,
+    m_toolbar->AddTool(wxID_REDO, wxEmptyString, wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR),
             "Redo");
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(wxID_CUT, wxEmptyString, 
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_TOOLBAR)
-#else
-    wxArtProvider::GetBitmap(wxART_CUT, wxART_TOOLBAR)
-#endif
-    ,
+    m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxArtProvider::GetBitmap(wxART_CUT, wxART_TOOLBAR),
             "Cut");
 
-    m_toolbar->AddTool(wxID_COPY, wxEmptyString, 
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_COPY, wxART_TOOLBAR)
-#else
-    wxArtProvider::GetBitmap(wxART_COPY, wxART_TOOLBAR)
-#endif
-    ,
+    m_toolbar->AddTool(wxID_COPY, wxEmptyString, wxArtProvider::GetBitmap(wxART_COPY, wxART_TOOLBAR),
             "Copy");
 
-    m_toolbar->AddTool(wxID_PASTE, wxEmptyString, 
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_PASTE, wxART_TOOLBAR)
-#else
-    wxArtProvider::GetBitmap(wxART_PASTE, wxART_TOOLBAR)
-#endif
-    ,
+    m_toolbar->AddTool(wxID_PASTE, wxEmptyString, wxArtProvider::GetBitmap(wxART_PASTE, wxART_TOOLBAR),
             "Paste");
 
-    m_toolbar->AddTool(wxID_DELETE, wxEmptyString, 
-#if wxCHECK_VERSION(3, 1, 6)
-    wxArtProvider::GetBitmapBundle(wxART_DELETE, wxART_TOOLBAR)
-#else
-    wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR)
-#endif
-    ,
+    m_toolbar->AddTool(wxID_DELETE, wxEmptyString, wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR),
             "Delete selected object without using clipboard.");
 
     m_toolbar->AddSeparator();

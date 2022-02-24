@@ -45,11 +45,11 @@ bool NewFrame::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_checkBox_mainframe = new wxCheckBox(this, wxID_ANY, "Main Frame Window");
     m_checkBox_mainframe->SetValidator(wxGenericValidator(&m_has_mainframe));
     auto static_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
-    #if wxCHECK_VERSION(3, 1, 1)
+#if wxCHECK_VERSION(3, 1, 1)
     m_checkBox_mainframe),
-    #else
+#else
     wxEmptyString),
-    #endif
+#endif
     wxVERTICAL);
     box_sizer->Add(static_box, wxSizerFlags().Expand().DoubleBorder(wxALL));
 

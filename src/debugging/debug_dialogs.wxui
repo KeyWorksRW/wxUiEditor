@@ -6,57 +6,6 @@
     art_directory="../art_src">
     <node
       class="wxDialog"
-      base_file="..\debugging\nodeinfo_base"
-      class_name="NodeInfoBase"
-      derived_class_name="NodeInfo"
-      derived_file="../debugging/nodeinfo"
-      title="Node Information">
-      <node
-        class="wxBoxSizer"
-        orientation="wxVERTICAL"
-        var_name="parent_sizer"
-        flags="wxEXPAND">
-        <node
-          class="wxStaticBoxSizer"
-          label="Selected Node"
-          var_name="static_box_2">
-          <node
-            class="wxStaticText"
-            label="Name:"
-            var_name="m_txt_generator" />
-          <node
-            class="wxStaticText"
-            label="Type:"
-            var_name="m_txt_type" />
-          <node
-            class="wxStaticText"
-            label="Memory:"
-            var_name="m_txt_memory" />
-        </node>
-        <node
-          class="wxStaticBoxSizer"
-          label="Memory Usage"
-          flags="wxEXPAND">
-          <node
-            class="wxStaticText"
-            label="Project:"
-            var_name="m_txt_project" />
-          <node
-            class="wxStaticText"
-            label="Clipboard:"
-            var_name="m_txt_clipboard" />
-        </node>
-        <node
-          class="wxStdDialogButtonSizer"
-          Cancel="false"
-          Close="true"
-          OK="false"
-          default_button="Close"
-          flags="wxEXPAND" />
-      </node>
-    </node>
-    <node
-      class="wxDialog"
       base_file="debugsettingsBase"
       class_name="DebugSettingsBase"
       derived_class_name="DebugSettings"

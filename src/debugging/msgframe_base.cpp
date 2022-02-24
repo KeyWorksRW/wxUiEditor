@@ -35,11 +35,11 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     auto menu_item_saveas = new wxMenuItem(menu_file, wxID_SAVEAS, wxEmptyString);
     menu_item_saveas->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_FILE_SAVE_AS, wxART_MENU)
-    #endif
+#endif
     );
     menu_file->Append(menu_item_saveas);
 
@@ -47,11 +47,11 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     auto menu_item_clear = new wxMenuItem(menu_file, wxID_CLEAR, wxEmptyString);
     menu_item_clear->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_CUT, wxART_MENU)
-    #endif
+#endif
     );
     menu_file->Append(menu_item_clear);
 
@@ -65,33 +65,33 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_menu_item_warnings = new wxMenuItem(menu_view, id_warning_msgs, "Warnings",
         wxEmptyString, wxITEM_CHECK);
     m_menu_item_warnings->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_WARNING, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_WARNING, wxART_MENU)
-    #endif
+#endif
     );
     menu_view->Append(m_menu_item_warnings);
 
     m_menu_item_events = new wxMenuItem(menu_view, id_event_msgs, "Events",
         wxEmptyString, wxITEM_CHECK);
     m_menu_item_events->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_TIP, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_TIP, wxART_MENU)
-    #endif
+#endif
     );
     menu_view->Append(m_menu_item_events);
 
     m_menu_item_info = new wxMenuItem(menu_view, wxID_INFO, wxEmptyString,
         wxEmptyString, wxITEM_CHECK);
     m_menu_item_info->SetBitmap(
-    #if wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
     wxArtProvider::GetBitmapBundle(wxART_INFORMATION, wxART_MENU)
-    #else
+#else
     wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_MENU)
-    #endif
+#endif
     );
     menu_view->Append(m_menu_item_info);
     menubar->Append(menu_view, "&View");

@@ -29,11 +29,11 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_radio_use_function = new wxRadioButton(this, wxID_ANY, "Use function");
     m_function_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
-    #if wxCHECK_VERSION(3, 1, 1)
+#if wxCHECK_VERSION(3, 1, 1)
     m_radio_use_function),
-    #else
+#else
     wxEmptyString),
-    #endif
+#endif
     wxVERTICAL);
     box_sizer->Add(m_function_box, wxSizerFlags().Expand().Border(wxALL));
 
@@ -44,11 +44,11 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     m_radio_use_lambda = new wxRadioButton(this, wxID_ANY, "Use lambda");
     m_lambda_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,
-    #if wxCHECK_VERSION(3, 1, 1)
+#if wxCHECK_VERSION(3, 1, 1)
     m_radio_use_lambda),
-    #else
+#else
     wxEmptyString),
-    #endif
+#endif
     wxVERTICAL);
     box_sizer->Add(m_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 

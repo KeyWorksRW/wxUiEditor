@@ -36,9 +36,14 @@ void WriteCode::WriteCodeLine(ttlib::sview code, size_t indentation)
     {
         if (indentation != indent::none)
         {
-            for (int i = 0; i < m_indent; ++i)
+            // Don't indent #if, #else or #endif
+            if (code[0] != '#' ||
+                !(code.is_sameprefix("#if") || code.is_sameprefix("#else") || code.is_sameprefix("#endif")))
             {
-                doWrite("    ");
+                for (int i = 0; i < m_indent; ++i)
+                {
+                    doWrite("    ");
+                }
             }
         }
         m_isLineWriting = true;

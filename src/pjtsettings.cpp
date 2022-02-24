@@ -107,7 +107,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
         if (parts[IndexArtID].contains("|"))
         {
             ttlib::multistr id_client(parts[IndexArtID], '|');
-#if !wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
             image =
                 wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1])).ConvertToImage();
 #else
@@ -116,7 +116,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
         }
         else
         {
-#if !wxCHECK_VERSION(3, 1, 6)
+#if wxCHECK_VERSION(3, 1, 6)
             image = wxArtProvider::GetBitmapBundle(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
                         .ConvertToImage();
 #else

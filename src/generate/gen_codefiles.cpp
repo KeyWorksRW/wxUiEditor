@@ -95,7 +95,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             {
                 if (!NeedsGenerateCheck)
                 {
-                    results.emplace_back() << path << " saved" << '\n';
+                    results.emplace_back() << path.filename() << " saved" << '\n';
                 }
                 else
                 {
@@ -127,7 +127,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             {
                 if (!NeedsGenerateCheck)
                 {
-                    results.emplace_back() << path << " saved" << '\n';
+                    results.emplace_back() << path.filename() << " saved" << '\n';
                 }
                 else
                 {
@@ -282,7 +282,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else
         {
-            results.emplace_back() << path << " saved" << '\n';
+            results.emplace_back() << path.filename() << " saved" << '\n';
         }
 
         path.replace_extension(source_ext);
@@ -297,7 +297,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else
         {
-            results.emplace_back() << path << " saved" << '\n';
+            results.emplace_back() << path.filename() << " saved" << '\n';
         }
     }
 

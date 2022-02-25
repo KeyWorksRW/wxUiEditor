@@ -379,6 +379,22 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
 
                 if (panel_type != HDR_PANEL)
                 {
+                    if (event->GetNode()->IsForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
+                    {
+                        bool is_handled = false;
+                        for (auto& iter: event->GetNode()->GetChildNodePtrs())
+                        {
+                            if (iter->isGen(gen_wxContextMenuEvent))
+                            {
+                                is_handled = true;
+                                break;
+                            }
+                        }
+
+                        // This means the base class handles this event, so don't add it to the derived class
+                        if (is_handled)
+                            continue;
+                    }
                     m_source->writeLine();
                     m_source->writeLine(ttlib::cstr() << "void " << derived_name << "::" << prototype);
                     m_source->writeLine("{");

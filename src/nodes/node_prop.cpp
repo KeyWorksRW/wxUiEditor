@@ -295,6 +295,17 @@ wxBitmap NodeProperty::as_bitmap() const
         return image;
 }
 
+#if wxCHECK_VERSION(3, 1, 6)
+wxBitmapBundle NodeProperty::as_bitmap_bundle() const
+{
+    auto bundle = wxGetApp().GetImageBundle(m_value);
+    if (!bundle.IsOk())
+        return wxNullBitmap;
+    else
+        return bundle;
+}
+#endif
+
 wxAnimation NodeProperty::as_animation() const
 {
     return wxGetApp().GetProjectSettings()->GetPropertyAnimation(m_value);

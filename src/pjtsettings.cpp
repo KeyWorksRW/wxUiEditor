@@ -84,7 +84,7 @@ ttlib::cstr& ProjectSettings::setProjectPath(const ttlib::cstr& file, bool remov
     return m_projectPath;
 }
 
-wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled)
+wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled, bool check_image)
 {
     ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
@@ -179,7 +179,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
     if (!image.IsOk())
     {
-        return GetInternalImage("unknown");
+        return (check_image ? GetInternalImage("unknown") : image);
     }
 
     // If it's not embedded, then cache it so that we don't read it from disk again
@@ -221,6 +221,70 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
     return image;
 }
+
+#if wxCHECK_VERSION(3, 1, 6)
+wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description)
+{
+    ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexImage].empty())
+    {
+        return GetInternalImage("unknown");
+    }
+
+    if (parts[IndexType].contains("Art"))
+    {
+        if (parts[IndexArtID].contains("|"))
+        {
+            ttlib::multistr id_client(parts[IndexArtID], '|');
+            return wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]));
+        }
+        else
+        {
+            return wxArtProvider::GetBitmapBundle(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"));
+        }
+    }
+
+    auto image_first = GetPropertyBitmap(description, false, false);
+    if (!image_first.IsOk())
+    {
+        return GetInternalImage("unknown");
+    }
+
+    // Note that the search for files only occurs once after the first one is found. No additional search is performed until
+    // the project is reloaded. This is to prevent frequent searching since most of the time, the second image won't exist.
+
+    if (auto result = m_bundles.find(description); result != m_bundles.end())
+    {
+        return result->second;
+    }
+
+    if (auto pos = parts[IndexImage].find_last_of('.'); ttlib::is_found(pos))
+    {
+        parts[IndexImage].insert(pos, "_2x");
+        ttlib::cstr new_description;
+        new_description << parts[IndexType] << ';' << parts[IndexImage];
+        auto image_second = GetPropertyBitmap(new_description, false, false);
+        if (!image_second.IsOk())
+        {
+            parts[IndexImage].Replace("_2x.", "@2x.");
+            new_description.clear();
+            new_description << parts[IndexType] << ';' << parts[IndexImage];
+            image_second = GetPropertyBitmap(new_description, false, false);
+            if (!image_second.IsOk())
+            {
+                m_bundles[description] = wxBitmapBundle::FromBitmap(image_first);
+                return m_bundles[description];
+            }
+        }
+
+        m_bundles[description] = wxBitmapBundle::FromBitmaps(image_first, image_second);
+        return m_bundles[description];
+    }
+
+    return wxBitmapBundle::FromBitmap(image_first);
+}
+#endif
 
 wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description)
 {

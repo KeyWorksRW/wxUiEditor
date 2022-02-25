@@ -295,6 +295,9 @@ private:
 
     BasePanel* m_generatedPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };
+#if defined(INTERNAL_WIDGETS)
+    BasePanel* m_xrcPanel { nullptr };
+#endif
 
     int m_MainSashPosition { 300 };
     int m_SecondarySashPosition { 300 };

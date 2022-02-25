@@ -8,6 +8,7 @@
 #include <wx/aui/auibook.h>  // wxaui: wx advanced user interface - notebook
 #include <wx/fdrepdlg.h>     // wxFindReplaceDialog class
 #include <wx/stc/stc.h>      // A wxWidgets implementation of Scintilla.  This class is the
+#include <wx/wupdlock.h>     // wxWindowUpdateLocker prevents window redrawing
 
 #include "base_panel.h"
 
@@ -15,6 +16,7 @@
 #include "code_display.h"  // CodeDisplay -- CodeDisplay class
 #include "cstm_event.h"    // CustomEvent -- Custom Event class
 #include "gen_base.h"      // Generate Base class
+#include "gen_xrc.h"       // BaseXrcGenerator -- Generate XRC file
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes
@@ -34,7 +36,7 @@ const char* g_u8_cpp_keywords = "alignas alignof and and_eq atomic_cancel atomic
 	                          typename union unsigned using virtual void volatile wchar_t \
 	                          while xor xor_eq";
 
-BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCode) : wxPanel(parent)
+BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode) : wxPanel(parent)
 {
     m_GenerateDerivedCode = GenerateDerivedCode;
     auto top_sizer = new wxBoxSizer(wxVERTICAL);
@@ -42,11 +44,22 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCod
     m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook->SetArtProvider(new wxAuiGenericTabArt());
 
-    m_cppPanel = new CodeDisplay(m_notebook);
-    m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+    if (GenerateDerivedCode >= 0)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
-    m_hPanel = new CodeDisplay(m_notebook);
-    m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
+        m_hPanel = new CodeDisplay(m_notebook);
+        m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
+    }
+    else
+    {
+        m_cppPanel = new CodeDisplay(m_notebook);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        m_hPanel = new CodeDisplay(m_notebook);
+        m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
+    }
 
     top_sizer->Add(m_notebook, wxSizerFlags(1).Expand());
 
@@ -147,9 +160,7 @@ void BasePanel::GenerateBaseClass()
         }
     }
 
-    BaseCodeGenerator codegen;
-
-    Freeze();
+    wxWindowUpdateLocker freeze(this);
 
     PANEL_TYPE panel_type = CPP_PANEL;
     if (auto page = m_notebook->GetCurrentPage(); page)
@@ -160,16 +171,20 @@ void BasePanel::GenerateBaseClass()
         }
     }
 
+    BaseCodeGenerator codegen;
+
     m_cppPanel->Clear();
     codegen.SetSrcWriteCode(m_cppPanel);
 
     m_hPanel->Clear();
     codegen.SetHdrWriteCode(m_hPanel);
 
-    if (m_GenerateDerivedCode)
+    if (m_GenerateDerivedCode == 1)
         codegen.GenerateDerivedClass(project, m_cur_form, panel_type);
-    else
+    else if (m_GenerateDerivedCode == 0)
         codegen.GenerateBaseClass(project, m_cur_form, panel_type);
+    else
+        codegen.GenerateXrcClass(project, m_cur_form, panel_type);
 
     if (panel_type == CPP_PANEL)
     {
@@ -180,8 +195,6 @@ void BasePanel::GenerateBaseClass()
     {
         m_hPanel->CodeGenerationComplete();
     }
-
-    Thaw();
 }
 
 void BasePanel::OnNodeSelected(CustomEvent& event)
@@ -199,7 +212,7 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
         GenerateBaseClass();
     }
 
-    if (!m_GenerateDerivedCode)
+    if (m_GenerateDerivedCode <= 0)
     {
         if (auto page = m_notebook->GetCurrentPage(); page)
         {

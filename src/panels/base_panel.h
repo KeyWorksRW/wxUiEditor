@@ -22,7 +22,7 @@ class wxStyledTextCtrl;
 class BasePanel : public wxPanel
 {
 public:
-    BasePanel(wxWindow* parent, MainFrame* frame, bool GenerateDerivedCode);
+    BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode);
     ~BasePanel() override;
 
     void GenerateBaseClass();
@@ -38,5 +38,5 @@ private:
     wxAuiNotebook* m_notebook;
     Node* m_cur_form { nullptr };
 
-    bool m_GenerateDerivedCode;
+    int m_GenerateDerivedCode;
 };

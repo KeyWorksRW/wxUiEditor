@@ -20,8 +20,50 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
     if (end == tt::npos)
         throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
 
+    m_is_popup_menu = false;
+    size_t popups = 0;
+    int nesting = 0;
+    for (size_t pos = curTxtLine + 1; pos < txtfile.size(); ++pos)
+    {
+        auto menu_line = txtfile[pos].subview(txtfile[pos].find_nonspace());
+        if (menu_line.empty() || menu_line.at(0) == '/')  // ignore blank lines and comments
+            continue;
+
+        if (menu_line.is_sameprefix("END") || menu_line.is_sameprefix("}"))
+        {
+            --nesting;
+            if (nesting > 0)
+                continue;
+            else
+                break;
+        }
+        else if (menu_line.is_sameprefix("BEGIN") || menu_line.is_sameprefix("{"))
+        {
+            ++nesting;
+            continue;
+        }
+        if (menu_line.is_sameprefix("POPUP"))
+        {
+            ++popups;
+
+            // If there is more than one POPUP or the text of the popup contains an accelerator, then assume this is a
+            // wxMenuBar.
+
+            if (popups > 1 || menu_line.contains("&"))
+            {
+                ++popups;  // so logic after the for loop will know this is a wxMenuBar
+                break;
+            }
+        }
+    }
+
+    // If there was only one POPUP directive and it didn't contain an acclerator, then assume this is a popup menu
+
+    if (popups <= 1)
+        m_is_popup_menu = true;
+
     m_form_type = form_menu;
-    m_form_node = g_NodeCreator.NewNode(gen_MenuBar);
+    m_form_node = g_NodeCreator.NewNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
 
 #if defined(_DEBUG)
     m_form_node->prop_set_value(prop_base_src_includes, ttlib::cstr() << "// " << txtfile.filename());
@@ -50,7 +92,7 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
 
 void resForm::ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine)
 {
-    NodeSharedPtr parent { nullptr };
+    NodeSharedPtr parent = m_is_popup_menu ? m_form_node : nullptr;
 
     for (; curTxtLine < txtfile.size(); ++curTxtLine)
     {
@@ -74,7 +116,7 @@ void resForm::ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine)
             continue;
         }
 
-        if (line.is_sameprefix("POPUP"))
+        if (line.is_sameprefix("POPUP") && !m_is_popup_menu)
         {
             auto& control = m_ctrls.emplace_back();
             parent = control.SetNodePtr(g_NodeCreator.NewNode(gen_wxMenu));

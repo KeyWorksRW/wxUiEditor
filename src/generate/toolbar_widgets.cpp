@@ -61,7 +61,7 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         auto child = GetMockup()->GetChild(wxobject, i);
         if (childObj->isGen(gen_tool))
         {
-            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
+            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
@@ -216,7 +216,7 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
         auto child = GetMockup()->GetChild(wxobject, i);
         if (childObj->isGen(gen_tool))
         {
-            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
+            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
@@ -424,7 +424,7 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
         auto child = GetMockup()->GetChild(wxobject, i);
         if (childObj->isGen(gen_auitool))
         {
-            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
+            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 

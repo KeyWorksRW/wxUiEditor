@@ -96,7 +96,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             auto result = MakeSubMenu(menu_item.get());
             auto item = sub_menu->AppendSubMenu(result, menu_item->prop_as_wxString(prop_label));
             if (menu_item->HasValue(prop_bitmap))
-                item->SetBitmap(menu_item->prop_as_wxBitmap(prop_bitmap));
+                item->SetBitmap(menu_item->prop_as_wxBitmapBundle(prop_bitmap));
         }
         else if (menu_item->isGen(gen_separator))
         {
@@ -130,9 +130,9 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
                     unchecked = menu_item->prop_as_wxBitmap(prop_unchecked_bitmap);
                 }
 #ifdef __WXMSW__
-                item->SetBitmaps(menu_item->prop_as_wxBitmap(prop_bitmap), unchecked);
+                item->SetBitmaps(menu_item->prop_as_wxBitmapBundle(prop_bitmap), unchecked);
 #else
-                item->SetBitmap(menu_item->GetPropertyAsBitmap(prop_bitmap));
+                item->SetBitmap(menu_item->prop_as_wxBitmapBundle(prop_bitmap));
 #endif
             }
 #ifdef __WXMSW__

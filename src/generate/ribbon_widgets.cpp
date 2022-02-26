@@ -193,6 +193,7 @@ bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto bmp = node->HasValue(prop_bitmap) ? node->prop_as_wxBitmap(prop_bitmap) : wxNullBitmap;
+    // REVIEW: [KeyWorks - 02-25-2022] This is still a bitmap rather then a bundle as of 2/25/22
     auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->prop_as_wxString(prop_label), bmp, 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

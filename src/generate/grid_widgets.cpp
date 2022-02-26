@@ -461,7 +461,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
         if (childObj->isGen(gen_propGridPage))
         {
             wxPropertyGridPage* page =
-                pgm->AddPage(childObj->prop_as_wxString(prop_label), childObj->prop_as_wxBitmap(prop_bitmap));
+                pgm->AddPage(childObj->prop_as_wxString(prop_label), childObj->prop_as_wxBitmapBundle(prop_bitmap));
 
             for (size_t j = 0; j < childObj->GetChildCount(); ++j)
             {

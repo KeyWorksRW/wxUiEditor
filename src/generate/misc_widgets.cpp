@@ -146,7 +146,7 @@ wxObject* BannerWindowGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_bitmap))
     {
-        widget->SetBitmap(node->prop_as_wxBitmap(prop_bitmap));
+        widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
     }
 
     else if (node->HasValue(prop_start_colour) && node->HasValue(prop_end_colour))

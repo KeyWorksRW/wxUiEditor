@@ -140,7 +140,7 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
     Item(IndexImage)->SetValue(m_img_props.image.wx_str());
-#if 0   // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
+#if 0  // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
     if (!m_isEmbeddedImage)
     {
         Item(IndexScale)->SetValue(m_img_props.CombineScale());

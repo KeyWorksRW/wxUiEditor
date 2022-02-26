@@ -38,19 +38,19 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_bitmap))
     {
-        widget->SetBitmap(node->prop_as_wxBitmap(prop_bitmap));
+        widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
 
         if (node->HasValue(prop_disabled_bmp))
-            widget->SetBitmapDisabled(node->prop_as_wxBitmap(prop_disabled_bmp));
+            widget->SetBitmapDisabled(node->prop_as_wxBitmapBundle(prop_disabled_bmp));
 
         if (node->HasValue(prop_pressed_bmp))
-            widget->SetBitmapPressed(node->prop_as_wxBitmap(prop_pressed_bmp));
+            widget->SetBitmapPressed(node->prop_as_wxBitmapBundle(prop_pressed_bmp));
 
         if (node->HasValue(prop_focus_bmp))
-            widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus_bmp));
+            widget->SetBitmapFocus(node->prop_as_wxBitmapBundle(prop_focus_bmp));
 
         if (node->HasValue(prop_current))
-            widget->SetBitmapCurrent(node->prop_as_wxBitmap(prop_current));
+            widget->SetBitmapCurrent(node->prop_as_wxBitmapBundle(prop_current));
 
         if (node->HasValue(prop_position))
             widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int(prop_position)));
@@ -249,19 +249,19 @@ wxObject* ToggleButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     widget->SetValue((node->prop_as_bool(prop_pressed)));
 
     if (node->HasValue(prop_bitmap))
-        widget->SetBitmap(node->prop_as_wxBitmap(prop_bitmap));
+        widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
 
     if (node->HasValue(prop_disabled_bmp))
-        widget->SetBitmapDisabled(node->prop_as_wxBitmap(prop_disabled_bmp));
+        widget->SetBitmapDisabled(node->prop_as_wxBitmapBundle(prop_disabled_bmp));
 
     if (node->HasValue(prop_pressed_bmp))
-        widget->SetBitmapPressed(node->prop_as_wxBitmap(prop_pressed_bmp));
+        widget->SetBitmapPressed(node->prop_as_wxBitmapBundle(prop_pressed_bmp));
 
     if (node->HasValue(prop_focus_bmp))
-        widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus_bmp));
+        widget->SetBitmapFocus(node->prop_as_wxBitmapBundle(prop_focus_bmp));
 
     if (node->HasValue(prop_current))
-        widget->SetBitmapCurrent(node->prop_as_wxBitmap(prop_current));
+        widget->SetBitmapCurrent(node->prop_as_wxBitmapBundle(prop_current));
 
     if (node->HasValue(prop_position))
         widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int(prop_position)));
@@ -438,7 +438,7 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (node->HasValue(prop_bitmap))
     {
-        widget->SetBitmap(node->prop_as_wxBitmap(prop_bitmap));
+        widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
 
         if (node->HasValue(prop_disabled_bmp))
             widget->SetBitmapDisabled(node->prop_as_wxBitmap(prop_disabled_bmp));

@@ -70,6 +70,11 @@ public:
     ttString GetDerivedDirectory();
 
     wxImage GetImage(const ttlib::cstr& description);
+#if wxCHECK_VERSION(3, 1, 6)
+    wxBitmapBundle GetImageBundle(const ttlib::cstr& description);
+#else
+    wxBitmap GetImageBundle(const ttlib::cstr& description);
+#endif
 
     ProjectSettings* GetProjectSettings() { return m_pjtSettings; };
 

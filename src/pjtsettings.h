@@ -53,7 +53,13 @@ public:
 
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
-    wxImage GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled = true);
+    //
+    // If check_image is true, and !image.IsOK(), GetInternalImage() is returned
+    wxImage GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled = true, bool check_image = true);
+
+#if wxCHECK_VERSION(3, 1, 6)
+    wxBitmapBundle GetPropertyBitmapBundle(const ttlib::cstr& description);
+#endif
 
     // This takes the full animation property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
@@ -79,6 +85,9 @@ private:
     std::mutex m_mutex_embed_retrieve;
 
     std::map<std::string, wxImage> m_images;
+#if wxCHECK_VERSION(3, 1, 6)
+    std::map<std::string, wxBitmapBundle> m_bundles;
+#endif
 
     std::thread* m_collect_thread { nullptr };
 

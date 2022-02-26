@@ -257,6 +257,19 @@ wxImage App::GetImage(const ttlib::cstr& description)
         return GetInternalImage("unknown");
 }
 
+#if wxCHECK_VERSION(3, 1, 6)
+wxBitmapBundle App::GetImageBundle(const ttlib::cstr& description)
+{
+    if (description.is_sameprefix("Embed;") || description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") ||
+        description.is_sameprefix("Art;"))
+    {
+        return m_pjtSettings->GetPropertyBitmapBundle(description);
+    }
+    else
+        return GetInternalImage("unknown");
+}
+#endif
+
 ttString App::GetArtDirectory()
 {
     if (m_project->HasValue(prop_art_directory))

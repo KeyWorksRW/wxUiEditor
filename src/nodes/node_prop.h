@@ -54,6 +54,12 @@ public:
     auto as_wxString() const { return m_value.wx_str(); }
     wxArrayString as_wxArrayString() const;
 
+#if wxCHECK_VERSION(3, 1, 6)
+    wxBitmapBundle as_bitmap_bundle() const;
+#else
+    wxBitmap as_bitmap_bundle() const { return as_bitmap(); }
+#endif
+
     const ttlib::cstr& as_string() const { return m_value; }
 
     // Converts friendly name to wxWidgets constant

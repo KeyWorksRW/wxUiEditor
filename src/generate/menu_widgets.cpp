@@ -30,7 +30,7 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
 
     if (node->isGen(gen_PopupMenu))
     {
-        auto label = new wxStaticText(panel, wxID_ANY, node->prop_as_wxString(prop_label));
+        auto label = new wxStaticText(panel, wxID_ANY, node->prop_as_wxString(prop_class_name));
         sizer->Add(label, wxSizerFlags().Border(wxALL));
         label->Bind(wxEVT_LEFT_DOWN, &MenuBarBase::OnLeftMenuClick, this);
     }

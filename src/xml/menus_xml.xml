@@ -7,7 +7,6 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyMenuBarBase</property>
-		<property name="label" type="string_escapes">MyMenuBar</property>
 		<property name="style" type="bitlist">
 			<option name="wxMB_DOCKABLE"
 				help="Allows the menu bar to be detached (wxGTK only)." />
@@ -18,7 +17,6 @@ inline const char* menus_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Code Generation" />
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyPopupMenuBase</property>
-		<property name="label" type="string_escapes">MyPopupMenu</property>
 	</gen>
 
 	<gen class="wxContextMenuEvent" image="menu" type="ctx_menu">

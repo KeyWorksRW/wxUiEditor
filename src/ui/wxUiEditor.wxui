@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <wxUiEditorData
-  data_version="13">
+  data_version="14">
   <node
     class="Project"
     art_directory="../art_src"
@@ -3112,7 +3112,7 @@
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/auitoolbar.png;[-1,-1]"
-                  help="wxToolBar"
+                  help="wxAuiToolBar"
                   id="gen_wxAuiToolBar" />
                 <node
                   class="ribbonTool"

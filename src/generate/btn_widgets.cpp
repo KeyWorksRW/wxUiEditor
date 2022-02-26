@@ -176,7 +176,8 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
         if (code.size())
             code << '\n';
 
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true)
+             << ");";
 
         if (node->HasValue(prop_position))
         {
@@ -198,7 +199,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
             if (code.size())
                 code << '\n';
             code << node->get_node_name() << "->SetBitmapDisabled("
-                 << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp)) << ");";
+                 << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp), true) << ");";
         }
 
         if (node->HasValue(prop_pressed_bmp))
@@ -206,23 +207,23 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
             if (code.size())
                 code << '\n';
             code << node->get_node_name() << "->SetBitmapPressed("
-                 << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp)) << ");";
+                 << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp), true) << ");";
         }
 
         if (node->HasValue(prop_focus_bmp))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp))
-                 << ");";
+            code << node->get_node_name() << "->SetBitmapFocus("
+                 << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp), true) << ");";
         }
 
         if (node->HasValue(prop_current))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->prop_as_string(prop_current))
-                 << ");";
+            code << node->get_node_name() << "->SetBitmapCurrent("
+                 << GenerateBitmapCode(node->prop_as_string(prop_current), true) << ");";
         }
     }
     return code;
@@ -363,7 +364,8 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true)
+             << ");";
 
         if (node->HasValue(prop_position))
         {
@@ -385,7 +387,7 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t
             if (code.size())
                 code << '\n';
             code << node->get_node_name() << "->SetBitmapDisabled("
-                 << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp)) << ");";
+                 << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp), true) << ");";
         }
 
         if (node->HasValue(prop_pressed_bmp))
@@ -400,16 +402,16 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp))
-                 << ");";
+            code << node->get_node_name() << "->SetBitmapFocus("
+                 << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp), true) << ");";
         }
 
         if (node->HasValue(prop_current))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->prop_as_string(prop_current))
-                 << ");";
+            code << node->get_node_name() << "->SetBitmapCurrent("
+                 << GenerateBitmapCode(node->prop_as_string(prop_current), true) << ");";
         }
     }
 
@@ -496,14 +498,15 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenSettings(Node* node, size
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true)
+             << ");";
 
         if (node->HasValue(prop_disabled_bmp))
         {
             if (code.size())
                 code << '\n';
             code << node->get_node_name() << "->SetBitmapDisabled("
-                 << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp)) << ");";
+                 << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp), true) << ");";
         }
 
         if (node->HasValue(prop_pressed_bmp))
@@ -518,16 +521,16 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenSettings(Node* node, size
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapFocus(" << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp))
-                 << ");";
+            code << node->get_node_name() << "->SetBitmapFocus("
+                 << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp), true) << ");";
         }
 
         if (node->HasValue(prop_current))
         {
             if (code.size())
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapCurrent(" << GenerateBitmapCode(node->prop_as_string(prop_current))
-                 << ");";
+            code << node->get_node_name() << "->SetBitmapCurrent("
+                 << GenerateBitmapCode(node->prop_as_string(prop_current), true) << ");";
         }
     }
 

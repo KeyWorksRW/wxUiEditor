@@ -613,7 +613,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
         code << "auto ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
     code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-         << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+         << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true) << ");";
 
     return code;
 }

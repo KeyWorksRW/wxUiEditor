@@ -180,7 +180,8 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
     ttlib::cstr code;
     if (node->HasValue(prop_bitmap))
     {
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true)
+             << ");";
     }
     else if (node->HasValue(prop_start_colour) && node->HasValue(prop_end_colour))
     {
@@ -381,10 +382,13 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
         if (use_generic_version)
         {
             // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
-            code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+            code << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true);
         }
         else
         {
+            // REVIEW: [KeyWorks - 02-25-2022] GenerateBitmapCode may return a wxBitmapBundle under 3.1.6, so if that's the
+            // case, we can't had it to a wxBitmap.
+
             // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
             code << "wxBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ")";
         }

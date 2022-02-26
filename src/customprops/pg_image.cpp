@@ -58,11 +58,13 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
+#if 0  // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
     if (!m_isEmbeddedImage)
     {
         AddPrivateChild(new CustomPointProperty("scale size", prop, CustomPointProperty::type_scale));
         Item(IndexScale)->SetHelpString("Scale the image to this size.");
     }
+#endif
 }
 
 void PropertyGrid_Image::RefreshChildren()
@@ -138,10 +140,12 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
     Item(IndexImage)->SetValue(m_img_props.image.wx_str());
+#if 0   // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
     if (!m_isEmbeddedImage)
     {
         Item(IndexScale)->SetValue(m_img_props.CombineScale());
     }
+#endif
 }
 
 void PropertyGrid_Image::SetAutoComplete()
@@ -235,6 +239,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             }
             break;
 
+#if 0  // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
         case IndexScale:
             {
                 auto u8_value = childValue.GetString().utf8_string();
@@ -243,6 +248,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 img_props.SetHeight(mstr[1].atoi());
             }
             break;
+#endif
     }
 
     value = img_props.CombineValues().wx_str();

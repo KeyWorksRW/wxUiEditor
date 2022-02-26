@@ -187,6 +187,8 @@ private:
 
     WinResource* m_pWinResource;
 
+    bool m_is_popup_menu { false };
+
 #if defined(_DEBUG)
     // Makes it easier to know exactly which form we're looking at in the debugger
     ttlib::cstr m_form_id;

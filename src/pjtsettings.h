@@ -59,7 +59,7 @@ public:
     // to load. The image is cached for as long as the project is open.
     //
     // If check_image is true, and !image.IsOK(), GetInternalImage() is returned
-    wxImage GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled = true, bool check_image = true);
+    wxImage GetPropertyBitmap(const ttlib::cstr& description, bool check_image = true);
 
 #if wxCHECK_VERSION(3, 1, 6)
     wxBitmapBundle GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node);

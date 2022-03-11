@@ -456,25 +456,25 @@ wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop)
     }
 }
 
-void GetScaleInfo(wxSize& size, ttlib::sview description)
+void GetSizeInfo(wxSize& size, ttlib::sview description)
 {
-    ttlib::multiview scale;
+    ttlib::multiview size_description;
     if (description.contains(";"))
-        scale.SetString(description, ';', tt::TRIM::left);
+        size_description.SetString(description, ';', tt::TRIM::left);
     else
-        scale.SetString(description, ',');
+        size_description.SetString(description, ',');
 
-    ASSERT(scale.size())
-    ASSERT(scale[0].size())
+    ASSERT(size_description.size())
+    ASSERT(size_description[0].size())
 
-    if (scale.empty())
+    if (size_description.empty())
     {
-        size.x = -1;
-        size.y = -1;
+        size.x = 16;
+        size.y = 16;
         return;
     }
-    size_t start = scale[0].front() == '[' ? 1 : 0;
-    size.x = scale[0].atoi(start);
-    if (scale.size() > 1)
-        size.y = scale[1].atoi();
+    size_t start = size_description[0].front() == '[' ? 1 : 0;
+    size.x = size_description[0].atoi(start);
+    if (size_description.size() > 1)
+        size.y = size_description[1].atoi();
 }

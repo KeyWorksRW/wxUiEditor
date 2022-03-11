@@ -37,5 +37,6 @@ private:
     ttlib::cstr m_old_image;
 
     bool m_isEmbeddedImage { false };
+    bool m_isSVGImage { false };
     bool m_isAutoCompleteSet { false };
 };

@@ -344,7 +344,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
         return &m_bundles[description];
     }
 
-    auto image_first = wxGetApp().GetProjectSettings()->GetPropertyBitmap(description, false, false);
+    auto image_first = wxGetApp().GetProjectSettings()->GetPropertyBitmap(description, false);
     if (!image_first.IsOk())
     {
         return nullptr;
@@ -467,7 +467,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
         ttlib::cstr new_description;
         new_description << parts[IndexType] << ';';
         new_description << img_bundle.lst_filenames[1];
-        auto image_second = GetPropertyBitmap(new_description, false, false);
+        auto image_second = GetPropertyBitmap(new_description, false);
         if (image_second.IsOk())
         {
             bitmaps.push_back(image_second);
@@ -478,7 +478,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
             new_description.clear();
             new_description << parts[IndexType] << ';';
             new_description << img_bundle.lst_filenames[1];
-            auto image_third = GetPropertyBitmap(new_description, false, false);
+            auto image_third = GetPropertyBitmap(new_description, false);
             if (image_third.IsOk())
             {
                 bitmaps.push_back(image_third);

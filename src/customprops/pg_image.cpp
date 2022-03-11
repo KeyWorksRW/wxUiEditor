@@ -54,17 +54,17 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
         types.Add(s_type_names[1]);  // Embed
         types.Add(s_type_names[2]);  // XPM
         types.Add(s_type_names[3]);  // Header
+        types.Add(s_type_names[4]);  // SVG
     }
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
-#if 0  // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
-    if (!m_isEmbeddedImage)
+
+    if (m_isSVGImage)
     {
-        AddPrivateChild(new CustomPointProperty("scale size", prop, CustomPointProperty::type_scale));
-        Item(IndexScale)->SetHelpString("Scale the image to this size.");
+        AddPrivateChild(new CustomPointProperty("default size", prop, CustomPointProperty::type_scale));
+        Item(IndexSize)->SetHelpString("Sets the default size to pass to wxBitmapBundle.");
     }
-#endif
 }
 
 void PropertyGrid_Image::RefreshChildren()
@@ -84,7 +84,7 @@ void PropertyGrid_Image::RefreshChildren()
             Item(IndexImage)->SetLabel("image");
         }
 
-        if (m_img_props.type == "Embed")
+        if (m_img_props.type == "Embed" || m_img_props.type == "SVG")
         {
             Item(IndexImage)
                 ->SetHelpString("Specifies the original image which will be embedded into a generated class source file as "
@@ -101,6 +101,7 @@ void PropertyGrid_Image::RefreshChildren()
 
         if (m_old_image != m_img_props.image || m_old_type != m_img_props.type)
         {
+            // REVIEW: [KeyWorks - 03-11-2022] When does this happen?
             wxBitmap bmp;
             if (m_img_props.image.size())
             {
@@ -143,9 +144,13 @@ void PropertyGrid_Image::RefreshChildren()
 #if 0  // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
     if (!m_isEmbeddedImage)
     {
-        Item(IndexScale)->SetValue(m_img_props.CombineScale());
+        Item(IndexSize)->SetValue(m_img_props.CombineScale());
     }
 #endif
+    if (m_isSVGImage)
+    {
+        Item(IndexSize)->SetValue(m_img_props.CombineScale());
+    }
 }
 
 void PropertyGrid_Image::SetAutoComplete()
@@ -240,7 +245,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             break;
 
 #if 0  // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
-        case IndexScale:
+        case IndexSize:
             {
                 auto u8_value = childValue.GetString().utf8_string();
                 ttlib::multiview mstr(u8_value, ',');

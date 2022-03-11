@@ -84,7 +84,7 @@ ttlib::cstr& ProjectSettings::setProjectPath(const ttlib::cstr& file, bool remov
     return m_projectPath;
 }
 
-wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool want_scaled, bool check_image)
+wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool check_image)
 {
     ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
@@ -185,39 +185,6 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     // If it's not embedded, then cache it so that we don't read it from disk again
     if (!parts[IndexType].contains("Embed") && result == m_images.end())
         m_images[path] = image;
-
-    // Scale if needed
-    if (want_scaled && parts.size() > IndexScale)
-    {
-        wxSize scale_size;
-        // If a dimension was specified, then it will have been split out, so we need to combine them
-        if (parts.size() > IndexScale + 1)
-        {
-            GetScaleInfo(scale_size, ttlib::cstr(parts[IndexScale]) << ',' << parts[IndexScale + 1]);
-        }
-        else
-        {
-            GetScaleInfo(scale_size, parts[IndexScale]);
-        }
-
-        if (scale_size.x != -1 || scale_size.y != -1)
-        {
-            auto original_size = image.GetSize();
-            if (scale_size.x != -1)
-                original_size.x = scale_size.x;
-            if (scale_size.y != -1)
-                original_size.y = scale_size.y;
-
-            // Scaling a mask doesn't work well at high quality, so only use higher quality for images with no mask (alpha
-            // channel is fine)
-            auto newImage = image.Scale(original_size.x, original_size.y,
-                                        image.HasMask() ? wxIMAGE_QUALITY_NORMAL : wxIMAGE_QUALITY_HIGH);
-            if (newImage.IsOk())
-            {
-                return newImage;
-            }
-        }
-    }
 
     return image;
 }

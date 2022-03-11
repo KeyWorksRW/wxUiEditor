@@ -24,11 +24,11 @@ void ImageProperties::InitValues(const char* value)
         type = mstr[IndexType];
         if (type == "Header" && image.extension().is_sameas(".xpm", tt::CASE::either))
             type = "XPM";
-    }
 
-    if (mstr.size() > IndexImage + 1)
-    {
-        GetScaleInfo(m_size, mstr[IndexScale]);
+        if (type == "SVG" && mstr.size() > IndexImage + 1)
+        {
+            GetSizeInfo(m_size, mstr[IndexSize]);
+        }
     }
 }
 

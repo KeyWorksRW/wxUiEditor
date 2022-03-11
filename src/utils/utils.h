@@ -26,7 +26,7 @@ enum PropIndex
     IndexType = 0,
     IndexImage,
     IndexArtID = IndexImage,
-    IndexScale
+    IndexSize
 };
 
 ttlib::cstr ClearPropFlag(ttlib::cview flag, ttlib::cview currentValue);
@@ -69,8 +69,8 @@ wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);
 // If the property specifies dialog units, then parent will be used to do the conversion
 wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
 
-// Convert the parts[IndexScale] or equivalent string into wxSize dimensions
-void GetScaleInfo(wxSize& size, ttlib::sview description);
+// Convert the parts[IndexSize] or equivalent string into wxSize dimensions
+void GetSizeInfo(wxSize& size, ttlib::sview description);
 
 // Friendly name/wxSYS_COLOUR_ pairs (e.g. "tooltip"/wxSYS_COLOUR_INFOBK)
 extern std::map<std::string, const char*> g_sys_colour_pair;

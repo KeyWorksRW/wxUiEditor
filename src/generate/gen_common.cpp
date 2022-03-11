@@ -613,14 +613,6 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbun
         return code;
     }
 
-    wxSize scale_size { -1, -1 };
-
-    // If a dimension was specified, then it will have been split out, so we need to combine them
-    if (parts.size() > IndexScale)
-    {
-        GetScaleInfo(scale_size, parts[IndexScale]);
-    }
-
     if (parts[IndexType].contains("Art"))
     {
         ttlib::cstr art_id(parts[IndexArtID]);
@@ -669,18 +661,6 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbun
             code << ')';
         }
 
-        // Scale if needed
-        if (scale_size.x != -1 || scale_size.y != -1)
-        {
-            auto bmp = wxGetApp().GetImage(parts[IndexImage]);
-            auto original_size = bmp.GetSize();
-            if (scale_size.x != -1)
-                original_size.x = scale_size.x;
-            if (scale_size.y != -1)
-                original_size.y = scale_size.y;
-            code << ttlib::cstr().Format(".ConvertToImage().Scale(%d, %d)", original_size.x, original_size.y);
-        }
-
         return code;
     }
 
@@ -692,19 +672,6 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbun
         ttlib::cstr name(parts[IndexImage].filename());
         name.remove_extension();
         code << name << "_xpm)";
-
-        // Scale if needed
-        if (scale_size.x != -1 || scale_size.y != -1)
-        {
-            auto bmp = wxGetApp().GetImage(parts[IndexImage]);
-            auto original_size = bmp.GetSize();
-            if (scale_size.x != -1)
-                original_size.x = scale_size.x;
-            if (scale_size.y != -1)
-                original_size.y = scale_size.y;
-            // XPM files use a mask which does not scale well when wxIMAGE_QUALITY_HIGH is used
-            code << ttlib::cstr().Format(".Scale(%d, %d)", original_size.x, original_size.y);
-        }
     }
     else
     {
@@ -724,19 +691,6 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbun
         }
 
         code << name << ", sizeof(" << name << "))";
-
-        // Scale if needed
-        if (scale_size.x != -1 || scale_size.y != -1)
-        {
-            auto bmp = wxGetApp().GetImage(description);
-            auto original_size = bmp.GetSize();
-            if (scale_size.x != -1)
-                original_size.x = scale_size.x;
-            if (scale_size.y != -1)
-                original_size.y = scale_size.y;
-            // Assume an alpha channel, so high-quality scaling makes sense
-            code << ttlib::cstr().Format(".Scale(%d, %d, wxIMAGE_QUALITY_HIGH)", original_size.x, original_size.y);
-        }
     }
     return code;
 }

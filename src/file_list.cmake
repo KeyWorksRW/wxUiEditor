@@ -11,6 +11,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/cstm_event.cpp        # Custom Event handling
     ${CMAKE_CURRENT_LIST_DIR}/frame_status_bar.cpp  # MainFrame status bar functions
     ${CMAKE_CURRENT_LIST_DIR}/gen_enums.cpp         # Enumerations for generators
+    ${CMAKE_CURRENT_LIST_DIR}/image_bundle.cpp      # Functions for working with wxBitmapBundle
     ${CMAKE_CURRENT_LIST_DIR}/lambdas.cpp           # Functions for formatting and storage of lamda events
     ${CMAKE_CURRENT_LIST_DIR}/paths.cpp             # Handles *_directory properties
     ${CMAKE_CURRENT_LIST_DIR}/pjtsettings.cpp       # Hold data for currently loaded project

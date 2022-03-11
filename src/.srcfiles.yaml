@@ -42,6 +42,7 @@ Files:
     cstm_event.cpp        # Custom Event handling
     frame_status_bar.cpp  # MainFrame status bar functions
     gen_enums.cpp         # Enumerations for generators
+    image_bundle.cpp      # Functions for working with wxBitmapBundle
     lambdas.cpp           # Functions for formatting and storage of lamda events
     paths.cpp             # Handles *_directory properties
     pjtsettings.cpp       # Hold data for currently loaded project

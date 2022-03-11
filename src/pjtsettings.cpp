@@ -223,67 +223,33 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 }
 
 #if wxCHECK_VERSION(3, 1, 6)
-wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description)
+wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
 {
-    ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-
-    if (parts[IndexImage].empty())
-    {
-        return GetInternalImage("unknown");
-    }
-
-    if (parts[IndexType].contains("Art"))
-    {
-        if (parts[IndexArtID].contains("|"))
-        {
-            ttlib::multistr id_client(parts[IndexArtID], '|');
-            return wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]));
-        }
-        else
-        {
-            return wxArtProvider::GetBitmapBundle(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"));
-        }
-    }
-
-    auto image_first = GetPropertyBitmap(description, false, false);
-    if (!image_first.IsOk())
-    {
-        return GetInternalImage("unknown");
-    }
-
-    // Note that the search for files only occurs once after the first one is found. No additional search is performed until
-    // the project is reloaded. This is to prevent frequent searching since most of the time, the second image won't exist.
-
     if (auto result = m_bundles.find(description); result != m_bundles.end())
     {
-        return result->second;
+        return result->second.bundle;
     }
 
-    if (auto pos = parts[IndexImage].find_last_of('.'); ttlib::is_found(pos))
+    if (auto result = ProcessBundleProperty(description, node); result)
     {
-        parts[IndexImage].insert(pos, "_2x");
-        ttlib::cstr new_description;
-        new_description << parts[IndexType] << ';' << parts[IndexImage];
-        auto image_second = GetPropertyBitmap(new_description, false, false);
-        if (!image_second.IsOk())
-        {
-            parts[IndexImage].Replace("_2x.", "@2x.");
-            new_description.clear();
-            new_description << parts[IndexType] << ';' << parts[IndexImage];
-            image_second = GetPropertyBitmap(new_description, false, false);
-            if (!image_second.IsOk())
-            {
-                m_bundles[description] = wxBitmapBundle::FromBitmap(image_first);
-                return m_bundles[description];
-            }
-        }
-
-        m_bundles[description] = wxBitmapBundle::FromBitmaps(image_first, image_second);
-        return m_bundles[description];
+        return result->bundle;
     }
 
-    return wxBitmapBundle::FromBitmap(image_first);
+    return GetInternalImage("unknown");
 }
+
+const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description)
+{
+    if (auto result = m_bundles.find(description); result != m_bundles.end())
+    {
+        return &result->second;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 #endif
 
 wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description)
@@ -338,7 +304,7 @@ wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description
 
 bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
 
-bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
+bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation)
 {
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
 
@@ -361,9 +327,76 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
     if (m_map_embedded.find(path.filename().c_str()) != m_map_embedded.end())
         return false;
 
+    auto final_result = AddNewEmbeddedImage(path, form, add_lock);
+    if (is_animation || !final_result)
+        return final_result;
+
+#if wxCHECK_VERSION(3, 1, 6)
+    // Note that path may now contain the prop_art_directory prefix
+
+    add_lock.lock();
+
+    if (auto pos = path.find_last_of('.'); ttlib::is_found(pos))
+    {
+        if (path.contains("_16x16."))
+        {
+            path.Replace("_16x16.", "_24x24.");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+            path.Replace("_24x24.", "_32x32.");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+        }
+        else if (path.contains("_24x24."))
+        {
+            path.Replace("_24x24.", "_36x36.");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+            path.Replace("_36x36.", "_48x48.");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+        }
+        else
+        {
+            path.insert(pos, "_1_5x");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+            path.Replace("_1_5x", "_2x");
+            if (path.file_exists())
+            {
+                AddNewEmbeddedImage(path, form, add_lock);
+                add_lock.lock();
+            }
+        }
+    }
+#endif
+
+    return final_result;
+}
+
+bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock)
+{
     wxFFileInputStream stream(path.wx_str());
     if (!stream.IsOk())
+    {
+        add_lock.unlock();
         return false;
+    }
 
     wxImageHandler* handler;
     auto& list = wxImage::GetHandlers();
@@ -439,6 +472,7 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form)
         }
     }
 
+    add_lock.unlock();
     return false;
 }
 
@@ -612,6 +646,20 @@ bool ProjectSettings::CheckNode(Node* node)
 
 void ProjectSettings::FinishThreads()
 {
+#if wxCHECK_VERSION(3, 1, 6)
+    if (m_collect_bundle_thread)
+    {
+        m_cancel_collection = true;
+        if (m_collect_bundle_thread->joinable())
+        {
+            m_collect_bundle_thread->join();
+        }
+        delete m_collect_bundle_thread;
+        m_collect_bundle_thread = nullptr;
+        m_cancel_collection = false;
+    }
+#endif
+
     if (m_collect_thread)
     {
         if (m_collect_thread->joinable())

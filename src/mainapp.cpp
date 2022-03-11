@@ -258,12 +258,12 @@ wxImage App::GetImage(const ttlib::cstr& description)
 }
 
 #if wxCHECK_VERSION(3, 1, 6)
-wxBitmapBundle App::GetImageBundle(const ttlib::cstr& description)
+wxBitmapBundle App::GetBitmapBundle(const ttlib::cstr& description, Node* node)
 {
     if (description.is_sameprefix("Embed;") || description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") ||
         description.is_sameprefix("Art;"))
     {
-        return m_pjtSettings->GetPropertyBitmapBundle(description);
+        return m_pjtSettings->GetPropertyBitmapBundle(description, node);
     }
     else
         return GetInternalImage("unknown");

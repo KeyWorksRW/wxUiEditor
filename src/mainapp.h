@@ -9,6 +9,12 @@
 
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
+#if wxCHECK_VERSION(3, 1, 6)
+    #include <wx/bmpbndl.h>
+#else
+    #include <wx/bitmap.h>
+#endif
+
 #include "node_classes.h"  // Forward defintions of Node classes
 
 namespace pugi
@@ -71,9 +77,9 @@ public:
 
     wxImage GetImage(const ttlib::cstr& description);
 #if wxCHECK_VERSION(3, 1, 6)
-    wxBitmapBundle GetImageBundle(const ttlib::cstr& description);
+    wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
 #else
-    wxBitmap GetImageBundle(const ttlib::cstr& description);
+    wxBitmap GetBitmapBundle(const ttlib::cstr& description);
 #endif
 
     ProjectSettings* GetProjectSettings() { return m_pjtSettings; };

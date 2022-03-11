@@ -298,11 +298,20 @@ wxBitmap NodeProperty::as_bitmap() const
 #if wxCHECK_VERSION(3, 1, 6)
 wxBitmapBundle NodeProperty::as_bitmap_bundle() const
 {
-    auto bundle = wxGetApp().GetImageBundle(m_value);
+    auto bundle = wxGetApp().GetBitmapBundle(m_value, m_node);
     if (!bundle.IsOk())
         return wxNullBitmap;
     else
         return bundle;
+}
+
+const ImageBundle* NodeProperty::as_image_bundle() const
+{
+    auto bundle_ptr = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(m_value);
+    if (!bundle_ptr || !bundle_ptr->bundle.IsOk())
+        return nullptr;
+    else
+        return bundle_ptr;
 }
 #endif
 

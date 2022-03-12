@@ -26,7 +26,7 @@ To build the Windows version of **wxUiEditor**, run the following two commands f
 
 Note that the linking stage of the Release build will take quite a bit of time.
 
-See [Developer notes](docs/DEV_NOTES.md) for more information about the code.
+See [Developer notes](docs/DEV_NOTES.md) for more information about the current branches, and some high level overview of the code.
 
 ## Licenses
 

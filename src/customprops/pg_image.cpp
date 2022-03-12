@@ -54,21 +54,17 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
         types.Add(s_type_names[1]);  // Embed
         types.Add(s_type_names[2]);  // XPM
         types.Add(s_type_names[3]);  // Header
-#if wxCHECK_VERSION(3, 1, 6)
         types.Add(s_type_names[4]);  // SVG
-#endif
     }
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 
-#if wxCHECK_VERSION(3, 1, 6)
     if (!m_isEmbeddedImage)
     {
         AddPrivateChild(new CustomPointProperty("default size for SVG", prop, CustomPointProperty::type_SVG));
         Item(IndexSize)->SetHelpString("Sets the default size to pass to wxBitmapBundle. Only used by SVG files.");
     }
-#endif
 }
 
 void PropertyGrid_Image::RefreshChildren()
@@ -105,7 +101,6 @@ void PropertyGrid_Image::RefreshChildren()
 
         if (m_old_image != m_img_props.image || m_old_type != m_img_props.type)
         {
-#if wxCHECK_VERSION(3, 1, 6)
             wxBitmapBundle bundle;
             if (m_img_props.image.size())
             {
@@ -138,30 +133,6 @@ void PropertyGrid_Image::RefreshChildren()
 
             Item(IndexImage)->SetValueImage(bundle);
 
-#else  // not wxCHECK_VERSION(3, 1, 6)
-
-            wxBitmap bmp;
-            if (m_img_props.image.size())
-            {
-                wxImage img = wxGetApp().GetProjectSettings()->GetPropertyBitmap(m_img_props.CombineValues(), false);
-                if (img.IsOk())
-                {
-                    // SetValueImage expects a bitmap with an alpha channel, so if it doesn't have one, make one now.
-                    // Note that if this was an XPM file, then the mask will be converted to an alpha channel which is
-                    // what we want.
-
-                    if (!img.HasAlpha())
-                        img.InitAlpha();
-                    bmp = img;
-                }
-            }
-
-            if (!bmp.IsOk())
-                bmp = LoadHeaderImage(empty_png, sizeof(empty_png)).Scale(15, 15);
-
-            Item(IndexImage)->SetValueImage(bmp);
-
-#endif  // wxCHECK_VERSION(3, 1, 6)
             m_old_image = m_img_props.image;
             // We do NOT set m_old_type here -- that needs to be handled in the next if clause
         }
@@ -180,9 +151,7 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
     Item(IndexImage)->SetValue(m_img_props.image.wx_str());
-#if wxCHECK_VERSION(3, 1, 6)
     Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
-#endif
 }
 
 void PropertyGrid_Image::SetAutoComplete()

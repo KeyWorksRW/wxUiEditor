@@ -387,7 +387,6 @@ wxBitmap Node::prop_as_wxBitmap(PropName name) const
         return wxNullBitmap;
 }
 
-#if wxCHECK_VERSION(3, 1, 6)
 wxBitmapBundle Node::prop_as_wxBitmapBundle(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
@@ -395,7 +394,6 @@ wxBitmapBundle Node::prop_as_wxBitmapBundle(PropName name) const
     else
         return wxNullBitmap;
 }
-#endif
 
 wxArrayString Node::prop_as_wxArrayString(PropName name) const
 {

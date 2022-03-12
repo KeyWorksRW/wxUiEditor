@@ -5,24 +5,21 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#if wxCHECK_VERSION(3, 1, 6)
-    #include <filesystem>
-    #include <fstream>
-    #include <thread>
+#include <filesystem>
+#include <fstream>
+#include <thread>
 
-    #include <wx/artprov.h>   // wxArtProvider class
-    #include <wx/bmpbndl.h>   // includes wx/bitmap.h, wxBitmapBundle class interface
-    #include <wx/mstream.h>   // Memory stream classes
-    #include <wx/wfstream.h>  // File stream classes
+#include <wx/artprov.h>   // wxArtProvider class
+#include <wx/bmpbndl.h>   // includes wx/bitmap.h, wxBitmapBundle class interface
+#include <wx/mstream.h>   // Memory stream classes
+#include <wx/wfstream.h>  // File stream classes
 
-    #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
-    #include "image_bundle.h"
-
-    #include "mainapp.h"      // compiler_standard -- Main application class
-    #include "node.h"         // Node class
-    #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
-    #include "utils.h"        // Utility functions that work with properties
+#include "mainapp.h"      // compiler_standard -- Main application class
+#include "node.h"         // Node class
+#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"        // Utility functions that work with properties
 
 bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
 
@@ -278,12 +275,12 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
                     }
                     else
                     {
-    #if defined(_DEBUG)
+#if defined(_DEBUG)
                         auto org_size = static_cast<size_t>(stream.GetLength());
                         auto png_size = read_stream->GetBufferSize();
                         ttlib::cstr size_comparison;
                         size_comparison.Format("Original: %ku, new: %ku", org_size, png_size);
-    #endif  // _DEBUG
+#endif  // _DEBUG
 
                         embed->type = handler->GetType();
                         embed->array_size = stream.GetSize();
@@ -524,5 +521,3 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
     m_bundles[description] = std::move(img_bundle);
     return &m_bundles[description];
 }
-
-#endif

@@ -9,11 +9,7 @@
 
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
-#if wxCHECK_VERSION(3, 1, 6)
-    #include <wx/bmpbndl.h>
-#else
-    #include <wx/bitmap.h>
-#endif
+#include <wx/bmpbndl.h>
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
@@ -76,11 +72,7 @@ public:
     ttString GetDerivedDirectory();
 
     wxImage GetImage(const ttlib::cstr& description);
-#if wxCHECK_VERSION(3, 1, 6)
     wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
-#else
-    wxBitmap GetBitmapBundle(const ttlib::cstr& description);
-#endif
 
     ProjectSettings* GetProjectSettings() { return m_pjtSettings; };
 

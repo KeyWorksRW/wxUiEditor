@@ -19,8 +19,8 @@
 
 #include <wx/defs.h>  // Declarations/definitions common to all wx source files
 
-#if !wxCHECK_VERSION(3, 1, 5)
-    #error "You must have wxWidgets 3.1.5 or later to build this project."
+#if !wxCHECK_VERSION(3, 1, 6)
+    #error "You must have wxWidgets 3.1.6 or later to build this project."
 #endif
 
 #if defined(__WINDOWS__)
@@ -37,16 +37,6 @@
 #endif
 
 #include <wx/debug.h>  // Misc debug functions and macros
-
-#if !wxCHECK_VERSION(3, 1, 6)
-    #if (__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
-        #ifdef _MSC_VER
-            // This *IS* a legitimate warning, however while wxWidgets 3.1.15 has made some progress, there are still header
-            // files that do this.
-            #pragma warning(disable : 5054)  // operator '|': deprecated between enumerations of different types
-        #endif
-    #endif
-#endif
 
 // These warnings are still generated in 3.1.16
 
@@ -112,7 +102,7 @@ enum class MoveDirection
 };
 
 constexpr const char* txtVersion = "wxUiEditor 0.9.1";
-constexpr const char* txtCopyRight = "Copyright (c) 2019-2021 KeyWorks Software";
+constexpr const char* txtCopyRight = "Copyright (c) 2019-2022 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 
 // Use when you need to return an empty const ttlib::cstr&

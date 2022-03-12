@@ -107,24 +107,15 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
         if (parts[IndexArtID].contains("|"))
         {
             ttlib::multistr id_client(parts[IndexArtID], '|');
-#if wxCHECK_VERSION(3, 1, 6)
             image = (wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]))
                          .GetBitmapFor(wxGetFrame().GetWindow()))
                         .ConvertToImage();
-#else
-            image = wxArtProvider::GetBitmap(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1])).ConvertToImage();
-#endif
         }
         else
         {
-#if wxCHECK_VERSION(3, 1, 6)
             image = (wxArtProvider::GetBitmapBundle(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
                          .GetBitmapFor(wxGetFrame().GetWindow()))
                         .ConvertToImage();
-#else
-            image = wxArtProvider::GetBitmap(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
-                        .ConvertToImage();
-#endif
         }
     }
     else if (parts[IndexType].contains("Embed"))
@@ -189,7 +180,6 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     return image;
 }
 
-#if wxCHECK_VERSION(3, 1, 6)
 wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
 {
     if (auto result = m_bundles.find(description); result != m_bundles.end())
@@ -216,8 +206,6 @@ const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& de
         return nullptr;
     }
 }
-
-#endif
 
 wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description)
 {
@@ -298,7 +286,6 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_ani
     if (is_animation || !final_result)
         return final_result;
 
-#if wxCHECK_VERSION(3, 1, 6)
     // Note that path may now contain the prop_art_directory prefix
 
     add_lock.lock();
@@ -351,7 +338,6 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_ani
             }
         }
     }
-#endif
 
     return final_result;
 }
@@ -613,7 +599,6 @@ bool ProjectSettings::CheckNode(Node* node)
 
 void ProjectSettings::FinishThreads()
 {
-#if wxCHECK_VERSION(3, 1, 6)
     if (m_collect_bundle_thread)
     {
         m_cancel_collection = true;
@@ -625,7 +610,6 @@ void ProjectSettings::FinishThreads()
         m_collect_bundle_thread = nullptr;
         m_cancel_collection = false;
     }
-#endif
 
     if (m_collect_thread)
     {

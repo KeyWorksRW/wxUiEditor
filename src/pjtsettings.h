@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Hold data for currently loaded project
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,11 +11,7 @@
 #include <mutex>
 #include <thread>
 
-#if wxCHECK_VERSION(3, 1, 6)
-    #include "image_bundle.h"  // Functions for working with wxBitmapBundle
-#else
-    #include <wx/bitmap.h>
-#endif
+#include "image_bundle.h"  // This will #include wx/bmpbndl.h and wx/bitmap.h
 
 class Node;
 class wxAnimation;
@@ -61,7 +57,6 @@ public:
     // If check_image is true, and !image.IsOK(), GetInternalImage() is returned
     wxImage GetPropertyBitmap(const ttlib::cstr& description, bool check_image = true);
 
-#if wxCHECK_VERSION(3, 1, 6)
     wxBitmapBundle GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node);
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
@@ -73,7 +68,6 @@ public:
     void ProjectSettings::ParseBundles();
 
     ImageBundle* ProcessBundleProperty(const ttlib::cstr& description, Node* node);
-#endif
 
     // This takes the full animation property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
@@ -91,14 +85,12 @@ protected:
     void CollectEmbeddedImages();
     void CollectNodeImages(Node* node, Node* form);
 
-#if wxCHECK_VERSION(3, 1, 6)
     void CollectBundles();
     void CollectNodeBundles(Node* node, Node* form);
     void AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form);
 
     // Reads the image and stores it in m_map_embedded
     bool AddEmbeddedBundleImage(ttlib::cstr path, Node* form);
-#endif
 
     bool AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock);
 
@@ -112,14 +104,12 @@ private:
     std::map<std::string, wxImage> m_images;
 
     std::thread* m_collect_thread { nullptr };
-#if wxCHECK_VERSION(3, 1, 6)
     std::mutex m_mutex_init_bundles;
 
     std::map<std::string, ImageBundle> m_bundles;
 
     bool m_cancel_collection { false };
     std::thread* m_collect_bundle_thread { nullptr };
-#endif
 
     std::map<std::string, std::unique_ptr<EmbededImage>, std::less<>> m_map_embedded;
 

@@ -20,7 +20,7 @@ public:
     {
         type_size,
         type_point,
-        type_scale
+        type_SVG
     };
 
     CustomPointProperty(const wxString& label, NodeProperty* prop, DataType type = CustomPointProperty::type_size);

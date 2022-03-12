@@ -261,7 +261,7 @@ wxImage App::GetImage(const ttlib::cstr& description)
 wxBitmapBundle App::GetBitmapBundle(const ttlib::cstr& description, Node* node)
 {
     if (description.is_sameprefix("Embed;") || description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") ||
-        description.is_sameprefix("Art;"))
+        description.is_sameprefix("Art;") || description.is_sameprefix("SVG;"))
     {
         return m_pjtSettings->GetPropertyBitmapBundle(description, node);
     }

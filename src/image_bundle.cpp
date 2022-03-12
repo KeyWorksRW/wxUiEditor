@@ -343,6 +343,39 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
         AddNewEmbeddedBundle(description, parts[IndexImage], node->GetForm());
         return &m_bundles[description];
     }
+    else if (parts[IndexType].contains("SVG"))
+    {
+        ttlib::cstr path = parts[IndexImage];
+        if (!path.file_exists())
+        {
+            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
+            path.append_filename(parts[IndexImage]);
+            if (!path.file_exists())
+            {
+                return nullptr;
+            }
+        }
+        wxSize size;
+        if (parts.size() > IndexSize)
+        {
+            GetSizeInfo(size, parts[IndexSize]);
+        }
+        if (size.x < 1)
+            size.x = 16;
+        if (size.y < 1)
+            size.y = 16;
+        img_bundle.bundle = wxBitmapBundle::FromSVGFile(path.wx_str(), size);
+        if (img_bundle.bundle.IsOk())
+        {
+            img_bundle.lst_filenames.emplace_back(path);
+            m_bundles[description] = std::move(img_bundle);
+            return &m_bundles[description];
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
 
     auto image_first = wxGetApp().GetProjectSettings()->GetPropertyBitmap(description, false);
     if (!image_first.IsOk())

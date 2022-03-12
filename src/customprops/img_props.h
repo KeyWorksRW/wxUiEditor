@@ -13,11 +13,8 @@
 
 class NodeProperty;
 
-inline constexpr std::array<const char*, 4> s_type_names = {
-    "Art",
-    "Embed",
-    "XPM",
-    "Header",
+inline constexpr std::array<const char*, 5> s_type_names = {
+    "Art", "Embed", "XPM", "Header", "SVG",
 };
 
 struct ImageProperties
@@ -30,7 +27,7 @@ public:
 
     void InitValues(const char* value);
     ttlib::cstr CombineValues();
-    wxString CombineScale();
+    wxString CombineDefaultSize();
 
     void SetWidth(int width) { m_size.x = width; }
     void SetHeight(int height) { m_size.y = height; }

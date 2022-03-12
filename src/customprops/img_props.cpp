@@ -29,6 +29,11 @@ void ImageProperties::InitValues(const char* value)
         {
             GetSizeInfo(m_size, mstr[IndexSize]);
         }
+        else
+        {
+            m_size.x = -1;
+            m_size.y = -1;
+        }
     }
 }
 
@@ -49,11 +54,14 @@ ttlib::cstr ImageProperties::CombineValues()
     }
 
     ttlib::cstr value;
+
+    // REVIEW: [KeyWorks - 03-11-2022] Why are we still adding the size? That's only used for SVG images.
+
     value << type << ';' << image << ";[" << m_size.x << ',' << m_size.y << "]";
     return value;
 }
 
-wxString ImageProperties::CombineScale()
+wxString ImageProperties::CombineDefaultSize()
 {
     wxString value;
     value << m_size.x << ',' << m_size.y;

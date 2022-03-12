@@ -54,17 +54,21 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
         types.Add(s_type_names[1]);  // Embed
         types.Add(s_type_names[2]);  // XPM
         types.Add(s_type_names[3]);  // Header
+#if wxCHECK_VERSION(3, 1, 6)
         types.Add(s_type_names[4]);  // SVG
+#endif
     }
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 
-    if (m_isSVGImage)
+#if wxCHECK_VERSION(3, 1, 6)
+    if (!m_isEmbeddedImage)
     {
-        AddPrivateChild(new CustomPointProperty("default size", prop, CustomPointProperty::type_scale));
-        Item(IndexSize)->SetHelpString("Sets the default size to pass to wxBitmapBundle.");
+        AddPrivateChild(new CustomPointProperty("default size for SVG", prop, CustomPointProperty::type_SVG));
+        Item(IndexSize)->SetHelpString("Sets the default size to pass to wxBitmapBundle. Only used by SVG files.");
     }
+#endif
 }
 
 void PropertyGrid_Image::RefreshChildren()
@@ -101,11 +105,44 @@ void PropertyGrid_Image::RefreshChildren()
 
         if (m_old_image != m_img_props.image || m_old_type != m_img_props.type)
         {
-            // REVIEW: [KeyWorks - 03-11-2022] When does this happen?
+#if wxCHECK_VERSION(3, 1, 6)
+            wxBitmapBundle bundle;
+            if (m_img_props.image.size())
+            {
+                if (m_img_props.type == "XPM")
+                {
+                    wxImage img = wxGetApp().GetProjectSettings()->GetPropertyBitmap(m_img_props.CombineValues(), false);
+                    if (img.IsOk())
+                    {
+                        // SetValueImage expects a bitmap with an alpha channel, so if it doesn't have one, make one now.
+                        // Note that if this was an XPM file, then the mask will be converted to an alpha channel which is
+                        // what we want.
+
+                        if (!img.HasAlpha())
+                            img.InitAlpha();
+                        bundle = wxBitmapBundle::FromBitmap(img);
+                    }
+                }
+                else
+                {
+                    auto img = wxGetApp().GetProjectSettings()->GetPropertyBitmapBundle(m_img_props.CombineValues(), false);
+                    if (img.IsOk())
+                    {
+                        bundle = img;
+                    }
+                }
+            }
+
+            if (!bundle.IsOk())
+                bundle = wxBitmapBundle::FromBitmap(LoadHeaderImage(empty_png, sizeof(empty_png)).Scale(15, 15));
+
+            Item(IndexImage)->SetValueImage(bundle);
+
+#else  // not wxCHECK_VERSION(3, 1, 6)
+
             wxBitmap bmp;
             if (m_img_props.image.size())
             {
-                // Get a non-scaled version of the bitmap
                 wxImage img = wxGetApp().GetProjectSettings()->GetPropertyBitmap(m_img_props.CombineValues(), false);
                 if (img.IsOk())
                 {
@@ -123,6 +160,8 @@ void PropertyGrid_Image::RefreshChildren()
                 bmp = LoadHeaderImage(empty_png, sizeof(empty_png)).Scale(15, 15);
 
             Item(IndexImage)->SetValueImage(bmp);
+
+#endif  // wxCHECK_VERSION(3, 1, 6)
             m_old_image = m_img_props.image;
             // We do NOT set m_old_type here -- that needs to be handled in the next if clause
         }
@@ -141,16 +180,9 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
     Item(IndexImage)->SetValue(m_img_props.image.wx_str());
-#if 0  // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
-    if (!m_isEmbeddedImage)
-    {
-        Item(IndexSize)->SetValue(m_img_props.CombineScale());
-    }
+#if wxCHECK_VERSION(3, 1, 6)
+    Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
 #endif
-    if (m_isSVGImage)
-    {
-        Item(IndexSize)->SetValue(m_img_props.CombineScale());
-    }
 }
 
 void PropertyGrid_Image::SetAutoComplete()
@@ -186,6 +218,10 @@ void PropertyGrid_Image::SetAutoComplete()
         {
             dir.GetAllFiles(art_dir, &array_files, "*.xpm", wxDIR_FILES);
         }
+        else if (m_img_props.type == "SVG")
+        {
+            dir.GetAllFiles(art_dir, &array_files, "*.svg", wxDIR_FILES);
+        }
 
         for (auto& iter: array_files)
         {
@@ -217,6 +253,11 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
 
                 // If the type has changed, then the image property is no longer valid
                 img_props.image.clear();
+                if (img_props.type == "SVG")
+                {
+                    img_props.SetWidth(16);
+                    img_props.SetHeight(16);
+                }
             }
             break;
 
@@ -244,8 +285,8 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             }
             break;
 
-#if 0  // See https://github.com/KeyWorksRW/wxUiEditor/issues/683
         case IndexSize:
+            if (img_props.type == "SVG")
             {
                 auto u8_value = childValue.GetString().utf8_string();
                 ttlib::multiview mstr(u8_value, ',');
@@ -253,7 +294,6 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 img_props.SetHeight(mstr[1].atoi());
             }
             break;
-#endif
     }
 
     value = img_props.CombineValues().wx_str();

@@ -21,7 +21,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
 {
     m_prop_type = type;
 
-    if (type == CustomPointProperty::type_scale && prop->HasValue() && prop->as_string().contains("["))
+    if (type == CustomPointProperty::type_SVG && prop->HasValue() && prop->as_string().contains("["))
     {
         ttlib::cstr value(prop->as_string().substr(prop->as_string().find('[') + 1));
         if (value.back() == ']')
@@ -48,7 +48,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
         AddPrivateChild(new wxIntProperty("height", wxPG_LABEL, m_point.y));
     }
 
-    if (type != CustomPointProperty::type_scale)
+    if (type != CustomPointProperty::type_SVG)
     {
         AddPrivateChild(new wxBoolProperty("using dialog units", wxPG_LABEL, m_dialog_units));
         Item(2)->SetHelpString("When checked, values will be converted to dialog units by calling ConvertPixelsToDialog().");
@@ -63,7 +63,7 @@ void CustomPointProperty::RefreshChildren()
         InitValues(value.utf8_string());
         Item(0)->SetValue(m_point.x);
         Item(1)->SetValue(m_point.y);
-        if (m_prop_type != type_scale)
+        if (m_prop_type != type_SVG)
             Item(2)->SetValue(m_dialog_units);
     }
 }

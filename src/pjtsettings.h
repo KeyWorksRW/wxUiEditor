@@ -29,10 +29,6 @@ class ProjectSettings
 {
 public:
     ProjectSettings();
-    ~ProjectSettings();
-
-    // Call this to ensure any background threads get completed
-    void FinishThreads();
 
     // This will parse the entire project, and ensure that each embedded image is associated
     // with the form node of the form it first appears in.
@@ -63,10 +59,6 @@ public:
     // code for the bundle.
     const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description);
 
-    // This will finish any current thread and then launch a new thread to start collecting
-    // all the image bundles in the project (initializes m_bundles)
-    void ProjectSettings::ParseBundles();
-
     ImageBundle* ProcessBundleProperty(const ttlib::cstr& description, Node* node);
 
     // This takes the full animation property description and uses that to determine the image
@@ -76,16 +68,13 @@ public:
     bool AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation = false);
     EmbededImage* GetEmbeddedImage(ttlib::sview path);
 
-    // This will finish any current thread and then launch a new thread to start collecting
-    // all the embedded images in the project
-    void ParseEmbeddedImages();
+    // This will collect bundles for the entire project -- it initializes
+    // std::map<std::string, ImageBundle> m_bundles for every image.
+    void CollectBundles();
 
 protected:
     bool CheckNode(Node* node);
-    void CollectEmbeddedImages();
-    void CollectNodeImages(Node* node, Node* form);
 
-    void CollectBundles();
     void CollectNodeBundles(Node* node, Node* form);
     void AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form);
 
@@ -103,15 +92,9 @@ private:
 
     std::map<std::string, wxImage> m_images;
 
-    std::thread* m_collect_thread { nullptr };
-    std::mutex m_mutex_init_bundles;
-
+    // std::string is the entire property for the image
     std::map<std::string, ImageBundle> m_bundles;
 
-    bool m_cancel_collection { false };
-    std::thread* m_collect_bundle_thread { nullptr };
-
+    // std::string is parts[IndexImage].filename()
     std::map<std::string, std::unique_ptr<EmbededImage>, std::less<>> m_map_embedded;
-
-    bool m_is_terminating { false };
 };

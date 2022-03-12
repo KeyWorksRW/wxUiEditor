@@ -8,6 +8,8 @@
 #include "ttcwd.h"       // cwd -- Class for storing and optionally restoring the current directory
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
+#include <wx/utils.h>  // Miscellaneous utilities
+
 #include "../nodes/node_creator.h"  // NodeCreator class
 #include "base_generator.h"         // BaseGenerator -- Base widget generator class
 #include "gen_enums.h"              // Enumerations for generators
@@ -80,6 +82,8 @@ bool App::LoadProject(const ttString& file)
                 return false;
             }
         }
+
+        wxBusyCursor wait;
         project = LoadProject(doc);
     }
 
@@ -91,6 +95,7 @@ bool App::LoadProject(const ttString& file)
             return false;
         }
 
+        wxBusyCursor wait;
         project = LoadProject(doc);
     }
 
@@ -107,8 +112,13 @@ bool App::LoadProject(const ttString& file)
     m_pjtSettings->SetProjectFile(file);
     m_pjtSettings->SetProjectPath(file);
 
-    // Start a thread to collect all of the embedded images
-    m_pjtSettings->ParseEmbeddedImages();
+    {
+        wxBusyCursor wait;
+
+        ttSaveCwd cwd;
+        m_pjtSettings->GetProjectPath().ChangeDir();
+        m_pjtSettings->CollectBundles();
+    }
 
     // Imported projects start with an older version so that they pass through the old project fixups.
     if (m_ProjectVersion == ImportProjectVersion)
@@ -474,8 +484,13 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
         m_pjtSettings->SetProjectFile(file);
         m_pjtSettings->SetProjectPath(file);
 
-        // Finish previous thread and start a new thread to collect all of the embedded images.
-        m_pjtSettings->ParseEmbeddedImages();
+        {
+            wxBusyCursor wait;
+
+            ttSaveCwd cwd;
+            m_pjtSettings->GetProjectPath().ChangeDir();
+            m_pjtSettings->CollectBundles();
+        }
 
 #if defined(_DEBUG)
         // If the file has been created once before, then for the first form, copy the old classname and base filename to the
@@ -617,8 +632,13 @@ bool App::NewProject(bool create_empty)
         m_frame->SetImportedFlag();
     }
 
-    // Start a thread to collect all of the embedded images
-    m_pjtSettings->ParseEmbeddedImages();
+    {
+        wxBusyCursor wait;
+
+        ttSaveCwd cwd;
+        m_pjtSettings->GetProjectPath().ChangeDir();
+        m_pjtSettings->CollectBundles();
+    }
 
     wxGetFrame().FireProjectLoadedEvent();
     if (m_project->GetChildCount())

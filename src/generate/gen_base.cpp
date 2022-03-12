@@ -1667,10 +1667,50 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 {
     for (auto& iter: node->get_props_vector())
     {
-        if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
-        {
-            auto& value = iter.as_string();
+        if (!iter.HasValue())
+            continue;
 
+        auto& value = iter.as_string();
+        if (iter.type() == type_image)
+        {
+            if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(iter.as_string()); bundle)
+            {
+                if (value.is_sameprefix("Embed"))
+                {
+                    for (auto& idx_image: bundle->lst_filenames)
+                    {
+                        if (auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(idx_image); embed)
+                        {
+                            bool is_found = false;
+                            for (size_t idx = 0; idx < m_embedded_images.size(); ++idx)
+                            {
+                                if (m_embedded_images[idx] == embed)
+                                {
+                                    is_found = true;
+                                    break;
+                                }
+                            }
+                            if (!is_found)
+                            {
+                                m_embedded_images.emplace_back(embed);
+                            }
+                        }
+                    }
+                }
+                else if (value.is_sameprefix("Header") || value.is_sameprefix("XPM"))
+                {
+                    for (auto& idx_image: bundle->lst_filenames)
+                    {
+                        embedset.insert(ttlib::cstr() << "#include \"" << idx_image << "\"");
+                    }
+                }
+
+                // TODO: [KeyWorks - 03-12-2022] Need to support SVG images
+            }
+        }
+
+        else if (iter.type() == type_animation)
+        {
             if (value.is_sameprefix("Embed"))
             {
                 ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
@@ -1721,11 +1761,9 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
         }
     }
 
-    auto count = node->GetChildCount();
-    for (size_t i = 0; i < count; i++)
+    for (auto& child: node->GetChildNodePtrs())
     {
-        auto child = node->GetChild(i);
-        CollectImageHeaders(child, embedset);
+        CollectImageHeaders(child.get(), embedset);
     }
 }
 

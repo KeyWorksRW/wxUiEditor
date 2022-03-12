@@ -23,33 +23,17 @@
 
 bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
 
-void ProjectSettings::ParseBundles()
-{
-    FinishThreads();
-
-    m_collect_bundle_thread = new std::thread(&ProjectSettings::CollectBundles, this);
-}
-
 void ProjectSettings::CollectBundles()
 {
-    std::unique_lock<std::mutex> add_lock(m_mutex_init_bundles);
-
-    // We need the shared ptr rather than the raw pointer because we can't let the pointer become invalid while we're still
-    // processing nodes.
-    auto project = wxGetApp().GetProjectPtr();
+    auto project = wxGetApp().GetProject();
 
     for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
     {
-        if (m_is_terminating || m_cancel_collection)
-            return;
-
-        auto form = project->GetChildPtr(pos);
+        auto form = project->GetChild(pos);
 
         for (auto& iter: form->GetChildNodePtrs())
         {
-            if (m_is_terminating || m_cancel_collection)
-                return;
-            CollectNodeBundles(iter.get(), form.get());
+            CollectNodeBundles(iter.get(), form);
         }
     }
 }
@@ -58,39 +42,35 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
 {
     for (auto& iter: node->get_props_vector())
     {
-        if (iter.type() == type_image || iter.type() == type_animation)
+        if (!iter.HasValue())
+            continue;
+
+        if (iter.type() == type_image)
         {
-            if (!iter.HasValue())
-                continue;
+            if (m_bundles.find(iter.as_string()) == m_bundles.end())
+            {
+                ProcessBundleProperty(iter.as_string(), node);
+            }
+        }
+        else if (iter.type() == type_animation)
+        {
             auto& value = iter.as_string();
             if (value.is_sameprefix("Embed"))
             {
-                if (m_is_terminating || m_cancel_collection)
-                    return;
-
                 ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts[IndexImage].size())
                 {
                     if (auto result = m_map_embedded.find(parts[IndexImage].filename()); result == m_map_embedded.end())
                     {
-                        if (m_is_terminating)
-                            return;
-
-                        if (iter.type() == type_animation)
-                        {
-                            AddEmbeddedImage(parts[IndexImage], form);
-                        }
-                        else
-                        {
-                            AddNewEmbeddedBundle(value, parts[IndexImage], form);
-                        }
-
-                        if (m_is_terminating)
-                            return;
+                        AddEmbeddedImage(parts[IndexImage], form);
                     }
                 }
             }
         }
+    }
+    for (auto& child: node->GetChildNodePtrs())
+    {
+        CollectNodeBundles(child.get(), form);
     }
 }
 

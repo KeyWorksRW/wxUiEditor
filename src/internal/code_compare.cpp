@@ -53,9 +53,6 @@ CodeCompare::~CodeCompare()
 
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
-    // First make sure all embedded images have been parsed.
-    wxGetApp().GetProjectSettings()->FinishThreads();
-
     if (GenerateCodeFiles(this, true, &m_class_list))
     {
         for (auto& iter: m_class_list)

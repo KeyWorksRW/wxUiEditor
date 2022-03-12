@@ -120,10 +120,10 @@ void PropertyGrid_Image::RefreshChildren()
                 }
                 else
                 {
-                    auto img = wxGetApp().GetProjectSettings()->GetPropertyBitmapBundle(m_img_props.CombineValues(), false);
-                    if (img.IsOk())
+                    auto img = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(m_img_props.CombineValues());
+                    if (img->bundle.IsOk())
                     {
-                        bundle = img;
+                        bundle = img->bundle;
                     }
                 }
             }

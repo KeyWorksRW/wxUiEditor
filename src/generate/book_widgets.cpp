@@ -26,10 +26,6 @@
 
 #include "book_widgets.h"
 
-// These dimensions match the default size in containers.xml -- if you change them here, then you must also change every
-// "image_size" property in containers.xml. Doing so will break any project that has these values as the default, so you will
-// also need to do a project version increase and convert down-level projects. Bottom line: don't change these values!
-
 constexpr const int DEF_TAB_IMG_WIDTH = 16;
 constexpr const int DEF_TAB_IMG_HEIGHT = 16;
 
@@ -532,13 +528,6 @@ std::optional<ttlib::cstr> NotebookGenerator::GenEvents(NodeEvent* event, const 
 bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/notebook.h>", set_src, set_hdr);
-    auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size.x != -1 || size.y != -1)
-    {
-        InsertGeneratorInclude(node, "#include <wx/imaglist.h>", set_src, set_hdr);
-        InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
-    }
-
     if (node->HasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/bookctrl.h>");
@@ -619,13 +608,6 @@ std::optional<ttlib::cstr> AuiNotebookGenerator::GenEvents(NodeEvent* event, con
 bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/auibook.h>", set_src, set_hdr);
-    auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size.x != -1 || size.y != -1)
-    {
-        InsertGeneratorInclude(node, "#include <wx/imaglist.h>", set_src, set_hdr);
-        InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
-    }
-
     if (node->HasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/bookctrl.h>");
@@ -730,13 +712,6 @@ std::optional<ttlib::cstr> ListbookGenerator::GenEvents(NodeEvent* event, const 
 bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/listbook.h>", set_src, set_hdr);
-    auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size != wxDefaultSize)
-    {
-        InsertGeneratorInclude(node, "#include <wx/imaglist.h>", set_src, set_hdr);
-        InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
-    }
-
     if (node->HasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/bookctrl.h>");

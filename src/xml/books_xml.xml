@@ -34,8 +34,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<property name="var_name" type="string">m_listbook</property>
 		<property name="display_images" type="bool"
 			help="If true, will display an image on the tab in addition to any text.">0</property>
-		<property name="image_size" type="wxSize"
-			help="All tab images will be scaled to this size.">16, 16</property>
 		<property name="persist_name" type="string"
 			help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
 		<property name="style" type="option">
@@ -64,8 +62,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<property name="var_name" type="string">m_notebook</property>
 		<property name="display_images" type="bool"
 			help="If true, will display an image on the tab in addition to any text.">0</property>
-		<property name="image_size" type="wxSize"
-			help="All tab images will be scaled to this size.">16, 16</property>
 		<property name="persist_name" type="string"
 			help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
 		<property name="tab_position" type="option">
@@ -100,8 +96,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_toolbook</property>
-		<property name="image_size" type="wxSize"
-			help="All tool images will be scaled to this size.">16, 16</property>
 		<property name="style" type="bitlist">
 			<option name="wxTBK_HORZ_LAYOUT"
 				help="Shows the text and the icons alongside, not vertically stacked (only implement under Windows and GTK 2 platforms as it relies on wxTB_HORZ_LAYOUT flag support)." />
@@ -119,8 +113,6 @@ inline const char* books_xml = R"===(<?xml version="1.0"?>
 		<property name="var_name" type="string">m_treebook</property>
 		<property name="display_images" type="bool"
 			help="If true, will display an image on the tab in addition to any text.">0</property>
-		<property name="image_size" type="wxSize"
-			help="All tab images will be scaled to this size.">16, 16</property>
 		<property name="persist_name" type="string"
 			help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page and the expand/collapse state of sub pages." />
 		<property name="tab_position" type="option">

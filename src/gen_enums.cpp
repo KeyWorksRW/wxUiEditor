@@ -208,7 +208,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_hover_color, "hover_color" },
     { prop_icon, "icon" },
     { prop_id, "id" },
-    { prop_image_size, "image_size" },
+    { prop_image_size, "image_size" },  // currently unused
     { prop_inactive_bitmap, "inactive_bitmap" },
     { prop_inc, "inc" },
     { prop_include_advanced, "include_advanced" },

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Book component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -752,38 +752,16 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    // A toolbook always has images, so we can't use AddBookImageList
-
-    auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size.GetWidth() == -1)
-    {
-        size.SetWidth(DEF_TAB_IMG_WIDTH);
-    }
-    if (size.GetHeight() == -1)
-    {
-        size.SetHeight(DEF_TAB_IMG_HEIGHT);
-    }
-
-    auto img_list = new wxImageList(size.x, size.y);
-
+    wxBookCtrlBase::Images bundle_list;
     for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
     {
         if (node->GetChild(idx_child)->HasValue(prop_bitmap))
         {
-            auto img = wxGetApp().GetImage(node->GetChild(idx_child)->prop_as_string(prop_bitmap));
-            ASSERT(img.IsOk());
-            img_list->Add(img.Scale(size.x, size.y));
-        }
-        else
-        {
-            auto img = GetInternalImage("unknown");
-            ASSERT(img.IsOk());
-            img_list->Add(img.Scale(size.x, size.y));
+            bundle_list.push_back(node->GetChild(idx_child)->prop_as_wxBitmapBundle(prop_bitmap));
         }
     }
-
     auto book = wxStaticCast(widget, wxBookCtrlBase);
-    book->AssignImageList(img_list);
+    book->SetImages(bundle_list);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_TOOLBOOK_PAGE_CHANGED, &ToolbookGenerator::OnPageChanged, this);

@@ -427,6 +427,10 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
         InsertGeneratorInclude(node, "#include <wx/generic/statbmpg.h>", set_src, set_hdr);
     else
         InsertGeneratorInclude(node, "#include <wx/statbmp.h>", set_src, set_hdr);
+
+    // Add wxBitmapBundle header -- the BaseCodeGenerator class will see it and replace it with a conditional include if
+    // needed.
+    set_src.insert("#include <wx/bmpbndl.h>");
     return true;
 }
 

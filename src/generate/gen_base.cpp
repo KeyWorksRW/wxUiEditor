@@ -238,6 +238,31 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     // Make certain there is a blank line before the the wxWidget #includes
     m_source->writeLine();
 
+    // All generators that use a wxBitmapBundle should add "#include <wx/bmpbndl.h>" to the header set. If the user specified
+    // 3.1 for the wxWidgets library, then code generation will create conditional code that uses wxBitmapBundle if 3.1.6 or
+    // wxBitmap if older. We need to conditionalize the header output by removing the "#include <wx/bmpbndl.h>" entry and
+    // creating our own conditionalized header.
+
+    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    {
+        if (auto bmpbndl_hdr = src_includes.find("#include <wx/bmpbndl.h>"); bmpbndl_hdr != src_includes.end())
+        {
+            src_includes.erase(bmpbndl_hdr);
+            if (auto bitmap_hdr = src_includes.find("#include <wx/bitmap.h>"); bitmap_hdr != src_includes.end())
+            {
+                src_includes.erase(bitmap_hdr);
+            }
+
+            ttlib::cstr code("#if wxCHECK_VERSION(3, 1, 6)\n\t");
+            code << "#include <wx/bmpbndl.h>";
+            code << "\n#else\n\t";
+            code << "#include <wx/bitmap.h>";
+            code << "\n#endif";
+            m_source->writeLine(code, indent::auto_keep_whitespace);
+            m_source->writeLine();
+        }
+    }
+
     // First output all the wxWidget header files
     for (auto& iter: src_includes)
     {

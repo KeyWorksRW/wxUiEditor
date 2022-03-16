@@ -12,6 +12,7 @@
 
 #include "appoptions.h"    // AppOptions -- Application-wide options
 #include "gridbag_item.h"  // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
+#include "image_bundle.h"  // This will #include wx/bmpbndl.h and wx/bitmap.h
 #include "mainframe.h"     // MainFrame -- Main window frame
 #include "node_creator.h"  // NodeCreator class
 #include "node_decl.h"     // NodeDeclaration class
@@ -393,6 +394,14 @@ wxBitmapBundle Node::prop_as_wxBitmapBundle(PropName name) const
         return m_properties[result->second].as_bitmap_bundle();
     else
         return wxNullBitmap;
+}
+
+const ImageBundle* Node::prop_as_image_bundle(PropName name) const
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_image_bundle();
+    else
+        return nullptr;
 }
 
 wxArrayString Node::prop_as_wxArrayString(PropName name) const

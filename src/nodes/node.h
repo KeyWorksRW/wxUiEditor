@@ -26,6 +26,7 @@ namespace pugi
 
 class wxSizerFlags;
 class wxAnimation;
+struct ImageBundle;
 
 class Node;
 using NodeSharedPtr = std::shared_ptr<Node>;
@@ -183,6 +184,7 @@ public:
     wxArrayString prop_as_wxArrayString(PropName name) const;
 
     wxBitmapBundle prop_as_wxBitmapBundle(PropName name) const;
+    const ImageBundle* prop_as_image_bundle(PropName name) const;
 
     FontProperty prop_as_font_prop(PropName name) const;
     double prop_as_double(PropName name) const;

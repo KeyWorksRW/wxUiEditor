@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Book component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -26,13 +26,6 @@
 
 #include "book_widgets.h"
 
-// These dimensions match the default size in containers.xml -- if you change them here, then you must also change every
-// "image_size" property in containers.xml. Doing so will break any project that has these values as the default, so you will
-// also need to do a project version increase and convert down-level projects. Bottom line: don't change these values!
-
-constexpr const int DEF_TAB_IMG_WIDTH = 16;
-constexpr const int DEF_TAB_IMG_HEIGHT = 16;
-
 // Walks up the parent tree until it finds a Book and returns whether or not the book is
 // supposed to display images. This function will handle wxTreeBook with any depth of sub
 // pages.
@@ -44,8 +37,9 @@ static bool isBookHasImage(Node* node);
 
 static void AddBookImageList(Node* node_book, wxObject* widget);
 static void BookCtorAddImagelist(ttlib::cstr& code, Node* node);
-static void AddTreebookSubImages(Node* node, wxImageList* img_list, wxSize& size);
-static void AddTreebookImageCode(ttlib::cstr& code, Node* node, size_t& image_index, wxSize& size);
+static void AddTreebookSubImages(Node* node, wxImageList* img_list);
+static void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list);
+static void AddTreebookImageCode(ttlib::cstr& code, Node* node, size_t& image_index);
 static int GetTreebookImageIndex(Node* node);
 
 //////////////////////////////////////////  BookPageGenerator  //////////////////////////////////////////
@@ -532,13 +526,6 @@ std::optional<ttlib::cstr> NotebookGenerator::GenEvents(NodeEvent* event, const 
 bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/notebook.h>", set_src, set_hdr);
-    auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size.x != -1 || size.y != -1)
-    {
-        InsertGeneratorInclude(node, "#include <wx/imaglist.h>", set_src, set_hdr);
-        InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
-    }
-
     if (node->HasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/bookctrl.h>");
@@ -619,13 +606,6 @@ std::optional<ttlib::cstr> AuiNotebookGenerator::GenEvents(NodeEvent* event, con
 bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/aui/auibook.h>", set_src, set_hdr);
-    auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size.x != -1 || size.y != -1)
-    {
-        InsertGeneratorInclude(node, "#include <wx/imaglist.h>", set_src, set_hdr);
-        InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
-    }
-
     if (node->HasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/bookctrl.h>");
@@ -730,13 +710,6 @@ std::optional<ttlib::cstr> ListbookGenerator::GenEvents(NodeEvent* event, const 
 bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/listbook.h>", set_src, set_hdr);
-    auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size != wxDefaultSize)
-    {
-        InsertGeneratorInclude(node, "#include <wx/imaglist.h>", set_src, set_hdr);
-        InsertGeneratorInclude(node, "#include <wx/image.h>", set_src, set_hdr);
-    }
-
     if (node->HasValue(prop_persist_name))
     {
         set_src.insert("#include <wx/persist/bookctrl.h>");
@@ -752,38 +725,16 @@ wxObject* ToolbookGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxToolbook(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    // A toolbook always has images, so we can't use AddBookImageList
-
-    auto size = node->prop_as_wxSize(prop_bitmapsize);
-    if (size.GetWidth() == -1)
-    {
-        size.SetWidth(DEF_TAB_IMG_WIDTH);
-    }
-    if (size.GetHeight() == -1)
-    {
-        size.SetHeight(DEF_TAB_IMG_HEIGHT);
-    }
-
-    auto img_list = new wxImageList(size.x, size.y);
-
+    wxBookCtrlBase::Images bundle_list;
     for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
     {
         if (node->GetChild(idx_child)->HasValue(prop_bitmap))
         {
-            auto img = wxGetApp().GetImage(node->GetChild(idx_child)->prop_as_string(prop_bitmap));
-            ASSERT(img.IsOk());
-            img_list->Add(img.Scale(size.x, size.y));
-        }
-        else
-        {
-            auto img = GetInternalImage("unknown");
-            ASSERT(img.IsOk());
-            img_list->Add(img.Scale(size.x, size.y));
+            bundle_list.push_back(node->GetChild(idx_child)->prop_as_wxBitmapBundle(prop_bitmap));
         }
     }
-
     auto book = wxStaticCast(widget, wxBookCtrlBase);
-    book->AssignImageList(img_list);
+    book->SetImages(bundle_list);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
     widget->Bind(wxEVT_TOOLBOOK_PAGE_CHANGED, &ToolbookGenerator::OnPageChanged, this);
@@ -958,16 +909,26 @@ static void AddBookImageList(Node* node_book, wxObject* widget)
 {
     if (isBookDisplayImages(node_book) && isBookHasImage(node_book))
     {
-        auto size = node_book->prop_as_wxSize(prop_bitmapsize);
-        if (size.x == -1)
+#if 1
+        wxBookCtrlBase::Images bundle_list;
+        for (auto& child_node: node_book->GetChildNodePtrs())
         {
-            size.x = DEF_TAB_IMG_WIDTH;
+            if (child_node->HasValue(prop_bitmap))
+            {
+                bundle_list.push_back(child_node->prop_as_wxBitmapBundle(prop_bitmap));
+            }
+
+            if (node_book->isGen(gen_wxTreebook))
+            {
+                AddTreebookSubImages(child_node.get(), bundle_list);
+            }
         }
-        if (size.y == -1)
-        {
-            size.y = DEF_TAB_IMG_HEIGHT;
-        }
-        wxImageList* img_list = new wxImageList(size.x, size.y);
+        auto book = wxStaticCast(widget, wxBookCtrlBase);
+        book->SetImages(bundle_list);
+#else
+        // Don't remove this section -- we need to use it to compare with our code generation for pre-3.1.6 code
+
+        wxImageList* img_list = nullptr;
 
         for (auto& child_node: node_book->GetChildNodePtrs())
         {
@@ -975,17 +936,28 @@ static void AddBookImageList(Node* node_book, wxObject* widget)
             {
                 auto img = wxGetApp().GetImage(child_node->prop_as_string(prop_bitmap));
                 ASSERT(img.IsOk());
-                img_list->Add(img.Scale(size.x, size.y));
+                if (!img_list)
+                {
+                    img_list = new wxImageList(img.GetWidth(), img.GetHeight());
+                    img_list->Add(img);
+                }
+                else
+                {
+                    auto size = img_list->GetSize();
+                    // If the image is already the desired size, then Scale() will return immediately without doing anything
+                    img_list->Add(img.Scale(size.x, size.y));
+                }
             }
 
-            if (node_book->isGen(gen_wxTreebook))
+            if (node_book->isGen(gen_wxTreebook) && img_list)
             {
-                AddTreebookSubImages(child_node.get(), img_list, size);
+                AddTreebookSubImages(child_node.get(), img_list);
             }
         }
 
         auto book = wxStaticCast(widget, wxBookCtrlBase);
         book->AssignImageList(img_list);
+#endif
     }
 }
 
@@ -994,22 +966,12 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
     if ((node->prop_as_bool(prop_display_images) || node->isGen(gen_wxToolbook)) && isBookHasImage(node))
     {
         code.insert(0, "\t");
-        auto size = node->prop_as_wxSize(prop_bitmapsize);
-        if (size.x == -1)
-        {
-            size.x = DEF_TAB_IMG_WIDTH;
-        }
-        if (size.y == -1)
-        {
-            size.y = DEF_TAB_IMG_HEIGHT;
-        }
 
         // Enclose the code in braces to allow using "img_list" and "bmp" as variable names, as well as making the
         // code more readable.
 
         code << "\n\t{";
-        code << "\n\t\tauto img_list = new wxImageList(";
-        code << size.x << ", " << size.y << ");";
+        code << "\n\t\tauto img_list = new wxImageList;";
 
         size_t image_index = 0;
         for (auto& child_node: node->GetChildNodePtrs())
@@ -1025,13 +987,13 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
                 code << "\n\t\timg_list->Add(img_" << image_index;
                 if (child_node->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
                     code << ".ConvertToImage()";
-                code << ".Scale(" << size.x << ", " << size.y << "));";
+                code << ");";
                 ++image_index;
             }
             if (node->isGen(gen_wxTreebook))
             {
                 // This is a recursive function that will handle unlimited nesting
-                AddTreebookImageCode(code, child_node.get(), image_index, size);
+                AddTreebookImageCode(code, child_node.get(), image_index);
             }
         }
         code << "\n\t\t" << node->get_node_name() << "->AssignImageList(img_list);";
@@ -1078,8 +1040,11 @@ static bool isBookHasImage(Node* node)
     return false;
 }
 
-static void AddTreebookSubImages(Node* node, wxImageList* img_list, wxSize& size)
+static void AddTreebookSubImages(Node* node, wxImageList* img_list)
 {
+    if (!img_list)
+        return;
+
     for (auto& child_node: node->GetChildNodePtrs())
     {
         if (child_node->isGen(gen_BookPage))
@@ -1088,14 +1053,32 @@ static void AddTreebookSubImages(Node* node, wxImageList* img_list, wxSize& size
             {
                 auto img = wxGetApp().GetImage(child_node->prop_as_string(prop_bitmap));
                 ASSERT(img.IsOk());
+
+                auto size = img_list->GetSize();
+                // If the image is already the desired size, then Scale() will return immediately without doing anything
                 img_list->Add(img.Scale(size.x, size.y));
             }
-            AddTreebookSubImages(child_node.get(), img_list, size);
+            AddTreebookSubImages(child_node.get(), img_list);
         }
     }
 }
 
-static void AddTreebookImageCode(ttlib::cstr& code, Node* child_node, size_t& image_index, wxSize& size)
+static void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list)
+{
+    for (auto& child_node: node->GetChildNodePtrs())
+    {
+        if (child_node->isGen(gen_BookPage))
+        {
+            if (child_node->HasValue(prop_bitmap))
+            {
+                bundle_list.push_back(child_node->prop_as_wxBitmapBundle(prop_bitmap));
+            }
+            AddTreebookSubImages(child_node.get(), bundle_list);
+        }
+    }
+}
+
+static void AddTreebookImageCode(ttlib::cstr& code, Node* child_node, size_t& image_index)
 {
     for (auto& grand_child: child_node->GetChildNodePtrs())
     {
@@ -1106,9 +1089,9 @@ static void AddTreebookImageCode(ttlib::cstr& code, Node* child_node, size_t& im
             code << "\n\t\timg_list->Add(img_" << image_index;
             if (grand_child->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
                 code << ".ConvertToImage()";
-            code << ".Scale(" << size.x << ", " << size.y << "));";
+            code << ");";
             ++image_index;
-            AddTreebookImageCode(code, grand_child.get(), image_index, size);
+            AddTreebookImageCode(code, grand_child.get(), image_index);
         }
     }
 }

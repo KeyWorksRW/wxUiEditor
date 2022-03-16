@@ -1701,7 +1701,9 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 {
                     for (auto& idx_image: bundle->lst_filenames)
                     {
-                        embedset.insert(ttlib::cstr() << "#include \"" << idx_image << "\"");
+                        ttlib::cstr path(idx_image);
+                        path.backslashestoforward();
+                        embedset.insert(ttlib::cstr() << "#include \"" << path << "\"");
                     }
                 }
 

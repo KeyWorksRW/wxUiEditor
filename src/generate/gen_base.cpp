@@ -514,7 +514,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 }
                 m_source->writeLine();
                 ttlib::cstr code;
-                code.reserve(142);  // loosely based on a line length of 140
+                code.reserve(96);  // loosely based on a line length of 80
                 if (wxGetApp().GetCompilerVersion() != compiler_standard::c11)
                 {
                     code << "inline ";
@@ -529,8 +529,8 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 while (pos < max_pos)
                 {
                     code.clear();
-                    // Using 132 will generate lines up to 140 characters long (4 indent + max 3 chars for number + comma)
-                    for (; pos < max_pos && code.size() < 132; ++pos)
+                    // Using 72 will generate lines up to 80 characters long (4 indent + max 3 chars for number + comma)
+                    for (; pos < max_pos && code.size() < 72; ++pos)
                     {
                         code << static_cast<int>(iter_array->array_data[pos]) << ',';
                     }

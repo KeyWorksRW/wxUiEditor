@@ -188,11 +188,15 @@ wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& descr
     return GetInternalImage("unknown");
 }
 
-const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description)
+const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
 {
     if (auto result = m_bundles.find(description); result != m_bundles.end())
     {
         return &result->second;
+    }
+    else if (node)
+    {
+        return ProcessBundleProperty(description, node);
     }
     else
     {

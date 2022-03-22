@@ -59,7 +59,7 @@ public:
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
     // code for the bundle.
-    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description);
+    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr);
 
     ImageBundle* ProcessBundleProperty(const ttlib::cstr& description, Node* node);
 

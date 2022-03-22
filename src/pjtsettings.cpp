@@ -188,11 +188,15 @@ wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& descr
     return GetInternalImage("unknown");
 }
 
-const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description)
+const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
 {
     if (auto result = m_bundles.find(description); result != m_bundles.end())
     {
         return &result->second;
+    }
+    else if (node)
+    {
+        return ProcessBundleProperty(description, node);
     }
     else
     {
@@ -354,7 +358,7 @@ bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::uni
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbededImage>();
+                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().c_str()].get();
                 embed->array_name = path.filename();
                 embed->array_name.Replace(".", "_", true);
@@ -422,7 +426,7 @@ bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::uni
     return false;
 }
 
-EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
+EmbeddedImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
 {
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
 

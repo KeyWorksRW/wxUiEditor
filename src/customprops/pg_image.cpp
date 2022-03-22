@@ -21,6 +21,7 @@ using namespace wxue_img;
 
 #include "bitmaps.h"      // Contains various images handling functions
 #include "mainapp.h"      // Main application class
+#include "mainframe.h"    // MainFrame -- Main window frame
 #include "node.h"         // Node -- Node class
 #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
 #include "utils.h"        // Utility functions that work with properties
@@ -120,10 +121,14 @@ void PropertyGrid_Image::RefreshChildren()
                 }
                 else
                 {
-                    auto img = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(m_img_props.CombineValues());
-                    if (img->bundle.IsOk())
+                    if (auto img = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(m_img_props.CombineValues(),
+                                                                                           wxGetFrame().GetSelectedNode());
+                        img)
                     {
-                        bundle = img->bundle;
+                        if (img->bundle.IsOk())
+                        {
+                            bundle = img->bundle;
+                        }
                     }
                 }
             }

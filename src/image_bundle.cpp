@@ -7,14 +7,18 @@
 
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 #include <thread>
 
 #include <wx/artprov.h>   // wxArtProvider class
 #include <wx/bmpbndl.h>   // includes wx/bitmap.h, wxBitmapBundle class interface
 #include <wx/mstream.h>   // Memory stream classes
 #include <wx/wfstream.h>  // File stream classes
+#include <wx/zstream.h>   // zlib stream classes
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+
+#include "pugixml.hpp"  // xml parser
 
 #include "mainapp.h"      // compiler_standard -- Main application class
 #include "node.h"         // Node class
@@ -22,6 +26,7 @@
 #include "utils.h"        // Utility functions that work with properties
 
 bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
+wxBitmapBundle LoadSVG(EmbeddedImage* embed);
 
 void ProjectSettings::CollectBundles()
 {
@@ -95,6 +100,21 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
         {
             m_bundles[description] = img_bundle;
             return;
+        }
+    }
+
+    if (path.extension().is_sameas(".svg", tt::CASE::either))
+    {
+        ttlib::multiview parts(description);
+        if (AddSvgBundleImage(parts[IndexSize], path, form))
+        {
+            img_bundle.lst_filenames.emplace_back(path);
+            if (auto embed = GetEmbeddedImage(path); embed)
+            {
+                img_bundle.bundle = LoadSVG(embed);
+                m_bundles[description] = std::move(img_bundle);
+                return;
+            }
         }
     }
 
@@ -207,6 +227,57 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
     m_bundles[description] = std::move(img_bundle);
 }
 
+static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
+{
+    size_t buf_size;
+    if (size == tt::npos || size > (64 * 1024))
+        buf_size = (64 * 1024);
+    else
+        buf_size = static_cast<size_t>(size);
+
+    auto read_buf = std::make_unique<unsigned char[]>(buf_size);
+    auto read_size = buf_size;
+
+    size_t copied_data = 0;
+    for (;;)
+    {
+        if (size != tt::npos && copied_data + read_size > size)
+            read_size = size - copied_data;
+        inputStream->Read(read_buf.get(), read_size);
+
+        auto actually_read = inputStream->LastRead();
+        outputStream->Write(read_buf.get(), actually_read);
+        if (outputStream->LastWrite() != actually_read)
+        {
+            return false;
+        }
+
+        if (size == tt::npos)
+        {
+            if (inputStream->Eof())
+                break;
+        }
+        else
+        {
+            copied_data += actually_read;
+            if (copied_data >= size)
+                break;
+        }
+    }
+
+    return true;
+}
+
+wxBitmapBundle LoadSVG(EmbeddedImage* embed)
+{
+    size_t org_size = (embed->array_size >> 32);
+    auto str = std::make_unique<char[]>(org_size);
+    wxMemoryInputStream stream_in(embed->array_data.get(), embed->array_size & 0xFFFFFFFF);
+    wxZlibInputStream zlib_strm(stream_in);
+    zlib_strm.Read(str.get(), org_size);
+    return wxBitmapBundle::FromSVG(str.get(), wxSize(embed->size_x, embed->size_y));
+}
+
 bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
 {
     wxFFileInputStream stream(path.wx_str());
@@ -214,7 +285,6 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
     {
         return false;
     }
-
     wxImageHandler* handler;
     auto& list = wxImage::GetHandlers();
     for (auto node = list.GetFirst(); node; node = node->GetNext())
@@ -225,7 +295,7 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbededImage>();
+                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().c_str()].get();
                 embed->array_name = path.filename();
                 embed->array_name.Replace(".", "_", true);
@@ -322,36 +392,8 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
     }
     else if (parts[IndexType].contains("SVG"))
     {
-        ttlib::cstr path = parts[IndexImage];
-        if (!path.file_exists())
-        {
-            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
-            path.append_filename(parts[IndexImage]);
-            if (!path.file_exists())
-            {
-                return nullptr;
-            }
-        }
-        wxSize size;
-        if (parts.size() > IndexSize)
-        {
-            GetSizeInfo(size, parts[IndexSize]);
-        }
-        if (size.x < 1)
-            size.x = 16;
-        if (size.y < 1)
-            size.y = 16;
-        img_bundle.bundle = wxBitmapBundle::FromSVGFile(path.wx_str(), size);
-        if (img_bundle.bundle.IsOk())
-        {
-            img_bundle.lst_filenames.emplace_back(path);
-            m_bundles[description] = std::move(img_bundle);
-            return &m_bundles[description];
-        }
-        else
-        {
-            return nullptr;
-        }
+        AddNewEmbeddedBundle(description, parts[IndexImage], node->GetForm());
+        return &m_bundles[description];
     }
 
     auto image_first = wxGetApp().GetProjectSettings()->GetPropertyBitmap(description, false);
@@ -500,4 +542,73 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
 
     m_bundles[description] = std::move(img_bundle);
     return &m_bundles[description];
+}
+
+bool ProjectSettings::AddSvgBundleImage(const ttlib::cstr& description, ttlib::cstr path, Node* form)
+{
+    // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
+    // leading spaces, etc.
+    pugi::xml_document doc;
+    auto result = doc.load_file(path.c_str());
+    if (!result)
+    {
+        return false;
+    }
+
+    auto root = doc.first_child();  // this should be the <svg> element.
+    root.remove_attributes();       // we don't need any of the attributes
+
+    // Remove some inkscape nodes that we don't need
+    root.remove_child("sodipodi:namedview");
+    root.remove_child("metadata");
+
+    std::ostringstream xml_stream;
+    doc.save(xml_stream, "", pugi::format_raw | pugi::format_no_declaration);
+    std::string str = xml_stream.str();
+
+    // Include the trailing zero -- we need to read this back as a string, not a data array
+    wxMemoryInputStream stream(str.c_str(), str.size() + 1);
+
+    wxMemoryOutputStream memory_stream;
+    wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
+    m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
+    auto embed = m_map_embedded[path.filename().c_str()].get();
+    embed->array_name = path.filename();
+    embed->array_name.Replace(".", "_", true);
+    embed->form = form;
+
+    size_t org_size = (stream.GetLength() & 0xFFFFFFFF);
+
+    if (!CopyStreamData(&stream, &save_strem, stream.GetLength()))
+    {
+        // TODO: [KeyWorks - 03-16-2022] This would be really bad, though it should be impossible
+        return false;
+    }
+    save_strem.Close();
+    auto compressed_size = memory_stream.TellO();
+
+    auto read_stream = memory_stream.GetOutputStreamBuffer();
+    embed->type = wxBITMAP_TYPE_INVALID;
+    embed->array_size = (compressed_size | (org_size << 32));
+    embed->array_data = std::make_unique<unsigned char[]>(compressed_size);
+    memcpy(embed->array_data.get(), read_stream->GetBufferStart(), compressed_size);
+
+#if defined(_DEBUG)
+    wxFile file_original(path.wx_str(), wxFile::read);
+    if (file_original.IsOpened())
+    {
+        auto file_size = file_original.Length();
+        ttlib::cstr size_comparison;
+        int percent = (100 - (100 / (file_size / compressed_size)));
+        size_comparison.Format("%s -- Original: %ku, compressed: %ku, %u percent", path.filename().c_str(), file_size, compressed_size, percent);
+        MSG_INFO(size_comparison)
+    }
+#endif
+
+    wxSize size;
+    GetSizeInfo(size, description);
+    embed->size_x = size.x;
+    embed->size_y = size.y;
+
+    return true;
 }

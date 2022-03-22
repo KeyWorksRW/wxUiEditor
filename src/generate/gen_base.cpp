@@ -315,7 +315,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     thrd_collect_img_headers.join();
     std::sort(m_embedded_images.begin(), m_embedded_images.end(),
-              [](const EmbededImage* a, const EmbededImage* b)
+              [](const EmbeddedImage* a, const EmbeddedImage* b)
               {
                   return (a->array_name.compare(b->array_name) < 0);
               });

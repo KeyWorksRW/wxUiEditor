@@ -16,11 +16,13 @@
 class Node;
 class wxAnimation;
 
-struct EmbededImage
+struct EmbeddedImage
 {
     Node* form;  // the form node the image is declared in
     ttlib::cstr array_name;
     size_t array_size;
+    int size_x { 16 };  // currently x and y are only used for SVG images
+    int size_y { 16 };
     std::unique_ptr<unsigned char[]> array_data;
     wxBitmapType type;
 };
@@ -57,7 +59,7 @@ public:
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
     // code for the bundle.
-    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description);
+    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr);
 
     ImageBundle* ProcessBundleProperty(const ttlib::cstr& description, Node* node);
 
@@ -66,7 +68,7 @@ public:
     wxAnimation GetPropertyAnimation(const ttlib::cstr& description);
 
     bool AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation = false);
-    EmbededImage* GetEmbeddedImage(ttlib::sview path);
+    EmbeddedImage* GetEmbeddedImage(ttlib::sview path);
 
     // This will collect bundles for the entire project -- it initializes
     // std::map<std::string, ImageBundle> m_bundles for every image.
@@ -80,6 +82,9 @@ protected:
 
     // Reads the image and stores it in m_map_embedded
     bool AddEmbeddedBundleImage(ttlib::cstr path, Node* form);
+
+    // Reads the image and stores it in m_map_embedded
+    bool AddSvgBundleImage(const ttlib::cstr& description, ttlib::cstr path, Node* form);
 
     bool AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock);
 
@@ -96,5 +101,5 @@ private:
     std::map<std::string, ImageBundle> m_bundles;
 
     // std::string is parts[IndexImage].filename()
-    std::map<std::string, std::unique_ptr<EmbededImage>, std::less<>> m_map_embedded;
+    std::map<std::string, std::unique_ptr<EmbeddedImage>, std::less<>> m_map_embedded;
 };

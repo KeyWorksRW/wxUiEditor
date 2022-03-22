@@ -599,8 +599,9 @@ bool ProjectSettings::AddSvgBundleImage(const ttlib::cstr& description, ttlib::c
     {
         auto file_size = file_original.Length();
         ttlib::cstr size_comparison;
-        int percent = (100 - (100 / (file_size / compressed_size)));
-        size_comparison.Format("%s -- Original: %ku, compressed: %ku, %u percent", path.filename().c_str(), file_size, compressed_size, percent);
+        int percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
+        size_comparison.Format("%s -- Original: %ku, compressed: %ku, %u percent", path.filename().c_str(), file_size,
+                               compressed_size, percent);
         MSG_INFO(size_comparison)
     }
 #endif

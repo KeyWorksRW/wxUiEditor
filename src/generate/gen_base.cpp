@@ -41,6 +41,19 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
 };
 )===";
 
+inline constexpr const auto txt_GetBundleFromSVG = R"===(
+// Convert compressed SVG string into a wxBitmapBundle
+inline wxBitmapBundle GetBundleFromSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+{
+    auto str = std::make_unique<char[]>(size_svg);
+    wxMemoryInputStream stream_in(data, size_data);
+    wxZlibInputStream zlib_strm(stream_in);
+    zlib_strm.Read(str.get(), size_svg);
+    return wxBitmapBundle::FromSVG(str.get(), def_size);
+};
+)===";
+
 inline constexpr const auto txt_GetAnimFromHdrFunction = R"===(
 // Convert a data array into a wxAnimation
 inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
@@ -113,8 +126,10 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     m_type_generated.clear();
 
     m_form_node = form_node;
+
     m_NeedAnimationFunction = false;
     m_NeedHeaderFunction = false;
+    m_NeedSVGFunction = false;
     m_NeedArtProviderHeader = false;
 
     EventVector events;
@@ -385,28 +400,69 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     if (m_panel_type != HDR_PANEL)
     {
-        if (m_NeedHeaderFunction && !form_node->isGen(gen_Images))
+        if (!form_node->isGen(gen_Images))
         {
-            m_source->writeLine("\n#include <wx/mstream.h>  // Memory stream classes", indent::none);
-            ttlib::textfile function;
-            function.ReadString(txt_GetImageFromArrayFunction);
-            for (auto& iter: function)
-            {
-                m_source->writeLine(iter, indent::none);
-            }
-        }
+            // First, generate the header files needed
 
-        if (m_NeedAnimationFunction)
-        {
             m_source->writeLine();
-            m_source->writeLine("#include <wx/animate.h>", indent::none);
-            if (!m_NeedHeaderFunction)
-                m_source->writeLine("#include <wx/mstream.h>  // Memory stream classes", indent::none);
-            ttlib::textfile function;
-            function.ReadString(txt_GetAnimFromHdrFunction);
-            for (auto& iter: function)
+            if (m_NeedAnimationFunction)
             {
-                m_source->writeLine(iter, indent::none);
+                m_source->writeLine("#include <wx/animate.h>", indent::none);
+            }
+            if (m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+            {
+                m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+            }
+            if (m_NeedSVGFunction)
+            {
+                m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+                m_source->writeLine();
+                m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+            }
+
+            // Now generate the functions
+
+            if (m_NeedHeaderFunction)
+            {
+                ttlib::textfile function;
+                function.ReadString(txt_GetImageFromArrayFunction);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
+                m_source->writeLine();
+            }
+
+            if (m_NeedSVGFunction)
+            {
+                if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+                {
+                    m_source->writeLine();
+                    m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
+                    m_source->Indent();
+                    m_source->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
+                                        indent::auto_no_whitespace);
+                    m_source->Unindent();
+                    m_source->writeLine("#endif", indent::none);
+                }
+
+                ttlib::textfile function;
+                function.ReadString(txt_GetBundleFromSVG);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
+                m_source->writeLine();
+            }
+
+            if (m_NeedAnimationFunction)
+            {
+                ttlib::textfile function;
+                function.ReadString(txt_GetAnimFromHdrFunction);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
             }
         }
 
@@ -1812,6 +1868,10 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
             {
                 m_NeedArtProviderHeader = true;
             }
+            else if ((parts[IndexType] == "SVG"))
+            {
+                m_NeedSVGFunction = true;
+            }
         }
     }
 
@@ -1836,6 +1896,10 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 else if ((parts[IndexType] == "Art"))
                 {
                     m_NeedArtProviderHeader = true;
+                }
+                else if ((parts[IndexType] == "SVG"))
+                {
+                    m_NeedSVGFunction = true;
                 }
             }
         }

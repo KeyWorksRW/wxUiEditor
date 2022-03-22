@@ -25,7 +25,7 @@
 #include "utils.h"        // Utility functions that work with properties
 
 bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
-wxBitmapBundle LoadSVG(EmbededImage* embed);
+wxBitmapBundle LoadSVG(EmbeddedImage* embed);
 
 void ProjectSettings::CollectBundles()
 {
@@ -263,7 +263,7 @@ static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStr
     return true;
 }
 
-wxBitmapBundle LoadSVG(EmbededImage* embed)
+wxBitmapBundle LoadSVG(EmbeddedImage* embed)
 {
     size_t org_size = (embed->array_size >> 32);
     auto str = std::make_unique<char[]>(org_size);
@@ -302,7 +302,7 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
 
         wxMemoryOutputStream memory_stream;
         wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
-        m_map_embedded[path.filename().c_str()] = std::make_unique<EmbededImage>();
+        m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
         auto embed = m_map_embedded[path.filename().c_str()].get();
         embed->array_name = path.filename();
         embed->array_name.Replace(".", "_", true);
@@ -341,7 +341,7 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbededImage>();
+                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().c_str()].get();
                 embed->array_name = path.filename();
                 embed->array_name.Replace(".", "_", true);

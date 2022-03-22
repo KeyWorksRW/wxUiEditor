@@ -16,7 +16,7 @@
 class Node;
 class wxAnimation;
 
-struct EmbededImage
+struct EmbeddedImage
 {
     Node* form;  // the form node the image is declared in
     ttlib::cstr array_name;
@@ -66,7 +66,7 @@ public:
     wxAnimation GetPropertyAnimation(const ttlib::cstr& description);
 
     bool AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation = false);
-    EmbededImage* GetEmbeddedImage(ttlib::sview path);
+    EmbeddedImage* GetEmbeddedImage(ttlib::sview path);
 
     // This will collect bundles for the entire project -- it initializes
     // std::map<std::string, ImageBundle> m_bundles for every image.
@@ -96,5 +96,5 @@ private:
     std::map<std::string, ImageBundle> m_bundles;
 
     // std::string is parts[IndexImage].filename()
-    std::map<std::string, std::unique_ptr<EmbededImage>, std::less<>> m_map_embedded;
+    std::map<std::string, std::unique_ptr<EmbeddedImage>, std::less<>> m_map_embedded;
 };

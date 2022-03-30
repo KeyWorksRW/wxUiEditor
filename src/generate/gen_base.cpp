@@ -26,6 +26,12 @@
 #include "utils.h"         // Utility functions that work with properties
 #include "write_code.h"    // Write code to Scintilla or file
 
+// This determines the longest line when generating embedded images. Do *not* use constexpr for this -- at some point we may
+// want to allow the user to set maximum line length of all generated code, and if so, this will need to reflect the user's
+// preference.
+
+static int max_image_line_length { 125 };
+
 using namespace GenEnum;
 
 // clang-format off
@@ -514,7 +520,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 }
                 m_source->writeLine();
                 ttlib::cstr code;
-                code.reserve(96);  // loosely based on a line length of 80
+                code.reserve(max_image_line_length + 16);
                 if (wxGetApp().GetCompilerVersion() != compiler_standard::c11)
                 {
                     code << "inline ";
@@ -529,8 +535,8 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 while (pos < max_pos)
                 {
                     code.clear();
-                    // Using 72 will generate lines up to 80 characters long (4 indent + max 3 chars for number + comma)
-                    for (; pos < max_pos && code.size() < 72; ++pos)
+                    // -8 to account for 4 indent + max 3 chars for number + comma
+                    for (; pos < max_pos && code.size() < (max_image_line_length - 8); ++pos)
                     {
                         code << static_cast<int>(iter_array->array_data[pos]) << ',';
                     }

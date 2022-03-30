@@ -1803,7 +1803,6 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
             {
                 MSG_WARNING(ttlib::cstr("Unable to locate ") << iter.as_string())
             }
-
         }
 
         else if (iter.type() == type_animation)

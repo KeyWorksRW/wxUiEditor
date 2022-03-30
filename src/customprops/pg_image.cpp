@@ -156,7 +156,10 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
     Item(IndexImage)->SetValue(m_img_props.image.wx_str());
-    Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
+    if (!m_isEmbeddedImage)
+    {
+        Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
+    }
 }
 
 void PropertyGrid_Image::SetAutoComplete()

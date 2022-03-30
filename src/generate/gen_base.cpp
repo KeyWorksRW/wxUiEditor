@@ -26,6 +26,12 @@
 #include "utils.h"         // Utility functions that work with properties
 #include "write_code.h"    // Write code to Scintilla or file
 
+// This determines the longest line when generating embedded images. Do *not* use constexpr for this -- at some point we may
+// want to allow the user to set maximum line length of all generated code, and if so, this will need to reflect the user's
+// preference.
+
+static int max_image_line_length { 125 };
+
 using namespace GenEnum;
 
 // clang-format off
@@ -38,6 +44,19 @@ inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
     wxImage image;
     image.LoadFile(strm);
     return image;
+};
+)===";
+
+inline constexpr const auto txt_GetBundleFromSVG = R"===(
+// Convert compressed SVG string into a wxBitmapBundle
+inline wxBitmapBundle GetBundleFromSVG(const unsigned char* data,
+    size_t size_data, size_t size_svg, wxSize def_size)
+{
+    auto str = std::make_unique<char[]>(size_svg);
+    wxMemoryInputStream stream_in(data, size_data);
+    wxZlibInputStream zlib_strm(stream_in);
+    zlib_strm.Read(str.get(), size_svg);
+    return wxBitmapBundle::FromSVG(str.get(), def_size);
 };
 )===";
 
@@ -113,8 +132,10 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     m_type_generated.clear();
 
     m_form_node = form_node;
+
     m_NeedAnimationFunction = false;
     m_NeedHeaderFunction = false;
+    m_NeedSVGFunction = false;
     m_NeedArtProviderHeader = false;
 
     EventVector events;
@@ -385,28 +406,69 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     if (m_panel_type != HDR_PANEL)
     {
-        if (m_NeedHeaderFunction && !form_node->isGen(gen_Images))
+        if (!form_node->isGen(gen_Images))
         {
-            m_source->writeLine("\n#include <wx/mstream.h>  // Memory stream classes", indent::none);
-            ttlib::textfile function;
-            function.ReadString(txt_GetImageFromArrayFunction);
-            for (auto& iter: function)
-            {
-                m_source->writeLine(iter, indent::none);
-            }
-        }
+            // First, generate the header files needed
 
-        if (m_NeedAnimationFunction)
-        {
             m_source->writeLine();
-            m_source->writeLine("#include <wx/animate.h>", indent::none);
-            if (!m_NeedHeaderFunction)
-                m_source->writeLine("#include <wx/mstream.h>  // Memory stream classes", indent::none);
-            ttlib::textfile function;
-            function.ReadString(txt_GetAnimFromHdrFunction);
-            for (auto& iter: function)
+            if (m_NeedAnimationFunction)
             {
-                m_source->writeLine(iter, indent::none);
+                m_source->writeLine("#include <wx/animate.h>", indent::none);
+            }
+            if (m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+            {
+                m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+            }
+            if (m_NeedSVGFunction)
+            {
+                m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+                m_source->writeLine();
+                m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+            }
+
+            // Now generate the functions
+
+            if (m_NeedHeaderFunction)
+            {
+                ttlib::textfile function;
+                function.ReadString(txt_GetImageFromArrayFunction);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
+                m_source->writeLine();
+            }
+
+            if (m_NeedSVGFunction)
+            {
+                if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+                {
+                    m_source->writeLine();
+                    m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
+                    m_source->Indent();
+                    m_source->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
+                                        indent::auto_no_whitespace);
+                    m_source->Unindent();
+                    m_source->writeLine("#endif", indent::none);
+                }
+
+                ttlib::textfile function;
+                function.ReadString(txt_GetBundleFromSVG);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
+                m_source->writeLine();
+            }
+
+            if (m_NeedAnimationFunction)
+            {
+                ttlib::textfile function;
+                function.ReadString(txt_GetAnimFromHdrFunction);
+                for (auto& iter: function)
+                {
+                    m_source->writeLine(iter, indent::none);
+                }
             }
         }
 
@@ -430,7 +492,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 }
 
                 m_source->writeLine(ttlib::cstr("extern const unsigned char ")
-                                    << iter_array->array_name << '[' << iter_array->array_size << "];");
+                                    << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
             }
             if (isNameSpaceWritten)
             {
@@ -457,25 +519,28 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                     is_namespace_written = true;
                 }
                 m_source->writeLine();
-                ttlib::cstr image_code;
+                ttlib::cstr code;
+                code.reserve(max_image_line_length + 16);
                 if (wxGetApp().GetCompilerVersion() != compiler_standard::c11)
                 {
-                    image_code << "inline ";
+                    code << "inline ";
                 }
-                image_code << "const unsigned char " << iter_array->array_name << '[' << iter_array->array_size << "] {";
+                // SVG images store the original size in the high 32 bits
+                size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
+                code << "const unsigned char " << iter_array->array_name << '[' << max_pos << "] {";
 
-                m_source->writeLine(image_code);
+                m_source->writeLine(code);
 
                 size_t pos = 0;
-                while (pos < iter_array->array_size)
+                while (pos < max_pos)
                 {
-                    ttlib::cstr code;
-                    // Using 132 will generate lines up to 140 characters long (4 indent + max 3 chars for number + comma)
-                    for (; pos < iter_array->array_size && code.size() < 132; ++pos)
+                    code.clear();
+                    // -8 to account for 4 indent + max 3 chars for number + comma
+                    for (; pos < max_pos && code.size() < (max_image_line_length - 8); ++pos)
                     {
                         code << static_cast<int>(iter_array->array_data[pos]) << ',';
                     }
-                    if (pos >= iter_array->array_size && code.back() == ',')
+                    if (pos >= max_pos && code.back() == ',')
                         code.pop_back();
                     m_source->writeLine(code);
                 }
@@ -536,7 +601,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 is_namespace_written = true;
             }
             m_header->writeLine(ttlib::cstr("extern const unsigned char ")
-                                << iter_array->array_name << '[' << iter_array->array_size << "];");
+                                << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
         }
         if (is_namespace_written)
         {
@@ -1700,7 +1765,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
         {
             if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(iter.as_string()); bundle)
             {
-                if (value.is_sameprefix("Embed"))
+                if (value.is_sameprefix("Embed") || value.is_sameprefix("SVG"))
                 {
                     for (auto& idx_image: bundle->lst_filenames)
                     {
@@ -1733,6 +1798,10 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                 }
 
                 // TODO: [KeyWorks - 03-12-2022] Need to support SVG images
+            }
+            else
+            {
+                MSG_WARNING(ttlib::cstr("Unable to locate ") << iter.as_string())
             }
         }
 
@@ -1812,6 +1881,10 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
             {
                 m_NeedArtProviderHeader = true;
             }
+            else if ((parts[IndexType] == "SVG"))
+            {
+                m_NeedSVGFunction = true;
+            }
         }
     }
 
@@ -1836,6 +1909,10 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 else if ((parts[IndexType] == "Art"))
                 {
                     m_NeedArtProviderHeader = true;
+                }
+                else if ((parts[IndexType] == "SVG"))
+                {
+                    m_NeedSVGFunction = true;
                 }
             }
         }
@@ -1960,7 +2037,9 @@ void BaseCodeGenerator::GenerateHandlers()
     {
         for (auto& iter_img: m_embedded_images)
         {
-            if (iter_img->type != wxBITMAP_TYPE_BMP && m_type_generated.find(iter_img->type) == m_type_generated.end())
+            // wxBITMAP_TYPE_INVALID means it is a zlib compressed SVG string
+            if (iter_img->type != wxBITMAP_TYPE_BMP && iter_img->type != wxBITMAP_TYPE_INVALID &&
+                m_type_generated.find(iter_img->type) == m_type_generated.end())
             {
                 m_source->writeLine(ttlib::cstr("if (!wxImage::FindHandler(") << g_map_types[iter_img->type] << "))");
                 m_source->Indent();

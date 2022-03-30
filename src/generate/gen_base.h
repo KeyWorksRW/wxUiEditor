@@ -150,8 +150,11 @@ private:
 
     PANEL_TYPE m_panel_type { NOT_PANEL };
 
+    bool m_is_derived_class { true };
+
+    // These are also initialized whenever GenerateBaseClass() is called
     bool m_NeedArtProviderHeader { false };
     bool m_NeedHeaderFunction { false };
     bool m_NeedAnimationFunction { false };
-    bool m_is_derived_class { true };
+    bool m_NeedSVGFunction { false };
 };

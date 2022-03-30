@@ -62,7 +62,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
             m_bitmap->SetBitmap(bmp);
 
             ttlib::cstr info("Dimensions: ");
-            info << bmp.GetWidth() << "(w) x " << bmp.GetHeight() << "(w)  Bit depth: " << bmp.GetDepth();
+            info << bmp.GetWidth() << "(w) x " << bmp.GetHeight() << "(h)  Bit depth: " << bmp.GetDepth();
             m_text_info->SetLabel(info);
         }
     }

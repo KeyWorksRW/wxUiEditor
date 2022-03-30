@@ -40,6 +40,14 @@ void ProjectSettings::CollectBundles()
         {
             CollectNodeBundles(iter.get(), form);
         }
+
+        if (form->HasProp(prop_icon) && form->HasValue(prop_icon))
+        {
+            if (m_bundles.find(form->prop_as_string(prop_icon)) == m_bundles.end())
+            {
+                ProcessBundleProperty(form->prop_as_string(prop_icon), form);
+            }
+        }
     }
 }
 

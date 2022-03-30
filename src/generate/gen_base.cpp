@@ -1793,6 +1793,11 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 
                 // TODO: [KeyWorks - 03-12-2022] Need to support SVG images
             }
+            else
+            {
+                MSG_WARNING(ttlib::cstr("Unable to locate ") << iter.as_string())
+            }
+
         }
 
         else if (iter.type() == type_animation)

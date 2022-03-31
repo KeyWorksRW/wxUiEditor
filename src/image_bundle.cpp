@@ -25,6 +25,16 @@
 #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
 #include "utils.h"        // Utility functions that work with properties
 
+// Note that we do *not* support @1_5x or @2x as suffixes. Since these suffixes will become part of the string name when
+// converted to an embedded character array, the compiler will not accept the '@' character. We could of course change it,
+// but then we don't know if it's unique if there is an actual filename that used a leading suffix '_' character instead of a
+// leading '@'.
+
+const char* suffixes[] = {
+    "_1_5x",
+    "_2x",
+};
+
 bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
 wxBitmapBundle LoadSVG(EmbeddedImage* embed);
 
@@ -186,20 +196,17 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
         }
         else
         {
-            path.insert(pos, "_1_5x");
-            if (path.file_exists())
+            ttlib::cstr additional_path;
+            for (auto& iter: suffixes)
             {
-                if (auto added = AddEmbeddedBundleImage(path, form); added)
+                additional_path = path;
+                additional_path.insert(pos, iter);
+                if (additional_path.file_exists())
                 {
-                    img_bundle.lst_filenames.emplace_back(path);
-                }
-            }
-            path.Replace("_1_5x", "_2x");
-            if (path.file_exists())
-            {
-                if (auto added = AddEmbeddedBundleImage(path, form); added)
-                {
-                    img_bundle.lst_filenames.emplace_back(path);
+                    if (auto added = AddEmbeddedBundleImage(additional_path, form); added)
+                    {
+                        img_bundle.lst_filenames.emplace_back(additional_path);
+                    }
                 }
             }
         }
@@ -474,42 +481,27 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
         }
         else
         {
-            ttlib::cstr path(parts[IndexImage]);
-            path.insert(pos, "_1_5x");
-            if (!path.file_exists())
+            ttlib::cstr path;
+            for (auto& iter: suffixes)
             {
-                if (wxGetApp().GetProjectPtr()->HasValue(prop_art_directory))
+                path = parts[IndexImage];
+                path.insert(pos, iter);
+                if (!path.file_exists())
                 {
-                    ttlib::cstr tmp_path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
-                    tmp_path.append_filename(path);
-                    if (tmp_path.file_exists())
+                    if (wxGetApp().GetProjectPtr()->HasValue(prop_art_directory))
                     {
-                        img_bundle.lst_filenames.emplace_back(tmp_path);
+                        ttlib::cstr tmp_path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
+                        tmp_path.append_filename(path);
+                        if (tmp_path.file_exists())
+                        {
+                            img_bundle.lst_filenames.emplace_back(tmp_path);
+                        }
                     }
                 }
-            }
-            else
-            {
-                img_bundle.lst_filenames.emplace_back(path);
-            }
-
-            path = parts[IndexImage];
-            path.Replace("_1_5x", "_2x");
-            if (!path.file_exists())
-            {
-                if (wxGetApp().GetProjectPtr()->HasValue(prop_art_directory))
+                else
                 {
-                    ttlib::cstr tmp_path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
-                    tmp_path.append_filename(path);
-                    if (tmp_path.file_exists())
-                    {
-                        img_bundle.lst_filenames.emplace_back(tmp_path);
-                    }
+                    img_bundle.lst_filenames.emplace_back(path);
                 }
-            }
-            else
-            {
-                img_bundle.lst_filenames.emplace_back(path);
             }
         }
     }

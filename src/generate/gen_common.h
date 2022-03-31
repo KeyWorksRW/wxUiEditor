@@ -89,10 +89,6 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code);
 // Returns "wxNullBitmap" if description is empty
 ttlib::cstr GenerateBundleCode(const ttlib::cstr& description);
 
-// If a wxVector() is required to create the wxBitmapBundle, this will generate the opening
-// brace and the vector code and returns true with code filled in.
-bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code);
-
 ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name);
 
 // Will generate "wxDefaultPosition" if prop_pos is -1;-1

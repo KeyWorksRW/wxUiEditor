@@ -1477,6 +1477,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     if (auto generator = declaration->GetGenerator(); generator)
     {
+        bool need_closing_brace = false;
         if (auto result = generator->GenConstruction(node); result)
         {
             // Don't add blank lines when adding tools to a toolbar
@@ -1490,6 +1491,10 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                                                  ttlib::is_found(result.value().find("\n\t\t"))) ?
                                                     indent::none :
                                                     indent::auto_no_whitespace);
+            if (result.value().is_sameprefix("\t{"))
+            {
+                need_closing_brace = true;
+            }
         }
         GenSettings(node);
 
@@ -1533,6 +1538,10 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 }
                 else
                 {
+                    if (need_closing_brace)
+                    {
+                        code << "\t";
+                    }
                     code << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
                 }
 
@@ -1562,7 +1571,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 }
             }
 
-            m_source->writeLine(code);
+            if (need_closing_brace)
+            {
+                m_source->writeLine(code, indent::auto_keep_whitespace);
+                m_source->writeLine("\t}");
+            }
+            else
+            {
+                m_source->writeLine(code);
+            }
         }
         else if (parent->IsToolBar() && !node->isType(type_tool))
         {

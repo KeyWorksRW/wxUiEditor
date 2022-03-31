@@ -426,6 +426,19 @@ bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::uni
     return false;
 }
 
+void ProjectSettings::InitializeArrayName(EmbeddedImage* embed, ttlib::sview filename)
+{
+    embed->array_name = filename;
+    for (size_t idx = 0; idx < embed->array_name.size(); ++idx)
+    {
+        if (ttlib::is_alnum(embed->array_name[idx]) || embed->array_name[idx] == '_')
+        {
+            continue;
+        }
+        embed->array_name[idx] = '_';
+    }
+}
+
 EmbeddedImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
 {
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);

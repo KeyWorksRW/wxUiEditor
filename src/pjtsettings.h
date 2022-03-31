@@ -70,6 +70,9 @@ public:
     bool AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation = false);
     EmbeddedImage* GetEmbeddedImage(ttlib::sview path);
 
+    // Converts filename to a valid string name and sets EmbeddedImage::array_name
+    void InitializeArrayName(EmbeddedImage* embed, ttlib::sview filename);
+
     // This will collect bundles for the entire project -- it initializes
     // std::map<std::string, ImageBundle> m_bundles for every image.
     void CollectBundles();

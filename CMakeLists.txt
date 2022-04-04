@@ -45,25 +45,20 @@ endif()
 option(INTERNAL_WIDGETS_SOURCES "Build with internal forked wxWidgets sources" )
 
 if (INTERNAL_WIDGETS_SOURCES)
-    # This uses a private forked version of wxWidgets containing current sources
-    message(NOTICE "Building with internal forked wxWidget libraries")
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
-    set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
+    message(NOTICE "Building internal version")
 
-    # This will build wxCLib.lib and wxWidgets.lib
-    add_subdirectory(../wxWidgets/bld ${CMAKE_CURRENT_LIST_DIR}/build/wxWidgets_internal)
 
     # Add preprocessor definition that can be used to conditionalize code based on whether the
     # internal wxWidgets libraries are being used.
     add_compile_definitions(INTERNAL_WIDGETS)
-else()
-    # wxSnapshot is dev release (currently 3.1.15)
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
-    set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
 
-    # This will build wxCLib.lib and wxWidgets.lib
-    add_subdirectory(${widget_cmake_dir})
 endif()
+
+set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
+set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
+
+# This will build wxCLib.lib and wxWidgets.lib
+add_subdirectory(${widget_cmake_dir})
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 

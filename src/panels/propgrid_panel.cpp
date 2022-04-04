@@ -1083,7 +1083,15 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
                 // If the image field is empty, then the entire property needs to be cleared
                 if (parts.size() > IndexImage && parts[IndexImage].empty())
+                {
                     value.clear();
+                }
+                else
+                {
+                    // This ensures that all images from a bitmap bundle get added
+                    wxGetApp().GetBitmapBundle(value, prop->GetNode());
+                }
+
                 modifyProperty(prop, value);
             }
             break;

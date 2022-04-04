@@ -40,6 +40,16 @@ const char* suffixes[] = {
 bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
 wxBitmapBundle LoadSVG(EmbeddedImage* embed);
 
+inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
+{
+    ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    ASSERT(parts.size() > 1)
+
+    ttlib::cstr lookup_str;
+    lookup_str << parts[0] << ';' << parts[1].filename();
+    return lookup_str;
+}
+
 void ProjectSettings::CollectBundles()
 {
     auto project = wxGetApp().GetProject();
@@ -55,7 +65,7 @@ void ProjectSettings::CollectBundles()
 
         if (form->HasProp(prop_icon) && form->HasValue(prop_icon))
         {
-            if (m_bundles.find(form->prop_as_string(prop_icon)) == m_bundles.end())
+            if (m_bundles.find(ConvertToLookup(form->prop_as_string(prop_icon))) == m_bundles.end())
             {
                 ProcessBundleProperty(form->prop_as_string(prop_icon), form);
             }
@@ -72,7 +82,7 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
 
         if (iter.type() == type_image)
         {
-            if (m_bundles.find(iter.as_string()) == m_bundles.end())
+            if (m_bundles.find(ConvertToLookup(iter.as_string())) == m_bundles.end())
             {
                 ProcessBundleProperty(iter.as_string(), node);
             }
@@ -101,6 +111,12 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
 
 void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form)
 {
+    ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    ASSERT(parts.size() > 1)
+
+    ttlib::cstr lookup_str;
+    lookup_str << parts[0] << ';' << parts[1].filename();
+
     ImageBundle img_bundle;
 
     if (!path.file_exists())
@@ -111,28 +127,27 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
             art_path.append_filename(path);
             if (!art_path.file_exists())
             {
-                m_bundles[description] = img_bundle;
+                m_bundles[lookup_str] = img_bundle;
                 return;
             }
             path = std::move(art_path);
         }
         else
         {
-            m_bundles[description] = img_bundle;
+            m_bundles[lookup_str] = img_bundle;
             return;
         }
     }
 
     if (path.extension().is_sameas(".svg", tt::CASE::either))
     {
-        ttlib::multiview parts(description);
         if (AddSvgBundleImage(parts[IndexSize], path, form))
         {
             img_bundle.lst_filenames.emplace_back(path);
             if (auto embed = GetEmbeddedImage(path); embed)
             {
                 img_bundle.bundle = LoadSVG(embed);
-                m_bundles[description] = std::move(img_bundle);
+                m_bundles[lookup_str] = std::move(img_bundle);
                 return;
             }
         }
@@ -140,7 +155,7 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
 
     if (!AddEmbeddedBundleImage(path, form))
     {
-        m_bundles[description] = img_bundle;
+        m_bundles[lookup_str] = img_bundle;
         return;
     }
 
@@ -241,7 +256,7 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
         img_bundle.bundle = wxBitmapBundle::FromBitmaps(bitmaps);
     }
 
-    m_bundles[description] = std::move(img_bundle);
+    m_bundles[lookup_str] = std::move(img_bundle);
 }
 
 static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
@@ -373,10 +388,14 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
 
 ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& description, Node* node)
 {
-    ASSERT_MSG(m_bundles.find(description) == m_bundles.end(),
-               "ProcessBundleProperty should not be called if bundle already exists!")
-
     ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    ASSERT(parts.size() > 1)
+
+    ttlib::cstr lookup_str;
+    lookup_str << parts[0] << ';' << parts[1].filename();
+
+    ASSERT_MSG(m_bundles.find(lookup_str) == m_bundles.end(),
+               "ProcessBundleProperty should not be called if bundle already exists!")
 
     if (parts[IndexImage].empty())
     {
@@ -398,18 +417,18 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
                 wxArtProvider::GetBitmapBundle(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"));
         }
 
-        m_bundles[description] = std::move(img_bundle);
-        return &m_bundles[description];
+        m_bundles[lookup_str] = std::move(img_bundle);
+        return &m_bundles[lookup_str];
     }
     else if (parts[IndexType].contains("Embed"))
     {
         AddNewEmbeddedBundle(description, parts[IndexImage], node->GetForm());
-        return &m_bundles[description];
+        return &m_bundles[lookup_str];
     }
     else if (parts[IndexType].contains("SVG"))
     {
         AddNewEmbeddedBundle(description, parts[IndexImage], node->GetForm());
-        return &m_bundles[description];
+        return &m_bundles[lookup_str];
     }
 
     auto image_first = wxGetApp().GetProjectSettings()->GetPropertyBitmap(description, false);
@@ -541,8 +560,8 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
         img_bundle.bundle = wxBitmapBundle::FromBitmaps(bitmaps);
     }
 
-    m_bundles[description] = std::move(img_bundle);
-    return &m_bundles[description];
+    m_bundles[lookup_str] = std::move(img_bundle);
+    return &m_bundles[lookup_str];
 }
 
 bool ProjectSettings::AddSvgBundleImage(const ttlib::cstr& description, ttlib::cstr path, Node* form)

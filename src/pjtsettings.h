@@ -84,6 +84,7 @@ protected:
     bool CheckNode(Node* node);
 
     void CollectNodeBundles(Node* node, Node* form);
+
     void AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form);
 
     // Reads the image and stores it in m_map_embedded

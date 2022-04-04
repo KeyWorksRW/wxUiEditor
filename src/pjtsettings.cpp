@@ -37,6 +37,16 @@ inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
     return animation;
 };
 
+inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
+{
+    ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    ASSERT(parts.size() > 1)
+
+    ttlib::cstr lookup_str;
+    lookup_str << parts[0] << ';' << parts[1].filename();
+    return lookup_str;
+}
+
 namespace wxue_img
 {
     extern const unsigned char pulsing_unknown_gif[377];
@@ -175,11 +185,12 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
 void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
 {
-    auto result = m_bundles.find(description);
+    auto lookup_str = ConvertToLookup(description);
+    auto result = m_bundles.find(lookup_str);
     if (result == m_bundles.end())
     {
         ProcessBundleProperty(description, node);
-        result = m_bundles.find(description);
+        result = m_bundles.find(lookup_str);
     }
 
     if (result != m_bundles.end() && result->second.lst_filenames.size())
@@ -206,7 +217,7 @@ void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
 
 wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
 {
-    if (auto result = m_bundles.find(description); result != m_bundles.end())
+    if (auto result = m_bundles.find(ConvertToLookup(description)); result != m_bundles.end())
     {
         return result->second.bundle;
     }
@@ -221,7 +232,7 @@ wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& descr
 
 const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
 {
-    if (auto result = m_bundles.find(description); result != m_bundles.end())
+    if (auto result = m_bundles.find(ConvertToLookup(description)); result != m_bundles.end())
     {
         return &result->second;
     }

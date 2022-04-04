@@ -7,11 +7,7 @@
 
 #pragma once
 
-#if wxCHECK_VERSION(3, 1, 6)
-    #include "image_bundle.h"  // Functions for working with wxBitmapBundle
-#else
-    #include <wx/bitmap.h>  // wxBitmap class interface
-#endif
+#include "image_bundle.h"  // Functions for working with wxBitmapBundle
 
 #include "font_prop.h"     // FontProperty class
 #include "node_classes.h"  // Forward defintions of Node classes
@@ -58,12 +54,8 @@ public:
     auto as_wxString() const { return m_value.wx_str(); }
     wxArrayString as_wxArrayString() const;
 
-#if wxCHECK_VERSION(3, 1, 6)
     wxBitmapBundle as_bitmap_bundle() const;
     const ImageBundle* as_image_bundle() const;
-#else
-    wxBitmap as_bitmap_bundle() const { return as_bitmap(); }
-#endif
 
     const ttlib::cstr& as_string() const { return m_value; }
 

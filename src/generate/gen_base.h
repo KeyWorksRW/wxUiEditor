@@ -18,7 +18,7 @@ class NodeCreator;
 class WriteCode;
 class wxWindow;
 
-struct EmbededImage;
+struct EmbeddedImage;
 
 using EventVector = std::vector<NodeEvent*>;
 
@@ -143,15 +143,18 @@ private:
     ttlib::cstr m_baseFullPath;
     EventVector m_CtxMenuEvents;
 
-    std::vector<const EmbededImage*> m_embedded_images;
+    std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;
 
     Node* m_form_node;
 
     PANEL_TYPE m_panel_type { NOT_PANEL };
 
+    bool m_is_derived_class { true };
+
+    // These are also initialized whenever GenerateBaseClass() is called
     bool m_NeedArtProviderHeader { false };
     bool m_NeedHeaderFunction { false };
     bool m_NeedAnimationFunction { false };
-    bool m_is_derived_class { true };
+    bool m_NeedSVGFunction { false };
 };

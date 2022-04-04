@@ -26,6 +26,7 @@ namespace pugi
 
 class wxSizerFlags;
 class wxAnimation;
+struct ImageBundle;
 
 class Node;
 using NodeSharedPtr = std::shared_ptr<Node>;
@@ -182,11 +183,8 @@ public:
     wxBitmap prop_as_wxBitmap(PropName name) const;
     wxArrayString prop_as_wxArrayString(PropName name) const;
 
-#if wxCHECK_VERSION(3, 1, 6)
     wxBitmapBundle prop_as_wxBitmapBundle(PropName name) const;
-#else
-    wxBitmap prop_as_wxBitmapBundle(PropName name) const { return prop_as_wxBitmap(name); }
-#endif
+    const ImageBundle* prop_as_image_bundle(PropName name) const;
 
     FontProperty prop_as_font_prop(PropName name) const;
     double prop_as_double(PropName name) const;

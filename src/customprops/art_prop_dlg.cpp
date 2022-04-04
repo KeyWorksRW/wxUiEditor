@@ -42,27 +42,28 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
 
 void ArtBrowserDialog::ChangeClient()
 {
-    auto img_list = new wxImageList(16, 16);
-    int index = 0;
-
+    // Save the current selection before all items are deleted. Restore the selection after the new items have been added.
     auto sel = m_list->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     if (sel < 0)
         sel = 0;
 
     m_list->DeleteAllItems();
+
+    int index = 0;
+    wxVector<wxBitmapBundle> bitmap_bundles;
     for (auto& iter: set_art_ids)
     {
-        auto bmp = wxArtProvider::GetBitmap(iter, wxART_MAKE_CLIENT_ID_FROM_STR(m_client), wxSize(16, 16));
-        if (bmp.IsOk())
+        if (auto bundle = wxArtProvider::GetBitmapBundle(iter, wxART_MAKE_CLIENT_ID_FROM_STR(m_client), wxSize(16, 16));
+            bundle.IsOk())
         {
-            m_list->InsertItem(index, iter, img_list->Add(bmp));
+            bitmap_bundles.push_back(bundle);
+            m_list->InsertItem(index, iter, static_cast<int>(bitmap_bundles.size() - 1));
             m_list->SetItemPtrData(index++, reinterpret_cast<wxUIntPtr>(iter.c_str()));
         }
     }
+    m_list->SetSmallImages(bitmap_bundles);
 
-    m_list->AssignImageList(img_list, wxIMAGE_LIST_SMALL);
     m_list->SetColumnWidth(0, wxLIST_AUTOSIZE);
-
     m_list->SetItemState(sel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 }
 

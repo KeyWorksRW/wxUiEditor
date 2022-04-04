@@ -44,13 +44,6 @@ namespace wxue_img
 
 ProjectSettings::ProjectSettings() {}
 
-ProjectSettings::~ProjectSettings()
-{
-    // If the thread is running, this will tell it to stop
-    m_is_terminating = true;
-    FinishThreads();
-}
-
 ttlib::cstr& ProjectSettings::SetProjectFile(const ttString& file)
 {
     m_projectFile.clear();
@@ -107,24 +100,15 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
         if (parts[IndexArtID].contains("|"))
         {
             ttlib::multistr id_client(parts[IndexArtID], '|');
-#if wxCHECK_VERSION(3, 1, 6)
             image = (wxArtProvider::GetBitmapBundle(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1]))
                          .GetBitmapFor(wxGetFrame().GetWindow()))
                         .ConvertToImage();
-#else
-            image = wxArtProvider::GetBitmap(id_client[0], wxART_MAKE_CLIENT_ID_FROM_STR(id_client[1])).ConvertToImage();
-#endif
         }
         else
         {
-#if wxCHECK_VERSION(3, 1, 6)
             image = (wxArtProvider::GetBitmapBundle(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
                          .GetBitmapFor(wxGetFrame().GetWindow()))
                         .ConvertToImage();
-#else
-            image = wxArtProvider::GetBitmap(parts[IndexArtID].wx_str(), wxART_MAKE_CLIENT_ID_FROM_STR("wxART_OTHER"))
-                        .ConvertToImage();
-#endif
         }
     }
     else if (parts[IndexType].contains("Embed"))
@@ -189,7 +173,37 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     return image;
 }
 
-#if wxCHECK_VERSION(3, 1, 6)
+void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
+{
+    auto result = m_bundles.find(description);
+    if (result == m_bundles.end())
+    {
+        ProcessBundleProperty(description, node);
+        result = m_bundles.find(description);
+    }
+
+    if (result != m_bundles.end() && result->second.lst_filenames.size())
+    {
+        auto form = node->GetForm();
+        for (auto& iter: result->second.lst_filenames)
+        {
+            if (auto embed = GetEmbeddedImage(iter); embed)
+            {
+                if (embed->form != form)
+                {
+                    // This will happen when a bundle bitmap is added to the Images generator. The initial bitmap will be
+                    // correctly changed to use the new form, but we also need to process  all the sub images as well
+
+                    if (form->isGen(gen_Images))
+                    {
+                        embed->form = form;
+                    }
+                }
+            }
+        }
+    }
+}
+
 wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
 {
     if (auto result = m_bundles.find(description); result != m_bundles.end())
@@ -205,19 +219,21 @@ wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& descr
     return GetInternalImage("unknown");
 }
 
-const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description)
+const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
 {
     if (auto result = m_bundles.find(description); result != m_bundles.end())
     {
         return &result->second;
+    }
+    else if (node)
+    {
+        return ProcessBundleProperty(description, node);
     }
     else
     {
         return nullptr;
     }
 }
-
-#endif
 
 wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description)
 {
@@ -298,7 +314,6 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_ani
     if (is_animation || !final_result)
         return final_result;
 
-#if wxCHECK_VERSION(3, 1, 6)
     // Note that path may now contain the prop_art_directory prefix
 
     add_lock.lock();
@@ -351,7 +366,6 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_ani
             }
         }
     }
-#endif
 
     return final_result;
 }
@@ -375,10 +389,9 @@ bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::uni
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbededImage>();
+                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().c_str()].get();
-                embed->array_name = path.filename();
-                embed->array_name.Replace(".", "_", true);
+                InitializeArrayName(embed, path.filename());
                 embed->form = form;
 
                 // At this point, other threads can lookup and add an embedded image, they just can't access the data of this
@@ -443,7 +456,20 @@ bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::uni
     return false;
 }
 
-EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
+void ProjectSettings::InitializeArrayName(EmbeddedImage* embed, ttlib::sview filename)
+{
+    embed->array_name = filename;
+    for (size_t idx = 0; idx < embed->array_name.size(); ++idx)
+    {
+        if (ttlib::is_alnum(embed->array_name[idx]) || embed->array_name[idx] == '_')
+        {
+            continue;
+        }
+        embed->array_name[idx] = '_';
+    }
+}
+
+EmbeddedImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
 {
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
 
@@ -458,91 +484,8 @@ EmbededImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
     }
 }
 
-// To consistently generate the same code, an image declaration needs to be added to the first form that uses it. That means
-// that all embeded images need to be initialized -- otherwise, the user could select a form that has not been initialized
-// yet, and it will look like it's the first form to use the image, when in fact it's just because the previous form wasn't
-// initialized.
-
-// When a project is loaded, MainFrame start processing nodes and collecting embedded image data. However, that will stop as
-// soon as it's determined that at least one of the forms needs to have code regenerated. So to be certain that every node
-// gets parsed, we create a background thread that parses all nodes every time a project is loaded.
-
-void ProjectSettings::ParseEmbeddedImages()
-{
-    FinishThreads();
-
-    m_collect_thread = new std::thread(&ProjectSettings::CollectEmbeddedImages, this);
-}
-
-void ProjectSettings::CollectEmbeddedImages()
-{
-    // We need the shared ptr rather than the raw pointer because we can't let the pointer become invalid while we're still
-    // processing nodes.
-    auto project = wxGetApp().GetProjectPtr();
-
-    for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
-    {
-        if (m_is_terminating)
-            return;
-
-        auto form = project->GetChildPtr(pos);
-
-        for (auto& iter: form->GetChildNodePtrs())
-        {
-            if (m_is_terminating)
-                return;
-            CollectNodeImages(iter.get(), form.get());
-        }
-    }
-}
-
-void ProjectSettings::CollectNodeImages(Node* node, Node* form)
-{
-    for (auto& iter: node->get_props_vector())
-    {
-        if (iter.type() == type_image || iter.type() == type_animation)
-        {
-            if (!iter.HasValue())
-                continue;
-            auto& value = iter.as_string();
-            if (value.is_sameprefix("Embed"))
-            {
-                if (m_is_terminating)
-                    return;
-
-                ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
-                if (parts[IndexImage].size())
-                {
-                    std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
-                    if (auto result = m_map_embedded.find(parts[IndexImage].filename()); result == m_map_embedded.end())
-                    {
-                        if (m_is_terminating)
-                            return;
-
-                        add_lock.unlock();
-                        AddEmbeddedImage(parts[IndexImage], form);
-                        if (m_is_terminating)
-                            return;
-                    }
-                }
-            }
-        }
-    }
-
-    auto count = node->GetChildCount();
-    for (size_t i = 0; i < count; i++)
-    {
-        if (m_is_terminating)
-            return;
-        auto child = node->GetChildPtr(i);
-        CollectNodeImages(child.get(), form);
-    }
-}
-
 bool ProjectSettings::UpdateEmbedNodes()
 {
-    FinishThreads();
-
     bool is_changed = false;
     auto project = wxGetApp().GetProject();
 
@@ -609,33 +552,6 @@ bool ProjectSettings::CheckNode(Node* node)
     }
 
     return is_changed;
-}
-
-void ProjectSettings::FinishThreads()
-{
-#if wxCHECK_VERSION(3, 1, 6)
-    if (m_collect_bundle_thread)
-    {
-        m_cancel_collection = true;
-        if (m_collect_bundle_thread->joinable())
-        {
-            m_collect_bundle_thread->join();
-        }
-        delete m_collect_bundle_thread;
-        m_collect_bundle_thread = nullptr;
-        m_cancel_collection = false;
-    }
-#endif
-
-    if (m_collect_thread)
-    {
-        if (m_collect_thread->joinable())
-        {
-            m_collect_thread->join();
-        }
-        delete m_collect_thread;
-        m_collect_thread = nullptr;
-    }
 }
 
 namespace wxue_img

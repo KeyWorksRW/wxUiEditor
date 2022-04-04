@@ -367,30 +367,86 @@ wxObject* StaticBitmapGenerator::CreateMockup(Node* node, wxObject* parent)
 std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto ";
-
-    bool use_generic_version = (node->prop_as_string(prop_scale_mode) != "None");
-    if (use_generic_version)
-        code << node->get_node_name() << " = new wxGenericStaticBitmap(";
-    else
-        code << node->get_node_name() << " = new wxStaticBitmap(";
-
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     if (node->HasValue(prop_bitmap))
     {
-        if (use_generic_version)
+        auto& description = node->prop_as_string(prop_bitmap);
+        bool is_vector_code = GenerateVectorCode(description, code);
+
+        if (is_vector_code)
         {
-            // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
-            code << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true);
+            code << "\t\t";
+        }
+
+        if (node->IsLocal())
+            code << "auto ";
+
+        bool use_generic_version = (node->prop_as_string(prop_scale_mode) != "None");
+        if (use_generic_version)
+            code << node->get_node_name() << " = new wxGenericStaticBitmap(";
+        else
+            code << node->get_node_name() << " = new wxStaticBitmap(";
+
+        code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+
+        if (!is_vector_code)
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) != "3.1")
+            {
+                code << GenerateBundleCode(description);
+            }
+            else
+            {
+                if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+                {
+                    code.insert(0, "\t");
+                    code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
+                    code << GenerateBundleCode(description);
+                    GeneratePosSizeFlags(node, code);
+                }
+
+                code << "\n#else\n\t\t";
+                if (use_generic_version)
+                {
+                    // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
+                    code << GenerateBitmapCode(description, true);
+                }
+                else
+                {
+                    // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
+                    code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
+                }
+                GeneratePosSizeFlags(node, code);
+                code << "\n#endif";
+                return code;
+            }
         }
         else
         {
-            // REVIEW: [KeyWorks - 02-25-2022] GenerateBitmapCode may return a wxBitmapBundle under 3.1.6, so if that's the
-            // case, we can't had it to a wxBitmap.
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) != "3.1")
+            {
+                code << "wxBitmapBundle::FromBitmaps(bitmaps)";
+            }
+            else
+            {
+                code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t\t";
+                code << "wxBitmapBundle::FromBitmaps(bitmaps)";
+                GeneratePosSizeFlags(node, code);
 
-            // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
-            code << "wxBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ")";
+                code << "\n#else\n\t\t\t";
+                if (use_generic_version)
+                {
+                    // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
+                    code << GenerateBitmapCode(description, true);
+                }
+                else
+                {
+                    // wxStaticBitmap requires a wxGDIImage for the bitmap, and that won't accept a wxImage.
+                    code << "wxBitmap(" << GenerateBitmapCode(description) << ")";
+                }
+                GeneratePosSizeFlags(node, code);
+                code << "\n#endif";
+                return code;
+            }
         }
     }
     else
@@ -427,6 +483,10 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
         InsertGeneratorInclude(node, "#include <wx/generic/statbmpg.h>", set_src, set_hdr);
     else
         InsertGeneratorInclude(node, "#include <wx/statbmp.h>", set_src, set_hdr);
+
+    // Add wxBitmapBundle header -- the BaseCodeGenerator class will see it and replace it with a conditional include if
+    // needed.
+    set_src.insert("#include <wx/bmpbndl.h>");
     return true;
 }
 

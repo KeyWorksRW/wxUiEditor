@@ -249,7 +249,7 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
 #if defined(_DEBUG)
 void MsgLogging::OnNodeSelected()
 {
-    if (m_msgFrame)
+    if (!m_bDestroyed && m_msgFrame)
     {
         m_msgFrame->OnNodeSelected();
     }

@@ -695,6 +695,251 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbun
     return code;
 }
 
+ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
+{
+    ttlib::cstr code;
+
+    if (description.empty())
+    {
+        code << "wxNullBitmap";
+        return code;
+    }
+
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexImage].empty())
+    {
+        code << "wxNullBitmap";
+        return code;
+    }
+
+    if (parts[IndexType].contains("Art"))
+    {
+        ttlib::cstr art_id(parts[IndexArtID]);
+        ttlib::cstr art_client;
+        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        {
+            art_client = art_id.subview(pos + 1);
+            art_id.erase(pos);
+        }
+
+        code << "wxArtProvider::GetBitmapBundle(" << art_id << ", ";
+
+        // Note that current documentation states that the client is required, but the header file says otherwise
+        if (art_client.size())
+            code << art_client;
+        code << ')';
+    }
+
+    else if (parts[IndexType].is_sameas("XPM") || parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
+    {
+        if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(description); bundle)
+        {
+            if (bundle->lst_filenames.size() == 1)
+            {
+                code << "wxBitmapBundle::FromBitmap(wxImage(";
+                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                name.remove_extension();
+                code << name << "_xpm))";
+            }
+            else if (bundle->lst_filenames.size() == 2)
+            {
+                code << "wxBitmapBundle::FromBitmaps(wxImage(";
+                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                name.remove_extension();
+                code << name << "_xpm), ";
+                name = bundle->lst_filenames[1].filename();
+                name.remove_extension();
+                code << "wxImage(" << name << "_xpm))";
+            }
+            else
+            {
+                code << "\n\t\t[] {\n\t\t\twxVector<wxBitmap> bitmaps;\n";
+                for (auto& iter: bundle->lst_filenames)
+                {
+                    ttlib::cstr name(iter.filename());
+                    name.remove_extension();
+                    code << "\t\t\tbitmaps.push_back(wxImage(" << name << "_xpm));\n";
+                }
+
+                code << "\t\t\treturn wxBitmapBundle::FromBitmaps(bitmaps);\n\t\t}";
+            }
+        }
+        else
+        {
+            FAIL_MSG(ttlib::cstr(description) << " was not converted to a bundle ahead of time!")
+
+            // This should never happen, but if it does, at least generate something that will compiler
+            code << "wxImage(";
+            ttlib::cstr name(parts[IndexImage].filename());
+            name.remove_extension();
+            code << name << "_xpm)";
+        }
+    }
+    else if (description.is_sameprefix("SVG"))
+    {
+        auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+        if (!embed)
+        {
+            FAIL_MSG(ttlib::cstr() << description << " not embedded!")
+            code << "wxNullBitmap";
+            return code;
+        }
+        ttlib::cstr name = "wxue_img::" + embed->array_name;
+        code << "GetBundleFromSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
+        code << (embed->array_size >> 32) << ", wxSize(" << embed->size_x << ", " << embed->size_y << "))";
+    }
+    else
+    {
+        if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(description); bundle)
+        {
+            if (bundle->lst_filenames.size() == 1)
+            {
+                code << "wxBitmapBundle::FromBitmap(GetImageFromArray(";
+                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                name.remove_extension();
+                name.Replace(".", "_", true);  // fix wxFormBuilder header files
+
+                if (parts[IndexType].is_sameprefix("Embed"))
+                {
+                    auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    if (embed)
+                    {
+                        name = "wxue_img::" + embed->array_name;
+                    }
+                }
+
+                code << name << ", sizeof(" << name << ")))";
+            }
+            else if (bundle->lst_filenames.size() == 2)
+            {
+                code << "wxBitmapBundle::FromBitmaps(GetImageFromArray(";
+                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                name.remove_extension();
+                name.Replace(".", "_", true);  // fix wxFormBuilder header files
+
+                if (parts[IndexType].is_sameprefix("Embed"))
+                {
+                    auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[1]);
+                    if (embed)
+                    {
+                        name = "wxue_img::" + embed->array_name;
+                    }
+                }
+                code << name << ", sizeof(" << name << ")), GetImageFromArray(";
+
+                name = bundle->lst_filenames[1].filename();
+                name.remove_extension();
+                name.Replace(".", "_", true);
+
+                if (parts[IndexType].is_sameprefix("Embed"))
+                {
+                    auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[1]);
+                    if (embed)
+                    {
+                        name = "wxue_img::" + embed->array_name;
+                    }
+                }
+                code << name << ", sizeof(" << name << ")))";
+            }
+            else
+            {
+                code << "\n\t\t[] {\n\t\t\twxVector<wxBitmap> bitmaps;\n";
+                for (auto& iter: bundle->lst_filenames)
+                {
+                    ttlib::cstr name(iter.filename());
+                    name.remove_extension();
+                    name.Replace(".", "_", true);  // fix wxFormBuilder header files
+                    if (parts[IndexType].is_sameprefix("Embed"))
+                    {
+                        auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(iter);
+                        if (embed)
+                        {
+                            name = "wxue_img::" + embed->array_name;
+                        }
+                    }
+                    code << "\t\t\tbitmaps.push_back(GetImageFromArray(" << name << ", sizeof(" << name << ")));\n";
+                }
+
+                code << "\t\t\treturn wxBitmapBundle::FromBitmaps(bitmaps);\n\t\t}";
+            }
+        }
+        else
+        {
+            FAIL_MSG(ttlib::cstr(description) << " was not converted to a bundle ahead of time!")
+
+            // This should never happen, but if it does, at least generate something that will compiler
+            code << "wxNullBitmsap";
+        }
+    }
+
+    return code;
+}
+
+bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
+{
+    if (description.empty())
+    {
+        return false;
+    }
+
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexImage].empty() || parts[IndexType].contains("Art") || parts[IndexType].contains("SVG"))
+    {
+        return false;
+    }
+
+    auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(description);
+
+    if (!bundle || bundle->lst_filenames.size() < 3)
+    {
+        return false;
+    }
+
+    // If we get here, then we need to first put the bitmaps into a wxVector in order for wxBitmapBundle to load them.
+
+    code << "\t{\n";
+    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    {
+        code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+    }
+    code << "\t\twxVector<wxBitmap> bitmaps;\n";
+
+    bool is_xpm = (parts[IndexType].is_sameas("XPM") || parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either));
+
+    for (auto& iter: bundle->lst_filenames)
+    {
+        ttlib::cstr name(iter.filename());
+        name.remove_extension();
+        if (is_xpm)
+        {
+            code << "\t\tbitmaps.push_back(wxImage(" << name << "_xpm));\n";
+        }
+        else
+        {
+            name.Replace(".", "_", true);  // fix wxFormBuilder header files
+            if (parts[IndexType].is_sameprefix("Embed"))
+            {
+                auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(iter);
+                if (embed)
+                {
+                    name = "wxue_img::" + embed->array_name;
+                }
+            }
+            code << "\t\tbitmaps.push_back(GetImageFromArray(" << name << ", sizeof(" << name << ")));\n";
+        }
+    }
+    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    {
+        code << "#endif\n";
+    }
+
+    // Note that the opening brace is *not* closed. That will have to be handled by BaseCodeGenerator::GenConstruction()
+
+    return true;
+}
+
 ttlib::cstr GenFormCode(GenEnum::GenCodeType command, Node* node)
 {
     ttlib::cstr code;

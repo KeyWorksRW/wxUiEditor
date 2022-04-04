@@ -34,6 +34,7 @@
 #include "node_decl.h"       // NodeDeclaration class
 #include "node_prop.h"       // NodeProperty -- NodeProperty class
 #include "paths.h"           // Handles *_directory properties
+#include "pjtsettings.h"     // ProjectSettings -- Hold data for currently loaded project
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 #include "utils.h"           // Utility functions that work with properties
 
@@ -1083,7 +1084,15 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
                 // If the image field is empty, then the entire property needs to be cleared
                 if (parts.size() > IndexImage && parts[IndexImage].empty())
+                {
                     value.clear();
+                }
+                else
+                {
+                    // This ensures that all images from a bitmap bundle get added
+                    wxGetApp().GetProjectSettings()->UpdateBundle(value, prop->GetNode());
+                }
+
                 modifyProperty(prop, value);
             }
             break;

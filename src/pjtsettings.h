@@ -63,6 +63,9 @@ public:
 
     ImageBundle* ProcessBundleProperty(const ttlib::cstr& description, Node* node);
 
+    // This adds the bundle if new, or updates the embed->form if the node has changed
+    void UpdateBundle(const ttlib::cstr& description, Node* node);
+
     // This takes the full animation property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
     wxAnimation GetPropertyAnimation(const ttlib::cstr& description);

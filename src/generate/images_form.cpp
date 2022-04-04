@@ -50,7 +50,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
             m_image_name->SetLabel(wxEmptyString);
         }
 
-        auto bmp = node->prop_as_wxBitmap(prop_bitmap);
+        auto bmp = node->prop_as_wxBitmapBundle(prop_bitmap);
         ASSERT(bmp.IsOk());
         if (!bmp.IsOk())
         {
@@ -60,9 +60,10 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
         else
         {
             m_bitmap->SetBitmap(bmp);
+            auto default_size = bmp.GetDefaultSize();
 
-            ttlib::cstr info("Dimensions: ");
-            info << bmp.GetWidth() << "(w) x " << bmp.GetHeight() << "(h)  Bit depth: " << bmp.GetDepth();
+            ttlib::cstr info("Default wxSize: ");
+            info << default_size.GetWidth() << " x " << default_size.GetHeight();
             m_text_info->SetLabel(info);
         }
     }

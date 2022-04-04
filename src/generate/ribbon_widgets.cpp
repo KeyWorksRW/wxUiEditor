@@ -193,7 +193,7 @@ bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto bmp = node->HasValue(prop_bitmap) ? node->prop_as_wxBitmap(prop_bitmap) : wxNullBitmap;
-    // REVIEW: [KeyWorks - 02-25-2022] This is still a bitmap rather then a bundle as of 2/25/22
+    // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
     auto widget = new wxRibbonPage((wxRibbonBar*) parent, wxID_ANY, node->prop_as_wxString(prop_label), bmp, 0);
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -337,6 +337,7 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
         if (!bmp.IsOk())
             bmp = GetInternalImage("default");
 
+        // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
         btn_bar->AddButton(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, childObj->prop_as_wxString(prop_help),
                            (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
     }
@@ -440,6 +441,7 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
             auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
+            // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
             btn_bar->AddTool(wxID_ANY, bmp, childObj->prop_as_wxString(prop_help),
                              (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
         }
@@ -559,6 +561,7 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
+            // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
             gallery->Append(bmp, wxID_ANY);
         }
     }

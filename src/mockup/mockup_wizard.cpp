@@ -46,7 +46,8 @@ void MockupWizard::CreateBmpPageRow()
 
     if (m_wizard_node->HasValue(prop_bitmap))
     {
-        m_bitmap = m_wizard_node->prop_as_wxBitmap(prop_bitmap);
+        auto bundle = m_wizard_node->prop_as_wxBitmapBundle(prop_bitmap);
+        m_bitmap = bundle.GetBitmap(bundle.GetPreferredBitmapSizeFor(this));
         if (m_bitmap.IsOk())
         {
             wxSize bmp_size(wxDefaultSize);
@@ -302,5 +303,8 @@ bool MockupWizard::ResizeBitmap(wxBitmap& bmp)
 MockupWizardPage::MockupWizardPage(Node* node, wxObject* parent) : wxPanel(wxStaticCast(parent, wxWindow))
 {
     if (node->HasValue(prop_bitmap))
-        m_bitmap = node->prop_as_wxBitmap(prop_bitmap);
+    {
+        auto bundle = node->prop_as_wxBitmapBundle(prop_bitmap);
+        m_bitmap = bundle.GetBitmap(bundle.GetPreferredBitmapSizeFor(this));
+    }
 }

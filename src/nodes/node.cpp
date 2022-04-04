@@ -380,6 +380,7 @@ wxAnimation Node::prop_as_wxAnimation(PropName name) const
         return wxNullAnimation;
 }
 
+// This is still required, even for 3.1.6 since wxRibbon pages still use bitmaps instead of bundles
 wxBitmap Node::prop_as_wxBitmap(PropName name) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())

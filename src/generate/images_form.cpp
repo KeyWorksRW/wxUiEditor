@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Embedded images generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,9 +14,11 @@
 
 #include "images_form.h"
 
-#include "bitmaps.h"    // Contains various images handling functions
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
+#include "bitmaps.h"      // Contains various images handling functions
+#include "mainapp.h"      // compiler_standard -- Main application class
+#include "mainframe.h"    // MainFrame -- Main window frame
+#include "node.h"         // Node class
+#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
 
 #include "ui_images.h"
 
@@ -39,11 +41,29 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     auto node = wxGetFrame().GetSelectedNode();
     if (node->isGen(gen_embedded_image))
     {
+        auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(node->prop_as_string(prop_bitmap));
+
         ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
 
         if (mstr.size() > 1)
         {
-            m_image_name->SetLabel(mstr[1].wx_str());
+            if (bundle && bundle->lst_filenames.size())
+            {
+                ttlib::cstr list;
+                for (auto& iter: bundle->lst_filenames)
+                {
+                    if (list.size())
+                    {
+                        list << '\n';
+                    }
+                    list << iter;
+                }
+                m_image_name->SetLabel(list.wx_str());
+            }
+            else
+            {
+                m_image_name->SetLabel(mstr[1].wx_str());
+            }
         }
         else
         {

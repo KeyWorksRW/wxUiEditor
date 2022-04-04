@@ -443,16 +443,16 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->SetBitmap(node->prop_as_wxBitmapBundle(prop_bitmap));
 
         if (node->HasValue(prop_disabled_bmp))
-            widget->SetBitmapDisabled(node->prop_as_wxBitmap(prop_disabled_bmp));
+            widget->SetBitmapDisabled(node->prop_as_wxBitmapBundle(prop_disabled_bmp));
 
         if (node->HasValue(prop_pressed_bmp))
-            widget->SetBitmapPressed(node->prop_as_wxBitmap(prop_pressed_bmp));
+            widget->SetBitmapPressed(node->prop_as_wxBitmapBundle(prop_pressed_bmp));
 
         if (node->HasValue(prop_focus_bmp))
-            widget->SetBitmapFocus(node->prop_as_wxBitmap(prop_focus_bmp));
+            widget->SetBitmapFocus(node->prop_as_wxBitmapBundle(prop_focus_bmp));
 
         if (node->HasValue(prop_current))
-            widget->SetBitmapCurrent(node->prop_as_wxBitmap(prop_current));
+            widget->SetBitmapCurrent(node->prop_as_wxBitmapBundle(prop_current));
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);

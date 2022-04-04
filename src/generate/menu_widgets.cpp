@@ -124,23 +124,22 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 
             if (menu_item->HasValue(prop_bitmap))
             {
-                wxBitmap unchecked = wxNullBitmap;
+#ifdef __WXMSW__
                 if (menu_item->HasValue(prop_unchecked_bitmap))
                 {
-                    unchecked = menu_item->prop_as_wxBitmap(prop_unchecked_bitmap);
+                    auto unchecked = menu_item->prop_as_wxBitmapBundle(prop_unchecked_bitmap);
+                    item->SetBitmaps(menu_item->prop_as_wxBitmapBundle(prop_bitmap), unchecked);
                 }
-#ifdef __WXMSW__
-                item->SetBitmaps(menu_item->prop_as_wxBitmapBundle(prop_bitmap), unchecked);
-#else
-                item->SetBitmap(menu_item->prop_as_wxBitmapBundle(prop_bitmap));
+                else
 #endif
+                    item->SetBitmap(menu_item->prop_as_wxBitmapBundle(prop_bitmap));
             }
 #ifdef __WXMSW__
             else
             {
                 if (menu_item->HasValue(prop_unchecked_bitmap))
                 {
-                    item->SetBitmaps(wxNullBitmap, menu_item->prop_as_wxBitmap(prop_unchecked_bitmap));
+                    item->SetBitmaps(wxNullBitmap, menu_item->prop_as_wxBitmapBundle(prop_unchecked_bitmap));
                 }
             }
 #endif

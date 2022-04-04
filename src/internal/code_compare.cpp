@@ -94,6 +94,7 @@ HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::str
 
 void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
 {
+    #if defined(INTERNAL_WIDGETS)
     pugi::xml_document doc;
     auto root = doc.append_child("project");
 
@@ -109,6 +110,7 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     // /e -- terminate with escape
     // /u -- don't add files to MRU
     winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd);
+    #endif
 }
 
 #endif  // defined(_DEBUG) || defined(INTERNAL_WIDGETS)

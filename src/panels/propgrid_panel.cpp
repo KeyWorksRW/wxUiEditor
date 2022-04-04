@@ -34,6 +34,7 @@
 #include "node_decl.h"       // NodeDeclaration class
 #include "node_prop.h"       // NodeProperty -- NodeProperty class
 #include "paths.h"           // Handles *_directory properties
+#include "pjtsettings.h"     // ProjectSettings -- Hold data for currently loaded project
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 #include "utils.h"           // Utility functions that work with properties
 
@@ -1089,7 +1090,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     // This ensures that all images from a bitmap bundle get added
-                    wxGetApp().GetBitmapBundle(value, prop->GetNode());
+                    wxGetApp().GetProjectSettings()->UpdateBundle(value, prop->GetNode());
                 }
 
                 modifyProperty(prop, value);

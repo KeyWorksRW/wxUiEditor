@@ -173,6 +173,37 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     return image;
 }
 
+void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
+{
+    auto result = m_bundles.find(description);
+    if (result == m_bundles.end())
+    {
+        ProcessBundleProperty(description, node);
+        result = m_bundles.find(description);
+    }
+
+    if (result != m_bundles.end() && result->second.lst_filenames.size())
+    {
+        auto form = node->GetForm();
+        for (auto& iter: result->second.lst_filenames)
+        {
+            if (auto embed = GetEmbeddedImage(iter); embed)
+            {
+                if (embed->form != form)
+                {
+                    // This will happen when a bundle bitmap is added to the Images generator. The initial bitmap will be
+                    // correctly changed to use the new form, but we also need to process  all the sub images as well
+
+                    if (form->isGen(gen_Images))
+                    {
+                        embed->form = form;
+                    }
+                }
+            }
+        }
+    }
+}
+
 wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
 {
     if (auto result = m_bundles.find(description); result != m_bundles.end())
@@ -360,8 +391,7 @@ bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::uni
             {
                 m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().c_str()].get();
-                embed->array_name = path.filename();
-                embed->array_name.Replace(".", "_", true);
+                InitializeArrayName(embed, path.filename());
                 embed->form = form;
 
                 // At this point, other threads can lookup and add an embedded image, they just can't access the data of this

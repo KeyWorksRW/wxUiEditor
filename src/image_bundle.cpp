@@ -33,6 +33,8 @@
 const char* suffixes[] = {
     "_1_5x",
     "_2x",
+    "@1_5x",
+    "@2x",
 };
 
 bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
@@ -312,8 +314,7 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
             {
                 m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
                 auto embed = m_map_embedded[path.filename().c_str()].get();
-                embed->array_name = path.filename();
-                embed->array_name.Replace(".", "_", true);
+                InitializeArrayName(embed, path.filename());
                 embed->form = form;
 
                 // If possible, convert the file to a PNG -- even if the original file is a PNG, since we might end up with
@@ -573,8 +574,7 @@ bool ProjectSettings::AddSvgBundleImage(const ttlib::cstr& description, ttlib::c
     wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
     m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
     auto embed = m_map_embedded[path.filename().c_str()].get();
-    embed->array_name = path.filename();
-    embed->array_name.Replace(".", "_", true);
+    InitializeArrayName(embed, path.filename());
     embed->form = form;
 
     size_t org_size = (stream.GetLength() & 0xFFFFFFFF);

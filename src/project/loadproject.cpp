@@ -302,6 +302,24 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                             }
                             break;
 
+                        case type_image:
+                            {
+                                ttlib::multistr parts(iter.value(), ';', tt::TRIM::both);
+                                if (parts.size() < 3)
+                                {
+                                    prop->set_value(iter.value());
+                                }
+                                else
+                                {
+                                    parts[1].backslashestoforward();
+                                    ttlib::cstr description(parts[0]);
+                                    description << ';' << parts[1];
+                                    if (parts[0].is_sameprefix("SVG"))
+                                        description << ';' << parts[2];
+                                    prop->set_value(description);
+                                }
+                            }
+
                         default:
                             prop->set_value(iter.value());
                     }

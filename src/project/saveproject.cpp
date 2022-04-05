@@ -1,9 +1,11 @@
 //////////////////////////////////////////////////////////////////////////
 // Purpose:   Save a wxUiEditor project file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
+
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
 #include "mainapp.h"    // App -- Main application class
 #include "node.h"       // Node class
@@ -42,7 +44,30 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
             if (iter.type() == type_bool)
                 attr.set_value(iter.as_bool());
             else
-                attr.set_value(value.c_str());
+            {
+                if (iter.isType(type_image) || iter.isType(type_animation))
+                {
+                    // Normalize using forward slashes, no spaces after ';' and no size info unless it is an SVG file
+
+                    ttlib::multistr parts(value, ';', tt::TRIM::both);
+                    if (parts.size() < 2)
+                        continue;
+
+                    ttlib::cstr description(parts[0]);
+                    parts[1].backslashestoforward();
+                    description << ';' << parts[1];
+
+                    if (parts.size() > 2 && parts[0].is_sameprefix("SVG"))
+                    {
+                        description << ';' << parts[2];
+                    }
+                    attr.set_value(description.c_str());
+                }
+                else
+                {
+                    attr.set_value(value.c_str());
+                }
+            }
         }
         else
         {

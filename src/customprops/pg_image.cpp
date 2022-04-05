@@ -61,11 +61,8 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
 
-    if (!m_isEmbeddedImage)
-    {
-        AddPrivateChild(new CustomPointProperty("default size for SVG", prop, CustomPointProperty::type_SVG));
-        Item(IndexSize)->SetHelpString("Sets the default size to pass to wxBitmapBundle. Only used by SVG files.");
-    }
+    AddPrivateChild(new CustomPointProperty("Size", prop, CustomPointProperty::type_SVG));
+    Item(IndexSize)->SetHelpString("Default size -- ignored unless it's a SVG file.");
 }
 
 void PropertyGrid_Image::RefreshChildren()
@@ -156,10 +153,7 @@ void PropertyGrid_Image::RefreshChildren()
 
     Item(IndexType)->SetValue(m_img_props.type.wx_str());
     Item(IndexImage)->SetValue(m_img_props.image.wx_str());
-    if (!m_isEmbeddedImage)
-    {
-        Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
-    }
+    Item(IndexSize)->SetValue(m_img_props.CombineDefaultSize());
 }
 
 void PropertyGrid_Image::SetAutoComplete()
@@ -263,7 +257,6 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
             break;
 
         case IndexSize:
-            if (img_props.type == "SVG")
             {
                 auto u8_value = childValue.GetString().utf8_string();
                 ttlib::multiview mstr(u8_value, ',');

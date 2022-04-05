@@ -21,6 +21,7 @@ namespace pugi
 class MainFrame;
 class ProjectSettings;
 class ImportXML;
+struct ImageBundle;
 
 // Current version of wxUiEditor project files
 constexpr const auto curWxuiMajorVer = 1;
@@ -62,6 +63,7 @@ public:
 
     wxImage GetImage(const ttlib::cstr& description);
     wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
+    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr);
 
     ProjectSettings* GetProjectSettings() { return m_pjtSettings; };
 

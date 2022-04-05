@@ -7,10 +7,11 @@
 
 #include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
 
-#include "img_props.h"  // ImageProperties
-#include "mainapp.h"    // App -- Main application class
-#include "node.h"       // Node -- Node class
-#include "utils.h"      // Utility functions that work with properties
+#include "img_props.h"    // ImageProperties
+#include "mainapp.h"      // App -- Main application class
+#include "node.h"         // Node -- Node class
+#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"        // Utility functions that work with properties
 
 void ImageProperties::InitValues(const char* value)
 {
@@ -31,8 +32,16 @@ void ImageProperties::InitValues(const char* value)
         }
         else
         {
-            m_size.x = -1;
-            m_size.y = -1;
+            auto img_bundle = wxGetApp().GetPropertyImageBundle(value);
+            if (img_bundle)
+            {
+                m_size = img_bundle->bundle.GetDefaultSize();
+            }
+            else
+            {
+                m_size.x = -1;
+                m_size.y = -1;
+            }
         }
     }
 }
@@ -54,10 +63,10 @@ ttlib::cstr ImageProperties::CombineValues()
     }
 
     ttlib::cstr value;
-
-    // REVIEW: [KeyWorks - 03-11-2022] Why are we still adding the size? That's only used for SVG images.
-
-    value << type << ';' << image << ";[" << m_size.x << ',' << m_size.y << "]";
+    image.backslashestoforward();
+    value << type << ';' << image;
+    if (type == "SVG")
+        value << ";[" << m_size.x << ',' << m_size.y << "]";
     return value;
 }
 

@@ -15,12 +15,6 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			<option name=".hxx" />
 			.h
 		</property>
-		<property name="compiler_standard" type="option" help="Specifies the minimum compiler standard to use. If set to to higher then C++ 11 and code is generated that requires that standard, then a conditional block will be generated to prevent compilation with an older compiler.\n\nIf set to C++17 or higher, embedded images will be created with an inline keyword.">
-			<option name="C++ 11" />
-			<option name="C++ 17" />
-			<option name="C++ 20" />
-			C++ 11
-		</property>
 		<property name="wxWidgets_version" type="option" help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
 			<option name="3.1" />
 			<option name="3.2" />

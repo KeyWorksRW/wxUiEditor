@@ -80,13 +80,6 @@ R"===(//////////////////////////////////////////////////////////////////////////
 
 )===";
 
-inline constexpr const auto txt_CompilaerC17Required = R"===(
-#if !(__cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L))
-    #error "A C++17 or later compatible compiler is required."
-#endif
-
-)===";
-
 // clang-format on
 
 std::map<wxBitmapType, std::string> g_map_handlers;
@@ -341,11 +334,6 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                   return (a->array_name.compare(b->array_name) < 0);
               });
 
-    if (m_embedded_images.size() && wxGetApp().GetCompilerVersion() != compiler_standard::c11)
-    {
-        m_source->writeLine(txt_CompilaerC17Required, false);
-    }
-
     if (m_panel_type != HDR_PANEL)
     {
         if (!img_include_set.empty())
@@ -521,10 +509,6 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 m_source->writeLine();
                 ttlib::cstr code;
                 code.reserve(max_image_line_length + 16);
-                if (wxGetApp().GetCompilerVersion() != compiler_standard::c11)
-                {
-                    code << "inline ";
-                }
                 // SVG images store the original size in the high 32 bits
                 size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
                 code << "const unsigned char " << iter_array->array_name << '[' << max_pos << "] {";

@@ -42,7 +42,7 @@ wxBitmapBundle LoadSVG(EmbeddedImage* embed);
 
 inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
 {
-    ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+    ttlib::multiview parts(description, ';', tt::TRIM::both);
     ASSERT(parts.size() > 1)
 
     ttlib::cstr lookup_str;

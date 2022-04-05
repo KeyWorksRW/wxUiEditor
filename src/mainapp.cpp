@@ -268,6 +268,11 @@ wxBitmapBundle App::GetBitmapBundle(const ttlib::cstr& description, Node* node)
         return GetInternalImage("unknown");
 }
 
+const ImageBundle* App::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
+{
+    return m_pjtSettings->GetPropertyImageBundle(description, node);
+}
+
 ttString App::GetArtDirectory()
 {
     if (m_project->HasValue(prop_art_directory))

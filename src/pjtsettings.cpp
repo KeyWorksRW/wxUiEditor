@@ -185,7 +185,13 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
 
 void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
 {
-    auto lookup_str = ConvertToLookup(description);
+    ttlib::multiview parts(description, ';', tt::TRIM::both);
+    if (parts.size() < 2)
+        return;
+
+    ttlib::cstr lookup_str;
+    lookup_str << parts[0] << ';' << parts[1].filename();
+
     auto result = m_bundles.find(lookup_str);
     if (result == m_bundles.end())
     {
@@ -217,6 +223,15 @@ void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
 
 wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
 {
+    ttlib::multiview parts(description, ';', tt::TRIM::both);
+    if (parts.size() < 2)
+    {
+        return GetInternalImage("unknown");
+    }
+
+    ttlib::cstr lookup_str;
+    lookup_str << parts[0] << ';' << parts[1].filename();
+
     if (auto result = m_bundles.find(ConvertToLookup(description)); result != m_bundles.end())
     {
         return result->second.bundle;
@@ -232,7 +247,16 @@ wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& descr
 
 const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
 {
-    if (auto result = m_bundles.find(ConvertToLookup(description)); result != m_bundles.end())
+    ttlib::multiview parts(description, ';', tt::TRIM::both);
+    if (parts.size() < 2)
+    {
+        return nullptr;
+    }
+
+    ttlib::cstr lookup_str;
+    lookup_str << parts[0] << ';' << parts[1].filename();
+
+    if (auto result = m_bundles.find(lookup_str); result != m_bundles.end())
     {
         return &result->second;
     }

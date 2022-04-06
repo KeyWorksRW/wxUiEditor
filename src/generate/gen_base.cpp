@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Src and Hdr files for the Base Class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1735,18 +1735,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
     {
         if (result.value().size())
         {
-            if (node->isGen(gen_wxButton) && node->HasValue(prop_bitmap))
-            {
-                m_source->writeLine(result.value(), indent::auto_keep_whitespace);
-            }
-            else if ((node->isGen(gen_wxMenuItem) || node->isGen(gen_submenu)) && node->HasValue(prop_bitmap))
-            {
-                m_source->writeLine(result.value(), indent::auto_keep_whitespace);
-            }
-            else
-            {
-                m_source->writeLine(result.value(), auto_indent);
-            }
+            m_source->writeLine(result.value(), auto_indent);
         }
     }
 

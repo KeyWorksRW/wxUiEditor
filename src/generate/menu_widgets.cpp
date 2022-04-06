@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,7 @@
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator -- NodeCreator class
 #include "utils.h"         // Utility functions that work with properties
+#include "write_code.h"    // Write code to Scintilla or file
 
 #include "menu_widgets.h"
 
@@ -399,12 +400,13 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenAdditionalCode(GenEnum::GenCodeT
     return code;
 }
 
-std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
 
     if (node->HasValue(prop_bitmap))
     {
+        auto_indent = indent::auto_keep_whitespace;
         ttlib::cstr bundle_code;
         bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
         if (is_code_block)
@@ -510,13 +512,15 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
     bool has_bitmap = node->HasValue(prop_bitmap);
 
     if (has_bitmap)
     {
+        auto_indent = indent::auto_keep_whitespace;
+
         bool is_old_widgets = (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1");
         if (is_old_widgets)
         {

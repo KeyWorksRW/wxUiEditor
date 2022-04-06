@@ -675,7 +675,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbun
     }
     else
     {
-        code << "GetImageFromArray(";
+        code << "wxueImage(";
 
         ttlib::cstr name(parts[1].filename());
         name.remove_extension();
@@ -793,7 +793,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         {
             if (bundle->lst_filenames.size() == 1)
             {
-                code << "wxBitmapBundle::FromBitmap(GetImageFromArray(";
+                code << "wxBitmapBundle::FromBitmap(wxueImage(";
                 ttlib::cstr name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
@@ -811,7 +811,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
             }
             else if (bundle->lst_filenames.size() == 2)
             {
-                code << "wxBitmapBundle::FromBitmaps(GetImageFromArray(";
+                code << "wxBitmapBundle::FromBitmaps(wxueImage(";
                 ttlib::cstr name(bundle->lst_filenames[0].filename());
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
@@ -824,7 +824,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                         name = "wxue_img::" + embed->array_name;
                     }
                 }
-                code << name << ", sizeof(" << name << ")), GetImageFromArray(";
+                code << name << ", sizeof(" << name << ")), wxueImage(";
 
                 name = bundle->lst_filenames[1].filename();
                 name.remove_extension();
@@ -856,7 +856,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                             name = "wxue_img::" + embed->array_name;
                         }
                     }
-                    code << "\t\t\tbitmaps.push_back(GetImageFromArray(" << name << ", sizeof(" << name << ")));\n";
+                    code << "\t\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
                 }
 
                 // Return true to indicate a code block was generated
@@ -926,7 +926,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
                     name = "wxue_img::" + embed->array_name;
                 }
             }
-            code << "\t\tbitmaps.push_back(GetImageFromArray(" << name << ", sizeof(" << name << ")));\n";
+            code << "\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
         }
     }
     if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")

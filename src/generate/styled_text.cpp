@@ -155,7 +155,7 @@ std::map<std::string, int> g_stc_lexers = {
 inline constexpr const auto txt_styled_sample = R"===(
 // Sample text so that you can view effects of various settings
 
-inline wxImage GetImageFromArray(const unsigned char* long_parameter_name,size_t another_long_parameter_size_data)
+inline wxImage wxueImage(const unsigned char* long_parameter_name,size_t another_long_parameter_size_data)
 {
     wxMemoryInputStream strm(another_long_parameter_size_data,size_data);
     {

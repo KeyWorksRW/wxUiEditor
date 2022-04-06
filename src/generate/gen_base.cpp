@@ -36,9 +36,9 @@ using namespace GenEnum;
 
 // clang-format off
 
-inline constexpr const auto txt_GetImageFromArrayFunction = R"===(
+inline constexpr const auto txt_wxueImageFunction = R"===(
 // Convert a data array into a wxImage
-inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -419,7 +419,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
             if (m_NeedHeaderFunction)
             {
                 ttlib::textfile function;
-                function.ReadString(txt_GetImageFromArrayFunction);
+                function.ReadString(txt_wxueImageFunction);
                 for (auto& iter: function)
                 {
                     m_source->writeLine(iter, indent::none);
@@ -565,7 +565,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
                 if (form_node->isType(type_images))
                 {
                     ttlib::textfile function;
-                    function.ReadString(txt_GetImageFromArrayFunction);
+                    function.ReadString(txt_wxueImageFunction);
                     for (auto& iter: function)
                     {
                         m_header->write("\t");

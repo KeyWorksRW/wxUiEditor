@@ -971,32 +971,66 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
         // code more readable.
 
         code << "\n\t{";
-        code << "\n\t\tauto img_list = new wxImageList;";
+        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        {
+            code << "\n#if wxCHECK_VERSION(3, 1, 6)";
+        }
 
-        size_t image_index = 0;
+        code << "\n\t\twxBookCtrlBase::Images bundle_list;";
         for (auto& child_node: node->GetChildNodePtrs())
         {
-            // Note: when we generate the code, we could look at the actual image and determine whether it's already
-            // the correct size and only scale it if needed. However, that requires the user to know to regenerate
-            // the code any time the image is changed to ensure it has the correct dimensions.
-
             if (child_node->HasValue(prop_bitmap))
             {
-                code << "\n\t\tauto img_" << image_index << " = ";
-                code << GenerateBitmapCode(child_node->prop_as_string(prop_bitmap)) << ";";
-                code << "\n\t\timg_list->Add(img_" << image_index;
-                if (child_node->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
-                    code << ".ConvertToImage()";
-                code << ");";
-                ++image_index;
-            }
-            if (node->isGen(gen_wxTreebook))
-            {
-                // This is a recursive function that will handle unlimited nesting
-                AddTreebookImageCode(code, child_node.get(), image_index);
+                auto bundle_code = GenerateBundleCode(child_node->prop_as_string(prop_bitmap));
+                if (bundle_code[0] == '{')
+                {
+                    code << "\n\t\t" << bundle_code;
+                    code << "\n\t\t\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";
+                    code << "\n\t\t}";
+                }
+                else
+                {
+                    code << "\n\t\tbundle_list.push_back(";
+                    code << bundle_code;
+                    code << ");";
+                }
             }
         }
-        code << "\n\t\t" << node->get_node_name() << "->AssignImageList(img_list);";
+        code << "\n\t\t" << node->get_node_name() << "->SetImages(bundle_list);";
+
+        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        {
+            code << "\n\n#else  // older version of wxWidgets that doesn't support bitmap bundles\n";
+
+            code << "\n\t\tauto img_list = new wxImageList;";
+
+            size_t image_index = 0;
+            for (auto& child_node: node->GetChildNodePtrs())
+            {
+                // Note: when we generate the code, we could look at the actual image and determine whether it's already
+                // the correct size and only scale it if needed. However, that requires the user to know to regenerate
+                // the code any time the image is changed to ensure it has the correct dimensions.
+
+                if (child_node->HasValue(prop_bitmap))
+                {
+                    code << "\n\t\tauto img_" << image_index << " = ";
+                    code << GenerateBitmapCode(child_node->prop_as_string(prop_bitmap)) << ";";
+                    code << "\n\t\timg_list->Add(img_" << image_index;
+                    if (child_node->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
+                        code << ".ConvertToImage()";
+                    code << ");";
+                    ++image_index;
+                }
+                if (node->isGen(gen_wxTreebook))
+                {
+                    // This is a recursive function that will handle unlimited nesting
+                    AddTreebookImageCode(code, child_node.get(), image_index);
+                }
+            }
+            code << "\n\t\t" << node->get_node_name() << "->AssignImageList(img_list);";
+
+            code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
+        }
         code << "\n\t}";
     }
 }

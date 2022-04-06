@@ -77,7 +77,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code);
 ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbundle = false,
                                const ttlib::cstr* pDpiWindow = nullptr);
 
-// If a wxVector() is required to create the wxBitmapBundle, this will generate the opening
+// If a wxVector is required to create the wxBitmapBundle, this will generate the opening
 // brace and the vector code and returns true with code filled in.
 //
 // Call this before calling GenerateBundleCode()
@@ -86,7 +86,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code);
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
 // function.
 //
-// Returns "wxNullBitmap" if description is empty
+// If the returned string starts with a '{' character, then a wxVector was generated,
 ttlib::cstr GenerateBundleCode(const ttlib::cstr& description);
 
 ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name);

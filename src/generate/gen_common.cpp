@@ -820,7 +820,7 @@ ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
 
                 if (parts[IndexType].is_sameprefix("Embed"))
                 {
-                    auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[1]);
+                    auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
                     {
                         name = "wxue_img::" + embed->array_name;
@@ -844,7 +844,11 @@ ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
             }
             else
             {
-                code << "\n\t\t[] {\n\t\t\twxVector<wxBitmap> bitmaps;\n";
+                // Caller will need to check for a return that starts with a { and use the bitmaps local variable as well as
+                // adding the closing brace. It's a bit of a hack, but unless the caller knows how many sub-images there are,
+                // it's the only way.
+
+                code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
                 {
                     ttlib::cstr name(iter.filename());
@@ -860,8 +864,6 @@ ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
                     }
                     code << "\t\t\tbitmaps.push_back(GetImageFromArray(" << name << ", sizeof(" << name << ")));\n";
                 }
-
-                code << "\t\t\treturn wxBitmapBundle::FromBitmaps(bitmaps);\n\t\t}";
             }
         }
         else

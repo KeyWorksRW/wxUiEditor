@@ -180,7 +180,10 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
     ttlib::cstr code;
     if (node->HasValue(prop_bitmap))
     {
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+        if (GenBtnBimapCode(node, code, true))
+        {
+            auto_indent = indent::auto_keep_whitespace;
+        }
     }
     else if (node->HasValue(prop_start_colour) && node->HasValue(prop_end_colour))
     {

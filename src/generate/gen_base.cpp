@@ -1739,6 +1739,10 @@ void BaseCodeGenerator::GenSettings(Node* node)
             {
                 m_source->writeLine(result.value(), indent::auto_keep_whitespace);
             }
+            else if ((node->isGen(gen_wxMenuItem) || node->isGen(gen_submenu)) && node->HasValue(prop_bitmap))
+            {
+                m_source->writeLine(result.value(), indent::auto_keep_whitespace);
+            }
             else
             {
                 m_source->writeLine(result.value(), auto_indent);

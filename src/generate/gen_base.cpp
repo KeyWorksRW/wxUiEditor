@@ -1734,7 +1734,16 @@ void BaseCodeGenerator::GenSettings(Node* node)
     if (auto result = generator->GenSettings(node, auto_indent); result)
     {
         if (result.value().size())
-            m_source->writeLine(result.value(), auto_indent);
+        {
+            if (node->isGen(gen_wxButton) && node->HasValue(prop_bitmap))
+            {
+                m_source->writeLine(result.value(), indent::auto_keep_whitespace);
+            }
+            else
+            {
+                m_source->writeLine(result.value(), auto_indent);
+            }
+        }
     }
 
     // If the node has a window_extra_style property, then generate any possible validator settings as

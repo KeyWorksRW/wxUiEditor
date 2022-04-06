@@ -76,6 +76,10 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 
 bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
+    // In case the widget hasn't been fully specified yet
+    if (!widget || !node || !prop)
+        return false;
+
     // We do not support changing the "markup" property because while the control displays correctly when markup is set,
     // it does not revert when markup is cleared (at least on Windows where markup controls whether a generic or native
     // version of the button is displayed).
@@ -144,6 +148,20 @@ std::optional<ttlib::cstr> ButtonGenerator::GenEvents(NodeEvent* event, const st
     return GenEventCode(event, class_name);
 }
 
+struct BTN_BMP_TYPES
+{
+    GenEnum::PropName prop_name;
+    const char* function_name;
+};
+
+const BTN_BMP_TYPES btn_bmp_types[] = {
+    { prop_bitmap, "SetBitmap" },
+    { prop_disabled_bmp, "SetBitmapDisabled" },
+    { prop_pressed_bmp, "SetBitmapPressed" },
+    { prop_focus_bmp, "SetBitmapFocus" },
+    { prop_current, "SetBitmapCurrent" },
+};
+
 std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
@@ -173,11 +191,10 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
 
     if (node->HasValue(prop_bitmap))
     {
+        bool has_additional_bitmaps = (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
+                                       node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
         if (code.size())
             code << '\n';
-
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true)
-             << ");";
 
         if (node->HasValue(prop_position))
         {
@@ -194,36 +211,110 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& /* a
             code << node->get_node_name() << "->SetBitmapMargins(" << size.GetWidth() << ", " << size.GetHeight() << ");";
         }
 
-        if (node->HasValue(prop_disabled_bmp))
+        bool is_old_widgets = (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1");
+        if (is_old_widgets)
         {
-            if (code.size())
+            if (code.size() && !(code.back() == '\n'))
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapDisabled("
-                 << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp), true) << ");";
+            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
         }
 
-        if (node->HasValue(prop_pressed_bmp))
+        if (has_additional_bitmaps)
         {
-            if (code.size())
+            if (code.size() && !(code.back() == '\n'))
                 code << '\n';
-            code << node->get_node_name() << "->SetBitmapPressed("
-                 << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp), true) << ");";
+            code << "{\n";
         }
 
-        if (node->HasValue(prop_focus_bmp))
+        ttlib::cstr bundle_code;
+        bool is_vector_generated = false;
+
+        for (auto& iter: btn_bmp_types)
         {
-            if (code.size())
-                code << '\n';
-            code << node->get_node_name() << "->SetBitmapFocus("
-                 << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp), true) << ");";
+            if (node->HasValue(iter.prop_name))
+            {
+                bundle_code.clear();
+                bool is_code_block = GenerateBundleCode(node->prop_as_string(iter.prop_name), bundle_code);
+                if (is_code_block)
+                {
+                    if (is_vector_generated)
+                    {
+                        code << "\n\n\tbitmaps.clear();";
+                        // find end of wxVector<wxBitmap> bitmaps;
+                        bundle_code.erase(0, bundle_code.find(';'));
+                    }
+                    else
+                    {
+                        is_vector_generated = true;
+                    }
+
+                    // GenerateBundleCode assumes an indent within an indent
+                    bundle_code.Replace("\t\t\t", "\t", true);
+                    // if has_additional_bitmaps is true, we already have an opening brace
+                    code << bundle_code.c_str() + (has_additional_bitmaps ? 1 : 0);
+                    code << "\t" << node->get_node_name() << "->" << iter.function_name;
+                    code << "(wxBitmapBundle::FromBitmaps(bitmaps));";
+
+                    if (!has_additional_bitmaps)
+                    {
+                        code << "\n}";
+                    }
+                }
+                else
+                {
+                    if (code.size() && !(code.back() == '\n'))
+                        code << '\n';
+                    code << "\t" << node->get_node_name() << "->" << iter.function_name << "(" << bundle_code << ");";
+                }
+            }
         }
 
-        if (node->HasValue(prop_current))
+        if (has_additional_bitmaps)
         {
-            if (code.size())
-                code << '\n';
-            code << node->get_node_name() << "->SetBitmapCurrent("
-                 << GenerateBitmapCode(node->prop_as_string(prop_current), true) << ");";
+            code << "\n}";
+        }
+
+        /////////// wxWidgets 3.1 code ///////////
+
+        if (is_old_widgets)
+        {
+            code << "\n#else\n";
+            code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true)
+                 << ");";
+
+            if (node->HasValue(prop_disabled_bmp))
+            {
+                if (code.size())
+                    code << '\n';
+                code << node->get_node_name() << "->SetBitmapDisabled("
+                     << GenerateBitmapCode(node->prop_as_string(prop_disabled_bmp), true) << ");";
+            }
+
+            if (node->HasValue(prop_pressed_bmp))
+            {
+                if (code.size())
+                    code << '\n';
+                code << node->get_node_name() << "->SetBitmapPressed("
+                     << GenerateBitmapCode(node->prop_as_string(prop_pressed_bmp), true) << ");";
+            }
+
+            if (node->HasValue(prop_focus_bmp))
+            {
+                if (code.size())
+                    code << '\n';
+                code << node->get_node_name() << "->SetBitmapFocus("
+                     << GenerateBitmapCode(node->prop_as_string(prop_focus_bmp), true) << ");";
+            }
+
+            if (node->HasValue(prop_current))
+            {
+                if (code.size())
+                    code << '\n';
+                code << node->get_node_name() << "->SetBitmapCurrent("
+                     << GenerateBitmapCode(node->prop_as_string(prop_current), true) << ");";
+            }
+
+            code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
         }
     }
     return code;

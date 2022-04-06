@@ -48,12 +48,53 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
             code << "\n\tSetBitmapBackgroundColour(" << GenerateColourCode(node, prop_bmp_background_colour) << ");";
     }
 
-    code << "\n\tCreate(parent, id, title, ";
     if (node->HasValue(prop_bitmap))
-        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+    {
+        code << '\n';
+        ttlib::cstr bundle_code;
+        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+        if (is_code_block)
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+            }
+            code << '\t' << bundle_code;
+            code << "\n\tCreate(parent, id, title, wxBitmapBundle::FromBitmaps(bitmaps)";
+            code << ", pos, style);";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else";
+                code << "\n\tCreate(parent, id, title, ";
+                code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+                code << ", pos, style);";
+                code << "\n#endif";
+            }
+            code << "\n\t}";
+        }
+        else
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "#if wxCHECK_VERSION(3, 1, 6)";
+            }
+            code << "\n\tCreate(parent, id, title, ";
+            code << bundle_code;
+            code << ", pos, style);";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else";
+                code << "\n\tCreate(parent, id, title, ";
+                code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+                code << ", pos, style);";
+                code << "\n#endif";
+            }
+        }
+    }
     else
-        code << "wxNullBitmap";
-    code << ", pos, style);";
+    {
+        code << "\n\tCreate(parent, id, title, wxNullBitmap, pos, style);";
+    }
 
     return code;
 }
@@ -220,22 +261,58 @@ wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent)
 std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
-
-    if (node->IsLocal())
-        code << "auto ";
-    code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this";
-
-    if (node->HasValue(prop_bitmap))
+    if (!node->HasValue(prop_bitmap))
     {
-        code << ", nullptr, nullptr, ";
-
-        if (node->HasValue(prop_bitmap))
-            code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
-        else
-            code << "wxNullBitmap";
+        if (node->IsLocal())
+            code << "auto ";
+        code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this);";
     }
+    else
+    {
+        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        {
+            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+        }
+        ttlib::cstr bundle_code;
+        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+        if (is_code_block)
+        {
+            // GenerateBundleCode assumes an indent within an indent
+            bundle_code.Replace("\t\t\t", "\t\t", true);
 
-    code << ");";
+            code << '\t' << bundle_code << "\t\t";
+            if (node->IsLocal())
+                code << "auto ";
+            code << node->prop_as_string(prop_var_name)
+                 << " = new wxWizardPageSimple(this, nullptr, nullptr, wxBitmapBundle::FromBitmaps(bitmaps));";
+            code << "\n\t}";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n\t";
+                if (node->IsLocal())
+                    code << "auto ";
+                code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this, nullptr, nullptr, ";
+                code << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+                code << "\n#endif";
+            }
+        }
+        else
+        {
+            if (node->IsLocal())
+                code << "auto ";
+            code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this, nullptr, nullptr, ";
+            code << bundle_code << ");";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                if (node->IsLocal())
+                    code << "auto ";
+                code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this, nullptr, nullptr, ";
+                code << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+                code << "\n#endif";
+            }
+        }
+    }
 
     return code;
 }

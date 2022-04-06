@@ -1327,28 +1327,16 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     {
         if (auto result = generator->GenConstruction(form_node); result)
         {
-            if (!form_node->isGen(gen_wxWizard) || !form_node->HasValue(prop_bitmap) || m_embedded_images.empty())
+            if (form_node->isGen(gen_wxWizard) && form_node->HasValue(prop_bitmap))
             {
-                m_source->writeLine(result.value(), indent::none);
+                m_source->Indent();
+                GenerateHandlers();
+                m_source->Unindent();
             }
-            else
-            {
-                // Before the wizard code calls Create, we need to be certain any embedded image handler type got loaded
-                ttlib::multiview lines(result.value(), '\n');
-                for (auto& iter_line: lines)
-                {
-                    m_source->writeLine(iter_line, indent::none);
-                    if (iter_line.front() == '{')
-                    {
-                        m_source->Indent();
-                        GenerateHandlers();
-                        m_source->Unindent();
-                    }
-                }
-            }
-        }
-        m_source->Indent();
 
+            m_source->writeLine(result.value(), indent::none);
+            m_source->Indent();
+        }
         size_t auto_indent = indent::auto_no_whitespace;
         if (auto result = generator->GenSettings(form_node, auto_indent); result)
         {

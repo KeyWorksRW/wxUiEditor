@@ -695,14 +695,12 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbun
     return code;
 }
 
-ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
+bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
 {
-    ttlib::cstr code;
-
     if (description.empty())
     {
         code << "wxNullBitmap";
-        return code;
+        return false;
     }
 
     ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
@@ -710,7 +708,7 @@ ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
     if (parts[IndexImage].empty())
     {
         code << "wxNullBitmap";
-        return code;
+        return false;
     }
 
     if (parts[IndexType].contains("Art"))
@@ -783,7 +781,7 @@ ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
         {
             FAIL_MSG(ttlib::cstr() << description << " not embedded!")
             code << "wxNullBitmap";
-            return code;
+            return false;
         }
         ttlib::cstr name = "wxue_img::" + embed->array_name;
         code << "GetBundleFromSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
@@ -844,10 +842,6 @@ ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
             }
             else
             {
-                // Caller will need to check for a return that starts with a { and use the bitmaps local variable as well as
-                // adding the closing brace. It's a bit of a hack, but unless the caller knows how many sub-images there are,
-                // it's the only way.
-
                 code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
                 {
@@ -864,6 +858,9 @@ ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
                     }
                     code << "\t\t\tbitmaps.push_back(GetImageFromArray(" << name << ", sizeof(" << name << ")));\n";
                 }
+
+                // Return true to indicate a code block was generated
+                return true;
             }
         }
         else
@@ -875,7 +872,7 @@ ttlib::cstr GenerateBundleCode(const ttlib::cstr& description)
         }
     }
 
-    return code;
+    return false;
 }
 
 bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)

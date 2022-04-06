@@ -84,10 +84,11 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbun
 bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code);
 
 // Generates the code necessary to create a wxBitmapBundle used to pass as an argument to a
-// function.
+// function, or the start of a code block containing: { wxVector<wxBitmap> bitmaps;
 //
-// If the returned string starts with a '{' character, then a wxVector was generated,
-ttlib::cstr GenerateBundleCode(const ttlib::cstr& description);
+// Returns true if the returned string starts with a '{' character and a wxVector was
+// generated.
+bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code);
 
 ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name);
 

@@ -390,9 +390,11 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
 
         if (!is_vector_code)
         {
+            ttlib::cstr bundle_code;
             if (wxGetProject().prop_as_string(prop_wxWidgets_version) != "3.1")
             {
-                code << GenerateBundleCode(description);
+                GenerateBundleCode(description, bundle_code);
+                code << bundle_code;
             }
             else
             {
@@ -400,7 +402,8 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
                 {
                     code.insert(0, "\t");
                     code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
-                    code << GenerateBundleCode(description);
+                    GenerateBundleCode(description, bundle_code);
+                    code << bundle_code;
                     GeneratePosSizeFlags(node, code);
                 }
 

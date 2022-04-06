@@ -981,8 +981,8 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
         {
             if (child_node->HasValue(prop_bitmap))
             {
-                auto bundle_code = GenerateBundleCode(child_node->prop_as_string(prop_bitmap));
-                if (bundle_code[0] == '{')
+                ttlib::cstr bundle_code;
+                if (GenerateBundleCode(child_node->prop_as_string(prop_bitmap), bundle_code))
                 {
                     code << "\n\t\t" << bundle_code;
                     code << "\n\t\t\tbundle_list.push_back(wxBitmapBundle::FromBitmaps(bitmaps));";

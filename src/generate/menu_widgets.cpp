@@ -427,8 +427,8 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* 
                 if (node->IsLocal())
                     code << "auto ";
 
-                code << node->get_node_name() << "Item->SetBitmap("
-                     << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true) << ");";
+                code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+                     << ");";
                 code << "\n#endif";
             }
         }
@@ -447,8 +447,8 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* 
                 if (node->IsLocal())
                     code << "auto ";
 
-                code << node->get_node_name() << "Item->SetBitmap("
-                     << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true) << ");";
+                code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+                     << ");";
                 code << "\n#endif";
             }
         }
@@ -590,13 +590,13 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /*
                 if (node->HasValue(prop_unchecked_bitmap))
                 {
                     code << node->get_node_name() << "->SetBitmaps("
-                         << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true);
-                    code << ", " << GenerateBitmapCode(node->prop_as_string(prop_unchecked_bitmap), true) << ");";
+                         << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+                    code << ", " << GenerateBitmapCode(node->prop_as_string(prop_unchecked_bitmap)) << ");";
                 }
                 else
                 {
-                    code << node->get_node_name() << "->SetBitmap("
-                         << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true) << ");";
+                    code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+                         << ");";
                 }
                 code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
             }
@@ -620,8 +620,8 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /*
             {
                 code << "\n#else\n";
 
-                code << node->get_node_name() << "->SetBitmap("
-                     << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true) << ");";
+                code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+                     << ");";
                 code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
             }
         }

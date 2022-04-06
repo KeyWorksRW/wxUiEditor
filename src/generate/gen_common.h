@@ -74,8 +74,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code);
 // return either a bitmap or an image if scaling is requested. XPM returns wxImage and HDR
 // returns wxueImage() (which is a wxImage). pDpiWindow is the name of the window
 // to use for wxBitmapBundle::GetBitmapFrom()
-ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbundle = false,
-                               const ttlib::cstr* pDpiWindow = nullptr);
+ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description);
 
 // If a wxVector is required to create the wxBitmapBundle, this will generate the opening
 // brace and the vector code and returns true with code filled in.

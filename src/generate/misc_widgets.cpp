@@ -111,7 +111,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
     if (node->HasValue(prop_inactive_bitmap))
     {
         code << "\n\t" << node->get_node_name() << "->SetInactiveBitmap(";
-        code << GenerateBitmapCode(node->prop_as_string(prop_inactive_bitmap), true) << ");";
+        code << GenerateBitmapCode(node->prop_as_string(prop_inactive_bitmap)) << ");";
     }
 
     return code;
@@ -180,8 +180,7 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
     ttlib::cstr code;
     if (node->HasValue(prop_bitmap))
     {
-        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true)
-             << ");";
+        code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
     }
     else if (node->HasValue(prop_start_colour) && node->HasValue(prop_end_colour))
     {
@@ -411,7 +410,7 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
                 if (use_generic_version)
                 {
                     // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
-                    code << GenerateBitmapCode(description, true);
+                    code << GenerateBitmapCode(description);
                 }
                 else
                 {
@@ -439,7 +438,7 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
                 if (use_generic_version)
                 {
                     // wxGenericStaticBitmap expects a wxBitmap, so it's fine to pass it a wxImage
-                    code << GenerateBitmapCode(description, true);
+                    code << GenerateBitmapCode(description);
                 }
                 else
                 {

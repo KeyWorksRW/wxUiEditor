@@ -50,7 +50,7 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
 
     code << "\n\tCreate(parent, id, title, ";
     if (node->HasValue(prop_bitmap))
-        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true);
+        code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
     else
         code << "wxNullBitmap";
     code << ", pos, style);";
@@ -230,7 +230,7 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
         code << ", nullptr, nullptr, ";
 
         if (node->HasValue(prop_bitmap))
-            code << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true);
+            code << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
         else
             code << "wxNullBitmap";
     }

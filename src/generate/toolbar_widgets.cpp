@@ -592,7 +592,7 @@ ttlib::cstr ConstructTool(Node* node)
         code << "wxEmptyString";
     }
 
-    code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true);
+    code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
 
     if (!node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
     {

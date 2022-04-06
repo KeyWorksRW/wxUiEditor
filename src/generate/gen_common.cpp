@@ -595,7 +595,7 @@ ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name)
     return code;
 }
 
-ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbundle, const ttlib::cstr* pDpiWindow)
+ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
 {
     ttlib::cstr code;
 
@@ -623,43 +623,10 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbun
             art_id.erase(pos);
         }
 
-        if (is_bitmapbundle)
-        {
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
-            {
-                code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
-                code << "wxArtProvider::GetBitmapBundle(" << art_id;
-                if (art_client.size())
-                    code << ", " << art_client;
-                if (pDpiWindow)
-                    code << ").GetBitmapFrom(" << *pDpiWindow;
-                code << ')';
-
-                code << "\n#else\n\t";
-                code << "wxArtProvider::GetBitmap(" << art_id;
-                if (art_client.size())
-                    code << ", " << art_client;
-                code << ')';
-
-                code << "\n#endif\n\t";
-            }
-            else
-            {
-                code << "wxArtProvider::GetBitmapBundle(" << art_id;
-                if (art_client.size())
-                    code << ", " << art_client;
-                if (pDpiWindow)
-                    code << ").GetBitmapFrom(" << *pDpiWindow;
-                code << ')';
-            }
-        }
-        else
-        {
-            code << "wxArtProvider::GetBitmap(" << art_id;
-            if (art_client.size())
-                code << ", " << art_client;
-            code << ')';
-        }
+        code << "wxArtProvider::GetBitmap(" << art_id;
+        if (art_client.size())
+            code << ", " << art_client;
+        code << ')';
 
         return code;
     }

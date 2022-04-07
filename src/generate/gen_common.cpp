@@ -741,7 +741,12 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
 
     ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
-    if (parts[IndexImage].empty())
+    if (parts[IndexType].is_sameprefix("SVG"))
+    {
+        code << "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
+        return code;
+    }
+    else if (parts[IndexImage].empty())
     {
         code << "wxNullBitmap";
         return code;

@@ -34,7 +34,7 @@ EventHandlerDlg::EventHandlerDlg(wxWindow* parent, NodeEvent* event) : EventHand
     // On Windows, this saves converting the UTF16 characters to ANSI.
     m_stc->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
 
-    auto form = event->GetNode()->IsForm() ? event->GetNode() : event->GetNode()->FindParentForm();
+    auto form = event->GetNode()->get_form();
     if (form)
     {
         std::set<std::string> variables;

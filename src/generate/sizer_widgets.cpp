@@ -1045,8 +1045,7 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
     // without hitting assertion errors in debug builds, and in release builds, the Save button is positioned
     // incorrectly. Unfortunately that means we have to add the buttons one at a time if a Save button is specified.
 
-    if (node->FindParentForm()->isGen(gen_wxDialog) && !node->prop_as_bool(prop_Save) &&
-        !node->prop_as_bool(prop_ContextHelp))
+    if (node->get_form()->isGen(gen_wxDialog) && !node->prop_as_bool(prop_Save) && !node->prop_as_bool(prop_ContextHelp))
     {
         code << node->get_node_name() << " = CreateStdDialogButtonSizer(";
         ttlib::cstr flags;

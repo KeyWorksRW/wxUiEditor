@@ -1703,7 +1703,7 @@ void PropGridPanel::OnPostPropChange(CustomEvent& event)
     else if (event.GetNodeProperty()->isProp(prop_focus))
     {
         auto node = event.GetNode();
-        auto form = node->GetForm();
+        auto form = node->get_form();
         auto list = form->FindAllChildProperties(prop_focus);
         size_t count = 0;
         for (auto iter: list)

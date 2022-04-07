@@ -106,23 +106,21 @@ NodeEvent* Node::AddNodeEvent(const NodeEventInfo* info)
     return &m_events[m_events.size() - 1];
 }
 
-Node* Node::LocateAncestorType(GenType type) const noexcept
+Node* Node::get_form() noexcept
 {
-    auto parent = GetParent();
-    while (parent && !parent->isType(type))
+    if (IsForm())
     {
-        parent = parent->GetParent();
+        return this;
     }
 
-    return parent;
-}
-
-Node* Node::FindParentForm() const noexcept
-{
-    for (auto& iter: lst_form_types)
+    auto parent = GetParent();
+    while (parent)
     {
-        if (auto retObj = LocateAncestorType(iter); retObj)
-            return retObj;
+        if (parent->IsForm())
+        {
+            return parent;
+        }
+        parent = parent->GetParent();
     }
 
     return nullptr;
@@ -491,9 +489,9 @@ const ttlib::cstr& Node::get_parent_name() const
     return tt_empty_cstr;
 }
 
-const ttlib::cstr& Node::get_form_name() const
+const ttlib::cstr& Node::get_form_name()
 {
-    if (auto form = FindParentForm(); form)
+    if (auto form = get_form(); form)
     {
         return form->get_node_name();
     }
@@ -781,7 +779,7 @@ ttlib::cstr Node::GetUniqueName(const ttlib::cstr& proposed_name)
     if (IsForm())
         return {};
 
-    auto form = FindParentForm();
+    auto form = get_form();
     if (!form)
         return {};
 
@@ -827,7 +825,7 @@ bool Node::FixDuplicateName()
         return false;
     }
 
-    auto form = FindParentForm();
+    auto form = get_form();
     ASSERT(form);
     if (!form)
         return false;
@@ -884,7 +882,7 @@ void Node::FixDuplicateNodeNames(Node* form)
         }
         else
         {
-            form = FindParentForm();
+            form = get_form();
         }
 
         ASSERT(form);

@@ -103,7 +103,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCo
         }
         else
         {
-            dlg = node->FindParentForm();
+            dlg = node->get_form();
         }
 
         auto min_size = dlg->prop_as_wxSize(prop_minimum_size);
@@ -479,7 +479,7 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCod
         }
         else
         {
-            panel = node->FindParentForm();
+            panel = node->get_form();
         }
 
         auto min_size = panel->prop_as_wxSize(prop_minimum_size);

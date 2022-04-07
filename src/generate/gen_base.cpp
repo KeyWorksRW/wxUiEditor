@@ -1502,7 +1502,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             {
                 if (node->isGen(gen_wxStdDialogButtonSizer))
                 {
-                    if (node->FindParentForm()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
+                    if (node->get_form()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
                         code << node->GetParent()->get_node_name() << "->Add(CreateSeparatedSizer(" << node->get_node_name()
                              << "), ";
                     else

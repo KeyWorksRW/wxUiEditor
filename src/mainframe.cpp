@@ -1195,14 +1195,7 @@ Node* MainFrame::GetSelectedForm()
     if (!m_selected_node || m_selected_node->isGen(gen_Project))
         return nullptr;
 
-    if (m_selected_node->IsForm())
-    {
-        return m_selected_node.get();
-    }
-    else
-    {
-        return m_selected_node->FindParentForm();
-    }
+    return m_selected_node->get_form();
 }
 
 bool MainFrame::SelectNode(Node* node, bool force, bool notify)

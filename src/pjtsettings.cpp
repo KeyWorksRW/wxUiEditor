@@ -201,7 +201,7 @@ void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
 
     if (result != m_bundles.end() && result->second.lst_filenames.size())
     {
-        auto form = node->GetForm();
+        auto form = node->get_form();
         for (auto& iter: result->second.lst_filenames)
         {
             if (auto embed = GetEmbeddedImage(iter); embed)
@@ -551,7 +551,7 @@ bool ProjectSettings::CheckNode(Node* node)
 {
     bool is_changed = false;
 
-    Node* node_form = node->IsForm() ? node : node->FindParentForm();
+    Node* node_form = node->get_form();
 
     auto node_position = wxGetApp().GetProject()->GetChildPosition(node_form);
 

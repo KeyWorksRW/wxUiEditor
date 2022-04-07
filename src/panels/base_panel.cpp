@@ -202,9 +202,7 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
     if (!IsShown())
         return;
 
-    auto form = event.GetNode();
-    if (!form->IsForm())
-        form = form->FindParentForm();
+    auto form = event.GetNode()->get_form();
 
     if (form != m_cur_form)
     {

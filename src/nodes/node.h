@@ -44,6 +44,9 @@ public:
     NodeSharedPtr GetParentPtr() const noexcept { return m_parent; }
     Node* GetParent() const noexcept { return m_parent.get(); }
 
+    // Returns this if the node is a form, else walks up node tree to find the parent form.
+    Node* get_form() noexcept;
+
     void SetParent(NodeSharedPtr parent) { m_parent = parent; }
     void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
 
@@ -55,10 +58,6 @@ public:
     auto GetPropertyCount() const { return m_properties.size(); }
     auto GetEventCount() const { return m_events.size(); }
     size_t GetInUseEventCount() const;
-
-    Node* LocateAncestorType(GenEnum::GenType type) const noexcept;
-    Node* FindParentForm() const noexcept;
-    Node* GetForm() const noexcept { return FindParentForm(); }  // alias
 
     // Equivalent to AddChild(child); child->SetParent(this);
     // Returns false if child is not allowed for this node.
@@ -134,7 +133,7 @@ public:
     const ttlib::cstr& get_parent_name() const;
 
     // Finds the parent form and returns the value of the it's property "class_name"
-    const ttlib::cstr& get_form_name() const;
+    const ttlib::cstr& get_form_name();
 
     auto GetNodeDeclaration() { return m_declaration; }
 

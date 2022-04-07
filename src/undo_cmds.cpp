@@ -290,7 +290,7 @@ void ChangeSizerType::Change()
     m_parent->RemoveChild(m_old_node);
     m_old_node->SetParent(NodeSharedPtr());
     m_parent->Adopt(m_node);
-    if (auto parent_form = m_parent->FindParentForm(); parent_form)
+    if (auto parent_form = m_parent->get_form(); parent_form)
     {
         parent_form->FixDuplicateNodeNames();
     }

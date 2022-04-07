@@ -70,12 +70,16 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
 // Generate any non-default wxWindow settings
 void GenerateWindowSettings(Node* node, ttlib::cstr& code);
 
+// Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
+//
+// Set is_single to true for a non-button control.
+bool GenBtnBimapCode(Node* node, ttlib::cstr& code, bool is_single = false);
+
 // Converts bitmap property into code. Code is set to wxNullBitmap if no bitmap. Art will
 // return either a bitmap or an image if scaling is requested. XPM returns wxImage and HDR
 // returns wxueImage() (which is a wxImage). pDpiWindow is the name of the window
 // to use for wxBitmapBundle::GetBitmapFrom()
-ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description, bool is_bitmapbundle = false,
-                               const ttlib::cstr* pDpiWindow = nullptr);
+ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description);
 
 // If a wxVector is required to create the wxBitmapBundle, this will generate the opening
 // brace and the vector code and returns true with code filled in.

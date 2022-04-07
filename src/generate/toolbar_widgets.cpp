@@ -16,7 +16,7 @@
 
 #include "toolbar_widgets.h"
 
-static ttlib::cstr ConstructTool(Node* node);
+static ttlib::cstr ConstructTool(Node* node, ttlib::sview BitmapCode = "");
 
 //////////////////////////////////////////  ToolBarFormGenerator  //////////////////////////////////////////
 
@@ -357,7 +357,46 @@ void ToolBarGenerator::OnTool(wxCommandEvent& event)
 
 std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
 {
-    return ConstructTool(node);
+    if (node->HasValue(prop_bitmap))
+    {
+        ttlib::cstr code;
+        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        {
+            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+        }
+
+        ttlib::cstr bundle_code;
+        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+        if (is_code_block)
+        {
+            // GenerateBundleCode assumes an indent within an indent
+            bundle_code.Replace("\t\t\t", "\t\t", true);
+            code << '\t' << bundle_code;
+            code << '\t' << ConstructTool(node, "wxBitmapBundle::FromBitmaps(bitmaps)");
+            code << "\n\t}";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                code << ConstructTool(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
+                code << "\n#endif";
+            }
+        }
+        else
+        {
+            code << ConstructTool(node, bundle_code);
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                code << ConstructTool(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
+                code << "\n#endif";
+            }
+        }
+        return code;
+    }
+    else
+    {
+        return ConstructTool(node);
+    }
 }
 
 std::optional<ttlib::cstr> ToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
@@ -541,7 +580,46 @@ void AuiToolBarGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
 
 std::optional<ttlib::cstr> AuiToolGenerator::GenConstruction(Node* node)
 {
-    return ConstructTool(node);
+    if (node->HasValue(prop_bitmap))
+    {
+        ttlib::cstr code;
+        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        {
+            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+        }
+
+        ttlib::cstr bundle_code;
+        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+        if (is_code_block)
+        {
+            // GenerateBundleCode assumes an indent within an indent
+            bundle_code.Replace("\t\t\t", "\t\t", true);
+            code << '\t' << bundle_code;
+            code << '\t' << ConstructTool(node, "wxBitmapBundle::FromBitmaps(bitmaps)");
+            code << "\n\t}";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                code << ConstructTool(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
+                code << "\n#endif";
+            }
+        }
+        else
+        {
+            code << ConstructTool(node, bundle_code);
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                code << ConstructTool(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
+                code << "\n#endif";
+            }
+        }
+        return code;
+    }
+    else
+    {
+        return ConstructTool(node);
+    }
 }
 
 std::optional<ttlib::cstr> AuiToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
@@ -553,7 +631,7 @@ std::optional<ttlib::cstr> AuiToolGenerator::GenEvents(NodeEvent* event, const s
 
 // This is called to add a tool to either wxToolBar or wxAuiToolBar
 
-ttlib::cstr ConstructTool(Node* node)
+ttlib::cstr ConstructTool(Node* node, ttlib::sview BitmapCode)
 {
     ttlib::cstr code;
     code << '\t';
@@ -592,7 +670,14 @@ ttlib::cstr ConstructTool(Node* node)
         code << "wxEmptyString";
     }
 
-    code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true);
+    if (BitmapCode.size())
+    {
+        code << ", " << BitmapCode;
+    }
+    else
+    {
+        code << ", " << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+    }
 
     if (!node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
     {

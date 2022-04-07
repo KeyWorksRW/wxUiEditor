@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Menu component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,7 @@
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator -- NodeCreator class
 #include "utils.h"         // Utility functions that work with properties
+#include "write_code.h"    // Write code to Scintilla or file
 
 #include "menu_widgets.h"
 
@@ -399,14 +400,60 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenAdditionalCode(GenEnum::GenCodeT
     return code;
 }
 
-std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
 
     if (node->HasValue(prop_bitmap))
     {
-        code << "\t" << node->get_node_name() << "Item->SetBitmap("
-             << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true) << ");";
+        auto_indent = indent::auto_keep_whitespace;
+        ttlib::cstr bundle_code;
+        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+        if (is_code_block)
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+            }
+            // GenerateBundleCode assumes an indent within an indent
+            bundle_code.Replace("\t\t\t", "\t", true);
+            code << bundle_code;
+            code << "\t";
+            if (node->IsLocal())
+                code << "auto ";
+            code << node->get_node_name() << "Item->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));";
+            code << "\n}";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                if (node->IsLocal())
+                    code << "auto ";
+
+                code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+                     << ");";
+                code << "\n#endif";
+            }
+        }
+        else
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+            }
+            if (node->IsLocal())
+                code << "auto ";
+            code << node->get_node_name() << "Item->SetBitmap(" << bundle_code << ");";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                if (node->IsLocal())
+                    code << "auto ";
+
+                code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+                     << ");";
+                code << "\n#endif";
+            }
+        }
     }
 
     return code;
@@ -465,22 +512,122 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
+    bool has_bitmap = node->HasValue(prop_bitmap);
 
-    if (node->HasValue(prop_bitmap))
+    if (has_bitmap)
     {
+        auto_indent = indent::auto_keep_whitespace;
+
+        bool is_old_widgets = (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1");
+        if (is_old_widgets)
+        {
+            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+        }
+
+        ttlib::cstr bundle_code;
+        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+
         if (node->HasValue(prop_unchecked_bitmap))
         {
-            code << "\t" << node->get_node_name() << "->SetBitmaps("
-                 << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true);
-            code << ", " << GenerateBitmapCode(node->prop_as_string(prop_unchecked_bitmap), true) << ");";
+            ttlib::cstr unchecked_code;
+            bool is_checked_block = GenerateBundleCode(node->prop_as_string(prop_unchecked_bitmap), unchecked_code);
+            if (is_code_block || is_checked_block)
+            {
+                code << "{\n";
+                if (is_code_block)
+                {
+                    // GenerateBundleCode assumes an indent within an indent
+                    bundle_code.Replace("\t\t\t", "\t", true);
+                    // we already generated the opening brace
+                    bundle_code.erase(0, 1);
+                    code << bundle_code.c_str() + 1;
+                }
+
+                if (is_checked_block)
+                {
+                    // GenerateBundleCode assumes an indent within an indent
+                    unchecked_code.Replace("\t\t\t", "\t", true);
+                    // we already generated the opening brace
+                    unchecked_code.erase(0, 1);
+                    if (is_code_block)
+                    {
+                        unchecked_code.Replace("bitmaps", "unchecked_bmps", true);
+                    }
+                    code << '\n' << unchecked_code.c_str() + 1;
+                }
+
+                code << "\t" << node->get_node_name() << "->SetBitmaps(";
+
+                if (is_code_block)
+                {
+                    code << "wxBitmapBundle::FromBitmaps(bitmaps), ";
+                }
+                else
+                {
+                    code << bundle_code << ", ";
+                }
+
+                if (is_checked_block)
+                {
+                    code << "wxBitmapBundle::FromBitmaps(";
+                    code << (is_code_block ? "unchecked_bmps" : "bitmaps");
+                }
+                else
+                {
+                    code << bundle_code << ", " << unchecked_code;
+                }
+
+                code << ");\n}";
+            }
+            else
+            {
+                code << node->get_node_name() << "->SetBitmaps(" << bundle_code;
+                code << ", " << unchecked_code << ");";
+            }
+
+            if (is_old_widgets)
+            {
+                code << "\n#else\n";
+                if (node->HasValue(prop_unchecked_bitmap))
+                {
+                    code << node->get_node_name() << "->SetBitmaps("
+                         << GenerateBitmapCode(node->prop_as_string(prop_bitmap));
+                    code << ", " << GenerateBitmapCode(node->prop_as_string(prop_unchecked_bitmap)) << ");";
+                }
+                else
+                {
+                    code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+                         << ");";
+                }
+                code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
+            }
         }
+
+        // single bitmap (no unchecked bitmap)
         else
         {
-            code << "\t" << node->get_node_name() << "->SetBitmap("
-                 << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true) << ");";
+            if (is_code_block)
+            {
+                // GenerateBundleCode assumes an indent within an indent
+                bundle_code.Replace("\t\t\t", "\t", true);
+                code << bundle_code;
+                code << "\t" << node->get_node_name() << "->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));\n}";
+            }
+            else
+            {
+                code << node->get_node_name() << "->SetBitmap(" << bundle_code << ");";
+            }
+            if (is_old_widgets)
+            {
+                code << "\n#else\n";
+
+                code << node->get_node_name() << "->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
+                     << ");";
+                code << "\n#endif  // wxCHECK_VERSION(3, 1, 6)";
+            }
         }
     }
 
@@ -489,7 +636,9 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /*
 
     if (!node->GetParent()->isGen(gen_PopupMenu))
     {
-        code << "\t" << node->get_parent_name() << "->Append(" << node->get_node_name() << ");";
+        if (!has_bitmap)
+            code << "\t";
+        code << node->get_parent_name() << "->Append(" << node->get_node_name() << ");";
     }
 
     if ((node->prop_as_string(prop_kind) == "wxITEM_CHECK" || node->prop_as_string(prop_kind) == "wxITEM_RADIO") &&
@@ -497,7 +646,9 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& /*
     {
         if (code.size())
             code << '\n';
-        code << "\t" << node->get_node_name() << "->Check();";
+        if (!has_bitmap)
+            code << "\t";
+        code << node->get_node_name() << "->Check();";
     }
 
     return code;
@@ -538,7 +689,8 @@ bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  CtxMenuGenerator  //////////////////////////////////////////
 
-bool CtxMenuGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src, std::set<std::string>& /* set_hdr */)
+bool CtxMenuGenerator::GetIncludes(Node* /* node */, std::set<std::string>& set_src, std::set<std::string>&
+                                   /* set_hdr */)
 {
     set_src.insert("#include <wx/event.h>");
     set_src.insert("#include <wx/menu.h>");

@@ -608,12 +608,66 @@ ttlib::cstr PropertyGridItemGenerator::GetHelpText(Node* node)
 std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
-
-    if (node->IsLocal())
-        code << "auto ";
-    code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
-    code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
-         << GenerateBitmapCode(node->prop_as_string(prop_bitmap), true) << ");";
+    if (node->HasValue(prop_bitmap))
+    {
+        ttlib::cstr bundle_code;
+        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+        if (is_code_block)
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+            }
+            // GenerateBundleCode assumes an indent within an indent
+            bundle_code.Replace("\t\t\t", "\t\t", true);
+            code << '\t' << bundle_code;
+            code << "\t\t";
+            if (node->IsLocal())
+                code << "auto ";
+            code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
+            code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
+                 << "wxBitmapBundle::FromBitmaps(bitmaps));";
+            code << "\n\t}";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n\t";
+                if (node->IsLocal())
+                    code << "auto ";
+                code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
+                code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
+                     << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+                code << "\n#endif";
+            }
+        }
+        else
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+            }
+            if (node->IsLocal())
+                code << "auto ";
+            code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
+            code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", " << bundle_code << ");";
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                if (node->IsLocal())
+                    code << "auto ";
+                code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
+                code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
+                     << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
+                code << "\n#endif";
+            }
+        }
+    }
+    else
+    {
+        if (node->IsLocal())
+            code << "auto ";
+        code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
+        code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
+    }
 
     return code;
 }

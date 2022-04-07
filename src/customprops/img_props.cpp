@@ -19,6 +19,8 @@ void ImageProperties::InitValues(const char* value)
 
     if (mstr.size() > IndexImage)
         image = mstr[IndexImage];
+    else
+        image.clear();
 
     if (mstr.size() > IndexType)
     {

@@ -548,33 +548,32 @@ bool ProjectSettings::CheckNode(Node* node)
             if (parts[IndexType] != "Embed")
                 continue;
 
-            if (auto result = m_map_embedded.find(parts[IndexImage].filename()); result != m_map_embedded.end())
+            auto result = m_map_embedded.find(parts[IndexImage].filename());
+            // If it hasn't been added yet, add it now
+            if (result == m_map_embedded.end())
             {
-                // If it hasn't been added yet, add it now
-                if (result == m_map_embedded.end())
-                {
-                    AddEmbeddedImage(parts[IndexImage], node_form);
-                    continue;
-                }
+                AddEmbeddedImage(parts[IndexImage], node_form);
+                continue;
+            }
 
-                auto embed = result->second.get();
+            auto embed = result->second.get();
+            ASSERT(embed)
 
-                if (node_form->isGen(gen_Images))
+            if (node_form->isGen(gen_Images))
+            {
+                if (embed->form != node_form)
                 {
-                    if (embed->form != node_form)
-                    {
-                        embed->form = node_form;
-                        is_changed = true;
-                    }
+                    embed->form = node_form;
+                    is_changed = true;
                 }
-                else
+            }
+            else
+            {
+                auto child_pos = wxGetApp().GetProject()->GetChildPosition(embed->form);
+                if (child_pos > node_position)
                 {
-                    auto child_pos = wxGetApp().GetProject()->GetChildPosition(embed->form);
-                    if (child_pos > node_position)
-                    {
-                        embed->form = node_form;
-                        is_changed = true;
-                    }
+                    embed->form = node_form;
+                    is_changed = true;
                 }
             }
         }

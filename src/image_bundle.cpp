@@ -52,22 +52,15 @@ inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
 
 void ProjectSettings::CollectBundles()
 {
-    auto project = wxGetApp().GetProject();
-
-    for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
+    for (auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
     {
-        auto form = project->GetChild(pos);
+        CollectNodeBundles(iter.get(), iter.get());
 
-        for (auto& iter: form->GetChildNodePtrs())
+        if (iter->HasProp(prop_icon) && iter->HasValue(prop_icon))
         {
-            CollectNodeBundles(iter.get(), form);
-        }
-
-        if (form->HasProp(prop_icon) && form->HasValue(prop_icon))
-        {
-            if (m_bundles.find(ConvertToLookup(form->prop_as_string(prop_icon))) == m_bundles.end())
+            if (m_bundles.find(ConvertToLookup(iter->prop_as_string(prop_icon))) == m_bundles.end())
             {
-                ProcessBundleProperty(form->prop_as_string(prop_icon), form);
+                ProcessBundleProperty(iter->prop_as_string(prop_icon), iter.get());
             }
         }
     }
@@ -84,7 +77,7 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
         {
             if (m_bundles.find(ConvertToLookup(iter.as_string())) == m_bundles.end())
             {
-                ProcessBundleProperty(iter.as_string(), node);
+                ProcessBundleProperty(iter.as_string(), form);
             }
         }
         else if (iter.type() == type_animation)
@@ -422,12 +415,12 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
     }
     else if (parts[IndexType].contains("Embed"))
     {
-        AddNewEmbeddedBundle(description, parts[IndexImage], node->GetForm());
+        AddNewEmbeddedBundle(description, parts[IndexImage], node->get_form());
         return &m_bundles[lookup_str];
     }
     else if (parts[IndexType].contains("SVG"))
     {
-        AddNewEmbeddedBundle(description, parts[IndexImage], node->GetForm());
+        AddNewEmbeddedBundle(description, parts[IndexImage], node->get_form());
         return &m_bundles[lookup_str];
     }
 

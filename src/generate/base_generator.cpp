@@ -384,6 +384,7 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
     { "bitmap", "_bitmap" },
     { "bookpage", "book_ctrl_base" },
     { "box", "_box" },
+    { "bundle", "_bundle" },  // just in case we want to add help for this
     { "button", "_button" },
     { "combo", "_combo" },
     { "column", "_column" },

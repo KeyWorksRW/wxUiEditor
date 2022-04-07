@@ -532,6 +532,10 @@ bool ProjectSettings::UpdateEmbedNodes()
     return is_changed;
 }
 
+// REVIEW: [KeyWorks - 04-07-2022] We should eliminate this call if possible -- ProjectSettings::CollectBundles() processed
+// all nodes initially, and the only reason this would be needed is if adding or changing a bitmap property did not get set
+// up correctly (highly unlikely).
+
 bool ProjectSettings::CheckNode(Node* node)
 {
     bool is_changed = false;
@@ -552,6 +556,7 @@ bool ProjectSettings::CheckNode(Node* node)
             // If it hasn't been added yet, add it now
             if (result == m_map_embedded.end())
             {
+                FAIL_MSG("We get here if a bitmap did not get added to m_map_embedded -- that shouldn't happen")
                 AddEmbeddedImage(parts[IndexImage], node_form);
                 continue;
             }
@@ -563,6 +568,7 @@ bool ProjectSettings::CheckNode(Node* node)
             {
                 if (embed->form != node_form)
                 {
+                    FAIL_MSG("Can we fix this without walking through every form?")
                     embed->form = node_form;
                     is_changed = true;
                 }
@@ -572,6 +578,7 @@ bool ProjectSettings::CheckNode(Node* node)
                 auto child_pos = wxGetApp().GetProject()->GetChildPosition(embed->form);
                 if (child_pos > node_position)
                 {
+                    FAIL_MSG("If this is valid, we need to document why.")
                     embed->form = node_form;
                     is_changed = true;
                 }

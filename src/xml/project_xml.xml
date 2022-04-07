@@ -17,7 +17,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="wxWidgets_version" type="option" help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
 			<option name="3.1" />
-			<option name="3.2" />
+			<option name="3.1.6" />
 			3.1
 		</property>
 	</gen>

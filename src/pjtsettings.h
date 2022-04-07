@@ -27,6 +27,8 @@ struct EmbeddedImage
     wxBitmapType type;
 };
 
+wxBitmapBundle LoadSVG(EmbeddedImage* embed);
+
 class ProjectSettings
 {
 public:

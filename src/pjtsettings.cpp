@@ -216,6 +216,17 @@ void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
                         embed->form = form;
                     }
                 }
+                if (parts[IndexType].is_sameprefix("SVG") && parts.size() > 2)
+                {
+                    wxSize new_size;
+                    GetSizeInfo(new_size, parts[IndexSize]);
+                    if (embed->size_x != new_size.x || embed->size_y != new_size.y)
+                    {
+                        embed->size_x = new_size.x;
+                        embed->size_y = new_size.y;
+                        result->second.bundle = LoadSVG(embed);
+                    }
+                }
             }
         }
     }

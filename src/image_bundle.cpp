@@ -38,7 +38,6 @@ const char* suffixes[] = {
 };
 
 bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
-wxBitmapBundle LoadSVG(EmbeddedImage* embed);
 
 inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
 {

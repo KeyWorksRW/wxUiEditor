@@ -460,6 +460,18 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
     }
     else
     {
+
+        if (node->IsLocal())
+            code << "auto ";
+
+        bool use_generic_version = (node->prop_as_string(prop_scale_mode) != "None");
+        if (use_generic_version)
+            code << node->get_node_name() << " = new wxGenericStaticBitmap(";
+        else
+            code << node->get_node_name() << " = new wxStaticBitmap(";
+
+        code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+
         code << "wxNullBitmap";
     }
 

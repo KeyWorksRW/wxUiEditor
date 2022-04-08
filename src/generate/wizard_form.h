@@ -14,7 +14,7 @@ class WizardFormGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node*, wxObject* parent) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node*) override;
+    bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string& class_name) override;
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node*) override;
 

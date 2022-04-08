@@ -1327,13 +1327,6 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     {
         if (auto result = generator->GenConstruction(form_node); result)
         {
-            if (form_node->isGen(gen_wxWizard) && form_node->HasValue(prop_bitmap))
-            {
-                m_source->Indent();
-                GenerateHandlers();
-                m_source->Unindent();
-            }
-
             m_source->writeLine(result.value(), indent::none);
             m_source->Indent();
         }
@@ -1352,7 +1345,10 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         m_source->Indent();
     }
 
-    GenerateHandlers();
+    if (!form_node->isGen(gen_wxWizard))
+    {
+        GenerateHandlers();
+    }
 
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {

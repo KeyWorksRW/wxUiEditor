@@ -7,9 +7,13 @@
 
 #include <wx/wizard.h>  // wxWizard class: a GUI control presenting the user with a
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "utils.h"       // Utility functions that work with properties
+#include "gen_base.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"   // GeneratorLibrary -- Generator classes
+#include "mainapp.h"      // App -- Main application class
+#include "node.h"         // Node class
+#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"        // Utility functions that work with properties
+#include "write_code.h"   // WriteCode -- Write code to Scintilla or file
 
 #include "../mockup/mockup_wizard.h"  // WizardPageSimple
 #include "../panels/navpopupmenu.h"   // NavPopupMenu -- Context-menu for Navigation Panel
@@ -22,8 +26,10 @@ wxObject* WizardFormGenerator::CreateMockup(Node* /* node */, wxObject* /* paren
     return nullptr;
 }
 
-std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
+bool WizardFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen)
 {
+    auto src_code = code_gen->GetSrcWriter();
+
     ttlib::cstr code;
 
     // By calling the default wxWizard() constructor, we don't need for the caller to pass in wxNullBitmap which will be
@@ -48,9 +54,15 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
             code << "\n\tSetBitmapBackgroundColour(" << GenerateColourCode(node, prop_bmp_background_colour) << ");";
     }
 
+    src_code->writeLine(code, indent::none);
+    code.clear();
+    src_code->writeLine();
+    src_code->Indent();
+    code_gen->GenerateHandlers();
+    src_code->Unindent();
+
     if (node->HasValue(prop_bitmap))
     {
-        code << '\n';
         ttlib::cstr bundle_code;
         bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
         if (is_code_block)
@@ -96,7 +108,9 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenConstruction(Node* node)
         code << "\n\tCreate(parent, id, title, wxNullBitmap, pos, style);";
     }
 
-    return code;
+    src_code->writeLine(code, indent::none);
+
+    return true;
 }
 
 std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)

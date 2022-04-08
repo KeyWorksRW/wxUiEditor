@@ -15,10 +15,10 @@ using namespace GenEnum;
 
 #include "menubutton_base.h"
 
-#include <wx/mstream.h>  // Memory stream classes
+#include <wx/mstream.h>  // memory stream classes
 
 // Convert a data array into a wxImage
-inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -40,14 +40,14 @@ MenuButton::MenuButton() : wxMenu()
         wxImage::AddHandler(new wxPNGHandler);
 
     auto menu_item = Append(gen_wxButton, "Insert wxButton");
-    menu_item->SetBitmap(GetImageFromArray(wxue_img::wxButton_png, sizeof(wxue_img::wxButton_png)));
+    menu_item->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxButton_png, sizeof(wxue_img::wxButton_png))));
 
     auto menu_item_2 = Append(gen_wxToggleButton, "Insert wxToggleButton");
-    menu_item_2->SetBitmap(GetImageFromArray(wxue_img::toggle_button_png, sizeof(wxue_img::toggle_button_png)));
+    menu_item_2->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::toggle_button_png, sizeof(wxue_img::toggle_button_png))));
 
     auto menu_item_3 = Append(gen_wxStdDialogButtonSizer, "Insert wxStdDialogButtonSizer");
-    menu_item_3->SetBitmap(GetImageFromArray(wxue_img::stddialogbuttonsizer_png, sizeof(wxue_img::stddialogbuttonsizer_png)));
+    menu_item_3->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::stddialogbuttonsizer_png, sizeof(wxue_img::stddialogbuttonsizer_png))));
 
     auto menu_item_4 = Append(gen_wxCommandLinkButton, "Insert wxCommandLinkButton");
-    menu_item_4->SetBitmap(GetImageFromArray(wxue_img::wxCommandLinkButton_png, sizeof(wxue_img::wxCommandLinkButton_png)));
+    menu_item_4->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxCommandLinkButton_png, sizeof(wxue_img::wxCommandLinkButton_png))));
 }

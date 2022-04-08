@@ -15,10 +15,10 @@ using namespace GenEnum;
 
 #include "menuspin_base.h"
 
-#include <wx/mstream.h>  // Memory stream classes
+#include <wx/mstream.h>  // memory stream classes
 
 // Convert a data array into a wxImage
-inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -39,11 +39,11 @@ MenuSpin::MenuSpin() : wxMenu()
         wxImage::AddHandler(new wxPNGHandler);
 
     auto menu_item = Append(gen_wxSpinCtrl, "Insert wxSpinCtrl");
-    menu_item->SetBitmap(GetImageFromArray(wxue_img::spin_ctrl_png, sizeof(wxue_img::spin_ctrl_png)));
+    menu_item->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::spin_ctrl_png, sizeof(wxue_img::spin_ctrl_png))));
 
     auto menu_item_2 = Append(gen_wxSpinCtrlDouble, "Insert wxSpinCtrlDouble");
-    menu_item_2->SetBitmap(GetImageFromArray(wxue_img::spin_ctrl_double_png, sizeof(wxue_img::spin_ctrl_double_png)));
+    menu_item_2->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::spin_ctrl_double_png, sizeof(wxue_img::spin_ctrl_double_png))));
 
     auto menu_item_3 = Append(gen_wxSpinButton, "Insert wxSpinButton");
-    menu_item_3->SetBitmap(GetImageFromArray(wxue_img::spinbtn_png, sizeof(wxue_img::spinbtn_png)));
+    menu_item_3->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::spinbtn_png, sizeof(wxue_img::spinbtn_png))));
 }

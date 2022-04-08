@@ -15,10 +15,10 @@ using namespace GenEnum;
 
 #include "menucombobox_base.h"
 
-#include <wx/mstream.h>  // Memory stream classes
+#include <wx/mstream.h>  // memory stream classes
 
 // Convert a data array into a wxImage
-inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -39,11 +39,11 @@ MenuCombobox::MenuCombobox() : wxMenu()
         wxImage::AddHandler(new wxPNGHandler);
 
     auto menu_item = Append(gen_wxComboBox, "Insert wxComboBox");
-    menu_item->SetBitmap(GetImageFromArray(wxue_img::wxComboBox_png, sizeof(wxue_img::wxComboBox_png)));
+    menu_item->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxComboBox_png, sizeof(wxue_img::wxComboBox_png))));
 
     auto menu_item_2 = Append(gen_wxChoice, "Insert wxChoice");
-    menu_item_2->SetBitmap(GetImageFromArray(wxue_img::wxChoice_png, sizeof(wxue_img::wxChoice_png)));
+    menu_item_2->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxChoice_png, sizeof(wxue_img::wxChoice_png))));
 
     auto menu_item_3 = Append(gen_wxBitmapComboBox, "Insert wxBitmapComboBox");
-    menu_item_3->SetBitmap(GetImageFromArray(wxue_img::bmp_combo_box_png, sizeof(wxue_img::bmp_combo_box_png)));
+    menu_item_3->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::bmp_combo_box_png, sizeof(wxue_img::bmp_combo_box_png))));
 }

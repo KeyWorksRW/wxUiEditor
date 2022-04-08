@@ -15,10 +15,10 @@ using namespace GenEnum;
 
 #include "menustaticsizer_base.h"
 
-#include <wx/mstream.h>  // Memory stream classes
+#include <wx/mstream.h>  // memory stream classes
 
 // Convert a data array into a wxImage
-inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -39,11 +39,11 @@ MenuStaticSizer::MenuStaticSizer() : wxMenu()
         wxImage::AddHandler(new wxPNGHandler);
 
     auto menu_item = Append(gen_wxStaticBoxSizer, "Insert wxStaticBoxSizer");
-    menu_item->SetBitmap(GetImageFromArray(wxue_img::wxStaticBoxSizer_png, sizeof(wxue_img::wxStaticBoxSizer_png)));
+    menu_item->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxStaticBoxSizer_png, sizeof(wxue_img::wxStaticBoxSizer_png))));
 
     auto menu_item_2 = Append(gen_StaticCheckboxBoxSizer, "Insert CheckBox wxStaticBoxSizer");
-    menu_item_2->SetBitmap(GetImageFromArray(wxue_img::wxStaticCheckBoxSizer_png, sizeof(wxue_img::wxStaticCheckBoxSizer_png)));
+    menu_item_2->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxStaticCheckBoxSizer_png, sizeof(wxue_img::wxStaticCheckBoxSizer_png))));
 
     auto menu_item_3 = Append(gen_StaticRadioBtnBoxSizer, "Insert RadioButton wxStaticBoxSizer");
-    menu_item_3->SetBitmap(GetImageFromArray(wxue_img::wxStaticRadioBtnSizer_png, sizeof(wxue_img::wxStaticRadioBtnSizer_png)));
+    menu_item_3->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxStaticRadioBtnSizer_png, sizeof(wxue_img::wxStaticRadioBtnSizer_png))));
 }

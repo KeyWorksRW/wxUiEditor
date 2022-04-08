@@ -4,127 +4,128 @@
   <node
     class="Project"
     art_directory="../art_src"
-    generate_cmake="true">
+    generate_cmake="true"
+    wxWidgets_version="3.1.6">
     <node
       class="Images"
       base_file="ui_images">
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/default.png;[-1,-1]" />
+        bitmap="Embed;../art_src/default.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/empty.png;[-1,-1]" />
+        bitmap="Embed;../art_src/empty.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/unknown.png;[-1,-1]" />
+        bitmap="Embed;../art_src/unknown.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/project.png;[-1,-1]" />
+        bitmap="Embed;../art_src/project.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/title_close.png;[-1,-1]" />
+        bitmap="Embed;../art_src/title_close.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/debug_16.png;[-1,-1]" />
+        bitmap="Embed;../art_src/debug_16.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/debug_32.png;[-1,-1]" />
+        bitmap="Embed;../art_src/debug_32.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/logo16.png;[-1,-1]" />
+        bitmap="Embed;../art_src/logo16.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/logo32.png;[-1,-1]" />
+        bitmap="Embed;../art_src/logo32.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/logo64.png;[-1,-1]" />
+        bitmap="Embed;../art_src/logo64.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/auitoolbar.png;[-1,-1]" />
+        bitmap="Embed;../art_src/auitoolbar.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/bmp_combo_box.png;[-1,-1]" />
+        bitmap="Embed;../art_src/bmp_combo_box.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/check3state.png;[-1,-1]" />
+        bitmap="Embed;../art_src/check3state.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/dataview_ctrl.png;[-1,-1]" />
+        bitmap="Embed;../art_src/dataview_ctrl.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/dataviewlist_ctrl.png;[-1,-1]" />
+        bitmap="Embed;../art_src/dataviewlist_ctrl.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/dataviewtree_ctrl.png;[-1,-1]" />
+        bitmap="Embed;../art_src/dataviewtree_ctrl.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/ribbon_bar.png;[-1,-1]" />
+        bitmap="Embed;../art_src/ribbon_bar.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/ribbon_buttonbar.png;[-1,-1]" />
+        bitmap="Embed;../art_src/ribbon_buttonbar.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/ribbon_gallery.png;[-1,-1]" />
+        bitmap="Embed;../art_src/ribbon_gallery.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/scrollbar.png;[-1,-1]" />
+        bitmap="Embed;../art_src/scrollbar.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/spinbtn.png;[-1,-1]" />
+        bitmap="Embed;../art_src/spinbtn.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/spin_ctrl.png;[-1,-1]" />
+        bitmap="Embed;../art_src/spin_ctrl.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/spin_ctrl_double.png;[-1,-1]" />
+        bitmap="Embed;../art_src/spin_ctrl_double.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/stddialogbuttonsizer.png;[-1,-1]" />
+        bitmap="Embed;../art_src/stddialogbuttonsizer.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/toggle_button.png;[-1,-1]" />
+        bitmap="Embed;../art_src/toggle_button.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxButton.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxButton.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxCheckBox.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxCheckBox.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxCheckListBox.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxCheckListBox.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxChoice.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxChoice.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxComboBox.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxComboBox.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxCommandLinkButton.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxCommandLinkButton.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxListBox.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxListBox.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxListView.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxListView.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxRearrangeCtrl.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxRearrangeCtrl.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxSimpleHtmlListBox.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxSimpleHtmlListBox.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxStaticBoxSizer.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxStaticBoxSizer.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxStaticCheckBoxSizer.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxStaticCheckBoxSizer.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxStaticRadioBtnSizer.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxStaticRadioBtnSizer.png" />
       <node
         class="embedded_image"
-        bitmap="Embed;../art_src/wxEditListBox.png;[-1,-1]" />
+        bitmap="Embed;../art_src/wxEditListBox.png" />
     </node>
     <node
       class="wxDialog"
@@ -1074,7 +1075,7 @@
           var_name="m_menuFile">
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art_src/new.png;[16,16]"
+            bitmap="Embed;../art_src/new.png"
             help="Create an empty project"
             id="id_NewProject"
             label="&amp;New Project...&#09;Ctrl+N"
@@ -1082,7 +1083,7 @@
             wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetApp().NewProject(true);@@}" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_FILE_OPEN|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_FILE_OPEN|wxART_MENU"
             help="Open a project"
             id="id_OpenProject"
             label="&amp;Open Project...&#09;Ctrl+O"
@@ -1102,7 +1103,7 @@
             class="separator" />
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art_src/save.png;[16,16]"
+            bitmap="Embed;../art_src/save.png"
             help="Save current project"
             id="wxID_SAVE"
             label="&amp;Save&#09;Ctrl+S"
@@ -1110,7 +1111,7 @@
             wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().IsModified());@@}" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_FILE_SAVE_AS|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_FILE_SAVE_AS|wxART_MENU"
             help="Save current project to a different filename"
             id="id_SaveProjectAs"
             label="Save &amp;As...&#09;Ctrl-Shift+S"
@@ -1180,7 +1181,7 @@
             var_name="separator4" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_QUIT|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_QUIT|wxART_MENU"
             id="wxID_EXIT"
             label=""
             var_name="menu_quit" />
@@ -1191,7 +1192,7 @@
           var_name="m_menuEdit">
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_UNDO|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_UNDO|wxART_MENU"
             id="wxID_UNDO"
             label=""
             var_name="menu_undo"
@@ -1199,7 +1200,7 @@
             wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanUndo());@@}" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_REDO|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_REDO|wxART_MENU"
             id="wxID_REDO"
             label=""
             var_name="menu_redo"
@@ -1210,7 +1211,7 @@
             var_name="separator5" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_CUT|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_CUT|wxART_MENU"
             id="wxID_CUT"
             label=""
             var_name="menu_cut"
@@ -1218,14 +1219,14 @@
             wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanCopyNode());@@}" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_COPY|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_COPY|wxART_MENU"
             id="wxID_COPY"
             label=""
             var_name="menu_copy"
             wxEVT_MENU="OnCopy" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_PASTE|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_PASTE|wxART_MENU"
             id="wxID_PASTE"
             label=""
             var_name="menu_paste"
@@ -1233,7 +1234,7 @@
             wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanPasteNode());@@}" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_DELETE|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_DELETE|wxART_MENU"
             help="Delete selected object without using clipboard."
             id="wxID_DELETE"
             label=""
@@ -1252,7 +1253,7 @@
             var_name="separator6" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_FIND|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_FIND|wxART_MENU"
             help="Find text in the active code viewer."
             id="wxID_FIND"
             label=""
@@ -1260,7 +1261,7 @@
             wxEVT_MENU="OnFindDialog" />
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_EDIT|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_EDIT|wxART_MENU"
             help="Find text in the active code viewer."
             id="id_insert_widget"
             label="&amp;Insert widget..."
@@ -1275,7 +1276,7 @@
             var_name="submenu3">
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/nav_moveup.png;[-1,-1]"
+              bitmap="Embed;../art_src/nav_moveup.png"
               help="Moves selected item up"
               id="id_MoveUp"
               label="Up"
@@ -1284,7 +1285,7 @@
               wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Up);@@}" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/nav_movedown.png;[-1,-1]"
+              bitmap="Embed;../art_src/nav_movedown.png"
               help="Moves selected item down"
               id="id_MoveDown"
               label="Down"
@@ -1293,7 +1294,7 @@
               wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Down);@@}" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/nav_moveleft.png;[-1,-1]"
+              bitmap="Embed;../art_src/nav_moveleft.png"
               help="Moves selected item left"
               id="id_MoveLeft"
               label="Left"
@@ -1302,7 +1303,7 @@
               wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Left);@@}" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/nav_moveright.png;[-1,-1]"
+              bitmap="Embed;../art_src/nav_moveright.png"
               help="Moves selected item right"
               id="id_MoveRight"
               label="Right"
@@ -1316,7 +1317,7 @@
             var_name="submenu2">
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/alignleft.png;[-1,-1]"
+              bitmap="Embed;../art_src/alignleft.png"
               help="Align selected item to the left"
               id="id_AlignLeft"
               kind="wxITEM_CHECK"
@@ -1326,7 +1327,7 @@
               wxEVT_MENU="OnChangeAlignment" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/aligncenter.png;[-1,-1]"
+              bitmap="Embed;../art_src/aligncenter.png"
               checked="true"
               help="Align selected item to the center horizontally"
               id="id_AlignCenterHorizontal"
@@ -1337,7 +1338,7 @@
               wxEVT_MENU="OnChangeAlignment" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/alignright.png;[-1,-1]"
+              bitmap="Embed;../art_src/alignright.png"
               help="Align selected item to the right"
               id="id_AlignRight"
               kind="wxITEM_CHECK"
@@ -1350,7 +1351,7 @@
               var_name="separator8" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/aligntop.png;[-1,-1]"
+              bitmap="Embed;../art_src/aligntop.png"
               help="Align selected item to the top"
               id="id_AlignTop"
               kind="wxITEM_CHECK"
@@ -1360,7 +1361,7 @@
               wxEVT_MENU="OnChangeAlignment" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/alignvertcenter.png;[-1,-1]"
+              bitmap="Embed;../art_src/alignvertcenter.png"
               help="Align selected item to the center vertically"
               id="id_AlignCenterVertical"
               kind="wxITEM_CHECK"
@@ -1370,7 +1371,7 @@
               wxEVT_MENU="OnChangeAlignment" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/alignbottom.png;[-1,-1]"
+              bitmap="Embed;../art_src/alignbottom.png"
               help="Align selected item to the bottom"
               id="id_AlignBottom"
               kind="wxITEM_CHECK"
@@ -1385,7 +1386,7 @@
             var_name="submenu4">
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/left.png;[16,16]"
+              bitmap="Embed;../art_src/left.png"
               help="Toggle border on the left side of the item"
               id="id_BorderLeft"
               kind="wxITEM_CHECK"
@@ -1394,7 +1395,7 @@
               wxEVT_MENU="OnChangeBorder" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/right.png;[16,16]"
+              bitmap="Embed;../art_src/right.png"
               help="Toggle border on the right side of the item"
               id="id_BorderRight"
               kind="wxITEM_CHECK"
@@ -1403,7 +1404,7 @@
               wxEVT_MENU="OnChangeBorder" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/top.png;[16,16]"
+              bitmap="Embed;../art_src/top.png"
               help="Toggle border on the top side of the item"
               id="id_BorderTop"
               kind="wxITEM_CHECK"
@@ -1412,7 +1413,7 @@
               wxEVT_MENU="OnChangeBorder" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/bottom.png;[16,16]"
+              bitmap="Embed;../art_src/bottom.png"
               help="Toggle border on the bottom side of the item"
               id="id_BorderBottom"
               kind="wxITEM_CHECK"
@@ -1422,7 +1423,7 @@
           </node>
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art_src/expand.png;[16,16]"
+            bitmap="Embed;../art_src/expand.png"
             help="Toggle the wxEXPAND flag"
             id="id_Expand"
             kind="wxITEM_CHECK"
@@ -1437,7 +1438,7 @@
           var_name="m_menuTools">
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art_src/generate.png;[16,16]"
+            bitmap="Embed;../art_src/generate.png"
             help="Generates C++ Code for each top level form"
             id="id_GenerateCode"
             label="&amp;Generate Base Code"
@@ -1467,7 +1468,7 @@
           var_name="m_menuHelp">
           <node
             class="wxMenuItem"
-            bitmap="Art; wxART_HELP|wxART_MENU; [-1,-1]"
+            bitmap="Art;wxART_HELP|wxART_MENU"
             id="wxID_ABOUT"
             label=""
             var_name="menu_help"
@@ -1487,27 +1488,27 @@
         var_name="m_toolbar">
         <node
           class="tool"
-          bitmap="Embed;../art_src/new.png;[-1,-1]"
+          bitmap="Embed;../art_src/new.png"
           id="id_NewProject"
           label="New"
           tooltip="New Project (Ctrl+N)" />
         <node
           class="tool"
-          bitmap="Art; wxART_FILE_OPEN|wxART_TOOLBAR; [-1,-1]"
+          bitmap="Art;wxART_FILE_OPEN|wxART_TOOLBAR"
           id="id_OpenProject"
           label="Open"
           tooltip="Open Project (Ctrl+O)"
           var_name="tool2" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/save.png;[-1,-1]"
+          bitmap="Embed;../art_src/save.png"
           id="wxID_SAVE"
           label="Save"
           tooltip="Save current project"
           var_name="tool3" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/generate.png;[-1,-1]"
+          bitmap="Embed;../art_src/generate.png"
           id="id_GenerateCode"
           label=""
           tooltip="Generate base class code"
@@ -1517,14 +1518,14 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Art; wxART_UNDO|wxART_TOOLBAR; [-1,-1]"
+          bitmap="Art;wxART_UNDO|wxART_TOOLBAR"
           id="wxID_UNDO"
           label=""
           tooltip="Undo"
           var_name="Undo" />
         <node
           class="tool"
-          bitmap="Art; wxART_REDO|wxART_TOOLBAR; [-1,-1]"
+          bitmap="Art;wxART_REDO|wxART_TOOLBAR"
           id="wxID_REDO"
           label=""
           tooltip="Redo"
@@ -1533,28 +1534,28 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Art; wxART_CUT|wxART_TOOLBAR; [-1,-1]"
+          bitmap="Art;wxART_CUT|wxART_TOOLBAR"
           id="wxID_CUT"
           label=""
           tooltip="Cut"
           var_name="Cut" />
         <node
           class="tool"
-          bitmap="Art; wxART_COPY|wxART_TOOLBAR; [-1,-1]"
+          bitmap="Art;wxART_COPY|wxART_TOOLBAR"
           id="wxID_COPY"
           label=""
           tooltip="Copy"
           var_name="Copy" />
         <node
           class="tool"
-          bitmap="Art; wxART_PASTE|wxART_TOOLBAR; [-1,-1]"
+          bitmap="Art;wxART_PASTE|wxART_TOOLBAR"
           id="wxID_PASTE"
           label=""
           tooltip="Paste"
           var_name="Paste" />
         <node
           class="tool"
-          bitmap="Art; wxART_DELETE|wxART_TOOLBAR; [-1,-1]"
+          bitmap="Art;wxART_DELETE|wxART_TOOLBAR"
           id="wxID_DELETE"
           label=""
           tooltip="Delete selected object without using clipboard."
@@ -1563,7 +1564,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/alignleft.png;[-1,-1]"
+          bitmap="Embed;../art_src/alignleft.png"
           id="id_AlignLeft"
           kind="wxITEM_CHECK"
           label=""
@@ -1571,7 +1572,7 @@
           var_name="AlignLeft" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/aligncenter.png;[-1,-1]"
+          bitmap="Embed;../art_src/aligncenter.png"
           id="id_AlignCenterHorizontal"
           kind="wxITEM_CHECK"
           label=""
@@ -1579,7 +1580,7 @@
           var_name="AlignCenterH" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/alignright.png;[-1,-1]"
+          bitmap="Embed;../art_src/alignright.png"
           id="id_AlignRight"
           kind="wxITEM_CHECK"
           label=""
@@ -1589,7 +1590,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/aligntop.png;[-1,-1]"
+          bitmap="Embed;../art_src/aligntop.png"
           id="id_AlignTop"
           kind="wxITEM_CHECK"
           label=""
@@ -1597,7 +1598,7 @@
           var_name="AlignTop" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/alignvertcenter.png;[-1,-1]"
+          bitmap="Embed;../art_src/alignvertcenter.png"
           id="id_AlignCenterVertical"
           kind="wxITEM_CHECK"
           label=""
@@ -1605,7 +1606,7 @@
           var_name="AlignCenterV" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/alignbottom.png;[-1,-1]"
+          bitmap="Embed;../art_src/alignbottom.png"
           id="id_AlignBottom"
           kind="wxITEM_CHECK"
           label=""
@@ -1615,7 +1616,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/left.png;[-1,-1]"
+          bitmap="Embed;../art_src/left.png"
           id="id_BorderLeft"
           kind="wxITEM_CHECK"
           label=""
@@ -1623,7 +1624,7 @@
           var_name="BorderLeft" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/right.png;[-1,-1]"
+          bitmap="Embed;../art_src/right.png"
           id="id_BorderRight"
           kind="wxITEM_CHECK"
           label=""
@@ -1631,7 +1632,7 @@
           var_name="BorderRight" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/top.png;[-1,-1]"
+          bitmap="Embed;../art_src/top.png"
           id="id_BorderTop"
           kind="wxITEM_CHECK"
           label=""
@@ -1639,7 +1640,7 @@
           var_name="BorderTop" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/bottom.png;[-1,-1]"
+          bitmap="Embed;../art_src/bottom.png"
           id="id_BorderBottom"
           kind="wxITEM_CHECK"
           label=""
@@ -1649,7 +1650,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/expand.png;[-1,-1]"
+          bitmap="Embed;../art_src/expand.png"
           id="id_Expand"
           kind="wxITEM_CHECK"
           label=""
@@ -1659,7 +1660,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/hidden.png;[-1,-1]"
+          bitmap="Embed;../art_src/hidden.png"
           id="id_ShowHidden"
           kind="wxITEM_CHECK"
           label=""
@@ -1667,7 +1668,7 @@
           var_name="Spy" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/magnify.png;[-1,-1]"
+          bitmap="Embed;../art_src/magnify.png"
           id="id_Magnify"
           kind="wxITEM_CHECK"
           label=""
@@ -1682,7 +1683,7 @@
       base_file="navtoolbar_base">
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_coll_expand.png;[-1,-1]"
+        bitmap="Embed;../art_src/nav_coll_expand.png"
         id="id_NavCollExpand"
         label=""
         statusbar="Expand selected item, collapse all other items at the same level"
@@ -1690,7 +1691,7 @@
         var_name="collapse_expand" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_expand.png;[-1,-1]"
+        bitmap="Embed;../art_src/nav_expand.png"
         id="id_NavExpand"
         label=""
         statusbar="Expand selected item and all of it's sub-items"
@@ -1698,7 +1699,7 @@
         var_name="expand" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_collapse.png;[-1,-1]"
+        bitmap="Embed;../art_src/nav_collapse.png"
         id="id_NavCollapse"
         label=""
         statusbar="Collapse selected item and all items at the same level"
@@ -1708,7 +1709,7 @@
         class="toolSeparator" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_moveleft.png;[-1,-1]"
+        bitmap="Embed;../art_src/nav_moveleft.png"
         id="id_NavMoveLeft"
         label=""
         statusbar="Move the selected item left"
@@ -1716,7 +1717,7 @@
         var_name="move_left" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_moveup.png;[-1,-1]"
+        bitmap="Embed;../art_src/nav_moveup.png"
         id="id_NavMoveUp"
         label=""
         statusbar="Move the selected item up"
@@ -1724,7 +1725,7 @@
         var_name="move_up" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_movedown.png;[-1,-1]"
+        bitmap="Embed;../art_src/nav_movedown.png"
         id="id_NavMoveDown"
         label=""
         statusbar="Move the selected item down"
@@ -1732,7 +1733,7 @@
         var_name="move_down" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_moveright.png;[-1,-1]"
+        bitmap="Embed;../art_src/nav_moveright.png"
         id="id_NavMoveRight"
         label=""
         statusbar="Move the selected item right"
@@ -2250,31 +2251,30 @@
     <node
       class="PopupMenu"
       class_name="MenuButton"
-      label="MenuButton"
       base_file="menubutton_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuButton"
       generate_ids="false">
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxButton.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxButton.png"
         id="gen_wxButton"
         label="Insert wxButton" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/toggle_button.png;[-1,-1]"
+        bitmap="Embed;../art_src/toggle_button.png"
         id="gen_wxToggleButton"
         label="Insert wxToggleButton"
         var_name="menu_item_2" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/stddialogbuttonsizer.png;[-1,-1]"
+        bitmap="Embed;../art_src/stddialogbuttonsizer.png"
         id="gen_wxStdDialogButtonSizer"
         label="Insert wxStdDialogButtonSizer"
         var_name="menu_item_3" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxCommandLinkButton.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxCommandLinkButton.png"
         id="gen_wxCommandLinkButton"
         label="Insert wxCommandLinkButton"
         var_name="menu_item_4" />
@@ -2282,20 +2282,19 @@
     <node
       class="PopupMenu"
       class_name="MenuCheckbox"
-      label="MenuCheckbox"
       base_file="menucheckbox_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuCheckbox"
       generate_ids="false">
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxCheckBox.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxCheckBox.png"
         help="Insert a normal two-state checkbox"
         id="gen_wxCheckBox"
         label="Insert wxCheckBox" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/check3state.png;[-1,-1]"
+        bitmap="Embed;../art_src/check3state.png"
         help="Insert a 3-state checkbox"
         id="gen_Check3State"
         label="Insert 3-state wxCheckBox"
@@ -2304,25 +2303,24 @@
     <node
       class="PopupMenu"
       class_name="MenuCombobox"
-      label="MenuCombobox"
       base_file="menucombobox_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuCombobox"
       generate_ids="false">
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxComboBox.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxComboBox.png"
         id="gen_wxComboBox"
         label="Insert wxComboBox" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxChoice.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxChoice.png"
         id="gen_wxChoice"
         label="Insert wxChoice"
         var_name="menu_item_2" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/bmp_combo_box.png;[-1,-1]"
+        bitmap="Embed;../art_src/bmp_combo_box.png"
         id="gen_wxBitmapComboBox"
         label="Insert wxBitmapComboBox"
         var_name="menu_item_3" />
@@ -2330,25 +2328,24 @@
     <node
       class="PopupMenu"
       class_name="MenuDataCtrl"
-      label="MenuDataCtrl"
       base_file="menudatactrl_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuDataCtrl"
       generate_ids="false">
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/dataview_ctrl.png;[-1,-1]"
+        bitmap="Embed;../art_src/dataview_ctrl.png"
         id="gen_wxDataViewCtrl"
         label="Insert wxDataViewCtrl" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/dataviewtree_ctrl.png;[-1,-1]"
+        bitmap="Embed;../art_src/dataviewtree_ctrl.png"
         id="gen_wxDataViewTreeCtrl"
         label="Insert wxDataViewTreeCtrl"
         var_name="menu_item_2" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/dataviewlist_ctrl.png;[-1,-1]"
+        bitmap="Embed;../art_src/dataviewlist_ctrl.png"
         id="gen_wxDataViewListCtrl"
         label="Insert wxDataViewListCtrl"
         var_name="menu_item_3" />
@@ -2356,43 +2353,42 @@
     <node
       class="PopupMenu"
       class_name="MenuListbox"
-      label="MenuListbox"
       base_file="menulistbox_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuListbox"
       generate_ids="false">
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxListBox.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxListBox.png"
         id="gen_wxListBox"
         label="Insert wxListBox" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxCheckListBox.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxCheckListBox.png"
         id="gen_wxCheckListBox"
         label="Insert wxCheckListBox"
         var_name="menu_item_2" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxEditListBox.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxEditListBox.png"
         id="gen_wxEditableListBox"
         label="Insert wxEditableListBox"
         var_name="menu_item_6" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxListView.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxListView.png"
         id="gen_wxListView"
         label="Insert wxListView"
         var_name="menu_item_3" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxRearrangeCtrl.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxRearrangeCtrl.png"
         id="gen_wxRearrangeCtrl"
         label="Insert wxRearrangeCtrl"
         var_name="menu_item_4" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxSimpleHtmlListBox.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxSimpleHtmlListBox.png"
         id="gen_wxSimpleHtmlListBox"
         label="Insert wxSimpleHtmlListBox"
         var_name="menu_item_5" />
@@ -2400,25 +2396,24 @@
     <node
       class="PopupMenu"
       class_name="MenuRibbonType"
-      label="MenuRibbonType"
       base_file="menuribbontype_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuRibbonType"
       generate_ids="false">
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/ribbon_buttonbar.png;[-1,-1]"
+        bitmap="Embed;../art_src/ribbon_buttonbar.png"
         id="gen_wxRibbonButtonBar"
         label="Insert wxRibbonButtonBar" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/ribbon_bar.png;[-1,-1]"
+        bitmap="Embed;../art_src/ribbon_bar.png"
         id="gen_wxRibbonToolBar"
         label="Insert wxRibbonToolBar"
         var_name="menu_item_2" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/ribbon_gallery.png;[-1,-1]"
+        bitmap="Embed;../art_src/ribbon_gallery.png"
         id="gen_wxRibbonGallery"
         label="Insert wxRibbonGallery"
         var_name="menu_item_3" />
@@ -2426,25 +2421,24 @@
     <node
       class="PopupMenu"
       class_name="MenuStaticSizer"
-      label="MenuStaticSizer"
       base_file="menustaticsizer_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuStaticSizer"
       generate_ids="false">
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxStaticBoxSizer.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxStaticBoxSizer.png"
         id="gen_wxStaticBoxSizer"
         label="Insert wxStaticBoxSizer" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxStaticCheckBoxSizer.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxStaticCheckBoxSizer.png"
         id="gen_StaticCheckboxBoxSizer"
         label="Insert CheckBox wxStaticBoxSizer"
         var_name="menu_item_2" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/wxStaticRadioBtnSizer.png;[-1,-1]"
+        bitmap="Embed;../art_src/wxStaticRadioBtnSizer.png"
         id="gen_StaticRadioBtnBoxSizer"
         label="Insert RadioButton wxStaticBoxSizer"
         var_name="menu_item_3" />
@@ -2452,25 +2446,24 @@
     <node
       class="PopupMenu"
       class_name="MenuSpin"
-      label="MenuSpin"
       base_file="menuspin_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
       derived_class_name="MenuSpin"
       generate_ids="false">
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/spin_ctrl.png;[-1,-1]"
+        bitmap="Embed;../art_src/spin_ctrl.png"
         id="gen_wxSpinCtrl"
         label="Insert wxSpinCtrl" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/spin_ctrl_double.png;[-1,-1]"
+        bitmap="Embed;../art_src/spin_ctrl_double.png"
         id="gen_wxSpinCtrlDouble"
         label="Insert wxSpinCtrlDouble"
         var_name="menu_item_2" />
       <node
         class="wxMenuItem"
-        bitmap="Embed;../art_src/spinbtn.png;[-1,-1]"
+        bitmap="Embed;../art_src/spinbtn.png"
         id="gen_wxSpinButton"
         label="Insert wxSpinButton"
         var_name="menu_item_3" />
@@ -2508,22 +2501,22 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxDialog.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxDialog.png"
                   help="wxDialog"
                   id="CreateNewDialog" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxPanel.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxPanel.png"
                   help="wxPanel"
                   id="CreateNewPanel" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxFrame.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxFrame.png"
                   help="wxFrame"
                   id="CreateNewFrame" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/WXPOPupTransientWindow.png;[-1,-1]"
+                  bitmap="Embed;../art_src/WXPOPupTransientWindow.png"
                   help="wxPopupTransientWindow"
                   id="gen_wxPopupTransientWindow" />
               </node>
@@ -2538,12 +2531,12 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxWizard.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxWizard.png"
                   help="wxWizard"
                   id="CreateNewWizard" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxWizardPageSimple.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxWizardPageSimple.png"
                   help="wxWizardPageSimple"
                   id="gen_wxWizardPageSimple" />
               </node>
@@ -2558,12 +2551,12 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxToolBar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxToolBar.png"
                   help="wxToolBar"
                   id="gen_ToolBar" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/ribbon_bar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/ribbon_bar.png"
                   help="wxRibbonBar"
                   id="CreateNewFormRibbon" />
               </node>
@@ -2578,17 +2571,17 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxMenuBar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxMenuBar.png"
                   help="wxMenuBar"
                   id="gen_MenuBar" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/menu.png;[-1,-1]"
+                  bitmap="Embed;../art_src/menu.png"
                   help="wxMenu"
                   id="gen_PopupMenu" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/menuitem.png;[-1,-1]"
+                  bitmap="Embed;../art_src/menuitem.png"
                   help="wxContextMenuEvent"
                   id="gen_wxContextMenuEvent" />
               </node>
@@ -2603,12 +2596,12 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/pagectrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/pagectrl.png"
                   help="Create a file containing embedded images"
                   id="gen_Images" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/static_bitmap.png;[-1,-1]"
+                  bitmap="Embed;../art_src/static_bitmap.png"
                   help="Add an embedded image to an Images file"
                   id="gen_embedded_image" />
               </node>
@@ -2629,23 +2622,23 @@
                 wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/sizer_horizontal.png;[-1,-1]"
+                  bitmap="Embed;../art_src/sizer_horizontal.png"
                   help="Horizontal wxBoxSizer"
                   id="gen_wxBoxSizer" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/sizer.png;[-1,-1]"
+                  bitmap="Embed;../art_src/sizer.png"
                   help="Vertical wxBoxSizer"
                   id="gen_VerticalBoxSizer" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxStaticBoxSizer.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxStaticBoxSizer.png"
                   help="wxStaticBoxSizer"
                   id="NewStaticSizer"
                   kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wrap_sizer.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wrap_sizer.png"
                   help="wxWrapSizer"
                   id="gen_wxWrapSizer" />
               </node>
@@ -2660,17 +2653,17 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/grid_sizer.png;[-1,-1]"
+                  bitmap="Embed;../art_src/grid_sizer.png"
                   help="wxGridSizer"
                   id="gen_wxGridSizer" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/flex_grid_sizer.png;[-1,-1]"
+                  bitmap="Embed;../art_src/flex_grid_sizer.png"
                   help="wxFlexGridSizer"
                   id="gen_wxFlexGridSizer" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/grid_bag_sizer.png;[-1,-1]"
+                  bitmap="Embed;../art_src/grid_bag_sizer.png"
                   help="wxGridBagSizer"
                   id="gen_wxGridBagSizer" />
               </node>
@@ -2685,17 +2678,17 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/stddialogbuttonsizer.png;[-1,-1]"
+                  bitmap="Embed;../art_src/stddialogbuttonsizer.png"
                   help="wxStdDialogButtonSizer"
                   id="gen_wxStdDialogButtonSizer" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/text_sizer.png;[-1,-1]"
+                  bitmap="Embed;../art_src/text_sizer.png"
                   help="wxTextSizerWrapper"
                   id="gen_TextSizer" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/spacer.png;[-1,-1]"
+                  bitmap="Embed;../art_src/spacer.png"
                   help="spacer"
                   id="gen_spacer" />
               </node>
@@ -2717,34 +2710,34 @@
                 wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxStaticText.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxStaticText.png"
                   help="wxStaticText"
                   id="gen_wxStaticText" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxtextCtrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxtextCtrl.png"
                   help="wxTextCtrl"
                   id="gen_wxTextCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxcheckBox.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxcheckBox.png"
                   help="Check Boxes"
                   id="NewCheckbox"
                   kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxradioButton.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxradioButton.png"
                   help="wxRadioButton"
                   id="gen_wxRadioButton" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxButton.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxButton.png"
                   help="Buttons"
                   id="NewButton"
                   kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/spin_ctrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/spin_ctrl.png"
                   help="Spin controls"
                   id="NewSpin"
                   kind="wxRIBBON_BUTTON_DROPDOWN" />
@@ -2762,19 +2755,19 @@
                 wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxcomboBox.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxcomboBox.png"
                   help="Combos &amp; Choice"
                   id="NewCombobox"
                   kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxListBox.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxListBox.png"
                   help="Lists"
                   id="NewListbox"
                   kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/radio_box.png;[-1,-1]"
+                  bitmap="Embed;../art_src/radio_box.png"
                   help="wxRadioBox"
                   id="gen_wxRadioBox" />
               </node>
@@ -2790,32 +2783,32 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/filePicker.png;[-1,-1]"
+                  bitmap="Embed;../art_src/filePicker.png"
                   help="wxFilePickerCtrl"
                   id="gen_wxFilePickerCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/dirPicker.png;[-1,-1]"
+                  bitmap="Embed;../art_src/dirPicker.png"
                   help="wxDirPickerCtrl"
                   id="gen_wxDirPickerCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/fontPicker.png;[-1,-1]"
+                  bitmap="Embed;../art_src/fontPicker.png"
                   help="wxFontPickerCtrl"
                   id="gen_wxFontPickerCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/colourPickerIcon.png;[-1,-1]"
+                  bitmap="Embed;../art_src/colourPickerIcon.png"
                   help="wxColourPickerCtrl"
                   id="gen_wxColourPickerCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/datepicker.png;[-1,-1]"
+                  bitmap="Embed;../art_src/datepicker.png"
                   help="wxDatePickerCtrl"
                   id="gen_wxDatePickerCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/timepicker.png;[-1,-1]"
+                  bitmap="Embed;../art_src/timepicker.png"
                   help="wxTimePickerCtrl"
                   id="gen_wxTimePickerCtrl" />
               </node>
@@ -2831,22 +2824,22 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/static_bitmap.png;[-1,-1]"
+                  bitmap="Embed;../art_src/static_bitmap.png"
                   help="wxStaticBitmap"
                   id="gen_wxStaticBitmap" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/static_line.png;[-1,-1]"
+                  bitmap="Embed;../art_src/static_line.png"
                   help="wxStaticLine"
                   id="gen_wxStaticLine" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/slider.png;[-1,-1]"
+                  bitmap="Embed;../art_src/slider.png"
                   help="wxSlider"
                   id="gen_wxSlider" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/gauge.png;[-1,-1]"
+                  bitmap="Embed;../art_src/gauge.png"
                   help="wxGauge"
                   id="gen_wxGauge" />
               </node>
@@ -2867,23 +2860,23 @@
                 wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxPanel.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxPanel.png"
                   help="wxPanel"
                   id="gen_wxPanel" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxsplitterWindow.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxsplitterWindow.png"
                   help="wxSplitterWindow"
                   id="gen_wxSplitterWindow" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxscrolledWindow.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxscrolledWindow.png"
                   help="wxScrolled (Panel or Window)"
                   id="NewScrolled"
                   kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxCollapsiblePane.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxCollapsiblePane.png"
                   help="wxCollapsiblePane"
                   id="gen_wxCollapsiblePane" />
               </node>
@@ -2898,37 +2891,37 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/auinotebook.png;[-1,-1]"
+                  bitmap="Embed;../art_src/auinotebook.png"
                   help="wxAuiNotebook"
                   id="gen_wxAuiNotebook" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxChoicebook.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxChoicebook.png"
                   help="wxChoicebook"
                   id="gen_wxChoicebook" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxListbook.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxListbook.png"
                   help="wxListbook"
                   id="gen_wxListbook" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxnotebook.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxnotebook.png"
                   help="wxNotebook"
                   id="gen_wxNotebook" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxsimplebook.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxsimplebook.png"
                   help="wxSimplebook"
                   id="gen_wxSimplebook" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxToolbook.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxToolbook.png"
                   help="wxToolbook"
                   id="gen_wxToolbook" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxTreebook.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxTreebook.png"
                   help="wxTreebook"
                   id="gen_wxTreebook" />
               </node>
@@ -2943,12 +2936,12 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/book_page.png;[-1,-1]"
+                  bitmap="Embed;../art_src/book_page.png"
                   help="Adds a wxPanel, allowing for multiple controls"
                   id="gen_BookPage" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/pagectrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/pagectrl.png"
                   help="Adds a single control as the page"
                   id="gen_PageCtrl" />
               </node>
@@ -2968,7 +2961,7 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/grid.png;[-1,-1]"
+                  bitmap="Embed;../art_src/grid.png"
                   help="wxGrid"
                   id="gen_wxGrid" />
               </node>
@@ -2983,22 +2976,22 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxPropertyGrid.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxPropertyGrid.png"
                   help="wxPropertyGrid"
                   id="gen_wxPropertyGrid" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxPropertyGridManager.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxPropertyGridManager.png"
                   help="wxPropertyGridManager"
                   id="gen_wxPropertyGridManager" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/propgridpage.png;[-1,-1]"
+                  bitmap="Embed;../art_src/propgridpage.png"
                   help="wxPropertyGrid Page"
                   id="gen_propGridPage" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/propgriditem.png;[-1,-1]"
+                  bitmap="Embed;../art_src/propgriditem.png"
                   help="wxPropertyGrid Item"
                   id="gen_propGridItem" />
               </node>
@@ -3013,17 +3006,17 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/tree_ctrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/tree_ctrl.png"
                   help="wxTreeCtrl"
                   id="gen_wxTreeCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/treelistctrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/treelistctrl.png"
                   help="wxTreeListCtrl"
                   id="gen_wxTreeListCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/treelistctrlcolumn.png;[-1,-1]"
+                  bitmap="Embed;../art_src/treelistctrlcolumn.png"
                   help="wxTreeListCtrl Column"
                   id="gen_TreeListCtrlColumn" />
               </node>
@@ -3039,18 +3032,18 @@
                 wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/dataview_ctrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/dataview_ctrl.png"
                   help="Data Control"
                   id="NewDataCtrl"
                   kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/dataviewlist_column.png;[-1,-1]"
+                  bitmap="Embed;../art_src/dataviewlist_column.png"
                   help="DataView Column"
                   id="gen_dataViewColumn" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/doc_mdi_parent_frame.png;[-1,-1]"
+                  bitmap="Embed;../art_src/doc_mdi_parent_frame.png"
                   help="DataViewList Column"
                   id="gen_dataViewListColumn" />
               </node>
@@ -3071,27 +3064,27 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxmenuBar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxmenuBar.png"
                   help="wxMenuBar"
                   id="gen_wxMenuBar" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/menu.png;[-1,-1]"
+                  bitmap="Embed;../art_src/menu.png"
                   help="wxMenu"
                   id="gen_wxMenu" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/menuitem.png;[-1,-1]"
+                  bitmap="Embed;../art_src/menuitem.png"
                   help="wxMenuItem"
                   id="gen_wxMenuItem" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/submenu.png;[-1,-1]"
+                  bitmap="Embed;../art_src/submenu.png"
                   help="submenu"
                   id="gen_submenu" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/separator.png;[-1,-1]"
+                  bitmap="Embed;../art_src/separator.png"
                   help="separator"
                   id="gen_separator" />
               </node>
@@ -3106,22 +3099,22 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxtoolBar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxtoolBar.png"
                   help="wxToolBar"
                   id="gen_wxToolBar" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/auitoolbar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/auitoolbar.png"
                   help="wxAuiToolBar"
                   id="gen_wxAuiToolBar" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/tool.png;[-1,-1]"
+                  bitmap="Embed;../art_src/tool.png"
                   help="Tool"
                   id="gen_tool" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/toolseparator.png;[-1,-1]"
+                  bitmap="Embed;../art_src/toolseparator.png"
                   help="Tool Separator"
                   id="gen_toolSeparator" />
               </node>
@@ -3137,38 +3130,38 @@
                 wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/ribbon_bar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/ribbon_bar.png"
                   help="wxRibbonBar"
                   id="CreateNewRibbon" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/ribbon_page.png;[-1,-1]"
+                  bitmap="Embed;../art_src/ribbon_page.png"
                   help="wxRibbonPage"
                   id="gen_wxRibbonPage" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/ribbon_panel.png;[-1,-1]"
+                  bitmap="Embed;../art_src/ribbon_panel.png"
                   help="wxRibbonPanel"
                   id="gen_wxRibbonPanel" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/ribbon_buttonbar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/ribbon_buttonbar.png"
                   help="Ribbon Bar Type"
                   id="NewRibbonType"
                   kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/ribbon_button.png;[-1,-1]"
+                  bitmap="Embed;../art_src/ribbon_button.png"
                   help="Ribbon Button"
                   id="gen_ribbonButton" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/toolseparator.png;[-1,-1]"
+                  bitmap="Embed;../art_src/toolseparator.png"
                   help="Tool Separator"
                   id="gen_ribbonSeparator" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/ribbon_gallery_item.png;[-1,-1]"
+                  bitmap="Embed;../art_src/ribbon_gallery_item.png"
                   help="Ribbon Gallery Item"
                   id="gen_ribbonGalleryItem" />
               </node>
@@ -3183,12 +3176,12 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/statusbar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/statusbar.png"
                   help="wxStatusBar"
                   id="gen_wxStatusBar" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/infobar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/infobar.png"
                   help="wxInfoBar"
                   id="gen_wxInfoBar" />
               </node>
@@ -3208,12 +3201,12 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/richtextctrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/richtextctrl.png"
                   help="wxRichTextCtrl"
                   id="gen_wxRichTextCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/scintilla.png;[-1,-1]"
+                  bitmap="Embed;../art_src/scintilla.png"
                   help="wxStyledTextCtrl"
                   id="gen_wxStyledTextCtrl" />
               </node>
@@ -3228,52 +3221,52 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/hyperlink_ctrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/hyperlink_ctrl.png"
                   help="wxHyperlinkCtrl"
                   id="gen_wxHyperlinkCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/search.png;[-1,-1]"
+                  bitmap="Embed;../art_src/search.png"
                   help="wxSearchCtrl"
                   id="gen_wxSearchCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/calendar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/calendar.png"
                   help="wxCalendarCtrl"
                   id="gen_wxCalendarCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxfileCtrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxfileCtrl.png"
                   help="wxFileCtrl"
                   id="gen_wxFileCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/genericdir_ctrl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/genericdir_ctrl.png"
                   help="wxGenericDirCtrl"
                   id="gen_wxGenericDirCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/scrollbar.png;[-1,-1]"
+                  bitmap="Embed;../art_src/scrollbar.png"
                   help="wxScrollBar"
                   id="gen_wxScrollBar" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxactivityIndicator.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxactivityIndicator.png"
                   help="wxActivityIndicator"
                   id="gen_wxActivityIndicator" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxanimation.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxanimation.png"
                   help="wxAnimationCtrl"
                   id="gen_wxAnimationCtrl" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/wxbannerWindow.png;[-1,-1]"
+                  bitmap="Embed;../art_src/wxbannerWindow.png"
                   help="wxBannerWindow"
                   id="gen_wxBannerWindow" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/customControl.png;[-1,-1]"
+                  bitmap="Embed;../art_src/customControl.png"
                   help="CustomControl"
                   id="gen_CustomControl" />
               </node>
@@ -3288,12 +3281,12 @@
                 wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/htmlwin.png;[-1,-1]"
+                  bitmap="Embed;../art_src/htmlwin.png"
                   help="wxHtmlWindow"
                   id="gen_wxHtmlWindow" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/webview.png;[-1,-1]"
+                  bitmap="Embed;../art_src/webview.png"
                   help="wxWebView"
                   id="gen_wxWebView" />
               </node>
@@ -3709,7 +3702,7 @@
       class="wxDialog"
       base_file="startupdlg_base"
       class_name="StartupDlg"
-      icon="Embed;../art_src/logo16.png;[-1,-1]"
+      icon="Embed;../art_src/logo16.png"
       inserted_hdr_code="enum : size_t@@{@@    START_MRU,@@    START_CONVERT,@@    START_OPEN,@@    START_EMPTY,@@};@@@@auto GetCommandType() const { return m_cmdType; }@@ttString&amp; GetProjectFile() { return m_value; }@@@@protected:@@void OnHyperlink(wxHyperlinkEvent&amp; event);@@@@private:@@ttString m_value;@@size_t m_cmdType { START_EMPTY };"
       private_members="true"
       title="Open, Import, or Create Project"
@@ -3727,7 +3720,7 @@
           proportion="1">
           <node
             class="wxStaticBitmap"
-            bitmap="Embed;../art_src/logo64.png;[-1,-1]"
+            bitmap="Embed;../art_src/logo64.png"
             var_name="bmp_4" />
           <node
             class="spacer"
@@ -3788,7 +3781,7 @@
               var_name="box_sizer_4">
               <node
                 class="wxStaticBitmap"
-                bitmap="Embed;../art_src/open.png;[-1,-1]"
+                bitmap="Embed;../art_src/open.png"
                 var_name="bmp_2" />
               <node
                 class="wxHyperlinkCtrl"
@@ -3805,7 +3798,7 @@
               var_name="box_sizer_3">
               <node
                 class="wxStaticBitmap"
-                bitmap="Embed;../art_src/pagectrl.png;[-1,-1]" />
+                bitmap="Embed;../art_src/pagectrl.png" />
               <node
                 class="wxHyperlinkCtrl"
                 class_access="none"
@@ -3821,7 +3814,7 @@
               var_name="box_sizer_5">
               <node
                 class="wxStaticBitmap"
-                bitmap="Embed;../art_src/new.png;[-1,-1]"
+                bitmap="Embed;../art_src/new.png"
                 var_name="bmp_3" />
               <node
                 class="wxHyperlinkCtrl"

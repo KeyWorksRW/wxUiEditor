@@ -15,10 +15,10 @@ using namespace GenEnum;
 
 #include "menuribbontype_base.h"
 
-#include <wx/mstream.h>  // Memory stream classes
+#include <wx/mstream.h>  // memory stream classes
 
 // Convert a data array into a wxImage
-inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -39,11 +39,11 @@ MenuRibbonType::MenuRibbonType() : wxMenu()
         wxImage::AddHandler(new wxPNGHandler);
 
     auto menu_item = Append(gen_wxRibbonButtonBar, "Insert wxRibbonButtonBar");
-    menu_item->SetBitmap(GetImageFromArray(wxue_img::ribbon_buttonbar_png, sizeof(wxue_img::ribbon_buttonbar_png)));
+    menu_item->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::ribbon_buttonbar_png, sizeof(wxue_img::ribbon_buttonbar_png))));
 
     auto menu_item_2 = Append(gen_wxRibbonToolBar, "Insert wxRibbonToolBar");
-    menu_item_2->SetBitmap(GetImageFromArray(wxue_img::ribbon_bar_png, sizeof(wxue_img::ribbon_bar_png)));
+    menu_item_2->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::ribbon_bar_png, sizeof(wxue_img::ribbon_bar_png))));
 
     auto menu_item_3 = Append(gen_wxRibbonGallery, "Insert wxRibbonGallery");
-    menu_item_3->SetBitmap(GetImageFromArray(wxue_img::ribbon_gallery_png, sizeof(wxue_img::ribbon_gallery_png)));
+    menu_item_3->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::ribbon_gallery_png, sizeof(wxue_img::ribbon_gallery_png))));
 }

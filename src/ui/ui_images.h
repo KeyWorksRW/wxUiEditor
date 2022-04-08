@@ -16,7 +16,7 @@ namespace wxue_img
 {
     
     // Convert a data array into a wxImage
-    inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+    inline wxImage wxueImage(const unsigned char* data, size_t size_data)
     {
         wxMemoryInputStream strm(data, size_data);
         wxImage image;

@@ -15,10 +15,10 @@ using namespace GenEnum;
 
 #include "menucheckbox_base.h"
 
-#include <wx/mstream.h>  // Memory stream classes
+#include <wx/mstream.h>  // memory stream classes
 
 // Convert a data array into a wxImage
-inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -39,9 +39,9 @@ MenuCheckbox::MenuCheckbox() : wxMenu()
 
     auto menu_item = Append(gen_wxCheckBox, "Insert wxCheckBox",
         "Insert a normal two-state checkbox", wxITEM_NORMAL);
-    menu_item->SetBitmap(GetImageFromArray(wxue_img::wxCheckBox_png, sizeof(wxue_img::wxCheckBox_png)));
+    menu_item->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxCheckBox_png, sizeof(wxue_img::wxCheckBox_png))));
 
     auto menu_item_2 = Append(gen_Check3State, "Insert 3-state wxCheckBox",
         "Insert a 3-state checkbox", wxITEM_NORMAL);
-    menu_item_2->SetBitmap(GetImageFromArray(wxue_img::check3state_png, sizeof(wxue_img::check3state_png)));
+    menu_item_2->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::check3state_png, sizeof(wxue_img::check3state_png))));
 }

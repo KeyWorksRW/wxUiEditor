@@ -15,10 +15,10 @@ using namespace GenEnum;
 
 #include "menulistbox_base.h"
 
-#include <wx/mstream.h>  // Memory stream classes
+#include <wx/mstream.h>  // memory stream classes
 
 // Convert a data array into a wxImage
-inline wxImage GetImageFromArray(const unsigned char* data, size_t size_data)
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
 {
     wxMemoryInputStream strm(data, size_data);
     wxImage image;
@@ -42,20 +42,20 @@ MenuListbox::MenuListbox() : wxMenu()
         wxImage::AddHandler(new wxPNGHandler);
 
     auto menu_item = Append(gen_wxListBox, "Insert wxListBox");
-    menu_item->SetBitmap(GetImageFromArray(wxue_img::wxListBox_png, sizeof(wxue_img::wxListBox_png)));
+    menu_item->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxListBox_png, sizeof(wxue_img::wxListBox_png))));
 
     auto menu_item_2 = Append(gen_wxCheckListBox, "Insert wxCheckListBox");
-    menu_item_2->SetBitmap(GetImageFromArray(wxue_img::wxCheckListBox_png, sizeof(wxue_img::wxCheckListBox_png)));
+    menu_item_2->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxCheckListBox_png, sizeof(wxue_img::wxCheckListBox_png))));
 
     auto menu_item_6 = Append(gen_wxEditableListBox, "Insert wxEditableListBox");
-    menu_item_6->SetBitmap(GetImageFromArray(wxue_img::wxEditListBox_png, sizeof(wxue_img::wxEditListBox_png)));
+    menu_item_6->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxEditListBox_png, sizeof(wxue_img::wxEditListBox_png))));
 
     auto menu_item_3 = Append(gen_wxListView, "Insert wxListView");
-    menu_item_3->SetBitmap(GetImageFromArray(wxue_img::wxListView_png, sizeof(wxue_img::wxListView_png)));
+    menu_item_3->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxListView_png, sizeof(wxue_img::wxListView_png))));
 
     auto menu_item_4 = Append(gen_wxRearrangeCtrl, "Insert wxRearrangeCtrl");
-    menu_item_4->SetBitmap(GetImageFromArray(wxue_img::wxRearrangeCtrl_png, sizeof(wxue_img::wxRearrangeCtrl_png)));
+    menu_item_4->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxRearrangeCtrl_png, sizeof(wxue_img::wxRearrangeCtrl_png))));
 
     auto menu_item_5 = Append(gen_wxSimpleHtmlListBox, "Insert wxSimpleHtmlListBox");
-    menu_item_5->SetBitmap(GetImageFromArray(wxue_img::wxSimpleHtmlListBox_png, sizeof(wxue_img::wxSimpleHtmlListBox_png)));
+    menu_item_5->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::wxSimpleHtmlListBox_png, sizeof(wxue_img::wxSimpleHtmlListBox_png))));
 }

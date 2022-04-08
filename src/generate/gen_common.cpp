@@ -890,7 +890,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
             return false;
         }
         ttlib::cstr name = "wxue_img::" + embed->array_name;
-        code << "GetBundleFromSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
+        code << "wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
         code << (embed->array_size >> 32) << ", wxSize(" << embed->size_x << ", " << embed->size_y << "))";
     }
     else

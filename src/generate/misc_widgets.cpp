@@ -100,7 +100,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
             }
         }
 
-        code << "GetAnimFromHdr(" << name << ", sizeof(" << name << "))";
+        code << "wxueAnimation(" << name << ", sizeof(" << name << "))";
     }
     else
     {

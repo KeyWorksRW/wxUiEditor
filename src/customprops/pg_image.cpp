@@ -51,11 +51,12 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     }
     else
     {
+        // These need to match the array in img_props.h
         types.Add(s_type_names[0]);  // Art
         types.Add(s_type_names[1]);  // Embed
-        types.Add(s_type_names[2]);  // XPM
-        types.Add(s_type_names[3]);  // Header
-        types.Add(s_type_names[4]);  // SVG
+        types.Add(s_type_names[2]);  // Header
+        types.Add(s_type_names[3]);  // SVG
+        types.Add(s_type_names[4]);  // XPM
     }
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));

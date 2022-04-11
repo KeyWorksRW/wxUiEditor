@@ -460,7 +460,6 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
     }
     else
     {
-
         if (node->IsLocal())
             code << "auto ";
 

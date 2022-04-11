@@ -13,9 +13,7 @@
 
 class NodeProperty;
 
-inline constexpr std::array<const char*, 5> s_type_names = {
-    "Art", "Embed", "XPM", "Header", "SVG",
-};
+inline constexpr std::array<const char*, 5> s_type_names = { "Art", "Embed", "Header", "SVG", "XPM" };
 
 struct ImageProperties
 {

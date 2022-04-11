@@ -348,15 +348,11 @@ protected:
 
 #endif  // defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)
 
-// clang-format off
-
-#if defined(_MSC_VER)
-
-#if defined(wxUSE_ON_FATAL_EXCEPTION)
+#if defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
 void App::OnFatalException()
 {
-#if defined(_DEBUG)
+    #if defined(_DEBUG)
 
     StackLogger logger;
     logger.WalkFromException();
@@ -372,16 +368,13 @@ void App::OnFatalException()
     // We now have the relevant call stack displayed in the debugger, so break into it.
     wxTrap();
 
-#endif  // _DEBUG
+    #endif  // _DEBUG
 
     // Let the user know something terrible happened.
-    wxMessageBox("An internal error has occurred!", txtVersion);
+    wxMessageBox("A fatal exception has occured!", txtVersion);
 }
 
-#endif  // defined(wxUSE_ON_FATAL_EXCEPTION)
-#endif  // defined(_MSC_VER)
-
-// clang-format on
+#endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
 #if defined(_DEBUG)
 
@@ -390,10 +383,13 @@ void App::ShowMsgWindow()
     g_pMsgLogging->ShowLogger();
 }
 
+#endif  // defined(_DEBUG)
+
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+
 void App::DbgCurrentTest(wxCommandEvent&)
 {
-    INTERNAL_ERROR(ttlib::cstr() << "\n\nInternal error test.")
-    MSG_WARNING("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()");
+    wxMessageBox("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()", txtVersion);
 }
 
-#endif  // defined(_DEBUG)
+#endif

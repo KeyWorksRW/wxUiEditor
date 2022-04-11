@@ -124,6 +124,8 @@ MainFrame::MainFrame() :
 
     menuInternal->AppendSeparator();
     menuInternal->Append(id_FindWidget, "&Find Widget...", "Search for a widget starting with the current selected node");
+    menuInternal->AppendSeparator();
+    menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
 
     m_submenu_import_recent = new wxMenu();
     m_menuFile->AppendSeparator();
@@ -137,7 +139,8 @@ MainFrame::MainFrame() :
     config->SetPath("/");
 
     Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, wxID_FILE1 + 1000, wxID_FILE9 + 1000);
-    #endif
+
+    #endif  // not _DEBUG
 
     m_menubar->Append(menuInternal, "&Internal");
 #endif
@@ -299,7 +302,9 @@ MainFrame::MainFrame() :
             g_pMsgLogging->ShowLogger();
         },
         id_ShowLogger);
+#endif
 
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 
@@ -1083,7 +1088,7 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_derivedPanel = new BasePanel(m_notebook, this, 1);
     m_notebook->AddPage(m_derivedPanel, "Derived", false, wxWithImages::NO_IMAGE);
 
-#if defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
     m_xrcPanel = new BasePanel(m_notebook, this, -1);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 #endif

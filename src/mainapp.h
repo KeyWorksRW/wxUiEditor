@@ -106,10 +106,13 @@ public:
 
 #if defined(_DEBUG)
 
-    void DbgCurrentTest(wxCommandEvent& event);
     void ShowMsgWindow();
     bool AutoMsgWindow() { return (m_prefs.flags & PREFS_MSG_WINDOW); }
 
+#endif
+
+#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+    void DbgCurrentTest(wxCommandEvent& event);
 #endif
 
     void SetMainFrameClosing() { m_isMainFrameClosing = true; }

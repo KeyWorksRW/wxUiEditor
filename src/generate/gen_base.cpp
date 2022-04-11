@@ -1783,12 +1783,11 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                         embedset.insert(ttlib::cstr() << "#include \"" << path << "\"");
                     }
                 }
-
-                // TODO: [KeyWorks - 03-12-2022] Need to support SVG images
             }
             else
             {
-                MSG_WARNING(ttlib::cstr("Unable to locate ") << iter.as_string())
+                // Since this is a thread, you can't send the standard MSG_WARNING if the window is opened, or it will lock
+                // the debugger.
             }
         }
 

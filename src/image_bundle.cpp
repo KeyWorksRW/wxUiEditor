@@ -131,7 +131,7 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
         }
     }
 
-    if (path.extension().is_sameas(".svg", tt::CASE::either))
+    if (parts[IndexType].is_sameprefix("SVG"))
     {
         if (AddSvgBundleImage(parts[IndexSize], path, form))
         {

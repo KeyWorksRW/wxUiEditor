@@ -42,11 +42,11 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         wxString pattern;
         if (m_img_props.IsAnimationType())
         {
-            pattern = "All files|*.*|Gif|*.gif|Ani|*.ani||";
+            pattern = "Animation files|*.*|Gif|*.gif|Ani|*.ani||";
         }
         else
         {
-            pattern = "All files|*.*|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||";
+            pattern = "Bitmap files|*.png;*.bmp;*.ico;*.xpm|PNG|*.png|XPM|*.xpm|Tiff|*.tif;*.tiff|Bitmaps|*.bmp|Icon|*.ico||";
         }
 
         wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString, pattern,

@@ -101,7 +101,7 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
     }
 }
 
-void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form)
+bool ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form)
 {
     ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
     ASSERT(parts.size() > 1)
@@ -120,14 +120,14 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
             if (!art_path.file_exists())
             {
                 m_bundles[lookup_str] = img_bundle;
-                return;
+                return true;
             }
             path = std::move(art_path);
         }
         else
         {
             m_bundles[lookup_str] = img_bundle;
-            return;
+            return true;
         }
     }
 
@@ -140,15 +140,14 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
             {
                 img_bundle.bundle = LoadSVG(embed);
                 m_bundles[lookup_str] = std::move(img_bundle);
-                return;
+                return true;
             }
         }
     }
 
     if (!AddEmbeddedBundleImage(path, form))
     {
-        m_bundles[lookup_str] = img_bundle;
-        return;
+        return false;
     }
 
     img_bundle.lst_filenames.emplace_back(path);
@@ -249,6 +248,7 @@ void ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
     }
 
     m_bundles[lookup_str] = std::move(img_bundle);
+    return true;
 }
 
 static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
@@ -414,13 +414,25 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
     }
     else if (parts[IndexType].contains("Embed"))
     {
-        AddNewEmbeddedBundle(description, parts[IndexImage], node->get_form());
-        return &m_bundles[lookup_str];
+        if (AddNewEmbeddedBundle(description, parts[IndexImage], node->get_form()))
+        {
+            return &m_bundles[lookup_str];
+        }
+        else
+        {
+            return nullptr;
+        }
     }
     else if (parts[IndexType].contains("SVG"))
     {
-        AddNewEmbeddedBundle(description, parts[IndexImage], node->get_form());
-        return &m_bundles[lookup_str];
+        if (AddNewEmbeddedBundle(description, parts[IndexImage], node->get_form()))
+        {
+            return &m_bundles[lookup_str];
+        }
+        else
+        {
+            return nullptr;
+        }
     }
 
     auto image_first = wxGetApp().GetProjectSettings()->GetPropertyBitmap(description, false);

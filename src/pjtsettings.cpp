@@ -564,11 +564,12 @@ bool ProjectSettings::CheckNode(Node* node)
                 continue;
 
             auto result = m_map_embedded.find(parts[IndexImage].filename());
-            // If it hasn't been added yet, add it now
             if (result == m_map_embedded.end())
             {
-                FAIL_MSG("We get here if a bitmap did not get added to m_map_embedded -- that shouldn't happen")
-                AddEmbeddedImage(parts[IndexImage], node_form);
+                // If the image file could not be loaded, we end up here. This can happen by trying to add a SVG image to
+                // a Embed image type
+                // FAIL_MSG("We get here if a bitmap did not get added to m_map_embedded -- that shouldn't happen")
+                // AddEmbeddedImage(parts[IndexImage], node_form);
                 continue;
             }
 

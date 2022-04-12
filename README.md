@@ -4,7 +4,7 @@ This Windows GUI tool is used to create and maintain [wxWidgets](https://docs.wx
 
 In addition to creating new projects, the following project types can be imported:
 
-<!-- - **wxCrafter** (Click [here](docs/import_crafter.md) for more information) -->
+- **wxCrafter** (Click [here](docs/import_crafter.md) for more information)
 - **wxFormBuilder** (Click [here](docs/import_formbuilder.md) for more information)
 - **wxGlade**
 - **wxSmith**

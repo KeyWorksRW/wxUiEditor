@@ -471,6 +471,10 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
     {
         return ttlib::cstr("wx_ribbon_bar.html");
     }
+    else if (class_name == "RibbonToolBar")
+    {
+        return ttlib::cstr("wx_ribbon_tool_bar.html");
+    }
     else if (class_name == "StaticCheckboxBoxSizer" || class_name == "StaticRadioBtnBoxSizer")
     {
         return ttlib::cstr("wx_static_box_sizer.html");

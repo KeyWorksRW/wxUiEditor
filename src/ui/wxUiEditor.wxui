@@ -1276,7 +1276,7 @@
             var_name="submenu3">
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/nav_moveup.png"
+              bitmap="Art;wxART_GO_UP|wxART_MENU"
               help="Moves selected item up"
               id="id_MoveUp"
               label="Up"
@@ -1285,7 +1285,7 @@
               wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Up);@@}" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/nav_movedown.png"
+              bitmap="Art;wxART_GO_DOWN|wxART_MENU"
               help="Moves selected item down"
               id="id_MoveDown"
               label="Down"
@@ -1294,7 +1294,7 @@
               wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Down);@@}" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/nav_moveleft.png"
+              bitmap="Art;wxART_GO_BACK|wxART_MENU"
               help="Moves selected item left"
               id="id_MoveLeft"
               label="Left"
@@ -1303,7 +1303,7 @@
               wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetFrame().MoveNode(MoveDirection::Left);@@}" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/nav_moveright.png"
+              bitmap="Art;wxART_GO_FORWARD|wxART_MENU"
               help="Moves selected item right"
               id="id_MoveRight"
               label="Right"
@@ -1317,7 +1317,7 @@
             var_name="submenu2">
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/alignleft.png"
+              bitmap="SVG;../art_src/alignleft.svg;[16,16]"
               help="Align selected item to the left"
               id="id_AlignLeft"
               kind="wxITEM_CHECK"
@@ -1327,7 +1327,7 @@
               wxEVT_MENU="OnChangeAlignment" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/aligncenter.png"
+              bitmap="SVG;../art_src/aligncenter.svg;[16,16]"
               checked="true"
               help="Align selected item to the center horizontally"
               id="id_AlignCenterHorizontal"
@@ -1338,7 +1338,7 @@
               wxEVT_MENU="OnChangeAlignment" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/alignright.png"
+              bitmap="SVG;../art_src/alignright.svg;[16,16]"
               help="Align selected item to the right"
               id="id_AlignRight"
               kind="wxITEM_CHECK"
@@ -1351,7 +1351,7 @@
               var_name="separator8" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/aligntop.png"
+              bitmap="SVG;../art_src/aligntop.svg;[16,16]"
               help="Align selected item to the top"
               id="id_AlignTop"
               kind="wxITEM_CHECK"
@@ -1361,7 +1361,7 @@
               wxEVT_MENU="OnChangeAlignment" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/alignvertcenter.png"
+              bitmap="SVG;../art_src/alignvertcenter.svg;[16,16]"
               help="Align selected item to the center vertically"
               id="id_AlignCenterVertical"
               kind="wxITEM_CHECK"
@@ -1371,7 +1371,7 @@
               wxEVT_MENU="OnChangeAlignment" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/alignbottom.png"
+              bitmap="SVG;../art_src/alignright.svg;[16,16]"
               help="Align selected item to the bottom"
               id="id_AlignBottom"
               kind="wxITEM_CHECK"
@@ -1386,7 +1386,7 @@
             var_name="submenu4">
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/left.png"
+              bitmap="SVG;../art_src/left.svg;[16,16]"
               help="Toggle border on the left side of the item"
               id="id_BorderLeft"
               kind="wxITEM_CHECK"
@@ -1395,7 +1395,7 @@
               wxEVT_MENU="OnChangeBorder" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/right.png"
+              bitmap="SVG;../art_src/right.svg;[16,16]"
               help="Toggle border on the right side of the item"
               id="id_BorderRight"
               kind="wxITEM_CHECK"
@@ -1404,7 +1404,7 @@
               wxEVT_MENU="OnChangeBorder" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/top.png"
+              bitmap="SVG;../art_src/top.svg;[16,16]"
               help="Toggle border on the top side of the item"
               id="id_BorderTop"
               kind="wxITEM_CHECK"
@@ -1413,7 +1413,7 @@
               wxEVT_MENU="OnChangeBorder" />
             <node
               class="wxMenuItem"
-              bitmap="Embed;../art_src/bottom.png"
+              bitmap="SVG;../art_src/bottom.svg;[16,16]"
               help="Toggle border on the bottom side of the item"
               id="id_BorderBottom"
               kind="wxITEM_CHECK"
@@ -1423,7 +1423,7 @@
           </node>
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art_src/expand.png"
+            bitmap="SVG;../art_src/expand.svg;[16,16]"
             help="Toggle the wxEXPAND flag"
             id="id_Expand"
             kind="wxITEM_CHECK"
@@ -1438,7 +1438,7 @@
           var_name="m_menuTools">
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art_src/generate.png"
+            bitmap="SVG;../art_src/generate.svg;[16,16]"
             help="Generates C++ Code for each top level form"
             id="id_GenerateCode"
             label="&amp;Generate Base Code"
@@ -1475,6 +1475,7 @@
             wxEVT_MENU="OnAbout" />
           <node
             class="wxMenuItem"
+            bitmap="SVG;../art_src/wxlogo.svg;[16,16]"
             help="Open wxWidgets documentation in your default browser."
             label="wxWidgets Documentation"
             var_name="menu_item_6"
@@ -1683,7 +1684,7 @@
       base_file="navtoolbar_base">
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_coll_expand.png"
+        bitmap="SVG;../art_src/nav_coll_expand.svg;[16,16]"
         id="id_NavCollExpand"
         label=""
         statusbar="Expand selected item, collapse all other items at the same level"
@@ -1691,7 +1692,7 @@
         var_name="collapse_expand" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_expand.png"
+        bitmap="SVG;../art_src/nav_expand.svg;[16,16]"
         id="id_NavExpand"
         label=""
         statusbar="Expand selected item and all of it's sub-items"
@@ -1699,7 +1700,7 @@
         var_name="expand" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_collapse.png"
+        bitmap="SVG;../art_src/nav_collapse.svg;[16,16]"
         id="id_NavCollapse"
         label=""
         statusbar="Collapse selected item and all items at the same level"
@@ -1709,7 +1710,7 @@
         class="toolSeparator" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_moveleft.png"
+        bitmap="Art;wxART_GO_BACK|wxART_MENU"
         id="id_NavMoveLeft"
         label=""
         statusbar="Move the selected item left"
@@ -1717,7 +1718,7 @@
         var_name="move_left" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_moveup.png"
+        bitmap="Art;wxART_GO_UP|wxART_MENU"
         id="id_NavMoveUp"
         label=""
         statusbar="Move the selected item up"
@@ -1725,7 +1726,7 @@
         var_name="move_up" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_movedown.png"
+        bitmap="Art;wxART_GO_DOWN|wxART_MENU"
         id="id_NavMoveDown"
         label=""
         statusbar="Move the selected item down"
@@ -1733,7 +1734,7 @@
         var_name="move_down" />
       <node
         class="tool"
-        bitmap="Embed;../art_src/nav_moveright.png"
+        bitmap="Art;wxART_GO_FORWARD|wxART_OTHER"
         id="id_NavMoveRight"
         label=""
         statusbar="Move the selected item right"

@@ -110,7 +110,7 @@ namespace wxue_img
     extern const unsigned char alignvertcenter_svg[911];
     extern const unsigned char bottom_svg[585];
     extern const unsigned char expand_svg[819];
-    extern const unsigned char generate_svg[3369];
+    extern const unsigned char generate_svg[780];
     extern const unsigned char hidden_svg[2111];
     extern const unsigned char left_svg[585];
     extern const unsigned char magnify_svg[3953];

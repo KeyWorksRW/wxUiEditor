@@ -1075,7 +1075,7 @@
           var_name="m_menuFile">
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art_src/new.png"
+            bitmap="Art;wxART_NEW|wxART_MENU"
             help="Create an empty project"
             id="id_NewProject"
             label="&amp;New Project...&#09;Ctrl+N"
@@ -1083,7 +1083,7 @@
             wxEVT_MENU="[](wxCommandEvent&amp;)@@{@@wxGetApp().NewProject(true);@@}" />
           <node
             class="wxMenuItem"
-            bitmap="Art;wxART_FILE_OPEN|wxART_MENU"
+            bitmap="Art;wxART_FILE_OPEN|wxART_OTHER"
             help="Open a project"
             id="id_OpenProject"
             label="&amp;Open Project...&#09;Ctrl+O"
@@ -1103,7 +1103,7 @@
             class="separator" />
           <node
             class="wxMenuItem"
-            bitmap="Embed;../art_src/save.png"
+            bitmap="Art;wxART_FILE_SAVE|wxART_MENU"
             help="Save current project"
             id="wxID_SAVE"
             label="&amp;Save&#09;Ctrl+S"
@@ -1488,7 +1488,7 @@
         var_name="m_toolbar">
         <node
           class="tool"
-          bitmap="Embed;../art_src/new.png"
+          bitmap="Art;wxART_NEW|wxART_TOOLBAR"
           id="id_NewProject"
           label="New"
           tooltip="New Project (Ctrl+N)" />
@@ -1501,14 +1501,14 @@
           var_name="tool2" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/save.png"
+          bitmap="Art;wxART_FILE_SAVE|wxART_TOOLBAR"
           id="wxID_SAVE"
           label="Save"
           tooltip="Save current project"
           var_name="tool3" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/generate.png"
+          bitmap="SVG;../art_src/generate.svg;[24,24]"
           id="id_GenerateCode"
           label=""
           tooltip="Generate base class code"
@@ -1564,7 +1564,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/alignleft.png"
+          bitmap="SVG;../art_src/alignleft.svg;[24,24]"
           id="id_AlignLeft"
           kind="wxITEM_CHECK"
           label=""
@@ -1572,7 +1572,7 @@
           var_name="AlignLeft" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/aligncenter.png"
+          bitmap="SVG;../art_src/aligncenter.svg;[24,24]"
           id="id_AlignCenterHorizontal"
           kind="wxITEM_CHECK"
           label=""
@@ -1580,7 +1580,7 @@
           var_name="AlignCenterH" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/alignright.png"
+          bitmap="SVG;../art_src/alignright.svg;[24,24]"
           id="id_AlignRight"
           kind="wxITEM_CHECK"
           label=""
@@ -1590,7 +1590,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/aligntop.png"
+          bitmap="SVG;../art_src/aligntop.svg;[24,24]"
           id="id_AlignTop"
           kind="wxITEM_CHECK"
           label=""
@@ -1598,7 +1598,7 @@
           var_name="AlignTop" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/alignvertcenter.png"
+          bitmap="SVG;../art_src/alignvertcenter.svg;[24,24]"
           id="id_AlignCenterVertical"
           kind="wxITEM_CHECK"
           label=""
@@ -1606,7 +1606,7 @@
           var_name="AlignCenterV" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/alignbottom.png"
+          bitmap="SVG;../art_src/alignbottom.svg;[24,24]"
           id="id_AlignBottom"
           kind="wxITEM_CHECK"
           label=""
@@ -1616,7 +1616,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/left.png"
+          bitmap="SVG;../art_src/left.svg;[24,24]"
           id="id_BorderLeft"
           kind="wxITEM_CHECK"
           label=""
@@ -1624,7 +1624,7 @@
           var_name="BorderLeft" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/right.png"
+          bitmap="SVG;../art_src/right.svg;[24,24]"
           id="id_BorderRight"
           kind="wxITEM_CHECK"
           label=""
@@ -1632,7 +1632,7 @@
           var_name="BorderRight" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/top.png"
+          bitmap="SVG;../art_src/top.svg;[24,24]"
           id="id_BorderTop"
           kind="wxITEM_CHECK"
           label=""
@@ -1640,7 +1640,7 @@
           var_name="BorderTop" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/bottom.png"
+          bitmap="SVG;../art_src/bottom.svg;[24,24]"
           id="id_BorderBottom"
           kind="wxITEM_CHECK"
           label=""
@@ -1650,7 +1650,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/expand.png"
+          bitmap="SVG;../art_src/expand.svg;[24,24]"
           id="id_Expand"
           kind="wxITEM_CHECK"
           label=""
@@ -1660,7 +1660,7 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/hidden.png"
+          bitmap="SVG;../art_src/hidden.svg;[24,24]"
           id="id_ShowHidden"
           kind="wxITEM_CHECK"
           label=""
@@ -1668,7 +1668,7 @@
           var_name="Spy" />
         <node
           class="tool"
-          bitmap="Embed;../art_src/magnify.png"
+          bitmap="SVG;../art_src/magnify.svg;[24,24]"
           id="id_Magnify"
           kind="wxITEM_CHECK"
           label=""
@@ -3781,7 +3781,7 @@
               var_name="box_sizer_4">
               <node
                 class="wxStaticBitmap"
-                bitmap="Embed;../art_src/open.png"
+                bitmap="Art;wxART_FILE_OPEN|wxART_TOOLBAR"
                 var_name="bmp_2" />
               <node
                 class="wxHyperlinkCtrl"
@@ -3814,7 +3814,7 @@
               var_name="box_sizer_5">
               <node
                 class="wxStaticBitmap"
-                bitmap="Embed;../art_src/new.png"
+                bitmap="Art;wxART_NEW|wxART_TOOLBAR"
                 var_name="bmp_3" />
               <node
                 class="wxHyperlinkCtrl"

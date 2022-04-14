@@ -101,7 +101,7 @@ enum class MoveDirection
     Right
 };
 
-constexpr const char* txtVersion = "wxUiEditor 0.9.1";
+constexpr const char* txtVersion = "wxUiEditor 0.9.2";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2022 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 

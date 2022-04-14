@@ -29,6 +29,11 @@ inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     return wxBitmapBundle::FromSVG(str.get(), def_size);
 };
 
+namespace wxue_img
+{
+    extern const unsigned char import_svg[418];
+}
+
 MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style) :
     wxFrame(parent, id, title, pos, size, style)
@@ -53,6 +58,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuFile->AppendSubMenu(m_submenu_recent, "Open &Recent");
 
     auto menu_import = new wxMenuItem(m_menuFile, wxID_ANY, "&Import...");
+    menu_import->SetBitmap(wxueBundleSVG(wxue_img::import_svg, 418, 1013, wxSize(16, 16)));
     m_menuFile->Append(menu_import);
 
     m_menuFile->AppendSeparator();

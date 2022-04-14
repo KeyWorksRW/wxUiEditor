@@ -1075,7 +1075,7 @@
           var_name="m_menuFile">
           <node
             class="wxMenuItem"
-            bitmap="Art;wxART_NEW|wxART_MENU"
+            bitmap="SVG;../art_src/new-project.svg;[16,16]"
             help="Create an empty project"
             id="id_NewProject"
             label="&amp;New Project...&#09;Ctrl+N"
@@ -1489,7 +1489,7 @@
         var_name="m_toolbar">
         <node
           class="tool"
-          bitmap="Art;wxART_NEW|wxART_TOOLBAR"
+          bitmap="SVG;../art_src/new-project.svg;[24,24]"
           id="id_NewProject"
           label="New"
           tooltip="New Project (Ctrl+N)" />

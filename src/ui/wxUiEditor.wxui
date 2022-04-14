@@ -1103,7 +1103,7 @@
             class="separator" />
           <node
             class="wxMenuItem"
-            bitmap="Art;wxART_FILE_SAVE|wxART_MENU"
+            bitmap="SVG;../art_src/save.svg;[16,16]"
             help="Save current project"
             id="wxID_SAVE"
             label="&amp;Save&#09;Ctrl+S"
@@ -1502,7 +1502,7 @@
           var_name="tool2" />
         <node
           class="tool"
-          bitmap="Art;wxART_FILE_SAVE|wxART_TOOLBAR"
+          bitmap="SVG;../art_src/save.svg;[24,24]"
           id="wxID_SAVE"
           label="Save"
           tooltip="Save current project"

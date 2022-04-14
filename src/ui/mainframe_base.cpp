@@ -59,7 +59,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     auto menu_item = new wxMenuItem(m_menuFile, wxID_SAVE, "&Save\tCtrl+S",
         "Save current project", wxITEM_NORMAL);
-    menu_item->SetBitmap(wxueBundleSVG(wxue_img::save_svg, 717, 2603, wxSize(24, 24)));
+    menu_item->SetBitmap(wxueBundleSVG(wxue_img::save_svg, 717, 2603, wxSize(16, 16)));
     m_menuFile->Append(menu_item);
 
     auto menu_item2 = new wxMenuItem(m_menuFile, id_SaveProjectAs, "Save &As...\tCtrl-Shift+S",
@@ -286,7 +286,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_toolbar->AddTool(wxID_SAVE, "Save", wxueBundleSVG(wxue_img::save_svg, 717, 2603, wxSize(24, 24)),
             "Save current project");
 
-    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(16, 16)),
+    m_toolbar->AddTool(id_GenerateCode, wxEmptyString, wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(24, 24)),
             "Generate base class code");
 
     m_toolbar->AddSeparator();
@@ -313,21 +313,21 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, wxueBundleSVG(wxue_img::alignleft_svg, 688, 1442, wxSize(16, 16)),
+    m_toolbar->AddTool(id_AlignLeft, wxEmptyString, wxueBundleSVG(wxue_img::alignleft_svg, 688, 1442, wxSize(24, 24)),
             "Align left", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString, wxueBundleSVG(wxue_img::aligncenter_svg, 898, 1976, wxSize(16, 16)),
+    m_toolbar->AddTool(id_AlignCenterHorizontal, wxEmptyString, wxueBundleSVG(wxue_img::aligncenter_svg, 898, 1976, wxSize(24, 24)),
             "Center horizontally", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignRight, wxEmptyString, wxueBundleSVG(wxue_img::alignright_svg, 690, 1441, wxSize(16, 16)),
+    m_toolbar->AddTool(id_AlignRight, wxEmptyString, wxueBundleSVG(wxue_img::alignright_svg, 690, 1441, wxSize(24, 24)),
             "Align right", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_AlignTop, wxEmptyString, wxueBundleSVG(wxue_img::aligntop_svg, 688, 1440, wxSize(16, 16)),
+    m_toolbar->AddTool(id_AlignTop, wxEmptyString, wxueBundleSVG(wxue_img::aligntop_svg, 688, 1440, wxSize(24, 24)),
             "Align top", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, wxueBundleSVG(wxue_img::alignvertcenter_svg, 911, 2016, wxSize(16, 16)),
+    m_toolbar->AddTool(id_AlignCenterVertical, wxEmptyString, wxueBundleSVG(wxue_img::alignvertcenter_svg, 911, 2016, wxSize(24, 24)),
             "Center vertically", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_AlignBottom, wxEmptyString, wxueBundleSVG(wxue_img::alignbottom_svg, 658, 1392, wxSize(24, 24)),
@@ -335,21 +335,21 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, wxueBundleSVG(wxue_img::left_svg, 585, 1857, wxSize(16, 16)),
+    m_toolbar->AddTool(id_BorderLeft, wxEmptyString, wxueBundleSVG(wxue_img::left_svg, 585, 1857, wxSize(24, 24)),
             "Left border", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderRight, wxEmptyString, wxueBundleSVG(wxue_img::right_svg, 599, 1878, wxSize(16, 16)),
+    m_toolbar->AddTool(id_BorderRight, wxEmptyString, wxueBundleSVG(wxue_img::right_svg, 599, 1878, wxSize(24, 24)),
             "Right border", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderTop, wxEmptyString, wxueBundleSVG(wxue_img::top_svg, 586, 1859, wxSize(16, 16)),
+    m_toolbar->AddTool(id_BorderTop, wxEmptyString, wxueBundleSVG(wxue_img::top_svg, 586, 1859, wxSize(24, 24)),
             "Top border", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, wxueBundleSVG(wxue_img::bottom_svg, 585, 1859, wxSize(16, 16)),
+    m_toolbar->AddTool(id_BorderBottom, wxEmptyString, wxueBundleSVG(wxue_img::bottom_svg, 585, 1859, wxSize(24, 24)),
             "Bottom border", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(id_Expand, wxEmptyString, wxueBundleSVG(wxue_img::expand_svg, 819, 1685, wxSize(16, 16)),
+    m_toolbar->AddTool(id_Expand, wxEmptyString, wxueBundleSVG(wxue_img::expand_svg, 819, 1685, wxSize(24, 24)),
             "Expand to fill the space", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();

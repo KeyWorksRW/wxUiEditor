@@ -889,9 +889,16 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
             code << "wxNullBitmap";
             return false;
         }
+
+        wxSize svg_size { -1, -1 };
+        if (parts[IndexSize].size())
+        {
+            GetSizeInfo(svg_size, parts[IndexSize]);
+        }
+
         ttlib::cstr name = "wxue_img::" + embed->array_name;
         code << "wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
-        code << (embed->array_size >> 32) << ", wxSize(" << embed->size_x << ", " << embed->size_y << "))";
+        code << (embed->array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
     }
     else
     {

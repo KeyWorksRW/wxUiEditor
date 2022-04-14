@@ -3729,7 +3729,8 @@
             width="10" />
           <node
             class="wxStaticText"
-            label="wxUiEditor 0.9.1"
+            label="wxUiEditor"
+            var_name="m_name_version"
             font="extra large"
             alignment="wxALIGN_CENTER_VERTICAL"
             proportion="1" />

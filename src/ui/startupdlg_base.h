@@ -64,6 +64,6 @@ private:
     // Class member variables
 
     wxFlexGridSizer* m_recent_flex_grid;
-    wxStaticText* m_staticText;
+    wxStaticText* m_name_version;
     wxStaticText* m_staticTextRecentProjects;  // // This should be hidden if there actually are any recent projects
 };

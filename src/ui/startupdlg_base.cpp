@@ -56,13 +56,13 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     box_sizer_6->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
-    m_staticText = new wxStaticText(this, wxID_ANY, "wxUiEditor 0.9.1");
+    m_name_version = new wxStaticText(this, wxID_ANY, "wxUiEditor");
     {
         wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
         font.SetSymbolicSize(wxFONTSIZE_X_LARGE);
-        m_staticText->SetFont(font);
+        m_name_version->SetFont(font);
     }
-    box_sizer_6->Add(m_staticText, wxSizerFlags(1).Center().Border(wxALL));
+    box_sizer_6->Add(m_name_version, wxSizerFlags(1).Center().Border(wxALL));
 
     auto box_sizer_8 = new wxBoxSizer(wxHORIZONTAL);
     dlg_sizer->Add(box_sizer_8, wxSizerFlags().Border(wxALL));

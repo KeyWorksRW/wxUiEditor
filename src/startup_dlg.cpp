@@ -14,6 +14,8 @@
 
 void StartupDlg::OnInit(wxInitDialogEvent& event)
 {
+    m_name_version->SetLabel(txtVersion);
+
     auto& history = wxGetApp().GetMainFrame()->GetFileHistory();
     bool file_added = false;
     for (size_t idx = 0; idx < history.GetCount(); ++idx)

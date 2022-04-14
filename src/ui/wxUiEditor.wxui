@@ -790,7 +790,7 @@
       class_name="ImportBase"
       derived_class_name="ImportDlg"
       derived_file="import_dlg"
-      icon=""
+      icon="SVG;../art_src/import.svg;[16,16]"
       title="New Imported Project"
       wxEVT_INIT_DIALOG="OnInitDialog">
       <node

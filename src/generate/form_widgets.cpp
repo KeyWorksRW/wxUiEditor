@@ -7,14 +7,22 @@
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "node_prop.h"   // NodeProperty -- NodeProperty class
-#include "utils.h"       // Utility functions that work with properties
-#include "write_code.h"  // WriteCode -- Write code to Scintilla or file
+#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
+
+#include "gen_base.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"   // GeneratorLibrary -- Generator classes
+#include "mainapp.h"      // App -- App class
+#include "node.h"         // Node class
+#include "node_prop.h"    // NodeProperty -- NodeProperty class
+#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"        // Utility functions that work with properties
+#include "write_code.h"   // WriteCode -- Write code to Scintilla or file
 
 #include "form_widgets.h"
+
+// Generates code for any class inheriting from wxTopLevelWindow -- this will generate
+// everything needed to set the window's icon.
+ttlib::cstr GenerateIconCode(const ttlib::cstr& description);
 
 //////////////////////////////////////////  DialogFormGenerator  //////////////////////////////////////////
 
@@ -45,25 +53,8 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
     if (node->HasValue(prop_icon))
     {
         code_gen->GenerateHandlers();
-
-        auto image_code = GenerateBitmapCode(node->prop_as_string(prop_icon));
-        if (!image_code.contains(".Scale") && image_code.is_sameprefix("wxImage("))
-        {
-            code << "SetIcon(wxIcon(" << image_code.subview(sizeof("wxImage")) << ");";
-            src_code->writeLine(code);
-        }
-        else
-        {
-            src_code->writeLine("{");
-            src_code->Indent();
-            src_code->writeLine("wxIcon icon;");
-            code << "icon.CopyFromBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_icon)) << ");\n";
-            code << "SetIcon(wxIcon(icon));";
-            src_code->writeLine(code);
-            src_code->writeLine("}");
-            src_code->Unindent();
-        }
-        code.clear();
+        auto icon_code = GenerateIconCode(node->prop_as_string(prop_icon));
+        src_code->writeLine(icon_code, indent::auto_keep_whitespace);
     }
 
     code << GenFontColourSettings(node);
@@ -531,4 +522,149 @@ bool PanelFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     InsertGeneratorInclude(node, "#include <wx/panel.h>", set_src, set_hdr);
 
     return true;
+}
+
+//////////////////////////////////////////  Utility Code  //////////////////////////////////////////
+
+// Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything needed to set the window's
+// icon.
+
+ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
+{
+    ttlib::cstr code;
+
+    if (description.empty())
+    {
+        return code;
+    }
+
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts[IndexImage].empty())
+    {
+        return code;
+    }
+
+    if (parts[IndexType].is_sameas("XPM") || parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
+    {
+        // In theory, we could create an alpha channel using black as the transparency, but it just doesn't make sense for
+        // the user to be using XPM files as an icon.
+        code << "// XPM files do not contain an alpha channel and cannot be used as an icon.";
+        return code;
+    }
+
+    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1" && !parts[IndexType].is_sameas("SVG"))
+    {
+        code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+    }
+
+    if (parts[IndexType].contains("Art"))
+    {
+        ttlib::cstr art_id(parts[IndexArtID]);
+        ttlib::cstr art_client;
+        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        {
+            art_client = art_id.subview(pos + 1);
+            art_id.erase(pos);
+        }
+
+        code << "SetIcon(wxArtProvider::GetBitmapBundle(" << art_id << ", ";
+        // Note that current documentation states that the client is required, but the header file says otherwise
+        if (art_client.size())
+            code << art_client;
+        code << ").GetIconFor(this));\n";
+    }
+    else if (description.is_sameprefix("SVG"))
+    {
+        auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+        if (!embed)
+        {
+            FAIL_MSG(ttlib::cstr() << description << " not embedded!")
+            return code;
+        }
+
+        wxSize svg_size { -1, -1 };
+        if (parts[IndexSize].size())
+        {
+            GetSizeInfo(svg_size, parts[IndexSize]);
+        }
+
+        ttlib::cstr name = "wxue_img::" + embed->array_name;
+        code << "SetIcon(wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
+        code << (embed->array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
+        code << ".GetIconFor(this));\n";
+        return code;
+    }
+    else
+    {
+        if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(description); bundle)
+        {
+            if (bundle->lst_filenames.size() == 1)
+            {
+                code << "SetIcon(wxBitmapBundle::FromBitmap(wxueImage(";
+                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                name.remove_extension();
+                name.Replace(".", "_", true);  // fix wxFormBuilder header files
+
+                if (parts[IndexType].is_sameprefix("Embed"))
+                {
+                    auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    if (embed)
+                    {
+                        name = "wxue_img::" + embed->array_name;
+                    }
+                }
+
+                code << name << ", sizeof(" << name << ")))";
+                code << ".GetIconFor(this));\n";
+            }
+            else
+            {
+                code << "{\n\twxIconBundle icon_bundle;\n\twxIcon icon;\n";
+                for (auto& iter: bundle->lst_filenames)
+                {
+                    ttlib::cstr name(iter.filename());
+                    name.remove_extension();
+                    name.Replace(".", "_", true);  // fix wxFormBuilder header files
+                    if (parts[IndexType].is_sameprefix("Embed"))
+                    {
+                        auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(iter);
+                        if (embed)
+                        {
+                            name = "wxue_img::" + embed->array_name;
+                        }
+                    }
+                    code << "\ticon.CopyFromBitmap(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+                    code << "\ticon_bundle.AddIcon(icon);\n";
+                }
+                code << "\tSetIcons(icon_bundle);\n}\n";
+            }
+        }
+        else
+        {
+            FAIL_MSG(ttlib::cstr(description) << " was not converted to a bundle ahead of time!")
+            return code;
+        }
+    }
+
+    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    {
+        code << "#else\n";
+        auto image_code = GenerateBitmapCode(description);
+        if (!image_code.contains(".Scale") && image_code.is_sameprefix("wxImage("))
+        {
+            code << "SetIcon(wxIcon(" << image_code.subview(sizeof("wxImage")) << ");\n";
+        }
+        else
+        {
+            code << "{\n";
+            code << "\twxIcon icon;\n";
+            code << "\ticon.CopyFromBitmap(" << GenerateBitmapCode(description) << ");\n";
+            code << "\tSetIcon(wxIcon(icon));\n";
+            code << "}\n";
+        }
+        code << "#endif\n";
+    }
+
+    return code;
 }

@@ -40,11 +40,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    {
-        wxIcon icon;
-        icon.CopyFromBitmap(wxueImage(wxue_img::logo16_png, sizeof(wxue_img::logo16_png)));
-        SetIcon(wxIcon(icon));
-        }
+    SetIcon(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::logo16_png, sizeof(wxue_img::logo16_png))).GetIconFor(this));
 
     auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
 

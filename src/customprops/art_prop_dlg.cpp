@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Art Property Dialog for image property
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +11,9 @@
 #include <wx/imaglist.h>  // wxImageList base header
 
 #include "art_prop_dlg.h"  // auto-generated: ../ui/artpropdlg_base.h and ../ui/artpropdlg_base.cpp
+
+#include "mainframe.h"  // MainFrame -- Main window frame
+#include "node.h"       // Node class
 
 extern std::set<std::string> set_art_ids;  // defined in pg_image.cpp
 
@@ -33,7 +36,29 @@ ArtBrowserDialog::ArtBrowserDialog(wxWindow* parent, const ImageProperties& img_
     }
     else
     {
-        m_client = "wxART_OTHER";
+        if (auto node = wxGetFrame().GetSelectedNode(); node)
+        {
+            if (node->isType(type_tool) || node->isType(type_ribbontool) || node->isType(type_aui_tool))
+            {
+                m_client = "wxART_TOOLBAR";
+            }
+            else if (node->isType(type_menuitem))
+            {
+                m_client = "wxART_MENU";
+            }
+            else if (node->isGen(gen_wxButton))
+            {
+                m_client = "wxART_BUTTON";
+            }
+            else
+            {
+                m_client = "wxART_OTHER";
+            }
+        }
+        else
+        {
+            m_client = "wxART_OTHER";
+        }
     }
 
     m_choice_client->SetStringSelection(m_client);

@@ -3723,7 +3723,7 @@
           proportion="1">
           <node
             class="wxStaticBitmap"
-            bitmap="Embed;../art_src/logo64.png"
+            bitmap="SVG;../art_src/logo.svg;[64,64]"
             var_name="bmp_4" />
           <node
             class="spacer"

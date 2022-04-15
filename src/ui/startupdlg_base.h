@@ -67,3 +67,10 @@ private:
     wxStaticText* m_name_version;
     wxStaticText* m_staticTextRecentProjects;  // // This should be hidden if there actually are any recent projects
 };
+
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char logo_svg[1943];
+}

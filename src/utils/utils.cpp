@@ -478,3 +478,10 @@ void GetSizeInfo(wxSize& size, ttlib::sview description)
     if (size_description.size() > 1)
         size.y = size_description[1].atoi();
 }
+
+wxSize get_image_prop_size(ttlib::sview size_description)
+{
+    wxSize size;
+    GetSizeInfo(size, size_description);
+    return size;
+}

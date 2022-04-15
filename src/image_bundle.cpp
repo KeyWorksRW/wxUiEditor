@@ -133,12 +133,12 @@ bool ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib
 
     if (parts[IndexType].is_sameprefix("SVG"))
     {
-        if (AddSvgBundleImage(parts[IndexSize], path, form))
+        if (AddSvgBundleImage(path, form))
         {
             img_bundle.lst_filenames.emplace_back(path);
             if (auto embed = GetEmbeddedImage(path); embed)
             {
-                img_bundle.bundle = LoadSVG(embed);
+                img_bundle.bundle = LoadSVG(embed, parts[IndexSize]);
                 m_bundles[lookup_str] = std::move(img_bundle);
                 return true;
             }
@@ -292,14 +292,14 @@ static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStr
     return true;
 }
 
-wxBitmapBundle LoadSVG(EmbeddedImage* embed)
+wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description)
 {
     size_t org_size = (embed->array_size >> 32);
     auto str = std::make_unique<char[]>(org_size);
     wxMemoryInputStream stream_in(embed->array_data.get(), embed->array_size & 0xFFFFFFFF);
     wxZlibInputStream zlib_strm(stream_in);
     zlib_strm.Read(str.get(), org_size);
-    return wxBitmapBundle::FromSVG(str.get(), wxSize(embed->size_x, embed->size_y));
+    return wxBitmapBundle::FromSVG(str.get(), get_image_prop_size(size_description));
 }
 
 bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
@@ -568,7 +568,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
     return &m_bundles[lookup_str];
 }
 
-bool ProjectSettings::AddSvgBundleImage(const ttlib::cstr& description, ttlib::cstr path, Node* form)
+bool ProjectSettings::AddSvgBundleImage(ttlib::cstr path, Node* form)
 {
     // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
     // leading spaces, etc.
@@ -628,11 +628,6 @@ bool ProjectSettings::AddSvgBundleImage(const ttlib::cstr& description, ttlib::c
         MSG_INFO(size_comparison)
     }
 #endif
-
-    wxSize size;
-    GetSizeInfo(size, description);
-    embed->size_x = size.x;
-    embed->size_y = size.y;
 
     return true;
 }

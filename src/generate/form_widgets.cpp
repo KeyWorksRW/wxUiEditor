@@ -583,11 +583,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
             return code;
         }
 
-        wxSize svg_size { -1, -1 };
-        if (parts[IndexSize].size())
-        {
-            GetSizeInfo(svg_size, parts[IndexSize]);
-        }
+        auto svg_size = get_image_prop_size(parts[IndexSize]);
 
         ttlib::cstr name = "wxue_img::" + embed->array_name;
         code << "SetIcon(wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";

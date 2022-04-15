@@ -21,13 +21,11 @@ struct EmbeddedImage
     Node* form;  // the form node the image is declared in
     ttlib::cstr array_name;
     size_t array_size;
-    int size_x { 16 };  // currently x and y are only used for SVG images
-    int size_y { 16 };
     std::unique_ptr<unsigned char[]> array_data;
     wxBitmapType type;
 };
 
-wxBitmapBundle LoadSVG(EmbeddedImage* embed);
+wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description);
 
 class ProjectSettings
 {
@@ -93,7 +91,7 @@ protected:
     bool AddEmbeddedBundleImage(ttlib::cstr path, Node* form);
 
     // Reads the image and stores it in m_map_embedded
-    bool AddSvgBundleImage(const ttlib::cstr& description, ttlib::cstr path, Node* form);
+    bool AddSvgBundleImage(ttlib::cstr path, Node* form);
 
     bool AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock);
 

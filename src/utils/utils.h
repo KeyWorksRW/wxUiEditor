@@ -70,7 +70,10 @@ wxPoint DlgPoint(wxObject* parent, Node* node, GenEnum::PropName prop);
 wxSize DlgSize(wxObject* parent, Node* node, GenEnum::PropName prop);
 
 // Convert the parts[IndexSize] or equivalent string into wxSize dimensions
-void GetSizeInfo(wxSize& size, ttlib::sview description);
+void GetSizeInfo(wxSize& size, ttlib::sview size_description);
+
+// Convert the parts[IndexSize] or equivalent string into wxSize dimensions
+wxSize get_image_prop_size(ttlib::sview size_description);
 
 // Friendly name/wxSYS_COLOUR_ pairs (e.g. "tooltip"/wxSYS_COLOUR_INFOBK)
 extern std::map<std::string, const char*> g_sys_colour_pair;

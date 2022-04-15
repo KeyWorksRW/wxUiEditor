@@ -18,15 +18,6 @@
 
 #include <memory>  // for std::make_unique
 
-// Convert a data array into a wxImage
-inline wxImage wxueImage(const unsigned char* data, size_t size_data)
-{
-    wxMemoryInputStream strm(data, size_data);
-    wxImage image;
-    image.LoadFile(strm);
-    return image;
-};
-
 // Convert compressed SVG string into a wxBitmapBundle
 inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
     size_t size_data, size_t size_svg, wxSize def_size)
@@ -40,8 +31,8 @@ inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 
 namespace wxue_img
 {
-    extern const unsigned char logo16_png[639];
-    extern const unsigned char pagectrl_png[601];
+    extern const unsigned char import_svg[418];
+    extern const unsigned char new_project_svg[921];
 }
 
 bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -50,10 +41,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-        wxImage::AddHandler(new wxPNGHandler);
-
-    SetIcon(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::logo16_png, sizeof(wxue_img::logo16_png))).GetIconFor(this));
+    SetIcon(wxueBundleSVG(wxue_img::logo_svg, 1943, 7265, wxSize(16, 16)).GetIconFor(this));
 
     auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -129,7 +117,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_2->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto bmp = new wxStaticBitmap(this, wxID_ANY, wxBitmapBundle::FromBitmap(wxueImage(wxue_img::pagectrl_png, sizeof(wxue_img::pagectrl_png))));
+    auto bmp = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::import_svg, 418, 1013, wxSize(24, 24)));
     box_sizer_3->Add(bmp, wxSizerFlags().Border(wxALL));
 
     auto hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, "Import...", wxEmptyString, wxDefaultPosition, wxDefaultSize,
@@ -141,7 +129,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_2->Add(box_sizer_5, wxSizerFlags().Border(wxALL));
 
-    auto bmp_3 = new wxStaticBitmap(this, wxID_ANY, wxArtProvider::GetBitmapBundle(wxART_NEW, wxART_TOOLBAR));
+    auto bmp_3 = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, wxSize(24, 24)));
     box_sizer_5->Add(bmp_3, wxSizerFlags().Border(wxALL));
 
     auto hyperlink_3 = new wxGenericHyperlinkCtrl(this, wxID_ANY, "New", wxEmptyString, wxDefaultPosition, wxDefaultSize,

@@ -115,6 +115,14 @@ void CustomPointProperty::InitValues(ttlib::cview value)
         else
             parts.SetString(value, ',');
 
+        if (parts.size() < 2)
+        {
+            m_point.x = -1;
+            m_point.y = -1;
+            m_dialog_units = true;
+            return;
+        }
+
         // We don't need to trim, because ttlib::atoi() skips leading whitespace
         m_point.x = ttlib::atoi(parts[0]);
         m_point.y = ttlib::atoi(parts[1]);

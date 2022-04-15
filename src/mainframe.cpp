@@ -599,6 +599,13 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
 }
 
+namespace wxue_img
+{
+    extern const unsigned char logo_svg[1943];
+}
+
+wxBitmapBundle wxueBundleSVG(const unsigned char* data, size_t size_data, size_t size_svg, wxSize def_size);
+
 void MainFrame::OnAbout(wxCommandEvent&)
 {
     wxAboutDialogInfo aboutInfo;
@@ -612,11 +619,7 @@ void MainFrame::OnAbout(wxCommandEvent&)
 
     aboutInfo.AddDeveloper("Ralph Walden");
 
-    wxIcon icon;
-    auto image = LoadHeaderImage(logo64_png, sizeof(logo64_png));
-    image.ConvertAlphaToMask(wxIMAGE_ALPHA_THRESHOLD);
-    icon.CopyFromBitmap(image);
-    aboutInfo.SetIcon(icon);
+    aboutInfo.SetIcon(wxueBundleSVG(wxue_img::logo_svg, 1943, 7265, wxSize(64, 64)).GetIconFor(this));
 
     wxAboutBox(aboutInfo);
 }

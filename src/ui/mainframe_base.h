@@ -112,7 +112,6 @@ namespace wxue_img
     extern const unsigned char expand_svg[819];
     extern const unsigned char generate_svg[780];
     extern const unsigned char hidden_svg[2111];
-    extern const unsigned char import_svg[418];
     extern const unsigned char left_svg[585];
     extern const unsigned char magnify_svg[3953];
     extern const unsigned char new_project_svg[921];

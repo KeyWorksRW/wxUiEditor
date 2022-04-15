@@ -996,6 +996,7 @@
       class="wxDialog"
       base_file="insertwidget_base"
       class_name="InsertWidget"
+      icon="Art;wxART_EDIT|wxART_MENU"
       inserted_hdr_code="ttlib::cstr GetWidget() { return m_widget; }@@@@private:@@ttlib::cstr m_widget;"
       minimum_size="-1,-1"
       private_members="true"
@@ -3705,7 +3706,7 @@
       class="wxDialog"
       base_file="startupdlg_base"
       class_name="StartupDlg"
-      icon="Embed;../art_src/logo16.png"
+      icon="SVG;../art_src/logo.svg;[16,16]"
       inserted_hdr_code="enum : size_t@@{@@    START_MRU,@@    START_CONVERT,@@    START_OPEN,@@    START_EMPTY,@@};@@@@auto GetCommandType() const { return m_cmdType; }@@ttString&amp; GetProjectFile() { return m_value; }@@@@protected:@@void OnHyperlink(wxHyperlinkEvent&amp; event);@@@@private:@@ttString m_value;@@size_t m_cmdType { START_EMPTY };"
       private_members="true"
       title="Open, Import, or Create Project"
@@ -3802,7 +3803,7 @@
               var_name="box_sizer_3">
               <node
                 class="wxStaticBitmap"
-                bitmap="Embed;../art_src/pagectrl.png" />
+                bitmap="SVG;../art_src/import.svg;[24,24]" />
               <node
                 class="wxHyperlinkCtrl"
                 class_access="none"
@@ -3818,7 +3819,7 @@
               var_name="box_sizer_5">
               <node
                 class="wxStaticBitmap"
-                bitmap="Art;wxART_NEW|wxART_TOOLBAR"
+                bitmap="SVG;../art_src/new-project.svg;[24,24]"
                 var_name="bmp_3" />
               <node
                 class="wxHyperlinkCtrl"

@@ -73,3 +73,10 @@ protected:
     wxButton* m_stdBtnOK;
     wxButton* m_stdBtnCancel;
 };
+
+namespace wxue_img
+{
+    // Images declared in this class module:
+
+    extern const unsigned char import_svg[418];
+}

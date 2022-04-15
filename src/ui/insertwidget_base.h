@@ -6,10 +6,13 @@
 
 #pragma once
 
+#include <wx/bitmap.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/icon.h>
+#include <wx/image.h>
 #include <wx/listbox.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>

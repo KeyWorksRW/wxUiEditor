@@ -47,6 +47,12 @@ namespace result
     };
 }  // namespace result
 
+// This determines the longest line when generating embedded images. Do *not* use constexpr for this -- at some point we may
+// want to allow the user to set maximum line length of all generated code, and if so, this will need to reflect the user's
+// preference.
+
+constexpr int max_image_line_length { 125 };
+
 int WriteCMakeFile(bool test_only = true);  // See gen_cmake.cpp
 
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at
@@ -92,6 +98,9 @@ protected:
         Protected,
         Public
     };
+
+    // This method is in images_form.cpp, and handles both source and header code generation
+    void GenerateImagesForm();
 
     ttlib::cstr GetDeclaration(Node* node);
 

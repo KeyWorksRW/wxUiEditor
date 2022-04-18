@@ -26,12 +26,6 @@
 #include "utils.h"         // Utility functions that work with properties
 #include "write_code.h"    // Write code to Scintilla or file
 
-// This determines the longest line when generating embedded images. Do *not* use constexpr for this -- at some point we may
-// want to allow the user to set maximum line length of all generated code, and if so, this will need to reflect the user's
-// preference.
-
-static int max_image_line_length { 125 };
-
 using namespace GenEnum;
 
 // clang-format off
@@ -389,78 +383,81 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         }
     }
 
+    if (form_node->isGen(gen_Images))
+    {
+        GenerateImagesForm();
+        return;
+    }
+
     if (m_panel_type != CPP_PANEL)
         GenerateClassHeader(form_node, events);
 
     if (m_panel_type != HDR_PANEL)
     {
-        if (!form_node->isGen(gen_Images))
+        // First, generate the header files needed
+
+        m_source->writeLine();
+        if (m_NeedAnimationFunction)
         {
-            // First, generate the header files needed
-
+            m_source->writeLine("#include <wx/animate.h>", indent::none);
+        }
+        if (m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+        {
+            m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+        }
+        if (m_NeedSVGFunction)
+        {
+            m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
             m_source->writeLine();
-            if (m_NeedAnimationFunction)
+            m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+        }
+
+        // Now generate the functions
+
+        if (m_NeedHeaderFunction)
+        {
+            ttlib::textfile function;
+            function.ReadString(txt_wxueImageFunction);
+            for (auto& iter: function)
             {
-                m_source->writeLine("#include <wx/animate.h>", indent::none);
+                m_source->writeLine(iter, indent::none);
             }
-            if (m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+            m_source->writeLine();
+        }
+
+        if (m_NeedSVGFunction)
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
             {
-                m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
-            }
-            if (m_NeedSVGFunction)
-            {
-                m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
                 m_source->writeLine();
-                m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+                m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
+                m_source->Indent();
+                m_source->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
+                                    indent::auto_no_whitespace);
+                m_source->Unindent();
+                m_source->writeLine("#endif", indent::none);
             }
 
-            // Now generate the functions
-
-            if (m_NeedHeaderFunction)
+            ttlib::textfile function;
+            function.ReadString(txt_GetBundleFromSVG);
+            for (auto& iter: function)
             {
-                ttlib::textfile function;
-                function.ReadString(txt_wxueImageFunction);
-                for (auto& iter: function)
-                {
-                    m_source->writeLine(iter, indent::none);
-                }
-                m_source->writeLine();
+                m_source->writeLine(iter, indent::none);
             }
+            m_source->writeLine();
+        }
 
-            if (m_NeedSVGFunction)
+        if (m_NeedAnimationFunction)
+        {
+            ttlib::textfile function;
+            function.ReadString(txt_GetAnimFromHdrFunction);
+            for (auto& iter: function)
             {
-                if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
-                {
-                    m_source->writeLine();
-                    m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
-                    m_source->Indent();
-                    m_source->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
-                                        indent::auto_no_whitespace);
-                    m_source->Unindent();
-                    m_source->writeLine("#endif", indent::none);
-                }
-
-                ttlib::textfile function;
-                function.ReadString(txt_GetBundleFromSVG);
-                for (auto& iter: function)
-                {
-                    m_source->writeLine(iter, indent::none);
-                }
-                m_source->writeLine();
-            }
-
-            if (m_NeedAnimationFunction)
-            {
-                ttlib::textfile function;
-                function.ReadString(txt_GetAnimFromHdrFunction);
-                for (auto& iter: function)
-                {
-                    m_source->writeLine(iter, indent::none);
-                }
+                m_source->writeLine(iter, indent::none);
             }
         }
 
-        if (m_embedded_images.size() && !form_node->isGen(gen_Images))
+        if (m_embedded_images.size())
         {
             bool isNameSpaceWritten = false;
             for (auto iter_array: m_embedded_images)
@@ -1401,10 +1398,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     }
 
     m_source->Unindent();
-    if (!form_node->isGen(gen_Images))
-    {
-        m_source->writeLine("}");
-    }
+    m_source->writeLine("}");
 
     Node* node_ctx_menu = nullptr;
     for (size_t pos_child = 0; pos_child < form_node->GetChildCount(); pos_child++)
@@ -2019,7 +2013,7 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
 
 void BaseCodeGenerator::GenerateHandlers()
 {
-    if (m_embedded_images.size() && !m_form_node->isGen(gen_Images))
+    if (m_embedded_images.size())
     {
         for (auto& iter_img: m_embedded_images)
         {

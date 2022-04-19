@@ -47,6 +47,7 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     if (prop->GetNode()->isGen(gen_embedded_image))
     {
         types.Add(s_type_names[1]);  // Embed
+        types.Add(s_type_names[3]);  // SVG
         m_isEmbeddedImage = true;
     }
     else
@@ -221,7 +222,15 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
         case IndexType:
             if (auto index = childValue.GetLong(); index >= 0)
             {
-                img_props.type = s_type_names[index];
+                if (m_isEmbeddedImage && index > 0)
+                {
+                    // REVIEW: [KeyWorks - 04-19-2022] This will only work if we only allow two iamge types (Embed and SVG)
+                    img_props.type = s_type_names[3];
+                }
+                else
+                {
+                    img_props.type = s_type_names[index];
+                }
 
                 // If the type has changed, then the image property is no longer valid
                 img_props.image.clear();

@@ -127,37 +127,206 @@ inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 };
 )===";
 
+inline constexpr const auto txt_GetBundleFromBitmaps = R"===(
+// Convert multiple bitmaps into a wxBitmapBundle
+inline wxBitmapBundle wxueBundleBitmaps(const wxBitmap& bmp1, const wxBitmap& bmp2, const wxBitmap& bmp3)
+{
+    wxVector<wxBitmap> bitmaps;
+    if (bmp1.IsOk())
+        bitmaps.push_back(bmp1);
+    if (bmp2.IsOk())
+        bitmaps.push_back(bmp2);
+    if (bmp3.IsOk())
+        bitmaps.push_back(bmp3);
+    return wxBitmapBundle::FromBitmaps(bitmaps);
+};
+)===";
+
 // clang-format on
 
 void BaseCodeGenerator::GenerateImagesForm()
 {
-    if (m_embedded_images.empty())
+    if (m_embedded_images.empty() || !m_form_node->GetChildCount())
     {
         return;
     }
 
+    auto pjsettings = wxGetApp().GetProjectSettings();
+    bool is_old_widgets = (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1");
+
     if (m_panel_type != HDR_PANEL)
     {
-        bool is_namespace_written = false;
+        if (m_NeedSVGFunction)
+        {
+            if (is_old_widgets)
+            {
+                m_source->writeLine();
+                m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
+                m_source->Indent();
+                m_source->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
+                                    indent::auto_no_whitespace);
+                m_source->Unindent();
+                m_source->writeLine("#endif", indent::none);
+            }
+
+            ttlib::textfile function;
+            function.ReadString(txt_GetBundleFromSVG);
+            for (auto& iter: function)
+            {
+                m_source->writeLine(iter, indent::none);
+            }
+        }
+
+        if (m_NeedImageFunction)
+        {
+            ttlib::textfile function;
+            function.ReadString(txt_wxueImageFunction);
+            for (auto& iter: function)
+            {
+                m_source->writeLine(iter, indent::none);
+            }
+
+            m_source->writeLine();
+            if (is_old_widgets)
+            {
+                m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
+            }
+
+            function.clear();
+            function.ReadString(txt_GetBundleFromBitmaps);
+            for (auto& iter: function)
+            {
+                m_source->writeLine(iter, indent::none);
+            }
+
+            if (is_old_widgets)
+            {
+                m_source->writeLine("#endif", indent::none);
+            }
+        }
+
+        m_source->writeLine();
+        m_source->writeLine("namespace wxue_img\n{");
+        m_source->Indent();
+        m_source->SetLastLineBlank();
+
+        if (m_NeedSVGFunction)
+        {
+            for (auto embed: m_embedded_images)
+            {
+                if (embed->form != m_form_node || embed->type != wxBITMAP_TYPE_INVALID)
+                    continue;
+                ttlib::cstr code("wxBitmapBundle bundle_");
+                code << embed->array_name << "(int width, int height)";
+                m_source->writeLine(code);
+                m_source->writeLine("{");
+                m_source->Indent();
+                code = "return wxueBundleSVG(wxue_img::";
+                code << embed->array_name << "wxueBundleSVG(" << embed->array_name << ", "
+                     << (embed->array_size & 0xFFFFFFFF) << ", ";
+                code << (embed->array_size >> 32) << ", wxSize(width, height))";
+                m_source->writeLine(code);
+                m_source->Unindent();
+                m_source->writeLine("}");
+                m_source->writeLine();
+            }
+        }
+
+        if (m_NeedImageFunction)
+        {
+            for (auto embed: m_embedded_images)
+            {
+                if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
+                    continue;
+                m_source->writeLine();
+                ttlib::cstr code("wxImage image_");
+                code << embed->array_name << "()";
+                m_source->writeLine(code);
+                m_source->writeLine("{");
+                m_source->Indent();
+                code = "return wxueImage(";
+                code << embed->array_name << ", " << embed->array_size << ");";
+                m_source->writeLine(code);
+                m_source->Unindent();
+                m_source->writeLine("}");
+            }
+
+            m_source->writeLine();
+
+            if (!m_NeedSVGFunction && is_old_widgets)
+            {
+                m_source->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
+                m_source->SetLastLineBlank();
+            }
+
+            for (auto& child: m_form_node->GetChildNodePtrs())
+            {
+                if (auto bundle = pjsettings->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
+                    bundle && bundle->lst_filenames.size())
+                {
+                    auto embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    m_source->writeLine();
+                    ttlib::cstr code("wxBitmapBundle bundle_");
+                    code << embed->array_name << "()";
+                    m_source->writeLine(code);
+                    m_source->writeLine("{");
+                    m_source->Indent();
+                    if (bundle->lst_filenames.size() == 1)
+                    {
+                        code = "return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(";
+                        code << embed->array_name << ", " << embed->array_size << ")));";
+                        m_source->writeLine(code);
+                    }
+                    else
+                    {
+                        m_source->writeLine("return wxueBundleBitmaps(");
+                        m_source->Indent();
+                        code = "wxBitmap(wxueImage(";
+                        embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[0]);
+                        code << embed->array_name << ", " << embed->array_size << ")),";
+                        m_source->writeLine(code);
+                        code.clear();
+                        embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[1]);
+                        code << "wxBitmap(wxueImage(" << embed->array_name << ", " << embed->array_size << ")),";
+                        m_source->writeLine(code);
+                        code.clear();
+                        if (bundle->lst_filenames.size() == 2)
+                        {
+                            code << "wxNullBitmap);";
+                        }
+                        else
+                        {
+                            embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[2]);
+                            code = "wxBitmap(wxueImage(";
+                            code << embed->array_name << ", " << embed->array_size << ")));";
+                        }
+                        m_source->writeLine(code);
+                        m_source->Unindent();  // end indented parameters
+                    }
+                    m_source->Unindent();  // end function block
+                    m_source->writeLine("}");
+                }
+            }
+        }
+
+        if (!m_NeedSVGFunction && is_old_widgets)
+        {
+            m_source->writeLine("#endif", indent::none);
+        }
+
+        // Now add all of the image data
+
         for (auto iter_array: m_embedded_images)
         {
             if (iter_array->form != m_form_node)
                 continue;
 
-            if (!is_namespace_written)
-            {
-                m_source->writeLine();
-                m_source->writeLine("namespace wxue_img\n{");
-                m_source->Indent();
-                is_namespace_written = true;
-            }
             m_source->writeLine();
             ttlib::cstr code;
             code.reserve(max_image_line_length + 16);
             // SVG images store the original size in the high 32 bits
             size_t max_pos = (iter_array->array_size & 0xFFFFFFFF);
             code << "const unsigned char " << iter_array->array_name << '[' << max_pos << "] {";
-
             m_source->writeLine(code);
 
             size_t pos = 0;
@@ -175,56 +344,78 @@ void BaseCodeGenerator::GenerateImagesForm()
             }
             m_source->writeLine("};");
         }
-        if (is_namespace_written)
-        {
-            m_source->writeLine();
-            m_source->Unindent();
-            m_source->writeLine("}\n");
-        }
+
+        m_source->writeLine();
+        m_source->Unindent();
+        m_source->writeLine("}\n");
     }
 
     if (m_panel_type != CPP_PANEL)
     {
-        bool is_namespace_written = false;
-        for (auto iter_array: m_embedded_images)
-        {
-            if (iter_array->form != m_form_node)
-                continue;
+        m_header->writeLine();
+        m_header->writeLine("namespace wxue_img\n{");
+        m_header->Indent();
+        m_header->SetLastLineBlank();
 
-            if (!is_namespace_written)
+        if (m_NeedSVGFunction)
+        {
+            for (auto embed: m_embedded_images)
             {
-                m_header->writeLine();
-                m_header->writeLine("namespace wxue_img\n{");
-
-                if (m_form_node->isType(type_images))
-                {
-                    ttlib::textfile function;
-                    function.ReadString(txt_wxueImageFunction);
-                    for (auto& iter: function)
-                    {
-                        m_header->write("\t");
-                        if (iter.size() && iter.at(0) == ' ')
-                            m_header->write("\t");
-                        m_header->writeLine(iter);
-                    }
-                    m_header->writeLine();
-                }
-
-                m_header->Indent();
-                if (!m_form_node->isType(type_images))
-                {
-                    m_header->writeLine("// Images declared in this class module:");
-                    m_header->writeLine();
-                }
-                is_namespace_written = true;
+                if (embed->form != m_form_node || embed->type != wxBITMAP_TYPE_INVALID)
+                    continue;
+                ttlib::cstr code("wxBitmapBundle bundle_");
+                code << embed->array_name << "(int width, int height);";
+                m_header->writeLine(code);
             }
-            m_header->writeLine(ttlib::cstr("extern const unsigned char ")
-                                << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
         }
-        if (is_namespace_written)
+
+        if (m_NeedImageFunction)
         {
-            m_header->Unindent();
-            m_header->writeLine("}\n");
+            m_header->writeLine();
+            for (auto embed: m_embedded_images)
+            {
+                if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
+                    continue;
+                ttlib::cstr code("wxImage image_");
+                code << embed->array_name << "();";
+                m_header->writeLine(code);
+            }
+        }
+
+        m_header->writeLine();
+        if (!m_NeedSVGFunction && is_old_widgets)
+        {
+            m_header->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
+        }
+
+        for (auto& child: m_form_node->GetChildNodePtrs())
+        {
+            if (auto bundle = pjsettings->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
+                bundle && bundle->lst_filenames.size())
+            {
+                auto embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[0]);
+                ttlib::cstr code("wxBitmapBundle bundle_");
+                code << embed->array_name << "();";
+                m_header->writeLine(code);
+            }
         }
     }
+
+    if (!m_NeedSVGFunction && is_old_widgets)
+    {
+        m_header->writeLine("#endif", indent::none);
+    }
+
+    m_header->writeLine();
+    for (auto iter_array: m_embedded_images)
+    {
+        if (iter_array->form != m_form_node)
+            continue;
+
+        m_header->writeLine(ttlib::cstr("extern const unsigned char ")
+                            << iter_array->array_name << '[' << (iter_array->array_size & 0xFFFFFFFF) << "];");
+    }
+
+    m_header->Unindent();
+    m_header->writeLine("}\n");
 }

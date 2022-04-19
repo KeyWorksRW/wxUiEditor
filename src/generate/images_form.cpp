@@ -384,7 +384,7 @@ void BaseCodeGenerator::GenerateImagesForm()
             ttlib::cstr code("#if wxCHECK_VERSION(3, 1, 6)\n\t");
             code << "#include <wx/bmpbndl.h>";
             code << "\n#else\n\t";
-            code << "#include <wx/bitmap.h>";
+            code << "#include <wx/image.h>";
             code << "\n#endif";
             m_header->writeLine(code, indent::auto_keep_whitespace);
         }

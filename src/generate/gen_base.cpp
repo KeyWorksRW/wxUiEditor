@@ -186,11 +186,6 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         hdr_includes.insert("#include <wx/event.h>");
     }
 
-    if (form_node->isGen(gen_Images))
-    {
-        hdr_includes.insert("#include <wx/mstream.h>");
-    }
-
     if (panel_type != CPP_PANEL)
     {
         // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
@@ -947,6 +942,11 @@ void BaseCodeGenerator::CollectIncludes(Node* node, std::set<std::string>& set_s
 
 void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
+    if (node->isGen(gen_Images))
+    {
+        return;
+    }
+
     bool isAddToSrc = false;
 
     // If the component is set for local access only, then add the header file to the source set. Once all processing is

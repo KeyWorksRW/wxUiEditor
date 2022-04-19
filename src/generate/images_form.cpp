@@ -99,6 +99,8 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     return sizer;
 }
 
+//////////////////////////////////////////  Code Generator for Images  //////////////////////////////////////////
+
 // clang-format off
 
 // These strings are also in gen_base.cpp
@@ -156,8 +158,14 @@ void BaseCodeGenerator::GenerateImagesForm()
 
     if (m_panel_type != HDR_PANEL)
     {
+        m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+
         if (m_NeedSVGFunction)
         {
+            m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
+            m_source->writeLine();
+            m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+
             if (is_old_widgets)
             {
                 m_source->writeLine();
@@ -222,9 +230,8 @@ void BaseCodeGenerator::GenerateImagesForm()
                 m_source->writeLine("{");
                 m_source->Indent();
                 code = "return wxueBundleSVG(wxue_img::";
-                code << embed->array_name << "wxueBundleSVG(" << embed->array_name << ", "
-                     << (embed->array_size & 0xFFFFFFFF) << ", ";
-                code << (embed->array_size >> 32) << ", wxSize(width, height))";
+                code << embed->array_name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
+                code << (embed->array_size >> 32) << ", wxSize(width, height));";
                 m_source->writeLine(code);
                 m_source->Unindent();
                 m_source->writeLine("}");
@@ -234,23 +241,6 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         if (m_NeedImageFunction)
         {
-            for (auto embed: m_embedded_images)
-            {
-                if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
-                    continue;
-                m_source->writeLine();
-                ttlib::cstr code("wxImage image_");
-                code << embed->array_name << "()";
-                m_source->writeLine(code);
-                m_source->writeLine("{");
-                m_source->Indent();
-                code = "return wxueImage(";
-                code << embed->array_name << ", " << embed->array_size << ");";
-                m_source->writeLine(code);
-                m_source->Unindent();
-                m_source->writeLine("}");
-            }
-
             m_source->writeLine();
 
             if (!m_NeedSVGFunction && is_old_widgets)
@@ -265,6 +255,10 @@ void BaseCodeGenerator::GenerateImagesForm()
                     bundle && bundle->lst_filenames.size())
                 {
                     auto embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    if (embed->type == wxBITMAP_TYPE_INVALID)
+                    {
+                        continue;  // This is an SVG image which we already handled
+                    }
                     m_source->writeLine();
                     ttlib::cstr code("wxBitmapBundle bundle_");
                     code << embed->array_name << "()";
@@ -306,6 +300,24 @@ void BaseCodeGenerator::GenerateImagesForm()
                     m_source->Unindent();  // end function block
                     m_source->writeLine("}");
                 }
+            }
+
+            m_source->writeLine();
+            for (auto embed: m_embedded_images)
+            {
+                if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
+                    continue;
+                m_source->writeLine();
+                ttlib::cstr code("wxImage image_");
+                code << embed->array_name << "()";
+                m_source->writeLine(code);
+                m_source->writeLine("{");
+                m_source->Indent();
+                code = "return wxueImage(";
+                code << embed->array_name << ", " << embed->array_size << ");";
+                m_source->writeLine(code);
+                m_source->Unindent();
+                m_source->writeLine("}");
             }
         }
 
@@ -350,8 +362,33 @@ void BaseCodeGenerator::GenerateImagesForm()
         m_source->writeLine("}\n");
     }
 
+    /////////////// Header code ///////////////
+
     if (m_panel_type != CPP_PANEL)
     {
+        if (m_NeedSVGFunction && is_old_widgets)
+        {
+            m_source->writeLine();
+            m_header->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
+            m_header->Indent();
+            m_header->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"");
+            m_header->Unindent();
+            m_header->writeLine("#endif", indent::none);
+        }
+        else if (!m_NeedSVGFunction && is_old_widgets)
+        {
+            ttlib::cstr code("#if wxCHECK_VERSION(3, 1, 6)\n\t");
+            code << "#include <wx/bmpbndl.h>";
+            code << "\n#else\n\t";
+            code << "#include <wx/bitmap.h>";
+            code << "\n#endif";
+            m_header->writeLine(code, indent::auto_keep_whitespace);
+        }
+        else
+        {
+            m_header->writeLine("#include <wx/bmpbndl.h>");
+        }
+
         m_header->writeLine();
         m_header->writeLine("namespace wxue_img\n{");
         m_header->Indent();
@@ -369,19 +406,6 @@ void BaseCodeGenerator::GenerateImagesForm()
             }
         }
 
-        if (m_NeedImageFunction)
-        {
-            m_header->writeLine();
-            for (auto embed: m_embedded_images)
-            {
-                if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
-                    continue;
-                ttlib::cstr code("wxImage image_");
-                code << embed->array_name << "();";
-                m_header->writeLine(code);
-            }
-        }
-
         m_header->writeLine();
         if (!m_NeedSVGFunction && is_old_widgets)
         {
@@ -394,7 +418,24 @@ void BaseCodeGenerator::GenerateImagesForm()
                 bundle && bundle->lst_filenames.size())
             {
                 auto embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[0]);
+                if (embed->type == wxBITMAP_TYPE_INVALID)
+                {
+                    continue;  // This is an SVG image which we already handled
+                }
                 ttlib::cstr code("wxBitmapBundle bundle_");
+                code << embed->array_name << "();";
+                m_header->writeLine(code);
+            }
+        }
+
+        if (m_NeedImageFunction)
+        {
+            m_header->writeLine();
+            for (auto embed: m_embedded_images)
+            {
+                if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
+                    continue;
+                ttlib::cstr code("wxImage image_");
                 code << embed->array_name << "();";
                 m_header->writeLine(code);
             }

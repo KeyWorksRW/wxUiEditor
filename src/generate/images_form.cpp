@@ -302,22 +302,26 @@ void BaseCodeGenerator::GenerateImagesForm()
                 }
             }
 
-            m_source->writeLine();
-            for (auto embed: m_embedded_images)
+            if (!m_NeedSVGFunction && is_old_widgets)
             {
-                if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
-                    continue;
+                m_source->writeLine("#else", indent::none);
                 m_source->writeLine();
-                ttlib::cstr code("wxImage image_");
-                code << embed->array_name << "()";
-                m_source->writeLine(code);
-                m_source->writeLine("{");
-                m_source->Indent();
-                code = "return wxueImage(";
-                code << embed->array_name << ", " << embed->array_size << ");";
-                m_source->writeLine(code);
-                m_source->Unindent();
-                m_source->writeLine("}");
+                for (auto embed: m_embedded_images)
+                {
+                    if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
+                        continue;
+                    m_source->writeLine();
+                    ttlib::cstr code("wxImage image_");
+                    code << embed->array_name << "()";
+                    m_source->writeLine(code);
+                    m_source->writeLine("{");
+                    m_source->Indent();
+                    code = "return wxueImage(";
+                    code << embed->array_name << ", " << embed->array_size << ");";
+                    m_source->writeLine(code);
+                    m_source->Unindent();
+                    m_source->writeLine("}");
+                }
             }
         }
 
@@ -428,16 +432,20 @@ void BaseCodeGenerator::GenerateImagesForm()
             }
         }
 
-        if (m_NeedImageFunction)
+        if (!m_NeedSVGFunction && is_old_widgets)
         {
-            m_header->writeLine();
-            for (auto embed: m_embedded_images)
+            if (m_NeedImageFunction)
             {
-                if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
-                    continue;
-                ttlib::cstr code("wxImage image_");
-                code << embed->array_name << "();";
-                m_header->writeLine(code);
+                m_header->writeLine("#else", indent::none);
+                m_header->writeLine();
+                for (auto embed: m_embedded_images)
+                {
+                    if (embed->form != m_form_node || embed->type == wxBITMAP_TYPE_INVALID)
+                        continue;
+                    ttlib::cstr code("wxImage image_");
+                    code << embed->array_name << "();";
+                    m_header->writeLine(code);
+                }
             }
         }
     }

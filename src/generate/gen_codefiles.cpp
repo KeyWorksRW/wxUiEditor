@@ -101,7 +101,16 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
                 {
                     if (pClassList)
                     {
-                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                        if (form->isGen(gen_Images))
+                        {
+                            // While technically this is a "form" it doesn't have the usual properties set
+
+                            pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
+                        }
+                        else
+                        {
+                            pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                        }
                         continue;
                     }
                     else
@@ -361,7 +370,16 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
         for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
         {
             auto form = project->GetChild(pos);
-            if (form->prop_as_string(prop_class_name).is_sameas(iter_class))
+
+            // The Images class doesn't have a prop_class_name, so use "Images". Note that this will fail if there is a real
+            // form where the user set the class name to "Images". If this wasn't an Internal function, then we would need to
+            // store nodes rather than class names.
+
+            ttlib::cstr class_name(form->prop_as_string(prop_class_name));
+            if (form->isGen(gen_Images))
+                class_name = "Images";
+
+            if (class_name.is_sameas(iter_class))
             {
                 BaseCodeGenerator codegen;
 

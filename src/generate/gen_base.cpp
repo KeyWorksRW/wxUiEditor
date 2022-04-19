@@ -124,6 +124,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     m_NeedHeaderFunction = false;
     m_NeedSVGFunction = false;
     m_NeedArtProviderHeader = false;
+    m_NeedImageFunction = false;
 
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
@@ -401,7 +402,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         {
             m_source->writeLine("#include <wx/animate.h>", indent::none);
         }
-        if (m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+        if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
         {
             m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
         }
@@ -414,7 +415,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
         // Now generate the functions
 
-        if (m_NeedHeaderFunction)
+        if (m_NeedImageFunction || m_NeedHeaderFunction)
         {
             ttlib::textfile function;
             function.ReadString(txt_wxueImageFunction);
@@ -1734,6 +1735,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
     }
 }
 
+// This function is called by the thread thrd_collect_img_headers
 void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& embedset)
 {
     for (auto& iter: node->get_props_vector())
@@ -1843,6 +1845,8 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
     }
 }
 
+// Called by the thread thrd_need_img_func
+//
 // Determine if Header or Animation functions need to be generated, and whether the
 // wx/artprov.h header is needed
 void BaseCodeGenerator::ParseImageProperties(Node* node)
@@ -1852,10 +1856,14 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         ttlib::multiview parts(node->prop_as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
         if (parts.size() >= IndexImage + 1)
         {
-            if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header"))
+            if (parts[IndexType] == "Header")
+            {
+                m_NeedHeaderFunction = true;
+            }
+            else if (parts[IndexType] == "Embed")
             {
                 if (!parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
-                    m_NeedHeaderFunction = true;
+                    m_NeedImageFunction = true;
             }
             else if ((parts[IndexType] == "Art"))
             {
@@ -1879,12 +1887,12 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 if (parts.size() < IndexImage + 1)
                     continue;
 
-                if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header"))
+                if (parts[IndexType] == "Embed")
                 {
                     if (iter.type() == type_animation)
                         m_NeedAnimationFunction = true;
                     else if (!parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
-                        m_NeedHeaderFunction = true;
+                        m_NeedImageFunction = true;
                 }
                 else if ((parts[IndexType] == "Art"))
                 {
@@ -1893,6 +1901,13 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 else if ((parts[IndexType] == "SVG"))
                 {
                     m_NeedSVGFunction = true;
+                }
+                else if (parts[IndexType] == "Header")
+                {
+                    if (iter.type() == type_animation)
+                        m_NeedAnimationFunction = true;
+                    else if (!parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
+                        m_NeedHeaderFunction = true;
                 }
             }
         }

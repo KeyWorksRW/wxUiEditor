@@ -162,8 +162,9 @@ private:
     bool m_is_derived_class { true };
 
     // These are also initialized whenever GenerateBaseClass() is called
-    bool m_NeedArtProviderHeader { false };
-    bool m_NeedHeaderFunction { false };
-    bool m_NeedAnimationFunction { false };
-    bool m_NeedSVGFunction { false };
+    bool m_NeedArtProviderHeader { false };  // Set when Art type is used
+    bool m_NeedHeaderFunction { false };     // Set when Header type is used
+    bool m_NeedAnimationFunction { false };  // Set when an Animation image is used
+    bool m_NeedSVGFunction { false };        // Set when SVG image type is used
+    bool m_NeedImageFunction { false };      // Set when Embed type is used
 };

@@ -837,7 +837,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
 
     else if (parts[IndexType].is_sameas("XPM") || parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
     {
-        if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(description); bundle)
+        if (auto bundle = wxGetApp().GetPropertyImageBundle(description); bundle)
         {
             if (bundle->lst_filenames.size() == 1)
             {
@@ -882,7 +882,14 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
     }
     else if (description.is_sameprefix("SVG"))
     {
-        auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+        if (auto function_name = wxGetApp().GetBundleFuncName(description); function_name.size())
+        {
+            // We get here if there is an Image form that contains the function to retrieve this bundle.
+            code = function_name;
+            return true;
+        }
+
+        auto embed = wxGetApp().GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
         {
             FAIL_MSG(ttlib::cstr() << description << " not embedded!")

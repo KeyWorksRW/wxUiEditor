@@ -46,7 +46,10 @@ public:
     ttlib::cstr& SetProjectPath(const ttString& path, bool remove_filename = true);
     ttlib::cstr& setProjectPath(const ttlib::cstr& path, bool remove_filename = true);
 
+    // Returns the directory the project file is in as a ttlib::cstr
     ttlib::cstr& getProjectPath() { return m_projectPath; }
+
+    // Returns the directory the project file is in as a ttString
     ttString GetProjectPath() { return ttString() << m_projectPath.wx_str(); }
 
     // This takes the full bitmap property description and uses that to determine the image

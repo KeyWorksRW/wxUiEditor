@@ -386,8 +386,9 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
     { "box", "_box" },
     { "bundle", "_bundle" },  // just in case we want to add help for this
     { "button", "_button" },
-    { "combo", "_combo" },
+    { "colour", "_colour" },
     { "column", "_column" },
+    { "combo", "_combo" },
     { "ctrl", "_ctrl" },
     { "dialog", "_dialog" },  // stddialog becomes std_dialog
     { "double", "_double" },

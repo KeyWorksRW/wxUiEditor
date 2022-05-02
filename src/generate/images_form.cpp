@@ -44,7 +44,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     auto node = wxGetFrame().GetSelectedNode();
     if (node->isGen(gen_embedded_image))
     {
-        auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(node->prop_as_string(prop_bitmap));
+        auto bundle = wxGetApp().GetPropertyImageBundle(node->prop_as_string(prop_bitmap));
 
         ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
 

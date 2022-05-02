@@ -150,6 +150,8 @@ private:
     WriteCode* m_source;
 
     ttlib::cstr m_baseFullPath;
+    ttlib::cstr m_header_ext { ".h" };
+
     EventVector m_CtxMenuEvents;
 
     std::vector<const EmbeddedImage*> m_embedded_images;

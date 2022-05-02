@@ -295,11 +295,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         WritePropSourceCode(form_node, prop_base_src_includes);
     }
 
-    ttlib::cstr header_ext(".h");
-
     if (auto& hdr_extension = project->prop_as_string(prop_header_ext); hdr_extension.size())
     {
-        header_ext = hdr_extension;
+        m_header_ext = hdr_extension;
     }
 
     if (file.empty())
@@ -310,7 +308,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     }
     else
     {
-        file.replace_extension(header_ext);
+        file.replace_extension(m_header_ext);
         m_source->writeLine();
         m_source->writeLine(ttlib::cstr() << "#include \"" << file.filename() << "\"");
     }
@@ -1015,6 +1013,26 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
             }
             else if (iter.type() == type_image)
             {
+                if (iter.isProp(prop_bitmap))
+                {
+                    if (auto function_name = wxGetApp().GetBundleFuncName(iter.as_string()); function_name.size())
+                    {
+                        for (auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
+                        {
+                            if (form->isGen(gen_Images))
+                            {
+                                ttlib::cstr image_file = wxGetApp().getProjectPath();
+                                image_file.append_filename(form->prop_as_string(prop_base_file));
+                                image_file.replace_extension(m_header_ext);
+                                image_file.make_relative(m_baseFullPath);
+                                set_src.insert(ttlib::cstr() << "#include \"" << image_file << '\"');
+                                break;
+                            }
+                        }
+                        continue;
+                    }
+                }
+
                 // The problem at this point is that we don't know how the bitmap will be used. It could be just a
                 // wxBitmap, or it could be handed to a wxImage for sizing, or it might be handed to
                 // wxWindow->SetIcon(). We play it safe and supply all three header files.

@@ -327,7 +327,6 @@ ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
                         {
                             name << "wxue_img::bundle_" << embed->array_name << "()";
                         }
-
                     }
                     break;
                 }

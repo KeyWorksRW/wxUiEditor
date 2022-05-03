@@ -112,13 +112,24 @@ BaseCodeGenerator::BaseCodeGenerator()
     }
 }
 
-void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_TYPE panel_type)
+void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_TYPE panel_type)
 {
     m_CtxMenuEvents.clear();
     m_embedded_images.clear();
     m_type_generated.clear();
 
+    m_project = wxGetApp().GetProject();
     m_form_node = form_node;
+    m_ImagesForm = nullptr;
+
+    for (auto& form: m_project->GetChildNodePtrs())
+    {
+        if (form->isGen(gen_Images))
+        {
+            m_ImagesForm = form.get();
+            break;
+        }
+    }
 
     m_NeedAnimationFunction = false;
     m_NeedHeaderFunction = false;
@@ -169,9 +180,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     std::set<std::string> src_includes;
     std::set<std::string> hdr_includes;
-    if (project->prop_as_string(prop_help_provider) != "none")
+    if (m_project->prop_as_string(prop_help_provider) != "none")
         src_includes.insert("#include <wx/cshelp.h>");
-    if (project->prop_as_bool(prop_internationalize))
+    if (m_project->prop_as_bool(prop_internationalize))
         hdr_includes.insert("#include <wx/intl.h>");
 
     // This will almost always be needed, and it in turn includes a bunch of other files like string.h which are also
@@ -215,9 +226,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         }
     }
 
-    if (project->HasValue(prop_local_pch_file))
+    if (m_project->HasValue(prop_local_pch_file))
     {
-        m_source->writeLine(ttlib::cstr() << "#include \"" << project->prop_as_string(prop_local_pch_file) << '"');
+        m_source->writeLine(ttlib::cstr() << "#include \"" << m_project->prop_as_string(prop_local_pch_file) << '"');
         m_source->writeLine();
     }
 
@@ -285,9 +296,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     m_source->writeLine();
 
-    if (project->HasValue(prop_src_preamble))
+    if (m_project->HasValue(prop_src_preamble))
     {
-        WritePropSourceCode(project, prop_src_preamble);
+        WritePropSourceCode(m_project, prop_src_preamble);
     }
 
     if (form_node->HasValue(prop_base_src_includes))
@@ -295,7 +306,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         WritePropSourceCode(form_node, prop_base_src_includes);
     }
 
-    if (auto& hdr_extension = project->prop_as_string(prop_header_ext); hdr_extension.size())
+    if (auto& hdr_extension = m_project->prop_as_string(prop_header_ext); hdr_extension.size())
     {
         m_header_ext = hdr_extension;
     }
@@ -336,7 +347,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     }
 
     // Make a copy of the string so that we can tweak it
-    ttlib::cstr namespace_prop = project->prop_as_string(prop_name_space);
+    ttlib::cstr namespace_prop = m_project->prop_as_string(prop_name_space);
     size_t indent = 0;
     ttlib::multistr names;
     if (namespace_prop.size())

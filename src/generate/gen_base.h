@@ -72,7 +72,7 @@ public:
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
-    void GenerateBaseClass(Node* project, Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
+    void GenerateBaseClass(Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
 
@@ -158,6 +158,8 @@ private:
     std::set<wxBitmapType> m_type_generated;
 
     Node* m_form_node;
+    Node* m_ImagesForm;
+    Node* m_project;
 
     PANEL_TYPE m_panel_type { NOT_PANEL };
 

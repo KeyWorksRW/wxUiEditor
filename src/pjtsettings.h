@@ -68,6 +68,8 @@ public:
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
     // code for the bundle.
+    //
+    // Returns nullptr if there is no ImageBundle
     const ImageBundle* GetPropertyImageBundle(const ttlib::multistr& parts, Node* node = nullptr);
     const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr)
     {

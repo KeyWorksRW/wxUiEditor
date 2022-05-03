@@ -488,6 +488,7 @@ void ProjectSettings::InitializeArrayName(EmbeddedImage* embed, ttlib::sview fil
 
 EmbeddedImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
 {
+    // REVIEW: [KeyWorks - 05-03-2022] Do we still need this lock?
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
 
     if (auto result = m_map_embedded.find(path.filename()); result != m_map_embedded.end())

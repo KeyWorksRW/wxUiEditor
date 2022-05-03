@@ -37,10 +37,13 @@ static bool isBookHasImage(Node* node);
 
 static void AddBookImageList(Node* node_book, wxObject* widget);
 static void BookCtorAddImagelist(ttlib::cstr& code, Node* node);
-static void AddTreebookSubImages(Node* node, wxImageList* img_list);
 static void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list);
 static void AddTreebookImageCode(ttlib::cstr& code, Node* node, size_t& image_index);
 static int GetTreebookImageIndex(Node* node);
+
+#if 0
+static void AddTreebookSubImages(Node* node, wxImageList* img_list);
+#endif
 
 //////////////////////////////////////////  BookPageGenerator  //////////////////////////////////////////
 
@@ -1074,6 +1077,7 @@ static bool isBookHasImage(Node* node)
     return false;
 }
 
+#if 0
 static void AddTreebookSubImages(Node* node, wxImageList* img_list)
 {
     if (!img_list)
@@ -1096,6 +1100,7 @@ static void AddTreebookSubImages(Node* node, wxImageList* img_list)
         }
     }
 }
+#endif
 
 static void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list)
 {

@@ -18,8 +18,6 @@
 #include <wx/statline.h>           // wxStaticLine class interface
 #include <wx/statusbr.h>           // wxStatusBar class interface
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "bitmaps.h"      // Contains various images handling functions
 #include "gen_common.h"   // GeneratorLibrary -- Generator classes
 #include "mainapp.h"      // App -- Main application class

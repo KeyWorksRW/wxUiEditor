@@ -13,8 +13,6 @@
 #include <wx/sizer.h>              // provide wxSizer class for layout
 #include <wx/stc/stc.h>            // A wxWidgets implementation of Scintilla.
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "styled_text.h"
 
 #include "gen_common.h"    // GeneratorLibrary -- Generator classes

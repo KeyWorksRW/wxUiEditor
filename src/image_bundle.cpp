@@ -16,8 +16,6 @@
 #include <wx/wfstream.h>  // File stream classes
 #include <wx/zstream.h>   // zlib stream classes
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "pugixml.hpp"  // xml parser
 
 #include "mainapp.h"      // compiler_standard -- Main application class
@@ -101,9 +99,8 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
     }
 }
 
-bool ProjectSettings::AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form)
+bool ProjectSettings::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form)
 {
-    ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
     ASSERT(parts.size() > 1)
 
     ttlib::cstr lookup_str;
@@ -378,9 +375,8 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
     return false;
 }
 
-ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& description, Node* node)
+ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::multistr& parts, Node* node)
 {
-    ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
     ASSERT(parts.size() > 1)
 
     ttlib::cstr lookup_str;
@@ -414,7 +410,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
     }
     else if (parts[IndexType].contains("Embed"))
     {
-        if (AddNewEmbeddedBundle(description, parts[IndexImage], node->get_form()))
+        if (AddNewEmbeddedBundle(parts, parts[IndexImage], node->get_form()))
         {
             return &m_bundles[lookup_str];
         }
@@ -425,7 +421,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
     }
     else if (parts[IndexType].contains("SVG"))
     {
-        if (AddNewEmbeddedBundle(description, parts[IndexImage], node->get_form()))
+        if (AddNewEmbeddedBundle(parts, parts[IndexImage], node->get_form()))
         {
             return &m_bundles[lookup_str];
         }
@@ -435,7 +431,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::cstr& descripti
         }
     }
 
-    auto image_first = wxGetApp().GetProjectSettings()->GetPropertyBitmap(description, false);
+    auto image_first = wxGetApp().GetProjectSettings()->GetPropertyBitmap(parts, false);
     if (!image_first.IsOk())
     {
         return nullptr;

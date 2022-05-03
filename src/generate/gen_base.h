@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Generate Src and Hdr files for Base Class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +47,12 @@ namespace result
     };
 }  // namespace result
 
+// This determines the longest line when generating embedded images. Do *not* use constexpr for this -- at some point we may
+// want to allow the user to set maximum line length of all generated code, and if so, this will need to reflect the user's
+// preference.
+
+constexpr int max_image_line_length { 125 };
+
 int WriteCMakeFile(bool test_only = true);  // See gen_cmake.cpp
 
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at
@@ -66,7 +72,7 @@ public:
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
-    void GenerateBaseClass(Node* project, Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
+    void GenerateBaseClass(Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
 
@@ -92,6 +98,9 @@ protected:
         Protected,
         Public
     };
+
+    // This method is in images_form.cpp, and handles both source and header code generation
+    void GenerateImagesForm();
 
     ttlib::cstr GetDeclaration(Node* node);
 
@@ -141,20 +150,25 @@ private:
     WriteCode* m_source;
 
     ttlib::cstr m_baseFullPath;
+    ttlib::cstr m_header_ext { ".h" };
+
     EventVector m_CtxMenuEvents;
 
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;
 
     Node* m_form_node;
+    Node* m_ImagesForm;
+    Node* m_project;
 
     PANEL_TYPE m_panel_type { NOT_PANEL };
 
     bool m_is_derived_class { true };
 
     // These are also initialized whenever GenerateBaseClass() is called
-    bool m_NeedArtProviderHeader { false };
-    bool m_NeedHeaderFunction { false };
-    bool m_NeedAnimationFunction { false };
-    bool m_NeedSVGFunction { false };
+    bool m_NeedArtProviderHeader { false };  // Set when Art type is used
+    bool m_NeedHeaderFunction { false };     // Set when Header type is used
+    bool m_NeedAnimationFunction { false };  // Set when an Animation image is used
+    bool m_NeedSVGFunction { false };        // Set when SVG image type is used
+    bool m_NeedImageFunction { false };      // Set when Embed type is used
 };

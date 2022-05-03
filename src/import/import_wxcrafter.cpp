@@ -55,8 +55,6 @@ namespace rapidjson
 
 using namespace rapidjson;
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // Main window frame

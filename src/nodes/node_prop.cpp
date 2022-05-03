@@ -12,8 +12,6 @@
 #include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
 #include <wx/propgrid/propgriddefs.h>  // wxPropertyGrid miscellaneous definitions
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "font_prop.h"     // FontProperty -- FontProperty class
 #include "mainapp.h"       // App -- App class
 #include "mainapp.h"       // App -- Main application class
@@ -306,7 +304,7 @@ wxBitmapBundle NodeProperty::as_bitmap_bundle() const
 
 const ImageBundle* NodeProperty::as_image_bundle() const
 {
-    auto bundle_ptr = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(m_value);
+    auto bundle_ptr = wxGetApp().GetPropertyImageBundle(m_value);
     if (!bundle_ptr || !bundle_ptr->bundle.IsOk())
         return nullptr;
     else

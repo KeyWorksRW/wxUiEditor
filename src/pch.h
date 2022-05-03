@@ -81,14 +81,15 @@
 
 #include "ttlibspace.h"  // This must be included before any other ttLib header files
 
-#include "ttcstr.h"   // ttlib::cstr -- std::string with additional functions
-#include "ttcview.h"  // ttlib::cview -- string_view functionality on a zero-terminated char string.
-#include "ttstr.h"    // ttString -- wxString with ttlib::cstr equivalent functions
-#include "ttsview.h"  // sview -- std::string_view with additional methods
+#include "ttcstr.h"      // ttlib::cstr -- std::string with additional functions
+#include "ttcview.h"     // ttlib::cview -- std::string_view functionality on a zero-terminated char string.
+#include "ttmultistr.h"  // ttlib::multistr -- breaks a single string into multiple strings
+#include "ttstr.h"       // ttString -- wxString with ttlib::cstr equivalent functions
+#include "ttsview.h"     // ttlib::sview -- std::string_view with additional methods
 
 #if !defined(int_t)
 
-// signed integer type with width determined by platform
+// signed integer type, width determined by platform
 typedef ptrdiff_t int_t;
 
 #endif  // not !defined(int_t)

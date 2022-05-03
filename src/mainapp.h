@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Main application class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,9 +18,11 @@ namespace pugi
     class xml_document;
 }
 
+class ImportXML;
 class MainFrame;
 class ProjectSettings;
-class ImportXML;
+
+struct EmbeddedImage;
 struct ImageBundle;
 
 // Current version of wxUiEditor project files
@@ -63,7 +65,13 @@ public:
 
     wxImage GetImage(const ttlib::cstr& description);
     wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
+
+    const ImageBundle* GetPropertyImageBundle(const ttlib::multistr& parts, Node* node = nullptr);
     const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr);
+    EmbeddedImage* GetEmbeddedImage(ttlib::sview path);
+
+    // If there is an Image form containing this bundle, return it's name
+    ttlib::cstr GetBundleFuncName(const ttlib::cstr& description);
 
     ProjectSettings* GetProjectSettings() { return m_pjtSettings; };
 

@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "import_xml.h"
 
 #include "gen_enums.h"    // Enumerations for generators

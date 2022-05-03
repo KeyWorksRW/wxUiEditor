@@ -12,8 +12,6 @@
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 #include <wx/stc/stc.h>   // Scintilla
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "write_code.h"
 
 #include "mainapp.h"       // App -- Main application class

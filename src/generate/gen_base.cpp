@@ -11,8 +11,6 @@
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-#include "ttstr.h"       // ttString, ttSaveCwd -- Enhanced version of wxString
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
 #include "gen_base.h"
@@ -25,12 +23,6 @@
 #include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
 #include "utils.h"         // Utility functions that work with properties
 #include "write_code.h"    // Write code to Scintilla or file
-
-// This determines the longest line when generating embedded images. Do *not* use constexpr for this -- at some point we may
-// want to allow the user to set maximum line length of all generated code, and if so, this will need to reflect the user's
-// preference.
-
-static int max_image_line_length { 125 };
 
 using namespace GenEnum;
 
@@ -118,18 +110,30 @@ BaseCodeGenerator::BaseCodeGenerator()
     }
 }
 
-void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_TYPE panel_type)
+void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_TYPE panel_type)
 {
     m_CtxMenuEvents.clear();
     m_embedded_images.clear();
     m_type_generated.clear();
 
+    m_project = wxGetApp().GetProject();
     m_form_node = form_node;
+    m_ImagesForm = nullptr;
+
+    for (auto& form: m_project->GetChildNodePtrs())
+    {
+        if (form->isGen(gen_Images))
+        {
+            m_ImagesForm = form.get();
+            break;
+        }
+    }
 
     m_NeedAnimationFunction = false;
     m_NeedHeaderFunction = false;
     m_NeedSVGFunction = false;
     m_NeedArtProviderHeader = false;
+    m_NeedImageFunction = false;
 
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
@@ -174,9 +178,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     std::set<std::string> src_includes;
     std::set<std::string> hdr_includes;
-    if (project->prop_as_string(prop_help_provider) != "none")
+    if (m_project->prop_as_string(prop_help_provider) != "none")
         src_includes.insert("#include <wx/cshelp.h>");
-    if (project->prop_as_bool(prop_internationalize))
+    if (m_project->prop_as_bool(prop_internationalize))
         hdr_includes.insert("#include <wx/intl.h>");
 
     // This will almost always be needed, and it in turn includes a bunch of other files like string.h which are also
@@ -189,11 +193,6 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     if (events.size() || m_CtxMenuEvents.size())
     {
         hdr_includes.insert("#include <wx/event.h>");
-    }
-
-    if (form_node->isGen(gen_Images))
-    {
-        hdr_includes.insert("#include <wx/mstream.h>");
     }
 
     if (panel_type != CPP_PANEL)
@@ -225,9 +224,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         }
     }
 
-    if (project->HasValue(prop_local_pch_file))
+    if (m_project->HasValue(prop_local_pch_file))
     {
-        m_source->writeLine(ttlib::cstr() << "#include \"" << project->prop_as_string(prop_local_pch_file) << '"');
+        m_source->writeLine(ttlib::cstr() << "#include \"" << m_project->prop_as_string(prop_local_pch_file) << '"');
         m_source->writeLine();
     }
 
@@ -295,9 +294,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
 
     m_source->writeLine();
 
-    if (project->HasValue(prop_src_preamble))
+    if (m_project->HasValue(prop_src_preamble))
     {
-        WritePropSourceCode(project, prop_src_preamble);
+        WritePropSourceCode(m_project, prop_src_preamble);
     }
 
     if (form_node->HasValue(prop_base_src_includes))
@@ -305,11 +304,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         WritePropSourceCode(form_node, prop_base_src_includes);
     }
 
-    ttlib::cstr header_ext(".h");
-
-    if (auto& hdr_extension = project->prop_as_string(prop_header_ext); hdr_extension.size())
+    if (auto& hdr_extension = m_project->prop_as_string(prop_header_ext); hdr_extension.size())
     {
-        header_ext = hdr_extension;
+        m_header_ext = hdr_extension;
     }
 
     if (file.empty())
@@ -320,7 +317,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     }
     else
     {
-        file.replace_extension(header_ext);
+        file.replace_extension(m_header_ext);
         m_source->writeLine();
         m_source->writeLine(ttlib::cstr() << "#include \"" << file.filename() << "\"");
     }
@@ -348,7 +345,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
     }
 
     // Make a copy of the string so that we can tweak it
-    ttlib::cstr namespace_prop = project->prop_as_string(prop_name_space);
+    ttlib::cstr namespace_prop = m_project->prop_as_string(prop_name_space);
     size_t indent = 0;
     ttlib::multistr names;
     if (namespace_prop.size())
@@ -389,78 +386,81 @@ void BaseCodeGenerator::GenerateBaseClass(Node* project, Node* form_node, PANEL_
         }
     }
 
+    if (form_node->isGen(gen_Images))
+    {
+        GenerateImagesForm();
+        return;
+    }
+
     if (m_panel_type != CPP_PANEL)
         GenerateClassHeader(form_node, events);
 
     if (m_panel_type != HDR_PANEL)
     {
-        if (!form_node->isGen(gen_Images))
+        // First, generate the header files needed
+
+        m_source->writeLine();
+        if (m_NeedAnimationFunction)
         {
-            // First, generate the header files needed
-
+            m_source->writeLine("#include <wx/animate.h>", indent::none);
+        }
+        if (m_NeedImageFunction || m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+        {
+            m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
+        }
+        if (m_NeedSVGFunction)
+        {
+            m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
             m_source->writeLine();
-            if (m_NeedAnimationFunction)
+            m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+        }
+
+        // Now generate the functions
+
+        if (m_NeedImageFunction || m_NeedHeaderFunction)
+        {
+            ttlib::textfile function;
+            function.ReadString(txt_wxueImageFunction);
+            for (auto& iter: function)
             {
-                m_source->writeLine("#include <wx/animate.h>", indent::none);
+                m_source->writeLine(iter, indent::none);
             }
-            if (m_NeedHeaderFunction || m_NeedSVGFunction || m_NeedAnimationFunction)
+            m_source->writeLine();
+        }
+
+        if (m_NeedSVGFunction)
+        {
+            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
             {
-                m_source->writeLine("\n#include <wx/mstream.h>  // memory stream classes", indent::none);
-            }
-            if (m_NeedSVGFunction)
-            {
-                m_source->writeLine("#include <wx/zstream.h>  // zlib stream classes", indent::none);
                 m_source->writeLine();
-                m_source->writeLine("#include <memory>  // for std::make_unique", indent::none);
+                m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
+                m_source->Indent();
+                m_source->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
+                                    indent::auto_no_whitespace);
+                m_source->Unindent();
+                m_source->writeLine("#endif", indent::none);
             }
 
-            // Now generate the functions
-
-            if (m_NeedHeaderFunction)
+            ttlib::textfile function;
+            function.ReadString(txt_GetBundleFromSVG);
+            for (auto& iter: function)
             {
-                ttlib::textfile function;
-                function.ReadString(txt_wxueImageFunction);
-                for (auto& iter: function)
-                {
-                    m_source->writeLine(iter, indent::none);
-                }
-                m_source->writeLine();
+                m_source->writeLine(iter, indent::none);
             }
+            m_source->writeLine();
+        }
 
-            if (m_NeedSVGFunction)
+        if (m_NeedAnimationFunction)
+        {
+            ttlib::textfile function;
+            function.ReadString(txt_GetAnimFromHdrFunction);
+            for (auto& iter: function)
             {
-                if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
-                {
-                    m_source->writeLine();
-                    m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
-                    m_source->Indent();
-                    m_source->writeLine("#error \"You must build with wxWidgets 3.1.6 or later to use SVG images.\"",
-                                        indent::auto_no_whitespace);
-                    m_source->Unindent();
-                    m_source->writeLine("#endif", indent::none);
-                }
-
-                ttlib::textfile function;
-                function.ReadString(txt_GetBundleFromSVG);
-                for (auto& iter: function)
-                {
-                    m_source->writeLine(iter, indent::none);
-                }
-                m_source->writeLine();
-            }
-
-            if (m_NeedAnimationFunction)
-            {
-                ttlib::textfile function;
-                function.ReadString(txt_GetAnimFromHdrFunction);
-                for (auto& iter: function)
-                {
-                    m_source->writeLine(iter, indent::none);
-                }
+                m_source->writeLine(iter, indent::none);
             }
         }
 
-        if (m_embedded_images.size() && !form_node->isGen(gen_Images))
+        if (m_embedded_images.size())
         {
             bool isNameSpaceWritten = false;
             for (auto iter_array: m_embedded_images)
@@ -949,6 +949,11 @@ void BaseCodeGenerator::CollectIncludes(Node* node, std::set<std::string>& set_s
 
 void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
+    if (node->isGen(gen_Images))
+    {
+        return;
+    }
+
     bool isAddToSrc = false;
 
     // If the component is set for local access only, then add the header file to the source set. Once all processing is
@@ -1017,6 +1022,26 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
             }
             else if (iter.type() == type_image)
             {
+                if (iter.isProp(prop_bitmap))
+                {
+                    if (auto function_name = wxGetApp().GetBundleFuncName(iter.as_string()); function_name.size())
+                    {
+                        for (auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
+                        {
+                            if (form->isGen(gen_Images))
+                            {
+                                ttlib::cstr image_file = wxGetApp().getProjectPath();
+                                image_file.append_filename(form->prop_as_string(prop_base_file));
+                                image_file.replace_extension(m_header_ext);
+                                image_file.make_relative(m_baseFullPath);
+                                set_src.insert(ttlib::cstr() << "#include \"" << image_file << '\"');
+                                break;
+                            }
+                        }
+                        continue;
+                    }
+                }
+
                 // The problem at this point is that we don't know how the bitmap will be used. It could be just a
                 // wxBitmap, or it could be handed to a wxImage for sizing, or it might be handed to
                 // wxWindow->SetIcon(). We play it safe and supply all three header files.
@@ -1401,10 +1426,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     }
 
     m_source->Unindent();
-    if (!form_node->isGen(gen_Images))
-    {
-        m_source->writeLine("}");
-    }
+    m_source->writeLine("}");
 
     Node* node_ctx_menu = nullptr;
     for (size_t pos_child = 0; pos_child < form_node->GetChildCount(); pos_child++)
@@ -1740,6 +1762,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
     }
 }
 
+// This function is called by the thread thrd_collect_img_headers
 void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& embedset)
 {
     for (auto& iter: node->get_props_vector())
@@ -1849,6 +1872,8 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
     }
 }
 
+// Called by the thread thrd_need_img_func
+//
 // Determine if Header or Animation functions need to be generated, and whether the
 // wx/artprov.h header is needed
 void BaseCodeGenerator::ParseImageProperties(Node* node)
@@ -1858,10 +1883,14 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         ttlib::multiview parts(node->prop_as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);
         if (parts.size() >= IndexImage + 1)
         {
-            if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header"))
+            if (parts[IndexType] == "Header")
+            {
+                m_NeedHeaderFunction = true;
+            }
+            else if (parts[IndexType] == "Embed")
             {
                 if (!parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
-                    m_NeedHeaderFunction = true;
+                    m_NeedImageFunction = true;
             }
             else if ((parts[IndexType] == "Art"))
             {
@@ -1881,16 +1910,34 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         {
             if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
             {
-                ttlib::multiview parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                ttlib::multistr parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts.size() < IndexImage + 1)
                     continue;
 
-                if ((parts[IndexType] == "Embed" || parts[IndexType] == "Header"))
+                // If the is a Images form, then we need to see if the image property refers to an image within the Images
+                // form. If so, a function call will be made to the Image Form's source code to load the image and therefore
+                // we don't need to generate and special header files or generate the general purpose image loading function.
+
+                if (m_ImagesForm && m_form_node != m_ImagesForm)
+                {
+                    if (auto bundle = wxGetApp().GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+                    {
+                        if (auto embed = wxGetApp().GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                        {
+                            if (embed->form == m_ImagesForm)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                if (parts[IndexType] == "Embed")
                 {
                     if (iter.type() == type_animation)
                         m_NeedAnimationFunction = true;
                     else if (!parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
-                        m_NeedHeaderFunction = true;
+                        m_NeedImageFunction = true;
                 }
                 else if ((parts[IndexType] == "Art"))
                 {
@@ -1899,6 +1946,13 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 else if ((parts[IndexType] == "SVG"))
                 {
                     m_NeedSVGFunction = true;
+                }
+                else if (parts[IndexType] == "Header")
+                {
+                    if (iter.type() == type_animation)
+                        m_NeedAnimationFunction = true;
+                    else if (!parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
+                        m_NeedHeaderFunction = true;
                 }
             }
         }
@@ -2019,7 +2073,7 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
 
 void BaseCodeGenerator::GenerateHandlers()
 {
-    if (m_embedded_images.size() && !m_form_node->isGen(gen_Images))
+    if (m_embedded_images.size())
     {
         for (auto& iter_img: m_embedded_images)
         {

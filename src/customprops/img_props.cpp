@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "img_props.h"    // ImageProperties
 #include "mainapp.h"      // App -- Main application class
 #include "node.h"         // Node -- Node class

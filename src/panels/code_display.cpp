@@ -35,6 +35,11 @@ CodeDisplay::CodeDisplay(wxWindow* parent) : CodeDisplayBase(parent)
     ttlib::cstr widget_keywords("\
         wxToolBar \
         wxMenuBar \
+        wxBitmapBundle \
+        wxBitmap \
+        wxImage \
+        wxMemoryInputStream \
+        wxVector \
         wxWindow"
 
         );

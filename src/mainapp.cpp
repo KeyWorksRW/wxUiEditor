@@ -21,6 +21,7 @@
 #include "node_creator.h"        // NodeCreator class
 #include "pjtsettings.h"         // ProjectSettings -- Hold data for currently loaded project
 #include "ui/startupdlg_base.h"  // CStartup -- Dialog to display is wxUE is launched with no arguments
+#include "utils.h"               // Utility functions that work with properties
 
 #include "pugixml.hpp"
 
@@ -268,9 +269,73 @@ wxBitmapBundle App::GetBitmapBundle(const ttlib::cstr& description, Node* node)
         return GetInternalImage("unknown");
 }
 
+const ImageBundle* App::GetPropertyImageBundle(const ttlib::multistr& parts, Node* node)
+{
+    return m_pjtSettings->GetPropertyImageBundle(parts, node);
+}
+
 const ImageBundle* App::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
 {
     return m_pjtSettings->GetPropertyImageBundle(description, node);
+}
+
+EmbeddedImage* App::GetEmbeddedImage(ttlib::sview path)
+{
+    return m_pjtSettings->GetEmbeddedImage(path);
+}
+
+ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
+{
+    ttlib::cstr name;
+
+    for (auto& form: m_project->GetChildNodePtrs())
+    {
+        if (form->isGen(gen_Images))
+        {
+            ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+            if (parts.size() < 2)
+            {
+                // caller's description does not include a filename
+                return name;
+            }
+
+            for (auto& iter: form->GetChildNodePtrs())
+            {
+                ttlib::multiview form_image_parts(iter->prop_as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                if (form_image_parts.size() < 2)
+                {
+                    continue;
+                }
+
+                if (parts[0] == form_image_parts[0] && parts[1].filename() == form_image_parts[1].filename())
+                {
+                    if (auto bundle = GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
+                    {
+                        auto embed = GetEmbeddedImage(bundle->lst_filenames[0]);
+                        if (embed->type == wxBITMAP_TYPE_INVALID)
+                        {
+                            name << "wxue_img::bundle_" << embed->array_name << "(";
+
+                            wxSize svg_size { -1, -1 };
+                            if (parts[IndexSize].size())
+                            {
+                                GetSizeInfo(svg_size, parts[IndexSize]);
+                            }
+                            name << svg_size.x << ", " << svg_size.y << ")";
+                        }
+                        else
+                        {
+                            name << "wxue_img::bundle_" << embed->array_name << "()";
+                        }
+                    }
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    return name;
 }
 
 ttString App::GetArtDirectory()

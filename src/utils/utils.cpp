@@ -11,8 +11,6 @@
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations
 #include <wx/mstream.h>  // Memory stream classes
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 #include "utils.h"         // Utility functions that work with properties

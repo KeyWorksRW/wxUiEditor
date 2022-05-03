@@ -11,8 +11,6 @@
 #include <wx/toolbar.h>   // wxToolBar interface declaration
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "nav_panel.h"
 
 #include "bitmaps.h"          // Contains various images handling functions

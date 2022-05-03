@@ -8,8 +8,6 @@
 #include <charconv>  // for std::to_chars
 #include <cstdlib>   // for std::atof
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "font_prop.h"
 
 #include "node_creator.h"  // NodeCreator -- Class used to create nodes

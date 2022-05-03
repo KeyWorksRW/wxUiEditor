@@ -304,7 +304,7 @@ wxBitmapBundle NodeProperty::as_bitmap_bundle() const
 
 const ImageBundle* NodeProperty::as_image_bundle() const
 {
-    auto bundle_ptr = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(m_value);
+    auto bundle_ptr = wxGetApp().GetPropertyImageBundle(m_value);
     if (!bundle_ptr || !bundle_ptr->bundle.IsOk())
         return nullptr;
     else

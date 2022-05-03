@@ -1079,7 +1079,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 ttlib::cstr value;
                 // Do NOT call GetValueAsString() -- we need to return the value the way the custom property formatted it
                 value << m_prop_grid->GetPropertyValue(property).GetString().wx_str();
-                ttlib::multistr parts(value, BMP_PROP_SEPARATOR);
+                ttlib::multistr parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
                 // If the image field is empty, then the entire property needs to be cleared
                 if (parts.size() > IndexImage && parts[IndexImage].empty())
                 {
@@ -1088,7 +1088,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     // This ensures that all images from a bitmap bundle get added
-                    wxGetApp().GetProjectSettings()->UpdateBundle(value, prop->GetNode());
+                    wxGetApp().GetProjectSettings()->UpdateBundle(parts, prop->GetNode());
                 }
 
                 modifyProperty(prop, value);

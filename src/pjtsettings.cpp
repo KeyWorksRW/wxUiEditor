@@ -33,16 +33,6 @@ inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
     return animation;
 };
 
-inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
-{
-    ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-    ASSERT(parts.size() > 1)
-
-    ttlib::cstr lookup_str;
-    lookup_str << parts[0] << ';' << parts[1].filename();
-    return lookup_str;
-}
-
 namespace wxue_img
 {
     extern const unsigned char pulsing_unknown_gif[377];
@@ -83,10 +73,8 @@ ttlib::cstr& ProjectSettings::setProjectPath(const ttlib::cstr& file, bool remov
     return m_projectPath;
 }
 
-wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool check_image)
+wxImage ProjectSettings::GetPropertyBitmap(const ttlib::multistr& parts, bool check_image)
 {
-    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-
     if (parts[IndexImage].empty())
     {
         return GetInternalImage("unknown");
@@ -179,9 +167,8 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::cstr& description, bool 
     return image;
 }
 
-void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
+void ProjectSettings::UpdateBundle(const ttlib::multistr& parts, Node* node)
 {
-    ttlib::multiview parts(description, ';', tt::TRIM::both);
     if (parts.size() < 2)
         return;
 
@@ -191,7 +178,7 @@ void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
     auto result = m_bundles.find(lookup_str);
     if (result == m_bundles.end())
     {
-        ProcessBundleProperty(description, node);
+        ProcessBundleProperty(parts, node);
         result = m_bundles.find(lookup_str);
     }
 
@@ -219,7 +206,7 @@ void ProjectSettings::UpdateBundle(const ttlib::cstr& description, Node* node)
 
 wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
 {
-    ttlib::multiview parts(description, ';', tt::TRIM::both);
+    ttlib::multistr parts(description, ';', tt::TRIM::both);
     if (parts.size() < 2)
     {
         return GetInternalImage("unknown");
@@ -228,12 +215,12 @@ wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& descr
     ttlib::cstr lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
 
-    if (auto result = m_bundles.find(ConvertToLookup(description)); result != m_bundles.end())
+    if (auto result = m_bundles.find(lookup_str); result != m_bundles.end())
     {
         return result->second.bundle;
     }
 
-    if (auto result = ProcessBundleProperty(description, node); result)
+    if (auto result = ProcessBundleProperty(parts, node); result)
     {
         return result->bundle;
     }
@@ -241,9 +228,8 @@ wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& descr
     return GetInternalImage("unknown");
 }
 
-const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
+const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::multistr& parts, Node* node)
 {
-    ttlib::multiview parts(description, ';', tt::TRIM::both);
     if (parts.size() < 2)
     {
         return nullptr;
@@ -258,7 +244,7 @@ const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::cstr& de
     }
     else if (node)
     {
-        return ProcessBundleProperty(description, node);
+        return ProcessBundleProperty(parts, node);
     }
     else
     {

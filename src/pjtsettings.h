@@ -56,18 +56,35 @@ public:
     // to load. The image is cached for as long as the project is open.
     //
     // If check_image is true, and !image.IsOK(), GetInternalImage() is returned
-    wxImage GetPropertyBitmap(const ttlib::cstr& description, bool check_image = true);
+    wxImage GetPropertyBitmap(const ttlib::multistr& parts, bool check_image = true);
+
+    inline wxImage GetPropertyBitmap(const ttlib::cstr& description, bool check_image = true)
+    {
+        ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+        return GetPropertyBitmap(parts, check_image);
+    }
 
     wxBitmapBundle GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node);
 
     // ImageBundle contains the filenames of each image in the bundle, needed to generate the
     // code for the bundle.
-    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr);
+    const ImageBundle* GetPropertyImageBundle(const ttlib::multistr& parts, Node* node = nullptr);
+    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr)
+    {
+        ttlib::multistr parts(description, ';', tt::TRIM::both);
+        return GetPropertyImageBundle(parts, node);
+    }
 
-    ImageBundle* ProcessBundleProperty(const ttlib::cstr& description, Node* node);
+    ImageBundle* ProcessBundleProperty(const ttlib::multistr& parts, Node* node);
+
+    inline ImageBundle* ProcessBundleProperty(const ttlib::cstr& description, Node* node)
+    {
+        ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+        return ProcessBundleProperty(parts, node);
+    }
 
     // This adds the bundle if new, or updates the embed->form if the node has changed
-    void UpdateBundle(const ttlib::cstr& description, Node* node);
+    void UpdateBundle(const ttlib::multistr& parts, Node* node);
 
     // This takes the full animation property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
@@ -88,7 +105,13 @@ protected:
 
     void CollectNodeBundles(Node* node, Node* form);
 
-    bool AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form);
+    bool AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form);
+
+    inline bool AddNewEmbeddedBundle(const ttlib::cstr& description, ttlib::cstr path, Node* form)
+    {
+        ttlib::multistr parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+        return AddNewEmbeddedBundle(parts, path, form);
+    }
 
     // Reads the image and stores it in m_map_embedded
     bool AddEmbeddedBundleImage(ttlib::cstr path, Node* form);

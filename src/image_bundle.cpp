@@ -16,8 +16,6 @@
 #include <wx/wfstream.h>  // File stream classes
 #include <wx/zstream.h>   // zlib stream classes
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "pugixml.hpp"  // xml parser
 
 #include "mainapp.h"      // compiler_standard -- Main application class

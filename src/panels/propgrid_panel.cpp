@@ -18,8 +18,6 @@
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 #include <wx/wupdlock.h>           // wxWindowUpdateLocker prevents window redrawing
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "propgrid_panel.h"
 
 #include "appoptions.h"      // AppOptions -- Application-wide options

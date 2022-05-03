@@ -7,8 +7,6 @@
 
 #include <unordered_map>
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "eventhandler_dlg.h"  // auto-generated: eventhandlerdlg_base.h and eventhandlerdlg_base.cpp
 
 #include "../nodes/node.h"        // Node class

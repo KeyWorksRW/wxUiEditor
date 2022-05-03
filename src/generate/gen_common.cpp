@@ -7,8 +7,6 @@
 
 #include <charconv>  // for std::to_chars
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "gen_common.h"
 
 #include "lambdas.h"      // Functions for formatting and storage of lamda events

@@ -12,8 +12,6 @@
 #include <wx/sysopt.h>   // wxSystemOptions
 #include <wx/utils.h>    // Miscellaneous utilities
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "mainapp.h"
 
 #include "appoptions.h"          // AppOptions -- Application-wide options

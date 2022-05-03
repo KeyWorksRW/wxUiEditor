@@ -7,8 +7,6 @@
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "gen_base.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"   // GeneratorLibrary -- Generator classes
 #include "mainapp.h"      // App -- App class

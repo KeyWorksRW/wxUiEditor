@@ -14,8 +14,6 @@
 #include <wx/textwrapper.h>  // declaration of wxTextWrapper class
 #include <wx/wrapsizer.h>    // provide wrapping sizer for layout (wxWrapSizer)
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 

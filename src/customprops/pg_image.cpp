@@ -11,8 +11,6 @@
 #include <wx/dir.h>                // wxDir is a class for enumerating the files in a directory
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-
 #include "ui_images.h"
 
 using namespace wxue_img;

@@ -16,10 +16,6 @@
 #include <wx/mstream.h>   // Memory stream classes
 #include <wx/wfstream.h>  // File stream classes
 
-#include "ttcview.h"     // cview -- string_view functionality on a zero-terminated char string.
-#include "ttmultistr.h"  // multistr -- Breaks a single string into multiple strings
-#include "ttsview.h"     // sview -- std::string_view with additional methods
-
 #include "pjtsettings.h"  // ProjectSettings
 
 #include "bitmaps.h"    // Map of bitmaps accessed by name

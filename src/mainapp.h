@@ -66,6 +66,7 @@ public:
     wxImage GetImage(const ttlib::cstr& description);
     wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
 
+    const ImageBundle* GetPropertyImageBundle(const ttlib::multistr& parts, Node* node = nullptr);
     const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr);
     EmbeddedImage* GetEmbeddedImage(ttlib::sview path);
 

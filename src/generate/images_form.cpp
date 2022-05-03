@@ -393,6 +393,8 @@ void BaseCodeGenerator::GenerateImagesForm()
         }
 
         m_header->writeLine();
+        m_header->writeLine("wxImage wxueImage(const unsigned char* data, size_t size_data);");
+        m_header->writeLine();
         m_header->writeLine("namespace wxue_img\n{");
         m_header->Indent();
         m_header->SetLastLineBlank();

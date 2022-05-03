@@ -1910,9 +1910,27 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         {
             if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
             {
-                ttlib::multiview parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                ttlib::multistr parts(iter.as_string(), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts.size() < IndexImage + 1)
                     continue;
+
+                // If the is a Images form, then we need to see if the image property refers to an image within the Images
+                // form. If so, a function call will be made to the Image Form's source code to load the image and therefore
+                // we don't need to generate and special header files or generate the general purpose image loading function.
+
+                if (m_ImagesForm && m_form_node != m_ImagesForm)
+                {
+                    if (auto bundle = wxGetApp().GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+                    {
+                        if (auto embed = wxGetApp().GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                        {
+                            if (embed->form == m_ImagesForm)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                }
 
                 if (parts[IndexType] == "Embed")
                 {

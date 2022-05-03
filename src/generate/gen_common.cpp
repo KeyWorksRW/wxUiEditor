@@ -884,7 +884,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         {
             // We get here if there is an Image form that contains the function to retrieve this bundle.
             code = function_name;
-            return true;
+            return false;
         }
 
         auto embed = wxGetApp().GetEmbeddedImage(parts[IndexImage]);
@@ -907,6 +907,13 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
     }
     else
     {
+        if (auto function_name = wxGetApp().GetBundleFuncName(description); function_name.size())
+        {
+            // We get here if there is an Image form that contains the function to retrieve this bundle.
+            code = function_name;
+            return false;
+        }
+
         if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(description); bundle)
         {
             if (bundle->lst_filenames.size() == 1)

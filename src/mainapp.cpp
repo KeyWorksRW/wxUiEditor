@@ -269,6 +269,11 @@ wxBitmapBundle App::GetBitmapBundle(const ttlib::cstr& description, Node* node)
         return GetInternalImage("unknown");
 }
 
+const ImageBundle* App::GetPropertyImageBundle(const ttlib::multistr& parts, Node* node)
+{
+    return m_pjtSettings->GetPropertyImageBundle(parts, node);
+}
+
 const ImageBundle* App::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
 {
     return m_pjtSettings->GetPropertyImageBundle(description, node);
@@ -287,9 +292,22 @@ ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
     {
         if (form->isGen(gen_Images))
         {
+            ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+            if (parts.size() < 2)
+            {
+                // caller's description does not include a filename
+                return name;
+            }
+
             for (auto& iter: form->GetChildNodePtrs())
             {
-                if (iter->prop_as_string(prop_bitmap).is_sameas(description))
+                ttlib::multiview form_image_parts(iter->prop_as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                if (form_image_parts.size() < 2)
+                {
+                    continue;
+                }
+
+                if (parts[0] == form_image_parts[0] && parts[1].filename() == form_image_parts[1].filename())
                 {
                     if (auto bundle = GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
                     {
@@ -298,7 +316,6 @@ ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
                         {
                             name << "wxue_img::bundle_" << embed->array_name << "(";
 
-                            ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
                             wxSize svg_size { -1, -1 };
                             if (parts[IndexSize].size())
                             {
@@ -306,10 +323,16 @@ ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
                             }
                             name << svg_size.x << ", " << svg_size.y << ")";
                         }
+                        else
+                        {
+                            name << "wxue_img::bundle_" << embed->array_name << "()";
+                        }
+
                     }
                     break;
                 }
             }
+            break;
         }
     }
 

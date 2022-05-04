@@ -108,6 +108,22 @@ if (MSVC)
     target_compile_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GL>" "/FC" "/W4" "/Zc:__cplusplus" "/utf-8")
     target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/LTCG>")
 
+    if (PGO_GENERATE)
+        if (PGO_USEPROFILE)
+            message(FATAL_ERROR "You cannot set both PGO_GENERATE and PGO_USEPROFILE")
+        endif()
+
+        message(NOTICE "Creating instrumented build for profiling run")
+
+        target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/GENPROFILE:EXACT>")
+    endif()
+
+    if (PGO_USEPROFILE)
+        message(NOTICE "Creating optimized build using profile data")
+
+        target_link_options(wxUiEditor PRIVATE "$<$<CONFIG:Release>:/USEPROFILE>")
+    endif()
+
     target_link_options(wxUiEditor PRIVATE
         "$<$<CONFIG:Debug>:/natvis:${CMAKE_SOURCE_DIR}/src/wxui.natvis>"
         "$<$<CONFIG:Debug>:/OPT:REF>"

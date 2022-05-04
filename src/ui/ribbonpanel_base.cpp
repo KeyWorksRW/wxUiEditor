@@ -6,6 +6,8 @@
 
 #include <wx/ribbon/panel.h>
 
+#include "ui_images.h"
+
 #include "ribbon_ids.h"
 #include "gen_enums.h"     // Enumerations for generators
 

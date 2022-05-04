@@ -6,23 +6,53 @@
 
 #pragma once
 
-#include <wx/bitmap.h>
 #include <wx/gdicmn.h>
-#include <wx/icon.h>
-#include <wx/image.h>
-#include <wx/mstream.h>
+
+#include <wx/bmpbndl.h>
+
+wxImage wxueImage(const unsigned char* data, size_t size_data);
 
 namespace wxue_img
 {
-    
-    // Convert a data array into a wxImage
-    inline wxImage wxueImage(const unsigned char* data, size_t size_data)
-    {
-        wxMemoryInputStream strm(data, size_data);
-        wxImage image;
-        image.LoadFile(strm);
-        return image;
-    };
+    wxBitmapBundle bundle_default_png();
+    wxBitmapBundle bundle_empty_png();
+    wxBitmapBundle bundle_unknown_png();
+    wxBitmapBundle bundle_project_png();
+    wxBitmapBundle bundle_title_close_png();
+    wxBitmapBundle bundle_debug_16_png();
+    wxBitmapBundle bundle_debug_32_png();
+    wxBitmapBundle bundle_logo16_png();
+    wxBitmapBundle bundle_logo32_png();
+    wxBitmapBundle bundle_logo64_png();
+    wxBitmapBundle bundle_auitoolbar_png();
+    wxBitmapBundle bundle_bmp_combo_box_png();
+    wxBitmapBundle bundle_check3state_png();
+    wxBitmapBundle bundle_dataview_ctrl_png();
+    wxBitmapBundle bundle_dataviewlist_ctrl_png();
+    wxBitmapBundle bundle_dataviewtree_ctrl_png();
+    wxBitmapBundle bundle_ribbon_bar_png();
+    wxBitmapBundle bundle_ribbon_buttonbar_png();
+    wxBitmapBundle bundle_ribbon_gallery_png();
+    wxBitmapBundle bundle_scrollbar_png();
+    wxBitmapBundle bundle_spinbtn_png();
+    wxBitmapBundle bundle_spin_ctrl_png();
+    wxBitmapBundle bundle_spin_ctrl_double_png();
+    wxBitmapBundle bundle_stddialogbuttonsizer_png();
+    wxBitmapBundle bundle_toggle_button_png();
+    wxBitmapBundle bundle_wxButton_png();
+    wxBitmapBundle bundle_wxCheckBox_png();
+    wxBitmapBundle bundle_wxCheckListBox_png();
+    wxBitmapBundle bundle_wxChoice_png();
+    wxBitmapBundle bundle_wxComboBox_png();
+    wxBitmapBundle bundle_wxCommandLinkButton_png();
+    wxBitmapBundle bundle_wxListBox_png();
+    wxBitmapBundle bundle_wxListView_png();
+    wxBitmapBundle bundle_wxRearrangeCtrl_png();
+    wxBitmapBundle bundle_wxSimpleHtmlListBox_png();
+    wxBitmapBundle bundle_wxStaticBoxSizer_png();
+    wxBitmapBundle bundle_wxStaticCheckBoxSizer_png();
+    wxBitmapBundle bundle_wxStaticRadioBtnSizer_png();
+    wxBitmapBundle bundle_wxEditListBox_png();
 
     extern const unsigned char auitoolbar_png[476];
     extern const unsigned char bmp_combo_box_png[492];

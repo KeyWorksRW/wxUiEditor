@@ -6,8 +6,226 @@
 
 #include "ui_images.h"
 
+#include <wx/mstream.h>  // memory stream classes
+
+// Convert a data array into a wxImage
+inline wxImage wxueImage(const unsigned char* data, size_t size_data)
+{
+    wxMemoryInputStream strm(data, size_data);
+    wxImage image;
+    image.LoadFile(strm);
+    return image;
+};
+
+// Convert multiple bitmaps into a wxBitmapBundle
+inline wxBitmapBundle wxueBundleBitmaps(const wxBitmap& bmp1, const wxBitmap& bmp2, const wxBitmap& bmp3)
+{
+    wxVector<wxBitmap> bitmaps;
+    if (bmp1.IsOk())
+        bitmaps.push_back(bmp1);
+    if (bmp2.IsOk())
+        bitmaps.push_back(bmp2);
+    if (bmp3.IsOk())
+        bitmaps.push_back(bmp3);
+    return wxBitmapBundle::FromBitmaps(bitmaps);
+};
+
 namespace wxue_img
 {
+    wxBitmapBundle bundle_default_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(default_png, 518)));
+    }
+
+    wxBitmapBundle bundle_empty_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(empty_png, 101)));
+    }
+
+    wxBitmapBundle bundle_unknown_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(unknown_png, 1699)));
+    }
+
+    wxBitmapBundle bundle_project_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(project_png, 899)));
+    }
+
+    wxBitmapBundle bundle_title_close_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(title_close_png, 144)));
+    }
+
+    wxBitmapBundle bundle_debug_16_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(debug_16_png, 656)));
+    }
+
+    wxBitmapBundle bundle_debug_32_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(debug_32_png, 1701)));
+    }
+
+    wxBitmapBundle bundle_logo16_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(logo16_png, 639)));
+    }
+
+    wxBitmapBundle bundle_logo32_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(logo32_png, 1470)));
+    }
+
+    wxBitmapBundle bundle_logo64_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(logo64_png, 1718)));
+    }
+
+    wxBitmapBundle bundle_auitoolbar_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(auitoolbar_png, 476)));
+    }
+
+    wxBitmapBundle bundle_bmp_combo_box_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(bmp_combo_box_png, 492)));
+    }
+
+    wxBitmapBundle bundle_check3state_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(check3state_png, 194)));
+    }
+
+    wxBitmapBundle bundle_dataview_ctrl_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(dataview_ctrl_png, 231)));
+    }
+
+    wxBitmapBundle bundle_dataviewlist_ctrl_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(dataviewlist_ctrl_png, 685)));
+    }
+
+    wxBitmapBundle bundle_dataviewtree_ctrl_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(dataviewtree_ctrl_png, 238)));
+    }
+
+    wxBitmapBundle bundle_ribbon_bar_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(ribbon_bar_png, 844)));
+    }
+
+    wxBitmapBundle bundle_ribbon_buttonbar_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(ribbon_buttonbar_png, 300)));
+    }
+
+    wxBitmapBundle bundle_ribbon_gallery_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(ribbon_gallery_png, 215)));
+    }
+
+    wxBitmapBundle bundle_scrollbar_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(scrollbar_png, 214)));
+    }
+
+    wxBitmapBundle bundle_spinbtn_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(spinbtn_png, 192)));
+    }
+
+    wxBitmapBundle bundle_spin_ctrl_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(spin_ctrl_png, 300)));
+    }
+
+    wxBitmapBundle bundle_spin_ctrl_double_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(spin_ctrl_double_png, 219)));
+    }
+
+    wxBitmapBundle bundle_stddialogbuttonsizer_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(stddialogbuttonsizer_png, 524)));
+    }
+
+    wxBitmapBundle bundle_toggle_button_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(toggle_button_png, 277)));
+    }
+
+    wxBitmapBundle bundle_wxButton_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxButton_png, 500)));
+    }
+
+    wxBitmapBundle bundle_wxCheckBox_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxCheckBox_png, 202)));
+    }
+
+    wxBitmapBundle bundle_wxCheckListBox_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxCheckListBox_png, 498)));
+    }
+
+    wxBitmapBundle bundle_wxChoice_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxChoice_png, 330)));
+    }
+
+    wxBitmapBundle bundle_wxComboBox_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxComboBox_png, 233)));
+    }
+
+    wxBitmapBundle bundle_wxCommandLinkButton_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxCommandLinkButton_png, 582)));
+    }
+
+    wxBitmapBundle bundle_wxListBox_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxListBox_png, 310)));
+    }
+
+    wxBitmapBundle bundle_wxListView_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxListView_png, 356)));
+    }
+
+    wxBitmapBundle bundle_wxRearrangeCtrl_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxRearrangeCtrl_png, 332)));
+    }
+
+    wxBitmapBundle bundle_wxSimpleHtmlListBox_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxSimpleHtmlListBox_png, 676)));
+    }
+
+    wxBitmapBundle bundle_wxStaticBoxSizer_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxStaticBoxSizer_png, 199)));
+    }
+
+    wxBitmapBundle bundle_wxStaticCheckBoxSizer_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxStaticCheckBoxSizer_png, 341)));
+    }
+
+    wxBitmapBundle bundle_wxStaticRadioBtnSizer_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxStaticRadioBtnSizer_png, 367)));
+    }
+
+    wxBitmapBundle bundle_wxEditListBox_png()
+    {
+        return wxBitmapBundle::FromBitmap(wxBitmap(wxueImage(wxEditListBox_png, 707)));
+    }
 
     const unsigned char auitoolbar_png[476] {
     137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,22,0,0,0,22,8,6,0,0,0,196,180,108,59,0,0,0,9,112,72,89,115,0,0,11,

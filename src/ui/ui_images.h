@@ -14,6 +14,8 @@ wxImage wxueImage(const unsigned char* data, size_t size_data);
 
 namespace wxue_img
 {
+    wxBitmapBundle bundle_wxlogo_svg(int width, int height);
+
     wxBitmapBundle bundle_default_png();
     wxBitmapBundle bundle_empty_png();
     wxBitmapBundle bundle_unknown_png();
@@ -93,4 +95,5 @@ namespace wxue_img
     extern const unsigned char wxStaticBoxSizer_png[199];
     extern const unsigned char wxStaticCheckBoxSizer_png[341];
     extern const unsigned char wxStaticRadioBtnSizer_png[367];
+    extern const unsigned char wxlogo_svg[1331];
 }

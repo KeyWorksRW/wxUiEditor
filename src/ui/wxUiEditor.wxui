@@ -126,6 +126,9 @@
       <node
         class="embedded_image"
         bitmap="Embed;../art_src/wxEditListBox.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/wxlogo.svg;[16,16]" />
     </node>
     <node
       class="wxDialog"

@@ -19,6 +19,9 @@ if (MSVC)
     # This can considerably speed up build times at the cost of larger object files.
     string(REPLACE "/Zi" "/Z7" z_seven ${CMAKE_CXX_FLAGS_DEBUG})
     set(CMAKE_CXX_FLAGS_DEBUG ${z_seven} CACHE STRING "C++ Debug flags" FORCE)
+
+    # Use static runtime for Release builds to run with Wine without needing to install the dlls
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 else()
     # This should work for gcc and clang (including xcode which is based on clang)
     # -O2 can result in faster code than -O3 due to CPU caching.
@@ -46,7 +49,6 @@ option(INTERNAL_WIDGETS_SOURCES "Build with internal forked wxWidgets sources" )
 
 if (INTERNAL_WIDGETS_SOURCES)
     message(NOTICE "Building internal version")
-
 
     # Add preprocessor definition that can be used to conditionalize code based on whether the
     # internal wxWidgets libraries are being used.

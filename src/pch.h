@@ -1,13 +1,22 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Precompiled header file
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 // This header file is used to create a pre-compiled header for use in the entire project
 
 #pragma once
+
+// Ensure that _DEBUG is defined in non-release builds
+#if !defined(NDEBUG) && !defined(_DEBUG)
+    #define _DEBUG
+#endif
+
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    #define INTERNAL_TESTING
+#endif
 
 #define wxUSE_GUI         1
 #define wxUSE_NO_MANIFEST 1
@@ -31,12 +40,9 @@
     #endif
 #endif
 
-// Ensure that _DEBUG is defined in non-release builds
-#if !defined(NDEBUG) && !defined(_DEBUG)
-    #define _DEBUG
+#if defined(_DEBUG)
+    #include <wx/debug.h>  // Misc debug functions and macros
 #endif
-
-#include <wx/debug.h>  // Misc debug functions and macros
 
 // These warnings are still generated in 3.1.16
 
@@ -114,14 +120,17 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
 
 //////////////////////////////////////// macros ////////////////////////////////////////
 
-#if defined(NDEBUG)
+#if defined(NDEBUG) && !defined(INTERNAL_TESTING)
 
     #define MSG_INFO(msg)
     #define MSG_EVENT(msg)
     #define MSG_WARNING(msg)
     #define MSG_ERROR(msg)
 
-#else  // not defined(NDEBUG)
+    // Use this macro to comment out parameters that are not used in Release builds
+    #define TESTING_PARAM(param) /* param */
+
+#else
 
 // These messages can be individually enabled/disabled in the Preferences dialog (Debug tab).
 // Note that none of these are displayed in a Release build.
@@ -145,7 +154,10 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
             g_pMsgLogging->AddErrorMsg(msg); \
         }
 
-#endif  // defined(NDEBUG)
+    // Use this macro to comment out parameters that are not used in Release builds
+    #define TESTING_PARAM(param) param
+
+#endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)
 
 #include "assertion_dlg.h"  // Assertion Dialog
 

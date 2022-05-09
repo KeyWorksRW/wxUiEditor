@@ -39,7 +39,7 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     m_form_type = isDialog ? form_dialog : form_panel;
     m_form_node = g_NodeCreator.NewNode(isDialog ? gen_wxDialog : gen_PanelForm);
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     ttlib::cstr fullpath;
     fullpath.assignCwd();
     fullpath.append_filename(txtfile.filename().filename());
@@ -48,15 +48,15 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     fullpath.forwardslashestoback();
     #endif  // _WIN32
     m_form_node->prop_set_value(prop_base_src_includes, ttlib::cstr() << "// " << fullpath);
-#endif  // _DEBUG
+#endif
 
     ttlib::cstr value;  // General purpose string we can use throughout this function
     value = line.substr(0, end);
     m_form_node->prop_set_value(prop_class_name, ConvertFormID(value));
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     m_form_id = m_form_node->prop_as_string(prop_class_name);
-#endif  // _DEBUG
+#endif
 
     line.remove_prefix(end);
     line.moveto_digit();

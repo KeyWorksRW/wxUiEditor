@@ -53,7 +53,7 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
             m_project->CreateDoc(m_docOut);
     }
 
-    catch (const std::exception& DBG_PARAM(e))
+    catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
         wxMessageBox(wxString("This project file is invalid and cannot be loaded: ") << filename, "Import Project");

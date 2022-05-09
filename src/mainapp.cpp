@@ -100,10 +100,14 @@ bool App::OnInit()
     // If we're just providing text-popups for help, then this is all we need.
     wxHelpProvider::Set(new wxSimpleHelpProvider);
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     g_pMsgLogging = new MsgLogging();
-    wxLog::SetActiveTarget(g_pMsgLogging);
 #endif
+
+#if defined(_DEBUG)
+    // wxLog only exists in _DEBUG builds
+    wxLog::SetActiveTarget(g_pMsgLogging);
+#endif  // _DEBUG
 
     SetVendorName("KeyWorks");
 
@@ -441,20 +445,17 @@ void App::OnFatalException()
 
 #endif  // defined(_MSC_VER) && defined(wxUSE_ON_FATAL_EXCEPTION)
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
 void App::ShowMsgWindow()
 {
     g_pMsgLogging->ShowLogger();
 }
 
-#endif  // defined(_DEBUG)
-
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-
 void App::DbgCurrentTest(wxCommandEvent&)
 {
-    FAIL_MSG("test")
+    FAIL_MSG("test FAIL_MSG() macro")
+
     wxMessageBox("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()", txtVersion);
 }
 

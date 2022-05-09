@@ -161,7 +161,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
                 ++currentFiles;
             }
         }
-        catch (const std::exception& DBG_PARAM(e))
+        catch (const std::exception& TESTING_PARAM(e))
         {
             MSG_ERROR(e.what());
             wxMessageBox(ttlib::cstr("An internal error occurred generating code files for ")

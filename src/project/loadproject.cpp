@@ -154,7 +154,7 @@ NodeSharedPtr App::LoadProject(pugi::xml_document& doc)
         }
         project = g_NodeCreator.CreateNode(node);
     }
-    catch (const std::exception& DBG_PARAM(e))
+    catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
         wxMessageBox("This wxUiEditor project file is invalid and cannot be loaded.", "Load Project");

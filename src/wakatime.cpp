@@ -116,11 +116,7 @@ void WakaTime::SetWakaExePath()
 
 // Number of seconds before sending WakaTime a heartbeat. WakaTime docs recommend a two minute interval (120 seconds).
 
-#if defined(_DEBUG)
-constexpr const intmax_t waka_interval = 1;
-#else
 constexpr const intmax_t waka_interval = 120;
-#endif  // _DEBUG
 
 void WakaTime::SendHeartbeat(bool FileSavedEvent)
 {
@@ -151,10 +147,6 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
             {
                 cmd << " --write";
             }
-
-#if defined(_DEBUG)
-            cmd << " --verbose";
-#endif  // _DEBUG
 
             wxExecute(cmd, wxEXEC_HIDE_CONSOLE);
         }

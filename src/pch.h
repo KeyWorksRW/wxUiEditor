@@ -14,7 +14,7 @@
     #define _DEBUG
 #endif
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+#if defined(_DEBUG) && !defined(INTERNAL_TESTING)
     #define INTERNAL_TESTING
 #endif
 

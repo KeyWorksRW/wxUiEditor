@@ -112,14 +112,11 @@ public:
     void SetLanguage(wxLanguage language) { m_lang = language; }
     wxLanguage GetLanguage() { return m_lang; }
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
     void ShowMsgWindow();
     bool AutoMsgWindow() { return (m_prefs.flags & PREFS_MSG_WINDOW); }
 
-#endif
-
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void DbgCurrentTest(wxCommandEvent& event);
 #endif
 

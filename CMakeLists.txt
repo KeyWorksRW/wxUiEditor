@@ -82,7 +82,15 @@ if (INTERNAL_TESTING)
     set (wxui_internal ${wxui_internal}
         ${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/internal/nodeinfo.cpp
-    )
+
+        # These are always included in Debug builds, with INTERNAL_TESTING we also need them
+        # in Release builds.
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/debugging/msg_logging.cpp>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/debugging/msgframe.cpp>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/debugging/msgframe_base.cpp>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/debugging/debugsettings.cpp>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/debugging/debugsettingsBase.cpp>
+        )
 endif()
 
 # Note the requirement that --config Debug is used to get the additional debug files

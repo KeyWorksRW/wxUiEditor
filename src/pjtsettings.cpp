@@ -441,7 +441,7 @@ bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::uni
                     }
                     else
                     {
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
                         auto org_size = static_cast<size_t>(stream.GetLength());
                         auto png_size = read_stream->GetBufferSize();
                         ttlib::cstr size_comparison;

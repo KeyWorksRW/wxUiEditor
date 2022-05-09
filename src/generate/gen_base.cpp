@@ -1022,7 +1022,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
             }
             else if (iter.type() == type_image)
             {
-                if (iter.isProp(prop_bitmap))
+                if (!iter.isProp(prop_icon))
                 {
                     if (auto function_name = wxGetApp().GetBundleFuncName(iter.as_string()); function_name.size())
                     {

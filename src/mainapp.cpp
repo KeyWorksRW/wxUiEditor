@@ -454,6 +454,7 @@ void App::ShowMsgWindow()
 
 void App::DbgCurrentTest(wxCommandEvent&)
 {
+    FAIL_MSG("test")
     wxMessageBox("Add code you want to test to (mainapp.cpp) App::DbgCurrentTest()", txtVersion);
 }
 

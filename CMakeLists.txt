@@ -73,16 +73,17 @@ include(src/ui/wxui_code.cmake)  # This will set ${wxue_generated_code} with lis
 include(src/file_list.cmake)     # This will set ${file_list} with a list of source files
 
 if (INTERNAL_TESTING)
-
     include(src/internal/wxui_internal.cmake)  # This will set ${wxui_internal} with a list of source files
+
+    # Note that setting the INTERNAL_TESTING doesn't just add these modules, it also
+    # enables the three assertion macros in a Release build, and may change other
+    # functionality as well. It should NEVER be used for a production build!
 
     set (wxui_internal ${wxui_internal}
         ${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp
         ${CMAKE_CURRENT_LIST_DIR}/src/internal/nodeinfo.cpp
     )
-
 endif()
-
 
 # Note the requirement that --config Debug is used to get the additional debug files
 add_executable(wxUiEditor WIN32

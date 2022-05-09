@@ -169,66 +169,31 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
 
 #endif  // defined(NDEBUG)
 
-#if defined(NDEBUG)
+#include "assertion_dlg.h"  // Assertion Dialog
 
-    #define ASSERT(cond)
-    #define ASSERT_MSG(cond, msg)
-    #define FAIL_MSG(msg)
+#if defined(NDEBUG) && !defined(INTERNAL_TESTING)
+    #define CHECK2_MSG(cond, op, msg) wxASSERT_MSG(cond, msg)
+    #define CHECK_MSG(cond, rc, msg)  wxCHECK2_MSG(cond, return rc, msg)
+    #define CHECK(cond, rc)           wxCHECK2_MSG(cond, return rc, (const char*) nullptr)
+    #define CHECK2(cond, op)          wxCHECK2_MSG(cond, op, (const char*) nullptr)
+    #define CHECK_RET(cond, msg)      wxCHECK2_MSG(cond, return, msg)
+#else
 
-#else  // Debug build only
-
-    #if defined(_WIN32) && !defined(NONWIN_TEST)
-
-bool ttAssertionMsg(const char* filename, const char* function, int line, const char* cond, const std::string& msg);
-
-    // Unlike the wxASSERT macros, these will provide an Abort button allowing you to immediately terminate the
-    // application. The assertion information is easier to read, but does not provide a call stack or the ability to
-    // ignore the assertion.
-
-        #define ASSERT(cond)                                                            \
-            {                                                                           \
-                if (!(cond) && ttAssertionMsg(__FILE__, __func__, __LINE__, #cond, "")) \
-                {                                                                       \
-                    wxTrap();                                                           \
-                }                                                                       \
-            }
-
-        #define ASSERT_MSG(cond, msg)                                                  \
-            if (!(cond) && ttAssertionMsg(__FILE__, __func__, __LINE__, #cond, (msg))) \
-            {                                                                          \
-                wxTrap();                                                              \
-            }
-
-        #define FAIL_MSG(msg)                                               \
-            if (ttAssertionMsg(__FILE__, __func__, __LINE__, nullptr, msg)) \
-            {                                                               \
-                wxTrap();                                                   \
-            }
-
-    #else  // not defined(_WIN32)
-        #define ASSERT(cond)          wxASSERT(cond)
-        #define ASSERT_MSG(cond, msg) wxASSERT_MSG(cond, msg)
-        #define FAIL_MSG(msg)         wxFAIL_MSG(msg)
-    #endif  // _WIN32
-
-#endif  // defined(NDEBUG)
-
-#if defined(_WIN32) && !defined(NONWIN_TEST)
-// These are essentially the same as the wxWidgets macros except that it calls ttAssertionMsg instead of
+// These are essentially the same as the wxWidgets macros except that it calls AssertionDlg instead of
 // wxFAIL_COND_MSG
 
-    #define CHECK2_MSG(cond, op, msg)                                       \
-        if (cond)                                                           \
-        {                                                                   \
-        }                                                                   \
-        else                                                                \
-        {                                                                   \
-            if (ttAssertionMsg(__FILE__, __func__, __LINE__, #cond, (msg))) \
-            {                                                               \
-                wxTrap();                                                   \
-            }                                                               \
-            op;                                                             \
-        }                                                                   \
+    #define CHECK2_MSG(cond, op, msg)                                     \
+        if (cond)                                                         \
+        {                                                                 \
+        }                                                                 \
+        else                                                              \
+        {                                                                 \
+            if (AssertionDlg(__FILE__, __func__, __LINE__, #cond, (msg))) \
+            {                                                             \
+                wxTrap();                                                 \
+            }                                                             \
+            op;                                                           \
+        }                                                                 \
         struct wxDummyCheckStruct /* just to force a semicolon */
 
     #define CHECK_MSG(cond, rc, msg) CHECK2_MSG(cond, return rc, msg)
@@ -236,10 +201,4 @@ bool ttAssertionMsg(const char* filename, const char* function, int line, const 
     #define CHECK2(cond, op)         CHECK2_MSG(cond, op, (const char*) nullptr)
     #define CHECK_RET(cond, msg)     CHECK2_MSG(cond, return, msg)
 
-#else
-    #define CHECK2_MSG(cond, op, msg) wxASSERT_MSG(cond, msg)
-    #define CHECK_MSG(cond, rc, msg)  wxCHECK2_MSG(cond, return rc, msg)
-    #define CHECK(cond, rc)           wxCHECK2_MSG(cond, return rc, (const char*) nullptr)
-    #define CHECK2(cond, op)          wxCHECK2_MSG(cond, op, (const char*) nullptr)
-    #define CHECK_RET(cond, msg)      wxCHECK2_MSG(cond, return, msg)
-#endif
+#endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)

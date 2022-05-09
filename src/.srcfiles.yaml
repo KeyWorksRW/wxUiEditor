@@ -34,6 +34,7 @@ Files:
 
     mainapp.cpp           # Main application class
     mainframe.cpp         # Main window frame
+    assertion_dlg.cpp     # Assertion Dialog
 
     appoptions.cpp        # Application-wide options
     bitmaps.cpp           # Map of bitmaps accessed by name
@@ -202,8 +203,6 @@ DebugFiles:
     debugging/debugsettings.cpp         # Settings while running the Debug version of wxUiEditor
     debugging/debugsettingsBase.cpp     # wxUiEditor generated file
     debugging/msgframe_base.cpp         # wxUiEditor generated file
-
-    ../ttLib/src/winsrc/ttdebug_min.cpp  # ttAssertionMsg
 
 Docs:
     # ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation

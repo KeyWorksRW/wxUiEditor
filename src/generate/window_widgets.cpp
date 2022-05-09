@@ -90,7 +90,6 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                 if (!subwindow)
                 {
                     FAIL_MSG("Child of splitter is not derived from wxWindow class.");
-                    BETA_ERROR("Child of splitter is not derived from wxWindow class.");
                     return;
                 }
 
@@ -115,7 +114,6 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                 if (!subwindow0 || !subwindow1)
                 {
                     FAIL_MSG("Child of splitter is not derived from wxWindow class.");
-                    BETA_ERROR("Child of splitter is not derived from wxWindow class.");
                     return;
                 }
 

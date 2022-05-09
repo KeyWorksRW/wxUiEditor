@@ -723,12 +723,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
     {
         // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
         FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
-#if !defined(_DEBUG)
-        INTERNAL_ERROR(ttlib::cstr() << "\nThe following node is missing a parent: " << node->get_node_name())
-        throw;
-#else
         return;
-#endif  // _DEBUG
     }
 
     auto childPos = parent->GetChildPosition(node);
@@ -742,12 +737,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
     {
         // If this actually happens, then we silently do nothing leaving the user no idea of why it didn't work
         FAIL_MSG("If this occurs, we need to figure out why and then add a message to let the user know why.")
-#if !defined(_DEBUG)
-        INTERNAL_ERROR(ttlib::cstr() << "\nThe following node is missing a sizer parent: " << node->get_node_name())
-        throw;
-#else
         return;
-#endif  // _DEBUG
     }
 
     // Avoid the temptation to set new_sizer to the raw pointer so that .get() doesn't have to be called below. Doing so will

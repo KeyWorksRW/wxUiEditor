@@ -114,28 +114,6 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
 
 //////////////////////////////////////// macros ////////////////////////////////////////
 
-// Use INTERNAL_ERROR(msg) if you always want to report a problem in any Debug or Release build. Use BETA_ERROR(msg) if this
-// is just something you want reported on during a Debug or Release beta build (which presumably will be fixed and not occur
-// before a non-beta Release). You do not need to call these if you are instead calling throw std::...()
-
-#if defined(BETA)
-    #define BETA_ERROR(msg)                                                                                              \
-        {                                                                                                                \
-            wxMessageBox(wxString("An internal error occured in ") << __func__ << " at line " << __LINE__ << '.' << msg, \
-                         txtVersion);                                                                                    \
-        }
-#else
-    #define BETA_ERROR(msg) \
-        {                   \
-        }
-#endif
-
-#define INTERNAL_ERROR(msg)                                                                                          \
-    {                                                                                                                \
-        wxMessageBox(wxString("An internal error occured in ") << __func__ << " at line " << __LINE__ << '.' << msg, \
-                     txtVersion);                                                                                    \
-    }
-
 #if defined(NDEBUG)
 
     #define MSG_INFO(msg)

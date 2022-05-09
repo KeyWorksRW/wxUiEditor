@@ -607,7 +607,6 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
     if (!propName)
     {
         FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << node->DeclName() << " class.");
-        BETA_ERROR(ttlib::cstr("\nMissing \"name\" property in ") << node->DeclName() << " class.")
         return;
     }
 
@@ -615,7 +614,6 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
     if (class_name.empty())
     {
         FAIL_MSG("Property name cannot be null");
-        BETA_ERROR("Property name cannot be null")
         return;
     }
 
@@ -1184,7 +1182,6 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
         else
         {
             FAIL_MSG("Unrecognized class name so no idea how to declare it in the header file.")
-            BETA_ERROR("Unrecognized class name so no idea how to declare it in the header file.")
         }
     }
     else if (class_name.is_sameas("CustomControl"))
@@ -1213,7 +1210,6 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
     if (!form_node->HasValue(prop_class_name))
     {
         FAIL_MSG(ttlib::cstr("Missing \"name\" property in ") << form_node->DeclName());
-        BETA_ERROR(ttlib::cstr("\nMissing \"name\" property in ") << form_node->DeclName());
         return;
     }
 

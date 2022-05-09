@@ -184,7 +184,7 @@ int FileCodeWriter::WriteFile(bool test_only)
         if (file_original.IsOpened())
         {
             auto in_size = file_original.Length();
-            if (m_buffer.size() == static_cast<size_t>(in_size))
+            if (m_buffer.size() == (to_size_t) in_size)
             {
                 auto buffer = std::make_unique<unsigned char[]>(in_size);
                 if (file_original.Read(buffer.get(), in_size) == in_size)

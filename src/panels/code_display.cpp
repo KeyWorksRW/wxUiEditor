@@ -140,7 +140,7 @@ void CodeDisplay::doWrite(ttlib::sview code)
 
 void CodeDisplay::CodeGenerationComplete()
 {
-    m_scintilla->AddTextRaw(m_view.GetBuffer().data(), static_cast<int>(m_view.GetBuffer().size()));
+    m_scintilla->AddTextRaw(m_view.GetBuffer().data(), (to_int) m_view.GetBuffer().size());
     m_scintilla->SetReadOnly(true);
 
     m_view.ParseBuffer();
@@ -161,17 +161,17 @@ void CodeDisplay::OnNodeSelected(Node* node)
     if (is_event)
     {
         name << "->Bind";
-        line = static_cast<int>(m_view.FindLineContaining(name));
+        line = (to_int) m_view.FindLineContaining(name);
         if (!ttlib::is_found(line))
         {
             name.Replace("->Bind", " = ");
-            line = static_cast<int>(m_view.FindLineContaining(name));
+            line = (to_int) m_view.FindLineContaining(name);
         }
     }
     else
     {
         name << " = ";
-        line = static_cast<int>(m_view.FindLineContaining(name));
+        line = (to_int) m_view.FindLineContaining(name);
     }
 
     if (!ttlib::is_found(line))

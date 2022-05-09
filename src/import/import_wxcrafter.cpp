@@ -880,7 +880,7 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
                 if (index > 0)
                 {
                     auto list_effects = GetStringVector(FindValue(value, "m_options"));
-                    if (static_cast<size_t>(index) < list_effects.size())
+                    if ((to_size_t) index < list_effects.size())
                     {
                         bool found = false;
                         for (auto& friendly_pair: g_friend_constant)

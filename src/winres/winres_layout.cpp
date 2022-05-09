@@ -652,7 +652,7 @@ int resForm::GridSizerNeeded(size_t idx_start, size_t idx_end, const resCtrl* /*
             break;
     }
 
-    return static_cast<int>(max_columns);
+    return (to_int) max_columns;
 }
 
 int resForm::GroupGridSizerNeeded(std::vector<std::reference_wrapper<resCtrl>>& group_ctrls, size_t idx_start) const
@@ -687,7 +687,7 @@ int resForm::GroupGridSizerNeeded(std::vector<std::reference_wrapper<resCtrl>>& 
         idx_next_row = idx_next_row + row_children;
     }
 
-    return static_cast<int>(max_columns);
+    return (to_int) max_columns;
 }
 
 void resForm::CollectGroupControls(std::vector<std::reference_wrapper<resCtrl>>& group_ctrls, size_t idx_parent)

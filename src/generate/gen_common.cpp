@@ -188,7 +188,7 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
         bool has_utf_char = false;
         for (auto iter: str_with_escapes)
         {
-            if (static_cast<signed char>(iter) < 0)
+            if (iter < 0)
             {
                 has_utf_char = true;
                 break;
@@ -1268,8 +1268,7 @@ ttlib::cstr GenFontColourSettings(Node* node)
             code << "{\n\twxFontInfo font_info(";
             if (point_size != static_cast<int>(point_size))
             {
-                code << "\n#if (wxMAJOR_VERSION < 3) || ((wxMAJOR_VERSION == 3) && (wxMINOR_VERSION < 2) && "
-                        "(wxRELEASE_NUMBER < 2))\n\t";
+                code << "\n#if !wxCHECK_VERSION(3, 1, 2)\n\t";
                 if (point_size <= 0)
                 {
                     code << "wxSystemSettings::GetFont()->GetPointSize());";

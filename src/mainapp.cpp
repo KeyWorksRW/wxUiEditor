@@ -381,7 +381,7 @@ protected:
         if (frame.HasSourceLocation())
         {
             ttlib::cstr source;
-            source << frame.GetFileName().wx_str() << ':' << static_cast<int>(frame.GetLine());
+            source << frame.GetFileName().wx_str() << ':' << (to_int) frame.GetLine();
 
             wxString params;
             if (auto paramCount = frame.GetParamCount(); paramCount > 0)
@@ -403,12 +403,12 @@ protected:
             if (params.size() > 100)
                 params = "(...)";
 
-            m_calls.emplace_back() << static_cast<int>(frame.GetLevel()) << ' ' << frame.GetName().wx_str()
+            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().wx_str()
                                    << params.wx_str() << ' ' << source;
         }
         else
         {
-            m_calls.emplace_back() << static_cast<int>(frame.GetLevel()) << ' ' << frame.GetName().wx_str();
+            m_calls.emplace_back() << (to_int) frame.GetLevel() << ' ' << frame.GetName().wx_str();
         }
     }
 

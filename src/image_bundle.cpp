@@ -254,7 +254,7 @@ static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStr
     if (size == tt::npos || size > (64 * 1024))
         buf_size = (64 * 1024);
     else
-        buf_size = static_cast<size_t>(size);
+        buf_size = size;
 
     auto read_buf = std::make_unique<unsigned char[]>(buf_size);
     auto read_size = buf_size;
@@ -337,7 +337,7 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
 
                     auto read_stream = save_stream.GetOutputStreamBuffer();
                     stream.SeekI(0);
-                    if (read_stream->GetBufferSize() <= static_cast<size_t>(stream.GetLength()))
+                    if (read_stream->GetBufferSize() <= (to_size_t) stream.GetLength())
                     {
                         embed->array_size = read_stream->GetBufferSize();
                         embed->array_data = std::make_unique<unsigned char[]>(embed->array_size);
@@ -346,7 +346,7 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
                     else
                     {
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-                        auto org_size = static_cast<size_t>(stream.GetLength());
+                        size_t org_size = (to_size_t) stream.GetLength();
                         auto png_size = read_stream->GetBufferSize();
                         ttlib::cstr size_comparison;
                         size_comparison.Format("Original: %ku, new: %ku", org_size, png_size);

@@ -39,7 +39,7 @@ wxObject* ListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < static_cast<int>(array.size()))
+            if (sel > -1 && sel < (to_int) array.size())
                 widget->SetSelection(sel);
         }
     }
@@ -133,7 +133,7 @@ std::optional<ttlib::cstr> ListBoxGenerator::GenSettings(Node* node, size_t& /* 
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < static_cast<int>(array.size()))
+            if (sel > -1 && sel < (to_int) array.size())
             {
                 code << "\n";
                 code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
@@ -177,7 +177,7 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < static_cast<int>(array.size()))
+            if (sel > -1 && sel < (to_int) array.size())
                 widget->SetSelection(sel);
         }
     }
@@ -271,7 +271,7 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < static_cast<int>(array.size()))
+            if (sel > -1 && sel < (to_int) array.size())
             {
                 code << "\n";
                 code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
@@ -315,7 +315,7 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < static_cast<int>(array.size()))
+            if (sel > -1 && sel < (to_int) array.size())
                 widget->GetList()->SetSelection(sel);
         }
     }
@@ -402,7 +402,7 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < static_cast<int>(array.size()))
+            if (sel > -1 && sel < (to_int) array.size())
             {
                 code << "\n";
                 code << node->get_node_name() << "->GetList()->SetSelection(" << node->prop_as_string(prop_selection_int)

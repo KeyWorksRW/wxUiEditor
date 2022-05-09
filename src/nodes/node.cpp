@@ -670,7 +670,7 @@ Node* Node::CreateChildNode(GenName name)
                 }
                 else
                 {
-                    wxMessageBox(ttlib::cstr() << "You can only add " << static_cast<size_t>(max_children) << ' '
+                    wxMessageBox(ttlib::cstr() << "You can only add " << (to_size_t) max_children << ' '
                                                << map_GenNames[name] << " as a child of " << DeclName());
                 }
 

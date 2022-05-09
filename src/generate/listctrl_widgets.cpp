@@ -43,7 +43,7 @@ wxObject* ListViewGenerator::CreateMockup(Node* node, wxObject* parent)
                 ttlib::multistr columns(row, ';', tt::TRIM::both);
                 for (size_t column = 0; column < columns.size() && column < headers.size(); ++column)
                 {
-                    widget->SetItem(index, static_cast<int>(column), columns[column].wx_str());
+                    widget->SetItem(index, (to_int) column, columns[column].wx_str());
                 }
             }
         }

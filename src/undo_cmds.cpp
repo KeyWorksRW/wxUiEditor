@@ -268,12 +268,12 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
         {
             if (m_old_node->prop_as_string(prop_orientation) == "wxHORIZONTAL")
             {
-                m_node->prop_set_value(prop_cols, static_cast<int>(m_old_node->GetChildCount()));
+                m_node->prop_set_value(prop_cols,(to_int) m_old_node->GetChildCount());
             }
             else
             {
                 m_node->prop_set_value(prop_cols, 0);
-                m_node->prop_set_value(prop_rows, static_cast<int>(m_old_node->GetChildCount()));
+                m_node->prop_set_value(prop_rows, (to_int) m_old_node->GetChildCount());
             }
         }
 

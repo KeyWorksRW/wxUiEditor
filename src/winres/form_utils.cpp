@@ -252,5 +252,5 @@ size_t resForm::FindChildPosition(const Node* node)
             return idx_child;
     }
 
-    return static_cast<size_t>(-1);
+    return (to_size_t) -1;
 }

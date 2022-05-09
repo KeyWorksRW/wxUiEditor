@@ -520,9 +520,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_TYPE panel_type
                 {
                     code.clear();
                     // -8 to account for 4 indent + max 3 chars for number + comma
-                    for (; pos < max_pos && code.size() < static_cast<size_t>(max_image_line_length - 8); ++pos)
+                    for (; pos < max_pos && code.size() < (to_size_t) max_image_line_length - 8; ++pos)
                     {
-                        code << static_cast<int>(iter_array->array_data[pos]) << ',';
+                        code << (to_int) iter_array->array_data[pos] << ',';
                     }
                     if (pos >= max_pos && code.back() == ',')
                         code.pop_back();

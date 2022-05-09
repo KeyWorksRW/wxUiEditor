@@ -514,8 +514,7 @@ ttlib::cstr WinResource::ConvertCodePageString(std::string_view str)
     std::wstring result;
     auto out_size = (str.size() * sizeof(wchar_t)) + sizeof(wchar_t);
     result.reserve(out_size);
-    auto count_chars = MultiByteToWideChar(m_codepage, 0, str.data(), static_cast<int>(str.size()), result.data(),
-                                           static_cast<int>(out_size));
+    auto count_chars = MultiByteToWideChar(m_codepage, 0, str.data(), (to_int) str.size(), result.data(), (to_int) out_size);
     return ttlib::utf16to8(std::wstring_view(result.c_str(), count_chars));
 #else
     return ttlib::cstr(str);

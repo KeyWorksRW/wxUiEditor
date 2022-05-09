@@ -174,7 +174,7 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
         if (node_decl->isType(type_sizer))
         {
             auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
-            if (count < static_cast<size_t>(max_children))
+            if (count < (to_size_t) max_children)
             {
                 node = NewNode(node_decl);
                 if (name == gen_VerticalBoxSizer)
@@ -186,7 +186,7 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
         else if (node_decl->isType(type_gbsizer))
         {
             auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
-            if (count < static_cast<size_t>(max_children))
+            if (count < (to_size_t) max_children)
             {
                 node = NewNode(node_decl);
             }
@@ -200,7 +200,7 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
         else
         {
             auto count = CountChildrenWithSameType(parent, node_decl->gen_type());
-            if (count < static_cast<size_t>(max_children))
+            if (count < (to_size_t) max_children)
             {
                 node = NewNode(node_decl);
             }

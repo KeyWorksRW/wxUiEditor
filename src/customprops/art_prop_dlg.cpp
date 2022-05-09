@@ -82,7 +82,7 @@ void ArtBrowserDialog::ChangeClient()
             bundle.IsOk())
         {
             bitmap_bundles.push_back(bundle);
-            m_list->InsertItem(index, iter, static_cast<int>(bitmap_bundles.size() - 1));
+            m_list->InsertItem(index, iter, (to_int) (bitmap_bundles.size() - 1));
             m_list->SetItemPtrData(index++, reinterpret_cast<wxUIntPtr>(iter.c_str()));
         }
     }

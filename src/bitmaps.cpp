@@ -121,10 +121,10 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
         {
             if (*buf_ptr >= '0' && *buf_ptr <= '9')
             {
-                unsigned char value = static_cast<unsigned char>(*buf_ptr - '0');
+                unsigned char value = (to_uchar) (*buf_ptr - '0');
                 for (++buf_ptr; *buf_ptr >= '0' && *buf_ptr <= '9'; ++buf_ptr)
                 {
-                    value = (value * 10) + static_cast<unsigned char>(*buf_ptr - '0');
+                    value = (value * 10) + (to_uchar) (*buf_ptr - '0');
                 }
                 ptr_out_buf[actual_size] = value;
 
@@ -158,21 +158,21 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
 
                 // Get the high value
                 if (*buf_ptr >= '0' && *buf_ptr <= '9')
-                    value = static_cast<unsigned char>(*buf_ptr - '0') * 16;
+                    value = (to_uchar) (*buf_ptr - '0') * 16;
                 else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
-                    value = static_cast<unsigned char>((*buf_ptr - 'A') + 10) * 16;
+                    value = (to_uchar) ((*buf_ptr - 'A') + 10) * 16;
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
-                    value = static_cast<unsigned char>((*buf_ptr - 'a') + 10) * 16;
+                    value = (to_uchar) ((*buf_ptr - 'a') + 10) * 16;
 
                 ++buf_ptr;
 
                 // Get the low value
                 if (*buf_ptr >= '0' && *buf_ptr <= '9')
-                    value += static_cast<unsigned char>(*buf_ptr - '0');
+                    value += (to_uchar) (*buf_ptr - '0');
                 else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
-                    value += static_cast<unsigned char>((*buf_ptr - 'A') + 10);
+                    value += (to_uchar) ((*buf_ptr - 'A') + 10);
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
-                    value += static_cast<unsigned char>((*buf_ptr - 'a') + 10);
+                    value += (to_uchar) ((*buf_ptr - 'a') + 10);
 
                 ptr_out_buf[actual_size] = value;
 
@@ -328,10 +328,10 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
         {
             if (*buf_ptr >= '0' && *buf_ptr <= '9')
             {
-                unsigned char value = static_cast<unsigned char>(*buf_ptr - '0');
+                unsigned char value = (to_uchar) (*buf_ptr - '0');
                 for (++buf_ptr; *buf_ptr >= '0' && *buf_ptr <= '9'; ++buf_ptr)
                 {
-                    value = (value * 10) + static_cast<unsigned char>(*buf_ptr - '0');
+                    value = (value * 10) + (to_uchar) (*buf_ptr - '0');
                 }
                 ptr_out_buf[actual_size] = value;
 
@@ -365,21 +365,21 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
 
                 // Get the high value
                 if (*buf_ptr >= '0' && *buf_ptr <= '9')
-                    value = static_cast<unsigned char>(*buf_ptr - '0') * 16;
+                    value = (to_uchar) (*buf_ptr - '0') * 16;
                 else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
-                    value = static_cast<unsigned char>((*buf_ptr - 'A') + 10) * 16;
+                    value = (to_uchar) ((*buf_ptr - 'A') + 10) * 16;
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
-                    value = static_cast<unsigned char>((*buf_ptr - 'a') + 10) * 16;
+                    value = (to_uchar) ((*buf_ptr - 'a') + 10) * 16;
 
                 ++buf_ptr;
 
                 // Get the low value
                 if (*buf_ptr >= '0' && *buf_ptr <= '9')
-                    value += static_cast<unsigned char>(*buf_ptr - '0');
+                    value += (to_uchar) (*buf_ptr - '0');
                 else if (*buf_ptr >= 'A' && *buf_ptr <= 'F')
-                    value += static_cast<unsigned char>((*buf_ptr - 'A') + 10);
+                    value += (to_uchar) ((*buf_ptr - 'A') + 10);
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
-                    value += static_cast<unsigned char>((*buf_ptr - 'a') + 10);
+                    value += (to_uchar) ((*buf_ptr - 'a') + 10);
 
                 ptr_out_buf[actual_size] = value;
 

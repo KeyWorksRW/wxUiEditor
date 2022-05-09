@@ -496,7 +496,7 @@ void EmbedImage::ImgageInHeaderOut()
             auto& line = file.addEmptyLine();
             for (; pos < buf_size && line.size() < 116; ++pos)
             {
-                line << static_cast<int>(buf[pos]) << ',';
+                line << buf[pos] << ',';
             }
         }
     }

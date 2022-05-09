@@ -199,7 +199,7 @@ wxObject* RadioBoxGenerator::CreateMockup(Node* node, wxObject* parent)
                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), choices,
                                  node->prop_as_int(prop_majorDimension), GetStyleInt(node, "rb_"));
 
-    if (int selection = node->prop_as_int(prop_selection); static_cast<size_t>(selection) < choices.Count())
+    if (int selection = node->prop_as_int(prop_selection); (to_size_t) selection < choices.Count())
     {
         widget->SetSelection(selection);
     }

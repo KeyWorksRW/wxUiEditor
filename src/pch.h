@@ -160,6 +160,7 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
 #endif  // defined(NDEBUG) && !defined(INTERNAL_TESTING)
 
 #include "assertion_dlg.h"  // Assertion Dialog
+#include "to_casts.h"       // to_int -- Smart Numeric Casts
 
 #if defined(NDEBUG) && !defined(INTERNAL_TESTING)
     #define CHECK2_MSG(cond, op, msg) wxASSERT_MSG(cond, msg)

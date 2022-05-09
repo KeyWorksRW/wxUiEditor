@@ -1,17 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Message logging class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
+// In a Debug build, we use our custom logging class to retrieve wxWidgets messages. In a Release build with INTERNAL_TESTING
+// set, we still have the custom class and window, but there is no log window to derive from, or messages from wxWidgets to
+// intercept.
+
 #if defined(_DEBUG)
-// clang-format off
     #include <wx/log.h>  // Assorted wxLogXXX functions, and wxLog (sink for logs)
     #include <wx/generic/logg.h>  // wxLogGui class
-// clang-format on
 #endif  // _DEBUG
 
 class MsgFrame;
@@ -32,8 +34,9 @@ public:
     void AddWarningMsg(ttlib::cview msg);
     void AddErrorMsg(ttlib::cview msg);
 
-#if defined(_DEBUG)
     void OnNodeSelected();
+
+#if defined(_DEBUG)
     void DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogRecordInfo& info) override;
 #endif
 

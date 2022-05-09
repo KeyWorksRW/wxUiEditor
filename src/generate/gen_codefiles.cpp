@@ -161,7 +161,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
                 ++currentFiles;
             }
         }
-        catch (const std::exception& DBG_PARAM(e))
+        catch (const std::exception& TESTING_PARAM(e))
         {
             MSG_ERROR(e.what());
             wxMessageBox(ttlib::cstr("An internal error occurred generating code files for ")
@@ -339,7 +339,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
     }
 }
 
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
 
     #include "pugixml.hpp"
 
@@ -468,4 +468,4 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
     }
 }
 
-#endif  // defined(INTERNAL_WIDGETS)
+#endif  // defined(INTERNAL_TESTING)

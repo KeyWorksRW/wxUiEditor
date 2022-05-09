@@ -45,14 +45,14 @@ protected:
 
     void OnOK(wxCommandEvent& event) override;
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void OnRecentDir(wxCommandEvent& event) override;
     void OnRemove(wxCommandEvent& event) override;
 #endif
 
 private:
     std::vector<ttString> m_lstProjects;
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     wxFileHistory m_FileHistory;
 #endif
 };

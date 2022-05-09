@@ -33,7 +33,7 @@ enum
 
 void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
 {
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     m_combo_recent_dirs->Show();
     m_btnRemove->Show();
 #endif  // _DEBUG
@@ -49,7 +49,7 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     config->SetPath("/preferences");
     auto import_type = config->Read("import_type", IMPORT_FB);
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     m_FileHistory.Load(*config);
     for (size_t idx = 0; idx < m_FileHistory.GetCount(); ++idx)
     {
@@ -119,7 +119,7 @@ void ImportDlg::OnInitDialog(wxInitDialogEvent& WXUNUSED(event))
     if (files.size())
         m_checkListProjects->InsertItems(files, 0);
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // Because m_combo_recent_dirs was created hidden and is shown in Debug builds.
     Fit();
 #endif
@@ -164,7 +164,7 @@ void ImportDlg::OnOK(wxCommandEvent& event)
     else
         config->Write("import_type", static_cast<long>(IMPORT_FB));
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     m_FileHistory.Save(*config);
 #endif
     config->SetPath("/");
@@ -179,7 +179,7 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
     if (dlg.ShowModal() != wxID_OK)
         return;
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     m_FileHistory.AddFileToHistory(dlg.GetPath());
     m_combo_recent_dirs->AppendString(dlg.GetPath());
 #endif
@@ -218,7 +218,7 @@ void ImportDlg::OnDirectory(wxCommandEvent& WXUNUSED(event))
         m_checkListProjects->InsertItems(files, 0);
 }
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 void ImportDlg::OnRecentDir(wxCommandEvent& WXUNUSED(event))
 {
     auto result = m_combo_recent_dirs->GetValue();

@@ -18,7 +18,7 @@
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
 
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
     #include "internal/nodeinfo_base.h"  // NodeInfo -- Node memory usage dialog
 #endif
 
@@ -343,7 +343,7 @@ void MsgFrame::OnParent(wxCommandEvent& WXUNUSED(event))
         }
         else
         {
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
             NodeInfo dlg(this);
             dlg.ShowModal();
 #endif

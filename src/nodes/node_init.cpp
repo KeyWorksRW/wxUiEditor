@@ -430,7 +430,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
     while (generator)
     {
         auto class_name = generator.attribute("class").as_string();
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
         if (rmap_GenNames.find(class_name) == rmap_GenNames.end())
         {
             MSG_WARNING(ttlib::cstr("Unrecognized class name -- ") << class_name);
@@ -448,7 +448,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
             }
         }
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
         if (type == gen_type_unknown)
         {
             MSG_WARNING(ttlib::cstr("Unrecognized class type -- ") << type_name);

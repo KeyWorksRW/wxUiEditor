@@ -1177,14 +1177,14 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
                     prop_name = prop_help;
                 else
                 {
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
                     if ((prop_value.IsString() && prop_value.GetStringLength()) ||
                         (prop_value.IsBool() && prop_value.GetBool()))
                     {
                         MSG_INFO(ttlib::cstr() << node->DeclName() << " doesn't have a property called "
                                                << GenEnum::map_PropNames[prop_name]);
                     }
-#endif  // _DEBUG
+#endif
                 }
             }
             if (prop_value.IsBool())

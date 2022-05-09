@@ -4,6 +4,7 @@ set (file_list
 
     ${CMAKE_CURRENT_LIST_DIR}/mainapp.cpp           # Main application class
     ${CMAKE_CURRENT_LIST_DIR}/mainframe.cpp         # Main window frame
+    ${CMAKE_CURRENT_LIST_DIR}/assertion_dlg.cpp     # Assertion Dialog
 
     ${CMAKE_CURRENT_LIST_DIR}/appoptions.cpp        # Application-wide options
     ${CMAKE_CURRENT_LIST_DIR}/bitmaps.cpp           # Map of bitmaps accessed by name
@@ -162,7 +163,4 @@ set (file_list
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msgframe_base.cpp>       # wxUiEditor generated file
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/debugsettingsBase.cpp>   # wxUiEditor generated file
-
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/winsrc/ttdebug_min.cpp>  # ttAssertionMsg
-
 )

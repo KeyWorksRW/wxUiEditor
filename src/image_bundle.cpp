@@ -345,12 +345,12 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
                     }
                     else
                     {
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
                         auto org_size = static_cast<size_t>(stream.GetLength());
                         auto png_size = read_stream->GetBufferSize();
                         ttlib::cstr size_comparison;
                         size_comparison.Format("Original: %ku, new: %ku", org_size, png_size);
-#endif  // _DEBUG
+#endif
 
                         embed->type = handler->GetType();
                         embed->array_size = stream.GetSize();
@@ -612,7 +612,7 @@ bool ProjectSettings::AddSvgBundleImage(ttlib::cstr path, Node* form)
     embed->array_data = std::make_unique<unsigned char[]>(compressed_size);
     memcpy(embed->array_data.get(), read_stream->GetBufferStart(), compressed_size);
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     wxFile file_original(path.wx_str(), wxFile::read);
     if (file_original.IsOpened())
     {

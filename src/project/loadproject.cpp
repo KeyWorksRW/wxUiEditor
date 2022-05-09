@@ -154,7 +154,7 @@ NodeSharedPtr App::LoadProject(pugi::xml_document& doc)
         }
         project = g_NodeCreator.CreateNode(node);
     }
-    catch (const std::exception& DBG_PARAM(e))
+    catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
         wxMessageBox("This wxUiEditor project file is invalid and cannot be loaded.", "Load Project");
@@ -453,7 +453,7 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
     m_ProjectVersion = ImportProjectVersion;
     if (import.Import(file))
     {
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
         ttString full_path(file);
         full_path.make_absolute();
         wxGetFrame().GetAppendImportHistory()->AddFileToHistory(full_path);

@@ -736,7 +736,7 @@ void resForm::Adopt(Node* node, resCtrl* child)
 
 void resForm::Adopt(const NodeSharedPtr& node, resCtrl& child)
 {
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     ASSERT_MSG(!child.isAdded(), "Logic problem, child has already been added.");
     if (child.isAdded())
     {

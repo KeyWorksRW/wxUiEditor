@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Message logging class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -131,6 +131,15 @@ void MsgLogging::AddErrorMsg(ttlib::cview msg)
         frame->SetRightStatusField(str);
 }
 
+void MsgLogging::OnNodeSelected()
+{
+    if (!m_bDestroyed && m_msgFrame)
+    {
+        m_msgFrame->OnNodeSelected();
+    }
+}
+
+#if defined(_DEBUG)
 void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogRecordInfo& info)
 {
     if (wxGetApp().isMainFrameClosing())
@@ -243,15 +252,6 @@ void MsgLogging::DoLogRecord(wxLogLevel level, const wxString& msg, const wxLogR
             // just ignore those: passing them to the base class would result in asserts from DoLogText() because
             // DoLogTextAtLevel() would call it as it doesn't know how to handle these levels otherwise
             break;
-    }
-}
-
-#if defined(_DEBUG)
-void MsgLogging::OnNodeSelected()
-{
-    if (!m_bDestroyed && m_msgFrame)
-    {
-        m_msgFrame->OnNodeSelected();
     }
 }
 #endif

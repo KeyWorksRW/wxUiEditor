@@ -151,7 +151,7 @@ static const ImageMap png_headers[] = {
 
 // A different Icon is used for debug builds so that it is easier to identify that a debug build is being run.
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     { "logo16", debug_16_png, sizeof(debug_16_png) },
     { "logo32", debug_32_png, sizeof(debug_32_png) }
 #else

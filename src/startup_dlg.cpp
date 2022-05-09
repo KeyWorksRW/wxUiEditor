@@ -53,7 +53,7 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
         }
     }
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     auto append_history_ptr = wxGetFrame().GetAppendImportHistory();
     for (size_t idx = 0; idx < append_history_ptr->GetCount(); ++idx)
     {

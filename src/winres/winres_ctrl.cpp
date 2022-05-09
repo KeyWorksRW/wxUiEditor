@@ -95,7 +95,7 @@ static const ClassGenPair lst_name_gen[] = {
 
 void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 {
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // Create a copy of the original line without the extra spaces that can be used to send to our log window if there are
     // problems processing it.
 
@@ -220,7 +220,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 
         else
         {
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
             ttlib::cstr msg("Unrecognized CONTROL: ");
             auto pos = line.find_space();
             msg << line.subview(0, pos);
@@ -305,7 +305,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             // TODO: [KeyWorks - 06-01-2021] We handle all controls that MS documented on 05/31/2018, which as of 6/01/2021
             // is still the current documentation. So, if we get here the control is unrecognizable.
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
             ttlib::cstr msg("Unrecognized resource directive: ");
             auto pos = line.find_space();
             msg << line.subview(0, pos);

@@ -210,7 +210,7 @@ public:
 
     wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     wxFileHistory* GetAppendImportHistory() { return &m_ImportHistory; }
 #endif  // _DEBUG
 
@@ -259,11 +259,11 @@ protected:
 
     void OnNodeSelected(CustomEvent& event);
 
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
     void OnCodeCompare(wxCommandEvent& event);
 #endif
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void OnFindWidget(wxCommandEvent& event);
 #endif
 
@@ -295,7 +295,7 @@ private:
 
     BasePanel* m_generatedPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
     BasePanel* m_xrcPanel { nullptr };
 #endif
 
@@ -312,7 +312,7 @@ private:
     wxFindReplaceDialog* m_findDialog { nullptr };
 
     wxFileHistory m_FileHistory;
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     wxFileHistory m_ImportHistory;
     wxMenu* m_submenu_import_recent;
 

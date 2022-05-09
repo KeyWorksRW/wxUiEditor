@@ -65,7 +65,7 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
     m_form_type = form_menu;
     m_form_node = g_NodeCreator.NewNode(m_is_popup_menu ? gen_PopupMenu : gen_MenuBar);
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     m_form_node->prop_set_value(prop_base_src_includes, ttlib::cstr() << "// " << txtfile.filename());
 #endif  // _DEBUG
 
@@ -74,7 +74,7 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
     value = line.substr(0, end);
     m_form_node->prop_set_value(prop_class_name, ConvertFormID(value));
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     m_form_id = m_form_node->prop_as_string(prop_class_name);
 #endif  // _DEBUG
 

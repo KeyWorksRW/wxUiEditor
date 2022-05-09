@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // clang-format off
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
 #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
 
@@ -91,7 +91,7 @@ HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::str
 
 void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
 {
-    #if defined(INTERNAL_WIDGETS)
+    #if defined(INTERNAL_TESTING)
     pugi::xml_document doc;
     auto root = doc.append_child("project");
 
@@ -110,4 +110,4 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     #endif
 }
 
-#endif  // defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)

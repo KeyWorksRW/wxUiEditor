@@ -450,7 +450,7 @@ void App::ShowMsgWindow()
 
 #endif  // defined(_DEBUG)
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
 void App::DbgCurrentTest(wxCommandEvent&)
 {

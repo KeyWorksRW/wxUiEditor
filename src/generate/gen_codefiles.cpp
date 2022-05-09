@@ -339,7 +339,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
     }
 }
 
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
 
     #include "pugixml.hpp"
 
@@ -468,4 +468,4 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
     }
 }
 
-#endif  // defined(INTERNAL_WIDGETS)
+#endif  // defined(INTERNAL_TESTING)

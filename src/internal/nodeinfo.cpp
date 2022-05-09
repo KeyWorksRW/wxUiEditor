@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // clang-format off
-#if defined(INTERNAL_WIDGETS) || defined(_DEBUG)
+#if defined(INTERNAL_TESTING) || defined(_DEBUG)
 
 #include "nodeinfo_base.h"  // auto-generated: nodeinfo_base.h and nodeinfo_base.cpp
 
@@ -78,4 +78,4 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
     Fit();
 }
 
-#endif  // defined(INTERNAL_WIDGETS) || defined(_DEBUG)
+#endif  // defined(INTERNAL_TESTING) || defined(_DEBUG)

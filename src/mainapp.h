@@ -119,7 +119,7 @@ public:
 
 #endif
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void DbgCurrentTest(wxCommandEvent& event);
 #endif
 

@@ -53,7 +53,7 @@
 #include "ui/importwinres_base.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
 #include "ui/insertwidget_base.h"  // InsertWidget -- Dialog to lookup and insert a widget
 
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
     #include "internal/code_compare_base.h"
     #include "internal/nodeinfo_base.h"
 #endif
@@ -112,7 +112,7 @@ MainFrame::MainFrame() :
     m_FileHistory.AddFilesToMenu();
     config->SetPath("/");
 
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
     auto menuInternal = new wxMenu;
 
     menuInternal->Append(id_CodeDiffDlg, "Compare Code &Generation...",
@@ -261,7 +261,7 @@ MainFrame::MainFrame() :
         },
         id_Magnify);
 
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
     Bind(
         wxEVT_MENU,
         [this](wxCommandEvent&)
@@ -281,7 +281,7 @@ MainFrame::MainFrame() :
         id_NodeMemory);
 #endif
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
 #endif
 
@@ -304,7 +304,7 @@ MainFrame::MainFrame() :
         id_ShowLogger);
 #endif
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
 #endif
 
@@ -549,7 +549,7 @@ void MainFrame::OnOpenRecentProject(wxCommandEvent& event)
     }
 }
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 void MainFrame::OnImportRecent(wxCommandEvent& event)
 {
     ttString file = m_ImportHistory.GetHistoryFile(event.GetId() - (wxID_FILE1 + 1000));
@@ -567,7 +567,7 @@ void MainFrame::OnImportRecent(wxCommandEvent& event)
     else if (extension == ".xrc")
         wxGetApp().AppendXRC(files);
 }
-#endif  // defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
 
 void MainFrame::OnNewProject(wxCommandEvent&)
 {
@@ -1091,7 +1091,7 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_derivedPanel = new BasePanel(m_notebook, this, 1);
     m_notebook->AddPage(m_derivedPanel, "Derived", false, wxWithImages::NO_IMAGE);
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // m_xrcPanel = new BasePanel(m_notebook, this, -1);
     // m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 #endif
@@ -1722,7 +1722,7 @@ void MainFrame::PushUndoAction(UndoActionPtr cmd, bool add_to_stack)
         m_undo_stack.Push(cmd);
 }
 
-#if defined(INTERNAL_WIDGETS)
+#if defined(INTERNAL_TESTING)
 
 void MainFrame::OnCodeCompare(wxCommandEvent& WXUNUSED(event))
 {
@@ -1751,7 +1751,7 @@ Node* FindChildNode(Node* node, GenEnum::GenName name)
     return nullptr;
 }
 
-#if defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
 void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
 {
@@ -1782,4 +1782,4 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-#endif  // defined(_DEBUG) || defined(INTERNAL_WIDGETS)
+#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)

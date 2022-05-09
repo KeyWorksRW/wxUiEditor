@@ -45,15 +45,14 @@ if (NOT isMultiConfig)
     endif()
 endif()
 
-option(INTERNAL_WIDGETS_SOURCES "Build with internal forked wxWidgets sources" )
+option(INTERNAL_TESTING "Build with internal testing functionality")
 
-if (INTERNAL_WIDGETS_SOURCES)
-    message(NOTICE "Building internal version")
+if (INTERNAL_TESTING)
+    message(NOTICE "Building internal testing version")
 
-    # Add preprocessor definition that can be used to conditionalize code based on whether the
-    # internal wxWidgets libraries are being used.
-    add_compile_definitions(INTERNAL_WIDGETS)
-
+    # In addition to enabling testing-only functionality, this enables ASSERT(), ASSERT_MSG(),
+    # and FAIL_MSG() in a Release build.
+    add_compile_definitions(INTERNAL_TESTING)
 endif()
 
 set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
@@ -73,7 +72,7 @@ add_compile_definitions(BETA)
 include(src/ui/wxui_code.cmake)  # This will set ${wxue_generated_code} with list of generated files
 include(src/file_list.cmake)     # This will set ${file_list} with a list of source files
 
-if (INTERNAL_WIDGETS_SOURCES)
+if (INTERNAL_TESTING)
 
     include(src/internal/wxui_internal.cmake)  # This will set ${wxui_internal} with a list of source files
 

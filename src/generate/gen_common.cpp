@@ -835,6 +835,13 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
 
     else if (parts[IndexType].is_sameas("XPM") || parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
     {
+        if (auto function_name = wxGetApp().GetBundleFuncName(description); function_name.size())
+        {
+            // We get here if there is an Image form that contains the function to retrieve this bundle.
+            code = function_name;
+            return false;
+        }
+
         if (auto bundle = wxGetApp().GetPropertyImageBundle(description); bundle)
         {
             if (bundle->lst_filenames.size() == 1)
@@ -856,7 +863,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
             }
             else
             {
-                code << "\n\t\t[] {\n\t\t\twxVector<wxBitmap> bitmaps;\n";
+                code << "{\n\t\t\twxVector<wxBitmap> bitmaps;\n";
                 for (auto& iter: bundle->lst_filenames)
                 {
                     ttlib::cstr name(iter.filename());
@@ -864,7 +871,8 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                     code << "\t\t\tbitmaps.push_back(wxImage(" << name << "_xpm));\n";
                 }
 
-                code << "\t\t\treturn wxBitmapBundle::FromBitmaps(bitmaps);\n\t\t}";
+                // Return true to indicate a code block was generated
+                return true;
             }
         }
         else

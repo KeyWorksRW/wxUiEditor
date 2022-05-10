@@ -5,8 +5,9 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// clang-format off
-#if defined(INTERNAL_TESTING) || defined(_DEBUG)
+#if !defined(INTERNAL_TESTING)
+    #error "INTERNAL_TESTING must be defined if you include this moduel!"
+#endif
 
 #include "nodeinfo_base.h"  // auto-generated: nodeinfo_base.h and nodeinfo_base.cpp
 
@@ -14,8 +15,6 @@
 #include "mainframe.h"   // Main window frame
 #include "node.h"        // Node class
 #include "undo_stack.h"  // UndoAction -- Maintain a undo and redo stack
-
-// clang-format on
 
 struct NodeMemory
 {
@@ -77,5 +76,3 @@ void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 
     Fit();
 }
-
-#endif  // defined(INTERNAL_TESTING) || defined(_DEBUG)

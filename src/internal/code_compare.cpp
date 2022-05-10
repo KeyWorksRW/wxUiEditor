@@ -5,8 +5,9 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-// clang-format off
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
+#if !defined(INTERNAL_TESTING)
+    #error "INTERNAL_TESTING must be defined if you include this moduel!"
+#endif
 
 #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
 
@@ -87,11 +88,8 @@ HINSTANCE winShellRun(std::string_view filename, std::string_view args, std::str
     return ShellExecuteW(hwndParent, NULL, name16.c_str(), args16.c_str(), dir16.c_str(), nShow);
 }
 
-    #endif  // _WIN32
-
 void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
 {
-    #if defined(INTERNAL_TESTING)
     pugi::xml_document doc;
     auto root = doc.append_child("project");
 
@@ -107,7 +105,6 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     // /e -- terminate with escape
     // /u -- don't add files to MRU
     winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd);
-    #endif
 }
 
-#endif  // defined(_DEBUG) || defined(INTERNAL_TESTING)
+#endif  // _WIN32

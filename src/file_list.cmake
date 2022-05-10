@@ -156,6 +156,11 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/tttextfile.cpp  # Classes for reading and writing text files.
 
     # Debug-only files
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare.cpp>    # Compare code generation
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/nodeinfo.cpp>        # Node memory usage dialog
+
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare_base.cpp>
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/nodeinfo_base.cpp>
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msg_logging.cpp>    # Message logging class

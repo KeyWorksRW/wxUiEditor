@@ -47,6 +47,11 @@ endif()
 
 option(INTERNAL_TESTING "Build with internal testing functionality")
 
+# This option is designed to make it possible to check changes to a wxWidgets fork, and/or to build
+# with the current wxWidgets sources (assuming the wxWidgets fork is in sync). Realistically, this
+# is only going to be usable by the maintainers of this project.
+option(WIDGETS_FORK "Assumes the existance of ../wxWidgets/bld/CMakeLists.txt")
+
 if (INTERNAL_TESTING)
     message(NOTICE "Building internal testing version")
 
@@ -55,11 +60,21 @@ if (INTERNAL_TESTING)
     add_compile_definitions(INTERNAL_TESTING)
 endif()
 
-set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
-set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
+if (NOT WIDGETS_FORK)
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
+    set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
 
-# This will build wxCLib.lib and wxWidgets.lib
-add_subdirectory(${widget_cmake_dir})
+    # This will build wxCLib.lib and wxWidgets.lib
+    add_subdirectory(${widget_cmake_dir})
+else()
+    message(NOTICE "Building with forked wxWidgets libraries")
+
+    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
+    set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
+
+    # This will build wxCLib.lib and wxWidgets.lib
+    add_subdirectory(../wxWidgets/bld ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
+endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 

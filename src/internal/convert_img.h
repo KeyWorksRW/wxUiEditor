@@ -9,12 +9,12 @@
 
 #include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
 
-#include "embedimg_base.h"
+#include "convert_img_base.h"
 
-class EmbedImage : public EmbedImageBase
+class ConvertImageDlg : public ConvertImageBase
 {
 public:
-    EmbedImage(wxWindow* parent = nullptr);
+    ConvertImageDlg(wxWindow* parent = nullptr);
 
 protected:
     bool IsHeaderPage() { return (m_choicebook->GetChoiceCtrl()->GetSelection() != 1); };

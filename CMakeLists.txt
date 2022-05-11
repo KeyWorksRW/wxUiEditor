@@ -98,7 +98,9 @@ if (INTERNAL_TESTING)
         # These are always included in Debug builds, with INTERNAL_TESTING we also need them
         # in Release builds.
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/convert_img.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/nodeinfo.cpp>
+
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/debugging/msg_logging.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/debugging/msgframe.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/debugging/msgframe_base.cpp>

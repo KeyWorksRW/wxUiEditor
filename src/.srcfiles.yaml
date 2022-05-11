@@ -167,7 +167,6 @@ Files:
 
     ../pugixml/pugixml.cpp      # XML parser
 
-    ui/embedimg.cpp             # Convert image to Header (.h) or XPM (.xpm) file
     ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
@@ -180,8 +179,10 @@ Files:
 
     # Internal Files -- only valid if INTERNAL_WIDGETS is defined
     internal/wxui_code.cmake
-    internal/code_compare.cpp
-    internal/nodeinfo.cpp       # Node memory usage dialog
+
+    internal/convert_img.cpp     # Convert image to Header (.h) or XPM (.xpm) file
+    internal/code_compare.cpp    # Compare code generation
+    internal/nodeinfo.cpp        # Node memory usage dialog
 
     # ttLib submodule files (see https://github.com/KeyWorksRW/ttLib repository)
 

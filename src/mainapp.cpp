@@ -79,7 +79,6 @@ bool App::OnInit()
     #endif
 #endif
 
-    // Add all image handlers so that the EmbedImage class can be used to convert any type of image that wxWidgets supports.
     wxInitAllImageHandlers();
 
     // The name is sort of a standard. More importantly, it is sometimes used as the mask in Windows bitmaps for toolbar

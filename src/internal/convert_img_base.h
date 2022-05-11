@@ -17,11 +17,11 @@
 #include <wx/statbmp.h>
 #include <wx/stattext.h>
 
-class EmbedImageBase : public wxDialog
+class ConvertImageBase : public wxDialog
 {
 public:
-    EmbedImageBase() {}
-    EmbedImageBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Convert Image",
+    ConvertImageBase() {}
+    ConvertImageBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Convert Image",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -67,6 +67,7 @@ protected:
     wxStaticText* m_staticHdrRGB;
     wxStaticText* m_staticHeader;
     wxStaticText* m_staticOriginal;
+    wxStaticText* m_staticOriginal_2;
     wxStaticText* m_staticOutput;
     wxStaticText* m_staticSave;
     wxStaticText* m_staticSize;

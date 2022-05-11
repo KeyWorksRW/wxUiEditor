@@ -483,3 +483,27 @@ wxSize get_image_prop_size(ttlib::sview size_description)
     GetSizeInfo(size, size_description);
     return size;
 }
+
+// Any mime type in the following list with NOT be converted to PNG even if m_check_make_png is set to true
+
+// clang-format off
+inline constexpr const char* lst_no_png_conversion[] = {
+
+    "image/x-ani",
+    "image/x-cur",
+    "image/gif",
+    "image/x-ico",
+    "image/jpeg",
+
+};
+// clang-format on
+
+bool isConvertibleMime(const ttString& suffix)
+{
+    for (auto& iter: lst_no_png_conversion)
+    {
+        if (suffix.is_sameas(iter))
+            return false;
+    }
+    return true;
+}

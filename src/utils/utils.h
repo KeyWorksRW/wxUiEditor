@@ -80,3 +80,5 @@ extern std::map<std::string, const char*> g_sys_colour_pair;
 
 // Friendly name/wxSTC_WRAP_ constant
 extern std::map<std::string, const char*> g_stc_wrap_mode;
+
+bool isConvertibleMime(const ttString& suffix);

@@ -50,7 +50,6 @@ Files:
     undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     undo_stack.cpp        # Maintain an undo and redo stack
     wakatime.cpp          # Updates WakaTime metrics
-    xpm.cpp               # All xpm files
 
     customprops/code_string_prop.cpp    # Derived wxStringProperty class for code
     customprops/custom_colour_prop.cpp  # Property editor for colour

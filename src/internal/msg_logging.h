@@ -11,10 +11,14 @@
 // set, we still have the custom class and window, but there is no log window to derive from, or messages from wxWidgets to
 // intercept.
 
+// clang-format off
 #if defined(_DEBUG)
-    #include <wx/generic/logg.h>  // wxLogGui class
+    // wx/log.h *MUST* be included before wx/generic/logg.h
     #include <wx/log.h>           // Assorted wxLogXXX functions, and wxLog (sink for logs)
-#endif                            // _DEBUG
+
+    #include <wx/generic/logg.h>  // wxLogGui class
+#endif
+// clang-format on
 
 class MsgFrame;
 

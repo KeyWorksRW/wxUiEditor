@@ -20,7 +20,6 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd
     ${CMAKE_CURRENT_LIST_DIR}/undo_stack.cpp        # Maintain an undo and redo stack
     ${CMAKE_CURRENT_LIST_DIR}/wakatime.cpp          # Updates WakaTime metrics
-    ${CMAKE_CURRENT_LIST_DIR}/xpm.cpp               # All xpm files
 
     ${CMAKE_CURRENT_LIST_DIR}/customprops/code_string_prop.cpp    # Derived wxStringProperty class for code
     ${CMAKE_CURRENT_LIST_DIR}/customprops/custom_colour_prop.cpp  # Property editor for colour

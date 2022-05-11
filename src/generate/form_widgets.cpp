@@ -543,7 +543,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
         return code;
     }
 
-    if (parts[IndexType].is_sameas("XPM") || parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
+    if (parts[IndexType].is_sameas("XPM"))
     {
         // In theory, we could create an alpha channel using black as the transparency, but it just doesn't make sense for
         // the user to be using XPM files as an icon.

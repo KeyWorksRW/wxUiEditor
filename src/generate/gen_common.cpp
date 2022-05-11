@@ -769,7 +769,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
     }
 
     ttlib::cstr result;
-    if (parts[IndexType].is_sameas("XPM") || parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
+    if (parts[IndexType].is_sameas("XPM"))
     {
         code << "wxImage(";
 
@@ -833,7 +833,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
         code << ')';
     }
 
-    else if (parts[IndexType].is_sameas("XPM") || parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
+    else if (parts[IndexType].is_sameas("XPM"))
     {
         if (auto function_name = wxGetApp().GetBundleFuncName(description); function_name.size())
         {
@@ -1038,7 +1038,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
     }
     code << "\t\twxVector<wxBitmap> bitmaps;\n";
 
-    bool is_xpm = (parts[IndexType].is_sameas("XPM") || parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either));
+    bool is_xpm = (parts[IndexType].is_sameas("XPM"));
 
     for (auto& iter: bundle->lst_filenames)
     {

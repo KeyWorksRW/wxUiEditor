@@ -32,7 +32,6 @@ PropertyGrid_Animation::PropertyGrid_Animation(const wxString& label, NodeProper
     wxPGChoices types;
 
     types.Add(s_type_names[1]);  // Embed
-    types.Add(s_type_names[3]);  // Header
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
     AddPrivateChild(new ImageStringProperty("image", m_img_props));
@@ -100,8 +99,6 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
                 auto index = childValue.GetLong();
                 if (index == 0)
                     img_props.type = s_type_names[1];
-                else if (index == 1)
-                    img_props.type = s_type_names[3];
 
                 if (index >= 0)
                 {

@@ -46,3 +46,9 @@ Example:
 Starting with **wxWidgets** 3.1.6, many SVG images can be used as bitmaps that will accuratele scale to any dimension. Support for SVG is somewhat limited, so it's generally a good idea to preview the image before you build you application execting the SVG images to work. If you are adding it to a control inside **wxUiEditor** you can simply check how it looks in the Mockup panel. Otherwise, you can use the Preview SVG command under the Tools menu to see what it looks at (this will also allow you to see it at different scaling sizes).
 
 When you specify an SVG file, **wxUiEdiutor** will read the file, strip out some content that **wxWidgets** won't use, compress it, and then store it as an unsigned character array in one of your source files. This will typically reduce the size of the image in your executable file by 80%. When your program runs, the generated code that displays the image will automatically decompress the data and pass it to **wxBitMapBundle**.
+
+# XPM images
+
+Several graphics applications will save an XPM file using a `static char` array. This will generate a compiler error when compiled with a c++20 compiler since it is invalid to assign a literal string to a non-const char array pointer. In addition, while most applications create an array name consisting of the base filename with a `_xpm` suffix, not all do. If you add an XPM file using the XPM image type, then **wxUiEditor** expects the `_xpm` suffix, and your code will not compile if it does not have the expected array name.
+
+Both of these problems can be avoided by using the Embed command to specify your filename. Internally, **wxUiEditor** will convert the image to a PNG format (using any mask as the alpha channel) and then embed the image in the generated source code. The image should appear the same as it would if you used the XPM type, but without the potential problems mentioned above.

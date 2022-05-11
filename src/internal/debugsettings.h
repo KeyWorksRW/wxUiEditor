@@ -7,21 +7,20 @@
 
 #pragma once
 
-#include "debugsettingsBase.h"
+#include "debugsettings_base.h"
 
 class DebugSettings : public DebugSettingsBase
 {
 public:
-	DebugSettings(wxWindow* parent = nullptr);
+    DebugSettings(wxWindow* parent = nullptr);
 
 protected:
+    // Handlers for DebugSettingsBase events.
 
-	// Handlers for DebugSettingsBase events.
-
-	void OnInit(wxInitDialogEvent& event) override;
-	void OnShowNow(wxCommandEvent& WXUNUSED(event)) override;
-	void OnOK(wxCommandEvent& WXUNUSED(event)) override;
+    void OnInit(wxInitDialogEvent& event) override;
+    void OnShowNow(wxCommandEvent& WXUNUSED(event)) override;
+    void OnOK(wxCommandEvent& WXUNUSED(event)) override;
 
 private:
-	long m_orgFlags;
+    long m_orgFlags;
 };

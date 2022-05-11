@@ -16,14 +16,14 @@ class DebugSettingsBase : public wxDialog
 {
 public:
     DebugSettingsBase() {}
-    DebugSettingsBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Debug Settings",
+    DebugSettingsBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test Settings",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Debug Settings",
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test Settings",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 

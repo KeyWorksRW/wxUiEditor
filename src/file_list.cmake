@@ -163,10 +163,10 @@ set (file_list
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img_base.cpp>
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/nodeinfo_base.cpp>
 
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msg_logging.cpp>    # Message logging class
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msgframe.cpp>       # Stores messages
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/msg_logging.cpp>    # Message logging class
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/msgframe.cpp>       # Stores messages
 
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msgframe_base.cpp>       # wxUiEditor generated file
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/debugsettingsBase.cpp>   # wxUiEditor generated file
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/msgframe_base.cpp>       # wxUiEditor generated file
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/debugsettings_base.cpp>   # wxUiEditor generated file
 )

@@ -8,7 +8,7 @@
 
 #include "code_compare_base.h"
 
-#include "../debugging/WinMerge.xpm"
+#include "WinMerge.xpm"
 
 bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style, const wxString &name)

@@ -59,7 +59,7 @@
 #endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    #include "debugging/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
+    #include "internal/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
 #endif
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window

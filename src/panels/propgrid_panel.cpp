@@ -65,6 +65,8 @@ PropGridPanel::PropGridPanel(wxWindow* parent, MainFrame* frame) : wxPanel(paren
     }
 
     m_astr_wx_decorations.Add("__declspec(dllexport)");
+    m_astr_wx_decorations.Add("__attribute__((dllexport))");
+    m_astr_wx_decorations.Add("[[gnu::dllexport]]");
 
     m_notebook_parent = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook_parent->SetArtProvider(new wxAuiSimpleTabArt());

@@ -484,7 +484,7 @@ wxSize get_image_prop_size(ttlib::sview size_description)
     return size;
 }
 
-// Any mime type in the following list with NOT be converted to PNG even if m_check_make_png is set to true
+// Any mime type in the following list will NOT be converted to PNG.
 
 // clang-format off
 inline constexpr const char* lst_no_png_conversion[] = {

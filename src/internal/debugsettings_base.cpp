@@ -10,7 +10,7 @@
 #include <wx/statbox.h>
 #include <wx/valgen.h>
 
-#include "debugsettingsBase.h"
+#include "debugsettings_base.h"
 
 bool DebugSettingsBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style, const wxString &name)

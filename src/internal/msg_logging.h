@@ -12,9 +12,9 @@
 // intercept.
 
 #if defined(_DEBUG)
-    #include <wx/log.h>  // Assorted wxLogXXX functions, and wxLog (sink for logs)
     #include <wx/generic/logg.h>  // wxLogGui class
-#endif  // _DEBUG
+    #include <wx/log.h>           // Assorted wxLogXXX functions, and wxLog (sink for logs)
+#endif                            // _DEBUG
 
 class MsgFrame;
 
@@ -25,7 +25,6 @@ class MsgLogging
 #endif
 {
 public:
-
     void ShowLogger();
     void CloseLogger();
 

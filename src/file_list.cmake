@@ -137,7 +137,6 @@ set (file_list
 
     ${CMAKE_CURRENT_LIST_DIR}/../pugixml/pugixml.cpp      # XML parser
 
-    ${CMAKE_CURRENT_LIST_DIR}/ui/embedimg.cpp             # Convert image to Header (.h) or XPM (.xpm) file
     ${CMAKE_CURRENT_LIST_DIR}/ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node
     ${CMAKE_CURRENT_LIST_DIR}/ui/import_dlg.cpp           # Dialog to import one or more projects
     ${CMAKE_CURRENT_LIST_DIR}/ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
@@ -157,15 +156,17 @@ set (file_list
 
     # Debug-only files
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare.cpp>    # Compare code generation
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img.cpp>     # Convert image
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/nodeinfo.cpp>        # Node memory usage dialog
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare_base.cpp>
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img_base.cpp>
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/nodeinfo_base.cpp>
 
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msg_logging.cpp>    # Message logging class
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msgframe.cpp>       # Stores messages
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/msg_logging.cpp>    # Message logging class
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/msgframe.cpp>       # Stores messages
 
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/msgframe_base.cpp>       # wxUiEditor generated file
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/debugging/debugsettingsBase.cpp>   # wxUiEditor generated file
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/msgframe_base.cpp>       # wxUiEditor generated file
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/debugsettings_base.cpp>   # wxUiEditor generated file
 )

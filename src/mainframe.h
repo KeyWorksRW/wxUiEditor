@@ -235,7 +235,6 @@ protected:
     void OnCut(wxCommandEvent& event) override;
     void OnDelete(wxCommandEvent& event) override;
     void OnDuplicate(wxCommandEvent& event) override;
-    void OnEmbedImageConverter(wxCommandEvent& event) override;
     void OnGenInhertedClass(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
     void OnImportProject(wxCommandEvent& event);
@@ -259,11 +258,9 @@ protected:
 
     void OnNodeSelected(CustomEvent& event);
 
-#if defined(INTERNAL_TESTING)
-    void OnCodeCompare(wxCommandEvent& event);
-#endif
-
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
+    void OnCodeCompare(wxCommandEvent& event);
+    void OnConvertImageDlg(wxCommandEvent& event);
     void OnFindWidget(wxCommandEvent& event);
 #endif
 

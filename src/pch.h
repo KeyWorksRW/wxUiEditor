@@ -135,7 +135,7 @@ constexpr const char BMP_PROP_SEPARATOR = ';';
 // These messages can be individually enabled/disabled in the Preferences dialog (Debug tab).
 // Note that none of these are displayed in a Release build.
 
-    #include "debugging/msg_logging.h"  // MsgLogging -- Message logging class
+    #include "internal/msg_logging.h"  // MsgLogging -- Message logging class
 
     #define MSG_INFO(msg)                   \
         {                                   \

@@ -62,7 +62,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         }
         return false;
     }
-    else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("Header") || m_img_props.type.contains("SVG"))
+    else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("SVG"))
     {
         ttSaveCwd cwd;
         if (wxGetApp().GetProject()->HasValue(prop_art_directory) && wxGetApp().GetArtDirectory().dir_exists())
@@ -71,18 +71,13 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         }
 
         wxString pattern;
-        if (m_img_props.IsAnimationType())
-        {
-            pattern = "Header files (*.h_img)|*.h_img";
-        }
-        else if (m_img_props.type.contains("SVG"))
+        if (m_img_props.type.contains("SVG"))
         {
             pattern = "SVG files (*.svg)|*.svg";
-            ;
         }
         else
         {
-            pattern = m_img_props.type.contains("XPM") ? "XPM files (*.xpm)|*.xpm" : "Header files (*.h_img)|*.h_img";
+            pattern = "XPM files (*.xpm)|*.xpm";
         }
 
         wxFileDialog dlg(propGrid->GetPanel(), "Open Image", wxFileName::GetCwd(), wxEmptyString, pattern,

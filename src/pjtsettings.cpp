@@ -302,8 +302,6 @@ wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description
     return image;
 }
 
-bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
-
 bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation)
 {
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);

@@ -167,7 +167,6 @@ Files:
 
     ../pugixml/pugixml.cpp      # XML parser
 
-    ui/embedimg.cpp             # Convert image to Header (.h) or XPM (.xpm) file
     ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
@@ -180,8 +179,13 @@ Files:
 
     # Internal Files -- only valid if INTERNAL_WIDGETS is defined
     internal/wxui_code.cmake
-    internal/code_compare.cpp
-    internal/nodeinfo.cpp       # Node memory usage dialog
+
+    internal/code_compare.cpp    # Compare code generation
+    internal/convert_img.cpp     # Convert image to Header (.h) or XPM (.xpm) file
+    internal/debugsettings.cpp   # Settings while running the Debug version of wxUiEditor
+    internal/msg_logging.cpp     # Message logging class
+    internal/msgframe.cpp        # Stores messages
+    internal/nodeinfo.cpp        # Node memory usage dialog
 
     # ttLib submodule files (see https://github.com/KeyWorksRW/ttLib repository)
 
@@ -193,16 +197,6 @@ Files:
     ../ttLib/src/ttstr.cpp       # Enhanced version of wxString
     ../ttLib/src/ttlibspace.cpp  # ttlib namespace functions
     ../ttLib/src/tttextfile.cpp  # Classes for reading and writing text files.
-
-DebugFiles:
-    # Debug-only files
-
-    debugging/msg_logging.cpp    # Message logging class
-    debugging/msgframe.cpp       # Stores messages
-
-    debugging/debugsettings.cpp         # Settings while running the Debug version of wxUiEditor
-    debugging/debugsettingsBase.cpp     # wxUiEditor generated file
-    debugging/msgframe_base.cpp         # wxUiEditor generated file
 
 Docs:
     # ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation

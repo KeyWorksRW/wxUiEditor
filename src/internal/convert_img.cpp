@@ -21,7 +21,7 @@
 
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
-#include "embedimg.h"  // auto-generated: embedimg_base.h and embedimg_base.cpp
+#include "convert_img.h"  // auto-generated: convert_img_base.h and convert_img_base.cpp
 
 #include "bitmaps.h"    // Map of bitmaps accessed by name
 #include "mainframe.h"  // MainFrame -- Main window frame
@@ -32,37 +32,13 @@
 
 using namespace wxue_img;
 
-// Any mime type in the following list with NOT be converted to PNG even if m_check_make_png is set to true
-
-// clang-format off
-inline constexpr const char* lst_no_png_conversion[] = {
-
-    "image/x-ani",
-    "image/x-cur",
-    "image/gif",
-    "image/x-ico",
-    "image/jpeg",
-
-};
-// clang-format on
-
-bool isConvertibleMime(const ttString& suffix)
+void MainFrame::OnConvertImageDlg(wxCommandEvent& WXUNUSED(event))
 {
-    for (auto& iter: lst_no_png_conversion)
-    {
-        if (suffix.is_sameas(iter))
-            return false;
-    }
-    return true;
-}
-
-void MainFrame::OnEmbedImageConverter(wxCommandEvent& WXUNUSED(event))
-{
-    EmbedImage dlg(this);
+    ConvertImageDlg dlg(this);
     dlg.ShowModal();
 }
 
-EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
+ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
 {
     m_cwd.assignCwd();
 
@@ -127,7 +103,7 @@ EmbedImage::EmbedImage(wxWindow* parent) : EmbedImageBase(parent)
     Layout();
 }
 
-void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
+void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 {
     ttString file = m_fileOriginal->GetTextCtrlValue();
 
@@ -377,7 +353,7 @@ void EmbedImage::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
     Layout();
 }
 
-void EmbedImage::OnComboXpmMask(wxCommandEvent& WXUNUSED(event))
+void ConvertImageDlg::OnComboXpmMask(wxCommandEvent& WXUNUSED(event))
 {
     if (!m_ForceXpmMask->GetValue())
     {
@@ -396,7 +372,7 @@ void EmbedImage::OnComboXpmMask(wxCommandEvent& WXUNUSED(event))
     Layout();
 }
 
-void EmbedImage::OnComboHdrMask(wxCommandEvent& WXUNUSED(event))
+void ConvertImageDlg::OnComboHdrMask(wxCommandEvent& WXUNUSED(event))
 {
     if (!m_ForceHdrMask->GetValue())
     {
@@ -415,7 +391,7 @@ void EmbedImage::OnComboHdrMask(wxCommandEvent& WXUNUSED(event))
     Layout();
 }
 
-void EmbedImage::OnConvert(wxCommandEvent& WXUNUSED(event))
+void ConvertImageDlg::OnConvert(wxCommandEvent& WXUNUSED(event))
 {
     if (IsHeaderPage())
         ImgageInHeaderOut();
@@ -425,7 +401,7 @@ void EmbedImage::OnConvert(wxCommandEvent& WXUNUSED(event))
     SetOutputBitmap();
 }
 
-void EmbedImage::ImgageInHeaderOut()
+void ConvertImageDlg::ImgageInHeaderOut()
 {
     ttString in_filename = m_fileOriginal->GetTextCtrlValue();
     if (in_filename.empty())
@@ -532,7 +508,7 @@ void EmbedImage::ImgageInHeaderOut()
     }
 }
 
-void EmbedImage::ImageInXpmOut()
+void ConvertImageDlg::ImageInXpmOut()
 {
     ttString in_filename = m_fileOriginal->GetTextCtrlValue();
     if (in_filename.empty())
@@ -571,7 +547,7 @@ void EmbedImage::ImageInXpmOut()
     }
 }
 
-wxColor EmbedImage::GetXpmTransparencyColor()
+wxColor ConvertImageDlg::GetXpmTransparencyColor()
 {
     wxColor rgb { 0, 0, 0 };
     ttString transparency = m_comboXpmMask->GetStringSelection();
@@ -616,7 +592,7 @@ wxColor EmbedImage::GetXpmTransparencyColor()
     return rgb;
 }
 
-wxColor EmbedImage::GetHdrTransparencyColor()
+wxColor ConvertImageDlg::GetHdrTransparencyColor()
 {
     wxColor rgb { 0, 0, 0 };
     ttString transparency = m_comboHdrMask->GetStringSelection();
@@ -661,7 +637,7 @@ wxColor EmbedImage::GetHdrTransparencyColor()
     return rgb;
 }
 
-void EmbedImage::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
+void ConvertImageDlg::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
 {
     if (!m_orgImage.IsOk())
         return;
@@ -690,7 +666,7 @@ void EmbedImage::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
 }
 
 // This is only used for XPM output
-void EmbedImage::OnConvertAlpha(wxCommandEvent& event)
+void ConvertImageDlg::OnConvertAlpha(wxCommandEvent& event)
 {
     if (m_fileOutput->GetPath().size() && m_fileOriginal->GetPath().size())
         m_btnConvert->Enable();
@@ -754,7 +730,7 @@ void EmbedImage::OnConvertAlpha(wxCommandEvent& event)
     }
 }
 
-void EmbedImage::OnForceXpmMask(wxCommandEvent& event)
+void ConvertImageDlg::OnForceXpmMask(wxCommandEvent& event)
 {
     if (!m_orgImage.IsOk())
         return;
@@ -814,7 +790,7 @@ void EmbedImage::OnForceXpmMask(wxCommandEvent& event)
     }
 }
 
-void EmbedImage::OnForceHdrMask(wxCommandEvent& event)
+void ConvertImageDlg::OnForceHdrMask(wxCommandEvent& event)
 {
     if (!m_orgImage.IsOk())
         return;
@@ -878,7 +854,7 @@ void EmbedImage::OnForceHdrMask(wxCommandEvent& event)
     }
 }
 
-void EmbedImage::OnOutputChange(wxFileDirPickerEvent& WXUNUSED(event))
+void ConvertImageDlg::OnOutputChange(wxFileDirPickerEvent& WXUNUSED(event))
 {
     if (m_fileOriginal->GetPath() != m_lastInputFile)
     {
@@ -891,7 +867,7 @@ void EmbedImage::OnOutputChange(wxFileDirPickerEvent& WXUNUSED(event))
     }
 }
 
-void EmbedImage::SetOutputBitmap()
+void ConvertImageDlg::SetOutputBitmap()
 {
     if (m_fileOriginal->GetPath().empty())
     {
@@ -947,7 +923,7 @@ void EmbedImage::SetOutputBitmap()
     Layout();
 }
 
-void EmbedImage::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
+void ConvertImageDlg::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
 {
     if (IsHeaderPage())
     {
@@ -956,7 +932,7 @@ void EmbedImage::OnCheckPngConversion(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void EmbedImage::AdjustOutputFilename()
+void ConvertImageDlg::AdjustOutputFilename()
 {
     ttString filename = m_fileOutput->GetPath();
     if (filename.size())
@@ -990,7 +966,7 @@ void EmbedImage::AdjustOutputFilename()
     }
 }
 
-void EmbedImage::SetSizeLabel()
+void ConvertImageDlg::SetSizeLabel()
 {
     wxString size_label;
     size_label << "Size: " << m_xpmImage.GetWidth() << " x " << m_xpmImage.GetHeight();
@@ -1012,7 +988,7 @@ void EmbedImage::SetSizeLabel()
     m_staticDimensions->SetLabelText(size_label);
 }
 
-void EmbedImage::EnableConvertButton()
+void ConvertImageDlg::EnableConvertButton()
 {
     if (m_lastOutputFile.size())
     {

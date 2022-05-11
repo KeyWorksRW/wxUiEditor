@@ -45,7 +45,7 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
     if (prop->GetNode()->isGen(gen_embedded_image))
     {
         types.Add(s_type_names[1]);  // Embed
-        types.Add(s_type_names[3]);  // SVG
+        types.Add(s_type_names[2]);  // SVG
         m_isEmbeddedImage = true;
     }
     else
@@ -53,9 +53,8 @@ PropertyGrid_Image::PropertyGrid_Image(const wxString& label, NodeProperty* prop
         // These need to match the array in img_props.h
         types.Add(s_type_names[0]);  // Art
         types.Add(s_type_names[1]);  // Embed
-        types.Add(s_type_names[2]);  // Header
-        types.Add(s_type_names[3]);  // SVG
-        types.Add(s_type_names[4]);  // XPM
+        types.Add(s_type_names[2]);  // SVG
+        types.Add(s_type_names[3]);  // XPM
     }
 
     AddPrivateChild(new wxEnumProperty("type", wxPG_LABEL, types, 0));
@@ -91,10 +90,6 @@ void PropertyGrid_Image::RefreshChildren()
         else if (m_img_props.type == "XPM")
         {
             Item(IndexImage)->SetHelpString("Specifies the XPM file to include.");
-        }
-        else if (m_img_props.type == "Header")
-        {
-            Item(IndexImage)->SetHelpString("Specifies an external file containing the image as an unsigned char array.");
         }
 
         if (m_old_image != m_img_props.image || m_old_type != m_img_props.type)
@@ -174,11 +169,7 @@ void PropertyGrid_Image::SetAutoComplete()
         wxDir dir;
         wxArrayString array_files;
         wxBusyCursor hourglass;
-        if (m_img_props.type == "Header")
-        {
-            dir.GetAllFiles(art_dir, &array_files, "*.h_img", wxDIR_FILES);
-        }
-        else if (m_img_props.type == "Embed")
+        if (m_img_props.type == "Embed")
         {
             // For auto-completion, we limit the array to the most common image types
             dir.GetAllFiles(art_dir, &array_files, "*.png", wxDIR_FILES);
@@ -223,7 +214,7 @@ wxVariant PropertyGrid_Image::ChildChanged(wxVariant& thisValue, int childIndex,
                 if (m_isEmbeddedImage && index > 0)
                 {
                     // REVIEW: [KeyWorks - 04-19-2022] This will only work if we only allow two iamge types (Embed and SVG)
-                    img_props.type = s_type_names[3];
+                    img_props.type = s_type_names[2];  // SVG image type
                 }
                 else
                 {

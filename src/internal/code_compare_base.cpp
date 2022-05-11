@@ -8,7 +8,7 @@
 
 #include "code_compare_base.h"
 
-#include "../debugging/WinMerge.xpm"
+#include "WinMerge.xpm"
 
 bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style, const wxString &name)
@@ -34,7 +34,11 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer->Add(m_list_changes, wxSizerFlags().Border(wxALL));
 
     m_btn = new wxButton(this, wxID_ANY, "&WinMerge...");
+#if wxCHECK_VERSION(3, 1, 6)
+        m_btn->SetBitmap(wxBitmapBundle::FromBitmap(wxImage(WinMerge_xpm)));
+#else
     m_btn->SetBitmap(wxImage(WinMerge_xpm));
+#endif  // wxCHECK_VERSION(3, 1, 6)
     m_btn->Enable(false);
     box_sizer->Add(m_btn, wxSizerFlags().Border(wxALL));
 

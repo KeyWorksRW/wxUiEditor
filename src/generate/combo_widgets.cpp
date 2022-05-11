@@ -193,7 +193,7 @@ wxObject* ChoiceGenerator::CreateMockup(Node* node, wxObject* parent)
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel <  (to_int) array.size())
+            if (sel > -1 && sel < (to_int) array.size())
                 widget->SetSelection(sel);
         }
     }
@@ -294,7 +294,7 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenSettings(Node* node, size_t& /* a
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel <  (to_int) array.size())
+            if (sel > -1 && sel < (to_int) array.size())
             {
                 code << "\n";
                 code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
@@ -340,7 +340,7 @@ wxObject* BitmapComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel <  (to_int) array.size())
+            if (sel > -1 && sel < (to_int) array.size())
                 widget->SetSelection(sel);
         }
     }
@@ -454,7 +454,7 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenSettings(Node* node, size
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel <  (to_int) array.size())
+            if (sel > -1 && sel < (to_int) array.size())
             {
                 code << "\n";
                 code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";

@@ -59,7 +59,7 @@
 #endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    #include "debugging/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
+    #include "internal/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
 #endif
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
@@ -77,6 +77,7 @@ enum
 
     id_DebugCurrentTest,
     id_DebugPreferences,
+    id_ConvertImage,
     id_ShowLogger,
     id_NodeMemory,
     id_CodeDiffDlg,
@@ -127,6 +128,7 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_DebugPreferences, "Test &Settings...", "Settings to use in testing builds");
     menuInternal->AppendSeparator();
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
+    menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
 
     m_submenu_import_recent = new wxMenu();
     m_menuFile->AppendSeparator();
@@ -257,6 +259,7 @@ MainFrame::MainFrame() :
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     Bind(wxEVT_MENU, &MainFrame::OnFindWidget, this, id_FindWidget);
+    Bind(wxEVT_MENU, &MainFrame::OnConvertImageDlg, this, id_ConvertImage);
 
     Bind(
         wxEVT_MENU,

@@ -7,7 +7,7 @@
 
 #include <wx/config.h>  // wxConfig base header
 
-#include "debugsettings.h"  // auto-generated: debugsettingsBase.h and debugsettingsBase.cpp
+#include "debugsettings.h"  // auto-generated: debugsettings_base.h and debugsettings_base.cpp
 
 #include "mainapp.h"  // App -- App class
 

@@ -35,8 +35,6 @@ const char* suffixes[] = {
     "@2x",
 };
 
-bool isConvertibleMime(const ttString& suffix);  // declared in embedimg.cpp
-
 inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
 {
     ttlib::multiview parts(description, ';', tt::TRIM::both);

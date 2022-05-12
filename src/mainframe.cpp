@@ -643,8 +643,6 @@ void MainFrame::ProjectLoaded()
     m_undo_stack.clear();
     m_undo_stack_size = 0;
 
-    m_selected_node = wxGetApp().GetProjectPtr();
-
     if (!m_iswakatime_bound)
     {
         m_iswakatime_bound = true;
@@ -656,7 +654,16 @@ void MainFrame::ProjectLoaded()
              });
     }
 
-    UpdateFrame();
+    m_selected_node = wxGetApp().GetProjectPtr();
+
+    // We can't use FireSelectedEvent() here because we need to let other event handlers finish with the project load
+    // event handling.
+
+    CustomEvent node_event(EVT_NodeSelected, m_selected_node.get());
+    for (auto handler: m_custom_event_handlers)
+    {
+        handler->AddPendingEvent(node_event);
+    }
 }
 
 void MainFrame::ProjectSaved()

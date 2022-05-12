@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "../ui/newwizard_base.h"  // auto-generated: ../ui/newwizard_base.h and ../ui/newwizard_base.cpp
+#include "wxui/newwizard_base.h"  // auto-generated: wxui/newwizard_base.h and wxui/newwizard_base.cpp
 
 #include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
 #include "mainframe.h"            // MainFrame -- Main window frame

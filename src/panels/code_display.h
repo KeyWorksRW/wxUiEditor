@@ -11,7 +11,7 @@
 
 #include "tttextfile.h"  // ttlib::viewfile
 
-#include "../ui/codedisplay_base.h"
+#include "codedisplay_base.h"
 
 #include "write_code.h"  // WriteCode -- Write code to Scintilla or file
 

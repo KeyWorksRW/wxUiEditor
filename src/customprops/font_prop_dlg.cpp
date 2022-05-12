@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "font_prop_dlg.h"  // auto-generated: ../ui/fontpropdlg_base.h and ../ui/fontpropdlg_base.cpp
+#include "font_prop_dlg.h"  // auto-generated: wxui/fontpropdlg_base.h and wxui/fontpropdlg_base.cpp
 
 #include "../nodes/node.h"        // Node class
 #include "../nodes/node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes

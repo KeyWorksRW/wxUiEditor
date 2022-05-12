@@ -21,7 +21,7 @@ Options:
     TargetDir:        ../build/CMakeFiles/CMakeTmp   # just a temporary location for the library
     Natvis:           wxui.natvis # MSVC Debug visualizer
 
-    IncDirs:          ./;nodes;generate;utils;customprops;ui;../wxSnapshot/include;../wxSnapshot/win;../ttLib/include;../pugixml
+    IncDirs:          ./;nodes;generate;utils;customprops;ui;wxui;../pugixml;../ttLib/include;../wxSnapshot/include;../wxSnapshot/win
 
     Libs_dbg:         ../build/wxSnapshot/Debug/wxCLib.lib;../build/wxSnapshot/Debug/wxWidgets.lib
     Libs_rel:         ../build/wxSnapshot/Release/wxCLib.lib;../build/wxSnapshot/Release/wxWidgets.lib
@@ -171,10 +171,9 @@ Files:
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ui/insertwidget.cpp         # Dialog to lookup and insert a widget
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
-    ui/startupdlg_base.cpp      # Startup dialog
 
     # wxUiEditor generated files
-    ui/wxui_code.cmake
+    wxui/wxui_code.cmake
 
     # Internal Files -- only valid if INTERNAL_WIDGETS is defined
     internal/wxui_code.cmake

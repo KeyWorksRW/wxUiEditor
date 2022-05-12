@@ -9,7 +9,7 @@
 
 #include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
 
-#include "convert_img_base.h"
+#include "internal/convert_img_base.h"  // ConvertImageBase
 
 class ConvertImageDlg : public ConvertImageBase
 {

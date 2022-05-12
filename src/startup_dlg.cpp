@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "ui/startupdlg_base.h"  // auto-generated: ui/startupdlg_base.h and ui/startupdlg_base.cpp
+#include "wxui/startupdlg_base.h"  // auto-generated: wxui/startupdlg_base.h and wxui/startupdlg_base.cpp
 
 #include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame

@@ -84,7 +84,7 @@ add_compile_definitions(BETA)
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates. Specifying the full path and extension
 # means ninja sees this as a normal dependency that didn't change any time one of the files it specifies changes.
 
-include(src/ui/wxui_code.cmake)  # This will set ${wxue_generated_code} with list of generated files
+include(src/wxui/wxui_code.cmake)  # This will set ${wxue_generated_code} with list of generated files
 include(src/file_list.cmake)     # This will set ${file_list} with a list of source files
 
 if (INTERNAL_TESTING)
@@ -167,29 +167,33 @@ if (WIN32)
 endif()
 
 target_include_directories(wxUiEditor PRIVATE
-    ${widget_dir}/include
-    ${setup_dir}
     src/
     src/nodes
     src/generate
     src/utils
     src/customprops
     src/ui
+    src/wxui
     pugixml
     ttLib/include
+
+    ${widget_dir}/include
+    ${setup_dir}
 )
 
 target_include_directories(check_build PRIVATE
-    ${widget_dir}/include
-    ${setup_dir}
     src/
     src/nodes
     src/generate
     src/utils
     src/customprops
     src/ui
+    src/wxui
     pugixml
     ttLib/include
+
+    ${widget_dir}/include
+    ${setup_dir}
 )
 
 # Packaging Instructions

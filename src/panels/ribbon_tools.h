@@ -9,7 +9,7 @@
 #include <wx/ribbon/bar.h>      // Top-level component of the ribbon-bar-style interface
 #include <wx/ribbon/toolbar.h>  // Ribbon-style tool bar
 
-#include "ribbonpanel_base.h"
+#include "wxui/ribbonpanel_base.h"
 
 #include <wx/aui/auibar.h>
 #include <wx/aui/auibook.h>

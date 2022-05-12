@@ -11,9 +11,9 @@
 
 #include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
 
-#include "../ui/fontpropdlg_base.h"
+#include "font_prop.h"  // FontProperty class
 
-#include "../utils/font_prop.h"  // FontProperty class
+#include "wxui/fontpropdlg_base.h"  // FontPropDlgBase
 
 class NodeProperty;
 

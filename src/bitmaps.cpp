@@ -13,8 +13,8 @@
 #include <wx/animate.h>  // wxAnimation and wxAnimationCtrl
 #include <wx/mstream.h>  // Memory stream classes
 
-#include "ribbonpanel_base.h"  // Most of the embedded generator images will be declared here
-#include "ui_images.h"         // This is generated from the Images form
+#include "wxui/ribbonpanel_base.h"  // Most of the embedded generator images will be declared here
+#include "wxui/ui_images.h"         // This is generated from the Images form
 
 #include "bitmaps.h"
 

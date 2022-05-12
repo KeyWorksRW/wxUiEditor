@@ -10,13 +10,14 @@
 
 #include "custom_colour_prop.h"
 
-#include "../nodes/node.h"       // Node class
-#include "../nodes/node_prop.h"  // NodeProperty class
-#include "gen_enums.h"           // Enumerations for generators
-#include "utils.h"               // Utility functions that work with properties
+#include "gen_enums.h"  // Enumerations for generators
+#include "node.h"       // Node class
+#include "node_prop.h"  // NodeProperty class
+#include "utils.h"      // Utility functions that work with properties
 
 #include "../custom_ctrls/colour_rect_ctrl.h"  // ColourRectCtrl -- Control that displays a solid color
-#include "../ui/colourprop_base.h"             // auto-generated: ../ui/colourprop_base.h ../ui/colourprop_base.cpp
+
+#include "wxui/colourprop_base.h"  // auto-generated: wxui/colourprop_base.h wxui/colourprop_base.cpp
 
 EditColourProperty::EditColourProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)

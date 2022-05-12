@@ -9,9 +9,9 @@
 
 #include "txt_string_prop.h"
 
-#include "../nodes/node_prop.h"  // NodeProperty class
+#include "node_prop.h"  // NodeProperty class
 
-#include "../ui/editstringdialog_base.h"  // auto-generated: ../ui/editstringdialog_base.cpp
+#include "wxui/editstringdialog_base.h"  // auto-generated: wxui/editstringdialog_base.cpp
 
 EditStringProperty::EditStringProperty(const wxString& label, NodeProperty* prop) :
     wxStringProperty(label, wxPG_LABEL, prop->as_wxString()), m_prop(prop)

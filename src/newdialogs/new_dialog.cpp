@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "../ui/newdialog_base.h"  // auto-generated: ../ui/newdialog_base.h and ../ui/newdialog_base.cpp
+#include "wxui/newdialog_base.h"  // auto-generated: wxui/newdialog_base.h and wxui/newdialog_base.cpp
 
 #include "../panels/nav_panel.h"  // NavigationPanel -- Navigation Panel
 #include "mainframe.h"            // MainFrame -- Main window frame

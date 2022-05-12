@@ -418,7 +418,6 @@
       base_file="gridbag_item_base"
       class_name="GridBagItemBase"
       derived_class_name="GridBagItem"
-      derived_file="gridbag_item"
       title="Append or Insert into wxGridBagSizer"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -506,7 +505,6 @@
       base_file="import_base"
       class_name="ImportBase"
       derived_class_name="ImportDlg"
-      derived_file="import_dlg"
       icon="SVG;../art_src/import.svg;[16,16]"
       title="New Imported Project"
       wxEVT_INIT_DIALOG="OnInitDialog">
@@ -1914,7 +1912,6 @@
       base_file="optionsdlg_base"
       class_name="OptionsDlgBase"
       derived_class_name="OptionsDlg"
-      derived_file="optionsdlg"
       title="Options"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -3118,8 +3115,7 @@
       class="PanelForm"
       base_file="codedisplay_base"
       class_name="CodeDisplayBase"
-      derived_class_name="CodeDisplay"
-      derived_file="../panels/code_display.cpp">
+      derived_class_name="CodeDisplay">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -3143,7 +3139,6 @@
       base_file="fontpropdlg_base"
       class_name="FontPropDlgBase"
       derived_class_name="FontPropDlg"
-      derived_file="../customprops/font_prop_dlg.cpp"
       title="Font Property"
       wxEVT_INIT_DIALOG="OnInit">
       <node

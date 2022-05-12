@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "eventhandlerdlg_base.h"
+#include "wxui/eventhandlerdlg_base.h"  // EventHandlerDlgBase
 
 class NodeEvent;
 class Node;

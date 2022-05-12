@@ -10,7 +10,7 @@
 #include <wx/artprov.h>   // wxArtProvider class
 #include <wx/imaglist.h>  // wxImageList base header
 
-#include "art_prop_dlg.h"  // auto-generated: ../ui/artpropdlg_base.h and ../ui/artpropdlg_base.cpp
+#include "art_prop_dlg.h"  // auto-generated: wxui/artpropdlg_base.h and wxui/artpropdlg_base.cpp
 
 #include "mainframe.h"  // MainFrame -- Main window frame
 #include "node.h"       // Node class

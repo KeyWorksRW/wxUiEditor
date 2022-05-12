@@ -13,7 +13,7 @@
 #include "lambdas.h"             // Functions for formatting and storage of lamda events
 #include "mainframe.h"           // MainFrame -- Main window frame
 
-#include "../ui/editcodedialog_base.h"  // auto-generated: ../ui/editcodedialog_base.cpp
+#include "wxui/editcodedialog_base.h"  // auto-generated: wxui/editcodedialog_base.cpp
 
 // Defined in base_panel.cpp
 extern const char* g_u8_cpp_keywords;

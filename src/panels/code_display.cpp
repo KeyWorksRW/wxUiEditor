@@ -8,7 +8,7 @@
 #include <wx/fdrepdlg.h>  // wxFindReplaceDialog class
 #include <wx/msgdlg.h>    // common header and base class for wxMessageDialog
 
-#include "code_display.h"  // auto-generated: ../ui/codedisplay_base.h and ../ui/codedisplay_base.cpp
+#include "code_display.h"  // auto-generated: wxui/codedisplay_base.h and wxui/codedisplay_base.cpp
 
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class

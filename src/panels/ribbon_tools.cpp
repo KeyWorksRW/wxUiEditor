@@ -10,7 +10,7 @@
 #include <wx/ribbon/panel.h>  // Ribbon-style container for a group of related tools / controls
 #include <wx/sizer.h>         // provide wxSizer class for layout
 
-#include "ribbon_tools.h"  // auto-generated: ../ui/ribbonpanel_base.h and ../ui/ribbonpanel_base.cpp
+#include "ribbon_tools.h"  // auto-generated: wxui/ribbonpanel_base.h and wxui/ribbonpanel_base.cpp
 
 #include "gen_enums.h"     // Enumerations for generators
 #include "mainframe.h"     // MainFrame -- Main window frame

@@ -23,8 +23,8 @@ using namespace GenEnum;
 #include "../import/import_wxcrafter.h"  // WxCrafter -- Import a wxCrafter project
 #include "../import/import_wxglade.h"    // WxGlade -- Import a wxGlade file
 #include "../import/import_wxsmith.h"    // WxSmith -- Import a wxSmith file
-#include "../ui/import_dlg.h"            // ImportDlg -- Dialog to create a new project
 #include "../winres/import_winres.h"     // WinResource -- Parse a Windows resource file
+#include "import_dlg.h"                  // ImportDlg -- Dialog to create a new project
 #include "node_gridbag.h"                // GridBag -- Create and modify a node containing a wxGridBagSizer
 
 using namespace GenEnum;

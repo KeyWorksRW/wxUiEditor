@@ -7,7 +7,7 @@
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "html_string_prop.h"  // auto-generated: ../ui/edit_html_dialog_base.h and ../ui/edit_html_dialog_base.cpp
+#include "html_string_prop.h"  // auto-generated: wxui/edit_html_dialog_base.h and wxui/edit_html_dialog_base.cpp
 
 #include "../nodes/node_prop.h"  // NodeProperty class
 #include "lambdas.h"             // Functions for formatting and storage of lamda events

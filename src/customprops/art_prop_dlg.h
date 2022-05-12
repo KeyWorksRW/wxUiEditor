@@ -9,7 +9,7 @@
 
 #include <wx/artprov.h>  // wxArtProvider class
 
-#include "../ui/artpropdlg_base.h"
+#include "wxui/artpropdlg_base.h"  // ArtPropertyDlgBase
 
 #include "img_props.h"  // ImageProperties -- Handles property grid image properties
 

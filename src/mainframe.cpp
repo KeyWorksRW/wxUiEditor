@@ -50,8 +50,9 @@
 #include "panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
 #include "panels/ribbon_tools.h"    // RibbonPanel -- Displays component tools in a wxRibbonBar
 
-#include "ui/importwinres_base.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
-#include "ui/insertwidget_base.h"  // InsertWidget -- Dialog to lookup and insert a widget
+#include "wxui/importwinres_base.h"  // ImportWinResDlg -- Dialog for Importing a Windows resource file
+#include "wxui/insertwidget_base.h"  // InsertWidget -- Dialog to lookup and insert a widget
+#include "wxui/ui_images.h"          // This is generated from the Images form
 
 #if defined(INTERNAL_TESTING)
     #include "internal/code_compare_base.h"
@@ -65,8 +66,6 @@
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
 
 #include "pugixml.hpp"
-
-#include "ui_images.h"
 
 using namespace wxue_img;
 using namespace GenEnum;

@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "../ui/newframe_base.h"  // auto-generated: ../ui/newframe_base.h and ../ui/newframe_base.cpp
+#include "wxui/newframe_base.h"  // auto-generated: wxui/newframe_base.h and wxui/newframe_base.cpp
 
 #include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar

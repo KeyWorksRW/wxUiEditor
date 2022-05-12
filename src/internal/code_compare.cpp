@@ -13,7 +13,7 @@
 
 #include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
 
-#include "code_compare_base.h"
+#include "internal/code_compare_base.h"
 
 #include "gen_base.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "mainapp.h"      // App -- Main application class

@@ -13,9 +13,9 @@
 #include "node_prop.h"  // NodeProperty -- NodeProperty class
 #include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
 
-#include "newdialog_base.h"  // NewDialog -- Dialog for creating a new project dialog
-#include "newframe_base.h"   // NewFrame -- Dialog for creating a new project wxFrame
-#include "newwizard_base.h"  // NewWizard -- Dialog for creating a new wizard
+#include "wxui/newdialog_base.h"  // NewDialog -- Dialog for creating a new project dialog
+#include "wxui/newframe_base.h"   // NewFrame -- Dialog for creating a new project wxFrame
+#include "wxui/newwizard_base.h"  // NewWizard -- Dialog for creating a new wizard
 
 #include "../panels/navpopupmenu.h"  // NavPopupMenu -- Context-menu for Navigation Panel
 

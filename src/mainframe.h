@@ -14,7 +14,7 @@
 #include "mainapp.h"     // App class
 #include "undo_stack.h"  // UndoAction -- Maintain a undo and redo stack
 
-#include "ui/mainframe_base.h"
+#include "wxui/mainframe_base.h"
 
 using namespace GenEnum;
 

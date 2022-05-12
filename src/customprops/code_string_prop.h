@@ -10,7 +10,7 @@
 #include <wx/propgrid/editors.h>  // wxPropertyGrid editors
 #include <wx/propgrid/props.h>    // wxPropertyGrid Property Classes
 
-#include "editcodedialog_base.h"
+#include "wxui/editcodedialog_base.h"  // EditCodeDialogBase
 
 class Node;
 class NodeEvent;

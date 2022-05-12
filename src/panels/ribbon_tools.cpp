@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Displays node creation tools in a wxRibbonBar
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,7 @@
 
 #include "gen_enums.h"     // Enumerations for generators
 #include "mainframe.h"     // MainFrame -- Main window frame
+#include "node.h"          // Node class
 #include "node_creator.h"  // NodeCreator class
 
 #include "newdialog_base.h"  // NewDialog -- Dialog for creating a new project dialog
@@ -40,6 +41,12 @@ RibbonPanel::RibbonPanel(wxWindow* parent) : RibbonPanelBase(parent) {}
 void RibbonPanel::OnToolClick(wxRibbonToolBarEvent& event)
 {
     size_t id = event.GetId();
+
+    if (id == CreateNewRibbon && (!wxGetFrame().GetSelectedNode() || wxGetFrame().GetSelectedNode()->isGen(gen_Project)))
+    {
+        id = CreateNewFormRibbon;
+    }
+
     if (id < gen_name_array_size)
     {
         wxGetFrame().CreateToolNode(static_cast<GenName>(event.GetId()));

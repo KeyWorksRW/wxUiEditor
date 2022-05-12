@@ -18,6 +18,18 @@ using namespace GenEnum;
 
 bool Node::CreateToolNode(GenName name)
 {
+    if (isGen(gen_Project))
+    {
+        if (name == gen_wxMenuBar)
+        {
+            name = gen_MenuBar;
+        }
+        else if (name == gen_wxToolBar)
+        {
+            name = gen_ToolBar;
+        }
+    }
+
     auto new_node = CreateChildNode(name);
     if (!new_node)
         return false;

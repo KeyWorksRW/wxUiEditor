@@ -27,7 +27,7 @@ Options:
     Libs_rel:         ../build/wxSnapshot/Release/wxCLib.lib;../build/wxSnapshot/Release/wxWidgets.lib
 
 # file_list.cmake
-# ui/wxui_code.cmake
+# wxui/wxui_code.cmake
 
 Files:
     wxUiEditor.rc         # Only processed when compiling for Windows, ignored otherwise

@@ -23,12 +23,32 @@ extern const char* g_u8_cpp_keywords;
 
 const int node_marker = 1;
 
-CodeDisplay::CodeDisplay(wxWindow* parent) : CodeDisplayBase(parent)
-{
-    // On Windows, this saves converting the UTF16 characters to ANSI.
-    m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
+#if defined(XRC_ENABLED)
+const char* g_xrc_keywords = "resource";
+#endif
 
-    // clang-format off
+CodeDisplay::CodeDisplay(wxWindow* parent, bool is_XML) : CodeDisplayBase(parent), m_isXML(is_XML)
+{
+    if (m_isXML)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_XML);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
+
+        m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
+        m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#E91AFF"));
+        m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
+        m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
+        m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
+    }
+    else
+    {
+        // On Windows, this saves converting the UTF16 characters to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
+
+        // clang-format off
 
     // Add regular classes that have different generator class names
 
@@ -44,40 +64,40 @@ CodeDisplay::CodeDisplay(wxWindow* parent) : CodeDisplayBase(parent)
 
         );
 
-    // clang-format on
+        // clang-format on
 
-    for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
-    {
-        if (!iter)
+        for (auto iter: g_NodeCreator.GetNodeDeclarationArray())
         {
-            // This will happen if there is an enumerated value but no generator for it
-            continue;
+            if (!iter)
+            {
+                // This will happen if there is an enumerated value but no generator for it
+                continue;
+            }
+
+            if (!iter->DeclName().is_sameprefix("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
+                continue;
+            widget_keywords << ' ' << iter->DeclName();
         }
 
-        if (!iter->DeclName().is_sameprefix("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
-            continue;
-        widget_keywords << ' ' << iter->DeclName();
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
+        m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
+        m_scintilla->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
+        m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
     }
-
-    // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-    m_scintilla->SendMsg(SCI_SETKEYWORDS, 1, (wxIntPtr) widget_keywords.c_str());
 
     // TODO: [KeyWorks - 01-02-2022] We do this because currently font selection uses a facename which is not cross-platform.
     // See issue #597.
     wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
-
-    m_scintilla->StyleSetBold(wxSTC_C_WORD, true);
-    m_scintilla->StyleSetForeground(wxSTC_C_WORD, *wxBLUE);
-    m_scintilla->StyleSetForeground(wxSTC_C_WORD2, wxColour("#E91AFF"));
-    m_scintilla->StyleSetForeground(wxSTC_C_STRING, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(49, 106, 197));
-    m_scintilla->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_C_COMMENTDOC, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_C_COMMENTLINEDOC, wxColour(0, 128, 0));
-    m_scintilla->StyleSetForeground(wxSTC_C_NUMBER, *wxRED);
 
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
 

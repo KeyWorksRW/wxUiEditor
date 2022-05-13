@@ -52,6 +52,19 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode
         m_hPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
     }
+#if defined(XRC_ENABLED)
+    else if (GenerateDerivedCode == -1)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, true);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
+        // which properties are not supported.
+
+        m_hPanel = new CodeDisplay(m_notebook);
+        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+    }
+#endif
     else
     {
         m_cppPanel = new CodeDisplay(m_notebook);
@@ -131,7 +144,7 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
     {
         m_cppPanel->GetEventHandler()->ProcessEvent(event);
     }
-    else if (text == "header")
+    else if (text == "header" || text == "info")
     {
         m_hPanel->GetEventHandler()->ProcessEvent(event);
     }

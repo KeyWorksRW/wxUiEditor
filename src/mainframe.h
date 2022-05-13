@@ -292,7 +292,7 @@ private:
 
     BasePanel* m_generatedPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };
-#if defined(INTERNAL_TESTING)
+#if defined(XRC_ENABLED)
     BasePanel* m_xrcPanel { nullptr };
 #endif
 

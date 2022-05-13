@@ -1024,6 +1024,12 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
         {
             m_derivedPanel->GenerateBaseClass();
         }
+#if defined(XRC_ENABLED)
+        else if (page == m_xrcPanel)
+        {
+            m_xrcPanel->GenerateBaseClass();
+        }
+#endif  // XRC_ENABLED
     }
 }
 
@@ -1068,9 +1074,9 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_derivedPanel = new BasePanel(m_notebook, this, 1);
     m_notebook->AddPage(m_derivedPanel, "Derived", false, wxWithImages::NO_IMAGE);
 
-#if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    // m_xrcPanel = new BasePanel(m_notebook, this, -1);
-    // m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
+#if defined(XRC_ENABLED)
+    m_xrcPanel = new BasePanel(m_notebook, this, -1);
+    m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 #endif
 
     return m_notebook;

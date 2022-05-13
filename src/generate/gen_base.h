@@ -81,6 +81,7 @@ public:
 
     // code for this is in gen_xrc.cpp
     void GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
+    void PreviewXrcClass(Node* form_node);
 
     auto GetHeaderWriter() { return m_header; }
     auto GetSrcWriter() { return m_source; }

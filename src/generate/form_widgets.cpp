@@ -68,6 +68,59 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
     return true;
 }
 
+bool DialogFormGenerator::GenXRC(Node* node, BaseCodeGenerator* code_gen)
+{
+    auto m_source = code_gen->GetSrcWriter();
+    m_source->writeLine(ttlib::cstr("<object class=\"wxDialog\" name=\"") << node->prop_as_string(prop_class_name) << "\">");
+
+    m_source->Indent();
+    if (node->HasValue(prop_title))
+    {
+        m_source->writeLine(ttlib::cstr("<title>") << node->prop_as_string(prop_title) << "</title>");
+    }
+    if (node->HasValue(prop_center))
+    {
+        m_source->writeLine(node->prop_as_string(prop_center).is_sameas("no") ? "<centered>0</centered>" : "<centered>1</centered>");
+    }
+    m_source->Unindent();
+
+    return true;
+}
+
+bool DialogFormGenerator::GenXRCInfo(Node* node, BaseCodeGenerator* code_gen)
+{
+    auto m_header = code_gen->GetHeaderWriter();
+
+    std::set<std::string> unsupported;
+
+    if (node->prop_as_bool(prop_persist))
+    {
+        unsupported.emplace("persist");
+    }
+    if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
+        node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
+    {
+        unsupported.emplace("dialog can only be centered in both directions");
+    }
+
+    if (unsupported.size())
+    {
+        m_header->writeLine("wxFrame unsupported properties (unavailable in XRC):");
+
+        m_header->Indent();
+        for (auto& iter: unsupported)
+        {
+            m_header->writeLine(iter);
+        }
+        m_header->Unindent();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 std::optional<ttlib::cstr> DialogFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);

@@ -270,6 +270,13 @@ protected:
 
 #endif
 
+#if defined(XRC_ENABLED)
+
+    void OnPreviewXrc(wxCommandEvent& e);
+
+#endif
+
+
     wxWindow* CreateNoteBook(wxWindow* parent);
 
     void CreateSplitters();

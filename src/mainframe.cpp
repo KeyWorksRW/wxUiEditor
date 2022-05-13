@@ -80,6 +80,7 @@ enum
     id_ShowLogger,
     id_NodeMemory,
     id_CodeDiffDlg,
+    id_PreviewXRC,
     id_FindWidget
 };
 
@@ -128,6 +129,12 @@ MainFrame::MainFrame() :
     menuInternal->AppendSeparator();
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
     menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
+
+    #if defined(XRC_ENABLED)
+
+    menuInternal->Append(id_PreviewXRC, "Preview XRC Dialog...", "Show a dialog using XRC");
+
+    #endif
 
     m_submenu_import_recent = new wxMenu();
     m_menuFile->AppendSeparator();
@@ -277,6 +284,11 @@ MainFrame::MainFrame() :
         id_DebugPreferences);
 
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
+
+    #if defined(XRC_ENABLED)
+    Bind(wxEVT_MENU, &MainFrame::OnPreviewXrc, this, id_PreviewXRC);
+    #endif
+
 #endif
 
     AddCustomEventHandler(GetEventHandler());

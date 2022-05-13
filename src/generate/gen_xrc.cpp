@@ -9,7 +9,10 @@
 #include <thread>
 #include <unordered_set>
 
-#include <wx/filename.h>  // wxFileName - encapsulates a file path
+#include <wx/filename.h>    // wxFileName - encapsulates a file path
+#include <wx/mstream.h>     // Memory stream classes
+#include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
+#include <wx/xrc/xmlres.h>  // XML resources
 
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
@@ -17,6 +20,7 @@
 
 #include "gen_common.h"   // GeneratorLibrary -- Generator classes
 #include "mainapp.h"      // App -- Main application class
+#include "mainframe.h"    // MainFrame -- Main window frame
 #include "node.h"         // Node class
 #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
 #include "utils.h"        // Utility functions that work with properties
@@ -30,6 +34,79 @@ inline constexpr const auto txt_XRC_FOOTER = R"===(</resource>
 )===";
 
 #if defined(XRC_ENABLED)
+
+static bool s_isXmlInitalized { false };
+
+void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
+{
+    if (!m_selected_node)
+    {
+        wxMessageBox("You need to select a dialog first.", "XRC Dialog Preview");
+        return;
+    }
+
+    auto form_node = m_selected_node.get();
+    if (!form_node->IsForm())
+    {
+        form_node = form_node->get_form();
+    }
+
+    if (!form_node->isGen(gen_wxDialog))
+    {
+        wxMessageBox("Only dialogs can be previewed.", "XRC Dialog Preview");
+        return;
+    }
+
+    try
+    {
+        BaseCodeGenerator codegen;
+
+        // We probably won't ever use h_cw, but BaseCodeGenerator expects it to exist, so this avoids adding a bunch of
+        // conditional code to determine if it actually exists or not.
+        auto h_cw = std::make_unique<FileCodeWriter>("XRC-info");
+        codegen.SetHdrWriteCode(h_cw.get());
+
+        auto xrc_cw = std::make_unique<FileCodeWriter>("XRC");
+        codegen.SetSrcWriteCode(xrc_cw.get());
+        codegen.GenerateXrcClass(form_node);
+
+        wxMemoryInputStream stream(xrc_cw->GetString().c_str(), xrc_cw->GetString().size());
+        wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
+        if (!xmlDoc->IsOk())
+        {
+            wxMessageBox("Invalid XRC file generated -- it cannot be loaded.", "XRC Dialog Preview");
+            return;
+        }
+
+        if (!s_isXmlInitalized)
+        {
+            wxXmlResource::Get()->InitAllHandlers();
+            s_isXmlInitalized = true;
+        }
+
+        if (!wxXmlResource::Get()->LoadDocument(xmlDoc.release()))
+        {
+            wxMessageBox("wxWidgets could not parse the XRC data.", "XRC Dialog Preview");
+            return;
+        }
+
+        wxDialog dlg;
+        if (wxXmlResource::Get()->LoadDialog(&dlg, NULL, form_node->prop_as_string(prop_class_name)))
+        {
+            dlg.ShowModal();
+        }
+        else
+        {
+            wxMessageBox(ttlib::cstr("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
+                         "XRC Dialog Preview");
+        }
+    }
+    catch (const std::exception& TESTING_PARAM(e))
+    {
+        MSG_ERROR(e.what());
+        wxMessageBox("An internal error occurred generating XRC code", "XRC Dialog Preview");
+    }
+}
 
 void GenXrcNode(Node* node, BaseCodeGenerator* code_gen)
 {

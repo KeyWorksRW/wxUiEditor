@@ -60,6 +60,11 @@ public:
     // Return true if all construction and settings code was written to src_code
     bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
 
+#if defined(XRC_ENABLED)
+    bool GenXRC(Node* node, BaseCodeGenerator* code_gen) override;
+    bool GenXRCInfo(Node* node, BaseCodeGenerator* code_gen) override;
+#endif
+
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 

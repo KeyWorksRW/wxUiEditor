@@ -1202,25 +1202,7 @@ ttlib::cstr GenFormSettings(Node* node)
 
             code << ");";
         }
-
-        if (node->HasValue(prop_icon))
-        {
-            if (code.size())
-                code << '\n';
-            auto image_code = GenerateBitmapCode(node->prop_as_string(prop_icon));
-            if (!image_code.contains(".Scale") && image_code.is_sameprefix("wxImage("))
-            {
-                code << "SetIcon(wxIcon(" << image_code.subview(sizeof("wxImage")) << ");";
-            }
-            else
-            {
-                code << "wxIcon icon;\n";
-                code << "icon.CopyFromBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_icon)) << ");\n";
-                code << "SetIcon(wxIcon(icon));";
-            }
-        }
     }
-
     if (node->prop_as_string(prop_window_extra_style).size())
         code << "\nSetExtraStyle(GetExtraStyle() | " << node->prop_as_string(prop_window_extra_style) << ");";
 

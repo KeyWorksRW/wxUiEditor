@@ -248,6 +248,12 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenEvents(NodeEvent* event, const
 
 std::optional<ttlib::cstr> FrameFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
+    if (auto code = GenerateIconCode(node->prop_as_string(prop_icon)); code.size())
+    {
+        code << GenFormSettings(node);
+        return code;
+    }
+
     return GenFormSettings(node);
 }
 
@@ -538,7 +544,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
 
     ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
-    if (parts[IndexImage].empty())
+    if (parts.size() < 2 || parts[IndexImage].empty())
     {
         return code;
     }

@@ -1351,6 +1351,12 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
             m_source->writeLine(result.value(), indent::none);
             m_source->Indent();
         }
+
+        if (form_node->isGen(gen_wxFrame))
+        {
+            GenerateHandlers();
+        }
+
         size_t auto_indent = indent::auto_no_whitespace;
         if (auto result = generator->GenSettings(form_node, auto_indent); result)
         {
@@ -1366,7 +1372,7 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
         m_source->Indent();
     }
 
-    if (!form_node->isGen(gen_wxWizard))
+    if (!form_node->isGen(gen_wxWizard) && !form_node->isGen(gen_wxFrame))
     {
         GenerateHandlers();
     }

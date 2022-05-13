@@ -59,6 +59,8 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 			<option name="wxBOTH" />
 			wxBOTH
 		</property>
+		<property name="icon" type="image"
+			help="Specifies the image to display in the title bar of the frame." />
 	</gen>
 
 	<gen class="wxPopupTransientWindow" image="wxPopupTransientWindow" type="form">

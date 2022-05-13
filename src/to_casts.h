@@ -23,7 +23,7 @@ public:
 
     inline operator int() const noexcept
     {
-        ASSERT_MSG(v <= INT_MAX, "value is too large to convert to int")
+        ASSERT_MSG(static_cast<const int>(v) == -1 || v <= INT_MAX, "value is too large to convert to int")
         return static_cast<const int>(v);
     }
 };

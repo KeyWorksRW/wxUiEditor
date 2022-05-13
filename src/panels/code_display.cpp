@@ -24,7 +24,9 @@ extern const char* g_u8_cpp_keywords;
 const int node_marker = 1;
 
 #if defined(XRC_ENABLED)
-const char* g_xrc_keywords = "resource";
+
+const char* g_xrc_keywords = "centered class name object resource title";
+
 #endif
 
 CodeDisplay::CodeDisplay(wxWindow* parent, bool is_XML) : CodeDisplayBase(parent), m_isXML(is_XML)
@@ -40,6 +42,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, bool is_XML) : CodeDisplayBase(parent
         m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
         m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
+        m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
         m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
     }

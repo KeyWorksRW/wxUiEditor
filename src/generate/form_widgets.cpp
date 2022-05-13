@@ -236,6 +236,59 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
     return code;
 }
 
+bool FrameFormGenerator::GenXRC(Node* node, BaseCodeGenerator* code_gen)
+{
+    auto m_source = code_gen->GetSrcWriter();
+    m_source->writeLine(ttlib::cstr("<object class=\"wxFrame\" name=\"") << node->prop_as_string(prop_class_name) << "\">");
+
+    m_source->Indent();
+    if (node->HasValue(prop_title))
+    {
+        m_source->writeLine(ttlib::cstr("<title>") << node->prop_as_string(prop_title) << "</title>");
+    }
+    if (node->HasValue(prop_center))
+    {
+        m_source->writeLine("<centered>1</centered>");
+    }
+    m_source->Unindent();
+
+    return true;
+}
+
+bool FrameFormGenerator::GenXRCInfo(Node* node, BaseCodeGenerator* code_gen)
+{
+    auto m_header = code_gen->GetHeaderWriter();
+
+    std::set<std::string> unsupported;
+
+    if (node->prop_as_bool(prop_persist))
+    {
+        unsupported.emplace("persist");
+    }
+    if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
+        node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
+    {
+        unsupported.emplace("window can only be centered in both directions");
+    }
+
+    if (unsupported.size())
+    {
+        m_header->writeLine("wxFrame unsupported properties (unavailable in XRC):");
+
+        m_header->Indent();
+        for (auto& iter: unsupported)
+        {
+            m_header->writeLine(iter);
+        }
+        m_header->Unindent();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 std::optional<ttlib::cstr> FrameFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     return GenFormCode(cmd, node);

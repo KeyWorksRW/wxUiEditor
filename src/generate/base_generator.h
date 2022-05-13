@@ -64,6 +64,20 @@ public:
     // Return true if all construction and settings code was written to src_code
     virtual bool GenConstruction(Node*, BaseCodeGenerator* /* code_gen */) { return false; }
 
+#if defined(XRC_ENABLED)
+    // Generate object and all properties. Restore indendation, but do not add </object>.
+    //
+    // Return true if object was created
+    virtual bool GenXRC(Node*, BaseCodeGenerator* /* code_gen */) { return false; }
+
+    // Generate information about unsupported properties, writing to
+    // code_gen->GetHeaderWriter().
+    //
+    // Return true if information was written
+    virtual bool GenXRCInfo(Node*, BaseCodeGenerator* /* code_gen */) { return false; }
+#endif // XRC_ENABLED
+
+
     // Return true if the Generic version of the control is being used.
     virtual bool IsGeneric(Node*) { return false; }
 

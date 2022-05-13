@@ -197,7 +197,7 @@ void BasePanel::GenerateBaseClass()
     else if (m_GenerateDerivedCode == 0)
         codegen.GenerateBaseClass(m_cur_form, panel_type);
     else
-        codegen.GenerateXrcClass(project, m_cur_form, panel_type);
+        codegen.GenerateXrcClass(m_cur_form, panel_type);
 
     if (panel_type == CPP_PANEL)
     {

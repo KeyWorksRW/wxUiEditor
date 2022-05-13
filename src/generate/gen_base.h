@@ -80,7 +80,7 @@ public:
     int GenerateDerivedClass(Node* project, Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
 
     // code for this is in gen_xrc.cpp
-    void GenerateXrcClass(Node* project, Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
+    void GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
 
     auto GetHeaderWriter() { return m_header; }
     auto GetSrcWriter() { return m_source; }

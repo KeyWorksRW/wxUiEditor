@@ -23,11 +23,7 @@ extern const char* g_u8_cpp_keywords;
 
 const int node_marker = 1;
 
-#if defined(XRC_ENABLED)
-
-const char* g_xrc_keywords = "centered class name object resource title";
-
-#endif
+const char* g_xrc_keywords = "centered class icon name object pos resource size stock_client stock_id style title";
 
 CodeDisplay::CodeDisplay(wxWindow* parent, bool is_XML) : CodeDisplayBase(parent), m_isXML(is_XML)
 {

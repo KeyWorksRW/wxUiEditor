@@ -270,12 +270,7 @@ protected:
 
 #endif
 
-#if defined(XRC_ENABLED)
-
     void OnPreviewXrc(wxCommandEvent& e);
-
-#endif
-
 
     wxWindow* CreateNoteBook(wxWindow* parent);
 
@@ -299,9 +294,7 @@ private:
 
     BasePanel* m_generatedPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };
-#if defined(XRC_ENABLED)
     BasePanel* m_xrcPanel { nullptr };
-#endif
 
     int m_MainSashPosition { 300 };
     int m_SecondarySashPosition { 300 };

@@ -52,7 +52,6 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode
         m_hPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
     }
-#if defined(XRC_ENABLED)
     else if (GenerateDerivedCode == -1)
     {
         m_cppPanel = new CodeDisplay(m_notebook, true);
@@ -64,7 +63,6 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode
         m_hPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
-#endif
     else
     {
         m_cppPanel = new CodeDisplay(m_notebook);

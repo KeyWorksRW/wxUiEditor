@@ -19,10 +19,9 @@ public:
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
-#if defined(XRC_ENABLED)
     bool GenXRC(Node* node, BaseCodeGenerator* code_gen) override;
     bool GenXRCInfo(Node* node, BaseCodeGenerator* code_gen) override;
-#endif
+
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
@@ -59,11 +58,8 @@ class DialogFormGenerator : public BaseGenerator
 public:
     // Return true if all construction and settings code was written to src_code
     bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
-
-#if defined(XRC_ENABLED)
     bool GenXRC(Node* node, BaseCodeGenerator* code_gen) override;
     bool GenXRCInfo(Node* node, BaseCodeGenerator* code_gen) override;
-#endif
 
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;

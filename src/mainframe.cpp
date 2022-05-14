@@ -130,11 +130,7 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
     menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
 
-    #if defined(XRC_ENABLED)
-
-    menuInternal->Append(id_PreviewXRC, "Preview XRC Dialog...", "Show a dialog using XRC");
-
-    #endif
+    menuInternal->Append(id_PreviewXRC, "Preview XRC...", "Show a dialog using XRC");
 
     m_submenu_import_recent = new wxMenu();
     m_menuFile->AppendSeparator();
@@ -284,11 +280,7 @@ MainFrame::MainFrame() :
         id_DebugPreferences);
 
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
-
-    #if defined(XRC_ENABLED)
     Bind(wxEVT_MENU, &MainFrame::OnPreviewXrc, this, id_PreviewXRC);
-    #endif
-
 #endif
 
     AddCustomEventHandler(GetEventHandler());
@@ -1036,12 +1028,10 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
         {
             m_derivedPanel->GenerateBaseClass();
         }
-#if defined(XRC_ENABLED)
         else if (page == m_xrcPanel)
         {
             m_xrcPanel->GenerateBaseClass();
         }
-#endif  // XRC_ENABLED
     }
 }
 
@@ -1086,10 +1076,8 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_derivedPanel = new BasePanel(m_notebook, this, 1);
     m_notebook->AddPage(m_derivedPanel, "Derived", false, wxWithImages::NO_IMAGE);
 
-#if defined(XRC_ENABLED)
     m_xrcPanel = new BasePanel(m_notebook, this, -1);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
-#endif
 
     return m_notebook;
 }

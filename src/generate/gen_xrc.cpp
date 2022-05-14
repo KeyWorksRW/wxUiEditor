@@ -33,8 +33,6 @@ inline constexpr const auto txt_XRC_HEADER = R"===(<?xml version="1.0"?>
 inline constexpr const auto txt_XRC_FOOTER = R"===(</resource>
 )===";
 
-#if defined(XRC_ENABLED)
-
 static bool s_isXmlInitalized { false };
 
 void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
@@ -150,12 +148,8 @@ void GenXrcInfo(Node* node, BaseCodeGenerator* code_gen)
     }
 }
 
-#endif
-
 void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type)
 {
-#if defined(XRC_ENABLED)
-
     m_project = wxGetApp().GetProject();
     m_form_node = form_node;
 
@@ -192,6 +186,4 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type)
     {
         GenXrcInfo(form_node, this);
     }
-
-#endif  // defined(XRC_ENABLED)
 }

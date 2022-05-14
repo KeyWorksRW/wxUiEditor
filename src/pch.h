@@ -118,14 +118,6 @@ extern ttlib::cstr tt_empty_cstr;
 // Character used to separate the fields in a bitmap property
 constexpr const char BMP_PROP_SEPARATOR = ';';
 
-#if defined(INTERNAL_TESTING)
-    // REVIEW: [randalph - 05-13-2022] I don't know yet whether exporting XRC would be useful given how few of our properties
-    // are supported by the current wxWidgets XRC support. However, I distinguish between internal testing and xrc code, so
-    // it gets it's own definition here to use throughout our code.
-
-    #define XRC_ENABLED
-#endif
-
 //////////////////////////////////////// macros ////////////////////////////////////////
 
 #if defined(NDEBUG) && !defined(INTERNAL_TESTING)

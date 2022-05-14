@@ -89,6 +89,8 @@ public:
     // Write code to m_source that will load any handlers needed by the form's class
     void GenerateHandlers();
 
+    PANEL_TYPE GetPanelType() { return m_panel_type; }
+
 protected:
     void WritePropSourceCode(Node* node, GenEnum::PropName prop);
     void WritePropHdrCode(Node* node, GenEnum::PropName prop);

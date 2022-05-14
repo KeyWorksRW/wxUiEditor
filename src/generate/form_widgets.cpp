@@ -74,14 +74,93 @@ bool DialogFormGenerator::GenXRC(Node* node, BaseCodeGenerator* code_gen)
     m_source->writeLine(ttlib::cstr("<object class=\"wxDialog\" name=\"") << node->prop_as_string(prop_class_name) << "\">");
 
     m_source->Indent();
+    if (node->HasValue(prop_style))
+    {
+        if (node->prop_as_string(prop_style).contains("wxWANTS_CHARS") && code_gen->GetPanelType() == CPP_PANEL)
+        {
+            m_source->writeLine(ttlib::cstr("<!-- The wxWANTS_CHARS style will be ignored when the XRC is loaded. -->"));
+        }
+
+        if (node->HasValue(prop_extra_style))
+        {
+            ttlib::cstr all_styles = node->prop_as_string(prop_style);
+            all_styles << '|' << node->prop_as_string(prop_extra_style);
+            m_source->writeLine(ttlib::cstr("<style>") << all_styles << "</style>");
+        }
+        else
+        {
+            m_source->writeLine(ttlib::cstr("<style>") << node->prop_as_string(prop_style) << "</style>");
+        }
+    }
+    if (node->HasValue(prop_pos))
+    {
+        m_source->writeLine(ttlib::cstr("<pos>") << node->prop_as_string(prop_pos) << "</pos>");
+    }
+    if (node->HasValue(prop_size))
+    {
+        m_source->writeLine(ttlib::cstr("<size>") << node->prop_as_string(prop_size) << "</size>");
+    }
     if (node->HasValue(prop_title))
     {
         m_source->writeLine(ttlib::cstr("<title>") << node->prop_as_string(prop_title) << "</title>");
     }
+
     if (node->HasValue(prop_center))
     {
-        m_source->writeLine(node->prop_as_string(prop_center).is_sameas("no") ? "<centered>0</centered>" : "<centered>1</centered>");
+        if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
+            node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
+        {
+            if (code_gen->GetPanelType() == CPP_PANEL)
+            {
+                m_source->writeLine(ttlib::cstr("<!-- ")
+                                    << node->prop_as_string(prop_center) << " cannot be be set in the XRC file. -->");
+            }
+            m_source->writeLine("<centered>1</centered>");
+        }
+        else
+        {
+            m_source->writeLine(node->prop_as_string(prop_center).is_sameas("no") ? "<centered>0</centered>" :
+                                                                                    "<centered>1</centered>");
+        }
     }
+    if (node->HasValue(prop_icon))
+    {
+        ttlib::multiview parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
+        ASSERT(parts.size() > 1)
+        if (parts[IndexType].is_sameas("Art"))
+        {
+            ttlib::multiview art_parts(parts[IndexArtID], '|');
+            m_source->writeLine(ttlib::cstr("<icon stock_id=\"")
+                                << art_parts[0] << "\" stock_client=\"" << art_parts[1] << "\"/>");
+        }
+        else
+        {
+            // REVIEW: [KeyWorks - 05-13-2022] As of wxWidgets 3.1.6, SVG files do not work here
+
+            m_source->writeLine(ttlib::cstr("<icon>") << parts[IndexImage] << "</icon>");
+        }
+    }
+
+    if (code_gen->GetPanelType() == CPP_PANEL)
+    {
+        if (node->HasValue(prop_minimum_size))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- minimum size cannot be be set in the XRC file. -->"));
+        }
+        if (node->HasValue(prop_maximum_size))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- maximum size cannot be be set in the XRC file. -->"));
+        }
+        if (node->HasValue(prop_background_colour))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- background colour cannot be be set in the XRC file. -->"));
+        }
+        if (node->prop_as_bool(prop_persist))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- persist is not supported in the XRC file. -->"));
+        }
+    }
+
     m_source->Unindent();
 
     return true;
@@ -90,35 +169,9 @@ bool DialogFormGenerator::GenXRC(Node* node, BaseCodeGenerator* code_gen)
 bool DialogFormGenerator::GenXRCInfo(Node* node, BaseCodeGenerator* code_gen)
 {
     auto m_header = code_gen->GetHeaderWriter();
-
-    std::set<std::string> unsupported;
-
-    if (node->prop_as_bool(prop_persist))
-    {
-        unsupported.emplace("persist");
-    }
-    if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
-        node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
-    {
-        unsupported.emplace("dialog can only be centered in both directions");
-    }
-
-    if (unsupported.size())
-    {
-        m_header->writeLine("wxFrame unsupported properties (unavailable in XRC):");
-
-        m_header->Indent();
-        for (auto& iter: unsupported)
-        {
-            m_header->writeLine(iter);
-        }
-        m_header->Unindent();
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    m_header->writeLine(ttlib::cstr("Window resource name is ") << node->prop_as_string(prop_class_name));
+    m_header->writeLine();
+    return true;
 }
 
 std::optional<ttlib::cstr> DialogFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
@@ -295,13 +348,118 @@ bool FrameFormGenerator::GenXRC(Node* node, BaseCodeGenerator* code_gen)
     m_source->writeLine(ttlib::cstr("<object class=\"wxFrame\" name=\"") << node->prop_as_string(prop_class_name) << "\">");
 
     m_source->Indent();
+    if (node->HasValue(prop_style))
+    {
+        if (node->HasValue(prop_extra_style))
+        {
+            ttlib::cstr all_styles = node->prop_as_string(prop_style);
+            all_styles << '|' << node->prop_as_string(prop_extra_style);
+            m_source->writeLine(ttlib::cstr("<style>") << all_styles << "</style>");
+        }
+        else
+        {
+            m_source->writeLine(ttlib::cstr("<style>") << node->prop_as_string(prop_style) << "</style>");
+        }
+    }
+    if (node->HasValue(prop_pos))
+    {
+        m_source->writeLine(ttlib::cstr("<pos>") << node->prop_as_string(prop_pos) << "</pos>");
+    }
+    if (node->HasValue(prop_size))
+    {
+        m_source->writeLine(ttlib::cstr("<size>") << node->prop_as_string(prop_size) << "</size>");
+    }
+
     if (node->HasValue(prop_title))
     {
         m_source->writeLine(ttlib::cstr("<title>") << node->prop_as_string(prop_title) << "</title>");
     }
     if (node->HasValue(prop_center))
     {
-        m_source->writeLine("<centered>1</centered>");
+        if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
+            node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
+        {
+            if (code_gen->GetPanelType() == CPP_PANEL)
+            {
+                m_source->writeLine(ttlib::cstr("<!-- ")
+                                    << node->prop_as_string(prop_center) << " cannot be be set in the XRC file. -->");
+            }
+            m_source->writeLine("<centered>1</centered>");
+        }
+        else
+        {
+            m_source->writeLine(node->prop_as_string(prop_center).is_sameas("no") ? "<centered>0</centered>" :
+                                                                                    "<centered>1</centered>");
+        }
+    }
+    if (node->HasValue(prop_icon))
+    {
+        ttlib::multiview parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
+        ASSERT(parts.size() > 1)
+        if (parts[IndexType].is_sameas("Art"))
+        {
+            ttlib::multiview art_parts(parts[IndexArtID], '|');
+            m_source->writeLine(ttlib::cstr("<icon stock_id=\"")
+                                << art_parts[0] << "\" stock_client=\"" << art_parts[1] << "\"/>");
+        }
+        else
+        {
+            // REVIEW: [KeyWorks - 05-13-2022] As of wxWidgets 3.1.6, SVG files do not work here
+
+            m_source->writeLine(ttlib::cstr("<icon>") << parts[IndexImage] << "</icon>");
+        }
+    }
+
+    if (code_gen->GetPanelType() == CPP_PANEL)
+    {
+        if (node->HasValue(prop_smart_size))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- smart size cannot be be set in the XRC file. -->"));
+        }
+        if (node->HasValue(prop_minimum_size))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- minimum size cannot be be set in the XRC file. -->"));
+        }
+        if (node->HasValue(prop_maximum_size))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- maximum size cannot be be set in the XRC file. -->"));
+        }
+        if (!node->prop_as_string(prop_variant).is_sameas("normal"))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- variant cannot be be set in the XRC file. -->"));
+        }
+        if (node->HasValue(prop_foreground_colour))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- foreground colour cannot be be set in the XRC file. -->"));
+        }
+        if (node->HasValue(prop_background_colour))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- background colour cannot be be set in the XRC file. -->"));
+        }
+        if (node->prop_as_bool(prop_persist))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- persist is not supported in the XRC file. -->"));
+        }
+        if (node->HasValue(prop_tooltip))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- tooltip cannot be be set in the XRC file. -->"));
+        }
+        if (node->HasValue(prop_context_help))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- context help cannot be be set in the XRC file. -->"));
+        }
+        if (node->prop_as_bool(prop_disabled))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- disabled cannot be be set in the XRC file. -->"));
+        }
+        if (node->prop_as_bool(prop_hidden))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- hidden cannot be be set in the XRC file. -->"));
+        }
+        if (node->HasValue(prop_font))
+        {
+            m_source->writeLine(ttlib::cstr("<!-- font cannot be be set in the XRC file. -->"));
+        }
     }
     m_source->Unindent();
 
@@ -311,35 +469,9 @@ bool FrameFormGenerator::GenXRC(Node* node, BaseCodeGenerator* code_gen)
 bool FrameFormGenerator::GenXRCInfo(Node* node, BaseCodeGenerator* code_gen)
 {
     auto m_header = code_gen->GetHeaderWriter();
-
-    std::set<std::string> unsupported;
-
-    if (node->prop_as_bool(prop_persist))
-    {
-        unsupported.emplace("persist");
-    }
-    if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
-        node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
-    {
-        unsupported.emplace("window can only be centered in both directions");
-    }
-
-    if (unsupported.size())
-    {
-        m_header->writeLine("wxFrame unsupported properties (unavailable in XRC):");
-
-        m_header->Indent();
-        for (auto& iter: unsupported)
-        {
-            m_header->writeLine(iter);
-        }
-        m_header->Unindent();
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    m_header->writeLine(ttlib::cstr("Window resource name is ") << node->prop_as_string(prop_class_name));
+    m_header->writeLine();
+    return true;
 }
 
 std::optional<ttlib::cstr> FrameFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
@@ -465,7 +597,8 @@ bool PanelFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen
     ttlib::cstr code;
     code << "bool " << node->prop_as_string(prop_class_name) << "::Create";
 
-    code << "(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString &name)\n{";
+    code << "(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString "
+            "&name)\n{";
     code << "\n\tif (!wxPanel::Create(parent, id, pos, size, style, name))\n\t\treturn false;\n\n";
 
     src_code->writeLine(code, indent::none);
@@ -636,8 +769,8 @@ bool PanelFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 
 //////////////////////////////////////////  Utility Code  //////////////////////////////////////////
 
-// Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything needed to set the window's
-// icon.
+// Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything needed to set the
+// window's icon.
 
 ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
 {
@@ -657,8 +790,8 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
 
     if (parts[IndexType].is_sameas("XPM"))
     {
-        // In theory, we could create an alpha channel using black as the transparency, but it just doesn't make sense for
-        // the user to be using XPM files as an icon.
+        // In theory, we could create an alpha channel using black as the transparency, but it just doesn't make sense
+        // for the user to be using XPM files as an icon.
         code << "// XPM files do not contain an alpha channel and cannot be used as an icon.";
         return code;
     }

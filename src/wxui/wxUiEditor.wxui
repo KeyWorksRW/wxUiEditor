@@ -1169,6 +1169,14 @@
             label="Create &amp;Derived Code"
             var_name="menu_item20"
             wxEVT_MENU="OnGenInhertedClass" />
+          <node
+            class="separator"
+            var_name="separator_2" />
+          <node
+            class="wxMenuItem"
+            label="Preview XRC..."
+            var_name="menu_item_8"
+            wxEVT_MENU="OnPreviewXrc" />
         </node>
         <node
           class="wxMenu"

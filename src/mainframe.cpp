@@ -130,7 +130,7 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
     menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
 
-    menuInternal->Append(id_PreviewXRC, "Preview XRC...", "Show a dialog using XRC");
+    menuInternal->Append(id_PreviewXRC, "Preview XRC...\tCtrl+R", "Show a dialog using XRC");
 
     m_submenu_import_recent = new wxMenu();
     m_menuFile->AppendSeparator();

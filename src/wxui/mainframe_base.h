@@ -80,6 +80,7 @@ protected:
     virtual void OnOpenProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOptionsDlg(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPaste(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPreviewXrc(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveAsProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnToggleExpandLayout(wxCommandEvent& event) { event.Skip(); }

@@ -48,7 +48,14 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
     auto form_node = m_selected_node.get();
     if (!form_node->IsForm())
     {
-        form_node = form_node->get_form();
+        if (form_node->isGen(gen_Project) && form_node->GetChildCount())
+        {
+            form_node = form_node->GetChild(0);
+        }
+        else
+        {
+            form_node = form_node->get_form();
+        }
     }
 
     if (!form_node->isGen(gen_wxDialog))
@@ -91,7 +98,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         }
 
         wxDialog dlg;
-        if (wxXmlResource::Get()->LoadDialog(&dlg, NULL, form_node->prop_as_string(prop_class_name)))
+        if (wxXmlResource::Get()->LoadDialog(&dlg, this, form_node->prop_as_string(prop_class_name)))
         {
             dlg.ShowModal();
         }

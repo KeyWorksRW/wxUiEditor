@@ -85,20 +85,24 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
             return;
         }
 
+        auto xrc_resource = wxXmlResource::Get();
+
         if (!s_isXmlInitalized)
         {
-            wxXmlResource::Get()->InitAllHandlers();
+            xrc_resource->InitAllHandlers();
             s_isXmlInitalized = true;
         }
 
-        if (!wxXmlResource::Get()->LoadDocument(xmlDoc.release()))
+        wxString res_name("wxuiPreview");
+
+        if (!xrc_resource->LoadDocument(xmlDoc.release(), res_name))
         {
             wxMessageBox("wxWidgets could not parse the XRC data.", "XRC Dialog Preview");
             return;
         }
 
         wxDialog dlg;
-        if (wxXmlResource::Get()->LoadDialog(&dlg, this, form_node->prop_as_string(prop_class_name)))
+        if (xrc_resource->LoadDialog(&dlg, this, form_node->prop_as_string(prop_class_name)))
         {
             dlg.ShowModal();
         }
@@ -107,6 +111,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
             wxMessageBox(ttlib::cstr("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
                          "XRC Dialog Preview");
         }
+        xrc_resource->Unload(res_name);
     }
     catch (const std::exception& TESTING_PARAM(e))
     {

@@ -21,18 +21,6 @@ To get submodule updates, run:
 
 There are two submodules: `ttLib` and `wxSnapshot`.
 
-# Branches
-
-- main -- current development branch, builds with wxSnapshot (currently wxWidgets version 3.1.5)
-- stable -- snapshot of the last release
-- 3_1_6 -- uses current wxWidgets sources
-
-All other branches are experiments, or a long-running dev branch.
-
-wxWidgets version 3.1.6 is currently scheduled for an early April release. Once it is released, the `wxSnapshot` module will be updated and the `3_1_6` branch will be merged into main and then removed.
-
-It is currently not possible for anyone other than the maintainer to build in the 3_1_6 branch as this requires a private fork of wxWidgets.
-
 # Developer notes
 
 If you are planning on contributing code, the following sections contain information about the code that might not be immediately obvious. Reading these sections may make the code easier to understand, as well as ensuring that PR's are written in a way that matches the rest of the code base.
@@ -41,7 +29,7 @@ Note that the code requires a C++17 compliant compiler -- which means you should
 
 ## Debug builds
 
-When you create a debug build, there will be an additional **Debug** menu to the right of the **Help** menu that will give you access to additional functionality for easier debugging.
+When you create a debug build, there will be an additional **Internal** menu to the right of the **Help** menu that will give you access to additional functionality for easier debugging.
 
 ## Strings
 
@@ -57,7 +45,7 @@ These two types are used to ensure optimal bit-width for the current platform (c
 
 ### Debugging macros
 
-The `ASSERT...` and `FAIL...` macros are the preferred macros for debug checks. They work on all platforms, but the message box is slightly different on Windows and non-Windows platforms.
+The `ASSERT...` and `FAIL...` macros are the preferred macros for debug checks. On Windows, they provide the option to break into a debugger if running a Debug build.
 
 The `MSG_...` macros allow for display information in the custom logging window. The custom logging window has filters so that you can limit which messages are displayed. Unlike the `wxLog...` macros, none of these messages will ever be displayed to the user -- they are for your debugging use only.
 

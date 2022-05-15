@@ -131,3 +131,8 @@ ttlib::cstr GenerateNewAssignment(Node* node, bool use_generic = false);
 std::optional<ttlib::cstr> GenGetSetCode(Node* node);
 
 std::optional<ttlib::cstr> GenValidatorSettings(Node* node);
+
+// Write sizeritem XRC code
+void GenXrcSizerItem(Node* node, BaseCodeGenerator* code_gen);
+
+void GenXrcSizerItem(Node*, pugi::xml_node& object);

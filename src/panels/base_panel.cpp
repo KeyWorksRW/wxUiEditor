@@ -52,6 +52,17 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode
         m_hPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
     }
+    else if (GenerateDerivedCode == -1)
+    {
+        m_cppPanel = new CodeDisplay(m_notebook, true);
+        m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
+
+        // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
+        // which properties are not supported.
+
+        m_hPanel = new CodeDisplay(m_notebook);
+        m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
+    }
     else
     {
         m_cppPanel = new CodeDisplay(m_notebook);
@@ -131,7 +142,7 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
     {
         m_cppPanel->GetEventHandler()->ProcessEvent(event);
     }
-    else if (text == "header")
+    else if (text == "header" || text == "info")
     {
         m_hPanel->GetEventHandler()->ProcessEvent(event);
     }
@@ -146,7 +157,7 @@ void BasePanel::GenerateBaseClass()
 
     // If no form is selected, display the first child form of the project
     m_cur_form = wxGetFrame().GetSelectedForm();
-    if (!m_cur_form)
+    if (!m_cur_form && m_GenerateDerivedCode != -1)
     {
         if (project->GetChildCount() > 0)
         {
@@ -184,7 +195,7 @@ void BasePanel::GenerateBaseClass()
     else if (m_GenerateDerivedCode == 0)
         codegen.GenerateBaseClass(m_cur_form, panel_type);
     else
-        codegen.GenerateXrcClass(project, m_cur_form, panel_type);
+        codegen.GenerateXrcClass(m_cur_form, panel_type);
 
     if (panel_type == CPP_PANEL)
     {

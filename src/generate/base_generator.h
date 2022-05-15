@@ -47,6 +47,13 @@ using OptionalIncludes = std::optional<std::vector<std::string>>;
 class BaseGenerator
 {
 public:
+    enum
+    {
+        xrc_not_supported = 0,
+        xrc_sizer_item_created,
+        xrc_updated
+    };
+
     BaseGenerator() {}
     virtual ~BaseGenerator() {}
 
@@ -63,6 +70,14 @@ public:
 
     // Return true if all construction and settings code was written to src_code
     virtual bool GenConstruction(Node*, BaseCodeGenerator* /* code_gen */) { return false; }
+
+    // Add attributes to object, and all properties
+    //
+    // Return an xrc_ enum (e.g. xrc_sizer_item_created)
+    virtual int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) { return xrc_not_supported; }
+
+    // Return the required wxXmlResourceHandler
+    virtual void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) {}
 
     // Return true if the Generic version of the control is being used.
     virtual bool IsGeneric(Node*) { return false; }

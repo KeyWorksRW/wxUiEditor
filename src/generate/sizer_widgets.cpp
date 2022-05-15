@@ -14,8 +14,10 @@
 #include <wx/textwrapper.h>  // declaration of wxTextWrapper class
 #include <wx/wrapsizer.h>    // provide wrapping sizer for layout (wxWrapSizer)
 
+#include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
+#include "write_code.h"  // WriteCode -- Write code to Scintilla or file
 
 #include "sizer_widgets.h"
 
@@ -50,6 +52,34 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     return true;
 }
 
+int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        auto sizer = object.append_child("object");
+        sizer.append_attribute("class").set_value("wxBoxSizer");
+        sizer.append_attribute("name").set_value(node->prop_as_string(prop_var_name).c_str());
+        sizer.append_child("orient").text().set(node->prop_as_string(prop_orientation).c_str());
+        if (node->HasValue(prop_minimum_size))
+        {
+            sizer.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size).c_str());
+        }
+        return BaseGenerator::xrc_sizer_item_created;
+    }
+    else
+    {
+        object.append_attribute("class").set_value("wxBoxSizer");
+        object.append_attribute("name").set_value(node->prop_as_string(prop_var_name).c_str());
+        object.append_child("orient").text().set(node->prop_as_string(prop_orientation).c_str());
+        return BaseGenerator::xrc_updated;
+    }
+}
+
+void BoxSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxSizerXmlHandler");
+}
 //////////////////////////////////////////  GridSizerGenerator  //////////////////////////////////////////
 
 wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)

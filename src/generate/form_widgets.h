@@ -22,6 +22,9 @@ public:
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };
 
 class PopupWinGenerator : public BaseGenerator
@@ -60,4 +63,7 @@ public:
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };

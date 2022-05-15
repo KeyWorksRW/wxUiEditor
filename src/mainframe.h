@@ -221,7 +221,6 @@ public:
 
 protected:
     void OnAbout(wxCommandEvent& event) override;
-    void OnImportRecent(wxCommandEvent& event);
     void OnAppendCrafter(wxCommandEvent& event) override;
     void OnAppendFormBuilder(wxCommandEvent& event) override;
     void OnAppendGlade(wxCommandEvent& event) override;
@@ -238,6 +237,7 @@ protected:
     void OnGenInhertedClass(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
     void OnImportProject(wxCommandEvent& event);
+    void OnImportRecent(wxCommandEvent& event);
     void OnImportWindowsResource(wxCommandEvent& event) override;
     void OnInsertWidget(wxCommandEvent&) override;
     void OnNewProject(wxCommandEvent& event);
@@ -245,6 +245,7 @@ protected:
     void OnOpenRecentProject(wxCommandEvent& event);
     void OnOptionsDlg(wxCommandEvent& event) override;
     void OnPaste(wxCommandEvent& event) override;
+    void OnPreviewXrc(wxCommandEvent& event) override;
     void OnSaveAsProject(wxCommandEvent& event) override;
     void OnSaveProject(wxCommandEvent& event) override;
     void OnToggleExpandLayout(wxCommandEvent&) override;
@@ -292,9 +293,7 @@ private:
 
     BasePanel* m_generatedPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };
-#if defined(INTERNAL_TESTING)
     BasePanel* m_xrcPanel { nullptr };
-#endif
 
     int m_MainSashPosition { 300 };
     int m_SecondarySashPosition { 300 };

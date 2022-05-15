@@ -263,6 +263,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     auto menu_item20 = new wxMenuItem(m_menuTools, id_GenerateDerived, "Create &Derived Code",
         "Creates the files and classes that derive from the generated base classes", wxITEM_NORMAL);
     m_menuTools->Append(menu_item20);
+
+    m_menuTools->AppendSeparator();
+
+    auto menu_item_8 = new wxMenuItem(m_menuTools, wxID_ANY, "Preview XRC...");
+    m_menuTools->Append(menu_item_8);
     m_menubar->Append(m_menuTools, "&Tools");
 
     m_menuHelp = new wxMenu();
@@ -489,6 +494,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnToggleExpandLayout, this, id_Expand);
     Bind(wxEVT_MENU, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
     Bind(wxEVT_MENU, &MainFrameBase::OnGenInhertedClass, this, id_GenerateDerived);
+    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, menu_item_8->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());
     Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseDocs, this, menu_item_6->GetId());

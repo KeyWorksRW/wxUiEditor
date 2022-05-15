@@ -271,7 +271,6 @@ protected:
 
 #endif
 
-
     wxWindow* CreateNoteBook(wxWindow* parent);
 
     void CreateSplitters();

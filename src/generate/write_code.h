@@ -49,10 +49,10 @@ public:
 
     virtual void Clear() = 0;
 
-protected:
     // Derived class provides this to write text to whatever output device is being used
     virtual void doWrite(ttlib::sview code) = 0;
 
+protected:
     void WriteCodeLine(ttlib::sview code, size_t indentation);
 
 private:
@@ -67,7 +67,7 @@ public:
     FileCodeWriter(const wxString& file) : m_filename(file) { m_buffer.clear(); }
 
     void Clear() override { m_buffer.clear(); };
-    const ttlib::cstr& GetString() const { return m_buffer; };
+    ttlib::cstr& GetString() { return m_buffer; };
 
     // Returns -1 if an error occurred, 0 if no update is needed, 1 on success
     int WriteFile(bool test_only = false);

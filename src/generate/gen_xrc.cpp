@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include <future>
+#include <sstream>
 #include <thread>
 #include <unordered_set>
 
@@ -25,6 +26,8 @@
 #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
 #include "utils.h"        // Utility functions that work with properties
 #include "write_code.h"   // Write code to Scintilla or file
+
+#include "pugixml.hpp"
 
 inline constexpr const auto txt_XRC_HEADER = R"===(<?xml version="1.0"?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
@@ -118,33 +121,57 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
     }
 }
 
-void GenXrcNode(Node* node, BaseCodeGenerator* code_gen)
+int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
     auto generator = node->GetNodeDeclaration()->GetGenerator();
-    bool object_created = generator->GenXRC(node, code_gen);
-
-    auto m_source = code_gen->GetSrcWriter();
-
-    for (auto& child: node->GetChildNodePtrs())
+    auto result = generator->GenXrcObject(node, object, add_comments);
+    if (result == BaseGenerator::xrc_sizer_item_created)
     {
-        m_source->Indent();
-        GenXrcNode(child.get(), code_gen);
-        m_source->Unindent();
+        auto actual_object = object.child("object");
+        for (auto& child: node->GetChildNodePtrs())
+        {
+            auto child_object = actual_object.append_child("object");
+            auto child_result = GenXrcObject(child.get(), child_object, add_comments);
+            if (child_result == BaseGenerator::xrc_not_supported)
+            {
+                actual_object.remove_child(child_object);
+                break;
+            }
+        }
+        return result;
     }
-    if (object_created)
+    else if (result == BaseGenerator::xrc_updated)
     {
-        m_source->writeLine("</object>");
+        for (auto& child: node->GetChildNodePtrs())
+        {
+            auto child_object = object.append_child("object");
+            auto child_result = GenXrcObject(child.get(), child_object, add_comments);
+            if (child_result == BaseGenerator::xrc_not_supported)
+            {
+                object.remove_child(child_object);
+                break;
+            }
+        }
+        return result;
+    }
+    else
+    {
+        return BaseGenerator::xrc_not_supported;
     }
 }
 
-void GenXrcInfo(Node* node, BaseCodeGenerator* code_gen)
+void CollectHandlers(Node* node, std::set<std::string>& handlers)
 {
     auto generator = node->GetNodeDeclaration()->GetGenerator();
-    generator->GenXRCInfo(node, code_gen);
-
+    generator->RequiredHandlers(node, handlers);
     for (auto& child: node->GetChildNodePtrs())
     {
-        GenXrcInfo(child.get(), code_gen);
+        generator = child->GetNodeDeclaration()->GetGenerator();
+        generator->RequiredHandlers(child.get(), handlers);
+        if (child->GetChildCount())
+        {
+            CollectHandlers(child.get(), handlers);
+        }
     }
 }
 
@@ -158,32 +185,52 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type)
     m_header->Clear();
     m_source->Clear();
 
-    m_source->writeLine(txt_XRC_HEADER);
+    pugi::xml_document doc;
+    auto root = doc.append_child("resource");
+    root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
+    root.append_attribute("version") = "2.5.3.0";
 
-    ttlib::cstr file;
-    if (auto& base_file = form_node->prop_as_string(prop_base_file); base_file.size())
+    auto object = root.append_child("object");
+    auto form_result = GenXrcObject(form_node, object, m_panel_type == CPP_PANEL);
+    if (form_result == BaseGenerator::xrc_not_supported)
     {
-        ttSaveCwd cwd;
-        ttlib::ChangeDir(wxGetApp().getProjectPath());
-        file = base_file;
-        file.make_relative(wxGetApp().getProjectPath());
-        file.backslashestoforward();
-        file.remove_extension();
-
-        m_baseFullPath = base_file;
-        m_baseFullPath.make_absolute();
-        m_baseFullPath.remove_filename();
+        root.remove_child(object);
     }
 
     if (m_panel_type != HDR_PANEL)
     {
-        m_source->writeLine();
-        GenXrcNode(form_node, this);
-        m_source->writeLine();
-        m_source->writeLine(txt_XRC_FOOTER);
+        if (form_result != BaseGenerator::xrc_not_supported)
+        {
+            std::ostringstream xml_stream;
+            doc.save(xml_stream, "\t");
+            std::string str = xml_stream.str();
+            m_source->doWrite(str);
+        }
+        else
+        {
+            m_source->writeLine("This form cannot be output to XRC.");
+        }
     }
     else
     {
-        GenXrcInfo(form_node, this);
+        if (form_result != BaseGenerator::xrc_not_supported)
+        {
+            m_header->writeLine(ttlib::cstr("Resource name is ") << form_node->prop_as_string(prop_class_name));
+            m_header->writeLine();
+            m_header->writeLine("Required handlers:");
+            m_header->writeLine();
+            m_header->Indent();
+
+            std::set<std::string> handlers;
+            CollectHandlers(form_node, handlers);
+            for (auto& iter: handlers)
+            {
+                m_header->writeLine(iter);
+            }
+        }
+        else
+        {
+            m_header->writeLine("This form cannot be output to XRC.");
+        }
     }
 }

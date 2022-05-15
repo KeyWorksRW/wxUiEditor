@@ -9,11 +9,13 @@
 
 #include "gen_common.h"
 
+#include "gen_base.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "lambdas.h"      // Functions for formatting and storage of lamda events
 #include "mainapp.h"      // App -- App class
 #include "node.h"         // Node class
 #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
 #include "utils.h"        // Utility functions that work with properties
+#include "write_code.h"   // WriteCode -- Write code to Scintilla or file
 
 ttlib::cstr GenerateSizerFlags(Node* node)
 {
@@ -1699,5 +1701,67 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         if (!node->IsForm())
             code << node->get_node_name() << "->";
         code << "SetHelpText(" << GenerateQuotedString(node->prop_as_string(prop_context_help)) << ");";
+    }
+}
+
+void GenXrcSizerItem(Node* node, BaseCodeGenerator* code_gen)
+{
+    auto m_source = code_gen->GetSrcWriter();
+    m_source->writeLine("<object class=\"sizeritem\">");
+    m_source->Indent();
+    ttlib::cstr flags;
+    flags << node->prop_as_string(prop_borders);
+    if (node->HasValue(prop_flags))
+    {
+        if (flags.size())
+        {
+            flags << '|';
+        }
+        flags << node->prop_as_string(prop_flags);
+    }
+    if (node->HasValue(prop_alignment))
+    {
+        if (flags.size())
+        {
+            flags << '|';
+        }
+        flags << node->prop_as_string(prop_alignment);
+    }
+    if (flags.size())
+    {
+        m_source->writeLine(ttlib::cstr("<flag>") << flags << "</flag>");
+    }
+
+    if (node->HasValue(prop_border_size))
+    {
+        m_source->writeLine(ttlib::cstr("<border>") << node->prop_as_string(prop_border_size) << "</border>");
+    }
+}
+
+void GenXrcSizerItem(Node* node, pugi::xml_node& object)
+{
+    object.append_attribute("class").set_value("sizeritem");
+    ttlib::cstr flags;
+    flags << node->prop_as_string(prop_borders);
+    if (node->HasValue(prop_flags))
+    {
+        if (flags.size())
+        {
+            flags << '|';
+        }
+        flags << node->prop_as_string(prop_flags);
+    }
+    if (node->HasValue(prop_alignment))
+    {
+        if (flags.size())
+        {
+            flags << '|';
+        }
+        flags << node->prop_as_string(prop_alignment);
+    }
+    object.append_child("flag").text().set(flags.c_str());
+    if (node->HasValue(prop_border_size))
+    {
+        object.append_child("border").text().set(node->prop_as_string(prop_border_size).c_str());
     }
 }

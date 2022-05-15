@@ -18,6 +18,8 @@
 
 #include "form_widgets.h"
 
+#include "pugixml.hpp"
+
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate
 // everything needed to set the window's icon.
 ttlib::cstr GenerateIconCode(const ttlib::cstr& description);
@@ -68,110 +70,106 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
     return true;
 }
 
-bool DialogFormGenerator::GenXRC(Node* node, BaseCodeGenerator* code_gen)
+int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    auto m_source = code_gen->GetSrcWriter();
-    m_source->writeLine(ttlib::cstr("<object class=\"wxDialog\" name=\"") << node->prop_as_string(prop_class_name) << "\">");
-
-    m_source->Indent();
+    object.append_attribute("class").set_value("wxDialog");
+    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name).c_str());
     if (node->HasValue(prop_style))
     {
-        if (node->prop_as_string(prop_style).contains("wxWANTS_CHARS") && code_gen->GetPanelType() == CPP_PANEL)
+        if (add_comments && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
         {
-            m_source->writeLine(ttlib::cstr("<!-- The wxWANTS_CHARS style will be ignored when the XRC is loaded. -->"));
+            object.append_child(pugi::node_comment)
+                .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
         }
-
-        if (node->HasValue(prop_extra_style))
+        if (!node->HasValue(prop_extra_style))
         {
-            ttlib::cstr all_styles = node->prop_as_string(prop_style);
-            all_styles << '|' << node->prop_as_string(prop_extra_style);
-            m_source->writeLine(ttlib::cstr("<style>") << all_styles << "</style>");
+            object.append_child("style").text().set(node->prop_as_string(prop_style).c_str());
         }
         else
         {
-            m_source->writeLine(ttlib::cstr("<style>") << node->prop_as_string(prop_style) << "</style>");
+            ttlib::cstr all_styles = node->prop_as_string(prop_style);
+            all_styles << '|' << node->prop_as_string(prop_extra_style);
+            object.append_child("style").text().set(all_styles.c_str());
         }
     }
     if (node->HasValue(prop_pos))
     {
-        m_source->writeLine(ttlib::cstr("<pos>") << node->prop_as_string(prop_pos) << "</pos>");
+        object.append_child("pos").text().set(node->prop_as_string(prop_pos).c_str());
     }
     if (node->HasValue(prop_size))
     {
-        m_source->writeLine(ttlib::cstr("<size>") << node->prop_as_string(prop_size) << "</size>");
+        object.append_child("size").text().set(node->prop_as_string(prop_size).c_str());
     }
     if (node->HasValue(prop_title))
     {
-        m_source->writeLine(ttlib::cstr("<title>") << node->prop_as_string(prop_title) << "</title>");
+        object.append_child("title").text().set(node->prop_as_string(prop_title).c_str());
     }
-
     if (node->HasValue(prop_center))
     {
         if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
             node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
         {
-            if (code_gen->GetPanelType() == CPP_PANEL)
+            if (add_comments)
             {
-                m_source->writeLine(ttlib::cstr("<!-- ")
-                                    << node->prop_as_string(prop_center) << " cannot be be set in the XRC file. -->");
+                object.append_child(pugi::node_comment)
+                    .set_value(
+                        (ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file.").c_str());
             }
-            m_source->writeLine("<centered>1</centered>");
+            object.append_child("centered").text().set(1);
         }
         else
         {
-            m_source->writeLine(node->prop_as_string(prop_center).is_sameas("no") ? "<centered>0</centered>" :
-                                                                                    "<centered>1</centered>");
+            object.append_child("centered").text().set(node->prop_as_string(prop_center).is_sameas("no") ? 0 : 1);
         }
     }
     if (node->HasValue(prop_icon))
     {
-        ttlib::multiview parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
+        ttlib::multistr parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {
-            ttlib::multiview art_parts(parts[IndexArtID], '|');
-            m_source->writeLine(ttlib::cstr("<icon stock_id=\"")
-                                << art_parts[0] << "\" stock_client=\"" << art_parts[1] << "\"/>");
+            ttlib::multistr art_parts(parts[IndexArtID], '|');
+            auto icon = object.append_child("icon");
+            icon.append_attribute("stock_id").set_value(art_parts[0].c_str());
+            icon.append_attribute("stock_client").set_value(art_parts[1].c_str());
         }
         else
         {
             // REVIEW: [KeyWorks - 05-13-2022] As of wxWidgets 3.1.6, SVG files do not work here
-
-            m_source->writeLine(ttlib::cstr("<icon>") << parts[IndexImage] << "</icon>");
+            object.append_child("icon").text().set(parts[IndexImage].c_str());
         }
     }
-
-    if (code_gen->GetPanelType() == CPP_PANEL)
+    if (add_comments)
     {
         if (node->HasValue(prop_minimum_size))
         {
-            m_source->writeLine(ttlib::cstr("<!-- minimum size cannot be be set in the XRC file. -->"));
+            object.append_child(pugi::node_comment).set_value(" minimum size cannot be be set in the XRC file. ");
         }
         if (node->HasValue(prop_maximum_size))
         {
-            m_source->writeLine(ttlib::cstr("<!-- maximum size cannot be be set in the XRC file. -->"));
+            object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
         }
         if (node->HasValue(prop_background_colour))
         {
-            m_source->writeLine(ttlib::cstr("<!-- background colour cannot be be set in the XRC file. -->"));
+            object.append_child(pugi::node_comment).set_value(" background colour cannot be be set in the XRC file. ");
         }
         if (node->prop_as_bool(prop_persist))
         {
-            m_source->writeLine(ttlib::cstr("<!-- persist is not supported in the XRC file. -->"));
+            object.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
         }
     }
 
-    m_source->Unindent();
-
-    return true;
+    return xrc_updated;
 }
 
-bool DialogFormGenerator::GenXRCInfo(Node* node, BaseCodeGenerator* code_gen)
+void DialogFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
-    auto m_header = code_gen->GetHeaderWriter();
-    m_header->writeLine(ttlib::cstr("Window resource name is ") << node->prop_as_string(prop_class_name));
-    m_header->writeLine();
-    return true;
+    handlers.emplace("wxDialogXmlHandler");
+    if (node->HasValue(prop_icon))
+    {
+        handlers.emplace("wxIconXmlHandler");
+        handlers.emplace("wxBitmapXmlHandler");
+    }
 }
 
 std::optional<ttlib::cstr> DialogFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
@@ -342,136 +340,138 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
     return code;
 }
 
-bool FrameFormGenerator::GenXRC(Node* node, BaseCodeGenerator* code_gen)
+int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    auto m_source = code_gen->GetSrcWriter();
-    m_source->writeLine(ttlib::cstr("<object class=\"wxFrame\" name=\"") << node->prop_as_string(prop_class_name) << "\">");
-
-    m_source->Indent();
+    object.append_attribute("class").set_value("wxFrame");
+    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name).c_str());
     if (node->HasValue(prop_style))
     {
-        if (node->HasValue(prop_extra_style))
+        if (add_comments && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
         {
-            ttlib::cstr all_styles = node->prop_as_string(prop_style);
-            all_styles << '|' << node->prop_as_string(prop_extra_style);
-            m_source->writeLine(ttlib::cstr("<style>") << all_styles << "</style>");
+            object.append_child(pugi::node_comment)
+                .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
+        }
+        if (!node->HasValue(prop_extra_style))
+        {
+            object.append_child("style").text().set(node->prop_as_string(prop_style).c_str());
         }
         else
         {
-            m_source->writeLine(ttlib::cstr("<style>") << node->prop_as_string(prop_style) << "</style>");
+            ttlib::cstr all_styles = node->prop_as_string(prop_style);
+            all_styles << '|' << node->prop_as_string(prop_extra_style);
+            object.append_child("style").text().set(all_styles.c_str());
         }
     }
     if (node->HasValue(prop_pos))
     {
-        m_source->writeLine(ttlib::cstr("<pos>") << node->prop_as_string(prop_pos) << "</pos>");
+        object.append_child("pos").text().set(node->prop_as_string(prop_pos).c_str());
     }
     if (node->HasValue(prop_size))
     {
-        m_source->writeLine(ttlib::cstr("<size>") << node->prop_as_string(prop_size) << "</size>");
+        object.append_child("size").text().set(node->prop_as_string(prop_size).c_str());
     }
-
     if (node->HasValue(prop_title))
     {
-        m_source->writeLine(ttlib::cstr("<title>") << node->prop_as_string(prop_title) << "</title>");
+        object.append_child("title").text().set(node->prop_as_string(prop_title).c_str());
     }
     if (node->HasValue(prop_center))
     {
         if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
             node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
         {
-            if (code_gen->GetPanelType() == CPP_PANEL)
+            if (add_comments)
             {
-                m_source->writeLine(ttlib::cstr("<!-- ")
-                                    << node->prop_as_string(prop_center) << " cannot be be set in the XRC file. -->");
+                object.append_child(pugi::node_comment)
+                    .set_value(
+                        (ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file.").c_str());
             }
-            m_source->writeLine("<centered>1</centered>");
+            object.append_child("centered").text().set(1);
         }
         else
         {
-            m_source->writeLine(node->prop_as_string(prop_center).is_sameas("no") ? "<centered>0</centered>" :
-                                                                                    "<centered>1</centered>");
+            object.append_child("centered").text().set(node->prop_as_string(prop_center).is_sameas("no") ? 0 : 1);
         }
     }
     if (node->HasValue(prop_icon))
     {
-        ttlib::multiview parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
+        ttlib::multistr parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
         if (parts[IndexType].is_sameas("Art"))
         {
-            ttlib::multiview art_parts(parts[IndexArtID], '|');
-            m_source->writeLine(ttlib::cstr("<icon stock_id=\"")
-                                << art_parts[0] << "\" stock_client=\"" << art_parts[1] << "\"/>");
+            ttlib::multistr art_parts(parts[IndexArtID], '|');
+            auto icon = object.append_child("icon");
+            icon.append_attribute("stock_id").set_value(art_parts[0].c_str());
+            icon.append_attribute("stock_client").set_value(art_parts[1].c_str());
         }
         else
         {
             // REVIEW: [KeyWorks - 05-13-2022] As of wxWidgets 3.1.6, SVG files do not work here
-
-            m_source->writeLine(ttlib::cstr("<icon>") << parts[IndexImage] << "</icon>");
+            object.append_child("icon").text().set(parts[IndexImage].c_str());
         }
     }
-
-    if (code_gen->GetPanelType() == CPP_PANEL)
+    if (add_comments)
     {
         if (node->HasValue(prop_smart_size))
         {
-            m_source->writeLine(ttlib::cstr("<!-- smart size cannot be be set in the XRC file. -->"));
+            object.append_child(pugi::node_comment).set_value(" smart size cannot be be set in the XRC file. ");
         }
         if (node->HasValue(prop_minimum_size))
         {
-            m_source->writeLine(ttlib::cstr("<!-- minimum size cannot be be set in the XRC file. -->"));
+            object.append_child(pugi::node_comment).set_value(" minimum size cannot be be set in the XRC file. ");
         }
         if (node->HasValue(prop_maximum_size))
         {
-            m_source->writeLine(ttlib::cstr("<!-- maximum size cannot be be set in the XRC file. -->"));
+            object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
         }
         if (!node->prop_as_string(prop_variant).is_sameas("normal"))
         {
-            m_source->writeLine(ttlib::cstr("<!-- variant cannot be be set in the XRC file. -->"));
-        }
-        if (node->HasValue(prop_foreground_colour))
-        {
-            m_source->writeLine(ttlib::cstr("<!-- foreground colour cannot be be set in the XRC file. -->"));
-        }
-        if (node->HasValue(prop_background_colour))
-        {
-            m_source->writeLine(ttlib::cstr("<!-- background colour cannot be be set in the XRC file. -->"));
-        }
-        if (node->prop_as_bool(prop_persist))
-        {
-            m_source->writeLine(ttlib::cstr("<!-- persist is not supported in the XRC file. -->"));
-        }
-        if (node->HasValue(prop_tooltip))
-        {
-            m_source->writeLine(ttlib::cstr("<!-- tooltip cannot be be set in the XRC file. -->"));
-        }
-        if (node->HasValue(prop_context_help))
-        {
-            m_source->writeLine(ttlib::cstr("<!-- context help cannot be be set in the XRC file. -->"));
-        }
-        if (node->prop_as_bool(prop_disabled))
-        {
-            m_source->writeLine(ttlib::cstr("<!-- disabled cannot be be set in the XRC file. -->"));
-        }
-        if (node->prop_as_bool(prop_hidden))
-        {
-            m_source->writeLine(ttlib::cstr("<!-- hidden cannot be be set in the XRC file. -->"));
+            object.append_child(pugi::node_comment).set_value(" variant cannot be be set in the XRC file. ");
         }
         if (node->HasValue(prop_font))
         {
-            m_source->writeLine(ttlib::cstr("<!-- font cannot be be set in the XRC file. -->"));
+            object.append_child(pugi::node_comment).set_value(" font cannot be be set in the XRC file. ");
+        }
+        if (node->HasValue(prop_foreground_colour))
+        {
+            object.append_child(pugi::node_comment).set_value(" foreground colour cannot be be set in the XRC file. ");
+        }
+        if (node->HasValue(prop_background_colour))
+        {
+            object.append_child(pugi::node_comment).set_value(" background colour cannot be be set in the XRC file. ");
+        }
+        if (node->prop_as_bool(prop_persist))
+        {
+            object.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
+        }
+        if (node->HasValue(prop_tooltip))
+        {
+            object.append_child(pugi::node_comment).set_value(" tooltip colour cannot be be set in the XRC file. ");
+        }
+        if (node->HasValue(prop_context_help))
+        {
+            object.append_child(pugi::node_comment).set_value(" context help cannot be be set in the XRC file. ");
+        }
+        if (node->HasValue(prop_disabled))
+        {
+            object.append_child(pugi::node_comment).set_value(" disabled cannot be be set in the XRC file. ");
+        }
+        if (node->HasValue(prop_hidden))
+        {
+            object.append_child(pugi::node_comment).set_value(" hidden colour cannot be be set in the XRC file. ");
         }
     }
-    m_source->Unindent();
 
-    return true;
+    return xrc_updated;
 }
 
-bool FrameFormGenerator::GenXRCInfo(Node* node, BaseCodeGenerator* code_gen)
+void FrameFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
-    auto m_header = code_gen->GetHeaderWriter();
-    m_header->writeLine(ttlib::cstr("Window resource name is ") << node->prop_as_string(prop_class_name));
-    m_header->writeLine();
-    return true;
+    handlers.emplace("wxFrameXmlHandler");
+    if (node->HasValue(prop_icon))
+    {
+        handlers.emplace("wxIconXmlHandler");
+        handlers.emplace("wxBitmapXmlHandler");
+    }
 }
 
 std::optional<ttlib::cstr> FrameFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)

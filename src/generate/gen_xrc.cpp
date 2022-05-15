@@ -125,6 +125,11 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
     auto generator = node->GetNodeDeclaration()->GetGenerator();
     auto result = generator->GenXrcObject(node, object, add_comments);
+    if (result == BaseGenerator::xrc_not_supported && node->isGen(gen_Project))
+    {
+        result = BaseGenerator::xrc_updated;
+    }
+
     if (result == BaseGenerator::xrc_sizer_item_created)
     {
         auto actual_object = object.child("object");
@@ -190,11 +195,20 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type)
     root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
     root.append_attribute("version") = "2.5.3.0";
 
-    auto object = root.append_child("object");
-    auto form_result = GenXrcObject(form_node, object, m_panel_type == CPP_PANEL);
-    if (form_result == BaseGenerator::xrc_not_supported)
+    int form_result = BaseGenerator::xrc_updated;
+    if (!wxGetFrame().GetSelectedForm())
     {
-        root.remove_child(object);
+        form_node = m_project;
+        GenXrcObject(m_project, root, m_panel_type == CPP_PANEL);
+    }
+    else
+    {
+        auto object = root.append_child("object");
+        form_result = GenXrcObject(form_node, object, m_panel_type == CPP_PANEL);
+        if (form_result == BaseGenerator::xrc_not_supported)
+        {
+            root.remove_child(object);
+        }
     }
 
     if (m_panel_type != HDR_PANEL)
@@ -215,8 +229,11 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type)
     {
         if (form_result != BaseGenerator::xrc_not_supported)
         {
-            m_header->writeLine(ttlib::cstr("Resource name is ") << form_node->prop_as_string(prop_class_name));
-            m_header->writeLine();
+            if (form_node != m_project)
+            {
+                m_header->writeLine(ttlib::cstr("Resource name is ") << form_node->prop_as_string(prop_class_name));
+                m_header->writeLine();
+            }
             m_header->writeLine("Required handlers:");
             m_header->writeLine();
             m_header->Indent();

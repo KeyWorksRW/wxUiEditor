@@ -445,7 +445,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
         }
         if (node->HasValue(prop_tooltip))
         {
-            object.append_child(pugi::node_comment).set_value(" tooltip colour cannot be be set in the XRC file. ");
+            object.append_child(pugi::node_comment).set_value(" tooltip cannot be be set in the XRC file. ");
         }
         if (node->HasValue(prop_context_help))
         {
@@ -457,7 +457,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
         }
         if (node->HasValue(prop_hidden))
         {
-            object.append_child(pugi::node_comment).set_value(" hidden colour cannot be be set in the XRC file. ");
+            object.append_child(pugi::node_comment).set_value(" hidden cannot be be set in the XRC file. ");
         }
     }
 

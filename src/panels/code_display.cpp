@@ -167,8 +167,10 @@ void CodeDisplay::CodeGenerationComplete()
 
 void CodeDisplay::OnNodeSelected(Node* node)
 {
-    if (!node->HasProp(prop_var_name))
+    if (!node->HasProp(prop_var_name) && !m_isXML)
+    {
         return;  // probably a form, spacer, or image
+    }
 
     auto is_event = wxGetFrame().GetPropPanel()->IsEventPageShowing();
 
@@ -186,6 +188,19 @@ void CodeDisplay::OnNodeSelected(Node* node)
             name.Replace("->Bind", " = ");
             line = (to_int) m_view.FindLineContaining(name);
         }
+    }
+    else if (m_isXML)
+    {
+        ttlib::cstr search("name=\"");
+        if (node->HasValue(prop_var_name))
+        {
+            search << node->prop_as_string(prop_var_name);
+        }
+        else
+        {
+            search << node->prop_as_string(prop_class_name);
+        }
+        line = (to_int) m_view.FindLineContaining(search);
     }
     else
     {

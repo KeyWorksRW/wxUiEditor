@@ -1764,4 +1764,5 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
     {
         object.append_child("border").text().set(node->prop_as_string(prop_border_size).c_str());
     }
+    object.append_child("option").text().set(node->prop_as_string(prop_proportion).c_str());
 }

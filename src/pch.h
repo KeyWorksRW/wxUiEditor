@@ -49,6 +49,8 @@
 #ifdef _MSC_VER
     #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
     #pragma warning(disable : 4244)  // conversion from 'size_t' to 'int', possible loss of data
+
+    #pragma warning(disable : 5054)  // '|' deprecated between enumerations of different types
 #endif
 
 #if !defined(_WIN32) || defined(__clang__)
@@ -56,10 +58,13 @@
     #pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
 
-// We include these here so that C4244 and C4267 get disabled
+// included here so that C5054 gets disabled
 #include <wx/choicebk.h>
 #include <wx/htmllbox.h>
 #include <wx/richtext/richtextbuffer.h>
+
+// included here so that C4244 and C4267 get disabled
+#include <wx/propgrid/propgridpagestate.h>
 
 #include <wx/gdicmn.h>  // Common GDI classes, types and declarations
 #include <wx/msgdlg.h>  // common header and base class for wxMessageDialog

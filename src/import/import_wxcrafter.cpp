@@ -882,7 +882,6 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
                     auto list_effects = GetStringVector(FindValue(value, "m_options"));
                     if ((to_size_t) index < list_effects.size())
                     {
-                        bool found = false;
                         for (auto& friendly_pair: g_friend_constant)
                         {
                             if (ttlib::is_sameas(friendly_pair.second, list_effects[index]))
@@ -891,7 +890,6 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
                                                      friendly_pair.first.c_str() + friendly_pair.first.find('_') + 1);
                                 node->prop_set_value(prop_hide_effect,
                                                      friendly_pair.first.c_str() + friendly_pair.first.find('_') + 1);
-                                found = true;
                                 break;
                             }
                         }

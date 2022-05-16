@@ -512,7 +512,6 @@ std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
         isPosSet = true;
     }
 
-    bool isSizeSet { false };
     auto size = node->prop_as_wxSize(prop_size);
     if (size.x != -1 || size.y != -1)
     {
@@ -522,7 +521,6 @@ std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
             isPosSet = true;
         }
         code << ", wxSize(" << size.x << ", " << size.y << ")";
-        isSizeSet = true;
     }
 
     ttlib::cstr all_styles;

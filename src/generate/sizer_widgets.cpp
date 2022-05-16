@@ -1194,15 +1194,12 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenEvents(NodeEvent* e
     // use a string for this to allow the lambda processing code to replace it.
     std::string comma(", ");
 
-    bool is_lambda { false };
-
     if (event->get_value().contains("["))
     {
         handler << event->get_name() << ',' << event->get_value();
         // Put the lambda expression on it's own line
         handler.Replace("[", "\n\t\t[");
         comma = ",\n\t";
-        is_lambda = true;
     }
     else if (event->get_value().contains("::"))
     {

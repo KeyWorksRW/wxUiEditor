@@ -29,7 +29,7 @@ enum PropIndex
     IndexSize
 };
 
-ttlib::cstr ClearPropFlag(ttlib::cview flag, ttlib::cview currentValue);
+ttlib::cstr ClearPropFlag(ttlib::sview flag, ttlib::cview currentValue);
 ttlib::cstr ClearMultiplePropFlags(ttlib::cview flags, ttlib::cview currentValue);
 ttlib::cstr SetPropFlag(ttlib::cview flag, ttlib::cview currentValue);
 

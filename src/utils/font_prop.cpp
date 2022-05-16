@@ -186,7 +186,7 @@ void FontProperty::Convert(ttlib::cview font)
     if (mstr.size() > font::idx_facename_style)
     {
         auto value = std::atof(std::string(mstr[font::idx_facename_style]).c_str());
-        if (value < wxFONTSTYLE_NORMAL)  // wxFONTSTYLE_NORMAL == 90, so too large to be a point size
+        if (value < static_cast<double>(wxFONTSTYLE_NORMAL))  // wxFONTSTYLE_NORMAL == 90, so too large to be a point size
         {
             m_pointSize = value;
 

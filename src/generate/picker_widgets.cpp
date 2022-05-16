@@ -96,12 +96,28 @@ bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
 wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxFilePickerCtrl(
-        wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
-        node->prop_as_string(prop_message).size() ? node->prop_as_wxString(prop_message) : wxFileSelectorPromptStr,
-        node->prop_as_string(prop_wildcard).size() ? node->prop_as_wxString(prop_wildcard) :
-                                                     wxFileSelectorDefaultWildcardStr,
-        DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    wxString msg;
+    if (node->HasValue(prop_message))
+    {
+        msg = std::move(node->prop_as_wxString(prop_message));
+    }
+    else
+    {
+        msg = wxFileSelectorPromptStr;
+    }
+    wxString wildcard;
+    if (node->HasValue(prop_wildcard))
+    {
+        wildcard = std::move(node->prop_as_wxString(prop_wildcard));
+    }
+    else
+    {
+        wildcard = wxFileSelectorDefaultWildcardStr;
+    }
+
+    auto widget = new wxFilePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
+                                       msg, wildcard, DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
+                                       GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
@@ -205,10 +221,19 @@ std::optional<ttlib::cstr> FilePickerGenerator::GetPropertyDescription(NodePrope
 
 wxObject* DirPickerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxDirPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
-                                      node->prop_as_string(prop_message).size() ? node->prop_as_wxString(prop_message) :
-                                                                                  wxDirSelectorPromptStr,
-                                      DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    wxString prompt;
+    if (node->HasValue(prop_message))
+    {
+        prompt = node->prop_as_wxString(prop_message);
+    }
+    else
+    {
+        prompt = wxDirSelectorPromptStr;
+    }
+
+    auto widget =
+        new wxDirPickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path), prompt,
+                            DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 

@@ -15,7 +15,7 @@ Options:
     Crt_rel:          dll      # [static | dll] type of CRT to link to in release builds
     Crt_dbg:          dll      # [static | dll] type of CRT to link to in debug builds
 
-    CFlags_cmn:       /std:c++17 /Zc:__cplusplus /utf-8 /DUNICODE /DINTERNAL_TESTING
+    CFlags_cmn:       /std:c++20 /Zc:__cplusplus /utf-8 /DUNICODE /DINTERNAL_TESTING
     CFlags_rel:       /DNDEBUG # static wxWidgets libraries in release build
 
     TargetDir:        ../build/CMakeFiles/CMakeTmp   # just a temporary location for the library

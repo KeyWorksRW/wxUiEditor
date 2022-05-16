@@ -27,7 +27,7 @@ ttlib::cstr DoubleToStr(double val)
     return result;
 }
 
-ttlib::cstr ClearPropFlag(ttlib::cview flag, ttlib::cview currentValue)
+ttlib::cstr ClearPropFlag(ttlib::sview flag, ttlib::cview currentValue)
 {
     ttlib::cstr result;
     if (flag.empty() || currentValue.empty())

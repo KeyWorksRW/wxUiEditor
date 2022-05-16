@@ -288,10 +288,7 @@ MainFrame::MainFrame() :
     m_notebook->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &MainFrame::OnAuiNotebookPageChanged, this);
 }
 
-MainFrame::~MainFrame()
-{
-    delete m_findDialog;
-}
+MainFrame::~MainFrame() { delete m_findDialog; }
 
 void MainFrame::OnSaveProject(wxCommandEvent& event)
 {
@@ -1347,15 +1344,9 @@ void MainFrame::DuplicateNode(Node* node)
     SelectNode(new_node, true, true);
 }
 
-bool MainFrame::CanCopyNode()
-{
-    return (m_selected_node.get() && !m_selected_node->isGen(gen_Project));
-}
+bool MainFrame::CanCopyNode() { return (m_selected_node.get() && !m_selected_node->isGen(gen_Project)); }
 
-bool MainFrame::CanPasteNode()
-{
-    return (m_selected_node.get() && (m_clipboard.get() || isClipboardDataAvailable()));
-}
+bool MainFrame::CanPasteNode() { return (m_selected_node.get() && (m_clipboard.get() || isClipboardDataAvailable())); }
 
 void MainFrame::Undo()
 {

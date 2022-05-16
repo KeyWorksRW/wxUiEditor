@@ -968,15 +968,9 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
     }
 }
 
-inline bool is_printable(unsigned char ch)
-{
-    return (ch > 31 && ch < 128);
-}
+inline bool is_printable(unsigned char ch) { return (ch > 31 && ch < 128); }
 
-inline bool is_numeric(unsigned char ch)
-{
-    return (ch >= '0' && ch <= '9');
-}
+inline bool is_numeric(unsigned char ch) { return (ch >= '0' && ch <= '9'); }
 
 void FormBuilder::ConvertNameSpaceProp(NodeProperty* prop, ttlib::cview org_names)
 {

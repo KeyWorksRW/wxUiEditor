@@ -45,7 +45,4 @@ private:
 
 extern AppOptions g_AppOptions;
 
-inline AppOptions& GetAppOptions()
-{
-    return g_AppOptions;
-}
+inline AppOptions& GetAppOptions() { return g_AppOptions; }

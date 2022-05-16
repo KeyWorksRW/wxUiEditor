@@ -147,25 +147,13 @@ void EventHandlerDlg::OnUseLambda(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void EventHandlerDlg::OnFunctionText(wxCommandEvent& WXUNUSED(event))
-{
-    FormatBindText();
-}
+void EventHandlerDlg::OnFunctionText(wxCommandEvent& WXUNUSED(event)) { FormatBindText(); }
 
-void EventHandlerDlg::OnCapture(wxCommandEvent& WXUNUSED(event))
-{
-    FormatBindText();
-}
+void EventHandlerDlg::OnCapture(wxCommandEvent& WXUNUSED(event)) { FormatBindText(); }
 
-void EventHandlerDlg::OnIncludeEvent(wxCommandEvent& WXUNUSED(event))
-{
-    FormatBindText();
-}
+void EventHandlerDlg::OnIncludeEvent(wxCommandEvent& WXUNUSED(event)) { FormatBindText(); }
 
-void EventHandlerDlg::OnChange(wxStyledTextEvent& WXUNUSED(event))
-{
-    FormatBindText();
-}
+void EventHandlerDlg::OnChange(wxStyledTextEvent& WXUNUSED(event)) { FormatBindText(); }
 
 void EventHandlerDlg::OnOK(wxCommandEvent& event)
 {

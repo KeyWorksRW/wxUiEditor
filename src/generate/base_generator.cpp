@@ -20,10 +20,7 @@
 
 #include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 
-MockupParent* BaseGenerator::GetMockup()
-{
-    return wxGetFrame().GetMockup();
-}
+MockupParent* BaseGenerator::GetMockup() { return wxGetFrame().GetMockup(); }
 
 void BaseGenerator::OnLeftClick(wxMouseEvent& event)
 {

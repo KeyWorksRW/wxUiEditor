@@ -32,10 +32,7 @@ EditHtmlDialog::EditHtmlDialog(wxWindow* parent, NodeProperty* prop) : EditHtmlD
     m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
 };
 
-void EditHtmlDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
-{
-    m_scintilla->AddText(m_value);
-}
+void EditHtmlDialog::OnInit(wxInitDialogEvent& WXUNUSED(event)) { m_scintilla->AddText(m_value); }
 
 void EditHtmlDialog::OnOK(wxCommandEvent& event)
 {

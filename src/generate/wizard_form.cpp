@@ -267,10 +267,7 @@ bool WizardFormGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
 
 //////////////////////////////////////////  WizardPageGenerator  //////////////////////////////////////////
 
-wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent)
-{
-    return new MockupWizardPage(node, parent);
-}
+wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent) { return new MockupWizardPage(node, parent); }
 
 std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
 {

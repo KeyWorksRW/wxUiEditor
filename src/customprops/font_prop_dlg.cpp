@@ -105,35 +105,17 @@ void FontPropDlg::OnInit(wxInitDialogEvent& WXUNUSED(event))
     }
 }
 
-void FontPropDlg::OnFamily(wxCommandEvent& WXUNUSED(event))
-{
-    UpdateFontInfo();
-}
+void FontPropDlg::OnFamily(wxCommandEvent& WXUNUSED(event)) { UpdateFontInfo(); }
 
-void FontPropDlg::OnStyle(wxCommandEvent& WXUNUSED(event))
-{
-    UpdateFontInfo();
-}
+void FontPropDlg::OnStyle(wxCommandEvent& WXUNUSED(event)) { UpdateFontInfo(); }
 
-void FontPropDlg::OnWeight(wxCommandEvent& WXUNUSED(event))
-{
-    UpdateFontInfo();
-}
+void FontPropDlg::OnWeight(wxCommandEvent& WXUNUSED(event)) { UpdateFontInfo(); }
 
-void FontPropDlg::OnFacename(wxCommandEvent& WXUNUSED(event))
-{
-    UpdateFontInfo();
-}
+void FontPropDlg::OnFacename(wxCommandEvent& WXUNUSED(event)) { UpdateFontInfo(); }
 
-void FontPropDlg::OnUnderlined(wxCommandEvent& WXUNUSED(event))
-{
-    UpdateFontInfo();
-}
+void FontPropDlg::OnUnderlined(wxCommandEvent& WXUNUSED(event)) { UpdateFontInfo(); }
 
-void FontPropDlg::OnStrikeThrough(wxCommandEvent& WXUNUSED(event))
-{
-    UpdateFontInfo();
-}
+void FontPropDlg::OnStrikeThrough(wxCommandEvent& WXUNUSED(event)) { UpdateFontInfo(); }
 
 void FontPropDlg::OnCustomRadio(wxCommandEvent& WXUNUSED(event))
 {
@@ -157,15 +139,9 @@ void FontPropDlg::OnSystemRadio(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void FontPropDlg::OnPointSize(wxSpinDoubleEvent& WXUNUSED(event))
-{
-    UpdateFontInfo();
-}
+void FontPropDlg::OnPointSize(wxSpinDoubleEvent& WXUNUSED(event)) { UpdateFontInfo(); }
 
-void FontPropDlg::OnSymbolSize(wxCommandEvent& WXUNUSED(event))
-{
-    UpdateFontInfo();
-}
+void FontPropDlg::OnSymbolSize(wxCommandEvent& WXUNUSED(event)) { UpdateFontInfo(); }
 
 void FontPropDlg::OnEditPointSize(wxCommandEvent& event)
 {

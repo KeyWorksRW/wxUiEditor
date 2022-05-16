@@ -18,10 +18,7 @@ NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) : m_ty
     m_name = GenEnum::map_GenNames[m_gen_name];
 }
 
-NodeDeclaration::~NodeDeclaration()
-{
-    delete m_generator;
-}
+NodeDeclaration::~NodeDeclaration() { delete m_generator; }
 
 PropDeclaration* NodeDeclaration::GetPropDeclaration(size_t idx) const
 {

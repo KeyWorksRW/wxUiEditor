@@ -281,10 +281,7 @@ bool Node::ChangeChildPosition(NodeSharedPtr node, size_t pos)
     return true;
 }
 
-bool Node::IsLocal() const noexcept
-{
-    return isPropValue(prop_class_access, "none");
-}
+bool Node::IsLocal() const noexcept { return isPropValue(prop_class_access, "none"); }
 
 bool Node::HasValue(PropName name) const
 {

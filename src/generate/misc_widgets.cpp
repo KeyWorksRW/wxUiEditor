@@ -813,10 +813,7 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /
     return code;
 }
 
-bool HyperlinkGenerator::IsGeneric(Node* node)
-{
-    return (!node->prop_as_bool(prop_underlined));
-}
+bool HyperlinkGenerator::IsGeneric(Node* node) { return (!node->prop_as_bool(prop_underlined)); }
 
 std::optional<ttlib::cstr> HyperlinkGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
@@ -885,10 +882,7 @@ void InfoBarGenerator::OnButton(wxCommandEvent& event)
     event.Skip();
 }
 
-void InfoBarGenerator::OnTimer(wxTimerEvent& /* event */)
-{
-    m_infobar->ShowMessage("Message ...");
-}
+void InfoBarGenerator::OnTimer(wxTimerEvent& /* event */) { m_infobar->ShowMessage("Message ..."); }
 
 bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {

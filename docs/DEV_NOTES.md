@@ -25,7 +25,7 @@ There are two submodules: `ttLib` and `wxSnapshot`.
 
 If you are planning on contributing code, the following sections contain information about the code that might not be immediately obvious. Reading these sections may make the code easier to understand, as well as ensuring that PR's are written in a way that matches the rest of the code base.
 
-Note that the code requires a C++17 compliant compiler -- which means you should be using C++17 coding conventions. That includes using `std::string_view` (or `ttlib::cview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
+Note that the code requires a C++20 compliant compiler -- which means you should be using C++20 coding conventions. That includes using `std::string_view` (or `ttlib::sview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
 
 ## Debug builds
 
@@ -33,11 +33,11 @@ When you create a debug build, there will be an additional **Internal** menu to 
 
 ## Strings
 
-The only time **wxString** should be used in **wxUiEditor** is when a string will be used for UI or for filenames. The **ttLib** class **ttString** derives from **wxString** and is often used in the code for working with filenames instead of passing the string to a **wxFileName**.
+The only time **wxString** should be used in **wxUiEditor** is when a string will be used for UI or for filenames. The **ttLib** class `ttString` derives from `wxString` and is often used instead of `wxString` since it has more automatic conversion of the UTF8 strings that are used throughout the code.
 
-Both `ttString` and `ttlib::cstr` have a `wx_str()` method that will perform UTF8<->UTF16 conversion when compiled for Windows, and no conversion when compiled for other platforms. `ttlib::cstr` is essentially std::string with additional methods including `wx_str()`.
+Both `ttString` and `ttlib::cstr` have a `wx_str()` method that will perform UTF8<->UTF16 conversion when compiled for Windows, and no conversion when compiled for other platforms. `ttlib::cstr` is essentially `std::string` with additional methods including `wx_str()`. Note that when constructing a `wxString` from a `std::string` or `std::string_view` on Windows, you will get an ANSI to UTF16 conversion. If you construct a `ttString` from `std::string` or `std::string_view` on Windows, it will perform a UTF8 to UTF16 conversion (no conversion at all if not on Windows). Since wxUiEditor works exclusively with UTF8 strings, `ttString` is preferable to `wxString` in most cases.
 
-In most cases, **ttlib::cview** is used instead of **std::string_view**. **ttlib::cview** inherits from **std::string_view** but points to a zero-terminated string.
+You will generally see `ttlib::sview` used instead of `std::string_view`. Like `ttlib::cstr`, this class provides dozens of additional methods beside the standard base class.
 
 ## size_t and int_t
 

@@ -82,11 +82,11 @@ public:
     void ParseEvents(pugi::xml_node& elem_obj, NodeCategory& category);
 
     const ttlib::cstr& GetGeneratorFlags() { return m_internal_flags; }
-    void SetGeneratorFlags(ttlib::cview flags) { m_internal_flags = flags; }
+    void SetGeneratorFlags(std::string_view flags) { m_internal_flags = flags; }
 
     int_t GetAllowableChildren(GenType child_gen_type) const;
 
-    void SetOverRideDefValue(GenEnum::PropName prop_name, ttlib::cview new_value)
+    void SetOverRideDefValue(GenEnum::PropName prop_name, std::string_view new_value)
     {
         m_override_def_values[prop_name] = new_value;
     }

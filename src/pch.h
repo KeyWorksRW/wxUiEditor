@@ -22,6 +22,9 @@
 #define wxUSE_NO_MANIFEST 1
 #define wxUSE_UNICODE     1
 
+// Allows ttLib additions to pugixml
+#define TTLIB_ADDITIONS 1
+
 #ifdef _MSC_VER
     #pragma warning(push)
 #endif

@@ -52,7 +52,7 @@ public:
 
     NodeProperty* get_prop_ptr(PropName name);
 
-    NodeEvent* GetEvent(ttlib::cview name);
+    NodeEvent* GetEvent(ttlib::sview name);
     NodeEvent* GetEvent(size_t index);
 
     auto GetPropertyCount() const { return m_properties.size(); }

@@ -33,7 +33,7 @@ std::optional<pugi::xml_document> ImportXML::LoadDocFile(const ttString& file)
 
 void ImportXML::HandleSizerItemProperty(const pugi::xml_node& xml_prop, Node* node, Node* parent)
 {
-    auto flag_value = xml_prop.text().as_cview();
+    auto flag_value = xml_prop.text().as_sview();
 
     ttlib::cstr border_value;
     if (flag_value.contains("wxALL"))
@@ -332,7 +332,7 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
     }
     else
     {
-        auto view_value = xml_prop.text().as_cview();
+        auto view_value = xml_prop.text().as_sview();
         if (view_value.contains("wxST_SIZEGRIP"))
         {
             auto value = xml_prop.text().as_cstr();
@@ -443,7 +443,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
 {
     for (auto& iter: xml_obj.attributes())
     {
-        if (iter.cname().is_sameas("name"))
+        if (iter.value() == "name")
         {
             if (new_node->IsForm())
             {
@@ -452,7 +452,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
                     prop->set_value(iter.value());
                 }
             }
-            else if (iter.as_cview().is_sameprefix("wxID_"))
+            else if (iter.as_string().starts_with("wxID_"))
             {
                 auto prop = new_node->get_prop_ptr(prop_id);
                 if (prop)
@@ -485,7 +485,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
                 }
             }
         }
-        else if (iter.cname().is_sameas("variable"))
+        else if (iter.value() == "variable")
         {
             if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
             {
@@ -494,7 +494,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
                 prop->set_value(new_name);
             }
         }
-        else if (iter.cname().is_sameas("subclass"))
+        else if (iter.value() == "subclass")
         {
             new_node->prop_set_value(prop_derived_class, iter.value());
         }
@@ -507,7 +507,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
     {
         auto wxue_prop = MapPropName(iter.name());
 
-        if (iter.cname().is_sameas("object"))
+        if (iter.value() == "object")
         {
             continue;
         }
@@ -554,12 +554,12 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             }
             continue;
         }
-        else if (iter.cname().is_sameas("tabs"))
+        else if (iter.value() == "tabs")
         {
             ProcessNotebookTabs(iter, node);
             continue;
         }
-        else if (iter.cname().is_sameas("option"))
+        else if (iter.value() == "option")
         {
             if (auto prop = node->get_prop_ptr(prop_proportion); prop)
             {
@@ -585,7 +585,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 
         // Finally, process names that are unique to XRC/ImportXML
 
-        if (iter.cname().is_sameas("orient"))
+        if (iter.value() == "orient")
         {
             prop = node->get_prop_ptr(prop_orientation);
             if (prop)
@@ -593,15 +593,15 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                 prop->set_value(iter.text().as_string());
             }
         }
-        else if (iter.cname().is_sameas("border"))
+        else if (iter.value() == "border")
         {
             node->prop_set_value(prop_border_size, iter.text().as_string());
         }
-        else if (iter.cname().is_sameas("selection") && node->isGen(gen_wxChoice))
+        else if (iter.value() == "selection" && node->isGen(gen_wxChoice))
         {
             node->prop_set_value(prop_selection_int, iter.text().as_int());
         }
-        else if (iter.cname().is_sameas("selected"))
+        else if (iter.value() == "selected")
         {
             if (node->isGen(gen_oldbookpage))
                 node->prop_set_value(prop_select, iter.text().as_bool());
@@ -610,15 +610,15 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                 node->prop_set_value(prop_checked, iter.text().as_bool());
             }
         }
-        else if (iter.cname().is_sameas("enabled"))
+        else if (iter.value() == "enabled")
         {
             if (!iter.text().as_bool())
                 node->prop_set_value(prop_disabled, true);
         }
-        else if (iter.cname().is_sameas("subclass"))
+        else if (iter.value() == "subclass")
         {
             // wxFormBuilder and XRC use the same name, but but it has different meanings.
-            auto value = iter.text().as_cview();
+            auto value = iter.text().as_sview();
             if (value.empty())
                 continue;
             if (value.contains(";"))
@@ -645,29 +645,29 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                 node->prop_set_value(prop_derived_class, value);
             }
         }
-        else if (iter.cname().is_sameas("creating_code"))
+        else if (iter.value() == "creating_code")
         {
             // TODO: [KeyWorks - 12-09-2021] This consists of macros that allow the user to override one or more macros with
             // their own parameter.
         }
-        else if (iter.cname().is_sameas("flag"))
+        else if (iter.value() == "flag")
         {
             if (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem))
                 HandleSizerItemProperty(iter, node, parent);
             else if (!node->isGen(gen_spacer))
             {  // spacer's don't use alignment or border styles
-                MSG_INFO(ttlib::cstr() << iter.cname() << " not supported for " << node->DeclName());
+                MSG_INFO(ttlib::cstr() << iter.name() << " not supported for " << node->DeclName());
             }
         }
-        else if (iter.cname().is_sameas("handler"))
+        else if (iter.name() == "handler")
         {
             ProcessHandler(iter, node);
         }
-        else if (iter.cname().is_sameas("exstyle") && node->isGen(gen_wxDialog))
+        else if (iter.name() == "exstyle" && node->isGen(gen_wxDialog))
         {
             node->prop_set_value(prop_extra_style, iter.text().as_string());
         }
-        else if (iter.cname().is_sameas("cellpos"))
+        else if (iter.name() == "cellpos")
         {
             ttlib::multistr mstr(iter.text().as_string(), ',');
             if (mstr.size())
@@ -678,7 +678,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                     node->prop_set_value(prop_row, mstr[1]);
             }
         }
-        else if (iter.cname().is_sameas("cellspan"))
+        else if (iter.name() == "cellspan")
         {
             ttlib::multistr mstr(iter.text().as_string(), ',');
             if (mstr.size())
@@ -689,7 +689,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                     node->prop_set_value(prop_colspan, mstr[1]);
             }
         }
-        else if (iter.cname().is_sameas("size") && node->isGen(gen_spacer))
+        else if (iter.name() == "size" && node->isGen(gen_spacer))
         {
             ttlib::multistr mstr(iter.text().as_string(), ',');
             if (mstr.size())
@@ -700,17 +700,17 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                     node->prop_set_value(prop_height, mstr[1]);
             }
         }
-        else if (iter.cname().is_sameas("centered") && node->isGen(gen_wxDialog))
+        else if (iter.name() == "centered" && node->isGen(gen_wxDialog))
         {
             return;  // we always center dialogs
         }
-        else if (iter.cname().is_sameas("focused") && node->isGen(gen_wxTreeCtrl))
+        else if (iter.name() == "focused" && node->isGen(gen_wxTreeCtrl))
         {
             return;  // since we don't add anything to a wxTreeCtrl, we can't set something as the focus
         }
         else
         {
-            MSG_INFO(ttlib::cstr() << "Unrecognized property: " << iter.cname() << " for " << node->DeclName());
+            MSG_INFO(ttlib::cstr() << "Unrecognized property: " << iter.name() << " for " << node->DeclName());
         }
     }
 }
@@ -720,7 +720,7 @@ void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
     ttlib::cstr choices;
     for (auto& iter: xml_obj.children())
     {
-        if (iter.cname().is_sameas("item"))
+        if (iter.name() == "item")
         {
             auto child = iter.child_as_cstr();
             child.Replace("\"", "\\\"", true);
@@ -739,11 +739,11 @@ void ImportXML::ProcessNotebookTabs(const pugi::xml_node& xml_obj, Node* /* node
     m_notebook_tabs.clear();
     for (auto& iter: xml_obj.children())
     {
-        if (iter.cname().is_sameas("tab"))
+        if (iter.name() == "tab")
         {
             if (!iter.attribute("window").empty())
             {
-                m_notebook_tabs[iter.attribute("window").as_string()] = iter.child_as_cstr();
+                m_notebook_tabs[iter.attribute("window").as_std_str()] = iter.child_as_cstr();
             }
         }
     }

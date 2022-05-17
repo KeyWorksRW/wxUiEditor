@@ -65,9 +65,9 @@ NodeProperty* Node::get_prop_ptr(PropName name)
         return nullptr;
 }
 
-NodeEvent* Node::GetEvent(ttlib::cview name)
+NodeEvent* Node::GetEvent(ttlib::sview name)
 {
-    if (auto it = m_event_map.find(name.c_str()); it != m_event_map.end())
+    if (auto it = m_event_map.find(std::string(name)); it != m_event_map.end())
         return &m_events[it->second];
     else
         return nullptr;

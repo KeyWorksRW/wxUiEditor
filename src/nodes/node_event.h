@@ -12,7 +12,7 @@ class Node;
 class NodeEventInfo
 {
 public:
-    NodeEventInfo(ttlib::cview name, ttlib::cview event_class, ttlib::cview help) :
+    NodeEventInfo(std::string_view name, std::string_view event_class, std::string_view help) :
         m_name(name), m_event_class(event_class), m_help(help)
     {
     }
@@ -32,7 +32,7 @@ class NodeEvent
 public:
     NodeEvent(const NodeEventInfo* info, Node* node) : m_info(info), m_node(node) {}
 
-    void set_value(ttlib::cview value) { m_value = value; }
+    void set_value(std::string_view value) { m_value = value; }
     const ttlib::cstr& get_value() const noexcept { return m_value; }
     const ttlib::cstr& get_name() const noexcept { return m_info->get_name(); }
 

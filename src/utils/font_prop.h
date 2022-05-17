@@ -28,7 +28,7 @@ public:
 
     wxFont GetFont() const;
 
-    void Convert(ttlib::cview font);
+    void Convert(ttlib::sview font);
     wxString as_wxString() const;
     ttlib::cstr as_string() const;
 

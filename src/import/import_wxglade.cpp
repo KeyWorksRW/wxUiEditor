@@ -73,16 +73,16 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     if (gen_name == gen_unknown)
     {
         // If we don't recognize the class, then try the base= attribute
-        auto base = xml_obj.attribute("base").as_cview();
-        if (base.is_sameas("EditFrame"))
+        auto base = xml_obj.attribute("base").as_string();
+        if (base == "EditFrame")
         {
             gen_name = ConvertToGenName("wxFrame", parent);
         }
-        else if (base.is_sameas("EditDialog"))
+        else if (base == "EditDialog")
         {
             gen_name = ConvertToGenName("wxDialog", parent);
         }
-        else if (base.is_sameas("EditTopLevelPanel"))
+        else if (base == "EditTopLevelPanel")
         {
             gen_name = ConvertToGenName("Panel", parent);
         }
@@ -104,9 +104,9 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
     {
         for (auto& iter: xml_obj.children())
         {
-            if (iter.cname().is_sameas("style"))
+            if (iter.value() == "style")
             {
-                if (iter.text().as_cview().contains("wxCHK_3STATE"))
+                if (iter.text().as_sview().contains("wxCHK_3STATE"))
                     gen_name = gen_Check3State;
                 break;
             }
@@ -193,24 +193,24 @@ NodeSharedPtr WxGlade::CreateGladeNode(pugi::xml_node& xml_obj, Node* parent, No
         {
             for (auto& btn_id: button.children())
             {
-                auto id = btn_id.attribute("name").as_cview();
-                if (id.is_sameas("wxID_OK"))
+                auto id = btn_id.attribute("name").as_string();
+                if (id == "wxID_OK")
                     new_node->get_prop_ptr(prop_OK)->set_value("1");
-                else if (id.is_sameas("wxID_YES"))
+                else if (id == "wxID_YES")
                     new_node->get_prop_ptr(prop_Yes)->set_value("1");
-                else if (id.is_sameas("wxID_SAVE"))
+                else if (id == "wxID_SAVE")
                     new_node->get_prop_ptr(prop_Save)->set_value("1");
-                else if (id.is_sameas("wxID_APPLY"))
+                else if (id == "wxID_APPLY")
                     new_node->get_prop_ptr(prop_Apply)->set_value("1");
-                else if (id.is_sameas("wxID_NO"))
+                else if (id == "wxID_NO")
                     new_node->get_prop_ptr(prop_No)->set_value("1");
-                else if (id.is_sameas("wxID_CANCEL"))
+                else if (id == "wxID_CANCEL")
                     new_node->get_prop_ptr(prop_Cancel)->set_value("1");
-                else if (id.is_sameas("wxID_CLOSE"))
+                else if (id == "wxID_CLOSE")
                     new_node->get_prop_ptr(prop_Close)->set_value("1");
-                else if (id.is_sameas("wxID_HELP"))
+                else if (id == "wxID_HELP")
                     new_node->get_prop_ptr(prop_Help)->set_value("1");
-                else if (id.is_sameas("wxID_CONTEXT_HELP"))
+                else if (id == "wxID_CONTEXT_HELP")
                     new_node->get_prop_ptr(prop_ContextHelp)->set_value("1");
             }
         }

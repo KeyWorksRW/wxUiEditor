@@ -191,12 +191,12 @@ static const auto lstStdButtonEvents = {
 
 NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 {
-    auto class_name = xml_obj.attribute("class").as_cview();
+    auto class_name = xml_obj.attribute("class").as_std_str();
     if (class_name.empty())
         return NodeSharedPtr();
 
     // This should never be the case, but let's switch it in the off chance it slips through
-    if (class_name.is_sameas("wxListCtrl"))
+    if (class_name == "wxListCtrl")
         class_name = "wxListView";
 
     auto new_node = CreateNode(class_name, parent);
@@ -208,10 +208,10 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
     for (auto& iter: xml_obj.attributes())
     {
-        if (iter.cname().is_sameas("class"))
+        if (iter.name() == "class")
             continue;
 
-        if (iter.cname().is_sameprefix("wxEVT_"))
+        if (iter.name().starts_with("wxEVT_"))
         {
             if (auto event = new_node->GetEvent(iter.name()); event)
             {
@@ -348,7 +348,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
             if (is_event)
                 continue;
 
-            if (auto value = iter.value(); *value)
+            if (auto value = iter.value(); value.size())
             {
                 {
                     // REVIEW: [KeyWorks - 11-30-2021] This code block deals with changes to the 1.2 project format prior to
@@ -465,7 +465,7 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
         auto& doc = import.GetDocument();
         auto root = doc.first_child();
         auto project = root.child("node");
-        if (!project || !project.attribute("class").as_cview().is_sameas("Project"))
+        if (!project || project.attribute("class").as_string() != "Project")
         {
             ASSERT_MSG(project, ttlib::cstr() << "Failed trying to load converted xml document: " << file.wx_str());
 

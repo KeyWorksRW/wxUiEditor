@@ -90,7 +90,7 @@ FontProperty::FontProperty(NodeProperty* prop) { Convert(prop->as_string()); }
 // facename font (point is a floating-point number)
 //     facename, point size, family, style, weight, underlined, strikethrough
 
-void FontProperty::Convert(ttlib::cview font)
+void FontProperty::Convert(ttlib::sview font)
 {
     if (font.empty())
     {

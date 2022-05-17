@@ -27,7 +27,7 @@ ttlib::cstr DoubleToStr(double val)
     return result;
 }
 
-ttlib::cstr ClearPropFlag(ttlib::sview flag, ttlib::cview currentValue)
+ttlib::cstr ClearPropFlag(ttlib::sview flag, ttlib::sview currentValue)
 {
     ttlib::cstr result;
     if (flag.empty() || currentValue.empty())
@@ -49,7 +49,7 @@ ttlib::cstr ClearPropFlag(ttlib::sview flag, ttlib::cview currentValue)
     return result;
 }
 
-ttlib::cstr ClearMultiplePropFlags(ttlib::cview flags, ttlib::cview currentValue)
+ttlib::cstr ClearMultiplePropFlags(ttlib::sview flags, ttlib::sview currentValue)
 {
     ttlib::cstr result;
     if (flags.empty() || currentValue.empty())
@@ -83,7 +83,7 @@ ttlib::cstr ClearMultiplePropFlags(ttlib::cview flags, ttlib::cview currentValue
     return result;
 }
 
-ttlib::cstr SetPropFlag(ttlib::cview flag, ttlib::cview currentValue)
+ttlib::cstr SetPropFlag(ttlib::sview flag, ttlib::sview currentValue)
 {
     ttlib::cstr result(currentValue);
     if (flag.empty())
@@ -105,7 +105,7 @@ ttlib::cstr SetPropFlag(ttlib::cview flag, ttlib::cview currentValue)
     return result;
 }
 
-bool isPropFlagSet(ttlib::cview flag, ttlib::cview currentValue)
+bool isPropFlagSet(ttlib::sview flag, ttlib::sview currentValue)
 {
     if (flag.empty() || currentValue.empty())
     {
@@ -123,7 +123,7 @@ bool isPropFlagSet(ttlib::cview flag, ttlib::cview currentValue)
     return false;
 }
 
-int ConvertBitlistToInt(ttlib::cview list)
+int ConvertBitlistToInt(ttlib::sview list)
 {
     int result = 0;
     if (list.size())
@@ -197,12 +197,12 @@ ttlib::cstr ConvertSystemColourToString(long colour)
     return str;
 }
 
-wxSystemColour ConvertToSystemColour(ttlib::cview value)
+wxSystemColour ConvertToSystemColour(ttlib::sview value)
 {
     // clang-format off
 
-    #define IS_SYSCOLOUR(name) if (value.is_sameas(#name)) return name;
-    #define ELSE_IS_SYSCOLOUR(name) else if (value.is_sameas(#name)) return name;
+    #define IS_SYSCOLOUR(name) if (value == #name) return name;
+    #define ELSE_IS_SYSCOLOUR(name) else if (value == #name) return name;
 
     IS_SYSCOLOUR(wxSYS_COLOUR_SCROLLBAR)
 
@@ -244,7 +244,7 @@ wxSystemColour ConvertToSystemColour(ttlib::cview value)
     // clang-format on
 }
 
-wxColour ConvertToColour(ttlib::cview value)
+wxColour ConvertToColour(ttlib::sview value)
 {
     // check for system colour
     if (ttlib::is_sameprefix(value, "wx"))
@@ -313,7 +313,7 @@ const char* ConvertFontFamilyToString(wxFontFamily family)
     return result;
 }
 
-ttlib::cstr ConvertEscapeSlashes(ttlib::cview str)
+ttlib::cstr ConvertEscapeSlashes(ttlib::sview str)
 {
     ttlib::cstr result;
 
@@ -359,7 +359,7 @@ ttlib::cstr ConvertEscapeSlashes(ttlib::cview str)
     return result;
 }
 
-ttlib::cstr CreateEscapedText(ttlib::cview str)
+ttlib::cstr CreateEscapedText(ttlib::sview str)
 {
     ttlib::cstr result;
 
@@ -392,7 +392,7 @@ ttlib::cstr CreateEscapedText(ttlib::cview str)
     return result;
 }
 
-std::vector<ttlib::cstr> ConvertToArrayString(ttlib::cview value)
+std::vector<ttlib::cstr> ConvertToArrayString(ttlib::sview value)
 {
     std::vector<ttlib::cstr> array;
     if (value.empty())
@@ -411,7 +411,7 @@ std::vector<ttlib::cstr> ConvertToArrayString(ttlib::cview value)
     return array;
 }
 
-wxArrayString ConvertToWxArrayString(ttlib::cview value)
+wxArrayString ConvertToWxArrayString(ttlib::sview value)
 {
     wxArrayString array;
     if (value.empty())

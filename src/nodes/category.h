@@ -17,7 +17,7 @@ using namespace GenEnum;
 class NodeCategory
 {
 public:
-    NodeCategory(ttlib::cview name) { m_name = name; }
+    NodeCategory(std::string_view name) { m_name.assign(name.data(), name.size()); }
 
     const wxString& GetName() { return m_name; }
     ttlib::cstr getName() { return ttlib::cstr(m_name.wx_str()); }
@@ -38,7 +38,7 @@ public:
         return m_events.at(index);
     }
 
-    NodeCategory& AddCategory(ttlib::cview name) { return m_categories.emplace_back(name); }
+    NodeCategory& AddCategory(std::string_view name) { return m_categories.emplace_back(name); }
     std::vector<NodeCategory>& GetCategories() { return m_categories; }
 
     size_t GetPropNameCount() const { return m_prop_names.size(); }

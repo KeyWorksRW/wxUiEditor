@@ -29,11 +29,10 @@ public:
     NodeSharedPtr CreateFbpNode(pugi::xml_node& xml_prop, Node* parent, Node* sizeritem = nullptr);
 
 protected:
-    void ConvertNameSpaceProp(NodeProperty* prop, ttlib::cview org_names);
+    void ConvertNameSpaceProp(NodeProperty* prop, std::string_view org_names);
 
     // Called when a property is unknown and has a value set.
-    void ProcessPropValue(pugi::xml_node& xml_prop, ttlib::cview prop_name, ttlib::cview class_name, Node* newobject);
-    void ProcessStyleProperty(pugi::xml_node& xml_prop, ttlib::cview class_name, Node* newobject);
+    void ProcessPropValue(pugi::xml_node& xml_prop, ttlib::sview prop_name, ttlib::sview class_name, Node* newobject);
 
     void BitmapProperty(pugi::xml_node& xml_obj, NodeProperty* prop);
     void CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node);

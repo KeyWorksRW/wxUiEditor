@@ -157,11 +157,11 @@ static const ImageMap png_headers[] = {
 
 };
 
-wxImage GetInternalImage(ttlib::cview name)
+wxImage GetInternalImage(ttlib::sview name)
 {
     for (auto& iter: png_headers)
     {
-        if (name.is_sameas(iter.name))
+        if (name == iter.name)
         {
             return LoadHeaderImage(iter.data, iter.size_data);
         }
@@ -171,7 +171,7 @@ wxImage GetInternalImage(ttlib::cview name)
     return LoadHeaderImage(default_png, sizeof(default_png));
 }
 
-wxIcon GetIconImage(ttlib::cview name)
+wxIcon GetIconImage(ttlib::sview name)
 {
     for (auto& iter: png_headers)
     {

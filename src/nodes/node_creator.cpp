@@ -26,7 +26,7 @@ NodeCreator::~NodeCreator()
     }
 }
 
-NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
+NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::sview className)
 {
     auto result = rmap_GenNames.find(className);
     ASSERT_MSG(result != rmap_GenNames.end(), ttlib::cstr()

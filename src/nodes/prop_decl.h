@@ -32,8 +32,8 @@ struct PropChildDeclaration
 class PropDeclaration : public PropChildDeclaration
 {
 public:
-    PropDeclaration(GenEnum::PropName prop_name, GenEnum::PropType prop_type, ttlib::cview def_value, ttlib::cview help,
-                    ttlib::cview customEditor)
+    PropDeclaration(GenEnum::PropName prop_name, GenEnum::PropType prop_type, std::string_view def_value,
+                    std::string_view help, std::string_view customEditor)
     {
         m_def_value = def_value;
         m_help = help;
@@ -54,8 +54,8 @@ public:
     // These get used to setup wxPGProperty, so both key and value need to be a wxString
     struct Options
     {
-        wxString name;
-        wxString help;
+        ttString name;
+        ttString help;
     };
 
     std::vector<Options>& GetOptions() { return m_options; }

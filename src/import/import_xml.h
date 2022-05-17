@@ -51,7 +51,7 @@ protected:
     pugi::xml_document m_docOut;
     ttString m_importProjectFile;
     NodeSharedPtr m_project;
-    std::map<std::string, std::string> m_notebook_tabs;
+    std::map<std::string, std::string, std::less<>> m_notebook_tabs;
 
     std::set<ttlib::cstr> m_errors;
 };

@@ -52,7 +52,7 @@ public:
     // pointer.
     NodeDeclaration* get_declaration(GenEnum::GenName gen_name) { return m_a_declarations[gen_name]; }
 
-    NodeDeclaration* GetNodeDeclaration(ttlib::cview class_name);
+    NodeDeclaration* GetNodeDeclaration(ttlib::sview class_name);
 
     // This returns the integer value of most wx constants used in various components
     int GetConstantAsInt(const std::string& name, int defValue = 0) const;
@@ -95,7 +95,7 @@ private:
     pugi::xml_document* m_pdoc_interface { nullptr };
 
     // Contains a map to every interface class -- valid only during Initialize()
-    std::map<std::string, pugi::xml_node> m_interfaces;
+    std::map<std::string, pugi::xml_node, std::less<>> m_interfaces;
 };
 
 extern NodeCreator g_NodeCreator;

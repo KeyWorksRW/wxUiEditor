@@ -32,7 +32,7 @@ struct ImageMap
 
 static const ImageMap png_headers[] = {
 
-    { "unknown", unknown_png, sizeof(unknown_png) },
+    { .name = "unknown", .data = unknown_png, .size_data = sizeof(unknown_png) },
     { "default", default_png, sizeof(default_png) },
 
     { "flex_grid_sizer", flex_grid_sizer_png, sizeof(flex_grid_sizer_png) },

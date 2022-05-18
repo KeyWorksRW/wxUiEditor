@@ -18,7 +18,7 @@ struct StylePair
 // lst_styles maps a window style to a wxWidgets style that is appended to prop_style.
 static const StylePair lst_styles[] = {
 
-    { "CBS_DROPDOWN", "wxCB_DROPDOWN" },
+    { .win_style = "CBS_DROPDOWN", .wx_style = "wxCB_DROPDOWN" },
     { "CBS_DROPDOWNLIST", "wxCB_READONLY" },
     { "CBS_SIMPLE", "wxCB_SIMPLE" },
     { "CBS_SORT", "wxCB_SORT" },

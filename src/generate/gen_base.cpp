@@ -120,7 +120,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_TYPE panel_type
     m_form_node = form_node;
     m_ImagesForm = nullptr;
 
-    for (auto& form: m_project->GetChildNodePtrs())
+    for (const auto& form: m_project->GetChildNodePtrs())
     {
         if (form->isGen(gen_Images))
         {
@@ -1024,7 +1024,7 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                 {
                     if (auto function_name = wxGetApp().GetBundleFuncName(iter.as_string()); function_name.size())
                     {
-                        for (auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
+                        for (const auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
                         {
                             if (form->isGen(gen_Images))
                             {
@@ -1704,7 +1704,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
         }
     }
 
-    for (auto& iter: node->GetChildNodePtrs())
+    for (const auto& iter: node->GetChildNodePtrs())
     {
         CollectIDs(iter.get(), set_ids);
     }

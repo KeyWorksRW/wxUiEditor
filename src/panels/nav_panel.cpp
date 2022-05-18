@@ -360,7 +360,7 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
     auto tree_parent = m_node_tree_map[node_parent];
     ASSERT(tree_parent.IsOk());
 
-    for (auto& iter_child: node_parent->GetChildNodePtrs())
+    for (const auto& iter_child: node_parent->GetChildNodePtrs())
     {
         auto node = iter_child.get();
         auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).wx_str(), GetImageIndex(node), -1);

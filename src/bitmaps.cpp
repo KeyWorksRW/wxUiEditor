@@ -286,7 +286,7 @@ wxImage GetHeaderImage(ttlib::sview filename, size_t* p_original_size, ttString*
     }
 
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
-    unsigned char* ptr_out_buf = image_buffer.get();
+    auto out_buffer = image_buffer.get();
 
     if (isUiditorFile)
     {
@@ -300,7 +300,7 @@ wxImage GetHeaderImage(ttlib::sview filename, size_t* p_original_size, ttString*
                 {
                     value = (value * 10) + (to_uchar) (*buf_ptr - '0');
                 }
-                ptr_out_buf[actual_size] = value;
+                out_buffer[actual_size] = value;
 
                 if (++actual_size > image_buffer_size)
                 {
@@ -348,7 +348,7 @@ wxImage GetHeaderImage(ttlib::sview filename, size_t* p_original_size, ttString*
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
                     value += (to_uchar) ((*buf_ptr - 'a') + 10);
 
-                ptr_out_buf[actual_size] = value;
+                out_buffer[actual_size] = value;
 
                 if (++actual_size > image_buffer_size)
                 {
@@ -493,7 +493,7 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::sview filename)
     }
 
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
-    unsigned char* ptr_out_buf = image_buffer.get();
+    auto out_buffer = image_buffer.get();
 
     if (isUiditorFile)
     {
@@ -507,7 +507,7 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::sview filename)
                 {
                     value = (value * 10) + (to_uchar) (*buf_ptr - '0');
                 }
-                ptr_out_buf[actual_size] = value;
+                out_buffer[actual_size] = value;
 
                 if (++actual_size > image_buffer_size)
                 {
@@ -555,7 +555,7 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::sview filename)
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
                     value += (to_uchar) ((*buf_ptr - 'a') + 10);
 
-                ptr_out_buf[actual_size] = value;
+                out_buffer[actual_size] = value;
 
                 if (++actual_size > image_buffer_size)
                 {

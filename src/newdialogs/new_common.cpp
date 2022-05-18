@@ -59,7 +59,7 @@ void UpdateFormClass(Node* form_node)
 bool IsClassNameUnique(wxString classname)
 {
     auto new_classname = classname.utf8_string();
-    for (auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
+    for (const auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
     {
         if (iter.get()->prop_as_string(prop_class_name).is_sameas(new_classname))
         {

@@ -542,7 +542,7 @@ void MockupContent::OnNodeSelected(Node* node)
                 if (child->isGen(gen_BookPage))
                 {
                     bool is_node_found { false };
-                    for (auto& grand_child: child->GetChildNodePtrs())
+                    for (const auto& grand_child: child->GetChildNodePtrs())
                     {
                         if (grand_child.get() == node)
                         {

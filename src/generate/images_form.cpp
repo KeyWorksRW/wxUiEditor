@@ -248,7 +248,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                 m_source->SetLastLineBlank();
             }
 
-            for (auto& child: m_form_node->GetChildNodePtrs())
+            for (const auto& child: m_form_node->GetChildNodePtrs())
             {
                 if (auto bundle = pjsettings->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
                     bundle && bundle->lst_filenames.size())
@@ -417,7 +417,7 @@ void BaseCodeGenerator::GenerateImagesForm()
             m_header->writeLine("#if wxCHECK_VERSION(3, 1, 6)", indent::none);
         }
 
-        for (auto& child: m_form_node->GetChildNodePtrs())
+        for (const auto& child: m_form_node->GetChildNodePtrs())
         {
             if (auto bundle = pjsettings->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
                 bundle && bundle->lst_filenames.size())

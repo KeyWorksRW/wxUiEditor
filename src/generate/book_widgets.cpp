@@ -86,11 +86,11 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             int idx_image = 0;
             bool is_image_found { false };
-            for (auto& child: grandparent->GetChildNodePtrs())
+            for (const auto& child: grandparent->GetChildNodePtrs())
             {
                 if (child->HasValue(prop_bitmap))
                     ++idx_image;
-                for (auto& grand_child: child->GetChildNodePtrs())
+                for (const auto& grand_child: child->GetChildNodePtrs())
                 {
                     if (grand_child.get() == node)
                     {
@@ -119,7 +119,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
         {
             int idx_image = -1;
             bool is_image_found { false };
-            for (auto& child: node_parent->GetChildNodePtrs())
+            for (const auto& child: node_parent->GetChildNodePtrs())
             {
                 if (child.get() == node)
                 {
@@ -135,7 +135,7 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
                 }
                 if (child->GetParent()->isGen(gen_wxTreebook))
                 {
-                    for (auto& grand_child: child->GetChildNodePtrs())
+                    for (const auto& grand_child: child->GetChildNodePtrs())
                     {
                         if (grand_child.get() == node)
                         {
@@ -179,15 +179,15 @@ wxObject* BookPageGenerator::CreateMockup(Node* node, wxObject* parent)
             if (node->HasValue(prop_bitmap) && node_parent->prop_as_bool(prop_display_images))
             {
                 int idx_image = -1;
-                for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+                for (const auto& child: node_parent->GetChildNodePtrs())
                 {
-                    if (node_parent->GetChild(idx_child) == node)
+                    if (child.get() == node)
                     {
                         if (idx_image < 0)
                             idx_image = 0;
                         break;
                     }
-                    if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                    if (child->HasValue(prop_bitmap))
                     {
                         if (idx_image < 0)
                             idx_image = 0;
@@ -285,15 +285,15 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
                 idx_image = GetTreebookImageIndex(node);
             else
             {
-                for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child)
+                for (const auto& child: node_parent->GetChildNodePtrs())
                 {
-                    if (node_parent->GetChild(idx_child) == node)
+                    if (child.get() == node)
                     {
                         if (idx_image < 0)
                             idx_image = 0;
                         break;
                     }
-                    if (node_parent->GetChild(idx_child)->HasValue(prop_bitmap))
+                    if (child->HasValue(prop_bitmap))
                     {
                         if (idx_image < 0)
                             idx_image = 0;
@@ -331,13 +331,17 @@ wxObject* PageCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         if (node_parent->isGen(gen_wxToolbook))
         {
             int idx_image = -1;
-            for (size_t idx_child = 0; idx_child < node_parent->GetChildCount(); ++idx_child, ++idx_image)
+            for (const auto& child: node_parent->GetChildNodePtrs())
             {
-                if (node_parent->GetChild(idx_child) == node)
+                if (child.get() == node)
                 {
                     if (idx_image < 0)
                         idx_image = 0;
                     break;
+                }
+                else
+                {
+                    ++idx_image;
                 }
             }
             book->AddPage(wxStaticCast(widget, wxWindow), node->prop_as_wxString(prop_label), false, idx_image);
@@ -914,7 +918,7 @@ static void AddBookImageList(Node* node_book, wxObject* widget)
     {
 #if 1
         wxBookCtrlBase::Images bundle_list;
-        for (auto& child_node: node_book->GetChildNodePtrs())
+        for (const auto& child_node: node_book->GetChildNodePtrs())
         {
             if (child_node->HasValue(prop_bitmap))
             {
@@ -933,7 +937,7 @@ static void AddBookImageList(Node* node_book, wxObject* widget)
 
         wxImageList* img_list = nullptr;
 
-        for (auto& child_node: node_book->GetChildNodePtrs())
+        for (const auto& child_node: node_book->GetChildNodePtrs())
         {
             if (child_node->HasValue(prop_bitmap))
             {
@@ -980,7 +984,7 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
         }
 
         code << "\n\t\twxBookCtrlBase::Images bundle_list;";
-        for (auto& child_node: node->GetChildNodePtrs())
+        for (const auto& child_node: node->GetChildNodePtrs())
         {
             if (child_node->HasValue(prop_bitmap))
             {
@@ -1008,7 +1012,7 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
             code << "\n\t\tauto img_list = new wxImageList;";
 
             size_t image_index = 0;
-            for (auto& child_node: node->GetChildNodePtrs())
+            for (const auto& child_node: node->GetChildNodePtrs())
             {
                 // Note: when we generate the code, we could look at the actual image and determine whether it's already
                 // the correct size and only scale it if needed. However, that requires the user to know to regenerate
@@ -1054,7 +1058,7 @@ static bool isBookHasImage(Node* node)
 {
     bool is_book = !node->isGen(gen_BookPage);
 
-    for (auto& child_node: node->GetChildNodePtrs())
+    for (const auto& child_node: node->GetChildNodePtrs())
     {
         if (child_node->isGen(gen_BookPage))
         {
@@ -1063,7 +1067,7 @@ static bool isBookHasImage(Node* node)
             if (is_book && !node->isGen(gen_wxTreebook))
                 continue;
 
-            for (auto& grand_child: child_node->GetChildNodePtrs())
+            for (const auto& grand_child: child_node->GetChildNodePtrs())
             {
                 if (grand_child->isGen(gen_BookPage))
                 {
@@ -1083,7 +1087,7 @@ static void AddTreebookSubImages(Node* node, wxImageList* img_list)
     if (!img_list)
         return;
 
-    for (auto& child_node: node->GetChildNodePtrs())
+    for (const auto& child_node: node->GetChildNodePtrs())
     {
         if (child_node->isGen(gen_BookPage))
         {
@@ -1104,7 +1108,7 @@ static void AddTreebookSubImages(Node* node, wxImageList* img_list)
 
 static void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list)
 {
-    for (auto& child_node: node->GetChildNodePtrs())
+    for (const auto& child_node: node->GetChildNodePtrs())
     {
         if (child_node->isGen(gen_BookPage))
         {
@@ -1119,7 +1123,7 @@ static void AddTreebookSubImages(Node* node, wxBookCtrlBase::Images& bundle_list
 
 static void AddTreebookImageCode(ttlib::cstr& code, Node* child_node, size_t& image_index)
 {
-    for (auto& grand_child: child_node->GetChildNodePtrs())
+    for (const auto& grand_child: child_node->GetChildNodePtrs())
     {
         if (grand_child->isGen(gen_BookPage) && grand_child->HasValue(prop_bitmap))
         {
@@ -1145,13 +1149,13 @@ static int GetTreebookImageIndex(Node* node)
         treebook = treebook->GetParent();
     }
 
-    for (auto& child_node: treebook->GetChildNodePtrs())
+    for (const auto& child_node: treebook->GetChildNodePtrs())
     {
         if (child_node.get() == node)
             return idx_image;
         if (child_node->HasValue(prop_bitmap))
             ++idx_image;
-        for (auto& grand_child: child_node->GetChildNodePtrs())
+        for (const auto& grand_child: child_node->GetChildNodePtrs())
         {
             if (grand_child->isGen(gen_BookPage))
             {

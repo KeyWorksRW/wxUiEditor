@@ -70,10 +70,11 @@ public:
 
     // Returns the child's position or GetChildCount() in case of not finding it
     size_t GetChildPosition(Node* node);
+    size_t GetChildPosition(const NodeSharedPtr& node) { return GetChildPosition(node.get()); }
     bool ChangeChildPosition(NodeSharedPtr node, size_t pos);
 
-    void RemoveChild(NodeSharedPtr node);
     void RemoveChild(Node* node);
+    void RemoveChild(const NodeSharedPtr& node) { RemoveChild(node.get()); }
     void RemoveChild(size_t index);
     void RemoveAllChildren() { m_children.clear(); }
 
@@ -85,7 +86,7 @@ public:
 
     bool IsChildAllowed(Node* child);
     bool IsChildAllowed(NodeDeclaration* child);
-    bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
+    bool IsChildAllowed(const NodeSharedPtr& child) { return IsChildAllowed(child->GetNodeDeclaration()); }
 
     auto gen_type() const { return m_declaration->gen_type(); }
 
@@ -135,7 +136,7 @@ public:
     // Finds the parent form and returns the value of the it's property "class_name"
     const ttlib::cstr& get_form_name();
 
-    auto GetNodeDeclaration() { return m_declaration; }
+    NodeDeclaration* GetNodeDeclaration() { return m_declaration; }
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-sepcified bitmap)
@@ -251,7 +252,7 @@ public:
     void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node);
 
     int_t FindInsertionPos(Node* child) const;
-    int_t FindInsertionPos(NodeSharedPtr child) const { return FindInsertionPos(child.get()); }
+    int_t FindInsertionPos(const NodeSharedPtr& child) const { return FindInsertionPos(child.get()); }
 
     // Currently only called in debug builds, but available for release builds should we need it
     size_t GetNodeSize() const;
@@ -268,15 +269,10 @@ public:
     std::vector<NodeProperty*> FindAllChildProperties(PropName name);
 
     void CopyEventsFrom(Node*);
+    void CopyEventsFrom(const NodeSharedPtr& node) { return CopyEventsFrom(node.get()); }
 
 protected:
-    void PostProcessBook(Node* book_node);
-    void PostProcessPage(Node* page_node);
-
     void FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name);
-
-    // wxPanel only, not FormPanel
-    void PostProcessPanel(Node* panel_node);
 
 private:
     NodeSharedPtr m_parent;

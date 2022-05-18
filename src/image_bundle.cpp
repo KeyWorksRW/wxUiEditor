@@ -47,21 +47,21 @@ inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
 
 void ProjectSettings::CollectBundles()
 {
-    for (auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
+    for (const auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
     {
-        CollectNodeBundles(iter.get(), iter.get());
+        CollectNodeBundles(form, form);
 
-        if (iter->HasProp(prop_icon) && iter->HasValue(prop_icon))
+        if (form->HasProp(prop_icon) && form->HasValue(prop_icon))
         {
-            if (!m_bundles.contains(ConvertToLookup(iter->prop_as_string(prop_icon))))
+            if (!m_bundles.contains(ConvertToLookup(form->prop_as_string(prop_icon))))
             {
-                ProcessBundleProperty(iter->prop_as_string(prop_icon), iter.get());
+                ProcessBundleProperty(form->prop_as_string(prop_icon), form.get());
             }
         }
     }
 }
 
-void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
+void ProjectSettings::CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr& form)
 {
     for (auto& iter: node->get_props_vector())
     {
@@ -72,7 +72,7 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
         {
             if (!m_bundles.contains(ConvertToLookup(iter.as_string())))
             {
-                ProcessBundleProperty(iter.as_string(), form);
+                ProcessBundleProperty(iter.as_string(), form.get());
             }
         }
         else if (iter.type() == type_animation)
@@ -85,15 +85,15 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
                 {
                     if (!m_map_embedded.contains(parts[IndexImage].filename()))
                     {
-                        AddEmbeddedImage(parts[IndexImage], form);
+                        AddEmbeddedImage(parts[IndexImage], form.get());
                     }
                 }
             }
         }
     }
-    for (auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        CollectNodeBundles(child.get(), form);
+        CollectNodeBundles(child, form);
     }
 }
 

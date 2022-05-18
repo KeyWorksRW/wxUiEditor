@@ -286,7 +286,7 @@ ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
 {
     ttlib::cstr name;
 
-    for (auto& form: m_project->GetChildNodePtrs())
+    for (const auto& form: m_project->GetChildNodePtrs())
     {
         if (form->isGen(gen_Images))
         {
@@ -297,9 +297,9 @@ ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
                 return name;
             }
 
-            for (auto& iter: form->GetChildNodePtrs())
+            for (const auto& child: form->GetChildNodePtrs())
             {
-                ttlib::multiview form_image_parts(iter->prop_as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                ttlib::multiview form_image_parts(child->prop_as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (form_image_parts.size() < 2)
                 {
                     continue;

@@ -63,7 +63,7 @@ int WriteCMakeFile(bool test_only)
 
     std::set<ttlib::cstr> base_files;
 
-    for (auto& iter: project->GetChildNodePtrs())
+    for (const auto& iter: project->GetChildNodePtrs())
     {
         if (!iter->HasValue(prop_base_file))
             continue;

@@ -37,7 +37,7 @@ wxObject* MenuBarBase::CreateMockup(Node* node, wxObject* parent)
     }
     else
     {
-        for (auto& iter: node->GetChildNodePtrs())
+        for (const auto& iter: node->GetChildNodePtrs())
         {
             auto label = new wxStaticText(panel, wxID_ANY, iter->prop_as_wxString(prop_label));
             sizer->Add(label, wxSizerFlags().Border(wxALL));
@@ -90,7 +90,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
 {
     auto sub_menu = new wxMenu;
 
-    for (auto& menu_item: menu_node->GetChildNodePtrs())
+    for (const auto& menu_item: menu_node->GetChildNodePtrs())
     {
         if (menu_item->isType(type_submenu))
         {

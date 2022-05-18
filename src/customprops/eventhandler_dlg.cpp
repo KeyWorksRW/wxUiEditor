@@ -277,10 +277,9 @@ void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& 
         variables.insert(node->prop_as_string(prop_radiobtn_var_name));
     }
 
-    for (size_t i = 0; i < node->GetChildCount(); i++)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto child = node->GetChild(i);
-        CollectMemberVariables(child, variables);
+        CollectMemberVariables(child.get(), variables);
     }
 }
 

@@ -101,6 +101,7 @@ void Node::AddNodeEvent(const NodeEventInfo* info) { m_map_events.emplace(info->
 
 void Node::CopyEventsFrom(Node* from)
 {
+    ASSERT(from);
     for (auto& iter: from->m_map_events)
     {
         if (iter.second.get_value().size())
@@ -234,24 +235,17 @@ bool Node::IsChildAllowed(Node* child)
     return IsChildAllowed(child->GetNodeDeclaration());
 }
 
-void Node::RemoveChild(NodeSharedPtr node)
-{
-    auto iter = m_children.begin();
-    while (iter != m_children.end() && iter->get() != node.get())
-        iter++;
-
-    if (iter != m_children.end())
-        m_children.erase(iter);
-}
-
 void Node::RemoveChild(Node* node)
 {
-    auto iter = m_children.begin();
-    while (iter != m_children.end() && iter->get() != node)
-        iter++;
-
-    if (iter != m_children.end())
-        m_children.erase(iter);
+    for (size_t pos = 0; const auto& child: m_children)
+    {
+        if (child.get() == node)
+        {
+            m_children.erase(m_children.begin() + pos);
+            break;
+        }
+        ++pos;
+    }
 }
 
 void Node::RemoveChild(size_t pos)
@@ -264,11 +258,17 @@ void Node::RemoveChild(size_t pos)
 
 size_t Node::GetChildPosition(Node* node)
 {
-    size_t pos = 0;
-    while (pos < GetChildCount() && m_children[pos].get() != node)
+    for (size_t pos = 0; const auto& child: m_children)
+    {
+        if (child.get() == node)
+        {
+            return pos;
+        }
         ++pos;
+    }
 
-    return pos;
+    FAIL_MSG("failed to find child node, returned position is invalid!")
+    return (m_children.size() - 1);
 }
 
 bool Node::ChangeChildPosition(NodeSharedPtr node, size_t pos)
@@ -281,7 +281,7 @@ bool Node::ChangeChildPosition(NodeSharedPtr node, size_t pos)
     if (pos == cur_pos)
         return true;
 
-    RemoveChild(node.get());
+    RemoveChild(node);
     AddChild(pos, node);
     return true;
 }
@@ -931,7 +931,7 @@ void Node::FixDuplicateNodeNames(Node* form)
         }
     }
 
-    for (auto& child: GetChildNodePtrs())
+    for (const auto& child: GetChildNodePtrs())
     {
         child->FixDuplicateNodeNames(form);
     }
@@ -950,7 +950,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
         }
     }
 
-    for (auto& iter: GetChildNodePtrs())
+    for (const auto& iter: GetChildNodePtrs())
     {
         iter->CollectUniqueNames(name_set, cur_node);
     }
@@ -1024,15 +1024,15 @@ std::vector<NodeProperty*> Node::FindAllChildProperties(PropName name)
 
 void Node::FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name)
 {
-    for (size_t idx = 0; idx < m_children.size(); ++idx)
+    for (const auto& child: m_children)
     {
-        if (m_children[idx]->HasValue(name))
+        if (child->HasValue(name))
         {
-            list.emplace_back(m_children[idx]->get_prop_ptr(name));
+            list.emplace_back(child->get_prop_ptr(name));
         }
-        if (m_children[idx]->GetChildCount())
+        if (child->GetChildCount())
         {
-            m_children[idx]->FindAllChildProperties(list, name);
+            child->FindAllChildProperties(list, name);
         }
     }
 }

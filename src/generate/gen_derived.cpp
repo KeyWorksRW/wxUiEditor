@@ -380,7 +380,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
                     if (event->GetNode()->IsForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
                     {
                         bool is_handled = false;
-                        for (auto& iter: event->GetNode()->GetChildNodePtrs())
+                        for (const auto& iter: event->GetNode()->GetChildNodePtrs())
                         {
                             if (iter->isGen(gen_wxContextMenuEvent))
                             {

@@ -687,7 +687,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
     // If the node has porp_alignment, then it will also have prop_borders and prop_flags
     if (node->HasProp(prop_alignment))
     {
-        if (all_items.find("wxEXPAND") != all_items.end())
+        if (all_items.contains("wxEXPAND"))
         {
             node->prop_set_value(prop_flags, "wxEXPAND");
         }
@@ -695,26 +695,26 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
         {
             auto alignment = node->prop_as_raw_ptr(prop_alignment);
 
-            if (all_items.find("wxALIGN_CENTER") != all_items.end())
+            if (all_items.contains("wxALIGN_CENTER"))
             {
                 if (alignment->size())
                     *alignment << '|';
                 *alignment << "wxALIGN_CENTER";
             }
-            else if (all_items.find("wxALIGN_CENTER_HORIZONTAL") != all_items.end())
+            else if (all_items.contains("wxALIGN_CENTER_HORIZONTAL"))
             {
                 if (alignment->size())
                     *alignment << '|';
                 *alignment << "wxALIGN_CENTER_HORIZONTAL";
             }
-            else if (all_items.find("wxALIGN_CENTER_VERTICAL") != all_items.end())
+            else if (all_items.contains("wxALIGN_CENTER_VERTICAL"))
             {
                 if (alignment->size())
                     *alignment << '|';
                 *alignment << "wxALIGN_CENTER_VERTICAL";
             }
 
-            if (all_items.find("wxALIGN_RIGHT") != all_items.end())
+            if (all_items.contains("wxALIGN_RIGHT"))
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -723,7 +723,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
                     *alignment << "wxALIGN_RIGHT";
                 }
             }
-            else if (all_items.find("wxALIGN_LEFT") != all_items.end())
+            else if (all_items.contains("wxALIGN_LEFT"))
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -732,7 +732,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
                     *alignment << "wxALIGN_LEFT";
                 }
             }
-            else if (all_items.find("wxALIGN_TOP") != all_items.end())
+            else if (all_items.contains("wxALIGN_TOP"))
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -741,7 +741,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
                     *alignment << "wxALIGN_TOP";
                 }
             }
-            else if (all_items.find("wxALIGN_BOTTOM") != all_items.end())
+            else if (all_items.contains("wxALIGN_BOTTOM"))
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -755,7 +755,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
 
     if (node->HasProp(prop_border))
     {
-        if (all_items.find("wxALL") != all_items.end())
+        if (all_items.contains("wxALL"))
         {
             node->prop_set_value(prop_border, "wxALL");
         }
@@ -764,25 +764,25 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
             auto border_ptr = node->prop_as_raw_ptr(prop_border);
             border_ptr->clear();
 
-            if (all_items.find("wxLEFT") != all_items.end())
+            if (all_items.contains("wxLEFT"))
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
                 *border_ptr << "wxLEFT";
             }
-            if (all_items.find("wxRIGHT") != all_items.end())
+            if (all_items.contains("wxRIGHT"))
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
                 *border_ptr << "wxRIGHT";
             }
-            if (all_items.find("wxTOP") != all_items.end())
+            if (all_items.contains("wxTOP"))
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
                 *border_ptr << "wxTOP";
             }
-            if (all_items.find("wxBOTTOM") != all_items.end())
+            if (all_items.contains("wxBOTTOM"))
             {
                 if (border_ptr->size())
                     *border_ptr << ',';

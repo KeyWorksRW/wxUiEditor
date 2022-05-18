@@ -53,7 +53,7 @@ void ProjectSettings::CollectBundles()
 
         if (iter->HasProp(prop_icon) && iter->HasValue(prop_icon))
         {
-            if (m_bundles.find(ConvertToLookup(iter->prop_as_string(prop_icon))) == m_bundles.end())
+            if (!m_bundles.contains(ConvertToLookup(iter->prop_as_string(prop_icon))))
             {
                 ProcessBundleProperty(iter->prop_as_string(prop_icon), iter.get());
             }
@@ -70,7 +70,7 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
 
         if (iter.type() == type_image)
         {
-            if (m_bundles.find(ConvertToLookup(iter.as_string())) == m_bundles.end())
+            if (!m_bundles.contains(ConvertToLookup(iter.as_string())))
             {
                 ProcessBundleProperty(iter.as_string(), form);
             }
@@ -83,7 +83,7 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
                 ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts[IndexImage].size())
                 {
-                    if (auto result = m_map_embedded.find(parts[IndexImage].filename()); result == m_map_embedded.end())
+                    if (!m_map_embedded.contains(parts[IndexImage].filename()))
                     {
                         AddEmbeddedImage(parts[IndexImage], form);
                     }
@@ -380,8 +380,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::multistr& parts
     ttlib::cstr lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
 
-    ASSERT_MSG(m_bundles.find(lookup_str) == m_bundles.end(),
-               "ProcessBundleProperty should not be called if bundle already exists!")
+    ASSERT_MSG(!m_bundles.contains(lookup_str), "ProcessBundleProperty should not be called if bundle already exists!")
 
     if (parts[IndexImage].empty())
     {

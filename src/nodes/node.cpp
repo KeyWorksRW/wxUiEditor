@@ -980,23 +980,12 @@ size_t Node::GetNodeSize() const
         size += iter.GetPropSize();
     }
 
-    // BUGBUG: [KeyWorks - 05-17-2022] This is a very inaccurate way to get node size...
-
-#if 0
-    for (auto& iter: m_events)
+    for (auto& iter: m_map_events)
     {
-        size += iter.GetEventSize();
+        size += iter.second.GetEventSize();
     }
-#endif
-
-    // Add the size of our maps
 
     size += (m_prop_indices.size() * (sizeof(size_t) * 2));
-    // size += (m_event_map.size() * (sizeof(std::string) + sizeof(size_t)));
-
-    // BUGBUG: [KeyWorks - 05-17-2022] This isn't accurate -- need to iterate through the map and add the length of all the
-    // strings in use
-    size += (m_map_events.size() * (sizeof(NodeEvent)));
 
     return size;
 }

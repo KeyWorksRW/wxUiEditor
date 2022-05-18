@@ -1712,11 +1712,12 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
 
 void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
 {
-    for (size_t i = 0; i < node->GetEventCount(); ++i)
+    for (auto& iter: node->GetMapEvents())
     {
-        auto event = node->GetEvent(i);
-        if (!event->get_value().empty())
-            events.push_back(event);
+        if (iter.second.get_value().size())
+        {
+            events.push_back(&iter.second);
+        }
     }
 
     for (size_t i = 0; i < node->GetChildCount(); ++i)

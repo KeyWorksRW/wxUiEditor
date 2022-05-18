@@ -10,6 +10,8 @@
 #include <map>
 #include <unordered_map>
 
+#include "hash_map.h"  // Find std::string_view key in std::unordered_map
+
 namespace GenEnum
 {
     enum PropType : size_t
@@ -46,7 +48,7 @@ namespace GenEnum
         type_unknown,
 
     };
-    extern std::map<PropType, const char*> map_PropTypes;
+    extern std::unordered_map<std::string_view, PropType, str_view_hash, std::equal_to<>> umap_PropTypes;
 
     enum PropName : size_t
     {
@@ -467,7 +469,7 @@ namespace GenEnum
         gen_type_array_size,
         gen_type_unknown = gen_type_array_size
     };
-    extern std::map<GenType, const char*> map_GenTypes;
+    extern std::map<GenType, std::string_view> map_GenTypes;
 
     enum GenName : size_t
     {
@@ -634,6 +636,6 @@ namespace GenEnum
 
     };
     extern std::map<GenEnum::GenName, const char*> map_GenNames;
-    extern std::map<std::string_view, GenEnum::GenName, std::less<>> rmap_GenNames;
+    extern std::unordered_map<std::string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
 
 }  // namespace GenEnum

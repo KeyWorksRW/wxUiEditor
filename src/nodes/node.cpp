@@ -67,25 +67,23 @@ NodeProperty* Node::get_prop_ptr(PropName name)
 
 NodeEvent* Node::GetEvent(ttlib::sview name)
 {
-    if (auto it = m_event_map.find(std::string(name)); it != m_event_map.end())
-        return &m_events[it->second];
+    if (auto iter = m_map_events.find(name); iter != m_map_events.end())
+    {
+        return &iter->second;
+    }
     else
+    {
         return nullptr;
-}
-
-NodeEvent* Node::GetEvent(size_t index)
-{
-    ASSERT(index < m_events.size());
-    return &m_events[index];
+    }
 }
 
 size_t Node::GetInUseEventCount() const
 {
     size_t count = 0;
 
-    for (auto& iter: m_events)
+    for (auto& iter: m_map_events)
     {
-        if (iter.get_value().size())
+        if (iter.second.get_value().size())
             ++count;
     }
 
@@ -99,11 +97,18 @@ NodeProperty* Node::AddNodeProperty(PropDeclaration* declaration)
     return &m_properties[m_properties.size() - 1];
 }
 
-NodeEvent* Node::AddNodeEvent(const NodeEventInfo* info)
+void Node::AddNodeEvent(const NodeEventInfo* info) { m_map_events.emplace(info->get_name(), NodeEvent(info, this)); }
+
+void Node::CopyEventsFrom(Node* from)
 {
-    auto& event = m_events.emplace_back(info, this);
-    m_event_map[event.get_name()] = (m_events.size() - 1);
-    return &m_events[m_events.size() - 1];
+    for (auto& iter: from->m_map_events)
+    {
+        if (iter.second.get_value().size())
+        {
+            auto event = GetEvent(iter.second.get_name());
+            event->set_value(iter.second.get_value());
+        }
+    }
 }
 
 Node* Node::get_form() noexcept
@@ -721,16 +726,16 @@ Node* Node::CreateNode(GenName name)
     return cur_selection->CreateChildNode(name);
 }
 
-void Node::ModifyProperty(PropName name, ttlib::cview value)
+void Node::ModifyProperty(PropName name, ttlib::sview value)
 {
     auto prop = get_prop_ptr(name);
-    if (prop && value != prop->as_cview())
+    if (prop && value != prop->as_string())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }
 }
 
-void Node::ModifyProperty(ttlib::cview name, int value)
+void Node::ModifyProperty(ttlib::sview name, int value)
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
@@ -742,13 +747,13 @@ void Node::ModifyProperty(ttlib::cview name, int value)
     }
 }
 
-void Node::ModifyProperty(ttlib::cview name, ttlib::cview value)
+void Node::ModifyProperty(ttlib::sview name, ttlib::sview value)
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
         prop = get_prop_ptr(find_prop->second);
 
-    if (prop && value != prop->as_cview())
+    if (prop && value != prop->as_string())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }
@@ -762,9 +767,9 @@ void Node::ModifyProperty(NodeProperty* prop, int value)
     }
 }
 
-void Node::ModifyProperty(NodeProperty* prop, ttlib::cview value)
+void Node::ModifyProperty(NodeProperty* prop, ttlib::sview value)
 {
-    if (prop && value != prop->as_cview())
+    if (prop && value != prop->as_string())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }
@@ -975,15 +980,23 @@ size_t Node::GetNodeSize() const
         size += iter.GetPropSize();
     }
 
+    // BUGBUG: [KeyWorks - 05-17-2022] This is a very inaccurate way to get node size...
+
+#if 0
     for (auto& iter: m_events)
     {
         size += iter.GetEventSize();
     }
+#endif
 
     // Add the size of our maps
 
     size += (m_prop_indices.size() * (sizeof(size_t) * 2));
-    size += (m_event_map.size() * (sizeof(std::string) + sizeof(size_t)));
+    // size += (m_event_map.size() * (sizeof(std::string) + sizeof(size_t)));
+
+    // BUGBUG: [KeyWorks - 05-17-2022] This isn't accurate -- need to iterate through the map and add the length of all the
+    // strings in use
+    size += (m_map_events.size() * (sizeof(NodeEvent)));
 
     return size;
 }

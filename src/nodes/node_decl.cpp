@@ -11,7 +11,7 @@
 #include "node.h"            // Contains the user-modifiable node
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
-NodeDeclaration::NodeDeclaration(ttlib::cview class_name, NodeType* type) : m_type(type), m_category(class_name)
+NodeDeclaration::NodeDeclaration(ttlib::sview class_name, NodeType* type) : m_type(type), m_category(class_name)
 {
     m_gen_name = rmap_GenNames[class_name];
     m_gen_type = type->gen_type();
@@ -38,9 +38,9 @@ PropDeclaration* NodeDeclaration::GetPropDeclaration(size_t idx) const
     return nullptr;
 }
 
-NodeEventInfo* NodeDeclaration::GetEventInfo(ttlib::cview name)
+NodeEventInfo* NodeDeclaration::GetEventInfo(ttlib::sview name)
 {
-    if (auto it = m_events.find(name.c_str()); it != m_events.end())
+    if (auto it = m_events.find(name); it != m_events.end())
         return it->second.get();
 
     return nullptr;

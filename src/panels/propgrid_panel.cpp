@@ -509,13 +509,23 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
     {
         new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string());
         new_pg_property->SetAttribute(wxPG_BOOL_USE_DOUBLE_CLICK_CYCLING, wxVariant(true, "true"));
-        MSG_ERROR(ttlib::cstr("NodeProperty type is unsupported: ") << map_PropTypes[type]);
+
+#if defined(INTERNAL_TESTING)
+        for (auto& iter: umap_PropTypes)
+        {
+            if (iter.second == type)
+            {
+                MSG_ERROR(ttlib::cstr("NodeProperty type is unsupported: ") << iter.first);
+                break;
+            }
+        }
+#endif
     }
 
     return new_pg_property;
 }
 
-void PropGridPanel::AddProperties(ttlib::cview name, Node* node, NodeCategory& category, PropNameSet& prop_set,
+void PropGridPanel::AddProperties(ttlib::sview name, Node* node, NodeCategory& category, PropNameSet& prop_set,
                                   bool is_child_cat)
 {
     size_t propCount = category.GetPropNameCount();
@@ -701,7 +711,7 @@ inline constexpr const char* lst_mouse_events[] = {
 };
 // clang-format on
 
-void PropGridPanel::AddEvents(ttlib::cview name, Node* node, NodeCategory& category, EventSet& event_set)
+void PropGridPanel::AddEvents(ttlib::sview name, Node* node, NodeCategory& category, EventSet& event_set)
 {
     auto& eventList = category.GetEvents();
     for (auto& eventName: eventList)
@@ -1398,7 +1408,7 @@ void PropGridPanel::ModifyProperty(NodeProperty* prop, const wxString& str)
     m_isPropChangeSuspended = false;
 }
 
-void PropGridPanel::modifyProperty(NodeProperty* prop, ttlib::cview str)
+void PropGridPanel::modifyProperty(NodeProperty* prop, ttlib::sview str)
 {
     m_isPropChangeSuspended = true;
     wxGetFrame().ModifyProperty(prop, str);
@@ -1468,7 +1478,7 @@ wxString PropGridPanel::GetCategoryDisplayName(const wxString& original)
     return category_name;
 }
 
-void PropGridPanel::CreatePropCategory(ttlib::cview name, Node* node, NodeDeclaration* declaration, PropNameSet& prop_set)
+void PropGridPanel::CreatePropCategory(ttlib::sview name, Node* node, NodeDeclaration* declaration, PropNameSet& prop_set)
 {
     auto& category = declaration->GetCategory();
 
@@ -1598,7 +1608,7 @@ void PropGridPanel::CreateLayoutCategory(Node* node)
     m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
 }
 
-void PropGridPanel::CreateEventCategory(ttlib::cview name, Node* node, NodeDeclaration* declaration, EventSet& event_set)
+void PropGridPanel::CreateEventCategory(ttlib::sview name, Node* node, NodeDeclaration* declaration, EventSet& event_set)
 {
     auto& category = declaration->GetCategory();
 

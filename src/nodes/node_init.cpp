@@ -378,7 +378,7 @@ void NodeCreator::Initialize()
         }
 
         // Now parse the completed m_pdoc_interface document
-        ParseGeneratorFile(ttlib::emptystring);
+        ParseGeneratorFile("");
 
         for (auto& iter: lst_xml_generators)
         {
@@ -398,14 +398,14 @@ void NodeCreator::Initialize()
 }
 
 // The xml_data parameter is the char* pointer to the XML data. It will be empty when processing the interface document.
-void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
+void NodeCreator::ParseGeneratorFile(const char* xml_data)
 {
     // All but one of the possible files will use the doc file, so we create it even if it gets ignored because this is an
     // interface file
     pugi::xml_document doc;
     pugi::xml_node root;
 
-    if (xml_data.empty())
+    if (!xml_data || !*xml_data)
     {
         root = m_pdoc_interface->child("GeneratorDefinitions");
     }
@@ -431,13 +431,13 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
     {
         auto class_name = generator.attribute("class").as_std_str();
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-        if (rmap_GenNames.find(class_name) == rmap_GenNames.end())
+        if (!rmap_GenNames.contains(class_name))
         {
             MSG_WARNING(ttlib::cstr("Unrecognized class name -- ") << class_name);
         }
 #endif  // _DEBUG
 
-        auto type_name = generator.attribute("type").as_std_str();
+        auto type_name = generator.attribute("type").as_string();
         GenType type { gen_type_unknown };
         for (auto& iter: map_GenTypes)
         {
@@ -455,7 +455,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
         }
 #endif  // _DEBUG
 
-        if (xml_data.empty())
+        if (!xml_data || !*xml_data)
         {
             m_interfaces[class_name] = generator;
         }
@@ -496,7 +496,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
     }
 
     // Interface processing doesn't have a xml_data
-    if (xml_data.size())
+    if (xml_data && *xml_data)
     {
         auto elem_obj = root.child("gen");
         while (elem_obj)
@@ -595,16 +595,13 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
         auto description = elem_prop.attribute("help").as_string();
         auto customEditor = elem_prop.attribute("editor").as_string();
 
-        auto prop_type = elem_prop.attribute("type").as_string();
+        auto prop_type = elem_prop.attribute("type").as_sview();
 
         GenEnum::PropType property_type { type_unknown };
-        for (auto& iter: map_PropTypes)
+
+        if (auto result = umap_PropTypes.find(prop_type); result != umap_PropTypes.end())
         {
-            if (prop_type == iter.second)
-            {
-                property_type = iter.first;
-                break;
-            }
+            property_type = result->second;
         }
 
         if (property_type == type_unknown)

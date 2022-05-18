@@ -33,7 +33,7 @@ namespace pugi
 class NodeDeclaration
 {
 public:
-    NodeDeclaration(ttlib::cview class_name, NodeType* type);
+    NodeDeclaration(ttlib::sview class_name, NodeType* type);
     ~NodeDeclaration();
 
     NodeCategory& GetCategory() { return m_category; }
@@ -43,7 +43,7 @@ public:
 
     PropDeclaration* GetPropDeclaration(size_t idx) const;
 
-    NodeEventInfo* GetEventInfo(ttlib::cview name);
+    NodeEventInfo* GetEventInfo(ttlib::sview name);
     const NodeEventInfo* GetEventInfo(size_t idx) const;
 
     PropDeclarationMap& GetPropInfoMap() { return m_properties; }
@@ -56,7 +56,7 @@ public:
     bool isType(GenType type) const noexcept { return (type == m_gen_type); }
     bool isGen(GenName name) const noexcept { return (name == m_gen_name); }
 
-    ttlib::cview DeclName() const noexcept { return ttlib::cview(m_name); }
+    ttlib::sview DeclName() const noexcept { return ttlib::sview(m_name); }
 
     size_t AddBaseClass(NodeDeclaration* base)
     {
@@ -105,7 +105,7 @@ private:
     NodeCategory m_category;
 
     PropDeclarationMap m_properties;  // std::map<std::string, PropDeclarationPtr>
-    std::map<std::string, std::unique_ptr<NodeEventInfo>> m_events;
+    std::map<std::string, std::unique_ptr<NodeEventInfo>, std::less<>> m_events;
 
     std::map<GenEnum::PropName, std::string> m_override_def_values;
     std::set<GenEnum::PropName> m_hide_properties;

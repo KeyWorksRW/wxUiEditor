@@ -25,7 +25,7 @@ void Node::CreateDoc(pugi::xml_document& doc)
 
 void Node::AddNodeToDoc(pugi::xml_node& node)
 {
-    node.append_attribute("class") = DeclName().c_str();
+    node.append_attribute("class") = DeclName();
 
     for (auto& iter: m_properties)
     {
@@ -78,11 +78,13 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
         }
     }
 
-    for (auto& iter: m_events)
+    for (auto& iter: m_map_events)
     {
-        auto& value = iter.get_value();
+        auto& value = iter.second.get_value();
         if (value.size())
-            node.append_attribute(iter.get_name().c_str()) = value.c_str();
+        {
+            node.append_attribute(iter.second.get_name()) = value;
+        }
     }
 
     for (size_t i = 0; i < GetChildCount(); i++)

@@ -12,37 +12,35 @@
 
 using namespace GenEnum;
 
-std::map<PropType, const char*> GenEnum::map_PropTypes = {
+std::unordered_map<std::string_view, PropType, str_view_hash, std::equal_to<>> GenEnum::umap_PropTypes = {
 
-    // These types need to be listed in xml/gen.dtd
-
-    { type_animation, "animation" },
-    { type_bitlist, "bitlist" },
-    { type_bitmap, "bitmap" },
-    { type_bool, "bool" },
-    { type_code_edit, "code_edit" },
-    { type_editoption, "editoption" },
-    { type_file, "file" },
-    { type_float, "float" },
-    { type_html_edit, "html_edit" },
-    { type_id, "id" },
-    { type_image, "image" },
-    { type_int, "int" },
-    { type_option, "option" },
-    { type_path, "path" },
-    { type_string, "string" },
-    { type_string_code_single, "string_code_single" },
-    { type_string_edit, "string_edit" },
-    { type_string_edit_escapes, "string_edit_escapes" },
-    { type_string_edit_single, "string_edit_single" },
-    { type_string_escapes, "string_escapes" },
-    { type_stringlist, "stringlist" },
-    { type_uint, "uint" },
-    { type_uintpairlist, "uintpairlist" },
-    { type_wxColour, "wxColour" },
-    { type_wxFont, "wxFont" },
-    { type_wxPoint, "wxPoint" },
-    { type_wxSize, "wxSize" },
+    { "animation", type_animation },
+    { "bitlist", type_bitlist },
+    { "bitmap", type_bitmap },
+    { "bool", type_bool },
+    { "code_edit", type_code_edit },
+    { "editoption", type_editoption },
+    { "file", type_file },
+    { "float", type_float },
+    { "html_edit", type_html_edit },
+    { "id", type_id },
+    { "image", type_image },
+    { "int", type_int },
+    { "option", type_option },
+    { "path", type_path },
+    { "string", type_string },
+    { "string_code_single", type_string_code_single },
+    { "string_edit", type_string_edit },
+    { "string_edit_escapes", type_string_edit_escapes },
+    { "string_edit_single", type_string_edit_single },
+    { "string_escapes", type_string_escapes },
+    { "stringlist", type_stringlist },
+    { "uint", type_uint },
+    { "uintpairlist", type_uintpairlist },
+    { "wxColour", type_wxColour },
+    { "wxFont", type_wxFont },
+    { "wxPoint", type_wxPoint },
+    { "wxSize", type_wxSize },
 
 };
 
@@ -387,7 +385,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
-std::map<GenType, const char*> GenEnum::map_GenTypes = {
+std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
 
     { type_aui_tool, "aui_tool" },
     { type_aui_toolbar, "aui_toolbar" },
@@ -606,4 +604,4 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxWrapSizer, "wxWrapSizer" },
 
 };
-std::map<std::string_view, GenEnum::GenName, std::less<>> GenEnum::rmap_GenNames;
+std::unordered_map<std::string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> GenEnum::rmap_GenNames;

@@ -38,8 +38,7 @@ public:
     bool as_bool() const { return (as_int() != 0); };
     double as_float() const;
 
-    // REVIEW: [KeyWorks - 12-30-2021] Why do we need this? This just adds ctor/dtor code.
-    auto as_cview() const { return ttlib::cview(m_value.c_str(), m_value.length()); }
+    // ttlib::sview as_sview() const { return m_value; }
 
     // Use with caution! This allows you to modify the property string directly.
     auto as_raw_ptr() { return &m_value; }
@@ -93,7 +92,7 @@ public:
     Node* GetNode() { return m_node; }
 
     // Returns a char pointer to the name. Use get_name() if you want the enum value.
-    ttlib::cview DeclName() const noexcept { return m_declaration->DeclName(); }
+    ttlib::sview DeclName() const noexcept { return m_declaration->DeclName(); }
 
     bool isProp(PropName name) const noexcept { return m_declaration->isProp(name); }
     bool isType(PropType type) const noexcept { return m_declaration->isType(type); }

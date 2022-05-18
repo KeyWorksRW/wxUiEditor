@@ -17,7 +17,7 @@
 void ExpandLambda(ttlib::cstr& lambda)
 {
     lambda.LeftTrim();
-    if (lambda.is_sameprefix("@@"))
+    if (lambda.starts_with("@@"))
     {
         lambda.erase(0, 2);
     }

@@ -44,35 +44,35 @@ MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* 
 {
     for (auto& iter: *m_pMsgs)
     {
-        if (iter.is_sameprefix("Error:"))
+        if (iter.starts_with("Error:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
             m_textCtrl->AppendText("Error: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
-        if (iter.is_sameprefix("wxError:"))
+        if (iter.starts_with("wxError:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
             m_textCtrl->AppendText("wxError: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
-        else if (iter.is_sameprefix("Warning:"))
+        else if (iter.starts_with("Warning:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
             m_textCtrl->AppendText("Warning: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
-        else if (iter.is_sameprefix("wxWarning:"))
+        else if (iter.starts_with("wxWarning:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
             m_textCtrl->AppendText("wxWarning: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
-        else if (iter.is_sameprefix("wxInfo:"))
+        else if (iter.starts_with("wxInfo:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
             m_textCtrl->AppendText("wxInfo: ");

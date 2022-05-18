@@ -1074,7 +1074,7 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 
     ttlib::cstr class_name(node->DeclName());
 
-    if (class_name.is_sameprefix("wx"))
+    if (class_name.starts_with("wx"))
     {
         if (node->HasValue(prop_derived_class))
         {
@@ -1483,7 +1483,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                                                  ttlib::is_found(result.value().find("\n\t\t"))) ?
                                                     indent::none :
                                                     indent::auto_no_whitespace);
-            if (result.value().is_sameprefix("\t{"))
+            if (result.value().starts_with("\t{"))
             {
                 need_closing_brace = true;
             }
@@ -1699,7 +1699,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
         if (iter.type() == type_id)
         {
             auto& prop_id = iter.as_string();
-            if (!prop_id.is_sameprefix("wxID_"))
+            if (!prop_id.starts_with("wxID_"))
                 set_ids.insert(prop_id);
         }
     }
@@ -1778,7 +1778,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
         {
             if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(iter.as_string()); bundle)
             {
-                if (value.is_sameprefix("Embed") || value.is_sameprefix("SVG"))
+                if (value.starts_with("Embed") || value.starts_with("SVG"))
                 {
                     for (auto& idx_image: bundle->lst_filenames)
                     {
@@ -1800,7 +1800,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                         }
                     }
                 }
-                else if (value.is_sameprefix("Header") || value.is_sameprefix("XPM"))
+                else if (value.starts_with("Header") || value.starts_with("XPM"))
                 {
                     for (auto& idx_image: bundle->lst_filenames)
                     {
@@ -1819,7 +1819,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 
         else if (iter.type() == type_animation)
         {
-            if (value.is_sameprefix("Embed"))
+            if (value.starts_with("Embed"))
             {
                 ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
@@ -1852,7 +1852,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                     m_embedded_images.emplace_back(embed);
                 }
             }
-            else if (value.is_sameprefix("Header") || value.is_sameprefix("XPM"))
+            else if (value.starts_with("Header") || value.starts_with("XPM"))
             {
                 ttlib::multiview parts(value);
                 if (ttlib::is_whitespace(parts[IndexImage].front()))

@@ -247,7 +247,7 @@ wxSystemColour ConvertToSystemColour(ttlib::sview value)
 wxColour ConvertToColour(ttlib::sview value)
 {
     // check for system colour
-    if (ttlib::is_sameprefix(value, "wx"))
+    if (value.starts_with("wx"))
     {
         return wxSystemSettings::GetColour(ConvertToSystemColour(value));
     }

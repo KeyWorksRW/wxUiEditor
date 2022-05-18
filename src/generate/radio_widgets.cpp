@@ -237,7 +237,7 @@ std::optional<ttlib::cstr> RadioBoxGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
 
     ttlib::cstr choice_name(node->get_node_name());
-    if (choice_name.is_sameprefix("m_"))
+    if (choice_name.starts_with("m_"))
         choice_name.erase(0, 2);
     choice_name << "_choices";
     code << "\twxString " << choice_name << "[] = {";

@@ -64,7 +64,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
         case type_editoption:
         case type_option:
         case type_id:
-            if (m_value.is_sameprefix("wx"))
+            if (m_value.starts_with("wx"))
             {
                 return g_NodeCreator.GetConstantAsInt(m_value, 0);
             }
@@ -95,7 +95,7 @@ int NodeProperty::as_mockup(std::string_view prefix) const
                 int value = 0;
                 for (auto& iter: mstr)
                 {
-                    if (iter.is_sameprefix("wx"))
+                    if (iter.starts_with("wx"))
                     {
                         value |= g_NodeCreator.GetConstantAsInt(iter);
                     }
@@ -126,7 +126,7 @@ const ttlib::cstr& NodeProperty::as_constant(std::string_view prefix)
         case type_editoption:
         case type_option:
         case type_id:
-            if (m_value.is_sameprefix("wx"))
+            if (m_value.starts_with("wx"))
             {
                 return m_value;
             }
@@ -165,7 +165,7 @@ const ttlib::cstr& NodeProperty::as_constant(std::string_view prefix)
                 m_constant.clear();
                 for (auto& iter: mstr)
                 {
-                    if (iter.is_sameprefix("wx"))
+                    if (iter.starts_with("wx"))
                     {
                         if (m_constant.size())
                         {
@@ -236,7 +236,7 @@ wxSize NodeProperty::as_size() const
 wxColour NodeProperty::as_color() const
 {
     // check for system colour
-    if (m_value.is_sameprefix("wx"))
+    if (m_value.starts_with("wx"))
     {
         return wxSystemSettings::GetColour(ConvertToSystemColour(m_value));
     }

@@ -29,7 +29,7 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
         if (menu_line.empty() || menu_line.at(0) == '/')  // ignore blank lines and comments
             continue;
 
-        if (menu_line.is_sameprefix("END") || menu_line.is_sameprefix("}"))
+        if (menu_line.starts_with("END") || menu_line.starts_with("}"))
         {
             --nesting;
             if (nesting > 0)
@@ -37,12 +37,12 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
             else
                 break;
         }
-        else if (menu_line.is_sameprefix("BEGIN") || menu_line.is_sameprefix("{"))
+        else if (menu_line.starts_with("BEGIN") || menu_line.starts_with("{"))
         {
             ++nesting;
             continue;
         }
-        if (menu_line.is_sameprefix("POPUP"))
+        if (menu_line.starts_with("POPUP"))
         {
             ++popups;
 
@@ -81,7 +81,7 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
     for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
     {
         line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
-        if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
+        if (line.starts_with("BEGIN") || line.starts_with("{"))
         {
             ++curTxtLine;
             ParseMenus(txtfile, curTxtLine);
@@ -100,12 +100,12 @@ void resForm::ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine)
         if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
             continue;
 
-        if (line.is_sameprefix("END") || line.is_sameprefix("}"))
+        if (line.starts_with("END") || line.starts_with("}"))
         {
             break;
         }
 
-        if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
+        if (line.starts_with("BEGIN") || line.starts_with("{"))
         {
             if (parent)
             {
@@ -116,7 +116,7 @@ void resForm::ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine)
             continue;
         }
 
-        if (line.is_sameprefix("POPUP") && !m_is_popup_menu)
+        if (line.starts_with("POPUP") && !m_is_popup_menu)
         {
             auto& control = m_ctrls.emplace_back();
             parent = control.SetNodePtr(g_NodeCreator.NewNode(gen_wxMenu));
@@ -136,12 +136,12 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
         if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
             continue;
 
-        else if (line.is_sameprefix("END") || line.is_sameprefix("}"))
+        else if (line.starts_with("END") || line.starts_with("}"))
         {
             break;
         }
 
-        else if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
+        else if (line.starts_with("BEGIN") || line.starts_with("{"))
         {
             if (sub_parent)
             {
@@ -152,7 +152,7 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
             continue;
         }
 
-        else if (line.is_sameprefix("POPUP"))
+        else if (line.starts_with("POPUP"))
         {
             auto& control = m_ctrls.emplace_back();
             sub_parent = control.SetNodePtr(g_NodeCreator.NewNode(gen_submenu));
@@ -160,10 +160,10 @@ void resForm::ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curT
             line.moveto_nextword();
             sub_parent->prop_set_value(prop_label, m_pWinResource->ConvertCodePageString(line.view_substr(0)));
         }
-        else if (line.is_sameprefix("MENUITEM"))
+        else if (line.starts_with("MENUITEM"))
         {
             line.moveto_nextword();
-            if (line.is_sameprefix("SEPARATOR"))
+            if (line.starts_with("SEPARATOR"))
             {
                 auto& control = m_ctrls.emplace_back();
                 auto separator = control.SetNodePtr(g_NodeCreator.NewNode(gen_separator));

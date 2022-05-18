@@ -948,11 +948,11 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
             return prop_processed;
         }
 
-        else if (name.is_sameprefix("bitmap file ("))
+        else if (name.starts_with("bitmap file ("))
         {
             return prop_processed;  // These are different icon sizes
         }
-        else if (name.is_sameprefix("bitmap file ("))
+        else if (name.starts_with("bitmap file ("))
         {
             return prop_processed;  // These are different icon sizes
         }
@@ -1280,7 +1280,7 @@ void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
     if (ttlib::sview path = object["m_path"].GetString(); path.size())
     {
         ttlib::cstr bitmap;
-        if (path.is_sameprefix("wxART"))
+        if (path.starts_with("wxART"))
         {
             ttlib::multiview parts(path, ',');
             if (parts.size() > 1)
@@ -1334,7 +1334,7 @@ bool WxCrafter::ProcessFont(Node* node, const Value& object)
         if (crafter_str.contains("underlined"))
             font_info.Underlined();
 
-        if (!crafter_str.is_sameprefix("wxSYS_DEFAULT_GUI_FONT"))
+        if (!crafter_str.starts_with("wxSYS_DEFAULT_GUI_FONT"))
         {
             font_info.setDefGuiFont(false);
             font_info.FaceName("");
@@ -1568,7 +1568,7 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
     if (colour.IsString())
     {
         ttlib::sview clr_string = colour.GetString();
-        if (!clr_string.is_sameprefix("Default"))
+        if (!clr_string.starts_with("Default"))
         {
             if (clr_string[0] == '(')
             {
@@ -1580,7 +1580,7 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
                 wxColour clr(clr_string.wx_str());
                 return ConvertColourToString(clr);
             }
-            else if (clr_string.is_sameprefix("wx"))
+            else if (clr_string.starts_with("wx"))
             {
                 result = clr_string;
                 return result;

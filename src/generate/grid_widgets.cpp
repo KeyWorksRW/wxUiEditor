@@ -574,17 +574,17 @@ ttlib::cstr PropertyGridItemGenerator::GetHelpURL(Node* node)
 
     else
     {
-        if (!type.is_sameprefix("string"))
+        if (!type.starts_with("string"))
             type.Replace("string", "_string");
-        if (!type.is_sameprefix("choice"))
+        if (!type.starts_with("choice"))
             type.Replace("choice", "_choice");
-        if (!type.is_sameprefix("colour"))
+        if (!type.starts_with("colour"))
             type.Replace("colour", "_colour");
-        if (!type.is_sameprefix("enum"))
+        if (!type.starts_with("enum"))
             type.Replace("enum", "_enum");
-        if (!type.is_sameprefix("int"))
+        if (!type.starts_with("int"))
             type.Replace("int", "_int");
-        if (!type.is_sameprefix("file"))
+        if (!type.starts_with("file"))
             type.Replace("file", "_file");
 
         url << type << "_property.html";

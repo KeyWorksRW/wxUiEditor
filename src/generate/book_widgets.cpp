@@ -1023,7 +1023,7 @@ static void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
                     code << "\n\t\tauto img_" << image_index << " = ";
                     code << GenerateBitmapCode(child_node->prop_as_string(prop_bitmap)) << ";";
                     code << "\n\t\timg_list->Add(img_" << image_index;
-                    if (child_node->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
+                    if (child_node->prop_as_string(prop_bitmap).starts_with("Art;"))
                         code << ".ConvertToImage()";
                     code << ");";
                     ++image_index;
@@ -1130,7 +1130,7 @@ static void AddTreebookImageCode(ttlib::cstr& code, Node* child_node, size_t& im
             code << "\n\t\tauto img_" << image_index << " = ";
             code << GenerateBitmapCode(grand_child->prop_as_string(prop_bitmap)) << ";";
             code << "\n\t\timg_list->Add(img_" << image_index;
-            if (grand_child->prop_as_string(prop_bitmap).is_sameprefix("Art;"))
+            if (grand_child->prop_as_string(prop_bitmap).starts_with("Art;"))
                 code << ".ConvertToImage()";
             code << ");";
             ++image_index;

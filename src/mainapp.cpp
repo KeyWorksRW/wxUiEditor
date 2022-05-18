@@ -250,8 +250,8 @@ int App::OnExit()
 
 wxImage App::GetImage(const ttlib::cstr& description)
 {
-    if (description.is_sameprefix("Embed;") || description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") ||
-        description.is_sameprefix("Art;"))
+    if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
+        description.starts_with("Art;"))
     {
         return m_pjtSettings->GetPropertyBitmap(description);
     }
@@ -261,8 +261,8 @@ wxImage App::GetImage(const ttlib::cstr& description)
 
 wxBitmapBundle App::GetBitmapBundle(const ttlib::cstr& description, Node* node)
 {
-    if (description.is_sameprefix("Embed;") || description.is_sameprefix("XPM;") || description.is_sameprefix("Header;") ||
-        description.is_sameprefix("Art;") || description.is_sameprefix("SVG;"))
+    if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
+        description.starts_with("Art;") || description.starts_with("SVG;"))
     {
         return m_pjtSettings->GetPropertyBitmapBundle(description, node);
     }

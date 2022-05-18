@@ -313,7 +313,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                                     parts[1].backslashestoforward();
                                     ttlib::cstr description(parts[0]);
                                     description << ';' << parts[1];
-                                    if (parts[0].is_sameprefix("SVG"))
+                                    if (parts[0].starts_with("SVG"))
                                         description << ';' << parts[2];
                                     prop->set_value(description);
                                 }

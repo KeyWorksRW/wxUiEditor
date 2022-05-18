@@ -979,7 +979,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                         // Conversely, if the name is changed from local to a class member, a "m_" is added as a prefix (if
                         // it doesn't already have one).
                         ttlib::cstr name = node->prop_as_string(prop_var_name);
-                        if (value == "none" && name.is_sameprefix("m_"))
+                        if (value == "none" && name.starts_with("m_"))
                         {
                             name.erase(0, 2);
                             auto final_name = node->GetUniqueName(name);
@@ -990,7 +990,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                             grid_property->SetValueFromString(name, 0);
                             modifyProperty(propChange, name);
                         }
-                        else if (value != "none" && !name.is_sameprefix("m_"))
+                        else if (value != "none" && !name.starts_with("m_"))
                         {
                             name.insert(0, "m_");
                             auto final_name = node->GetUniqueName(name);

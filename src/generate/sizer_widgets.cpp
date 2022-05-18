@@ -1217,23 +1217,23 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenEvents(NodeEvent* e
         (event->GetEventInfo()->get_event_class() == "wxCommandEvent" ? "wxEVT_BUTTON" : "wxEVT_UPDATE_UI");
     code << "Bind(" << evt_str << comma << handler << comma;
 
-    if (event->get_name().is_sameprefix("OKButton"))
+    if (event->get_name().starts_with("OKButton"))
         code << "wxID_OK);";
-    else if (event->get_name().is_sameprefix("YesButton"))
+    else if (event->get_name().starts_with("YesButton"))
         code << "wxID_YES);";
-    else if (event->get_name().is_sameprefix("SaveButton"))
+    else if (event->get_name().starts_with("SaveButton"))
         code << "wxID_SAVE);";
-    else if (event->get_name().is_sameprefix("ApplyButton"))
+    else if (event->get_name().starts_with("ApplyButton"))
         code << "wxID_APPLY);";
-    else if (event->get_name().is_sameprefix("NoButton"))
+    else if (event->get_name().starts_with("NoButton"))
         code << "wxID_NO);";
-    else if (event->get_name().is_sameprefix("CancelButton"))
+    else if (event->get_name().starts_with("CancelButton"))
         code << "wxID_CANCEL);";
-    else if (event->get_name().is_sameprefix("CloseButton"))
+    else if (event->get_name().starts_with("CloseButton"))
         code << "wxID_CLOSE);";
-    else if (event->get_name().is_sameprefix("HelpButton"))
+    else if (event->get_name().starts_with("HelpButton"))
         code << "wxID_HELP);";
-    else if (event->get_name().is_sameprefix("ContextHelpButton"))
+    else if (event->get_name().starts_with("ContextHelpButton"))
         code << "wxID_CONTEXT_HELP);";
 
     return code;

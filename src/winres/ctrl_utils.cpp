@@ -159,7 +159,7 @@ ttlib::sview resCtrl::GetID(ttlib::sview line)
     else
         m_node->prop_set_value(prop_id, "wxID_ANY");
 
-    if (m_node->prop_as_string(prop_id) != "wxID_ANY" || !id.is_sameprefix("IDC_STATIC"))
+    if (m_node->prop_as_string(prop_id) != "wxID_ANY" || !id.starts_with("IDC_STATIC"))
     {
         m_node->prop_set_value(prop_var_comment, id);
     }

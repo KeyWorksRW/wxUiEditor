@@ -225,7 +225,7 @@ void FormBuilder::CreateProjectNode(pugi::xml_node& xml_obj, Node* new_node)
                 {
                     m_class_decoration = xml_prop.text().as_string();
                     // Current formbuild uses "; " as the default property value
-                    if (m_class_decoration.is_sameprefix((";")))
+                    if (m_class_decoration.starts_with((";")))
                     {
                         m_class_decoration.clear();
                     }

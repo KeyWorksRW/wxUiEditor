@@ -522,7 +522,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     }
     else
     {
-        if (node->HasValue(prop_var_name) && !node->prop_as_string(prop_class_access).is_sameprefix("none"))
+        if (node->HasValue(prop_var_name) && !node->prop_as_string(prop_class_access).starts_with("none"))
             wxGetFrame().setStatusText(node->prop_as_string(prop_var_name));
         else
             wxGetFrame().setStatusText(tt_empty_cstr);

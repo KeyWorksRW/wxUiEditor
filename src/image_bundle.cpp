@@ -78,7 +78,7 @@ void ProjectSettings::CollectNodeBundles(const NodeSharedPtr& node, const NodeSh
         else if (iter.type() == type_animation)
         {
             auto& value = iter.as_string();
-            if (value.is_sameprefix("Embed"))
+            if (value.starts_with("Embed"))
             {
                 ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts[IndexImage].size())
@@ -126,7 +126,7 @@ bool ProjectSettings::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::
         }
     }
 
-    if (parts[IndexType].is_sameprefix("SVG"))
+    if (parts[IndexType].starts_with("SVG"))
     {
         if (AddSvgBundleImage(path, form))
         {

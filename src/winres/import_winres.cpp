@@ -184,11 +184,11 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
             for (m_curline = 0; m_curline < file.size(); ++m_curline)
             {
                 auto curline = file[m_curline].view_nonspace();
-                if (curline.is_sameprefix("STRINGTABLE"))
+                if (curline.starts_with("STRINGTABLE"))
                 {
                     ParseStringTable(file);
                 }
-                else if (curline.is_sameprefix("#pragma code_page"))
+                else if (curline.starts_with("#pragma code_page"))
                 {
                     auto code = curline.find('(');
                     m_codepage = std::atoi(curline.subview(code + 1));
@@ -206,10 +206,10 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
             {
                 auto directive = curline.subview(curline.find_nonspace(start + 1));
 
-                if (directive.is_sameprefix("ifdef"))
+                if (directive.starts_with("ifdef"))
                 {
                     directive.moveto_nextword();
-                    if (ttlib::is_sameprefix(directive, "APSTUDIO_INVOKED"))
+                    if (directive.starts_with("APSTUDIO_INVOKED"))
                     {
                         // Step over any APSTUDIO_INVOKED section.
                         for (++m_curline; m_curline < file.size(); ++m_curline)
@@ -220,7 +220,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                                 continue;
                             if (line[start] == '#')
                             {
-                                if (auto tmp = line.subview(line.find_nonspace() + 1); tmp.is_sameprefix("endif"))
+                                if (auto tmp = line.subview(line.find_nonspace() + 1); tmp.starts_with("endif"))
                                 {
                                     break;
                                 }
@@ -238,19 +238,19 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                         for (auto erase_position = m_curline; erase_position < file.size(); ++erase_position)
                         {
                             curline = file[erase_position].view_nonspace();
-                            if (curline.is_sameprefix("#else"))
+                            if (curline.starts_with("#else"))
                             {
                                 do
                                 {
                                     file.RemoveLine(erase_position);
                                     curline = file[erase_position].view_nonspace();
-                                    if (curline.is_sameprefix("#endif"))
+                                    if (curline.starts_with("#endif"))
                                     {
                                         break;
                                     }
                                 } while (erase_position < file.size());
                             }
-                            if (curline.is_sameprefix("#endif"))
+                            if (curline.starts_with("#endif"))
                             {
                                 file.RemoveLine(erase_position);
 
@@ -267,7 +267,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                         }
                     }
                 }
-                else if (directive.is_sameprefix("pragma"))
+                else if (directive.starts_with("pragma"))
                 {
                     if (curline.contains(" code_page("))
                     {
@@ -308,7 +308,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                 }
                 ParseMenu(file);
             }
-            else if (curline.is_sameprefix("STRINGTABLE"))
+            else if (curline.starts_with("STRINGTABLE"))
             {
                 ParseStringTable(file);
             }
@@ -350,7 +350,7 @@ void WinResource::ParseDialog(ttlib::textfile& file)
 
         auto settings = line.subview(line.find_nonspace(end));
 
-        if (!settings.is_sameprefix("DIALOG"))  // verify this is a dialog
+        if (!settings.starts_with("DIALOG"))  // verify this is a dialog
             throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");
 
         auto pos = ttlib::stepover_pos(settings);
@@ -381,7 +381,7 @@ void WinResource::ParseMenu(ttlib::textfile& file)
 
         auto settings = line.subview(line.find_nonspace(end));
 
-        if (!settings.is_sameprefix("MENU"))  // verify this is a dialog
+        if (!settings.starts_with("MENU"))  // verify this is a dialog
             throw std::invalid_argument("Expected an ID then a MENU.");
 
         auto& form = m_forms.emplace_back();
@@ -405,11 +405,11 @@ void WinResource::ParseStringTable(ttlib::textfile& file)
         if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
             continue;
 
-        if (line.is_sameprefix("END") || line.is_sameprefix("}"))
+        if (line.starts_with("END") || line.starts_with("}"))
         {
             break;
         }
-        if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
+        if (line.starts_with("BEGIN") || line.starts_with("{"))
         {
             continue;
         }

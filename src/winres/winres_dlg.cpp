@@ -215,7 +215,7 @@ void resForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 }
 
-void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
+void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::sview style)
 {
     ttlib::cstr updated_style = m_form_node->prop_as_string(prop_name);
     if (updated_style.size())
@@ -224,7 +224,7 @@ void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
     m_form_node->prop_set_value(prop_name, updated_style);
 }
 
-ttlib::cstr resForm::ConvertFormID(ttlib::cview id)
+ttlib::cstr resForm::ConvertFormID(ttlib::sview id)
 {
     id.moveto_nonspace();
     ttlib::cstr value;

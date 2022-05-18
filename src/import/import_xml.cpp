@@ -894,7 +894,7 @@ GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
 }
 
 // clang-format off
-std::unordered_map<std::string, std::string> s_map_old_events = {
+std::map<std::string_view, std::string_view, std::less<>> s_map_old_events = {
 
 
     { "wxEVT_COMMAND_BUTTON_CLICKED",          "wxEVT_BUTTON" },
@@ -928,9 +928,9 @@ std::unordered_map<std::string, std::string> s_map_old_events = {
 };
 // clang-format on
 
-ttlib::cview ImportXML::GetCorrectEventName(ttlib::cview name)
+ttlib::sview ImportXML::GetCorrectEventName(ttlib::sview name)
 {
-    if (auto result = s_map_old_events.find(name.c_str()); result != s_map_old_events.end())
+    if (auto result = s_map_old_events.find(name); result != s_map_old_events.end())
     {
         return result->second;
     }

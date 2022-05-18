@@ -10,7 +10,7 @@
 #include "import_winres.h"  // WinResource -- Parse a Windows resource file
 #include "utils.h"          // Utility functions that work with properties
 
-void resCtrl::ParseCommonStyles(ttlib::cview line)
+void resCtrl::ParseCommonStyles(ttlib::sview line)
 {
     if (line.contains("WS_DISABLED"))
         m_node->prop_set_value(prop_disabled, true);
@@ -23,7 +23,7 @@ void resCtrl::ParseCommonStyles(ttlib::cview line)
         AppendStyle(prop_window_style, "wxVSCROLL");
 }
 
-bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect)
+bool resCtrl::ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRect)
 {
     duRect = { 0, 0, 0, 0 };
     pixelRect = { 0, 0, 0, 0 };
@@ -104,7 +104,7 @@ bool resCtrl::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRe
     return true;
 }
 
-ttlib::cview resCtrl::GetID(ttlib::cview line)
+ttlib::sview resCtrl::GetID(ttlib::sview line)
 {
     line.moveto_nonspace();
 
@@ -168,7 +168,7 @@ ttlib::cview resCtrl::GetID(ttlib::cview line)
     return line;
 }
 
-ttlib::cview resCtrl::GetLabel(ttlib::cview line)
+ttlib::sview resCtrl::GetLabel(ttlib::sview line)
 {
     line.moveto_nonspace();
 
@@ -253,7 +253,7 @@ ttlib::cview resCtrl::GetLabel(ttlib::cview line)
     return line;
 }
 
-ttlib::cview resCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
+ttlib::sview resCtrl::StepOverQuote(ttlib::sview line, ttlib::cstr& str)
 {
     ASSERT(line.at(0) == '"');
 
@@ -283,7 +283,7 @@ ttlib::cview resCtrl::StepOverQuote(ttlib::cview line, ttlib::cstr& str)
     return line.subview(idx);
 }
 
-ttlib::cview resCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
+ttlib::sview resCtrl::StepOverComma(ttlib::sview line, ttlib::cstr& str)
 {
     auto pos = str.AssignSubString(line, ',', ',');
     if (!ttlib::is_found(pos))
@@ -301,7 +301,7 @@ ttlib::cview resCtrl::StepOverComma(ttlib::cview line, ttlib::cstr& str)
     return line;
 }
 
-void resCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
+void resCtrl::AppendStyle(GenEnum::PropName prop_name, ttlib::sview style)
 {
     ttlib::cstr updated_style = m_node->prop_as_string(prop_name);
     if (updated_style.size())

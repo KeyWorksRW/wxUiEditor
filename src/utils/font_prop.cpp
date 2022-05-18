@@ -72,7 +72,7 @@ FontProperty::FontProperty(const wxFont& font)
 
 FontProperty::FontProperty(wxVariant font) { Convert(ttlib::cstr() << font.GetString().wx_str()); }
 
-FontProperty::FontProperty(ttlib::cview font) { Convert(font); }
+FontProperty::FontProperty(ttlib::sview font) { Convert(font); }
 
 FontProperty::FontProperty(NodeProperty* prop) { Convert(prop->as_string()); }
 

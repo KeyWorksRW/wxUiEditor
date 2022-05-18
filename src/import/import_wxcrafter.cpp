@@ -352,7 +352,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
 
     if (auto& gbSpan = FindValue(object, "gbSpan"); gbSpan.IsString() && !IsSame(gbSpan, "1,1"))
     {
-        ttlib::cview positions = gbSpan.GetString();
+        ttlib::sview positions = gbSpan.GetString();
         new_node->prop_set_value(prop_rowspan, positions.atoi());
         positions.moveto_nondigit();
         positions.moveto_digit();
@@ -360,7 +360,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
     }
     if (auto& gbPosition = FindValue(object, "gbPosition"); gbPosition.IsString() && !IsSame(gbPosition, "0,0"))
     {
-        ttlib::cview positions = gbPosition.GetString();
+        ttlib::sview positions = gbPosition.GetString();
         new_node->prop_set_value(prop_row, positions.atoi());
         positions.moveto_nondigit();
         positions.moveto_digit();
@@ -1191,7 +1191,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
                 node->prop_set_value(prop_name, prop_value.GetInt());
             else
             {
-                ttlib::cview val = prop_value.GetString();
+                ttlib::sview val = prop_value.GetString();
                 if (val.is_sameas("-1,-1") &&
                     (prop_name == prop_size || prop_name == prop_min_size || prop_name == prop_pos))
                 {
@@ -1277,7 +1277,7 @@ void WxCrafter::ValueProperty(Node* node, const Value& value)
 
 void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
 {
-    if (ttlib::cview path = object["m_path"].GetString(); path.size())
+    if (ttlib::sview path = object["m_path"].GetString(); path.size())
     {
         ttlib::cstr bitmap;
         if (path.is_sameprefix("wxART"))
@@ -1533,7 +1533,7 @@ const Value& rapidjson::FindValue(const rapidjson::Value& object, const char* ke
 
 // wxCrafter doesn't put a space between the words
 
-std::map<std::string, const char*> s_sys_colour_pair = {
+std::map<std::string, const char*, std::less<>> s_sys_colour_pair = {
 
     { "AppWorkspace", "wxSYS_COLOUR_APPWORKSPACE" },
     { "ActiveBorder", "wxSYS_COLOUR_ACTIVEBORDER" },
@@ -1567,7 +1567,7 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
     ttlib::cstr result;
     if (colour.IsString())
     {
-        ttlib::cview clr_string = colour.GetString();
+        ttlib::sview clr_string = colour.GetString();
         if (!clr_string.is_sameprefix("Default"))
         {
             if (clr_string[0] == '(')
@@ -1577,7 +1577,7 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
             }
             else if (colour.GetString()[0] == '#')
             {
-                wxColour clr(clr_string.c_str());
+                wxColour clr(clr_string.wx_str());
                 return ConvertColourToString(clr);
             }
             else if (clr_string.is_sameprefix("wx"))
@@ -1587,7 +1587,7 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
             }
             else
             {
-                if (auto colour_pair = s_sys_colour_pair.find(clr_string.c_str()); colour_pair != s_sys_colour_pair.end())
+                if (auto colour_pair = s_sys_colour_pair.find(clr_string); colour_pair != s_sys_colour_pair.end())
                     result = colour_pair->second;
             }
         }
@@ -1605,7 +1605,7 @@ std::string_view rapidjson::GetSelectedString(const rapidjson::Value& object)
             return array[sel].GetString();
         }
     }
-    return nullptr;
+    return {};
 }
 
 std::vector<std::string> rapidjson::GetStringVector(const rapidjson::Value& array)

@@ -27,7 +27,7 @@ public:
 
     // This will check for an obsolete event name, and if found, it will return the 3.x
     // version of the name. Otherwise, it returns name unmodified.
-    static ttlib::cview GetCorrectEventName(ttlib::cview name);
+    static ttlib::sview GetCorrectEventName(ttlib::sview name);
 
 protected:
     std::optional<pugi::xml_document> LoadDocFile(const ttString& file);

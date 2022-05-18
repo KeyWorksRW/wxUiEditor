@@ -390,7 +390,7 @@ void GenStyle(Node* node, ttlib::cstr& code, const char* prefix)
     }
 }
 
-void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator, ttlib::cview def_style)
+void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator, ttlib::sview def_style)
 {
     if (node->HasValue(prop_window_name))
     {
@@ -1518,7 +1518,7 @@ std::optional<ttlib::cstr> GenValidatorSettings(Node* node)
     return {};
 }
 
-static void AddPropIfUsed(PropName prop_name, ttlib::cview func_name, Node* node, ttlib::cstr& code)
+static void AddPropIfUsed(PropName prop_name, ttlib::sview func_name, Node* node, ttlib::cstr& code)
 {
     if (prop_name == prop_background_colour)
     {

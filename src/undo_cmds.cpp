@@ -114,7 +114,7 @@ void RemoveNodeAction::Revert()
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
 
-ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview value) : m_property(prop)
+ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::sview value) : m_property(prop)
 {
     m_undo_string << "change " << prop->DeclName();
 
@@ -148,14 +148,14 @@ void ModifyPropertyAction::Revert()
 
 ///////////////////////////////// ModifyProperties ////////////////////////////////////
 
-ModifyProperties::ModifyProperties(ttlib::cview undo_string, bool fire_events) : UndoAction(undo_string)
+ModifyProperties::ModifyProperties(ttlib::sview undo_string, bool fire_events) : UndoAction(undo_string)
 {
     m_fire_events = fire_events;
     m_RedoEventGenerated = true;
     m_UndoEventGenerated = true;
 }
 
-void ModifyProperties::AddProperty(NodeProperty* prop, ttlib::cview value)
+void ModifyProperties::AddProperty(NodeProperty* prop, ttlib::sview value)
 {
     auto& entry = m_properties.emplace_back();
     entry.property = prop;
@@ -195,7 +195,7 @@ void ModifyProperties::Revert()
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
-ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event), m_change_value(value)
+ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::sview value) : m_event(event), m_change_value(value)
 {
     m_undo_string << "change " << event->get_name() << " handler";
 

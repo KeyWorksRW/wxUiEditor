@@ -26,12 +26,12 @@ wxIcon GetIconImage(ttlib::sview name);
 // Converts the ASCII header file into binary data and loads it as an image. It's designed to
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header
 // file might or might not work.
-wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size = nullptr, ttString* p_mime_type = nullptr);
+wxImage GetHeaderImage(ttlib::sview filename, size_t* p_original_size = nullptr, ttString* p_mime_type = nullptr);
 
 // Converts the ASCII header file into binary data and loads it as an animation. It's designed to
 // read header files created by wxUiEditor or wxFormBuilder -- any other generated header
 // file might or might not work.
-bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename);
+bool GetAnimationImage(wxAnimation& animation, ttlib::sview filename);
 
 wxAnimation LoadAnimationImage(wxAnimation& animation, const unsigned char* data, size_t size_data);
 

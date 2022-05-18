@@ -55,7 +55,7 @@ private:
 class ModifyPropertyAction : public UndoAction
 {
 public:
-    ModifyPropertyAction(NodeProperty* prop, ttlib::cview value);
+    ModifyPropertyAction(NodeProperty* prop, ttlib::sview value);
     ModifyPropertyAction(NodeProperty* prop, int value);
     void Change() override;
     void Revert() override;
@@ -72,9 +72,9 @@ private:
 class ModifyProperties : public UndoAction
 {
 public:
-    ModifyProperties(ttlib::cview undo_string, bool fire_events = true);
+    ModifyProperties(ttlib::sview undo_string, bool fire_events = true);
 
-    void AddProperty(NodeProperty* prop, ttlib::cview value);
+    void AddProperty(NodeProperty* prop, ttlib::sview value);
     void AddProperty(NodeProperty* prop, int value);
 
     void Change() override;
@@ -98,7 +98,7 @@ private:
 class ModifyEventAction : public UndoAction
 {
 public:
-    ModifyEventAction(NodeEvent* event, ttlib::cview value);
+    ModifyEventAction(NodeEvent* event, ttlib::sview value);
     void Change() override;
     void Revert() override;
 

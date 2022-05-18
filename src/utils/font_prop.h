@@ -22,7 +22,7 @@ class FontProperty
 public:
     FontProperty();
     FontProperty(const wxFont& font);
-    FontProperty(ttlib::cview font);
+    FontProperty(ttlib::sview font);
     FontProperty(NodeProperty* prop);
     FontProperty(wxVariant font);
 

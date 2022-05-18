@@ -32,10 +32,10 @@ public:
     void ShowLogger();
     void CloseLogger();
 
-    void AddInfoMsg(ttlib::cview msg);
-    void AddEventMsg(ttlib::cview msg);
-    void AddWarningMsg(ttlib::cview msg);
-    void AddErrorMsg(ttlib::cview msg);
+    void AddInfoMsg(ttlib::sview msg);
+    void AddEventMsg(ttlib::sview msg);
+    void AddWarningMsg(ttlib::sview msg);
+    void AddErrorMsg(ttlib::sview msg);
 
     void OnNodeSelected();
 

@@ -35,7 +35,7 @@ public:
 
     // Remove outer quotes, prefix a digit with id_ -- this is how the id gets stored in the
     // dialog.
-    ttlib::cstr ConvertFormID(ttlib::cview id);
+    ttlib::cstr ConvertFormID(ttlib::sview id);
 
     // Call this after
     void CreateDialogLayout();
@@ -91,7 +91,7 @@ protected:
 
     void AddStaticBoxChildren(const resCtrl& box, size_t idx_group_box);
     void AddStyle(ttlib::textfile& txtfile, size_t& curTxtLine);
-    void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
+    void AppendStyle(GenEnum::PropName prop_name, ttlib::sview style);
     void ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine);
     void ParseMenus(ttlib::textfile& txtfile, size_t& curTxtLine);
     void ParseMenuItem(Node* parent, ttlib::textfile& txtfile, size_t& curTxtLine);
@@ -152,7 +152,7 @@ protected:
 
     void CreateStdButton();
 
-    bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);
+    bool ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRect);
 
     // This will search through m_ctrls and find the index of the control matching the node
     // parameter. Returns -1 if not found.

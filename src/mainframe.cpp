@@ -1393,7 +1393,7 @@ void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
     if (!wasExpanded)
     {
         auto alignment = m_selected_node->get_prop_ptr(prop_alignment);
-        if (alignment && alignment->as_cview().size())
+        if (alignment && alignment->as_string().size())
         {
             // All alignment flags are invalid if wxEXPAND is set
             ModifyProperty(alignment, "");
@@ -1441,9 +1441,9 @@ void MainFrame::ToggleBorderFlag(Node* node, int border)
     ModifyProperty(propFlag, value);
 }
 
-void MainFrame::ModifyProperty(NodeProperty* prop, ttlib::cview value)
+void MainFrame::ModifyProperty(NodeProperty* prop, ttlib::sview value)
 {
-    if (prop && value != prop->as_cview())
+    if (prop && value != prop->as_string())
     {
         PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }

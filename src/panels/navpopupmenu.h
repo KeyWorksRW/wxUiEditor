@@ -126,7 +126,7 @@ protected:
     void MenuAddMoveCommands(Node* node);
 
     void ChangeSizer(GenEnum::GenName new_sizer_gen);
-    void CreateSizerParent(Node* node, ttlib::cview widget);
+    void CreateSizerParent(Node* node, ttlib::sview widget);
 
 private:
     Node* m_node { nullptr };

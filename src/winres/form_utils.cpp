@@ -176,7 +176,7 @@ void resForm::SortCtrls()
 // This is almost identical to the function of the same name in resCtrl -- however that one needs to access m_node in order
 // to handle a wxComboBox which has a different height then specified in the resource file.
 
-bool resForm::ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect)
+bool resForm::ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRect)
 {
     duRect = { 0, 0, 0, 0 };
     pixelRect = { 0, 0, 0, 0 };

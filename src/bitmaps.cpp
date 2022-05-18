@@ -194,17 +194,17 @@ wxIcon GetIconImage(ttlib::sview name)
 // [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will be called during project
 // loading, and there could be dozens of calls to the same problem file(s).
 
-wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString* p_mime_type)
+wxImage GetHeaderImage(ttlib::sview filename, size_t* p_original_size, ttString* p_mime_type)
 {
     wxImage image;
 
-    if (!ttlib::file_exists(filename))
+    if (!filename.file_exists())
     {
         MSG_ERROR(ttlib::cstr() << filename << " passed to GetHeaderImage doesn't exist");
         return image;
     }
 
-    std::ifstream fileOriginal(filename, std::ios::binary | std::ios::in);
+    std::ifstream fileOriginal(filename.as_str(), std::ios::binary | std::ios::in);
     if (!fileOriginal.is_open())
     {
         MSG_ERROR(ttlib::cstr() << filename << " passed to GetHeaderImage could not be read");
@@ -403,15 +403,15 @@ wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
     return image;
 };
 
-bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
+bool GetAnimationImage(wxAnimation& animation, ttlib::sview filename)
 {
-    if (!ttlib::file_exists(filename))
+    if (!filename.file_exists())
     {
         MSG_ERROR(ttlib::cstr() << filename << " passed to GetAnimationanimation doesn't exist");
         return animation.IsOk();
     }
 
-    std::ifstream fileOriginal(filename, std::ios::binary | std::ios::in);
+    std::ifstream fileOriginal(filename.as_str(), std::ios::binary | std::ios::in);
     if (!fileOriginal.is_open())
     {
         MSG_ERROR(ttlib::cstr() << filename << " passed to GetAnimationImage could not be read");

@@ -30,7 +30,7 @@ public:
 
     const wxPGEditor* DoGetEditorClass() const override { return wxPGEditor_TextCtrl; }
 
-    void InitValues(ttlib::cview value);
+    void InitValues(ttlib::sview value);
     ttlib::cstr CombineValues();
 
 private:

@@ -93,7 +93,7 @@ static const ClassGenPair lst_name_gen[] = {
 
 */
 
-void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
+void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
 {
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // Create a copy of the original line without the extra spaces that can be used to send to our log window if there are

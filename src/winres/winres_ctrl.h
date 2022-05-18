@@ -19,7 +19,7 @@ public:
     auto GetNode() const { return m_node.get(); }
     auto GetNodePtr() const { return m_node; }
 
-    void ParseDirective(WinResource* pWinResource, ttlib::cview line);
+    void ParseDirective(WinResource* pWinResource, ttlib::sview line);
 
     // left position in pixels
     auto GetLeft() const { return m_pixel_rect.GetLeft(); }
@@ -63,7 +63,7 @@ public:
         GetNode()->prop_set_value(name, value);
     }
 
-    bool ParseDimensions(ttlib::cview line, wxRect& duRect, wxRect& pixelRect);
+    bool ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRect);
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     auto& GetOrginalLine() { return m_original_line; }
 #endif
@@ -76,38 +76,38 @@ public:
 
 protected:
     // This will map window styles to wxWidgets styles and append them to prop_style
-    void ParseStyles(ttlib::cview line);
+    void ParseStyles(ttlib::sview line);
 
-    void ParseListViewStyles(ttlib::cview line);
-    void ParseButtonStyles(ttlib::cview line);
+    void ParseListViewStyles(ttlib::sview line);
+    void ParseButtonStyles(ttlib::sview line);
 
-    void AddSpecialStyles(ttlib::cview line);
-    void AppendStyle(GenEnum::PropName prop_name, ttlib::cview style);
+    void AddSpecialStyles(ttlib::sview line);
+    void AppendStyle(GenEnum::PropName prop_name, ttlib::sview style);
 
     // Set prop_ to common values (disabled, hidden, scroll, etc.)
-    void ParseCommonStyles(ttlib::cview line);
+    void ParseCommonStyles(ttlib::sview line);
 
-    // This will set prop_id, and return a cview to the position past the id
-    ttlib::cview GetID(ttlib::cview line);
+    // This will set prop_id, and return a sview to the position past the id
+    ttlib::sview GetID(ttlib::sview line);
 
-    // This will set prop_label, and return a cview to the position past the id
-    ttlib::cview GetLabel(ttlib::cview line);
+    // This will set prop_label, and return a sview to the position past the id
+    ttlib::sview GetLabel(ttlib::sview line);
 
     // Returns a view past the closing quote, or an empty view if there was no closing quote
-    ttlib::cview StepOverQuote(ttlib::cview line, ttlib::cstr& str);
+    ttlib::sview StepOverQuote(ttlib::sview line, ttlib::cstr& str);
 
     // Retrieves any string between commas, returns view past the closing comma
-    ttlib::cview StepOverComma(ttlib::cview line, ttlib::cstr& str);
+    ttlib::sview StepOverComma(ttlib::sview line, ttlib::cstr& str);
 
     // Similar to ParseIconControl only in this case line is pointing to the id, and the Node
     // has already been created.
     //
     // Works with either SS_BITMAP or SS_ICON.
-    void ParseImageControl(ttlib::cview line);
+    void ParseImageControl(ttlib::sview line);
 
     // Icon controls require too much special processing to be inside the ParseDirective()
     // function.
-    void ParseIconControl(ttlib::cview line);
+    void ParseIconControl(ttlib::sview line);
 
 private:
     NodeSharedPtr m_node;

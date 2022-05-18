@@ -35,8 +35,7 @@ void WriteCode::WriteCodeLine(ttlib::sview code, size_t indentation)
         if (indentation != indent::none)
         {
             // Don't indent #if, #else or #endif
-            if (code[0] != '#' ||
-                !(code.starts_with("#if") || code.starts_with("#else") || code.starts_with("#endif")))
+            if (code[0] != '#' || !(code.starts_with("#if") || code.starts_with("#else") || code.starts_with("#endif")))
             {
                 for (int i = 0; i < m_indent; ++i)
                 {

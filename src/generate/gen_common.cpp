@@ -1766,3 +1766,51 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
     }
     object.append_child("option").text().set(node->prop_as_string(prop_proportion).c_str());
 }
+
+void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
+{
+    if (node->HasValue(prop_smart_size))
+    {
+        object.append_child(pugi::node_comment).set_value(" smart size cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_minimum_size) && !(supported_flags | xrc::min_size_supported))
+    {
+        object.append_child(pugi::node_comment).set_value(" minimum size cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_maximum_size) && !(supported_flags | xrc::max_size_supported))
+    {
+        object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
+    }
+    if (!node->prop_as_string(prop_variant).is_sameas("normal"))
+    {
+        object.append_child(pugi::node_comment).set_value(" variant cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_font))
+    {
+        object.append_child(pugi::node_comment).set_value(" font cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_foreground_colour))
+    {
+        object.append_child(pugi::node_comment).set_value(" foreground colour cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_background_colour))
+    {
+        object.append_child(pugi::node_comment).set_value(" background colour cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_tooltip))
+    {
+        object.append_child(pugi::node_comment).set_value(" tooltip cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_context_help))
+    {
+        object.append_child(pugi::node_comment).set_value(" context help cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_disabled))
+    {
+        object.append_child(pugi::node_comment).set_value(" disabled cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_hidden))
+    {
+        object.append_child(pugi::node_comment).set_value(" hidden cannot be be set in the XRC file. ");
+    }
+}

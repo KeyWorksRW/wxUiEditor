@@ -132,7 +132,20 @@ std::optional<ttlib::cstr> GenGetSetCode(Node* node);
 
 std::optional<ttlib::cstr> GenValidatorSettings(Node* node);
 
+namespace xrc
+{
+    enum : size_t
+    {
+        all_unsupported = 0,
+        min_size_supported = 1 << 0,
+        max_size_supported = 1 << 1,
+    };
+}
+
 // Write sizeritem XRC code
 void GenXrcSizerItem(Node* node, BaseCodeGenerator* code_gen);
 
 void GenXrcSizerItem(Node*, pugi::xml_node& object);
+
+// Add comments for unsupported properties
+void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags = xrc::all_unsupported);

@@ -1781,36 +1781,48 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
     {
         object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
     }
-    if (!node->prop_as_string(prop_variant).is_sameas("normal"))
-    {
-        object.append_child(pugi::node_comment).set_value(" variant cannot be be set in the XRC file. ");
-    }
-    if (node->HasValue(prop_font))
-    {
-        object.append_child(pugi::node_comment).set_value(" font cannot be be set in the XRC file. ");
-    }
-    if (node->HasValue(prop_foreground_colour))
-    {
-        object.append_child(pugi::node_comment).set_value(" foreground colour cannot be be set in the XRC file. ");
-    }
-    if (node->HasValue(prop_background_colour))
-    {
-        object.append_child(pugi::node_comment).set_value(" background colour cannot be be set in the XRC file. ");
-    }
-    if (node->HasValue(prop_tooltip))
-    {
-        object.append_child(pugi::node_comment).set_value(" tooltip cannot be be set in the XRC file. ");
-    }
-    if (node->HasValue(prop_context_help))
-    {
-        object.append_child(pugi::node_comment).set_value(" context help cannot be be set in the XRC file. ");
-    }
-    if (node->HasValue(prop_disabled))
-    {
-        object.append_child(pugi::node_comment).set_value(" disabled cannot be be set in the XRC file. ");
-    }
     if (node->HasValue(prop_hidden))
     {
         object.append_child(pugi::node_comment).set_value(" hidden cannot be be set in the XRC file. ");
+    }
+}
+
+void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
+{
+    if (node->HasValue(prop_variant))
+    {
+        object.append_child("variant").text().set(node->prop_as_string(prop_variant));
+    }
+    if (node->HasValue(prop_tooltip))
+    {
+        object.append_child("tooltip").text().set(node->prop_as_string(prop_tooltip));
+    }
+    if (node->HasValue(prop_font))
+    {
+        object.append_child("font").text().set(node->prop_as_font(prop_extra_style).GetNativeFontInfoDesc().ToUTF8().data());
+    }
+    if (node->HasValue(prop_background_colour))
+    {
+        object.append_child("bg").text().set(node->prop_as_wxColour(prop_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+    if (node->HasValue(prop_foreground_colour))
+    {
+        object.append_child("fg").text().set(node->prop_as_wxColour(prop_foreground_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+    if (node->prop_as_bool(prop_disabled))
+    {
+        object.append_child("enabled").text().set("0");
+    }
+    if (node->prop_as_bool(prop_focus))
+    {
+        object.append_child("focused").text().set("1");
+    }
+    if (node->HasValue(prop_extra_style))
+    {
+        object.append_child("exstyle").text().set(node->prop_as_string(prop_extra_style));
+    }
+    if (node->HasValue(prop_context_help))
+    {
+        object.append_child("help").text().set(node->prop_as_string(prop_context_help));
     }
 }

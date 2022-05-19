@@ -147,5 +147,8 @@ void GenXrcSizerItem(Node* node, BaseCodeGenerator* code_gen);
 
 void GenXrcSizerItem(Node*, pugi::xml_node& object);
 
+// These are the settings read by wxXmlResourceHandlerImpl::SetupWindow
+void GenXrcWindowSettings(Node*, pugi::xml_node& object);
+
 // Add comments for unsupported properties
 void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags = xrc::all_unsupported);

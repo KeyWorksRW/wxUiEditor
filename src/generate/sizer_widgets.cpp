@@ -54,26 +54,28 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
 {
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
     if (node->GetParent()->IsSizer())
     {
         GenXrcSizerItem(node, object);
-        auto sizer = object.append_child("object");
-        sizer.append_attribute("class").set_value("wxBoxSizer");
-        sizer.append_attribute("name").set_value(node->prop_as_string(prop_var_name).c_str());
-        sizer.append_child("orient").text().set(node->prop_as_string(prop_orientation).c_str());
-        if (node->HasValue(prop_minimum_size))
-        {
-            sizer.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size).c_str());
-        }
-        return BaseGenerator::xrc_sizer_item_created;
+        item = object.append_child("object");
     }
     else
     {
-        object.append_attribute("class").set_value("wxBoxSizer");
-        object.append_attribute("name").set_value(node->prop_as_string(prop_var_name).c_str());
-        object.append_child("orient").text().set(node->prop_as_string(prop_orientation).c_str());
-        return BaseGenerator::xrc_updated;
+        item = object;
+        result = BaseGenerator::xrc_updated;
     }
+
+    item.append_attribute("class").set_value("wxBoxSizer");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    if (node->HasValue(prop_minimum_size))
+    {
+        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    }
+    return result;
 }
 
 void BoxSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)

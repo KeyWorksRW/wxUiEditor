@@ -87,9 +87,8 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
         }
     }
 
-    for (size_t i = 0; i < GetChildCount(); i++)
+    for (const auto& child: m_children)
     {
-        auto child = GetChild(i);
         auto child_element = node.append_child("node");
         child->AddNodeToDoc(child_element);
     }

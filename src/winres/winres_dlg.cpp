@@ -24,9 +24,9 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
 
     bool isDialog = true;
 
-    for (size_t idx = curTxtLine; idx < txtfile.size(); ++idx)
+    for (auto& iter: txtfile)
     {
-        line = txtfile[idx].subview(txtfile[idx].find_nonspace());
+        line = iter.subview(iter.find_nonspace());
         if (line.starts_with("STYLE"))
         {
             if (line.contains("DS_CONTROL"))

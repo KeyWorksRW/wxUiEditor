@@ -23,17 +23,17 @@ void GridBag::Initialize()
     {
         m_max_column = 0;
         m_max_row = 0;
-        for (size_t idx = 0; idx < m_gridbag->GetChildCount(); ++idx)
+        for (const auto& child: m_gridbag->GetChildNodePtrs())
         {
-            auto col = m_gridbag->GetChild(idx)->prop_as_int(prop_column);
-            auto col_span = m_gridbag->GetChild(idx)->prop_as_int(prop_colspan);
+            auto col = child->prop_as_int(prop_column);
+            auto col_span = child->prop_as_int(prop_colspan);
             if (col_span > 1)
                 col += (col_span - 1);
             if (col > m_max_column)
                 m_max_column = col;
 
-            auto row = m_gridbag->GetChild(idx)->prop_as_int(prop_row);
-            auto row_span = m_gridbag->GetChild(idx)->prop_as_int(prop_rowspan);
+            auto row = child->prop_as_int(prop_row);
+            auto row_span = child->prop_as_int(prop_rowspan);
             if (row_span > 1)
                 row += (row_span - 1);
             if (row > m_max_row)
@@ -127,9 +127,9 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
 size_t GridBag::IncrementRows(int row, Node* gbsizer)
 {
     size_t insert_position = tt::npos;
-    for (size_t idx = 0; idx < gbsizer->GetChildCount(); ++idx)
+    for (size_t idx = 0; const auto& child: gbsizer->GetChildNodePtrs())
     {
-        if (gbsizer->GetChild(idx)->prop_as_int(prop_row) == row)
+        if (child->prop_as_int(prop_row) == row)
         {
             insert_position = idx;
             while (idx < gbsizer->GetChildCount())
@@ -139,6 +139,7 @@ size_t GridBag::IncrementRows(int row, Node* gbsizer)
             }
             break;
         }
+        ++idx;
     }
 
     return insert_position;
@@ -147,10 +148,9 @@ size_t GridBag::IncrementRows(int row, Node* gbsizer)
 size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
 {
     size_t insert_position = tt::npos;
-    for (size_t idx = 0; idx < gbsizer->GetChildCount(); ++idx)
+    for (size_t idx = 0; const auto& child: gbsizer->GetChildNodePtrs())
     {
-        if (gbsizer->GetChild(idx)->prop_as_int(prop_row) == row &&
-            gbsizer->GetChild(idx)->prop_as_int(prop_column) == column)
+        if (child->prop_as_int(prop_row) == row && child->prop_as_int(prop_column) == column)
         {
             insert_position = idx;
             while (idx < gbsizer->GetChildCount())
@@ -162,6 +162,7 @@ size_t GridBag::IncrementColumns(int row, int column, Node* gbsizer)
             }
             break;
         }
+        ++idx;
     }
 
     return insert_position;

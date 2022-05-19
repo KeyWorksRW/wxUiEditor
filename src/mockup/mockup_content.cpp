@@ -61,10 +61,9 @@ void MockupContent::CreateAllGenerators()
     if (form->isGen(gen_wxWizard))
     {
         m_wizard = new MockupWizard(this, form);
-        for (size_t i = 0; i < form->GetChildCount(); i++)
+        for (const auto& child: form->GetChildNodePtrs())
         {
-            auto child = form->GetChild(i);
-            CreateChildren(child, m_wizard, m_wizard);
+            CreateChildren(child.get(), m_wizard, m_wizard);
         }
 
         m_wizard->AllChildrenAdded();
@@ -128,10 +127,9 @@ void MockupContent::CreateAllGenerators()
 
         else
         {
-            for (size_t i = 0; i < form->GetChildCount(); i++)
+            for (const auto& child: form->GetChildNodePtrs())
             {
-                auto child = form->GetChild(i);
-                CreateChildren(child, this, this, m_parent_sizer);
+                CreateChildren(child.get(), this, this, m_parent_sizer);
             }
         }
     }

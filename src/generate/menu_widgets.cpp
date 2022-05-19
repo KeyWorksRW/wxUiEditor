@@ -67,11 +67,11 @@ void MenuBarBase::OnLeftMenuClick(wxMouseEvent& event)
     }
     else
     {
-        for (size_t pos_menu = 0; pos_menu < m_node_menubar->GetChildCount(); ++pos_menu)
+        for (const auto& child: m_node_menubar->GetChildNodePtrs())
         {
-            if (m_node_menubar->GetChild(pos_menu)->prop_as_string(prop_label) == text)
+            if (child->prop_as_string(prop_label) == text)
             {
-                menu_node = m_node_menubar->GetChild(pos_menu);
+                menu_node = child.get();
                 break;
             }
         }
@@ -116,8 +116,7 @@ wxMenu* MenuBarBase::MakeSubMenu(Node* menu_node)
             // label and bitmap.
 
             int id = wxID_ANY;
-            if (menu_item->prop_as_string(prop_id) != "wxID_ANY" &&
-                menu_item->prop_as_string(prop_id).starts_with("wxID_"))
+            if (menu_item->prop_as_string(prop_id) != "wxID_ANY" && menu_item->prop_as_string(prop_id).starts_with("wxID_"))
                 id = g_NodeCreator.GetConstantAsInt(menu_item->prop_as_string(prop_id), wxID_ANY);
 
             auto item = new wxMenuItem(sub_menu, id, menu_label, menu_item->prop_as_wxString(prop_help),

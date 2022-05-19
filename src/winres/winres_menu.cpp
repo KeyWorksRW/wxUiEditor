@@ -23,9 +23,9 @@ void resForm::ParseMenu(WinResource* pWinResource, ttlib::textfile& txtfile, siz
     m_is_popup_menu = false;
     size_t popups = 0;
     int nesting = 0;
-    for (size_t pos = curTxtLine + 1; pos < txtfile.size(); ++pos)
+    for (auto& iter: txtfile)
     {
-        auto menu_line = txtfile[pos].subview(txtfile[pos].find_nonspace());
+        auto menu_line = iter.subview(iter.find_nonspace());
         if (menu_line.empty() || menu_line.at(0) == '/')  // ignore blank lines and comments
             continue;
 

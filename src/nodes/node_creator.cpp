@@ -79,18 +79,17 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
 size_t NodeCreator::CountChildrenWithSameType(Node* parent, GenType type)
 {
     size_t count = 0;
-    size_t numChildren = parent->GetChildCount();
-    for (size_t i = 0; i < numChildren; ++i)
+    for (const auto& child: parent->GetChildNodePtrs())
     {
-        if (type == parent->GetChild(i)->gen_type())
+        if (type == child->gen_type())
             ++count;
 
         // treat type-sizer and type_gbsizer as the same since forms and contains can only have one of them as the top level
         // sizer.
 
-        else if (type == type_sizer && parent->GetChild(i)->gen_type() == type_gbsizer)
+        else if (type == type_sizer && child->gen_type() == type_gbsizer)
             ++count;
-        else if (type == type_gbsizer && parent->GetChild(i)->gen_type() == type_sizer)
+        else if (type == type_gbsizer && child->gen_type() == type_sizer)
             ++count;
     }
 

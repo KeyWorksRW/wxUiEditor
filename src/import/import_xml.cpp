@@ -301,8 +301,8 @@ void ImportXML::ProcessStyle(pugi::xml_node& xml_prop, Node* node, NodeProperty*
         style.clear();
         for (auto& iter: mstr)
         {
-            if (iter.starts_with("wxLC_ICON") || iter.starts_with("wxLC_SMALL_ICON") ||
-                iter.starts_with("wxLC_LIST") || iter.starts_with("wxLC_REPORT"))
+            if (iter.starts_with("wxLC_ICON") || iter.starts_with("wxLC_SMALL_ICON") || iter.starts_with("wxLC_LIST") ||
+                iter.starts_with("wxLC_REPORT"))
             {
                 node->prop_set_value(prop_mode, iter);
             }

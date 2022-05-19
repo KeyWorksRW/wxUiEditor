@@ -666,10 +666,8 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
     {
         std::set<ttlib::cstr> code_lines;
 
-        for (size_t idx_events = 0; idx_events < events.size(); ++idx_events)
+        for (auto& event: events)
         {
-            auto& event = events[idx_events];
-
             // Ignore lambda's and functions in another class
             if (event->get_value().contains("[") || event->get_value().contains("::"))
                 continue;
@@ -682,9 +680,10 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             if (event->GetNode()->IsForm() && event->get_name() == "wxEVT_CONTEXT_MENU")
             {
                 bool has_handler = false;
-                for (size_t pos_child = 0; pos_child < event->GetNode()->GetChildCount(); pos_child++)
+
+                for (const auto& child: event->GetNode()->GetChildNodePtrs())
                 {
-                    if (event->GetNode()->GetChild(pos_child)->isGen(gen_wxContextMenuEvent))
+                    if (child->isGen(gen_wxContextMenuEvent))
                     {
                         has_handler = true;
                         break;
@@ -732,10 +731,8 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
         // Unlike the above code, there shouldn't be any wxEVT_CONTEXT_MENU events since m_CtxMenuEvents should only contain
         // menu items events.
 
-        for (size_t idx_events = 0; idx_events < m_CtxMenuEvents.size(); ++idx_events)
+        for (const auto& event: m_CtxMenuEvents)
         {
-            auto& event = m_CtxMenuEvents[idx_events];
-
             // Ignore lambda's and functions in another class
             if (event->get_value().contains("[") || event->get_value().contains("::"))
                 continue;
@@ -802,19 +799,17 @@ void BaseCodeGenerator::CollectMemberVariables(Node* node, Permission perm, std:
             }
         }
 
-        for (size_t i = 0; i < node->GetChildCount(); i++)
+        for (const auto& child: node->GetChildNodePtrs())
         {
-            auto child = node->GetChild(i);
-            CollectMemberVariables(child, perm, code_lines);
+            CollectMemberVariables(child.get(), perm, code_lines);
         }
 
         return;
     }
 
-    for (size_t i = 0; i < node->GetChildCount(); i++)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto child = node->GetChild(i);
-        CollectMemberVariables(child, perm, code_lines);
+        CollectMemberVariables(child.get(), perm, code_lines);
     }
 }
 
@@ -822,10 +817,9 @@ void BaseCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::stri
 {
     GenValVarsBase(node->GetNodeDeclaration(), node, code_lines);
 
-    for (size_t i = 0; i < node->GetChildCount(); i++)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto child = node->GetChild(i);
-        CollectValidatorVariables(child, code_lines);
+        CollectValidatorVariables(child.get(), code_lines);
     }
 }
 
@@ -840,10 +834,9 @@ void BaseCodeGenerator::GenValidatorFunctions(Node* node)
         }
     }
 
-    for (size_t i = 0; i < node->GetChildCount(); i++)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto child = node->GetChild(i);
-        GenValidatorFunctions(child);
+        GenValidatorFunctions(child.get());
     }
 }
 
@@ -1061,10 +1054,9 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
     }
 
     // Now parse all the children
-    for (size_t i = 0; i < node->GetChildCount(); i++)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto child = node->GetChild(i);
-        GatherGeneratorIncludes(child, set_src, set_hdr);
+        GatherGeneratorIncludes(child.get(), set_src, set_hdr);
     }
 }
 
@@ -1389,11 +1381,11 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     }
 
     m_source->SetLastLineBlank();
-    for (size_t i = 0; i < form_node->GetChildCount(); i++)
+    for (const auto& child: form_node->GetChildNodePtrs())
     {
-        if (form_node->GetChild(i)->isGen(gen_wxContextMenuEvent))
+        if (child->isGen(gen_wxContextMenuEvent))
             continue;
-        GenConstruction(form_node->GetChild(i));
+        GenConstruction(child.get());
     }
 
     if (auto result = generator->GenAdditionalCode(code_after_children, form_node); result)
@@ -1431,11 +1423,11 @@ void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVec
     m_source->writeLine("}");
 
     Node* node_ctx_menu = nullptr;
-    for (size_t pos_child = 0; pos_child < form_node->GetChildCount(); pos_child++)
+    for (const auto& child: form_node->GetChildNodePtrs())
     {
-        if (form_node->GetChild(pos_child)->isGen(gen_wxContextMenuEvent))
+        if (child->isGen(gen_wxContextMenuEvent))
         {
-            node_ctx_menu = form_node->GetChild(pos_child);
+            node_ctx_menu = child.get();
             break;
         }
     }
@@ -1720,18 +1712,17 @@ void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
         }
     }
 
-    for (size_t i = 0; i < node->GetChildCount(); ++i)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto child = node->GetChild(i);
         if (child->isGen(gen_wxContextMenuEvent))
         {
-            for (size_t ctx_child_pos = 0; ctx_child_pos < child->GetChildCount(); ++ctx_child_pos)
+            for (const auto& ctx_child: child->GetChildNodePtrs())
             {
-                CollectEventHandlers(child->GetChild(ctx_child_pos), m_CtxMenuEvents);
+                CollectEventHandlers(ctx_child.get(), m_CtxMenuEvents);
             }
             continue;
         }
-        CollectEventHandlers(child, events);
+        CollectEventHandlers(child.get(), events);
     }
 }
 
@@ -1785,9 +1776,9 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                         if (auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(idx_image); embed)
                         {
                             bool is_found = false;
-                            for (size_t idx = 0; idx < m_embedded_images.size(); ++idx)
+                            for (auto pimage: m_embedded_images)
                             {
-                                if (m_embedded_images[idx] == embed)
+                                if (pimage == embed)
                                 {
                                     is_found = true;
                                     break;
@@ -1837,9 +1828,9 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
                     else
                     {
                         bool is_found = false;
-                        for (size_t idx = 0; idx < m_embedded_images.size(); ++idx)
+                        for (auto& pimage: m_embedded_images)
                         {
-                            if (m_embedded_images[idx] == embed)
+                            if (pimage == embed)
                             {
                                 is_found = true;
                                 break;
@@ -1905,9 +1896,8 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         }
     }
 
-    for (size_t i = 0; i < node->GetChildCount(); i++)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto child = node->GetChild(i);
         for (auto& iter: child->get_props_vector())
         {
             if ((iter.type() == type_image || iter.type() == type_animation) && iter.HasValue())
@@ -1960,7 +1950,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
         }
         if (child->GetChildCount())
         {
-            ParseImageProperties(child);
+            ParseImageProperties(child.get());
         }
     }
 }
@@ -1974,9 +1964,9 @@ void BaseCodeGenerator::AddPersistCode(Node* node)
         m_source->writeLine(code);
     }
 
-    for (size_t i = 0; i < node->GetChildCount(); ++i)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        AddPersistCode(node->GetChild(i));
+        AddPersistCode(child.get());
     }
 }
 
@@ -2006,9 +1996,9 @@ void BaseCodeGenerator::GenContextMenuHandler(Node* form_node, Node* node_ctx_me
     auto node_menu = g_NodeCreator.NewNode(g_NodeCreator.GetNodeDeclaration("wxMenu"));
     node_menu->prop_set_value(prop_var_name, "pmenu");
 
-    for (size_t pos_child = 0; pos_child < node_ctx_menu->GetChildCount(); ++pos_child)
+    for (const auto& child: node_ctx_menu->GetChildNodePtrs())
     {
-        auto child_node = g_NodeCreator.MakeCopy(node_ctx_menu->GetChildPtr(pos_child));
+        auto child_node = g_NodeCreator.MakeCopy(child);
         node_menu->Adopt(child_node);
         GenCtxConstruction(child_node.get());
     }

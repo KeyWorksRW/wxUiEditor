@@ -367,30 +367,28 @@ void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
 {
     auto pg = wxStaticCast(wxobject, wxPropertyGrid);
     auto node = GetMockup()->GetNode(wxobject);
-    size_t count = node->GetChildCount();
-    for (size_t i = 0; i < count; ++i)
+
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto childObj = node->GetChild(i);
-        if (childObj->isGen(gen_propGridItem))
+        if (child->isGen(gen_propGridItem))
         {
-            if (childObj->prop_as_string(prop_type) == "Category")
+            if (child->prop_as_string(prop_type) == "Category")
             {
-                pg->Append(
-                    new wxPropertyCategory(childObj->prop_as_wxString(prop_label), childObj->prop_as_wxString(prop_label)));
+                pg->Append(new wxPropertyCategory(child->prop_as_wxString(prop_label), child->prop_as_wxString(prop_label)));
             }
             else
             {
                 wxPGProperty* prop = wxDynamicCast(
-                    wxCreateDynamicObject("wx" + (childObj->prop_as_string(prop_type)) + "Property"), wxPGProperty);
+                    wxCreateDynamicObject("wx" + (child->prop_as_string(prop_type)) + "Property"), wxPGProperty);
                 if (prop)
                 {
-                    prop->SetLabel(childObj->prop_as_wxString(prop_label));
-                    prop->SetName(childObj->prop_as_wxString(prop_label));
+                    prop->SetLabel(child->prop_as_wxString(prop_label));
+                    prop->SetName(child->prop_as_wxString(prop_label));
                     pg->Append(prop);
 
-                    if (childObj->HasValue(prop_help))
+                    if (child->HasValue(prop_help))
                     {
-                        pg->SetPropertyHelpString(prop, childObj->prop_as_wxString(prop_help));
+                        pg->SetPropertyHelpString(prop, child->prop_as_wxString(prop_help));
                     }
                 }
             }
@@ -454,39 +452,36 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
     auto pgm = wxStaticCast(wxobject, wxPropertyGridManager);
 
     auto node = GetMockup()->GetNode(wxobject);
-    size_t count = node->GetChildCount();
-    for (size_t i = 0; i < count; ++i)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto childObj = node->GetChild(i);
-        if (childObj->isGen(gen_propGridPage))
+        if (child->isGen(gen_propGridPage))
         {
             wxPropertyGridPage* page =
-                pgm->AddPage(childObj->prop_as_wxString(prop_label), childObj->prop_as_wxBitmapBundle(prop_bitmap));
+                pgm->AddPage(child->prop_as_wxString(prop_label), child->prop_as_wxBitmapBundle(prop_bitmap));
 
-            for (size_t j = 0; j < childObj->GetChildCount(); ++j)
+            for (const auto& inner_child: child->GetChildNodePtrs())
             {
-                auto innerChildObj = childObj->GetChild(j);
-                if (innerChildObj->isGen(gen_propGridItem))
+                if (inner_child->isGen(gen_propGridItem))
                 {
-                    if (innerChildObj->prop_as_string(prop_type) == "Category")
+                    if (inner_child->prop_as_string(prop_type) == "Category")
                     {
-                        page->Append(new wxPropertyCategory(innerChildObj->prop_as_wxString(prop_label),
-                                                            innerChildObj->prop_as_wxString(prop_label)));
+                        page->Append(new wxPropertyCategory(inner_child->prop_as_wxString(prop_label),
+                                                            inner_child->prop_as_wxString(prop_label)));
                     }
                     else
                     {
                         wxPGProperty* prop = wxDynamicCast(
-                            wxCreateDynamicObject("wx" + (innerChildObj->prop_as_string(prop_type)) + "Property"),
+                            wxCreateDynamicObject("wx" + (inner_child->prop_as_string(prop_type)) + "Property"),
                             wxPGProperty);
                         if (prop)
                         {
-                            prop->SetLabel(innerChildObj->prop_as_wxString(prop_label));
-                            prop->SetName(innerChildObj->prop_as_wxString(prop_label));
+                            prop->SetLabel(inner_child->prop_as_wxString(prop_label));
+                            prop->SetName(inner_child->prop_as_wxString(prop_label));
                             page->Append(prop);
 
-                            if (innerChildObj->HasValue(prop_help))
+                            if (inner_child->HasValue(prop_help))
                             {
-                                page->SetPropertyHelpString(prop, innerChildObj->prop_as_wxString(prop_help));
+                                page->SetPropertyHelpString(prop, inner_child->prop_as_wxString(prop_help));
                             }
                         }
                     }
@@ -495,7 +490,7 @@ void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /
         }
     }
 
-    if (count)
+    if (node->GetChildCount())
     {
         pgm->SelectPage(0);
     }

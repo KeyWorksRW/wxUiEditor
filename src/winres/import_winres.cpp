@@ -30,7 +30,7 @@ bool WinResource::Import(const ttString& filename, bool write_doc)
 }
 
 // clang-format off
-static constexpr const auto lst_ignored_includes = {
+static const std::set<std::string_view> lst_ignored_includes = {
 
     "afxres.h",
     "windows.h",
@@ -71,28 +71,19 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
     // First step though the file to find all #includes. Local header files get stored to an array to add to forms.
     // #included resource files get added to the end of file.
 
-    for (size_t idx = 0; idx < file.size(); ++idx)
+    for (auto& iter: file)
     {
-        if (file[idx].contains("#include"))
+        if (iter.contains("#include"))
         {
             ttlib::cstr name;
-            auto curline = file[idx].view_nonspace();
+            auto curline = iter.view_nonspace();
             name.ExtractSubString(curline, curline.stepover());
             if (name.size())
             {
                 auto ext = name.extension();
                 if (ext.is_sameas(".h"))
                 {
-                    bool ignore_file = false;
-                    for (auto& iter: lst_ignored_includes)
-                    {
-                        if (name.is_sameas(iter))
-                        {
-                            ignore_file = true;
-                            break;
-                        }
-                    }
-                    if (!ignore_file)
+                    if (!lst_ignored_includes.contains(name))
                     {
                         m_include_lines.emplace(curline);
                     }

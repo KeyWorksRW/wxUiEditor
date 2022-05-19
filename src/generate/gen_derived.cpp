@@ -337,10 +337,8 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYP
         m_header->writeLine(ttlib::cstr() << "// Handlers for " << m_form_node->get_node_name() << " events");
 
         std::set<std::string> generatedHandlers;
-        for (size_t i = 0; i < events.size(); i++)
+        for (auto event: events)
         {
-            auto event = events[i];
-
             // Ignore lambda's and functions in another class
             if (event->get_value().contains("[") || event->get_value().contains("::"))
                 continue;

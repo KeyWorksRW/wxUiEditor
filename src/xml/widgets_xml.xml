@@ -9,6 +9,7 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_indicator</property>
+		<property name="auto_start" type="bool" />
 	</gen>
 
 	<gen class="wxAnimationCtrl" image="wxAnimation" type="widget">

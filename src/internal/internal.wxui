@@ -651,5 +651,82 @@
           flags="wxEXPAND" />
       </node>
     </node>
+    <node
+      class="wxDialog"
+      base_file="xrcpreview_base"
+      class_name="XrcPreviewBase"
+      derived_class_name="XrcPreview"
+      derived_file="xrcpreview"
+      minimum_size="800,600d"
+      persist="true"
+      title="XRC Preview">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_4">
+            <node
+              class="wxStaticText"
+              label="Preview only works with Dialogs. Be certain the dialog is visible and has a close box in the title bar!" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_2"
+            flags="wxEXPAND">
+            <node
+              class="wxButton"
+              label="&amp;Create..."
+              var_name="m_btn_2"
+              tooltip="Create XRC for a specific widget"
+              wxEVT_BUTTON="OnCreate" />
+            <node
+              class="wxButton"
+              label="&amp;XRC Copy"
+              var_name="m_btn_3"
+              tooltip="Copies the generated code from the XRC tab"
+              wxEVT_BUTTON="OnXrcCopy" />
+            <node
+              class="wxButton"
+              label="Clipboard"
+              var_name="m_btn_4"
+              wxEVT_BUTTON="OnClipBoard" />
+            <node
+              class="spacer"
+              proportion="1" />
+            <node
+              class="wxButton"
+              label="&amp;Preview..."
+              wxEVT_BUTTON="OnPreview" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            var_name="box_sizer_3"
+            flags="wxEXPAND"
+            proportion="1">
+            <node
+              class="wxStyledTextCtrl"
+              lexer="XML"
+              smart_size="-2,-1d"
+              flags="wxEXPAND"
+              proportion="1" />
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          Cancel="false"
+          Close="true"
+          OK="false"
+          default_button="none"
+          flags="wxEXPAND" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

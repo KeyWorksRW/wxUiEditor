@@ -6,7 +6,7 @@
 
 #include <wx/sizer.h>
 
-#include "internal/code_compare_base.h"  // CodeCompare
+#include "code_compare_base.h"
 
 #include "WinMerge.xpm"
 

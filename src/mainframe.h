@@ -267,6 +267,7 @@ protected:
     void OnCodeCompare(wxCommandEvent& event);
     void OnConvertImageDlg(wxCommandEvent& event);
     void OnFindWidget(wxCommandEvent& event);
+    void OnXrcPreviewDlg(wxCommandEvent& event);
 #endif
 
 #if defined(_DEBUG)  // Starts debug section.

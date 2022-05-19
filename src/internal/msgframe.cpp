@@ -187,10 +187,7 @@ void MsgFrame::OnClear(wxCommandEvent& WXUNUSED(event))
     m_pMsgs->clear();
 }
 
-void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event))
-{
-    Hide();
-}
+void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event)) { Hide(); }
 
 void MsgFrame::OnWarnings(wxCommandEvent& WXUNUSED(event))
 {

@@ -140,7 +140,6 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
             if (child_result == BaseGenerator::xrc_not_supported)
             {
                 actual_object.remove_child(child_object);
-                break;
             }
         }
         return result;

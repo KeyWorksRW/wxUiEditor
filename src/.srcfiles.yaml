@@ -207,6 +207,7 @@ Docs:
     ../docs/import_crafter.md
     ../docs/import_formbuilder.md
     ../docs/import_winres.md
+    ../docs/xrc.md
     nodes/README.md
 
     # The following are the XML files we use for interfaces and generators

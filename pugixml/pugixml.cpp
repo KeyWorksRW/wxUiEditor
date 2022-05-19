@@ -7393,6 +7393,7 @@ namespace pugi
 		{
 			buffered_writer.write_string(PUGIXML_TEXT("<?xml version=\"1.0\""));
 			if (encoding == encoding_latin1) buffered_writer.write_string(PUGIXML_TEXT(" encoding=\"ISO-8859-1\""));
+			if (encoding == encoding_auto) buffered_writer.write_string(PUGIXML_TEXT(" encoding=\"UTF-8\""));
 			buffered_writer.write('?', '>');
 			if (!(flags & format_raw)) buffered_writer.write('\n');
 		}

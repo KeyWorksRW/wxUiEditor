@@ -296,7 +296,7 @@ void GenPos(Node* node, ttlib::cstr& code)
     {
         if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
         {
-            code << ", ConvertPixelsToDialog(wxPoint(" << point.x << ", " << point.y << "))";
+            code << "ConvertDialogToPixels(wxPoint(" << point.x << ", " << point.y << "))";
         }
         else
         {
@@ -314,7 +314,7 @@ void GenSize(Node* node, ttlib::cstr& code)
     {
         if (node->prop_as_string(prop_size).contains("d", tt::CASE::either))
         {
-            code << ", ConvertPixelsToDialog(wxSize(" << size.x << ", " << size.y << "))";
+            code << "ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";
         }
         else
         {
@@ -422,7 +422,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
     {
         if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
         {
-            code << ", ConvertPixelsToDialog(wxPoint(" << pos.x << ", " << pos.y << "))";
+            code << ", ConvertDialogToPixels(wxPoint(" << pos.x << ", " << pos.y << "))";
         }
         else
         {
@@ -443,7 +443,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         }
         if (node->prop_as_string(prop_size).contains("d", tt::CASE::either))
         {
-            code << ", ConvertPixelsToDialog(wxSize(" << size.x << ", " << size.y << "))";
+            code << ", ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";
         }
         else
         {
@@ -1614,7 +1614,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
             code << "\n";
         code << node->get_node_name() << "->SetInitialSize(";
         if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
-            code << "ConvertPixelsToDialog(";
+            code << "ConvertDialogToPixels(";
 
         if (size.IsFullySpecified())
             code << "\n\t";
@@ -1629,7 +1629,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         else
             code << "-1";
         if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
-            code << ')';  // close the ConvertPixelsToDialog function call
+            code << ')';  // close the ConvertDialogToPixels function call
         code << "));";
     }
 
@@ -1643,11 +1643,11 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
             code << node->get_node_name() << "->";
             code << "SetMinSize(";
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                code << "ConvertPixelsToDialog(";
+                code << "ConvertDialogToPixels(";
 
             code << "wxSize(" << size.x << ", " << size.y;
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                code << ')';  // close the ConvertPixelsToDialog function call
+                code << ')';  // close the ConvertDialogToPixels function call
             code << "));";
         }
     }
@@ -1662,11 +1662,11 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
             code << node->get_node_name() << "->";
             code << "SetMaxSize(";
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                code << "ConvertPixelsToDialog(";
+                code << "ConvertDialogToPixels(";
 
             code << "wxSize(" << size.x << ", " << size.y;
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                code << ')';  // close the ConvertPixelsToDialog function call
+                code << ')';  // close the ConvertDialogToPixels function call
             code << "));";
         }
     }

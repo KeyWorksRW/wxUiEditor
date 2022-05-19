@@ -390,7 +390,7 @@ void GenStyle(Node* node, ttlib::cstr& code, const char* prefix)
     }
 }
 
-void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator, ttlib::cview def_style)
+void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator, ttlib::sview def_style)
 {
     if (node->HasValue(prop_window_name))
     {
@@ -476,7 +476,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         else
         {
             code << ",\n\t\t";
-            if (code.is_sameprefix("    "))
+            if (code.starts_with("    "))
             {
                 code.insert(0, 4, ' ');
             }
@@ -741,7 +741,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
 
     ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
-    if (parts[IndexType].is_sameprefix("SVG"))
+    if (parts[IndexType].starts_with("SVG"))
     {
         code << "wxNullBitmap /* SVG images require wxWidgets 3.1.6 */";
         return code;
@@ -787,7 +787,7 @@ ttlib::cstr GenerateBitmapCode(const ttlib::cstr& description)
         name.remove_extension();
         name.Replace(".", "_", true);  // wxFormBuilder writes files with the extra dots that have to be converted to '_'
 
-        if (parts[IndexType].is_sameprefix("Embed"))
+        if (parts[IndexType].starts_with("Embed"))
         {
             auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
             if (embed)
@@ -888,7 +888,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
             code << name << "_xpm)";
         }
     }
-    else if (description.is_sameprefix("SVG"))
+    else if (description.starts_with("SVG"))
     {
         if (auto function_name = wxGetApp().GetBundleFuncName(description); function_name.size())
         {
@@ -933,7 +933,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
-                if (parts[IndexType].is_sameprefix("Embed"))
+                if (parts[IndexType].starts_with("Embed"))
                 {
                     auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
@@ -951,7 +951,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
-                if (parts[IndexType].is_sameprefix("Embed"))
+                if (parts[IndexType].starts_with("Embed"))
                 {
                     auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
@@ -965,7 +965,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                 name.remove_extension();
                 name.Replace(".", "_", true);
 
-                if (parts[IndexType].is_sameprefix("Embed"))
+                if (parts[IndexType].starts_with("Embed"))
                 {
                     auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[1]);
                     if (embed)
@@ -983,7 +983,7 @@ bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code)
                     ttlib::cstr name(iter.filename());
                     name.remove_extension();
                     name.Replace(".", "_", true);  // fix wxFormBuilder header files
-                    if (parts[IndexType].is_sameprefix("Embed"))
+                    if (parts[IndexType].starts_with("Embed"))
                     {
                         auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(iter);
                         if (embed)
@@ -1053,7 +1053,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
         else
         {
             name.Replace(".", "_", true);  // fix wxFormBuilder header files
-            if (parts[IndexType].is_sameprefix("Embed"))
+            if (parts[IndexType].starts_with("Embed"))
             {
                 auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(iter);
                 if (embed)
@@ -1518,7 +1518,7 @@ std::optional<ttlib::cstr> GenValidatorSettings(Node* node)
     return {};
 }
 
-static void AddPropIfUsed(PropName prop_name, ttlib::cview func_name, Node* node, ttlib::cstr& code)
+static void AddPropIfUsed(PropName prop_name, ttlib::sview func_name, Node* node, ttlib::cstr& code)
 {
     if (prop_name == prop_background_colour)
     {

@@ -73,7 +73,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, bool is_XML) : CodeDisplayBase(parent
                 continue;
             }
 
-            if (!iter->DeclName().is_sameprefix("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
+            if (!iter->DeclName().starts_with("wx") || iter->DeclName().is_sameas("wxContextMenuEvent"))
                 continue;
             widget_keywords << ' ' << iter->DeclName();
         }

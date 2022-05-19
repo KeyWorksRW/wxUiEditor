@@ -133,7 +133,7 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
     if (result == BaseGenerator::xrc_sizer_item_created)
     {
         auto actual_object = object.child("object");
-        for (auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->GetChildNodePtrs())
         {
             auto child_object = actual_object.append_child("object");
             auto child_result = GenXrcObject(child.get(), child_object, add_comments);
@@ -147,7 +147,7 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
     }
     else if (result == BaseGenerator::xrc_updated)
     {
-        for (auto& child: node->GetChildNodePtrs())
+        for (const auto& child: node->GetChildNodePtrs())
         {
             auto child_object = object.append_child("object");
             auto child_result = GenXrcObject(child.get(), child_object, add_comments);
@@ -169,7 +169,7 @@ void CollectHandlers(Node* node, std::set<std::string>& handlers)
 {
     auto generator = node->GetNodeDeclaration()->GetGenerator();
     generator->RequiredHandlers(node, handlers);
-    for (auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->GetChildNodePtrs())
     {
         generator = child->GetNodeDeclaration()->GetGenerator();
         generator->RequiredHandlers(child.get(), handlers);

@@ -191,12 +191,12 @@ static const auto lstStdButtonEvents = {
 
 NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 {
-    auto class_name = xml_obj.attribute("class").as_cview();
+    auto class_name = xml_obj.attribute("class").as_std_str();
     if (class_name.empty())
         return NodeSharedPtr();
 
     // This should never be the case, but let's switch it in the off chance it slips through
-    if (class_name.is_sameas("wxListCtrl"))
+    if (class_name == "wxListCtrl")
         class_name = "wxListView";
 
     auto new_node = CreateNode(class_name, parent);
@@ -208,10 +208,10 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
     for (auto& iter: xml_obj.attributes())
     {
-        if (iter.cname().is_sameas("class"))
+        if (iter.name() == "class")
             continue;
 
-        if (iter.cname().is_sameprefix("wxEVT_"))
+        if (iter.name().starts_with("wxEVT_"))
         {
             if (auto event = new_node->GetEvent(iter.name()); event)
             {
@@ -313,7 +313,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                                     parts[1].backslashestoforward();
                                     ttlib::cstr description(parts[0]);
                                     description << ';' << parts[1];
-                                    if (parts[0].is_sameprefix("SVG"))
+                                    if (parts[0].starts_with("SVG"))
                                         description << ';' << parts[2];
                                     prop->set_value(description);
                                 }
@@ -348,7 +348,7 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
             if (is_event)
                 continue;
 
-            if (auto value = iter.value(); *value)
+            if (auto value = iter.value(); value.size())
             {
                 {
                     // REVIEW: [KeyWorks - 11-30-2021] This code block deals with changes to the 1.2 project format prior to
@@ -465,7 +465,7 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
         auto& doc = import.GetDocument();
         auto root = doc.first_child();
         auto project = root.child("node");
-        if (!project || !project.attribute("class").as_cview().is_sameas("Project"))
+        if (!project || project.attribute("class").as_string() != "Project")
         {
             ASSERT_MSG(project, ttlib::cstr() << "Failed trying to load converted xml document: " << file.wx_str());
 
@@ -668,10 +668,10 @@ void App::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dia
     WinResource winres;
     if (winres.ImportRc(rc_file, dialogs))
     {
-        auto project = winres.GetProjectPtr();
-        for (size_t idx_child = 0; idx_child < project->GetChildCount(); ++idx_child)
+        const auto& project = winres.GetProjectPtr();
+        for (const auto& child: project->GetChildNodePtrs())
         {
-            auto new_node = g_NodeCreator.MakeCopy(project->GetChildPtr(idx_child));
+            auto new_node = g_NodeCreator.MakeCopy(child);
             m_project->Adopt(new_node);
         }
 
@@ -682,18 +682,18 @@ void App::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dia
 
 void App::AppendCrafter(wxArrayString& files)
 {
-    for (size_t pos = 0; pos < files.size(); ++pos)
+    for (const auto& file: files)
     {
         WxCrafter crafter;
 
-        if (crafter.Import(files[pos]))
+        if (crafter.Import(file))
         {
             auto& doc = crafter.GetDocument();
             auto root = doc.first_child();
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
                              "Import wxCrafter project");
                 return;
             }
@@ -712,18 +712,18 @@ void App::AppendCrafter(wxArrayString& files)
 
 void App::AppendFormBuilder(wxArrayString& files)
 {
-    for (size_t pos = 0; pos < files.size(); ++pos)
+    for (auto& file: files)
     {
         FormBuilder fb;
 
-        if (fb.Import(files[pos]))
+        if (fb.Import(file))
         {
             auto& doc = fb.GetDocument();
             auto root = doc.first_child();
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
                              "Import wxFormBuilder project");
                 return;
             }
@@ -742,18 +742,18 @@ void App::AppendFormBuilder(wxArrayString& files)
 
 void App::AppendGlade(wxArrayString& files)
 {
-    for (size_t pos = 0; pos < files.size(); ++pos)
+    for (auto& file: files)
     {
         WxGlade glade;
 
-        if (glade.Import(files[pos]))
+        if (glade.Import(file))
         {
             auto& doc = glade.GetDocument();
             auto root = doc.first_child();
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
                              "Import wxGlade project");
                 return;
             }
@@ -772,18 +772,18 @@ void App::AppendGlade(wxArrayString& files)
 
 void App::AppendSmith(wxArrayString& files)
 {
-    for (size_t pos = 0; pos < files.size(); ++pos)
+    for (auto& file: files)
     {
         WxSmith smith;
 
-        if (smith.Import(files[pos]))
+        if (smith.Import(file))
         {
             auto& doc = smith.GetDocument();
             auto root = doc.first_child();
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
                              "Import wxSmith project");
                 return;
             }
@@ -802,19 +802,19 @@ void App::AppendSmith(wxArrayString& files)
 
 void App::AppendXRC(wxArrayString& files)
 {
-    for (size_t pos = 0; pos < files.size(); ++pos)
+    for (auto& file: files)
     {
         // wxSmith files are a superset of XRC files, so we use the wxSmith class to process both
         WxSmith smith;
 
-        if (smith.Import(files[pos]))
+        if (smith.Import(file))
         {
             auto& doc = smith.GetDocument();
             auto root = doc.first_child();
             auto project = root.child("node");
             if (!project || project.attribute("class").as_cstr() != "Project")
             {
-                wxMessageBox(wxString("The project file ") << files[pos] << " is invalid and cannot be opened.",
+                wxMessageBox(wxString("The project file ") << file << " is invalid and cannot be opened.",
                              "Import XRC project");
                 return;
             }

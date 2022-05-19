@@ -47,21 +47,21 @@ inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
 
 void ProjectSettings::CollectBundles()
 {
-    for (auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
+    for (const auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
     {
-        CollectNodeBundles(iter.get(), iter.get());
+        CollectNodeBundles(form, form);
 
-        if (iter->HasProp(prop_icon) && iter->HasValue(prop_icon))
+        if (form->HasProp(prop_icon) && form->HasValue(prop_icon))
         {
-            if (m_bundles.find(ConvertToLookup(iter->prop_as_string(prop_icon))) == m_bundles.end())
+            if (!m_bundles.contains(ConvertToLookup(form->prop_as_string(prop_icon))))
             {
-                ProcessBundleProperty(iter->prop_as_string(prop_icon), iter.get());
+                ProcessBundleProperty(form->prop_as_string(prop_icon), form.get());
             }
         }
     }
 }
 
-void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
+void ProjectSettings::CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr& form)
 {
     for (auto& iter: node->get_props_vector())
     {
@@ -70,30 +70,30 @@ void ProjectSettings::CollectNodeBundles(Node* node, Node* form)
 
         if (iter.type() == type_image)
         {
-            if (m_bundles.find(ConvertToLookup(iter.as_string())) == m_bundles.end())
+            if (!m_bundles.contains(ConvertToLookup(iter.as_string())))
             {
-                ProcessBundleProperty(iter.as_string(), form);
+                ProcessBundleProperty(iter.as_string(), form.get());
             }
         }
         else if (iter.type() == type_animation)
         {
             auto& value = iter.as_string();
-            if (value.is_sameprefix("Embed"))
+            if (value.starts_with("Embed"))
             {
                 ttlib::multiview parts(value, BMP_PROP_SEPARATOR, tt::TRIM::both);
                 if (parts[IndexImage].size())
                 {
-                    if (auto result = m_map_embedded.find(parts[IndexImage].filename()); result == m_map_embedded.end())
+                    if (!m_map_embedded.contains(parts[IndexImage].filename()))
                     {
-                        AddEmbeddedImage(parts[IndexImage], form);
+                        AddEmbeddedImage(parts[IndexImage], form.get());
                     }
                 }
             }
         }
     }
-    for (auto& child: node->GetChildNodePtrs())
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        CollectNodeBundles(child.get(), form);
+        CollectNodeBundles(child, form);
     }
 }
 
@@ -126,7 +126,7 @@ bool ProjectSettings::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::
         }
     }
 
-    if (parts[IndexType].is_sameprefix("SVG"))
+    if (parts[IndexType].starts_with("SVG"))
     {
         if (AddSvgBundleImage(path, form))
         {
@@ -380,8 +380,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::multistr& parts
     ttlib::cstr lookup_str;
     lookup_str << parts[0] << ';' << parts[1].filename();
 
-    ASSERT_MSG(m_bundles.find(lookup_str) == m_bundles.end(),
-               "ProcessBundleProperty should not be called if bundle already exists!")
+    ASSERT_MSG(!m_bundles.contains(lookup_str), "ProcessBundleProperty should not be called if bundle already exists!")
 
     if (parts[IndexImage].empty())
     {

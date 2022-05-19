@@ -32,7 +32,7 @@ struct ImageMap
 
 static const ImageMap png_headers[] = {
 
-    { "unknown", unknown_png, sizeof(unknown_png) },
+    { .name = "unknown", .data = unknown_png, .size_data = sizeof(unknown_png) },
     { "default", default_png, sizeof(default_png) },
 
     { "flex_grid_sizer", flex_grid_sizer_png, sizeof(flex_grid_sizer_png) },
@@ -157,11 +157,11 @@ static const ImageMap png_headers[] = {
 
 };
 
-wxImage GetInternalImage(ttlib::cview name)
+wxImage GetInternalImage(ttlib::sview name)
 {
     for (auto& iter: png_headers)
     {
-        if (name.is_sameas(iter.name))
+        if (name == iter.name)
         {
             return LoadHeaderImage(iter.data, iter.size_data);
         }
@@ -171,7 +171,7 @@ wxImage GetInternalImage(ttlib::cview name)
     return LoadHeaderImage(default_png, sizeof(default_png));
 }
 
-wxIcon GetIconImage(ttlib::cview name)
+wxIcon GetIconImage(ttlib::sview name)
 {
     for (auto& iter: png_headers)
     {
@@ -194,17 +194,17 @@ wxIcon GetIconImage(ttlib::cview name)
 // [KeyWorks - 05-04-2021] Note that we don't display warnings or errors to the user since this will be called during project
 // loading, and there could be dozens of calls to the same problem file(s).
 
-wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString* p_mime_type)
+wxImage GetHeaderImage(ttlib::sview filename, size_t* p_original_size, ttString* p_mime_type)
 {
     wxImage image;
 
-    if (!ttlib::file_exists(filename))
+    if (!filename.file_exists())
     {
         MSG_ERROR(ttlib::cstr() << filename << " passed to GetHeaderImage doesn't exist");
         return image;
     }
 
-    std::ifstream fileOriginal(filename, std::ios::binary | std::ios::in);
+    std::ifstream fileOriginal(filename.as_str(), std::ios::binary | std::ios::in);
     if (!fileOriginal.is_open())
     {
         MSG_ERROR(ttlib::cstr() << filename << " passed to GetHeaderImage could not be read");
@@ -286,7 +286,7 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
     }
 
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
-    unsigned char* ptr_out_buf = image_buffer.get();
+    auto out_buffer = image_buffer.get();
 
     if (isUiditorFile)
     {
@@ -300,7 +300,7 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
                 {
                     value = (value * 10) + (to_uchar) (*buf_ptr - '0');
                 }
-                ptr_out_buf[actual_size] = value;
+                out_buffer[actual_size] = value;
 
                 if (++actual_size > image_buffer_size)
                 {
@@ -348,7 +348,7 @@ wxImage GetHeaderImage(ttlib::cview filename, size_t* p_original_size, ttString*
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
                     value += (to_uchar) ((*buf_ptr - 'a') + 10);
 
-                ptr_out_buf[actual_size] = value;
+                out_buffer[actual_size] = value;
 
                 if (++actual_size > image_buffer_size)
                 {
@@ -403,15 +403,15 @@ wxImage LoadHeaderImage(const unsigned char* data, size_t size_data)
     return image;
 };
 
-bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
+bool GetAnimationImage(wxAnimation& animation, ttlib::sview filename)
 {
-    if (!ttlib::file_exists(filename))
+    if (!filename.file_exists())
     {
         MSG_ERROR(ttlib::cstr() << filename << " passed to GetAnimationanimation doesn't exist");
         return animation.IsOk();
     }
 
-    std::ifstream fileOriginal(filename, std::ios::binary | std::ios::in);
+    std::ifstream fileOriginal(filename.as_str(), std::ios::binary | std::ios::in);
     if (!fileOriginal.is_open())
     {
         MSG_ERROR(ttlib::cstr() << filename << " passed to GetAnimationImage could not be read");
@@ -493,7 +493,7 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
     }
 
     auto image_buffer = std::make_unique<unsigned char[]>(image_buffer_size);
-    unsigned char* ptr_out_buf = image_buffer.get();
+    auto out_buffer = image_buffer.get();
 
     if (isUiditorFile)
     {
@@ -507,7 +507,7 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
                 {
                     value = (value * 10) + (to_uchar) (*buf_ptr - '0');
                 }
-                ptr_out_buf[actual_size] = value;
+                out_buffer[actual_size] = value;
 
                 if (++actual_size > image_buffer_size)
                 {
@@ -555,7 +555,7 @@ bool GetAnimationImage(wxAnimation& animation, ttlib::cview filename)
                 else if (*buf_ptr >= 'a' && *buf_ptr <= 'f')
                     value += (to_uchar) ((*buf_ptr - 'a') + 10);
 
-                ptr_out_buf[actual_size] = value;
+                out_buffer[actual_size] = value;
 
                 if (++actual_size > image_buffer_size)
                 {

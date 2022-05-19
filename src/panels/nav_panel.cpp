@@ -171,9 +171,9 @@ void NavigationPanel::OnProjectUpdated()
         ExpandAllNodes(project);
 
         // Now we collapse all the project's immediate children
-        for (size_t index = 0; index < project->GetChildCount(); ++index)
+        for (const auto& form: project->GetChildNodePtrs())
         {
-            if (auto result = m_node_tree_map.find(project->GetChild(index)); result != m_node_tree_map.end())
+            if (auto result = m_node_tree_map.find(form.get()); result != m_node_tree_map.end())
             {
                 m_tree_ctrl->Collapse(result->second);
             }
@@ -360,7 +360,7 @@ void NavigationPanel::AddAllChildren(Node* node_parent)
     auto tree_parent = m_node_tree_map[node_parent];
     ASSERT(tree_parent.IsOk());
 
-    for (auto& iter_child: node_parent->GetChildNodePtrs())
+    for (const auto& iter_child: node_parent->GetChildNodePtrs())
     {
         auto node = iter_child.get();
         auto new_item = m_tree_ctrl->AppendItem(tree_parent, GetDisplayName(node).wx_str(), GetImageIndex(node), -1);
@@ -480,9 +480,10 @@ void NavigationPanel::ExpandAllNodes(Node* node)
             m_tree_ctrl->Expand(item_it->second);
     }
 
-    auto count = node->GetChildCount();
-    for (size_t i = 0; i < count; i++)
-        ExpandAllNodes(node->GetChild(i));
+    for (const auto& child: node->GetChildNodePtrs())
+    {
+        ExpandAllNodes(child.get());
+    }
 }
 
 void NavigationPanel::DeleteNode(Node* node)
@@ -496,9 +497,9 @@ void NavigationPanel::EraseAllMaps(Node* node)
     // If you delete a parent tree item it will automatically delete all children, but our maps won't reflect that. To keep
     // the treeview control and our maps in sync, we need to delete children before we delete the actual item.
 
-    for (size_t idx = 0; idx < node->GetChildCount(); idx++)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        EraseAllMaps(node->GetChild(idx));
+        EraseAllMaps(child.get());
     }
 
     if (auto result = m_node_tree_map.find(node); result != m_node_tree_map.end())
@@ -522,7 +523,7 @@ void NavigationPanel::OnNodeSelected(CustomEvent& event)
     }
     else
     {
-        if (node->HasValue(prop_var_name) && !node->prop_as_string(prop_class_access).is_sameprefix("none"))
+        if (node->HasValue(prop_var_name) && !node->prop_as_string(prop_class_access).starts_with("none"))
             wxGetFrame().setStatusText(node->prop_as_string(prop_var_name));
         else
             wxGetFrame().setStatusText(tt_empty_cstr);
@@ -691,11 +692,12 @@ void NavigationPanel::ChangeExpansion(Node* node, bool include_children, bool ex
 {
     if (include_children)
     {
-        for (size_t child_index = 0; child_index < node->GetChildCount(); ++child_index)
+        for (const auto& child: node->GetChildNodePtrs())
         {
-            auto child = node->GetChild(child_index);
             if (child->GetChildCount())
-                ChangeExpansion(child, include_children, expand);
+            {
+                ChangeExpansion(child.get(), include_children, expand);
+            }
         }
     }
     if (node->GetChildCount())
@@ -741,9 +743,9 @@ void NavigationPanel::OnCollapse(wxCommandEvent&)
     auto parent = node->GetParent();
     if (parent && parent->GetChildCount())
     {
-        for (size_t child_index = 0; child_index < parent->GetChildCount(); ++child_index)
+        for (const auto& child: parent->GetChildNodePtrs())
         {
-            ChangeExpansion(parent->GetChild(child_index), false, false);
+            ChangeExpansion(child.get(), false, false);
         }
     }
     else
@@ -769,10 +771,12 @@ void NavigationPanel::ExpandCollapse(Node* node)
     auto parent = node->GetParent();
     if (parent && parent->GetChildCount())
     {
-        for (size_t child_index = 0; child_index < parent->GetChildCount(); ++child_index)
+        for (const auto& child: parent->GetChildNodePtrs())
         {
-            if (parent->GetChild(child_index) != node)
-                ChangeExpansion(parent->GetChild(child_index), false, false);
+            if (child.get() != node)
+            {
+                ChangeExpansion(child.get(), false, false);
+            }
         }
     }
 

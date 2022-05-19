@@ -55,9 +55,8 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
     }
 
     bool generate_result = true;
-    for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
+    for (const auto& form: project->GetChildNodePtrs())
     {
-        auto form = project->GetChild(pos);
         if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
         {
             path = base_file;
@@ -86,7 +85,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
             codegen.SetSrcWriteCode(cpp_cw.get());
 
-            codegen.GenerateBaseClass(form);
+            codegen.GenerateBaseClass(form.get());
 
             path.replace_extension(header_ext);
             auto retval = h_cw->WriteFile(NeedsGenerateCheck);
@@ -226,9 +225,8 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
 
     size_t currentFiles = 0;
 
-    for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
+    for (const auto& form: project->GetChildNodePtrs())
     {
-        auto form = project->GetChildPtr(pos);
         if (auto& file = form->prop_as_string(prop_derived_file); file.size())
         {
             path = file;
@@ -367,10 +365,8 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 
     for (auto& iter_class: ClassList)
     {
-        for (size_t pos = 0; pos < project->GetChildCount(); ++pos)
+        for (const auto& form: project->GetChildNodePtrs())
         {
-            auto form = project->GetChild(pos);
-
             // The Images class doesn't have a prop_class_name, so use "Images". Note that this will fail if there is a real
             // form where the user set the class name to "Images". If this wasn't an Internal function, then we would need to
             // store nodes rather than class names.
@@ -397,7 +393,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                 auto cpp_cw = std::make_unique<FileCodeWriter>(base_file.wx_str());
                 codegen.SetSrcWriteCode(cpp_cw.get());
 
-                codegen.GenerateBaseClass(form);
+                codegen.GenerateBaseClass(form.get());
 
                 base_file.replace_extension(header_ext);
                 bool new_hdr = (h_cw->WriteFile(true) > 0);
@@ -421,7 +417,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                     cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
                     codegen.SetSrcWriteCode(cpp_cw.get());
 
-                    codegen.GenerateBaseClass(form);
+                    codegen.GenerateBaseClass(form.get());
 
                     path.replace_extension(header_ext);
                     h_cw->WriteFile();
@@ -451,7 +447,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                     cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
                     codegen.SetSrcWriteCode(cpp_cw.get());
 
-                    codegen.GenerateBaseClass(form);
+                    codegen.GenerateBaseClass(form.get());
 
                     path.replace_extension(source_ext);
                     cpp_cw->WriteFile();

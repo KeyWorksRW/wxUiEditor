@@ -378,7 +378,7 @@ void NodeCreator::Initialize()
         }
 
         // Now parse the completed m_pdoc_interface document
-        ParseGeneratorFile(ttlib::emptystring);
+        ParseGeneratorFile("");
 
         for (auto& iter: lst_xml_generators)
         {
@@ -398,14 +398,14 @@ void NodeCreator::Initialize()
 }
 
 // The xml_data parameter is the char* pointer to the XML data. It will be empty when processing the interface document.
-void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
+void NodeCreator::ParseGeneratorFile(const char* xml_data)
 {
     // All but one of the possible files will use the doc file, so we create it even if it gets ignored because this is an
     // interface file
     pugi::xml_document doc;
     pugi::xml_node root;
 
-    if (xml_data.empty())
+    if (!xml_data || !*xml_data)
     {
         root = m_pdoc_interface->child("GeneratorDefinitions");
     }
@@ -429,19 +429,19 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
     auto generator = root.child("gen");
     while (generator)
     {
-        auto class_name = generator.attribute("class").as_string();
+        auto class_name = generator.attribute("class").as_std_str();
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-        if (rmap_GenNames.find(class_name) == rmap_GenNames.end())
+        if (!rmap_GenNames.contains(class_name))
         {
             MSG_WARNING(ttlib::cstr("Unrecognized class name -- ") << class_name);
         }
 #endif  // _DEBUG
 
-        auto type_name = generator.attribute("type").as_cview();
+        auto type_name = generator.attribute("type").as_string();
         GenType type { gen_type_unknown };
         for (auto& iter: map_GenTypes)
         {
-            if (type_name.is_sameas(iter.second))
+            if (type_name == iter.second)
             {
                 type = iter.first;
                 break;
@@ -455,7 +455,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
         }
 #endif  // _DEBUG
 
-        if (xml_data.empty())
+        if (!xml_data || !*xml_data)
         {
             m_interfaces[class_name] = generator;
         }
@@ -463,12 +463,12 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
         auto declaration = new NodeDeclaration(class_name, GetNodeType(type));
         m_a_declarations[declaration->gen_name()] = declaration;
 
-        if (auto flags = generator.attribute("flags").as_cview(); flags.size())
+        if (auto flags = generator.attribute("flags").as_string(); flags.size())
         {
             declaration->SetGeneratorFlags(flags);
         }
 
-        auto image_name = generator.attribute("image").as_cview();
+        auto image_name = generator.attribute("image").as_string();
         if (image_name.size())
         {
             auto image = GetInternalImage(image_name);
@@ -496,18 +496,18 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
     }
 
     // Interface processing doesn't have a xml_data
-    if (xml_data.size())
+    if (xml_data && *xml_data)
     {
         auto elem_obj = root.child("gen");
         while (elem_obj)
         {
-            auto class_name = elem_obj.attribute("class").as_cview();
+            auto class_name = elem_obj.attribute("class").as_string();
             auto class_info = GetNodeDeclaration(class_name);
 
             auto elem_base = elem_obj.child("inherits");
             while (elem_base)
             {
-                auto base_name = elem_base.attribute("class").as_cview();
+                auto base_name = elem_base.attribute("class").as_string();
 
                 // Add a reference to its base class
                 auto base_info = GetNodeDeclaration(base_name);
@@ -526,7 +526,7 @@ void NodeCreator::ParseGeneratorFile(ttlib::cview xml_data)
                             inheritedProperty = inheritedProperty.next_sibling("property");
                             continue;
                         }
-                        class_info->SetOverRideDefValue(lookup_name->second, inheritedProperty.text().as_cview());
+                        class_info->SetOverRideDefValue(lookup_name->second, inheritedProperty.text().as_string());
                         inheritedProperty = inheritedProperty.next_sibling("property");
                     }
 
@@ -558,10 +558,10 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
     auto elem_category = elem_obj.child("category");
     while (elem_category)
     {
-        auto name = elem_category.attribute("name").as_cview();
+        auto name = elem_category.attribute("name").as_string();
         auto& new_cat = category.AddCategory(name);
 
-        if (auto base_name = elem_category.attribute("base_name").value(); *base_name)
+        if (auto base_name = elem_category.attribute("base_name").value(); base_name.size())
         {
             if (auto node = m_interfaces.find(base_name); node != m_interfaces.end())
             {
@@ -579,7 +579,7 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
     auto elem_prop = elem_obj.child("property");
     while (elem_prop)
     {
-        auto name = elem_prop.attribute("name").as_string();
+        auto name = elem_prop.attribute("name").as_std_str();
         GenEnum::PropName prop_name;
         auto lookup_name = rmap_PropNames.find(name);
         if (lookup_name == rmap_PropNames.end())
@@ -592,19 +592,16 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
 
         category.AddProperty(prop_name);
 
-        auto description = elem_prop.attribute("help").as_cview();
-        auto customEditor = elem_prop.attribute("editor").as_cview();
+        auto description = elem_prop.attribute("help").as_string();
+        auto customEditor = elem_prop.attribute("editor").as_string();
 
-        auto prop_type = elem_prop.attribute("type").as_cview();
+        auto prop_type = elem_prop.attribute("type").as_sview();
 
         GenEnum::PropType property_type { type_unknown };
-        for (auto& iter: map_PropTypes)
+
+        if (auto result = umap_PropTypes.find(prop_type); result != umap_PropTypes.end())
         {
-            if (prop_type.is_sameas(iter.second))
-            {
-                property_type = iter.first;
-                break;
-            }
+            property_type = result->second;
         }
 
         if (property_type == type_unknown)
@@ -634,8 +631,8 @@ void NodeCreator::ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj
             while (elem_opt)
             {
                 auto& opt = opts.emplace_back();
-                opt.name = elem_opt.attribute("name").as_string();
-                opt.help = elem_opt.attribute("help").as_string();
+                opt.name.assign_view(elem_opt.attribute("name").as_string());
+                opt.help.assign_view(elem_opt.attribute("help").as_string());
 
                 elem_opt = elem_opt.next_sibling("option");
             }
@@ -700,7 +697,7 @@ void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& catego
         // Only create the category if there is at least one event.
         if (elem_category.child("event"))
         {
-            auto name = elem_category.attribute("name").as_cview();
+            auto name = elem_category.attribute("name").as_string();
             auto& new_cat = category.AddCategory(name);
 
             ParseEvents(elem_category, new_cat);
@@ -711,11 +708,11 @@ void NodeDeclaration::ParseEvents(pugi::xml_node& elem_obj, NodeCategory& catego
     auto nodeEvent = elem_obj.child("event");
     while (nodeEvent)
     {
-        auto evt_name = nodeEvent.attribute("name").as_string();
+        auto evt_name = nodeEvent.attribute("name").as_std_str();
         category.AddEvent(evt_name);
 
-        auto evt_class = nodeEvent.attribute("class").as_cview("wxEvent");
-        auto description = nodeEvent.attribute("help").as_cview();
+        auto evt_class = nodeEvent.attribute("class").as_std_str("wxEvent");
+        auto description = nodeEvent.attribute("help").as_std_str();
 
         m_events[evt_name] = std::make_unique<NodeEventInfo>(evt_name, evt_class, description);
 

@@ -12,6 +12,8 @@
 #include <set>
 #include <unordered_set>
 
+#include "hash_map.h"  // Find std::string_view key in std::unordered_map
+
 #include "node_decl.h"   // NodeDeclaration class
 #include "node_types.h"  // NodeType -- Class for storing component types and allowable child count
 #include "prop_decl.h"   // PropChildDeclaration and PropDeclaration classes
@@ -40,7 +42,7 @@ public:
     NodeSharedPtr CreateNode(GenName name, Node* parent);
 
     // Only creates the node if the parent allows it as a child
-    NodeSharedPtr CreateNode(ttlib::cview name, Node* parent);
+    NodeSharedPtr CreateNode(ttlib::sview name, Node* parent);
 
     // Creates an orphaned node.
     NodeSharedPtr NewNode(GenEnum::GenName gen_name) { return NewNode(m_a_declarations[gen_name]); }
@@ -52,7 +54,7 @@ public:
     // pointer.
     NodeDeclaration* get_declaration(GenEnum::GenName gen_name) { return m_a_declarations[gen_name]; }
 
-    NodeDeclaration* GetNodeDeclaration(ttlib::cview class_name);
+    NodeDeclaration* GetNodeDeclaration(ttlib::sview class_name);
 
     // This returns the integer value of most wx constants used in various components
     int GetConstantAsInt(const std::string& name, int defValue = 0) const;
@@ -66,17 +68,15 @@ public:
 
     void InitGenerators();
 
-    bool IsOldHostType(ttlib::cview old_type) const
-    {
-        return (m_setOldHostTypes.find(old_type.c_str()) != m_setOldHostTypes.end());
-    }
+    bool IsOldHostType(ttlib::sview old_type) const { return m_setOldHostTypes.contains(old_type); }
 
     const NodeDeclarationArray& GetNodeDeclarationArray() const { return m_a_declarations; }
 
     size_t CountChildrenWithSameType(Node* parent, GenType type);
 
 protected:
-    void ParseGeneratorFile(ttlib::cview file);
+    // This must
+    void ParseGeneratorFile(const char* file);
     void ParseProperties(pugi::xml_node& elem_obj, NodeDeclaration* obj_info, NodeCategory& category);
 
     NodeType* GetNodeType(GenEnum::GenType type_name) { return &m_a_node_types[static_cast<size_t>(type_name)]; }
@@ -87,7 +87,7 @@ private:
     std::array<NodeDeclaration*, gen_name_array_size> m_a_declarations;
     std::array<NodeType, gen_type_array_size> m_a_node_types;
 
-    std::unordered_set<std::string> m_setOldHostTypes;
+    std::unordered_set<std::string, str_view_hash, std::equal_to<>> m_setOldHostTypes;
 
     std::unordered_map<std::string, int> m_map_constants;
 
@@ -95,7 +95,7 @@ private:
     pugi::xml_document* m_pdoc_interface { nullptr };
 
     // Contains a map to every interface class -- valid only during Initialize()
-    std::map<std::string, pugi::xml_node> m_interfaces;
+    std::map<std::string, pugi::xml_node, std::less<>> m_interfaces;
 };
 
 extern NodeCreator g_NodeCreator;

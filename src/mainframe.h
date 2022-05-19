@@ -145,7 +145,7 @@ public:
     void RemoveNode(Node* node, bool isCutMode);
 
     // Call this MainFrame version if you don't have access to a node.
-    void ModifyProperty(NodeProperty* prop, ttlib::cview value);
+    void ModifyProperty(NodeProperty* prop, ttlib::sview value);
 
     void ChangeAlignment(Node* node, int align, bool vertical);
 
@@ -168,6 +168,10 @@ public:
     // Search for a sizer to move the node into.
     // Set include_splitter to treat a splitter window like a sizer.
     Node* FindChildSizerItem(Node* node, bool include_splitter = false);
+    Node* FindChildSizerItem(const NodeSharedPtr& node, bool include_splitter = false)
+    {
+        return FindChildSizerItem(node.get(), include_splitter);
+    }
 
     // This is the only variable length field, and therefore can hold the most text
     void SetRightStatusField(const ttlib::cstr text) { SetStatusField(text, m_posRightStatusField); }

@@ -24,10 +24,10 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
 
     bool isDialog = true;
 
-    for (size_t idx = curTxtLine; idx < txtfile.size(); ++idx)
+    for (auto& iter: txtfile)
     {
-        line = txtfile[idx].subview(txtfile[idx].find_nonspace());
-        if (line.is_sameprefix("STYLE"))
+        line = iter.subview(iter.find_nonspace());
+        if (line.starts_with("STYLE"))
         {
             if (line.contains("DS_CONTROL"))
                 isDialog = false;  // This is a panel dialog, typically used by a wizard
@@ -66,23 +66,23 @@ void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, s
     for (++curTxtLine; curTxtLine < txtfile.size(); ++curTxtLine)
     {
         line = txtfile[curTxtLine].subview(txtfile[curTxtLine].find_nonspace());
-        if (line.is_sameprefix("STYLE"))
+        if (line.starts_with("STYLE"))
         {
             AddStyle(txtfile, curTxtLine);
         }
-        else if (line.is_sameprefix("CAPTION"))
+        else if (line.starts_with("CAPTION"))
         {
             line.moveto_nextword();
             value.ExtractSubString(line);
             m_form_node->prop_set_value(prop_title, m_pWinResource->ConvertCodePageString(value));
         }
-        else if (line.is_sameprefix("FONT"))
+        else if (line.starts_with("FONT"))
         {
             line.moveto_nextword();
             // TODO: [KeyWorks - 10-18-2020] This needs to be ignored for all "standard" fonts, but might be critical
             // for fonts used for non-English dialogs.
         }
-        else if (line.is_sameprefix("BEGIN") || line.is_sameprefix("{"))
+        else if (line.starts_with("BEGIN") || line.starts_with("{"))
         {
             ++curTxtLine;
             ParseControls(txtfile, curTxtLine);
@@ -190,7 +190,7 @@ void resForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
         if (line.empty() || line.at(0) == '/')  // ignore blank lines and comments
             continue;
 
-        if (line.is_sameprefix("END") || line.is_sameprefix("}"))
+        if (line.starts_with("END") || line.starts_with("}"))
             break;
 
         auto& control = m_ctrls.emplace_back();
@@ -215,7 +215,7 @@ void resForm::ParseControls(ttlib::textfile& txtfile, size_t& curTxtLine)
     }
 }
 
-void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
+void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::sview style)
 {
     ttlib::cstr updated_style = m_form_node->prop_as_string(prop_name);
     if (updated_style.size())
@@ -224,7 +224,7 @@ void resForm::AppendStyle(GenEnum::PropName prop_name, ttlib::cview style)
     m_form_node->prop_set_value(prop_name, updated_style);
 }
 
-ttlib::cstr resForm::ConvertFormID(ttlib::cview id)
+ttlib::cstr resForm::ConvertFormID(ttlib::sview id)
 {
     id.moveto_nonspace();
     ttlib::cstr value;
@@ -243,7 +243,7 @@ ttlib::cstr resForm::ConvertFormID(ttlib::cview id)
 
     value.RightTrim();
 
-    if (value.is_sameprefix("IDD_"))
+    if (value.starts_with("IDD_"))
         value.erase(0, sizeof("IDD_") - 1);
 
     if (value.size() > 1 && std::isupper(value[1]))

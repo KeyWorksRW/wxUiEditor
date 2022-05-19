@@ -70,7 +70,7 @@ void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxpar
     auto widget = wxStaticCast(wxobject, wxTreeListCtrl);
     auto node = GetMockup()->GetNode(wxobject);
 
-    for (auto& iter: node->GetChildNodePtrs())
+    for (const auto& iter: node->GetChildNodePtrs())
     {
         widget->AppendColumn(iter->prop_as_wxString(prop_label), iter->prop_as_int(prop_width),
                              static_cast<wxAlignment>(iter->prop_as_int(prop_alignment)), iter->prop_as_int(prop_flags));

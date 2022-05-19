@@ -31,7 +31,7 @@ void MainFrame::FireProjectLoadedEvent()
 {
     ProjectLoaded();
 
-    CustomEvent event(EVT_ProjectUpdated, wxGetApp().GetProjectPtr().get());
+    CustomEvent event(EVT_ProjectUpdated, wxGetApp().GetProject());
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(event);
@@ -85,7 +85,7 @@ void MainFrame::FireMultiPropEvent(ModifyProperties* undo_cmd)
 
 void MainFrame::FireProjectUpdatedEvent()
 {
-    CustomEvent event(EVT_ProjectUpdated, wxGetApp().GetProjectPtr().get());
+    CustomEvent event(EVT_ProjectUpdated, wxGetApp().GetProject());
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(event);

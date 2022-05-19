@@ -12,6 +12,44 @@
 
 static std::mutex g_mutexAssert;
 
+#if defined(__cpp_consteval)
+
+bool AssertionDlg(const std::source_location& location, const char* cond, std::string_view msg)
+{
+    // This is in case additional message processing results in an assert while this one is already being displayed.
+    std::unique_lock<std::mutex> classLock(g_mutexAssert);
+
+    ttlib::cstr str;
+
+    if (cond)
+        str << "Expression: " << cond << "\n\n";
+    if (!msg.empty())
+        str << "Comment: " << msg << "\n\n";
+
+    str << "File: " << location.file_name() << "\n";
+    str << "Function: " << location.function_name() << "\n";
+    str << "Line: " << (size_t) location.line() << "\n\n";
+    str << "Press Yes to call wxTrap, No to continue, Cancel to exit program.";
+
+    wxMessageDialog dlg(nullptr, str.wx_str(), "Assertion!", wxCENTRE | wxYES_NO | wxCANCEL);
+    dlg.SetYesNoCancelLabels("wxTrap", "Continue", "Exit program");
+
+    auto answer = dlg.ShowModal();
+
+    if (answer == wxID_YES)
+    {
+        return true;
+    }
+    else if (answer == wxID_CANCEL)
+    {
+        std::quick_exit(2);
+    }
+
+    return false;
+}
+
+#else  // not defined(__cpp_consteval)
+
 bool AssertionDlg(const char* filename, const char* function, int line, const char* cond, const std::string& msg)
 {
     // This is in case additional message processing results in an assert while this one is already being displayed.
@@ -45,3 +83,5 @@ bool AssertionDlg(const char* filename, const char* function, int line, const ch
 
     return false;
 }
+
+#endif  // defined(__cpp_consteval)

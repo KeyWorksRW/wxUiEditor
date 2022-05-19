@@ -29,7 +29,7 @@ int WriteCMakeFile(bool test_only)
     // need to tread that directory as the root of the file.
 
     ttlib::cstr cmake_file = project->prop_as_string(prop_cmake_file);
-    if (cmake_file.is_sameprefix(".."))
+    if (cmake_file.starts_with(".."))
     {
         ttlib::cstr new_dir(cmake_file);
         new_dir.remove_filename();
@@ -63,7 +63,7 @@ int WriteCMakeFile(bool test_only)
 
     std::set<ttlib::cstr> base_files;
 
-    for (auto& iter: project->GetChildNodePtrs())
+    for (const auto& iter: project->GetChildNodePtrs())
     {
         if (!iter->HasValue(prop_base_file))
             continue;

@@ -328,18 +328,15 @@ void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxp
     auto btn_bar = wxStaticCast(wxobject, wxRibbonButtonBar);
 
     auto node = GetMockup()->GetNode(wxobject);
-    size_t count = node->GetChildCount();
-    for (size_t i = 0; i < count; ++i)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto childObj = node->GetChild(i);
-
-        auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
+        auto bmp = child->prop_as_wxBitmap(prop_bitmap);
         if (!bmp.IsOk())
             bmp = GetInternalImage("default");
 
         // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
-        btn_bar->AddButton(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, childObj->prop_as_wxString(prop_help),
-                           (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
+        btn_bar->AddButton(wxID_ANY, child->prop_as_wxString(prop_label), bmp, child->prop_as_wxString(prop_help),
+                           (wxRibbonButtonKind) child->prop_as_int(prop_kind));
     }
 }
 
@@ -427,23 +424,20 @@ void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
     auto btn_bar = wxDynamicCast(wxobject, wxRibbonToolBar);
 
     auto node = GetMockup()->GetNode(wxobject);
-    size_t count = node->GetChildCount();
-    for (size_t idx = 0; idx < count; ++idx)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto childObj = node->GetChild(idx);
-
-        if (childObj->isGen(gen_ribbonSeparator))
+        if (child->isGen(gen_ribbonSeparator))
         {
             btn_bar->AddSeparator();
         }
         else
         {
-            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
+            auto bmp = child->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
             // REVIEW: This is still a bitmap rather then a bundle as of the 3.1.6 release
-            btn_bar->AddTool(wxID_ANY, bmp, childObj->prop_as_wxString(prop_help),
-                             (wxRibbonButtonKind) childObj->prop_as_int(prop_kind));
+            btn_bar->AddTool(wxID_ANY, bmp, child->prop_as_wxString(prop_help),
+                             (wxRibbonButtonKind) child->prop_as_int(prop_kind));
         }
     }
     btn_bar->Realize();
@@ -551,13 +545,11 @@ void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpar
     auto gallery = wxStaticCast(wxobject, wxRibbonGallery);
 
     auto node = GetMockup()->GetNode(wxobject);
-    size_t count = node->GetChildCount();
-    for (size_t i = 0; i < count; ++i)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto childObj = node->GetChild(i);
-        if (childObj->isGen(gen_ribbonGalleryItem))
+        if (child->isGen(gen_ribbonGalleryItem))
         {
-            auto bmp = childObj->prop_as_wxBitmap(prop_bitmap);
+            auto bmp = child->prop_as_wxBitmap(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 

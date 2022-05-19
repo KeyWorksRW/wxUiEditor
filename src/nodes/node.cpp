@@ -65,27 +65,25 @@ NodeProperty* Node::get_prop_ptr(PropName name)
         return nullptr;
 }
 
-NodeEvent* Node::GetEvent(ttlib::cview name)
+NodeEvent* Node::GetEvent(ttlib::sview name)
 {
-    if (auto it = m_event_map.find(name.c_str()); it != m_event_map.end())
-        return &m_events[it->second];
+    if (auto iter = m_map_events.find(name); iter != m_map_events.end())
+    {
+        return &iter->second;
+    }
     else
+    {
         return nullptr;
-}
-
-NodeEvent* Node::GetEvent(size_t index)
-{
-    ASSERT(index < m_events.size());
-    return &m_events[index];
+    }
 }
 
 size_t Node::GetInUseEventCount() const
 {
     size_t count = 0;
 
-    for (auto& iter: m_events)
+    for (auto& iter: m_map_events)
     {
-        if (iter.get_value().size())
+        if (iter.second.get_value().size())
             ++count;
     }
 
@@ -99,11 +97,19 @@ NodeProperty* Node::AddNodeProperty(PropDeclaration* declaration)
     return &m_properties[m_properties.size() - 1];
 }
 
-NodeEvent* Node::AddNodeEvent(const NodeEventInfo* info)
+void Node::AddNodeEvent(const NodeEventInfo* info) { m_map_events.emplace(info->get_name(), NodeEvent(info, this)); }
+
+void Node::CopyEventsFrom(Node* from)
 {
-    auto& event = m_events.emplace_back(info, this);
-    m_event_map[event.get_name()] = (m_events.size() - 1);
-    return &m_events[m_events.size() - 1];
+    ASSERT(from);
+    for (auto& iter: from->m_map_events)
+    {
+        if (iter.second.get_value().size())
+        {
+            auto event = GetEvent(iter.second.get_name());
+            event->set_value(iter.second.get_value());
+        }
+    }
 }
 
 Node* Node::get_form() noexcept
@@ -229,24 +235,17 @@ bool Node::IsChildAllowed(Node* child)
     return IsChildAllowed(child->GetNodeDeclaration());
 }
 
-void Node::RemoveChild(NodeSharedPtr node)
-{
-    auto iter = m_children.begin();
-    while (iter != m_children.end() && iter->get() != node.get())
-        iter++;
-
-    if (iter != m_children.end())
-        m_children.erase(iter);
-}
-
 void Node::RemoveChild(Node* node)
 {
-    auto iter = m_children.begin();
-    while (iter != m_children.end() && iter->get() != node)
-        iter++;
-
-    if (iter != m_children.end())
-        m_children.erase(iter);
+    for (size_t pos = 0; const auto& child: m_children)
+    {
+        if (child.get() == node)
+        {
+            m_children.erase(m_children.begin() + pos);
+            break;
+        }
+        ++pos;
+    }
 }
 
 void Node::RemoveChild(size_t pos)
@@ -259,11 +258,17 @@ void Node::RemoveChild(size_t pos)
 
 size_t Node::GetChildPosition(Node* node)
 {
-    size_t pos = 0;
-    while (pos < GetChildCount() && m_children[pos].get() != node)
+    for (size_t pos = 0; const auto& child: m_children)
+    {
+        if (child.get() == node)
+        {
+            return pos;
+        }
         ++pos;
+    }
 
-    return pos;
+    FAIL_MSG("failed to find child node, returned position is invalid!")
+    return (m_children.size() - 1);
 }
 
 bool Node::ChangeChildPosition(NodeSharedPtr node, size_t pos)
@@ -276,7 +281,7 @@ bool Node::ChangeChildPosition(NodeSharedPtr node, size_t pos)
     if (pos == cur_pos)
         return true;
 
-    RemoveChild(node.get());
+    RemoveChild(node);
     AddChild(pos, node);
     return true;
 }
@@ -721,16 +726,16 @@ Node* Node::CreateNode(GenName name)
     return cur_selection->CreateChildNode(name);
 }
 
-void Node::ModifyProperty(PropName name, ttlib::cview value)
+void Node::ModifyProperty(PropName name, ttlib::sview value)
 {
     auto prop = get_prop_ptr(name);
-    if (prop && value != prop->as_cview())
+    if (prop && value != prop->as_string())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }
 }
 
-void Node::ModifyProperty(ttlib::cview name, int value)
+void Node::ModifyProperty(ttlib::sview name, int value)
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
@@ -742,13 +747,13 @@ void Node::ModifyProperty(ttlib::cview name, int value)
     }
 }
 
-void Node::ModifyProperty(ttlib::cview name, ttlib::cview value)
+void Node::ModifyProperty(ttlib::sview name, ttlib::sview value)
 {
     NodeProperty* prop = nullptr;
     if (auto find_prop = rmap_PropNames.find(name); find_prop != rmap_PropNames.end())
         prop = get_prop_ptr(find_prop->second);
 
-    if (prop && value != prop->as_cview())
+    if (prop && value != prop->as_string())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }
@@ -762,9 +767,9 @@ void Node::ModifyProperty(NodeProperty* prop, int value)
     }
 }
 
-void Node::ModifyProperty(NodeProperty* prop, ttlib::cview value)
+void Node::ModifyProperty(NodeProperty* prop, ttlib::sview value)
 {
-    if (prop && value != prop->as_cview())
+    if (prop && value != prop->as_string())
     {
         wxGetFrame().PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }
@@ -926,7 +931,7 @@ void Node::FixDuplicateNodeNames(Node* form)
         }
     }
 
-    for (auto& child: GetChildNodePtrs())
+    for (const auto& child: GetChildNodePtrs())
     {
         child->FixDuplicateNodeNames(form);
     }
@@ -945,7 +950,7 @@ void Node::CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* c
         }
     }
 
-    for (auto& iter: GetChildNodePtrs())
+    for (const auto& iter: GetChildNodePtrs())
     {
         iter->CollectUniqueNames(name_set, cur_node);
     }
@@ -975,15 +980,12 @@ size_t Node::GetNodeSize() const
         size += iter.GetPropSize();
     }
 
-    for (auto& iter: m_events)
+    for (auto& iter: m_map_events)
     {
-        size += iter.GetEventSize();
+        size += iter.second.GetEventSize();
     }
 
-    // Add the size of our maps
-
     size += (m_prop_indices.size() * (sizeof(size_t) * 2));
-    size += (m_event_map.size() * (sizeof(std::string) + sizeof(size_t)));
 
     return size;
 }
@@ -1022,15 +1024,15 @@ std::vector<NodeProperty*> Node::FindAllChildProperties(PropName name)
 
 void Node::FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name)
 {
-    for (size_t idx = 0; idx < m_children.size(); ++idx)
+    for (const auto& child: m_children)
     {
-        if (m_children[idx]->HasValue(name))
+        if (child->HasValue(name))
         {
-            list.emplace_back(m_children[idx]->get_prop_ptr(name));
+            list.emplace_back(child->get_prop_ptr(name));
         }
-        if (m_children[idx]->GetChildCount())
+        if (child->GetChildCount())
         {
-            m_children[idx]->FindAllChildProperties(list, name);
+            child->FindAllChildProperties(list, name);
         }
     }
 }

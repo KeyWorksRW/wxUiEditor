@@ -44,35 +44,35 @@ MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* 
 {
     for (auto& iter: *m_pMsgs)
     {
-        if (iter.is_sameprefix("Error:"))
+        if (iter.starts_with("Error:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
             m_textCtrl->AppendText("Error: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
-        if (iter.is_sameprefix("wxError:"))
+        if (iter.starts_with("wxError:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
             m_textCtrl->AppendText("wxError: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
-        else if (iter.is_sameprefix("Warning:"))
+        else if (iter.starts_with("Warning:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
             m_textCtrl->AppendText("Warning: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
-        else if (iter.is_sameprefix("wxWarning:"))
+        else if (iter.starts_with("wxWarning:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
             m_textCtrl->AppendText("wxWarning: ");
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_textCtrl->AppendText(iter.view_stepover().wx_str());
         }
-        else if (iter.is_sameprefix("wxInfo:"))
+        else if (iter.starts_with("wxInfo:"))
         {
             m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
             m_textCtrl->AppendText("wxInfo: ");
@@ -97,7 +97,7 @@ MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* 
     wxPersistentRegisterAndRestore(this, "MsgWindow");
 }
 
-void MsgFrame::AddWarningMsg(ttlib::cview msg)
+void MsgFrame::AddWarningMsg(ttlib::sview msg)
 {
     if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_WARNING)
     {
@@ -108,7 +108,7 @@ void MsgFrame::AddWarningMsg(ttlib::cview msg)
     }
 }
 
-void MsgFrame::Add_wxWarningMsg(ttlib::cview msg)
+void MsgFrame::Add_wxWarningMsg(ttlib::sview msg)
 {
     if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_WARNING)
     {
@@ -119,7 +119,7 @@ void MsgFrame::Add_wxWarningMsg(ttlib::cview msg)
     }
 }
 
-void MsgFrame::Add_wxInfoMsg(ttlib::cview msg)
+void MsgFrame::Add_wxInfoMsg(ttlib::sview msg)
 {
     if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_INFO)
     {
@@ -130,7 +130,7 @@ void MsgFrame::Add_wxInfoMsg(ttlib::cview msg)
     }
 }
 
-void MsgFrame::AddErrorMsg(ttlib::cview msg)
+void MsgFrame::AddErrorMsg(ttlib::sview msg)
 {
     // Note that we always display error messages
 
@@ -140,7 +140,7 @@ void MsgFrame::AddErrorMsg(ttlib::cview msg)
     m_textCtrl->AppendText(msg.wx_str());
 }
 
-void MsgFrame::Add_wxErrorMsg(ttlib::cview msg)
+void MsgFrame::Add_wxErrorMsg(ttlib::sview msg)
 {
     // Note that we always display error messages
 
@@ -187,10 +187,7 @@ void MsgFrame::OnClear(wxCommandEvent& WXUNUSED(event))
     m_pMsgs->clear();
 }
 
-void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event))
-{
-    Hide();
-}
+void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event)) { Hide(); }
 
 void MsgFrame::OnWarnings(wxCommandEvent& WXUNUSED(event))
 {

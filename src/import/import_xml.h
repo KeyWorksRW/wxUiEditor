@@ -27,7 +27,7 @@ public:
 
     // This will check for an obsolete event name, and if found, it will return the 3.x
     // version of the name. Otherwise, it returns name unmodified.
-    static ttlib::cview GetCorrectEventName(ttlib::cview name);
+    static ttlib::sview GetCorrectEventName(ttlib::sview name);
 
 protected:
     std::optional<pugi::xml_document> LoadDocFile(const ttString& file);
@@ -51,7 +51,7 @@ protected:
     pugi::xml_document m_docOut;
     ttString m_importProjectFile;
     NodeSharedPtr m_project;
-    std::map<std::string, std::string> m_notebook_tabs;
+    std::map<std::string, std::string, std::less<>> m_notebook_tabs;
 
     std::set<ttlib::cstr> m_errors;
 };

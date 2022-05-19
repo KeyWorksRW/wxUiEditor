@@ -22,6 +22,9 @@
 #define wxUSE_NO_MANIFEST 1
 #define wxUSE_UNICODE     1
 
+// Allows ttLib additions to pugixml
+#define TTLIB_ADDITIONS 1
+
 #ifdef _MSC_VER
     #pragma warning(push)
 #endif
@@ -92,11 +95,15 @@
 
 #include "ttlibspace.h"  // This must be included before any other ttLib header files
 
+// Currently, the order of the ttLib includes is critical, so use blank lines to keep clang-format from reordering them.
+
+#include "ttstr.h"  // ttString -- wxString with ttlib::cstr equivalent functions
+
+#include "ttcview.h"  // ttlib::cview -- std::string_view functionality on a zero-terminated char string.
+#include "ttsview.h"  // ttlib::sview -- std::string_view with additional methods
+
 #include "ttcstr.h"      // ttlib::cstr -- std::string with additional functions
-#include "ttcview.h"     // ttlib::cview -- std::string_view functionality on a zero-terminated char string.
 #include "ttmultistr.h"  // ttlib::multistr -- breaks a single string into multiple strings
-#include "ttstr.h"       // ttString -- wxString with ttlib::cstr equivalent functions
-#include "ttsview.h"     // ttlib::sview -- std::string_view with additional methods
 
 #if !defined(int_t)
 

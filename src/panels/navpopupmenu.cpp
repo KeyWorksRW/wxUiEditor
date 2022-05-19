@@ -716,7 +716,7 @@ void NavPopupMenu::MenuAddStandardCommands(Node* node)
     }
 }
 
-void NavPopupMenu::CreateSizerParent(Node* node, ttlib::cview widget)
+void NavPopupMenu::CreateSizerParent(Node* node, ttlib::sview widget)
 {
     auto parent = node->GetParent();
     if (!parent)

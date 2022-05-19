@@ -77,16 +77,17 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 
         auto filename = newValue.sub_cstr();
         auto project = wxGetApp().GetProject();
-        for (size_t child_idx = 0; child_idx < project->GetChildCount(); ++child_idx)
+
+        for (const auto& child: project->GetChildNodePtrs())
         {
-            if (project->GetChild(child_idx) == node)
+            if (child.get() == node)
                 continue;
-            if (project->GetChild(child_idx)->prop_as_string(prop_base_file).filename() == filename)
+            if (child->prop_as_string(prop_base_file).filename() == filename)
             {
                 auto focus = wxWindow::FindFocus();
 
                 wxMessageBox(wxString() << "The base filename \"" << filename << "\" is already in use by "
-                                        << project->GetChild(child_idx)->prop_as_string(prop_class_name)
+                                        << child->prop_as_string(prop_class_name)
                                         << "\n\nEither change the name, or press ESC to restore the original name.",
                              "Duplicate base filename", wxICON_STOP);
                 if (focus)
@@ -190,7 +191,7 @@ void ChangeBaseDirectory(ttlib::cstr& path)
     auto undo_derived = std::make_shared<ModifyProperties>("Base directory");
     undo_derived->AddProperty(wxGetApp().GetProject()->get_prop_ptr(prop_base_directory), path);
 
-    for (auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
+    for (const auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
     {
         if (form->HasValue(prop_base_file))
         {

@@ -406,7 +406,7 @@ void ImportDlg::CheckResourceFiles(wxArrayString& files)
                 // dialog may not actually exist. So instead, we look for a trailing space which should indicate the
                 // statement is followed by dimensions.
 
-                if (type.is_sameprefix("DIALOG ") || type.is_sameprefix("DIALOGEX ") || type.is_sameprefix("MENU"))
+                if (type.starts_with("DIALOG ") || type.starts_with("DIALOGEX ") || type.starts_with("MENU"))
                 {
                     found = true;
                     break;

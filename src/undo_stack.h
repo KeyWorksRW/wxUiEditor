@@ -10,10 +10,12 @@
 class UndoAction
 {
 public:
-    UndoAction(const char* ptr_undo_string = nullptr)
+    UndoAction(ttlib::sview undo_string = tt_empty_cstr)
     {
-        if (ptr_undo_string)
-            m_undo_string = ptr_undo_string;
+        if (undo_string.size())
+        {
+            m_undo_string = undo_string;
+        }
     }
 
     virtual ~UndoAction() = default;
@@ -25,7 +27,7 @@ public:
     virtual void Revert() = 0;
 
     ttlib::cstr GetUndoString() { return m_undo_string; }
-    void SetUndoString(ttlib::cview str) { m_undo_string = str; }
+    void SetUndoString(ttlib::sview str) { m_undo_string = str; }
 
     bool wasUndoEventGenerated() { return m_UndoEventGenerated; }
     bool wasRedoEventGenerated() { return m_RedoEventGenerated; }

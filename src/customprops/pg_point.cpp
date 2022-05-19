@@ -99,7 +99,7 @@ wxVariant CustomPointProperty::ChildChanged(wxVariant& /* thisValue */, int chil
     return value;
 }
 
-void CustomPointProperty::InitValues(ttlib::cview value)
+void CustomPointProperty::InitValues(ttlib::sview value)
 {
     if (value.empty())
     {

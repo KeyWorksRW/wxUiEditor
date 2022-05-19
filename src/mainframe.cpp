@@ -1393,7 +1393,7 @@ void MainFrame::OnToggleExpandLayout(wxCommandEvent&)
     if (!wasExpanded)
     {
         auto alignment = m_selected_node->get_prop_ptr(prop_alignment);
-        if (alignment && alignment->as_cview().size())
+        if (alignment && alignment->as_string().size())
         {
             // All alignment flags are invalid if wxEXPAND is set
             ModifyProperty(alignment, "");
@@ -1441,9 +1441,9 @@ void MainFrame::ToggleBorderFlag(Node* node, int border)
     ModifyProperty(propFlag, value);
 }
 
-void MainFrame::ModifyProperty(NodeProperty* prop, ttlib::cview value)
+void MainFrame::ModifyProperty(NodeProperty* prop, ttlib::sview value)
 {
-    if (prop && value != prop->as_cview())
+    if (prop && value != prop->as_string())
     {
         PushUndoAction(std::make_shared<ModifyPropertyAction>(prop, value));
     }
@@ -1653,11 +1653,12 @@ Node* MainFrame::FindChildSizerItem(Node* node, bool include_splitter)
         return node;
     else
     {
-        for (size_t i = 0; i < node->GetChildCount(); ++i)
+        for (const auto& child: node->GetChildNodePtrs())
         {
-            auto result = FindChildSizerItem(node->GetChild(i), include_splitter);
-            if (result)
+            if (auto result = FindChildSizerItem(child, include_splitter); result)
+            {
                 return result;
+            }
         }
     }
 
@@ -1708,15 +1709,15 @@ void MainFrame::OnCodeCompare(wxCommandEvent& WXUNUSED(event))
 
 Node* FindChildNode(Node* node, GenEnum::GenName name)
 {
-    for (size_t idx_child = 0; idx_child < node->GetChildCount(); ++idx_child)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        if (node->GetChild(idx_child)->isGen(name))
+        if (child->isGen(name))
         {
-            return node->GetChild(idx_child);
+            return child.get();
         }
-        else if (node->GetChild(idx_child)->GetChildCount() > 0)
+        else if (child->GetChildCount() > 0)
         {
-            if (auto child_node = FindChildNode(node->GetChild(idx_child), name); child_node)
+            if (auto child_node = FindChildNode(child.get(), name); child_node)
             {
                 return child_node;
             }

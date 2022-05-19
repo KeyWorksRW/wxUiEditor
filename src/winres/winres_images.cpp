@@ -54,7 +54,7 @@ static std::map<std::string, const char*> map_win_wx_stock = {
 
 // clang-format on
 
-void resCtrl::ParseIconControl(ttlib::cview line)
+void resCtrl::ParseIconControl(ttlib::sview line)
 {
     line.moveto_nextword();
 
@@ -128,7 +128,7 @@ void resCtrl::ParseIconControl(ttlib::cview line)
 // has already been created.
 //
 // Works with either SS_BITMAP or SS_ICON.
-void resCtrl::ParseImageControl(ttlib::cview line)
+void resCtrl::ParseImageControl(ttlib::sview line)
 {
     ttlib::cstr image_name;
 

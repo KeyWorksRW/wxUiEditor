@@ -26,14 +26,15 @@ NodeCreator::~NodeCreator()
     }
 }
 
-NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::cview className)
+NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::sview className)
 {
-    auto result = rmap_GenNames.find(className);
-    ASSERT_MSG(result != rmap_GenNames.end(), ttlib::cstr()
-                                                  << "Attempt to get non-existant node declaration for " << className);
-    if (result == rmap_GenNames.end())
-        return nullptr;
-    return m_a_declarations[result->second];
+    if (auto result = rmap_GenNames.find(className); result != rmap_GenNames.end())
+    {
+        return m_a_declarations[result->second];
+    }
+
+    FAIL_MSG(ttlib::cstr() << "Attempt to get non-existant node declaration for " << className);
+    return nullptr;
 }
 
 NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
@@ -78,18 +79,17 @@ NodeSharedPtr NodeCreator::NewNode(NodeDeclaration* node_decl)
 size_t NodeCreator::CountChildrenWithSameType(Node* parent, GenType type)
 {
     size_t count = 0;
-    size_t numChildren = parent->GetChildCount();
-    for (size_t i = 0; i < numChildren; ++i)
+    for (const auto& child: parent->GetChildNodePtrs())
     {
-        if (type == parent->GetChild(i)->gen_type())
+        if (type == child->gen_type())
             ++count;
 
         // treat type-sizer and type_gbsizer as the same since forms and contains can only have one of them as the top level
         // sizer.
 
-        else if (type == type_sizer && parent->GetChild(i)->gen_type() == type_gbsizer)
+        else if (type == type_sizer && child->gen_type() == type_gbsizer)
             ++count;
-        else if (type == type_gbsizer && parent->GetChild(i)->gen_type() == type_sizer)
+        else if (type == type_gbsizer && child->gen_type() == type_sizer)
             ++count;
     }
 
@@ -216,16 +216,15 @@ NodeSharedPtr NodeCreator::CreateNode(GenName name, Node* parent)
 }
 
 // Called when the GenName isn't availalble
-NodeSharedPtr NodeCreator::CreateNode(ttlib::cview name, Node* parent)
+NodeSharedPtr NodeCreator::CreateNode(ttlib::sview name, Node* parent)
 {
-    auto result = rmap_GenNames.find(name);
-    if (result == rmap_GenNames.end())
+    if (auto result = rmap_GenNames.find(name); result != rmap_GenNames.end())
     {
-        FAIL_MSG(ttlib::cstr() << "No component definition for " << name);
-        return {};
+        return CreateNode(result->second, parent);
     }
 
-    return CreateNode(result->second, parent);
+    FAIL_MSG(ttlib::cstr() << "No component definition for " << name);
+    return {};
 }
 
 NodeSharedPtr NodeCreator::MakeCopy(Node* node)
@@ -246,6 +245,9 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
             copyProp->set_value(iter.as_string());
     }
 
+    copyObj->CopyEventsFrom(node);
+
+#if 0
     auto count = node->GetEventCount();
     for (size_t i = 0; i < count; i++)
     {
@@ -255,14 +257,14 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
         if (copyEvent)
             copyEvent->set_value(event->get_value());
     }
+#endif
 
-    count = node->GetChildCount();
-    for (size_t i = 0; i < count; i++)
+    for (auto& child: node->GetChildNodePtrs())
     {
-        auto childCopy = MakeCopy(node->GetChild(i));
-        ASSERT(childCopy);
-        if (childCopy)
+        if (auto childCopy = MakeCopy(child.get()); childCopy)
+        {
             copyObj->Adopt(childCopy);
+        }
     }
 
     return copyObj;

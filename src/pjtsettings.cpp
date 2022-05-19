@@ -505,9 +505,9 @@ bool ProjectSettings::UpdateEmbedNodes()
     bool is_changed = false;
     auto project = wxGetApp().GetProject();
 
-    for (size_t idx_form = 0; idx_form < project->GetChildCount(); ++idx_form)
+    for (const auto& form: project->GetChildNodePtrs())
     {
-        if (CheckNode(project->GetChild(idx_form)))
+        if (CheckNode(form))
             is_changed = true;
     }
     return is_changed;
@@ -517,7 +517,7 @@ bool ProjectSettings::UpdateEmbedNodes()
 // all nodes initially, and the only reason this would be needed is if adding or changing a bitmap property did not get set
 // up correctly (highly unlikely).
 
-bool ProjectSettings::CheckNode(Node* node)
+bool ProjectSettings::CheckNode(const NodeSharedPtr& node)
 {
     bool is_changed = false;
 
@@ -568,9 +568,9 @@ bool ProjectSettings::CheckNode(Node* node)
         }
     }
 
-    for (size_t idx_child = 0; idx_child < node->GetChildCount(); idx_child++)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        if (CheckNode(node->GetChild(idx_child)))
+        if (CheckNode(child))
             is_changed = true;
     }
 

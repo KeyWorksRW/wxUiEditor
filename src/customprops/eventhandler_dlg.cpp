@@ -14,7 +14,7 @@
 #include "lambdas.h"              // Functions for formatting and storage of lamda events
 
 // List of events and suggested function names
-extern const std::unordered_map<std::string, const char*> s_EventNames;
+extern const std::unordered_map<std::string_view, const char*> s_EventNames;
 
 // Defined in base_panel.cpp
 extern const char* g_u8_cpp_keywords;
@@ -277,14 +277,13 @@ void EventHandlerDlg::CollectMemberVariables(Node* node, std::set<std::string>& 
         variables.insert(node->prop_as_string(prop_radiobtn_var_name));
     }
 
-    for (size_t i = 0; i < node->GetChildCount(); i++)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        auto child = node->GetChild(i);
-        CollectMemberVariables(child, variables);
+        CollectMemberVariables(child.get(), variables);
     }
 }
 
-const std::unordered_map<std::string, const char*> s_EventNames = {
+const std::unordered_map<std::string_view, const char*> s_EventNames = {
 
     { "wxEVT_ACTIVATE", "OnActivate" },
     { "wxEVT_AUITOOLBAR_BEGIN_DRAG", "OnAuiToolBarBeginDrag" },

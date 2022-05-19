@@ -72,7 +72,7 @@ FontProperty::FontProperty(const wxFont& font)
 
 FontProperty::FontProperty(wxVariant font) { Convert(ttlib::cstr() << font.GetString().wx_str()); }
 
-FontProperty::FontProperty(ttlib::cview font) { Convert(font); }
+FontProperty::FontProperty(ttlib::sview font) { Convert(font); }
 
 FontProperty::FontProperty(NodeProperty* prop) { Convert(prop->as_string()); }
 
@@ -90,7 +90,7 @@ FontProperty::FontProperty(NodeProperty* prop) { Convert(prop->as_string()); }
 // facename font (point is a floating-point number)
 //     facename, point size, family, style, weight, underlined, strikethrough
 
-void FontProperty::Convert(ttlib::cview font)
+void FontProperty::Convert(ttlib::sview font)
 {
     if (font.empty())
     {

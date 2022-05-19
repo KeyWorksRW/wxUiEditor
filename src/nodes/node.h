@@ -30,6 +30,7 @@ struct ImageBundle;
 
 class Node;
 using NodeSharedPtr = std::shared_ptr<Node>;
+using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>>;
 
 using namespace GenEnum;
 
@@ -52,11 +53,10 @@ public:
 
     NodeProperty* get_prop_ptr(PropName name);
 
-    NodeEvent* GetEvent(ttlib::cview name);
-    NodeEvent* GetEvent(size_t index);
+    NodeEvent* GetEvent(ttlib::sview name);
+    NodeMapEvents& GetMapEvents() { return m_map_events; }
 
     auto GetPropertyCount() const { return m_properties.size(); }
-    auto GetEventCount() const { return m_events.size(); }
     size_t GetInUseEventCount() const;
 
     // Equivalent to AddChild(child); child->SetParent(this);
@@ -70,10 +70,11 @@ public:
 
     // Returns the child's position or GetChildCount() in case of not finding it
     size_t GetChildPosition(Node* node);
+    size_t GetChildPosition(const NodeSharedPtr& node) { return GetChildPosition(node.get()); }
     bool ChangeChildPosition(NodeSharedPtr node, size_t pos);
 
-    void RemoveChild(NodeSharedPtr node);
     void RemoveChild(Node* node);
+    void RemoveChild(const NodeSharedPtr& node) { RemoveChild(node.get()); }
     void RemoveChild(size_t index);
     void RemoveAllChildren() { m_children.clear(); }
 
@@ -85,7 +86,7 @@ public:
 
     bool IsChildAllowed(Node* child);
     bool IsChildAllowed(NodeDeclaration* child);
-    bool IsChildAllowed(NodeSharedPtr child) { return IsChildAllowed(child.get()); }
+    bool IsChildAllowed(const NodeSharedPtr& child) { return IsChildAllowed(child->GetNodeDeclaration()); }
 
     auto gen_type() const { return m_declaration->gen_type(); }
 
@@ -135,7 +136,7 @@ public:
     // Finds the parent form and returns the value of the it's property "class_name"
     const ttlib::cstr& get_form_name();
 
-    auto GetNodeDeclaration() { return m_declaration; }
+    NodeDeclaration* GetNodeDeclaration() { return m_declaration; }
 
     // Returns true if the property exists, has a value (!= wxDefaultSize, !=
     // wxDefaultPosition, or non-sepcified bitmap)
@@ -208,7 +209,7 @@ public:
     std::vector<NodeProperty>& get_props_vector() { return m_properties; }
 
     NodeProperty* AddNodeProperty(PropDeclaration* info);
-    NodeEvent* AddNodeEvent(const NodeEventInfo* info);
+    void AddNodeEvent(const NodeEventInfo* info);
     void CreateDoc(pugi::xml_document& doc);
 
     // This creates an orphaned node -- it is the caller's responsibility to hook it up with
@@ -225,16 +226,16 @@ public:
 
     // This will modify the property and fire a EVT_NodePropChange event if the property
     // actually changed
-    void ModifyProperty(PropName name, ttlib::cview value);
+    void ModifyProperty(PropName name, ttlib::sview value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(ttlib::cview name, ttlib::cview value);
+    void ModifyProperty(ttlib::sview name, ttlib::sview value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(ttlib::cview name, int value);
+    void ModifyProperty(ttlib::sview name, int value);
 
     // This will modify the property and fire a EVT_NodePropChange event
-    void ModifyProperty(NodeProperty* prop, ttlib::cview value);
+    void ModifyProperty(NodeProperty* prop, ttlib::sview value);
 
     // This will modify the property and fire a EVT_NodePropChange event
     void ModifyProperty(NodeProperty* prop, int value);
@@ -251,7 +252,7 @@ public:
     void CollectUniqueNames(std::unordered_set<std::string>& name_set, Node* cur_node);
 
     int_t FindInsertionPos(Node* child) const;
-    int_t FindInsertionPos(NodeSharedPtr child) const { return FindInsertionPos(child.get()); }
+    int_t FindInsertionPos(const NodeSharedPtr& child) const { return FindInsertionPos(child.get()); }
 
     // Currently only called in debug builds, but available for release builds should we need it
     size_t GetNodeSize() const;
@@ -267,14 +268,11 @@ public:
     // non-empty value.
     std::vector<NodeProperty*> FindAllChildProperties(PropName name);
 
+    void CopyEventsFrom(Node*);
+    void CopyEventsFrom(const NodeSharedPtr& node) { return CopyEventsFrom(node.get()); }
+
 protected:
-    void PostProcessBook(Node* book_node);
-    void PostProcessPage(Node* page_node);
-
     void FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name);
-
-    // wxPanel only, not FormPanel
-    void PostProcessPanel(Node* panel_node);
 
 private:
     NodeSharedPtr m_parent;
@@ -287,12 +285,14 @@ private:
     std::vector<NodeProperty> m_properties;
     std::map<PropName, size_t> m_prop_indices;
 
-    std::vector<NodeEvent> m_events;
-    std::unordered_map<std::string, size_t> m_event_map;
+    // using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>>;
+    std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>> m_map_events;
 
     std::vector<NodeSharedPtr> m_children;
     NodeDeclaration* m_declaration;
 };
+
+using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>>;
 
 // Same as wxGetApp() only this returns a reference to the project node
 Node& wxGetProject();

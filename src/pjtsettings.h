@@ -13,7 +13,8 @@
 
 #include "image_bundle.h"  // This will #include wx/bmpbndl.h and wx/bitmap.h
 
-class Node;
+#include "node_classes.h"  // Forward defintions of Node classes
+
 class wxAnimation;
 
 struct EmbeddedImage
@@ -103,9 +104,9 @@ public:
     void CollectBundles();
 
 protected:
-    bool CheckNode(Node* node);
+    bool CheckNode(const NodeSharedPtr& node);
 
-    void CollectNodeBundles(Node* node, Node* form);
+    void CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr& form);
 
     bool AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form);
 

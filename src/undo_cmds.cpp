@@ -114,7 +114,7 @@ void RemoveNodeAction::Revert()
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
 
-ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::cview value) : m_property(prop)
+ModifyPropertyAction::ModifyPropertyAction(NodeProperty* prop, ttlib::sview value) : m_property(prop)
 {
     m_undo_string << "change " << prop->DeclName();
 
@@ -148,14 +148,14 @@ void ModifyPropertyAction::Revert()
 
 ///////////////////////////////// ModifyProperties ////////////////////////////////////
 
-ModifyProperties::ModifyProperties(ttlib::cview undo_string, bool fire_events) : UndoAction(undo_string)
+ModifyProperties::ModifyProperties(ttlib::sview undo_string, bool fire_events) : UndoAction(undo_string)
 {
     m_fire_events = fire_events;
     m_RedoEventGenerated = true;
     m_UndoEventGenerated = true;
 }
 
-void ModifyProperties::AddProperty(NodeProperty* prop, ttlib::cview value)
+void ModifyProperties::AddProperty(NodeProperty* prop, ttlib::sview value)
 {
     auto& entry = m_properties.emplace_back();
     entry.property = prop;
@@ -195,7 +195,7 @@ void ModifyProperties::Revert()
 
 ///////////////////////////////// ModifyEventAction ////////////////////////////////////
 
-ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::cview value) : m_event(event), m_change_value(value)
+ModifyEventAction::ModifyEventAction(NodeEvent* event, ttlib::sview value) : m_event(event), m_change_value(value)
 {
     m_undo_string << "change " << event->get_name() << " handler";
 
@@ -277,7 +277,7 @@ ChangeSizerType::ChangeSizerType(Node* node, GenEnum::GenName new_gen_sizer)
             }
         }
 
-        for (auto& iter: m_old_node->GetChildNodePtrs())
+        for (const auto& iter: m_old_node->GetChildNodePtrs())
         {
             m_node->Adopt(g_NodeCreator.MakeCopy(iter.get()));
         }
@@ -449,9 +449,9 @@ GridBagAction::GridBagAction(Node* cur_gbsizer, const ttlib::cstr& undo_str) : U
     // Thaw() is called when GridBagAction::Update() is called
     nav_panel->Freeze();
 
-    for (size_t idx = 0; idx < cur_gbsizer->GetChildCount(); idx++)
+    for (const auto& child: cur_gbsizer->GetChildNodePtrs())
     {
-        nav_panel->EraseAllMaps(cur_gbsizer->GetChild(idx));
+        nav_panel->EraseAllMaps(child.get());
     }
 }
 
@@ -462,16 +462,17 @@ void GridBagAction::Change()
         auto nav_panel = wxGetFrame().GetNavigationPanel();
         wxWindowUpdateLocker freeze(nav_panel);
 
-        for (size_t idx = 0; idx < m_cur_gbsizer->GetChildCount(); idx++)
+        for (const auto& child: m_cur_gbsizer->GetChildNodePtrs())
         {
-            nav_panel->EraseAllMaps(m_cur_gbsizer->GetChild(idx));
+            nav_panel->EraseAllMaps(child.get());
         }
 
         auto save = g_NodeCreator.MakeCopy(m_cur_gbsizer);
         m_cur_gbsizer->RemoveAllChildren();
-        for (size_t idx = 0; idx < m_old_gbsizer->GetChildCount(); ++idx)
+
+        for (const auto& child: m_old_gbsizer->GetChildNodePtrs())
         {
-            m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(m_old_gbsizer->GetChild(idx)));
+            m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(child.get()));
         }
         m_old_gbsizer = std::move(save);
         m_isReverted = false;
@@ -489,16 +490,16 @@ void GridBagAction::Revert()
     auto nav_panel = wxGetFrame().GetNavigationPanel();
     wxWindowUpdateLocker freeze(nav_panel);
 
-    for (size_t idx = 0; idx < m_cur_gbsizer->GetChildCount(); idx++)
+    for (const auto& child: m_cur_gbsizer->GetChildNodePtrs())
     {
-        nav_panel->EraseAllMaps(m_cur_gbsizer->GetChild(idx));
+        nav_panel->EraseAllMaps(child.get());
     }
 
     auto save = g_NodeCreator.MakeCopy(m_cur_gbsizer);
     m_cur_gbsizer->RemoveAllChildren();
-    for (size_t idx = 0; idx < m_old_gbsizer->GetChildCount(); ++idx)
+    for (const auto& child: m_old_gbsizer->GetChildNodePtrs())
     {
-        m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(m_old_gbsizer->GetChild(idx)));
+        m_cur_gbsizer->Adopt(g_NodeCreator.MakeCopy(child.get()));
     }
     m_old_gbsizer = std::move(save);
     m_isReverted = true;
@@ -514,9 +515,9 @@ void GridBagAction::Update()
 {
     auto nav_panel = wxGetFrame().GetNavigationPanel();
 
-    for (size_t idx = 0; idx < m_cur_gbsizer->GetChildCount(); idx++)
+    for (const auto& child: m_cur_gbsizer->GetChildNodePtrs())
     {
-        nav_panel->EraseAllMaps(m_cur_gbsizer->GetChild(idx));
+        nav_panel->EraseAllMaps(child.get());
     }
 
     nav_panel->AddAllChildren(m_cur_gbsizer.get());
@@ -559,9 +560,9 @@ void SortProjectAction::Revert()
 {
     auto project = wxGetApp().GetProject();
     project->RemoveAllChildren();
-    for (size_t idx = 0; idx < m_old_project->GetChildCount(); ++idx)
+    for (const auto& child: m_old_project->GetChildNodePtrs())
     {
-        project->Adopt(g_NodeCreator.MakeCopy(m_old_project->GetChild(idx)));
+        project->Adopt(g_NodeCreator.MakeCopy(child.get()));
     }
 
     wxGetFrame().FireProjectUpdatedEvent();

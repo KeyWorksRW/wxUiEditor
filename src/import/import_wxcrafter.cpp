@@ -352,7 +352,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
 
     if (auto& gbSpan = FindValue(object, "gbSpan"); gbSpan.IsString() && !IsSame(gbSpan, "1,1"))
     {
-        ttlib::cview positions = gbSpan.GetString();
+        ttlib::sview positions = gbSpan.GetString();
         new_node->prop_set_value(prop_rowspan, positions.atoi());
         positions.moveto_nondigit();
         positions.moveto_digit();
@@ -360,7 +360,7 @@ void WxCrafter::ProcessChild(Node* parent, const Value& object)
     }
     if (auto& gbPosition = FindValue(object, "gbPosition"); gbPosition.IsString() && !IsSame(gbPosition, "0,0"))
     {
-        ttlib::cview positions = gbPosition.GetString();
+        ttlib::sview positions = gbPosition.GetString();
         new_node->prop_set_value(prop_row, positions.atoi());
         positions.moveto_nondigit();
         positions.moveto_digit();
@@ -687,7 +687,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
     // If the node has porp_alignment, then it will also have prop_borders and prop_flags
     if (node->HasProp(prop_alignment))
     {
-        if (all_items.find("wxEXPAND") != all_items.end())
+        if (all_items.contains("wxEXPAND"))
         {
             node->prop_set_value(prop_flags, "wxEXPAND");
         }
@@ -695,26 +695,26 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
         {
             auto alignment = node->prop_as_raw_ptr(prop_alignment);
 
-            if (all_items.find("wxALIGN_CENTER") != all_items.end())
+            if (all_items.contains("wxALIGN_CENTER"))
             {
                 if (alignment->size())
                     *alignment << '|';
                 *alignment << "wxALIGN_CENTER";
             }
-            else if (all_items.find("wxALIGN_CENTER_HORIZONTAL") != all_items.end())
+            else if (all_items.contains("wxALIGN_CENTER_HORIZONTAL"))
             {
                 if (alignment->size())
                     *alignment << '|';
                 *alignment << "wxALIGN_CENTER_HORIZONTAL";
             }
-            else if (all_items.find("wxALIGN_CENTER_VERTICAL") != all_items.end())
+            else if (all_items.contains("wxALIGN_CENTER_VERTICAL"))
             {
                 if (alignment->size())
                     *alignment << '|';
                 *alignment << "wxALIGN_CENTER_VERTICAL";
             }
 
-            if (all_items.find("wxALIGN_RIGHT") != all_items.end())
+            if (all_items.contains("wxALIGN_RIGHT"))
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -723,7 +723,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
                     *alignment << "wxALIGN_RIGHT";
                 }
             }
-            else if (all_items.find("wxALIGN_LEFT") != all_items.end())
+            else if (all_items.contains("wxALIGN_LEFT"))
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -732,7 +732,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
                     *alignment << "wxALIGN_LEFT";
                 }
             }
-            else if (all_items.find("wxALIGN_TOP") != all_items.end())
+            else if (all_items.contains("wxALIGN_TOP"))
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -741,7 +741,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
                     *alignment << "wxALIGN_TOP";
                 }
             }
-            else if (all_items.find("wxALIGN_BOTTOM") != all_items.end())
+            else if (all_items.contains("wxALIGN_BOTTOM"))
             {
                 if (!alignment->contains("wxALIGN_CENTER"))
                 {
@@ -755,7 +755,7 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
 
     if (node->HasProp(prop_border))
     {
-        if (all_items.find("wxALL") != all_items.end())
+        if (all_items.contains("wxALL"))
         {
             node->prop_set_value(prop_border, "wxALL");
         }
@@ -764,25 +764,25 @@ void WxCrafter::ProcessSizerFlags(Node* node, const Value& array)
             auto border_ptr = node->prop_as_raw_ptr(prop_border);
             border_ptr->clear();
 
-            if (all_items.find("wxLEFT") != all_items.end())
+            if (all_items.contains("wxLEFT"))
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
                 *border_ptr << "wxLEFT";
             }
-            if (all_items.find("wxRIGHT") != all_items.end())
+            if (all_items.contains("wxRIGHT"))
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
                 *border_ptr << "wxRIGHT";
             }
-            if (all_items.find("wxTOP") != all_items.end())
+            if (all_items.contains("wxTOP"))
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
                 *border_ptr << "wxTOP";
             }
-            if (all_items.find("wxBOTTOM") != all_items.end())
+            if (all_items.contains("wxBOTTOM"))
             {
                 if (border_ptr->size())
                     *border_ptr << ',';
@@ -948,11 +948,11 @@ GenEnum::PropName WxCrafter::UnknownProperty(Node* node, const Value& value, ttl
             return prop_processed;
         }
 
-        else if (name.is_sameprefix("bitmap file ("))
+        else if (name.starts_with("bitmap file ("))
         {
             return prop_processed;  // These are different icon sizes
         }
-        else if (name.is_sameprefix("bitmap file ("))
+        else if (name.starts_with("bitmap file ("))
         {
             return prop_processed;  // These are different icon sizes
         }
@@ -1191,7 +1191,7 @@ void WxCrafter::KnownProperty(Node* node, const Value& value, GenEnum::PropName 
                 node->prop_set_value(prop_name, prop_value.GetInt());
             else
             {
-                ttlib::cview val = prop_value.GetString();
+                ttlib::sview val = prop_value.GetString();
                 if (val.is_sameas("-1,-1") &&
                     (prop_name == prop_size || prop_name == prop_min_size || prop_name == prop_pos))
                 {
@@ -1277,10 +1277,10 @@ void WxCrafter::ValueProperty(Node* node, const Value& value)
 
 void WxCrafter::ProcessBitmapPropety(Node* node, const Value& object)
 {
-    if (ttlib::cview path = object["m_path"].GetString(); path.size())
+    if (ttlib::sview path = object["m_path"].GetString(); path.size())
     {
         ttlib::cstr bitmap;
-        if (path.is_sameprefix("wxART"))
+        if (path.starts_with("wxART"))
         {
             ttlib::multiview parts(path, ',');
             if (parts.size() > 1)
@@ -1334,7 +1334,7 @@ bool WxCrafter::ProcessFont(Node* node, const Value& object)
         if (crafter_str.contains("underlined"))
             font_info.Underlined();
 
-        if (!crafter_str.is_sameprefix("wxSYS_DEFAULT_GUI_FONT"))
+        if (!crafter_str.starts_with("wxSYS_DEFAULT_GUI_FONT"))
         {
             font_info.setDefGuiFont(false);
             font_info.FaceName("");
@@ -1533,7 +1533,7 @@ const Value& rapidjson::FindValue(const rapidjson::Value& object, const char* ke
 
 // wxCrafter doesn't put a space between the words
 
-std::map<std::string, const char*> s_sys_colour_pair = {
+std::map<std::string, const char*, std::less<>> s_sys_colour_pair = {
 
     { "AppWorkspace", "wxSYS_COLOUR_APPWORKSPACE" },
     { "ActiveBorder", "wxSYS_COLOUR_ACTIVEBORDER" },
@@ -1567,8 +1567,8 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
     ttlib::cstr result;
     if (colour.IsString())
     {
-        ttlib::cview clr_string = colour.GetString();
-        if (!clr_string.is_sameprefix("Default"))
+        ttlib::sview clr_string = colour.GetString();
+        if (!clr_string.starts_with("Default"))
         {
             if (clr_string[0] == '(')
             {
@@ -1577,17 +1577,17 @@ ttlib::cstr rapidjson::ConvertColour(const rapidjson::Value& colour)
             }
             else if (colour.GetString()[0] == '#')
             {
-                wxColour clr(clr_string.c_str());
+                wxColour clr(clr_string.wx_str());
                 return ConvertColourToString(clr);
             }
-            else if (clr_string.is_sameprefix("wx"))
+            else if (clr_string.starts_with("wx"))
             {
                 result = clr_string;
                 return result;
             }
             else
             {
-                if (auto colour_pair = s_sys_colour_pair.find(clr_string.c_str()); colour_pair != s_sys_colour_pair.end())
+                if (auto colour_pair = s_sys_colour_pair.find(clr_string); colour_pair != s_sys_colour_pair.end())
                     result = colour_pair->second;
             }
         }
@@ -1605,7 +1605,7 @@ std::string_view rapidjson::GetSelectedString(const rapidjson::Value& object)
             return array[sel].GetString();
         }
     }
-    return nullptr;
+    return {};
 }
 
 std::vector<std::string> rapidjson::GetStringVector(const rapidjson::Value& array)

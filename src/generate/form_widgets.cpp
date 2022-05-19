@@ -817,7 +817,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
             code << art_client;
         code << ").GetIconFor(this));\n";
     }
-    else if (description.is_sameprefix("SVG"))
+    else if (description.starts_with("SVG"))
     {
         auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
         if (!embed)
@@ -845,7 +845,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
                 name.remove_extension();
                 name.Replace(".", "_", true);  // fix wxFormBuilder header files
 
-                if (parts[IndexType].is_sameprefix("Embed"))
+                if (parts[IndexType].starts_with("Embed"))
                 {
                     auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed)
@@ -865,7 +865,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
                     ttlib::cstr name(iter.filename());
                     name.remove_extension();
                     name.Replace(".", "_", true);  // fix wxFormBuilder header files
-                    if (parts[IndexType].is_sameprefix("Embed"))
+                    if (parts[IndexType].starts_with("Embed"))
                     {
                         auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(iter);
                         if (embed)
@@ -890,7 +890,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
     {
         code << "#else\n";
         auto image_code = GenerateBitmapCode(description);
-        if (!image_code.contains(".Scale") && image_code.is_sameprefix("wxImage("))
+        if (!image_code.contains(".Scale") && image_code.starts_with("wxImage("))
         {
             code << "SetIcon(wxIcon(" << image_code.subview(sizeof("wxImage")) << ");\n";
         }

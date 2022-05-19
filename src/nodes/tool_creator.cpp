@@ -16,6 +16,46 @@
 
 using namespace GenEnum;
 
+static void PostProcessBook(Node* book_node)
+{
+    auto page_node = book_node->CreateChildNode(gen_BookPage);
+    if (page_node->FixDuplicateName())
+        wxGetFrame().FirePropChangeEvent(page_node->get_prop_ptr(prop_var_name));
+
+    if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
+    {
+        sizer->prop_set_value(prop_var_name, "page_sizer");
+        sizer->FixDuplicateName();
+        wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
+    }
+}
+
+static void PostProcessPage(Node* page_node)
+{
+    if (page_node->FixDuplicateName())
+        wxGetFrame().FirePropChangeEvent(page_node->get_prop_ptr(prop_var_name));
+
+    if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
+    {
+        sizer->prop_set_value(prop_var_name, "page_sizer");
+        sizer->FixDuplicateName();
+        wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
+    }
+}
+
+static void PostProcessPanel(Node* panel_node)
+{
+    if (panel_node->FixDuplicateName())
+        wxGetFrame().FirePropChangeEvent(panel_node->get_prop_ptr(prop_var_name));
+
+    if (auto sizer = panel_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
+    {
+        sizer->prop_set_value(prop_var_name, "panel_sizer");
+        sizer->FixDuplicateName();
+        wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
+    }
+}
+
 bool Node::CreateToolNode(GenName name)
 {
     if (isGen(gen_Project))
@@ -131,44 +171,4 @@ bool Node::CreateToolNode(GenName name)
     }
 
     return true;
-}
-
-void Node::PostProcessBook(Node* book_node)
-{
-    auto page_node = book_node->CreateChildNode(gen_BookPage);
-    if (page_node->FixDuplicateName())
-        wxGetFrame().FirePropChangeEvent(page_node->get_prop_ptr(prop_var_name));
-
-    if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
-    {
-        sizer->prop_set_value(prop_var_name, "page_sizer");
-        sizer->FixDuplicateName();
-        wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
-    }
-}
-
-void Node::PostProcessPage(Node* page_node)
-{
-    if (page_node->FixDuplicateName())
-        wxGetFrame().FirePropChangeEvent(page_node->get_prop_ptr(prop_var_name));
-
-    if (auto sizer = page_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
-    {
-        sizer->prop_set_value(prop_var_name, "page_sizer");
-        sizer->FixDuplicateName();
-        wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
-    }
-}
-
-void Node::PostProcessPanel(Node* panel_node)
-{
-    if (panel_node->FixDuplicateName())
-        wxGetFrame().FirePropChangeEvent(panel_node->get_prop_ptr(prop_var_name));
-
-    if (auto sizer = panel_node->CreateChildNode(gen_VerticalBoxSizer); sizer)
-    {
-        sizer->prop_set_value(prop_var_name, "panel_sizer");
-        sizer->FixDuplicateName();
-        wxGetFrame().FirePropChangeEvent(sizer->get_prop_ptr(prop_var_name));
-    }
 }

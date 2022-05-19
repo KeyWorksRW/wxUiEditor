@@ -208,7 +208,7 @@ EditColourDialog::EditColourDialog(wxWindow* parent, NodeProperty* prop) : Colou
         m_colour_rect->SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
         m_combo_system->Select(m_combo_system->FindString("WindowText", true));
     }
-    else if (prop->as_string().is_sameprefix("wx"))
+    else if (prop->as_string().starts_with("wx"))
     {
         m_radio_default->SetValue(false);
         m_radio_custom->SetValue(false);

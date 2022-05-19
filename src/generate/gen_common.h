@@ -23,7 +23,7 @@ class wxPropertyGridEvent;
 // Common component functions
 
 // Flags are added with no space around '|' character.
-inline void AddBitFlag(ttlib::cstr& strFlags, ttlib::cview flag)
+inline void AddBitFlag(ttlib::cstr& strFlags, ttlib::sview flag)
 {
     if (strFlags.size())
         strFlags << '|';
@@ -65,7 +65,7 @@ ttlib::cstr GetParentName(Node* node);
 //
 // If the only style specified is def_style, then it will not be added.
 void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator = false,
-                          ttlib::cview def_style = tt_empty_cstr);
+                          ttlib::sview def_style = tt_empty_cstr);
 
 // Generate any non-default wxWindow settings
 void GenerateWindowSettings(Node* node, ttlib::cstr& code);

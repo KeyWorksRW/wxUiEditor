@@ -93,7 +93,7 @@ static const ClassGenPair lst_name_gen[] = {
 
 */
 
-void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
+void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::sview line)
 {
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     // Create a copy of the original line without the extra spaces that can be used to send to our log window if there are
@@ -119,7 +119,7 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
 #endif  // _DEBUG
 
     m_pWinResource = pWinResource;
-    bool is_control = line.is_sameprefix("CONTROL");
+    bool is_control = line.starts_with("CONTROL");
     m_add_wrap_property = false;
     m_add_min_width_property = false;
 
@@ -253,48 +253,48 @@ void resCtrl::ParseDirective(WinResource* pWinResource, ttlib::cview line)
             }
         }
 
-        else if (line.is_sameprefix("AUTORADIOBUTTON"))
+        else if (line.starts_with("AUTORADIOBUTTON"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
             if (line.contains("WX_GROUP"))
                 AppendStyle(prop_style, "wxRB_GROUP");
         }
-        else if (line.is_sameprefix("CTEXT"))
+        else if (line.starts_with("CTEXT"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxStaticText);
             // We don't know if this will be in a horizontal or vertical sizer, so we just use wxALIGN_CENTER which works for
             // either.
             m_node->prop_set_value(prop_style, "wxALIGN_CENTER_HORIZONTAL");
         }
-        else if (line.is_sameprefix("DEFPUSHBUTTON"))
+        else if (line.starts_with("DEFPUSHBUTTON"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxButton);
             m_node->prop_set_value(prop_default, true);
         }
-        else if (line.is_sameprefix("LTEXT"))
+        else if (line.starts_with("LTEXT"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxStaticText);
             // m_node->prop_set_value(prop_style, "wxALIGN_LEFT");
         }
-        else if (line.is_sameprefix("RTEXT"))
+        else if (line.starts_with("RTEXT"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxStaticText);
             m_node->prop_set_value(prop_style, "wxALIGN_RIGHT");
         }
-        else if (line.is_sameprefix("RADIOBUTTON "))
+        else if (line.starts_with("RADIOBUTTON "))
         {
             m_node = g_NodeCreator.NewNode(gen_wxRadioButton);
             if (line.contains("WX_GROUP"))
                 AppendStyle(prop_style, "wxRB_GROUP");
         }
-        else if (line.is_sameprefix("SCROLLBAR"))
+        else if (line.starts_with("SCROLLBAR"))
         {
             m_node = g_NodeCreator.NewNode(gen_wxScrollBar);
             label_required = false;
             if (line.contains("SBS_VERT"))
                 m_node->prop_set_value(prop_style, "wxSB_VERTICAL");
         }
-        else if (line.is_sameprefix("ICON"))
+        else if (line.starts_with("ICON"))
         {
             ParseIconControl(line);
             return;

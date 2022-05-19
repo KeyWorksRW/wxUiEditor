@@ -18,16 +18,16 @@ public:
 
     void OnNodeSelected();
 
-    void AddErrorMsg(ttlib::cview msg);
-    void Add_wxErrorMsg(ttlib::cview msg);
+    void AddErrorMsg(ttlib::sview msg);
+    void Add_wxErrorMsg(ttlib::sview msg);
 
-    void AddWarningMsg(ttlib::cview msg);
-    void Add_wxWarningMsg(ttlib::cview msg);
+    void AddWarningMsg(ttlib::sview msg);
+    void Add_wxWarningMsg(ttlib::sview msg);
 
-    void AddInfoMsg(ttlib::cview msg) { m_textCtrl->AppendText(msg.wx_str()); };
-    void AddEventMsg(ttlib::cview msg) { m_textCtrl->AppendText(msg.wx_str()); };
+    void AddInfoMsg(ttlib::sview msg) { m_textCtrl->AppendText(msg.wx_str()); };
+    void AddEventMsg(ttlib::sview msg) { m_textCtrl->AppendText(msg.wx_str()); };
 
-    void Add_wxInfoMsg(ttlib::cview msg);
+    void Add_wxInfoMsg(ttlib::sview msg);
 
 protected:
     void UpdateNodeInfo();

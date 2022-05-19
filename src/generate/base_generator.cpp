@@ -193,7 +193,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         if (newValue.empty())
             return true;
 
-        for (auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
+        for (const auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
         {
             if (iter.get() == prop->GetNode())
             {
@@ -215,7 +215,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
 ttlib::cstr BaseGenerator::GetHelpText(Node* node)
 {
     ttlib::cstr class_name(map_GenNames[node->gen_name()]);
-    if (!class_name.is_sameprefix("wx"))
+    if (!class_name.starts_with("wx"))
     {
         if (class_name == "BookPage")
             class_name = "wxBookCtrl";
@@ -415,7 +415,7 @@ static std::vector<std::pair<const char*, const char*>> prefix_pair = {
 ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
 {
     ttlib::cstr class_name(map_GenNames[node->gen_name()]);
-    if (class_name.is_sameprefix("wx"))
+    if (class_name.starts_with("wx"))
     {
         class_name.erase(0, 2);
         class_name.MakeLower();
@@ -432,7 +432,7 @@ ttlib::cstr BaseGenerator::GetHelpURL(Node* node)
         {
             for (const auto& [key, value]: prefix_pair)
             {
-                if (!class_name.is_sameprefix(key))
+                if (!class_name.starts_with(key))
                     class_name.Replace(key, value);
             }
         }

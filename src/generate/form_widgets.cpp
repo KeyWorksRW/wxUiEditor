@@ -141,18 +141,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     }
     if (add_comments)
     {
-        if (node->HasValue(prop_minimum_size))
-        {
-            object.append_child(pugi::node_comment).set_value(" minimum size cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_maximum_size))
-        {
-            object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_background_colour))
-        {
-            object.append_child(pugi::node_comment).set_value(" background colour cannot be be set in the XRC file. ");
-        }
+        GenXrcComments(node, object);
         if (node->prop_as_bool(prop_persist))
         {
             object.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
@@ -411,53 +400,10 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
     }
     if (add_comments)
     {
-        if (node->HasValue(prop_smart_size))
-        {
-            object.append_child(pugi::node_comment).set_value(" smart size cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_minimum_size))
-        {
-            object.append_child(pugi::node_comment).set_value(" minimum size cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_maximum_size))
-        {
-            object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
-        }
-        if (!node->prop_as_string(prop_variant).is_sameas("normal"))
-        {
-            object.append_child(pugi::node_comment).set_value(" variant cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_font))
-        {
-            object.append_child(pugi::node_comment).set_value(" font cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_foreground_colour))
-        {
-            object.append_child(pugi::node_comment).set_value(" foreground colour cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_background_colour))
-        {
-            object.append_child(pugi::node_comment).set_value(" background colour cannot be be set in the XRC file. ");
-        }
+        GenXrcComments(node, object);
         if (node->prop_as_bool(prop_persist))
         {
             object.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
-        }
-        if (node->HasValue(prop_tooltip))
-        {
-            object.append_child(pugi::node_comment).set_value(" tooltip cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_context_help))
-        {
-            object.append_child(pugi::node_comment).set_value(" context help cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_disabled))
-        {
-            object.append_child(pugi::node_comment).set_value(" disabled cannot be be set in the XRC file. ");
-        }
-        if (node->HasValue(prop_hidden))
-        {
-            object.append_child(pugi::node_comment).set_value(" hidden cannot be be set in the XRC file. ");
         }
     }
 

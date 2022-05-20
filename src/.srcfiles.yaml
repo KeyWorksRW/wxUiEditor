@@ -176,7 +176,7 @@ Files:
     wxui/wxui_code.cmake
 
     # Internal Files -- only valid if INTERNAL_WIDGETS is defined
-    internal/wxui_code.cmake
+    internal/wxui_internal.cmake
 
     internal/code_compare.cpp    # Compare code generation
     internal/convert_img.cpp     # Convert image to Header (.h) or XPM (.xpm) file
@@ -184,6 +184,7 @@ Files:
     internal/msg_logging.cpp     # Message logging class
     internal/msgframe.cpp        # Stores messages
     internal/nodeinfo.cpp        # Node memory usage dialog
+    internal/xrcpreview.cpp      # Preview XRC code
 
     # ttLib submodule files (see https://github.com/KeyWorksRW/ttLib repository)
 
@@ -206,6 +207,7 @@ Docs:
     ../docs/import_crafter.md
     ../docs/import_formbuilder.md
     ../docs/import_winres.md
+    ../docs/xrc.md
     nodes/README.md
 
     # The following are the XML files we use for interfaces and generators

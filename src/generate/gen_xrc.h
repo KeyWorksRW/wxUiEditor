@@ -8,6 +8,12 @@
 #pragma once
 
 class WriteCode;
+class Node;
+
+// Generate a string containing the XRC of the starting node and all of it's children.
+//
+// Use project node to generate an XRC string of the entire project.
+std::string GenerateXrcStr(Node* node_start, bool add_comments = false);
 
 class BaseXrcGenerator
 {

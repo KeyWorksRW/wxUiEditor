@@ -61,6 +61,7 @@
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     #include "internal/debugsettings.h"  // DebugSettings -- Settings while running the Debug version of wxUiEditor
+    #include "internal/xrcpreview.h"     // XrcPreview
 #endif
 
 #include "mockup/mockup_parent.h"  // MockupParent -- Top-level MockUp Parent window
@@ -81,6 +82,7 @@ enum
     id_NodeMemory,
     id_CodeDiffDlg,
     id_PreviewXRC,
+    id_XrcPreviewDlg,
     id_FindWidget
 };
 
@@ -130,7 +132,8 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
     menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
 
-    menuInternal->Append(id_PreviewXRC, "Preview XRC...\tCtrl+R", "Show a dialog using XRC");
+    menuInternal->Append(id_PreviewXRC, "Preview generated XRC...\tCtrl+R", "Show XRC-generated form");
+    menuInternal->Append(id_XrcPreviewDlg, "XRC Preview Dialog...", "Dialog for previewing any XRC");
 
     m_submenu_import_recent = new wxMenu();
     m_menuFile->AppendSeparator();
@@ -281,6 +284,7 @@ MainFrame::MainFrame() :
 
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
     Bind(wxEVT_MENU, &MainFrame::OnPreviewXrc, this, id_PreviewXRC);
+    Bind(wxEVT_MENU, &MainFrame::OnXrcPreviewDlg, this, id_XrcPreviewDlg);
 #endif
 
     AddCustomEventHandler(GetEventHandler());

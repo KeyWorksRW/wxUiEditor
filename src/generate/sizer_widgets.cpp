@@ -54,26 +54,28 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
 int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
 {
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
     if (node->GetParent()->IsSizer())
     {
         GenXrcSizerItem(node, object);
-        auto sizer = object.append_child("object");
-        sizer.append_attribute("class").set_value("wxBoxSizer");
-        sizer.append_attribute("name").set_value(node->prop_as_string(prop_var_name).c_str());
-        sizer.append_child("orient").text().set(node->prop_as_string(prop_orientation).c_str());
-        if (node->HasValue(prop_minimum_size))
-        {
-            sizer.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size).c_str());
-        }
-        return BaseGenerator::xrc_sizer_item_created;
+        item = object.append_child("object");
     }
     else
     {
-        object.append_attribute("class").set_value("wxBoxSizer");
-        object.append_attribute("name").set_value(node->prop_as_string(prop_var_name).c_str());
-        object.append_child("orient").text().set(node->prop_as_string(prop_orientation).c_str());
-        return BaseGenerator::xrc_updated;
+        item = object;
+        result = BaseGenerator::xrc_updated;
     }
+
+    item.append_attribute("class").set_value("wxBoxSizer");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    if (node->HasValue(prop_minimum_size))
+    {
+        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    }
+    return result;
 }
 
 void BoxSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
@@ -1183,6 +1185,167 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
     }
 
     return code;
+}
+
+int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        // In C++, we would call CreateSeparatedSizer to get the line on Windows and Unix, but not on Mac. XRC doesn't
+        // support this, so we emulate it by adding the line. That's not correct on a Mac, though...
+
+        if (node->prop_as_bool(prop_static_line))
+        {
+            object.append_attribute("class").set_value("sizeritem");
+            object.append_child("flag").text().set("wxALL|wxEXPAND");
+
+            item = object.append_child("object");
+            item.append_attribute("class").set_value("wxBoxSizer");
+            item.append_child("orient").text().set("wxHORIZONTAL");
+
+            item = item.append_child("object");
+            item.append_attribute("class").set_value("sizeritem");
+            item.append_child("flag").text().set("wxTOP|wxRIGHT|wxLEFT|wxALIGN_BOTTOM");
+            item.append_child("option").text().set(1);
+
+            item = item.append_child("object");
+            item.append_attribute("class").set_value("wxStaticLine");
+            item.append_child("size").text().set("20,-1");
+
+            item = object.parent().append_child("object");
+            GenXrcSizerItem(node, item);
+            item = item.append_child("object");
+        }
+        else
+        {
+            GenXrcSizerItem(node, object);
+            item = object.append_child("object");
+        }
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxStdDialogButtonSizer");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    // You can only have one of: Ok, Yes, Save
+    if (node->prop_as_bool(prop_OK) || node->prop_as_bool(prop_Yes) || node->prop_as_bool(prop_Save))
+    {
+        auto button_parent = item.append_child("object");
+        button_parent.append_attribute("class").set_value("button");
+
+        auto button = button_parent.append_child("object");
+        button.append_attribute("class").set_value("wxButton");
+
+        if (node->prop_as_bool(prop_OK))
+        {
+            button.append_attribute("name").set_value("wxID_OK");
+            if (node->isPropValue(prop_default_button, "OK"))
+            {
+                button.append_child("default").text().set(1);
+            }
+        }
+        else if (node->prop_as_bool(prop_Yes))
+        {
+            button.append_attribute("name").set_value("wxID_YES");
+            if (node->isPropValue(prop_default_button, "Yes"))
+            {
+                button.append_child("default").text().set(1);
+            }
+        }
+        else if (node->prop_as_bool(prop_Save))
+        {
+            button.append_attribute("name").set_value("wxID_SAVE");
+            if (node->isPropValue(prop_default_button, "Save"))
+            {
+                button.append_child("default").text().set(1);
+            }
+        }
+    }
+
+    if (node->prop_as_bool(prop_No))
+    {
+        auto button_parent = item.append_child("object");
+        button_parent.append_attribute("class").set_value("button");
+
+        auto button = button_parent.append_child("object");
+        button.append_attribute("class").set_value("wxButton");
+
+        button.append_attribute("name").set_value("wxID_NO");
+        if (node->isPropValue(prop_default_button, "No"))
+        {
+            button.append_child("default").text().set(1);
+        }
+    }
+
+    // You can only have one of: Cancel, Close
+    if (node->prop_as_bool(prop_Cancel) || node->prop_as_bool(prop_Close))
+    {
+        auto button_parent = item.append_child("object");
+        button_parent.append_attribute("class").set_value("button");
+
+        auto button = button_parent.append_child("object");
+        button.append_attribute("class").set_value("wxButton");
+
+        if (node->prop_as_bool(prop_Cancel))
+        {
+            button.append_attribute("name").set_value("wxID_CANCEL");
+            if (node->isPropValue(prop_default_button, "Cancel"))
+            {
+                button.append_child("default").text().set(1);
+            }
+        }
+        else if (node->prop_as_bool(prop_Close))
+        {
+            button.append_attribute("name").set_value("wxID_CLOSE");
+            if (node->isPropValue(prop_default_button, "Close"))
+            {
+                button.append_child("default").text().set(1);
+            }
+        }
+    }
+
+    if (node->prop_as_bool(prop_Apply))
+    {
+        auto button_parent = item.append_child("object");
+        button_parent.append_attribute("class").set_value("button");
+
+        auto button = button_parent.append_child("object");
+        button.append_attribute("class").set_value("wxButton");
+
+        button.append_attribute("name").set_value("wxID_APPLY");
+    }
+
+    // You can only have one of: Help, ContextHelp
+    if (node->prop_as_bool(prop_Help) || node->prop_as_bool(prop_ContextHelp))
+    {
+        auto button_parent = item.append_child("object");
+        button_parent.append_attribute("class").set_value("button");
+
+        auto button = button_parent.append_child("object");
+        button.append_attribute("class").set_value("wxButton");
+
+        if (node->prop_as_bool(prop_Help))
+        {
+            button.append_attribute("name").set_value("wxID_HELP");
+        }
+        else if (node->prop_as_bool(prop_ContextHelp))
+        {
+            button.append_attribute("name").set_value("wxID_CONTEXT_HELP");
+        }
+    }
+
+    return result;
+}
+
+void StdDialogButtonSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxStdDialogButtonSizerXmlHandler");
 }
 
 std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

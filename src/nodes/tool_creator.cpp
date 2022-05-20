@@ -144,6 +144,15 @@ bool Node::CreateToolNode(GenName name)
                 prop->set_value("wxEXPAND");
         }
     }
+    else if (name == gen_wxStaticLine)
+    {
+        if (auto sizer = new_node->GetParent(); sizer->IsSizer())
+        {
+            // Set a default width that is large enough to see
+            new_node->prop_set_value(prop_size, "20,-1d");
+            wxGetFrame().FirePropChangeEvent(new_node->get_prop_ptr(prop_size));
+        }
+    }
     else if (name == gen_wxStdDialogButtonSizer || name == gen_wxStaticLine)
     {
         if (auto prop = new_node->get_prop_ptr(prop_flags); prop)

@@ -25,11 +25,6 @@ class ProjectSettings;
 struct EmbeddedImage;
 struct ImageBundle;
 
-// Current version of wxUiEditor project files
-constexpr const auto curWxuiMajorVer = 1;
-constexpr const auto curWxuiMinorVer = 4;
-constexpr const auto curCombinedVer = 14;
-
 constexpr const auto ImportProjectVersion = 13;
 
 class App : public wxApp

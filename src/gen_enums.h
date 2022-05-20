@@ -80,6 +80,7 @@ namespace GenEnum
         prop_aui_row,
         prop_auth_needed,
         prop_auto_complete,
+        prop_auto_start,
         prop_automatic_folding,
         prop_autosize_cols,
         prop_autosize_rows,

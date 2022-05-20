@@ -443,7 +443,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
 {
     for (auto& iter: xml_obj.attributes())
     {
-        if (iter.value() == "name")
+        if (iter.name() == "name")
         {
             if (new_node->IsForm())
             {
@@ -485,7 +485,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
                 }
             }
         }
-        else if (iter.value() == "variable")
+        else if (iter.name() == "variable")
         {
             if (auto prop = new_node->get_prop_ptr(prop_var_name); prop)
             {
@@ -494,7 +494,7 @@ void ImportXML::ProcessAttributes(const pugi::xml_node& xml_obj, Node* new_node)
                 prop->set_value(new_name);
             }
         }
-        else if (iter.value() == "subclass")
+        else if (iter.name() == "subclass")
         {
             new_node->prop_set_value(prop_derived_class, iter.value());
         }
@@ -507,7 +507,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
     {
         auto wxue_prop = MapPropName(iter.name());
 
-        if (iter.value() == "object")
+        if (iter.name() == "object")
         {
             continue;
         }
@@ -554,12 +554,12 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             }
             continue;
         }
-        else if (iter.value() == "tabs")
+        else if (iter.name() == "tabs")
         {
             ProcessNotebookTabs(iter, node);
             continue;
         }
-        else if (iter.value() == "option")
+        else if (iter.name() == "option")
         {
             if (auto prop = node->get_prop_ptr(prop_proportion); prop)
             {
@@ -585,7 +585,7 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 
         // Finally, process names that are unique to XRC/ImportXML
 
-        if (iter.value() == "orient")
+        if (iter.name() == "orient")
         {
             prop = node->get_prop_ptr(prop_orientation);
             if (prop)
@@ -593,15 +593,15 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                 prop->set_value(iter.text().as_string());
             }
         }
-        else if (iter.value() == "border")
+        else if (iter.name() == "border")
         {
             node->prop_set_value(prop_border_size, iter.text().as_string());
         }
-        else if (iter.value() == "selection" && node->isGen(gen_wxChoice))
+        else if (iter.name() == "selection" && node->isGen(gen_wxChoice))
         {
             node->prop_set_value(prop_selection_int, iter.text().as_int());
         }
-        else if (iter.value() == "selected")
+        else if (iter.name() == "selected")
         {
             if (node->isGen(gen_oldbookpage))
                 node->prop_set_value(prop_select, iter.text().as_bool());
@@ -610,12 +610,12 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                 node->prop_set_value(prop_checked, iter.text().as_bool());
             }
         }
-        else if (iter.value() == "enabled")
+        else if (iter.name() == "enabled")
         {
             if (!iter.text().as_bool())
                 node->prop_set_value(prop_disabled, true);
         }
-        else if (iter.value() == "subclass")
+        else if (iter.name() == "subclass")
         {
             // wxFormBuilder and XRC use the same name, but but it has different meanings.
             auto value = iter.text().as_sview();
@@ -645,12 +645,12 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                 node->prop_set_value(prop_derived_class, value);
             }
         }
-        else if (iter.value() == "creating_code")
+        else if (iter.name() == "creating_code")
         {
             // TODO: [KeyWorks - 12-09-2021] This consists of macros that allow the user to override one or more macros with
             // their own parameter.
         }
-        else if (iter.value() == "flag")
+        else if (iter.name() == "flag")
         {
             if (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem))
                 HandleSizerItemProperty(iter, node, parent);

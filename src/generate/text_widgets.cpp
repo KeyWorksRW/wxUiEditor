@@ -290,6 +290,79 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenEvents(NodeEvent* event, const 
     return GenEventCode(event, class_name);
 }
 
+int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxTextCtrl");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    if (node->HasValue(prop_style) || node->HasValue(prop_window_style))
+    {
+        ttlib::cstr style(node->prop_as_string(prop_style));
+        if (node->HasValue(prop_window_style))
+        {
+            if (style.size())
+                style << '|';
+            style << node->prop_as_string(prop_style);
+        }
+        item.append_child("style").text().set(style);
+    }
+    if (node->HasValue(prop_pos))
+    {
+        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
+    }
+    if (node->HasValue(prop_size))
+    {
+        item.append_child("size").text().set(node->prop_as_string(prop_size));
+    }
+
+    if (node->HasValue(prop_maxlength))
+    {
+        item.append_child("maxlength").text().set(node->prop_as_string(prop_maxlength));
+    }
+    if (node->HasValue(prop_value))
+    {
+        item.append_child("value").text().set(node->prop_as_string(prop_value));
+    }
+    if (node->HasValue(prop_hint))
+    {
+        item.append_child("hint").text().set(node->prop_as_string(prop_hint));
+    }
+
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->HasValue(prop_auto_complete))
+        {
+            item.append_child(pugi::node_comment).set_value(" auto complete cannot be be set in the XRC file. ");
+        }
+        if (node->HasValue(prop_spellcheck))
+        {
+            item.append_child(pugi::node_comment).set_value(" spell check cannot be be set in the XRC file. ");
+        }
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+void TextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxActivityIndicatorXmlHandler");
+}
+
 bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/textctrl.h>", set_src, set_hdr);

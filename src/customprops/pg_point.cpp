@@ -51,7 +51,7 @@ CustomPointProperty::CustomPointProperty(const wxString& label, NodeProperty* pr
     if (type != CustomPointProperty::type_SVG)
     {
         AddPrivateChild(new wxBoolProperty("using dialog units", wxPG_LABEL, m_dialog_units));
-        Item(2)->SetHelpString("When checked, values will be converted to dialog units by calling ConvertPixelsToDialog().");
+        Item(2)->SetHelpString("When checked, values will be converted to dialog units by calling ConvertDialogToPixels().");
     }
 }
 

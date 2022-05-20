@@ -21,6 +21,7 @@
 #include "bitmaps.h"      // Contains various images handling functions
 #include "gen_common.h"   // GeneratorLibrary -- Generator classes
 #include "mainapp.h"      // App -- Main application class
+#include "mainframe.h"    // MainFrame -- Main window frame
 #include "node.h"         // Node class
 #include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
 #include "utils.h"        // Utility functions that work with properties
@@ -36,7 +37,10 @@ wxObject* ActivityIndicatorGenerator::CreateMockup(Node* node, wxObject* parent)
                                           DlgSize(parent, node, prop_size), GetStyleInt(node));
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-    widget->Start();
+    if (node->prop_as_bool(prop_auto_start))
+    {
+        widget->Start();
+    }
 
     return widget;
 }
@@ -52,6 +56,69 @@ std::optional<ttlib::cstr> ActivityIndicatorGenerator::GenConstruction(Node* nod
     GeneratePosSizeFlags(node, code);
 
     return code;
+}
+
+std::optional<ttlib::cstr> ActivityIndicatorGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    if (node->prop_as_bool(prop_auto_start))
+    {
+        ttlib::cstr code;
+        code << node->get_node_name() << "->Start();";
+        return code;
+    }
+    else
+    {
+        return {};
+    }
+}
+
+int ActivityIndicatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxActivityIndicator");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    if (node->HasValue(prop_window_style))
+    {
+        item.append_child("style").text().set(node->prop_as_string(prop_window_style));
+    }
+    if (node->HasValue(prop_pos))
+    {
+        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
+    }
+    if (node->HasValue(prop_size))
+    {
+        item.append_child("size").text().set(node->prop_as_string(prop_size));
+    }
+    if (node->prop_as_bool(prop_auto_start))
+    {
+        item.append_child("running").text().set("1");
+    }
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ActivityIndicatorGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxActivityIndicatorXmlHandler");
 }
 
 bool ActivityIndicatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -127,6 +194,79 @@ std::optional<ttlib::cstr> AnimationGenerator::GenSettings(Node* node, size_t& /
     {
         return {};
     }
+}
+
+int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxAnimationCtrl");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    if (node->HasValue(prop_style))
+    {
+        item.append_child("style").text().set(node->prop_as_string(prop_style));
+    }
+    if (node->HasValue(prop_pos))
+    {
+        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
+    }
+    if (node->HasValue(prop_size))
+    {
+        item.append_child("size").text().set(node->prop_as_string(prop_size));
+    }
+    if (node->prop_as_bool(prop_hidden))
+    {
+        item.append_child("hidden").text().set("1");
+    }
+
+    if (node->HasValue(prop_animation))
+    {
+        ttlib::multistr parts(node->prop_as_string(prop_animation), ';', tt::TRIM::both);
+        ASSERT(parts.size() > 1)
+        item.append_child("animation").text().set(parts[IndexImage].c_str());
+    }
+    if (node->HasValue(prop_inactive_bitmap))
+    {
+        ttlib::multistr parts(node->prop_as_string(prop_inactive_bitmap), ';', tt::TRIM::both);
+        ASSERT(parts.size() > 1)
+        if (parts[IndexType].is_sameas("Art"))
+        {
+            ttlib::multistr art_parts(parts[IndexArtID], '|');
+            auto bmp = item.append_child("inactive-bitmap");
+            bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
+            bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
+        }
+        else
+        {
+            item.append_child("inactive-bitmap").text().set(parts[IndexImage].c_str());
+        }
+    }
+
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item, xrc::hidden_supported);
+    }
+
+    return result;
+}
+
+void AnimationGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxAnimationCtrlXmlHandler");
 }
 
 bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -274,6 +414,51 @@ std::optional<ttlib::cstr> StaticLineGenerator::GenConstruction(Node* node)
     }
 
     return code;
+}
+
+int StaticLineGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxStaticLine");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    if (node->HasValue(prop_style))
+    {
+        item.append_child("style").text().set(node->prop_as_string(prop_style));
+    }
+    if (node->HasValue(prop_pos))
+    {
+        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
+    }
+    if (node->HasValue(prop_size))
+    {
+        item.append_child("size").text().set(node->prop_as_string(prop_size));
+    }
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void StaticLineGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxStaticLineXmlHandler");
 }
 
 bool StaticLineGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

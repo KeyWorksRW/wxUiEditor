@@ -157,10 +157,13 @@ set (file_list
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare.cpp>    # Compare code generation
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img.cpp>     # Convert image
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/nodeinfo.cpp>        # Node memory usage dialog
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/xrcpreview.cpp>        # Node memory usage dialog
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare_base.cpp>
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img_base.cpp>
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/nodeinfo_base.cpp>
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/nodeinfo_base.cpp>
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/xrcpreview_base.cpp>
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/debugsettings.cpp>  # Settings while running the Debug version of wxUiEditor
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/msg_logging.cpp>    # Message logging class

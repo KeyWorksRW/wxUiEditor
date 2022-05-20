@@ -296,7 +296,7 @@ void GenPos(Node* node, ttlib::cstr& code)
     {
         if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
         {
-            code << ", ConvertPixelsToDialog(wxPoint(" << point.x << ", " << point.y << "))";
+            code << "ConvertDialogToPixels(wxPoint(" << point.x << ", " << point.y << "))";
         }
         else
         {
@@ -314,7 +314,7 @@ void GenSize(Node* node, ttlib::cstr& code)
     {
         if (node->prop_as_string(prop_size).contains("d", tt::CASE::either))
         {
-            code << ", ConvertPixelsToDialog(wxSize(" << size.x << ", " << size.y << "))";
+            code << "ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";
         }
         else
         {
@@ -422,7 +422,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
     {
         if (node->prop_as_string(prop_pos).contains("d", tt::CASE::either))
         {
-            code << ", ConvertPixelsToDialog(wxPoint(" << pos.x << ", " << pos.y << "))";
+            code << ", ConvertDialogToPixels(wxPoint(" << pos.x << ", " << pos.y << "))";
         }
         else
         {
@@ -443,7 +443,7 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
         }
         if (node->prop_as_string(prop_size).contains("d", tt::CASE::either))
         {
-            code << ", ConvertPixelsToDialog(wxSize(" << size.x << ", " << size.y << "))";
+            code << ", ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";
         }
         else
         {
@@ -1614,7 +1614,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
             code << "\n";
         code << node->get_node_name() << "->SetInitialSize(";
         if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
-            code << "ConvertPixelsToDialog(";
+            code << "ConvertDialogToPixels(";
 
         if (size.IsFullySpecified())
             code << "\n\t";
@@ -1629,7 +1629,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         else
             code << "-1";
         if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
-            code << ')';  // close the ConvertPixelsToDialog function call
+            code << ')';  // close the ConvertDialogToPixels function call
         code << "));";
     }
 
@@ -1643,11 +1643,11 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
             code << node->get_node_name() << "->";
             code << "SetMinSize(";
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                code << "ConvertPixelsToDialog(";
+                code << "ConvertDialogToPixels(";
 
             code << "wxSize(" << size.x << ", " << size.y;
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                code << ')';  // close the ConvertPixelsToDialog function call
+                code << ')';  // close the ConvertDialogToPixels function call
             code << "));";
         }
     }
@@ -1662,11 +1662,11 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
             code << node->get_node_name() << "->";
             code << "SetMaxSize(";
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                code << "ConvertPixelsToDialog(";
+                code << "ConvertDialogToPixels(";
 
             code << "wxSize(" << size.x << ", " << size.y;
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                code << ')';  // close the ConvertPixelsToDialog function call
+                code << ')';  // close the ConvertDialogToPixels function call
             code << "));";
         }
     }
@@ -1762,7 +1762,72 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
     object.append_child("flag").text().set(flags.c_str());
     if (node->HasValue(prop_border_size))
     {
-        object.append_child("border").text().set(node->prop_as_string(prop_border_size).c_str());
+        object.append_child("border").text().set(node->prop_as_string(prop_border_size));
     }
-    object.append_child("option").text().set(node->prop_as_string(prop_proportion).c_str());
+    if (node->prop_as_string(prop_proportion) != "0")
+    {
+        object.append_child("option").text().set(node->prop_as_string(prop_proportion));
+    }
+    if (node->HasValue(prop_minimum_size))
+    {
+        object.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    }
+}
+
+void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
+{
+    if (node->HasValue(prop_smart_size))
+    {
+        object.append_child(pugi::node_comment).set_value(" smart size cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_maximum_size) && !(supported_flags & xrc::max_size_supported))
+    {
+        object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
+    }
+    if (node->HasValue(prop_hidden) && !(supported_flags & xrc::hidden_supported))
+    {
+        object.append_child(pugi::node_comment).set_value(" hidden cannot be be set in the XRC file. ");
+    }
+}
+
+void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
+{
+    if (node->HasValue(prop_variant) && node->prop_as_string(prop_variant) != "normal")
+    {
+        object.append_child("variant").text().set(node->prop_as_string(prop_variant));
+    }
+    if (node->HasValue(prop_tooltip))
+    {
+        object.append_child("tooltip").text().set(node->prop_as_string(prop_tooltip));
+    }
+    if (node->HasValue(prop_font))
+    {
+        object.append_child("font").text().set(node->prop_as_font(prop_extra_style).GetNativeFontInfoDesc().ToUTF8().data());
+    }
+    if (node->HasValue(prop_background_colour))
+    {
+        object.append_child("bg").text().set(
+            node->prop_as_wxColour(prop_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+    if (node->HasValue(prop_foreground_colour))
+    {
+        object.append_child("fg").text().set(
+            node->prop_as_wxColour(prop_foreground_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+    if (node->prop_as_bool(prop_disabled))
+    {
+        object.append_child("enabled").text().set("0");
+    }
+    if (node->prop_as_bool(prop_focus))
+    {
+        object.append_child("focused").text().set("1");
+    }
+    if (node->HasValue(prop_extra_style))
+    {
+        object.append_child("exstyle").text().set(node->prop_as_string(prop_extra_style));
+    }
+    if (node->HasValue(prop_context_help))
+    {
+        object.append_child("help").text().set(node->prop_as_string(prop_context_help));
+    }
 }

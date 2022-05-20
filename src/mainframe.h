@@ -224,6 +224,7 @@ public:
     void ToggleBorderFlag(Node* node, int border);
 
 protected:
+    void OnExportXRC(wxCommandEvent& event) override;
     void OnAbout(wxCommandEvent& event) override;
     void OnAppendCrafter(wxCommandEvent& event) override;
     void OnAppendFormBuilder(wxCommandEvent& event) override;
@@ -267,6 +268,7 @@ protected:
     void OnCodeCompare(wxCommandEvent& event);
     void OnConvertImageDlg(wxCommandEvent& event);
     void OnFindWidget(wxCommandEvent& event);
+    void OnXrcPreviewDlg(wxCommandEvent& event);
 #endif
 
 #if defined(_DEBUG)  // Starts debug section.

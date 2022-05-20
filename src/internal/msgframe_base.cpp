@@ -149,6 +149,43 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_page_node->SetSizerAndFit(node_sizer);
 
+    m_page_xrc = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_page_xrc, "XRC");
+    m_page_xrc->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto page_sizer = new wxBoxSizer(wxVERTICAL);
+
+    auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    page_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));
+
+    m_scintilla = new wxStyledTextCtrl(m_page_xrc, wxID_ANY);
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_XML);
+        m_scintilla->SetReadOnly(true);
+        m_scintilla->SetEOLMode(wxSTC_EOL_LF);
+        // Sets text margin scaled appropriately for the current DPI on Windows,
+        // 5 on wxGTK or wxOSX
+        m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+        m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+        m_scintilla->SetProperty("fold", "1");
+        m_scintilla->SetMarginWidth(1, 16);
+        m_scintilla->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
+        m_scintilla->SetMarginMask(1, wxSTC_MASK_FOLDERS);
+        m_scintilla->SetMarginSensitive(1, true);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
+        m_scintilla->SetBackSpaceUnIndents(true);
+    }
+    m_scintilla->SetInitialSize(ConvertPixelsToDialog(wxSize(-2 > GetBestSize().x ? -2 : -1, -1)));
+    box_sizer_3->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
+
+    m_page_xrc->SetSizerAndFit(page_sizer);
+
     SetSizerAndFit(parent_sizer);
 
     Centre(wxBOTH);

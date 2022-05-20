@@ -596,6 +596,33 @@
               </node>
             </node>
           </node>
+          <node
+            class="BookPage"
+            class_access="protected:"
+            label="XRC"
+            var_name="m_page_xrc"
+            background_colour="wxSYS_COLOUR_BTNFACE"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxBoxSizer"
+              orientation="wxVERTICAL"
+              var_name="page_sizer">
+              <node
+                class="wxBoxSizer"
+                var_name="box_sizer_3"
+                flags="wxEXPAND"
+                proportion="1">
+                <node
+                  class="wxStyledTextCtrl"
+                  fold_margin="1"
+                  lexer="XML"
+                  read_only="true"
+                  smart_size="-2,-1d"
+                  flags="wxEXPAND"
+                  proportion="1" />
+              </node>
+            </node>
+          </node>
         </node>
       </node>
     </node>

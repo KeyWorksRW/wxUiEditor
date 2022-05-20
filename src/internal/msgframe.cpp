@@ -14,9 +14,12 @@
 #include "msgframe.h"  // auto-generated: msgframe_base.h and msgframe_base.cpp
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "gen_xrc.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
+
+#include "pugixml.hpp"
 
 #if defined(INTERNAL_TESTING)
     #include "internal/nodeinfo_base.h"  // NodeInfo -- Node memory usage dialog
@@ -38,6 +41,13 @@ static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
         CalcNodeMemory(iter.get(), node_memory);
     }
 }
+
+#ifndef SCI_SETKEYWORDS
+    #define SCI_SETKEYWORDS 4005
+    #define SCI_GETTEXT_MSG 2182
+#endif
+
+extern const char* g_xrc_keywords;
 
 MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* parent) :
     MsgFrameBase(parent), m_pMsgs(pMsgs), m_pDestroyed(pDestroyed)
@@ -93,6 +103,18 @@ MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* 
         m_menu_item_events->Check(true);
     if ((prefs.flags & App::PREFS_MSG_INFO))
         m_menu_item_info->Check(true);
+
+    // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+    m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
+
+    m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
+    m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#E91AFF"));
+    m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
+    m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
+    m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
+    m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
 
     wxPersistentRegisterAndRestore(this, "MsgWindow");
 }
@@ -254,8 +276,9 @@ void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
 
 void MsgFrame::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
 {
+    m_isXrcPage = (m_notebook->GetCurrentPage() == m_page_xrc);
     m_isNodeInfoPage = (m_notebook->GetCurrentPage() == m_page_node);
-    if (m_isNodeInfoPage)
+    if (m_isNodeInfoPage || m_isXrcPage)
     {
         UpdateNodeInfo();
     }
@@ -263,7 +286,7 @@ void MsgFrame::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))
 
 void MsgFrame::OnNodeSelected()
 {
-    if (m_isNodeInfoPage)
+    if (m_isNodeInfoPage || m_isXrcPage)
     {
         UpdateNodeInfo();
     }
@@ -277,6 +300,17 @@ void MsgFrame::UpdateNodeInfo()
     auto cur_sel = wxGetFrame().GetSelectedNode();
     if (cur_sel)
     {
+        if (m_isXrcPage)
+        {
+            auto doc_str = GenerateXrcStr(cur_sel, true);
+
+            m_scintilla->SetReadOnly(false);
+            m_scintilla->ClearAll();
+            m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
+            m_scintilla->SetReadOnly(true);
+            return;
+        }
+
         label.clear();
         label << "Generator: gen_" << cur_sel->DeclName();
         m_txt_generator->SetLabel(label);

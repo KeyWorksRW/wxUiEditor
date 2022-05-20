@@ -48,4 +48,5 @@ private:
     bool* m_pDestroyed;
 
     bool m_isNodeInfoPage { false };
+    bool m_isXrcPage { false };
 };

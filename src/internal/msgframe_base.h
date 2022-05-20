@@ -19,6 +19,7 @@
 #include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/stattext.h>
+#include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 
 class MsgFrameBase : public wxFrame
@@ -59,11 +60,13 @@ protected:
     wxNotebook* m_notebook;
     wxPanel* m_page_log;
     wxPanel* m_page_node;
+    wxPanel* m_page_xrc;
     wxStaticText* m_txt_clipboard;
     wxStaticText* m_txt_generator;
     wxStaticText* m_txt_memory;
     wxStaticText* m_txt_project;
     wxStaticText* m_txt_type;
+    wxStyledTextCtrl* m_scintilla;
     wxTextCtrl* m_textCtrl;
 };
 

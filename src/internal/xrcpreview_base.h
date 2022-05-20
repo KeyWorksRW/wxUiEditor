@@ -34,6 +34,7 @@ protected:
 
     virtual void OnClipBoard(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCreate(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnPreview(wxCommandEvent& event) { event.Skip(); }
     virtual void OnXrcCopy(wxCommandEvent& event) { event.Skip(); }
 

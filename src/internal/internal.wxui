@@ -659,7 +659,8 @@
       derived_file="xrcpreview"
       minimum_size="800,600d"
       persist="true"
-      title="XRC Preview">
+      title="XRC Preview"
+      wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -713,6 +714,7 @@
             proportion="1">
             <node
               class="wxStyledTextCtrl"
+              fold_margin="1"
               lexer="XML"
               smart_size="-2,-1d"
               flags="wxEXPAND"

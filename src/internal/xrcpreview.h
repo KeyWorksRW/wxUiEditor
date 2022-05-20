@@ -15,6 +15,7 @@ public:
     XrcPreview(wxWindow* parent);
 
 protected:
+    void OnInit(wxInitDialogEvent& event) override;
     void OnXrcCopy(wxCommandEvent& event) override;
     void OnClipBoard(wxCommandEvent& event) override;
     // Handlers for XrcPreviewBase events

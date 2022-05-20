@@ -88,3 +88,26 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
     }
     xrc_resource->Unload(res_name);
 }
+
+#ifndef SCI_SETKEYWORDS
+    #define SCI_SETKEYWORDS 4005
+#endif
+
+extern const char* g_xrc_keywords;
+
+void XrcPreview::OnInit(wxInitDialogEvent& event)
+{
+    // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+    m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_xrc_keywords);
+
+    m_scintilla->StyleSetBold(wxSTC_H_TAG, true);
+    m_scintilla->StyleSetForeground(wxSTC_H_ATTRIBUTE, wxColour("#E91AFF"));
+    m_scintilla->StyleSetForeground(wxSTC_H_TAG, *wxBLUE);
+    m_scintilla->StyleSetForeground(wxSTC_H_COMMENT, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_H_NUMBER, *wxRED);
+    m_scintilla->StyleSetForeground(wxSTC_H_ENTITY, *wxRED);
+    m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
+    m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
+
+    event.Skip();
+}

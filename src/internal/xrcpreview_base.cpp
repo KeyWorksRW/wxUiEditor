@@ -57,7 +57,18 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         // 5 on wxGTK or wxOSX
         m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
         m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
-        m_scintilla->SetMarginWidth(1, 0);  // Remove default margin
+        m_scintilla->SetProperty("fold", "1");
+        m_scintilla->SetMarginWidth(1, 16);
+        m_scintilla->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
+        m_scintilla->SetMarginMask(1, wxSTC_MASK_FOLDERS);
+        m_scintilla->SetMarginSensitive(1, true);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND);
+        m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
         m_scintilla->SetBackSpaceUnIndents(true);
     }
     m_scintilla->SetInitialSize(ConvertPixelsToDialog(wxSize(-2 > GetBestSize().x ? -2 : -1, -1)));
@@ -74,6 +85,7 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     wxPersistentRegisterAndRestore(this, "XrcPreviewBase");
 
     // Event handlers
+    Bind(wxEVT_INIT_DIALOG, &XrcPreviewBase::OnInit, this);
     m_btn_2->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnCreate, this);
     m_btn_3->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnXrcCopy, this);
     m_btn_4->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnClipBoard, this);

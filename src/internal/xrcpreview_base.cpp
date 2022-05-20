@@ -24,26 +24,26 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
-    m_staticText = new wxStaticText(this, wxID_ANY, "Preview only works with Dialogs. Be certain the dialog is visible and has a close box in the title bar!");
+    m_staticText = new wxStaticText(this, wxID_ANY, "Preview only works with Dialogs. Be certain the dialog will be visible and has a close box in the title bar!");
     box_sizer_4->Add(m_staticText, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
-    m_btn_2 = new wxButton(this, wxID_ANY, "&Create...");
-    m_btn_2->SetToolTip("Create XRC for a specific widget");
+    m_btn_2 = new wxButton(this, wxID_ANY, "&Blank");
+    m_btn_2->SetToolTip("Create XRC with a single empty object");
     box_sizer_2->Add(m_btn_2, wxSizerFlags().Border(wxALL));
 
-    m_btn_3 = new wxButton(this, wxID_ANY, "&XRC Copy");
-    m_btn_3->SetToolTip("Copies the generated code from the XRC tab");
+    m_btn_3 = new wxButton(this, wxID_ANY, "&Generate");
+    m_btn_3->SetToolTip("Generate XRC from current selected form.");
     box_sizer_2->Add(m_btn_3, wxSizerFlags().Border(wxALL));
 
-    m_btn_4 = new wxButton(this, wxID_ANY, "Clipboard");
+    m_btn_4 = new wxButton(this, wxID_ANY, "&Export...");
+    m_btn_4->SetToolTip("Generate XRC from current selected form.");
     box_sizer_2->Add(m_btn_4, wxSizerFlags().Border(wxALL));
 
-    box_sizer_2->AddStretchSpacer(1);
-
     m_btn = new wxButton(this, wxID_ANY, "&Preview...");
+    m_btn->SetToolTip("Load the XRC into a dialog and display it.");
     box_sizer_2->Add(m_btn, wxSizerFlags().Border(wxALL));
 
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
@@ -88,7 +88,7 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     Bind(wxEVT_INIT_DIALOG, &XrcPreviewBase::OnInit, this);
     m_btn_2->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnCreate, this);
     m_btn_3->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnXrcCopy, this);
-    m_btn_4->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnClipBoard, this);
+    m_btn_4->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnExport, this);
     m_btn->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnPreview, this);
 
     return true;

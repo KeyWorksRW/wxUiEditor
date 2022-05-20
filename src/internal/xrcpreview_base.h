@@ -17,14 +17,14 @@ class XrcPreviewBase : public wxDialog
 {
 public:
     XrcPreviewBase() {}
-    XrcPreviewBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "XRC Preview",
+    XrcPreviewBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test XRC",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "XRC Preview",
+    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test XRC",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
 
@@ -32,8 +32,8 @@ protected:
 
     // Virtual event handlers -- override them in your derived class
 
-    virtual void OnClipBoard(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCreate(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnExport(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnPreview(wxCommandEvent& event) { event.Skip(); }
     virtual void OnXrcCopy(wxCommandEvent& event) { event.Skip(); }

@@ -360,7 +360,7 @@ int TextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
 }
 void TextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
-    handlers.emplace("wxTextCtrlXmlHandler");
+    handlers.emplace("wxActivityIndicatorXmlHandler");
 }
 
 bool TextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

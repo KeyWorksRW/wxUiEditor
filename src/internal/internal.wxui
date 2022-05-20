@@ -659,7 +659,7 @@
       derived_file="xrcpreview"
       minimum_size="800,600d"
       persist="true"
-      title="XRC Preview"
+      title="Test XRC"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -676,7 +676,7 @@
             var_name="box_sizer_4">
             <node
               class="wxStaticText"
-              label="Preview only works with Dialogs. Be certain the dialog is visible and has a close box in the title bar!" />
+              label="Preview only works with Dialogs. Be certain the dialog will be visible and has a close box in the title bar!" />
           </node>
           <node
             class="wxBoxSizer"
@@ -684,27 +684,26 @@
             flags="wxEXPAND">
             <node
               class="wxButton"
-              label="&amp;Create..."
+              label="&amp;Blank"
               var_name="m_btn_2"
-              tooltip="Create XRC for a specific widget"
+              tooltip="Create XRC with a single empty object"
               wxEVT_BUTTON="OnCreate" />
             <node
               class="wxButton"
-              label="&amp;XRC Copy"
+              label="&amp;Generate"
               var_name="m_btn_3"
-              tooltip="Copies the generated code from the XRC tab"
+              tooltip="Generate XRC from current selected form."
               wxEVT_BUTTON="OnXrcCopy" />
             <node
               class="wxButton"
-              label="Clipboard"
+              label="&amp;Export..."
               var_name="m_btn_4"
-              wxEVT_BUTTON="OnClipBoard" />
-            <node
-              class="spacer"
-              proportion="1" />
+              tooltip="Generate XRC from current selected form."
+              wxEVT_BUTTON="OnExport" />
             <node
               class="wxButton"
               label="&amp;Preview..."
+              tooltip="Load the XRC into a dialog and display it."
               wxEVT_BUTTON="OnPreview" />
           </node>
           <node

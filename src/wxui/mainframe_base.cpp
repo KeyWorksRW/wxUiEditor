@@ -41,6 +41,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         const wxPoint& pos, const wxSize& size, long style) :
     wxFrame(parent, id, title, pos, size, style)
 {
+
     SetSizeHints(wxSize(800, 800));
 
     m_menubar = new wxMenuBar();
@@ -75,6 +76,9 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         "Save current project to a different filename", wxITEM_NORMAL);
     menu_item2->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_MENU));
     m_menuFile->Append(menu_item2);
+
+    auto menu_item_9 = new wxMenuItem(m_menuFile, wxID_ANY, "Export XRC...");
+    m_menuFile->Append(menu_item_9);
 
     m_menuFile->AppendSeparator();
 
@@ -395,6 +399,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         },
         wxID_SAVE);
     Bind(wxEVT_MENU, &MainFrameBase::OnSaveAsProject, this, id_SaveProjectAs);
+    Bind(wxEVT_MENU, &MainFrameBase::OnExportXRC, this, menu_item_9->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendCrafter, this, id_AppendCrafter);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendFormBuilder, this, id_AppendFormBuilder);
     Bind(wxEVT_MENU, &MainFrameBase::OnAppendGlade, this, id_AppendGlade);

@@ -836,6 +836,11 @@
             var_name="menu_item2"
             wxEVT_MENU="OnSaveAsProject" />
           <node
+            class="wxMenuItem"
+            label="Export XRC..."
+            var_name="menu_item_9"
+            wxEVT_MENU="OnExportXRC" />
+          <node
             class="separator"
             var_name="separator2" />
           <node

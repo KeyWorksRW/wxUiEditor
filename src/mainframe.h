@@ -224,6 +224,7 @@ public:
     void ToggleBorderFlag(Node* node, int border);
 
 protected:
+    void OnExportXRC(wxCommandEvent& event) override;
     void OnAbout(wxCommandEvent& event) override;
     void OnAppendCrafter(wxCommandEvent& event) override;
     void OnAppendFormBuilder(wxCommandEvent& event) override;

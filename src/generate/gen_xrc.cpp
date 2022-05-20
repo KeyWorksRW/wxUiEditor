@@ -10,6 +10,7 @@
 #include <thread>
 #include <unordered_set>
 
+#include <wx/filedlg.h>     // wxFileDialog base header
 #include <wx/filename.h>    // wxFileName - encapsulates a file path
 #include <wx/mstream.h>     // Memory stream classes
 #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
@@ -37,6 +38,8 @@ inline constexpr const auto txt_XRC_FOOTER = R"===(</resource>
 )===";
 
 static bool s_isXmlInitalized { false };
+
+int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments);
 
 void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
 {
@@ -67,18 +70,8 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
 
     try
     {
-        BaseCodeGenerator codegen;
-
-        // We probably won't ever use h_cw, but BaseCodeGenerator expects it to exist, so this avoids adding a bunch of
-        // conditional code to determine if it actually exists or not.
-        auto h_cw = std::make_unique<FileCodeWriter>("XRC-info");
-        codegen.SetHdrWriteCode(h_cw.get());
-
-        auto xrc_cw = std::make_unique<FileCodeWriter>("XRC");
-        codegen.SetSrcWriteCode(xrc_cw.get());
-        codegen.GenerateXrcClass(form_node);
-
-        wxMemoryInputStream stream(xrc_cw->GetString().c_str(), xrc_cw->GetString().size());
+        auto doc_str = GenerateXrcStr(form_node, false);
+        wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
         if (!xmlDoc->IsOk())
         {
@@ -118,6 +111,39 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
     {
         MSG_ERROR(e.what());
         wxMessageBox("An internal error occurred generating XRC code", "XRC Dialog Preview");
+    }
+}
+
+void MainFrame::OnExportXRC(wxCommandEvent& WXUNUSED(event))
+{
+    auto filename = wxGetApp().GetProjectFileName().filename();
+    if (filename.is_sameas(txtEmptyProject))
+    {
+        filename = "MyProject";
+    }
+    filename.replace_extension(".xrc");
+
+    wxFileDialog dialog(this, "Export Project As XRC", wxGetApp().GetProjectPath(), filename, "XRC File (*.xrc)|*.xrc",
+                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+    if (dialog.ShowModal() == wxID_OK)
+    {
+        filename = dialog.GetPath();
+        if (filename.extension().empty())
+        {
+            filename.replace_extension(".xrc");
+        }
+
+        pugi::xml_document doc;
+        auto root = doc.append_child("resource");
+        root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
+        root.append_attribute("version") = "2.5.3.0";
+
+        GenXrcObject(wxGetApp().GetProject(), root, false);
+        if (!doc.save_file(filename.sub_cstr().c_str(), "\t"))
+        {
+            wxMessageBox(wxString("An unexpected error occurred exportin ") << filename, "Export XRC");
+        }
     }
 }
 
@@ -179,6 +205,32 @@ void CollectHandlers(Node* node, std::set<std::string>& handlers)
     }
 }
 
+std::string GenerateXrcStr(Node* node_start, bool add_comments)
+{
+    pugi::xml_document doc;
+    auto root = doc.append_child("resource");
+    root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
+    root.append_attribute("version") = "2.5.3.0";
+
+    if (!node_start)
+    {
+        root.append_child("object");
+    }
+    else if (node_start->isGen(gen_Project))
+    {
+        GenXrcObject(node_start, root, add_comments);
+    }
+    else
+    {
+        auto object = root.append_child("object");
+        GenXrcObject(node_start, object, add_comments);
+    }
+
+    std::ostringstream xml_stream;
+    doc.save(xml_stream, "\t");
+    return xml_stream.str();
+}
+
 void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type)
 {
     m_project = wxGetApp().GetProject();
@@ -189,64 +241,28 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type)
     m_header->Clear();
     m_source->Clear();
 
-    pugi::xml_document doc;
-    auto root = doc.append_child("resource");
-    root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
-    root.append_attribute("version") = "2.5.3.0";
-
-    int form_result = BaseGenerator::xrc_updated;
-    if (!wxGetFrame().GetSelectedForm())
-    {
-        form_node = m_project;
-        GenXrcObject(m_project, root, m_panel_type == CPP_PANEL);
-    }
-    else
-    {
-        auto object = root.append_child("object");
-        form_result = GenXrcObject(form_node, object, m_panel_type == CPP_PANEL);
-        if (form_result == BaseGenerator::xrc_not_supported)
-        {
-            root.remove_child(object);
-        }
-    }
-
     if (m_panel_type != HDR_PANEL)
     {
-        if (form_result != BaseGenerator::xrc_not_supported)
-        {
-            std::ostringstream xml_stream;
-            doc.save(xml_stream, "\t");
-            std::string str = xml_stream.str();
-            m_source->doWrite(str);
-        }
-        else
-        {
-            m_source->writeLine("This form cannot be output to XRC.");
-        }
+        auto doc_str = GenerateXrcStr(form_node ? form_node : m_project, m_panel_type == CPP_PANEL);
+        m_source->doWrite(doc_str);
     }
-    else
-    {
-        if (form_result != BaseGenerator::xrc_not_supported)
-        {
-            if (form_node != m_project)
-            {
-                m_header->writeLine(ttlib::cstr("Resource name is ") << form_node->prop_as_string(prop_class_name));
-                m_header->writeLine();
-            }
-            m_header->writeLine("Required handlers:");
-            m_header->writeLine();
-            m_header->Indent();
 
-            std::set<std::string> handlers;
-            CollectHandlers(form_node, handlers);
-            for (auto& iter: handlers)
-            {
-                m_header->writeLine(iter);
-            }
-        }
-        else
+    else  // Info panel
+    {
+        if (form_node != m_project)
         {
-            m_header->writeLine("This form cannot be output to XRC.");
+            m_header->writeLine(ttlib::cstr("Resource name is ") << form_node->prop_as_string(prop_class_name));
+            m_header->writeLine();
+        }
+        m_header->writeLine("Required handlers:");
+        m_header->writeLine();
+        m_header->Indent();
+
+        std::set<std::string> handlers;
+        CollectHandlers(form_node, handlers);
+        for (auto& iter: handlers)
+        {
+            m_header->writeLine(iter);
         }
     }
 }

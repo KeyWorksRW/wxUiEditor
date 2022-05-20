@@ -834,9 +834,9 @@ std::unordered_map<std::string, const char*> g_friend_constant = {
     { "stc_forward", "wxSTC_IV_LOOKFORWARD" },
     { "stc_both", "wxSTC_IV_LOOKBOTH" },
 
-    { "stc_show lines as needed", "wxSTC_AUTOMATICFOLD_SHOW" },
-    { "stc_handle margin clicks", "wxSTC_AUTOMATICFOLD_CLICK" },
-    { "stc_show changes", "wxSTC_AUTOMATICFOLD_CHANGE" },
+    { "stc_show_lines", "wxSTC_AUTOMATICFOLD_SHOW" },
+    { "stc_margin_clicks", "wxSTC_AUTOMATICFOLD_CLICK" },
+    { "stc_show_changes", "wxSTC_AUTOMATICFOLD_CHANGE" },
 
     { "stc_before if expanded changes", "wxSTC_FOLDFLAG_LINEBEFORE_EXPANDED" },
     { "stc_before if contracted", "wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED" },

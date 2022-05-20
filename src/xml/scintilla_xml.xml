@@ -201,9 +201,9 @@ inline const char* scintilla_xml = R"===(<?xml version="1.0"?>
 				help="Sets the background colour of the markers." />
 
 			<property name="automatic_folding" type="bitlist">
-				<option name="show lines as needed" help="Automatically show lines as needed." />
-				<option name="handle margin clicks" help="Handle clicks in fold margin automatically." />
-				<option name="show changes" help="Show lines as needed when fold structure is changed." />
+				<option name="show_lines" help="Automatically show lines as needed." />
+				<option name="margin_clicks" help="Handle clicks in fold margin automatically." />
+				<option name="show_changes" help="Show lines as needed when fold structure is changed." />
 			</property>
 			<property name="fold_flags" type="bitlist"
 				help="In addition to showing markers in the folding margin, you can indicate folds to the user by drawing lines in the text area.">

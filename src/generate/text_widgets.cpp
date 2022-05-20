@@ -13,6 +13,7 @@
 
 #include <wx/event.h>                  // Event classes
 #include <wx/html/htmlwin.h>           // wxHtmlWindow class for parsing & displaying HTML
+#include <wx/infobar.h>                // declaration of wxInfoBarBase defining common API of wxInfoBar
 #include <wx/propgrid/manager.h>       // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>      // wxPropertyGrid
 #include <wx/richtext/richtextctrl.h>  // A rich edit control
@@ -27,6 +28,7 @@
 #include "text_widgets.h"
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
+#include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
@@ -169,13 +171,51 @@ wxObject* TextCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* /* node */, NodeProperty* prop)
+bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
 {
     if (prop->isProp(prop_value))
     {
         wxStaticCast(widget, wxTextCtrl)->SetValue(prop->as_wxString());
         return true;
     }
+#if defined(_WIN32)
+    else if (prop->isProp(prop_spellcheck))
+    {
+        if (prop->HasValue() && !node->prop_as_string(prop_style).contains("wxTE_RICH2"))
+        {
+            if (auto infobar = wxGetFrame().GetPropInfoBar(); infobar)
+            {
+                infobar->ShowMessage("When used on Windows, spell checking requires the style to contain wxTE_RICH2.",
+                                     wxICON_INFORMATION);
+            }
+        }
+        else
+        {
+            if (auto infobar = wxGetFrame().GetPropInfoBar(); infobar)
+            {
+                infobar->Dismiss();
+            }
+        }
+    }
+    else if (prop->isProp(prop_style))
+    {
+        if (node->HasValue(prop_spellcheck) && !node->prop_as_string(prop_style).contains("wxTE_RICH2"))
+        {
+            if (auto infobar = wxGetFrame().GetPropInfoBar(); infobar)
+            {
+                infobar->ShowMessage("When used on Windows, spell checking requires the style to contain wxTE_RICH2.",
+                                     wxICON_INFORMATION);
+            }
+        }
+        else
+        {
+            if (auto infobar = wxGetFrame().GetPropInfoBar(); infobar)
+            {
+                infobar->Dismiss();
+            }
+        }
+    }
+#endif  // _WIN32
 
     return false;
 }

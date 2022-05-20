@@ -1762,9 +1762,16 @@ void GenXrcSizerItem(Node* node, pugi::xml_node& object)
     object.append_child("flag").text().set(flags.c_str());
     if (node->HasValue(prop_border_size))
     {
-        object.append_child("border").text().set(node->prop_as_string(prop_border_size).c_str());
+        object.append_child("border").text().set(node->prop_as_string(prop_border_size));
     }
-    object.append_child("option").text().set(node->prop_as_string(prop_proportion).c_str());
+    if (node->prop_as_string(prop_proportion) != "0")
+    {
+        object.append_child("option").text().set(node->prop_as_string(prop_proportion));
+    }
+    if (node->HasValue(prop_minimum_size))
+    {
+        object.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    }
 }
 
 void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
@@ -1773,15 +1780,11 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
     {
         object.append_child(pugi::node_comment).set_value(" smart size cannot be be set in the XRC file. ");
     }
-    if (node->HasValue(prop_minimum_size) && !(supported_flags | xrc::min_size_supported))
-    {
-        object.append_child(pugi::node_comment).set_value(" minimum size cannot be be set in the XRC file. ");
-    }
     if (node->HasValue(prop_maximum_size) && !(supported_flags | xrc::max_size_supported))
     {
         object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
     }
-    if (node->HasValue(prop_hidden))
+    if (node->HasValue(prop_hidden) && !(supported_flags | xrc::hidden_supported))
     {
         object.append_child(pugi::node_comment).set_value(" hidden cannot be be set in the XRC file. ");
     }
@@ -1789,7 +1792,7 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
 
 void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
 {
-    if (node->HasValue(prop_variant))
+    if (node->HasValue(prop_variant) && node->prop_as_string(prop_variant) != "normal")
     {
         object.append_child("variant").text().set(node->prop_as_string(prop_variant));
     }
@@ -1803,11 +1806,13 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
     }
     if (node->HasValue(prop_background_colour))
     {
-        object.append_child("bg").text().set(node->prop_as_wxColour(prop_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+        object.append_child("bg").text().set(
+            node->prop_as_wxColour(prop_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
     if (node->HasValue(prop_foreground_colour))
     {
-        object.append_child("fg").text().set(node->prop_as_wxColour(prop_foreground_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+        object.append_child("fg").text().set(
+            node->prop_as_wxColour(prop_foreground_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
     if (node->prop_as_bool(prop_disabled))
     {

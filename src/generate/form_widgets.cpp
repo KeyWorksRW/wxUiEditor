@@ -73,7 +73,7 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
 int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
     object.append_attribute("class").set_value("wxDialog");
-    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name).c_str());
+    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
     if (node->HasValue(prop_style))
     {
         if (add_comments && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
@@ -83,26 +83,26 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
         }
         if (!node->HasValue(prop_extra_style))
         {
-            object.append_child("style").text().set(node->prop_as_string(prop_style).c_str());
+            object.append_child("style").text().set(node->prop_as_string(prop_style));
         }
         else
         {
             ttlib::cstr all_styles = node->prop_as_string(prop_style);
             all_styles << '|' << node->prop_as_string(prop_extra_style);
-            object.append_child("style").text().set(all_styles.c_str());
+            object.append_child("style").text().set(all_styles);
         }
     }
     if (node->HasValue(prop_pos))
     {
-        object.append_child("pos").text().set(node->prop_as_string(prop_pos).c_str());
+        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
     }
     if (node->HasValue(prop_size))
     {
-        object.append_child("size").text().set(node->prop_as_string(prop_size).c_str());
+        object.append_child("size").text().set(node->prop_as_string(prop_size));
     }
     if (node->HasValue(prop_title))
     {
-        object.append_child("title").text().set(node->prop_as_string(prop_title).c_str());
+        object.append_child("title").text().set(node->prop_as_string(prop_title));
     }
     if (node->HasValue(prop_center))
     {
@@ -113,7 +113,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
             {
                 object.append_child(pugi::node_comment)
                     .set_value(
-                        (ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file.").c_str());
+                        (ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
             }
             object.append_child("centered").text().set(1);
         }
@@ -130,13 +130,13 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
         {
             ttlib::multistr art_parts(parts[IndexArtID], '|');
             auto icon = object.append_child("icon");
-            icon.append_attribute("stock_id").set_value(art_parts[0].c_str());
-            icon.append_attribute("stock_client").set_value(art_parts[1].c_str());
+            icon.append_attribute("stock_id").set_value(art_parts[0]);
+            icon.append_attribute("stock_client").set_value(art_parts[1]);
         }
         else
         {
             // REVIEW: [KeyWorks - 05-13-2022] As of wxWidgets 3.1.6, SVG files do not work here
-            object.append_child("icon").text().set(parts[IndexImage].c_str());
+            object.append_child("icon").text().set(parts[IndexImage]);
         }
     }
     if (add_comments)
@@ -332,7 +332,7 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
 int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
     object.append_attribute("class").set_value("wxFrame");
-    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name).c_str());
+    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
     if (node->HasValue(prop_style))
     {
         if (add_comments && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
@@ -342,26 +342,26 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
         }
         if (!node->HasValue(prop_extra_style))
         {
-            object.append_child("style").text().set(node->prop_as_string(prop_style).c_str());
+            object.append_child("style").text().set(node->prop_as_string(prop_style));
         }
         else
         {
             ttlib::cstr all_styles = node->prop_as_string(prop_style);
             all_styles << '|' << node->prop_as_string(prop_extra_style);
-            object.append_child("style").text().set(all_styles.c_str());
+            object.append_child("style").text().set(all_styles);
         }
     }
     if (node->HasValue(prop_pos))
     {
-        object.append_child("pos").text().set(node->prop_as_string(prop_pos).c_str());
+        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
     }
     if (node->HasValue(prop_size))
     {
-        object.append_child("size").text().set(node->prop_as_string(prop_size).c_str());
+        object.append_child("size").text().set(node->prop_as_string(prop_size));
     }
     if (node->HasValue(prop_title))
     {
-        object.append_child("title").text().set(node->prop_as_string(prop_title).c_str());
+        object.append_child("title").text().set(node->prop_as_string(prop_title));
     }
     if (node->HasValue(prop_center))
     {
@@ -372,7 +372,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
             {
                 object.append_child(pugi::node_comment)
                     .set_value(
-                        (ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file.").c_str());
+                        (ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
             }
             object.append_child("centered").text().set(1);
         }
@@ -389,13 +389,13 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
         {
             ttlib::multistr art_parts(parts[IndexArtID], '|');
             auto icon = object.append_child("icon");
-            icon.append_attribute("stock_id").set_value(art_parts[0].c_str());
-            icon.append_attribute("stock_client").set_value(art_parts[1].c_str());
+            icon.append_attribute("stock_id").set_value(art_parts[0]);
+            icon.append_attribute("stock_client").set_value(art_parts[1]);
         }
         else
         {
             // REVIEW: [KeyWorks - 05-13-2022] As of wxWidgets 3.1.6, SVG files do not work here
-            object.append_child("icon").text().set(parts[IndexImage].c_str());
+            object.append_child("icon").text().set(parts[IndexImage]);
         }
     }
     if (add_comments)
@@ -526,6 +526,15 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenSettings(Node* node, size_t& /*
     {
         return code;
     }
+}
+
+int PopupWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, bool add_comments)
+{
+    if (add_comments)
+    {
+        object.append_child(pugi::node_comment).set_value(" wxPopupTransientWindow is not supported by XRC. ");
+    }
+    return BaseGenerator::xrc_form_not_supported;
 }
 
 bool PopupWinGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -699,6 +708,38 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCod
     }
 
     return {};
+}
+
+int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    object.append_attribute("class").set_value("wxPanel");
+    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
+
+    if (node->HasValue(prop_window_style))
+    {
+        object.append_child("style").text().set(node->prop_as_string(prop_window_style));
+    }
+    if (node->HasValue(prop_pos))
+    {
+        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
+    }
+    if (node->HasValue(prop_size))
+    {
+        object.append_child("size").text().set(node->prop_as_string(prop_size));
+    }
+
+    GenXrcWindowSettings(node, object);
+    if (add_comments)
+    {
+        GenXrcComments(node, object);
+    }
+
+    return BaseGenerator::xrc_updated;
+}
+
+void PanelFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxPanelXmlHandler");
 }
 
 std::optional<ttlib::cstr> PanelFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

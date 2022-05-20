@@ -184,6 +184,17 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
         }
         return result;
     }
+    else if (result == BaseGenerator::xrc_form_not_supported)
+    {
+        if (add_comments)
+        {
+            return result;
+        }
+        else
+        {
+            return BaseGenerator::xrc_not_supported;
+        }
+    }
     else
     {
         return BaseGenerator::xrc_not_supported;

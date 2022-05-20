@@ -38,6 +38,8 @@ public:
     ttlib::cstr GetHelpText(Node*) override { return ttlib::cstr("wxPopupTransientWindow"); }
     ttlib::cstr GetHelpURL(Node*) override { return ttlib::cstr("wx_popup_transient_window.html"); }
 
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 };
 
@@ -51,6 +53,9 @@ public:
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };
 
 class DialogFormGenerator : public BaseGenerator

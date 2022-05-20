@@ -50,6 +50,7 @@ public:
     enum
     {
         xrc_not_supported = 0,
+        xrc_form_not_supported,
         xrc_sizer_item_created,
         xrc_updated
     };

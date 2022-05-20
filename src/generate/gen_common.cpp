@@ -1784,7 +1784,7 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
     {
         object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
     }
-    if (node->HasValue(prop_hidden) && !(supported_flags & xrc::hidden_supported))
+    if (node->prop_as_bool(prop_hidden) && !(supported_flags & xrc::hidden_supported))
     {
         object.append_child(pugi::node_comment).set_value(" hidden cannot be be set in the XRC file. ");
     }

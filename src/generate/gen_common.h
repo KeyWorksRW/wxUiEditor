@@ -139,6 +139,7 @@ namespace xrc
         all_unsupported = 0,
         min_size_supported = 1 << 0,
         max_size_supported = 1 << 1,
+        hidden_supported = 1 << 2,
     };
 }
 

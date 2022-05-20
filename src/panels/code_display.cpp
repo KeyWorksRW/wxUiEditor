@@ -23,7 +23,9 @@ extern const char* g_u8_cpp_keywords;
 
 const int node_marker = 1;
 
-const char* g_xrc_keywords = "centered class icon name object orient pos resource size stock_client stock_id style title";
+const char* g_xrc_keywords = "animation bg border centered class default enabled exstyle flag fg focused font help icon "
+                             "inactive-bitmap name object option orient pos "
+                             "resource size stock_client stock_id style title tooltip variant";
 
 CodeDisplay::CodeDisplay(wxWindow* parent, bool is_XML) : CodeDisplayBase(parent), m_isXML(is_XML)
 {

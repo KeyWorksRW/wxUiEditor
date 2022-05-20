@@ -62,7 +62,14 @@ bool App::LoadProject(const ttString& file)
                          "You may be able to load the file, but if you then save it you could lose data.\n\n"
                          "Do you want to try to open it anyway?",
                          "Unrecognized Version", wxYES_NO) != wxYES)
+        {
             return false;
+        }
+        else
+        {
+            wxBusyCursor wait;
+            project = LoadProject(doc);
+        }
     }
 
     else if (m_ProjectVersion < curCombinedVer)

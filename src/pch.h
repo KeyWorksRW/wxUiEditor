@@ -126,8 +126,8 @@ constexpr const char* txtAppname = "wxUiEditor";
 
 // Current version of wxUiEditor project files
 constexpr const auto curWxuiMajorVer = 1;
-constexpr const auto curWxuiMinorVer = 5;
-constexpr const auto curCombinedVer = 15;
+constexpr const auto curWxuiMinorVer = 4;
+constexpr const auto curCombinedVer = 14;
 
 // Use when you need to return an empty const ttlib::cstr&
 extern ttlib::cstr tt_empty_cstr;

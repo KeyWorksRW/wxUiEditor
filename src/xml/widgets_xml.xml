@@ -189,6 +189,10 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			help="Minimum slider position.">0</property>
 		<property name="maxValue" type="int"
 			help="Maximum slider position.">100</property>
+		<property name="sel_start" type="int"
+			help="Selection starting position. Only usable on Windows.">-1</property>
+		<property name="sel_end" type="int"
+			help="Selection starting position. Only usable on Windows.">-1</property>
 		<property name="line_size" type="int"
 			help="If >0, sets the number of steps the slider moves when the user moves up or down a line.">0</property>
 		<property name="page_size" type="int"
@@ -276,10 +280,6 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 		<property name="style" type="bitlist">
 			<option name="wxGA_SMOOTH"
 				help="Create a smooth progress bar with one pixel wide update step (not supported by all platforms)." />
-			<option name="wxGA_TEXT"
-				help="Display the current value in percents in the gauge itself. This style is only supported in wxQt and ignored under the other platforms. Requires wxWidgets 3.1 or higher." />
-			<option name="wxGA_PROGRESS"
-				help="Display the value of the gauge in the application taskbar button under Windows 7 and later and the dock icon under OS X. Ignored under the other platforms. Requires wxWidgets 3.1 or higher." />
 		</property>
 	</gen>
 	)===" R"===(

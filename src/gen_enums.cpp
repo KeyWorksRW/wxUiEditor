@@ -304,6 +304,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_scroll_rate_x, "scroll_rate_x" },
     { prop_scroll_rate_y, "scroll_rate_y" },
     { prop_search_button, "search_button" },
+    { prop_sel_end, "sel_end" },
+    { prop_sel_start, "sel_start" },
     { prop_select, "select" },
     { prop_selection, "selection" },
     { prop_selection_int, "selection_int" },

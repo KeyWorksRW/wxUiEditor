@@ -50,6 +50,11 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
         return;
     }
 
+    if (!sel_node->IsForm())
+    {
+        sel_node = sel_node->get_form();
+    }
+
     auto doc_str = GenerateXrcStr(sel_node, false);
 
     m_scintilla->ClearAll();

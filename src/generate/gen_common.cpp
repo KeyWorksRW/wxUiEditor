@@ -1790,6 +1790,42 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
     }
 }
 
+void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style)
+{
+    ttlib::cstr combined_style(node->prop_as_string(prop_style));
+    if (other_style != prop_unknown && node->HasValue(other_style))
+    {
+        if (combined_style.size())
+        {
+            combined_style << '|';
+        }
+        combined_style << node->prop_as_string(other_style);
+    }
+
+    if (node->HasValue(prop_window_style))
+    {
+        if (combined_style.size())
+        {
+            combined_style << '|';
+        }
+        combined_style << node->prop_as_string(prop_window_style);
+    }
+
+    if (combined_style.size())
+    {
+        object.append_child("style").text().set(combined_style);
+    }
+
+    if (node->HasValue(prop_pos))
+    {
+        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
+    }
+    if (node->HasValue(prop_size))
+    {
+        object.append_child("size").text().set(node->prop_as_string(prop_size));
+    }
+}
+
 void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
 {
     if (node->HasValue(prop_variant) && node->prop_as_string(prop_variant) != "normal")

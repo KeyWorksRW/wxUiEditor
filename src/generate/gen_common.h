@@ -148,6 +148,9 @@ void GenXrcSizerItem(Node* node, BaseCodeGenerator* code_gen);
 
 void GenXrcSizerItem(Node*, pugi::xml_node& object);
 
+// Generates style | windows_style, pos, and size
+void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style = prop_unknown);
+
 // These are the settings read by wxXmlResourceHandlerImpl::SetupWindow
 void GenXrcWindowSettings(Node*, pugi::xml_node& object);
 

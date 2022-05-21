@@ -43,6 +43,9 @@ public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };
 
 class CustomControl : public BaseGenerator
@@ -100,6 +103,9 @@ public:
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };
 
 class SliderGenerator : public BaseGenerator
@@ -112,7 +118,12 @@ public:
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
+    bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
+
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };
 
 class HyperlinkGenerator : public BaseGenerator

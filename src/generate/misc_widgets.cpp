@@ -13,6 +13,7 @@
 #include <wx/generic/statbmpg.h>   // wxGenericStaticBitmap header
 #include <wx/hyperlink.h>          // Hyperlink control
 #include <wx/infobar.h>            // declaration of wxInfoBarBase defining common API of wxInfoBar
+#include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 #include <wx/slider.h>             // wxSlider interface
 #include <wx/statbmp.h>            // wxStaticBitmap class interface
 #include <wx/statline.h>           // wxStaticLine class interface
@@ -90,18 +91,9 @@ int ActivityIndicatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
 
     item.append_attribute("class").set_value("wxActivityIndicator");
     item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-    if (node->HasValue(prop_window_style))
-    {
-        item.append_child("style").text().set(node->prop_as_string(prop_window_style));
-    }
-    if (node->HasValue(prop_pos))
-    {
-        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
-    }
-    if (node->HasValue(prop_size))
-    {
-        item.append_child("size").text().set(node->prop_as_string(prop_size));
-    }
+
+    GenXrcStylePosSize(node, item);
+
     if (node->prop_as_bool(prop_auto_start))
     {
         item.append_child("running").text().set("1");
@@ -214,18 +206,9 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
 
     item.append_attribute("class").set_value("wxAnimationCtrl");
     item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-    if (node->HasValue(prop_style))
-    {
-        item.append_child("style").text().set(node->prop_as_string(prop_style));
-    }
-    if (node->HasValue(prop_pos))
-    {
-        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
-    }
-    if (node->HasValue(prop_size))
-    {
-        item.append_child("size").text().set(node->prop_as_string(prop_size));
-    }
+
+    GenXrcStylePosSize(node, item);
+
     if (node->prop_as_bool(prop_hidden))
     {
         item.append_child("hidden").text().set("1");
@@ -264,9 +247,13 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
     return result;
 }
 
-void AnimationGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+void AnimationGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
 {
     handlers.emplace("wxAnimationCtrlXmlHandler");
+    if (node->HasValue(prop_inactive_bitmap))
+    {
+        handlers.emplace("wxBitmapXmlHandler");
+    }
 }
 
 bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -360,6 +347,84 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
     return code;
 }
 
+int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxBannerWindow");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    if (node->HasValue(prop_direction))
+    {
+        item.append_child("direction").text().set(node->prop_as_string(prop_direction));
+    }
+
+    GenXrcStylePosSize(node, item);
+
+    if (node->HasValue(prop_start_colour) && !node->HasValue(prop_bitmap))
+    {
+        object.append_child("gradient-start")
+            .text()
+            .set(node->prop_as_wxColour(prop_start_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+    if (node->HasValue(prop_end_colour) && !node->HasValue(prop_bitmap))
+    {
+        object.append_child("gradient-end")
+            .text()
+            .set(node->prop_as_wxColour(prop_end_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+
+    if (node->HasValue(prop_bitmap))
+    {
+        ttlib::multistr parts(node->prop_as_string(prop_bitmap), ';', tt::TRIM::both);
+        ASSERT(parts.size() > 1)
+        if (parts[IndexType].is_sameas("Art"))
+        {
+            ttlib::multistr art_parts(parts[IndexArtID], '|');
+            auto bmp = item.append_child("bitmap");
+            bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
+            bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
+        }
+        else
+        {
+            item.append_child("bitmap").text().set(parts[IndexImage].c_str());
+        }
+    }
+
+    ADD_ITEM_PROP(prop_message, "message")
+    ADD_ITEM_PROP(prop_title, "title")
+
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void BannerWindowGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxBannerWindowXmlHandler");
+    if (node->HasValue(prop_bitmap))
+    {
+        handlers.emplace("wxBitmapXmlHandler");
+    }
+}
+
 bool BannerWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/bannerwindow.h>", set_src, set_hdr);
@@ -434,18 +499,8 @@ int StaticLineGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
 
     item.append_attribute("class").set_value("wxStaticLine");
     item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-    if (node->HasValue(prop_style))
-    {
-        item.append_child("style").text().set(node->prop_as_string(prop_style));
-    }
-    if (node->HasValue(prop_pos))
-    {
-        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
-    }
-    if (node->HasValue(prop_size))
-    {
-        item.append_child("size").text().set(node->prop_as_string(prop_size));
-    }
+
+    GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
     if (add_comments)
@@ -759,6 +814,41 @@ std::optional<ttlib::cstr> GaugeGenerator::GenEvents(NodeEvent* event, const std
     return GenEventCode(event, class_name);
 }
 
+int GaugeGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxGauge");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    ADD_ITEM_PROP(prop_range, "range")
+    ADD_ITEM_PROP(prop_position, "value")
+
+    GenXrcStylePosSize(node, item, prop_orientation);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void GaugeGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers) { handlers.emplace("wxGauge"); }
+
 bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/gauge.h>", set_src, set_hdr);
@@ -785,6 +875,10 @@ wxObject* SliderGenerator::CreateMockup(Node* node, wxObject* parent)
         widget->SetTickFreq(node->prop_as_int(prop_tick_frequency));
     if (node->prop_as_int(prop_thumb_length) > 0)
         widget->SetThumbLength(node->prop_as_int(prop_thumb_length));
+    if (node->prop_as_int(prop_sel_start) >= 0 && node->prop_as_int(prop_sel_end) >= 0)
+    {
+        widget->SetSelection(node->prop_as_int(prop_sel_start), node->prop_as_int(prop_sel_end));
+    }
 #endif  // _WIN32
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -843,6 +937,14 @@ std::optional<ttlib::cstr> SliderGenerator::GenSettings(Node* node, size_t& /* a
         code << node->get_node_name() << "->SetValue(" << node->prop_as_string(prop_position) << ");";
     }
 
+    if (node->prop_as_int(prop_sel_start) >= 0 && node->prop_as_int(prop_sel_end) >= 0)
+    {
+        if (code.size())
+            code << "\n";
+        code << node->get_node_name() << "->SetSelection(" << node->prop_as_int(prop_sel_start) << ", "
+             << node->prop_as_int(prop_sel_end) << ");";
+    }
+
     if (node->prop_as_int(prop_line_size) > 0)
     {
         if (code.size())
@@ -871,6 +973,85 @@ std::optional<ttlib::cstr> SliderGenerator::GenSettings(Node* node, size_t& /* a
         code << node->get_node_name() << "->SetThumbLength(" << node->prop_as_string(prop_thumb_length) << ");";
     }
     return code;
+}
+
+bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty* prop, Node* node)
+{
+    if (prop->isProp(prop_minValue))
+    {
+        auto newValue = event->GetValue();
+        if (newValue.GetInteger() > node->prop_as_int(prop_maxValue))
+        {
+            event->SetValidationFailureMessage("Slider minimum must be less than the maximum.");
+            event->Veto();
+            return false;
+        }
+        return true;
+    }
+    else if (prop->isProp(prop_maxValue))
+    {
+        auto newValue = event->GetValue();
+        if (newValue.GetInteger() < node->prop_as_int(prop_minValue))
+        {
+            event->SetValidationFailureMessage("Slider maximum must be greater than the minimum.");
+            event->Veto();
+            return false;
+        }
+        return true;
+    }
+    else
+    {
+        return BaseGenerator::AllowPropertyChange(event, prop, node);
+    }
+}
+
+int SliderGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxSlider");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    ADD_ITEM_PROP(prop_position, "value")
+    ADD_ITEM_PROP(prop_minValue, "min")
+    ADD_ITEM_PROP(prop_maxValue, "max")
+    ADD_ITEM_PROP(prop_tick_frequency, "tickfreq")
+    ADD_ITEM_PROP(prop_page_size, "pagesize")
+    ADD_ITEM_PROP(prop_line_size, "linesize")
+    ADD_ITEM_PROP(prop_thumb_length, "thumb")
+
+    if (node->prop_as_int(prop_sel_start) >= 0 && node->prop_as_int(prop_sel_end) >= 0)
+    {
+        ADD_ITEM_PROP(prop_sel_start, "selmin")
+        ADD_ITEM_PROP(prop_sel_end, "selmax")
+    }
+
+    GenXrcStylePosSize(node, item, prop_orientation);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void SliderGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxSliderXmlHandler");
 }
 
 bool SliderGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

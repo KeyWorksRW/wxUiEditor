@@ -156,3 +156,5 @@ void GenXrcWindowSettings(Node*, pugi::xml_node& object);
 
 // Add comments for unsupported properties
 void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags = xrc::all_unsupported);
+
+void GenXrcBitmap(Node*, pugi::xml_node& object);

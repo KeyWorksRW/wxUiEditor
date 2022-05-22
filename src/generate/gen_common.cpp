@@ -9,13 +9,14 @@
 
 #include "gen_common.h"
 
-#include "gen_base.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "lambdas.h"      // Functions for formatting and storage of lamda events
-#include "mainapp.h"      // App -- App class
-#include "node.h"         // Node class
-#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"        // Utility functions that work with properties
-#include "write_code.h"   // WriteCode -- Write code to Scintilla or file
+#include "gen_base.h"      // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "image_bundle.h"  // Functions for working with wxBitmapBundle
+#include "lambdas.h"       // Functions for formatting and storage of lamda events
+#include "mainapp.h"       // App -- App class
+#include "node.h"          // Node class
+#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
+#include "utils.h"         // Utility functions that work with properties
+#include "write_code.h"    // WriteCode -- Write code to Scintilla or file
 
 ttlib::cstr GenerateSizerFlags(Node* node)
 {
@@ -1865,5 +1866,44 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
     if (node->HasValue(prop_context_help))
     {
         object.append_child("help").text().set(node->prop_as_string(prop_context_help));
+    }
+}
+
+void GenXrcBitmap(Node* node, pugi::xml_node& object)
+{
+    if (node->HasValue(prop_bitmap))
+    {
+        ttlib::multistr parts(node->prop_as_string(prop_bitmap), ';', tt::TRIM::both);
+        ASSERT(parts.size() > 1)
+        if (parts[IndexType].is_sameas("Art"))
+        {
+            ttlib::multistr art_parts(parts[IndexArtID], '|');
+            auto bmp = object.append_child("bitmap");
+            bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
+            bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
+        }
+        else if (parts[IndexType].is_sameas("SVG"))
+        {
+            auto svg_object = object.append_child("bitmap");
+            svg_object.text().set(parts[IndexImage]);
+            auto size = get_image_prop_size(parts[IndexSize]);
+            svg_object.append_attribute("default_size").set_value(ttlib::cstr() << size.x << ',' << size.y);
+        }
+        else
+        {
+            if (auto bundle = wxGetApp().GetPropertyImageBundle(parts); bundle)
+            {
+                ttlib::cstr names;
+                for (auto& file: bundle->lst_filenames)
+                {
+                    if (names.size())
+                    {
+                        names << ';';
+                    }
+                    names << file;
+                }
+                object.append_child("bitmap").text().set(names);
+            }
+        }
     }
 }

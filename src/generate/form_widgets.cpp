@@ -112,8 +112,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
             if (add_comments)
             {
                 object.append_child(pugi::node_comment)
-                    .set_value(
-                        (ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
+                    .set_value((ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
             }
             object.append_child("centered").text().set(1);
         }
@@ -333,52 +332,21 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
 {
     object.append_attribute("class").set_value("wxFrame");
     object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
-    if (node->HasValue(prop_style))
-    {
-        if (add_comments && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
-        {
-            object.append_child(pugi::node_comment)
-                .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
-        }
-        if (!node->HasValue(prop_extra_style))
-        {
-            object.append_child("style").text().set(node->prop_as_string(prop_style));
-        }
-        else
-        {
-            ttlib::cstr all_styles = node->prop_as_string(prop_style);
-            all_styles << '|' << node->prop_as_string(prop_extra_style);
-            object.append_child("style").text().set(all_styles);
-        }
-    }
-    if (node->HasValue(prop_pos))
-    {
-        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
-    }
-    if (node->HasValue(prop_size))
-    {
-        object.append_child("size").text().set(node->prop_as_string(prop_size));
-    }
+
     if (node->HasValue(prop_title))
     {
         object.append_child("title").text().set(node->prop_as_string(prop_title));
     }
     if (node->HasValue(prop_center))
     {
-        if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
-            node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
+        if (node->prop_as_string(prop_center) == "wxVERTICAL" || node->prop_as_string(prop_center) == "wxHORIZONTAL" ||
+            node->prop_as_string(prop_center) == "wxBOTH")
         {
-            if (add_comments)
-            {
-                object.append_child(pugi::node_comment)
-                    .set_value(
-                        (ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
-            }
             object.append_child("centered").text().set(1);
         }
         else
         {
-            object.append_child("centered").text().set(node->prop_as_string(prop_center).is_sameas("no") ? 0 : 1);
+            object.append_child("centered").text().set(0);
         }
     }
     if (node->HasValue(prop_icon))
@@ -398,9 +366,25 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
             object.append_child("icon").text().set(parts[IndexImage]);
         }
     }
+
+    GenXrcWindowSettings(node, object);
+
     if (add_comments)
     {
         GenXrcComments(node, object);
+
+        if (node->prop_as_string(prop_center) == "wxVERTICAL")
+        {
+            object.append_child(pugi::node_comment)
+                .set_value((" For centering, you cannot set only one direction in the XRC file (set wxBOTH instead)."));
+        }
+
+        if (node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
+        {
+            object.append_child(pugi::node_comment)
+                .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
+        }
+
         if (node->prop_as_bool(prop_persist))
         {
             object.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");

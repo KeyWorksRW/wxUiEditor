@@ -218,7 +218,7 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
     {
         ttlib::multistr parts(node->prop_as_string(prop_animation), ';', tt::TRIM::both);
         ASSERT(parts.size() > 1)
-        item.append_child("animation").text().set(parts[IndexImage].c_str());
+        item.append_child("animation").text().set(parts[IndexImage]);
     }
     if (node->HasValue(prop_inactive_bitmap))
     {
@@ -228,12 +228,12 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
         {
             ttlib::multistr art_parts(parts[IndexArtID], '|');
             auto bmp = item.append_child("inactive-bitmap");
-            bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
-            bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
+            bmp.append_attribute("stock_id").set_value(art_parts[0]);
+            bmp.append_attribute("stock_client").set_value(art_parts[1]);
         }
         else
         {
-            item.append_child("inactive-bitmap").text().set(parts[IndexImage].c_str());
+            item.append_child("inactive-bitmap").text().set(parts[IndexImage]);
         }
     }
 
@@ -386,26 +386,10 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
             .set(node->prop_as_wxColour(prop_end_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
 
-    if (node->HasValue(prop_bitmap))
-    {
-        ttlib::multistr parts(node->prop_as_string(prop_bitmap), ';', tt::TRIM::both);
-        ASSERT(parts.size() > 1)
-        if (parts[IndexType].is_sameas("Art"))
-        {
-            ttlib::multistr art_parts(parts[IndexArtID], '|');
-            auto bmp = item.append_child("bitmap");
-            bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
-            bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
-        }
-        else
-        {
-            item.append_child("bitmap").text().set(parts[IndexImage].c_str());
-        }
-    }
-
     ADD_ITEM_PROP(prop_message, "message")
     ADD_ITEM_PROP(prop_title, "title")
 
+    GenXrcBitmap(node, item);
     GenXrcWindowSettings(node, item);
 
     if (add_comments)
@@ -576,6 +560,43 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenEvents(NodeEvent* event, const
     return GenEventCode(event, class_name);
 }
 
+int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxStatusBar");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    ADD_ITEM_PROP(prop_fields, "fields")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void StatusBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxStatusBarXmlHandler");
+}
+
 bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/statusbr.h>", set_src, set_hdr);
@@ -733,6 +754,49 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenSettings(Node* node, size_t
 std::optional<ttlib::cstr> StaticBitmapGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxStaticBitmap");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    GenXrcBitmap(node, item);
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->HasValue(prop_scale_mode) && node->prop_as_string(prop_scale_mode) != "None")
+        {
+            item.append_child(pugi::node_comment).set_value(" scale mode cannot be be set in the XRC file. ");
+        }
+
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void StaticBitmapGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxStaticBitmapXmlHandler");
+    handlers.emplace("wxBitmapXmlHandler");
 }
 
 bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -1178,6 +1242,63 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /
     }
     return code;
 }
+int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxHyperlinkCtrl");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_PROP(prop_url, "url")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->HasValue(prop_hover_color))
+        {
+            item.append_child(pugi::node_comment).set_value(" hover color cannot be be set in the XRC file. ");
+        }
+        if (node->HasValue(prop_normal_color))
+        {
+            item.append_child(pugi::node_comment).set_value(" normal color cannot be be set in the XRC file. ");
+        }
+        if (node->HasValue(prop_visited_color))
+        {
+            item.append_child(pugi::node_comment).set_value(" visited color cannot be be set in the XRC file. ");
+        }
+        if (!node->prop_as_bool(prop_underlined))
+        {
+            item.append_child(pugi::node_comment).set_value(" removing underline cannot be be set in the XRC file. ");
+        }
+        if (node->prop_as_bool(prop_sync_hover_colour))
+        {
+            item.append_child(pugi::node_comment).set_value(" sync hover color cannot be be set in the XRC file. ");
+        }
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void HyperlinkGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxStaticLineXmlHandler");
+}
 
 bool HyperlinkGenerator::IsGeneric(Node* node) { return (!node->prop_as_bool(prop_underlined)); }
 
@@ -1250,6 +1371,52 @@ void InfoBarGenerator::OnButton(wxCommandEvent& event)
 
 void InfoBarGenerator::OnTimer(wxTimerEvent& /* event */) { m_infobar->ShowMessage("Message ..."); }
 
+int InfoBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxInfoBar");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    if (node->HasValue(prop_show_effect))
+    {
+        item.append_child("showeffect").text().set(node->prop_as_constant(prop_show_effect, "info_"));
+    }
+    if (node->HasValue(prop_hide_effect))
+    {
+        item.append_child("hideeffect").text().set(node->prop_as_constant(prop_hide_effect, "info_"));
+    }
+
+    ADD_ITEM_PROP(prop_duration, "effectduration")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void InfoBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxInfoBarXmlHandler");
+}
+
 bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/infobar.h>", set_src, set_hdr);
@@ -1296,6 +1463,36 @@ std::optional<ttlib::cstr> CustomControl::GenSettings(Node* node, size_t& auto_i
     }
 }
 
+std::optional<ttlib::cstr> CustomControl::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("unknown");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    return result;
+}
+
 bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     if (node->HasValue(prop_header))
@@ -1314,9 +1511,4 @@ bool CustomControl::GetIncludes(Node* node, std::set<std::string>& set_src, std:
             set_hdr.insert(ttlib::cstr() << "class " << node->prop_as_string(prop_class_name) << ';');
     }
     return true;
-}
-
-std::optional<ttlib::cstr> CustomControl::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }

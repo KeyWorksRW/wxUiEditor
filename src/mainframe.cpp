@@ -132,7 +132,7 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
     menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
 
-    menuInternal->Append(id_PreviewXRC, "Preview generated XRC...\tCtrl+R", "Show XRC-generated form");
+    menuInternal->Append(id_PreviewXRC, "Preview generated XRC...\tF5", "Show XRC-generated form");
     menuInternal->Append(id_XrcPreviewDlg, "XRC Preview Dialog...", "Dialog for previewing any XRC");
 
     m_submenu_import_recent = new wxMenu();

@@ -57,10 +57,7 @@ int NodeProperty::as_int() const
     }
 }
 
-int NodeProperty::as_id() const
-{
-    return g_NodeCreator.GetConstantAsInt(m_value, wxID_ANY);
-}
+int NodeProperty::as_id() const { return g_NodeCreator.GetConstantAsInt(m_value, wxID_ANY); }
 
 int NodeProperty::as_mockup(std::string_view prefix) const
 {

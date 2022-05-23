@@ -201,6 +201,79 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& auto
     return code;
 }
 
+int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    // Since wxWidgets 2.9.1, all the bitmaps are available via wxButton. However, the XRC wxButtonXmlHandler doesn't
+    // support that, instead requiring the older wxBitmapButtonXmlHandler
+
+    bool old_button = (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
+                       node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
+
+    item.append_attribute("class").set_value(old_button ? "wxBitmapButton" : "wxButton");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    ADD_ITEM_PROP(prop_label, "label")
+
+    if (node->prop_as_bool(prop_default))
+    {
+        item.append_child("default").text().set("1");
+    }
+
+    GenXrcBitmap(node, item);
+
+    auto xrc_style = ClearMultiplePropFlags("wxBU_NOTEXT|wxBORDER_NONE", node->prop_as_string(prop_style));
+    GenXrcPreStylePosSize(node, item, xrc_style);
+
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (old_button && node->HasValue(prop_label))
+        {
+            ADD_ITEM_COMMENT("XRC doesn't support multiple-bitmap buttons with a text label. ")
+        }
+
+        if (node->HasValue(prop_margins))
+        {
+            ADD_ITEM_COMMENT(" margins cannot be be set in the XRC file. ")
+        }
+
+        if (node->prop_as_bool(prop_markup))
+        {
+            ADD_ITEM_COMMENT(" markup cannot be be set in the XRC file. ")
+        }
+        if (node->prop_as_bool(prop_auth_needed))
+        {
+            ADD_ITEM_COMMENT(" authentication cannot be be set in the XRC file. ")
+        }
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ButtonGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
+{
+    bool old_button = (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
+                       node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
+
+    handlers.emplace(old_button ? "wxBitmapButtonXmlHandler" : "wxButtonXmlHandler");
+}
+
 bool ButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);

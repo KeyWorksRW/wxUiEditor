@@ -23,11 +23,11 @@ extern const char* g_u8_cpp_keywords;
 
 const int node_marker = 1;
 
-const char* g_xrc_keywords =
-    "animation bg bitmap border centered class default default_size direction effectduration enabled exstyle fields flag fg "
-    "focused font hideeffect gradient-end gradient-start help icon inactive-bitmap label linesize max min message name "
-    "object option orient pagesize pos range resource selmax selmin showeffect size stock_client stock_id style styles "
-    "thumb tick tickfreq title tooltip value variant widths";
+const char* g_xrc_keywords = "animation bg bitmap border centered class current default default_size direction disabled "
+                             "effectduration enabled exstyle fields flag fg focus focused font hideeffect gradient-end "
+                             "gradient-start help icon inactive-bitmap label linesize max min message name object option "
+                             "orient pagesize pos pressed range resource selmax selmin showeffect size stock_client "
+                             "stock_id style styles thumb tick tickfreq title tooltip value variant widths";
 
 CodeDisplay::CodeDisplay(wxWindow* parent, bool is_XML) : CodeDisplayBase(parent), m_isXML(is_XML)
 {

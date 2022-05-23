@@ -71,7 +71,7 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
         m_scintilla->SetBackSpaceUnIndents(true);
     }
-    m_scintilla->SetInitialSize(ConvertPixelsToDialog(wxSize(-2 > GetBestSize().x ? -2 : -1, -1)));
+    m_scintilla->SetInitialSize(ConvertDialogToPixels(wxSize(-2 > GetBestSize().x ? -2 : -1, -1)));
     box_sizer_3->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
 
     auto stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);

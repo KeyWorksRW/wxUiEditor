@@ -114,7 +114,7 @@ bool FontPropDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_comboFacenames = new wxComboBox(m_custom_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY|wxCB_SORT);
     m_comboFacenames->Append("default");
     m_comboFacenames->SetStringSelection("default");
-    m_comboFacenames->SetInitialSize(ConvertPixelsToDialog(wxSize(300 > GetBestSize().x ? 300 : -1, -1)));
+    m_comboFacenames->SetInitialSize(ConvertDialogToPixels(wxSize(300 > GetBestSize().x ? 300 : -1, -1)));
     m_comboFacenames->SetToolTip("Leave Facename set to default to create a font that isn't dependent on a user's installed fonts.");
     box_sizer_8->Add(m_comboFacenames, wxSizerFlags().Expand().Border(wxALL));
 

@@ -55,7 +55,7 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
         font.SetSymbolicSize(wxFONTSIZE_LARGE);
         m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
     }
-    m_scintilla->SetInitialSize(ConvertPixelsToDialog(
+    m_scintilla->SetInitialSize(ConvertDialogToPixels(
         wxSize(600 > GetBestSize().x ? 600 : -1, 400 > GetBestSize().y ? 400 : -1)));
 
     m_htmlWin = new wxHtmlWindow(m_splitter);

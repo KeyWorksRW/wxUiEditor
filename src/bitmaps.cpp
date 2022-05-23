@@ -55,6 +55,7 @@ static const ImageMap png_headers[] = {
     { "book_page", book_page_png, sizeof(book_page_png) },
     { "calendar", calendar_png, sizeof(calendar_png) },
     { "check3state", check3state_png, sizeof(check3state_png) },
+    { "close_btn", close_btn_png, sizeof(close_btn_png) },
     { "colourPickerIcon", colourPickerIcon_png, sizeof(colourPickerIcon_png) },
     { "CustomControl", customControl_png, sizeof(customControl_png) },
     { "dataview_ctrl", dataview_ctrl_png, sizeof(dataview_ctrl_png) },

@@ -29,6 +29,7 @@ namespace wxue_img
     wxBitmapBundle bundle_auitoolbar_png();
     wxBitmapBundle bundle_bmp_combo_box_png();
     wxBitmapBundle bundle_check3state_png();
+    wxBitmapBundle bundle_close_btn_png();
     wxBitmapBundle bundle_dataview_ctrl_png();
     wxBitmapBundle bundle_dataviewlist_ctrl_png();
     wxBitmapBundle bundle_dataviewtree_ctrl_png();
@@ -59,6 +60,7 @@ namespace wxue_img
     extern const unsigned char auitoolbar_png[476];
     extern const unsigned char bmp_combo_box_png[492];
     extern const unsigned char check3state_png[194];
+    extern const unsigned char close_btn_png[956];
     extern const unsigned char dataview_ctrl_png[231];
     extern const unsigned char dataviewlist_ctrl_png[685];
     extern const unsigned char dataviewtree_ctrl_png[238];

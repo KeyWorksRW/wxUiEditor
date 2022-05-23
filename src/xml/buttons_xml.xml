@@ -97,7 +97,7 @@ inline const char* buttons_xml = R"===(<?xml version="1.0"?>
 			help="Generated when the button is clicked" />
 	</gen>
 
-	<gen class="CloseButton" image="wxBitmapButton" type="widget">
+	<gen class="CloseButton" image="close_btn" type="widget">
 		<inherits class="wxWindow">
 			<hide name="smart_size" />
 			<hide name="variant" />

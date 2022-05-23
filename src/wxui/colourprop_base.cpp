@@ -61,7 +61,7 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     m_combo_system = new wxComboBox(m_staticbox_system->GetStaticBox(), wxID_ANY, wxEmptyString);
     m_combo_system->Enable(false);
-    m_combo_system->SetInitialSize(ConvertPixelsToDialog(wxSize(250 > GetBestSize().x ? 250 : -1, -1)));
+    m_combo_system->SetInitialSize(ConvertDialogToPixels(wxSize(250 > GetBestSize().x ? 250 : -1, -1)));
     m_staticbox_system->Add(m_combo_system, wxSizerFlags().Border(wxALL));
 
     auto staticText = new wxStaticText(m_staticbox_system->GetStaticBox(), wxID_ANY, "Caution: On Windows, these are classic colours. They may not be the colours the user has set via a Theme or Dark Mode.");

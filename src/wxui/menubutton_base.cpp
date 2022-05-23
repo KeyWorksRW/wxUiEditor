@@ -15,6 +15,7 @@ using namespace GenEnum;
 
 namespace wxue_img
 {
+    extern const unsigned char close_btn_png[956];
     extern const unsigned char stddialogbuttonsizer_png[524];
     extern const unsigned char toggle_button_png[277];
     extern const unsigned char wxButton_png[500];
@@ -37,4 +38,7 @@ MenuButton::MenuButton() : wxMenu()
 
     auto menu_item_4 = Append(gen_wxCommandLinkButton, "Insert wxCommandLinkButton");
     menu_item_4->SetBitmap(wxue_img::bundle_wxCommandLinkButton_png());
+
+    auto menu_item_5 = Append(gen_CloseButton, "Insert Close Button");
+    menu_item_5->SetBitmap(wxue_img::bundle_close_btn_png());
 }

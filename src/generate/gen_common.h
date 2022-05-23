@@ -167,3 +167,8 @@ void GenXrcBitmap(Node*, pugi::xml_node& object);
 // If prop_id is not set to wxID_ANY, then it will be used as the name instead of
 // prop_var_name
 void GenXrcObjectAttributes(Node*, pugi::xml_node& object, std::string_view xrc_class);
+
+// If parent is a sizer, generates a sizer_item, and returns a newly created object.
+//
+// If parent is not a sizer, it simply returns the object.
+pugi::xml_node InitializeXrcObject(Node*, pugi::xml_node& object);

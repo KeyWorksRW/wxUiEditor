@@ -1962,3 +1962,16 @@ void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view
     object.append_attribute("name").set_value(
         node->prop_as_string(node->prop_as_string(prop_id) == "wxID_ANY" ? prop_var_name : prop_id));
 }
+
+pugi::xml_node InitializeXrcObject(Node* node, pugi::xml_node& object)
+{
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        return object.append_child("object");
+    }
+    else
+    {
+        return object;
+    }
+}

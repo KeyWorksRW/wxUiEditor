@@ -49,6 +49,12 @@ using OptionalIncludes = std::optional<std::vector<std::string>>;
         item.append_child(name_child).text().set(node->prop_as_string(name_prop)); \
     }
 
+#define ADD_ITEM_COMMENT(text)                                 \
+    if (add_comments)                                          \
+    {                                                          \
+        item.append_child(pugi::node_comment).set_value(text); \
+    }
+
 // This is the interface class that all generators derive from.
 class BaseGenerator
 {

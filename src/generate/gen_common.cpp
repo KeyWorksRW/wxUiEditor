@@ -1827,6 +1827,34 @@ void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style
     }
 }
 
+void GenXrcPreStylePosSize(Node* node, pugi::xml_node& object, std::string_view processed_style)
+{
+    ttlib::cstr combined_style(processed_style);
+
+    if (node->HasValue(prop_window_style))
+    {
+        if (combined_style.size())
+        {
+            combined_style << '|';
+        }
+        combined_style << node->prop_as_string(prop_window_style);
+    }
+
+    if (combined_style.size())
+    {
+        object.append_child("style").text().set(combined_style);
+    }
+
+    if (node->HasValue(prop_pos))
+    {
+        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
+    }
+    if (node->HasValue(prop_size))
+    {
+        object.append_child("size").text().set(node->prop_as_string(prop_size));
+    }
+}
+
 void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
 {
     if (node->HasValue(prop_variant) && node->prop_as_string(prop_variant) != "normal")
@@ -1869,40 +1897,58 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
     }
 }
 
+struct PropNamePair
+{
+    GenEnum::PropName prop;
+    const char* xrc_name;
+};
+
+static PropNamePair props[] = {
+
+    { prop_bitmap, "bitmap" },
+    { prop_pressed_bmp, "pressed" },
+    { prop_focus_bmp, "focus" },
+    { prop_disabled_bmp, "disabled" },
+    { prop_current, "current" }
+};
+
 void GenXrcBitmap(Node* node, pugi::xml_node& object)
 {
-    if (node->HasValue(prop_bitmap))
+    for (auto& prop_pair: props)
     {
-        ttlib::multistr parts(node->prop_as_string(prop_bitmap), ';', tt::TRIM::both);
-        ASSERT(parts.size() > 1)
-        if (parts[IndexType].is_sameas("Art"))
+        if (node->HasValue(prop_pair.prop))
         {
-            ttlib::multistr art_parts(parts[IndexArtID], '|');
-            auto bmp = object.append_child("bitmap");
-            bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
-            bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
-        }
-        else if (parts[IndexType].is_sameas("SVG"))
-        {
-            auto svg_object = object.append_child("bitmap");
-            svg_object.text().set(parts[IndexImage]);
-            auto size = get_image_prop_size(parts[IndexSize]);
-            svg_object.append_attribute("default_size").set_value(ttlib::cstr() << size.x << ',' << size.y);
-        }
-        else
-        {
-            if (auto bundle = wxGetApp().GetPropertyImageBundle(parts); bundle)
+            ttlib::multistr parts(node->prop_as_string(prop_pair.prop), ';', tt::TRIM::both);
+            ASSERT(parts.size() > 1)
+            if (parts[IndexType].is_sameas("Art"))
             {
-                ttlib::cstr names;
-                for (auto& file: bundle->lst_filenames)
+                ttlib::multistr art_parts(parts[IndexArtID], '|');
+                auto bmp = object.append_child(prop_pair.xrc_name);
+                bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
+                bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
+            }
+            else if (parts[IndexType].is_sameas("SVG"))
+            {
+                auto svg_object = object.append_child(prop_pair.xrc_name);
+                svg_object.text().set(parts[IndexImage]);
+                auto size = get_image_prop_size(parts[IndexSize]);
+                svg_object.append_attribute("default_size").set_value(ttlib::cstr() << size.x << ',' << size.y);
+            }
+            else
+            {
+                if (auto bundle = wxGetApp().GetPropertyImageBundle(parts); bundle)
                 {
-                    if (names.size())
+                    ttlib::cstr names;
+                    for (auto& file: bundle->lst_filenames)
                     {
-                        names << ';';
+                        if (names.size())
+                        {
+                            names << ';';
+                        }
+                        names << file;
                     }
-                    names << file;
+                    object.append_child(prop_pair.xrc_name).text().set(names);
                 }
-                object.append_child("bitmap").text().set(names);
             }
         }
     }

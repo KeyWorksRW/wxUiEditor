@@ -151,6 +151,9 @@ void GenXrcSizerItem(Node*, pugi::xml_node& object);
 // Generates style | windows_style, pos, and size
 void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style = prop_unknown);
 
+// Call this variant when you need to preprocess the style to remove unusable flags
+void GenXrcPreStylePosSize(Node* node, pugi::xml_node& object, std::string_view processed_style);
+
 // These are the settings read by wxXmlResourceHandlerImpl::SetupWindow
 void GenXrcWindowSettings(Node*, pugi::xml_node& object);
 

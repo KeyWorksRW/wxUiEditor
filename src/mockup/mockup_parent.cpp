@@ -399,6 +399,8 @@ void MockupParent::OnNodePropModified(CustomEvent& event)
         {
             if (prop->isProp(prop_message) && prop->GetNode()->isGen(gen_wxBannerWindow))
                 break;  // In this case, Mockup does need to be redrawn
+            else if (prop->isProp(prop_id) && prop->GetNode()->isGen(gen_wxButton))
+                break;  // In this case, Mockup does need to be redrawn since label could have changed
             else
                 return;
         }

@@ -38,6 +38,11 @@ public:
     bool as_bool() const { return (as_int() != 0); };
     double as_float() const;
 
+    // Looks up wx constant, returns it's numerical value.
+    //
+    // Returns wxID_ANY if constant is not found
+    int as_id() const;
+
     // ttlib::sview as_sview() const { return m_value; }
 
     // Use with caution! This allows you to modify the property string directly.

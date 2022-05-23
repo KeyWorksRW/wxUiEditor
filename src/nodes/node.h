@@ -175,6 +175,11 @@ public:
     int prop_as_int(PropName name) const;
     int prop_as_mockup(PropName name, std::string_view prefix) const;
 
+    // Looks up wx constant, returns it's numerical value.
+    //
+    // Returns wxID_ANY if constant is not found
+    int prop_as_id(PropName name) const;
+
     wxColour prop_as_wxColour(PropName name) const;
     wxFont prop_as_font(PropName name) const;
     wxPoint prop_as_wxPoint(PropName name) const;

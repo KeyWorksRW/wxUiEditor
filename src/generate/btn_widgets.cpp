@@ -25,13 +25,16 @@ using namespace GenEnum;
 
 wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxButton(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
-                               DlgSize(parent, node, prop_size), GetStyleInt(node));
+    auto widget = new wxButton(wxStaticCast(parent, wxWindow), node->prop_as_id(prop_id), wxEmptyString,
+                               DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    if (node->prop_as_bool(prop_markup))
-        widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
-    else
-        widget->SetLabel(node->prop_as_wxString(prop_label));
+    if (node->HasValue(prop_label))
+    {
+        if (node->prop_as_bool(prop_markup))
+            widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
+        else
+            widget->SetLabel(node->prop_as_wxString(prop_label));
+    }
 
     if (node->prop_as_bool(prop_default))
         widget->SetDefault();
@@ -87,7 +90,7 @@ bool ButtonGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePropert
     // it does not revert when markup is cleared (at least on Windows where markup controls whether a generic or native
     // version of the button is displayed).
 
-    if (prop->isProp(prop_label))
+    if (prop->isProp(prop_label) && prop->HasValue())
     {
         auto ctrl = wxStaticCast(widget, wxButton);
         if (node->prop_as_bool(prop_markup))
@@ -129,14 +132,17 @@ std::optional<ttlib::cstr> ButtonGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    if (!node->prop_as_bool(prop_markup))
+    if (node->HasValue(prop_label))
     {
-        code << GenerateQuotedString(node, prop_label);
-    }
-    else
-    {
-        // prop_markup is set, so the actual label will be set in GenSettings()
-        code << "wxEmptyString";
+        if (!node->prop_as_bool(prop_markup))
+        {
+            code << GenerateQuotedString(node, prop_label);
+        }
+        else
+        {
+            // prop_markup is set, so the actual label will be set in GenSettings()
+            code << "wxEmptyString";
+        }
     }
 
     GeneratePosSizeFlags(node, code, true);
@@ -155,7 +161,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& auto
 {
     ttlib::cstr code;
 
-    if (node->prop_as_bool(prop_markup))
+    if (node->prop_as_bool(prop_markup) && node->HasValue(prop_label))
     {
         if (code.size())
             code << '\n';
@@ -225,7 +231,10 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_c
                        node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
 
     item.append_attribute("class").set_value(old_button ? "wxBitmapButton" : "wxButton");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    // If we have a non-default id, then use that. Otherwise, use the variable name as the id.
+    item.append_attribute("name").set_value(
+        node->prop_as_string(node->prop_as_string(prop_id) == "wxID_ANY" ? prop_var_name : prop_id));
 
     ADD_ITEM_PROP(prop_label, "label")
 

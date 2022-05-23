@@ -70,7 +70,8 @@ inline const char* buttons_xml = R"===(<?xml version="1.0"?>
 		<inherits class="String Validator" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_btn</property>
-		<property name="label" type="string_escapes">MyButton</property>
+		<property name="label" type="string_escapes"
+			help="Leave this property blank if you are using a stock id. A stock id will automatically display a label matching the id.">MyButton</property>
 		<property name="markup" type="bool"
 			help="This can be used to apply fonts or colours to different parts of the label.">0</property>
 		<property name="default" type="bool"

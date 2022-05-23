@@ -25,7 +25,7 @@ const int node_marker = 1;
 
 const char* g_xrc_keywords = "animation bg bitmap border centered class current default default_size direction disabled "
                              "effectduration enabled exstyle fields flag fg focus focused font hideeffect gradient-end "
-                             "gradient-start help icon inactive-bitmap label linesize max min message name object option "
+                             "gradient-start help icon inactive-bitmap label linesize margins max min message name object option "
                              "orient pagesize pos pressed range resource selmax selmin showeffect size stock_client "
                              "stock_id style styles thumb tick tickfreq title tooltip value variant widths";
 
@@ -193,7 +193,11 @@ void CodeDisplay::OnNodeSelected(Node* node)
     else if (m_isXML)
     {
         ttlib::cstr search("name=\"");
-        if (node->HasValue(prop_var_name))
+        if (node->HasProp(prop_id) && node->prop_as_string(prop_id) != "wxID_ANY")
+        {
+            search << node->prop_as_string(prop_id);
+        }
+        else if (node->HasValue(prop_var_name))
         {
             search << node->prop_as_string(prop_var_name);
         }

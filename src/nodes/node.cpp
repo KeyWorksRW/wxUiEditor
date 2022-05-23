@@ -332,6 +332,14 @@ int Node::prop_as_int(PropName name) const
         return 0;
 }
 
+int Node::prop_as_id(PropName name) const
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_id();
+    else
+        return wxID_ANY;
+}
+
 int Node::prop_as_mockup(PropName name, std::string_view prefix) const
 {
     if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())

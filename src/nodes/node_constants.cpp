@@ -713,6 +713,8 @@ void NodeCreator::AddAllConstants()
     ADD_CONSTANT(wxRIBBON_BUTTON_HYBRID)
     ADD_CONSTANT(wxRIBBON_BUTTON_TOGGLE)
 
+    ADD_CONSTANT(wxID_ANY)
+
     // The following stock ids are taken from wxWidgets/src/common/stockitem.cpp
 
     ADD_CONSTANT(wxID_ABOUT)

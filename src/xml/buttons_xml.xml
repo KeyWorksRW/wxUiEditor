@@ -97,6 +97,22 @@ inline const char* buttons_xml = R"===(<?xml version="1.0"?>
 			help="Generated when the button is clicked" />
 	</gen>
 
+	<gen class="CloseButton" image="wxBitmapButton" type="widget">
+		<inherits class="wxWindow">
+			<hide name="smart_size" />
+			<hide name="variant" />
+			<hide name="foreground_colour" />
+			<hide name="background_colour" />
+			<hide name="font" />
+			<hide name="window_name" />
+		</inherits>
+		<inherits class="Window Events" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">close_btn</property>
+		<event name="wxEVT_BUTTON" class="wxCommandEvent"
+			help="Generated when the button is clicked" />
+	</gen>
+
 	<gen class="wxCommandLinkButton" image="wxCommandLinkButton" type="widget">
 		<inherits class="Command Bitmaps" />
 		<inherits class="wxWindow" />
@@ -107,7 +123,7 @@ inline const char* buttons_xml = R"===(<?xml version="1.0"?>
 			help="First line of text on the button, typically the label of an action that will be made when the button is pressed.">MyButton</property>
 		<property name="note" type="string_edit_escapes"
 			help="Second line of text describing the action performed when the button is pressed."
-		/>
+		 />
 		<property name="default" type="bool"
 			help="If true, this will be the default button (it will be depressed when the return key is pressed)">0</property>
 		<property name="auth_needed" type="bool"

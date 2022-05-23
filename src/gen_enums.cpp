@@ -475,10 +475,11 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },
     { gen_wxWindow, "wxWindow" },
 
-    // The following are the rergular generators
+    // The following are the regular generators
 
     { gen_BookPage, "BookPage" },
     { gen_Check3State, "Check3State" },
+    { gen_CloseButton, "CloseButton" },
     { gen_CustomControl, "CustomControl" },
     { gen_Images, "Images" },
     { gen_MenuBar, "MenuBar" },

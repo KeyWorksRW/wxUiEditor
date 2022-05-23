@@ -506,6 +506,7 @@ namespace GenEnum
 
         gen_BookPage,
         gen_Check3State,
+        gen_CloseButton,
         gen_CustomControl,
         gen_Images,
         gen_MenuBar,

@@ -98,6 +98,7 @@ inline const GenName lst_no_class_access[] = {
 
     gen_auitool,
     gen_BookPage,
+    gen_CloseButton,
     gen_StaticCheckboxBoxSizer,
     gen_StaticRadioBtnBoxSizer,
     gen_TextSizer,

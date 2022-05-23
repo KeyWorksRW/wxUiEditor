@@ -1953,3 +1953,12 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object)
         }
     }
 }
+
+void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view class_name)
+{
+    object.append_attribute("class").set_value(class_name);
+
+    // If we have a non-default id, then use that. Otherwise, use the variable name as the id.
+    object.append_attribute("name").set_value(
+        node->prop_as_string(node->prop_as_string(prop_id) == "wxID_ANY" ? prop_var_name : prop_id));
+}

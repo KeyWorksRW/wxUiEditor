@@ -230,11 +230,7 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_c
     bool old_button = (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
                        node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
 
-    item.append_attribute("class").set_value(old_button ? "wxBitmapButton" : "wxButton");
-
-    // If we have a non-default id, then use that. Otherwise, use the variable name as the id.
-    item.append_attribute("name").set_value(
-        node->prop_as_string(node->prop_as_string(prop_id) == "wxID_ANY" ? prop_var_name : prop_id));
+    GenXrcObjectAttributes(node, item, old_button ? "wxBitmapButton" : "wxButton");
 
     ADD_ITEM_PROP(prop_label, "label")
 
@@ -254,7 +250,7 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_c
     {
         if (old_button && node->HasValue(prop_label))
         {
-            ADD_ITEM_COMMENT("XRC doesn't support multiple-bitmap buttons with a text label. ")
+            ADD_ITEM_COMMENT(" XRC doesn't support multiple-bitmap buttons with a text label. ")
         }
 
         if (node->HasValue(prop_margins))

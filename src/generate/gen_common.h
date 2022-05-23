@@ -161,3 +161,9 @@ void GenXrcWindowSettings(Node*, pugi::xml_node& object);
 void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags = xrc::all_unsupported);
 
 void GenXrcBitmap(Node*, pugi::xml_node& object);
+
+// Generates class and name attributes for the object.
+//
+// If prop_id is not set to wxID_ANY, then it will be used as the name instead of
+// prop_var_name
+void GenXrcObjectAttributes(Node*, pugi::xml_node& object, std::string_view class_name);

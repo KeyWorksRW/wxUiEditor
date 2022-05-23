@@ -166,4 +166,4 @@ void GenXrcBitmap(Node*, pugi::xml_node& object);
 //
 // If prop_id is not set to wxID_ANY, then it will be used as the name instead of
 // prop_var_name
-void GenXrcObjectAttributes(Node*, pugi::xml_node& object, std::string_view class_name);
+void GenXrcObjectAttributes(Node*, pugi::xml_node& object, std::string_view xrc_class);

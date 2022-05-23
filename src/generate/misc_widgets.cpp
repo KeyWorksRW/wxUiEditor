@@ -89,9 +89,7 @@ int ActivityIndicatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("wxActivityIndicator");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-
+    GenXrcObjectAttributes(node, item, "wxActivityIndicator");
     GenXrcStylePosSize(node, item);
 
     if (node->prop_as_bool(prop_auto_start))
@@ -204,9 +202,7 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("wxAnimationCtrl");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-
+    GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
     GenXrcStylePosSize(node, item);
 
     if (node->prop_as_bool(prop_hidden))
@@ -363,15 +359,11 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("wxBannerWindow");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    GenXrcObjectAttributes(node, item, "wxBannerWindow");
 
-    if (node->HasValue(prop_direction))
-    {
-        item.append_child("direction").text().set(node->prop_as_string(prop_direction));
-    }
-
-    GenXrcStylePosSize(node, item);
+    ADD_ITEM_PROP(prop_message, "message")
+    ADD_ITEM_PROP(prop_title, "title")
+    ADD_ITEM_PROP(prop_direction, "direction")
 
     if (node->HasValue(prop_start_colour) && !node->HasValue(prop_bitmap))
     {
@@ -386,8 +378,7 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
             .set(node->prop_as_wxColour(prop_end_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
 
-    ADD_ITEM_PROP(prop_message, "message")
-    ADD_ITEM_PROP(prop_title, "title")
+    GenXrcStylePosSize(node, item);
 
     GenXrcBitmap(node, item);
     GenXrcWindowSettings(node, item);
@@ -481,9 +472,7 @@ int StaticLineGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("wxStaticLine");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-
+    GenXrcObjectAttributes(node, item, "wxStaticLine");
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
@@ -772,9 +761,7 @@ int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("wxStaticBitmap");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-
+    GenXrcObjectAttributes(node, item, "wxStaticBitmap");
     GenXrcBitmap(node, item);
 
     GenXrcStylePosSize(node, item);
@@ -894,8 +881,7 @@ int GaugeGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_co
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("wxGauge");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    GenXrcObjectAttributes(node, item, "wxGauge");
 
     ADD_ITEM_PROP(prop_range, "range")
     ADD_ITEM_PROP(prop_position, "value")
@@ -1085,8 +1071,7 @@ int SliderGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_c
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("wxSlider");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    GenXrcObjectAttributes(node, item, "wxSlider");
 
     ADD_ITEM_PROP(prop_position, "value")
     ADD_ITEM_PROP(prop_minValue, "min")
@@ -1258,8 +1243,7 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("wxHyperlinkCtrl");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    GenXrcObjectAttributes(node, item, "wxHyperlinkCtrl");
 
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_PROP(prop_url, "url")
@@ -1387,8 +1371,7 @@ int InfoBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("wxInfoBar");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    GenXrcObjectAttributes(node, item, "wxInfoBar");
 
     if (node->HasValue(prop_show_effect))
     {
@@ -1484,9 +1467,7 @@ int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_
         result = BaseGenerator::xrc_updated;
     }
 
-    item.append_attribute("class").set_value("unknown");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-
+    GenXrcObjectAttributes(node, item, "unknown");
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 

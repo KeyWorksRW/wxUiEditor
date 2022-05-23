@@ -69,6 +69,8 @@ if (NOT WIDGETS_FORK)
 else()
     message(NOTICE "Building with forked wxWidgets libraries")
 
+    add_compile_definitions(WIDGETS_FORK)
+
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
     set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
 

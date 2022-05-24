@@ -87,6 +87,36 @@ std::optional<ttlib::cstr> CheckBoxGenerator::GenSettings(Node* node, size_t& /*
     return code;
 }
 
+int CheckBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxCheckBox");
+
+    ADD_ITEM_PROP(prop_label, "label")
+
+    if (node->prop_as_bool(prop_checked))
+    {
+        object.append_child("checked").text().set("1");
+    }
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void CheckBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxCheckBoxXmlHandler");
+}
+
 bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
@@ -197,6 +227,49 @@ std::optional<ttlib::cstr> Check3StateGenerator::GenSettings(Node* node, size_t&
     }
 
     return code;
+}
+
+int Check3StateGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxCheckBox");
+
+    ADD_ITEM_PROP(prop_label, "label")
+
+#if defined(WIDGETS_FORK)
+    if (node->prop_as_string(prop_initial_state) == "wxCHK_CHECKED")
+    {
+        item.append_child("checked").text().set("1");
+    }
+    else if (node->prop_as_string(prop_initial_state) == "wxCHK_UNDETERMINED")
+    {
+        item.append_child("undetermined").text().set("1");
+    }
+#endif
+
+    ttlib::cstr styles(node->prop_as_string(prop_style));
+    if (styles.size())
+    {
+        styles << '|';
+    }
+    styles << "wxCHK_3STATE";
+    GenXrcPreStylePosSize(node, item, styles);
+
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void Check3StateGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxCheckBoxXmlHandler");
 }
 
 bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

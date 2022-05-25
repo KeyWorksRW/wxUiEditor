@@ -1785,10 +1785,6 @@ void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags)
     {
         object.append_child(pugi::node_comment).set_value(" maximum size cannot be be set in the XRC file. ");
     }
-    if (node->prop_as_bool(prop_hidden) && !(supported_flags & xrc::hidden_supported))
-    {
-        object.append_child(pugi::node_comment).set_value(" hidden cannot be be set in the XRC file. ");
-    }
 }
 
 void GenXrcStylePosSize(Node* node, pugi::xml_node& object, PropName other_style)
@@ -1855,8 +1851,58 @@ void GenXrcPreStylePosSize(Node* node, pugi::xml_node& object, std::string_view 
     }
 }
 
+// clang-format off
+static std::map<wxFontWeight, const char*> s_weight_pairs = {
+    { wxFONTWEIGHT_THIN, "thin" },
+    { wxFONTWEIGHT_EXTRALIGHT, "extralight" },
+    { wxFONTWEIGHT_LIGHT,"light" },
+    { wxFONTWEIGHT_NORMAL, "normalweight" },
+    { wxFONTWEIGHT_MEDIUM, "medium" },
+    { wxFONTWEIGHT_SEMIBOLD, "semibold" },
+    { wxFONTWEIGHT_BOLD, "bold" },
+    { wxFONTWEIGHT_EXTRABOLD, "extrabold" },
+    { wxFONTWEIGHT_HEAVY, "heavy" },
+    { wxFONTWEIGHT_EXTRAHEAVY, "extraheavy" },
+};
+
+static std::map<wxFontFamily, const char*> s_family_pairs = {
+    { wxFONTFAMILY_DEFAULT, "default" },
+    { wxFONTFAMILY_DECORATIVE, "decorative"},
+    { wxFONTFAMILY_ROMAN, "roman"},
+    { wxFONTFAMILY_SCRIPT, "script"},
+    { wxFONTFAMILY_SWISS, "swiss"},
+    { wxFONTFAMILY_MODERN, "modern"},
+    { wxFONTFAMILY_TELETYPE, "teletype"},
+};
+// clang-format on
+
+void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop)
+{
+    auto font_object = object.append_child("font");
+    font_object.append_child("size").text().set(font_prop.GetFractionalPointSize());
+    if (font_prop.GetStyle() == wxFONTSTYLE_ITALIC)
+        font_object.append_child("style").text().set("italic");
+    else if (font_prop.GetStyle() == wxFONTSTYLE_SLANT)
+        font_object.append_child("style").text().set("slant");
+    if (font_prop.GetWeight() != wxFONTWEIGHT_NORMAL)
+        font_object.append_child("weight").text().set(s_weight_pairs[font_prop.GetWeight()]);
+    if (font_prop.GetFamily() != wxFONTFAMILY_DEFAULT)
+        font_object.append_child("family").text().set(s_family_pairs[font_prop.GetFamily()]);
+    if (font_prop.HasFaceName() && font_prop.GetFaceName() != "default")
+        font_object.append_child("face").text().set(font_prop.GetFaceName().ToUTF8().data());
+    if (font_prop.IsUnderlined())
+        font_object.append_child("underlined").text().set("1");
+    if (font_prop.IsStrikethrough())
+        font_object.append_child("strikethrough").text().set("1");
+}
+
 void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
 {
+    if (node->prop_as_bool(prop_hidden))
+    {
+        // Hidden is set in the XRC_MAKE_INSTANCE macro
+        object.append_child("hidden").text().set("1");
+    }
     if (node->HasValue(prop_variant) && node->prop_as_string(prop_variant) != "normal")
     {
         object.append_child("variant").text().set(node->prop_as_string(prop_variant));
@@ -1867,7 +1913,8 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
     }
     if (node->HasValue(prop_font))
     {
-        object.append_child("font").text().set(node->prop_as_font(prop_extra_style).GetNativeFontInfoDesc().ToUTF8().data());
+        auto font_prop = node->prop_as_font_prop(prop_font);
+        GenXrcFont(object, font_prop);
     }
     if (node->HasValue(prop_background_colour))
     {

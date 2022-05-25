@@ -20,6 +20,8 @@
 
 class wxPropertyGridEvent;
 
+class FontProperty;
+
 // Common component functions
 
 // Flags are added with no space around '|' character.
@@ -172,3 +174,5 @@ void GenXrcObjectAttributes(Node*, pugi::xml_node& object, std::string_view xrc_
 //
 // If parent is not a sizer, it simply returns the object.
 pugi::xml_node InitializeXrcObject(Node*, pugi::xml_node& object);
+
+void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop);

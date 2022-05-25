@@ -339,7 +339,6 @@ static const PropName NonUiProps[] = {
     prop_maxlength,
     prop_message,
     prop_min,
-    prop_normal_color,
     prop_pagesize,
     prop_persist,
     prop_radiobtn_var_name,

@@ -9,7 +9,7 @@ inline const char* textctrls_xml = R"===(<?xml version="1.0"?>
 		<property name="var_name" type="string">m_staticText</property>
 		<property name="label" type="string_edit_escapes">MyLabel</property>
 		<property name="markup" type="bool"
-			help="Simple markup can be used to apply different fonts or colours to different parts of the control label when supported. If markup is not supported by the control or platform, it is simply stripped and SetLabel() is used with the resulting string.">0</property>
+			help="Simple markup can be used to apply different fonts or colours to different parts of the control label when supported. If markup is not supported by the control or platform, it is simply stripped and SetLabel() is used with the resulting string.\n\nSample: This is <i>italic</i> and this is <span fgcolor='red'>red</span>">0</property>
 		<property name="wrap" type="int"
 			help="Wraps the control's label so that each of its lines becomes at most this many pixels wide if possible (the lines are broken at words boundaries so it might not be the case if words are too long). If width is negative, no wrapping is done.">-1</property>
 		<property name="style" type="bitlist">

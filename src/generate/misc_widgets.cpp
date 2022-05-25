@@ -205,11 +205,6 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
     GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
     GenXrcStylePosSize(node, item);
 
-    if (node->prop_as_bool(prop_hidden))
-    {
-        item.append_child("hidden").text().set("1");
-    }
-
     if (node->HasValue(prop_animation))
     {
         ttlib::multistr parts(node->prop_as_string(prop_animation), ';', tt::TRIM::both);
@@ -237,7 +232,7 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
 
     if (add_comments)
     {
-        GenXrcComments(node, item, xrc::hidden_supported);
+        GenXrcComments(node, item);
     }
 
     return result;
@@ -367,13 +362,13 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
 
     if (node->HasValue(prop_start_colour) && !node->HasValue(prop_bitmap))
     {
-        object.append_child("gradient-start")
+        item.append_child("gradient-start")
             .text()
             .set(node->prop_as_wxColour(prop_start_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
     if (node->HasValue(prop_end_colour) && !node->HasValue(prop_bitmap))
     {
-        object.append_child("gradient-end")
+        item.append_child("gradient-end")
             .text()
             .set(node->prop_as_wxColour(prop_end_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
@@ -1227,6 +1222,7 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /
     }
     return code;
 }
+
 int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
     pugi::xml_node item;
@@ -1245,6 +1241,35 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
 
     GenXrcObjectAttributes(node, item, "wxHyperlinkCtrl");
 
+#if defined(WIDGETS_FORK)
+    if (!node->prop_as_bool(prop_underlined))
+    {
+        item.append_child("use_generic").text().set(1);
+        if (!node->HasValue(prop_font))
+        {
+            auto font_object = item.append_child("font");
+            font_object.append_child("sysfont").text().set("wxSYS_DEFAULT_GUI_FONT");
+            FontProperty font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+            font_object.append_child("underlined").text().set("0");
+        }
+    }
+    if (node->HasValue(prop_normal_color))
+    {
+        item.append_child("normal").text().set(
+            node->prop_as_wxColour(prop_normal_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+    if (node->HasValue(prop_hover_color))
+    {
+        item.append_child("hover").text().set(
+            node->prop_as_wxColour(prop_hover_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+    if (node->HasValue(prop_visited_color))
+    {
+        item.append_child("visited").text().set(
+            node->prop_as_wxColour(prop_visited_color).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+#endif
+
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_PROP(prop_url, "url")
 
@@ -1253,6 +1278,7 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
 
     if (add_comments)
     {
+#if !defined(WIDGETS_FORK)
         if (node->HasValue(prop_hover_color))
         {
             item.append_child(pugi::node_comment).set_value(" hover color cannot be be set in the XRC file. ");
@@ -1265,6 +1291,7 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
         {
             item.append_child(pugi::node_comment).set_value(" visited color cannot be be set in the XRC file. ");
         }
+#endif
         if (!node->prop_as_bool(prop_underlined))
         {
             item.append_child(pugi::node_comment).set_value(" removing underline cannot be be set in the XRC file. ");

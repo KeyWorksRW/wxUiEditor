@@ -49,6 +49,12 @@ using OptionalIncludes = std::optional<std::vector<std::string>>;
         item.append_child(name_child).text().set(node->prop_as_string(name_prop)); \
     }
 
+#define ADD_ITEM_BOOL(name_prop, name_child)           \
+    if (node->prop_as_bool(name_prop))                 \
+    {                                                  \
+        item.append_child(name_child).text().set("1"); \
+    }
+
 #define ADD_ITEM_COMMENT(text)                                 \
     if (add_comments)                                          \
     {                                                          \

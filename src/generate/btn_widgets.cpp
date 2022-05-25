@@ -213,57 +213,28 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_c
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
-    // Since wxWidgets 2.9.1, all the bitmaps are available via wxButton. However, the XRC wxButtonXmlHandler doesn't
-    // support that, instead requiring the older wxBitmapButtonXmlHandler
-
-#if !defined(WIDGETS_FORK)
-    bool old_button = (node->HasValue(prop_disabled_bmp) || node->HasValue(prop_pressed_bmp) ||
-                       node->HasValue(prop_focus_bmp) || node->HasValue(prop_current));
-
-    GenXrcObjectAttributes(node, item, old_button ? "wxBitmapButton" : "wxButton");
-#else
     GenXrcObjectAttributes(node, item, "wxButton");
-#endif
 
     ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_BOOL(prop_markup, "markup")
 
     if (node->prop_as_bool(prop_default))
     {
         item.append_child("default").text().set("1");
     }
 
-#if defined(WIDGETS_FORK)
     if (node->HasValue(prop_margins))
     {
         item.append_child("margins").text().set(node->prop_as_string(prop_margins));
     }
-#endif
 
     GenXrcBitmap(node, item);
-
-#if !defined(WIDGETS_FORK)
-    auto xrc_style = ClearMultiplePropFlags("wxBU_NOTEXT|wxBORDER_NONE", node->prop_as_string(prop_style));
-#else
-    auto& xrc_style = node->prop_as_string(prop_style);
-#endif
-    GenXrcPreStylePosSize(node, item, xrc_style);
+    GenXrcStylePosSize(node, item);
 
     GenXrcWindowSettings(node, item);
 
     if (add_comments)
     {
-#if !defined(WIDGETS_FORK)
-        if (old_button && node->HasValue(prop_label))
-        {
-            ADD_ITEM_COMMENT(" XRC doesn't support multiple-bitmap buttons with a text label. ")
-        }
-
-        if (node->HasValue(prop_margins))
-        {
-            ADD_ITEM_COMMENT(" margins cannot be be set in the XRC file. ")
-        }
-#endif
-
         if (node->prop_as_bool(prop_markup))
         {
             ADD_ITEM_COMMENT(" markup cannot be be set in the XRC file. ")

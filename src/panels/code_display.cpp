@@ -39,7 +39,7 @@ const char* g_xrc_keywords =
     "help helptext hgap hidden hideeffect hint horizontal htmlcode hybrid "
     "icon inc image image-small imagelist imagelist-small inactive-bitmap item "
     "label layer left left_dockable linesize longhelp "
-    "margins max max_size maximize_button maxlength message min minsize min_size minimize_button movable "
+    "margins markup max max_size maximize_button maxlength message min minsize min_size minimize_button movable "
     "name nonflexiblegrowmode null-text "
     "object object_ref option orient orientation "
     "packing pagesize pane_border perspective pin_button pos pressed proportion "

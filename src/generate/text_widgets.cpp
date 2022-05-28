@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Text component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +11,7 @@
     #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
 #endif
 
+#include <wx/busyinfo.h>               // Information window (when app is busy)
 #include <wx/event.h>                  // Event classes
 #include <wx/html/htmlwin.h>           // wxHtmlWindow class for parsing & displaying HTML
 #include <wx/infobar.h>                // declaration of wxInfoBarBase defining common API of wxInfoBar
@@ -20,6 +21,8 @@
 #include <wx/stattext.h>               // wxStaticText base header
 #include <wx/stc/stc.h>                // A wxWidgets implementation of Scintilla.
 #include <wx/webview.h>                // Common interface and events for web view component
+
+#include <wx/generic/stattextg.h>  // wxGenericStaticText header
 
 #ifdef _MSC_VER
     #pragma warning(pop)
@@ -31,13 +34,24 @@
 #include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
+#include "write_code.h"  // WriteCode -- Write code to Scintilla or file
 
 wxObject* StaticTextGenerator::CreateMockup(Node* node, wxObject* parent)
 {
-    auto widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
-                                   DlgSize(parent, node, prop_size), GetStyleInt(node));
+    wxStaticTextBase* widget;
+    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
+    {
+        widget =
+            new wxGenericStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString,
+                                    DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+    }
+    else
+    {
+        widget = new wxStaticText(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
+                                  DlgSize(parent, node, prop_size), GetStyleInt(node));
+    }
 
-    if (node->prop_as_bool(prop_markup))
+    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
         widget->SetLabelMarkup(node->prop_as_wxString(prop_label));
     else
         widget->SetLabel(node->prop_as_wxString(prop_label));
@@ -77,7 +91,8 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
+    code << node->get_node_name()
+         << GenerateNewAssignment(node, (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
@@ -113,7 +128,8 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenEvents(NodeEvent* event, cons
 std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
-    if (node->prop_as_bool(prop_markup))
+
+    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
     {
         if (code.size())
             code << '\n';
@@ -129,6 +145,48 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& 
         code << node->get_node_name() << "->Wrap(" << node->prop_as_string(prop_wrap) << ");";
     }
     return code;
+}
+
+int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxStaticText");
+
+#if 0
+    // REVIEW: [KeyWorks - 05-28-2022] Once markup and generic version is supported in XRC, this can be enabled
+    // with a version check.
+
+    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
+    {
+        item.append_child("use_generic platform=\"msw\"").text().set("1");
+    }
+    ADD_ITEM_BOOL(prop_markup, "markup")
+#endif
+
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_PROP(prop_wrap, "wrap")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->prop_as_bool(prop_markup))
+        {
+            item.append_child(pugi::node_comment).set_value(" markup cannot be be set in the XRC file. ");
+        }
+
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void StaticTextGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxStaticTextXmlHandler");
 }
 
 bool StaticTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -520,6 +578,31 @@ std::optional<ttlib::cstr> RichTextCtrlGenerator::GenEvents(NodeEvent* event, co
     return GenEventCode(event, class_name);
 }
 
+int RichTextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxRichTextCtrl");
+
+    ADD_ITEM_PROP(prop_value, "value")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void RichTextCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxRichTextCtrlXmlHandler -- you must explicitly add this handler");
+}
+
 bool RichTextCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/richtext/richtextctrl.h>", set_src, set_hdr);
@@ -533,10 +616,32 @@ wxObject* HtmlWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxHtmlWindow(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                    DlgSize(parent, node, prop_size), GetStyleInt(node));
 
+    if (node->prop_as_int(prop_html_borders) >= 0)
+        widget->SetBorders(wxStaticCast(parent, wxWindow)->FromDIP(node->prop_as_int(prop_html_borders)));
+
     if (node->HasValue(prop_html_content))
     {
         widget->SetPage(node->prop_as_wxString(prop_html_content));
     }
+
+#if 0
+    // These work, but can take a LONG time to actually load and display if the html file is large.
+    // Note that the XRC preview does display the URL so the user can still preview it.
+    else if (node->HasValue(prop_html_url))
+    {
+        wxBusyInfo wait(wxBusyInfoFlags()
+                            .Parent(wxStaticCast(parent, wxWindow))
+                            .Title(ttString("Parsing ") << node->prop_as_wxString(prop_html_url))
+                            .Text("This could take awhile..."));
+        widget->LoadPage(node->prop_as_wxString(prop_html_url));
+    }
+#else
+    else if (node->HasValue(prop_html_url))
+    {
+        widget->SetPage(ttlib::cstr("Contents of<br>    ")
+                        << node->prop_as_string(prop_html_url) << "<br>will be displayed here.");
+    }
+#endif
     else
     {
         widget->SetPage("<b>wxHtmlWindow</b><br/><br/>This is a dummy page.</body></html>");
@@ -566,11 +671,25 @@ std::optional<ttlib::cstr> HtmlWindowGenerator::GenSettings(Node* node, size_t& 
 {
     ttlib::cstr code;
 
+    if (node->prop_as_int(prop_html_borders) >= 0)
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetBorders(this->FromDIP(, " << node->prop_as_int(prop_html_borders) << "));\n";
+    }
+
     if (node->HasValue(prop_html_content))
     {
         if (code.size())
             code << '\n';
         code << node->get_node_name() << "->SetPage(" << GenerateQuotedString(node->prop_as_string(prop_html_content))
+             << ");\n";
+    }
+    else if (node->HasValue(prop_html_url))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->LoadPage(" << GenerateQuotedString(node->prop_as_string(prop_html_url))
              << ");\n";
     }
 
@@ -586,9 +705,41 @@ std::optional<ttlib::cstr> HtmlWindowGenerator::GenEvents(NodeEvent* event, cons
     return GenEventCode(event, class_name);
 }
 
+int HtmlWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxHtmlWindow");
+
+    if (node->prop_as_int(prop_html_borders) >= 0)
+        ADD_ITEM_PROP(prop_html_borders, "borders")
+    ADD_ITEM_PROP(prop_html_url, "url")
+    ADD_ITEM_PROP(prop_html_content, "htmlcode")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void HtmlWindowGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxHtmlWindowXmlHandler");
+}
+
 bool HtmlWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/html/htmlwin.h>", set_src, set_hdr);
+    if (node->HasValue(prop_html_url))
+    {
+        InsertGeneratorInclude(node, "#include <wx/filesys.h>", set_src, set_hdr);
+    }
     return true;
 }
 

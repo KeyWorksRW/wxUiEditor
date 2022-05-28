@@ -21,6 +21,9 @@ public:
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };
 
 class TextCtrlGenerator : public BaseGenerator
@@ -52,6 +55,9 @@ public:
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };
 
 class HtmlWindowGenerator : public BaseGenerator
@@ -64,6 +70,9 @@ public:
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };
 
 class WebViewGenerator : public BaseGenerator

@@ -332,7 +332,6 @@ static const PropName NonUiProps[] = {
     prop_get_function,
     prop_hover_color,
     prop_id,
-    prop_inc,
     prop_initial,
     prop_max,
     prop_max_point_size,

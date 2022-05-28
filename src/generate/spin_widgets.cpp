@@ -27,6 +27,9 @@ wxObject* SpinCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     if (node->prop_as_bool(prop_hexadecimal))
         widget->SetBase(16);
 
+    if (node->prop_as_int(prop_inc) > 1)
+        widget->SetIncrement(node->prop_as_int(prop_inc));
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -82,21 +85,69 @@ std::optional<ttlib::cstr> SpinCtrlGenerator::GenConstruction(Node* node)
 
 std::optional<ttlib::cstr> SpinCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
+    ttlib::cstr code;
     if (node->prop_as_bool(prop_hexadecimal))
     {
-        ttlib::cstr code;
         code << node->get_node_name() << "->SetBase(16);";
         return code;
     }
-    else
+    if (node->prop_as_int(prop_inc) > 1)
     {
-        return {};
+        code << node->get_node_name() << "->SetIncrement(" << node->prop_as_int(prop_inc) << ");";
     }
+
+    if (code.size())
+        return code;
+    else
+        return {};
 }
 
 std::optional<ttlib::cstr> SpinCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxSpinCtrl");
+
+    ADD_ITEM_PROP(prop_min, "min")
+    ADD_ITEM_PROP(prop_max, "max")
+    ADD_ITEM_PROP(prop_initial, "value")
+
+    if (node->prop_as_int(prop_inc) > 1)
+        ADD_ITEM_PROP(prop_inc, "inc")
+
+    if (node->prop_as_bool(prop_hexadecimal))
+        item.append_child("base").text().set("16");
+
+    if (node->HasValue(prop_style))
+    {
+        GenXrcStylePosSize(node, item);
+    }
+    else
+    {
+        // XRC is going to force the wxSP_ARROW_KEYS if we don't pass something. Since a spin control
+        // can only be horizontal, we simply pass that flag.
+        GenXrcPreStylePosSize(node, item, "wxSP_HORIZONTAL");
+    }
+
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void SpinCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxSpinCtrlXmlHandler");
 }
 
 bool SpinCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

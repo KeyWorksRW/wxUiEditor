@@ -29,6 +29,11 @@
     #pragma warning(push)
 #endif
 
+#if defined(__clang__)
+    // warning: unused typedef 'complete' in scopedptr.h
+    #pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif
+
 #include <wx/defs.h>  // Declarations/definitions common to all wx source files
 
 #if !wxCHECK_VERSION(3, 1, 6)
@@ -55,11 +60,6 @@
 
     // These warnings are still generated in 3.1.17
     #pragma warning(disable : 5054)  // '|' deprecated between enumerations of different types
-#endif
-
-#if !defined(_WIN32) || defined(__clang__)
-    // warning: unused typedef 'complete' in scopedptr.h
-    #pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
 
 #if !wxCHECK_VERSION(3, 1, 7)

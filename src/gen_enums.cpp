@@ -202,6 +202,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_hide_effect, "hide_effect" },
     { prop_hint, "hint" },
     { prop_hover_color, "hover_color" },
+    { prop_html_borders, "html_borders" },
     { prop_html_content, "html_content" },
     { prop_html_file, "html_file" },
     { prop_html_url, "html_url" },

@@ -208,6 +208,7 @@ namespace GenEnum
         prop_hide_effect,
         prop_hint,
         prop_hover_color,
+        prop_html_borders,
         prop_html_content,
         prop_html_file,
         prop_html_url,

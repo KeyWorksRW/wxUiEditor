@@ -10,11 +10,12 @@
 #include <thread>
 #include <unordered_set>
 
-#include <wx/filedlg.h>     // wxFileDialog base header
-#include <wx/filename.h>    // wxFileName - encapsulates a file path
-#include <wx/mstream.h>     // Memory stream classes
-#include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
-#include <wx/xrc/xmlres.h>  // XML resources
+#include <wx/filedlg.h>          // wxFileDialog base header
+#include <wx/filename.h>         // wxFileName - encapsulates a file path
+#include <wx/mstream.h>          // Memory stream classes
+#include <wx/xml/xml.h>          // wxXmlDocument - XML parser & data holder class
+#include <wx/xrc/xh_richtext.h>  // XML resource handler for wxRichTextCtrl
+#include <wx/xrc/xmlres.h>       // XML resources
 
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
@@ -84,6 +85,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         if (!s_isXmlInitalized)
         {
             xrc_resource->InitAllHandlers();
+            xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
             s_isXmlInitalized = true;
         }
 

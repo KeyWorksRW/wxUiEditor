@@ -72,7 +72,7 @@ void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
         return;
     }
     pos += (sizeof("name=\"") - 1);
-    while (pos < xrc_text.size() && xrc_text[pos] != '"')
+    while (pos < (to_int) xrc_text.size() && xrc_text[pos] != '"')
     {
         dlg_name << xrc_text[pos++];
     }

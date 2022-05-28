@@ -47,12 +47,13 @@
     #include <wx/debug.h>  // Misc debug functions and macros
 #endif
 
-// These warnings are still generated in 3.1.16
-
 #ifdef _MSC_VER
-    #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
-    #pragma warning(disable : 4244)  // conversion from 'size_t' to 'int', possible loss of data
+    #if !wxCHECK_VERSION(3, 1, 7)
+        #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
+        #pragma warning(disable : 4244)  // conversion from 'size_t' to 'int', possible loss of data
+    #endif
 
+    // These warnings are still generated in 3.1.17
     #pragma warning(disable : 5054)  // '|' deprecated between enumerations of different types
 #endif
 
@@ -61,12 +62,14 @@
     #pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
 
-// included here so that C5054 gets disabled
-#include <wx/choicebk.h>
-#include <wx/htmllbox.h>
-#include <wx/richtext/richtextbuffer.h>
+#if !wxCHECK_VERSION(3, 1, 7)
+    // included here so that C4244 and C4267 get disabled
+    #include <wx/choicebk.h>
+    #include <wx/htmllbox.h>
+    #include <wx/richtext/richtextbuffer.h>
+#endif
 
-// included here so that C4244 and C4267 get disabled
+// included here so that C5054 gets disabled
 #include <wx/propgrid/propgridpagestate.h>
 
 #include <wx/gdicmn.h>  // Common GDI classes, types and declarations

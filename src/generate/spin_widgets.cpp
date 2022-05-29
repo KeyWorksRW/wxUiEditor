@@ -339,6 +339,46 @@ std::optional<ttlib::cstr> SpinButtonGenerator::GenEvents(NodeEvent* event, cons
     return GenEventCode(event, class_name);
 }
 
+int SpinButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxSpinButton");
+
+    ADD_ITEM_PROP(prop_min, "min")
+    ADD_ITEM_PROP(prop_max, "max")
+    ADD_ITEM_PROP(prop_initial, "value")
+
+    if (node->prop_as_int(prop_inc) > 1)
+        ADD_ITEM_PROP(prop_inc, "inc")
+
+    if (node->HasValue(prop_style))
+    {
+        GenXrcStylePosSize(node, item);
+    }
+    else
+    {
+        // XRC is going to force the wxSP_ARROW_KEYS if we don't pass something. Since a spin control
+        // can only be horizontal, we simply pass that flag.
+        GenXrcPreStylePosSize(node, item, "wxSP_VERTICAL");
+    }
+
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void SpinButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxSpinButtonXmlHandler");
+}
+
 bool SpinButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/spinbutt.h>", set_src, set_hdr);

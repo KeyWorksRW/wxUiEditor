@@ -95,11 +95,7 @@ int CheckBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
     GenXrcObjectAttributes(node, item, "wxCheckBox");
 
     ADD_ITEM_PROP(prop_label, "label")
-
-    if (node->prop_as_bool(prop_checked))
-    {
-        object.append_child("checked").text().set("1");
-    }
+    ADD_ITEM_BOOL(prop_checked, "checked")
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

@@ -75,27 +75,14 @@ std::optional<ttlib::cstr> ActivityIndicatorGenerator::GenSettings(Node* node, s
 
 int ActivityIndicatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxActivityIndicator");
     GenXrcStylePosSize(node, item);
 
-    if (node->prop_as_bool(prop_auto_start))
-    {
-        item.append_child("running").text().set("1");
-    }
+    ADD_ITEM_BOOL(prop_auto_start, "running")
+
     GenXrcWindowSettings(node, item);
 
     if (add_comments)
@@ -188,19 +175,8 @@ std::optional<ttlib::cstr> AnimationGenerator::GenSettings(Node* node, size_t& /
 
 int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
     GenXrcStylePosSize(node, item);
@@ -340,19 +316,8 @@ std::optional<ttlib::cstr> BannerWindowGenerator::GenSettings(Node* node, size_t
 
 int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxBannerWindow");
 
@@ -453,19 +418,8 @@ std::optional<ttlib::cstr> StaticLineGenerator::GenConstruction(Node* node)
 
 int StaticLineGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticLine");
     GenXrcStylePosSize(node, item);
@@ -546,22 +500,10 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenEvents(NodeEvent* event, const
 
 int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
-
-    item.append_attribute("class").set_value("wxStatusBar");
-    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    GenXrcObjectAttributes(node, item, "wxStatusBar");
 
     ADD_ITEM_PROP(prop_fields, "fields")
 
@@ -742,19 +684,8 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenEvents(NodeEvent* event, co
 
 int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticBitmap");
     GenXrcBitmap(node, item);
@@ -862,19 +793,8 @@ std::optional<ttlib::cstr> GaugeGenerator::GenEvents(NodeEvent* event, const std
 
 int GaugeGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxGauge");
 
@@ -1052,19 +972,8 @@ bool SliderGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProper
 
 int SliderGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxSlider");
 
@@ -1225,19 +1134,8 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /
 
 int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxHyperlinkCtrl");
 
@@ -1384,19 +1282,8 @@ void InfoBarGenerator::OnTimer(wxTimerEvent& /* event */) { m_infobar->ShowMessa
 
 int InfoBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxInfoBar");
 
@@ -1480,19 +1367,8 @@ std::optional<ttlib::cstr> CustomControl::GenEvents(NodeEvent* event, const std:
 
 int CustomControl::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
 {
-    pugi::xml_node item;
-    auto result = BaseGenerator::xrc_sizer_item_created;
-
-    if (node->GetParent()->IsSizer())
-    {
-        GenXrcSizerItem(node, object);
-        item = object.append_child("object");
-    }
-    else
-    {
-        item = object;
-        result = BaseGenerator::xrc_updated;
-    }
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "unknown");
     GenXrcStylePosSize(node, item);

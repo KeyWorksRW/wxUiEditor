@@ -52,6 +52,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/base_generator.cpp    # Base widget generator class
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_initialize.cpp    # Initialize all widget generate classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_common.cpp        # Common widget generation functions
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_xrc_utils.cpp     # Common XRC generating functions
 
     # The following files in generate/ are used to display the widget in the Mockup panel and to generate
     # the code to insert into the source and header files.

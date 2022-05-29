@@ -223,6 +223,8 @@ inline const char* buttons_xml = R"===(<?xml version="1.0"?>
 			help="Maximal value.">10</property>
 		<property name="initial" type="int"
 			help="Initial value.">0</property>
+		<property name="inc" type="int"
+			help="Increment value.">1</property>
 		<property name="style" type="bitlist">
 			<option name="wxSP_HORIZONTAL"
 				help="Specifies a horizontal spin button (note that this style is not supported in wxGTK)." />

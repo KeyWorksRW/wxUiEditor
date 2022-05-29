@@ -301,6 +301,9 @@ wxObject* SpinButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     widget->SetRange(node->prop_as_int(prop_min), node->prop_as_int(prop_max));
     widget->SetValue(node->prop_as_int(prop_initial));
 
+    if (node->prop_as_int(prop_inc) > 1)
+        widget->SetIncrement(node->prop_as_int(prop_inc));
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -329,6 +332,11 @@ std::optional<ttlib::cstr> SpinButtonGenerator::GenSettings(Node* node, size_t& 
     if (node->prop_as_int(prop_initial))
     {
         code << '\n' << node->get_node_name() << "->SetValue(" << node->prop_as_int(prop_initial) << ");";
+    }
+
+    if (node->prop_as_int(prop_inc) > 1)
+    {
+        code << '\n' << node->get_node_name() << "->SetIncrement(" << node->prop_as_int(prop_inc) << ");";
     }
 
     return code;

@@ -5,14 +5,11 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/config.h>   // wxConfig base header
-#include <wx/dir.h>      // wxDir is a class for enumerating the files in a directory
-#include <wx/dirdlg.h>   // wxDirDialog base class
-#include <wx/filedlg.h>  // wxFileDialog base header
-
-#if defined(_DEBUG)
-    #include <wx/filename.h>
-#endif
+#include <wx/config.h>    // wxConfig base header
+#include <wx/dir.h>       // wxDir is a class for enumerating the files in a directory
+#include <wx/dirdlg.h>    // wxDirDialog base class
+#include <wx/filedlg.h>   // wxFileDialog base header
+#include <wx/filename.h>  // wxFileName - encapsulates a file path
 
 #include "pugixml.hpp"   // xml processing
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files

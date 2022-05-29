@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "node_classes.h"  // Forward defintions of Node classes
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
+#include "node_classes.h"    // Forward defintions of Node classes
 
 #include "gen_enums.h"  // Enumerations for generators
 using namespace GenEnum;

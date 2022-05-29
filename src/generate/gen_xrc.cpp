@@ -31,12 +31,24 @@
 
 #include "pugixml.hpp"
 
+namespace xrc_gen
+{
+    enum
+    {
+        no_comments = false,
+        comments = true,
+        preview = true
+    };
+}
+
 inline constexpr const auto txt_XRC_HEADER = R"===(<?xml version="1.0"?>
 <resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
 )===";
 
 inline constexpr const auto txt_XRC_FOOTER = R"===(</resource>
 )===";
+
+constexpr const char* txt_dlg_name = "_wxue_temp_dlg";
 
 static bool s_isXmlInitalized { false };
 
@@ -63,7 +75,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         }
     }
 
-    if (!form_node->isGen(gen_wxDialog))
+    if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm))
     {
         wxMessageBox("Only dialogs can be previewed.", "XRC Dialog Preview");
         return;
@@ -71,7 +83,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
 
     try
     {
-        auto doc_str = GenerateXrcStr(form_node, false);
+        auto doc_str = GenerateXrcStr(form_node, xrc_gen::no_comments, xrc_gen::preview);
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
         if (!xmlDoc->IsOk())
@@ -98,7 +110,9 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         }
 
         wxDialog dlg;
-        if (xrc_resource->LoadDialog(&dlg, this, form_node->prop_as_string(prop_class_name)))
+        wxString dlg_name =
+            form_node->isGen(gen_wxDialog) ? form_node->prop_as_wxString(prop_class_name) : wxString(txt_dlg_name);
+        if (xrc_resource->LoadDialog(&dlg, this, dlg_name))
         {
             dlg.ShowModal();
         }
@@ -218,7 +232,7 @@ void CollectHandlers(Node* node, std::set<std::string>& handlers)
     }
 }
 
-std::string GenerateXrcStr(Node* node_start, bool add_comments)
+std::string GenerateXrcStr(Node* node_start, bool add_comments, bool is_preview)
 {
     pugi::xml_document doc;
     auto root = doc.append_child("resource");
@@ -232,6 +246,24 @@ std::string GenerateXrcStr(Node* node_start, bool add_comments)
     else if (node_start->isGen(gen_Project))
     {
         GenXrcObject(node_start, root, add_comments);
+    }
+    else if (is_preview && node_start->isGen(gen_PanelForm))
+    {
+        auto object = root.append_child("object");
+        object.append_attribute("class").set_value("wxDialog");
+        object.append_attribute("name").set_value(txt_dlg_name);
+        object.append_child("style").text().set("wxDEFAULT_DIALOG_STYLE");
+        object.append_child("centered").text().set("1");
+        object.append_child("title").text().set(node_start->prop_as_string(prop_class_name));
+        auto item = object.append_child("object");
+        item.append_attribute("class").set_value("wxBoxSizer");
+        item.append_attribute("name").set_value("_wxue_temp_sizer");
+        item.append_child("orient").text().set("wxVERTICAL");
+        auto sizer_item = item.append_child("object");
+        sizer_item.append_attribute("class").set_value("sizeritem");
+        object = sizer_item.append_child("object");
+
+        GenXrcObject(node_start, object, add_comments);
     }
     else
     {

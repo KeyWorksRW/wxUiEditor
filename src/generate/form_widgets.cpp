@@ -696,29 +696,21 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCod
 
 int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    object.append_attribute("class").set_value("wxPanel");
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    item.append_attribute("class").set_value("wxPanel");
     object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
 
-    if (node->HasValue(prop_window_style))
-    {
-        object.append_child("style").text().set(node->prop_as_string(prop_window_style));
-    }
-    if (node->HasValue(prop_pos))
-    {
-        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
-    }
-    if (node->HasValue(prop_size))
-    {
-        object.append_child("size").text().set(node->prop_as_string(prop_size));
-    }
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
 
-    GenXrcWindowSettings(node, object);
     if (add_comments)
     {
-        GenXrcComments(node, object);
+        GenXrcComments(node, item);
     }
 
-    return BaseGenerator::xrc_updated;
+    return result;
 }
 
 void PanelFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)

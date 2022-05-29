@@ -34,7 +34,7 @@ XrcPreview::XrcPreview(wxWindow* parent) { Create(parent); }
 
 void XrcPreview::OnCreate(wxCommandEvent& WXUNUSED(event))
 {
-    auto doc_str = GenerateXrcStr(nullptr, false);
+    auto doc_str = GenerateXrcStr(nullptr, false, true);
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
@@ -55,7 +55,7 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
         sel_node = sel_node->get_form();
     }
 
-    auto doc_str = GenerateXrcStr(sel_node, false);
+    auto doc_str = GenerateXrcStr(sel_node, false, true);
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());

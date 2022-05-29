@@ -14,6 +14,38 @@
 #include "utils.h"        // Utility functions that work with properties
 #include "write_code.h"   // WriteCode -- Write code to Scintilla or file
 
+// clang-format off
+
+const char* g_xrc_keywords =
+
+    "accel align animation art-provider "
+    "base best_size bg bitmap bitmap-small bitmap2 bitmapposition bitmapsize border borders bottom bottom_dockable border buttons buttonsize "
+    "caption caption_visible cellpos cellspan center center_pane centered centre centre_pane checkable checked class close_button col cols "
+        "collapsed content current "
+    "data default defaultdirectory defaultfilename defaultfilter defaultfolder default_pane default_size depth dimension direction disabled "
+        "disabled-bitmap dock dock_fixed dontattachtoframe dropdown "
+    "effectduration enabled expanded exstyle extra-accels "
+    "fields filter flag flexibledirection float floatable floating_size fg focus focused font "
+    "gradient-end gradient-start gravity gripper growablecols growablerows "
+    "help helptext hgap hidden hideeffect hint horizontal htmlcode hybrid "
+    "icon inc image image-small imagelist imagelist-small inactive-bitmap item "
+    "label layer left left_dockable linesize longhelp "
+    "margins markup max max_size maximize_button maxlength message min minsize min_size minimize_button movable "
+    "name nonflexiblegrowmode null-text "
+    "object object_ref option orient orientation "
+    "packing pagesize pane_border perspective pin_button pos pressed proportion "
+    "radio range ratio resizable resource right right_dockable row rows "
+    "sashpos scrollrate selected selection selmax selmin separation showeffect size small-bitmap small-disabled-bitmap state stock_client "
+        "stock_id style styles "
+    "text textcolour thumb thumbsize tick tickfreq title toggle toolbar_pane tooltip top top_dockable "
+    "url "
+    "value variant vertical vgap "
+    "width widths wildcard windowlabel wrap wrapmode"
+
+    ;
+
+// clang-format on
+
 void GenXrcSizerItem(Node* node, BaseCodeGenerator* code_gen)
 {
     auto m_source = code_gen->GetSrcWriter();

@@ -17,6 +17,8 @@ using namespace GenEnum;
 
 class FontProperty;
 
+extern const char* g_xrc_keywords;
+
 namespace xrc
 {
     enum : size_t

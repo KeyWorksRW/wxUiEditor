@@ -327,7 +327,6 @@ static const PropName NonUiProps[] = {
     prop_derived_class_name,
     prop_derived_file,
     prop_derived_header,
-    prop_digits,
     prop_filter,
     prop_get_function,
     prop_hover_color,

@@ -217,11 +217,7 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_c
 
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_BOOL(prop_markup, "markup")
-
-    if (node->prop_as_bool(prop_default))
-    {
-        item.append_child("default").text().set("1");
-    }
+    ADD_ITEM_BOOL(prop_default, "default")
 
     if (node->HasValue(prop_margins))
     {
@@ -527,6 +523,16 @@ wxObject* CommandLinkBtnGenerator::CreateMockup(Node* node, wxObject* parent)
 
         if (node->HasValue(prop_current))
             widget->SetBitmapCurrent(node->prop_as_wxBitmapBundle(prop_current));
+
+#if 0
+        // REVIEW: [KeyWorks - 05-30-2022] As of 3.1.7, these don't work property on Windows 10.
+
+        if (node->HasValue(prop_position))
+            widget->SetBitmapPosition(static_cast<wxDirection>(node->prop_as_int(prop_position)));
+
+        if (node->HasValue(prop_margins))
+            widget->SetBitmapMargins(node->prop_as_wxSize(prop_margins));
+#endif
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -581,6 +587,34 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenSettings(Node* node, size
 std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int CommandLinkBtnGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxCommandLinkButton");
+
+    ADD_ITEM_PROP(prop_main_label, "label")
+    ADD_ITEM_PROP(prop_note, "note")
+    ADD_ITEM_BOOL(prop_default, "default")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcBitmap(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void CommandLinkBtnGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxCommandLinkButtonXmlHandler");
 }
 
 bool CommandLinkBtnGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

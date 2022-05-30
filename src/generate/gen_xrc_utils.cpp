@@ -340,6 +340,11 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object)
             }
         }
     }
+
+    if (node->HasValue(prop_position))
+    {
+        object.append_child("bitmapposition").text().set(node->prop_as_string(prop_position));
+    }
 }
 
 void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view xrc_class)

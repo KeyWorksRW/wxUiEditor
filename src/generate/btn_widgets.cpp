@@ -219,11 +219,6 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_c
     ADD_ITEM_BOOL(prop_markup, "markup")
     ADD_ITEM_BOOL(prop_default, "default")
 
-    if (node->HasValue(prop_margins))
-    {
-        item.append_child("margins").text().set(node->prop_as_string(prop_margins));
-    }
-
     GenXrcBitmap(node, item);
     GenXrcStylePosSize(node, item);
 
@@ -488,6 +483,33 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t
     return code;
 }
 
+int ToggleButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, node->HasValue(prop_label) ? "wxToggleButton" : "wxBitmapToggleButton");
+
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_BOOL(prop_pressed, "checked")
+
+    GenXrcBitmap(node, item);
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ToggleButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxToggleButtonXmlHandler");
+}
+
 bool ToggleButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/tglbtn.h>", set_src, set_hdr);
@@ -600,8 +622,8 @@ int CommandLinkBtnGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bo
     ADD_ITEM_PROP(prop_note, "note")
     ADD_ITEM_BOOL(prop_default, "default")
 
-    GenXrcStylePosSize(node, item);
     GenXrcBitmap(node, item);
+    GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
     if (add_comments)

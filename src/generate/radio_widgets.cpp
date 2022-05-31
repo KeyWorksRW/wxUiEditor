@@ -103,6 +103,32 @@ std::optional<ttlib::cstr> RadioButtonGenerator::GenEvents(NodeEvent* event, con
     return GenEventCode(event, class_name);
 }
 
+int RadioButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxRadioButton");
+
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_BOOL(prop_checked, "value")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void RadioButtonGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxRadioButtonXmlHandler");
+}
+
 bool RadioButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/radiobut.h>", set_src, set_hdr);

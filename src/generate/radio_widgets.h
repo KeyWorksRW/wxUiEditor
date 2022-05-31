@@ -24,6 +24,9 @@ public:
     bool AllowPropertyChange(wxPropertyGridEvent*, NodeProperty*, Node*) override;
     void ChangeEnableState(wxPropertyGridManager*, NodeProperty*) override;
 
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
 private:
     bool m_info_warning { false };
 };

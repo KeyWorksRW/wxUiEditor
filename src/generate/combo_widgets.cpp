@@ -20,7 +20,7 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxComboBox(wxStaticCast(parent, wxWindow), wxID_ANY, wxEmptyString, DlgPoint(parent, node, prop_pos),
                                  DlgSize(parent, node, prop_size), 0, nullptr, GetStyleInt(node));
 
-    if (node->HasValue(prop_hint))
+    if (node->HasValue(prop_hint) && !node->prop_as_string(prop_style).contains("wxCB_READONLY"))
         widget->SetHint(node->prop_as_wxString(prop_hint));
 
     if (node->HasValue(prop_contents))
@@ -110,7 +110,7 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenSettings(Node* node, size_t& /*
 {
     ttlib::cstr code;
 
-    if (node->HasValue(prop_hint))
+    if (node->HasValue(prop_hint) && !node->prop_as_string(prop_style).contains("wxCB_READONLY"))
     {
         if (code.size())
             code << '\n';
@@ -165,6 +165,51 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenSettings(Node* node, size_t& /*
 std::optional<ttlib::cstr> ComboBoxGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int ComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxComboBox");
+
+    if (node->HasValue(prop_contents))
+    {
+        auto content = item.append_child("content");
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        for (auto& iter: array)
+        {
+            content.append_child("item").text().set(iter);    
+        }
+    }
+
+    if (node->HasValue(prop_selection_string))
+        item.append_child("value").text().set(node->prop_as_string(prop_selection_string));
+    else if (node->prop_as_int(prop_selection_int) >= 0)
+        item.append_child("selection").text().set(node->prop_as_string(prop_selection_int));
+
+    if (node->HasValue(prop_hint) && !node->prop_as_string(prop_style).contains("wxCB_READONLY"))
+        item.append_child("hint").text().set(node->prop_as_string(prop_hint));
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->HasValue(prop_selection_string))
+        {
+            ADD_ITEM_COMMENT("You cannot use selection_string for the selection in XRC.")
+        }
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ComboBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxComboBoxXmlHandler");
 }
 
 bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -308,6 +353,51 @@ std::optional<ttlib::cstr> ChoiceGenerator::GenSettings(Node* node, size_t& /* a
 std::optional<ttlib::cstr> ChoiceGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int ChoiceGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxChoice");
+
+    if (node->HasValue(prop_contents))
+    {
+        auto content = item.append_child("content");
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        for (auto& iter: array)
+        {
+            content.append_child("item").text().set(iter);    
+        }
+    }
+
+    if (node->HasValue(prop_selection_string))
+        item.append_child("value").text().set(node->prop_as_string(prop_selection_string));
+
+    // Older versions of wxWidgets didn't support setting the selection via the value property,
+    // so we add the property here even if the above is set.
+    if (node->prop_as_int(prop_selection_int) >= 0)
+        item.append_child("selection").text().set(node->prop_as_string(prop_selection_int));
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->HasValue(prop_selection_string))
+        {
+            ADD_ITEM_COMMENT("You cannot use selection_string for the selection in XRC.")
+        }
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ChoiceGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxChoiceXmlHandler");
 }
 
 bool ChoiceGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

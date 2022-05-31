@@ -234,16 +234,14 @@ int Check3StateGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool 
 
     ADD_ITEM_PROP(prop_label, "label")
 
-#if defined(WIDGETS_FORK)
     if (node->prop_as_string(prop_initial_state) == "wxCHK_CHECKED")
     {
         item.append_child("checked").text().set("1");
     }
     else if (node->prop_as_string(prop_initial_state) == "wxCHK_UNDETERMINED")
     {
-        item.append_child("undetermined").text().set("1");
+        item.append_child("checked").text().set("2");
     }
-#endif
 
     ttlib::cstr styles(node->prop_as_string(prop_style));
     if (styles.size())

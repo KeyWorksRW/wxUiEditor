@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Initialize all generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +9,6 @@
 #include "mainapp.h"       // App -- App class
 #include "node_creator.h"  // NodeCreator
 
-#include "book_widgets.h"      // ChoicebookGenerator -- Book component classes
 #include "btn_widgets.h"       // ButtonGenerator -- Button component class
 #include "checkbox_widgets.h"  // CheckBoxGenerator -- wxCheckBox component class
 #include "combo_widgets.h"     // Combo and choice component classes
@@ -35,10 +34,17 @@
 #include "window_widgets.h"    // Splitter and Scroll component classes
 #include "wizard_form.h"       // Wizard form class
 
+#include "gen_aui_notebook.h"        // AuiNotebookGenerator -- wxAuiNotebook generator
+#include "gen_book_page.h"           // BookPageGenerator -- Book page generator
 #include "gen_box_sizer.h"           // BoxSizerGenerator -- wxBoxSizer generator
+#include "gen_choicebook.h"          // ChoicebookGenerator -- wxChoicebook generator
 #include "gen_flexgrid_sizer.h"      // FlexGridSizerGenerator -- wxFlexGridSizer generator
 #include "gen_grid_sizer.h"          // GridSizerGenerator -- wxGridSizer generator
 #include "gen_gridbag_sizer.h"       // GridBagSizerGenerator -- wxGridBagSizer generator
+#include "gen_listbook.h"            // ListbookGenerator -- wxListbook generator
+#include "gen_notebook.h"            // NotebookGenerator -- wxNotebook generator
+#include "gen_page_ctrl.h"           // PageCtrlGenerator -- Page control generator
+#include "gen_simplebook.h"          // SimplebookGenerator -- wxSimplebook generator
 #include "gen_spacer_sizer.h"        // SpacerGenerator -- Add space to sizer generator
 #include "gen_statchkbox_sizer.h"    // StaticCheckboxBoxSizerGenerator -- wxStaticBoxSizer with wxCheckBox generator
 #include "gen_static_box.h"          // StaticBoxGenerator -- wxStaticBox generator
@@ -46,6 +52,8 @@
 #include "gen_statradiobox_sizer.h"  // StaticRadioBtnBoxSizerGenerator -- wxStaticBoxSizer with wxRadioButton generator
 #include "gen_std_dlgbtn_sizer.h"    // StdDialogButtonSizerGenerator -- wxStdDialogButtonSizer generator
 #include "gen_text_sizer.h"          // TextSizerGenerator -- wxTextSizerWrapper generator
+#include "gen_toolbook.h"            // ToolbookGenerator -- wxToolbook generator
+#include "gen_treebook.h"            // TreebookGenerator -- wxTreebook generator
 #include "gen_wrap_sizer.h"          // WrapSizerGenerator -- wxGridSizer generator
 
 #include "gen_enums.h"  // Enumerations for generators

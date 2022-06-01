@@ -83,11 +83,11 @@ Files:
     generate/gen_initialize.cpp    # Initialize all widget generate classes
     generate/gen_common.cpp        # Common widget generation functions
     generate/gen_xrc_utils.cpp     # Common XRC generating functions
+    generate/gen_book_utils.cpp    # Common Book utilities
 
     # The following files in generate/ are used to display the widget in the Mockup panel and to generate
     # the code to insert into the source and header files.
 
-    generate/book_widgets.cpp      # Book generation classes
     generate/btn_widgets.cpp       # Button generation class
     generate/checkbox_widgets.cpp  # wxCheckBox generation class
     generate/combo_widgets.cpp     # Combo and choice generation classes
@@ -113,18 +113,29 @@ Files:
     generate/window_widgets.cpp    # Splitter and Scroll generation classes
     generate/wizard_form.cpp       # Wizard form class
 
+    generate/gen_static_box.cpp         # wxStaticBox generator
+
     generate/gen_box_sizer.cpp          # wxBoxSizer generator
     generate/gen_flexgrid_sizer.cpp     # wxFlexGridSizer generator
     generate/gen_grid_sizer.cpp         # wxGridSizer generator
     generate/gen_gridbag_sizer.cpp      # wxGridBagSizer generator
     generate/gen_spacer_sizer.cpp       # Add space to sizer generator
     generate/gen_statchkbox_sizer.cpp   # wxStaticBoxSizer with wxCheckBox generator
-    generate/gen_static_box.cpp         # wxStaticBox generator
     generate/gen_staticbox_sizer.cpp    # wxStaticBoxSizer gemeratpr
     generate/gen_statradiobox_sizer.cpp # wxStaticBoxSizer with wxRadioButton generator
     generate/gen_std_dlgbtn_sizer.cpp   # wxStdDialogButtonSizer generator
     generate/gen_text_sizer.cpp         # wxTextSizerWrapper generator
     generate/gen_wrap_sizer.cpp         # wxWrapSizer generator
+
+    generate/gen_aui_notebook.cpp       # wxAuiNotebook generator
+    generate/gen_book_page.cpp          # Book page generator
+    generate/gen_choicebook.cpp         # wxChoicebook generator
+    generate/gen_listbook.cpp           # wxListbook generator
+    generate/gen_notebook.cpp           # wxNotebook generator
+    generate/gen_page_ctrl.cpp          # Page control generator
+    generate/gen_simplebook.cpp         # wxSimplebook generator
+    generate/gen_toolbook.cpp           # wxToolbook generator
+    generate/gen_treebook.cpp           # wxTreebook generator
 
     import/import_crafter_maps.cpp # wxCrafter mappings
     import/import_formblder.cpp    # Import a wxFormBuider project

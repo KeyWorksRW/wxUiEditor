@@ -53,11 +53,11 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_initialize.cpp    # Initialize all widget generate classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_common.cpp        # Common widget generation functions
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_xrc_utils.cpp     # Common XRC generating functions
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_book_utils.cpp    # Common Book utilities
 
     # The following files in generate/ are used to display the widget in the Mockup panel and to generate
     # the code to insert into the source and header files.
 
-    ${CMAKE_CURRENT_LIST_DIR}/generate/book_widgets.cpp      # Book generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/btn_widgets.cpp       # Button generation class
     ${CMAKE_CURRENT_LIST_DIR}/generate/checkbox_widgets.cpp  # wxCheckBox generation class
     ${CMAKE_CURRENT_LIST_DIR}/generate/combo_widgets.cpp     # Combo and choice generation classes
@@ -83,18 +83,29 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/window_widgets.cpp    # Splitter and Scroll generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/wizard_form.cpp       # Wizard form class
 
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_box.cpp         # wxStaticBox generator
+
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_box_sizer.cpp          # wxBoxSizer generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_flexgrid_sizer.cpp     # wxFlexGridSizer generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_grid_sizer.cpp         # wxGridSizer generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_gridbag_sizer.cpp      # wxGridBagSizer generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_spacer_sizer.cpp       # Add space to sizer generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_statchkbox_sizer.cpp   # wxStaticBoxSizer with wxCheckBox generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_box.cpp         # wxStaticBox generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_staticbox_sizer.cpp    # wxStaticBoxSizer gemeratpr
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_statradiobox_sizer.cpp # wxStaticBoxSizer with wxRadioButton generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_std_dlgbtn_sizer.cpp   # wxStdDialogButtonSizer generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_text_sizer.cpp         # wxTextSizerWrapper generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_wrap_sizer.cpp         # wxWrapSizer generator
+
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_aui_notebook.cpp       # wxAuiNotebook generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_book_page.cpp          # Book page generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_choicebook.cpp         # wxChoicebook generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_listbook.cpp           # wxListbook generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_notebook.cpp           # wxNotebook generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_page_ctrl.cpp          # Page control generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_simplebook.cpp         # wxSimplebook generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_toolbook.cpp           # wxToolbook generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_treebook.cpp           # wxTreebook generator
 
     ${CMAKE_CURRENT_LIST_DIR}/import/import_crafter_maps.cpp  # wxCrafter mappings
     ${CMAKE_CURRENT_LIST_DIR}/import/import_formblder.cpp     # Import a wxFormBuider project

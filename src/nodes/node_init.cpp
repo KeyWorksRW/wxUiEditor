@@ -286,6 +286,13 @@ static const ParentChild lstParentChild[] = {
     { type_sizer, type_toolbar, infinite },
     { type_sizer, type_treelistctrl, infinite },
     { type_sizer, type_widget, infinite },
+    { type_sizer, type_staticbox, infinite },
+
+    // wxStaticBox
+
+    { type_staticbox, type_widget, infinite },
+    { type_staticbox, type_sizer, infinite },
+    { type_staticbox, type_gbsizer, infinite },
 
     // Misc
 

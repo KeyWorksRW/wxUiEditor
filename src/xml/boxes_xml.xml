@@ -233,4 +233,11 @@ inline const char* boxes_xml = R"===(<?xml version="1.0"?>
 		<event name="wxEVT_RADIOBOX" class="wxCommandEvent"
 			help="Generated when a radio button in the box is clicked." />
 	</gen>
+
+	<gen class="wxStaticBox" image="wxStaticBoxSizer" type="staticbox">
+		<inherits class="wxWindow" />
+		<inherits class="sizer_child" />
+		<property name="var_name" type="string">static_box</property>
+		<property name="label" type="string_escapes">label</property>
+	</gen>
 </GeneratorDefinitions>)===";

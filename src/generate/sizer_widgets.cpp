@@ -17,6 +17,7 @@
 #include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
+#include "utils.h"       // Utility functions that work with properties
 #include "write_code.h"  // WriteCode -- Write code to Scintilla or file
 
 #include "sizer_widgets.h"
@@ -46,12 +47,6 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
-bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
-{
-    InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
-    return true;
-}
-
 int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
 {
     pugi::xml_node item;
@@ -71,9 +66,18 @@ int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* 
     item.append_attribute("class").set_value("wxBoxSizer");
     item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
     item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+
     if (node->HasValue(prop_minimum_size))
     {
         item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    }
+    else if (node->GetParent()->IsForm() &&  node->GetParent()->HasValue(prop_minimum_size))
+    {
+        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's a problem for forms which
+        // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
+        // create for most forms.
+
+        item.append_child("minsize").text().set(node->GetParent()->prop_as_string(prop_minimum_size));
     }
     return result;
 }
@@ -82,6 +86,13 @@ void BoxSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>
 {
     handlers.emplace("wxSizerXmlHandler");
 }
+
+bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
+    return true;
+}
+
 //////////////////////////////////////////  GridSizerGenerator  //////////////////////////////////////////
 
 wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
@@ -253,6 +264,40 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenEvents(NodeEvent* event, 
     return GenEventCode(event, class_name);
 }
 
+int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxStaticBoxSizer");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    if (node->HasValue(prop_minimum_size))
+    {
+        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    }
+
+    ADD_ITEM_PROP(prop_label, "label")
+
+    return result;
+}
+
+void StaticBoxSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxSizerXmlHandler");
+}
+
 bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
@@ -398,6 +443,45 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* no
 std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxStaticBoxSizer");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    if (node->HasValue(prop_minimum_size))
+    {
+        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    }
+
+    auto checkbox = item.append_child("windowlabel");
+    auto child = checkbox.append_child("object");
+    child.append_attribute("class").set_value("wxCheckBox");
+    child.append_child("label").text().set(node->prop_as_string(prop_label));
+    if (node->prop_as_bool(prop_checked))
+        child.append_child("checked").text().set("1");
+
+    return result;
+}
+
+void StaticCheckboxBoxSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxSizerXmlHandler");
 }
 
 bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -1406,6 +1490,79 @@ bool StdDialogButtonSizerGenerator::GetIncludes(Node* node, std::set<std::string
 {
     InsertGeneratorInclude(node, "#include <wx/button.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
+
+    return true;
+}
+
+//////////////////////////////////////////  StaticBoxGenerator  //////////////////////////////////////////
+
+// This is a widget, not a sizer. It exists only for impport compatability -- wxStaticBoxSizer is the preferred
+// way to use this. It does, however, allow children.
+
+wxObject* StaticBoxGenerator::CreateMockup(Node* node, wxObject* parent)
+{
+    auto widget = new wxStaticBox(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_label),
+                                  DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size), GetStyleInt(node));
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> StaticBoxGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << GenerateNewAssignment(node);
+
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+
+    auto& label = node->prop_as_string(prop_label);
+    if (label.size())
+    {
+        code << GenerateQuotedString(label);
+    }
+    else
+    {
+        code << "wxEmptyString";
+    }
+
+    GeneratePosSizeFlags(node, code);
+
+    return code;
+}
+
+int StaticBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxStaticBox");
+    ADD_ITEM_PROP(prop_label, "label")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->prop_as_bool(prop_markup))
+        {
+            item.append_child(pugi::node_comment).set_value(" markup cannot be be set in the XRC file. ");
+        }
+
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void StaticBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxStaticBoxXmlHandler");
+}
+
+bool StaticBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
 
     return true;
 }

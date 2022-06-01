@@ -75,7 +75,6 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/project.cpp           # Project generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/radio_widgets.cpp     # Radio button and Radio box generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/ribbon_widgets.cpp    # Ribbon generation classes
-    ${CMAKE_CURRENT_LIST_DIR}/generate/sizer_widgets.cpp     # Sizer generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/spin_widgets.cpp      # Spin and ScrollBar generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/styled_text.cpp       # wxStyledText (scintilla) generate
     ${CMAKE_CURRENT_LIST_DIR}/generate/text_widgets.cpp      # Text generation classes
@@ -83,6 +82,19 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/tree_widgets.cpp      # wxTreeCtrl generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/window_widgets.cpp    # Splitter and Scroll generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/wizard_form.cpp       # Wizard form class
+
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_box_sizer.cpp          # wxBoxSizer generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_flexgrid_sizer.cpp     # wxFlexGridSizer generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_grid_sizer.cpp         # wxGridSizer generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_gridbag_sizer.cpp      # wxGridBagSizer generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_spacer_sizer.cpp       # Add space to sizer generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_statchkbox_sizer.cpp   # wxStaticBoxSizer with wxCheckBox generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_box.cpp         # wxStaticBox generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_staticbox_sizer.cpp    # wxStaticBoxSizer gemeratpr
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_statradiobox_sizer.cpp # wxStaticBoxSizer with wxRadioButton generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_std_dlgbtn_sizer.cpp   # wxStdDialogButtonSizer generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_text_sizer.cpp         # wxTextSizerWrapper generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_wrap_sizer.cpp         # wxWrapSizer generator
 
     ${CMAKE_CURRENT_LIST_DIR}/import/import_crafter_maps.cpp  # wxCrafter mappings
     ${CMAKE_CURRENT_LIST_DIR}/import/import_formblder.cpp     # Import a wxFormBuider project

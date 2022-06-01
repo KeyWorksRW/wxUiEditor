@@ -27,7 +27,6 @@
 #include "project.h"           // Project generator
 #include "radio_widgets.h"     // RadioButtonGenerator -- Radio button and Radio box component classes
 #include "ribbon_widgets.h"    // RibbonBarGenerator -- Ribbon component classes
-#include "sizer_widgets.h"     // Sizer component classes
 #include "spin_widgets.h"      // Spin component classes
 #include "styled_text.h"       // StyledTextGenerator -- wxStyledText (scintilla) generate
 #include "text_widgets.h"      // Text component classes
@@ -35,6 +34,19 @@
 #include "tree_widgets.h"      // TreeCtrlGenerator -- wxTreeCtrl component classes
 #include "window_widgets.h"    // Splitter and Scroll component classes
 #include "wizard_form.h"       // Wizard form class
+
+#include "gen_box_sizer.h"           // BoxSizerGenerator -- wxBoxSizer generator
+#include "gen_flexgrid_sizer.h"      // FlexGridSizerGenerator -- wxFlexGridSizer generator
+#include "gen_grid_sizer.h"          // GridSizerGenerator -- wxGridSizer generator
+#include "gen_gridbag_sizer.h"       // GridBagSizerGenerator -- wxGridBagSizer generator
+#include "gen_spacer_sizer.h"        // SpacerGenerator -- Add space to sizer generator
+#include "gen_statchkbox_sizer.h"    // StaticCheckboxBoxSizerGenerator -- wxStaticBoxSizer with wxCheckBox generator
+#include "gen_static_box.h"          // StaticBoxGenerator -- wxStaticBox generator
+#include "gen_staticbox_sizer.h"     // StaticBoxSizerGenerator -- wxStaticBoxSizer generator
+#include "gen_statradiobox_sizer.h"  // StaticRadioBtnBoxSizerGenerator -- wxStaticBoxSizer with wxRadioButton generator
+#include "gen_std_dlgbtn_sizer.h"    // StdDialogButtonSizerGenerator -- wxStdDialogButtonSizer generator
+#include "gen_text_sizer.h"          // TextSizerGenerator -- wxTextSizerWrapper generator
+#include "gen_wrap_sizer.h"          // WrapSizerGenerator -- wxGridSizer generator
 
 #include "gen_enums.h"  // Enumerations for generators
 

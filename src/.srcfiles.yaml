@@ -105,7 +105,6 @@ Files:
     generate/project.cpp           # Project generator
     generate/radio_widgets.cpp     # Radio button and Radio box generation classes
     generate/ribbon_widgets.cpp    # Ribbon generation classes
-    generate/sizer_widgets.cpp     # Sizer generation classes
     generate/spin_widgets.cpp      # Spin and ScrollBar generation classes
     generate/styled_text.cpp       # wxStyledText (scintilla) generate
     generate/text_widgets.cpp      # Text generation classes
@@ -113,6 +112,19 @@ Files:
     generate/tree_widgets.cpp      # wxTreeCtrl generation classes
     generate/window_widgets.cpp    # Splitter and Scroll generation classes
     generate/wizard_form.cpp       # Wizard form class
+
+    generate/gen_box_sizer.cpp          # wxBoxSizer generator
+    generate/gen_flexgrid_sizer.cpp     # wxFlexGridSizer generator
+    generate/gen_grid_sizer.cpp         # wxGridSizer generator
+    generate/gen_gridbag_sizer.cpp      # wxGridBagSizer generator
+    generate/gen_spacer_sizer.cpp       # Add space to sizer generator
+    generate/gen_statchkbox_sizer.cpp   # wxStaticBoxSizer with wxCheckBox generator
+    generate/gen_static_box.cpp         # wxStaticBox generator
+    generate/gen_staticbox_sizer.cpp    # wxStaticBoxSizer gemeratpr
+    generate/gen_statradiobox_sizer.cpp # wxStaticBoxSizer with wxRadioButton generator
+    generate/gen_std_dlgbtn_sizer.cpp   # wxStdDialogButtonSizer generator
+    generate/gen_text_sizer.cpp         # wxTextSizerWrapper generator
+    generate/gen_wrap_sizer.cpp         # wxWrapSizer generator
 
     import/import_crafter_maps.cpp # wxCrafter mappings
     import/import_formblder.cpp    # Import a wxFormBuider project

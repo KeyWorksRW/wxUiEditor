@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Button component classes
+// Purpose:   wxButton generator
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -13,10 +13,6 @@
 #include "write_code.h"  // Write code to Scintilla or file
 
 #include "gen_button.h"
-
-using namespace GenEnum;
-
-//////////////////////////////////////////  ButtonGenerator  //////////////////////////////////////////
 
 wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
 {

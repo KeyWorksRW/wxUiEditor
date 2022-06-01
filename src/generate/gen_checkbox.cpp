@@ -1,19 +1,17 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   wxCheckBox component class
+// Purpose:   wxCheckBox generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include <wx/checkbox.h>  // wxCheckBox class interface
-#include <wx/checklst.h>  // wxCheckListBox class interface
-#include <wx/event.h>     // Event classes
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
-#include "checkbox_widgets.h"
+#include "gen_checkbox.h"
 
 wxObject* CheckBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -87,6 +85,12 @@ std::optional<ttlib::cstr> CheckBoxGenerator::GenSettings(Node* node, size_t& /*
     return code;
 }
 
+bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
+    return true;
+}
+
 int CheckBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
@@ -111,12 +115,6 @@ int CheckBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
 void CheckBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxCheckBoxXmlHandler");
-}
-
-bool CheckBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
-{
-    InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
-    return true;
 }
 
 //////////////////////////////////////////  Check3StateGenerator  //////////////////////////////////////////
@@ -225,6 +223,12 @@ std::optional<ttlib::cstr> Check3StateGenerator::GenSettings(Node* node, size_t&
     return code;
 }
 
+bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
+    return true;
+}
+
 int Check3StateGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
@@ -264,10 +268,4 @@ int Check3StateGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool 
 void Check3StateGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
 {
     handlers.emplace("wxCheckBoxXmlHandler");
-}
-
-bool Check3StateGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
-{
-    InsertGeneratorInclude(node, "#include <wx/checkbox.h>", set_src, set_hdr);
-    return true;
 }

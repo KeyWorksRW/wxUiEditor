@@ -180,7 +180,7 @@ int ComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
-            content.append_child("item").text().set(iter);    
+            content.append_child("item").text().set(iter);
         }
     }
 
@@ -368,7 +368,7 @@ int ChoiceGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_c
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
         {
-            content.append_child("item").text().set(iter);    
+            content.append_child("item").text().set(iter);
         }
     }
 

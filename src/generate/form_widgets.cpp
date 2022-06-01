@@ -72,38 +72,37 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
 
 int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
-    object.append_attribute("class").set_value("wxDialog");
-    object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
+    // We use item so that the macros in base_generator.h work, and the code looks the same
+    // as other widget XRC generatorsl
+    auto item = object;
+    GenXrcObjectAttributes(node, item, "wxDialog");
+
+    ADD_ITEM_PROP(prop_title, "title")
+
     if (node->HasValue(prop_style))
     {
         if (add_comments && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
         {
-            object.append_child(pugi::node_comment)
+            item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
         }
         if (!node->HasValue(prop_extra_style))
         {
-            object.append_child("style").text().set(node->prop_as_string(prop_style));
+            item.append_child("style").text().set(node->prop_as_string(prop_style));
         }
         else
         {
             ttlib::cstr all_styles = node->prop_as_string(prop_style);
             all_styles << '|' << node->prop_as_string(prop_extra_style);
-            object.append_child("style").text().set(all_styles);
+            item.append_child("style").text().set(all_styles);
         }
     }
+
     if (node->HasValue(prop_pos))
-    {
-        object.append_child("pos").text().set(node->prop_as_string(prop_pos));
-    }
+        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
     if (node->HasValue(prop_size))
-    {
-        object.append_child("size").text().set(node->prop_as_string(prop_size));
-    }
-    if (node->HasValue(prop_title))
-    {
-        object.append_child("title").text().set(node->prop_as_string(prop_title));
-    }
+        item.append_child("size").text().set(node->prop_as_string(prop_size));
+
     if (node->HasValue(prop_center))
     {
         if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
@@ -111,16 +110,17 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
         {
             if (add_comments)
             {
-                object.append_child(pugi::node_comment)
+                item.append_child(pugi::node_comment)
                     .set_value((ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
             }
-            object.append_child("centered").text().set(1);
+            item.append_child("centered").text().set(1);
         }
         else
         {
-            object.append_child("centered").text().set(node->prop_as_string(prop_center).is_sameas("no") ? 0 : 1);
+            item.append_child("centered").text().set(node->prop_as_string(prop_center).is_sameas("no") ? 0 : 1);
         }
     }
+
     if (node->HasValue(prop_icon))
     {
         ttlib::multistr parts(node->prop_as_string(prop_icon), ';', tt::TRIM::both);
@@ -128,23 +128,23 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
         if (parts[IndexType].is_sameas("Art"))
         {
             ttlib::multistr art_parts(parts[IndexArtID], '|');
-            auto icon = object.append_child("icon");
+            auto icon = item.append_child("icon");
             icon.append_attribute("stock_id").set_value(art_parts[0]);
             icon.append_attribute("stock_client").set_value(art_parts[1]);
         }
         else
         {
             // REVIEW: [KeyWorks - 05-13-2022] As of wxWidgets 3.1.6, SVG files do not work here
-            object.append_child("icon").text().set(parts[IndexImage]);
+            item.append_child("icon").text().set(parts[IndexImage]);
         }
     }
+
     if (add_comments)
     {
-        GenXrcComments(node, object);
         if (node->prop_as_bool(prop_persist))
-        {
-            object.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
-        }
+            item.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
+
+        GenXrcComments(node, item);
     }
 
     return xrc_updated;

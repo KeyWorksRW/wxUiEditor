@@ -356,14 +356,20 @@ void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view
 {
     object.append_attribute("class").set_value(xrc_class);
 
-    // If we have a non-default id, then use that. Otherwise, use the variable name as the id.
-    object.append_attribute("name").set_value(
-        node->prop_as_string(node->prop_as_string(prop_id) == "wxID_ANY" ? prop_var_name : prop_id));
+    // A non default ID takes precedence, followed by a variable name and finally a classname.
+    // Note that forms can use either an ID or a class name.
+
+    if (node->HasProp(prop_id) && node->prop_as_string(prop_id) != "wxID_ANY")
+        object.append_attribute("name").set_value(node->prop_as_string(prop_id));
+    else if (node->HasProp(prop_var_name))
+        object.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    else
+        object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
 }
 
 pugi::xml_node InitializeXrcObject(Node* node, pugi::xml_node& object)
 {
-    if (node->GetParent()->IsSizer())
+    if (node->GetParent()->IsSizer() || node->GetParent()->isGen(gen_wxStaticBox))
     {
         GenXrcSizerItem(node, object);
         return object.append_child("object");

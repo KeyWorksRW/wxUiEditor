@@ -161,6 +161,9 @@ void CodeDisplay::CodeGenerationComplete()
     m_scintilla->AddTextRaw(m_view.GetBuffer().data(), (to_int) m_view.GetBuffer().size());
     m_scintilla->SetReadOnly(true);
 
+    // Find doesn't work correctly unless there's a selection to start the search from.
+    m_scintilla->SetEmptySelection(0);
+
     m_view.ParseBuffer();
 }
 

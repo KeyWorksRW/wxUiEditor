@@ -277,6 +277,12 @@ protected:
 
 #endif
 
+    // The following event handlers are used when previewing an XRC form
+
+    void OnXrcKeyUp(wxKeyEvent& event);
+    void OnXrcClose(wxCloseEvent& event);
+    void OnXrcActivate(wxActivateEvent& event);
+
     wxWindow* CreateNoteBook(wxWindow* parent);
 
     void CreateSplitters();
@@ -335,6 +341,11 @@ private:
 
     NodeSharedPtr m_clipboard;
     size_t m_clip_hash;  // generated clipboard hash
+
+    wxDialog* m_pxrc_dlg { nullptr };
+    wxFrame* m_pxrc_win { nullptr };
+
+    bool m_isXrcResourceInitalized { false };
 
     bool m_isProject_generated { false };
     bool m_isProject_modified { false };

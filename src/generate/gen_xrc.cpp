@@ -10,12 +10,19 @@
 #include <thread>
 #include <unordered_set>
 
-#include <wx/filedlg.h>          // wxFileDialog base header
-#include <wx/filename.h>         // wxFileName - encapsulates a file path
-#include <wx/mstream.h>          // Memory stream classes
-#include <wx/xml/xml.h>          // wxXmlDocument - XML parser & data holder class
-#include <wx/xrc/xh_richtext.h>  // XML resource handler for wxRichTextCtrl
-#include <wx/xrc/xmlres.h>       // XML resources
+#include <wx/filedlg.h>     // wxFileDialog base header
+#include <wx/filename.h>    // wxFileName - encapsulates a file path
+#include <wx/mstream.h>     // Memory stream classes
+#include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
+#include <wx/xrc/xmlres.h>  // XML resources
+
+// The following handlers must be explicitly added
+
+#include <wx/xrc/xh_aui.h>             // XRC resource handler for wxAUI
+#include <wx/xrc/xh_auitoolb.h>        // XML resource handler for wxAuiToolBar
+#include <wx/xrc/xh_ribbon.h>          // XML resource handler for wxRibbon related classes
+#include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
+#include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
@@ -50,12 +57,12 @@ inline constexpr const auto txt_XRC_FOOTER = R"===(</resource>
 
 constexpr const char* txt_dlg_name = "_wxue_temp_dlg";
 
-static bool s_isXmlInitalized { false };
-
 int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments);
 
 void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
 {
+    m_pxrc_dlg = nullptr;
+
     if (!m_selected_node)
     {
         wxMessageBox("You need to select a dialog first.", "XRC Dialog Preview");
@@ -75,14 +82,47 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         }
     }
 
-    if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm))
+    if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm) && !form_node->isGen(gen_wxFrame))
     {
         wxMessageBox("Only dialogs can be previewed.", "XRC Dialog Preview");
         return;
     }
 
+    auto xrc_resource = wxXmlResource::Get();
+
+    if (!m_isXrcResourceInitalized)
+    {
+        m_isXrcResourceInitalized = true;
+
+        xrc_resource->InitAllHandlers();
+        xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
+        xrc_resource->AddHandler(new wxAuiXmlHandler);
+        xrc_resource->AddHandler(new wxAuiToolBarXmlHandler);
+        xrc_resource->AddHandler(new wxRibbonXmlHandler);
+        xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
+    }
+
+    wxString res_name("wxuiPreview");
     try
     {
+        // Our directory is probably already set correctly, but this will make certain that it is.
+
+        ttSaveCwd save_cwd;
+        wxSetWorkingDirectory(wxGetApp().GetProjectPath());
+
+        ttlib::cstr style = form_node->prop_as_string(prop_style);
+
+        if (form_node->isGen(gen_wxDialog) &&
+            (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
+        {
+            ttlib::cstr modified_style("wxCLOSE_BOX|wxCAPTION");
+            if (style.size())
+                modified_style << '|' << style;
+            form_node->prop_set_value(prop_style, modified_style);
+            wxMessageBox("Caption and Close box temporarily added so that you can close the preview dialog.",
+                         "wxDialog Preview", wxICON_INFORMATION);
+        }
+
         auto doc_str = GenerateXrcStr(form_node, xrc_gen::no_comments, xrc_gen::preview);
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
@@ -92,43 +132,86 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
             return;
         }
 
-        auto xrc_resource = wxXmlResource::Get();
-
-        if (!s_isXmlInitalized)
-        {
-            xrc_resource->InitAllHandlers();
-            xrc_resource->AddHandler(new wxRichTextCtrlXmlHandler);
-            s_isXmlInitalized = true;
-        }
-
-        wxString res_name("wxuiPreview");
-
         if (!xrc_resource->LoadDocument(xmlDoc.release(), res_name))
         {
             wxMessageBox("wxWidgets could not parse the XRC data.", "XRC Dialog Preview");
             return;
         }
 
-        wxDialog dlg;
-        wxString dlg_name =
-            form_node->isGen(gen_wxDialog) ? form_node->prop_as_wxString(prop_class_name) : wxString(txt_dlg_name);
-        if (xrc_resource->LoadDialog(&dlg, this, dlg_name))
+        // If it's a form, then the xml-generator has already created a parent dialog.
+        if (form_node->isGen(gen_wxDialog) || form_node->isGen(gen_PanelForm))
         {
-            dlg.ShowModal();
+            wxDialog dlg;
+            m_pxrc_dlg = &dlg;  // so event handlers can access it
+            dlg.Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, this);
+
+            wxString dlg_name =
+                form_node->isGen(gen_wxDialog) ? form_node->prop_as_wxString(prop_class_name) : wxString(txt_dlg_name);
+            if (xrc_resource->LoadDialog(&dlg, wxGetFrame().GetWindow(), dlg_name))
+            {
+                dlg.ShowModal();
+            }
+            else
+            {
+                wxMessageBox(ttlib::cstr("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
+                             "XRC wxDialog Preview");
+            }
+            m_pxrc_dlg = nullptr;
         }
-        else
+        else if (form_node->isGen(gen_wxFrame))
         {
-            wxMessageBox(ttlib::cstr("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
-                         "XRC Dialog Preview");
+            m_pxrc_win = new wxFrame;
+            if (xrc_resource->LoadFrame(m_pxrc_win, wxGetFrame().GetWindow(), form_node->prop_as_wxString(prop_class_name)))
+            {
+                m_pxrc_win->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnXrcClose, this);
+                m_pxrc_win->Bind(wxEVT_ACTIVATE, &MainFrame::OnXrcActivate, this);
+                m_pxrc_win->Show();
+            }
+            else
+            {
+                wxMessageBox(ttlib::cstr("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
+                             "XRC wxFrame Preview");
+            }
         }
-        xrc_resource->Unload(res_name);
+
+        // Restore the original style if we changed it.
+        if (form_node->prop_as_string(prop_style) != style)
+            form_node->prop_set_value(prop_style, style);
     }
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
         wxMessageBox("An internal error occurred generating XRC code", "XRC Dialog Preview");
     }
+
+    xrc_resource->Unload(res_name);
 }
+
+void MainFrame::OnXrcKeyUp(wxKeyEvent& event)
+{
+    if (event.GetKeyCode() != WXK_ESCAPE)
+        return;
+
+    if (m_pxrc_dlg)
+    {
+        m_pxrc_dlg->EndModal(wxID_OK);
+    }
+}
+
+// clang-format off
+void MainFrame::OnXrcClose(wxCloseEvent& /* event */)
+{
+    m_pxrc_win->Destroy();
+}
+
+void MainFrame::OnXrcActivate(wxActivateEvent& event)
+{
+    if (!event.GetActive())
+        m_pxrc_win->Destroy();
+    else
+        event.Skip();
+}
+// clang-format on
 
 void MainFrame::OnExportXRC(wxCommandEvent& WXUNUSED(event))
 {
@@ -252,7 +335,7 @@ std::string GenerateXrcStr(Node* node_start, bool add_comments, bool is_preview)
         auto object = root.append_child("object");
         object.append_attribute("class").set_value("wxDialog");
         object.append_attribute("name").set_value(txt_dlg_name);
-        object.append_child("style").text().set("wxDEFAULT_DIALOG_STYLE");
+        object.append_child("style").text().set("wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER");
         object.append_child("centered").text().set("1");
         object.append_child("title").text().set(node_start->prop_as_string(prop_class_name));
         auto item = object.append_child("object");

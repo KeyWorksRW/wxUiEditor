@@ -135,3 +135,7 @@ ttlib::cstr GenerateNewAssignment(Node* node, bool use_generic = false);
 std::optional<ttlib::cstr> GenGetSetCode(Node* node);
 
 std::optional<ttlib::cstr> GenValidatorSettings(Node* node);
+
+// Generates code for any class inheriting from wxTopLevelWindow -- this will generate
+// everything needed to set the window's icon.
+ttlib::cstr GenerateIconCode(const ttlib::cstr& description);

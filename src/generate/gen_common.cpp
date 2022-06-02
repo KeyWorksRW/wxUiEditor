@@ -1704,3 +1704,142 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         code << "SetHelpText(" << GenerateQuotedString(node->prop_as_string(prop_context_help)) << ");";
     }
 }
+
+// Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything needed to set the
+// window's icon.
+
+ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
+{
+    ttlib::cstr code;
+
+    if (description.empty())
+    {
+        return code;
+    }
+
+    ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+
+    if (parts.size() < 2 || parts[IndexImage].empty())
+    {
+        return code;
+    }
+
+    if (parts[IndexType].is_sameas("XPM"))
+    {
+        // In theory, we could create an alpha channel using black as the transparency, but it just doesn't make sense
+        // for the user to be using XPM files as an icon.
+        code << "// XPM files do not contain an alpha channel and cannot be used as an icon.";
+        return code;
+    }
+
+    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1" && !parts[IndexType].is_sameas("SVG"))
+    {
+        code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+    }
+
+    if (parts[IndexType].contains("Art"))
+    {
+        ttlib::cstr art_id(parts[IndexArtID]);
+        ttlib::cstr art_client;
+        if (auto pos = art_id.find('|'); ttlib::is_found(pos))
+        {
+            art_client = art_id.subview(pos + 1);
+            art_id.erase(pos);
+        }
+
+        code << "SetIcon(wxArtProvider::GetBitmapBundle(" << art_id << ", ";
+        // Note that current documentation states that the client is required, but the header file says otherwise
+        if (art_client.size())
+            code << art_client;
+        code << ").GetIconFor(this));\n";
+    }
+    else if (description.starts_with("SVG"))
+    {
+        auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+        if (!embed)
+        {
+            FAIL_MSG(ttlib::cstr() << description << " not embedded!")
+            return code;
+        }
+
+        auto svg_size = get_image_prop_size(parts[IndexSize]);
+
+        ttlib::cstr name = "wxue_img::" + embed->array_name;
+        code << "SetIcon(wxueBundleSVG(" << name << ", " << (embed->array_size & 0xFFFFFFFF) << ", ";
+        code << (embed->array_size >> 32) << ", wxSize(" << svg_size.x << ", " << svg_size.y << "))";
+        code << ".GetIconFor(this));\n";
+        return code;
+    }
+    else
+    {
+        if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(description); bundle)
+        {
+            if (bundle->lst_filenames.size() == 1)
+            {
+                code << "SetIcon(wxBitmapBundle::FromBitmap(wxueImage(";
+                ttlib::cstr name(bundle->lst_filenames[0].filename());
+                name.remove_extension();
+                name.Replace(".", "_", true);  // fix wxFormBuilder header files
+
+                if (parts[IndexType].starts_with("Embed"))
+                {
+                    auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    if (embed)
+                    {
+                        name = "wxue_img::" + embed->array_name;
+                    }
+                }
+
+                code << name << ", sizeof(" << name << ")))";
+                code << ".GetIconFor(this));\n";
+            }
+            else
+            {
+                code << "{\n\twxIconBundle icon_bundle;\n\twxIcon icon;\n";
+                for (auto& iter: bundle->lst_filenames)
+                {
+                    ttlib::cstr name(iter.filename());
+                    name.remove_extension();
+                    name.Replace(".", "_", true);  // fix wxFormBuilder header files
+                    if (parts[IndexType].starts_with("Embed"))
+                    {
+                        auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(iter);
+                        if (embed)
+                        {
+                            name = "wxue_img::" + embed->array_name;
+                        }
+                    }
+                    code << "\ticon.CopyFromBitmap(wxueImage(" << name << ", sizeof(" << name << ")));\n";
+                    code << "\ticon_bundle.AddIcon(icon);\n";
+                }
+                code << "\tSetIcons(icon_bundle);\n}\n";
+            }
+        }
+        else
+        {
+            FAIL_MSG(ttlib::cstr(description) << " was not converted to a bundle ahead of time!")
+            return code;
+        }
+    }
+
+    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    {
+        code << "#else\n";
+        auto image_code = GenerateBitmapCode(description);
+        if (!image_code.contains(".Scale") && image_code.starts_with("wxImage("))
+        {
+            code << "SetIcon(wxIcon(" << image_code.subview(sizeof("wxImage")) << ");\n";
+        }
+        else
+        {
+            code << "{\n";
+            code << "\twxIcon icon;\n";
+            code << "\ticon.CopyFromBitmap(" << GenerateBitmapCode(description) << ");\n";
+            code << "\tSetIcon(wxIcon(icon));\n";
+            code << "}\n";
+        }
+        code << "#endif\n";
+    }
+
+    return code;
+}

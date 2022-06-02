@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Grid component classes
+// Purpose:   wxPropertyGrid generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +9,7 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
-class PropertyGridManagerGenerator : public BaseGenerator
+class PropertyGridGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
@@ -19,10 +19,4 @@ public:
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
-};
-
-class PropertyGridPageGenerator : public BaseGenerator
-{
-public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
 };

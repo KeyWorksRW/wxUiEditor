@@ -44,6 +44,8 @@ set (file_list
 
     ${CMAKE_CURRENT_LIST_DIR}/custom_ctrls/colour_rect_ctrl.cpp   # Control that displays a solid color
 
+    # Code generation modules
+
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_cmake.cpp         # Auto-generate a .cmake file
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_codefiles.cpp     # Generate code files
@@ -57,8 +59,8 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_xrc_utils.cpp     # Common XRC generating functions
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_book_utils.cpp    # Common Book utilities
 
-    # The following files in generate/ are used to display the widget in the Mockup panel and to generate
-    # the code to insert into the source and header files.
+    # Generators are responsible for displaying the widget in the Mockup window,
+    # and generating both C++ and XRC code.
 
     ${CMAKE_CURRENT_LIST_DIR}/generate/dataview_widgets.cpp  # wxDataView generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/grid_widgets.cpp      # Grid generation classes
@@ -70,53 +72,51 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/toolbar_widgets.cpp   # Toolbar generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/tree_widgets.cpp      # wxTreeCtrl generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/window_widgets.cpp    # Splitter and Scroll generation classes
-    ${CMAKE_CURRENT_LIST_DIR}/generate/wizard_form.cpp       # Wizard form class
 
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_activity.cpp       # wxActivityIndicator generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_animation.cpp      # wxAnimationCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_banner_window.cpp  # wxBannerWindow generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_bitmap_combo.cpp   # wxBitmapComboBox generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_button.cpp         # wxButton generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_calendar_ctrl.cpp  # wxCalendarCtrl generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_check_listbox.cpp  # wxCheckListBox generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_checkbox.cpp       # wxCheckBox generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_choice.cpp         # wxChoice generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_close_btn.cpp      # wxBitmapButton::CreateCloseButton generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_cmd_link_btn.cpp   # wxCommandLinkButton generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_collapsible.cpp    # wxCollapsiblePane generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_combobox.cpp       # wxComboBox generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_custom_ctrl.cpp    # Custom Control generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_dir_ctrl.cpp       # wxGenericDirCtrl generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_edit_listbox.cpp   # wxEditableListBox generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_file_ctrl.cpp      # wxFileCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_gauge.cpp          # wxGauge generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_grid.cpp           # wxGrid generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_html_listbox.cpp   # wxSimpleHtmlListBox generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_html_window.cpp    # wxHtmlWindow generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_hyperlink.cpp      # wxHyperlinkCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_infobar.cpp        # wxInfoBar generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_listbox.cpp        # wxListBox generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_listview.cpp       # wxListView generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_panel.cpp          # wxPanel generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_prop_grid.cpp      # wxPropertyGrid generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_prop_item.cpp      # PropertyGrid/Manager Item generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_radio_box.cpp      # wxRadioBox generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_radio_btn.cpp      # wxRadioButton generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_rearrange.cpp      # wxRearrangeCtrl generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_rich_text.cpp      # wxRichTextCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_scrollbar.cpp      # wxScrollBar generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_search_ctrl.cpp    # wxSearchCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_slider.cpp         # wxSlider generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_spin_btn.cpp       # wxSpinButton generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_spin_ctrl.cpp      # wxSpinButton generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_box.cpp     # wxStaticBox generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_line.cpp    # wxStaticLine generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_status_bar.cpp     # wxStatusBar generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_toggle_btn.cpp     # wxToggleButton generator
-
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_radio_box.cpp      # wxRadioBox generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_radio_btn.cpp      # wxRadioButton generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_calendar_ctrl.cpp  # wxCalendarCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_file_ctrl.cpp      # wxFileCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_dir_ctrl.cpp       # wxGenericDirCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_search_ctrl.cpp    # wxSearchCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_grid.cpp           # wxGrid generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_prop_grid.cpp      # wxPropertyGrid generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_prop_item.cpp      # PropertyGrid/Manager Item generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_html_listbox.cpp   # wxSimpleHtmlListBox generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_rearrange.cpp      # wxRearrangeCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_check_listbox.cpp  # wxCheckListBox generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_listbox.cpp        # wxListBox generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_edit_listbox.cpp   # wxEditableListBox generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_listview.cpp       # wxListView generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_collapsible.cpp    # wxCollapsiblePane generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_panel.cpp          # wxPanel generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_text.cpp    # wxStaticText generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_status_bar.cpp     # wxStatusBar generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_text_ctrl.cpp      # wxTextCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_rich_text.cpp      # wxRichTextCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_html_window.cpp    # wxHtmlWindow generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_toggle_btn.cpp     # wxToggleButton generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_web_view.cpp       # wxWebView generator
 
     # Books
@@ -134,18 +134,19 @@ set (file_list
     # Forms
 
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_dialog.cpp             # wxDialog generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_frame.cpp              # wxFrame generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_panel_form.cpp         # wxPanel Form generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_popup_trans_win.cpp    # wxPopupTransientWindow generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_frame.cpp              # wxFrame generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_wizard.cpp             # wxWizard generator
 
     # Pickers
 
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_date_picker.cpp        # wxDatePickerCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_time_picker.cpp        # wxTimePickerCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_file_picker.cpp        # wxFilePickerCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_dir_picker.cpp         # wxDirPickerCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_clr_picker.cpp         # wxColourPickerCtrl generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_date_picker.cpp        # wxDatePickerCtrl generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_dir_picker.cpp         # wxDirPickerCtrl generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_file_picker.cpp        # wxFilePickerCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_font_picker.cpp        # wxFontPickerCtrl generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_time_picker.cpp        # wxTimePickerCtrl generator
 
     # Sizers
 

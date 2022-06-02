@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Wizard form class
+// Purpose:   wxWizard generator
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -18,7 +18,7 @@
 #include "../mockup/mockup_wizard.h"  // WizardPageSimple
 #include "../panels/navpopupmenu.h"   // NavPopupMenu -- Context-menu for Navigation Panel
 
-#include "wizard_form.h"
+#include "gen_wizard.h"
 
 wxObject* WizardFormGenerator::CreateMockup(Node* /* node */, wxObject* /* parent */)
 {

@@ -85,53 +85,96 @@ Files:
     generate/gen_xrc_utils.cpp     # Common XRC generating functions
     generate/gen_book_utils.cpp    # Common Book utilities
 
-    # The following files in generate/ are used to display the widget in the Mockup panel and to generate
-    # the code to insert into the source and header files.
+    # Generators are responsible for displaying the widget in the Mockup window,
+    # and generating both C++ and XRC code.
 
-    generate/btn_widgets.cpp       # Button generation class
-    generate/ctrl_widgets.cpp      # Calendar, GenericDir, Search Ctrl generation classes
     generate/dataview_widgets.cpp  # wxDataView generation classes
-    generate/form_widgets.cpp      # Form generation classes
     generate/grid_widgets.cpp      # Grid generation classes
     generate/images_form.cpp       # Embedded images generator
-    generate/listbox_widgets.cpp   # ListBox generation classes
-    generate/listctrl_widgets.cpp  # ListCtrl generation class
     generate/menu_widgets.cpp      # Menu generation classes
-    generate/panel_widgets.cpp     # Panel generation classes
-    generate/picker_widgets.cpp    # Picker generation classes
     generate/project.cpp           # Project generator
-    generate/radio_widgets.cpp     # Radio button and Radio box generation classes
     generate/ribbon_widgets.cpp    # Ribbon generation classes
     generate/styled_text.cpp       # wxStyledText (scintilla) generate
-    generate/text_widgets.cpp      # Text generation classes
     generate/toolbar_widgets.cpp   # Toolbar generation classes
     generate/tree_widgets.cpp      # wxTreeCtrl generation classes
     generate/window_widgets.cpp    # Splitter and Scroll generation classes
-    generate/wizard_form.cpp       # Wizard form class
 
     generate/gen_activity.cpp       # wxActivityIndicator generator
     generate/gen_animation.cpp      # wxAnimationCtrl generator
     generate/gen_banner_window.cpp  # wxBannerWindow generator
     generate/gen_bitmap_combo.cpp   # wxBitmapComboBox generator
     generate/gen_button.cpp         # wxButton generator
+    generate/gen_calendar_ctrl.cpp  # wxCalendarCtrl generator
+    generate/gen_check_listbox.cpp  # wxCheckListBox generator
     generate/gen_checkbox.cpp       # wxCheckBox generator
     generate/gen_choice.cpp         # wxChoice generator
     generate/gen_close_btn.cpp      # wxBitmapButton::CreateCloseButton generator
     generate/gen_cmd_link_btn.cpp   # wxCommandLinkButton generator
+    generate/gen_collapsible.cpp    # wxCollapsiblePane generator
     generate/gen_combobox.cpp       # wxComboBox generator
     generate/gen_custom_ctrl.cpp    # Custom Control generator
+    generate/gen_dir_ctrl.cpp       # wxGenericDirCtrl generator
+    generate/gen_edit_listbox.cpp   # wxEditableListBox generator
+    generate/gen_file_ctrl.cpp      # wxFileCtrl generator
     generate/gen_gauge.cpp          # wxGauge generator
+    generate/gen_grid.cpp           # wxGrid generator
+    generate/gen_html_listbox.cpp   # wxSimpleHtmlListBox generator
+    generate/gen_html_window.cpp    # wxHtmlWindow generator
     generate/gen_hyperlink.cpp      # wxHyperlinkCtrl generator
     generate/gen_infobar.cpp        # wxInfoBar generator
+    generate/gen_listbox.cpp        # wxListBox generator
+    generate/gen_listview.cpp       # wxListView generator
+    generate/gen_panel.cpp          # wxPanel generator
+    generate/gen_prop_grid.cpp      # wxPropertyGrid generator
+    generate/gen_prop_item.cpp      # PropertyGrid/Manager Item generator
+    generate/gen_radio_box.cpp      # wxRadioBox generator
+    generate/gen_radio_btn.cpp      # wxRadioButton generator
+    generate/gen_rearrange.cpp      # wxRearrangeCtrl generator
+    generate/gen_rich_text.cpp      # wxRichTextCtrl generator
     generate/gen_scrollbar.cpp      # wxScrollBar generator
+    generate/gen_search_ctrl.cpp    # wxSearchCtrl generator
     generate/gen_slider.cpp         # wxSlider generator
     generate/gen_spin_btn.cpp       # wxSpinButton generator
     generate/gen_spin_ctrl.cpp      # wxSpinButton generator
     generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     generate/gen_static_box.cpp     # wxStaticBox generator
     generate/gen_static_line.cpp    # wxStaticLine generator
+    generate/gen_static_text.cpp    # wxStaticText generator
     generate/gen_status_bar.cpp     # wxStatusBar generator
+    generate/gen_text_ctrl.cpp      # wxTextCtrl generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
+    generate/gen_web_view.cpp       # wxWebView generator
+
+    # Books
+
+    generate/gen_aui_notebook.cpp       # wxAuiNotebook generator
+    generate/gen_book_page.cpp          # Book page generator
+    generate/gen_choicebook.cpp         # wxChoicebook generator
+    generate/gen_listbook.cpp           # wxListbook generator
+    generate/gen_notebook.cpp           # wxNotebook generator
+    generate/gen_page_ctrl.cpp          # Page control generator
+    generate/gen_simplebook.cpp         # wxSimplebook generator
+    generate/gen_toolbook.cpp           # wxToolbook generator
+    generate/gen_treebook.cpp           # wxTreebook generator
+
+    # Forms
+
+    generate/gen_dialog.cpp             # wxDialog generator
+    generate/gen_frame.cpp              # wxFrame generator
+    generate/gen_panel_form.cpp         # wxPanel Form generator
+    generate/gen_popup_trans_win.cpp    # wxPopupTransientWindow generator
+    generate/gen_wizard.cpp             # wxWizard generator
+
+    # Pickers
+
+    generate/gen_clr_picker.cpp         # wxColourPickerCtrl generator
+    generate/gen_date_picker.cpp        # wxDatePickerCtrl generator
+    generate/gen_dir_picker.cpp         # wxDirPickerCtrl generator
+    generate/gen_file_picker.cpp        # wxFilePickerCtrl generator
+    generate/gen_font_picker.cpp        # wxFontPickerCtrl generator
+    generate/gen_time_picker.cpp        # wxTimePickerCtrl generator
+
+    # Sizers
 
     generate/gen_box_sizer.cpp          # wxBoxSizer generator
     generate/gen_flexgrid_sizer.cpp     # wxFlexGridSizer generator
@@ -144,16 +187,6 @@ Files:
     generate/gen_std_dlgbtn_sizer.cpp   # wxStdDialogButtonSizer generator
     generate/gen_text_sizer.cpp         # wxTextSizerWrapper generator
     generate/gen_wrap_sizer.cpp         # wxWrapSizer generator
-
-    generate/gen_aui_notebook.cpp       # wxAuiNotebook generator
-    generate/gen_book_page.cpp          # Book page generator
-    generate/gen_choicebook.cpp         # wxChoicebook generator
-    generate/gen_listbook.cpp           # wxListbook generator
-    generate/gen_notebook.cpp           # wxNotebook generator
-    generate/gen_page_ctrl.cpp          # Page control generator
-    generate/gen_simplebook.cpp         # wxSimplebook generator
-    generate/gen_toolbook.cpp           # wxToolbook generator
-    generate/gen_treebook.cpp           # wxTreebook generator
 
     import/import_crafter_maps.cpp # wxCrafter mappings
     import/import_formblder.cpp    # Import a wxFormBuider project

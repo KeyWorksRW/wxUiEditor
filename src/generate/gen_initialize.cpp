@@ -19,7 +19,6 @@
 #include "toolbar_widgets.h"   // Toolbar component classes
 #include "tree_widgets.h"      // TreeCtrlGenerator -- wxTreeCtrl component classes
 #include "window_widgets.h"    // Splitter and Scroll component classes
-#include "wizard_form.h"       // Wizard form class
 
 #include "gen_activity.h"            // ActivityIndicatorGenerator -- wxActivityIndicator generator
 #include "gen_animation.h"           // AnimationGenerator -- wxAnimationCtrl generator
@@ -95,6 +94,7 @@
 #include "gen_toolbook.h"            // ToolbookGenerator -- wxToolbook generator
 #include "gen_treebook.h"            // TreebookGenerator -- wxTreebook generator
 #include "gen_web_view.h"            // WebViewGenerator -- wxWebView generator
+#include "gen_wizard.h"              // WizardFormGenerator -- wxWizard generator
 #include "gen_wrap_sizer.h"          // WrapSizerGenerator -- wxGridSizer generator
 
 #include "gen_enums.h"  // Enumerations for generators

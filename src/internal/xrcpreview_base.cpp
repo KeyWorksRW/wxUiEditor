@@ -46,6 +46,10 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_btn->SetToolTip("Load the XRC into a dialog and display it.");
     box_sizer_2->Add(m_btn, wxSizerFlags().Border(wxALL));
 
+    m_searchCtrl = new wxSearchCtrl(this, wxID_ANY);
+    m_searchCtrl->ShowSearchButton(true);
+    box_sizer_2->Add(m_searchCtrl, wxSizerFlags().Border(wxALL));
+
     auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));
 
@@ -90,6 +94,7 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_btn_3->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnXrcCopy, this);
     m_btn_4->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnExport, this);
     m_btn->Bind(wxEVT_BUTTON, &XrcPreviewBase::OnPreview, this);
+    m_searchCtrl->Bind(wxEVT_SEARCHCTRL_SEARCH_BTN, &XrcPreviewBase::OnSearch, this);
 
     return true;
 }

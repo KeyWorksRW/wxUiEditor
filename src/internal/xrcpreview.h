@@ -16,6 +16,7 @@ public:
     XrcPreview(wxWindow* parent);
 
 protected:
+    void OnSearch(wxCommandEvent& event) override;
     void OnExport(wxCommandEvent& event) override;
     // Handlers for XrcPreviewBase events
     void OnInit(wxInitDialogEvent& event) override;

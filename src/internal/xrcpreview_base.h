@@ -10,6 +10,7 @@
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/srchctrl.h>
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
 
@@ -19,14 +20,14 @@ public:
     XrcPreviewBase() {}
     XrcPreviewBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test XRC",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
+        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
 
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Test XRC",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr);
+        long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, const wxString &name = wxDialogNameStr);
 
 protected:
 
@@ -36,6 +37,7 @@ protected:
     virtual void OnExport(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnPreview(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSearch(wxCommandEvent& event) { event.Skip(); }
     virtual void OnXrcCopy(wxCommandEvent& event) { event.Skip(); }
 
     // Class member variables
@@ -44,6 +46,7 @@ protected:
     wxButton* m_btn_2;
     wxButton* m_btn_3;
     wxButton* m_btn_4;
+    wxSearchCtrl* m_searchCtrl;
     wxStaticText* m_staticText;
     wxStyledTextCtrl* m_scintilla;
 };

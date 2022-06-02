@@ -1,19 +1,19 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <wxUiEditorData
   data_version="14">
   <node
     class="Project"
     cmake_file="wxui_internal.cmake"
     cmake_varname="wxui_internal"
-    generate_cmake="true">
+    generate_cmake="1">
     <node
       class="wxDialog"
       base_file="code_compare_base"
       class_name="CodeCompare"
       inserted_hdr_code="~CodeCompare();@@@@private:@@    std::vector&lt;ttlib::cstr> m_class_list;"
-      private_members="true"
+      private_members="1"
       title="Compare Code Generation"
-      use_derived_class="false"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -35,20 +35,20 @@
           <node
             class="wxListBox"
             var_name="m_list_changes"
-            disabled="true"
+            disabled="1"
             minimum_size="250,200" />
           <node
             class="wxButton"
             label="&amp;WinMerge..."
             bitmap="XPM;WinMerge.xpm"
-            disabled="true"
+            disabled="1"
             wxEVT_BUTTON="OnWinMerge" />
         </node>
         <node
           class="wxStdDialogButtonSizer"
-          Cancel="false"
-          Close="true"
-          OK="false"
+          Cancel="0"
+          Close="1"
+          OK="0"
           default_button="Close"
           flags="wxEXPAND" />
       </node>
@@ -73,7 +73,7 @@
           <node
             class="wxCollapsiblePane"
             class_access="none"
-            collapsed="true"
+            collapsed="1"
             label="Dialog Description"
             var_name="collapsiblePane"
             borders="wxLEFT|wxRIGHT|wxTOP"
@@ -147,7 +147,7 @@
                     flags="wxEXPAND">
                     <node
                       class="wxCheckBox"
-                      checked="true"
+                      checked="1"
                       label="Convert to &amp;PNG"
                       var_name="m_check_make_png"
                       tooltip="If checked, image will be converted to PNG before being saved."
@@ -211,7 +211,7 @@
                     flags="wxEXPAND">
                     <node
                       class="wxCheckBox"
-                      checked="true"
+                      checked="1"
                       label="&amp;Alpha Channel to Mask"
                       var_name="m_ConvertAlphaChannel"
                       tooltip="Check this to replace any alpha channel with a mask."
@@ -266,7 +266,7 @@
             class="wxStaticText"
             label="16 x 16"
             var_name="m_staticDimensions"
-            hidden="true"
+            hidden="1"
             alignment="wxALIGN_CENTER"
             borders="wxTOP|wxRIGHT|wxLEFT"
             proportion="1" />
@@ -280,27 +280,27 @@
             class="wxStaticText"
             label="Source"
             var_name="m_staticOriginal"
-            hidden="true"
+            hidden="1"
             alignment="wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_HORIZONTAL"
             borders="wxLEFT|wxRIGHT|wxTOP" />
           <node
             class="wxStaticText"
             label="Current"
             var_name="m_staticOutput"
-            hidden="true"
+            hidden="1"
             alignment="wxALIGN_CENTER"
             borders="wxLEFT|wxRIGHT|wxTOP" />
           <node
             class="wxStaticBitmap"
             class_access="protected:"
             var_name="m_bmpOriginal"
-            hidden="true"
+            hidden="1"
             alignment="wxALIGN_CENTER" />
           <node
             class="wxStaticBitmap"
             class_access="protected:"
             var_name="m_bmpOutput"
-            hidden="true"
+            hidden="1"
             alignment="wxALIGN_CENTER" />
         </node>
         <node
@@ -313,13 +313,13 @@
             class="wxStaticText"
             label="save"
             var_name="m_staticSave"
-            hidden="true"
+            hidden="1"
             flags="wxEXPAND" />
           <node
             class="wxStaticText"
             label="size"
             var_name="m_staticSize"
-            hidden="true"
+            hidden="1"
             flags="wxEXPAND" />
         </node>
         <node
@@ -345,7 +345,7 @@
       class_name="DebugSettingsBase"
       derived_class_name="DebugSettings"
       derived_file="debugsettings"
-      persist="true"
+      persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Test Settings"
       wxEVT_INIT_DIALOG="OnInit">
@@ -421,7 +421,7 @@
         <node
           class="wxStdDialogButtonSizer"
           class_access="protected:"
-          static_line="false"
+          static_line="0"
           var_name="std_button_sizer"
           flags="wxEXPAND"
           OKButtonClicked="OnOK" />
@@ -616,7 +616,7 @@
                   class="wxStyledTextCtrl"
                   fold_margin="1"
                   lexer="XML"
-                  read_only="true"
+                  read_only="1"
                   smart_size="-2,-1d"
                   flags="wxEXPAND"
                   proportion="1" />
@@ -630,9 +630,9 @@
       class="wxDialog"
       base_file="nodeinfo_base"
       class_name="NodeInfo"
-      private_members="true"
+      private_members="1"
       title="Node Information"
-      use_derived_class="false"
+      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -671,9 +671,9 @@
         </node>
         <node
           class="wxStdDialogButtonSizer"
-          Cancel="false"
-          Close="true"
-          OK="false"
+          Cancel="0"
+          Close="1"
+          OK="0"
           default_button="Close"
           flags="wxEXPAND" />
       </node>
@@ -685,7 +685,8 @@
       derived_class_name="XrcPreview"
       derived_file="xrcpreview"
       minimum_size="800,600d"
-      persist="true"
+      persist="1"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Test XRC"
       wxEVT_INIT_DIALOG="OnInit">
       <node
@@ -732,6 +733,9 @@
               label="&amp;Preview..."
               tooltip="Load the XRC into a dialog and display it."
               wxEVT_BUTTON="OnPreview" />
+            <node
+              class="wxSearchCtrl"
+              wxEVT_SEARCHCTRL_SEARCH_BTN="OnSearch" />
           </node>
           <node
             class="wxBoxSizer"
@@ -749,9 +753,9 @@
         </node>
         <node
           class="wxStdDialogButtonSizer"
-          Cancel="false"
-          Close="true"
-          OK="false"
+          Cancel="0"
+          Close="1"
+          OK="0"
           default_button="none"
           flags="wxEXPAND" />
       </node>

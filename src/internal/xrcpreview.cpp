@@ -14,12 +14,16 @@
 #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
 #include <wx/xrc/xmlres.h>  // XML resources
 
+#include "tttextfile.h"  // ttlib::viewfile
+
 #include "gen_xrc.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
 #include "xrcpreview.h"  // auto-generated: xrcpreview_base.h and xrcpreview_base.cpp
 
 #include "pugixml.hpp"
+
+const int node_marker = 1;
 
 void MainFrame::OnXrcPreviewDlg(wxCommandEvent& /* event */)
 {
@@ -59,6 +63,37 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
+    m_scintilla->SetEmptySelection(0);
+
+    ttlib::viewfile m_view;
+    m_view.ReadString(doc_str);
+
+    ttlib::cstr search("name=\"");
+    sel_node = wxGetFrame().GetSelectedNode();
+
+    if (sel_node->HasProp(prop_id) && sel_node->prop_as_string(prop_id) != "wxID_ANY")
+    {
+        search << sel_node->prop_as_string(prop_id);
+    }
+    else if (sel_node->HasValue(prop_var_name))
+    {
+        search << sel_node->prop_as_string(prop_var_name);
+    }
+    else
+    {
+        search << sel_node->prop_as_string(prop_class_name);
+    }
+
+    int line = (to_int) m_view.FindLineContaining(search);
+
+    if (!ttlib::is_found(line))
+        return;
+
+    m_scintilla->MarkerDeleteAll(node_marker);
+    m_scintilla->MarkerAdd(line, node_marker);
+
+    // Unlike GetLineVisible(), this function does ensure that the line is visible.
+    m_scintilla->ScrollToLine(line);
 }
 
 void XrcPreview::OnPreview(wxCommandEvent& WXUNUSED(event))
@@ -129,6 +164,11 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
     m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
     m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
 
+    wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+
+    m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
+
     event.Skip();
 }
 
@@ -153,5 +193,22 @@ void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
         {
             wxMessageBox(wxString("An unexpected error occurred exportin ") << filename, "Export XRC");
         }
+    }
+}
+
+void XrcPreview::OnSearch(wxCommandEvent& event)
+{
+    m_scintilla->SetSelectionStart(m_scintilla->GetSelectionEnd());
+    m_scintilla->SearchAnchor();
+    auto srch_string = event.GetString();
+    auto result = m_scintilla->SearchNext(0, event.GetString());
+
+    if (result == wxSTC_INVALID_POSITION)
+    {
+        wxMessageBox(wxString() << event.GetString() << " not found.", "Not Found", wxICON_ERROR);
+    }
+    else
+    {
+        m_scintilla->EnsureCaretVisible();
     }
 }

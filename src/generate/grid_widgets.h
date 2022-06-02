@@ -7,31 +7,7 @@
 
 #pragma once
 
-class GridGenerator : public BaseGenerator
-{
-public:
-    wxObject* CreateMockup(Node* node, wxObject* parent) override;
-
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
-    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
-
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
-};
-
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
-
-class PropertyGridGenerator : public BaseGenerator
-{
-public:
-    wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
-
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
-
-    bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
-};
 
 class PropertyGridManagerGenerator : public BaseGenerator
 {
@@ -43,14 +19,6 @@ public:
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
-};
-
-class PropertyGridItemGenerator : public BaseGenerator
-{
-public:
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    ttlib::cstr GetHelpText(Node*) override;
-    ttlib::cstr GetHelpURL(Node*) override;
 };
 
 class PropertyGridPageGenerator : public BaseGenerator

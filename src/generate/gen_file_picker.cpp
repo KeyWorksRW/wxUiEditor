@@ -1,0 +1,139 @@
+/////////////////////////////////////////////////////////////////////////////
+// Purpose:   wxFilePickerCtrl generator
+// Author:    Ralph Walden
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
+/////////////////////////////////////////////////////////////////////////////
+
+#include <wx/filepicker.h>  // wxFilePickerCtrl, wxDirPickerCtrl base header
+
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
+#include "node.h"           // Node class
+#include "pugixml.hpp"      // xml read/write/create/process
+#include "utils.h"          // Utility functions that work with properties
+
+#include "gen_file_picker.h"
+
+wxObject* FilePickerGenerator::CreateMockup(Node* node, wxObject* parent)
+{
+    wxString msg;
+    if (node->HasValue(prop_message))
+    {
+        msg = std::move(node->prop_as_wxString(prop_message));
+    }
+    else
+    {
+        msg = wxFileSelectorPromptStr;
+    }
+    wxString wildcard;
+    if (node->HasValue(prop_wildcard))
+    {
+        wildcard = std::move(node->prop_as_wxString(prop_wildcard));
+    }
+    else
+    {
+        wildcard = wxFileSelectorDefaultWildcardStr;
+    }
+
+    auto widget = new wxFilePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, node->prop_as_wxString(prop_initial_path),
+                                       msg, wildcard, DlgPoint(parent, node, prop_pos), DlgSize(parent, node, prop_size),
+                                       GetStyleInt(node));
+
+    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+
+    return widget;
+}
+
+std::optional<ttlib::cstr> FilePickerGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code("\t");
+    if (node->IsLocal())
+        code << "auto ";
+    code << node->get_node_name() << GenerateNewAssignment(node);
+    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
+    {
+        auto& path = node->prop_as_string(prop_initial_path);
+        if (path.size())
+        {
+            code << GenerateQuotedString(path);
+        }
+        else
+        {
+            code << "wxEmptyString";
+        }
+    }
+
+    code << ", ";
+    {
+        auto& msg = node->prop_as_string(prop_message);
+        if (msg.size())
+        {
+            code << "\n\t\t" << GenerateQuotedString(msg);
+        }
+        else
+        {
+            code << "wxFileSelectorPromptStr";
+        }
+    }
+
+    code << ", ";
+    {
+        auto& msg = node->prop_as_string(prop_wildcard);
+        if (msg.size())
+        {
+            code << "\n\t\t" << GenerateQuotedString(msg);
+        }
+        else
+        {
+            code << "wxFileSelectorDefaultWildcardStr";
+        }
+    }
+
+    // Note that wxFLP_DEFAULT_STYLE cannot be specified by the user. We use this to force writing 0 if the user doesn't
+    // select any options.
+    GeneratePosSizeFlags(node, code, true, "wxFLP_DEFAULT_STYLE");
+
+    return code;
+}
+
+std::optional<ttlib::cstr> FilePickerGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    ttlib::cstr code;
+
+    if (node->prop_as_bool(prop_focus))
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << "->SetFocus()";
+    }
+
+    if (code.size())
+        return code;
+    else
+
+        return {};
+}
+std::optional<ttlib::cstr> FilePickerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+bool FilePickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
+{
+    InsertGeneratorInclude(node, "#include <wx/filepicker.h>", set_src, set_hdr);
+    return true;
+}
+
+std::optional<ttlib::cstr> FilePickerGenerator::GetPropertyDescription(NodeProperty* prop)
+{
+    if (prop->isProp(prop_message))
+    {
+        return (
+            ttlib::cstr() << "Title bar text for the file picker dialog. If not specified, \"Select a file\" will be used.");
+    }
+    else
+    {
+        return {};
+    }
+}

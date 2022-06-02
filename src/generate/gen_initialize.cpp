@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Initialize all generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,32 +9,93 @@
 #include "mainapp.h"       // App -- App class
 #include "node_creator.h"  // NodeCreator
 
-#include "book_widgets.h"      // ChoicebookGenerator -- Book component classes
-#include "btn_widgets.h"       // ButtonGenerator -- Button component class
-#include "checkbox_widgets.h"  // CheckBoxGenerator -- wxCheckBox component class
-#include "combo_widgets.h"     // Combo and choice component classes
-#include "ctrl_widgets.h"      // CalendarCtrlGenerator -- Calendar, GenericDir, Search Ctrl component classes
 #include "dataview_widgets.h"  // DataViewCtrl -- wxDataView component classes
-#include "form_widgets.h"      // FrameFormGenerator -- Form component classes
 #include "grid_widgets.h"      // PropertyGridGenerator -- Grid component classes
 #include "images_form.h"       // ImagesGenerator -- Embedded images generator
-#include "listbox_widgets.h"   // ListBox component classes
-#include "listctrl_widgets.h"  // ListViewGenerator -- ListCtrl component class
 #include "menu_widgets.h"      // Menu component classes
-#include "misc_widgets.h"      // Miscellaneous component classes
-#include "panel_widgets.h"     // Panel component classes
-#include "picker_widgets.h"    // DatePickerCtrlGenerator -- Picker component classes
 #include "project.h"           // Project generator
-#include "radio_widgets.h"     // RadioButtonGenerator -- Radio button and Radio box component classes
 #include "ribbon_widgets.h"    // RibbonBarGenerator -- Ribbon component classes
-#include "sizer_widgets.h"     // Sizer component classes
-#include "spin_widgets.h"      // Spin component classes
 #include "styled_text.h"       // StyledTextGenerator -- wxStyledText (scintilla) generate
-#include "text_widgets.h"      // Text component classes
 #include "toolbar_widgets.h"   // Toolbar component classes
 #include "tree_widgets.h"      // TreeCtrlGenerator -- wxTreeCtrl component classes
 #include "window_widgets.h"    // Splitter and Scroll component classes
-#include "wizard_form.h"       // Wizard form class
+
+#include "gen_activity.h"            // ActivityIndicatorGenerator -- wxActivityIndicator generator
+#include "gen_animation.h"           // AnimationGenerator -- wxAnimationCtrl generator
+#include "gen_aui_notebook.h"        // AuiNotebookGenerator -- wxAuiNotebook generator
+#include "gen_banner_window.h"       // BannerWindowGenerator -- wxBannerWindow generator
+#include "gen_bitmap_combo.h"        // BitmapComboBoxGenerator -- wxBitmapComboBox generator
+#include "gen_book_page.h"           // BookPageGenerator -- Book page generator
+#include "gen_box_sizer.h"           // BoxSizerGenerator -- wxBoxSizer generator
+#include "gen_button.h"              // ButtonGenerator -- wxButton generator
+#include "gen_calendar_ctrl.h"       // CalendarCtrlGenerator -- wxCalendarCtrl generator
+#include "gen_check_listbox.h"       // CheckListBoxGenerator -- wxCheckListBox generator
+#include "gen_checkbox.h"            // CheckBoxGenerator -- wxCheckBox generator
+#include "gen_choice.h"              // ChoiceGenerator -- wxChoice generator
+#include "gen_choicebook.h"          // ChoicebookGenerator -- wxChoicebook generator
+#include "gen_close_btn.h"           // CloseButtonGenerator -- wxBitmapButton::CreateCloseButton generator
+#include "gen_clr_picker.h"          // ColourPickerGenerator -- wxColourPickerCtrl generator
+#include "gen_cmd_link_btn.h"        // CommandLinkBtnGenerator -- wxCommandLinkButton generator
+#include "gen_collapsible.h"         // CollapsiblePaneGenerator -- wxCollapsiblePane generator
+#include "gen_combobox.h"            // ComboBoxGenerator -- wxComboBox generator
+#include "gen_custom_ctrl.h"         // CustomControl -- Custom Control generator
+#include "gen_date_picker.h"         // DatePickerCtrlGenerator -- wxDatePickerCtrl generator
+#include "gen_dialog.h"              // DialogFormGenerator -- wxDialog generator
+#include "gen_dir_ctrl.h"            // GenericDirCtrlGenerator -- wxGenericDirCtrl generator
+#include "gen_dir_picker.h"          // DirPickerGenerator -- wxDirPickerCtrl generator
+#include "gen_edit_listbox.h"        // EditListBoxGenerator -- wxEditableListBox generator
+#include "gen_file_ctrl.h"           // FileCtrlGenerator -- wxFileCtrl generator
+#include "gen_file_picker.h"         // FilePickerGenerator -- wxFilePickerCtrl generator
+#include "gen_flexgrid_sizer.h"      // FlexGridSizerGenerator -- wxFlexGridSizer generator
+#include "gen_font_picker.h"         // FontPickerGenerator -- wxFontPickerCtrl generator
+#include "gen_frame.h"               // FrameFormGenerator -- wxFrame generator
+#include "gen_gauge.h"               // GaugeGenerator -- wxGauge generator
+#include "gen_grid.h"                // GridGenerator -- wxGrid generator
+#include "gen_grid_sizer.h"          // GridSizerGenerator -- wxGridSizer generator
+#include "gen_gridbag_sizer.h"       // GridBagSizerGenerator -- wxGridBagSizer generator
+#include "gen_html_listbox.h"        // HtmlListBoxGenerator -- wxSimpleHtmlListBox generator
+#include "gen_html_window.h"         // HtmlWindowGenerator -- wxHtmlWindow generator
+#include "gen_hyperlink.h"           // HyperlinkGenerator -- wxHyperlinkCtrl generator
+#include "gen_infobar.h"             // InfoBarGenerator -- wxInfoBar generator
+#include "gen_listbook.h"            // ListbookGenerator -- wxListbook generator
+#include "gen_listbox.h"             // ListBoxGenerator -- wxListBox generator
+#include "gen_listview.h"            // ListViewGenerator -- wxListView generator
+#include "gen_notebook.h"            // NotebookGenerator -- wxNotebook generator
+#include "gen_page_ctrl.h"           // PageCtrlGenerator -- Page control generator
+#include "gen_panel.h"               // PanelGenerator -- wxPanel generator
+#include "gen_panel_form.h"          // PanelFormGenerator -- wxPanel Form generator
+#include "gen_popup_trans_win.h"     // PopupWinGenerator -- wxPopupTransientWindow generator
+#include "gen_prop_grid.h"           // PropertyGridGenerator -- wxPropertyGrid generator
+#include "gen_prop_item.h"           // PropertyGridItemGenerator -- PropertyGrid/Manager Item generator
+#include "gen_radio_box.h"           // RadioBoxGenerator -- wxRadioBox generator
+#include "gen_radio_btn.h"           // RadioButtonGenerator -- Radio button and Radio box component classes
+#include "gen_rearrange.h"           // RearrangeCtrlGenerator -- wxRearrangeCtrl generator
+#include "gen_rich_text.h"           // RichTextCtrlGenerator -- wxRichTextCtrl generator
+#include "gen_scrollbar.h"           // ScrollBarGenerator -- wxScrollBar generator
+#include "gen_search_ctrl.h"         // SearchCtrlGenerator -- wxSearchCtrl generator
+#include "gen_simplebook.h"          // SimplebookGenerator -- wxSimplebook generator
+#include "gen_slider.h"              // SliderGenerator -- wxSlider generator
+#include "gen_spacer_sizer.h"        // SpacerGenerator -- Add space to sizer generator
+#include "gen_spin_btn.h"            // SpinButtonGenerator -- wxSpinButton generator
+#include "gen_spin_ctrl.h"           // SpinCtrlGenerator -- Spin and ScrollBar component classes
+#include "gen_statchkbox_sizer.h"    // StaticCheckboxBoxSizerGenerator -- wxStaticBoxSizer with wxCheckBox generator
+#include "gen_static_bmp.h"          // StaticBitmapGenerator -- wxStaticBitmap generator
+#include "gen_static_box.h"          // StaticBoxGenerator -- wxStaticBox generator
+#include "gen_static_line.h"         // StaticLineGenerator -- wxStaticLine generator
+#include "gen_static_text.h"         // StaticTextGenerator -- wxStaticText generator
+#include "gen_staticbox_sizer.h"     // StaticBoxSizerGenerator -- wxStaticBoxSizer generator
+#include "gen_statradiobox_sizer.h"  // StaticRadioBtnBoxSizerGenerator -- wxStaticBoxSizer with wxRadioButton generator
+#include "gen_status_bar.h"          // StatusBarGenerator -- wxStatusBar generator
+#include "gen_std_dlgbtn_sizer.h"    // StdDialogButtonSizerGenerator -- wxStdDialogButtonSizer generator
+#include "gen_text_ctrl.h"           // TextCtrlGenerator -- wxTextCtrl generator
+#include "gen_text_sizer.h"          // TextSizerGenerator -- wxTextSizerWrapper generator
+#include "gen_time_picker.h"         // TimePickerCtrlGenerator -- wxTimePickerCtrl generator
+#include "gen_toggle_btn.h"          // ToggleButtonGenerator -- wxToggleButton generator
+#include "gen_toolbook.h"            // ToolbookGenerator -- wxToolbook generator
+#include "gen_treebook.h"            // TreebookGenerator -- wxTreebook generator
+#include "gen_web_view.h"            // WebViewGenerator -- wxWebView generator
+#include "gen_wizard.h"              // WizardFormGenerator -- wxWizard generator
+#include "gen_wrap_sizer.h"          // WrapSizerGenerator -- wxGridSizer generator
 
 #include "gen_enums.h"  // Enumerations for generators
 

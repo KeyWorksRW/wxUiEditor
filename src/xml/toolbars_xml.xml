@@ -7,8 +7,6 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyToolBarBase</property>
-		<property name="bitmapsize" type="wxSize"
-			help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels." />
 		<property name="margins" type="wxSize"
 			help="Values to be used as margins for the toolbar." />
 		<property name="packing" type="uint"
@@ -38,6 +36,8 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 				help="Combination of wxTB_HORZ_LAYOUT and wxTB_TEXT." />
 			wxTB_HORIZONTAL
 		</property>
+		<property name="bitmapsize" type="wxSize"
+			help="Default size of each tool bitmap. It is usually unnecessary to set this property, as the tools will always be made big enough to fit the size of the bitmaps used in them." />
 	</gen>
 
 	<gen class="wxToolBar" image="wxToolBar" type="toolbar">
@@ -45,8 +45,6 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Window Events" />
 		<inherits class="sizer_child" />
 		<property name="var_name" type="string">m_toolBar</property>
-		<property name="bitmapsize" type="wxSize"
-			help="Default size of each tool bitmap. The default bitmap size is 16 by 15 pixels." />
 		<property name="margins" type="wxSize"
 			help="Values to be used as margins for the toolbar." />
 		<property name="packing" type="uint"
@@ -82,6 +80,8 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 				help="Align the toolbar at the right side of parent window." />
 			wxTB_HORIZONTAL
 		</property>
+		<property name="bitmapsize" type="wxSize"
+			help="Default size of each tool bitmap. It is usually unnecessary to set this property, as the tools will always be made big enough to fit the size of the bitmaps used in them." />
 	</gen>
 
 	<gen class="tool" image="tool" type="tool">

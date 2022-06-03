@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxWizard generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -264,6 +264,92 @@ bool WizardFormGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
     return true;
 }
 
+// ../../wxSnapShot/src/xrc/xh_wizrd.cpp
+// ../../../wxWidgets/src/xrc/xh_wizrd.cpp
+
+int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    // We use item so that the macros in base_generator.h work, and the code looks the same
+    // as other widget XRC generatorsl
+    auto item = object;
+    GenXrcObjectAttributes(node, item, "wxWizard");
+
+    ADD_ITEM_PROP(prop_title, "title")
+    GenXrcBitmap(node, item);
+
+    if (node->HasValue(prop_center))
+    {
+        if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
+            node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
+        {
+            if (add_comments)
+            {
+                item.append_child(pugi::node_comment)
+                    .set_value((ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
+            }
+            item.append_child("centered").text().set(1);
+        }
+        else
+        {
+            item.append_child("centered").text().set(node->prop_as_string(prop_center).is_sameas("no") ? 0 : 1);
+        }
+    }
+
+    if (node->HasValue(prop_style))
+    {
+        if (add_comments && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
+        {
+            item.append_child(pugi::node_comment)
+                .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
+        }
+        if (!node->HasValue(prop_extra_style))
+        {
+            item.append_child("style").text().set(node->prop_as_string(prop_style));
+        }
+        else
+        {
+            ttlib::cstr all_styles = node->prop_as_string(prop_style);
+            all_styles << '|' << node->prop_as_string(prop_extra_style);
+            item.append_child("style").text().set(all_styles);
+        }
+    }
+
+    if (node->HasValue(prop_pos))
+        item.append_child("pos").text().set(node->prop_as_string(prop_pos));
+    if (node->HasValue(prop_size))
+        item.append_child("size").text().set(node->prop_as_string(prop_size));
+
+    if (add_comments)
+    {
+        auto border = node->prop_as_int(prop_border);
+        if (border != 5 && border > 0)
+            item.append_child(pugi::node_comment).set_value(" SetBorder() is not supported in the XRC file. ");
+        if (node->HasValue(prop_bmp_placement))
+            item.append_child(pugi::node_comment).set_value(" SetBitmapPlacement() is not supported in the XRC file. ");
+        if (node->HasValue(prop_bmp_min_width))
+            item.append_child(pugi::node_comment).set_value(" SetMinimumBitmapWidth() is not supported in the XRC file. ");
+        if (node->HasValue(prop_bmp_background_colour))
+            item.append_child(pugi::node_comment)
+                .set_value(" SetBitmapBackgroundColour() is not supported in the XRC file. ");
+
+        if (node->prop_as_bool(prop_persist))
+            item.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
+
+        GenXrcComments(node, item);
+    }
+
+    return xrc_updated;
+}
+
+void WizardFormGenerator::RequiredHandlers(Node* node, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxWizardXmlHandler");
+    if (node->HasValue(prop_bitmap))
+    {
+        handlers.emplace("wxBitmapXmlHandler");
+    }
+}
+
 //////////////////////////////////////////  WizardPageGenerator  //////////////////////////////////////////
 
 wxObject* WizardPageGenerator::CreateMockup(Node* node, wxObject* parent) { return new MockupWizardPage(node, parent); }
@@ -344,4 +430,27 @@ bool WizardPageGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
     }
 
     return true;
+}
+
+int WizardPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxWizardPageSimple");
+    GenXrcBitmap(node, item);
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void WizardPageGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxWizardXmlHandler");
 }

@@ -13,6 +13,7 @@
 #include <wx/filedlg.h>     // wxFileDialog base header
 #include <wx/filename.h>    // wxFileName - encapsulates a file path
 #include <wx/mstream.h>     // Memory stream classes
+#include <wx/wizard.h>      // wxWizard class: a GUI control presenting the user with a
 #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
 #include <wx/xrc/xmlres.h>  // XML resources
 
@@ -82,9 +83,10 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         }
     }
 
-    if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm) && !form_node->isGen(gen_wxFrame))
+    if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm) && !form_node->isGen(gen_wxFrame) &&
+        !form_node->isGen(gen_wxWizard))
     {
-        wxMessageBox("Only dialogs can be previewed.", "XRC Dialog Preview");
+        wxMessageBox("This type of form is not available in XRC.", "XRC Preview");
         return;
     }
 
@@ -173,7 +175,28 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
                              "XRC wxFrame Preview");
             }
         }
-
+        else if (form_node->isGen(gen_wxWizard))
+        {
+            if (auto object = xrc_resource->LoadObject(NULL, form_node->prop_as_string(prop_class_name), "wxWizard"); object)
+            {
+                auto wizard = wxStaticCast(object, wxWizard);
+                if (form_node->GetChildCount())
+                {
+                    auto first_page = wizard->FindWindow(form_node->GetChild(0)->prop_as_wxString(prop_var_name));
+                    wizard->RunWizard(wxStaticCast(first_page, wxWizardPageSimple));
+                    wizard->Destroy();
+                }
+                else
+                {
+                    wxMessageBox("You can't run a wizard that doesn't have any pages.", "XRC wxWizard Preview");
+                }
+            }
+            else
+            {
+                wxMessageBox(ttlib::cstr("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
+                             "XRC wxWizard Preview");
+            }
+        }
         // Restore the original style if we changed it.
         if (form_node->prop_as_string(prop_style) != style)
             form_node->prop_set_value(prop_style, style);

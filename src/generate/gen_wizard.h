@@ -24,6 +24,9 @@ public:
     bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;
 
     std::vector<Node*> GetChildPanes(Node* parent);
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };
 
 class WizardPageGenerator : public BaseGenerator
@@ -34,4 +37,7 @@ public:
     std::optional<ttlib::cstr> GenConstruction(Node*) override;
 
     bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };

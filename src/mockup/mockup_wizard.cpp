@@ -146,7 +146,7 @@ void MockupWizard::SetSelection(size_t pageIndex)
         if (!bmpPrev.IsOk())
             bmpPrev = m_bitmap;
 
-        if (!bmp.IsSameAs(bmpPrev))
+        if (!bmp.IsSameAs(bmpPrev) && m_static_bitmap)
             m_static_bitmap->SetBitmap(bmp);
 
         m_pages[old_pageIndex]->Hide();
@@ -181,7 +181,7 @@ void MockupWizard::OnBackOrNext(wxCommandEvent& event)
     if (!bmpPrev.IsOk())
         bmpPrev = m_bitmap;
 
-    if (!bmp.IsSameAs(bmpPrev))
+    if (!bmp.IsSameAs(bmpPrev) && m_static_bitmap)
         m_static_bitmap->SetBitmap(bmp);
 
     m_pages[m_cur_page_index]->Show();
@@ -239,7 +239,7 @@ void MockupWizard::AllChildrenAdded()
     {
         if (m_wizard_node->prop_as_int(prop_bmp_placement))
         {
-            if (ResizeBitmap(m_bitmap))
+            if (ResizeBitmap(m_bitmap) && m_static_bitmap)
             {
                 m_static_bitmap->SetBitmap(m_bitmap);
             }

@@ -68,3 +68,40 @@ bool ListbookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_listbk.cpp
+// ../../../wxWidgets/src/xrc/xh_listbk.cpp
+
+int ListbookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxListbook");
+
+    ttlib::cstr styles(node->prop_as_string(prop_style));
+    if (node->prop_as_string(prop_tab_position) != "wxBK_DEFAULT")
+    {
+        if (styles.size())
+            styles << '|';
+        styles << node->prop_as_string(prop_tab_position);
+    }
+
+    GenXrcPreStylePosSize(node, item, styles);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->prop_as_bool(prop_persist))
+            item.append_child(pugi::node_comment).set_value(" persist is not supported in XRC. ");
+
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ListbookGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxListbookXmlHandler");
+}

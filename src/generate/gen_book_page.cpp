@@ -285,3 +285,90 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
     }
     return code;
 }
+
+// ../../wxSnapShot/src/xrc/xh_bookctrlbase.cpp
+// ../../../wxWidgets/src/xrc/xh_bookctrlbase.cpp
+
+int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+#if 0
+    int depth = 0;
+    if (node->GetParent()->isGen(gen_BookPage))
+    {
+        auto treebook = node->GetParent()->GetParent();
+        ++depth;
+        while (!treebook->isGen(gen_wxTreebook))
+        {
+            if (treebook->IsForm())
+            {
+                FAIL_MSG("Expected a wxTreeBook parent for nested Book Page")
+                return BaseGenerator::xrc_not_supported;
+            }
+            ++depth;
+            treebook = treebook->GetParent();
+        }
+        // Now that we've found the depth, let's find the xml node of the treebook
+        for(;;)
+        {
+            auto class_attr = object.attribute("class");
+            if (class_attr.value() != "wxTreebook")
+            {
+                object = object.parent();
+                ASSERT(!object.empty())
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+#endif
+
+    auto item = InitializeXrcObject(node, object);
+
+    ttlib::cstr page_type;
+    if (node->GetParent()->isGen(gen_wxNotebook) || node->GetParent()->isGen(gen_wxAuiNotebook))
+        page_type = "notebookpage";
+    else if (node->GetParent()->isGen(gen_wxChoicebook))
+        page_type = "choicebookpage";
+    else if (node->GetParent()->isGen(gen_wxListbook))
+        page_type = "listbookpage";
+    else if (node->GetParent()->isGen(gen_wxSimplebook))
+        page_type = "simplebookpage";
+    else if (node->GetParent()->isGen(gen_wxToolbook))
+        page_type = "toolbookpage";
+    else if (node->GetParent()->isGen(gen_wxTreebook))
+        page_type = "treebookpage";
+    else if (node->GetParent()->isGen(gen_BookPage))
+        page_type = "treebookpage";
+    else
+        FAIL_MSG("BookPageGenerator needs to know what to call the pages to pass to the XRC handler.")
+
+    GenXrcObjectAttributes(node, item, page_type);
+    // if (depth > 0)
+    // item.append_child("depth").text().set(depth);
+    GenXrcBitmap(node, item);
+
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_BOOL(prop_select, "selected")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    auto panel = item.append_child("object");
+    panel.append_attribute("class").set_value("wxPanel");
+    panel.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    panel.append_child("style").text().set("wxTAB_TRAVERSAL");
+
+    return BaseGenerator::xrc_sizer_item_created;
+}
+
+void BookPageGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxBookCtrlXmlHandlerBase");
+}

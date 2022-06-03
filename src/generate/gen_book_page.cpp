@@ -294,8 +294,18 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
     auto item = InitializeXrcObject(node, object);
 
     ttlib::cstr page_type;
-    if (node->GetParent()->isGen(gen_wxNotebook))
+    if (node->GetParent()->isGen(gen_wxNotebook) || node->GetParent()->isGen(gen_wxAuiNotebook))
         page_type = "notebookpage";
+    else if (node->GetParent()->isGen(gen_wxChoicebook))
+        page_type = "choicebookpage";
+    else if (node->GetParent()->isGen(gen_wxListbook))
+        page_type = "listbookpage";
+    else if (node->GetParent()->isGen(gen_wxSimplebook))
+        page_type = "simplebookpage";
+    else if (node->GetParent()->isGen(gen_wxToolbook))
+        page_type = "toolbookpage";
+    else if (node->GetParent()->isGen(gen_wxTreebook))
+        page_type = "treebookpage";
     else
         FAIL_MSG("BookPageGenerator needs to know what to call the pages to pass to the XRC handler.")
 

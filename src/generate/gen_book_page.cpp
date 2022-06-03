@@ -285,3 +285,43 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
     }
     return code;
 }
+
+// ../../wxSnapShot/src/xrc/xh_bookctrlbase.cpp
+// ../../../wxWidgets/src/xrc/xh_bookctrlbase.cpp
+
+int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto item = InitializeXrcObject(node, object);
+
+    ttlib::cstr page_type;
+    if (node->GetParent()->isGen(gen_wxNotebook))
+        page_type = "notebookpage";
+    else
+        FAIL_MSG("BookPageGenerator needs to know what to call the pages to pass to the XRC handler.")
+
+    GenXrcObjectAttributes(node, item, page_type);
+    GenXrcBitmap(node, item);
+
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_BOOL(prop_select, "selected")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    auto panel = item.append_child("object");
+    panel.append_attribute("class").set_value("wxPanel");
+    panel.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+    panel.append_child("style").text().set("wxTAB_TRAVERSAL");
+
+    return BaseGenerator::xrc_sizer_item_created;
+}
+
+void BookPageGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxBookCtrlXmlHandlerBase");
+}

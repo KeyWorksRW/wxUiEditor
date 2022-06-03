@@ -283,6 +283,36 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
         auto actual_object = object.child("object");
         for (const auto& child: node->GetChildNodePtrs())
         {
+            // Normally, the XRC heirarchy matches our node heirarchy with the exception of XRC needing
+            // a sizeritem as the immediate parent of a widget node. The exception is wxTreebook -- while
+            // our nodes have BookPages as children of BookPages, XRC expects all BookPages to be children
+            // of the wxTreebook with a depth parameter indicating if it is a sub-page or not.
+
+            if (child->isGen(gen_BookPage) && child->GetParent()->isGen(gen_BookPage))
+            {
+                int depth = 0;
+                actual_object = object;
+                for (;;)
+                {
+                    auto class_attr = actual_object.attribute("class");
+                    if (class_attr.value() != "wxTreebook")
+                    {
+                        if (class_attr.value() == "treebookpage")
+                            ++depth;
+                        actual_object = actual_object.parent();
+                        ASSERT(!actual_object.empty())
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                auto child_object = actual_object.append_child("object");
+                child_object.append_child("depth").text().set(depth);
+                GenXrcObject(child.get(), child_object, add_comments);
+                continue;
+            }
+
             auto child_object = actual_object.append_child("object");
             auto child_result = GenXrcObject(child.get(), child_object, add_comments);
             if (child_result == BaseGenerator::xrc_not_supported)

@@ -92,6 +92,7 @@
 #include "gen_time_picker.h"         // TimePickerCtrlGenerator -- wxTimePickerCtrl generator
 #include "gen_toggle_btn.h"          // ToggleButtonGenerator -- wxToggleButton generator
 #include "gen_toolbook.h"            // ToolbookGenerator -- wxToolbook generator
+#include "gen_tree_ctrl.h"           // TreeCtrlGenerator -- wxTreeCtrl generator
 #include "gen_treebook.h"            // TreebookGenerator -- wxTreebook generator
 #include "gen_web_view.h"            // WebViewGenerator -- wxWebView generator
 #include "gen_wizard.h"              // WizardFormGenerator -- wxWizard generator

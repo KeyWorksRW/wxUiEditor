@@ -118,6 +118,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_text_ctrl.cpp      # wxTextCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_toggle_btn.cpp     # wxToggleButton generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_web_view.cpp       # wxWebView generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
 
     # Books
 

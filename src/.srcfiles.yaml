@@ -144,6 +144,7 @@ Files:
     generate/gen_text_ctrl.cpp      # wxTextCtrl generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
     generate/gen_web_view.cpp       # wxWebView generator
+    generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
 
     # Books
 

@@ -21,6 +21,9 @@ wxObject* DatePickerCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxDatePickerCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, wxDefaultDateTime, DlgPoint(parent, node, prop_pos),
                              DlgSize(parent, node, prop_size), GetStyleInt(node));
 
+    if (node->prop_as_string(prop_style).contains("wxDP_ALLOWNONE"))
+        widget->SetNullText(node->prop_as_wxString(prop_null_text));
+
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
 
     return widget;
@@ -38,6 +41,19 @@ std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+{
+    if (node->prop_as_string(prop_style).contains("wxDP_ALLOWNONE"))
+    {
+        ttlib::cstr code;
+        code << node->get_node_name() << "->SetNullText(" << GenerateQuotedString(node->prop_as_string(prop_null_text))
+             << ");";
+        return code;
+    }
+
+    return {};
+}
+
 std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
@@ -48,4 +64,33 @@ bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
     InsertGeneratorInclude(node, "#include <wx/datectrl.h>", set_src, set_hdr);
     InsertGeneratorInclude(node, "#include <wx/dateevt.h>", set_src, set_hdr);
     return true;
+}
+
+// ../../wxSnapShot/src/xrc/xh_datectrl.cpp
+// ../../../wxWidgets/src/xrc/xh_datectrl.cpp
+
+int DatePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxDatePickerCtrl");
+
+    if (node->prop_as_string(prop_style).contains("wxDP_ALLOWNONE"))
+        item.append_child("null-text").text().set(node->prop_as_string(prop_null_text));
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void DatePickerCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxDateCtrlXmlHandler");
 }

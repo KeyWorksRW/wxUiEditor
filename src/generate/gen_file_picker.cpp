@@ -114,6 +114,7 @@ std::optional<ttlib::cstr> FilePickerGenerator::GenSettings(Node* node, size_t& 
 
         return {};
 }
+
 std::optional<ttlib::cstr> FilePickerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
@@ -136,4 +137,34 @@ std::optional<ttlib::cstr> FilePickerGenerator::GetPropertyDescription(NodePrope
     {
         return {};
     }
+}
+
+// ../../wxSnapShot/src/xrc/xh_filepicker.cpp
+// ../../../wxWidgets/src/xrc/xh_filepicker.cpp
+
+int FilePickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxFilePickerCtrl");
+
+    ADD_ITEM_PROP(prop_initial_path, "value")
+    ADD_ITEM_PROP(prop_message, "message")
+    ADD_ITEM_PROP(prop_wildcard, "wildcard")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void FilePickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxFilePickerCtrlXmlHandler");
 }

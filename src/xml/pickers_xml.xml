@@ -123,6 +123,9 @@ inline const char* pickers_xml = R"===(<?xml version="1.0"?>
 				help="Creates a control with the style that is best supported for the current platform (currently wxDP_SPIN under Windows and OSX/Cocoa and wxDP_DROPDOWN elsewhere)." />
 			wxDP_DEFAULT|wxDP_SHOWCENTURY
 		</property>
+		<property name="null_text" type="string"
+			help="If wxDP_ALLOWNONE style is set, this will set the string displayed when the control doesn't have any valid value. Currently this is only actually used under MSW, where it can be used to override the previous value which is still displayed by the control in this case, and ignored elsewhere.\n\nNotably, text can be empty to completely hide the date if no valid date is specified."
+		></property>
 		<event name="wxEVT_DATE_CHANGED" class="wxDateEvent"
 			help="Generated when the user changes the current selection in the control." />
 	</gen>

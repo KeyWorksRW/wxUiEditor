@@ -273,6 +273,7 @@ namespace GenEnum
         prop_non_flexible_grow_mode,
         prop_normal_color,
         prop_note,
+        prop_null_text,
         prop_orientation,
         prop_packing,
         prop_page_size,

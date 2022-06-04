@@ -267,6 +267,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_non_flexible_grow_mode, "non_flexible_grow_mode" },
     { prop_normal_color, "normal_color" },
     { prop_note, "note" },
+    { prop_null_text, "null_text" },
     { prop_orientation, "orientation" },
     { prop_packing, "packing" },
     { prop_page_size, "page_size" },

@@ -52,3 +52,32 @@ bool ColourPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     InsertGeneratorInclude(node, "#include <wx/clrpicker.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_clrpicker.cpp
+// ../../../wxWidgets/src/xrc/xh_clrpicker.cpp
+
+int ColourPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxColourPickerCtrl");
+
+    item.append_child("value").text().set(
+        node->prop_as_wxColour(prop_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ColourPickerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxColourPickerCtrlXmlHandler");
+}

@@ -237,6 +237,28 @@ void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop)
         font_object.append_child("strikethrough").text().set("1");
 }
 
+void GenXrcFont(pugi::xml_node& item, std::string_view param_name, Node* node, PropName prop)
+{
+    auto font_object = item.append_child(param_name);
+    auto font_prop = node->prop_as_font_prop(prop);
+
+    font_object.append_child("size").text().set(font_prop.GetFractionalPointSize());
+    if (font_prop.GetStyle() == wxFONTSTYLE_ITALIC)
+        font_object.append_child("style").text().set("italic");
+    else if (font_prop.GetStyle() == wxFONTSTYLE_SLANT)
+        font_object.append_child("style").text().set("slant");
+    if (font_prop.GetWeight() != wxFONTWEIGHT_NORMAL)
+        font_object.append_child("weight").text().set(s_weight_pairs[font_prop.GetWeight()]);
+    if (font_prop.GetFamily() != wxFONTFAMILY_DEFAULT)
+        font_object.append_child("family").text().set(s_family_pairs[font_prop.GetFamily()]);
+    if (font_prop.HasFaceName() && font_prop.GetFaceName() != "default")
+        font_object.append_child("face").text().set(font_prop.GetFaceName().ToUTF8().data());
+    if (font_prop.IsUnderlined())
+        font_object.append_child("underlined").text().set("1");
+    if (font_prop.IsStrikethrough())
+        font_object.append_child("strikethrough").text().set("1");
+}
+
 void GenXrcWindowSettings(Node* node, pugi::xml_node& object)
 {
     if (node->prop_as_bool(prop_hidden))

@@ -61,3 +61,6 @@ void GenXrcObjectAttributes(Node*, pugi::xml_node& object, std::string_view xrc_
 pugi::xml_node InitializeXrcObject(Node*, pugi::xml_node& object);
 
 void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop);
+
+// param_name is the name of the XRC object, typically "font".
+void GenXrcFont(pugi::xml_node& item, std::string_view param_name, Node* node, PropName prop);

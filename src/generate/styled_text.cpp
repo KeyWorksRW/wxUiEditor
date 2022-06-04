@@ -1083,3 +1083,35 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, No
         }
     }
 }
+
+// ../../wxSnapShot/src/xrc/xh_styledtextctrl.cpp
+// ../../../wxWidgets/src/xrc/xh_styledtextctrl.cpp
+
+int StyledTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxStyledTextCtrl");
+
+    if (node->prop_as_string(prop_stc_wrap_mode) != "no wrapping")
+    {
+        item.append_child("wrapmode").text().set(node->prop_as_constant(prop_stc_wrap_mode, "stc_"));
+    }
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        ADD_ITEM_COMMENT(" The only property supported by XRC is wrap_mode. ")
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void StyledTextGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxStyledTextCtrlXmlHandler");
+}

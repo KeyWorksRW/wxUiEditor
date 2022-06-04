@@ -109,3 +109,37 @@ bool FileCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     InsertGeneratorInclude(node, "#include <wx/filectrl.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_filectrl.cpp
+// ../../../wxWidgets/src/xrc/xh_filectrl.cpp
+
+int FileCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxFileCtrl");
+
+    ADD_ITEM_PROP(prop_initial_folder, "defaultdirectory")
+    ADD_ITEM_PROP(prop_initial_filename, "defaultfilename")
+    ADD_ITEM_PROP(prop_wildcard, "wildcard")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->prop_as_int(prop_filter_index) > 0)
+            ADD_ITEM_COMMENT("XRC does not support calling SetFilterIndex()")
+        if (node->prop_as_bool(prop_show_hidden))
+            ADD_ITEM_COMMENT("XRC does not support calling ShowHidden()")
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void FileCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxFileCtrlXmlHandler");
+}

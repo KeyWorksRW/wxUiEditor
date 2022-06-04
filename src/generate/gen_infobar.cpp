@@ -77,6 +77,9 @@ bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
     return true;
 }
 
+// ../../wxSnapShot/src/xrc/xh_infobar.cpp
+// ../../../wxWidgets/src/xrc/xh_infobar.cpp
+
 int InfoBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;

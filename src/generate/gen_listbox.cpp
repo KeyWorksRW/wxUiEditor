@@ -148,3 +148,48 @@ bool ListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
     InsertGeneratorInclude(node, "#include <wx/listbox.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_listb.cpp
+// ../../../wxWidgets/src/xrc/xh_listb.cpp
+
+int ListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxListBox");
+
+    if (node->HasValue(prop_contents))
+    {
+        auto content = item.append_child("content");
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        for (auto& iter: array)
+        {
+            content.append_child("item").text().set(iter);
+        }
+    }
+
+    // TODO: [KeyWorks - 06-04-2022] This needs to be supported in XRC
+    if (node->HasValue(prop_selection_string))
+        item.append_child("value").text().set(node->prop_as_string(prop_selection_string));
+
+    // Older versions of wxWidgets didn't support setting the selection via the value property,
+    // so we add the property here even if the above is set.
+    if (node->prop_as_int(prop_selection_int) >= 0)
+        item.append_child("selection").text().set(node->prop_as_string(prop_selection_int));
+
+    GenXrcStylePosSize(node, item, prop_type);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ListBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxListBoxXmlHandler");
+}

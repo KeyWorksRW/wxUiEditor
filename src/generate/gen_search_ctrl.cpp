@@ -103,3 +103,39 @@ bool SearchCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     InsertGeneratorInclude(node, "#include <wx/srchctrl.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_srchctrl.cpp
+// ../../../wxWidgets/src/xrc/xh_srchctrl.cpp
+
+int SearchCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxSearchCtrl");
+
+    ADD_ITEM_PROP(prop_value, "value")
+
+    // Note that XRC calls SetDescriptiveText() instead of SetHint() which has a different apperance (SetDescription text is
+    // not greyed out).
+    ADD_ITEM_PROP(prop_hint, "hint")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        if (node->prop_as_bool(prop_search_button))
+            ADD_ITEM_COMMENT("XRC does not support ShowSearchButton()")
+        if (node->prop_as_bool(prop_cancel_button))
+            ADD_ITEM_COMMENT("XRC does not support ShowCancelButton()")
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void SearchCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxSearchCtrlXmlHandler");
+}

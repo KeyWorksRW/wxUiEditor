@@ -68,3 +68,29 @@ bool CalendarCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     InsertGeneratorInclude(node, "#include <wx/calctrl.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_cald.cpp
+// ../../../wxWidgets/src/xrc/xh_cald.cpp
+
+int CalendarCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxCalendarCtrl");
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void CalendarCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxCalendarCtrlXmlHandler");
+}

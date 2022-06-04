@@ -68,7 +68,6 @@ std::optional<ttlib::cstr> FileCtrlGenerator::GenConstruction(Node* node)
     GenPos(node, code);
     code << ", ";
     GenSize(node, code);
-    code << ", ";
     if (node->HasValue(prop_window_name))
     {
         code << ", " << node->prop_as_string(prop_window_name);

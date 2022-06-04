@@ -17,7 +17,6 @@
 #include "ribbon_widgets.h"    // RibbonBarGenerator -- Ribbon component classes
 #include "styled_text.h"       // StyledTextGenerator -- wxStyledText (scintilla) generate
 #include "toolbar_widgets.h"   // Toolbar component classes
-#include "tree_widgets.h"      // TreeCtrlGenerator -- wxTreeCtrl component classes
 #include "window_widgets.h"    // Splitter and Scroll component classes
 
 #include "gen_activity.h"            // ActivityIndicatorGenerator -- wxActivityIndicator generator
@@ -93,6 +92,7 @@
 #include "gen_toggle_btn.h"          // ToggleButtonGenerator -- wxToggleButton generator
 #include "gen_toolbook.h"            // ToolbookGenerator -- wxToolbook generator
 #include "gen_tree_ctrl.h"           // TreeCtrlGenerator -- wxTreeCtrl generator
+#include "gen_tree_list.h"           // TreeListCtrlGenerator -- wxTreeCtrl component classes
 #include "gen_treebook.h"            // TreebookGenerator -- wxTreebook generator
 #include "gen_web_view.h"            // WebViewGenerator -- wxWebView generator
 #include "gen_wizard.h"              // WizardFormGenerator -- wxWizard generator

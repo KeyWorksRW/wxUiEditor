@@ -5,17 +5,13 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/event.h>     // Event classes
-#include <wx/sizer.h>     // provide wxSizer class for layout
 #include <wx/treelist.h>  // wxTreeListCtrl class declaration.
 
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "node.h"        // Node class
 #include "utils.h"       // Utility functions that work with properties
 
-#include "tree_widgets.h"
-
-//////////////////////////////////////////  TreeListCtrlGenerator  //////////////////////////////////////////
+#include "gen_tree_list.h"
 
 wxObject* TreeListCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
 {

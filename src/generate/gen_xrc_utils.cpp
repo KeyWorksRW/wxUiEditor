@@ -83,6 +83,17 @@ void GenXrcSizerItem(Node* node, BaseCodeGenerator* code_gen)
 void GenXrcSizerItem(Node* node, pugi::xml_node& object)
 {
     object.append_attribute("class").set_value("sizeritem");
+
+    if (node->GetParent()->isGen(gen_wxGridBagSizer))
+    {
+        ttlib::cstr size;
+        size << node->prop_as_string(prop_row) << ',' << node->prop_as_string(prop_column);
+        object.append_child("cellpos").text().set(size);
+        size.clear();
+        size << node->prop_as_string(prop_rowspan) << ',' << node->prop_as_string(prop_colspan);
+        object.append_child("cellspan").text().set(size);
+    }
+
     ttlib::cstr flags;
     flags << node->prop_as_string(prop_borders);
     if (node->HasValue(prop_flags))

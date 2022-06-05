@@ -31,8 +31,6 @@ namespace xrc
 }
 
 // Write sizeritem XRC code
-void GenXrcSizerItem(Node* node, BaseCodeGenerator* code_gen);
-
 void GenXrcSizerItem(Node*, pugi::xml_node& object);
 
 // Generates style | windows_style, pos, and size

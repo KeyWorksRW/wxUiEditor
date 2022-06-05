@@ -46,40 +46,6 @@ const char* g_xrc_keywords =
 
 // clang-format on
 
-void GenXrcSizerItem(Node* node, BaseCodeGenerator* code_gen)
-{
-    auto m_source = code_gen->GetSrcWriter();
-    m_source->writeLine("<object class=\"sizeritem\">");
-    m_source->Indent();
-    ttlib::cstr flags;
-    flags << node->prop_as_string(prop_borders);
-    if (node->HasValue(prop_flags))
-    {
-        if (flags.size())
-        {
-            flags << '|';
-        }
-        flags << node->prop_as_string(prop_flags);
-    }
-    if (node->HasValue(prop_alignment))
-    {
-        if (flags.size())
-        {
-            flags << '|';
-        }
-        flags << node->prop_as_string(prop_alignment);
-    }
-    if (flags.size())
-    {
-        m_source->writeLine(ttlib::cstr("<flag>") << flags << "</flag>");
-    }
-
-    if (node->HasValue(prop_border_size))
-    {
-        m_source->writeLine(ttlib::cstr("<border>") << node->prop_as_string(prop_border_size) << "</border>");
-    }
-}
-
 void GenXrcSizerItem(Node* node, pugi::xml_node& object)
 {
     object.append_attribute("class").set_value("sizeritem");

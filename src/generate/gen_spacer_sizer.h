@@ -14,4 +14,7 @@ class SpacerGenerator : public BaseGenerator
 {
 public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 };

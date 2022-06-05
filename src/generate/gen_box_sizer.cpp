@@ -43,6 +43,9 @@ bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     return true;
 }
 
+// ../../wxSnapShot/src/xrc/xh_sizer.cpp
+// ../../../wxWidgets/src/xrc/xh_sizer.cpp
+
 int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
 {
     pugi::xml_node item;

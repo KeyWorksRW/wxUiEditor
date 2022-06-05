@@ -73,3 +73,27 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
 
     return code;
 }
+
+// ../../wxSnapShot/src/xrc/xh_sizer.cpp
+// ../../../wxWidgets/src/xrc/xh_sizer.cpp
+// See Handle_spacer()
+
+int SpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    pugi::xml_node item = object;
+    auto result = BaseGenerator::xrc_updated;
+
+    item.append_attribute("class").set_value("spacer");
+    item.append_child("size").text().set(ttlib::cstr() << node->prop_as_string(prop_width) << ',' << node->prop_as_string(prop_height));
+    if (node->prop_as_string(prop_proportion) != "0")
+    {
+        item.append_child("option").text().set(node->prop_as_string(prop_proportion));
+    }
+
+    return result;
+}
+
+void SpacerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxSizerXmlHandler");
+}

@@ -105,6 +105,11 @@ bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set
     InsertGeneratorInclude(node, "#include <wx/statbox.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_sizer.cpp
+// ../../../wxWidgets/src/xrc/xh_sizer.cpp
+// See Handle_wxStaticBoxSizer()
+
 int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
 {
     pugi::xml_node item;

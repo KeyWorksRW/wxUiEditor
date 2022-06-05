@@ -169,3 +169,55 @@ bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_sizer.cpp
+// ../../../wxWidgets/src/xrc/xh_sizer.cpp
+// See Handle_wxFlexGridSizer()
+
+int FlexGridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    pugi::xml_node item;
+    auto result = BaseGenerator::xrc_sizer_item_created;
+
+    if (node->GetParent()->IsSizer())
+    {
+        GenXrcSizerItem(node, object);
+        item = object.append_child("object");
+    }
+    else
+    {
+        item = object;
+        result = BaseGenerator::xrc_updated;
+    }
+
+    item.append_attribute("class").set_value("wxFlexGridSizer");
+    item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
+
+    ADD_ITEM_PROP(prop_rows, "rows")
+    ADD_ITEM_PROP(prop_cols, "cols")
+    ADD_ITEM_PROP(prop_vgap, "vgap")
+    ADD_ITEM_PROP(prop_hgap, "hgap")
+    ADD_ITEM_PROP(prop_growablerows, "growablerows")
+    ADD_ITEM_PROP(prop_growablecols, "growablecols")
+    ADD_ITEM_PROP(prop_flexible_direction, "flexibledirection")
+    ADD_ITEM_PROP(prop_non_flexible_grow_mode, "nonflexiblegrowmode")
+
+    if (node->HasValue(prop_minimum_size))
+    {
+        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    }
+    else if (node->GetParent()->IsForm() && node->GetParent()->HasValue(prop_minimum_size))
+    {
+        // As of wxWidgets 3.1.7, minsize can only be used for sizers, and wxSplitterWindow. That's a problem for forms which
+        // often can specify their own minimum size. The workaround is to set the minimum size of the parent sizer that we
+        // create for most forms.
+
+        item.append_child("minsize").text().set(node->GetParent()->prop_as_string(prop_minimum_size));
+    }
+    return result;
+}
+
+void FlexGridSizerGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxSizerXmlHandler");
+}

@@ -207,6 +207,53 @@ public:
     // This will convert the string from UTF8 to UTF16 on Windows
     wxString prop_as_wxString(PropName name) const;
 
+    // The following are shorter versions of the above functions. These are only here to save typing, and enhance code
+    // readability (since they all require a prop_ parameter, it should be easy to know what they work on)
+
+    // Sets value only if the property exists, returns false if it doesn't exist.
+    template <typename T>
+    bool set_value(PropName name, T value)
+    {
+        if (auto prop = get_prop_ptr(name); prop)
+        {
+            prop->set_value(value);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    const ttlib::cstr& value(PropName name) const { return prop_as_string(name); }
+
+    bool as_bool(PropName name) const { return prop_as_bool(name); }
+
+    // If type is option, id, or bitlist, this will convert that constant name to it's value
+    // (see g_NodeCreator.GetConstantAsInt()). Otherwise, it calls atoi().
+    int as_int(PropName name) const { return prop_as_int(name); }
+
+    // Looks up wx constant, returns it's numerical value.
+    //
+    // Returns wxID_ANY if constant is not found
+    int as_id(PropName name) const { return prop_as_id(name); }
+
+    double as_double(PropName name) const { return prop_as_double(name); }
+
+    const ttlib::cstr& as_string(PropName name) const { return prop_as_string(name); }
+    const ttlib::cstr& as_constant(PropName name, std::string_view prefix) { return prop_as_constant(name, prefix); }
+
+    wxColour as_wxColour(PropName name) const { return prop_as_wxColour(name); }
+    wxFont as_wxFont(PropName name) const { return prop_as_font(name); }
+    wxPoint as_wxPoint(PropName name) const { return prop_as_wxPoint(name); }
+    wxSize as_wxSize(PropName name) const { return prop_as_wxSize(name); }
+    wxBitmap as_wxBitmap(PropName name) const { return prop_as_wxBitmap(name); }
+    wxArrayString as_wxArrayString(PropName name) const { return prop_as_wxArrayString(name); }
+    wxBitmapBundle as_wxBitmapBundle(PropName name) const { return prop_as_wxBitmapBundle(name); }
+    wxString as_wxString(PropName name) const { return prop_as_wxString(name); }
+
+    const ImageBundle* as_image_bundle(PropName name) const { return prop_as_image_bundle(name); }
+    FontProperty as_font_prop(PropName name) const { return prop_as_font_prop(name); }
+
     wxSizerFlags GetSizerFlags() const;
 
     NodeSharedPtr GetSharedPtr() { return shared_from_this(); }

@@ -77,6 +77,7 @@
 #include "gen_spacer_sizer.h"        // SpacerGenerator -- Add space to sizer generator
 #include "gen_spin_btn.h"            // SpinButtonGenerator -- wxSpinButton generator
 #include "gen_spin_ctrl.h"           // SpinCtrlGenerator -- Spin and ScrollBar component classes
+#include "gen_split_win.h"           // SplitterWindowGenerator -- wxSplitterWindow generator
 #include "gen_statchkbox_sizer.h"    // StaticCheckboxBoxSizerGenerator -- wxStaticBoxSizer with wxCheckBox generator
 #include "gen_static_bmp.h"          // StaticBitmapGenerator -- wxStaticBitmap generator
 #include "gen_static_box.h"          // StaticBoxGenerator -- wxStaticBox generator

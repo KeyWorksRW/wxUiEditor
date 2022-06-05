@@ -145,6 +145,7 @@ Files:
     generate/gen_web_view.cpp       # wxWebView generator
     generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
     generate/gen_tree_list.cpp      # wxTreeListCtrl generator
+    generate/gen_split_win.cpp      # wxSplitterWindow generator
 
     # Books
 

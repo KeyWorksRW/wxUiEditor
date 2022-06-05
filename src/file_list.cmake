@@ -119,6 +119,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_web_view.cpp       # wxWebView generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_tree_list.cpp      # wxTreeListCtrl generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_split_win.cpp      # wxSplitterWindow generator
 
     # Books
 

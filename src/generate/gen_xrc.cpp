@@ -281,6 +281,15 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
     if (result == BaseGenerator::xrc_sizer_item_created)
     {
         auto actual_object = object.child("object");
+        if (node->isGen(gen_wxCollapsiblePane))
+        {
+            // XRC wants a panewindow object as the sole child of wxCollapsiblePane, and all node children
+            // must be added as children of this panewindow.
+
+            actual_object = actual_object.append_child("object");
+            actual_object.append_attribute("class").set_value("panewindow");
+        }
+
         for (const auto& child: node->GetChildNodePtrs())
         {
             // Normally, the XRC heirarchy matches our node heirarchy with the exception of XRC needing

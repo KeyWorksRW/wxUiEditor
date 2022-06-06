@@ -16,12 +16,12 @@
 #include "project.h"           // Project generator
 #include "ribbon_widgets.h"    // RibbonBarGenerator -- Ribbon component classes
 #include "styled_text.h"       // StyledTextGenerator -- wxStyledText (scintilla) generate
-#include "toolbar_widgets.h"   // Toolbar component classes
 #include "window_widgets.h"    // Splitter and Scroll component classes
 
 #include "gen_activity.h"            // ActivityIndicatorGenerator -- wxActivityIndicator generator
 #include "gen_animation.h"           // AnimationGenerator -- wxAnimationCtrl generator
 #include "gen_aui_notebook.h"        // AuiNotebookGenerator -- wxAuiNotebook generator
+#include "gen_aui_toolbar.h"         // AuiToolBarGenerator -- wxAuiToolBar generator
 #include "gen_banner_window.h"       // BannerWindowGenerator -- wxBannerWindow generator
 #include "gen_bitmap_combo.h"        // BitmapComboBoxGenerator -- wxBitmapComboBox generator
 #include "gen_book_page.h"           // BookPageGenerator -- Book page generator
@@ -91,6 +91,7 @@
 #include "gen_text_sizer.h"          // TextSizerGenerator -- wxTextSizerWrapper generator
 #include "gen_time_picker.h"         // TimePickerCtrlGenerator -- wxTimePickerCtrl generator
 #include "gen_toggle_btn.h"          // ToggleButtonGenerator -- wxToggleButton generator
+#include "gen_toolbar.h"             // wxToolBar generator
 #include "gen_toolbook.h"            // ToolbookGenerator -- wxToolbook generator
 #include "gen_tree_ctrl.h"           // TreeCtrlGenerator -- wxTreeCtrl generator
 #include "gen_tree_list.h"           // TreeListCtrlGenerator -- wxTreeCtrl component classes

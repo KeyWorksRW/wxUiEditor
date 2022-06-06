@@ -69,7 +69,6 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/project.cpp           # Project generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/ribbon_widgets.cpp    # Ribbon generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/styled_text.cpp       # wxStyledText (scintilla) generate
-    ${CMAKE_CURRENT_LIST_DIR}/generate/toolbar_widgets.cpp   # Toolbar generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/window_widgets.cpp    # Splitter and Scroll generation classes
 
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_activity.cpp       # wxActivityIndicator generator
@@ -117,9 +116,12 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_text_ctrl.cpp      # wxTextCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_toggle_btn.cpp     # wxToggleButton generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_web_view.cpp       # wxWebView generator
+
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_tree_list.cpp      # wxTreeListCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_split_win.cpp      # wxSplitterWindow generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_toolbar.cpp        # wxToolBar generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_aui_toolbar.cpp    # wxAuiToolBar generator
 
     # Books
 

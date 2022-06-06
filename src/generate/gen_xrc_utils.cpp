@@ -290,14 +290,18 @@ struct PropNamePair
     const char* xrc_name;
 };
 
+// clang-format off
 static PropNamePair props[] = {
 
     { prop_bitmap, "bitmap" },
     { prop_pressed_bmp, "pressed" },
     { prop_focus_bmp, "focus" },
     { prop_disabled_bmp, "disabled" },
-    { prop_current, "current" }
+    { prop_current, "current" },
+    { prop_unchecked_bitmap, "bitmap2" }
+
 };
+// clang-format on
 
 void GenXrcBitmap(Node* node, pugi::xml_node& object)
 {

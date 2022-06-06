@@ -95,3 +95,33 @@ bool AuiNotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_aui.cpp
+// ../../../wxWidgets/src/xrc/xh_aui.cpp
+// wxAuiNotebook handler is near the end of this file.
+
+int AuiNotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxAuiNotebook");
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        ADD_ITEM_COMMENT("XRC does not support calling SetArtProvider()")
+        if (node->as_int(prop_tab_height) >= 0)
+            ADD_ITEM_COMMENT("XRC does not support calling SetTabCtrlHeight()")
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void AuiNotebookGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxAuiXmlHandler");
+}

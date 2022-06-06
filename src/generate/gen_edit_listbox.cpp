@@ -84,3 +84,41 @@ bool EditListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
     InsertGeneratorInclude(node, "#include <wx/listbase.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_editlbox.cpp
+// ../../../wxWidgets/src/xrc/xh_editlbox.cpp
+
+int EditListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxEditableListBox");
+
+    ADD_ITEM_PROP(prop_label, "label")
+
+    if (node->HasValue(prop_contents))
+    {
+        auto content = item.append_child("content");
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        for (auto& iter: array)
+        {
+            content.append_child("item").text().set(iter);
+        }
+    }
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void EditListBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxEditableListBoxXmlHandler");
+}

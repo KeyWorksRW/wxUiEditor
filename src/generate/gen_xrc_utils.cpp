@@ -378,3 +378,18 @@ pugi::xml_node InitializeXrcObject(Node* node, pugi::xml_node& object)
         return object;
     }
 }
+
+void GenXrcToolProps(Node* node, pugi::xml_node& item)
+{
+    if (node->value(prop_kind) == "wxITEM_RADIO")
+        item.append_child("radio").text().set("1");
+    else if (node->value(prop_kind) == "wxITEM_CHECK")
+        item.append_child("toggle").text().set("1");
+    else if (node->value(prop_kind) == "wxITEM_DROPDOWN")
+        item.append_child("dropdown").text().set("1");
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_PROP(prop_tooltip, "tooltip")
+    ADD_ITEM_PROP(prop_statusbar, "longhelp")
+    ADD_ITEM_BOOL(prop_disabled, "disabled")
+    GenXrcBitmap(node, item);
+}

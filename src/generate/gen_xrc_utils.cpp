@@ -395,5 +395,13 @@ void GenXrcToolProps(Node* node, pugi::xml_node& item)
     ADD_ITEM_PROP(prop_tooltip, "tooltip")
     ADD_ITEM_PROP(prop_statusbar, "longhelp")
     ADD_ITEM_BOOL(prop_disabled, "disabled")
+
+    if (!node->HasValue(prop_bitmap))
+    {
+        auto bmp = item.append_child("bitmap");
+        bmp.append_attribute("stock_id").set_value("wxART_QUESTION");
+        bmp.append_attribute("stock_client").set_value("wxART_TOOLBAR");
+    }
+
     GenXrcBitmap(node, item);
 }

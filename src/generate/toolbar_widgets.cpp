@@ -576,6 +576,38 @@ void AuiToolBarGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
 #endif
 }
 
+// ../../wxSnapShot/src/xrc/xh_auitoolb.cpp
+// ../../../wxWidgets/src/xrc/xh_auitoolb.cpp
+
+int AuiToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxAuiToolBar");
+
+    if (node->as_int(prop_packing) >= 0)
+        ADD_ITEM_PROP(prop_packing, "packing")
+    if (node->as_int(prop_separation) >= 0)
+        ADD_ITEM_PROP(prop_separation, "separation")
+    ADD_ITEM_PROP(prop_margins, "margins")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void AuiToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxAuiToolBarXmlHandler");
+}
+
 //////////////////////////////////////////  AuiToolGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> AuiToolGenerator::GenConstruction(Node* node)
@@ -625,6 +657,15 @@ std::optional<ttlib::cstr> AuiToolGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> AuiToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "wxButton");
+    GenXrcToolProps(node, item);
+
+    return BaseGenerator::xrc_updated;
 }
 
 //////////////////////////////////////////  ConstructTool  //////////////////////////////////////////

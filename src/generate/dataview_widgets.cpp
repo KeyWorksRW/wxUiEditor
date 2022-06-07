@@ -146,6 +146,33 @@ bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::
     return true;
 }
 
+// ../../wxSnapShot/src/xrc/xh_dataview.cpp
+// ../../../wxWidgets/src/xrc/xh_dataview.cpp
+// See HandleCtrl()
+
+int DataViewCtrl::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxDataViewCtrl");
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void DataViewCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxDataViewXmlHandler");
+}
+
 //////////////////////////////////////////  DataViewListCtrl  //////////////////////////////////////////
 
 wxObject* DataViewListCtrl::CreateMockup(Node* node, wxObject* parent)
@@ -240,6 +267,33 @@ bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
     return true;
 }
 
+// ../../wxSnapShot/src/xrc/xh_dataview.cpp
+// ../../../wxWidgets/src/xrc/xh_dataview.cpp
+// See HandleListCtrl()
+
+int DataViewListCtrl::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxDataViewListCtrl");
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void DataViewListCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxDataViewXmlHandler");
+}
+
 //////////////////////////////////////////  DataViewTreeCtrl  //////////////////////////////////////////
 
 wxObject* DataViewTreeCtrl::CreateMockup(Node* node, wxObject* parent)
@@ -273,6 +327,35 @@ bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
     return true;
+}
+
+// ../../wxSnapShot/src/xrc/xh_dataview.cpp
+// ../../../wxWidgets/src/xrc/xh_dataview.cpp
+// See HandleTreeCtrl()
+
+int DataViewTreeCtrl::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxDataViewListCtrl");
+
+    // TODO: [KeyWorks - 06-06-2022] XRC supports "imagelist"
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void DataViewTreeCtrl::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxDataViewXmlHandler");
 }
 
 //////////////////////////////////////////  DataViewColumn  //////////////////////////////////////////

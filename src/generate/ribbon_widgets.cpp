@@ -188,6 +188,43 @@ bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
+// ../../wxSnapShot/src/xrc/xh_ribbon.cpp
+// ../../../wxWidgets/src/xrc/xh_ribbon.cpp
+// See Handle_bar()
+
+int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxRibbonBar");
+
+    ttlib::cstr art(node->value(prop_theme));
+    if (art == "Generic")
+        art = "aui";
+    else if (art == "MSW")
+        art = "msw";
+    else
+        art = "default";
+
+    item.append_child("art-provider").text().set(art);
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void RibbonBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxRibbonXmlHandler");
+}
+
 //////////////////////////////////////////  RibbonPageGenerator  //////////////////////////////////////////
 
 wxObject* RibbonPageGenerator::CreateMockup(Node* node, wxObject* parent)
@@ -245,6 +282,31 @@ bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     InsertGeneratorInclude(node, "#include <wx/ribbon/page.h>", set_src, set_hdr);
 
     return true;
+}
+
+// ../../wxSnapShot/src/xrc/xh_wizrd.cpp
+// ../../../wxWidgets/src/xrc/xh_wizrd.cpp
+// See Handle_page()
+
+int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxRibbonPage");
+
+    ADD_ITEM_PROP(prop_label, "label")
+    GenXrcBitmap(node, item, "icon");
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
 }
 
 //////////////////////////////////////////  RibbonPanelGenerator  //////////////////////////////////////////
@@ -311,6 +373,34 @@ bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
     return true;
 }
 
+// ../../wxSnapShot/src/xrc/xh_wizrd.cpp
+// ../../../wxWidgets/src/xrc/xh_wizrd.cpp
+// See Handle_panel()
+
+int RibbonPanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxRibbonPanel");
+
+    ADD_ITEM_PROP(prop_label, "label")
+    GenXrcBitmap(node, item, "icon");
+
+    // Up through wxWidgets 3.1.7, no styles are accepted
+    // GenXrcStylePosSize(node, item);
+    GenXrcPreStylePosSize(node, item, {});
+
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
 //////////////////////////////////////////  RibbonButtonBarGenerator  //////////////////////////////////////////
 
 wxObject* RibbonButtonBarGenerator::CreateMockup(Node* node, wxObject* parent)
@@ -365,6 +455,14 @@ bool RibbonButtonBarGenerator::GetIncludes(Node* node, std::set<std::string>& se
     return true;
 }
 
+int RibbonButtonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "wxRibbonButtonBar");
+
+    return BaseGenerator::xrc_updated;
+}
+
 //////////////////////////////////////////  RibbonButtonGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> RibbonButtonGenerator::GenConstruction(Node* node)
@@ -399,6 +497,23 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> RibbonButtonGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "button");
+
+    if (!node->HasValue(prop_bitmap))
+    {
+        auto bmp = item.append_child("bitmap");
+        bmp.append_attribute("stock_id").set_value("wxART_QUESTION");
+        bmp.append_attribute("stock_client").set_value("wxART_TOOLBAR");
+    }
+
+    GenXrcBitmap(node, item);
+
+    return BaseGenerator::xrc_updated;
 }
 
 //////////////////////////////////////////  RibbonToolBarGenerator  //////////////////////////////////////////
@@ -493,6 +608,11 @@ bool RibbonToolBarGenerator::GetIncludes(Node* /* node */, std::set<std::string>
     return true;
 }
 
+int RibbonToolBarGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, bool /* add_comments */)
+{
+    return BaseGenerator::xrc_not_supported;
+}
+
 //////////////////////////////////////////  RibbonToolGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> RibbonToolGenerator::GenConstruction(Node* node)
@@ -526,6 +646,11 @@ std::optional<ttlib::cstr> RibbonToolGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> RibbonToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int RibbonToolGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, bool /* add_comments */)
+{
+    return BaseGenerator::xrc_not_supported;
 }
 
 //////////////////////////////////////////  RibbonGalleryGenerator  //////////////////////////////////////////
@@ -584,6 +709,14 @@ bool RibbonGalleryGenerator::GetIncludes(Node* node, std::set<std::string>& set_
     return true;
 }
 
+int RibbonGalleryGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "wxRibbonGallery");
+
+    return BaseGenerator::xrc_updated;
+}
+
 //////////////////////////////////////////  RibbonGalleryItemGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> RibbonGalleryItemGenerator::GenConstruction(Node* node)
@@ -605,4 +738,21 @@ std::optional<ttlib::cstr> RibbonGalleryItemGenerator::GenConstruction(Node* nod
 std::optional<ttlib::cstr> RibbonGalleryItemGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "item");
+
+    if (!node->HasValue(prop_bitmap))
+    {
+        auto bmp = item.append_child("bitmap");
+        bmp.append_attribute("stock_id").set_value("wxART_QUESTION");
+        bmp.append_attribute("stock_client").set_value("wxART_TOOLBAR");
+    }
+
+    GenXrcBitmap(node, item);
+
+    return BaseGenerator::xrc_updated;
 }

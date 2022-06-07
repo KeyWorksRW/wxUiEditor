@@ -199,6 +199,32 @@ bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
     return true;
 }
 
+// ../../wxSnapShot/src/xrc/xh_menu.cpp
+// ../../../wxWidgets/src/xrc/xh_menu.cpp
+
+int MenuBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxMenuBar");
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void MenuBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxMenuBarXmlHandler");
+}
+
 //////////////////////////////////////////  MenuBarFormGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> MenuBarFormGenerator::GenConstruction(Node* node)
@@ -244,6 +270,32 @@ bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
     return true;
+}
+
+// ../../wxSnapShot/src/xrc/xh_menu.cpp
+// ../../../wxWidgets/src/xrc/xh_menu.cpp
+
+int MenuBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxMenuBar");
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void MenuBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxMenuBarXmlHandler");
 }
 
 //////////////////////////////////////////  PopupMenuGenerator  //////////////////////////////////////////
@@ -359,6 +411,26 @@ bool MenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std:
     return true;
 }
 
+// ../../wxSnapShot/src/xrc/xh_menu.cpp
+// ../../../wxWidgets/src/xrc/xh_menu.cpp
+
+int MenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxMenu");
+
+    ADD_ITEM_PROP(prop_label, "label")
+    GenXrcBitmap(node, item);
+
+    return BaseGenerator::xrc_updated;
+}
+
+void MenuGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxMenuXmlHandler");
+}
+
 //////////////////////////////////////////  SubMenuGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> SubMenuGenerator::GenConstruction(Node* node)
@@ -463,6 +535,18 @@ bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
     return true;
+}
+
+int SubMenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxMenu");
+
+    ADD_ITEM_PROP(prop_label, "label")
+    GenXrcBitmap(node, item);
+
+    return BaseGenerator::xrc_updated;
 }
 
 //////////////////////////////////////////  MenuItemGenerator  //////////////////////////////////////////
@@ -665,6 +749,35 @@ bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     return true;
 }
 
+int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxMenuItem");
+
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_PROP(prop_shortcut, "accel")
+    ADD_ITEM_PROP(prop_help, "help")
+    ADD_ITEM_BOOL(prop_checked, "checked")
+    if (node->as_bool(prop_disabled))
+        item.append_child("enabled").text().set("0");
+
+    if (node->value(prop_kind) == "wxITEM_RADIO")
+        item.append_child("radio").text().set("1");
+    else if (node->value(prop_kind) == "wxITEM_CHECK")
+        item.append_child("checkable").text().set("1");
+
+    GenXrcBitmap(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
 //////////////////////////////////////////  SeparatorGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> SeparatorGenerator::GenConstruction(Node* node)
@@ -684,6 +797,13 @@ bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
 
     return true;
+}
+
+int SeparatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "separator");
+    return BaseGenerator::xrc_updated;
 }
 
 //////////////////////////////////////////  CtxMenuGenerator  //////////////////////////////////////////

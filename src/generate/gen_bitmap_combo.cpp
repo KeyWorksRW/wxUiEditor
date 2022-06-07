@@ -172,3 +172,37 @@ bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set
     InsertGeneratorInclude(node, "#include <wx/bmpcbox.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_bmpcbox.cpp
+// ../../../wxWidgets/src/xrc/xh_bmpcbox.cpp
+
+int BitmapComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxBitmapComboBox");
+
+    if (node->HasValue(prop_selection_string))
+        item.append_child("value").text().set(node->prop_as_string(prop_selection_string));
+    else if (node->prop_as_int(prop_selection_int) >= 0)
+        item.append_child("selection").text().set(node->prop_as_string(prop_selection_int));
+
+    if (node->HasValue(prop_hint) && !node->prop_as_string(prop_style).contains("wxCB_READONLY"))
+        item.append_child("hint").text().set(node->prop_as_string(prop_hint));
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void BitmapComboBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxBitmapComboBoxXmlHandler");
+}

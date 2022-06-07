@@ -45,7 +45,8 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object);
 // Add comments for unsupported properties
 void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags = xrc::all_unsupported);
 
-void GenXrcBitmap(Node* node, pugi::xml_node& object);
+// Specify the XRC param name if it doesn't match the property name
+void GenXrcBitmap(Node* node, pugi::xml_node& item, std::string_view param_name = {});
 
 // Generates class and name attributes for the object.
 //

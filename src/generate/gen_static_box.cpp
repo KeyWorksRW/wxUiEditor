@@ -15,7 +15,7 @@
 
 #include "gen_static_box.h"
 
-// This exists only for impport compatability -- wxStaticBoxSizer is the preferred
+// This exists only for import compatability -- wxStaticBoxSizer is the preferred
 // way to use this. It does, however, allow children.
 
 wxObject* StaticBoxGenerator::CreateMockup(Node* node, wxObject* parent)

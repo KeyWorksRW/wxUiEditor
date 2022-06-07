@@ -253,7 +253,7 @@ std::optional<ttlib::cstr> AuiToolGenerator::GenEvents(NodeEvent* event, const s
 int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
 {
     auto item = InitializeXrcObject(node, object);
-    GenXrcObjectAttributes(node, item, "wxButton");
+    GenXrcObjectAttributes(node, item, "tool");
     GenXrcToolProps(node, item);
 
     return BaseGenerator::xrc_updated;

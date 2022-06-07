@@ -169,6 +169,38 @@ void ToolBarFormGenerator::OnTool(wxCommandEvent& event)
     }
 }
 
+// ../../wxSnapShot/src/xrc/xh_toolb.cpp
+// ../../../wxWidgets/src/xrc/xh_toolb.cpp
+
+int ToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxToolBar");
+
+    if (node->as_int(prop_packing) >= 0)
+        ADD_ITEM_PROP(prop_packing, "packing")
+    if (node->as_int(prop_separation) >= 0)
+        ADD_ITEM_PROP(prop_separation, "separation")
+    ADD_ITEM_PROP(prop_margins, "margins")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ToolBarFormGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxToolBarXmlHandler");
+}
+
 //////////////////////////////////////////  ToolBarGenerator  //////////////////////////////////////////
 
 wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
@@ -348,6 +380,38 @@ void ToolBarGenerator::OnTool(wxCommandEvent& event)
     }
 }
 
+// ../../wxSnapShot/src/xrc/xh_toolb.cpp
+// ../../../wxWidgets/src/xrc/xh_toolb.cpp
+
+int ToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxToolBar");
+
+    if (node->as_int(prop_packing) >= 0)
+        ADD_ITEM_PROP(prop_packing, "packing")
+    if (node->as_int(prop_separation) >= 0)
+        ADD_ITEM_PROP(prop_separation, "separation")
+    ADD_ITEM_PROP(prop_margins, "margins")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxToolBarXmlHandler");
+}
+
 //////////////////////////////////////////  ToolGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
@@ -399,7 +463,16 @@ std::optional<ttlib::cstr> ToolGenerator::GenEvents(NodeEvent* event, const std:
     return GenEventCode(event, class_name);
 }
 
-//////////////////////////////////////////  ToolGenerator  //////////////////////////////////////////
+int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "tool");
+    GenXrcToolProps(node, item);
+
+    return BaseGenerator::xrc_updated;
+}
+
+//////////////////////////////////////////  ToolSeparatorGenerator  //////////////////////////////////////////
 
 std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
 {

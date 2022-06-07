@@ -95,11 +95,11 @@ Files:
     generate/project.cpp           # Project generator
     generate/ribbon_widgets.cpp    # Ribbon generation classes
     generate/styled_text.cpp       # wxStyledText (scintilla) generate
-    generate/toolbar_widgets.cpp   # Toolbar generation classes
     generate/window_widgets.cpp    # Splitter and Scroll generation classes
 
     generate/gen_activity.cpp       # wxActivityIndicator generator
     generate/gen_animation.cpp      # wxAnimationCtrl generator
+    generate/gen_aui_toolbar.cpp    # wxAuiToolBar generator
     generate/gen_banner_window.cpp  # wxBannerWindow generator
     generate/gen_bitmap_combo.cpp   # wxBitmapComboBox generator
     generate/gen_button.cpp         # wxButton generator
@@ -135,6 +135,7 @@ Files:
     generate/gen_slider.cpp         # wxSlider generator
     generate/gen_spin_btn.cpp       # wxSpinButton generator
     generate/gen_spin_ctrl.cpp      # wxSpinButton generator
+    generate/gen_split_win.cpp      # wxSplitterWindow generator
     generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     generate/gen_static_box.cpp     # wxStaticBox generator
     generate/gen_static_line.cpp    # wxStaticLine generator
@@ -142,12 +143,10 @@ Files:
     generate/gen_status_bar.cpp     # wxStatusBar generator
     generate/gen_text_ctrl.cpp      # wxTextCtrl generator
     generate/gen_toggle_btn.cpp     # wxToggleButton generator
-    generate/gen_web_view.cpp       # wxWebView generator
-
+    generate/gen_toolbar.cpp        # wxToolBar generator
     generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
     generate/gen_tree_list.cpp      # wxTreeListCtrl generator
-    generate/gen_split_win.cpp      # wxSplitterWindow generator
-    generate/gen_toolbar.cpp        # wxToolBar generator
+    generate/gen_web_view.cpp       # wxWebView generator
 
     # Books
 

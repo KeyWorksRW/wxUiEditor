@@ -303,7 +303,7 @@ static PropNamePair props[] = {
 };
 // clang-format on
 
-void GenXrcBitmap(Node* node, pugi::xml_node& object)
+void GenXrcBitmap(Node* node, pugi::xml_node& object, std::string_view param_name)
 {
     for (auto& prop_pair: props)
     {
@@ -314,13 +314,13 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object)
             if (parts[IndexType].is_sameas("Art"))
             {
                 ttlib::multistr art_parts(parts[IndexArtID], '|');
-                auto bmp = object.append_child(prop_pair.xrc_name);
+                auto bmp = object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
                 bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
                 bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
             }
             else if (parts[IndexType].is_sameas("SVG"))
             {
-                auto svg_object = object.append_child(prop_pair.xrc_name);
+                auto svg_object = object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
                 svg_object.text().set(parts[IndexImage]);
                 auto size = get_image_prop_size(parts[IndexSize]);
                 svg_object.append_attribute("default_size").set_value(ttlib::cstr() << size.x << ',' << size.y);
@@ -338,7 +338,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object)
                         }
                         names << file;
                     }
-                    object.append_child(prop_pair.xrc_name).text().set(names);
+                    object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name).text().set(names);
                 }
             }
         }

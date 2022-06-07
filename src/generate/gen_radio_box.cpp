@@ -158,3 +158,43 @@ bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_radbx.cpp
+// ../../../wxWidgets/src/xrc/xh_radbx.cpp
+
+int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxRadioBox");
+
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_PROP(prop_majorDimension, "dimension")
+    ADD_ITEM_PROP(prop_selection, "selection")
+
+    if (node->HasValue(prop_contents))
+    {
+        auto content = item.append_child("content");
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        for (auto& iter: array)
+        {
+            content.append_child("item").text().set(iter);
+        }
+    }
+
+    GenXrcPreStylePosSize(node, item, (node->value(prop_style) == "columns") ? "wxRA_HORIZONTAL" : "wxRA_VERTICAL");
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void RadioBoxGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxRadioBoxXmlHandler");
+}

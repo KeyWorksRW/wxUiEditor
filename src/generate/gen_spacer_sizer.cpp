@@ -84,7 +84,8 @@ int SpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* ad
     auto result = BaseGenerator::xrc_updated;
 
     item.append_attribute("class").set_value("spacer");
-    item.append_child("size").text().set(ttlib::cstr() << node->prop_as_string(prop_width) << ',' << node->prop_as_string(prop_height));
+    item.append_child("size").text().set(ttlib::cstr()
+                                         << node->prop_as_string(prop_width) << ',' << node->prop_as_string(prop_height));
     if (node->prop_as_string(prop_proportion) != "0")
     {
         item.append_child("option").text().set(node->prop_as_string(prop_proportion));

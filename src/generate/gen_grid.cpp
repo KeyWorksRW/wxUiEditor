@@ -342,3 +342,30 @@ bool GridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_wizrd.cpp
+// ../../../wxWidgets/src/xrc/xh_wizrd.cpp
+
+int GridGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxGrid");
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        ADD_ITEM_COMMENT(" XRC doesn't support any properties for wxGrid. ")
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void GridGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxGridXmlHandler");
+}

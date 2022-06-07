@@ -122,3 +122,36 @@ bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set
 
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_wizrd.cpp
+// ../../../wxWidgets/src/xrc/xh_wizrd.cpp
+
+int ScrolledWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxScrolledWindow");
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (node->as_int(prop_scroll_rate_x) >= 0 || node->as_int(prop_scroll_rate_y) >= 0)
+    {
+        ttlib::cstr scroll_rate;
+        scroll_rate << node->as_int(prop_scroll_rate_x) << ',' << node->as_int(prop_scroll_rate_y);
+        item.append_child("scrollrate").text().set(scroll_rate);
+    }
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ScrolledWindowGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxScrolledWindowXmlHandler");
+}

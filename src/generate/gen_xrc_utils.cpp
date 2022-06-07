@@ -290,16 +290,20 @@ struct PropNamePair
     const char* xrc_name;
 };
 
+// clang-format off
 static PropNamePair props[] = {
 
     { prop_bitmap, "bitmap" },
     { prop_pressed_bmp, "pressed" },
     { prop_focus_bmp, "focus" },
     { prop_disabled_bmp, "disabled" },
-    { prop_current, "current" }
-};
+    { prop_current, "current" },
+    { prop_unchecked_bitmap, "bitmap2" }
 
-void GenXrcBitmap(Node* node, pugi::xml_node& object)
+};
+// clang-format on
+
+void GenXrcBitmap(Node* node, pugi::xml_node& object, std::string_view param_name)
 {
     for (auto& prop_pair: props)
     {
@@ -310,13 +314,13 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object)
             if (parts[IndexType].is_sameas("Art"))
             {
                 ttlib::multistr art_parts(parts[IndexArtID], '|');
-                auto bmp = object.append_child(prop_pair.xrc_name);
+                auto bmp = object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
                 bmp.append_attribute("stock_id").set_value(art_parts[0].c_str());
                 bmp.append_attribute("stock_client").set_value(art_parts[1].c_str());
             }
             else if (parts[IndexType].is_sameas("SVG"))
             {
-                auto svg_object = object.append_child(prop_pair.xrc_name);
+                auto svg_object = object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name);
                 svg_object.text().set(parts[IndexImage]);
                 auto size = get_image_prop_size(parts[IndexSize]);
                 svg_object.append_attribute("default_size").set_value(ttlib::cstr() << size.x << ',' << size.y);
@@ -334,7 +338,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object)
                         }
                         names << file;
                     }
-                    object.append_child(prop_pair.xrc_name).text().set(names);
+                    object.append_child(param_name.empty() ? prop_pair.xrc_name : param_name).text().set(names);
                 }
             }
         }
@@ -377,4 +381,27 @@ pugi::xml_node InitializeXrcObject(Node* node, pugi::xml_node& object)
     {
         return object;
     }
+}
+
+void GenXrcToolProps(Node* node, pugi::xml_node& item)
+{
+    if (node->value(prop_kind) == "wxITEM_RADIO")
+        item.append_child("radio").text().set("1");
+    else if (node->value(prop_kind) == "wxITEM_CHECK")
+        item.append_child("toggle").text().set("1");
+    else if (node->value(prop_kind) == "wxITEM_DROPDOWN")
+        item.append_child("dropdown").text().set("1");
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_PROP(prop_tooltip, "tooltip")
+    ADD_ITEM_PROP(prop_statusbar, "longhelp")
+    ADD_ITEM_BOOL(prop_disabled, "disabled")
+
+    if (!node->HasValue(prop_bitmap))
+    {
+        auto bmp = item.append_child("bitmap");
+        bmp.append_attribute("stock_id").set_value("wxART_QUESTION");
+        bmp.append_attribute("stock_client").set_value("wxART_TOOLBAR");
+    }
+
+    GenXrcBitmap(node, item);
 }

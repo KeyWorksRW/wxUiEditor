@@ -139,3 +139,6 @@ std::optional<ttlib::cstr> GenValidatorSettings(Node* node);
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate
 // everything needed to set the window's icon.
 ttlib::cstr GenerateIconCode(const ttlib::cstr& description);
+
+// This is called to add a tool to either wxToolBar or wxAuiToolBar
+ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode = "");

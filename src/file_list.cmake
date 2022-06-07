@@ -69,11 +69,11 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/project.cpp           # Project generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/ribbon_widgets.cpp    # Ribbon generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/styled_text.cpp       # wxStyledText (scintilla) generate
-    ${CMAKE_CURRENT_LIST_DIR}/generate/toolbar_widgets.cpp   # Toolbar generation classes
     ${CMAKE_CURRENT_LIST_DIR}/generate/window_widgets.cpp    # Splitter and Scroll generation classes
 
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_activity.cpp       # wxActivityIndicator generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_animation.cpp      # wxAnimationCtrl generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_aui_toolbar.cpp    # wxAuiToolBar generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_banner_window.cpp  # wxBannerWindow generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_bitmap_combo.cpp   # wxBitmapComboBox generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_button.cpp         # wxButton generator
@@ -109,6 +109,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_slider.cpp         # wxSlider generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_spin_btn.cpp       # wxSpinButton generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_spin_ctrl.cpp      # wxSpinButton generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_split_win.cpp      # wxSplitterWindow generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_box.cpp     # wxStaticBox generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_static_line.cpp    # wxStaticLine generator
@@ -116,10 +117,10 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_status_bar.cpp     # wxStatusBar generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_text_ctrl.cpp      # wxTextCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_toggle_btn.cpp     # wxToggleButton generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_web_view.cpp       # wxWebView generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_toolbar.cpp        # wxToolBar generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_tree_ctrl.cpp      # wxTreeCtrl generator
     ${CMAKE_CURRENT_LIST_DIR}/generate/gen_tree_list.cpp      # wxTreeListCtrl generator
-    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_split_win.cpp      # wxSplitterWindow generator
+    ${CMAKE_CURRENT_LIST_DIR}/generate/gen_web_view.cpp       # wxWebView generator
 
     # Books
 

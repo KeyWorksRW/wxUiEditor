@@ -99,3 +99,33 @@ bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
     InsertGeneratorInclude(node, "#include <wx/dirctrl.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_gdctl.cpp
+// ../../../wxWidgets/src/xrc/xh_gdctl.cpp
+
+int GenericDirCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxGenericDirCtrl");
+
+    ADD_ITEM_PROP(prop_defaultfolder, "defaultfolder")
+    ADD_ITEM_PROP(prop_filter, "filter")
+    ADD_ITEM_PROP(prop_defaultfilter, "defaultfilter")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void GenericDirCtrlGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxGenericDirCtrlXmlHandler");
+}

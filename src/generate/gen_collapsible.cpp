@@ -106,3 +106,32 @@ bool CollapsiblePaneGenerator::GetIncludes(Node* node, std::set<std::string>& se
     InsertGeneratorInclude(node, "#include <wx/collpane.h>", set_src, set_hdr);
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_collpane.cpp
+// ../../../wxWidgets/src/xrc/xh_collpane.cpp
+
+int CollapsiblePaneGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    GenXrcObjectAttributes(node, item, "wxCollapsiblePane");
+
+    ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_BOOL(prop_collapsed, "collapsed")
+
+    GenXrcStylePosSize(node, item);
+    GenXrcWindowSettings(node, item);
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void CollapsiblePaneGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxCollapsiblePaneXmlHandler");
+}

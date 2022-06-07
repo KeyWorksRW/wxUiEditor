@@ -222,7 +222,9 @@ int SplitterWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bo
     if (node->prop_as_int(prop_min_pane_size) >= 0)
         item.append_child("minsize").text().set(node->prop_as_string(prop_min_pane_size));
     ADD_ITEM_PROP(prop_sashgravity, "gravity")
-    item.append_child("orientation").text().set(node->prop_as_string(prop_splitmode) == "wxSPLIT_HORIZONTAL" ? "horizontal" : "vertical");
+    item.append_child("orientation")
+        .text()
+        .set(node->prop_as_string(prop_splitmode) == "wxSPLIT_HORIZONTAL" ? "horizontal" : "vertical");
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

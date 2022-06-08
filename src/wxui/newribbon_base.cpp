@@ -64,7 +64,6 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_spinCtrlPages = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
             wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 7, 3);
     m_spinCtrlPages->SetValidator(wxGenericValidator(&m_num_pages));
-    m_spinCtrlPages->Enable(false);
     box_sizer_4->Add(m_spinCtrlPages, wxSizerFlags().Border(wxALL));
 
     auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

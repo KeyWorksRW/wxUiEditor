@@ -1822,8 +1822,7 @@
             max="7"
             min="1"
             var_name="m_spinCtrlPages"
-            validator_variable="m_num_pages"
-            disabled="1" />
+            validator_variable="m_num_pages" />
         </node>
         <node
           class="wxStdDialogButtonSizer"

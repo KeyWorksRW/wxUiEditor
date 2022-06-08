@@ -1934,3 +1934,14 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
 
     return code;
 }
+
+ttlib::cstr GenerateWxSize(Node* node, PropName prop)
+{
+    ttlib::cstr code;
+    auto size = node->prop_as_wxSize(prop);
+    if (node->value(prop).contains("d", tt::CASE::either))
+        code << "ConvertDialogToPixels(wxSize(" << size.x << ", " << size.y << "))";
+    else
+        code << "wxSize(" << size.x << ", " << size.y << ")";
+    return code;
+}

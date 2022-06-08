@@ -142,3 +142,8 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description);
 
 // This is called to add a tool to either wxToolBar or wxAuiToolBar
 ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode = "");
+
+// Generates wxSize(x,y) or ConvertDialogToPixels(wxSize(x,y))
+//
+// wxSize will be converted to dialog units if the size contains a 'd' character.
+ttlib::cstr GenerateWxSize(Node* node, PropName prop);

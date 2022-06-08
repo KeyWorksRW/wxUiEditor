@@ -193,6 +193,12 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
         }
     }
 
+    if (node->HasValue(prop_empty_cell_size))
+    {
+        code << (isExpanded ? "\n\t    " : "\n\t") << node->get_node_name() << "->SetEmptyCellSize(";
+        code << GenerateWxSize(node, prop_empty_cell_size) << ");";
+    }
+
     auto& direction = node->prop_as_string(prop_flexible_direction);
     if (direction.empty() || direction.is_sameas("wxBOTH"))
     {

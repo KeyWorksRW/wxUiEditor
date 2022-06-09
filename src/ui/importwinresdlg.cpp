@@ -66,7 +66,10 @@ void ImportWinRes::ReadRcFile()
     }
 }
 
-void ImportWinRes::OnResourceFile(wxFileDirPickerEvent& WXUNUSED(event)) { ReadRcFile(); }
+void ImportWinRes::OnResourceFile(wxFileDirPickerEvent& WXUNUSED(event))
+{
+    ReadRcFile();
+}
 
 void ImportWinRes::OnSelectAll(wxCommandEvent& WXUNUSED(event))
 {

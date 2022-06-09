@@ -30,7 +30,10 @@ NodeProperty::NodeProperty(PropDeclaration* info, Node* node) : m_declaration(in
 // dependency for other modeuls that need NodeProperty, and it allows for changes to PropDeclaration that don't require
 // recompiling every module that included prop_decl.h.
 
-bool NodeProperty::IsDefaultValue() const { return m_value.is_sameas(m_declaration->GetDefaultValue()); }
+bool NodeProperty::IsDefaultValue() const
+{
+    return m_value.is_sameas(m_declaration->GetDefaultValue());
+}
 
 int NodeProperty::as_int() const
 {
@@ -57,7 +60,10 @@ int NodeProperty::as_int() const
     }
 }
 
-int NodeProperty::as_id() const { return g_NodeCreator.GetConstantAsInt(m_value, wxID_ANY); }
+int NodeProperty::as_id() const
+{
+    return g_NodeCreator.GetConstantAsInt(m_value, wxID_ANY);
+}
 
 int NodeProperty::as_mockup(std::string_view prefix) const
 {
@@ -272,7 +278,10 @@ wxColour NodeProperty::as_color() const
     }
 }
 
-wxFont NodeProperty::as_font() const { return FontProperty(m_value.subview()).GetFont(); }
+wxFont NodeProperty::as_font() const
+{
+    return FontProperty(m_value.subview()).GetFont();
+}
 
 FontProperty NodeProperty::as_font_prop() const
 {
@@ -307,7 +316,10 @@ const ImageBundle* NodeProperty::as_image_bundle() const
         return bundle_ptr;
 }
 
-wxAnimation NodeProperty::as_animation() const { return wxGetApp().GetProjectSettings()->GetPropertyAnimation(m_value); }
+wxAnimation NodeProperty::as_animation() const
+{
+    return wxGetApp().GetProjectSettings()->GetPropertyAnimation(m_value);
+}
 
 ttlib::cstr NodeProperty::as_escape_text() const
 {
@@ -378,7 +390,10 @@ wxArrayString NodeProperty::as_wxArrayString() const
     return result;
 }
 
-double NodeProperty::as_float() const { return std::atof(m_value.c_str()); }
+double NodeProperty::as_float() const
+{
+    return std::atof(m_value.c_str());
+}
 
 void NodeProperty::set_value(double value)
 {

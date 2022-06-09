@@ -25,7 +25,10 @@ void DebugSettings::OnInit(wxInitDialogEvent& event)
     event.Skip();  // transfer all validator data to their windows and update UI
 }
 
-void DebugSettings::OnShowNow(wxCommandEvent& WXUNUSED(event)) { g_pMsgLogging->ShowLogger(); }
+void DebugSettings::OnShowNow(wxCommandEvent& WXUNUSED(event))
+{
+    g_pMsgLogging->ShowLogger();
+}
 
 void DebugSettings::OnOK(wxCommandEvent& event)
 {

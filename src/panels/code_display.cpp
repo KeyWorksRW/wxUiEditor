@@ -154,7 +154,10 @@ void CodeDisplay::Clear()
     m_scintilla->ClearAll();
 }
 
-void CodeDisplay::doWrite(ttlib::sview code) { m_view.GetBuffer() << code; }
+void CodeDisplay::doWrite(ttlib::sview code)
+{
+    m_view.GetBuffer() << code;
+}
 
 void CodeDisplay::CodeGenerationComplete()
 {

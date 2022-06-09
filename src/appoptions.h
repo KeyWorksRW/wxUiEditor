@@ -24,11 +24,23 @@ public:
     void set_isWakaTimeEnabled(bool setting) { m_enable_wakatime = setting; }
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    bool get_FilterWarningMsgs() { return m_filter_warning_msgs; }
-    void set_FilterWarningMsgs(bool setting) { m_filter_warning_msgs = setting; }
+    bool get_FilterWarningMsgs()
+    {
+        return m_filter_warning_msgs;
+    }
+    void set_FilterWarningMsgs(bool setting)
+    {
+        m_filter_warning_msgs = setting;
+    }
 
-    wxString& get_ChmFile() { return m_chm_file; }
-    void set_ChmFile(const wxString& str) { m_chm_file = str; }
+    wxString& get_ChmFile()
+    {
+        return m_chm_file;
+    }
+    void set_ChmFile(const wxString& str)
+    {
+        m_chm_file = str;
+    }
 #endif
 
 private:
@@ -45,4 +57,7 @@ private:
 
 extern AppOptions g_AppOptions;
 
-inline AppOptions& GetAppOptions() { return g_AppOptions; }
+inline AppOptions& GetAppOptions()
+{
+    return g_AppOptions;
+}

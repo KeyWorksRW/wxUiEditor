@@ -34,7 +34,10 @@ void MainFrame::OnXrcPreviewDlg(wxCommandEvent& /* event */)
 // If this constructor is used, the caller must call Create(parent)
 XrcPreview::XrcPreview() {}
 
-XrcPreview::XrcPreview(wxWindow* parent) { Create(parent); }
+XrcPreview::XrcPreview(wxWindow* parent)
+{
+    Create(parent);
+}
 
 void XrcPreview::OnCreate(wxCommandEvent& WXUNUSED(event))
 {

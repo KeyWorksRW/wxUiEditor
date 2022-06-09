@@ -108,4 +108,7 @@ int GaugeGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_co
     return result;
 }
 
-void GaugeGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers) { handlers.emplace("wxGauge"); }
+void GaugeGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxGauge");
+}

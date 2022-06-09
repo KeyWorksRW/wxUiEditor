@@ -97,7 +97,10 @@ NodeProperty* Node::AddNodeProperty(PropDeclaration* declaration)
     return &m_properties[m_properties.size() - 1];
 }
 
-void Node::AddNodeEvent(const NodeEventInfo* info) { m_map_events.emplace(info->get_name(), NodeEvent(info, this)); }
+void Node::AddNodeEvent(const NodeEventInfo* info)
+{
+    m_map_events.emplace(info->get_name(), NodeEvent(info, this));
+}
 
 void Node::CopyEventsFrom(Node* from)
 {
@@ -286,7 +289,10 @@ bool Node::ChangeChildPosition(NodeSharedPtr node, size_t pos)
     return true;
 }
 
-bool Node::IsLocal() const noexcept { return isPropValue(prop_class_access, "none"); }
+bool Node::IsLocal() const noexcept
+{
+    return isPropValue(prop_class_access, "none");
+}
 
 bool Node::HasValue(PropName name) const
 {

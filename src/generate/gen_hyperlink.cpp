@@ -207,7 +207,10 @@ void HyperlinkGenerator::RequiredHandlers(Node* /* node */, std::set<std::string
     handlers.emplace("wxStaticLineXmlHandler");
 }
 
-bool HyperlinkGenerator::IsGeneric(Node* node) { return (!node->prop_as_bool(prop_underlined)); }
+bool HyperlinkGenerator::IsGeneric(Node* node)
+{
+    return (!node->prop_as_bool(prop_underlined));
+}
 
 std::optional<ttlib::cstr> HyperlinkGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {

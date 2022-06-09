@@ -215,7 +215,10 @@ public:
     wxInfoBar* GetPropInfoBar() { return m_info_bar; }
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    wxFileHistory* GetAppendImportHistory() { return &m_ImportHistory; }
+    wxFileHistory* GetAppendImportHistory()
+    {
+        return &m_ImportHistory;
+    }
 #endif  // _DEBUG
 
     void ProjectLoaded();

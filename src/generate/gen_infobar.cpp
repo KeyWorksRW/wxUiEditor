@@ -69,7 +69,10 @@ void InfoBarGenerator::OnButton(wxCommandEvent& event)
     event.Skip();
 }
 
-void InfoBarGenerator::OnTimer(wxTimerEvent& /* event */) { m_infobar->ShowMessage("Message ..."); }
+void InfoBarGenerator::OnTimer(wxTimerEvent& /* event */)
+{
+    m_infobar->ShowMessage("Message ...");
+}
 
 bool InfoBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {

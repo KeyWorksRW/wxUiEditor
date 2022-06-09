@@ -15,7 +15,10 @@
 #include "node.h"          // Node class
 #include "undo_cmds.h"     // Undoable command classes derived from UndoAction
 
-GridBag::GridBag(Node* node_gridbag) : m_gridbag(node_gridbag) { Initialize(); }
+GridBag::GridBag(Node* node_gridbag) : m_gridbag(node_gridbag)
+{
+    Initialize();
+}
 
 void GridBag::Initialize()
 {

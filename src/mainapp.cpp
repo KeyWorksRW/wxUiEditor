@@ -59,7 +59,10 @@ wxIMPLEMENT_APP(App);
 
 ttlib::cstr tt_empty_cstr;
 
-App::App() { m_lang = wxLANGUAGE_DEFAULT; }
+App::App()
+{
+    m_lang = wxLANGUAGE_DEFAULT;
+}
 
 bool App::OnInit()
 {
@@ -280,7 +283,10 @@ const ImageBundle* App::GetPropertyImageBundle(const ttlib::cstr& description, N
     return m_pjtSettings->GetPropertyImageBundle(description, node);
 }
 
-EmbeddedImage* App::GetEmbeddedImage(ttlib::sview path) { return m_pjtSettings->GetEmbeddedImage(path); }
+EmbeddedImage* App::GetEmbeddedImage(ttlib::sview path)
+{
+    return m_pjtSettings->GetEmbeddedImage(path);
+}
 
 ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
 {
@@ -441,7 +447,10 @@ void App::OnFatalException()
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
-void App::ShowMsgWindow() { g_pMsgLogging->ShowLogger(); }
+void App::ShowMsgWindow()
+{
+    g_pMsgLogging->ShowLogger();
+}
 
 void App::DbgCurrentTest(wxCommandEvent&)
 {

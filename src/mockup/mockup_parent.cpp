@@ -278,9 +278,15 @@ void MockupParent::SelectNode(wxObject* wxobject)
 
 // These are functions the component windows need access to
 
-Node* MockupParent::GetNode(wxObject* wxobject) { return m_panelContent->GetNode(wxobject); }
+Node* MockupParent::GetNode(wxObject* wxobject)
+{
+    return m_panelContent->GetNode(wxobject);
+}
 
-wxObject* MockupParent::Get_wxObject(Node* node) { return m_panelContent->Get_wxObject(node); }
+wxObject* MockupParent::Get_wxObject(Node* node)
+{
+    return m_panelContent->Get_wxObject(node);
+}
 
 wxObject* MockupParent::GetChild(wxObject* wxobject, size_t childIndex)
 {

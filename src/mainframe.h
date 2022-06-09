@@ -269,6 +269,7 @@ protected:
     void OnConvertImageDlg(wxCommandEvent& event);
     void OnFindWidget(wxCommandEvent& event);
     void OnXrcPreviewDlg(wxCommandEvent& event);
+    void OnCompareXrcDlg(wxCommandEvent& event);
     void OnMockupPreview(wxCommandEvent& event);
 #endif
 

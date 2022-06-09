@@ -760,5 +760,34 @@
           flags="wxEXPAND" />
       </node>
     </node>
+    <node
+      class="wxDialog"
+      base_file="xrccompare_base"
+      class_name="XrcCompareBase"
+      derived_class_name="XrcCompare"
+      derived_file="xrccompare"
+      persist="1"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Compare C++/XRC Generated UI">
+      <node
+        class="wxFlexGridSizer"
+        class_access="protected:"
+        var_name="m_flex_grid_sizer"
+        minimum_size="900,700d"
+        flexible_direction="wxVERTICAL"
+        growablerows="1"
+        hgap="20">
+        <node
+          class="wxStaticText"
+          class_access="none"
+          label="C++ Generated"
+          var_name="staticText" />
+        <node
+          class="wxStaticText"
+          class_access="none"
+          label="XRC Generated"
+          var_name="staticText_2" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

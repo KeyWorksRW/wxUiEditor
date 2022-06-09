@@ -102,7 +102,9 @@ if (INTERNAL_TESTING)
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/convert_img.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/nodeinfo.cpp>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/xrccompare.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/xrcpreview.cpp>
+        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/mockup_preview.cpp>
 
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/msg_logging.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/msgframe.cpp>

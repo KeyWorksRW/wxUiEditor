@@ -249,6 +249,7 @@ set (file_list
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare.cpp>    # Compare code generation
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img.cpp>     # Convert image
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/nodeinfo.cpp>        # Node memory usage dialog
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/xrccompare.cpp>      # C++/XRC UI Comparison dialog
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/xrcpreview.cpp>      # Test XRC
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/mockup_preview.cpp>  # Preview Mockup
 

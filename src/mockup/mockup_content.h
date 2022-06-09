@@ -35,9 +35,12 @@ public:
 
     void SelectNode(wxObject* wxobject);
 
-protected:
     // Set all of the inherited wxWindow interface properties
-    void SetWindowProperties(Node* node, wxWindow* window);
+    //
+    // convert_win is used by ConvertDialogToPixels
+    static void SetWindowProperties(Node* node, wxWindow* window, wxWindow* convert_win);
+
+protected:
 
     void CreateChildren(Node*, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer = nullptr);
 

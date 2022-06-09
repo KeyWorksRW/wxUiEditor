@@ -227,7 +227,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         created_window = wxStaticCast(created_object, wxWindow);
         if (!node->isType(type_images))
         {
-            SetWindowProperties(node, created_window);
+            SetWindowProperties(node, created_window, m_mockupParent);
         }
     }
 
@@ -331,7 +331,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     }
 }
 
-void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
+// Note that this is a static function also called by CreateMockupChildren in mockup_preview.cpp
+void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* convert_win)
 {
     bool is_smart_size { false };  // true means prop_size and prop_minimum_size will be ignored
 
@@ -344,7 +345,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
             size.y = (size.y > window->GetBestSize().y ? size.y : -1);
 
         if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
-            window->SetInitialSize(m_mockupParent->ConvertDialogToPixels(size));
+            window->SetInitialSize(convert_win->ConvertDialogToPixels(size));
         else
             window->SetInitialSize(size);
     }
@@ -354,7 +355,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
         {
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                window->SetMinSize(m_mockupParent->ConvertDialogToPixels(minsize));
+                window->SetMinSize(convert_win->ConvertDialogToPixels(minsize));
             else
                 window->SetMinSize(minsize);
         }
@@ -363,7 +364,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
     if (auto maxsize = node->prop_as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
     {
         if (node->prop_as_string(prop_maximum_size).contains("d", tt::CASE::either))
-            window->SetMaxSize(m_mockupParent->ConvertDialogToPixels(maxsize));
+            window->SetMaxSize(convert_win->ConvertDialogToPixels(maxsize));
         else
             window->SetMaxSize(maxsize);
     }
@@ -403,7 +404,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->Disable();
     }
 
-    if (node->isPropValue(prop_hidden, true) && !m_mockupParent->IsShowingHidden())
+    if (node->isPropValue(prop_hidden, true) && !wxGetFrame().GetMockup()->IsShowingHidden())
     {
         window->Show(false);
     }

@@ -56,7 +56,7 @@ inline constexpr const auto txt_XRC_HEADER = R"===(<?xml version="1.0"?>
 inline constexpr const auto txt_XRC_FOOTER = R"===(</resource>
 )===";
 
-constexpr const char* txt_dlg_name = "_wxue_temp_dlg";
+const char* txt_dlg_name = "_wxue_temp_dlg";
 
 int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments);
 
@@ -410,6 +410,14 @@ std::string GenerateXrcStr(Node* node_start, bool add_comments, bool is_preview)
         object = sizer_item.append_child("object");
 
         GenXrcObject(node_start, object, add_comments);
+    }
+    else if (is_preview && node_start->isGen(gen_wxDialog))
+    {
+        auto object = root.append_child("object");
+        object.append_attribute("class").set_value("wxPanel");
+        object.append_attribute("name").set_value(txt_dlg_name);
+        object = object.append_child("object");
+        GenXrcObject(node_start->GetChild(0), object, add_comments);
     }
     else
     {

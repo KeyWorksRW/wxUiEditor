@@ -12,6 +12,8 @@
 class DialogFormGenerator : public BaseGenerator
 {
 public:
+    wxObject* CreateMockup(Node* node, wxObject* parent) override;
+
     // Return true if all construction and settings code was written to src_code
     bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
 

@@ -17,7 +17,7 @@ public:
     XrcCompare();  // If you use this constructor, you must call Create(parent)
     ~XrcCompare();
 
-    bool DoCreate(wxWindow *parent, Node* node_form);
+    bool DoCreate(wxWindow* parent, Node* node_form);
 
 protected:
     bool InitXrc(Node* form_node);

@@ -83,7 +83,10 @@ XrcCompare::XrcCompare()
     m_res_name = "wxuiCompare";
 }
 
-XrcCompare::~XrcCompare() { wxXmlResource::Get()->Unload(m_res_name); }
+XrcCompare::~XrcCompare()
+{
+    wxXmlResource::Get()->Unload(m_res_name);
+}
 
 bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
 {

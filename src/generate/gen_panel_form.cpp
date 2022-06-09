@@ -17,6 +17,28 @@
 
 #include "gen_panel_form.h"
 
+wxObject* PanelFormGenerator::CreateMockup(Node* node, wxObject* parent)
+{
+    auto widget = new wxPanel(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
+                              DlgSize(parent, node, prop_size), GetStyleInt(node));
+    if (node->HasValue(prop_extra_style))
+    {
+        int ex_style = 0;
+        // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a std::string to pass to
+        // it
+        ttlib::multistr mstr(node->value(prop_extra_style), '|');
+        for (auto& iter: mstr)
+        {
+            // Friendly names will have already been converted, so normal lookup works fine.
+            ex_style |= g_NodeCreator.GetConstantAsInt(iter);
+        }
+
+        widget->SetExtraStyle(widget->GetExtraStyle() | ex_style);
+    }
+
+    return widget;
+}
+
 bool PanelFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_gen)
 {
     auto src_code = code_gen->GetSrcWriter();

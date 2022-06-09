@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Mockup of a form's contents
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -35,10 +35,12 @@ public:
 
     void SelectNode(wxObject* wxobject);
 
-protected:
     // Set all of the inherited wxWindow interface properties
-    void SetWindowProperties(Node* node, wxWindow* window);
+    //
+    // convert_win is used by ConvertDialogToPixels
+    static void SetWindowProperties(Node* node, wxWindow* window, wxWindow* convert_win);
 
+protected:
     void CreateChildren(Node*, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer = nullptr);
 
 private:

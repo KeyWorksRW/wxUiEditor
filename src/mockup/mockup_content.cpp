@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Mockup of a form's contents
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -74,11 +74,11 @@ void MockupContent::CreateAllGenerators()
     else if (form->isGen(gen_Images))
     {
         ASSERT_MSG(form->GetGenerator(), ttlib::cstr() << "Missing component for " << form->DeclName());
-        auto comp = form->GetGenerator();
-        if (!comp)
+        auto generator = form->GetGenerator();
+        if (!generator)
             return;
 
-        auto sizer = comp->CreateMockup(form, this);
+        auto sizer = generator->CreateMockup(form, this);
         m_parent_sizer->Add(wxStaticCast(sizer, wxBoxSizer), wxSizerFlags(1).Expand());
     }
 
@@ -145,11 +145,11 @@ void MockupContent::CreateAllGenerators()
 void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxBoxSizer* parent_sizer)
 {
     ASSERT_MSG(node->GetGenerator(), ttlib::cstr() << "Missing component for " << node->DeclName());
-    auto comp = node->GetGenerator();
-    if (!comp)
+    auto generator = node->GetGenerator();
+    if (!generator)
         return;
 
-    auto created_object = comp->CreateMockup(node, parent);
+    auto created_object = generator->CreateMockup(node, parent);
     if (!created_object)
     {
         if (node->IsSpacer() && parentNode)
@@ -227,7 +227,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
         created_window = wxStaticCast(created_object, wxWindow);
         if (!node->isType(type_images))
         {
-            SetWindowProperties(node, created_window);
+            SetWindowProperties(node, created_window, m_mockupParent);
         }
     }
 
@@ -314,7 +314,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             }
         }
     }
-    comp->AfterCreation(created_object, parent);
+    generator->AfterCreation(created_object, parent);
 
     if (parent_sizer)
     {
@@ -331,7 +331,8 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
     }
 }
 
-void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
+// Note that this is a static function also called by CreateMockupChildren in mockup_preview.cpp
+void MockupContent::SetWindowProperties(Node* node, wxWindow* window, wxWindow* convert_win)
 {
     bool is_smart_size { false };  // true means prop_size and prop_minimum_size will be ignored
 
@@ -344,7 +345,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
             size.y = (size.y > window->GetBestSize().y ? size.y : -1);
 
         if (node->prop_as_string(prop_smart_size).contains("d", tt::CASE::either))
-            window->SetInitialSize(m_mockupParent->ConvertDialogToPixels(size));
+            window->SetInitialSize(convert_win->ConvertDialogToPixels(size));
         else
             window->SetInitialSize(size);
     }
@@ -354,7 +355,7 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         if (auto minsize = node->prop_as_wxSize(prop_minimum_size); minsize != wxDefaultSize)
         {
             if (node->prop_as_string(prop_minimum_size).contains("d", tt::CASE::either))
-                window->SetMinSize(m_mockupParent->ConvertDialogToPixels(minsize));
+                window->SetMinSize(convert_win->ConvertDialogToPixels(minsize));
             else
                 window->SetMinSize(minsize);
         }
@@ -363,16 +364,16 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
     if (auto maxsize = node->prop_as_wxSize(prop_maximum_size); maxsize != wxDefaultSize)
     {
         if (node->prop_as_string(prop_maximum_size).contains("d", tt::CASE::either))
-            window->SetMaxSize(m_mockupParent->ConvertDialogToPixels(maxsize));
+            window->SetMaxSize(convert_win->ConvertDialogToPixels(maxsize));
         else
             window->SetMaxSize(maxsize);
     }
 
-    if (!node->isPropValue(prop_variant, "normal"))
+    if (auto& variant = node->value(prop_variant); variant.size() && variant != "normal")
     {
-        if (node->isPropValue(prop_variant, "small"))
+        if (variant == "small")
             window->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
-        else if (node->isPropValue(prop_variant, "mini"))
+        else if (variant == "mini")
             window->SetWindowVariant(wxWINDOW_VARIANT_MINI);
         else
             window->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
@@ -383,19 +384,19 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->SetFont(node->prop_as_font(prop_font));
     }
 
-    if (auto fg_colour = node->get_prop_ptr(prop_foreground_colour); fg_colour && fg_colour->HasValue())
+    if (auto& fg_colour = node->value(prop_foreground_colour); fg_colour.size())
     {
-        window->SetForegroundColour(ConvertToColour(fg_colour->as_string()));
+        window->SetForegroundColour(ConvertToColour(fg_colour));
     }
 
-    if (auto bg_colour = node->get_prop_ptr(prop_background_colour); bg_colour && bg_colour->HasValue())
+    if (auto& bg_colour = node->value(prop_background_colour); bg_colour.size())
     {
-        window->SetBackgroundColour(ConvertToColour(bg_colour->as_string()));
+        window->SetBackgroundColour(ConvertToColour(bg_colour));
     }
 
-    if (auto extra_style = node->get_prop_ptr(prop_window_extra_style); extra_style && extra_style->as_int() != 0)
+    if (auto extra_style = node->as_int(prop_window_extra_style); extra_style > 0)
     {
-        window->SetExtraStyle(extra_style->as_int());
+        window->SetExtraStyle(extra_style);
     }
 
     if (node->isPropValue(prop_disabled, true))
@@ -403,14 +404,14 @@ void MockupContent::SetWindowProperties(Node* node, wxWindow* window)
         window->Disable();
     }
 
-    if (node->isPropValue(prop_hidden, true) && !m_mockupParent->IsShowingHidden())
+    if (node->isPropValue(prop_hidden, true) && !wxGetFrame().GetMockup()->IsShowingHidden())
     {
         window->Show(false);
     }
 
-    if (auto tooltip = node->get_prop_ptr(prop_tooltip); tooltip && tooltip->as_string().size())
+    if (auto& tooltip = node->value(prop_tooltip); tooltip.size())
     {
-        window->SetToolTip(tooltip->as_wxString());
+        window->SetToolTip(tooltip.wx_str());
     }
 }
 

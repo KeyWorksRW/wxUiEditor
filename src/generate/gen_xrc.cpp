@@ -104,6 +104,8 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
     }
 
+    ttlib::cstr style = form_node->prop_as_string(prop_style);
+
     wxString res_name("wxuiPreview");
     try
     {
@@ -111,8 +113,6 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
 
         ttSaveCwd save_cwd;
         wxSetWorkingDirectory(wxGetApp().GetProjectPath());
-
-        ttlib::cstr style = form_node->prop_as_string(prop_style);
 
         if (form_node->isGen(gen_wxDialog) &&
             (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
@@ -197,15 +197,16 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
                              "XRC wxWizard Preview");
             }
         }
-        // Restore the original style if we changed it.
-        if (form_node->prop_as_string(prop_style) != style)
-            form_node->prop_set_value(prop_style, style);
     }
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
         wxMessageBox("An internal error occurred generating XRC code", "XRC Dialog Preview");
     }
+
+    // Restore the original style if it was temporarily changed.
+    if (form_node->prop_as_string(prop_style) != style)
+        form_node->prop_set_value(prop_style, style);
 
     xrc_resource->Unload(res_name);
 }

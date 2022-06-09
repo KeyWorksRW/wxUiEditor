@@ -269,6 +269,7 @@ protected:
     void OnConvertImageDlg(wxCommandEvent& event);
     void OnFindWidget(wxCommandEvent& event);
     void OnXrcPreviewDlg(wxCommandEvent& event);
+    void OnMockupPreview(wxCommandEvent& event);
 #endif
 
 #if defined(_DEBUG)  // Starts debug section.
@@ -344,6 +345,9 @@ private:
 
     wxDialog* m_pxrc_dlg { nullptr };
     wxFrame* m_pxrc_win { nullptr };
+
+    wxDialog* m_p_mockup_dlg { nullptr };
+    wxFrame* m_p_mockup_win { nullptr };
 
     bool m_isXrcResourceInitalized { false };
 

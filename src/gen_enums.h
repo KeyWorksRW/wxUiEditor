@@ -129,6 +129,8 @@ namespace GenEnum
         prop_column,
         prop_column_labels,
         prop_column_sizes,
+        prop_combine_all_forms,
+        prop_combined_xrc_file,
         prop_compiler_standard,
         prop_contents,
         prop_context_help,
@@ -392,6 +394,7 @@ namespace GenEnum
         prop_wrap,
         prop_wrap_flags,
         prop_wxWidgets_version,
+        prop_xrc_art_directory,
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
@@ -504,6 +507,7 @@ namespace GenEnum
         gen_sizeritem_settings,
         gen_wxTopLevelWindow,
         gen_wxWindow,
+        gen_XRC,
 
         // The following are the rergular generators
 

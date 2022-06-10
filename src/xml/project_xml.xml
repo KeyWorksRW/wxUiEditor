@@ -1,7 +1,20 @@
 inline const char* project_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
+	<gen class="CMake" type="interface">
+		<property name="generate_cmake" type="bool"
+			help="If checked, this will auto-generate a .cmake file whenever the Generate Base Code command is chosen.">0</property>
+		<property name="cmake_file" type="file"
+			help="The filename of the cmake file to create. By default, this will be created in the same directory as the project file.">wxui_code.cmake</property>
+		<property name="cmake_varname" type="string"
+			help="The variable name to set in the .cmake file. This will contain paths to every generated class.">wxue_generated_code</property>
+	</gen>
+
 	<gen class="Code" type="interface">
+		<property name="base_directory" type="path"
+			help="The generated base class output directory. Leave blank to generate them in the same directory as the project file." />
+		<property name="derived_directory" type="path"
+			help="The generated derived class output directory. Leave blank to generate them in the same directory as the project file." />
 		<property name="source_ext" type="option" help="Specifies the file extension to use when create source files.">
 			<option name=".cpp" />
 			<option name=".cc" />
@@ -22,19 +35,25 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 		</property>
 	</gen>
 
+	<gen class="XRC" type="interface">
+		<property name="combine_all_forms" type="bool"
+			help="If checked, Export XRC (File menu) will create a single XRC file containing all forms.">1</property>
+		<property name="combined_xrc_file" type="file"
+			help="This filename will be used to write all XRC content to unless you unchecked the combine_all_forms property above." />
+		<property name="xrc_art_directory" type="path"
+			help="The directory containing the images your XRC file will load." />
+	</gen>
+
 	<gen class="Project" type="project" image="project">
 		<inherits class="CMake" />
 		<inherits class="Code" />
+		<inherits class="XRC" />
 		<property name="local_pch_file" type="file"
 			help="The filename of a local precompiled header file. The file will be included in quotes." />
 		<property name="src_preamble" type="code_edit"
 			help="Code to generate at the top of the source file after the inclusion of any local precompiled header file. This can include header files, comments, macros, etc." />
 		<property name="art_directory" type="path"
 			help="The directory containing your images (png, ico, xpm, etc.)." />
-		<property name="base_directory" type="path"
-			help="The generated base class output directory. Leave blank to generate them in the same directory as the project file." />
-		<property name="derived_directory" type="path"
-			help="The generated derived class output directory. Leave blank to generate them in the same directory as the project file." />
 		<property name="internationalize" type="bool"
 			help="Wrap strings in a _() macro which expands into a call to wxGetTranslation().">0</property>
 		<property name="help_provider" type="option"

@@ -107,14 +107,14 @@ int AuiNotebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool 
 
     GenXrcObjectAttributes(node, item, "wxAuiNotebook");
 
+    if (node->value(prop_art_provider) == "wxAuiSimpleTabArt")
+        item.append_child("art-provider").text().set("simple");
+
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
     if (add_comments)
     {
-        ADD_ITEM_COMMENT("XRC does not support calling SetArtProvider()")
-        if (node->as_int(prop_tab_height) >= 0)
-            ADD_ITEM_COMMENT("XRC does not support calling SetTabCtrlHeight()")
         GenXrcComments(node, item);
     }
 

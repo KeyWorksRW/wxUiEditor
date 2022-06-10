@@ -49,6 +49,7 @@ public:
         id_NewProject,
         id_OpenProject,
         id_OptionsDlg,
+        id_PreviewXRC,
         id_SaveProjectAs,
         id_ShowHidden,
         id_insert_widget
@@ -118,4 +119,5 @@ namespace wxue_img
     extern const unsigned char right_svg[599];
     extern const unsigned char save_svg[717];
     extern const unsigned char top_svg[586];
+    extern const unsigned char xrc_preview_svg[469];
 }

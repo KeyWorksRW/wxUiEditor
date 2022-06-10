@@ -1182,7 +1182,9 @@
             var_name="separator_2" />
           <node
             class="wxMenuItem"
+            id="id_PreviewXRC"
             label="Preview XRC..."
+            shortcut="F5"
             var_name="menu_item_8"
             wxEVT_MENU="OnPreviewXrc" />
         </node>
@@ -1399,6 +1401,15 @@
           label=""
           tooltip="Magnify the size of the Mockup window"
           var_name="Magnify" />
+        <node
+          class="tool"
+          bitmap="SVG;../art_src/xrc_preview.svg;[24,24]"
+          id="id_PreviewXRC"
+          kind="wxITEM_CHECK"
+          label="Preview XRC..."
+          tooltip="Display form using XRC"
+          var_name="xrc_preview"
+          wxEVT_TOOL="OnPreviewXrc" />
       </node>
     </node>
     <node

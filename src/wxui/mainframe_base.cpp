@@ -270,7 +270,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_menuTools->AppendSeparator();
 
-    auto menu_item_8 = new wxMenuItem(m_menuTools, wxID_ANY, "Preview XRC...");
+    auto menu_item_8 = new wxMenuItem(m_menuTools, id_PreviewXRC, "Preview XRC...\tF5");
     m_menuTools->Append(menu_item_8);
     m_menubar->Append(m_menuTools, "&Tools");
 
@@ -371,6 +371,9 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar->AddTool(id_Magnify, wxEmptyString, wxueBundleSVG(wxue_img::magnify_svg, 3953, 8849, wxSize(24, 24)),
             "Magnify the size of the Mockup window", wxITEM_CHECK);
+
+    m_toolbar->AddTool(id_PreviewXRC, "Preview XRC...", wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(24, 24)),
+            "Display form using XRC", wxITEM_CHECK);
 
     m_toolbar->Realize();
 
@@ -499,11 +502,12 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnToggleExpandLayout, this, id_Expand);
     Bind(wxEVT_MENU, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
     Bind(wxEVT_MENU, &MainFrameBase::OnGenInhertedClass, this, id_GenerateDerived);
-    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, menu_item_8->GetId());
+    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewXRC);
     Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());
     Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseDocs, this, menu_item_6->GetId());
     Bind(wxEVT_TOOL, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
+    Bind(wxEVT_TOOL, &MainFrameBase::OnPreviewXrc, this, id_PreviewXRC);
 }
 
 namespace wxue_img
@@ -1049,6 +1053,24 @@ namespace wxue_img
     227,220,253,56,164,77,223,153,47,202,221,3,60,207,13,118,120,216,52,167,228,165,236,207,91,156,159,231,28,184,80,81,168,
     46,39,58,237,176,8,198,54,32,125,182,127,76,47,9,174,133,150,154,228,43,84,129,210,202,250,107,76,22,122,150,52,95,134,
     12,80,187,235,104,179,212,44,227,161,24,47,243,241,252,244,31,12,131,153,170
+    };
+
+    const unsigned char xrc_preview_svg[469] {
+    120,218,125,84,203,142,219,48,12,236,167,8,233,93,107,82,15,90,192,110,47,190,248,146,171,15,185,21,88,236,110,129,61,
+    20,104,209,239,47,31,162,44,52,69,16,36,225,72,156,25,146,38,252,252,235,207,251,183,231,159,223,127,127,132,215,151,
+    203,53,199,130,169,165,80,35,150,205,65,137,107,42,212,66,142,107,105,4,140,11,127,145,236,174,236,176,70,194,70,27,180,
+    8,57,53,189,231,56,83,163,193,117,44,194,71,139,84,54,63,129,37,66,205,24,156,205,152,233,38,169,96,239,94,155,251,107,
+    134,23,231,116,199,162,125,136,203,237,90,227,162,71,116,180,29,40,54,118,59,104,239,167,183,75,120,251,241,249,249,114,
+    249,138,32,159,203,211,52,6,200,17,213,30,132,181,65,138,43,148,210,97,96,104,149,99,76,144,215,25,115,209,7,91,49,121,
+    27,167,20,107,78,24,134,8,153,136,91,40,188,155,161,103,181,127,68,78,140,98,165,142,231,40,189,32,23,233,245,250,48,
+    193,172,204,249,38,93,54,165,85,161,31,86,240,152,148,157,238,61,233,225,184,198,179,72,243,218,112,53,252,236,215,177,
+    54,140,207,189,17,176,115,65,156,207,191,85,23,64,238,1,7,15,176,11,90,96,57,158,155,131,146,57,184,95,143,28,166,130,
+    234,188,28,170,247,176,149,81,95,61,245,234,201,175,49,89,75,3,211,212,48,249,42,118,34,205,13,211,125,195,212,27,238,
+    60,9,85,208,2,117,26,185,213,27,174,222,240,195,62,144,141,89,73,138,193,4,136,33,249,63,159,80,9,105,231,37,225,90,112,
+    137,84,215,149,143,241,204,69,99,31,188,56,146,162,107,167,89,158,141,16,148,206,193,46,114,155,171,243,197,148,29,84,
+    224,16,173,219,85,109,121,84,60,174,165,180,170,15,137,171,146,9,25,182,120,216,38,123,13,180,188,72,170,165,176,114,
+    177,250,37,234,45,240,175,38,233,37,46,19,205,65,175,97,83,92,78,173,174,93,122,51,28,105,55,255,27,236,147,188,39,191,
+    252,5,226,11,15,226
     };
 
 }

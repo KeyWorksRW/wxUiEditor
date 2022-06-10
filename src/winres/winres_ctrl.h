@@ -65,7 +65,10 @@ public:
 
     bool ParseDimensions(ttlib::sview line, wxRect& duRect, wxRect& pixelRect);
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    auto& GetOrginalLine() { return m_original_line; }
+    auto& GetOrginalLine()
+    {
+        return m_original_line;
+    }
 #endif
 
     NodeSharedPtr SetNodePtr(NodeSharedPtr node)

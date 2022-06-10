@@ -12,7 +12,6 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 			help="If a name is specified, wxPersistenceManager will be used to save/restore the currently selected page." />
 		<property name="art_provider" type="option">
 			<option name="wxAuiDefaultTabArt" help="Use art and colour scheme that is adapted to the major platforms' look." />
-			<option name="wxAuiGenericTabArt" help="Use a generic art and colour scheme." />
 			<option name="wxAuiSimpleTabArt" help="Use a simple art and colour scheme." />
 			wxAuiDefaultTabArt
 		</property>
@@ -31,7 +30,7 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 			<option name="wxAUI_NB_WINDOWLIST_BUTTON" help="With this style, a drop-down list of windows is available." />
 			wxAUI_NB_TOP|wxAUI_NB_TAB_SPLIT|wxAUI_NB_TAB_MOVE|wxAUI_NB_SCROLL_BUTTONS|wxAUI_NB_CLOSE_ON_ACTIVE_TAB|wxAUI_NB_MIDDLE_CLICK_CLOSE
 		</property>
-		<property name="tab_height" type="int" help="Sets the tab height. Use -1 for automatic calculation of the height.">-1</property>
+		<!-- <property name="tab_height" type="int" help="Sets the tab height. Use -1 for automatic calculation of the height.">-1</property> -->
 		<event name="wxEVT_AUINOTEBOOK_PAGE_CLOSE" class="wxAuiNotebookEvent" help="A page is about to be closed." />
 		<event name="wxEVT_AUINOTEBOOK_PAGE_CLOSED" class="wxAuiNotebookEvent" help="A page has been closed." />
 		<event name="wxEVT_AUINOTEBOOK_PAGE_CHANGED" class="wxAuiNotebookEvent" help="The page selection was changed." />

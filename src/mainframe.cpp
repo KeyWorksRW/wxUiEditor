@@ -81,7 +81,6 @@ enum
     id_ShowLogger,
     id_NodeMemory,
     id_CodeDiffDlg,
-    id_PreviewXRC,
     id_XrcPreviewDlg,
     id_CompareXrcDlg,
     id_MockupPreview,
@@ -135,10 +134,9 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
 
     menuInternal->AppendSeparator();
-    menuInternal->Append(id_PreviewXRC, "Preview generated XRC...\tF5", "Show XRC-generated form");
-    menuInternal->Append(id_MockupPreview, "Mockup Preview...", "Mockup Preview");
-    menuInternal->Append(id_XrcPreviewDlg, "XRC Preview Dialog...", "Dialog for previewing any XRC");
-    menuInternal->Append(id_CompareXrcDlg, "Compare C++/XRC...", "Generate both C++ and XRC, display side by side");
+    menuInternal->Append(id_MockupPreview, "Mockup Preview...\tF6", "Mockup Preview");
+    menuInternal->Append(id_CompareXrcDlg, "Compare C++/XRC...\tF7", "Generate both C++ and XRC, display side by side");
+    menuInternal->Append(id_XrcPreviewDlg, "XRC Preview Dialog...\tF8", "Dialog for previewing any XRC");
 
     m_submenu_import_recent = new wxMenu();
     m_menuFile->AppendSeparator();
@@ -288,10 +286,9 @@ MainFrame::MainFrame() :
         id_DebugPreferences);
 
     Bind(wxEVT_MENU, &App::DbgCurrentTest, &wxGetApp(), id_DebugCurrentTest);
-    Bind(wxEVT_MENU, &MainFrame::OnPreviewXrc, this, id_PreviewXRC);
-    Bind(wxEVT_MENU, &MainFrame::OnXrcPreviewDlg, this, id_XrcPreviewDlg);
     Bind(wxEVT_MENU, &MainFrame::OnCompareXrcDlg, this, id_CompareXrcDlg);
     Bind(wxEVT_MENU, &MainFrame::OnMockupPreview, this, id_MockupPreview);
+    Bind(wxEVT_MENU, &MainFrame::OnXrcPreviewDlg, this, id_XrcPreviewDlg);
 #endif
 
     AddCustomEventHandler(GetEventHandler());

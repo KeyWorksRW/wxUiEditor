@@ -125,7 +125,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
                          "wxDialog Preview", wxICON_INFORMATION);
         }
 
-        auto doc_str = GenerateXrcStr(form_node, xrc_gen::no_comments, xrc_gen::preview);
+        auto doc_str = GenerateXrcStr(form_node, xrc_gen::no_comments, form_node->isGen(gen_PanelForm));
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
         if (!xmlDoc->IsOk())

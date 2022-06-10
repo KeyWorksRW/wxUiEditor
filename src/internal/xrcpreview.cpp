@@ -62,7 +62,7 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
         sel_node = sel_node->get_form();
     }
 
-    auto doc_str = GenerateXrcStr(sel_node, false, true);
+    auto doc_str = GenerateXrcStr(sel_node, false, sel_node->isGen(gen_PanelForm));
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());

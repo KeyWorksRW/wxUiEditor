@@ -158,6 +158,8 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )." />
 		<property name="generate_ids" type="bool"
 			help="If checked, any non-wxWidgets ids will be created as an enumerated list. If you want to use your own id values, uncheck this and add the header file containing the ids to either base_src_includes or base_hdr_includes.">1</property>
+		<property name="xrc_file" type="file"
+			help="The filename of the XRC if not combining all forms." />
 	</gen>
 
 </GeneratorDefinitions>)===";

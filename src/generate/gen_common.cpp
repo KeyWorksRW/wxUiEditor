@@ -1623,9 +1623,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
             if (code.size())
                 code << "\n";
             code << node->get_node_name() << "->";
-            code << "SetMinSize(" << GenerateWxSize(node, prop_minimum_size);
-            ;
-            code << "));";
+            code << "SetMinSize(" << GenerateWxSize(node, prop_minimum_size) << ");";
         }
     }
 
@@ -1636,8 +1634,7 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
             if (code.size())
                 code << "\n";
             code << node->get_node_name() << "->";
-            code << "SetMaxSize(" << GenerateWxSize(node, prop_maximum_size);
-            code << "));";
+            code << "SetMaxSize(" << GenerateWxSize(node, prop_maximum_size) << ");";
         }
     }
 

@@ -25,7 +25,7 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     box_sizer_3->Add(box_sizer, wxSizerFlags().Center().Border(wxALL));
 
     m_colour_rect = new wxue_ctrl::ColourRectCtrl(this);
-    m_colour_rect->SetMaxSize(wxSize(32, 32));
+    m_colour_rect->SetMaxSize(ConvertDialogToPixels(wxSize(32, 32)));
     box_sizer->Add(m_colour_rect, wxSizerFlags().Border(wxALL));
 
     m_static_sample_text = new wxStaticText(this, wxID_ANY, "Sample Text");

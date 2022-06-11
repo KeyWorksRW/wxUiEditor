@@ -394,11 +394,10 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
                 MSG_WARNING(ttlib::cstr("Unrecognized property: ") << iter.name() << " in class: " << class_name);
 
                 wxMessageBox(ttlib::cstr().Format(
-                    "The property named \"%s\" of class \"%s\" is not supported by this version of wxUiEditor.\n"
+                    "The property named \"%v\" of class \"%s\" is not supported by this version of wxUiEditor.\n\n"
                     "If your project file was just converted from an older version, then the conversion was not "
-                    "complete.\n"
-                    "Otherwise, this project is from a newer version of wxUiEditor.\n\n"
-                    "The property's value is: %s\n"
+                    "complete. Otherwise, this project is from a newer version of wxUiEditor.\n\n"
+                    "The property's value is: %v\n\n"
                     "If you save this project, YOU WILL LOSE DATA",
                     iter.name(), class_name.c_str(), value));
             }

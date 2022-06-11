@@ -839,11 +839,6 @@
             var_name="menu_item2"
             wxEVT_MENU="OnSaveAsProject" />
           <node
-            class="wxMenuItem"
-            label="Export XRC..."
-            var_name="menu_item_9"
-            wxEVT_MENU="OnExportXRC" />
-          <node
             class="separator"
             var_name="separator2" />
           <node
@@ -1167,16 +1162,21 @@
             bitmap="SVG;../art_src/generate.svg;[16,16]"
             help="Generates C++ Code for each top level form"
             id="id_GenerateCode"
-            label="&amp;Generate Base Code"
+            label="Generate &amp;Base Code"
             var_name="menu_item19"
             wxEVT_MENU="OnGenerateCode" />
           <node
             class="wxMenuItem"
             help="Creates the files and classes that derive from the generated base classes"
             id="id_GenerateDerived"
-            label="Create &amp;Derived Code"
+            label="Generate &amp;Derived Code"
             var_name="menu_item20"
             wxEVT_MENU="OnGenInhertedClass" />
+          <node
+            class="wxMenuItem"
+            label="Generate &amp;XRC files"
+            var_name="menu_item_10"
+            wxEVT_MENU="OnExportXRC" />
           <node
             class="separator"
             var_name="separator_2" />

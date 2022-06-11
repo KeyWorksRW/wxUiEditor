@@ -118,7 +118,7 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="Bitmap shown when the button has keyboard focus but is not pressed." />
 		<property name="current" type="image"
 			help="Bitmap shown when the mouse is over the button (but it is not pressed). Notice that if hover bitmap is not specified but the current platform UI uses hover images for the buttons (such as Windows XP or GTK+), then the focus bitmap is used for the hover state as well. This makes it possible to set just the focus bitmap to get reasonably good behaviour on all platforms." />
-		<!-- This should work, but fails on Windows 10 			
+		<!-- This should work, but fails on Windows 10
 		<property name="position" type="option">
 			<option name="" />
 			<option name="wxLEFT"
@@ -131,7 +131,7 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 				help="Positions the bitmap at the bottom" />
 		</property>
  		-->
-		<!-- This should work, but fails on Windows 10 			
+		<!-- This should work, but fails on Windows 10
 		<property name="margins" type="wxSize"
 			help="The margins between the bitmap and the text of the button. This is currently only implemented under MSW. If it is not specified, a default margin is used around the bitmap." />
  		-->
@@ -158,15 +158,8 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )." />
 		<property name="generate_ids" type="bool"
 			help="If checked, any non-wxWidgets ids will be created as an enumerated list. If you want to use your own id values, uncheck this and add the header file containing the ids to either base_src_includes or base_hdr_includes.">1</property>
-	</gen>
-
-	<gen class="CMake" type="interface">
-		<property name="generate_cmake" type="bool"
-			help="If checked, this will auto-generate a .cmake file whenever the Generate Base Code command is chosen.">0</property>
-		<property name="cmake_file" type="file"
-			help="The filename of the cmake file to create. By default, this will be created in the same directory as the project file.">wxui_code.cmake</property>
-		<property name="cmake_varname" type="string"
-			help="The variable name to set in the .cmake file. This will contain paths to every generated class.">wxue_generated_code</property>
+		<property name="xrc_file" type="file"
+			help="The filename of the XRC if not combining all forms." />
 	</gen>
 
 </GeneratorDefinitions>)===";

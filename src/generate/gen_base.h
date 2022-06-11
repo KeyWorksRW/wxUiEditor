@@ -58,7 +58,7 @@ int WriteCMakeFile(bool test_only = true);  // See gen_cmake.cpp
 
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at
 // least one file needs to be generated. If pClassList is non-null, it will contain the base
-// class name over every form that needs updating.
+// class name of every form that needs updating.
 bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
 
 #if defined(INTERNAL_TESTING)

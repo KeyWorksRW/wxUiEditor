@@ -49,16 +49,7 @@ namespace xrc_gen
     };
 }
 
-inline constexpr const auto txt_XRC_HEADER = R"===(<?xml version="1.0"?>
-<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
-)===";
-
-inline constexpr const auto txt_XRC_FOOTER = R"===(</resource>
-)===";
-
 const char* txt_dlg_name = "_wxue_temp_dlg";
-
-int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments);
 
 void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
 {
@@ -211,6 +202,51 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
     xrc_resource->Unload(res_name);
 }
 
+void MainFrame::OnExportXRC(wxCommandEvent& WXUNUSED(event))
+{
+    auto project = wxGetApp().GetProject();
+    if (project->GetChildCount() == 0)
+    {
+        wxMessageBox("This project does not yet contain any forms -- nothing to save!", "Export XRC");
+        return;
+    }
+
+    if (project->as_bool(prop_combine_all_forms))
+    {
+        // If a combined file is being used, then always ask to confirm the filename.
+
+        ttlib::cstr out_file = project->value(prop_combined_xrc_file);
+        if (out_file.size() && out_file.extension().empty())
+        {
+            out_file.replace_extension(".xrc");
+        }
+
+        wxFileDialog dialog(this, "Export Project As XRC", wxGetApp().GetProjectPath(), out_file.wx_str(),
+                            "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+        if (dialog.ShowModal() != wxID_OK)
+            return;
+
+        out_file = dialog.GetPath().ToUTF8().data();
+
+        if (out_file.extension().empty())
+        {
+            out_file.replace_extension(".xrc");
+        }
+
+        if (GenerateXrcFiles(out_file))
+        {
+            wxMessageBox(wxString() << out_file.wx_str() << " saved.", "Export XRC", wxOK | wxCENTRE);
+        }
+    }
+    else
+    {
+        GenerateXrcFiles();
+    }
+
+    UpdateWakaTime();
+}
+
 void MainFrame::OnXrcKeyUp(wxKeyEvent& event)
 {
     if (event.GetKeyCode() != WXK_ESCAPE)
@@ -236,39 +272,6 @@ void MainFrame::OnXrcActivate(wxActivateEvent& event)
         event.Skip();
 }
 // clang-format on
-
-void MainFrame::OnExportXRC(wxCommandEvent& WXUNUSED(event))
-{
-    auto filename = wxGetApp().GetProjectFileName().filename();
-    if (filename.is_sameas(txtEmptyProject))
-    {
-        filename = "MyProject";
-    }
-    filename.replace_extension(".xrc");
-
-    wxFileDialog dialog(this, "Export Project As XRC", wxGetApp().GetProjectPath(), filename, "XRC File (*.xrc)|*.xrc",
-                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-
-    if (dialog.ShowModal() == wxID_OK)
-    {
-        filename = dialog.GetPath();
-        if (filename.extension().empty())
-        {
-            filename.replace_extension(".xrc");
-        }
-
-        pugi::xml_document doc;
-        auto root = doc.append_child("resource");
-        root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
-        root.append_attribute("version") = "2.5.3.0";
-
-        GenXrcObject(wxGetApp().GetProject(), root, false);
-        if (!doc.save_file(filename.sub_cstr().c_str(), "\t"))
-        {
-            wxMessageBox(wxString("An unexpected error occurred exportin ") << filename, "Export XRC");
-        }
-    }
-}
 
 int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
 {
@@ -464,4 +467,123 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type)
             m_header->writeLine(iter);
         }
     }
+}
+
+bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
+{
+    auto project = wxGetApp().GetProject();
+    if (project->GetChildCount() == 0)
+    {
+        if (NeedsGenerateCheck)
+            return false;
+
+        wxMessageBox("This project does not yet contain any forms -- nothing to save!", "Export XRC");
+        return false;
+    }
+
+    ttSaveCwd cwd;
+    ttlib::ChangeDir(wxGetApp().getProjectPath());
+
+    if (out_file.size())
+    {
+        if (out_file.extension().empty())
+        {
+            out_file.replace_extension(".xrc");
+        }
+
+        pugi::xml_document doc;
+        auto root = doc.append_child("resource");
+        root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
+        root.append_attribute("version") = "2.5.3.0";
+
+        GenXrcObject(wxGetApp().GetProject(), root, false);
+        if (!doc.save_file(out_file.c_str(), "\t"))
+        {
+            wxMessageBox(wxString("An unexpected error occurred exporting ") << out_file, "Export XRC");
+        }
+        return true;
+    }
+
+    std::vector<ttlib::cstr> results;
+    size_t currentFiles = 0;
+
+    for (auto& form: project->GetChildNodePtrs())
+    {
+        if (!form->HasValue(prop_xrc_file))
+        {
+            results.emplace_back() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n';
+            continue;
+        }
+        out_file = form->value(prop_xrc_file);
+        if (out_file.extension().empty())
+        {
+            out_file.replace_extension(".xrc");
+        }
+
+        pugi::xml_document doc_new;
+        auto root = doc_new.append_child("resource");
+        root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
+        root.append_attribute("version") = "2.5.3.0";
+
+        GenXrcObject(form.get(), root, false);
+
+        if (out_file.file_exists())
+        {
+            std::ostringstream xml_stream;
+            doc_new.save(xml_stream, "\t");
+            auto new_str = xml_stream.str();
+
+            pugi::xml_document doc_old;
+            if (doc_old.load_file(out_file.c_str()))
+            {
+                std::ostringstream xml_old_stream;
+                doc_old.save(xml_old_stream, "\t");
+                auto old_str = xml_old_stream.str();
+                if (old_str == new_str)
+                {
+                    ++currentFiles;
+                    continue;
+                }
+            }
+        }
+
+        if (NeedsGenerateCheck)
+            return true;
+
+        if (!doc_new.save_file(out_file.c_str(), "\t"))
+        {
+            results.emplace_back() << "Cannot create or write to the file " << out_file << '\n';
+        }
+        else
+        {
+            results.emplace_back() << out_file.filename() << " saved" << '\n';
+        }
+    }
+
+    if (NeedsGenerateCheck)
+        return false;
+
+    if (results.size())
+    {
+        ttlib::cstr msg;
+        for (auto& iter: results)
+        {
+            msg += iter;
+        }
+
+        if (currentFiles)
+        {
+            msg << '\n' << "The other " << currentFiles << " generated files are current";
+        }
+
+        wxMessageBox(msg.wx_str(), "Code Generation", wxOK);
+    }
+    else if (currentFiles)
+    {
+        ttlib::cstr msg;
+        msg << '\n' << "All " << currentFiles << " XRC file(s) are current";
+        wxMessageBox(msg, "Code Generation", wxOK);
+    }
+
+    return true;
 }

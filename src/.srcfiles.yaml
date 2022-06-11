@@ -6,9 +6,9 @@
 
 Options:
     Project:          wxUiEditor
-    Exe_type:         lib         # This is just for clang-cl to verify compilation, so we don't need an executable
-    Pch:              pch.h       # will add -FI to force include if filename specified
-    Ms_linker:        true        # true means use link.exe even when compiling with clang-cl
+    Exe_type:         lib      # This is just for clang-cl to verify compilation, so we don't need an executable
+    Pch:              pch.h    # will add -FI to force include if filename specified
+    Ms_linker:        true     # true means use link.exe even when compiling with clang-cl
 
     Optimize:         space    # [space | speed] optimization to use in release builds
     Warn:             4        # [1-4] warning level
@@ -16,10 +16,10 @@ Options:
     Crt_dbg:          dll      # [static | dll] type of CRT to link to in debug builds
 
     CFlags_cmn:       /std:c++20 /Zc:__cplusplus /utf-8 /DUNICODE /DINTERNAL_TESTING
-    CFlags_rel:       /DNDEBUG # static wxWidgets libraries in release build
+    CFlags_rel:       /DNDEBUG
 
-    TargetDir:        ../build/CMakeFiles/CMakeTmp   # just a temporary location for the library
-    Natvis:           wxui.natvis # MSVC Debug visualizer
+    TargetDir:        ../build/CMakeFiles/CMakeTmp  # just a temporary location for the psuedo library
+    Natvis:           wxui.natvis                   # MSVC Debug visualizer
 
     IncDirs:          ./;nodes;generate;utils;customprops;ui;wxui;../pugixml;../ttLib/include;../wxSnapshot/include;../wxSnapshot/win
 
@@ -289,15 +289,16 @@ Docs:
     ../docs/import_winres.md
     ../docs/xrc.md
     nodes/README.md
-
-    # The following are the XML files we use for interfaces and generators
-
     xml/README.md
+
+    # interface declarations
 
     xml/interface_xml.xml
     xml/sizer_child_xml.xml
     xml/validators_xml.xml
     xml/window_interfaces_xml.xml
+
+    # generator declarations
 
     xml/aui_xml.xml
     xml/bars_xml.xml

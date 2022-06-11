@@ -123,6 +123,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_column, "column" },
     { prop_column_labels, "column_labels" },
     { prop_column_sizes, "column_sizes" },
+    { prop_combine_all_forms, "combine_all_forms" },
+    { prop_combined_xrc_file, "combined_xrc_file" },
     { prop_compiler_standard, "compiler_standard" },
     { prop_contents, "contents" },
     { prop_context_help, "context_help" },
@@ -386,6 +388,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_wrap, "wrap" },
     { prop_wrap_flags, "wrap_flags" },
     { prop_wxWidgets_version, "wxWidgets_version" },
+    { prop_xrc_art_directory, "xrc_art_directory" },
+    { prop_xrc_file, "xrc_file" },
 
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
@@ -477,6 +481,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_sizeritem_settings, "sizeritem_settings" },
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },
     { gen_wxWindow, "wxWindow" },
+    { gen_XRC, "XRC" },
 
     // The following are the regular generators
 

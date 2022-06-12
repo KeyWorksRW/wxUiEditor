@@ -230,6 +230,9 @@ void MockupParent::CreateContent()
 
 void MockupParent::OnNodeSelected(CustomEvent& event)
 {
+    if (!IsShown())
+        return;
+
     if (wxGetFrame().GetSelectedForm() != m_form)
         m_isIgnoreSelection = false;
 
@@ -238,9 +241,6 @@ void MockupParent::OnNodeSelected(CustomEvent& event)
         m_isIgnoreSelection = false;
         return;
     }
-
-    if (!IsShown())
-        return;
 
     if (wxGetFrame().GetSelectedForm() != m_form)
     {
@@ -369,8 +369,10 @@ static const PropName NonUiProps[] = {
 
 void MockupParent::OnNodePropModified(CustomEvent& event)
 {
-    auto prop = event.GetNodeProperty();
+    if (!IsShown())
+        return;
 
+    auto prop = event.GetNodeProperty();
     if (prop->isProp(prop_tooltip))
     {
         if (auto node = wxGetFrame().GetSelectedNode(); node)

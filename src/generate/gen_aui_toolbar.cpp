@@ -38,7 +38,7 @@ wxObject* AuiToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool is_preview)
 {
     auto toolbar = wxStaticCast(wxobject, wxAuiToolBar);
     ASSERT(toolbar);
@@ -46,12 +46,10 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
     {
         return;
     }
-    auto node = GetMockup()->GetNode(wxobject);
     auto count = node->GetChildCount();
     for (size_t i = 0; i < count; ++i)
     {
         auto childObj = node->GetChild(i);
-        auto child = GetMockup()->GetChild(wxobject, i);
         if (childObj->isGen(gen_auitool))
         {
             auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
@@ -60,7 +58,7 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
 
             toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
                              (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
-                             wxEmptyString, child);
+                             wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_toolSeparator))
         {
@@ -68,8 +66,13 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
         }
         else
         {
-            auto control = wxDynamicCast(child, wxControl);
-            if (control)
+            const wxObject* child;
+            if (!is_preview)
+                child = GetMockup()->GetChild(wxobject, i);
+            else
+                child = node->GetChild(i)->GetMockupObject();
+
+            if (auto control = wxDynamicCast(child, wxControl); control)
             {
                 toolbar->AddControl(control);
             }

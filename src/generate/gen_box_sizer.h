@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxBoxSizer generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ public:
     std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
-    void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/) override;
+    void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;

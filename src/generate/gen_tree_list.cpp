@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxTreeListCtrl generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -23,10 +23,9 @@ wxObject* TreeListCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */)
+void TreeListCtrlGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node, bool /* is_preview */)
 {
     auto widget = wxStaticCast(wxobject, wxTreeListCtrl);
-    auto node = GetMockup()->GetNode(wxobject);
 
     for (const auto& iter: node->GetChildNodePtrs())
     {

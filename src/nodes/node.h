@@ -323,6 +323,9 @@ public:
     void CopyEventsFrom(Node*);
     void CopyEventsFrom(const NodeSharedPtr& node) { return CopyEventsFrom(node.get()); }
 
+    void SetMockupObject(wxObject* object) { m_mockup_object = object; }
+    const wxObject* GetMockupObject() const { return m_mockup_object; }
+
 protected:
     void FindAllChildProperties(std::vector<NodeProperty*>& list, PropName name);
 
@@ -342,6 +345,8 @@ private:
 
     std::vector<NodeSharedPtr> m_children;
     NodeDeclaration* m_declaration;
+
+    wxObject* m_mockup_object { nullptr };
 };
 
 using NodeMapEvents = std::unordered_map<std::string, NodeEvent, str_view_hash, std::equal_to<>>;

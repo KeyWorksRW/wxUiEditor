@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Ribbon component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +37,8 @@ wxObject* RibbonBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void RibbonBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void RibbonBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */,
+                                           bool /* is_preview */)
 {
     auto btn_bar = wxStaticCast(wxobject, wxRibbonBar);
     btn_bar->Realize();
@@ -47,6 +48,7 @@ void RibbonBarFormGenerator::OnPageChanged(wxRibbonBarEvent& event)
 {
     auto bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
     if (bar)
+        // BUGBUG: [Randalphwa - 06-12-2022] Don't use GetMockup() if is_preview is true!
         GetMockup()->SelectNode(event.GetPage());
     event.Skip();
 }
@@ -132,7 +134,7 @@ wxObject* RibbonBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void RibbonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void RibbonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */)
 {
     auto btn_bar = wxStaticCast(wxobject, wxRibbonBar);
     btn_bar->Realize();
@@ -142,6 +144,7 @@ void RibbonBarGenerator::OnPageChanged(wxRibbonBarEvent& event)
 {
     auto bar = wxDynamicCast(event.GetEventObject(), wxRibbonBar);
     if (bar)
+        // BUGBUG: [Randalphwa - 06-12-2022] Don't use GetMockup() if is_preview is true!
         GetMockup()->SelectNode(event.GetPage());
     event.Skip();
 }
@@ -413,11 +416,10 @@ wxObject* RibbonButtonBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void RibbonButtonBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
     auto btn_bar = wxStaticCast(wxobject, wxRibbonButtonBar);
 
-    auto node = GetMockup()->GetNode(wxobject);
     for (const auto& child: node->GetChildNodePtrs())
     {
         auto bmp = child->prop_as_wxBitmap(prop_bitmap);
@@ -534,11 +536,10 @@ wxObject* RibbonToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void RibbonToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
     auto btn_bar = wxDynamicCast(wxobject, wxRibbonToolBar);
 
-    auto node = GetMockup()->GetNode(wxobject);
     for (const auto& child: node->GetChildNodePtrs())
     {
         if (child->isGen(gen_ribbonSeparator))
@@ -665,11 +666,10 @@ wxObject* RibbonGalleryGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void RibbonGalleryGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
     auto gallery = wxStaticCast(wxobject, wxRibbonGallery);
 
-    auto node = GetMockup()->GetNode(wxobject);
     for (const auto& child: node->GetChildNodePtrs())
     {
         if (child->isGen(gen_ribbonGalleryItem))

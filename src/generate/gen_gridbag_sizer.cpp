@@ -57,8 +57,9 @@ wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
     return sizer;
 }
 
-void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
+    // BUGBUG: [Randalphwa - 06-12-2022] This isn't available if is_preview is true!
     auto mockup = GetMockup();
     // For storing objects whose postion needs to be determined
     std::vector<std::pair<wxObject*, wxGBSizerItem*>> newNodes;
@@ -71,13 +72,13 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
         return;
     }
 
-    auto count = mockup->GetNode(wxobject)->GetChildCount();
+    auto count = node->GetChildCount();
     for (size_t i = 0; i < count; ++i)
     {
+        // BUGBUG: [Randalphwa - 06-12-2022] can't use mockup if is_preview is true!
         auto wxsizerItem = mockup->GetChild(wxobject, i);
         if (!wxsizerItem)
             continue;  // spacer's don't have objects
-        auto node = mockup->GetNode(wxsizerItem);
 
         // Get the location of the item
         wxGBSpan span(node->prop_as_int(prop_rowspan), node->prop_as_int(prop_colspan));

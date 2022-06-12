@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxBoxSizer generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -37,9 +37,8 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
-void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
-    auto node = GetMockup()->GetNode(wxobject);
     if (node->as_bool(prop_hide_children))
     {
         if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)

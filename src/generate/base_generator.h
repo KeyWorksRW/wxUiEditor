@@ -82,7 +82,7 @@ public:
     virtual wxObject* CreateMockup(Node* /*node*/, wxObject* /*parent*/) { return nullptr; }
 
     // Called by Mockup after all children have been created
-    virtual void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/) {}
+    virtual void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) {}
 
     // Generate the code used to construct the object
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }

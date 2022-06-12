@@ -81,7 +81,7 @@ public:
     // Create an object to use in the Mockup panel (typically a sizer or widget).
     virtual wxObject* CreateMockup(Node* /*node*/, wxObject* /*parent*/) { return nullptr; }
 
-    // Called after all children have been created
+    // Called by Mockup after all children have been created
     virtual void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/) {}
 
     // Generate the code used to construct the object
@@ -103,6 +103,11 @@ public:
 
     // Generate specific additional code
     virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }
+
+    // Generate code after any children have been constructed
+    //
+    // Code will be written with indent::none set
+    virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
 
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }

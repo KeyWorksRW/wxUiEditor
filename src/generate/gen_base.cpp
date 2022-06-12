@@ -1500,6 +1500,70 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         }
 
         auto parent = node->GetParent();
+
+        if (auto result = generator->GenAfterChildren(node); result)
+        {
+            // If the node needs to write code after all children are constructed, then create the children first, then write
+            // the post-child code. Note that in this case, no further handling of the node is done, so GenAfterChildren() is
+            // required to handle all post-child construction code.
+
+            for (const auto& child: node->GetChildNodePtrs())
+            {
+                GenConstruction(child.get());
+            }
+
+            m_source->writeLine(result.value(), indent::none);
+
+            // Code for spacer's is handled by the component's GenConstruction() call
+            if (parent->IsSizer() && !node->isGen(gen_spacer))
+            {
+                ttlib::cstr code;
+                if (code.size())
+                    code << '\n';
+
+                if (need_closing_brace)
+                    code << '\t';
+                code << '\t' << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
+
+                if (parent->isGen(gen_wxGridBagSizer))
+                {
+                    code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column)
+                         << "), ";
+                    code << "wxGBSpan(" << node->prop_as_string(prop_rowspan) << ", " << node->prop_as_string(prop_colspan)
+                         << "), ";
+                    ttlib::cstr flags(node->prop_as_string(prop_borders));
+                    if (node->prop_as_string(prop_flags).size())
+                    {
+                        if (flags.size())
+                            flags << '|';
+                        flags << node->prop_as_string(prop_flags);
+                    }
+
+                    if (flags.empty())
+                        flags << '0';
+
+                    code << flags << ", " << node->prop_as_string(prop_border_size) << ");";
+                    code.Replace(", 0, 0);", ");");
+                }
+                else
+                {
+                    code << GenerateSizerFlags(node) << ");";
+                }
+
+                if (need_closing_brace)
+                {
+                    m_source->writeLine(code, indent::auto_keep_whitespace);
+                    m_source->writeLine("\t}");
+                }
+                else
+                {
+                    m_source->writeLine(code);
+                }
+            }
+
+            return;
+        }
+
         if (parent->IsSizer() && type != type_aui_toolbar)
         {
             ttlib::cstr code;

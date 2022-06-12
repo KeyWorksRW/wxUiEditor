@@ -30,6 +30,8 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 				help="Align items horizontally" />
 			wxHORIZONTAL
 		</property>
+		<property name="hide_children" type="bool"
+			help="Hides all of the sizer's children.">0</property>
 	</gen>
 
 	<gen class="VerticalBoxSizer" image="sizer" type="sizer">

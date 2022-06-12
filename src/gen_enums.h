@@ -207,6 +207,7 @@ namespace GenEnum
         prop_hexadecimal,
         prop_hgap,
         prop_hidden,
+        prop_hide_children,
         prop_hide_effect,
         prop_hint,
         prop_hover_color,

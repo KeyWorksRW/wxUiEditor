@@ -309,17 +309,10 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> ToolBarGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+std::optional<ttlib::cstr> ToolBarGenerator::GenAfterChildren(Node* node)
 {
     ttlib::cstr code;
-    if (cmd == code_after_children)
-    {
-        code << '\t' << node->get_node_name() << "->Realize();";
-    }
-    else
-    {
-        return {};
-    }
+    code << '\t' << node->get_node_name() << "->Realize();";
 
     return code;
 }

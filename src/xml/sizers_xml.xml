@@ -44,6 +44,8 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 			<option name="wxHORIZONTAL"
 				help="Align items horizontally" />
 			wxVERTICAL
+			<property name="hide_children" type="bool"
+				help="Hides all of the sizer's children.">0</property>
 		</property>
 	</gen>
 
@@ -66,6 +68,8 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 			help="Hides the sizer and it's children.">0</property>
 		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"
 			help="" />
+		<property name="hide_children" type="bool"
+			help="Hides all of the sizer's children.">0</property>
 	</gen>
 
 	<gen class="StaticCheckboxBoxSizer" image="wxStaticCheckBoxSizer" type="sizer" help="Available since wxWidgets 3.1.1">
@@ -146,6 +150,8 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 				help="Removes any spacer elements from the beginning of a row" />
 			wxEXTEND_LAST_ON_EACH_LINE|wxREMOVE_LEADING_SPACES
 		</property>
+		<property name="hide_children" type="bool"
+			help="Hides all of the sizer's children.">0</property>
 	</gen>
 
 	<gen class="wxGridSizer" image="grid_sizer" type="sizer">
@@ -160,6 +166,8 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 			help="The vertical gap (in pixels) between the cells in the sizer.">0</property>
 		<property name="hgap" type="uint"
 			help="The horizontal gap (in pixels) between cells in the sizer.">0</property>
+		<property name="hide_children" type="bool"
+			help="Hides all of the sizer's children.">0</property>
 	</gen>
 
 	<gen class="wxFlexGridSizer" image="flex_grid_sizer" type="sizer">
@@ -171,6 +179,8 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 			help="Number of Rows. '0' tells wxWidgets to calculate the number of rows required to hold the supplied items. If you choose to fix the row number, set the 'cols' figure to zero instead.">0</property>
 		<property name="cols" type="uint"
 			help="Number of Columns">2</property>
+		<property name="hide_children" type="bool"
+			help="Hides all of the sizer's children.">0</property>
 	</gen>
 
 	<gen class="wxGridBagSizer" image="grid_bag_sizer" type="gbsizer">
@@ -180,6 +190,8 @@ inline const char* sizers_xml = R"===(<?xml version="1.0"?>
 		<property name="var_name" type="string">grid_bag_sizer</property>
 		<property name="empty_cell_size" type="wxSize"
 			help="The size used for cells in the grid with no item." />
+		<property name="hide_children" type="bool"
+			help="Hides all of the sizer's children.">0</property>
 	</gen>
 
 	<gen class="TextSizer" image="text_sizer" type="widget">

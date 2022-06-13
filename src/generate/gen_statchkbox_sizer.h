@@ -15,9 +15,13 @@ class StaticCheckboxBoxSizerGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
+    void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
+
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
+    std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
+
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;

@@ -178,6 +178,8 @@ private:
     NodeSharedPtr m_parent;
     NodeSharedPtr m_node;
     NodeSharedPtr m_old_selected;
+
+    // REVIEW: [Randalphwa - 06-13-2022] m_old_pos can be -1, so it really should either be an int or an int64_t.
     size_t m_old_pos;
 
     int m_pos;

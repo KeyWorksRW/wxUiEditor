@@ -1443,8 +1443,6 @@ constexpr const GenType aftercode_types[] = {
     type_menubar,
     type_menu,
     type_submenu,
-    type_toolbar,
-    type_aui_toolbar,
     type_tool,
     type_listbook,
     type_simplebook,
@@ -1564,7 +1562,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             return;
         }
 
-        if (parent->IsSizer() && type != type_aui_toolbar)
+        if (parent->IsSizer())
         {
             ttlib::cstr code;
             if (auto result = generator->GenAdditionalCode(code_after_children, node); result)

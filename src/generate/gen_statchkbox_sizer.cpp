@@ -35,13 +35,20 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     if (min_size.x != -1 || min_size.y != -1)
         sizer->SetMinSize(min_size);
 
-    if (node->prop_as_bool(prop_hidden) && !GetMockup()->IsShowingHidden())
-        sizer->GetStaticBox()->Hide();
-
     if (node->HasValue(prop_tooltip))
         m_checkbox->SetToolTip(node->prop_as_wxString(prop_tooltip));
 
     return sizer;
+}
+
+void StaticCheckboxBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node,
+                                                    bool /* is_preview */)
+{
+    if (node->as_bool(prop_hidden))
+    {
+        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+            sizer->ShowItems(false);
+    }
 }
 
 bool StaticCheckboxBoxSizerGenerator::OnPropertyChange(wxObject* /* widget */, Node* node, NodeProperty* prop)
@@ -132,12 +139,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* no
     {
         code << node->get_node_name() << "->GetStaticBox()->Enable(false);";
     }
-    if (node->prop_as_bool(prop_hidden))
-    {
-        if (code.size())
-            code << "\n\t";
-        code << node->get_node_name() << "->GetStaticBox()->Hide();";
-    }
+
     if (node->HasValue(prop_tooltip))
     {
         if (code.size())
@@ -146,7 +148,46 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenSettings(Node* no
              << GenerateQuotedString(node->prop_as_string(prop_tooltip)) << ");";
     }
 
-    return code;
+    if (code.size())
+        return code;
+    else
+        return {};
+}
+
+std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenAfterChildren(Node* node)
+{
+    ttlib::cstr code;
+    if (node->as_bool(prop_hidden))
+    {
+        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+    }
+
+    auto parent = node->GetParent();
+    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    {
+        if (code.size())
+            code << '\n';
+        code << "\n\t";
+
+        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
+        // wxPanel.
+
+        if (parent->isGen(gen_wxRibbonPanel))
+        {
+            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+        else
+        {
+            if (GetParentName(node) != "this")
+                code << GetParentName(node) << "->";
+            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+    }
+
+    if (code.size())
+        return code;
+    else
+        return {};
 }
 
 std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
@@ -163,6 +204,10 @@ bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
     set_hdr.insert("#include <wx/checkbox.h>");
     return true;
 }
+
+// ../../wxSnapShot/src/xrc/xh_sizer.cpp
+// ../../../wxWidgets/src/xrc/xh_sizer.cpp
+// See Handle_wxStaticBoxSizer()
 
 int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
 {
@@ -187,6 +232,7 @@ int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& ob
     {
         item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
     }
+    ADD_ITEM_BOOL(prop_hidden, "hideitems");
 
     auto checkbox = item.append_child("windowlabel");
     auto child = checkbox.append_child("object");

@@ -314,7 +314,7 @@ void MockupContent::CreateChildren(Node* node, wxWindow* parent, wxObject* paren
             }
         }
     }
-    generator->AfterCreation(created_object, parent);
+    generator->AfterCreation(created_object, parent, node, false);
 
     if (parent_sizer)
     {

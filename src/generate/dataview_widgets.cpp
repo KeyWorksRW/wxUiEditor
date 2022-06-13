@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxDataView component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -42,11 +42,10 @@ wxObject* DataViewCtrl::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */)
+void DataViewCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node, bool /* is_preview */)
 {
     auto list = wxStaticCast(wxobject, wxDataViewCtrl);
 
-    auto node = GetMockup()->GetNode(wxobject);
     size_t count = node->GetChildCount();
     for (size_t i = 0; i < count; ++i)
     {
@@ -185,11 +184,10 @@ wxObject* DataViewListCtrl::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */)
+void DataViewListCtrl::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node, bool /* is_preview */)
 {
     auto list = wxStaticCast(wxobject, wxDataViewListCtrl);
 
-    auto node = GetMockup()->GetNode(wxobject);
     size_t count = node->GetChildCount();
     for (size_t i = 0; i < count; ++i)
     {

@@ -63,7 +63,7 @@ wxObject* SplitterWindowGenerator::CreateMockup(Node* node, wxObject* parent)
     return splitter;
 }
 
-void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool is_preview)
 {
     auto splitter = wxStaticCast(wxobject, wxCustomSplitterWindow);
     if (!splitter)
@@ -75,13 +75,17 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
     // Remove default panel
     auto firstChild = splitter->GetWindow1();
 
-    auto node = GetMockup()->GetNode(wxobject);
     size_t childCount = node->GetChildCount();
     switch (childCount)
     {
         case 1:
             {
-                auto subwindow = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
+                // BUGBUG: [Randalphwa - 06-12-2022] Don't use GetMockup() if is_preview is true!
+                wxWindow* subwindow;
+                if (!is_preview)
+                    subwindow = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
+                else
+                    subwindow = wxDynamicCast(node->GetChild(0)->GetMockupObject(), wxWindow);
                 if (!subwindow)
                 {
                     FAIL_MSG("Child of splitter is not derived from wxWindow class.");
@@ -97,14 +101,23 @@ void SplitterWindowGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpa
                 {
                     splitter->Initialize(subwindow);
                 }
-                // splitter->PushEventHandler(new ContainerBarEvtHandler(splitter));
                 break;
             }
 
         case 2:
             {
-                auto subwindow0 = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
-                auto subwindow1 = wxDynamicCast(GetMockup()->GetChild(wxobject, 1), wxWindow);
+                wxWindow *subwindow0, *subwindow1;
+
+                if (!is_preview)
+                {
+                    subwindow0 = wxDynamicCast(GetMockup()->GetChild(wxobject, 0), wxWindow);
+                    subwindow1 = wxDynamicCast(GetMockup()->GetChild(wxobject, 1), wxWindow);
+                }
+                else
+                {
+                    subwindow0 = wxDynamicCast(node->GetChild(0)->GetMockupObject(), wxWindow);
+                    subwindow1 = wxDynamicCast(node->GetChild(1)->GetMockupObject(), wxWindow);
+                }
 
                 if (!subwindow0 || !subwindow1)
                 {

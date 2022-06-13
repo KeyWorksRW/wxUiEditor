@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxDataView component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +13,7 @@ class DataViewCtrl : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
@@ -28,7 +28,7 @@ class DataViewListCtrl : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;

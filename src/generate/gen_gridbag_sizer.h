@@ -17,8 +17,11 @@ class GridBagSizerGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* /*parent*/) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
+
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
+
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;

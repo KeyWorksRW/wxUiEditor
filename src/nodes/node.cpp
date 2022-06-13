@@ -270,7 +270,10 @@ size_t Node::GetChildPosition(Node* node)
         ++pos;
     }
 
-    FAIL_MSG("failed to find child node, returned position is invalid!")
+    // REVIEW: [Randalphwa - 06-13-2022] Actually, this is sometimes valid when using undo. What really should happen is
+    // that it should return int64_t so that -1 becomes a valid return.
+
+    // FAIL_MSG("failed to find child node, returned position is invalid!")
     return (m_children.size() - 1);
 }
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   wxBoxSizer generator
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +37,51 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
+void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+{
+    if (node->as_bool(prop_hide_children))
+    {
+        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+            sizer->ShowItems(false);
+    }
+}
+
+std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node)
+{
+    ttlib::cstr code;
+    if (node->as_bool(prop_hide_children))
+    {
+        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+    }
+
+    auto parent = node->GetParent();
+    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    {
+        if (code.size())
+            code << '\n';
+        code << "\n\t";
+
+        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
+        // wxPanel.
+
+        if (parent->isGen(gen_wxRibbonPanel))
+        {
+            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+        else
+        {
+            if (GetParentName(node) != "this")
+                code << GetParentName(node) << "->";
+            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+    }
+
+    if (code.size())
+        return code;
+    else
+        return {};
+}
+
 bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
@@ -65,6 +110,8 @@ int BoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* 
     item.append_attribute("class").set_value("wxBoxSizer");
     item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
     item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+
+    ADD_ITEM_BOOL(prop_hide_children, "hideitems");
 
     if (node->HasValue(prop_minimum_size))
     {

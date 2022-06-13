@@ -30,6 +30,15 @@ wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
+void StaticBoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+{
+    if (node->as_bool(prop_hide_children))
+    {
+        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+            sizer->ShowItems(false);
+    }
+}
+
 std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
@@ -99,6 +108,42 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenEvents(NodeEvent* event, 
     return GenEventCode(event, class_name);
 }
 
+std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenAfterChildren(Node* node)
+{
+    ttlib::cstr code;
+    if (node->as_bool(prop_hide_children))
+    {
+        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+    }
+
+    auto parent = node->GetParent();
+    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    {
+        if (code.size())
+            code << '\n';
+        code << "\n\t";
+
+        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
+        // wxPanel.
+
+        if (parent->isGen(gen_wxRibbonPanel))
+        {
+            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+        else
+        {
+            if (GetParentName(node) != "this")
+                code << GetParentName(node) << "->";
+            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+    }
+
+    if (code.size())
+        return code;
+    else
+        return {};
+}
+
 bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
@@ -128,13 +173,16 @@ int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bo
 
     item.append_attribute("class").set_value("wxStaticBoxSizer");
     item.append_attribute("name").set_value(node->prop_as_string(prop_var_name));
-    item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
-    if (node->HasValue(prop_minimum_size))
-    {
-        item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
-    }
+    // item.append_child("orient").text().set(node->prop_as_string(prop_orientation));
+    // if (node->HasValue(prop_minimum_size))
+    // {
+    // item.append_child("minsize").text().set(node->prop_as_string(prop_minimum_size));
+    // }
 
+    ADD_ITEM_PROP(prop_orientation, "orient")
+    ADD_ITEM_PROP(prop_minimum_size, "minsize")
     ADD_ITEM_PROP(prop_label, "label")
+    ADD_ITEM_BOOL(prop_hide_children, "hideitems");
 
     return result;
 }

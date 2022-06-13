@@ -57,9 +57,14 @@ wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
     return sizer;
 }
 
-void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/)
+void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool is_preview)
 {
-    auto mockup = GetMockup();
+    if (node->as_bool(prop_hide_children))
+    {
+        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+            sizer->ShowItems(false);
+    }
+
     // For storing objects whose postion needs to be determined
     std::vector<std::pair<wxObject*, wxGBSizerItem*>> newNodes;
     wxGBPosition lastPosition(0, 0);
@@ -71,13 +76,17 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
         return;
     }
 
-    auto count = mockup->GetNode(wxobject)->GetChildCount();
+    auto count = node->GetChildCount();
     for (size_t i = 0; i < count; ++i)
     {
-        auto wxsizerItem = mockup->GetChild(wxobject, i);
-        if (!wxsizerItem)
+        const wxObject* child;
+        if (!is_preview)
+            child = GetMockup()->GetChild(wxobject, i);
+        else
+            child = node->GetChild(i)->GetMockupObject();
+
+        if (!child)
             continue;  // spacer's don't have objects
-        auto node = mockup->GetNode(wxsizerItem);
 
         // Get the location of the item
         wxGBSpan span(node->prop_as_int(prop_rowspan), node->prop_as_int(prop_colspan));
@@ -87,9 +96,9 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
         {
             // Needs to be auto positioned after the other children are added
 
-            if (auto item = GetGBSizerItem(node, lastPosition, span, wxsizerItem); item)
+            if (auto item = GetGBSizerItem(node, lastPosition, span, const_cast<wxObject*>(child)); item)
             {
-                newNodes.push_back(std::pair<wxObject*, wxGBSizerItem*>(wxsizerItem, item));
+                newNodes.push_back(std::pair<wxObject*, wxGBSizerItem*>(const_cast<wxObject*>(child), item));
             }
             continue;
         }
@@ -105,7 +114,7 @@ void GridBagSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxpare
 
         lastPosition = position;
 
-        if (auto item = GetGBSizerItem(node, position, span, wxsizerItem); item)
+        if (auto item = GetGBSizerItem(node, position, span, const_cast<wxObject*>(child)); item)
         {
             sizer->Add(item);
         }
@@ -224,6 +233,42 @@ std::optional<ttlib::cstr> GridBagSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::cstr> GridBagSizerGenerator::GenAfterChildren(Node* node)
+{
+    ttlib::cstr code;
+    if (node->as_bool(prop_hide_children))
+    {
+        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+    }
+
+    auto parent = node->GetParent();
+    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    {
+        if (code.size())
+            code << '\n';
+        code << "\n\t";
+
+        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
+        // wxPanel.
+
+        if (parent->isGen(gen_wxRibbonPanel))
+        {
+            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+        else
+        {
+            if (GetParentName(node) != "this")
+                code << GetParentName(node) << "->";
+            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+    }
+
+    if (code.size())
+        return code;
+    else
+        return {};
+}
+
 bool GridBagSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/gbsizer.h>", set_src, set_hdr);
@@ -290,6 +335,7 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
     ADD_ITEM_PROP(prop_growablecols, "growablecols")
     ADD_ITEM_PROP(prop_flexible_direction, "flexibledirection")
     ADD_ITEM_PROP(prop_non_flexible_grow_mode, "nonflexiblegrowmode")
+    ADD_ITEM_BOOL(prop_hide_children, "hideitems");
 
     if (node->HasValue(prop_minimum_size))
     {

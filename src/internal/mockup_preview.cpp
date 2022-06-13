@@ -66,6 +66,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parentNode, wx
 
         return;  // means the component doesn't create any UI element, and cannot have children
     }
+    node->SetMockupObject(created_object);
 
     wxWindow* created_window { nullptr };
     wxSizer* created_sizer { nullptr };
@@ -178,7 +179,7 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parentNode, wx
             }
         }
     }
-    generator->AfterCreation(created_object, parent);
+    generator->AfterCreation(created_object, parent, node, true);
 
     if (parent_sizer)
     {

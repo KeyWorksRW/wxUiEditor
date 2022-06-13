@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Grid component classes
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -34,11 +34,11 @@ wxObject* PropertyGridManagerGenerator::CreateMockup(Node* node, wxObject* paren
     return widget;
 }
 
-void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */)
+void PropertyGridManagerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node,
+                                                 bool /* is_preview */)
 {
     auto pgm = wxStaticCast(wxobject, wxPropertyGridManager);
 
-    auto node = GetMockup()->GetNode(wxobject);
     for (const auto& child: node->GetChildNodePtrs())
     {
         if (child->isGen(gen_propGridPage))

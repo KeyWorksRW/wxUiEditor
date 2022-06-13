@@ -30,10 +30,9 @@ wxObject* PropertyGridGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */)
+void PropertyGridGenerator::AfterCreation(wxObject* wxobject, wxWindow* /* wxparent */, Node* node, bool /* is_preview */)
 {
     auto pg = wxStaticCast(wxobject, wxPropertyGrid);
-    auto node = GetMockup()->GetNode(wxobject);
 
     for (const auto& child: node->GetChildNodePtrs())
     {

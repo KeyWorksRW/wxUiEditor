@@ -164,6 +164,51 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::cstr> FlexGridSizerGenerator::GenAfterChildren(Node* node)
+{
+    ttlib::cstr code;
+    if (node->as_bool(prop_hide_children))
+    {
+        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+    }
+
+    auto parent = node->GetParent();
+    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    {
+        if (code.size())
+            code << '\n';
+        code << "\n\t";
+
+        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
+        // wxPanel.
+
+        if (parent->isGen(gen_wxRibbonPanel))
+        {
+            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+        else
+        {
+            if (GetParentName(node) != "this")
+                code << GetParentName(node) << "->";
+            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+    }
+
+    if (code.size())
+        return code;
+    else
+        return {};
+}
+
+void FlexGridSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
+{
+    if (node->as_bool(prop_hide_children))
+    {
+        if (auto sizer = wxStaticCast(wxobject, wxSizer); sizer)
+            sizer->ShowItems(false);
+    }
+}
+
 bool FlexGridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);
@@ -201,6 +246,8 @@ int FlexGridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, boo
     ADD_ITEM_PROP(prop_growablecols, "growablecols")
     ADD_ITEM_PROP(prop_flexible_direction, "flexibledirection")
     ADD_ITEM_PROP(prop_non_flexible_grow_mode, "nonflexiblegrowmode")
+
+    ADD_ITEM_BOOL(prop_hide_children, "hideitems");
 
     if (node->HasValue(prop_minimum_size))
     {

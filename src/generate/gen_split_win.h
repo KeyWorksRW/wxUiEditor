@@ -13,7 +13,7 @@ class SplitterWindowGenerator : public BaseGenerator
 {
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
-    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/) override;
+    void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;

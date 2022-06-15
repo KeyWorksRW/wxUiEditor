@@ -14,6 +14,7 @@
 #include <wx/sizer.h>        // provide wxSizer class for layout
 #include <wx/statbox.h>      // wxStaticBox base header
 #include <wx/statline.h>     // wxStaticLine class interface
+#include <wx/wizard.h>       // wxWizard class: a GUI control presenting the user with a
 
 #include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
 #include "base_generator.h"            // BaseGenerator -- Base widget generator class
@@ -325,6 +326,91 @@ void MainFrame::OnMockupPreview(wxCommandEvent& /* event */)
                     dlg.Centre(wxBOTH);
 
                     dlg.ShowModal();
+                }
+                break;
+
+            case gen_wxWizard:
+                {
+                    wxWizard wizard;
+                    if (form_node->HasValue(prop_bitmap))
+                    {
+                        auto bundle = form_node->as_image_bundle(prop_bitmap);
+                        if (!wizard.Create(GetWindow(), wxID_ANY, form_node->value(prop_title), bundle->bundle,
+                                           DlgPoint(this, form_node, prop_pos), GetStyleInt(form_node)))
+                        {
+                            wxMessageBox("Unable to create mockup dialog", "Mockup Preview");
+                            return;
+                        }
+                    }
+                    else if (!wizard.Create(GetWindow(), wxID_ANY, form_node->value(prop_title), wxNullBitmap,
+                                            DlgPoint(this, form_node, prop_pos), GetStyleInt(form_node)))
+                    {
+                        wxMessageBox("Unable to create mockup dialog", "Mockup Preview");
+                        return;
+                    }
+
+                    if (form_node->HasValue(prop_extra_style))
+                    {
+                        int ex_style = 0;
+                        // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a
+                        // std::string to pass to it
+                        ttlib::multistr mstr(form_node->value(prop_extra_style), '|');
+                        for (auto& iter: mstr)
+                        {
+                            // Friendly names will have already been converted, so normal lookup works fine.
+                            ex_style |= g_NodeCreator.GetConstantAsInt(iter);
+                        }
+                        wizard.SetExtraStyle(ex_style);
+                    }
+
+                    if (form_node->as_int(prop_border) != 5)
+                        wizard.SetBorder(form_node->as_int(prop_border));
+                    if (form_node->HasValue(prop_bmp_placement))
+                    {
+                        int placement = 0;
+                        // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a
+                        // std::string to pass to it
+                        ttlib::multistr mstr(form_node->value(prop_bmp_placement), '|');
+                        for (auto& iter: mstr)
+                        {
+                            // Friendly names will have already been converted, so normal lookup works fine.
+                            placement |= g_NodeCreator.GetConstantAsInt(iter);
+                        }
+                        wizard.SetBitmapPlacement(placement);
+
+                        if (form_node->as_int(prop_bmp_min_width) > 0)
+                            wizard.SetMinimumBitmapWidth(form_node->as_int(prop_bmp_min_width));
+                        if (form_node->HasValue(prop_bmp_background_colour))
+                            wizard.SetBitmapBackgroundColour(form_node->as_wxColour(prop_bmp_background_colour));
+                    }
+
+                    std::vector<wxWizardPageSimple*> pages;
+                    for (auto& page: form_node->GetChildNodePtrs())
+                    {
+                        auto wiz_page = new wxWizardPageSimple;
+                        pages.emplace_back(wiz_page);
+                        if (page->HasValue(prop_bitmap))
+                        {
+                            auto bundle = page->as_image_bundle(prop_bitmap);
+                            wiz_page->Create(&wizard, nullptr, nullptr, bundle->bundle);
+                        }
+                        else
+                            wiz_page->Create(&wizard);
+
+                        if (page->GetChildCount())
+                            CreateMockupChildren(page->GetChild(0), wiz_page, nullptr, nullptr, &wizard);
+                    }
+
+                    for (size_t idx = 0; idx < pages.size(); ++idx)
+                    {
+                        if (idx > 0)
+                            pages[idx]->SetPrev(pages[idx - 1]);
+                        if (idx + 1 < pages.size())
+                            pages[idx]->SetNext(pages[idx + 1]);
+                    }
+
+                    wizard.RunWizard(wxStaticCast(pages[0], wxWizardPageSimple));
+                    wizard.Destroy();
                 }
                 break;
 

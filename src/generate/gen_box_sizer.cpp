@@ -14,10 +14,14 @@
 
 #include "gen_box_sizer.h"
 
-wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
+wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto sizer = new wxBoxSizer(node->prop_as_int(prop_orientation));
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
+    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    {
+        dlg->SetSizer(sizer);
+    }
     return sizer;
 }
 

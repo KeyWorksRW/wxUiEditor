@@ -14,10 +14,14 @@
 
 #include "gen_flexgrid_sizer.h"
 
-wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
+wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     wxFlexGridSizer* sizer = new wxFlexGridSizer(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols),
                                                  node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
+    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    {
+        dlg->SetSizer(sizer);
+    }
 
     if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
     {

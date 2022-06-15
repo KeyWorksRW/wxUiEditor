@@ -17,8 +17,10 @@
 
 #include "../mockup/mockup_content.h"  // MockupContent -- Mockup of a form's contents
 #include "base_generator.h"            // BaseGenerator -- Base widget generator class
+#include "gen_common.h"                // Common component functions
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
+#include "utils.h"                     // Utility functions that work with properties
 
 // This function is almost identical to MockupContent::CreateChildren. However, the Mockup version assumes the top window is
 // a wxPanel, whereas this version assumes the top version is a form.
@@ -227,6 +229,15 @@ void MainFrame::OnMockupPreview(wxCommandEvent& /* event */)
         return;
     }
 
+    if (form_node->isGen(gen_wxDialog))
+    {
+        if (!form_node->GetChildCount())
+        {
+            wxMessageBox("You can't display a dialog with no children", "Mockup Preview");
+            return;
+        }
+    }
+
     ttlib::cstr style = form_node->prop_as_string(prop_style);
 
     try
@@ -261,6 +272,56 @@ void MainFrame::OnMockupPreview(wxCommandEvent& /* event */)
                     dlg_sizer->SetMinSize(wxSize(300, 400));
                     CreateMockupChildren(form_node, &dlg, nullptr, dlg_sizer, &dlg);
                     dlg.SetSizerAndFit(dlg_sizer);
+                    dlg.Centre(wxBOTH);
+
+                    dlg.ShowModal();
+                }
+                break;
+
+            case gen_wxDialog:
+                {
+                    wxDialog dlg;
+                    if (!dlg.Create(GetWindow(), wxID_ANY, form_node->value(prop_title), DlgPoint(this, form_node, prop_pos),
+                                    DlgSize(this, form_node, prop_size), GetStyleInt(form_node)))
+                    {
+                        wxMessageBox("Unable to create mockup dialog", "Mockup Preview");
+                        return;
+                    }
+                    if (form_node->HasValue(prop_extra_style))
+                    {
+                        int ex_style = 0;
+                        // Can't use multiview because GetConstantAsInt() searches an unordered_map which requires a
+                        // std::string to pass to it
+                        ttlib::multistr mstr(form_node->value(prop_extra_style), '|');
+                        for (auto& iter: mstr)
+                        {
+                            // Friendly names will have already been converted, so normal lookup works fine.
+                            ex_style |= g_NodeCreator.GetConstantAsInt(iter);
+                        }
+
+                        dlg.SetExtraStyle(dlg.GetExtraStyle() | ex_style);
+                    }
+
+                    CreateMockupChildren(form_node->GetChild(0), &dlg, nullptr, nullptr, &dlg);
+                    if (auto btn = dlg.FindWindowById(dlg.GetAffirmativeId()); btn)
+                    {
+                        btn->Bind(wxEVT_BUTTON,
+                                  [&dlg](wxCommandEvent&)
+                                  {
+                                      dlg.EndModal(wxID_OK);
+                                  });
+                    }
+
+                    if (auto btn = dlg.FindWindowById(dlg.GetEscapeId()); btn)
+                    {
+                        btn->Bind(wxEVT_BUTTON,
+                                  [&dlg](wxCommandEvent&)
+                                  {
+                                      dlg.EndModal(wxID_CANCEL);
+                                  });
+                    }
+
+                    dlg.Fit();
                     dlg.Centre(wxBOTH);
 
                     dlg.ShowModal();

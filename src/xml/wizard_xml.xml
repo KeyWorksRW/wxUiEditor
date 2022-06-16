@@ -35,8 +35,8 @@ inline const char* wizard_xml = R"===(<?xml version="1.0"?>
 			<option name="wxWIZARD_EX_HELPBUTTON"
 				help="Shows a Help button using wxID_HELP." />
 		</property>
-		<property name="border" type="uint"
-			help="Sets the width of the border around the page area.">5</property>
+		<property name="border" type="int"
+			help="Sets the width of the border around the page area." />
 		<property name="center" type="option"
 			help="Centers the dialog box on the display in the chosen direction.">
 			<option name="" />

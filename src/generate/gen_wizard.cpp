@@ -319,19 +319,22 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     if (node->HasValue(prop_size))
         item.append_child("size").text().set(node->prop_as_string(prop_size));
 
+    if (node->HasValue(prop_border) && node->as_int(prop_border) > 0)
+        item.append_child("border").text().set(node->prop_as_string(prop_border));
+
+    if (node->HasValue(prop_bmp_placement))
+    {
+        item.append_child("bmp_placement").text().set(node->prop_as_string(prop_bmp_placement));
+        if (node->as_int(prop_bmp_min_width) > 0)
+            item.append_child("bmp_minwidth").text().set(node->prop_as_string(prop_bmp_min_width));
+        if (node->HasValue(prop_bmp_background_colour))
+            item.append_child("bmp_bg_clr")
+                .text()
+                .set(node->prop_as_wxColour(prop_bmp_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
+    }
+
     if (add_comments)
     {
-        auto border = node->prop_as_int(prop_border);
-        if (border != 5 && border > 0)
-            item.append_child(pugi::node_comment).set_value(" SetBorder() is not supported in the XRC file. ");
-        if (node->HasValue(prop_bmp_placement))
-            item.append_child(pugi::node_comment).set_value(" SetBitmapPlacement() is not supported in the XRC file. ");
-        if (node->HasValue(prop_bmp_min_width))
-            item.append_child(pugi::node_comment).set_value(" SetMinimumBitmapWidth() is not supported in the XRC file. ");
-        if (node->HasValue(prop_bmp_background_colour))
-            item.append_child(pugi::node_comment)
-                .set_value(" SetBitmapBackgroundColour() is not supported in the XRC file. ");
-
         if (node->prop_as_bool(prop_persist))
             item.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
 

@@ -14,9 +14,13 @@
 
 #include "gen_gridbag_sizer.h"
 
-wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
+wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto sizer = new wxGridBagSizer(node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
+    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    {
+        dlg->SetSizer(sizer);
+    }
 
     if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
     {

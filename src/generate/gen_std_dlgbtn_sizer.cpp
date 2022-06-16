@@ -18,6 +18,7 @@
 
 wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
+    auto dlg = wxDynamicCast(parent, wxDialog);
     auto sizer = new wxStdDialogButtonSizer();
 
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
@@ -25,17 +26,32 @@ wxObject* StdDialogButtonSizerGenerator::CreateMockup(Node* node, wxObject* pare
     if (node->prop_as_bool(prop_OK))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_OK));
     else if (node->prop_as_bool(prop_Yes))
+    {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_YES));
+        if (dlg)
+            dlg->SetAffirmativeId(wxID_YES);
+    }
     else if (node->prop_as_bool(prop_Save))
+    {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_SAVE));
-
+        if (dlg)
+            dlg->SetAffirmativeId(wxID_SAVE);
+    }
     if (node->prop_as_bool(prop_No))
+    {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_NO));
+        if (dlg)
+            dlg->SetEscapeId(wxID_NO);
+    }
 
     if (node->prop_as_bool(prop_Cancel))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CANCEL));
     else if (node->prop_as_bool(prop_Close))
+    {
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_CLOSE));
+        if (dlg)
+            dlg->SetEscapeId(wxID_CLOSE);
+    }
 
     if (node->prop_as_bool(prop_Apply))
         sizer->AddButton(new wxButton(wxStaticCast(parent, wxWindow), wxID_APPLY));

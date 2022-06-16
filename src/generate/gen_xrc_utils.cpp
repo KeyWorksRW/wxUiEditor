@@ -19,7 +19,8 @@
 const char* g_xrc_keywords =
 
     "accel align animation art-provider "
-    "base best_size bg bitmap bitmap-small bitmap2 bitmapposition bitmapsize border borders bottom bottom_dockable border buttons buttonsize "
+    "base best_size bg bitmap bitmap-small bitmap2 bitmapposition bitmapsize bmp_bg_clr bmp_minwidth bmp_placement border borders "
+        "bottom bottom_dockable border buttons buttonsize "
     "caption caption_visible cellpos cellspan center center_pane centered centre centre_pane checkable checked class close_button col cols "
         "collapsed content current "
     "data default defaultdirectory defaultfilename defaultfilter defaultfolder default_pane default_size depth digitis dimension "

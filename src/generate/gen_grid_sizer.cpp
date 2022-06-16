@@ -14,10 +14,15 @@
 
 #include "gen_grid_sizer.h"
 
-wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* /*parent*/)
+wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto sizer = new wxGridSizer(node->prop_as_int(prop_rows), node->prop_as_int(prop_cols), node->prop_as_int(prop_vgap),
                                  node->prop_as_int(prop_hgap));
+
+    if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
+    {
+        dlg->SetSizer(sizer);
+    }
 
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));
 

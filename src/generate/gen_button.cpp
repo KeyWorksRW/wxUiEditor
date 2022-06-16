@@ -28,7 +28,34 @@ wxObject* ButtonGenerator::CreateMockup(Node* node, wxObject* parent)
     }
 
     if (node->prop_as_bool(prop_default))
+    {
         widget->SetDefault();
+        if (auto dlg = wxDynamicCast(parent, wxDialog); dlg && node->prop_as_id(prop_id) != wxID_ANY)
+            dlg->SetAffirmativeId(node->prop_as_id(prop_id));
+    }
+    else
+    {
+        if (auto dlg = wxDynamicCast(parent, wxDialog); dlg && node->prop_as_id(prop_id) != wxID_ANY)
+        {
+            switch (node->prop_as_id(prop_id))
+            {
+                case wxID_OK:
+                case wxID_YES:
+                case wxID_SAVE:
+                    dlg->SetAffirmativeId(node->prop_as_id(prop_id));
+                    break;
+
+                case wxID_CANCEL:
+                case wxID_CLOSE:
+                case wxID_NO:
+                    dlg->SetEscapeId(node->prop_as_id(prop_id));
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
 
     if (node->prop_as_bool(prop_auth_needed))
         widget->SetAuthNeeded();

@@ -324,11 +324,11 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
 
     if (node->HasValue(prop_bmp_placement))
     {
-        item.append_child("bmp_placement").text().set(node->prop_as_string(prop_bmp_placement));
+        item.append_child("bitmap-placement").text().set(node->prop_as_string(prop_bmp_placement));
         if (node->as_int(prop_bmp_min_width) > 0)
-            item.append_child("bmp_minwidth").text().set(node->prop_as_string(prop_bmp_min_width));
+            item.append_child("bitmap-minwidth").text().set(node->prop_as_string(prop_bmp_min_width));
         if (node->HasValue(prop_bmp_background_colour))
-            item.append_child("bmp_bg_clr")
+            item.append_child("bitmap-bg")
                 .text()
                 .set(node->prop_as_wxColour(prop_bmp_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }

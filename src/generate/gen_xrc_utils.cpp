@@ -19,13 +19,13 @@
 const char* g_xrc_keywords =
 
     "accel align animation art-provider "
-    "base best_size bg bitmap bitmap-small bitmap2 bitmapposition bitmapsize bmp_bg_clr bmp_minwidth bmp_placement border borders "
+    "base best_size bg bitmap bitmap-bg bitmap-minwidth bitmap-placement bitmap-small bitmap2 bitmapposition bitmapsize border borders "
         "bottom bottom_dockable border buttons buttonsize "
     "caption caption_visible cellpos cellspan center center_pane centered centre centre_pane checkable checked class close_button col cols "
         "collapsed content current "
     "data default defaultdirectory defaultfilename defaultfilter defaultfolder default_pane default_size depth digitis dimension "
-        "disabled  direction disabled-bitmap dock dock_fixed dontattachtoframe dropdown "
-    "effectduration enabled expanded exstyle extra-accels "
+        "disabled direction disabled-bitmap dock dock_fixed dontattachtoframe dropdown "
+    "effectduration empty_cellsize enabled expanded exstyle extra-accels "
     "fields filter flag flexibledirection float floatable floating_size fg focus focused font "
     "gradient-end gradient-start gravity gripper growablecols growablerows "
     "help helptext hgap hidden hideeffect hint horizontal htmlcode hybrid "

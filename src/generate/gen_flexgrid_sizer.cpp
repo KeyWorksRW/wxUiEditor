@@ -20,7 +20,8 @@ wxObject* FlexGridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
                                                  node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
-        dlg->SetSizer(sizer);
+        if (!dlg->GetSizer())
+            dlg->SetSizer(sizer);
     }
 
     if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())

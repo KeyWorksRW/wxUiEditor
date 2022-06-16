@@ -21,7 +21,8 @@ wxObject* GridSizerGenerator::CreateMockup(Node* node, wxObject* parent)
 
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
-        dlg->SetSizer(sizer);
+        if (!dlg->GetSizer())
+            dlg->SetSizer(sizer);
     }
 
     sizer->SetMinSize(node->prop_as_wxSize(prop_minimum_size));

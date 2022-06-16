@@ -19,7 +19,8 @@ wxObject* GridBagSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     auto sizer = new wxGridBagSizer(node->prop_as_int(prop_vgap), node->prop_as_int(prop_hgap));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
-        dlg->SetSizer(sizer);
+        if (!dlg->GetSizer())
+            dlg->SetSizer(sizer);
     }
 
     if (auto& growable = node->prop_as_string(prop_growablecols); growable.size())
@@ -314,7 +315,7 @@ wxGBSizerItem* GridBagSizerGenerator::GetGBSizerItem(Node* sizeritem, const wxGB
 // ../../../wxWidgets/src/xrc/xh_sizer.cpp
 // See Handle_wxGridBagSizer()
 
-int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
@@ -354,10 +355,9 @@ int GridBagSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
         item.append_child("minsize").text().set(node->GetParent()->prop_as_string(prop_minimum_size));
     }
 
-    if (add_comments)
+    if (node->HasValue(prop_empty_cell_size))
     {
-        if (node->HasValue(prop_empty_cell_size))
-            ADD_ITEM_COMMENT(" XRC does not support calling SetEmptyCellSize() ")
+        item.append_child("empty_cellsize").text().set(node->value(prop_empty_cell_size));
     }
 
     return result;

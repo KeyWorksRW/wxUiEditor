@@ -32,7 +32,8 @@ wxObject* StaticCheckboxBoxSizerGenerator::CreateMockup(Node* node, wxObject* pa
     auto sizer = new wxStaticBoxSizer(staticbox, node->prop_as_int(prop_orientation));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
-        dlg->SetSizer(sizer);
+        if (!dlg->GetSizer())
+            dlg->SetSizer(sizer);
     }
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);

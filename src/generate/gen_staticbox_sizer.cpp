@@ -21,7 +21,8 @@ wxObject* StaticBoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
                                       node->prop_as_wxString(prop_label));
     if (auto dlg = wxDynamicCast(parent, wxDialog); dlg)
     {
-        dlg->SetSizer(sizer);
+        if (!dlg->GetSizer())
+            dlg->SetSizer(sizer);
     }
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);

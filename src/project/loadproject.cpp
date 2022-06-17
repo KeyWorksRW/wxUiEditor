@@ -5,9 +5,10 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
+#include <wx/stc/stc.h>  // A wxWidgets implementation of Scintilla.
+#include <wx/utils.h>    // Miscellaneous utilities
 
-#include <wx/utils.h>  // Miscellaneous utilities
+#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
 
 #include "../nodes/node_creator.h"  // NodeCreator class
 #include "base_generator.h"         // BaseGenerator -- Base widget generator class
@@ -26,6 +27,10 @@ using namespace GenEnum;
 #include "../winres/import_winres.h"     // WinResource -- Parse a Windows resource file
 #include "import_dlg.h"                  // ImportDlg -- Dialog to create a new project
 #include "node_gridbag.h"                // GridBag -- Create and modify a node containing a wxGridBagSizer
+
+#if defined(INTERNAL_TESTING)
+    #include "../internal/import_panel.h"  // ImportPanel -- Panel to display original imported file
+#endif
 
 using namespace GenEnum;
 
@@ -424,31 +429,55 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
 bool App::ImportProject(ttString& file)
 {
+#if defined(INTERNAL_TESTING)
+    // Importers will change the file extension, so make a copy here
+    auto import_file = file.sub_cstr();
+#endif
     bool result = false;
     if (file.has_extension(".wxcp"))
     {
         WxCrafter crafter;
         result = Import(crafter, file);
+#if defined(INTERNAL_TESTING)
+        if (result)
+            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
+#endif
     }
     else if (file.has_extension(".fbp"))
     {
         FormBuilder fb;
         result = Import(fb, file);
+#if defined(INTERNAL_TESTING)
+        if (result)
+            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
     }
     else if (file.has_extension(".rc") || file.has_extension(".dlg"))
     {
         WinResource winres;
         result = Import(winres, file);
+#if defined(INTERNAL_TESTING)
+        if (result)
+            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
+#endif
     }
     else if (file.has_extension(".wxs") || file.has_extension(".xrc"))
     {
         WxSmith smith;
         result = Import(smith, file);
+#if defined(INTERNAL_TESTING)
+        if (result)
+            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
     }
     else if (file.has_extension(".wxg"))
     {
         WxGlade glade;
         result = Import(glade, file);
+#if defined(INTERNAL_TESTING)
+        if (result)
+            wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
     }
 
     return result;
@@ -596,30 +625,40 @@ bool App::NewProject(bool create_empty)
         {
             try
             {
+#if defined(INTERNAL_TESTING)
+                // Importers will change the file extension, so make a copy here
+                auto import_file = iter.sub_cstr();
+#endif
+
                 if (iter.has_extension(".wxcp"))
                 {
                     WxCrafter crafter;
                     Import(crafter, iter, true);
+                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
                 }
                 else if (iter.has_extension(".fbp"))
                 {
                     FormBuilder fb;
                     Import(fb, iter, true);
+                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
                 }
                 else if (iter.has_extension(".wxs") || iter.has_extension(".xrc"))
                 {
                     WxSmith smith;
                     Import(smith, iter, true);
+                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
                 }
                 else if (iter.has_extension(".wxg"))
                 {
                     WxGlade glade;
                     Import(glade, iter, true);
+                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
                 }
                 else if (iter.has_extension(".rc") || iter.has_extension(".dlg"))
                 {
                     WinResource winres;
                     Import(winres, iter, true);
+                    wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
                 }
 
                 if (imported_from.size())

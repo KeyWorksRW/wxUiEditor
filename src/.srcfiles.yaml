@@ -265,6 +265,7 @@ Files:
     internal/xrcpreview.cpp      # Preview XRC code
     internal/mockup_preview.cpp  # Preview Mockup
     internal/xrccompare.cpp      # C++/XRC UI Comparison dialog
+    internal/import_panel.cpp    # Panel to display original imported file
 
     # ttLib submodule files (see https://github.com/KeyWorksRW/ttLib repository)
 

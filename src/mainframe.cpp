@@ -55,8 +55,9 @@
 #include "wxui/ui_images.h"          // This is generated from the Images form
 
 #if defined(INTERNAL_TESTING)
-    #include "internal/code_compare_base.h"
-    #include "internal/nodeinfo_base.h"
+    #include "internal/code_compare_base.h"  // CodeCompare
+    #include "internal/import_panel.h"       // ImportPanel -- Panel to display original imported file
+    #include "internal/nodeinfo_base.h"      // NodeInfo
 #endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
@@ -711,6 +712,7 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     g_pMsgLogging->OnNodeSelected();
+    m_imnportPanel->OnNodeSelected(sel_node);
 #endif
 
     UpdateFrame();
@@ -1075,7 +1077,6 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_notebook->SetArtProvider(new wxAuiSimpleTabArt());
 
     m_mockupPanel = new MockupParent(m_notebook, this);
-
     m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
 
     m_generatedPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_GENERATED);
@@ -1086,6 +1087,11 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
 
     m_xrcPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
+
+#if defined(INTERNAL_TESTING)
+    m_imnportPanel = new ImportPanel(m_notebook);
+    m_notebook->AddPage(m_imnportPanel, "Import", false, wxWithImages::NO_IMAGE);
+#endif
 
     return m_notebook;
 }

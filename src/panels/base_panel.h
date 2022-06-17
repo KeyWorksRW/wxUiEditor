@@ -27,7 +27,6 @@ public:
         PANEL_GENERATED,
         PANEL_DERIVED,
         PANEL_XRC,
-        PANEL_IMPORT,
     };
 
     BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode);

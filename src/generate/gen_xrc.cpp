@@ -433,7 +433,7 @@ std::string GenerateXrcStr(Node* node_start, bool add_comments, bool is_preview)
     return xml_stream.str();
 }
 
-void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type)
+void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
 {
     m_project = wxGetApp().GetProject();
     m_form_node = form_node;

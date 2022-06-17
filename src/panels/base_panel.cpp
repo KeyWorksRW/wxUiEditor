@@ -36,15 +36,15 @@ const char* g_u8_cpp_keywords = "alignas alignof and and_eq atomic_cancel atomic
 	                          typename union unsigned using virtual void volatile wchar_t \
 	                          while xor xor_eq";
 
-BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode) : wxPanel(parent)
+BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPanel(parent)
 {
-    m_GenerateDerivedCode = GenerateDerivedCode;
+    m_panel_type = panel_type;
     auto top_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook->SetArtProvider(new wxAuiGenericTabArt());
 
-    if (GenerateDerivedCode >= 0)
+    if (m_panel_type == PANEL_GENERATED || m_panel_type == PANEL_DERIVED)
     {
         m_cppPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
@@ -52,7 +52,7 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode
         m_hPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
     }
-    else if (GenerateDerivedCode == -1)
+    else if (m_panel_type == PANEL_XRC || m_panel_type == PANEL_IMPORT)
     {
         m_cppPanel = new CodeDisplay(m_notebook, true);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
@@ -65,6 +65,10 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode
     }
     else
     {
+        FAIL_MSG("Unknown Panel type!")
+
+        // Add default panel creation just to prevent crashing
+
         m_cppPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
@@ -157,7 +161,7 @@ void BasePanel::GenerateBaseClass()
 
     // If no form is selected, display the first child form of the project
     m_cur_form = wxGetFrame().GetSelectedForm();
-    if (!m_cur_form && m_GenerateDerivedCode != -1)
+    if (!m_cur_form && (m_panel_type == PANEL_GENERATED || m_panel_type == PANEL_DERIVED))
     {
         if (project->GetChildCount() > 0)
         {
@@ -173,12 +177,12 @@ void BasePanel::GenerateBaseClass()
 
     wxWindowUpdateLocker freeze(this);
 
-    PANEL_TYPE panel_type = CPP_PANEL;
+    PANEL_PAGE panel_page = CPP_PANEL;
     if (auto page = m_notebook->GetCurrentPage(); page)
     {
         if (page == m_hPanel)
         {
-            panel_type = HDR_PANEL;
+            panel_page = HDR_PANEL;
         }
     }
 
@@ -190,14 +194,26 @@ void BasePanel::GenerateBaseClass()
     m_hPanel->Clear();
     codegen.SetHdrWriteCode(m_hPanel);
 
-    if (m_GenerateDerivedCode == 1)
-        codegen.GenerateDerivedClass(project, m_cur_form, panel_type);
-    else if (m_GenerateDerivedCode == 0)
-        codegen.GenerateBaseClass(m_cur_form, panel_type);
-    else
-        codegen.GenerateXrcClass(m_cur_form, panel_type);
+    switch (m_panel_type)
+    {
+        case PANEL_GENERATED:
+            codegen.GenerateBaseClass(m_cur_form, panel_page);
+            break;
 
-    if (panel_type == CPP_PANEL)
+        case PANEL_DERIVED:
+            codegen.GenerateDerivedClass(project, m_cur_form, panel_page);
+            break;
+
+        case PANEL_XRC:
+            codegen.GenerateXrcClass(m_cur_form, panel_page);
+            break;
+
+        default:
+            FAIL_MSG("Unknown panel type!")
+            break;
+    }
+
+    if (panel_page == CPP_PANEL)
     {
         m_cppPanel->CodeGenerationComplete();
         m_cppPanel->OnNodeSelected(wxGetFrame().GetSelectedNode());
@@ -221,7 +237,7 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
         GenerateBaseClass();
     }
 
-    if (m_GenerateDerivedCode <= 0)
+    if (m_panel_type != PANEL_DERIVED)
     {
         if (auto page = m_notebook->GetCurrentPage(); page)
         {

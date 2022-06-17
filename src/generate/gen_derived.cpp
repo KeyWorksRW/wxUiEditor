@@ -52,7 +52,7 @@ static constexpr const char* lst_close_type_button[] = {
 
 // clang-format on
 
-int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_TYPE panel_type)
+int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAGE panel_type)
 {
     m_form_node = form;
     m_is_derived_class = m_form_node->prop_as_bool(prop_use_derived_class);

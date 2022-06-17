@@ -110,7 +110,7 @@ BaseCodeGenerator::BaseCodeGenerator()
     }
 }
 
-void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_TYPE panel_type)
+void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type)
 {
     m_CtxMenuEvents.clear();
     m_embedded_images.clear();

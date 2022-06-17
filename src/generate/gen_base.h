@@ -28,7 +28,7 @@ namespace pugi
     class xml_node;
 }
 
-enum PANEL_TYPE : size_t
+enum PANEL_PAGE : size_t
 {
     NOT_PANEL,
     CPP_PANEL,
@@ -73,15 +73,15 @@ public:
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
-    void GenerateBaseClass(Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
+    void GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
 
     // Returns result::fail, result::exists, result::created, or result::ignored
-    int GenerateDerivedClass(Node* project, Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
+    int GenerateDerivedClass(Node* project, Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
     // code for this is in gen_xrc.cpp
-    void GenerateXrcClass(Node* form_node, PANEL_TYPE panel_type = NOT_PANEL);
+    void GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
     void PreviewXrcClass(Node* form_node);
 
@@ -91,7 +91,7 @@ public:
     // Write code to m_source that will load any handlers needed by the form's class
     void GenerateHandlers();
 
-    PANEL_TYPE GetPanelType() { return m_panel_type; }
+    PANEL_PAGE GetPanelType() { return m_panel_type; }
 
 protected:
     void WritePropSourceCode(Node* node, GenEnum::PropName prop);
@@ -166,7 +166,7 @@ private:
     Node* m_ImagesForm;
     Node* m_project;
 
-    PANEL_TYPE m_panel_type { NOT_PANEL };
+    PANEL_PAGE m_panel_type { NOT_PANEL };
 
     bool m_is_derived_class { true };
 

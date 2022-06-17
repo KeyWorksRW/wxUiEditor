@@ -22,6 +22,14 @@ class wxStyledTextCtrl;
 class BasePanel : public wxPanel
 {
 public:
+    enum
+    {
+        PANEL_GENERATED,
+        PANEL_DERIVED,
+        PANEL_XRC,
+        PANEL_IMPORT,
+    };
+
     BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode);
     ~BasePanel() override;
 
@@ -38,5 +46,5 @@ private:
     wxAuiNotebook* m_notebook;
     Node* m_cur_form { nullptr };
 
-    int m_GenerateDerivedCode;
+    int m_panel_type;
 };

@@ -822,11 +822,21 @@ void ImportXML::ProcessHandler(const pugi::xml_node& xml_obj, Node* node)
 }
 
 // clang-format off
-static std::vector<std::pair<const char*, GenEnum::PropName>> property_mapping = {
+
+// See g_xrc_keywords in generate/gen_xrc_utils.cpp for a list of XRC keywords
+
+std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
 
     { "bg", prop_background_colour },
     { "fg", prop_foreground_colour },
-    { "bitmapsize", prop_image_size },
+    { "bitmapsize", prop_image_size },  // BUGBUG: [Randalphwa - 06-17-2022] should this be prop_bitmapsize?
+
+    { "bitmap-bg", prop_bmp_background_colour },
+    { "bitmap-minwidth", prop_bmp_min_width },
+    { "bitmap-placement", prop_bmp_placement },
+    { "art-provider", prop_art_provider },
+    { "empty_cellsize", prop_empty_cell_size },
+
     { "hover", prop_current },
     { "choices", prop_contents },
     { "content", prop_contents },
@@ -837,14 +847,13 @@ static std::vector<std::pair<const char*, GenEnum::PropName>> property_mapping =
 
 };
 
-static std::vector<std::pair<const char*, GenEnum::GenName>> class_mapping = {
+std::map<std::string_view, GenEnum::GenName, std::less<>> import_GenNames = {
 
     { "Custom", gen_CustomControl },
     { "Dialog", gen_wxDialog },
     { "Frame", gen_wxFrame },
     { "Panel", gen_PanelForm },
     { "Wizard", gen_wxWizard },
-    { "WizardPageSimple", gen_wxWizardPageSimple },
     { "WizardPageSimple", gen_wxWizardPageSimple },
     { "bookpage", gen_oldbookpage },
     { "panewindow", gen_VerticalBoxSizer },
@@ -859,17 +868,16 @@ GenEnum::PropName ImportXML::MapPropName(std::string_view name) const
 {
     if (name.size())
     {
-        for (auto& iter: map_PropNames)
+        if (auto prop = FindProp(name); prop != prop_unknown)
         {
-            if (name == iter.second)
-                return iter.first;
+            return prop;
         }
 
-        for (auto& iter: property_mapping)
+        if (auto result = import_PropNames.find(name); result != import_PropNames.end())
         {
-            if (iter.first == name)
-                return iter.second;
+            return result->second;
         }
+
     }
     return prop_unknown;
 }
@@ -878,16 +886,13 @@ GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
 {
     if (name.size())
     {
-        for (auto& iter: map_GenNames)
+        if (auto result = rmap_GenNames.find(name); result != rmap_GenNames.end())
         {
-            if (name == iter.second)
-                return iter.first;
+            return result->second;
         }
-
-        for (auto& iter: class_mapping)
+        if (auto result = import_GenNames.find(name); result != import_GenNames.end())
         {
-            if (iter.first == name)
-                return iter.second;
+            return result->second;
         }
     }
     return gen_unknown;

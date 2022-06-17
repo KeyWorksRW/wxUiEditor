@@ -124,3 +124,36 @@ bool ListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     InsertGeneratorInclude(node, "#include <wx/listctrl.h>", set_src, set_hdr);
     return true;
 }
+
+int ListViewGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+{
+    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto item = InitializeXrcObject(node, object);
+
+    // XRC doesn't support wxListView
+    GenXrcObjectAttributes(node, item, "wxListCtrl");
+
+    GenXrcStylePosSize(node, item, prop_mode);
+    GenXrcWindowSettings(node, item);
+
+    auto headers = ConvertToArrayString(node->value(prop_column_labels));
+    for (auto& iter: headers)
+    {
+        auto child = item.append_child("object");
+        child.append_attribute("class").set_value("listcol");
+        auto text = child.append_child("text");
+        text.text().set(iter);
+    }
+
+    if (add_comments)
+    {
+        GenXrcComments(node, item);
+    }
+
+    return result;
+}
+
+void ListViewGenerator::RequiredHandlers(Node* /* node */, std::set<std::string>& handlers)
+{
+    handlers.emplace("wxListCtrlXmlHandler");
+}

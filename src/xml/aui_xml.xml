@@ -88,8 +88,6 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 				help="By default only icons are shown." />
 			wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_PLAIN_BACKGROUND
 		</property>
-		<property name="bitmapsize" type="wxSize"
-			help="Default size of each tool bitmap. It is usually unnecessary to set this property, as the tools will always be made big enough to fit the size of the bitmaps used in them." />
 	</gen>
 
 	<gen class="auitool" image="tool" type="aui_tool">

@@ -21,8 +21,6 @@ wxObject* ToolBarFormGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                       DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NOALIGN | wxTB_NODIVIDER | wxNO_BORDER);
 
-    if (node->HasValue(prop_bitmapsize))
-        widget->SetToolBitmapSize(node->prop_as_wxSize(prop_bitmapsize));
     if (node->HasValue(prop_margins))
     {
         wxSize margins(node->prop_as_wxSize(prop_margins));
@@ -116,12 +114,6 @@ std::optional<ttlib::cstr> ToolBarFormGenerator::GenAdditionalCode(GenEnum::GenC
 std::optional<ttlib::cstr> ToolBarFormGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     auto code = GenFormSettings(node);
-    if (node->HasValue(prop_bitmapsize))
-    {
-        if (code.size())
-            code << '\n';
-        code << "SetToolBitmapSize(" << node->prop_as_string(prop_bitmapsize) << ");";
-    }
 
     if (node->prop_as_int(prop_separation) != 5)
     {
@@ -211,8 +203,6 @@ wxObject* ToolBarGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxToolBar(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                 DlgSize(parent, node, prop_size), GetStyleInt(node) | wxTB_NODIVIDER | wxNO_BORDER);
 
-    if (node->HasValue(prop_bitmapsize))
-        widget->SetToolBitmapSize(node->prop_as_wxSize(prop_bitmapsize));
     if (node->HasValue(prop_margins))
     {
         wxSize margins(node->prop_as_wxSize(prop_margins));
@@ -326,12 +316,6 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenAfterChildren(Node* node)
 std::optional<ttlib::cstr> ToolBarGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     auto code = GenFormSettings(node);
-    if (node->HasValue(prop_bitmapsize))
-    {
-        if (code.size())
-            code << '\n';
-        code << "SetToolBitmapSize(" << node->prop_as_string(prop_bitmapsize) << ");";
-    }
 
     if (node->prop_as_int(prop_separation) != 5)
     {

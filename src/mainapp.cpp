@@ -342,6 +342,22 @@ ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
     return name;
 }
 
+Node* App::GetFirstFormChild()
+{
+    if (m_project)
+    {
+        for (const auto& child: m_project->GetChildNodePtrs())
+        {
+            if (child->IsForm())
+            {
+                return child.get();
+            }
+        }
+    }
+
+    return nullptr;
+}
+
 ttString App::GetArtDirectory()
 {
     if (m_project->HasValue(prop_art_directory))

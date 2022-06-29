@@ -50,6 +50,9 @@ public:
     const NodeSharedPtr& GetProjectPtr() { return m_project; };
     Node* GetProject() { return m_project.get(); };
 
+    // Returns the first project child that is a form, or nullptr if not form children found.
+    Node* GetFirstFormChild();
+
     const ttlib::cstr& getProjectFileName();
     const ttlib::cstr& getProjectPath();
     ttString GetProjectFileName();

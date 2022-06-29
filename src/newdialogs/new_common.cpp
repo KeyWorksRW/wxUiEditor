@@ -7,8 +7,8 @@
 
 #include "new_common.h"
 
-#include "mainapp.h"  // App -- Main application class
-#include "node.h"     // Node class
+#include "mainapp.h"        // App -- Main application class
+#include "project_class.h"  // Project class
 
 void UpdateFormClass(Node* form_node)
 {
@@ -21,8 +21,8 @@ void UpdateFormClass(Node* form_node)
     }
     baseName.MakeLower();
     baseName << "_base";
-    if (wxGetApp().GetProject()->HasValue(prop_base_directory))
-        baseName.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');
+    if (GetProject()->HasValue(prop_base_directory))
+        baseName.insert(0, GetProject()->as_wxString(prop_base_directory) << '/');
 
     form_node->prop_set_value(prop_base_file, baseName);
     if (is_base_class)
@@ -49,8 +49,8 @@ void UpdateFormClass(Node* form_node)
         }
 
         drvName.MakeLower();
-        if (wxGetApp().GetProject()->HasValue(prop_derived_class_name))
-            drvName.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');
+        if (GetProject()->HasValue(prop_derived_class_name))
+            drvName.insert(0, GetProject()->prop_as_wxString(prop_base_directory) << '/');
 
         form_node->prop_set_value(prop_derived_file, drvName);
     }
@@ -59,7 +59,7 @@ void UpdateFormClass(Node* form_node)
 bool IsClassNameUnique(wxString classname)
 {
     auto new_classname = classname.utf8_string();
-    for (const auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
+    for (const auto& iter: GetProject()->GetChildNodePtrs())
     {
         if (iter.get()->prop_as_string(prop_class_name).is_sameas(new_classname))
         {

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Hold data for currently loaded project
+// Purpose:   Project class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
@@ -16,13 +16,14 @@
 #include <wx/mstream.h>   // Memory stream classes
 #include <wx/wfstream.h>  // File stream classes
 
-#include "pjtsettings.h"  // ProjectSettings
+#include "project_class.h"
 
-#include "bitmaps.h"    // Map of bitmaps accessed by name
-#include "mainapp.h"    // App -- App class
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
-#include "utils.h"      // Utility functions that work with properties
+#include "bitmaps.h"        // Map of bitmaps accessed by name
+#include "mainapp.h"        // App -- App class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 // Convert a data array into a wxAnimation
 inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
@@ -33,27 +34,31 @@ inline wxAnimation GetAnimFromHdr(const unsigned char* data, size_t size_data)
     return animation;
 };
 
+Project* GetProject()
+{
+    ASSERT_MSG(wxGetApp().GetProjectPtr(), "Can't request a project pointer before it is created.");
+    return wxGetApp().GetProject();
+}
+
 namespace wxue_img
 {
     extern const unsigned char pulsing_unknown_gif[377];
 }
 
-ProjectSettings::ProjectSettings() {}
-
-ttlib::cstr& ProjectSettings::SetProjectFile(const ttString& file)
+ttlib::cstr& Project::SetProjectFile(const ttString& file)
 {
     m_projectFile.clear();
     m_projectFile << file.wx_str();
     return m_projectFile;
 }
 
-ttlib::cstr& ProjectSettings::setProjectFile(const ttlib::cstr& file)
+ttlib::cstr& Project::setProjectFile(const ttlib::cstr& file)
 {
     m_projectFile = file;
     return m_projectFile;
 }
 
-ttlib::cstr& ProjectSettings::SetProjectPath(const ttString& file, bool remove_filename)
+ttlib::cstr& Project::SetProjectPath(const ttString& file, bool remove_filename)
 {
     m_projectPath.clear();
     m_projectPath << file.wx_str();
@@ -65,7 +70,7 @@ ttlib::cstr& ProjectSettings::SetProjectPath(const ttString& file, bool remove_f
     return m_projectPath;
 }
 
-ttlib::cstr& ProjectSettings::setProjectPath(const ttlib::cstr& file, bool remove_filename)
+ttlib::cstr& Project::setProjectPath(const ttlib::cstr& file, bool remove_filename)
 {
     m_projectPath = file;
     if (remove_filename)
@@ -73,7 +78,7 @@ ttlib::cstr& ProjectSettings::setProjectPath(const ttlib::cstr& file, bool remov
     return m_projectPath;
 }
 
-wxImage ProjectSettings::GetPropertyBitmap(const ttlib::multistr& parts, bool check_image)
+wxImage Project::GetPropertyBitmap(const ttlib::multistr& parts, bool check_image)
 {
     if (parts[IndexImage].empty())
     {
@@ -109,7 +114,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::multistr& parts, bool ch
     {
         if (!path.file_exists())
         {
-            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
+            path = prop_as_string(prop_art_directory);
             path.append_filename(parts[IndexImage]);
         }
         auto embed = GetEmbeddedImage(path);
@@ -132,7 +137,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::multistr& parts, bool ch
     {
         if (!path.file_exists())
         {
-            path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
+            path = prop_as_string(prop_art_directory);
             path.append_filename(parts[IndexImage]);
 
             if (result = m_images.find(path); result != m_images.end())
@@ -167,7 +172,7 @@ wxImage ProjectSettings::GetPropertyBitmap(const ttlib::multistr& parts, bool ch
     return image;
 }
 
-void ProjectSettings::UpdateBundle(const ttlib::multistr& parts, Node* node)
+void Project::UpdateBundle(const ttlib::multistr& parts, Node* node)
 {
     if (parts.size() < 2)
         return;
@@ -204,7 +209,7 @@ void ProjectSettings::UpdateBundle(const ttlib::multistr& parts, Node* node)
     }
 }
 
-wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
+wxBitmapBundle Project::GetPropertyBitmapBundle(const ttlib::cstr& description, Node* node)
 {
     ttlib::multistr parts(description, ';', tt::TRIM::both);
     if (parts.size() < 2)
@@ -228,7 +233,7 @@ wxBitmapBundle ProjectSettings::GetPropertyBitmapBundle(const ttlib::cstr& descr
     return GetInternalImage("unknown");
 }
 
-const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::multistr& parts, Node* node)
+const ImageBundle* Project::GetPropertyImageBundle(const ttlib::multistr& parts, Node* node)
 {
     if (parts.size() < 2)
     {
@@ -252,7 +257,7 @@ const ImageBundle* ProjectSettings::GetPropertyImageBundle(const ttlib::multistr
     }
 }
 
-wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description)
+wxAnimation Project::GetPropertyAnimation(const ttlib::cstr& description)
 {
     ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
 
@@ -266,7 +271,7 @@ wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description
     ttlib::cstr path = parts[IndexImage];
     if (!path.file_exists())
     {
-        path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
+        path = prop_as_string(prop_art_directory);
         path.append_filename(parts[IndexImage]);
     }
 
@@ -302,15 +307,15 @@ wxAnimation ProjectSettings::GetPropertyAnimation(const ttlib::cstr& description
     return image;
 }
 
-bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation)
+bool Project::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation)
 {
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
 
     if (!path.file_exists())
     {
-        if (wxGetApp().GetProject()->HasValue(prop_art_directory))
+        if (GetProject()->HasValue(prop_art_directory))
         {
-            ttlib::cstr art_path = wxGetApp().GetProject()->prop_as_string(prop_art_directory);
+            ttlib::cstr art_path = GetProject()->prop_as_string(prop_art_directory);
             art_path.append_filename(path);
             if (!art_path.file_exists())
                 return false;
@@ -385,7 +390,7 @@ bool ProjectSettings::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_ani
     return final_result;
 }
 
-bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock)
+bool Project::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock<std::mutex>& add_lock)
 {
     wxFFileInputStream stream(path.wx_str());
     if (!stream.IsOk())
@@ -471,7 +476,7 @@ bool ProjectSettings::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::uni
     return false;
 }
 
-void ProjectSettings::InitializeArrayName(EmbeddedImage* embed, ttlib::sview filename)
+void Project::InitializeArrayName(EmbeddedImage* embed, ttlib::sview filename)
 {
     embed->array_name = filename;
     for (size_t idx = 0; idx < embed->array_name.size(); ++idx)
@@ -484,7 +489,7 @@ void ProjectSettings::InitializeArrayName(EmbeddedImage* embed, ttlib::sview fil
     }
 }
 
-EmbeddedImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
+EmbeddedImage* Project::GetEmbeddedImage(ttlib::sview path)
 {
     // REVIEW: [KeyWorks - 05-03-2022] Do we still need this lock?
     std::unique_lock<std::mutex> add_lock(m_mutex_embed_add);
@@ -500,10 +505,10 @@ EmbeddedImage* ProjectSettings::GetEmbeddedImage(ttlib::sview path)
     }
 }
 
-bool ProjectSettings::UpdateEmbedNodes()
+bool Project::UpdateEmbedNodes()
 {
     bool is_changed = false;
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
 
     for (const auto& form: project->GetChildNodePtrs())
     {
@@ -513,17 +518,17 @@ bool ProjectSettings::UpdateEmbedNodes()
     return is_changed;
 }
 
-// REVIEW: [KeyWorks - 04-07-2022] We should eliminate this call if possible -- ProjectSettings::CollectBundles() processed
+// REVIEW: [KeyWorks - 04-07-2022] We should eliminate this call if possible -- Project::CollectBundles() processed
 // all nodes initially, and the only reason this would be needed is if adding or changing a bitmap property did not get set
 // up correctly (highly unlikely).
 
-bool ProjectSettings::CheckNode(const NodeSharedPtr& node)
+bool Project::CheckNode(const NodeSharedPtr& node)
 {
     bool is_changed = false;
 
     Node* node_form = node->get_form();
 
-    auto node_position = wxGetApp().GetProject()->GetChildPosition(node_form);
+    auto node_position = GetProject()->GetChildPosition(node_form);
 
     for (auto& iter: node->get_props_vector())
     {
@@ -557,7 +562,7 @@ bool ProjectSettings::CheckNode(const NodeSharedPtr& node)
             }
             else
             {
-                auto child_pos = wxGetApp().GetProject()->GetChildPosition(embed->form);
+                auto child_pos = GetProject()->GetChildPosition(embed->form);
                 if (child_pos > node_position)
                 {
                     FAIL_MSG("If this is valid, we need to document why.")
@@ -575,6 +580,127 @@ bool ProjectSettings::CheckNode(const NodeSharedPtr& node)
     }
 
     return is_changed;
+}
+
+ttlib::cstr Project::getArtDirectory()
+{
+    if (HasValue(prop_art_directory))
+        return value(prop_art_directory);
+    else
+        return m_projectPath;
+}
+
+ttString Project::GetArtDirectory()
+{
+    if (HasValue(prop_art_directory))
+        return prop_as_wxString(prop_art_directory);
+    else
+        return ttString() << m_projectPath.wx_str();
+}
+
+ttString Project::GetBaseDirectory()
+{
+    if (HasValue(prop_base_directory))
+        return as_wxString(prop_base_directory);
+    else
+        return GetProjectPath();
+}
+
+ttString Project::GetDerivedDirectory()
+{
+    if (HasValue(prop_derived_directory))
+        return as_wxString(prop_derived_directory);
+    else
+        return GetProjectPath();
+}
+
+Node* Project::GetFirstFormChild()
+{
+    for (const auto& child: GetChildNodePtrs())
+    {
+        if (child->IsForm())
+        {
+            return child.get();
+        }
+    }
+
+    return nullptr;
+}
+
+wxBitmapBundle Project::GetBitmapBundle(const ttlib::cstr& description, Node* node)
+{
+    if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
+        description.starts_with("Art;") || description.starts_with("SVG;"))
+    {
+        return GetPropertyBitmapBundle(description, node);
+    }
+    else
+        return GetInternalImage("unknown");
+}
+
+wxImage Project::GetImage(const ttlib::cstr& description)
+{
+    if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
+        description.starts_with("Art;"))
+    {
+        return GetPropertyBitmap(description);
+    }
+    else
+        return GetInternalImage("unknown");
+}
+
+ttlib::cstr Project::GetBundleFuncName(const ttlib::cstr& description)
+{
+    ttlib::cstr name;
+
+    for (const auto& form: GetChildNodePtrs())
+    {
+        if (form->isGen(gen_Images))
+        {
+            ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
+            if (parts.size() < 2)
+            {
+                // caller's description does not include a filename
+                return name;
+            }
+
+            for (const auto& child: form->GetChildNodePtrs())
+            {
+                ttlib::multiview form_image_parts(child->prop_as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
+                if (form_image_parts.size() < 2)
+                {
+                    continue;
+                }
+
+                if (parts[0] == form_image_parts[0] && parts[1].filename() == form_image_parts[1].filename())
+                {
+                    if (auto bundle = GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
+                    {
+                        auto embed = GetEmbeddedImage(bundle->lst_filenames[0]);
+                        if (embed->type == wxBITMAP_TYPE_INVALID)
+                        {
+                            name << "wxue_img::bundle_" << embed->array_name << "(";
+
+                            wxSize svg_size { -1, -1 };
+                            if (parts[IndexSize].size())
+                            {
+                                GetSizeInfo(svg_size, parts[IndexSize]);
+                            }
+                            name << svg_size.x << ", " << svg_size.y << ")";
+                        }
+                        else
+                        {
+                            name << "wxue_img::bundle_" << embed->array_name << "()";
+                        }
+                    }
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    return name;
 }
 
 namespace wxue_img

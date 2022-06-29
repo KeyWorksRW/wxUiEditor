@@ -15,14 +15,13 @@
 
 #include "gen_base.h"
 
-#include "gen_common.h"    // GeneratorLibrary -- Generator classes
-#include "mainapp.h"       // App -- Main application class
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "node_decl.h"     // NodeDeclaration class
-#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"         // Utility functions that work with properties
-#include "write_code.h"    // Write code to Scintilla or file
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "node.h"           // Node class
+#include "node_creator.h"   // NodeCreator class
+#include "node_decl.h"      // NodeDeclaration class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // Write code to Scintilla or file
 
 using namespace GenEnum;
 
@@ -116,7 +115,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
     m_embedded_images.clear();
     m_type_generated.clear();
 
-    m_project = wxGetApp().GetProject();
+    m_project = GetProject();
     m_form_node = form_node;
     m_ImagesForm = nullptr;
 
@@ -142,7 +141,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
     // If the code files are being written to disk, then UpdateEmbedNodes() has already been called.
     if (panel_type != NOT_PANEL)
     {
-        wxGetApp().GetProjectSettings()->UpdateEmbedNodes();
+        GetProject()->UpdateEmbedNodes();
     }
 
     m_panel_type = panel_type;
@@ -157,9 +156,9 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
     if (auto& base_file = form_node->prop_as_string(prop_base_file); base_file.size())
     {
         ttSaveCwd cwd;
-        ttlib::ChangeDir(wxGetApp().getProjectPath());
+        ttlib::ChangeDir(GetProject()->getProjectPath());
         file = base_file;
-        file.make_relative(wxGetApp().getProjectPath());
+        file.make_relative(GetProject()->getProjectPath());
         file.backslashestoforward();
         file.remove_extension();
 
@@ -1015,13 +1014,13 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
             {
                 if (!iter.isProp(prop_icon))
                 {
-                    if (auto function_name = wxGetApp().GetBundleFuncName(iter.as_string()); function_name.size())
+                    if (auto function_name = GetProject()->GetBundleFuncName(iter.as_string()); function_name.size())
                     {
-                        for (const auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
+                        for (const auto& form: GetProject()->GetChildNodePtrs())
                         {
                             if (form->isGen(gen_Images))
                             {
-                                ttlib::cstr image_file = wxGetApp().getProjectPath();
+                                ttlib::cstr image_file = GetProject()->getProjectPath();
                                 image_file.append_filename(form->prop_as_string(prop_base_file));
                                 image_file.replace_extension(m_header_ext);
                                 image_file.make_relative(m_baseFullPath);
@@ -1829,13 +1828,13 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
         auto& value = iter.as_string();
         if (iter.type() == type_image)
         {
-            if (auto bundle = wxGetApp().GetProjectSettings()->GetPropertyImageBundle(iter.as_string()); bundle)
+            if (auto bundle = GetProject()->GetPropertyImageBundle(iter.as_string()); bundle)
             {
                 if (value.starts_with("Embed") || value.starts_with("SVG"))
                 {
                     for (auto& idx_image: bundle->lst_filenames)
                     {
-                        if (auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(idx_image); embed)
+                        if (auto embed = GetProject()->GetEmbeddedImage(idx_image); embed)
                         {
                             bool is_found = false;
                             for (auto pimage: m_embedded_images)
@@ -1878,12 +1877,12 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 
                 if (parts[IndexImage].size())
                 {
-                    auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+                    auto embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
                     if (!embed)
                     {
-                        if (!wxGetApp().GetProjectSettings()->AddEmbeddedImage(parts[IndexImage], m_form_node))
+                        if (!GetProject()->AddEmbeddedImage(parts[IndexImage], m_form_node))
                             continue;
-                        embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+                        embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
                         if (!embed)
                             continue;
                     }
@@ -1974,9 +1973,9 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
 
                 if (m_ImagesForm && m_form_node != m_ImagesForm)
                 {
-                    if (auto bundle = wxGetApp().GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
+                    if (auto bundle = GetProject()->GetPropertyImageBundle(parts); bundle && bundle->lst_filenames.size())
                     {
-                        if (auto embed = wxGetApp().GetEmbeddedImage(bundle->lst_filenames[0]); embed)
+                        if (auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]); embed)
                         {
                             if (embed->form == m_ImagesForm)
                             {

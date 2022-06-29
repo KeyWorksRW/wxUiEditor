@@ -22,6 +22,7 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class
+#include "project_class.h"    // Project class
 #include "propgrid_panel.h"   // PropGridPanel -- PropertyGrid class for node properties and events
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties
@@ -159,7 +160,7 @@ void NavigationPanel::OnProjectUpdated()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    if (auto project = wxGetApp().GetProject(); project)
+    if (auto project = GetProject(); project)
     {
         auto root = m_tree_ctrl->AddRoot(GetDisplayName(project), GetImageIndex(project), -1);
         m_node_tree_map[project] = root;
@@ -452,7 +453,7 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
     else
     {
         if (node->isGen(gen_Project))
-            display_name << "Project: " << wxGetApp().getProjectFileName().filename();
+            display_name << "Project: " << GetProject()->getProjectFile().filename();
         else if (node->isGen(gen_wxContextMenuEvent))
         {
             display_name = node->prop_as_string(prop_handler_name);

@@ -15,10 +15,9 @@
 
 #include "internal/code_compare_base.h"
 
-#include "gen_base.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainapp.h"      // App -- Main application class
-#include "node.h"         // Node class
-#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
 
 #include "pugixml.hpp"
 
@@ -36,7 +35,7 @@ CodeCompare::~CodeCompare()
         wxRemoveFile(iter);
     }
 
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
     if (project->HasValue(prop_base_directory))
     {
         dir.GetAllFiles(project->prop_as_wxString(prop_base_directory), &files, "~wxue_**.*");

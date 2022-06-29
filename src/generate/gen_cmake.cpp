@@ -10,13 +10,13 @@
 #include "ttcwd.h"       // cwd -- Class for storing and optionally restoring the current directory
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
-#include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainapp.h"   // App -- Main application class
-#include "node.h"      // Node class
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
 
 int WriteCMakeFile(bool test_only)
 {
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
 
     if (!project->prop_as_bool(prop_generate_cmake) || !project->HasValue(prop_cmake_file))
     {
@@ -37,7 +37,7 @@ int WriteCMakeFile(bool test_only)
     }
     else
     {
-        ttlib::ChangeDir(wxGetApp().getProjectPath());
+        ttlib::ChangeDir(GetProject()->getProjectPath());
     }
 
     ttlib::cwd cur_dir;

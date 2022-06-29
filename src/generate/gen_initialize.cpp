@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "gen_common.h"    // GeneratorLibrary -- Generator classes
-#include "mainapp.h"       // App -- App class
 #include "node_creator.h"  // NodeCreator
 
 #include "dataview_widgets.h"  // DataViewCtrl -- wxDataView component classes

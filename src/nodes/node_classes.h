@@ -20,5 +20,7 @@ class BaseGenerator;
 class NodeCreator;
 class NodeCategory;
 class PropDeclaration;
+class Project;
 
 using NodeSharedPtr = std::shared_ptr<Node>;
+using ProjectSharedPtr = std::shared_ptr<Project>;

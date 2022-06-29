@@ -14,6 +14,7 @@
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "node_gridbag.h"         // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "project_class.h"        // Project class
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 
@@ -541,13 +542,13 @@ SortProjectAction::SortProjectAction()
 
     m_undo_string = "Sort Project";
 
-    m_old_project = g_NodeCreator.MakeCopy(wxGetApp().GetProject());
+    m_old_project = g_NodeCreator.MakeCopy(GetProject());
 }
 
 void SortProjectAction::Change()
 {
     m_old_project = g_NodeCreator.MakeCopy(wxGetApp().GetProjectPtr());
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
 
     auto& children = project->GetChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
@@ -558,7 +559,7 @@ void SortProjectAction::Change()
 
 void SortProjectAction::Revert()
 {
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
     project->RemoveAllChildren();
     for (const auto& child: m_old_project->GetChildNodePtrs())
     {

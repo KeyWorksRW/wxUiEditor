@@ -9,9 +9,9 @@
 
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
-#include <wx/bmpbndl.h>
-
 #include "node_classes.h"  // Forward defintions of Node classes
+
+class Project;
 
 namespace pugi
 {
@@ -47,31 +47,10 @@ public:
 
     MainFrame* GetMainFrame() { return m_frame; }
 
-    const NodeSharedPtr& GetProjectPtr() { return m_project; };
-    Node* GetProject() { return m_project.get(); };
+    // Only call this if you need the reference count incremented.
+    const ProjectSharedPtr& GetProjectPtr() { return m_project; };
 
-    // Returns the first project child that is a form, or nullptr if not form children found.
-    Node* GetFirstFormChild();
-
-    const ttlib::cstr& getProjectFileName();
-    const ttlib::cstr& getProjectPath();
-    ttString GetProjectFileName();
-    ttString GetProjectPath();
-    ttString GetArtDirectory();
-    ttString GetBaseDirectory();
-    ttString GetDerivedDirectory();
-
-    wxImage GetImage(const ttlib::cstr& description);
-    wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
-
-    const ImageBundle* GetPropertyImageBundle(const ttlib::multistr& parts, Node* node = nullptr);
-    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr);
-    EmbeddedImage* GetEmbeddedImage(ttlib::sview path);
-
-    // If there is an Image form containing this bundle, return it's name
-    ttlib::cstr GetBundleFuncName(const ttlib::cstr& description);
-
-    ProjectSettings* GetProjectSettings() { return m_pjtSettings; };
+    Project* GetProject() { return m_project.get(); };
 
     // clang-format off
     enum : long
@@ -157,17 +136,20 @@ protected:
     int OnRun() override;
     int OnExit() override;
 
-    auto LoadProject(pugi::xml_document& doc) -> std::shared_ptr<Node>;
+    auto LoadProject(pugi::xml_document& doc) -> std::shared_ptr<Project>;
 
 private:
-    std::shared_ptr<Node> m_project;
+    // This is a shared_ptr because it can be put on the undo stack, and it can be selected
+    // while a new project is being loaded.
+
+    std::shared_ptr<Project> m_project;
 
     // Every time we try to write to a directory that doesn't exist, we ask the user if they
     // want to create it. If they choose No then we store the path here and never ask again
     // for the current session.
     std::set<wxString> m_missing_dirs;
 
-    ProjectSettings* m_pjtSettings { nullptr };
+    // ProjectSettings* m_pjtSettings { nullptr };
 
     uiPREFERENCES m_prefs;
 

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Hold data for currently loaded project
+// Purpose:   Project class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
@@ -13,7 +13,7 @@
 
 #include "image_bundle.h"  // This will #include wx/bmpbndl.h and wx/bitmap.h
 
-#include "node_classes.h"  // Forward defintions of Node classes
+#include "node.h"  // Node class
 
 class wxAnimation;
 
@@ -28,10 +28,10 @@ struct EmbeddedImage
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description);
 
-class ProjectSettings
+class Project : public Node
 {
 public:
-    ProjectSettings();
+    Project(NodeDeclaration* declaration) : Node(declaration) {}
 
     // This will parse the entire project, and ensure that each embedded image is associated
     // with the form node of the form it first appears in.
@@ -39,7 +39,10 @@ public:
     // Returns true if an associated node changed
     bool UpdateEmbedNodes();
 
+    // lower-case version returns cstr, GetProjectFile returns ttString.
     ttlib::cstr& getProjectFile() { return m_projectFile; }
+
+    // upper-case version returns ttString, getProjectFile returns cstr.
     ttString GetProjectFile() { return ttString() << m_projectFile.wx_str(); }
 
     ttlib::cstr& SetProjectFile(const ttString& file);
@@ -52,6 +55,22 @@ public:
 
     // Returns the directory the project file is in as a ttString
     ttString GetProjectPath() { return ttString() << m_projectPath.wx_str(); }
+
+    ttlib::cstr getArtDirectory();
+    ttString GetArtDirectory();
+
+    ttString GetBaseDirectory();
+    ttString GetDerivedDirectory();
+
+    // Returns the first project child that is a form, or nullptr if not form children found.
+    Node* GetFirstFormChild();
+
+    wxImage GetImage(const ttlib::cstr& description);
+
+    wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
+
+    // If there is an Image form containing this bundle, return it's name
+    ttlib::cstr GetBundleFuncName(const ttlib::cstr& description);
 
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.
@@ -139,3 +158,5 @@ private:
     // std::string is parts[IndexImage].filename()
     std::map<std::string, std::unique_ptr<EmbeddedImage>, std::less<>> m_map_embedded;
 };
+
+Project* GetProject();

@@ -12,6 +12,7 @@
 #include "new_common.h"           // Contains code common between all new_ dialogs
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
+#include "project_class.h"        // Project class
 #include "undo_cmds.h"            // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewPanel::OnInit(wxInitDialogEvent& event)
@@ -32,7 +33,7 @@ void NewPanel::CreateNode()
     NodeSharedPtr new_node;
     if (m_is_form)
     {
-        new_node = g_NodeCreator.CreateNode(gen_PanelForm, wxGetApp().GetProject());
+        new_node = g_NodeCreator.CreateNode(gen_PanelForm, GetProject());
         ASSERT(new_node);
     }
     else
@@ -97,7 +98,7 @@ void NewPanel::CreateNode()
             UpdateFormClass(new_node.get());
         }
 
-        auto project = wxGetApp().GetProject();
+        auto project = GetProject();
         wxGetFrame().SelectNode(project);
 
         ttlib::cstr undo_str("New wxPanel");

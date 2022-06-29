@@ -9,9 +9,8 @@
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mainapp.h"        // App -- Main application class
 #include "node.h"           // Node class
-#include "pjtsettings.h"    // ProjectSettings -- Hold data for currently loaded project
+#include "project_class.h"  // Project class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 
@@ -46,7 +45,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
         name.LeftTrim();
         if (parts[IndexType].starts_with("Embed"))
         {
-            auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+            auto embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
                 name = "wxue_img::" + embed->array_name;

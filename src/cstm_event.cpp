@@ -7,11 +7,11 @@
 
 #include "cstm_event.h"
 
-#include "mainapp.h"     // App -- Main application class
-#include "mainframe.h"   // MainFrame -- Main window frame
-#include "node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
-#include "node_prop.h"   // NodeProperty class
-#include "undo_cmds.h"   // Undoable command classes derived from UndoAction
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node_event.h"     // NodeEventInfo -- NodeEvent and NodeEventInfo classes
+#include "node_prop.h"      // NodeProperty class
+#include "project_class.h"  // Project class
+#include "undo_cmds.h"      // Undoable command classes derived from UndoAction
 
 wxDEFINE_EVENT(EVT_ProjectUpdated, CustomEvent);
 wxDEFINE_EVENT(EVT_EventHandlerChanged, CustomEvent);
@@ -31,7 +31,7 @@ void MainFrame::FireProjectLoadedEvent()
 {
     ProjectLoaded();
 
-    CustomEvent event(EVT_ProjectUpdated, wxGetApp().GetProject());
+    CustomEvent event(EVT_ProjectUpdated, GetProject());
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(event);
@@ -85,7 +85,7 @@ void MainFrame::FireMultiPropEvent(ModifyProperties* undo_cmd)
 
 void MainFrame::FireProjectUpdatedEvent()
 {
-    CustomEvent event(EVT_ProjectUpdated, wxGetApp().GetProject());
+    CustomEvent event(EVT_ProjectUpdated, GetProject());
     for (auto handler: m_custom_event_handlers)
     {
         handler->ProcessEvent(event);

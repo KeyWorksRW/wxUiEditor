@@ -21,6 +21,7 @@
 #include "gen_common.h"                // Common component functions
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
+#include "project_class.h"             // Project class
 #include "utils.h"                     // Utility functions that work with properties
 
 // This function is almost identical to MockupContent::CreateChildren. However, the Mockup version assumes the top window is
@@ -216,7 +217,7 @@ void MainFrame::OnMockupPreview(wxCommandEvent& /* event */)
     {
         if (form_node->isGen(gen_Project) && form_node->GetChildCount())
         {
-            form_node = wxGetApp().GetFirstFormChild();
+            form_node = GetProject()->GetFirstFormChild();
         }
         else
         {

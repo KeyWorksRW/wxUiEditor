@@ -24,10 +24,11 @@
 
 #include "gen_base.h"
 
-#include "mainapp.h"       // App -- App class
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "write_code.h"    // Write code to Scintilla or file
+#include "node.h"           // Node class
+#include "node_creator.h"   // NodeCreator class
+#include "project_class.h"  // Project class
+
+#include "write_code.h"  // Write code to Scintilla or file
 
 // clang-format off
 
@@ -74,7 +75,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     if (m_is_derived_class && m_form_node->HasValue(prop_derived_file))
     {
         derived_file = m_form_node->prop_as_string(prop_derived_file);
-        derived_file.make_relative(wxGetApp().getProjectPath());
+        derived_file.make_relative(GetProject()->getProjectPath());
         derived_file.backslashestoforward();
     }
     else

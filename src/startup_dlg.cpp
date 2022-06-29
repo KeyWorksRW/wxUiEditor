@@ -7,7 +7,6 @@
 
 #include "wxui/startupdlg_base.h"  // auto-generated: wxui/startupdlg_base.h and wxui/startupdlg_base.cpp
 
-#include "mainapp.h"    // App -- Main application class
 #include "mainframe.h"  // MainFrame -- Main window frame
 
 // If this constructor is used, the caller must call Create(parent)
@@ -16,7 +15,7 @@ void StartupDlg::OnInit(wxInitDialogEvent& event)
 {
     m_name_version->SetLabel(txtVersion);
 
-    auto& history = wxGetApp().GetMainFrame()->GetFileHistory();
+    auto& history = GetMainFrame()->GetFileHistory();
     bool file_added = false;
     for (size_t idx = 0; idx < history.GetCount(); ++idx)
     {

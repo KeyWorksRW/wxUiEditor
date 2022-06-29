@@ -62,6 +62,9 @@ public:
     // Only use this with .wxui projects -- it will fail on a .fbp project
     NodeSharedPtr CreateNode(pugi::xml_node& node, Node* parent = nullptr);
 
+    // Only use this with .wxui projects -- it will fail on a .fbp project
+    ProjectSharedPtr CreateProjectClass(pugi::xml_node* xml_obj);
+
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
     NodeSharedPtr MakeCopy(Node* node);
     NodeSharedPtr MakeCopy(NodeSharedPtr node) { return MakeCopy(node.get()); };

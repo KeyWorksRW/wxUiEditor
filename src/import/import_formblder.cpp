@@ -15,11 +15,10 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "font_prop.h"       // FontProperty class
-#include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
-#include "pjtsettings.h"     // ProjectSettings -- Hold data for currently loaded project
+#include "project_class.h"   // Project class
 #include "utils.h"           // Utility functions that work with properties
 
 #include "import_arrays.cpp"  // Array of formbuilder/wxuieditor event name pairs

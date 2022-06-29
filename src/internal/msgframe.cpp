@@ -18,6 +18,7 @@
 #include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
+#include "project_class.h"   // Project class
 
 #include "pugixml.hpp"
 
@@ -346,7 +347,7 @@ void MsgFrame::UpdateNodeInfo()
             m_hyperlink->SetURL(url);
         }
 
-        auto project = wxGetApp().GetProject();
+        auto project = GetProject();
         CalcNodeMemory(project, node_memory);
 
         label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);

@@ -13,10 +13,11 @@
 
 #include "base_generator.h"
 
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
-#include "node_decl.h"  // NodeDeclaration class
-#include "node_prop.h"  // NodeProperty -- NodeProperty class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "node_decl.h"      // NodeDeclaration class
+#include "node_prop.h"      // NodeProperty -- NodeProperty class
+#include "project_class.h"  // Project class
 
 #include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 
@@ -196,7 +197,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         if (newValue.empty())
             return true;
 
-        for (const auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
+        for (const auto& iter: GetProject()->GetChildNodePtrs())
         {
             if (iter.get() == prop->GetNode())
             {

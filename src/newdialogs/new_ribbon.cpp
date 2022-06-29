@@ -13,6 +13,7 @@
 #include "new_common.h"              // Contains code common between all new_ dialogs
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
+#include "project_class.h"           // Project class
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewRibbon::OnInit(wxInitDialogEvent& event)
@@ -33,7 +34,7 @@ void NewRibbon::CreateNode()
     NodeSharedPtr bar_node;
     if (m_is_form)
     {
-        bar_node = g_NodeCreator.CreateNode(gen_RibbonBar, wxGetApp().GetProject());
+        bar_node = g_NodeCreator.CreateNode(gen_RibbonBar, GetProject());
         ASSERT(bar_node);
     }
     else
@@ -97,7 +98,7 @@ void NewRibbon::CreateNode()
             UpdateFormClass(bar_node.get());
         }
 
-        auto project = wxGetApp().GetProject();
+        auto project = GetProject();
         wxGetFrame().SelectNode(project);
 
         ttlib::cstr undo_str("New wxRibbonBar");

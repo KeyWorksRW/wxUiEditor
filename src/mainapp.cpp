@@ -14,13 +14,13 @@
 
 #include "mainapp.h"
 
-#include "appoptions.h"    // AppOptions -- Application-wide options
-#include "bitmaps.h"       // Contains various images handling functions
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node -- Node class
-#include "node_creator.h"  // NodeCreator class
-#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"         // Utility functions that work with properties
+#include "appoptions.h"     // AppOptions -- Application-wide options
+#include "bitmaps.h"        // Contains various images handling functions
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node -- Node class
+#include "node_creator.h"   // NodeCreator class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "wxui/startupdlg_base.h"  // CStartup -- Dialog to display is wxUE is launched with no arguments
 
@@ -238,148 +238,10 @@ int App::OnRun()
 
 int App::OnExit()
 {
-#if defined(_WIN32) && defined(_DEBUG) && defined(USE_CRT_MEMORY_DUMP)
-    // This isn't really necessary, it just makes it easier to track down memory leaks.
-
+    // This must get deleted in order to stop any thread it started to process embedded images
     m_project.reset();
 
-#endif  // defined(_WIN32) && defined(_DEBUG) && defined(USE_CRT_MEMORY_DUMP)
-
-    // This must get deleted in order to stop any thread it started to process embedded images
-    delete m_pjtSettings;
-
     return wxApp::OnExit();
-}
-
-wxImage App::GetImage(const ttlib::cstr& description)
-{
-    if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
-        description.starts_with("Art;"))
-    {
-        return m_pjtSettings->GetPropertyBitmap(description);
-    }
-    else
-        return GetInternalImage("unknown");
-}
-
-wxBitmapBundle App::GetBitmapBundle(const ttlib::cstr& description, Node* node)
-{
-    if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
-        description.starts_with("Art;") || description.starts_with("SVG;"))
-    {
-        return m_pjtSettings->GetPropertyBitmapBundle(description, node);
-    }
-    else
-        return GetInternalImage("unknown");
-}
-
-const ImageBundle* App::GetPropertyImageBundle(const ttlib::multistr& parts, Node* node)
-{
-    return m_pjtSettings->GetPropertyImageBundle(parts, node);
-}
-
-const ImageBundle* App::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
-{
-    return m_pjtSettings->GetPropertyImageBundle(description, node);
-}
-
-EmbeddedImage* App::GetEmbeddedImage(ttlib::sview path)
-{
-    return m_pjtSettings->GetEmbeddedImage(path);
-}
-
-ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)
-{
-    ttlib::cstr name;
-
-    for (const auto& form: m_project->GetChildNodePtrs())
-    {
-        if (form->isGen(gen_Images))
-        {
-            ttlib::multiview parts(description, BMP_PROP_SEPARATOR, tt::TRIM::both);
-            if (parts.size() < 2)
-            {
-                // caller's description does not include a filename
-                return name;
-            }
-
-            for (const auto& child: form->GetChildNodePtrs())
-            {
-                ttlib::multiview form_image_parts(child->prop_as_string(prop_bitmap), BMP_PROP_SEPARATOR, tt::TRIM::both);
-                if (form_image_parts.size() < 2)
-                {
-                    continue;
-                }
-
-                if (parts[0] == form_image_parts[0] && parts[1].filename() == form_image_parts[1].filename())
-                {
-                    if (auto bundle = GetPropertyImageBundle(description); bundle && bundle->lst_filenames.size())
-                    {
-                        auto embed = GetEmbeddedImage(bundle->lst_filenames[0]);
-                        if (embed->type == wxBITMAP_TYPE_INVALID)
-                        {
-                            name << "wxue_img::bundle_" << embed->array_name << "(";
-
-                            wxSize svg_size { -1, -1 };
-                            if (parts[IndexSize].size())
-                            {
-                                GetSizeInfo(svg_size, parts[IndexSize]);
-                            }
-                            name << svg_size.x << ", " << svg_size.y << ")";
-                        }
-                        else
-                        {
-                            name << "wxue_img::bundle_" << embed->array_name << "()";
-                        }
-                    }
-                    break;
-                }
-            }
-            break;
-        }
-    }
-
-    return name;
-}
-
-Node* App::GetFirstFormChild()
-{
-    if (m_project)
-    {
-        for (const auto& child: m_project->GetChildNodePtrs())
-        {
-            if (child->IsForm())
-            {
-                return child.get();
-            }
-        }
-    }
-
-    return nullptr;
-}
-
-ttString App::GetArtDirectory()
-{
-    if (m_project->HasValue(prop_art_directory))
-        return m_project->prop_as_wxString(prop_art_directory);
-    else
-        return GetProjectPath();
-}
-
-ttString App::GetBaseDirectory()
-{
-    if (m_project->HasValue(prop_base_directory))
-        return m_project->prop_as_wxString(prop_base_directory);
-    else
-        return GetProjectPath();
-}
-
-ttString App::GetDerivedDirectory()
-{
-    if (m_project->HasValue(prop_derived_directory))
-        return m_project->prop_as_wxString(prop_derived_directory);
-    else
-        return GetProjectPath();
 }
 
 #if defined(_DEBUG) && defined(wxUSE_ON_FATAL_EXCEPTION) && defined(wxUSE_STACKWALKER)

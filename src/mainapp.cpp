@@ -14,13 +14,13 @@
 
 #include "mainapp.h"
 
-#include "appoptions.h"    // AppOptions -- Application-wide options
-#include "bitmaps.h"       // Contains various images handling functions
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node.h"          // Node -- Node class
-#include "node_creator.h"  // NodeCreator class
-#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"         // Utility functions that work with properties
+#include "appoptions.h"     // AppOptions -- Application-wide options
+#include "bitmaps.h"        // Contains various images handling functions
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node -- Node class
+#include "node_creator.h"   // NodeCreator class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "wxui/startupdlg_base.h"  // CStartup -- Dialog to display is wxUE is launched with no arguments
 
@@ -238,15 +238,8 @@ int App::OnRun()
 
 int App::OnExit()
 {
-#if defined(_WIN32) && defined(_DEBUG) && defined(USE_CRT_MEMORY_DUMP)
-    // This isn't really necessary, it just makes it easier to track down memory leaks.
-
-    m_project.reset();
-
-#endif  // defined(_WIN32) && defined(_DEBUG) && defined(USE_CRT_MEMORY_DUMP)
-
     // This must get deleted in order to stop any thread it started to process embedded images
-    delete m_pjtSettings;
+    m_project.reset();
 
     return wxApp::OnExit();
 }
@@ -256,7 +249,7 @@ wxImage App::GetImage(const ttlib::cstr& description)
     if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
         description.starts_with("Art;"))
     {
-        return m_pjtSettings->GetPropertyBitmap(description);
+        return m_project->GetPropertyBitmap(description);
     }
     else
         return GetInternalImage("unknown");
@@ -267,7 +260,7 @@ wxBitmapBundle App::GetBitmapBundle(const ttlib::cstr& description, Node* node)
     if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||
         description.starts_with("Art;") || description.starts_with("SVG;"))
     {
-        return m_pjtSettings->GetPropertyBitmapBundle(description, node);
+        return m_project->GetPropertyBitmapBundle(description, node);
     }
     else
         return GetInternalImage("unknown");
@@ -275,17 +268,17 @@ wxBitmapBundle App::GetBitmapBundle(const ttlib::cstr& description, Node* node)
 
 const ImageBundle* App::GetPropertyImageBundle(const ttlib::multistr& parts, Node* node)
 {
-    return m_pjtSettings->GetPropertyImageBundle(parts, node);
+    return m_project->GetPropertyImageBundle(parts, node);
 }
 
 const ImageBundle* App::GetPropertyImageBundle(const ttlib::cstr& description, Node* node)
 {
-    return m_pjtSettings->GetPropertyImageBundle(description, node);
+    return m_project->GetPropertyImageBundle(description, node);
 }
 
 EmbeddedImage* App::GetEmbeddedImage(ttlib::sview path)
 {
-    return m_pjtSettings->GetEmbeddedImage(path);
+    return m_project->GetEmbeddedImage(path);
 }
 
 ttlib::cstr App::GetBundleFuncName(const ttlib::cstr& description)

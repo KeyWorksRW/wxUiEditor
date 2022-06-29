@@ -11,7 +11,7 @@
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "mainapp.h"        // App -- Main application class
 #include "node.h"           // Node class
-#include "pjtsettings.h"    // ProjectSettings -- Hold data for currently loaded project
+#include "project_class.h"  // Project class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
 

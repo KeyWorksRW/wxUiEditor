@@ -17,12 +17,12 @@ using namespace wxue_img;
 
 #include "pg_image.h"
 
-#include "bitmaps.h"      // Contains various images handling functions
-#include "mainapp.h"      // Main application class
-#include "mainframe.h"    // MainFrame -- Main window frame
-#include "node.h"         // Node -- Node class
-#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"        // Utility functions that work with properties
+#include "bitmaps.h"        // Contains various images handling functions
+#include "mainapp.h"        // Main application class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node -- Node class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "img_string_prop.h"  // wxSingleChoiceDialogAdapter
 #include "pg_point.h"         // CustomPointProperty -- Custom property grid class for wxPoint

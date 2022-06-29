@@ -5,11 +5,11 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "img_props.h"    // ImageProperties
-#include "mainapp.h"      // App -- Main application class
-#include "node.h"         // Node -- Node class
-#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"        // Utility functions that work with properties
+#include "img_props.h"      // ImageProperties
+#include "mainapp.h"        // App -- Main application class
+#include "node.h"           // Node -- Node class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 void ImageProperties::InitValues(const char* value)
 {

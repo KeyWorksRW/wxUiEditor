@@ -164,7 +164,7 @@ private:
 
     Node* m_form_node { nullptr };
     Node* m_ImagesForm { nullptr };
-    Node* m_project { nullptr };
+    Project* m_project { nullptr };
 
     PANEL_PAGE m_panel_type { NOT_PANEL };
 

@@ -23,10 +23,11 @@
 
 #include "convert_img.h"  // auto-generated: convert_img_base.h and convert_img_base.cpp
 
-#include "bitmaps.h"    // Map of bitmaps accessed by name
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
-#include "utils.h"      // Utility functions that work with properties
+#include "bitmaps.h"        // Map of bitmaps accessed by name
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "ui_images.h"
 

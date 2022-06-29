@@ -16,7 +16,7 @@
 #include "mainapp.h"                // App -- Main application class
 #include "mainframe.h"              // MainFrame -- Main window frame
 #include "node.h"                   // Node class
-#include "pjtsettings.h"            // ProjectSettings -- Hold data for currently loaded project
+#include "project_class.h"          // Project class
 
 using namespace GenEnum;
 
@@ -36,11 +36,6 @@ using namespace GenEnum;
 
 bool App::LoadProject(const ttString& file)
 {
-    delete m_pjtSettings;
-    m_pjtSettings = new ProjectSettings;
-
-    m_pjtSettings->SetProjectFile(file);
-
     pugi::xml_document doc;
     auto result = doc.load_file(file.wx_str());
     if (!result)
@@ -57,7 +52,7 @@ bool App::LoadProject(const ttString& file)
         return false;
     }
 
-    NodeSharedPtr project;
+    ProjectSharedPtr project;
 
     m_ProjectVersion = root.attribute("data_version").as_int((curWxuiMajorVer * 10) + curWxuiMinorVer);
 
@@ -119,16 +114,15 @@ bool App::LoadProject(const ttString& file)
     }
 
     m_project = project;
-
-    m_pjtSettings->SetProjectFile(file);
-    m_pjtSettings->SetProjectPath(file);
+    m_project->SetProjectFile(file);
+    m_project->SetProjectPath(file);
 
     {
         wxBusyCursor wait;
 
         ttSaveCwd cwd;
-        m_pjtSettings->GetProjectPath().ChangeDir();
-        m_pjtSettings->CollectBundles();
+        m_project->GetProjectPath().ChangeDir();
+        m_project->CollectBundles();
     }
 
     // Imported projects start with an older version so that they pass through the old project fixups.
@@ -146,9 +140,9 @@ bool App::LoadProject(const ttString& file)
     return true;
 }
 
-NodeSharedPtr App::LoadProject(pugi::xml_document& doc)
+ProjectSharedPtr App::LoadProject(pugi::xml_document& doc)
 {
-    NodeSharedPtr project;
+    ProjectSharedPtr project;
     try
     {
         auto root = doc.first_child();
@@ -164,7 +158,7 @@ NodeSharedPtr App::LoadProject(pugi::xml_document& doc)
             FAIL_MSG("Project does not have a \"node\" node.");
             throw std::runtime_error("Invalid project file");
         }
-        project = g_NodeCreator.CreateNode(node);
+        project = g_NodeCreator.CreateProjectClass(&node);
     }
     catch (const std::exception& TESTING_PARAM(e))
     {
@@ -427,6 +421,83 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
     return new_node;
 }
 
+ProjectSharedPtr NodeCreator::CreateProjectClass(pugi::xml_node* xml_obj)
+{
+    auto node_decl = m_a_declarations[gen_Project];
+    auto new_node = std::make_shared<Project>(node_decl);
+
+    // Calling GetBaseClassCount() is expensive, so do it once and store the result
+    auto node_info_base_count = m_a_declarations[gen_Project]->GetBaseClassCount();
+
+    size_t base = 0;
+    for (auto class_info = node_decl; class_info; class_info = node_decl->GetBaseClass(base++))
+    {
+        for (size_t index = 0; index < class_info->GetPropertyCount(); ++index)
+        {
+            auto prop_declaration = class_info->GetPropDeclaration(index);
+
+            // Set the default value, either from the property info, or an override from this class
+            auto defaultValue = prop_declaration->GetDefaultValue();
+            if (base > 0)
+            {
+                auto result = node_decl->GetOverRideDefValue(prop_declaration->get_name());
+                if (result)
+                    defaultValue = result.value();
+            }
+
+            auto prop = new_node->AddNodeProperty(prop_declaration);
+            prop->set_value(defaultValue);
+        }
+
+        for (size_t index = 0; index < class_info->GetEventCount(); ++index)
+        {
+            new_node->AddNodeEvent(class_info->GetEventInfo(index));
+        }
+
+        if (base >= node_info_base_count)
+            break;
+    }
+
+    if (!xml_obj)
+        return new_node;
+
+    for (auto& iter: xml_obj->attributes())
+    {
+        if (iter.name() == "class")
+            continue;
+
+        NodeProperty* prop = nullptr;
+        if (auto find_prop = rmap_PropNames.find(iter.name()); find_prop != rmap_PropNames.end())
+        {
+            prop = new_node->get_prop_ptr(find_prop->second);
+
+            if (prop)
+            {
+                if (prop->type() == type_bool)
+                {
+                    prop->set_value(iter.as_bool());
+                }
+                else
+                {
+                    prop->set_value(iter.value());
+                }
+            }
+        }
+    }
+
+    for (auto child = xml_obj->child("node"); child; child = child.next_sibling("node"))
+    {
+        CreateNode(child, new_node.get());
+    }
+
+    if (new_node->isGen(gen_wxGridBagSizer))
+    {
+        GridBag::GridBagSort(new_node.get());
+    }
+
+    return new_node;
+}
+
 bool App::ImportProject(ttString& file)
 {
 #if defined(INTERNAL_TESTING)
@@ -508,13 +579,6 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
             return false;
         }
 
-        if (m_pjtSettings && m_pjtSettings->GetProjectFile().filename() == "MyImportedProject")
-        {
-            m_pjtSettings->getProjectFile().remove_filename();
-            m_pjtSettings->getProjectFile().append_filename(file.filename().wx_str());
-            m_pjtSettings->getProjectFile().remove_extension();
-        }
-
         if (append && m_project->GetChildCount())
         {
             auto form = project.child("node");
@@ -527,21 +591,18 @@ bool App::Import(ImportXML& import, ttString& file, bool append)
             return true;
         }
 
-        delete m_pjtSettings;
-        m_pjtSettings = new ProjectSettings;
-
-        m_project = g_NodeCreator.CreateNode(project);
+        m_project = g_NodeCreator.CreateProjectClass(&project);
 
         file.remove_extension();
-        m_pjtSettings->SetProjectFile(file);
-        m_pjtSettings->SetProjectPath(file);
+        m_project->SetProjectFile(file);
+        m_project->SetProjectPath(file);
 
         {
             wxBusyCursor wait;
 
             ttSaveCwd cwd;
-            m_pjtSettings->GetProjectPath().ChangeDir();
-            m_pjtSettings->CollectBundles();
+            m_project->GetProjectPath().ChangeDir();
+            m_project->CollectBundles();
         }
 
 #if defined(_DEBUG)
@@ -588,15 +649,13 @@ bool App::NewProject(bool create_empty)
 
     if (create_empty)
     {
-        delete m_pjtSettings;
-        m_pjtSettings = new ProjectSettings;
+        m_project = g_NodeCreator.CreateProjectClass(nullptr);
+
         ttString file;
         file.assignCwd();
         file.append_filename(txtEmptyProject);
-        m_pjtSettings->SetProjectFile(file);
-        m_pjtSettings->SetProjectPath(file);
-
-        m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+        m_project->SetProjectFile(file);
+        m_project->SetProjectPath(file);
 
         wxGetFrame().FireProjectLoadedEvent();
         return true;
@@ -606,15 +665,13 @@ bool App::NewProject(bool create_empty)
     if (dlg.ShowModal() != wxID_OK)
         return false;
 
-    delete m_pjtSettings;
-    m_pjtSettings = new ProjectSettings;
+    m_project = g_NodeCreator.CreateProjectClass(nullptr);
+
     ttString file;
     file.assignCwd();
     file.append_filename("MyImportedProject");
-    m_pjtSettings->SetProjectFile(file);
-    m_pjtSettings->SetProjectPath(file);
-
-    m_project = g_NodeCreator.CreateNode(gen_Project, nullptr);
+    m_project->SetProjectFile(file);
+    m_project->SetProjectPath(file);
 
     ttlib::cstr imported_from;
 
@@ -687,9 +744,9 @@ bool App::NewProject(bool create_empty)
             path.replace_extension_wx(".wxui");
             path.make_absolute();
             path.backslashestoforward();
-            m_pjtSettings->SetProjectFile(path);
+            m_project->SetProjectFile(path);
             path.remove_filename();
-            m_pjtSettings->SetProjectPath(path);
+            m_project->SetProjectPath(path);
         }
         m_frame->SetImportedFlag();
     }
@@ -698,8 +755,8 @@ bool App::NewProject(bool create_empty)
         wxBusyCursor wait;
 
         ttSaveCwd cwd;
-        m_pjtSettings->GetProjectPath().ChangeDir();
-        m_pjtSettings->CollectBundles();
+        m_project->GetProjectPath().ChangeDir();
+        m_project->CollectBundles();
     }
 
     wxGetFrame().FireProjectLoadedEvent();
@@ -878,32 +935,24 @@ void App::AppendXRC(wxArrayString& files)
 
 const ttlib::cstr& App::getProjectFileName()
 {
-    if (!m_pjtSettings)
-        m_pjtSettings = new ProjectSettings;
-
-    return m_pjtSettings->getProjectFile();
+    ASSERT(m_project)
+    return m_project->getProjectFile();
 }
 
 const ttlib::cstr& App::getProjectPath()
 {
-    if (!m_pjtSettings)
-        m_pjtSettings = new ProjectSettings;
-
-    return m_pjtSettings->getProjectPath();
+    ASSERT(m_project)
+    return m_project->getProjectPath();
 }
 
 ttString App::GetProjectFileName()
 {
-    if (!m_pjtSettings)
-        m_pjtSettings = new ProjectSettings;
-
-    return m_pjtSettings->GetProjectFile();
+    ASSERT(m_project)
+    return m_project->GetProjectFile();
 }
 
 ttString App::GetProjectPath()
 {
-    if (!m_pjtSettings)
-        m_pjtSettings = new ProjectSettings;
-
-    return m_pjtSettings->GetProjectPath();
+    ASSERT(m_project)
+    return m_project->GetProjectPath();
 }

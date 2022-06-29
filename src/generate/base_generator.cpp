@@ -13,10 +13,11 @@
 
 #include "base_generator.h"
 
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
-#include "node_decl.h"  // NodeDeclaration class
-#include "node_prop.h"  // NodeProperty -- NodeProperty class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "node_decl.h"      // NodeDeclaration class
+#include "node_prop.h"      // NodeProperty -- NodeProperty class
+#include "project_class.h"  // Project class
 
 #include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 

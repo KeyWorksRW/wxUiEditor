@@ -22,6 +22,7 @@
 #include "node.h"             // Node class
 #include "node_creator.h"     // NodeCreator class
 #include "node_decl.h"        // NodeDeclaration class
+#include "project_class.h"    // Project class
 #include "propgrid_panel.h"   // PropGridPanel -- PropertyGrid class for node properties and events
 #include "undo_cmds.h"        // Undoable command classes derived from UndoAction
 #include "utils.h"            // Utility functions that work with properties

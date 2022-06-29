@@ -29,13 +29,13 @@
 
 #include "gen_base.h"
 
-#include "gen_common.h"   // GeneratorLibrary -- Generator classes
-#include "mainapp.h"      // App -- Main application class
-#include "mainframe.h"    // MainFrame -- Main window frame
-#include "node.h"         // Node class
-#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"        // Utility functions that work with properties
-#include "write_code.h"   // Write code to Scintilla or file
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "mainapp.h"        // App -- Main application class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // Write code to Scintilla or file
 
 #include "pugixml.hpp"
 

@@ -15,10 +15,10 @@
 
 #include "internal/code_compare_base.h"
 
-#include "gen_base.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainapp.h"      // App -- Main application class
-#include "node.h"         // Node class
-#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainapp.h"        // App -- Main application class
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
 
 #include "pugixml.hpp"
 

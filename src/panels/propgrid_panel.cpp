@@ -32,7 +32,7 @@
 #include "node_decl.h"       // NodeDeclaration class
 #include "node_prop.h"       // NodeProperty -- NodeProperty class
 #include "paths.h"           // Handles *_directory properties
-#include "pjtsettings.h"     // ProjectSettings -- Hold data for currently loaded project
+#include "project_class.h"   // Project class
 #include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 #include "utils.h"           // Utility functions that work with properties
 

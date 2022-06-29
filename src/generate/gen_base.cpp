@@ -15,14 +15,14 @@
 
 #include "gen_base.h"
 
-#include "gen_common.h"    // GeneratorLibrary -- Generator classes
-#include "mainapp.h"       // App -- Main application class
-#include "node.h"          // Node class
-#include "node_creator.h"  // NodeCreator class
-#include "node_decl.h"     // NodeDeclaration class
-#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"         // Utility functions that work with properties
-#include "write_code.h"    // Write code to Scintilla or file
+#include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "mainapp.h"        // App -- Main application class
+#include "node.h"           // Node class
+#include "node_creator.h"   // NodeCreator class
+#include "node_decl.h"      // NodeDeclaration class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // Write code to Scintilla or file
 
 using namespace GenEnum;
 

@@ -10,10 +10,11 @@
 
 #include "img_string_prop.h"
 
-#include "art_prop_dlg.h"  // ArtBrowserDialog -- Art Property Dialog for image property
-#include "mainapp.h"       // MoveDirection -- Main application class
-#include "node.h"          // Node -- Node class
-#include "utils.h"         // Utility functions that work with properties
+#include "art_prop_dlg.h"   // ArtBrowserDialog -- Art Property Dialog for image property
+#include "mainapp.h"        // MoveDirection -- Main application class
+#include "node.h"           // Node -- Node class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WXUNUSED(property))
 {

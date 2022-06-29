@@ -7,11 +7,12 @@
 
 #include "cstm_event.h"
 
-#include "mainapp.h"     // App -- Main application class
-#include "mainframe.h"   // MainFrame -- Main window frame
-#include "node_event.h"  // NodeEventInfo -- NodeEvent and NodeEventInfo classes
-#include "node_prop.h"   // NodeProperty class
-#include "undo_cmds.h"   // Undoable command classes derived from UndoAction
+#include "mainapp.h"        // App -- Main application class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node_event.h"     // NodeEventInfo -- NodeEvent and NodeEventInfo classes
+#include "node_prop.h"      // NodeProperty class
+#include "project_class.h"  // Project class
+#include "undo_cmds.h"      // Undoable command classes derived from UndoAction
 
 wxDEFINE_EVENT(EVT_ProjectUpdated, CustomEvent);
 wxDEFINE_EVENT(EVT_EventHandlerChanged, CustomEvent);

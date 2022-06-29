@@ -7,8 +7,8 @@
 
 #include "new_common.h"
 
-#include "mainapp.h"  // App -- Main application class
-#include "node.h"     // Node class
+#include "mainapp.h"        // App -- Main application class
+#include "project_class.h"  // Project class
 
 void UpdateFormClass(Node* form_node)
 {

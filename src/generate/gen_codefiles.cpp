@@ -9,10 +9,11 @@
 
 #include "mainframe.h"
 
-#include "gen_base.h"    // BaseCodeGenerator -- Generate Base class
-#include "mainapp.h"     // App -- Main application class
-#include "node.h"        // Node class
-#include "write_code.h"  // Write code to Scintilla or file
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Base class
+#include "mainapp.h"        // App -- Main application class
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
+#include "write_code.h"     // Write code to Scintilla or file
 
 bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
 {
@@ -204,9 +205,9 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
 
 void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
 {
-    auto& project = wxGetApp().GetProjectPtr();
+    auto project = GetProject();
     ttlib::cwd cwd;
-    ttlib::ChangeDir(wxGetApp().getProjectPath());
+    ttlib::ChangeDir(GetProject()->getProjectPath());
     ttlib::cstr path;
     std::vector<ttlib::cstr> results;
 
@@ -232,7 +233,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
             path = file;
             if (path.empty())
                 continue;
-            path.make_relative(wxGetApp().getProjectPath());
+            path.make_relative(GetProject()->getProjectPath());
             path.backslashestoforward();
             path.replace_extension(source_ext);
             if (path.file_exists())
@@ -258,7 +259,7 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
         codegen.SetSrcWriteCode(cpp_cw.get());
 
-        auto retval = codegen.GenerateDerivedClass(project.get(), form.get());
+        auto retval = codegen.GenerateDerivedClass(project, form.get());
         ASSERT_MSG(retval != result::exists, "this should be impossible since we checked above")
         if (retval == result::fail)
         {

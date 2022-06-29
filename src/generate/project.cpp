@@ -7,11 +7,12 @@
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include "gen_base.h"   // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
-#include "node_prop.h"  // NodeProperty -- NodeProperty class
-#include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "node_prop.h"      // NodeProperty -- NodeProperty class
+#include "project_class.h"  // Project class
+#include "undo_cmds.h"      // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 #include "wxui/newdialog_base.h"  // NewDialog -- Dialog for creating a new project dialog
 #include "wxui/newframe_base.h"   // NewFrame -- Dialog for creating a new project wxFrame

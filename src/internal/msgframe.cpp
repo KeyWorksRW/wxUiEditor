@@ -18,6 +18,7 @@
 #include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
+#include "project_class.h"   // Project class
 
 #include "pugixml.hpp"
 

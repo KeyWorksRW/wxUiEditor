@@ -7,12 +7,12 @@
 
 #include "import_xml.h"
 
-#include "gen_enums.h"    // Enumerations for generators
-#include "mainapp.h"      // App -- Main application class
-#include "mainframe.h"    // Main window frame
-#include "node.h"         // Node class
-#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"        // Utility functions that work with properties
+#include "gen_enums.h"      // Enumerations for generators
+#include "mainapp.h"        // App -- Main application class
+#include "mainframe.h"      // Main window frame
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 using namespace GenEnum;
 
@@ -877,7 +877,6 @@ GenEnum::PropName ImportXML::MapPropName(std::string_view name) const
         {
             return result->second;
         }
-
     }
     return prop_unknown;
 }

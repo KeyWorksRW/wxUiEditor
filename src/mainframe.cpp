@@ -39,7 +39,7 @@
 #include "node_creator.h"    // NodeCreator class
 #include "node_gridbag.h"    // GridBag -- Create and modify a node containing a wxGridBagSizer
 #include "node_prop.h"       // NodeProperty -- NodeProperty class
-#include "pjtsettings.h"     // ProjectSettings -- Hold data for currently loaded project
+#include "project_class.h"   // Project class
 #include "undo_cmds.h"       // InsertNodeAction -- Undoable command classes derived from UndoAction
 #include "utils.h"           // Utility functions that work with properties
 #include "wakatime.h"        // WakaTime -- Updates WakaTime metrics
@@ -310,7 +310,7 @@ void MainFrame::OnSaveProject(wxCommandEvent& event)
     else
     {
         pugi::xml_document doc;
-        wxGetApp().GetProjectPtr()->CreateDoc(doc);
+        GetProject()->CreateDoc(doc);
         if (doc.save_file(wxGetApp().getProjectFileName().c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
@@ -374,7 +374,7 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
         }
 
         pugi::xml_document doc;
-        wxGetApp().GetProjectPtr()->CreateDoc(doc);
+        GetProject()->CreateDoc(doc);
         if (doc.save_file(filename.sub_cstr().c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;

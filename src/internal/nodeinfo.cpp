@@ -11,10 +11,11 @@
 
 #include "nodeinfo_base.h"  // auto-generated: nodeinfo_base.h and nodeinfo_base.cpp
 
-#include "mainapp.h"     // App -- Main application class
-#include "mainframe.h"   // Main window frame
-#include "node.h"        // Node class
-#include "undo_stack.h"  // UndoAction -- Maintain a undo and redo stack
+#include "mainapp.h"        // App -- Main application class
+#include "mainframe.h"      // Main window frame
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
+#include "undo_stack.h"     // UndoAction -- Maintain a undo and redo stack
 
 struct NodeMemory
 {

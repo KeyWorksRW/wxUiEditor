@@ -10,15 +10,16 @@
 
 #include "node.h"
 
-#include "appoptions.h"    // AppOptions -- Application-wide options
-#include "gridbag_item.h"  // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
-#include "image_bundle.h"  // This will #include wx/bmpbndl.h and wx/bitmap.h
-#include "mainframe.h"     // MainFrame -- Main window frame
-#include "node_creator.h"  // NodeCreator class
-#include "node_decl.h"     // NodeDeclaration class
-#include "node_gridbag.h"  // GridBag -- Create and modify a node containing a wxGridBagSizer
-#include "node_prop.h"     // NodeProperty -- NodeProperty class
-#include "undo_cmds.h"     // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "appoptions.h"     // AppOptions -- Application-wide options
+#include "gridbag_item.h"   // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
+#include "image_bundle.h"   // This will #include wx/bmpbndl.h and wx/bitmap.h
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node_creator.h"   // NodeCreator class
+#include "node_decl.h"      // NodeDeclaration class
+#include "node_gridbag.h"   // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "node_prop.h"      // NodeProperty -- NodeProperty class
+#include "project_class.h"  // Project class
+#include "undo_cmds.h"      // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 using namespace GenEnum;
 

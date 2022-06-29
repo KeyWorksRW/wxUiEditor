@@ -14,6 +14,7 @@
 #include "node.h"                 // Node class
 #include "node_creator.h"         // NodeCreator -- Class used to create nodes
 #include "node_gridbag.h"         // GridBag -- Create and modify a node containing a wxGridBagSizer
+#include "project_class.h"        // Project class
 
 ///////////////////////////////// InsertNodeAction ////////////////////////////////////
 

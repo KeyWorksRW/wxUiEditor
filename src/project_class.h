@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Hold data for currently loaded project
+// Purpose:   Project class
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
@@ -13,7 +13,7 @@
 
 #include "image_bundle.h"  // This will #include wx/bmpbndl.h and wx/bitmap.h
 
-#include "node_classes.h"  // Forward defintions of Node classes
+#include "node.h"  // Node class
 
 class wxAnimation;
 
@@ -28,10 +28,10 @@ struct EmbeddedImage
 
 wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description);
 
-class ProjectSettings
+class Project : public Node
 {
 public:
-    ProjectSettings();
+    Project(NodeDeclaration* declaration) : Node(declaration) {}
 
     // This will parse the entire project, and ensure that each embedded image is associated
     // with the form node of the form it first appears in.
@@ -139,3 +139,5 @@ private:
     // std::string is parts[IndexImage].filename()
     std::map<std::string, std::unique_ptr<EmbeddedImage>, std::less<>> m_map_embedded;
 };
+
+Project* GetProject();

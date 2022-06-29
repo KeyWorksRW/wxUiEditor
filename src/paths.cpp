@@ -12,10 +12,11 @@
 
 #include "paths.h"
 
-#include "mainapp.h"    // Main application class
-#include "mainframe.h"  // MainFrame -- Main window frame
-#include "node.h"       // Node class
-#include "undo_cmds.h"  // InsertNodeAction -- Undoable command classes derived from UndoAction
+#include "mainapp.h"        // Main application class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
+#include "undo_cmds.h"      // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, Node* /* node */)
 {

@@ -18,10 +18,10 @@
 
 #include "pugixml.hpp"  // xml parser
 
-#include "mainapp.h"      // compiler_standard -- Main application class
-#include "node.h"         // Node class
-#include "pjtsettings.h"  // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"        // Utility functions that work with properties
+#include "mainapp.h"        // compiler_standard -- Main application class
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 // Note that we do *not* support @1_5x or @2x as suffixes. Since these suffixes will become part of the string name when
 // converted to an embedded character array, the compiler will not accept the '@' character. We could of course change it,
@@ -45,7 +45,58 @@ inline ttlib::cstr ConvertToLookup(const ttlib::cstr& description)
     return lookup_str;
 }
 
-void ProjectSettings::CollectBundles()
+static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
+{
+    size_t buf_size;
+    if (size == tt::npos || size > (64 * 1024))
+        buf_size = (64 * 1024);
+    else
+        buf_size = size;
+
+    auto read_buf = std::make_unique<unsigned char[]>(buf_size);
+    auto read_size = buf_size;
+
+    size_t copied_data = 0;
+    for (;;)
+    {
+        if (size != tt::npos && copied_data + read_size > size)
+            read_size = size - copied_data;
+        inputStream->Read(read_buf.get(), read_size);
+
+        auto actually_read = inputStream->LastRead();
+        outputStream->Write(read_buf.get(), actually_read);
+        if (outputStream->LastWrite() != actually_read)
+        {
+            return false;
+        }
+
+        if (size == tt::npos)
+        {
+            if (inputStream->Eof())
+                break;
+        }
+        else
+        {
+            copied_data += actually_read;
+            if (copied_data >= size)
+                break;
+        }
+    }
+
+    return true;
+}
+
+wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description)
+{
+    size_t org_size = (embed->array_size >> 32);
+    auto str = std::make_unique<char[]>(org_size);
+    wxMemoryInputStream stream_in(embed->array_data.get(), embed->array_size & 0xFFFFFFFF);
+    wxZlibInputStream zlib_strm(stream_in);
+    zlib_strm.Read(str.get(), org_size);
+    return wxBitmapBundle::FromSVG(str.get(), get_image_prop_size(size_description));
+}
+
+void Project::CollectBundles()
 {
     for (const auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
     {
@@ -61,7 +112,7 @@ void ProjectSettings::CollectBundles()
     }
 }
 
-void ProjectSettings::CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr& form)
+void Project::CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr& form)
 {
     for (auto& iter: node->get_props_vector())
     {
@@ -97,7 +148,7 @@ void ProjectSettings::CollectNodeBundles(const NodeSharedPtr& node, const NodeSh
     }
 }
 
-bool ProjectSettings::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form)
+bool Project::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form)
 {
     ASSERT(parts.size() > 1)
 
@@ -246,58 +297,7 @@ bool ProjectSettings::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::
     return true;
 }
 
-static bool CopyStreamData(wxInputStream* inputStream, wxOutputStream* outputStream, size_t size)
-{
-    size_t buf_size;
-    if (size == tt::npos || size > (64 * 1024))
-        buf_size = (64 * 1024);
-    else
-        buf_size = size;
-
-    auto read_buf = std::make_unique<unsigned char[]>(buf_size);
-    auto read_size = buf_size;
-
-    size_t copied_data = 0;
-    for (;;)
-    {
-        if (size != tt::npos && copied_data + read_size > size)
-            read_size = size - copied_data;
-        inputStream->Read(read_buf.get(), read_size);
-
-        auto actually_read = inputStream->LastRead();
-        outputStream->Write(read_buf.get(), actually_read);
-        if (outputStream->LastWrite() != actually_read)
-        {
-            return false;
-        }
-
-        if (size == tt::npos)
-        {
-            if (inputStream->Eof())
-                break;
-        }
-        else
-        {
-            copied_data += actually_read;
-            if (copied_data >= size)
-                break;
-        }
-    }
-
-    return true;
-}
-
-wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description)
-{
-    size_t org_size = (embed->array_size >> 32);
-    auto str = std::make_unique<char[]>(org_size);
-    wxMemoryInputStream stream_in(embed->array_data.get(), embed->array_size & 0xFFFFFFFF);
-    wxZlibInputStream zlib_strm(stream_in);
-    zlib_strm.Read(str.get(), org_size);
-    return wxBitmapBundle::FromSVG(str.get(), get_image_prop_size(size_description));
-}
-
-bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
+bool Project::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
 {
     wxFFileInputStream stream(path.wx_str());
     if (!stream.IsOk())
@@ -373,7 +373,7 @@ bool ProjectSettings::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
     return false;
 }
 
-ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::multistr& parts, Node* node)
+ImageBundle* Project::ProcessBundleProperty(const ttlib::multistr& parts, Node* node)
 {
     ASSERT(parts.size() > 1)
 
@@ -444,9 +444,9 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::multistr& parts
             path.Replace("_16x16.", "_24x24.");
             if (!path.file_exists())
             {
-                if (wxGetApp().GetProjectPtr()->HasValue(prop_art_directory))
+                if (GetProject()->HasValue(prop_art_directory))
                 {
-                    path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
+                    path = GetProject()->prop_as_string(prop_art_directory);
                     path.append_filename(parts[IndexImage]);
                     path.Replace("_16x16.", "_24x24.");
                     if (path.file_exists())
@@ -473,9 +473,9 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::multistr& parts
             path.Replace("_24x24.", "_36x36.");
             if (!path.file_exists())
             {
-                if (wxGetApp().GetProjectPtr()->HasValue(prop_art_directory))
+                if (GetProject()->HasValue(prop_art_directory))
                 {
-                    path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
+                    path = GetProject()->prop_as_string(prop_art_directory);
                     path.append_filename(parts[IndexImage]);
                     path.Replace("_24x24.", "_36x36.");
                     if (path.file_exists())
@@ -505,9 +505,9 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::multistr& parts
                 path.insert(pos, iter);
                 if (!path.file_exists())
                 {
-                    if (wxGetApp().GetProjectPtr()->HasValue(prop_art_directory))
+                    if (GetProject()->HasValue(prop_art_directory))
                     {
-                        ttlib::cstr tmp_path = wxGetApp().GetProjectPtr()->prop_as_string(prop_art_directory);
+                        ttlib::cstr tmp_path = GetProject()->prop_as_string(prop_art_directory);
                         tmp_path.append_filename(path);
                         if (tmp_path.file_exists())
                         {
@@ -561,7 +561,7 @@ ImageBundle* ProjectSettings::ProcessBundleProperty(const ttlib::multistr& parts
     return &m_bundles[lookup_str];
 }
 
-bool ProjectSettings::AddSvgBundleImage(ttlib::cstr path, Node* form)
+bool Project::AddSvgBundleImage(ttlib::cstr path, Node* form)
 {
     // Run the file through an XML parser so that we can remove content that isn't used, as well as removing line breaks,
     // leading spaces, etc.

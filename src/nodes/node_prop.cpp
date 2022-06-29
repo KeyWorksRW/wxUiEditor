@@ -12,13 +12,12 @@
 #include <wx/animate.h>                // wxAnimation and wxAnimationCtrl
 #include <wx/propgrid/propgriddefs.h>  // wxPropertyGrid miscellaneous definitions
 
-#include "font_prop.h"     // FontProperty -- FontProperty class
-#include "mainapp.h"       // App -- App class
-#include "mainapp.h"       // App -- Main application class
-#include "node.h"          // Node -- Node class
-#include "node_creator.h"  // NodeCreator class
-#include "pjtsettings.h"   // ProjectSettings -- Hold data for currently loaded project
-#include "utils.h"         // Utility functions that work with properties
+#include "font_prop.h"      // FontProperty -- FontProperty class
+#include "mainapp.h"        // App -- Main application class
+#include "node.h"           // Node -- Node class
+#include "node_creator.h"   // NodeCreator class
+#include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "node_prop.h"
 

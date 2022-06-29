@@ -13,6 +13,7 @@
 #include "new_common.h"              // Contains code common between all new_ dialogs
 #include "node.h"                    // Node class
 #include "node_creator.h"            // NodeCreator -- Class used to create nodes
+#include "project_class.h"           // Project class
 #include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 void NewRibbon::OnInit(wxInitDialogEvent& event)

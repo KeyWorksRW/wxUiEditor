@@ -26,7 +26,8 @@
 // This function is almost identical to MockupContent::CreateChildren. However, the Mockup version assumes the top window is
 // a wxPanel, whereas this version assumes the top version is a form.
 
-void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxSizer* parent_sizer, wxWindow* form_window)
+void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxSizer* parent_sizer,
+                          wxWindow* form_window)
 {
     auto generator = node->GetGenerator();
     ASSERT_MSG(generator, ttlib::cstr() << "Missing component for " << node->DeclName());
@@ -215,7 +216,7 @@ void MainFrame::OnMockupPreview(wxCommandEvent& /* event */)
     {
         if (form_node->isGen(gen_Project) && form_node->GetChildCount())
         {
-            form_node = form_node->GetChild(0);
+            form_node = wxGetApp().GetFirstFormChild();
         }
         else
         {

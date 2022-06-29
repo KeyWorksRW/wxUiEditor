@@ -165,7 +165,7 @@ void BasePanel::GenerateBaseClass()
     {
         if (project->GetChildCount() > 0)
         {
-            m_cur_form = project->GetChild(0);
+            m_cur_form = wxGetApp().GetFirstFormChild();
         }
         else
         {

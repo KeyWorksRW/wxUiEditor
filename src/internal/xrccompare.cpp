@@ -46,7 +46,7 @@ void MainFrame::OnCompareXrcDlg(wxCommandEvent& /* event */)
     {
         if (form_node->isGen(gen_Project) && form_node->GetChildCount())
         {
-            form_node = form_node->GetChild(0);
+            form_node = wxGetApp().GetFirstFormChild();
         }
         else
         {

@@ -436,16 +436,26 @@ std::string GenerateXrcStr(Node* node_start, bool add_comments, bool is_preview)
 void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
 {
     m_project = wxGetApp().GetProject();
-    m_form_node = form_node;
-
     m_panel_type = panel_type;
 
     m_header->Clear();
     m_source->Clear();
 
+    if (form_node)
+    {
+        m_form_node = form_node;
+    }
+    else
+    {
+        m_form_node = wxGetApp().GetFirstFormChild();
+    }
+
+    if (!m_form_node)
+        return;
+
     if (m_panel_type != HDR_PANEL)
     {
-        auto doc_str = GenerateXrcStr(form_node ? form_node : m_project, m_panel_type == CPP_PANEL);
+        auto doc_str = GenerateXrcStr(m_form_node, m_panel_type == CPP_PANEL);
         m_source->doWrite(doc_str);
     }
 
@@ -453,7 +463,7 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
     {
         if (form_node != m_project)
         {
-            m_header->writeLine(ttlib::cstr("Resource name is ") << form_node->prop_as_string(prop_class_name));
+            m_header->writeLine(ttlib::cstr("Resource name is ") << m_form_node->prop_as_string(prop_class_name));
             m_header->writeLine();
         }
         m_header->writeLine("Required handlers:");
@@ -461,7 +471,7 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
         m_header->Indent();
 
         std::set<std::string> handlers;
-        CollectHandlers(form_node, handlers);
+        CollectHandlers(m_form_node, handlers);
         for (auto& iter: handlers)
         {
             m_header->writeLine(iter);

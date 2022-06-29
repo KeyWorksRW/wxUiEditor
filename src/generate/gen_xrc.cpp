@@ -30,7 +30,6 @@
 #include "gen_base.h"
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "mainapp.h"        // App -- Main application class
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class

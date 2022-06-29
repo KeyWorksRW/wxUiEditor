@@ -8,7 +8,6 @@
 #include "import_xml.h"
 
 #include "gen_enums.h"      // Enumerations for generators
-#include "mainapp.h"        // App -- Main application class
 #include "mainframe.h"      // Main window frame
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class

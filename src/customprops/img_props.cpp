@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "img_props.h"      // ImageProperties
-#include "mainapp.h"        // App -- Main application class
 #include "node.h"           // Node -- Node class
 #include "project_class.h"  // Project class
 #include "utils.h"          // Utility functions that work with properties

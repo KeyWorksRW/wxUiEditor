@@ -12,7 +12,6 @@
 
 #include "paths.h"
 
-#include "mainapp.h"        // Main application class
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
@@ -39,7 +38,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
 
         auto result = wxMessageBox(ttlib::cstr() << "The directory \"" << newValue.wx_str()
                                                  << "\" does not exist. Do you want to use this name anyway?",
-                                   "Directory doesn't exist", wxYES_NO | wxICON_WARNING, wxGetApp().GetMainFrame());
+                                   "Directory doesn't exist", wxYES_NO | wxICON_WARNING, GetMainFrame());
         if (focus)
         {
             focus->SetFocus();

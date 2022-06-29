@@ -448,4 +448,10 @@ inline MainFrame& wxGetFrame()
     return *wxGetApp().GetMainFrame();
 }
 
+inline MainFrame* GetMainFrame()
+{
+    ASSERT_MSG(wxGetApp().GetMainFrame(), "MainFrame hasn't been created yet.");
+    return wxGetApp().GetMainFrame();
+}
+
 extern const char* txtEmptyProject;  // "Empty Project"

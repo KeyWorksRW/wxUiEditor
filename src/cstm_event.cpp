@@ -7,7 +7,6 @@
 
 #include "cstm_event.h"
 
-#include "mainapp.h"        // App -- Main application class
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node_event.h"     // NodeEventInfo -- NodeEvent and NodeEventInfo classes
 #include "node_prop.h"      // NodeProperty class

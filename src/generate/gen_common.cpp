@@ -12,7 +12,6 @@
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "image_bundle.h"   // Functions for working with wxBitmapBundle
 #include "lambdas.h"        // Functions for formatting and storage of lamda events
-#include "mainapp.h"        // App -- App class
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 #include "utils.h"          // Utility functions that work with properties

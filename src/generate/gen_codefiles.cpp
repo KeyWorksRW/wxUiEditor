@@ -10,7 +10,6 @@
 #include "mainframe.h"
 
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Base class
-#include "mainapp.h"        // App -- Main application class
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 #include "write_code.h"     // Write code to Scintilla or file

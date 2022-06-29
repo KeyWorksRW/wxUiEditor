@@ -16,7 +16,6 @@
 
 #include "bitmaps.h"        // Contains various images handling functions
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainapp.h"        // compiler_standard -- Main application class
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class

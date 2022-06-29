@@ -9,7 +9,6 @@
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "mainapp.h"        // App -- Main application class
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 #include "pugixml.hpp"      // xml read/write/create/process

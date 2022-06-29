@@ -11,7 +11,6 @@
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainapp.h"        // App -- Main application class
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 

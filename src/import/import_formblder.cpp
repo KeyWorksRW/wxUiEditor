@@ -15,7 +15,6 @@
 
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "font_prop.h"       // FontProperty class
-#include "mainapp.h"         // App -- Main application class
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class

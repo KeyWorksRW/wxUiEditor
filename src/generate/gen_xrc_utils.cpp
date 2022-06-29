@@ -8,7 +8,6 @@
 #include "gen_xrc_utils.h"
 
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainapp.h"        // App -- App class
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 #include "utils.h"          // Utility functions that work with properties

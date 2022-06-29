@@ -10,7 +10,6 @@
 
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "mainapp.h"        // App -- App class
 #include "node.h"           // Node class
 #include "node_prop.h"      // NodeProperty -- NodeProperty class
 #include "project_class.h"  // Project class

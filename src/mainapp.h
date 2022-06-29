@@ -9,8 +9,6 @@
 
 #include <wx/app.h>  // wxAppBase class and macros used for declaration of wxApp
 
-#include <wx/bmpbndl.h>
-
 #include "node_classes.h"  // Forward defintions of Node classes
 
 class Project;

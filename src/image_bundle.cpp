@@ -18,7 +18,6 @@
 
 #include "pugixml.hpp"  // xml parser
 
-#include "mainapp.h"        // compiler_standard -- Main application class
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 #include "utils.h"          // Utility functions that work with properties

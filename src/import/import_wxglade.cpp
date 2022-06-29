@@ -8,7 +8,6 @@
 #include "import_wxglade.h"
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
-#include "mainapp.h"         // App -- Main application class
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
 #include "project_class.h"   // Project class

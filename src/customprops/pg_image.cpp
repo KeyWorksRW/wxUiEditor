@@ -18,7 +18,6 @@ using namespace wxue_img;
 #include "pg_image.h"
 
 #include "bitmaps.h"        // Contains various images handling functions
-#include "mainapp.h"        // Main application class
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node -- Node class
 #include "project_class.h"  // Project class

@@ -160,7 +160,7 @@ void NavigationPanel::OnProjectUpdated()
     m_tree_node_map.clear();
     m_node_tree_map.clear();
 
-    if (auto project = wxGetApp().GetProject(); project)
+    if (auto project = GetProject(); project)
     {
         auto root = m_tree_ctrl->AddRoot(GetDisplayName(project), GetImageIndex(project), -1);
         m_node_tree_map[project] = root;
@@ -453,7 +453,7 @@ ttlib::cstr NavigationPanel::GetDisplayName(Node* node) const
     else
     {
         if (node->isGen(gen_Project))
-            display_name << "Project: " << wxGetApp().getProjectFileName().filename();
+            display_name << "Project: " << GetProject()->getProjectFile().filename();
         else if (node->isGen(gen_wxContextMenuEvent))
         {
             display_name = node->prop_as_string(prop_handler_name);

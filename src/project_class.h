@@ -39,7 +39,10 @@ public:
     // Returns true if an associated node changed
     bool UpdateEmbedNodes();
 
+    // lower-case version returns cstr, GetProjectFile returns ttString.
     ttlib::cstr& getProjectFile() { return m_projectFile; }
+
+    // upper-case version returns ttString, getProjectFile returns cstr.
     ttString GetProjectFile() { return ttString() << m_projectFile.wx_str(); }
 
     ttlib::cstr& SetProjectFile(const ttString& file);
@@ -52,6 +55,22 @@ public:
 
     // Returns the directory the project file is in as a ttString
     ttString GetProjectPath() { return ttString() << m_projectPath.wx_str(); }
+
+    ttlib::cstr getArtDirectory();
+    ttString GetArtDirectory();
+
+    ttString GetBaseDirectory();
+    ttString GetDerivedDirectory();
+
+    // Returns the first project child that is a form, or nullptr if not form children found.
+    Node* GetFirstFormChild();
+
+    wxImage GetImage(const ttlib::cstr& description);
+
+    wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
+
+    // If there is an Image form containing this bundle, return it's name
+    ttlib::cstr GetBundleFuncName(const ttlib::cstr& description);
 
     // This takes the full bitmap property description and uses that to determine the image
     // to load. The image is cached for as long as the project is open.

@@ -98,7 +98,7 @@ wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description)
 
 void Project::CollectBundles()
 {
-    for (const auto& form: wxGetApp().GetProject()->GetChildNodePtrs())
+    for (const auto& form: GetProject()->GetChildNodePtrs())
     {
         CollectNodeBundles(form, form);
 
@@ -159,9 +159,9 @@ bool Project::AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr pat
 
     if (!path.file_exists())
     {
-        if (wxGetApp().GetProject()->HasValue(prop_art_directory))
+        if (GetProject()->HasValue(prop_art_directory))
         {
-            ttlib::cstr art_path = wxGetApp().GetProject()->prop_as_string(prop_art_directory);
+            ttlib::cstr art_path = GetProject()->prop_as_string(prop_art_directory);
             art_path.append_filename(path);
             if (!art_path.file_exists())
             {
@@ -428,7 +428,7 @@ ImageBundle* Project::ProcessBundleProperty(const ttlib::multistr& parts, Node* 
         }
     }
 
-    auto image_first = wxGetApp().GetProjectSettings()->GetPropertyBitmap(parts, false);
+    auto image_first = GetProject()->GetPropertyBitmap(parts, false);
     if (!image_first.IsOk())
     {
         return nullptr;

@@ -16,10 +16,11 @@
 
 #include "tttextfile.h"  // ttlib::viewfile
 
-#include "gen_xrc.h"     // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "mainframe.h"   // MainFrame -- Main window frame
-#include "node.h"        // Node class
-#include "xrcpreview.h"  // auto-generated: xrcpreview_base.h and xrcpreview_base.cpp
+#include "gen_xrc.h"        // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "mainframe.h"      // MainFrame -- Main window frame
+#include "node.h"           // Node class
+#include "project_class.h"  // Project class
+#include "xrcpreview.h"     // auto-generated: xrcpreview_base.h and xrcpreview_base.cpp
 
 #include "pugixml.hpp"
 
@@ -177,7 +178,7 @@ void XrcPreview::OnInit(wxInitDialogEvent& event)
 
 void XrcPreview::OnExport(wxCommandEvent& WXUNUSED(event))
 {
-    wxFileDialog dialog(this, "Export Project As XRC", wxGetApp().GetProjectPath(), "preview_test.xrc",
+    wxFileDialog dialog(this, "Export Project As XRC", GetProject()->GetProjectPath(), "preview_test.xrc",
                         "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)

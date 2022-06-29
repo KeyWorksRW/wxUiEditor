@@ -32,7 +32,7 @@ void ImageProperties::InitValues(const char* value)
         }
         else
         {
-            auto img_bundle = wxGetApp().GetPropertyImageBundle(value);
+            auto img_bundle = GetProject()->GetPropertyImageBundle(value);
             if (img_bundle)
             {
                 m_size = img_bundle->bundle.GetDefaultSize();
@@ -50,11 +50,11 @@ ttlib::cstr ImageProperties::CombineValues()
 {
     if (type.size() && type != "Art")
     {
-        if (!image.file_exists() && wxGetApp().GetProject()->HasValue(prop_art_directory))
+        if (!image.file_exists() && GetProject()->HasValue(prop_art_directory))
         {
-            auto path = wxGetApp().GetProject()->prop_as_string(prop_art_directory);
+            auto path = GetProject()->prop_as_string(prop_art_directory);
             path.append_filename(image);
-            path.make_relative(wxGetApp().getProjectPath());
+            path.make_relative(GetProject()->getProjectPath());
             if (path.file_exists())
             {
                 image = path;

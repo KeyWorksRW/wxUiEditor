@@ -103,7 +103,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
         // Our directory is probably already set correctly, but this will make certain that it is.
 
         ttSaveCwd save_cwd;
-        wxSetWorkingDirectory(wxGetApp().GetProjectPath());
+        wxSetWorkingDirectory(GetProject()->GetProjectPath());
 
         if (form_node->isGen(gen_wxDialog) &&
             (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
@@ -204,7 +204,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
 
 void MainFrame::OnExportXRC(wxCommandEvent& WXUNUSED(event))
 {
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
     if (project->GetChildCount() == 0)
     {
         wxMessageBox("This project does not yet contain any forms -- nothing to save!", "Export XRC");
@@ -221,7 +221,7 @@ void MainFrame::OnExportXRC(wxCommandEvent& WXUNUSED(event))
             out_file.replace_extension(".xrc");
         }
 
-        wxFileDialog dialog(this, "Export Project As XRC", wxGetApp().GetProjectPath(), out_file.wx_str(),
+        wxFileDialog dialog(this, "Export Project As XRC", GetProject()->GetProjectPath(), out_file.wx_str(),
                             "XRC File (*.xrc)|*.xrc", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
         if (dialog.ShowModal() != wxID_OK)
@@ -435,7 +435,7 @@ std::string GenerateXrcStr(Node* node_start, bool add_comments, bool is_preview)
 
 void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
 {
-    m_project = wxGetApp().GetProject();
+    m_project = GetProject();
     m_panel_type = panel_type;
 
     m_header->Clear();
@@ -447,7 +447,7 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
     }
     else
     {
-        m_form_node = wxGetApp().GetFirstFormChild();
+        m_form_node = GetProject()->GetFirstFormChild();
     }
 
     if (!m_form_node)
@@ -481,7 +481,7 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
 
 bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
 {
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
     if (project->GetChildCount() == 0)
     {
         if (NeedsGenerateCheck)
@@ -492,7 +492,7 @@ bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
     }
 
     ttSaveCwd cwd;
-    ttlib::ChangeDir(wxGetApp().getProjectPath());
+    GetProject()->GetProjectPath().ChangeDir();
 
     if (out_file.size())
     {
@@ -506,7 +506,7 @@ bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
         root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
         root.append_attribute("version") = "2.5.3.0";
 
-        GenXrcObject(wxGetApp().GetProject(), root, false);
+        GenXrcObject(GetProject(), root, false);
         if (!doc.save_file(out_file.c_str(), "\t"))
         {
             wxMessageBox(wxString("An unexpected error occurred exporting ") << out_file, "Export XRC");

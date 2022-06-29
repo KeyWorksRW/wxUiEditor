@@ -43,7 +43,7 @@ wxObject* ImagesGenerator::CreateMockup(Node* /* node */, wxObject* wxobject)
     auto node = wxGetFrame().GetSelectedNode();
     if (node->isGen(gen_embedded_image))
     {
-        auto bundle = wxGetApp().GetPropertyImageBundle(node->prop_as_string(prop_bitmap));
+        auto bundle = GetProject()->GetPropertyImageBundle(node->prop_as_string(prop_bitmap));
 
         ttlib::multiview mstr(node->prop_as_string(prop_bitmap), ';');
 
@@ -152,8 +152,7 @@ void BaseCodeGenerator::GenerateImagesForm()
         return;
     }
 
-    auto pjsettings = wxGetApp().GetProjectSettings();
-    bool is_old_widgets = (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1");
+    bool is_old_widgets = (GetProject()->value(prop_wxWidgets_version) == "3.1");
 
     if (m_panel_type != HDR_PANEL)
     {
@@ -250,10 +249,10 @@ void BaseCodeGenerator::GenerateImagesForm()
 
             for (const auto& child: m_form_node->GetChildNodePtrs())
             {
-                if (auto bundle = pjsettings->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
+                if (auto bundle = GetProject()->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
                     bundle && bundle->lst_filenames.size())
                 {
-                    auto embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[0]);
+                    auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]);
                     if (embed->type == wxBITMAP_TYPE_INVALID)
                     {
                         continue;  // This is an SVG image which we already handled
@@ -275,11 +274,11 @@ void BaseCodeGenerator::GenerateImagesForm()
                         m_source->writeLine("return wxueBundleBitmaps(");
                         m_source->Indent();
                         code = "wxBitmap(wxueImage(";
-                        embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[0]);
+                        embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]);
                         code << embed->array_name << ", " << embed->array_size << ")),";
                         m_source->writeLine(code);
                         code.clear();
-                        embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[1]);
+                        embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[1]);
                         code << "wxBitmap(wxueImage(" << embed->array_name << ", " << embed->array_size << ")),";
                         m_source->writeLine(code);
                         code.clear();
@@ -289,7 +288,7 @@ void BaseCodeGenerator::GenerateImagesForm()
                         }
                         else
                         {
-                            embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[2]);
+                            embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[2]);
                             code = "wxBitmap(wxueImage(";
                             code << embed->array_name << ", " << embed->array_size << ")));";
                         }
@@ -419,10 +418,10 @@ void BaseCodeGenerator::GenerateImagesForm()
 
         for (const auto& child: m_form_node->GetChildNodePtrs())
         {
-            if (auto bundle = pjsettings->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
+            if (auto bundle = GetProject()->GetPropertyImageBundle(child->prop_as_string(prop_bitmap));
                 bundle && bundle->lst_filenames.size())
             {
-                auto embed = pjsettings->GetEmbeddedImage(bundle->lst_filenames[0]);
+                auto embed = GetProject()->GetEmbeddedImage(bundle->lst_filenames[0]);
                 if (embed->type == wxBITMAP_TYPE_INVALID)
                 {
                     continue;  // This is an SVG image which we already handled

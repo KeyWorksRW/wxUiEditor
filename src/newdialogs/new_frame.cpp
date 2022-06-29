@@ -65,7 +65,7 @@ void NewFrame::CreateNode()
         UpdateFormClass(form_node.get());
     }
 
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
     wxGetFrame().SelectNode(project);
 
     ttlib::cstr undo_str("New wxFrame");

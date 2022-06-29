@@ -932,27 +932,3 @@ void App::AppendXRC(wxArrayString& files)
     wxGetFrame().FireProjectUpdatedEvent();
     wxGetFrame().SetModified();
 }
-
-const ttlib::cstr& App::getProjectFileName()
-{
-    ASSERT(m_project)
-    return m_project->getProjectFile();
-}
-
-const ttlib::cstr& App::getProjectPath()
-{
-    ASSERT(m_project)
-    return m_project->getProjectPath();
-}
-
-ttString App::GetProjectFileName()
-{
-    ASSERT(m_project)
-    return m_project->GetProjectFile();
-}
-
-ttString App::GetProjectPath()
-{
-    ASSERT(m_project)
-    return m_project->GetProjectPath();
-}

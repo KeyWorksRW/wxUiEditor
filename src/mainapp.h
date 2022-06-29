@@ -54,29 +54,6 @@ public:
 
     Project* GetProject() { return m_project.get(); };
 
-    // Returns the first project child that is a form, or nullptr if not form children found.
-    Node* GetFirstFormChild();
-
-    const ttlib::cstr& getProjectFileName();
-    const ttlib::cstr& getProjectPath();
-    ttString GetProjectFileName();
-    ttString GetProjectPath();
-    ttString GetArtDirectory();
-    ttString GetBaseDirectory();
-    ttString GetDerivedDirectory();
-
-    wxImage GetImage(const ttlib::cstr& description);
-    wxBitmapBundle GetBitmapBundle(const ttlib::cstr& description, Node* node);
-
-    const ImageBundle* GetPropertyImageBundle(const ttlib::multistr& parts, Node* node = nullptr);
-    const ImageBundle* GetPropertyImageBundle(const ttlib::cstr& description, Node* node = nullptr);
-    EmbeddedImage* GetEmbeddedImage(ttlib::sview path);
-
-    // If there is an Image form containing this bundle, return it's name
-    ttlib::cstr GetBundleFuncName(const ttlib::cstr& description);
-
-    Project* GetProjectSettings() { return m_project.get(); };
-
     // clang-format off
     enum : long
     {

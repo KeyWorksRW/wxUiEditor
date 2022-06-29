@@ -430,16 +430,16 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         if (prop->isProp(prop_base_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Base class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetBaseDirectory());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetBaseDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
         else if (prop->isProp(prop_derived_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived class filename");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetDerivedDirectory());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetDerivedDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
@@ -447,15 +447,15 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Custom Control Header");
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
         }
         else if (prop->isProp(prop_derived_header))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived Header");
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Header Files|*.h;*.hh;*.hpp;*.hxx");
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetProjectPath());
-            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, wxGetApp().GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
         }
         else if (prop->isProp(prop_local_pch_file))
         {
@@ -466,7 +466,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             // directory. If we can find a standard precompiled header filename in the parent directory, then use that
             // as the starting directory.
 
-            ttString pch(wxGetApp().GetProjectPath());
+            ttString pch(GetProject()->GetProjectPath());
             pch.append_filename("../");
             pch.append_filename("pch.h");
             if (pch.file_exists())
@@ -492,7 +492,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
                 return new_pg_property;
             }
 
-            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, wxGetApp().GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetProjectPath());
         }
     }
     else if (type == type_stringlist)
@@ -1100,7 +1100,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else
                 {
                     // This ensures that all images from a bitmap bundle get added
-                    wxGetApp().GetProjectSettings()->UpdateBundle(parts, prop->GetNode());
+                    GetProject()->UpdateBundle(parts, prop->GetNode());
                 }
 
                 modifyProperty(prop, value);
@@ -1118,7 +1118,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     if (newValue.size())
                     {
                         newValue.make_absolute();
-                        newValue.make_relative_wx(wxGetApp().GetProjectPath());
+                        newValue.make_relative_wx(GetProject()->GetProjectPath());
                         newValue.backslashestoforward();
                         property->SetValueFromString(newValue, 0);
                     }
@@ -1671,8 +1671,8 @@ void PropGridPanel::ReplaceBaseFile(const wxString& newValue, NodeProperty* prop
         baseName.Replace("Base", wxEmptyString);
     baseName.MakeLower();
     baseName << "_base";
-    if (wxGetApp().GetProject()->HasValue(prop_base_directory))
-        baseName.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');
+    if (GetProject()->HasValue(prop_base_directory))
+        baseName.insert(0, GetProject()->prop_as_wxString(prop_base_directory) << '/');
     auto grid_property = m_prop_grid->GetPropertyByLabel("base_file");
     grid_property->SetValueFromString(baseName, 0);
     ModifyProperty(propType, baseName);
@@ -1691,8 +1691,8 @@ void PropGridPanel::ReplaceDerivedFile(const wxString& newValue, NodeProperty* p
     }
 
     drvName.MakeLower();
-    if (wxGetApp().GetProject()->HasValue(prop_base_directory))
-        drvName.insert(0, wxGetApp().GetProject()->prop_as_wxString(prop_base_directory) << '/');
+    if (GetProject()->HasValue(prop_base_directory))
+        drvName.insert(0, GetProject()->prop_as_wxString(prop_base_directory) << '/');
     auto grid_property = m_prop_grid->GetPropertyByLabel("derived_file");
     grid_property->SetValueFromString(drvName, 0);
     ModifyProperty(propType, drvName);

@@ -14,7 +14,7 @@
 
 #include "img_props.h"        // Handles property grid image properties
 #include "img_string_prop.h"  // wxSingleChoiceDialogAdapter
-#include "mainapp.h"          // Main application class
+#include "project_class.h"    // Project class
 #include "utils.h"            // Utility functions that work with properties
 
 wxIMPLEMENT_ABSTRACT_CLASS(PropertyGrid_Animation, wxPGProperty);
@@ -61,7 +61,7 @@ void PropertyGrid_Animation::RefreshChildren()
     if (m_old_type != m_img_props.type)
     {
         wxArrayString array_art_ids;
-        auto art_dir = wxGetApp().GetArtDirectory();
+        auto art_dir = GetProject()->GetArtDirectory();
         if (art_dir.empty())
             art_dir = "./";
         wxDir dir;
@@ -113,10 +113,10 @@ wxVariant PropertyGrid_Animation::ChildChanged(wxVariant& thisValue, int childIn
                 ttString name(childValue.GetString());
                 if (!name.file_exists())
                 {
-                    name = wxGetApp().GetArtDirectory();
+                    name = GetProject()->GetArtDirectory();
                     name.append_filename_wx(childValue.GetString());
                 }
-                name.make_relative_wx(wxGetApp().GetProjectPath());
+                name.make_relative_wx(GetProject()->GetProjectPath());
                 name.backslashestoforward();
                 img_props.image.assign_wx(name);
             }

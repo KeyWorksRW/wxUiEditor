@@ -347,7 +347,7 @@ void MsgFrame::UpdateNodeInfo()
             m_hyperlink->SetURL(url);
         }
 
-        auto project = wxGetApp().GetProject();
+        auto project = GetProject();
         CalcNodeMemory(project, node_memory);
 
         label.Format("Project: %kzu (%kzu nodes)", node_memory.size, node_memory.children);

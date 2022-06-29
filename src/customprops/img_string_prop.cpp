@@ -31,9 +31,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("Embed"))
     {
         ttSaveCwd cwd;
-        if (wxGetApp().GetProject()->HasValue(prop_art_directory))
+        if (GetProject()->HasValue(prop_art_directory))
         {
-            auto dir = wxGetApp().GetArtDirectory();
+            auto dir = GetProject()->GetArtDirectory();
             if (dir.dir_exists())
             {
                 wxFileName::SetCwd(dir);
@@ -56,7 +56,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         if (dlg.ShowModal() == wxID_OK)
         {
             ttString name(dlg.GetPath());
-            name.make_relative_wx(wxGetApp().GetProjectPath());
+            name.make_relative_wx(GetProject()->GetProjectPath());
             name.backslashestoforward();
             SetValue(name);
             return true;
@@ -66,9 +66,9 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
     else if (m_img_props.type.contains("XPM") || m_img_props.type.contains("SVG"))
     {
         ttSaveCwd cwd;
-        if (wxGetApp().GetProject()->HasValue(prop_art_directory) && wxGetApp().GetArtDirectory().dir_exists())
+        if (GetProject()->HasValue(prop_art_directory) && GetProject()->GetArtDirectory().dir_exists())
         {
-            wxFileName::SetCwd(wxGetApp().GetArtDirectory());
+            wxFileName::SetCwd(GetProject()->GetArtDirectory());
         }
 
         wxString pattern;
@@ -86,7 +86,7 @@ bool ImageDialogAdapter::DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* WX
         if (dlg.ShowModal() == wxID_OK)
         {
             ttString name(dlg.GetPath());
-            name.make_relative_wx(wxGetApp().GetProjectPath());
+            name.make_relative_wx(GetProject()->GetProjectPath());
             name.backslashestoforward();
             SetValue(name);
             return true;

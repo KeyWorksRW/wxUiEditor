@@ -290,7 +290,7 @@ FontProperty NodeProperty::as_font_prop() const
 
 wxBitmap NodeProperty::as_bitmap() const
 {
-    auto image = wxGetApp().GetImage(m_value);
+    auto image = GetProject()->GetImage(m_value);
     if (!image.IsOk())
         return wxNullBitmap;
     else
@@ -299,7 +299,7 @@ wxBitmap NodeProperty::as_bitmap() const
 
 wxBitmapBundle NodeProperty::as_bitmap_bundle() const
 {
-    auto bundle = wxGetApp().GetBitmapBundle(m_value, m_node);
+    auto bundle = GetProject()->GetBitmapBundle(m_value, m_node);
     if (!bundle.IsOk())
         return wxNullBitmap;
     else
@@ -308,7 +308,7 @@ wxBitmapBundle NodeProperty::as_bitmap_bundle() const
 
 const ImageBundle* NodeProperty::as_image_bundle() const
 {
-    auto bundle_ptr = wxGetApp().GetPropertyImageBundle(m_value);
+    auto bundle_ptr = GetProject()->GetPropertyImageBundle(m_value);
     if (!bundle_ptr || !bundle_ptr->bundle.IsOk())
         return nullptr;
     else
@@ -317,7 +317,7 @@ const ImageBundle* NodeProperty::as_image_bundle() const
 
 wxAnimation NodeProperty::as_animation() const
 {
-    return wxGetApp().GetProjectSettings()->GetPropertyAnimation(m_value);
+    return GetProject()->GetPropertyAnimation(m_value);
 }
 
 ttlib::cstr NodeProperty::as_escape_text() const

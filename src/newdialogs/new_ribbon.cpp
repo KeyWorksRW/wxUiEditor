@@ -34,7 +34,7 @@ void NewRibbon::CreateNode()
     NodeSharedPtr bar_node;
     if (m_is_form)
     {
-        bar_node = g_NodeCreator.CreateNode(gen_RibbonBar, wxGetApp().GetProject());
+        bar_node = g_NodeCreator.CreateNode(gen_RibbonBar, GetProject());
         ASSERT(bar_node);
     }
     else
@@ -98,7 +98,7 @@ void NewRibbon::CreateNode()
             UpdateFormClass(bar_node.get());
         }
 
-        auto project = wxGetApp().GetProject();
+        auto project = GetProject();
         wxGetFrame().SelectNode(project);
 
         ttlib::cstr undo_str("New wxRibbonBar");

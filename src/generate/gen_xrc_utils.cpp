@@ -328,7 +328,7 @@ void GenXrcBitmap(Node* node, pugi::xml_node& object, std::string_view param_nam
             }
             else
             {
-                if (auto bundle = wxGetApp().GetPropertyImageBundle(parts); bundle)
+                if (auto bundle = GetProject()->GetPropertyImageBundle(parts); bundle)
                 {
                     ttlib::cstr names;
                     for (auto& file: bundle->lst_filenames)

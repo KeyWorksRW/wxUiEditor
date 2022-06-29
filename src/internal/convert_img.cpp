@@ -44,7 +44,7 @@ ConvertImageDlg::ConvertImageDlg(wxWindow* parent) : ConvertImageBase(parent)
     m_cwd.assignCwd();
 
     ttString dir;
-    auto dir_property = wxGetApp().GetProject()->prop_as_string(prop_art_directory);
+    auto dir_property = GetProject()->prop_as_string(prop_art_directory);
     if (dir_property.size())
         dir = dir_property;
     else
@@ -298,7 +298,7 @@ void ConvertImageDlg::OnInputChange(wxFileDirPickerEvent& WXUNUSED(event))
 
         // Now that we have a loaded image, set the output file.
         ttString outFilename;
-        auto dir_property = wxGetApp().GetProject()->prop_as_string(prop_art_directory);
+        auto dir_property = GetProject()->prop_as_string(prop_art_directory);
         if (dir_property.size())
         {
             outFilename = dir_property;

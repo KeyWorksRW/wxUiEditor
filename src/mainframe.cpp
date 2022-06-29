@@ -304,35 +304,35 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnSaveProject(wxCommandEvent& event)
 {
-    if (m_isImported || wxGetApp().GetProjectFileName().empty() ||
-        wxGetApp().GetProjectFileName().filename().is_sameas(txtEmptyProject))
+    if (m_isImported || GetProject()->getProjectFile().empty() ||
+        GetProject()->getProjectFile().filename().is_sameas(txtEmptyProject))
         OnSaveAsProject(event);
     else
     {
         pugi::xml_document doc;
         GetProject()->CreateDoc(doc);
-        if (doc.save_file(wxGetApp().getProjectFileName().c_str(), "  ", pugi::format_indent_attributes))
+        if (doc.save_file(GetProject()->getProjectFile().c_str(), "  ", pugi::format_indent_attributes))
         {
             m_isProject_modified = false;
             ProjectSaved();
         }
         else
         {
-            wxMessageBox(wxString("Unable to save the project: ") << wxGetApp().GetProjectFileName(), "Save Project");
+            wxMessageBox(wxString("Unable to save the project: ") << GetProject()->GetProjectFile(), "Save Project");
         }
     }
 }
 
 void MainFrame::OnSaveAsProject(wxCommandEvent&)
 {
-    auto filename = wxGetApp().GetProjectFileName().filename();
+    auto filename = GetProject()->GetProjectFile().filename();
     if (filename.is_sameas(txtEmptyProject))
     {
         filename = "MyProject";
     }
 
     // The ".wxue" extension is only used for testing -- all normal projects should have a .wxui extension
-    wxFileDialog dialog(this, "Save Project As", wxGetApp().GetProjectPath(), filename,
+    wxFileDialog dialog(this, "Save Project As", GetProject()->GetProjectPath(), filename,
                         "wxUiEditor Project File (*.wxui)|*.wxui;*.wxue", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
     if (dialog.ShowModal() == wxID_OK)
@@ -380,8 +380,8 @@ void MainFrame::OnSaveAsProject(wxCommandEvent&)
             m_isProject_modified = false;
             m_isImported = false;
             m_FileHistory.AddFileToHistory(filename);
-            wxGetApp().GetProjectSettings()->SetProjectFile(filename);
-            wxGetApp().GetProjectSettings()->SetProjectPath(filename);
+            GetProject()->SetProjectFile(filename);
+            GetProject()->SetProjectPath(filename);
             ProjectSaved();
             FireProjectLoadedEvent();
         }
@@ -571,7 +571,7 @@ void MainFrame::OnImportProject(wxCommandEvent&)
 
 void MainFrame::OnGenerateCode(wxCommandEvent&)
 {
-    wxGetApp().GetProjectSettings()->UpdateEmbedNodes();
+    GetProject()->UpdateEmbedNodes();
     m_isProject_generated = GenerateCodeFiles(this);
     UpdateWakaTime();
 
@@ -637,14 +637,14 @@ void MainFrame::OnClose(wxCloseEvent& event)
 
 void MainFrame::ProjectLoaded()
 {
-    ttlib::ChangeDir(wxGetApp().getProjectPath());
+    GetProject()->GetProjectPath().ChangeDir();
     setStatusText("Project loaded");
     if (!m_isImported)
     {
         m_isProject_generated = !GenerateCodeFiles(this, true);
-        if (!wxGetApp().GetProjectFileName().filename().is_sameas(txtEmptyProject))
+        if (!GetProject()->GetProjectFile().filename().is_sameas(txtEmptyProject))
         {
-            m_FileHistory.AddFileToHistory(wxGetApp().GetProjectFileName());
+            m_FileHistory.AddFileToHistory(GetProject()->GetProjectFile());
         }
         m_isProject_modified = false;
     }
@@ -681,7 +681,7 @@ void MainFrame::ProjectLoaded()
 
 void MainFrame::ProjectSaved()
 {
-    ttlib::cstr str(wxGetApp().getProjectFileName().filename() + " saved");
+    ttlib::cstr str(GetProject()->getProjectFile().filename() + " saved");
     setStatusText(str);
     UpdateFrame();
 }
@@ -788,7 +788,7 @@ void MainFrame::UpdateLayoutTools()
 
 void MainFrame::UpdateFrame()
 {
-    ttString filename = wxGetApp().GetProjectFileName().filename();
+    ttString filename = GetProject()->GetProjectFile().filename();
 
     if (filename.empty())
     {
@@ -1761,7 +1761,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
             auto start_node = GetSelectedNode();
             if (!start_node)
             {
-                start_node = wxGetApp().GetProject();
+                start_node = GetProject();
             }
             auto found_node = FindChildNode(start_node, result->second);
             if (found_node)

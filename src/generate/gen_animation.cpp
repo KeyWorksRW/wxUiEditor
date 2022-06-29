@@ -46,7 +46,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
         name.LeftTrim();
         if (parts[IndexType].starts_with("Embed"))
         {
-            auto embed = wxGetApp().GetProjectSettings()->GetEmbeddedImage(parts[IndexImage]);
+            auto embed = GetProject()->GetEmbeddedImage(parts[IndexImage]);
             if (embed)
             {
                 name = "wxue_img::" + embed->array_name;

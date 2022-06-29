@@ -17,7 +17,7 @@
 
 bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
 {
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
     if (project->GetChildCount() == 0)
     {
         if (NeedsGenerateCheck)
@@ -27,7 +27,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         return false;
     }
     ttSaveCwd cwd;
-    ttlib::ChangeDir(wxGetApp().getProjectPath());
+    GetProject()->GetProjectPath().ChangeDir();
     ttlib::cstr path;
     std::vector<ttlib::cstr> results;
 
@@ -344,10 +344,10 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
 
 void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root)
 {
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
 
     ttSaveCwd cwd;
-    ttlib::ChangeDir(wxGetApp().getProjectPath());
+    ttlib::ChangeDir(GetProject()->getProjectPath());
     ttlib::cstr path;
     std::vector<ttlib::cstr> results;
 

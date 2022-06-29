@@ -158,7 +158,7 @@ void BasePanel::GenerateBaseClass()
     if (!IsShown())
         return;
 
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
 
     // If no form is selected, display the first child form of the project
     m_cur_form = wxGetFrame().GetSelectedForm();
@@ -166,7 +166,7 @@ void BasePanel::GenerateBaseClass()
     {
         if (project->GetChildCount() > 0)
         {
-            m_cur_form = wxGetApp().GetFirstFormChild();
+            m_cur_form = GetProject()->GetFirstFormChild();
         }
         else
         {

@@ -17,7 +17,7 @@
 
 int WriteCMakeFile(bool test_only)
 {
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
 
     if (!project->prop_as_bool(prop_generate_cmake) || !project->HasValue(prop_cmake_file))
     {
@@ -38,7 +38,7 @@ int WriteCMakeFile(bool test_only)
     }
     else
     {
-        ttlib::ChangeDir(wxGetApp().getProjectPath());
+        ttlib::ChangeDir(GetProject()->getProjectPath());
     }
 
     ttlib::cwd cur_dir;

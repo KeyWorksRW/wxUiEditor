@@ -34,7 +34,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().PasteNode(wxGetApp().GetProject());
+            wxGetFrame().PasteNode(GetProject());
         },
         wxID_PASTE);
 

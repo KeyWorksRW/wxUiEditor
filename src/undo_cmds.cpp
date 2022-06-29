@@ -542,13 +542,13 @@ SortProjectAction::SortProjectAction()
 
     m_undo_string = "Sort Project";
 
-    m_old_project = g_NodeCreator.MakeCopy(wxGetApp().GetProject());
+    m_old_project = g_NodeCreator.MakeCopy(GetProject());
 }
 
 void SortProjectAction::Change()
 {
     m_old_project = g_NodeCreator.MakeCopy(wxGetApp().GetProjectPtr());
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
 
     auto& children = project->GetChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
@@ -559,7 +559,7 @@ void SortProjectAction::Change()
 
 void SortProjectAction::Revert()
 {
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
     project->RemoveAllChildren();
     for (const auto& child: m_old_project->GetChildNodePtrs())
     {

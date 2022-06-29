@@ -197,7 +197,7 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         if (newValue.empty())
             return true;
 
-        for (const auto& iter: wxGetApp().GetProject()->GetChildNodePtrs())
+        for (const auto& iter: GetProject()->GetChildNodePtrs())
         {
             if (iter.get() == prop->GetNode())
             {

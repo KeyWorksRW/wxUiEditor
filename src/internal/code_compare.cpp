@@ -36,7 +36,7 @@ CodeCompare::~CodeCompare()
         wxRemoveFile(iter);
     }
 
-    auto project = wxGetApp().GetProject();
+    auto project = GetProject();
     if (project->HasValue(prop_base_directory))
     {
         dir.GetAllFiles(project->prop_as_wxString(prop_base_directory), &files, "~wxue_**.*");

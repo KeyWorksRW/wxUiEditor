@@ -162,9 +162,9 @@ private:
     std::vector<const EmbeddedImage*> m_embedded_images;
     std::set<wxBitmapType> m_type_generated;
 
-    Node* m_form_node;
-    Node* m_ImagesForm;
-    Node* m_project;
+    Node* m_form_node { nullptr };
+    Node* m_ImagesForm { nullptr };
+    Node* m_project { nullptr };
 
     PANEL_PAGE m_panel_type { NOT_PANEL };
 

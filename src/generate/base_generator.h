@@ -55,11 +55,7 @@ using OptionalIncludes = std::optional<std::vector<std::string>>;
         item.append_child(name_child).text().set("1"); \
     }
 
-#define ADD_ITEM_COMMENT(text)                                 \
-    if (add_comments)                                          \
-    {                                                          \
-        item.append_child(pugi::node_comment).set_value(text); \
-    }
+#define ADD_ITEM_COMMENT(text) item.append_child(pugi::node_comment).set_value(text);
 
 // This is the interface class that all generators derive from.
 class BaseGenerator
@@ -93,7 +89,7 @@ public:
     // Add attributes to object, and all properties
     //
     // Return an xrc_ enum (e.g. xrc_sizer_item_created)
-    virtual int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) { return xrc_not_supported; }
+    virtual int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) { return xrc_not_supported; }
 
     // Return the required wxXmlResourceHandler
     virtual void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) {}

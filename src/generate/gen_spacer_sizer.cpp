@@ -78,7 +78,7 @@ std::optional<ttlib::cstr> SpacerGenerator::GenConstruction(Node* node)
 // ../../../wxWidgets/src/xrc/xh_sizer.cpp
 // See Handle_spacer()
 
-int SpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int SpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     pugi::xml_node item = object;
     auto result = BaseGenerator::xrc_updated;

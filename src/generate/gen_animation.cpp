@@ -83,7 +83,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenSettings(Node* node, size_t& /
     }
 }
 
-int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -116,7 +116,7 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
 
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

@@ -71,9 +71,9 @@ bool PopupWinGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     return true;
 }
 
-int PopupWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, bool add_comments)
+int PopupWinGenerator::GenXrcObject(Node*, pugi::xml_node& object, size_t xrc_flags)
 {
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         object.append_child(pugi::node_comment).set_value(" wxPopupTransientWindow is not supported by XRC. ");
     }

@@ -149,7 +149,7 @@ bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::
 // ../../../wxWidgets/src/xrc/xh_dataview.cpp
 // See HandleCtrl()
 
-int DataViewCtrl::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int DataViewCtrl::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -159,7 +159,7 @@ int DataViewCtrl::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comm
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -269,7 +269,7 @@ bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
 // ../../../wxWidgets/src/xrc/xh_dataview.cpp
 // See HandleListCtrl()
 
-int DataViewListCtrl::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int DataViewListCtrl::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -279,7 +279,7 @@ int DataViewListCtrl::GenXrcObject(Node* node, pugi::xml_node& object, bool add_
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -331,7 +331,7 @@ bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, s
 // ../../../wxWidgets/src/xrc/xh_dataview.cpp
 // See HandleTreeCtrl()
 
-int DataViewTreeCtrl::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int DataViewTreeCtrl::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -343,7 +343,7 @@ int DataViewTreeCtrl::GenXrcObject(Node* node, pugi::xml_node& object, bool add_
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

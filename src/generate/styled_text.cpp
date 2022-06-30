@@ -1087,7 +1087,7 @@ void StyledTextGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, No
 // ../../wxSnapShot/src/xrc/xh_styledtextctrl.cpp
 // ../../../wxWidgets/src/xrc/xh_styledtextctrl.cpp
 
-int StyledTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int StyledTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -1102,7 +1102,7 @@ int StyledTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         ADD_ITEM_COMMENT(" The only property supported by XRC is wrap_mode. ")
         GenXrcComments(node, item);

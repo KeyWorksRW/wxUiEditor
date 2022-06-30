@@ -200,7 +200,7 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
     return code;
 }
 
-int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;

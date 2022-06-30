@@ -195,7 +195,7 @@ bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 // ../../../wxWidgets/src/xrc/xh_ribbon.cpp
 // See Handle_bar()
 
-int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -215,7 +215,7 @@ int RibbonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -291,7 +291,7 @@ bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 // ../../../wxWidgets/src/xrc/xh_wizrd.cpp
 // See Handle_page()
 
-int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -304,7 +304,7 @@ int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -380,7 +380,7 @@ bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 // ../../../wxWidgets/src/xrc/xh_wizrd.cpp
 // See Handle_panel()
 
-int RibbonPanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int RibbonPanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -396,7 +396,7 @@ int RibbonPanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool 
 
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -457,7 +457,7 @@ bool RibbonButtonBarGenerator::GetIncludes(Node* node, std::set<std::string>& se
     return true;
 }
 
-int RibbonButtonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int RibbonButtonBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "wxRibbonButtonBar");
@@ -501,7 +501,7 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenEvents(NodeEvent* event, co
     return GenEventCode(event, class_name);
 }
 
-int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "button");
@@ -609,7 +609,7 @@ bool RibbonToolBarGenerator::GetIncludes(Node* /* node */, std::set<std::string>
     return true;
 }
 
-int RibbonToolBarGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, bool /* add_comments */)
+int RibbonToolBarGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)
 {
     return BaseGenerator::xrc_not_supported;
 }
@@ -649,7 +649,7 @@ std::optional<ttlib::cstr> RibbonToolGenerator::GenEvents(NodeEvent* event, cons
     return GenEventCode(event, class_name);
 }
 
-int RibbonToolGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, bool /* add_comments */)
+int RibbonToolGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)
 {
     return BaseGenerator::xrc_not_supported;
 }
@@ -709,7 +709,7 @@ bool RibbonGalleryGenerator::GetIncludes(Node* node, std::set<std::string>& set_
     return true;
 }
 
-int RibbonGalleryGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int RibbonGalleryGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "wxRibbonGallery");
@@ -740,7 +740,7 @@ std::optional<ttlib::cstr> RibbonGalleryItemGenerator::GenEvents(NodeEvent* even
     return GenEventCode(event, class_name);
 }
 
-int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "item");

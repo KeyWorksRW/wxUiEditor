@@ -26,7 +26,7 @@ public:
 
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
 private:

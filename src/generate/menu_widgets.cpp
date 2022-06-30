@@ -202,7 +202,7 @@ bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
 // ../../wxSnapShot/src/xrc/xh_menu.cpp
 // ../../../wxWidgets/src/xrc/xh_menu.cpp
 
-int MenuBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int MenuBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -212,7 +212,7 @@ int MenuBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -275,7 +275,7 @@ bool MenuBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 // ../../wxSnapShot/src/xrc/xh_menu.cpp
 // ../../../wxWidgets/src/xrc/xh_menu.cpp
 
-int MenuBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int MenuBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -285,7 +285,7 @@ int MenuBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -414,7 +414,7 @@ bool MenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 // ../../wxSnapShot/src/xrc/xh_menu.cpp
 // ../../../wxWidgets/src/xrc/xh_menu.cpp
 
-int MenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int MenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
 
@@ -537,7 +537,7 @@ bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
     return true;
 }
 
-int SubMenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int SubMenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
 
@@ -749,7 +749,7 @@ bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     return true;
 }
 
-int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -770,7 +770,7 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
 
     GenXrcBitmap(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -799,7 +799,7 @@ bool SeparatorGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
     return true;
 }
 
-int SeparatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int SeparatorGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "separator");

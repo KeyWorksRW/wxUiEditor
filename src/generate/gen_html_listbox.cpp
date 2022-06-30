@@ -128,7 +128,7 @@ bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
 // ../../wxSnapShot/src/xrc/xh_simplehtmllbox.cpp
 // ../../../wxWidgets/src/xrc/xh_simplehtmllbox.cpp
 
-int HtmlListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int HtmlListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -148,7 +148,7 @@ int HtmlListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

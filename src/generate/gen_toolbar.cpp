@@ -167,7 +167,7 @@ void ToolBarFormGenerator::OnTool(wxCommandEvent& event)
 // ../../wxSnapShot/src/xrc/xh_toolb.cpp
 // ../../../wxWidgets/src/xrc/xh_toolb.cpp
 
-int ToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int ToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -183,7 +183,7 @@ int ToolBarFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -366,7 +366,7 @@ void ToolBarGenerator::OnTool(wxCommandEvent& event)
 // ../../wxSnapShot/src/xrc/xh_toolb.cpp
 // ../../../wxWidgets/src/xrc/xh_toolb.cpp
 
-int ToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int ToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -382,7 +382,7 @@ int ToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -446,7 +446,7 @@ std::optional<ttlib::cstr> ToolGenerator::GenEvents(NodeEvent* event, const std:
     return GenEventCode(event, class_name);
 }
 
-int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "tool");

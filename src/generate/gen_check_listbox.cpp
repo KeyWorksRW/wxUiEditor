@@ -156,7 +156,7 @@ bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
 // ../../wxSnapShot/src/xrc/xh_chckl.cpp
 // ../../../wxWidgets/src/xrc/xh_chckl.cpp
 
-int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -185,7 +185,7 @@ int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
     GenXrcStylePosSize(node, item, prop_type);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

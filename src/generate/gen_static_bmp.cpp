@@ -180,7 +180,7 @@ bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_s
     return true;
 }
 
-int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -191,7 +191,7 @@ int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         if (node->HasValue(prop_scale_mode) && node->prop_as_string(prop_scale_mode) != "None")
         {

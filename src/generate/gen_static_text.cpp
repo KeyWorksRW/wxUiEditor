@@ -131,7 +131,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& 
     return code;
 }
 
-int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -155,7 +155,7 @@ int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         if (node->prop_as_bool(prop_markup))
         {

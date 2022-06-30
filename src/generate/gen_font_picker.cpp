@@ -106,7 +106,7 @@ bool FontPickerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 // ../../wxSnapShot/src/xrc/xh_fontpicker.cpp
 // ../../../wxWidgets/src/xrc/xh_fontpicker.cpp
 
-int FontPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int FontPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -118,7 +118,7 @@ int FontPickerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         if (node->prop_as_int(prop_min_point_size) != 0)
             ADD_ITEM_COMMENT("XRC does not support calling SetMinPointSize().")

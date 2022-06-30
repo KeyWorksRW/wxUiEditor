@@ -27,9 +27,10 @@
 
 #include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
 
-#include "gen_base.h"
+#include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
+#include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
@@ -37,16 +38,6 @@
 #include "write_code.h"     // Write code to Scintilla or file
 
 #include "pugixml.hpp"
-
-namespace xrc_gen
-{
-    enum
-    {
-        no_comments = false,
-        comments = true,
-        preview = true
-    };
-}
 
 const char* txt_dlg_name = "_wxue_temp_dlg";
 
@@ -115,7 +106,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
                          "wxDialog Preview", wxICON_INFORMATION);
         }
 
-        auto doc_str = GenerateXrcStr(form_node, xrc_gen::no_comments, form_node->isGen(gen_PanelForm));
+        auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
         if (!xmlDoc->IsOk())
@@ -272,10 +263,10 @@ void MainFrame::OnXrcActivate(wxActivateEvent& event)
 }
 // clang-format on
 
-int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto generator = node->GetNodeDeclaration()->GetGenerator();
-    auto result = generator->GenXrcObject(node, object, add_comments);
+    auto result = generator->GenXrcObject(node, object, xrc_flags);
     if (result == BaseGenerator::xrc_not_supported && node->isGen(gen_Project))
     {
         result = BaseGenerator::xrc_updated;
@@ -321,12 +312,12 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
                 }
                 auto child_object = actual_object.append_child("object");
                 child_object.append_child("depth").text().set(depth);
-                GenXrcObject(child.get(), child_object, add_comments);
+                GenXrcObject(child.get(), child_object, xrc_flags);
                 continue;
             }
 
             auto child_object = actual_object.append_child("object");
-            auto child_result = GenXrcObject(child.get(), child_object, add_comments);
+            auto child_result = GenXrcObject(child.get(), child_object, xrc_flags);
             if (child_result == BaseGenerator::xrc_not_supported)
             {
                 actual_object.remove_child(child_object);
@@ -339,7 +330,7 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
         for (const auto& child: node->GetChildNodePtrs())
         {
             auto child_object = object.append_child("object");
-            auto child_result = GenXrcObject(child.get(), child_object, add_comments);
+            auto child_result = GenXrcObject(child.get(), child_object, xrc_flags);
             if (child_result == BaseGenerator::xrc_not_supported)
             {
                 object.remove_child(child_object);
@@ -350,7 +341,7 @@ int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
     }
     else if (result == BaseGenerator::xrc_form_not_supported)
     {
-        if (add_comments)
+        if (xrc_flags & xrc::add_comments)
         {
             return result;
         }
@@ -380,7 +371,7 @@ void CollectHandlers(Node* node, std::set<std::string>& handlers)
     }
 }
 
-std::string GenerateXrcStr(Node* node_start, bool add_comments, bool is_preview)
+std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
 {
     pugi::xml_document doc;
     auto root = doc.append_child("resource");
@@ -393,9 +384,9 @@ std::string GenerateXrcStr(Node* node_start, bool add_comments, bool is_preview)
     }
     else if (node_start->isGen(gen_Project))
     {
-        GenXrcObject(node_start, root, add_comments);
+        GenXrcObject(node_start, root, xrc_flags);
     }
-    else if (is_preview && node_start->isGen(gen_PanelForm))
+    else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_PanelForm))
     {
         auto object = root.append_child("object");
         object.append_attribute("class").set_value("wxDialog");
@@ -411,20 +402,20 @@ std::string GenerateXrcStr(Node* node_start, bool add_comments, bool is_preview)
         sizer_item.append_attribute("class").set_value("sizeritem");
         object = sizer_item.append_child("object");
 
-        GenXrcObject(node_start, object, add_comments);
+        GenXrcObject(node_start, object, xrc_flags);
     }
-    else if (is_preview && node_start->isGen(gen_wxDialog))
+    else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_wxDialog))
     {
         auto object = root.append_child("object");
         object.append_attribute("class").set_value("wxPanel");
         object.append_attribute("name").set_value(txt_dlg_name);
         object = object.append_child("object");
-        GenXrcObject(node_start->GetChild(0), object, add_comments);
+        GenXrcObject(node_start->GetChild(0), object, xrc_flags);
     }
     else
     {
         auto object = root.append_child("object");
-        GenXrcObject(node_start, object, add_comments);
+        GenXrcObject(node_start, object, xrc_flags);
     }
 
     std::ostringstream xml_stream;
@@ -454,7 +445,10 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
 
     if (m_panel_type != HDR_PANEL)
     {
-        auto doc_str = GenerateXrcStr(m_form_node, m_panel_type == CPP_PANEL);
+        size_t xrc_flags = xrc::use_xrc_dir;
+        if (m_panel_type == CPP_PANEL)
+            xrc_flags |= xrc::add_comments;
+        auto doc_str = GenerateXrcStr(m_form_node, xrc_flags);
         m_source->doWrite(doc_str);
     }
 

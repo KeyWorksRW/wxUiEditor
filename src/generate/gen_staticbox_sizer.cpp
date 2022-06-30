@@ -160,7 +160,7 @@ bool StaticBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set
 // ../../../wxWidgets/src/xrc/xh_sizer.cpp
 // See Handle_wxStaticBoxSizer()
 
-int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int StaticBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;

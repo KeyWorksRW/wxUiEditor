@@ -91,7 +91,7 @@ bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 // ../../wxSnapShot/src/xrc/xh_simplebook.cpp
 // ../../../wxWidgets/src/xrc/xh_simplebook.cpp
 
-int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -101,7 +101,7 @@ int SimplebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         if (!node->isPropValue(prop_show_effect, "no effects") || !node->isPropValue(prop_show_effect, "no effects"))
             item.append_child(pugi::node_comment).set_value("SetEffects() are not supported in XRC");

@@ -203,7 +203,7 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& auto
     return code;
 }
 
-int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -219,7 +219,7 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_c
 
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         if (node->prop_as_bool(prop_markup))
         {

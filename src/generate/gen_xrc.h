@@ -17,9 +17,9 @@ namespace pugi
 // Generate a string containing the XRC of the starting node and all of it's children.
 //
 // Use project node to generate an XRC string of the entire project.
-std::string GenerateXrcStr(Node* node_start, bool add_comments = false, bool is_preview = false);
+std::string GenerateXrcStr(Node* node_start, size_t xrc_flags);
 
-int GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments);
+int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags);
 
 // If out_file contains a file, it will override project xrc_file and combine_xrc settings.
 //

@@ -105,7 +105,7 @@ std::optional<ttlib::cstr> SpinCtrlGenerator::GenEvents(NodeEvent* event, const 
     return GenEventCode(event, class_name);
 }
 
-int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -135,7 +135,7 @@ int SpinCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
 
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -223,7 +223,7 @@ std::optional<ttlib::cstr> SpinCtrlDoubleGenerator::GenEvents(NodeEvent* event, 
     return GenEventCode(event, class_name);
 }
 
-int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -251,7 +251,7 @@ int SpinCtrlDoubleGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bo
 
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

@@ -214,7 +214,7 @@ bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::stri
 // ../../../wxWidgets/src/xrc/xh_sizer.cpp
 // See Handle_wxStaticBoxSizer()
 
-int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int StaticCheckboxBoxSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;

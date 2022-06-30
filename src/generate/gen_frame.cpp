@@ -38,7 +38,7 @@ std::optional<ttlib::cstr> FrameFormGenerator::GenConstruction(Node* node)
     return code;
 }
 
-int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     object.append_attribute("class").set_value("wxFrame");
     object.append_attribute("name").set_value(node->prop_as_string(prop_class_name));
@@ -79,7 +79,7 @@ int FrameFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
 
     GenXrcWindowSettings(node, object);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, object);
 

@@ -232,7 +232,7 @@ bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     return true;
 }
 
-int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     // We use item so that the macros in base_generator.h work, and the code looks the same
     // as other widget XRC generatorsl
@@ -243,7 +243,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
 
     if (node->HasValue(prop_style))
     {
-        if (add_comments && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
+        if ((xrc_flags & xrc::add_comments) && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
         {
             item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
@@ -270,7 +270,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
         if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
             node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
         {
-            if (add_comments)
+            if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
                     .set_value((ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
@@ -301,7 +301,7 @@ int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
         }
     }
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         if (node->prop_as_bool(prop_persist))
             item.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");

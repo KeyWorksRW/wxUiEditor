@@ -42,7 +42,7 @@ XrcPreview::XrcPreview(wxWindow* parent)
 
 void XrcPreview::OnCreate(wxCommandEvent& WXUNUSED(event))
 {
-    auto doc_str = GenerateXrcStr(nullptr, false, true);
+    auto doc_str = GenerateXrcStr(nullptr, xrc::no_flags);
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
@@ -63,7 +63,7 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
         sel_node = sel_node->get_form();
     }
 
-    auto doc_str = GenerateXrcStr(sel_node, false, sel_node->isGen(gen_PanelForm));
+    auto doc_str = GenerateXrcStr(sel_node, sel_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());

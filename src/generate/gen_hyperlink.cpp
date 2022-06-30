@@ -130,7 +130,7 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenSettings(Node* node, size_t& /
     return code;
 }
 
-int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -172,7 +172,7 @@ int HyperlinkGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
 #if !defined(WIDGETS_FORK)
         if (node->HasValue(prop_hover_color))

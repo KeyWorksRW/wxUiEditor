@@ -306,7 +306,7 @@ void MsgFrame::UpdateNodeInfo()
     {
         if (m_isXrcPage)
         {
-            auto doc_str = GenerateXrcStr(cur_sel, true);
+            auto doc_str = GenerateXrcStr(cur_sel, xrc::add_comments | xrc::use_xrc_dir);
 
             m_scintilla->SetReadOnly(false);
             m_scintilla->ClearAll();

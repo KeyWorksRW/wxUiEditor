@@ -162,7 +162,7 @@ bool RadioBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
 // ../../wxSnapShot/src/xrc/xh_radbx.cpp
 // ../../../wxWidgets/src/xrc/xh_radbx.cpp
 
-int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -186,7 +186,7 @@ int RadioBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
     GenXrcPreStylePosSize(node, item, (node->value(prop_style) == "columns") ? "wxRA_HORIZONTAL" : "wxRA_VERTICAL");
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

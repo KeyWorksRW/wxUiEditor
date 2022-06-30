@@ -117,7 +117,7 @@ bool GridSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src,
 // ../../../wxWidgets/src/xrc/xh_sizer.cpp
 // See Handle_wxGridSizer()
 
-int GridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int GridSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;

@@ -69,7 +69,7 @@ bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set
 // ../../wxSnapShot/src/xrc/xh_datectrl.cpp
 // ../../../wxWidgets/src/xrc/xh_datectrl.cpp
 
-int DatePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int DatePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -82,7 +82,7 @@ int DatePickerCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bo
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

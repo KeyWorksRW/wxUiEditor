@@ -289,7 +289,7 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
 // ../../wxSnapShot/src/xrc/xh_bookctrlbase.cpp
 // ../../../wxWidgets/src/xrc/xh_bookctrlbase.cpp
 
-int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
 #if 0
     int depth = 0;
@@ -347,7 +347,7 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
     GenXrcObjectAttributes(node, item, page_type);
     // if (depth > 0)
     // item.append_child("depth").text().set(depth);
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_BOOL(prop_select, "selected")
@@ -355,7 +355,7 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

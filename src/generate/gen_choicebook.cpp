@@ -65,7 +65,7 @@ bool ChoicebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
 // ../../wxSnapShot/src/xrc/xh_choicbk.cpp
 // ../../../wxWidgets/src/xrc/xh_choicbk.cpp
 
-int ChoicebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int ChoicebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -83,7 +83,7 @@ int ChoicebookGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     GenXrcPreStylePosSize(node, item, styles);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

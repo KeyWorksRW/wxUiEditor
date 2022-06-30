@@ -123,6 +123,25 @@ enum class MoveDirection
     Right
 };
 
+namespace xrc
+{
+    enum : size_t
+    {
+        all_unsupported = 0,
+        min_size_supported = 1 << 0,
+        max_size_supported = 1 << 1,
+        hidden_supported = 1 << 2,
+    };
+
+    enum : size_t
+    {
+        no_flags = 0,
+        add_comments = 1 << 0,  // add comments about unsupported properties
+        use_xrc_dir = 1 << 1,   // if prop_xrc_dir is set, use that instead of prop_art_directory
+        previewing = 1 << 2,    // overrides add_comments and use_xrc_dir
+    };
+}  // namespace xrc
+
 constexpr const char* txtVersion = "wxUiEditor 0.9.3";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2022 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";

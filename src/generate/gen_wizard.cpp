@@ -266,7 +266,7 @@ bool WizardFormGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
 // ../../wxSnapShot/src/xrc/xh_wizrd.cpp
 // ../../../wxWidgets/src/xrc/xh_wizrd.cpp
 
-int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     // We use item so that the macros in base_generator.h work, and the code looks the same
     // as other widget XRC generatorsl
@@ -274,14 +274,14 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     GenXrcObjectAttributes(node, item, "wxWizard");
 
     ADD_ITEM_PROP(prop_title, "title")
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     if (node->HasValue(prop_center))
     {
         if (node->prop_as_string(prop_center).is_sameas("wxVERTICAL") ||
             node->prop_as_string(prop_center).is_sameas("wxHORIZONTAL"))
         {
-            if (add_comments)
+            if (xrc_flags & xrc::add_comments)
             {
                 item.append_child(pugi::node_comment)
                     .set_value((ttlib::cstr(node->prop_as_string(prop_center)) << " cannot be be set in the XRC file."));
@@ -296,7 +296,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
 
     if (node->HasValue(prop_style))
     {
-        if (add_comments && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
+        if ((xrc_flags & xrc::add_comments) && node->prop_as_string(prop_style).contains("wxWANTS_CHARS"))
         {
             item.append_child(pugi::node_comment)
                 .set_value("The wxWANTS_CHARS style will be ignored when the XRC is loaded.");
@@ -332,7 +332,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
                 .set(node->prop_as_wxColour(prop_bmp_background_colour).GetAsString(wxC2S_HTML_SYNTAX).ToUTF8().data());
     }
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         if (node->prop_as_bool(prop_persist))
             item.append_child(pugi::node_comment).set_value(" persist is not supported in the XRC file. ");
@@ -437,17 +437,17 @@ bool WizardPageGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* node)
     return true;
 }
 
-int WizardPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int WizardPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxWizardPageSimple");
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

@@ -50,7 +50,7 @@ std::optional<ttlib::cstr> ScrollBarGenerator::GenEvents(NodeEvent* event, const
     return GenEventCode(event, class_name);
 }
 
-int ScrollBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int ScrollBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -65,7 +65,7 @@ int ScrollBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool ad
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

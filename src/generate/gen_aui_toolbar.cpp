@@ -158,7 +158,7 @@ void AuiToolBarGenerator::OnTool(wxCommandEvent& WXUNUSED(event))
 // ../../wxSnapShot/src/xrc/xh_auitoolb.cpp
 // ../../../wxWidgets/src/xrc/xh_auitoolb.cpp
 
-int AuiToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int AuiToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -174,7 +174,7 @@ int AuiToolBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool a
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }
@@ -238,11 +238,11 @@ std::optional<ttlib::cstr> AuiToolGenerator::GenEvents(NodeEvent* event, const s
     return GenEventCode(event, class_name);
 }
 
-int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool /* add_comments */)
+int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "tool");
-    GenXrcToolProps(node, item);
+    GenXrcToolProps(node, item, xrc_flags);
 
     return BaseGenerator::xrc_updated;
 }

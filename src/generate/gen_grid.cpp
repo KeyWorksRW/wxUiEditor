@@ -346,7 +346,7 @@ bool GridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 // ../../wxSnapShot/src/xrc/xh_wizrd.cpp
 // ../../../wxWidgets/src/xrc/xh_wizrd.cpp
 
-int GridGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int GridGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -356,7 +356,7 @@ int GridGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_com
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         ADD_ITEM_COMMENT(" XRC doesn't support any properties for wxGrid. ")
         GenXrcComments(node, item);

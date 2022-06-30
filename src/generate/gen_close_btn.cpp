@@ -56,7 +56,7 @@ bool CloseButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_sr
     return true;
 }
 
-int CloseButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int CloseButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     pugi::xml_node item;
     auto result = BaseGenerator::xrc_sizer_item_created;
@@ -79,7 +79,7 @@ int CloseButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool 
 
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

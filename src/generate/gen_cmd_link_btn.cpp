@@ -115,7 +115,7 @@ bool CommandLinkBtnGenerator::GetIncludes(Node* node, std::set<std::string>& set
     return true;
 }
 
-int CommandLinkBtnGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int CommandLinkBtnGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -126,11 +126,11 @@ int CommandLinkBtnGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bo
     ADD_ITEM_PROP(prop_note, "note")
     ADD_ITEM_BOOL(prop_default, "default")
 
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

@@ -30,7 +30,7 @@
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parentNode, wxSizer* parent_sizer, wxWindow* form_window);
 
 // Defined in gen_xrc.cpp
-std::string GenerateXrcStr(Node* node_start, bool add_comments = false, bool is_preview = false);
+std::string GenerateXrcStr(Node* node_start, size_t xrc_flags);
 
 extern const char* txt_dlg_name;
 
@@ -179,7 +179,8 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
 
 bool XrcCompare::InitXrc(Node* form_node)
 {
-    auto doc_str = GenerateXrcStr(form_node, false, form_node->isGen(gen_wxDialog));
+    size_t xrc_flags = (form_node->isGen(gen_wxDialog) ? xrc::previewing : 0);
+    auto doc_str = GenerateXrcStr(form_node, xrc_flags);
     wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
     wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
     if (!xmlDoc->IsOk())

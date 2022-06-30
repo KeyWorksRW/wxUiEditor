@@ -92,7 +92,7 @@ std::optional<ttlib::cstr> RichTextCtrlGenerator::GenEvents(NodeEvent* event, co
     return GenEventCode(event, class_name);
 }
 
-int RichTextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int RichTextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -104,7 +104,7 @@ int RichTextCtrlGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         GenXrcComments(node, item);
     }

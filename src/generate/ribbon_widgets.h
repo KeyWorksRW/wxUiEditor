@@ -40,7 +40,7 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
 protected:
@@ -58,7 +58,7 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
 
 class RibbonPanelGenerator : public BaseGenerator
@@ -71,7 +71,7 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
 
 class RibbonButtonBarGenerator : public BaseGenerator
@@ -85,7 +85,7 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
 
 class RibbonButtonGenerator : public BaseGenerator
@@ -94,7 +94,7 @@ public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
 
 class RibbonToolBarGenerator : public BaseGenerator
@@ -109,7 +109,7 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
 
 class RibbonToolGenerator : public BaseGenerator
@@ -118,7 +118,7 @@ public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
 
 class RibbonGalleryGenerator : public BaseGenerator
@@ -132,7 +132,7 @@ public:
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
 
 class RibbonGalleryItemGenerator : public BaseGenerator
@@ -141,5 +141,5 @@ public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
-    int GenXrcObject(Node*, pugi::xml_node& /* object */, bool /* add_comments */) override;
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };

@@ -171,7 +171,7 @@ bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, 
     return true;
 }
 
-int ComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add_comments)
+int ComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
@@ -199,7 +199,7 @@ int ComboBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, bool add
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 
-    if (add_comments)
+    if (xrc_flags & xrc::add_comments)
     {
         if (node->HasValue(prop_selection_string))
         {

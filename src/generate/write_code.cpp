@@ -203,7 +203,7 @@ int FileCodeWriter::WriteFile(bool test_only)
     {
         ttString copy(m_filename);
         copy.remove_filename();
-        if (!copy.dir_exists() && !wxGetApp().AskedAboutMissingDir(copy))
+        if (copy.size() && !copy.dir_exists() && !wxGetApp().AskedAboutMissingDir(copy))
         {
             if (wxMessageBox(wxString() << "The directory " << copy << " doesn't exist.\n\nWould you like it to be created?",
                              "Generate Files", wxICON_WARNING | wxYES_NO) == wxYES)

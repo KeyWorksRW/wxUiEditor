@@ -299,7 +299,7 @@ int RibbonPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     GenXrcObjectAttributes(node, item, "wxRibbonPage");
 
     ADD_ITEM_PROP(prop_label, "label")
-    GenXrcBitmap(node, item, "icon");
+    GenXrcBitmap(node, item, xrc_flags, "icon");
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
@@ -388,7 +388,7 @@ int RibbonPanelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
     GenXrcObjectAttributes(node, item, "wxRibbonPanel");
 
     ADD_ITEM_PROP(prop_label, "label")
-    GenXrcBitmap(node, item, "icon");
+    GenXrcBitmap(node, item, xrc_flags, "icon");
 
     // Up through wxWidgets 3.1.7, no styles are accepted
     // GenXrcStylePosSize(node, item);
@@ -501,7 +501,7 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenEvents(NodeEvent* event, co
     return GenEventCode(event, class_name);
 }
 
-int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "button");
@@ -513,7 +513,7 @@ int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
         bmp.append_attribute("stock_client").set_value("wxART_TOOLBAR");
     }
 
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     return BaseGenerator::xrc_updated;
 }
@@ -740,7 +740,7 @@ std::optional<ttlib::cstr> RibbonGalleryItemGenerator::GenEvents(NodeEvent* even
     return GenEventCode(event, class_name);
 }
 
-int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "item");
@@ -752,7 +752,7 @@ int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object,
         bmp.append_attribute("stock_client").set_value("wxART_TOOLBAR");
     }
 
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     return BaseGenerator::xrc_updated;
 }

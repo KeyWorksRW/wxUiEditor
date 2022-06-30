@@ -347,7 +347,7 @@ int BookPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     GenXrcObjectAttributes(node, item, page_type);
     // if (depth > 0)
     // item.append_child("depth").text().set(depth);
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_BOOL(prop_select, "selected")

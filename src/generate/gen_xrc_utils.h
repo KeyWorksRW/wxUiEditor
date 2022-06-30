@@ -35,7 +35,7 @@ void GenXrcWindowSettings(Node* node, pugi::xml_node& object);
 void GenXrcComments(Node* node, pugi::xml_node& object, size_t supported_flags = xrc::all_unsupported);
 
 // Specify the XRC param name if it doesn't match the property name
-void GenXrcBitmap(Node* node, pugi::xml_node& item, std::string_view param_name = {});
+void GenXrcBitmap(Node* node, pugi::xml_node& item, size_t xrc_flags, std::string_view param_name = {});
 
 // Generates class and name attributes for the object.
 //
@@ -54,4 +54,4 @@ void GenXrcFont(pugi::xml_node& object, FontProperty& font_prop);
 void GenXrcFont(pugi::xml_node& item, std::string_view param_name, Node* node, PropName prop);
 
 // Can be used for either wxToolBar or wxAuiToolBar
-void GenXrcToolProps(Node* node, pugi::xml_node& item);
+void GenXrcToolProps(Node* node, pugi::xml_node& item, size_t xrc_flags);

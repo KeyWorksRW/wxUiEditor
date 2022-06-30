@@ -131,7 +131,7 @@ int BannerWindowGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
 
     GenXrcStylePosSize(node, item);
 
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
     GenXrcWindowSettings(node, item);
 
     if (xrc_flags & xrc::add_comments)

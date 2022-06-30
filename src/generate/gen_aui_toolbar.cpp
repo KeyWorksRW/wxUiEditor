@@ -238,11 +238,11 @@ std::optional<ttlib::cstr> AuiToolGenerator::GenEvents(NodeEvent* event, const s
     return GenEventCode(event, class_name);
 }
 
-int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "tool");
-    GenXrcToolProps(node, item);
+    GenXrcToolProps(node, item, xrc_flags);
 
     return BaseGenerator::xrc_updated;
 }

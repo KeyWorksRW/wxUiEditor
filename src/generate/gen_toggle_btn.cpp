@@ -180,7 +180,7 @@ int ToggleButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_BOOL(prop_pressed, "checked")
 
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 

@@ -274,7 +274,7 @@ int WizardFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     GenXrcObjectAttributes(node, item, "wxWizard");
 
     ADD_ITEM_PROP(prop_title, "title")
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     if (node->HasValue(prop_center))
     {
@@ -443,7 +443,7 @@ int WizardPageGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxWizardPageSimple");
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 

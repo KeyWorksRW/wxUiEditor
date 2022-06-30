@@ -414,14 +414,14 @@ bool MenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std:
 // ../../wxSnapShot/src/xrc/xh_menu.cpp
 // ../../../wxWidgets/src/xrc/xh_menu.cpp
 
-int MenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int MenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenu");
 
     ADD_ITEM_PROP(prop_label, "label")
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     return BaseGenerator::xrc_updated;
 }
@@ -537,14 +537,14 @@ bool SubMenuGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, s
     return true;
 }
 
-int SubMenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int SubMenuGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxMenu");
 
     ADD_ITEM_PROP(prop_label, "label")
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     return BaseGenerator::xrc_updated;
 }
@@ -768,7 +768,7 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
     else if (node->value(prop_kind) == "wxITEM_CHECK")
         item.append_child("checkable").text().set("1");
 
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     if (xrc_flags & xrc::add_comments)
     {

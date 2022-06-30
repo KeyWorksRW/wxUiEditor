@@ -126,7 +126,7 @@ int CommandLinkBtnGenerator::GenXrcObject(Node* node, pugi::xml_node& object, si
     ADD_ITEM_PROP(prop_note, "note")
     ADD_ITEM_BOOL(prop_default, "default")
 
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);
 

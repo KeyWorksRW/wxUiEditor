@@ -446,11 +446,11 @@ std::optional<ttlib::cstr> ToolGenerator::GenEvents(NodeEvent* event, const std:
     return GenEventCode(event, class_name);
 }
 
-int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "tool");
-    GenXrcToolProps(node, item);
+    GenXrcToolProps(node, item, xrc_flags);
 
     return BaseGenerator::xrc_updated;
 }

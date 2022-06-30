@@ -186,7 +186,7 @@ int StaticBitmapGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     auto item = InitializeXrcObject(node, object);
 
     GenXrcObjectAttributes(node, item, "wxStaticBitmap");
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

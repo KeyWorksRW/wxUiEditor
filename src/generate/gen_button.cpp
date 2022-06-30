@@ -237,7 +237,7 @@ int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc
     ADD_ITEM_BOOL(prop_markup, "markup")
     ADD_ITEM_BOOL(prop_default, "default")
 
-    GenXrcBitmap(node, item);
+    GenXrcBitmap(node, item, xrc_flags);
     GenXrcStylePosSize(node, item);
 
     GenXrcWindowSettings(node, item);

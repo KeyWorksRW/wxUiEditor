@@ -402,7 +402,7 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
     if (node->HasValue(prop_bitmap))
     {
         ttlib::cstr code;
-        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
             code << "#if wxCHECK_VERSION(3, 1, 6)\n";
         }
@@ -416,7 +416,7 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
             code << '\t' << bundle_code;
             code << '\t' << GenToolCode(node, "wxBitmapBundle::FromBitmaps(bitmaps)");
             code << "\n\t}";
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n";
                 code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
@@ -426,7 +426,7 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
         else
         {
             code << GenToolCode(node, bundle_code);
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n";
                 code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));

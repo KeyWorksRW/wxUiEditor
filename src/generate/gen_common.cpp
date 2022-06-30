@@ -598,7 +598,7 @@ bool GenBtnBimapCode(Node* node, ttlib::cstr& code, bool is_single)
     if (code.size())
         code << '\n';
 
-    bool is_old_widgets = (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1");
+    bool is_old_widgets = (wxGetProject().value(prop_wxWidgets_version) == "3.1");
     if (is_old_widgets)
     {
         if (code.size() && !(code.back() == '\n'))
@@ -1016,7 +1016,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
     // If we get here, then we need to first put the bitmaps into a wxVector in order for wxBitmapBundle to load them.
 
     code << "\t{\n";
-    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
     {
         code << "#if wxCHECK_VERSION(3, 1, 6)\n";
     }
@@ -1046,7 +1046,7 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code)
             code << "\t\tbitmaps.push_back(wxueImage(" << name << ", sizeof(" << name << ")));\n";
         }
     }
-    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
     {
         code << "#endif\n";
     }
@@ -1697,7 +1697,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
         return code;
     }
 
-    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1" && !parts[IndexType].is_sameas("SVG"))
+    if (wxGetProject().value(prop_wxWidgets_version) == "3.1" && !parts[IndexType].is_sameas("SVG"))
     {
         code << "#if wxCHECK_VERSION(3, 1, 6)\n";
     }
@@ -1787,7 +1787,7 @@ ttlib::cstr GenerateIconCode(const ttlib::cstr& description)
         }
     }
 
-    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
     {
         code << "#else\n";
         auto image_code = GenerateBitmapCode(description);

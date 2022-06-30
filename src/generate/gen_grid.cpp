@@ -174,7 +174,7 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
     {
         if (node->prop_as_string(prop_cell_fit) == "clip")
         {
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#if wxCHECK_VERSION(3, 1, 4)";
                 code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Clip());";
@@ -187,7 +187,7 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
         }
         else if (node->prop_as_string(prop_cell_fit) == "ellipsize")
         {
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#if wxCHECK_VERSION(3, 1, 4)";
                 code << braced_indent << node->get_node_name() << "->SetDefaultCellFitMode(wxGridFitMode::Ellipsize());";
@@ -202,7 +202,7 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
 
     if (node->prop_as_int(prop_selection_mode) != 0)
     {
-        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1" &&
+        if (wxGetProject().value(prop_wxWidgets_version) == "3.1" &&
             node->prop_as_string(prop_selection_mode) == "wxGridSelectNone")
         {
             code << "\n#if wxCHECK_VERSION(3, 1, 5)";

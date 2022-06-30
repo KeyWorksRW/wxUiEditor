@@ -482,7 +482,7 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& aut
         bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
         if (is_code_block)
         {
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "#if wxCHECK_VERSION(3, 1, 6)\n";
             }
@@ -494,7 +494,7 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& aut
                 code << "auto ";
             code << node->get_node_name() << "Item->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));";
             code << "\n}";
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n";
                 if (node->IsLocal())
@@ -507,14 +507,14 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& aut
         }
         else
         {
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "#if wxCHECK_VERSION(3, 1, 6)\n";
             }
             if (node->IsLocal())
                 code << "auto ";
             code << node->get_node_name() << "Item->SetBitmap(" << bundle_code << ");";
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n";
                 if (node->IsLocal())
@@ -604,19 +604,19 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& au
     {
         auto_indent = indent::auto_keep_whitespace;
 
-        bool is_old_widgets = (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1");
+        bool is_old_widgets = (wxGetProject().value(prop_wxWidgets_version) == "3.1");
         if (is_old_widgets)
         {
             code << "#if wxCHECK_VERSION(3, 1, 6)\n";
         }
 
         ttlib::cstr bundle_code;
-        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+        bool is_code_block = GenerateBundleCode(node->value(prop_bitmap), bundle_code);
 
         if (node->HasValue(prop_unchecked_bitmap))
         {
             ttlib::cstr unchecked_code;
-            bool is_checked_block = GenerateBundleCode(node->prop_as_string(prop_unchecked_bitmap), unchecked_code);
+            bool is_checked_block = GenerateBundleCode(node->value(prop_unchecked_bitmap), unchecked_code);
             if (is_code_block || is_checked_block)
             {
                 code << "{\n";

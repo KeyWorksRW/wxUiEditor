@@ -67,14 +67,14 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
         if (!is_vector_code)
         {
             ttlib::cstr bundle_code;
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) != "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
             {
                 GenerateBundleCode(description, bundle_code);
                 code << bundle_code;
             }
             else
             {
-                if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+                if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
                 {
                     code.insert(0, "\t");
                     code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t\t";
@@ -101,7 +101,7 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
         }
         else
         {
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) != "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) != "3.1")
             {
                 code << "wxBitmapBundle::FromBitmaps(bitmaps)";
             }

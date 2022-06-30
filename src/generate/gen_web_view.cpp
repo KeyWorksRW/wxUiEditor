@@ -76,7 +76,7 @@ std::optional<ttlib::cstr> WebViewGenerator::GenEvents(NodeEvent* event, const s
 {
     if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
          event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
-        wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        wxGetProject().value(prop_wxWidgets_version) == "3.1")
     {
         ttlib::cstr code("\n#if wxCHECK_VERSION(3, 1, 5)\n");
         code << GenEventCode(event, class_name);

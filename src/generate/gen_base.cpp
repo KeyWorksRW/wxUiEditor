@@ -255,7 +255,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
     // wxBitmap if older. We need to conditionalize the header output by removing the "#include <wx/bmpbndl.h>" entry and
     // creating our own conditionalized header.
 
-    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
     {
         if (auto bmpbndl_hdr = src_includes.find("#include <wx/bmpbndl.h>"); bmpbndl_hdr != src_includes.end())
         {
@@ -429,7 +429,7 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
         if (m_NeedSVGFunction)
         {
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 m_source->writeLine();
                 m_source->writeLine("#if !wxCHECK_VERSION(3, 1, 6)", indent::none);
@@ -698,7 +698,7 @@ void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
             }
             if ((event->get_name() == "wxEVT_WEBVIEW_FULL_SCREEN_CHANGED" ||
                  event->get_name() == "wxEVT_WEBVIEW_SCRIPT_MESSAGE_RECEIVED") &&
-                wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+                wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#if wxCHECK_VERSION(3, 1, 5)\n";
                 if (m_form_node->prop_as_bool(prop_use_derived_class))

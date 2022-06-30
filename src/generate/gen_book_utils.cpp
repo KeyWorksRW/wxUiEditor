@@ -117,7 +117,7 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
         // code more readable.
 
         code << "\n\t{";
-        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
             code << "\n#if wxCHECK_VERSION(3, 1, 6)";
         }
@@ -144,9 +144,9 @@ void BookCtorAddImagelist(ttlib::cstr& code, Node* node)
         }
         code << "\n\t\t" << node->get_node_name() << "->SetImages(bundle_list);";
 
-        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
-            code << "\n\n#else  // older version of wxWidgets that doesn't support bitmap bundles\n";
+            code << "\n\n#else  // older version of wxWidgets that don't support bitmap bundles\n";
 
             code << "\n\t\tauto img_list = new wxImageList;";
 

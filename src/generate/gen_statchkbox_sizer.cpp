@@ -114,7 +114,7 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenConstruction(Node
     }
 
     code << node->get_node_name() << " = new wxStaticBoxSizer(new wxStaticBox(" << parent_name << ", wxID_ANY,";
-    if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+    if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
     {
         code << "\n#if wxCHECK_VERSION(3, 1, 1)\n\t";
         code << node->prop_as_string(prop_checkbox_var_name) << "),";

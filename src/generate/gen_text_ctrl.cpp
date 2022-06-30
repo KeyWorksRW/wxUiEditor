@@ -180,7 +180,7 @@ std::optional<ttlib::cstr> TextCtrlGenerator::GenSettings(Node* node, size_t& au
 
     if (node->prop_as_string(prop_spellcheck).contains("enabled"))
     {
-        if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
         {
             code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
             code << node->get_node_name() << "->EnableProofCheck(wxTextProofOptions::Default()";

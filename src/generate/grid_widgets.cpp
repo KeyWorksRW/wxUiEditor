@@ -128,7 +128,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
         bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
         if (is_code_block)
         {
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "#if wxCHECK_VERSION(3, 1, 6)\n";
             }
@@ -142,7 +142,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
             code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
                  << "wxBitmapBundle::FromBitmaps(bitmaps));";
             code << "\n\t}";
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n\t";
                 if (node->IsLocal())
@@ -155,7 +155,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
         }
         else
         {
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "#if wxCHECK_VERSION(3, 1, 6)\n";
             }
@@ -163,7 +163,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
                 code << "auto ";
             code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
             code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", " << bundle_code << ");";
-            if (wxGetProject().prop_as_string(prop_wxWidgets_version) == "3.1")
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n";
                 if (node->IsLocal())

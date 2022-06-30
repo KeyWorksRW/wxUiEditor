@@ -47,24 +47,6 @@ wxObject* ComboBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     return widget;
 }
 
-bool ComboBoxGenerator::OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop)
-{
-    if (!node->HasValue(prop_contents))
-        return false;
-
-    if (prop->isProp(prop_selection_string))
-    {
-        wxStaticCast(widget, wxComboBox)->SetStringSelection(prop->as_wxString());
-        return true;
-    }
-    else if (prop->isProp(prop_selection_int))
-    {
-        wxStaticCast(widget, wxComboBox)->SetSelection(prop->as_int());
-        return true;
-    }
-    return false;
-}
-
 std::optional<ttlib::cstr> ComboBoxGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;

@@ -22,12 +22,22 @@ wxObject* HtmlListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
     auto widget = new wxSimpleHtmlListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                                           DlgSize(parent, node, prop_size), 0, nullptr, GetStyleInt(node));
 
-    auto& items = node->prop_as_string(prop_contents);
-    if (items.size())
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(items);
+        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
-            widget->Append(wxString::FromUTF8(iter));
+            widget->Append(iter.wx_str());
+
+        if (node->HasValue(prop_selection_string))
+        {
+            widget->SetStringSelection(node->prop_as_wxString(prop_selection_string));
+        }
+        else
+        {
+            int sel = node->prop_as_int(prop_selection_int);
+            if (sel > -1 && sel < (to_int) array.size())
+                widget->SetSelection(sel);
+        }
     }
 
     widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
@@ -100,7 +110,7 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenSettings(Node* node, size_t&
         code << node->get_node_name() << "->SetFocus()";
     }
 
-    if (node->prop_as_string(prop_contents).size())
+    if (node->HasValue(prop_contents))
     {
         auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
         for (auto& iter: array)
@@ -108,6 +118,30 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenSettings(Node* node, size_t&
             if (code.size())
                 code << "\n";
             code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
+        }
+
+        if (node->HasValue(prop_selection_string))
+        {
+            code << "\n";
+            if (node->HasValue(prop_validator_variable))  // as of 3.2.0, there is no validator variable for this property.
+            {
+                code << node->prop_as_string(prop_validator_variable) << " = ";
+                code << GenerateQuotedString(node, prop_selection_string) << ";  // set validator variable";
+            }
+            else
+            {
+                code << node->get_node_name() << "->SetStringSelection(";
+                code << GenerateQuotedString(node, prop_selection_string) << ");";
+            }
+        }
+        else
+        {
+            int sel = node->prop_as_int(prop_selection_int);
+            if (sel > -1 && sel < (to_int) array.size())
+            {
+                code << "\n";
+                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
+            }
         }
     }
 
@@ -150,6 +184,10 @@ int HtmlListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_
 
     if (xrc_flags & xrc::add_comments)
     {
+        if (node->HasValue(prop_selection_string))
+        {
+            ADD_ITEM_COMMENT("You cannot use selection_string for the selection in XRC.")
+        }
         GenXrcComments(node, item);
     }
 

@@ -347,8 +347,8 @@ static const PropName NonUiProps[] = {
     prop_persist,
     prop_radiobtn_var_name,
     prop_range,
-    prop_select,
-    prop_selection,
+    // prop_select,     // wxSimpleHtmlListBox won't redraw correctly if this or prop_selection is enabled.
+    // prop_selection,
     prop_set_function,
     prop_show_hidden,
     prop_thumbsize,

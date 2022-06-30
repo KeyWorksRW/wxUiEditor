@@ -1752,7 +1752,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
         if (iter.type() == type_id)
         {
             auto& prop_id = iter.as_string();
-            if (!prop_id.starts_with("wxID_"))
+            if (prop_id.size() && !prop_id.starts_with("wxID_"))
                 set_ids.insert(prop_id);
         }
     }

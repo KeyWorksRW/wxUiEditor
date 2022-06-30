@@ -142,14 +142,14 @@ namespace xrc
     };
 }  // namespace xrc
 
-constexpr const char* txtVersion = "wxUiEditor 0.9.3";
+constexpr const char* txtVersion = "wxUiEditor 1.0.0";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2022 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 
 // Current version of wxUiEditor project files
 constexpr const auto curWxuiMajorVer = 1;
-constexpr const auto curWxuiMinorVer = 4;
-constexpr const auto curCombinedVer = 14;
+constexpr const auto curWxuiMinorVer = 5;
+constexpr const auto curCombinedVer = 15;
 
 // Use when you need to return an empty const ttlib::cstr&
 extern ttlib::cstr tt_empty_cstr;

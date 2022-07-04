@@ -905,14 +905,16 @@ void MainFrame::OnBrowseDocs(wxCommandEvent& WXUNUSED(event))
             auto file = generator->GetHelpURL(m_selected_node.get());
             if (file.size())
             {
-                wxString url("https://docs.wxwidgets.org/trunk/class");
+                // wxString url("https://docs.wxwidgets.org/trunk/class");
+                wxString url("https://docs.wxwidgets.org/3.2.0/class");
                 url << file.wx_str();
                 wxLaunchDefaultBrowser(url);
                 return;
             }
         }
     }
-    wxLaunchDefaultBrowser("https://docs.wxwidgets.org/trunk/");
+    // wxLaunchDefaultBrowser("https://docs.wxwidgets.org/trunk/");
+    wxLaunchDefaultBrowser("https://docs.wxwidgets.org/3.2.0/");
 }
 
 void MainFrame::OnUpdateBrowseDocs(wxUpdateUIEvent& event)

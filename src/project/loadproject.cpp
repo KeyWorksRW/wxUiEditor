@@ -691,31 +691,41 @@ bool App::NewProject(bool create_empty)
                 {
                     WxCrafter crafter;
                     Import(crafter, iter, true);
+#if defined(INTERNAL_TESTING)
                     wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_JSON);
+#endif
                 }
                 else if (iter.has_extension(".fbp"))
                 {
                     FormBuilder fb;
                     Import(fb, iter, true);
+#if defined(INTERNAL_TESTING)
                     wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
                 }
                 else if (iter.has_extension(".wxs") || iter.has_extension(".xrc"))
                 {
                     WxSmith smith;
                     Import(smith, iter, true);
+#if defined(INTERNAL_TESTING)
                     wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
                 }
                 else if (iter.has_extension(".wxg"))
                 {
                     WxGlade glade;
                     Import(glade, iter, true);
+#if defined(INTERNAL_TESTING)
                     wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_XML);
+#endif
                 }
                 else if (iter.has_extension(".rc") || iter.has_extension(".dlg"))
                 {
                     WinResource winres;
                     Import(winres, iter, true);
+#if defined(INTERNAL_TESTING)
                     wxGetFrame().GetImportPanel()->SetImportFile(import_file, wxSTC_LEX_CPP);
+#endif
                 }
 
                 if (imported_from.size())

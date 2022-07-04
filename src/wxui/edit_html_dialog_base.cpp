@@ -56,9 +56,11 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
         m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
     }
     m_scintilla->SetInitialSize(ConvertDialogToPixels(
-        wxSize(600 > GetBestSize().x ? 600 : -1, 400 > GetBestSize().y ? 400 : -1)));
+        wxSize(225 > GetBestSize().x ? 225 : -1, 150 > GetBestSize().y ? 150 : -1)));
 
     m_htmlWin = new wxHtmlWindow(m_splitter);
+    m_htmlWin->SetInitialSize(ConvertDialogToPixels(
+        wxSize(200 > GetBestSize().x ? 200 : -1, 150 > GetBestSize().y ? 150 : -1)));
     m_splitter->SplitVertically(m_scintilla, m_htmlWin);
 
     auto stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

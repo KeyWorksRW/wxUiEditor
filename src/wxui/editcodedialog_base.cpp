@@ -46,7 +46,7 @@ bool EditCodeDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
         m_stc->SetBackSpaceUnIndents(true);
     }
     m_stc->SetInitialSize(ConvertDialogToPixels(
-        wxSize(600 > GetBestSize().x ? 600 : -1, 400 > GetBestSize().y ? 400 : -1)));
+        wxSize(300 > GetBestSize().x ? 300 : -1, 150 > GetBestSize().y ? 150 : -1)));
     parent_sizer->Add(m_stc, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     auto stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

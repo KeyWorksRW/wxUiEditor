@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wxUiEditorData
-  data_version="14">
+  data_version="15">
   <node
     class="Project"
     art_directory="../art_src"
@@ -220,7 +220,7 @@
           wrap_mode="word"
           wrap_visual_flag="end"
           minimum_size="-1,-1"
-          smart_size="600,400d"
+          smart_size="300,150d"
           border_size="10"
           flags="wxEXPAND"
           proportion="1"
@@ -265,13 +265,14 @@
             wrap_visual_flag="end"
             font="large"
             minimum_size="-1,-1"
-            smart_size="600,400d"
+            smart_size="225,150d"
             border_size="10"
             flags="wxEXPAND"
             proportion="1"
             wxEVT_STC_CHANGE="OnTextChange" />
           <node
-            class="wxHtmlWindow" />
+            class="wxHtmlWindow"
+            smart_size="200,150d" />
         </node>
         <node
           class="wxStdDialogButtonSizer"
@@ -399,7 +400,7 @@
               wrap_mode="word"
               wrap_visual_flag="end"
               minimum_size="-1,-1"
-              smart_size="600,400d"
+              smart_size="300,150d"
               border_size="10"
               flags="wxEXPAND"
               proportion="1"

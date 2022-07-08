@@ -31,6 +31,7 @@ static const ClassGenPair lst_class_gen[] = {
     { "\"Listbox\"", gen_wxListBox },
     { "\"RICHEDIT_CLASS\"", gen_wxTextCtrl },
     { "\"RichEdit20A\"", gen_wxTextCtrl },
+    { "\"RichEdit20W\"", gen_wxTextCtrl },
     { "\"RichEdit\"", gen_wxTextCtrl },
     { "\"Scrollbar\"", gen_wxScrollBar },
 

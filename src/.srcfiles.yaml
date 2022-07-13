@@ -282,6 +282,7 @@ Docs:
     # ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation
     # files.
 
+    ../CHANGELOG.md
     ../README.md
     ../docs/DEV_NOTES.md
     ../docs/images.md

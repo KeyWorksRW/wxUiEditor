@@ -7,6 +7,7 @@
 
 #include <array>
 #include <charconv>
+#include <set>
 
 #include <wx/gdicmn.h>   // Common GDI classes, types and declarations
 #include <wx/mstream.h>  // Memory stream classes
@@ -505,5 +506,38 @@ bool isConvertibleMime(const ttString& suffix)
         if (suffix.is_sameas(iter))
             return false;
     }
+    return true;
+}
+
+extern const char* g_u8_cpp_keywords;  // defined in ../panels/base_panel.cpp
+std::set<std::string> g_set_cpp_keywords;
+
+bool isValidVarName(const std::string& str)
+{
+    // variable names must start with an alphabetic character or underscore character
+    if (!((str[0] >= 'a' && str[0] <= 'z') || (str[0] >= 'A' && str[0] <= 'Z') || str[0] == '_'))
+        return false;
+
+    for (auto iter: str)
+    {
+        if (!((iter >= 'a' && iter <= 'z') || (iter >= 'A' && iter <= 'Z') || (iter >= '0' && iter <= '9') || iter == '_'))
+            return false;
+    }
+
+    // Ensure that the variable name is not a C++ keyword
+
+    // The set is only initialized the first time this function is called.
+    if (g_set_cpp_keywords.empty())
+    {
+        ttlib::multistr keywords(g_u8_cpp_keywords, ' ');
+        for (auto& iter: keywords)
+        {
+            g_set_cpp_keywords.emplace(iter);
+        }
+    }
+
+    if (g_set_cpp_keywords.contains(str))
+        return false;
+
     return true;
 }

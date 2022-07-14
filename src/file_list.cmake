@@ -228,6 +228,7 @@ set (file_list
 
     ${CMAKE_CURRENT_LIST_DIR}/../pugixml/pugixml.cpp      # XML parser
 
+    ${CMAKE_CURRENT_LIST_DIR}/ui/generate_xrc_dlg.cpp     # Dialog for generating XRC file(s)
     ${CMAKE_CURRENT_LIST_DIR}/ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node
     ${CMAKE_CURRENT_LIST_DIR}/ui/import_dlg.cpp           # Dialog to import one or more projects
     ${CMAKE_CURRENT_LIST_DIR}/ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file

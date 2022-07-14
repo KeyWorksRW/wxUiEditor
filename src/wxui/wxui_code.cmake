@@ -12,6 +12,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/eventhandlerdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/fontpropdlg_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/generate_xrc_dlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gridbag_item_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/import_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/importwinres_base.cpp

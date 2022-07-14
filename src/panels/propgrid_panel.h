@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   PropertyGrid class for node properties and events
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,6 +10,7 @@
 #include <map>
 #include <set>
 
+#include <wx/aui/auibook.h>       // wxaui: wx advanced user interface - notebook
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 
 #include "../nodes/node_classes.h"  // Forward defintions of Node classes
@@ -88,9 +89,11 @@ protected:
     void OnPropertyGridChanging(wxPropertyGridEvent& event);
     void OnPropertyGridExpand(wxPropertyGridEvent& event);
     void OnPropertyGridItemSelected(wxPropertyGridEvent& event);
-    void OnNodePropChange(CustomEvent& event);
     void OnReCreateGrid(wxCommandEvent& event);
     void OnAuiNotebookPageChanged(wxAuiNotebookEvent& event);
+
+public:
+    void OnNodePropChange(CustomEvent& event);
 
 private:
     std::map<wxPGProperty*, NodeProperty*> m_property_map;

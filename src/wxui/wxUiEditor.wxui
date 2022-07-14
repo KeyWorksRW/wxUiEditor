@@ -220,7 +220,6 @@
           wrap_mode="word"
           wrap_visual_flag="end"
           minimum_size="-1,-1"
-          smart_size="300,150d"
           border_size="10"
           flags="wxEXPAND"
           proportion="1"
@@ -265,14 +264,12 @@
             wrap_visual_flag="end"
             font="large"
             minimum_size="-1,-1"
-            smart_size="225,150d"
             border_size="10"
             flags="wxEXPAND"
             proportion="1"
             wxEVT_STC_CHANGE="OnTextChange" />
           <node
-            class="wxHtmlWindow"
-            smart_size="200,150d" />
+            class="wxHtmlWindow" />
         </node>
         <node
           class="wxStdDialogButtonSizer"
@@ -400,7 +397,6 @@
               wrap_mode="word"
               wrap_visual_flag="end"
               minimum_size="-1,-1"
-              smart_size="300,150d"
               border_size="10"
               flags="wxEXPAND"
               proportion="1"
@@ -415,6 +411,69 @@
           class="wxStdDialogButtonSizer"
           flags="wxEXPAND"
           OKButtonClicked="OnOK" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      base_file="generate_xrc_dlg_base"
+      class_name="GenerateXrcDlgBase"
+      derived_class_name="GenerateXrcDlg"
+      derived_file="../ui/generate_xrc_dlg"
+      persist="1"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Generate XRC File(s)"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="StaticRadioBtnBoxSizer"
+          class_access="protected:"
+          label="Combined File"
+          radiobtn_var_name="m_radio_combined"
+          var_name="m_combined_box"
+          flags="wxEXPAND"
+          validator_variable="m_create_combined"
+          wxEVT_RADIOBUTTON="OnCombinedFile">
+          <node
+            class="wxFilePickerCtrl"
+            message="Combined XRC File"
+            style="wxFLP_USE_TEXTCTRL|wxFLP_SAVE"
+            wildcard="*.xrc"
+            minimum_size="120,-1d"
+            flags="wxEXPAND"
+            proportion="1"
+            wxEVT_FILEPICKER_CHANGED="OnCombinedFilenameChanged" />
+        </node>
+        <node
+          class="StaticRadioBtnBoxSizer"
+          checked="0"
+          class_access="protected:"
+          label="Separate Files"
+          radiobtn_var_name="m_radio_separate"
+          var_name="m_separate_box"
+          flags="wxEXPAND"
+          wxEVT_RADIOBUTTON="OnSeparateFiles">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="Forms not listed do not have xrc_file set."
+            var_name="staticText" />
+          <node
+            class="wxListBox"
+            minimum_size="-1,50d"
+            flags="wxEXPAND"
+            proportion="1" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          OK="0"
+          Save="1"
+          default_button="none"
+          flags="wxEXPAND"
+          SaveButtonClicked="OnSave" />
       </node>
     </node>
     <node
@@ -569,7 +628,6 @@
               var_name="m_combo_recent_dirs"
               hidden="1"
               minimum_size="-1,-1"
-              smart_size="240,-1"
               wxEVT_COMBOBOX="OnRecentDir" />
             <node
               class="wxButton"
@@ -1175,7 +1233,7 @@
             wxEVT_MENU="OnGenInhertedClass" />
           <node
             class="wxMenuItem"
-            label="Generate &amp;XRC files"
+            label="Generate &amp;XRC files..."
             var_name="menu_item_10"
             wxEVT_MENU="OnExportXRC" />
           <node
@@ -3125,7 +3183,6 @@
             class="wxComboBox"
             var_name="m_combo_system"
             disabled="1"
-            smart_size="250,-1d"
             wxEVT_COMBOBOX="OnSystemColourChange" />
           <node
             class="wxStaticText"
@@ -3351,7 +3408,6 @@
                 class_access="none"
                 label="Face&amp;name:"
                 var_name="staticText_5"
-                smart_size="-1,-1d"
                 borders="wxTOP|wxRIGHT|wxLEFT" />
               <node
                 class="wxComboBox"
@@ -3360,7 +3416,6 @@
                 style="wxCB_READONLY|wxCB_SORT"
                 var_name="m_comboFacenames"
                 minimum_size="-1,-1d"
-                smart_size="300,-1d"
                 tooltip="Leave Facename set to default to create a font that isn't dependent on a user's installed fonts."
                 flags="wxEXPAND"
                 wxEVT_COMBOBOX="OnFacename" />

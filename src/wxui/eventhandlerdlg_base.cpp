@@ -78,8 +78,6 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
         m_stc->SetTabWidth(4);
         m_stc->SetBackSpaceUnIndents(true);
     }
-    m_stc->SetInitialSize(ConvertDialogToPixels(
-        wxSize(300 > GetBestSize().x ? 300 : -1, 150 > GetBestSize().y ? 150 : -1)));
     m_lambda_box->Add(m_stc, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());

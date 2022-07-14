@@ -18,6 +18,7 @@
 #include "node_decl.h"      // NodeDeclaration class
 #include "node_prop.h"      // NodeProperty -- NodeProperty class
 #include "project_class.h"  // Project class
+#include "utils.h"          // Utility functions that work with properties
 
 #include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 
@@ -124,6 +125,13 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         ttlib::cstr newValue = property->ValueToString(variant).utf8_string();
         if (newValue.empty())
             return true;
+
+        if (!isValidVarName(newValue))
+        {
+            event->SetValidationFailureMessage("The name you have specified is not a valid C++ variable name.");
+            event->Veto();
+            return false;
+        }
         auto unique_name = node->GetUniqueName(newValue);
         // GetUniqueName() won't check the current node so if the name is unique, we still need to check within the same node
         bool is_duplicate = !newValue.is_sameas(unique_name);

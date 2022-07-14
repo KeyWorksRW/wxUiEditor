@@ -82,3 +82,6 @@ extern std::map<std::string, const char*> g_sys_colour_pair;
 extern std::map<std::string, const char*> g_stc_wrap_mode;
 
 bool isConvertibleMime(const ttString& suffix);
+
+// Checks whether a string is a valid C++ variable name.
+bool isValidVarName(const std::string& str);

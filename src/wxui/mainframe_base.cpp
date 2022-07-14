@@ -265,7 +265,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         "Creates the files and classes that derive from the generated base classes", wxITEM_NORMAL);
     m_menuTools->Append(menu_item20);
 
-    auto menu_item_10 = new wxMenuItem(m_menuTools, wxID_ANY, "Generate &XRC files");
+    auto menu_item_10 = new wxMenuItem(m_menuTools, wxID_ANY, "Generate &XRC files...");
     m_menuTools->Append(menu_item_10);
 
     m_menuTools->AppendSeparator();

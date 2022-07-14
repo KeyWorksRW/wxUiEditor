@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [Unreleased (1.0.1)]
 
 Release summary...
 
@@ -10,3 +10,5 @@ Release summary...
 ### Fixed
 
 ### Changed
+
+A user can no longer enter an invalid C++ variable name.

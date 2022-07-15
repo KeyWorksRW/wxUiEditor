@@ -8,7 +8,7 @@
 #include <wx/panel.h>
 #include <wx/scrolwin.h>  // wxScrolledWindow, wxScrolledControl and wxScrollHelper
 
-#include "tttextfile.h"  // ttlib::viewfile
+#include <tttextfile_wx.h>  // ttlib::viewfile
 
 class MainFrame;
 class wxStyledTextCtrl;

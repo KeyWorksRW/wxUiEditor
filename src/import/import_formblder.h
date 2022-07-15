@@ -9,8 +9,6 @@
 
 #include <map>
 
-#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
-
 #include "node_classes.h"  // Forward defintions of Node classes
 
 #include "import_xml.h"  // ImportXML -- Base class for XML importing

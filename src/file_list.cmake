@@ -235,17 +235,6 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/ui/insertwidget.cpp         # Dialog to lookup and insert a widget
     ${CMAKE_CURRENT_LIST_DIR}/ui/optionsdlg.cpp           # Dialog containing special Debugging commands
 
-    # ttLib submodule files
-
-    ${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/ttcstr.cpp      # Class for handling zero-terminated char strings.
-    ${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/ttcview.cpp     # string_view functionality on a zero-terminated char string.
-    ${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/ttsview.cpp     # std::string_view with additional methods
-    ${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/ttmultistr.cpp  # Breaks a single string into multiple strings
-    ${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/ttparser.cpp    # Command line parser
-    ${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/ttstr.cpp       # Enhanced version of wxString
-    ${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/ttlibspace.cpp  # ttlib namespace functions
-    ${CMAKE_CURRENT_LIST_DIR}/../ttLib/src/tttextfile.cpp  # Classes for reading and writing text files.
-
     # Debug-only files
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare.cpp>    # Compare code generation
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img.cpp>     # Convert image

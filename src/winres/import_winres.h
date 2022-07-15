@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "tttextfile.h"
+#include <tttextfile_wx.h>
 
 #include "../import/import_xml.h"  // ImportXML -- Base class for XML importing
 #include "winres_form.h"           // resForm -- Process a Windows Resource form  (usually a dialog)

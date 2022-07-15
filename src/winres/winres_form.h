@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "gen_enums.h"    // Enumerations for generators
 #include "node.h"         // Node class

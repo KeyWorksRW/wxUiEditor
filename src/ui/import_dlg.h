@@ -13,8 +13,6 @@
 
 #include "import_base.h"
 
-#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
-
 class ImportDlg : public ImportBase
 {
 public:

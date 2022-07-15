@@ -9,7 +9,7 @@
 
 #include <wx/panel.h>
 
-#include "tttextfile.h"  // ttlib::viewfile
+#include <tttextfile_wx.h>  // ttlib::viewfile
 
 #include "codedisplay_base.h"
 

@@ -7,7 +7,7 @@
 
 #include <wx/dir.h>
 
-#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "importwinres_base.h"  // auto-generated: importwinres_base.h and importwinres_base.cpp
 

@@ -924,7 +924,7 @@ void FormBuilder::BitmapProperty(pugi::xml_node& xml_prop, NodeProperty* prop)
         if (!ttlib::is_found(pos_semi))
             return;
         ttlib::cstr filename;
-        if (org_value.subview(pos_semi).is_sameas("; Load From File"))
+        if (org_value.subview(pos_semi) == "; Load From File")
         {
             // Older version of wxFB placed the filename first
             org_value.erase(pos_semi);

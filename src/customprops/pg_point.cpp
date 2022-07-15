@@ -7,8 +7,6 @@
 
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid
 
-#include <ttmultistr.h>  // multistr -- Breaks a single string into multiple strings
-
 #include "pg_point.h"
 
 #include "node.h"   // Node -- Node class

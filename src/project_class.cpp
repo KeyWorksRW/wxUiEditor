@@ -327,7 +327,7 @@ bool Project::AddEmbeddedImage(ttlib::cstr path, Node* form, bool is_animation)
         }
     }
 
-    if (m_map_embedded.find(path.filename().c_str()) != m_map_embedded.end())
+    if (m_map_embedded.find(path.filename().as_str()) != m_map_embedded.end())
         return false;
 
     auto final_result = AddNewEmbeddedImage(path, form, add_lock);
@@ -409,8 +409,8 @@ bool Project::AddNewEmbeddedImage(ttlib::cstr path, Node* form, std::unique_lock
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
-                auto embed = m_map_embedded[path.filename().c_str()].get();
+                m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
+                auto embed = m_map_embedded[path.filename().as_str()].get();
                 InitializeArrayName(embed, path.filename());
                 embed->form = form;
 

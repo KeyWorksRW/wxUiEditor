@@ -25,7 +25,7 @@
 #include <wx/xrc/xh_richtext.h>        // XML resource handler for wxRichTextCtrl
 #include <wx/xrc/xh_styledtextctrl.h>  // XML resource handler for wxStyledTextCtrl
 
-#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 

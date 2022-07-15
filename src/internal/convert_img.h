@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
-
 #include "internal/convert_img_base.h"  // ConvertImageBase
 
 class ConvertImageDlg : public ConvertImageBase

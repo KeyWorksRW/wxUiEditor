@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "winres_form.h"
 
@@ -17,7 +17,7 @@ resForm::resForm() {}
 void resForm::ParseDialog(WinResource* pWinResource, ttlib::textfile& txtfile, size_t& curTxtLine)
 {
     m_pWinResource = pWinResource;
-    auto line = txtfile[curTxtLine].subview();
+    ttlib::sview line = txtfile[curTxtLine].subview();
     auto end = line.find_space();
     if (end == tt::npos)
         throw std::invalid_argument("Expected an ID then a DIALOG or DIALOGEX.");

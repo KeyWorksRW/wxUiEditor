@@ -80,8 +80,16 @@ endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
-# Comment the following line out for a non-beta Release
-add_compile_definitions(BETA)
+# Instructions for building the ttlib_wx library using this project's precompiled header
+include(ttLib_wx/src/ttlib_file_list.cmake)
+add_library(ttLib_wx STATIC ${ttlib_file_list})
+target_precompile_headers(ttLib_wx PRIVATE "src/pch.h")
+target_include_directories(ttLib_wx PRIVATE
+    ${widget_dir}/include
+    ${setup_dir}
+    src/
+    ttLib_wx/src
+)
 
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates. Specifying the full path and extension
 # means ninja sees this as a normal dependency that didn't change any time one of the files it specifies changes.
@@ -127,9 +135,9 @@ add_library(check_build STATIC EXCLUDE_FROM_ALL
 )
 
 if (WIN32)
-    target_link_libraries(wxUiEditor PRIVATE wxWidgets wxCLib comctl32 Imm32 Shlwapi Version UxTheme)
+    target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib comctl32 Imm32 Shlwapi Version UxTheme)
 else()
-    target_link_libraries(wxUiEditor PRIVATE wxWidgets wxCLib)
+    target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
 endif()
 
 if (MSVC)
@@ -179,7 +187,7 @@ target_include_directories(wxUiEditor PRIVATE
     src/ui
     src/wxui
     pugixml
-    ttLib/include
+    ttLib_wx/src
 
     ${widget_dir}/include
     ${setup_dir}
@@ -194,7 +202,7 @@ target_include_directories(check_build PRIVATE
     src/ui
     src/wxui
     pugixml
-    ttLib/include
+    ttLib_wx/src
 
     ${widget_dir}/include
     ${setup_dir}

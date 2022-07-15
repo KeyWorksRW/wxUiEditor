@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
+#include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
 
 #include "mainframe.h"
 

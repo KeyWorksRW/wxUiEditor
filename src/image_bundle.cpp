@@ -313,8 +313,8 @@ bool Project::AddEmbeddedBundleImage(ttlib::cstr path, Node* form)
             wxImage image;
             if (handler->LoadFile(&image, stream))
             {
-                m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
-                auto embed = m_map_embedded[path.filename().c_str()].get();
+                m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
+                auto embed = m_map_embedded[path.filename().as_str()].get();
                 InitializeArrayName(embed, path.filename());
                 embed->form = form;
 
@@ -587,8 +587,8 @@ bool Project::AddSvgBundleImage(ttlib::cstr path, Node* form)
 
     wxMemoryOutputStream memory_stream;
     wxZlibOutputStream save_strem(memory_stream, wxZ_BEST_COMPRESSION);
-    m_map_embedded[path.filename().c_str()] = std::make_unique<EmbeddedImage>();
-    auto embed = m_map_embedded[path.filename().c_str()].get();
+    m_map_embedded[path.filename().as_str()] = std::make_unique<EmbeddedImage>();
+    auto embed = m_map_embedded[path.filename().as_str()].get();
     InitializeArrayName(embed, path.filename());
     embed->form = form;
 
@@ -615,7 +615,7 @@ bool Project::AddSvgBundleImage(ttlib::cstr path, Node* form)
         auto file_size = file_original.Length();
         ttlib::cstr size_comparison;
         int percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
-        size_comparison.Format("%s -- Original: %ku, compressed: %ku, %u percent", path.filename().c_str(), file_size,
+        size_comparison.Format("%v -- Original: %ku, compressed: %ku, %u percent", path.filename(), file_size,
                                compressed_size, percent);
         MSG_INFO(size_comparison)
     }

@@ -9,9 +9,6 @@
 
 #include <wx/settings.h>
 
-#include "ttcstr.h"   // ttlib::cstr -- std::string with additional methods
-#include "ttsview.h"  // sview -- std::string_view with additional methods
-
 #include "gen_enums.h"  // Enumerations for generators
 
 class wxColour;

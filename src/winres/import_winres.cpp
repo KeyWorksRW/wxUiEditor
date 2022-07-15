@@ -5,7 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "tttextfile.h"  // ttTextFile -- Similar to wxTextFile, but uses UTF8 strings
+#include <tttextfile_wx.h>  // ttTextFile -- Similar to wxTextFile, but uses UTF8 strings
 
 #include "import_winres.h"
 
@@ -76,11 +76,11 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
         if (iter.contains("#include"))
         {
             ttlib::cstr name;
-            auto curline = iter.view_nonspace();
+            ttlib::sview curline = iter.view_nonspace();
             name.ExtractSubString(curline, curline.stepover());
             if (name.size())
             {
-                auto ext = name.extension();
+                ttlib::sview ext = name.extension();
                 if (ext.is_sameas(".h"))
                 {
                     if (!lst_ignored_includes.contains(name))
@@ -133,7 +133,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
 
         if (file[idx].contains("ICON") || file[idx].contains("BITMAP"))
         {
-            auto line = file[idx].view_nonspace();
+            ttlib::sview line = file[idx].view_nonspace();
             ttlib::cstr id;
             if (line.at(0) == '"')
                 id.AssignSubString(line);
@@ -174,7 +174,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
             // We have to restart at zero in order to pickup code page changes
             for (m_curline = 0; m_curline < file.size(); ++m_curline)
             {
-                auto curline = file[m_curline].view_nonspace();
+                ttlib::sview curline = file[m_curline].view_nonspace();
                 if (curline.starts_with("STRINGTABLE"))
                 {
                     ParseStringTable(file);
@@ -182,14 +182,14 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                 else if (curline.starts_with("#pragma code_page"))
                 {
                     auto code = curline.find('(');
-                    m_codepage = std::atoi(curline.subview(code + 1));
+                    m_codepage = ttlib::atoi(curline.subview(code + 1));
                 }
             }
         }
 
         for (m_curline = 0; m_curline < file.size(); ++m_curline)
         {
-            auto curline = file[m_curline].view_nonspace();
+            ttlib::sview curline = file[m_curline].view_nonspace();
             auto start = curline.find_nonspace();
             if (curline.empty() || curline[start] == '/')  // Ignore blank lines and comments.
                 continue;
@@ -263,7 +263,7 @@ bool WinResource::ImportRc(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>&
                     if (curline.contains(" code_page("))
                     {
                         auto code = curline.find('(');
-                        m_codepage = std::atoi(curline.subview(code + 1));
+                        m_codepage = ttlib::atoi(curline.subview(code + 1));
                     }
                 }
             }

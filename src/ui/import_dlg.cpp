@@ -11,8 +11,8 @@
 #include <wx/filedlg.h>   // wxFileDialog base header
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include "pugixml.hpp"   // xml processing
-#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+#include "pugixml.hpp"      // xml processing
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "import_dlg.h"  // auto-generated: import_base.h and import_base.cpp
 

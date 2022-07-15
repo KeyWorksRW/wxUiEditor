@@ -11,7 +11,7 @@
 
 #include <wx/dir.h>  // wxDir is a class for enumerating the files in a directory
 
-#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
+#include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
 
 #include "internal/code_compare_base.h"
 
@@ -103,7 +103,7 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
 
     // /e -- terminate with escape
     // /u -- don't add files to MRU
-    winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd);
+    winShellRun("WinMergeU.exe", "/e /u ~wxue_.WinMerge", cwd.sub_cstr().c_str());
 }
 
 #endif  // _WIN32

@@ -681,8 +681,7 @@ void MainFrame::ProjectLoaded()
 
 void MainFrame::ProjectSaved()
 {
-    ttlib::cstr str(GetProject()->getProjectFile().filename() + " saved");
-    setStatusText(str);
+    setStatusText(ttlib::cstr(GetProject()->getProjectFile().filename()) << " saved");
     UpdateFrame();
 }
 

@@ -7,8 +7,8 @@
 
 #include <fstream>
 
-#include "ttcwd.h"       // cwd -- Class for storing and optionally restoring the current directory
-#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+#include <ttcwd_wx.h>       // cwd -- Class for storing and optionally restoring the current directory
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "node.h"           // Node class
@@ -43,7 +43,7 @@ int WriteCMakeFile(bool test_only)
     ttlib::cwd cur_dir;
     cur_dir.make_absolute();
 
-    cmake_file.make_relative(cur_dir);
+    cmake_file.make_relative(cur_dir.utf8_string());
 
     ttlib::viewfile current;
     if (!current.ReadFile(cmake_file) && test_only)
@@ -73,7 +73,7 @@ int WriteCMakeFile(bool test_only)
 
     for (auto base_file: base_files)
     {
-        base_file.make_relative(cur_dir);
+        base_file.make_relative(cur_dir.utf8_string());
         base_file.backslashestoforward();
         base_file.remove_extension();
 

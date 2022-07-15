@@ -19,7 +19,7 @@
 #include <wx/wfstream.h>  // File stream classes
 #include <wx/wupdlock.h>  // wxWindowUpdateLocker prevents window redrawing
 
-#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "convert_img.h"  // auto-generated: convert_img_base.h and convert_img_base.cpp
 
@@ -457,7 +457,7 @@ void ConvertImageDlg::ImgageInHeaderOut()
 
     ttlib::textfile file;
 
-    file.addEmptyLine().Format("static const unsigned char %s[%zu] = {", string_name.filename().c_str(),
+    file.addEmptyLine().Format("static const unsigned char %v[%zu] = {", string_name.filename(),
                                read_stream->GetBufferSize());
 
     read_stream->Seek(0, wxFromStart);

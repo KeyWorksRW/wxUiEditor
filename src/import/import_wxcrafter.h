@@ -9,8 +9,6 @@
 
 #include <map>
 
-#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
-
 #include "gen_enums.h"     // Enumerations for generators
 #include "node_classes.h"  // Forward defintions of Node classes
 

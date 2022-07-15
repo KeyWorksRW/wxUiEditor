@@ -96,17 +96,12 @@
 #include <string_view>
 #include <vector>
 
-#include "ttlibspace.h"  // This must be included before any other ttLib header files
+#include <ttlib_wx.h>  // This must be included before any other ttLib header files
 
-// Currently, the order of the ttLib includes is critical, so use blank lines to keep clang-format from reordering them.
-
-#include "ttstr.h"  // ttString -- wxString with ttlib::cstr equivalent functions
-
-#include "ttcview.h"  // ttlib::cview -- std::string_view functionality on a zero-terminated char string.
-#include "ttsview.h"  // ttlib::sview -- std::string_view with additional methods
-
-#include "ttcstr.h"      // ttlib::cstr -- std::string with additional functions
-#include "ttmultistr.h"  // ttlib::multistr -- breaks a single string into multiple strings
+#include <ttcstr_wx.h>      // ttlib::cstr -- std::string with additional functions
+#include <ttmultistr_wx.h>  // ttlib::multistr -- breaks a single string into multiple strings
+#include <ttstring_wx.h>    // ttString -- wxString with ttlib::cstr equivalent functions
+#include <ttsview_wx.h>     // ttlib::sview -- std::string_view with additional methods
 
 #if !defined(int_t)
 

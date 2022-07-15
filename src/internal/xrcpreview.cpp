@@ -14,7 +14,7 @@
 #include <wx/xml/xml.h>     // wxXmlDocument - XML parser & data holder class
 #include <wx/xrc/xmlres.h>  // XML resources
 
-#include "tttextfile.h"  // ttlib::viewfile
+#include <tttextfile_wx.h>  // ttlib::viewfile
 
 #include "gen_xrc.h"        // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "mainframe.h"      // MainFrame -- Main window frame

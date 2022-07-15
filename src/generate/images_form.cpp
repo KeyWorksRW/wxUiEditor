@@ -10,7 +10,7 @@
 #include <wx/statbmp.h>   // wxStaticBitmap class interface
 #include <wx/stattext.h>  // wxStaticText base header
 
-#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "images_form.h"
 

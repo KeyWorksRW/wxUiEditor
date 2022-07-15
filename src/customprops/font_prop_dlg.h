@@ -9,8 +9,6 @@
 
 #include <wx/fontenum.h>
 
-#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
-
 #include "font_prop.h"  // FontProperty class
 
 #include "wxui/fontpropdlg_base.h"  // FontPropDlgBase

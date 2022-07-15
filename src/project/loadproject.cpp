@@ -8,8 +8,6 @@
 #include <wx/stc/stc.h>  // A wxWidgets implementation of Scintilla.
 #include <wx/utils.h>    // Miscellaneous utilities
 
-#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
-
 #include "../nodes/node_creator.h"  // NodeCreator class
 #include "base_generator.h"         // BaseGenerator -- Base widget generator class
 #include "gen_enums.h"              // Enumerations for generators

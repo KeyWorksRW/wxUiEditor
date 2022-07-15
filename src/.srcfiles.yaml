@@ -21,7 +21,7 @@ Options:
     TargetDir:        ../build/CMakeFiles/CMakeTmp  # just a temporary location for the psuedo library
     Natvis:           wxui.natvis                   # MSVC Debug visualizer
 
-    IncDirs:          ./;nodes;generate;utils;customprops;ui;wxui;../pugixml;../ttLib/include;../wxSnapshot/include;../wxSnapshot/win
+    IncDirs:          ./;nodes;generate;utils;customprops;ui;wxui;../pugixml;../ttLib_wx/src;../wxSnapshot/include;../wxSnapshot/win
 
     Libs_dbg:         ../build/wxSnapshot/Debug/wxCLib.lib;../build/wxSnapshot/Debug/wxWidgets.lib
     Libs_rel:         ../build/wxSnapshot/Release/wxCLib.lib;../build/wxSnapshot/Release/wxWidgets.lib
@@ -268,16 +268,16 @@ Files:
     internal/xrccompare.cpp      # C++/XRC UI Comparison dialog
     internal/import_panel.cpp    # Panel to display original imported file
 
-    # ttLib submodule files (see https://github.com/KeyWorksRW/ttLib repository)
+    # ttLib_wx submodule files (see https://github.com/KeyWorksRW/ttLib_wx repository)
 
-    ../ttLib/src/ttcstr.cpp      # Class for handling zero-terminated char strings.
-    ../ttLib/src/ttcview.cpp     # string_view functionality on a zero-terminated char string.
-    ../ttLib/src/ttsview.cpp     # std::string_view with additional methods
-    ../ttLib/src/ttmultistr.cpp  # Breaks a single string into multiple strings
-    ../ttLib/src/ttparser.cpp    # Command line parser
-    ../ttLib/src/ttstr.cpp       # Enhanced version of wxString
-    ../ttLib/src/ttlibspace.cpp  # ttlib namespace functions
-    ../ttLib/src/tttextfile.cpp  # Classes for reading and writing text files.
+    ../ttLib_wx/src/ttlib_wx.cpp       # ttlib namespace functions
+    ../ttLib_wx/src/ttcstr_wx.cpp      # std::string with additional methods
+    ../ttLib_wx/src/ttsview_wx.cpp     # std::string_view with additional methods
+    ../ttLib_wx/src/ttmultistr_wx.cpp  # Breaks a single string into multiple strings or views
+    ../ttLib_wx/src/tttextfile_wx.cpp  # Classes for reading and writing text files
+    ../ttLib_wx/src/ttcvector_wx.cpp   # Vector class for storing ttlib::cstr strings
+    ../ttLib_wx/src/ttparser_wx.cpp    # Command line parser
+    ../ttLib_wx/src/ttstring_wx.cpp    # Enhanced version of wxString
 
 Docs:
     # ttBld will ignore this section -- it's here just for convenience as a shortcut to open some of the documentation

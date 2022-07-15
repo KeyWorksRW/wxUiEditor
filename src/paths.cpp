@@ -7,8 +7,7 @@
 
 // This module handles changes to art_directory, base_directory, and derived_directory
 
-#include "ttcwd.h"  // cwd -- Class for storing and optionally restoring the current directory
-#include "ttstr.h"  // ttString -- wxString with additional methods similar to ttlib::cstr
+#include <ttcwd_wx.h>  // cwd -- Class for storing and optionally restoring the current directory
 
 #include "paths.h"
 

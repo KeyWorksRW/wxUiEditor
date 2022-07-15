@@ -11,7 +11,7 @@
 
 #include <wx/filename.h>  // wxFileName - encapsulates a file path
 
-#include "tttextfile.h"  // textfile -- Classes for reading and writing line-oriented files
+#include <tttextfile_wx.h>  // textfile -- Classes for reading and writing line-oriented files
 
 #include "gen_base.h"
 
@@ -2004,7 +2004,7 @@ void BaseCodeGenerator::ParseImageProperties(Node* node)
                 {
                     if (iter.type() == type_animation)
                         m_NeedAnimationFunction = true;
-                    else if (!parts[IndexImage].extension().is_sameas(".xpm", tt::CASE::either))
+                    else if (!ttlib::is_sameas(parts[IndexImage].extension(), ".xpm", tt::CASE::either))
                         m_NeedHeaderFunction = true;
                 }
             }

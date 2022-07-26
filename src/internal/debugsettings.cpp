@@ -67,6 +67,7 @@ void DebugSettings::OnOK(wxCommandEvent& event)
         auto config = wxConfig::Get();
         config->SetPath("/preferences");
         config->Write("flags", m_orgFlags);
+        config->SetPath("/");
     }
 
     event.Skip();  // Need to call this for Persist to work

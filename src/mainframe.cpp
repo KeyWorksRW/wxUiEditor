@@ -111,11 +111,48 @@ MainFrame::MainFrame() :
     }
 
     auto config = wxConfig::Get();
+
+    // Normally, wxPersistentRegisterAndRestore(this, "MainFrame"); could be called to save/restore the size and position.
+    // That works fine on Windows 10, but on Windows 11, a user can maximize the height of a window by dragging the frame to
+    // the bottom of the screen. This does not generate the normal size event, and therefore the main windows doesn't save or
+    // restore the correct size and position. It's worth noting that even Windows apps like Notepad don't handle this
+    // correctly either. However, by retrieving the dimensions when the app is closed, the exact size and position can be
+    // saved and restored without relying on event messages.
+
+#if defined(_DEBUG)
+    config->SetPath("/debug_mainframe");
+#else
+    config->SetPath("/mainframe");
+#endif
+
+    if (auto isMaximixed = config->ReadBool("IsMaximized", false); isMaximixed)
+    {
+        Maximize();
+    }
+    else
+    {
+        if (auto isIconized = config->ReadBool("IsIconized", false); isIconized)
+        {
+            Iconize();
+        }
+        else
+        {
+            wxPoint pt;
+            pt.x = config->ReadLong("PosX", -1);
+            pt.y = config->ReadLong("PosY", -1);
+            SetPosition(pt);
+
+            wxSize config_size;
+            config_size.x = config->ReadLong("SizeW", 500);
+            config_size.y = config->ReadLong("SizeH", 400);
+            SetSize(config_size);
+        }
+    }
+
     config->SetPath(txt_main_window_config);
     m_FileHistory.Load(*config);
     m_FileHistory.UseMenu(m_submenu_recent);
     m_FileHistory.AddFilesToMenu();
-    config->SetPath("/");
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     auto menuInternal = new wxMenu;
@@ -144,7 +181,7 @@ MainFrame::MainFrame() :
     m_menuFile->AppendSubMenu(m_submenu_import_recent, "Import &Recent");
 
     config = wxConfig::Get();
-    config->SetPath("debug_history/");
+    config->SetPath("/debug_history");
     m_ImportHistory.Load(*config);
     m_ImportHistory.UseMenu(m_submenu_import_recent);
     m_ImportHistory.AddFilesToMenu();
@@ -157,8 +194,6 @@ MainFrame::MainFrame() :
 
     CreateStatusBar(StatusPanels);
     SetStatusBarPane(1);  // specifies where menu and toolbar help content is displayed
-
-    wxPersistentRegisterAndRestore(this, "MainFrame");
     CreateSplitters();
 
     m_SecondarySplitter->Bind(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED,
@@ -615,6 +650,26 @@ void MainFrame::OnClose(wxCloseEvent& event)
     wxGetApp().SetMainFrameClosing();
 
     auto config = wxConfig::Get();
+#if defined(_DEBUG)
+    config->SetPath("/debug_mainframe");
+#else
+    config->SetPath("/mainframe");
+#endif
+
+    bool isIconized = IsIconized();
+    bool isMaximized = IsMaximized();
+
+    if (!isMaximized)
+    {
+        config->Write("PosX", isIconized ? -1 : GetPosition().x);
+        config->Write("PosY", isIconized ? -1 : GetPosition().y);
+        config->Write("SizeW", isIconized ? -1 : GetSize().GetWidth());
+        config->Write("SizeH", isIconized ? -1 : GetSize().GetHeight());
+    }
+
+    config->Write("IsMaximized", isMaximized);
+    config->Write("IsIconized", isIconized);
+
     config->SetPath(txt_main_window_config);
     m_FileHistory.Save(*config);
     m_property_panel->SaveDescBoxHeight();
@@ -626,8 +681,9 @@ void MainFrame::OnClose(wxCloseEvent& event)
         wxTheClipboard->Flush();
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
-    config->SetPath("debug_history/");
+    config->SetPath("/debug_history");
     m_ImportHistory.Save(*config);
+    config->SetPath("/");
 
     g_pMsgLogging->CloseLogger();
 #endif

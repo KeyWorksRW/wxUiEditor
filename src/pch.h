@@ -36,8 +36,8 @@
 
 #include <wx/defs.h>  // Declarations/definitions common to all wx source files
 
-#if !wxCHECK_VERSION(3, 1, 6)
-    #error "You must have wxWidgets 3.1.6 or later to build this project."
+#if !wxCHECK_VERSION(3, 2, 0)
+    #error "You must have wxWidgets 3.2.0 or later to build this project."
 #endif
 
 #if defined(__WINDOWS__)
@@ -50,23 +50,6 @@
 
 #if defined(_DEBUG)
     #include <wx/debug.h>  // Misc debug functions and macros
-#endif
-
-#ifdef _MSC_VER
-    #if !wxCHECK_VERSION(3, 1, 7)
-        #pragma warning(disable : 4267)  // conversion from 'size_t' to 'int', possible loss of data
-        #pragma warning(disable : 4244)  // conversion from 'size_t' to 'int', possible loss of data
-    #endif
-
-    // These warnings are still generated in 3.1.17
-    #pragma warning(disable : 5054)  // '|' deprecated between enumerations of different types
-#endif
-
-#if !wxCHECK_VERSION(3, 1, 7)
-    // included here so that C4244 and C4267 get disabled
-    #include <wx/choicebk.h>
-    #include <wx/htmllbox.h>
-    #include <wx/richtext/richtextbuffer.h>
 #endif
 
 // included here so that C5054 gets disabled

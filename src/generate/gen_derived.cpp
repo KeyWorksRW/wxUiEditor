@@ -265,7 +265,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                 // Add a comment to the header that specifies the generated header and source filenames
                 baseFile.replace_extension(header_ext);
                 derived_file.replace_extension(header_ext);
-                inc.Format("#include %kv", derived_file.subview());
+                inc.Format("#include %ks", derived_file.c_str());
 
                 ttlib::cstr comment(ttlib::cstr(header_ext) << "\"  // auto-generated: ");
                 comment << baseFile << " and ";
@@ -293,7 +293,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
             {
                 baseFile.replace_extension(header_ext);
                 ttlib::cstr inc;
-                inc.Format("#include %kv", baseFile.subview());
+                inc.Format("#include %ks", baseFile.c_str());
                 m_source->writeLine("// Non-generated additions to base class (virtual events is unchecked)");
                 m_source->writeLine("// Copy and paste into your own code as needed.");
                 m_source->writeLine();

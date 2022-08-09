@@ -238,8 +238,16 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
             if (path.file_exists())
             {
                 // Count both source and header file
-                currentFiles += 2;
-                continue;
+                path.replace_extension(header_ext);
+                if (path.file_exists())
+                {
+                    currentFiles += 2;
+                    continue;
+                }
+                else
+                {
+                    ++currentFiles;
+                }
             }
             path.remove_extension();
         }
@@ -259,7 +267,6 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         codegen.SetSrcWriteCode(cpp_cw.get());
 
         auto retval = codegen.GenerateDerivedClass(project, form.get());
-        ASSERT_MSG(retval != result::exists, "this should be impossible since we checked above")
         if (retval == result::fail)
         {
             results.emplace_back() << "Cannot create or write to the file " << path << '\n';
@@ -267,7 +274,27 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
         else if (retval == result::exists)
         {
-            ++currentFiles;
+            path.replace_extension(header_ext);
+            if (path.file_exists())
+            {
+                ++currentFiles;
+                continue;
+            }
+
+            // If we get here, the source file exists, but the header file does not.
+            retval = h_cw->WriteFile();
+            if (retval == result::fail)
+            {
+                results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            }
+            else if (retval == result::exists)
+            {
+                ++currentFiles;
+            }
+            else
+            {
+                results.emplace_back() << path.filename() << " saved" << '\n';
+            }
             continue;
         }
         else if (retval == result::ignored)
@@ -277,7 +304,10 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
         }
 
         path.replace_extension(header_ext);
-        retval = h_cw->WriteFile();
+        if (path.file_exists())
+            retval = result::exists;
+        else
+            retval = h_cw->WriteFile();
 
         if (retval == result::fail)
         {

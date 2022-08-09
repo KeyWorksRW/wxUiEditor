@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(wxUiEditor
     LANGUAGES CXX
-    VERSION 1.0.0
+    VERSION 1.0.1
     DESCRIPTION "wxWidgets UI designer"
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 
@@ -74,8 +74,41 @@ else()
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
     set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
 
+    # Note that for WIDGETS_FORK to work, you must build the wxWidgets libraries yourself
+    # (add_subdirectory is not used in this case). You will need to set the cmake configuration
+    # for wxWidgets to build mondo static (including static runtime). Do *not* use this for an
+    # official release build as you cannot optimize or profile the the wxWidgets library when
+    # using their cmake build.
+
+    # Alternaticely, you can use the following -- but that means creating the CMakeLists.txt
+    # file yourself (you can use the version in wxSnapshot as a template).
+
     # This will build wxCLib.lib and wxWidgets.lib
-    add_subdirectory(../wxWidgets/bld ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
+    # add_subdirectory(../wxWidgets/bld ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
+
+    # Using MSVC, this will build in lib/vc_x64_lib:
+    #     wxmsw33ud wxexpatd wxjpegd wxpngd wxregexud wxscintillad wxtiffd wxzlibd
+    # add_subdirectory(../wxWidgets ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
+    if (MSVC)
+        # Both debug and release libraries are in this directory
+        set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/lib/vc_x64_lib)
+    else()
+        set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/lib)
+    endif()
+endif()
+
+if (WIN32)
+    if (NOT WIDGETS_FORK)
+        set(setup_dir ${widget_cmake_dir}/win)
+    else()
+        set(setup_dir ${widget_cmake_dir}/lib/vc_x64_lib/mswud)
+    endif()
+else()
+    if (NOT WIDGETS_FORK)
+        set(setup_dir ${widget_cmake_dir}/unix)
+    else()
+        set(setup_dir ${widget_cmake_dir}/lib/wx/include/gtk3-unicode-static-3.3)
+    endif()
 endif()
 
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
@@ -134,10 +167,26 @@ add_library(check_build STATIC EXCLUDE_FROM_ALL
     ${wxue_generated_code}
 )
 
-if (WIN32)
-    target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib comctl32 Imm32 Shlwapi Version UxTheme)
+if (NOT WIDGETS_FORK)
+    if (WIN32)
+        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib comctl32 Imm32 Shlwapi Version UxTheme)
+    else()
+        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
+    endif()
 else()
-    target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
+    if (WIN32)
+        # Both Debug and Release libaries are in the same location
+        target_link_directories(wxUiEditor PRIVATE ${widget_lib_dir})
+        target_link_libraries(wxUiEditor PRIVATE ttLib_wx
+             wxmsw33ud wxexpatd wxjpegd wxpngd wxregexud wxscintillad wxtiffd wxzlibd
+             comctl32 Imm32 Shlwapi Version UxTheme)
+    else()
+        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
+        target_link_directories(wxUiEditor PRIVATE
+            $<$<CONFIG:Debug>:${widget_lib_dir}>
+            $<$<CONFIG:Release>:${widget_lib_dir}>
+        )
+    endif()
 endif()
 
 if (MSVC)
@@ -174,11 +223,10 @@ endif()
 target_precompile_headers(wxUiEditor PRIVATE "src/pch.h")
 target_precompile_headers(check_build PRIVATE "src/pch.h")
 
-if (WIN32)
-    set(setup_dir ${widget_cmake_dir}/win)
-endif()
-
 target_include_directories(wxUiEditor PRIVATE
+    ${widget_dir}/include
+    ${setup_dir}
+
     src/
     src/nodes
     src/generate
@@ -188,12 +236,12 @@ target_include_directories(wxUiEditor PRIVATE
     src/wxui
     pugixml
     ttLib_wx/src
-
-    ${widget_dir}/include
-    ${setup_dir}
 )
 
 target_include_directories(check_build PRIVATE
+    ${widget_dir}/include
+    ${setup_dir}
+
     src/
     src/nodes
     src/generate
@@ -203,9 +251,6 @@ target_include_directories(check_build PRIVATE
     src/wxui
     pugixml
     ttLib_wx/src
-
-    ${widget_dir}/include
-    ${setup_dir}
 )
 
 # Packaging Instructions
@@ -231,8 +276,7 @@ set(CPACK_CREATE_DESKTOP_LINKS wxUiEditor)
 configure_file ("${CMAKE_CURRENT_LIST_DIR}/nsis_options.cmake.in"
                 "${PROJECT_BINARY_DIR}/nsis_options.cmake"
                 @ONLY)
-set (CPACK_PROJECT_CONFIG_FILE
-     "${PROJECT_BINARY_DIR}/nsis_options.cmake")
+set (CPACK_PROJECT_CONFIG_FILE "${PROJECT_BINARY_DIR}/nsis_options.cmake")
 
 if (WIN32)
     set(CPACK_GENERATOR ZIP NSIS)
@@ -243,10 +287,6 @@ endif()
 # include(GNUInstallDirs)
 include(CPack)
 
-install(TARGETS wxUiEditor
-    CONFIGURATIONS Release
-)
+install(TARGETS wxUiEditor CONFIGURATIONS Release)
 
-set_property(INSTALL "bin/$<TARGET_FILE_NAME:wxUiEditor>"
-   PROPERTY CPACK_START_MENU_SHORTCUTS "wxUiEditor"
-)
+set_property(INSTALL "bin/$<TARGET_FILE_NAME:wxUiEditor>" PROPERTY CPACK_START_MENU_SHORTCUTS "wxUiEditor")

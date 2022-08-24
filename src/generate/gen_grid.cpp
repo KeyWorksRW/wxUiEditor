@@ -279,11 +279,23 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
     if (!node->prop_as_bool(prop_drag_col_size))
         code << braced_indent << node->get_node_name() << "->EnableDragColSize(false);";
 
-    code << braced_indent << node->get_node_name() << "->SetColLabelSize(" << node->prop_as_string(prop_col_label_size)
-         << ");";
     code << braced_indent << node->get_node_name() << "->SetColLabelAlignment("
          << node->prop_as_string(prop_col_label_horiz_alignment) << ", "
          << node->prop_as_string(prop_col_label_vert_alignment) << ");";
+
+    if (node->prop_as_int(prop_col_label_size) == -1)
+    {
+        code << braced_indent << node->get_node_name() << "->SetColLabelSize(wxGRID_AUTOSIZE);";
+    }
+    else if (node->prop_as_int(prop_col_label_size) == 0)
+    {
+        code << braced_indent << node->get_node_name() << "->HideColLabels();";
+    }
+    else
+    {
+        code << braced_indent << node->get_node_name() << "->SetColLabelSize(" << node->prop_as_string(prop_col_label_size)
+             << ");";
+    }
 
     if (node->HasValue(prop_col_label_values))
     {
@@ -315,6 +327,20 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
     code << braced_indent << node->get_node_name() << "->SetRowLabelAlignment("
          << node->prop_as_string(prop_row_label_horiz_alignment) << ", "
          << node->prop_as_string(prop_row_label_vert_alignment) << ");";
+
+    if (node->prop_as_int(prop_row_label_size) == -1)
+    {
+        code << braced_indent << node->get_node_name() << "->SetRowLabelSize(wxGRID_AUTOSIZE);";
+    }
+    else if (node->prop_as_int(prop_row_label_size) == 0)
+    {
+        code << braced_indent << node->get_node_name() << "->HideRowLabels();";
+    }
+    else
+    {
+        code << braced_indent << node->get_node_name() << "->SetRowLabelSize(" << node->prop_as_string(prop_row_label_size)
+             << ");";
+    }
 
     if (node->HasValue(prop_row_label_values))
     {

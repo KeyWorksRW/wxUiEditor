@@ -10,6 +10,7 @@ Release summary...
 ### Fixed
 
 - Code generation for button without a label fixed.
+- Code generation for wxGrid with positive row label size fixed.
 
 ### Changed
 

@@ -206,13 +206,13 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
             node->prop_as_string(prop_selection_mode) == "wxGridSelectNone")
         {
             code << "\n#if wxCHECK_VERSION(3, 1, 5)";
-            code << braced_indent << node->get_node_name() << "->SetSelectionMode("
+            code << braced_indent << node->get_node_name() << "->SetSelectionMode(wxGrid::"
                  << node->prop_as_string(prop_selection_mode) << ");";
             code << "\n#endif";
         }
         else
         {
-            code << braced_indent << node->get_node_name() << "->SetSelectionMode("
+            code << braced_indent << node->get_node_name() << "->SetSelectionMode(wxGrid::"
                  << node->prop_as_string(prop_selection_mode) << ");";
         }
     }

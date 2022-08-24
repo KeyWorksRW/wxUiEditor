@@ -9,6 +9,8 @@ Release summary...
 
 ### Fixed
 
+- Code generation for button without a label fixed.
+
 ### Changed
 
 - A user can no longer enter an invalid C++ variable name.

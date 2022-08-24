@@ -150,17 +150,14 @@ std::optional<ttlib::cstr> ButtonGenerator::GenConstruction(Node* node)
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
-    if (node->HasValue(prop_label))
+    // If prop_markup is set, then the label will be set in GenSettings()
+    if (node->HasValue(prop_label) && !node->prop_as_bool(prop_markup))
     {
-        if (!node->prop_as_bool(prop_markup))
-        {
-            code << GenerateQuotedString(node, prop_label);
-        }
-        else
-        {
-            // prop_markup is set, so the actual label will be set in GenSettings()
-            code << "wxEmptyString";
-        }
+        code << GenerateQuotedString(node, prop_label);
+    }
+    else
+    {
+        code << "wxEmptyString";
     }
 
     GeneratePosSizeFlags(node, code, true);

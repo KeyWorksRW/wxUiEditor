@@ -12,7 +12,7 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="Code" type="interface">
 		<property name="base_directory" type="path"
-			help="The generated base class output directory. Leave blank to generate them in the same directory as the project file." />
+			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file." />
 		<property name="derived_directory" type="path"
 			help="The generated derived class output directory. Leave blank to generate them in the same directory as the project file." />
 		<property name="source_ext" type="option" help="Specifies the file extension to use when create source files.">

@@ -75,7 +75,13 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     if (m_is_derived_class && m_form_node->HasValue(prop_derived_file))
     {
         derived_file = m_form_node->prop_as_string(prop_derived_file);
-        derived_file.make_relative(GetProject()->getProjectPath());
+        derived_file.backslashestoforward();
+        if (GetProject()->HasValue(prop_derived_directory) && !derived_file.contains("/"))
+        {
+            derived_file = GetProject()->as_string(prop_derived_directory);
+            derived_file.append_filename(m_form_node->prop_as_string(prop_derived_file));
+        }
+        derived_file.make_absolute();
         derived_file.backslashestoforward();
     }
     else
@@ -107,6 +113,13 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     if (auto& file = m_form_node->prop_as_string(prop_base_file); file.size())
     {
         baseFile = file;
+        baseFile.backslashestoforward();
+        if (GetProject()->HasValue(prop_base_directory) && !baseFile.contains("/"))
+        {
+            baseFile = GetProject()->GetBaseDirectory();
+            baseFile.append_filename(file);
+        }
+
         baseFile.replace_extension(header_ext);
         ttlib::cstr root(derived_file);
         root.remove_filename();
@@ -265,7 +278,7 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
                 // Add a comment to the header that specifies the generated header and source filenames
                 baseFile.replace_extension(header_ext);
                 derived_file.replace_extension(header_ext);
-                inc.Format("#include %ks", derived_file.c_str());
+                inc.Format("#include %ks", std::string(derived_file.filename()).c_str());
 
                 ttlib::cstr comment(ttlib::cstr(header_ext) << "\"  // auto-generated: ");
                 comment << baseFile << " and ";

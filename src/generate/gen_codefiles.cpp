@@ -64,6 +64,12 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             // generated.
             if (path == "filename_base")
                 continue;
+            path.backslashestoforward();
+            if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
+            {
+                path = GetProject()->GetBaseDirectory().utf8_string();
+                path.append_filename(base_file);
+            }
             path.make_absolute();
             path.backslashestoforward();
         }
@@ -232,7 +238,13 @@ void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
             path = file;
             if (path.empty())
                 continue;
-            path.make_relative(GetProject()->getProjectPath());
+            path.backslashestoforward();
+            if (GetProject()->HasValue(prop_derived_directory) && !path.contains("/"))
+            {
+                path = GetProject()->as_string(prop_derived_directory);
+                path.append_filename(file);
+            }
+            path.make_absolute();
             path.backslashestoforward();
             path.replace_extension(source_ext);
             if (path.file_exists())

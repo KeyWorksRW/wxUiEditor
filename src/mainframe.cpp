@@ -24,7 +24,7 @@
 #include <wx/utils.h>             // Miscellaneous utilities
 #include <wx/wupdlock.h>          // wxWindowUpdateLocker prevents window redrawing
 
-// auto-generated: ui/mainframe_base.h and ui/mainframe_base.cpp
+// auto-generated: wxui/mainframe_base.h and wxui/mainframe_base.cpp
 
 #include "mainframe.h"
 
@@ -604,6 +604,8 @@ void MainFrame::OnImportProject(wxCommandEvent&)
     wxGetApp().NewProject();
 }
 
+// This generates the base class files. For the derived class files, see OnGenInhertedClass()
+// in generate/gen_codefiles.cpp
 void MainFrame::OnGenerateCode(wxCommandEvent&)
 {
     GetProject()->UpdateEmbedNodes();

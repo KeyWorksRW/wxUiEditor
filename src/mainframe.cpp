@@ -1319,7 +1319,10 @@ void MainFrame::CopyNode(Node* node)
         {
             pugi::xml_document doc;
             auto clip_node = doc.append_child("node");
-            m_clipboard->AddNodeToDoc(clip_node);
+            int project_version = minRequiredVer;
+            m_clipboard->AddNodeToDoc(clip_node, project_version);
+            // REVIEW: [Randalphwa - 08-24-2022] project_version is ignored, assuming that the same version of
+            // wxClipboard will be used to paste the clipboard node.
             auto u8_data = new wxUtf8DataObject();
             std::stringstream strm;
             doc.save(strm, "", pugi::format_raw);

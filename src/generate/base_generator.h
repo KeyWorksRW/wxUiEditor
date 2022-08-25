@@ -97,6 +97,11 @@ public:
     // Return true if the Generic version of the control is being used.
     virtual bool IsGeneric(Node*) { return false; }
 
+    // Return the lowest required version of wxUiEditor to support this generator. Override
+    // this if the generator or any of it's non-default properties require a newer version of
+    // wxUiEditor.
+    virtual int GetRequiredVersion(Node* /*node*/) { return minRequiredVer; }
+
     // Generate specific additional code
     virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }
 

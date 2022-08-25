@@ -52,9 +52,9 @@ bool App::LoadProject(const ttString& file)
 
     ProjectSharedPtr project;
 
-    m_ProjectVersion = root.attribute("data_version").as_int((curWxuiMajorVer * 10) + curWxuiMinorVer);
+    m_ProjectVersion = root.attribute("data_version").as_int(curSupportedVer);
 
-    if (m_ProjectVersion > curCombinedVer)
+    if (m_ProjectVersion > curSupportedVer)
     {
         if (wxMessageBox("wxUiEditor does not recognize this version of the data file.\n"
                          "You may be able to load the file, but if you then save it you could lose data.\n\n"
@@ -70,7 +70,7 @@ bool App::LoadProject(const ttString& file)
         }
     }
 
-    else if (m_ProjectVersion < curCombinedVer)
+    else if (m_ProjectVersion < minRequiredVer)
     {
         if (!root.child("object") && !root.child("node"))
         {
@@ -126,13 +126,13 @@ bool App::LoadProject(const ttString& file)
     // Imported projects start with an older version so that they pass through the old project fixups.
     if (m_ProjectVersion == ImportProjectVersion)
     {
-        m_ProjectVersion = curCombinedVer;
+        m_ProjectVersion = minRequiredVer;
     }
 
     wxGetFrame().SetImportedFlag(false);
     wxGetFrame().FireProjectLoadedEvent();
 
-    if (m_isProject_updated || m_ProjectVersion < curCombinedVer)
+    if (m_isProject_updated || m_ProjectVersion < minRequiredVer)
         wxGetFrame().SetModified();
 
     return true;

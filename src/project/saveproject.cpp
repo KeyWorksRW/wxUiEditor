@@ -26,10 +26,14 @@ void Node::CreateDoc(pugi::xml_document& doc)
 
 void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 {
-    if (auto gen = GetGenerator(); gen)
+    if (project_version < curSupportedVer)
     {
-        if (gen->GetRequiredVersion(this) > project_version)
-            project_version = gen->GetRequiredVersion(this);
+        // Don't check if the version is alreay as high as we support -- this speeds up the process
+        if (auto gen = GetGenerator(); gen)
+        {
+            if (gen->GetRequiredVersion(this) > project_version)
+                project_version = gen->GetRequiredVersion(this);
+        }
     }
 
     node.append_attribute("class") = DeclName();

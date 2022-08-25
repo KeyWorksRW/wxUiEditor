@@ -52,6 +52,10 @@ option(INTERNAL_TESTING "Build with internal testing functionality")
 # is only going to be usable by the maintainers of this project.
 option(WIDGETS_FORK "Assumes the existance of ../wxWidgets/bld/CMakeLists.txt")
 
+# If this is set, you must build the library yourself. This is required if you build a UNIX version
+# as otherwise wxCLib will conflict with Unix dll versions of the sub-libraries such as wxpng.
+option(WIDGETS_BUILD "When building fork, use wxWidgets build system")
+
 if (INTERNAL_TESTING)
     message(NOTICE "Building internal testing version")
 
@@ -74,24 +78,31 @@ else()
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
     set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
 
-    # Note that for WIDGETS_FORK to work, you must build the wxWidgets libraries yourself
+    # Note that for WIDGETS_FORK with WIDGETS_BUILD to work, you must build the wxWidgets libraries yourself
     # (add_subdirectory is not used in this case). You will need to set the cmake configuration
     # for wxWidgets to build mondo static (including static runtime). Do *not* use this for an
-    # official release build as you cannot optimize or profile the the wxWidgets library when
+    # official release build as you cannot optimize or profile the wxWidgets library when
     # using their cmake build.
 
     # Alternaticely, you can use the following -- but that means creating the CMakeLists.txt
     # file yourself (you can use the version in wxSnapshot as a template).
 
-    # This will build wxCLib.lib and wxWidgets.lib
-    # add_subdirectory(../wxWidgets/bld ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
+    if (NOT WIDGETS_BUILD)
+        # This will build wxCLib and wxWidgets. wxCLib can NOT be used in a UNIX build
+        add_subdirectory(../wxWidgets/bld ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
+    endif()
 
     # Using MSVC, this will build in lib/vc_x64_lib:
     #     wxmsw33ud wxexpatd wxjpegd wxpngd wxregexud wxscintillad wxtiffd wxzlibd
     # add_subdirectory(../wxWidgets ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
+
     if (MSVC)
         # Both debug and release libraries are in this directory
-        set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/lib/vc_x64_lib)
+        if (WIDGETS_BUILD)
+            set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/lib/vc_x64_lib)
+        else()
+            set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
+        endif()
     else()
         set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/lib)
     endif()
@@ -151,7 +162,7 @@ if (INTERNAL_TESTING)
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/msg_logging.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/msgframe.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/debugsettings.cpp>
-        )
+    )
 endif()
 
 # Note the requirement that --config Debug is used to get the additional debug files
@@ -175,11 +186,33 @@ if (NOT WIDGETS_FORK)
     endif()
 else()
     if (WIN32)
-        # Both Debug and Release libaries are in the same location
-        target_link_directories(wxUiEditor PRIVATE ${widget_lib_dir})
-        target_link_libraries(wxUiEditor PRIVATE ttLib_wx
-             wxmsw33ud wxexpatd wxjpegd wxpngd wxregexud wxscintillad wxtiffd wxzlibd
-             comctl32 Imm32 Shlwapi Version UxTheme)
+        if (WIDGETS_BUILD)
+            # Both Debug and Release libaries are in the same location
+            target_link_directories(wxUiEditor PRIVATE ${widget_lib_dir})
+            target_link_libraries(wxUiEditor PRIVATE ttLib_wx
+                $<$<CONFIG:Debug>:wxmsw33ud>
+                $<$<CONFIG:Debug>:wxexpatd>
+                $<$<CONFIG:Debug>:wxjpegd>
+                $<$<CONFIG:Debug>:wxpngd>
+                $<$<CONFIG:Debug>:wxregexud>
+                $<$<CONFIG:Debug>:wxscintillad>
+                $<$<CONFIG:Debug>:wxtiffd>
+                $<$<CONFIG:Debug>:wxzlibd>
+
+                $<$<CONFIG:Release>:wxmsw33u>
+                $<$<CONFIG:Release>:wxexpat>
+                $<$<CONFIG:Release>:wxjpeg>
+                $<$<CONFIG:Release>:wxpng>
+                $<$<CONFIG:Release>:wxregexu>
+                $<$<CONFIG:Release>:wxscintilla>
+                $<$<CONFIG:Release>:wxtiff>
+                $<$<CONFIG:Release>:wxzlib>
+
+                 comctl32 Imm32 Shlwapi Version UxTheme
+            )
+        else()
+            target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
+        endif()
     else()
         target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
         target_link_directories(wxUiEditor PRIVATE

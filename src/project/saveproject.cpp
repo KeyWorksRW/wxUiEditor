@@ -5,9 +5,10 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "mainapp.h"    // App -- Main application class
-#include "node.h"       // Node class
-#include "prop_decl.h"  // PropChildDeclaration and PropDeclaration classes
+#include "base_generator.h"  // BaseGenerator class
+#include "mainapp.h"         // App -- Main application class
+#include "node.h"            // Node class
+#include "prop_decl.h"       // PropChildDeclaration and PropDeclaration classes
 
 #include "pugixml.hpp"
 
@@ -16,15 +17,21 @@ using namespace GenEnum;
 void Node::CreateDoc(pugi::xml_document& doc)
 {
     auto root = doc.append_child("wxUiEditorData");
-    root.append_attribute("data_version") = (curWxuiMajorVer * 10) + curWxuiMinorVer;
-
     auto node = root.append_child("node");
 
-    AddNodeToDoc(node);
+    int project_version = minRequiredVer;
+    AddNodeToDoc(node, project_version);
+    root.append_attribute("data_version") = project_version;
 }
 
-void Node::AddNodeToDoc(pugi::xml_node& node)
+void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 {
+    if (auto gen = GetGenerator(); gen)
+    {
+        if (gen->GetRequiredVersion(this) > project_version)
+            project_version = gen->GetRequiredVersion(this);
+    }
+
     node.append_attribute("class") = DeclName();
 
     for (auto& iter: m_properties)
@@ -90,6 +97,6 @@ void Node::AddNodeToDoc(pugi::xml_node& node)
     for (const auto& child: m_children)
     {
         auto child_element = node.append_child("node");
-        child->AddNodeToDoc(child_element);
+        child->AddNodeToDoc(child_element, project_version);
     }
 }

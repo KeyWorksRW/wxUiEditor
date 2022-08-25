@@ -124,10 +124,14 @@ constexpr const char* txtVersion = "wxUiEditor 1.0.1";
 constexpr const char* txtCopyRight = "Copyright (c) 2019-2022 KeyWorks Software";
 constexpr const char* txtAppname = "wxUiEditor";
 
-// Current version of wxUiEditor project files
-constexpr const auto curWxuiMajorVer = 1;
-constexpr const auto curWxuiMinorVer = 5;
-constexpr const auto curCombinedVer = 15;
+// This is the highest project number supported by this build of wxUiEditor. It should be
+// updated after every release, if there are any changes to the project format that might
+// require a newer version.
+constexpr const int curSupportedVer = 16;
+
+// This is the default minimum required version for all generators. It is the version used by
+// the 1.0.0 release.
+constexpr const int minRequiredVer = 15;
 
 // Use when you need to return an empty const ttlib::cstr&
 extern ttlib::cstr tt_empty_cstr;

@@ -310,7 +310,7 @@ public:
     size_t GetNodeSize() const;
 
     // This writes XML files in the 1.1 layout using attributes for properties
-    void AddNodeToDoc(pugi::xml_node& object);
+    void AddNodeToDoc(pugi::xml_node& object, int& project_version);
 
     void CalcNodeHash(size_t& hash) const;
 

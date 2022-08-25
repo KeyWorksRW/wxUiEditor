@@ -223,6 +223,15 @@ std::optional<ttlib::cstr> ButtonGenerator::GenSettings(Node* node, size_t& auto
     return code;
 }
 
+int ButtonGenerator::GetRequiredVersion(Node* node)
+{
+    // Code generation was invalid in minRequiredVer when there no label was set
+    if (!node->HasValue(prop_label) && !node->prop_as_bool(prop_markup))
+        return minRequiredVer + 1;
+
+    return minRequiredVer;
+}
+
 int ButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;

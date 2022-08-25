@@ -206,14 +206,14 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
             node->prop_as_string(prop_selection_mode) == "wxGridSelectNone")
         {
             code << "\n#if wxCHECK_VERSION(3, 1, 5)";
-            code << braced_indent << node->get_node_name() << "->SetSelectionMode(wxGrid::"
-                 << node->prop_as_string(prop_selection_mode) << ");";
+            code << braced_indent << node->get_node_name()
+                 << "->SetSelectionMode(wxGrid::" << node->prop_as_string(prop_selection_mode) << ");";
             code << "\n#endif";
         }
         else
         {
-            code << braced_indent << node->get_node_name() << "->SetSelectionMode(wxGrid::"
-                 << node->prop_as_string(prop_selection_mode) << ");";
+            code << braced_indent << node->get_node_name()
+                 << "->SetSelectionMode(wxGrid::" << node->prop_as_string(prop_selection_mode) << ");";
         }
     }
 
@@ -360,6 +360,19 @@ std::optional<ttlib::cstr> GridGenerator::GenSettings(Node* node, size_t& auto_i
 std::optional<ttlib::cstr> GridGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int GridGenerator::GetRequiredVersion(Node* node)
+{
+    // Code generation was invalid in minRequiredVer, so a newer version is required if this property is set.
+    if (node->prop_as_int(prop_selection_mode) != 0)
+        return minRequiredVer + 1;
+
+    // There was no code generation for a non-default setting in minRequiredVer
+    if (node->prop_as_int(prop_row_label_size) != -1)
+        return minRequiredVer + 1;
+
+    return minRequiredVer;
 }
 
 bool GridGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

@@ -45,6 +45,10 @@
     #endif
 #endif
 
+#if defined(_DEBUG)
+ttlib::cstr widgets_build_signature = WX_BUILD_OPTIONS_SIGNATURE;
+#endif  // _DEBUG
+
 wxIMPLEMENT_APP(App);
 
 #if defined(_WIN32) && defined(_DEBUG)

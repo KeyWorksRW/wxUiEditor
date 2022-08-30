@@ -431,6 +431,155 @@ void NodeProperty::set_value(const wxString& value)
     m_value << value.wx_str();
 }
 
+// All but one of the std::vector properties contain text which could have commas in it, so we need to use a '|' character as
+// the separator.
+
+ttlib::cstr NodeProperty::convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const
+{
+    ttlib::cstr result;
+    for (auto& field: fields)
+    {
+        if (result.size())
+            result << ';';
+        result << field.style << '|' << field.width;
+    }
+    return result;
+}
+
+ttlib::cstr NodeProperty::convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& items) const
+{
+    ttlib::cstr result;
+    for (auto& item: items)
+    {
+        if (result.size())
+            result << ';';
+        result << item.label;
+        if (item.checked.size() || item.checked.atoi() != 0)
+            result << '|' << item.checked;
+    }
+    return result;
+}
+
+ttlib::cstr NodeProperty::convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& items) const
+{
+    ttlib::cstr result;
+    for (auto& item: items)
+    {
+        if (result.size())
+            result << ';';
+        result << item.label;
+        if (item.enabled.atoi() != 1 || item.show.atoi() != 1 || item.tooltip.size() || item.helptext.size())
+            result << '|' << item.enabled << '|' << item.show << '|' << item.tooltip << '|' << item.helptext;
+    }
+    return result;
+}
+
+ttlib::cstr NodeProperty::convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>& items) const
+{
+    ttlib::cstr result;
+    for (auto& item: items)
+    {
+        if (result.size())
+            result << ';';
+        result << item.label;
+        if (item.bitmap.size())
+            result << '|' << item.bitmap;
+    }
+    return result;
+}
+
+std::vector<NODEPROP_STATUSBAR_FIELD> NodeProperty::as_statusbar_fields() const
+{
+    std::vector<NODEPROP_STATUSBAR_FIELD> result;
+
+    // "1" is the default value, indicating nothing has been set.
+    if (m_value == "1")
+    {
+        NODEPROP_STATUSBAR_FIELD field;
+        field.style = "wxSB_NORMAL";
+        field.width = "-1";
+        result.emplace_back(field);
+        return result;
+    }
+
+    ttlib::multistr fields(m_value, ';');
+    for (auto& field: fields)
+    {
+        ttlib::multistr parts(field, '|');
+        if (parts.size() == 2)
+            result.emplace_back(parts[0], parts[1]);
+        else if (parts.size() > 0)
+            result.emplace_back(parts[0], "-1");
+        else
+            result.emplace_back("wxSB_NORMAL", "-1");
+    }
+
+    return result;
+}
+
+std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
+{
+    std::vector<NODEPROP_CHECKLIST_ITEM> result;
+
+    ttlib::multistr fields(m_value, ';');
+    for (auto& field: fields)
+    {
+        ttlib::multistr parts(field, '|');
+        if (parts.size() == 2)
+            result.emplace_back(parts[0], parts[1]);
+        else if (parts.size() > 0)
+            result.emplace_back(parts[0], "");
+        else
+            result.emplace_back("", "");
+    }
+
+    return result;
+}
+
+std::vector<NODEPROP_BMP_COMBO_ITEM> NodeProperty::as_bmp_combo_items() const
+{
+    std::vector<NODEPROP_BMP_COMBO_ITEM> result;
+
+    ttlib::multistr fields(m_value, ';');
+    for (auto& field: fields)
+    {
+        ttlib::multistr parts(field, '|');
+        if (parts.size() == 2)
+            result.emplace_back(parts[0], parts[1]);
+        else if (parts.size() > 0)
+            result.emplace_back(parts[0], "");
+        else
+            result.emplace_back("", "");
+    }
+
+    return result;
+}
+
+std::vector<NODEPROP_RADIOBOX_ITEM> NodeProperty::as_radiobox_items() const
+{
+    std::vector<NODEPROP_RADIOBOX_ITEM> result;
+
+    ttlib::multistr fields(m_value, ';');
+    for (auto& field: fields)
+    {
+        ttlib::multistr parts(field, '|');
+        NODEPROP_RADIOBOX_ITEM item;
+        if (parts.size() > 0)
+            item.label = parts[0];
+        if (parts.size() > 1)
+            item.enabled = parts[1];
+        if (parts.size() > 2)
+            item.show = parts[2];
+        if (parts.size() > 3)
+            item.tooltip = parts[3];
+        if (parts.size() > 4)
+            item.helptext = parts[4];
+        result.emplace_back(item);
+    }
+
+    return result;
+}
+
 bool NodeProperty::HasValue() const
 {
     if (m_value.empty())
@@ -457,6 +606,9 @@ bool NodeProperty::HasValue() const
                 return (semicolonIndex != 0 && semicolonIndex + 2 < m_value.size());
             }
             return m_value.size();
+
+        case type_statbar_fields:
+            return (m_value == "1" || m_value == "wxSB_NORMAL|-1") ? false : true;
 
         default:
             return true;

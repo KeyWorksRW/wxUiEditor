@@ -479,6 +479,38 @@ ttlib::cstr* Node::prop_as_raw_ptr(PropName name)
         return nullptr;
 }
 
+std::vector<NODEPROP_STATUSBAR_FIELD> Node::as_statusbar_fields(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_statusbar_fields();
+    else
+        return std::vector<NODEPROP_STATUSBAR_FIELD>();
+}
+
+std::vector<NODEPROP_CHECKLIST_ITEM> Node::as_checklist_items(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_checklist_items();
+    else
+        return std::vector<NODEPROP_CHECKLIST_ITEM>();
+}
+
+std::vector<NODEPROP_RADIOBOX_ITEM> Node::as_radiobox_items(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_radiobox_items();
+    else
+        return std::vector<NODEPROP_RADIOBOX_ITEM>();
+}
+
+std::vector<NODEPROP_BMP_COMBO_ITEM> Node::as_bmp_combo_items(PropName name)
+{
+    if (auto result = m_prop_indices.find(name); result != m_prop_indices.end())
+        return m_properties[result->second].as_bmp_combo_items();
+    else
+        return std::vector<NODEPROP_BMP_COMBO_ITEM>();
+}
+
 const ttlib::cstr& Node::prop_default_value(PropName name)
 {
     auto prop = get_prop_ptr(name);

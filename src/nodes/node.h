@@ -251,6 +251,13 @@ public:
     wxBitmapBundle as_wxBitmapBundle(PropName name) const { return prop_as_wxBitmapBundle(name); }
     wxString as_wxString(PropName name) const { return prop_as_wxString(name); }
 
+    // If the following vector properties don't exist, they will return an empty vector
+
+    std::vector<NODEPROP_STATUSBAR_FIELD> as_statusbar_fields(PropName name);
+    std::vector<NODEPROP_CHECKLIST_ITEM> as_checklist_items(PropName name);
+    std::vector<NODEPROP_RADIOBOX_ITEM> as_radiobox_items(PropName name);
+    std::vector<NODEPROP_BMP_COMBO_ITEM> as_bmp_combo_items(PropName name);
+
     const ImageBundle* as_image_bundle(PropName name) const { return prop_as_image_bundle(name); }
     FontProperty as_font_prop(PropName name) const { return prop_as_font_prop(name); }
 

@@ -15,6 +15,33 @@
 
 class wxAnimation;
 
+struct NODEPROP_STATUSBAR_FIELD
+{
+    ttlib::cstr style;
+    ttlib::cstr width;
+};
+
+struct NODEPROP_CHECKLIST_ITEM
+{
+    ttlib::cstr label;
+    ttlib::cstr checked;  // 1 is true, or or empty is false
+};
+
+struct NODEPROP_RADIOBOX_ITEM
+{
+    ttlib::cstr label;
+    ttlib::cstr enabled;  // 1 is enabled, empty or 0 is disabled
+    ttlib::cstr show;     // 1 is shown, empty or 0 is hidden
+    ttlib::cstr tooltip;
+    ttlib::cstr helptext;
+};
+
+struct NODEPROP_BMP_COMBO_ITEM
+{
+    ttlib::cstr label;
+    ttlib::cstr bitmap;  // assumes embedded, svg only if .svg file extension, and svg will default to 16x16
+};
+
 class NodeProperty
 {
 public:
@@ -31,7 +58,28 @@ public:
     void set_value(ttlib::cstr val) { m_value.assign(val); }
     void set_value(std::string val) { m_value.assign(val); }
 
-    // Returns a non-const reference allowing you to modify the value
+    ttlib::cstr convert_statusbar_fields(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) const;
+    ttlib::cstr convert_checklist_items(std::vector<NODEPROP_CHECKLIST_ITEM>& fields) const;
+    ttlib::cstr convert_radiobox_items(std::vector<NODEPROP_RADIOBOX_ITEM>& fields) const;
+    ttlib::cstr convert_bmp_combo_items(std::vector<NODEPROP_BMP_COMBO_ITEM>& fields) const;
+
+    void set_value(std::vector<NODEPROP_STATUSBAR_FIELD>& fields) { m_value = convert_statusbar_fields(fields); }
+    void set_value(std::vector<NODEPROP_CHECKLIST_ITEM>& items) { m_value = convert_checklist_items(items); }
+    void set_value(std::vector<NODEPROP_RADIOBOX_ITEM>& items) { m_value = convert_radiobox_items(items); }
+    void set_value(std::vector<NODEPROP_BMP_COMBO_ITEM>& items) { m_value = convert_bmp_combo_items(items); }
+
+    // By returnung a vector instead of the string, the way the property string gets formatted is entirely up to
+    // NodeProperty. This allows, for example, to use '|' as a separator instead of ',' when there is text which contains a
+    // comma.
+
+    std::vector<NODEPROP_STATUSBAR_FIELD> as_statusbar_fields() const;
+    std::vector<NODEPROP_CHECKLIST_ITEM> as_checklist_items() const;
+    std::vector<NODEPROP_RADIOBOX_ITEM> as_radiobox_items() const;
+    std::vector<NODEPROP_BMP_COMBO_ITEM> as_bmp_combo_items() const;
+
+    // Returns a non-const reference allowing you to modify the value. Do *NOT* use this for
+    // the vector functions, as the formatting of the property string is entirely up to
+    // NodeProperty.
     ttlib::cstr& get_value() { return m_value; }
 
     int as_int() const;

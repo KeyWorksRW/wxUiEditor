@@ -20,7 +20,48 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
     auto org_style = GetStyleInt(node);
     // Don't display the gripper as it can resize our main window rather than just the mockup window
     auto widget = new wxStatusBar(wxStaticCast(parent, wxWindow), wxID_ANY, (org_style &= ~wxSTB_SIZEGRIP));
-    widget->SetFieldsCount(node->prop_as_int(prop_fields));
+
+    auto fields = node->as_statusbar_fields(prop_fields);
+    if (fields.size())
+    {
+        bool set_width = false;
+        bool set_style = false;
+        for (auto& iter: fields)
+        {
+            if (iter.width.size() && iter.width.atoi() != -1)
+                set_width = true;
+            if (iter.style.size() && iter.style != "wxSB_NORMAL")
+                set_style = true;
+        }
+
+        if (set_width)
+        {
+            std::vector<int> widths;
+            for (auto& iter: fields)
+            {
+                widths.push_back(iter.width.atoi());
+            }
+            widget->SetFieldsCount(to_int(widths.size()), widths.data());
+        }
+        else
+        {
+            widget->SetFieldsCount(to_int(fields.size()));
+        }
+        if (set_style)
+        {
+            std::vector<int> styles;
+            for (auto& iter: fields)
+            {
+                styles.push_back(g_NodeCreator.GetConstantAsInt(iter.style));
+            }
+            widget->SetStatusStyles(to_int(styles.size()), styles.data());
+        }
+    }
+    else
+    {
+        // The default is to have one field
+        widget->SetFieldsCount(1);
+    }
 
     if (org_style & wxSTB_SIZEGRIP)
         widget->SetStatusText("gripper not displayed in Mock Up");
@@ -65,6 +106,11 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> StatusBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int StatusBarGenerator::GetRequiredVersion(Node* node)
+{
+    return (node->HasValue(prop_fields) ? minRequiredVer + 1 : minRequiredVer);
 }
 
 bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

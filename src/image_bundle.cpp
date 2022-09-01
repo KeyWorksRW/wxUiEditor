@@ -617,7 +617,8 @@ bool Project::AddSvgBundleImage(ttlib::cstr path, Node* form)
         int percent = static_cast<int>(100 - (100 / (file_size / compressed_size)));
         size_comparison.Format("%v -- Original: %ku, compressed: %ku, %u percent", path.filename(), file_size,
                                compressed_size, percent);
-        MSG_INFO(size_comparison)
+        // Enable line below to show results for every file
+        // MSG_INFO(size_comparison)
     }
 #endif
 

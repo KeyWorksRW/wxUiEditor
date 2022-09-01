@@ -400,12 +400,20 @@ std::vector<ttlib::cstr> ConvertToArrayString(ttlib::sview value)
         return array;
     ttlib::cstr parse;
     auto pos = parse.ExtractSubString(value);
+    if (!ttlib::is_found(pos))
+    {
+        // This usually means a property that was hand-edited incorrectly, or a newer version of the project
+        // file where the property is encoded differently.
+        return array;
+    }
     array.emplace_back(parse);
 
     for (auto tmp_value = ttlib::stepover(value.data() + pos); tmp_value.size();
          tmp_value = ttlib::stepover(tmp_value.data() + pos))
     {
         pos = parse.ExtractSubString(tmp_value);
+        if (!ttlib::is_found(pos))
+            break;
         array.emplace_back(parse);
     }
 

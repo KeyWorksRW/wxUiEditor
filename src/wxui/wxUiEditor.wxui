@@ -3708,6 +3708,7 @@
         <node
           class="wxStdDialogButtonSizer"
           flags="wxEXPAND"
+          CancelButtonClicked="OnCancel"
           OKButtonClicked="OnOK" />
       </node>
     </node>

@@ -34,6 +34,17 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
     m_grid->SetColFormatCustom(1, wxGRID_VALUE_NUMBER);
 
     auto fields = m_prop->as_statusbar_fields();
+    if (ttlib::is_digit(m_prop->as_string()[0]))
+    {
+        fields.clear();
+        auto total_fields = m_prop->as_int();
+        for (int idx = 0; idx < total_fields; ++idx)
+        {
+            NODEPROP_STATUSBAR_FIELD field { "wxSB_NORMAL", "-1" };
+            fields.push_back(field);
+        }
+    }
+
     if (fields.empty())
     {
         NODEPROP_STATUSBAR_FIELD field { "wxSB_NORMAL", "-1" };
@@ -71,7 +82,7 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
     Fit();
 }
 
-void SBarFieldsDialog::OnOK(wxCommandEvent& /* event */)
+void SBarFieldsDialog::OnOK(wxCommandEvent& event)
 {
     m_fields.clear();
     for (int row = 0; row < m_grid->GetNumberRows(); ++row)
@@ -85,7 +96,20 @@ void SBarFieldsDialog::OnOK(wxCommandEvent& /* event */)
     if (m_value == "wxSB_NORMAL|-1")
         m_value = "1";
 
-    EndModal(wxID_OK);
+    // REVIEW: [Randalphwa - 09-01-2022] This shouldn't be necessary, but in debug builds, we sometimes get
+    // a warning about undeleted events. Since none of the other custom property editors have this issue, it's most
+    // likely due to something in m_grid.
+    m_grid->GetEventHandler()->DeletePendingEvents();
+
+    event.Skip();
+}
+
+void SBarFieldsDialog::OnCancel(wxCommandEvent& event)
+{
+    // See comment in OnOK() about why this is necessary.
+    m_grid->GetEventHandler()->DeletePendingEvents();
+
+    event.Skip();
 }
 
 void SBarFieldsDialog::OnUpdateUI(wxUpdateUIEvent& WXUNUSED(event))

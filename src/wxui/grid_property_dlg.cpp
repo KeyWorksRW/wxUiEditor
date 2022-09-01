@@ -75,6 +75,7 @@ bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_TOOL, &GridPropertyDlg::OnNewRow, this, id_NewRow);
     Bind(wxEVT_TOOL, &GridPropertyDlg::OnDeleteRow, this, id_DeleteRow);
     Bind(wxEVT_TOOL, &GridPropertyDlg::OnUndoDelete, this, id_UndoDeleteRow);
+    Bind(wxEVT_BUTTON, &GridPropertyDlg::OnCancel, this, wxID_CANCEL);
     Bind(wxEVT_BUTTON, &GridPropertyDlg::OnOK, this, wxID_OK);
 
     return true;

@@ -39,6 +39,7 @@ protected:
 
     // Virtual event handlers -- override them in your derived class
 
+    virtual void OnCancel(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteRow(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
     virtual void OnNewRow(wxCommandEvent& event) { event.Skip(); }

@@ -10,8 +10,8 @@
 #include <wx/propgrid/editors.h>  // wxPropertyGrid editors
 #include <wx/propgrid/props.h>    // wxPropertyGrid Property Classes
 
-#include "wxui/grid_property_dlg.h"
 #include "node_prop.h"  // NodeProperty class
+#include "wxui/grid_property_dlg.h"
 
 class Node;
 class NodeEvent;
@@ -57,6 +57,7 @@ public:
 protected:
     void OnInit(wxInitDialogEvent& WXUNUSED(event)) override;
     void OnOK(wxCommandEvent& event) override;
+    void OnCancel(wxCommandEvent& event) override;
 
     void OnNewRow(wxCommandEvent& WXUNUSED(event)) override;
     void OnDeleteRow(wxCommandEvent& WXUNUSED(event)) override;

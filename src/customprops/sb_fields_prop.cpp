@@ -45,6 +45,11 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
         m_grid->AppendRows(to_int(fields.size()) - m_grid->GetNumberRows());
     }
 
+    // Unfortunately, wxGrid doesn't auto-size the column width correctly. Getting the text extent of the longest line
+    // including an additional space at the end solves the problem, at least running on Windows 11.
+    auto col_width = m_grid->GetTextExtent("wxSB_NORMAL ");
+    m_grid->SetDefaultColSize(col_width.GetWidth(), true);
+
     for (int row = 0; auto& iter: fields)
     {
         if (wxGridCellChoiceEditor* editor = static_cast<wxGridCellChoiceEditor*>(m_grid->GetCellEditor(row, 0)); editor)
@@ -57,7 +62,11 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
 
     m_help_text->SetLabel(
         "A positive width indicates a fixed width field, a negative width indicates a proportional field.");
-    m_help_text->Wrap(300);
+
+    // Force the width to get wrap in a way that makes the text the most clear.
+    auto width = m_help_text->GetTextExtent("A positive width indicates a fixed width field, ").GetWidth();
+    m_help_text->Wrap(width);
+
     m_help_text->Show();
     Fit();
 }

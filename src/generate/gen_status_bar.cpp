@@ -110,7 +110,11 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenEvents(NodeEvent* event, const
 
 int StatusBarGenerator::GetRequiredVersion(Node* node)
 {
-    return (node->HasValue(prop_fields) ? minRequiredVer + 1 : minRequiredVer);
+    if (!node->HasValue(prop_fields))
+        return minRequiredVer;
+    if (ttlib::is_digit(node->value(prop_fields)[0]))
+        return minRequiredVer;
+    return minRequiredVer + 1;
 }
 
 bool StatusBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -126,7 +130,30 @@ int StatusBarGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
 
     GenXrcObjectAttributes(node, item, "wxStatusBar");
 
-    ADD_ITEM_PROP(prop_fields, "fields")
+    if (GetRequiredVersion(node) > minRequiredVer)
+    {
+        auto fields = node->as_statusbar_fields(prop_fields);
+        if (fields.size())
+        {
+            ttlib::cstr widths, styles;
+            for (auto& iter: fields)
+            {
+                if (widths.size())
+                    widths << ",";
+                widths << iter.width;
+                if (styles.size())
+                    styles << ",";
+                styles << iter.style;
+            }
+            item.append_child("fields").text().set(ttlib::cstr() << fields.size());
+            item.append_child("widths").text().set(widths);
+            item.append_child("styles").text().set(styles);
+        }
+    }
+    else
+    {
+        ADD_ITEM_PROP(prop_fields, "fields")
+    }
 
     GenXrcStylePosSize(node, item);
     GenXrcWindowSettings(node, item);

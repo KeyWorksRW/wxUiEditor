@@ -23,18 +23,26 @@ SBarFieldsProperty::SBarFieldsProperty(const wxString& label, NodeProperty* prop
 SBarFieldsDialog::SBarFieldsDialog(wxWindow* parent, NodeProperty* prop) : GridPropertyDlg(parent)
 {
     m_prop = prop;
+};
 
+void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
+{
     m_prop_label->SetLabel("StatusBar Fields");
     m_grid->SetColLabelValue(0, "Style");
     m_grid->SetColLabelValue(1, "Width");
     m_grid->SetColFormatCustom(0, wxGRID_VALUE_CHOICE);
     m_grid->SetColFormatCustom(1, wxGRID_VALUE_NUMBER);
 
-    auto fields = prop->as_statusbar_fields();
+    auto fields = m_prop->as_statusbar_fields();
     if (fields.empty())
     {
         NODEPROP_STATUSBAR_FIELD field { "wxSB_NORMAL", "-1" };
         fields.push_back(field);
+    }
+
+    if (fields.size() > m_grid->GetNumberRows())
+    {
+        m_grid->AppendRows(to_int(fields.size()) - m_grid->GetNumberRows());
     }
 
     for (int row = 0; auto& iter: fields)
@@ -47,13 +55,12 @@ SBarFieldsDialog::SBarFieldsDialog(wxWindow* parent, NodeProperty* prop) : GridP
         ++row;
     }
 
-    m_help_text->SetLabel("A positive width indicates a fixed width field, a negative width indicates a proportional field.");
+    m_help_text->SetLabel(
+        "A positive width indicates a fixed width field, a negative width indicates a proportional field.");
     m_help_text->Wrap(300);
     m_help_text->Show();
     Fit();
-};
-
-void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event)) {}
+}
 
 void SBarFieldsDialog::OnOK(wxCommandEvent& /* event */)
 {

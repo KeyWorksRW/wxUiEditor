@@ -12,6 +12,7 @@
 #include "node.h"           // Node class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
 
 #include "gen_status_bar.h"
 
@@ -41,7 +42,7 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
             {
                 widths.push_back(iter.width.atoi());
             }
-            widget->SetFieldsCount(to_int(widths.size()), widths.data());
+            widget->SetFieldsCount(static_cast<int>(widths.size()), widths.data());
         }
         else
         {
@@ -74,31 +75,68 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 std::optional<ttlib::cstr> StatusBarGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
+
+    int num_fields;
+    auto fields = node->as_statusbar_fields(prop_fields);
+    if (GetRequiredVersion(node) > minRequiredVer)
+        num_fields = to_int(fields.size());
+    else
+        num_fields = node->prop_as_int(prop_fields);
+
     if (node->IsLocal())
         code << "auto ";
     code << node->get_node_name() << " = CreateStatusBar(";
 
     if (node->prop_as_string(prop_window_name).size())
     {
-        code << node->prop_as_int(prop_fields) << ", " << node->prop_as_string(prop_id);
+        code << num_fields << ", " << node->prop_as_string(prop_id);
         GenStyle(node, code);
         code << ", " << node->prop_as_string(prop_window_name);
     }
     else if (node->prop_as_int(prop_style) != wxSTB_DEFAULT_STYLE || node->prop_as_int(prop_window_style) > 0)
     {
-        code << node->prop_as_int(prop_fields) << ", " << node->prop_as_string(prop_id);
+        code << num_fields << ", " << node->prop_as_string(prop_id);
         GenStyle(node, code);
     }
     else if (node->prop_as_string(prop_id) != "wxID_ANY")
     {
-        code << node->prop_as_int(prop_fields) << ", " << node->prop_as_string(prop_id);
+        code << num_fields << ", " << node->prop_as_string(prop_id);
     }
-    else if (node->prop_as_int(prop_fields) > 1)
+    else if (num_fields > 1)
     {
-        code << node->prop_as_int(prop_fields);
+        code << num_fields;
     }
 
     code << ");";
+
+    return code;
+}
+
+std::optional<ttlib::cstr> StatusBarGenerator::GenSettings(Node* node, size_t& auto_indent)
+{
+    if (GetRequiredVersion(node) <= minRequiredVer)
+        return {};
+
+    ttlib::cstr code;
+    auto_indent = indent::auto_keep_whitespace;
+    code << "{\n\t";
+
+    auto fields = node->as_statusbar_fields(prop_fields);
+    ttlib::cstr widths, styles;
+    for (auto& iter: fields)
+    {
+        if (widths.size())
+            widths << ", ";
+        widths << iter.width;
+        if (styles.size())
+            styles << ", ";
+        styles << iter.style;
+    }
+    code << "const int sb_field_widths[" << fields.size() << "] = {" << widths << "};\n\t";
+    code << node->get_node_name() << "->SetStatusWidths(" << fields.size() << ", sb_field_widths);\n\t";
+    code << "const int sb_field_styles[" << fields.size() << "] = {" << widths << "};\n\t";
+    code << node->get_node_name() << "->SetStatusStyles(" << fields.size() << ", sb_field_styles);\n";
+    code << "}";
 
     return code;
 }

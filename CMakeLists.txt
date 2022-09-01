@@ -45,26 +45,26 @@ if (NOT isMultiConfig)
     endif()
 endif()
 
-option(INTERNAL_TESTING "Build with internal testing functionality")
+option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
 
-# This option is designed to make it possible to check changes to a wxWidgets fork, and/or to build
-# with the current wxWidgets sources (assuming the wxWidgets fork is in sync). Realistically, this
-# is only going to be usable by the maintainers of this project.
-option(WIDGETS_FORK "Assumes the existance of ../wxWidgets/bld/CMakeLists.txt")
+# This option is designed to make it possible to check changes to a wxWidgets fork, and/or to build with the current
+# wxWidgets sources (assuming the wxWidgets fork is in sync). Realistically, this is only going to be usable by the
+# maintainers of this project.
+option(INTERNAL_BLD_FORK "Assumes the existance of ../wxWidgets/bld/CMakeLists.txt")
 
-# If this is set, you must build the library yourself. This is required if you build a UNIX version
-# as otherwise wxCLib will conflict with Unix dll versions of the sub-libraries such as wxpng.
-option(WIDGETS_BUILD "When building fork, use wxWidgets build system")
+# If this is set, you must build the library yourself. This is required if you build a UNIX version as otherwise wxCLib will
+# conflict with Unix dll versions of the sub-libraries such as wxpng.
+option(INTERNAL_BLD_WX_CMAKE "When building fork, use wxWidgets build system")
 
-if (INTERNAL_TESTING)
+if (INTERNAL_BLD_TESTING)
     message(NOTICE "Building internal testing version")
 
     # In addition to enabling testing-only functionality, this enables ASSERT(), ASSERT_MSG(),
     # and FAIL_MSG() in a Release build.
-    add_compile_definitions(INTERNAL_TESTING)
+    add_compile_definitions(INTERNAL_BLD_TESTING)
 endif()
 
-if (NOT WIDGETS_FORK)
+if (NOT INTERNAL_BLD_FORK)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
     set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
 
@@ -73,21 +73,20 @@ if (NOT WIDGETS_FORK)
 else()
     message(NOTICE "Building with forked wxWidgets libraries")
 
-    add_compile_definitions(WIDGETS_FORK)
+    add_compile_definitions(INTERNAL_BLD_FORK)
 
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
     set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
 
-    # Note that for WIDGETS_FORK with WIDGETS_BUILD to work, you must build the wxWidgets libraries yourself
-    # (add_subdirectory is not used in this case). You will need to set the cmake configuration
-    # for wxWidgets to build mondo static (including static runtime). Do *not* use this for an
-    # official release build as you cannot optimize or profile the wxWidgets library when
-    # using their cmake build.
+    # Note that for INTERNAL_BLD_FORK with INTERNAL_BLD_WX_CMAKE to work, you must build the wxWidgets libraries yourself
+    # (add_subdirectory is not used in this case). You will need to set the cmake configuration for wxWidgets to build mondo
+    # static (including static runtime). Do *not* use this for an official release build as you cannot optimize or profile
+    # the wxWidgets library when using their cmake build.
 
-    # Alternaticely, you can use the following -- but that means creating the CMakeLists.txt
-    # file yourself (you can use the version in wxSnapshot as a template).
+    # Alternaticely, you can use the following -- but that means creating the CMakeLists.txt file yourself (you can use the
+    # version in wxSnapshot as a template).
 
-    if (NOT WIDGETS_BUILD)
+    if (NOT INTERNAL_BLD_WX_CMAKE)
         # This will build wxCLib and wxWidgets. wxCLib can NOT be used in a UNIX build
         add_subdirectory(../wxWidgets/bld ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
     endif()
@@ -98,7 +97,7 @@ else()
 
     if (MSVC)
         # Both debug and release libraries are in this directory
-        if (WIDGETS_BUILD)
+        if (INTERNAL_BLD_WX_CMAKE)
             set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/lib/vc_x64_lib)
         else()
             set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
@@ -109,17 +108,17 @@ else()
 endif()
 
 if (WIN32)
-    if (NOT WIDGETS_FORK)
+    if (NOT INTERNAL_BLD_FORK)
         set(setup_dir ${widget_cmake_dir}/win)
     else()
-        if (WIDGETS_BUILD)
+        if (INTERNAL_BLD_WX_CMAKE)
             set(setup_dir ${widget_cmake_dir}/lib/vc_x64_lib/mswud)
         else()
             set(setup_dir ${widget_cmake_dir}/win)
         endif()
     endif()
 else()
-    if (NOT WIDGETS_FORK)
+    if (NOT INTERNAL_BLD_FORK)
         set(setup_dir ${widget_cmake_dir}/unix)
     else()
         set(setup_dir ${widget_cmake_dir}/lib/wx/include/gtk3-unicode-static-3.3)
@@ -143,17 +142,16 @@ target_include_directories(ttLib_wx PRIVATE
 # means ninja sees this as a normal dependency that didn't change any time one of the files it specifies changes.
 
 include(src/wxui/wxui_code.cmake)  # This will set ${wxue_generated_code} with list of generated files
-include(src/file_list.cmake)     # This will set ${file_list} with a list of source files
+include(src/file_list.cmake)       # This will set ${file_list} with a list of source files
 
-if (INTERNAL_TESTING)
+if (INTERNAL_BLD_TESTING)
     include(src/internal/wxui_internal.cmake)  # This will set ${wxui_internal} with a list of source files
 
-    # Note that setting the INTERNAL_TESTING doesn't just add these modules, it also
-    # enables the three assertion macros in a Release build, and may change other
-    # functionality as well. It should NEVER be used for a production build!
+    # Note that setting the INTERNAL_BLD_TESTING doesn't just add these modules, it also enables the three assertion macros
+    # in a Release build, and may change other functionality as well. It should NEVER be used for a production build!
 
     set (wxui_internal ${wxui_internal}
-        # These are always included in Debug builds, with INTERNAL_TESTING we also need them
+        # These are always included in Debug builds, with INTERNAL_BLD_TESTING we also need them
         # in Release builds.
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/convert_img.cpp>
@@ -182,7 +180,7 @@ add_library(check_build STATIC EXCLUDE_FROM_ALL
     ${wxue_generated_code}
 )
 
-if (NOT WIDGETS_FORK)
+if (NOT INTERNAL_BLD_FORK)
     if (WIN32)
         target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib comctl32 Imm32 Shlwapi Version UxTheme)
     else()
@@ -190,7 +188,7 @@ if (NOT WIDGETS_FORK)
     endif()
 else()
     if (WIN32)
-        if (WIDGETS_BUILD)
+        if (INTERNAL_BLD_WX_CMAKE)
             # Both Debug and Release libaries are in the same location
             target_link_directories(wxUiEditor PRIVATE ${widget_lib_dir})
             target_link_libraries(wxUiEditor PRIVATE ttLib_wx

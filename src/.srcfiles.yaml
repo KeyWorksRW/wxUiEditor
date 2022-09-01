@@ -59,6 +59,7 @@ Files:
     customprops/font_string_prop.cpp    # Derived wxStringProperty class for font property
     customprops/html_string_prop.cpp    # Derived wxStringProperty class for HTML
     customprops/img_string_prop.cpp     # Derived wxStringProperty class for handling wxImage files or art
+    customprops/sb_fields_prop.cpp      # Property editor for status bar fields
     customprops/txt_string_prop.cpp     # Derived wxStringProperty class for single-line text
 
     customprops/art_prop_dlg.cpp     # Art Property Dialog for image property

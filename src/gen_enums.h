@@ -20,7 +20,9 @@ namespace GenEnum
         type_animation,
         type_bitlist,
         type_bitmap,
+        type_bmp_combo_item,
         type_bool,
+        type_checklist_item,
         type_code_edit,   // includes a button that triggers a dialog with a scintilla editor
         type_editoption,  // same as option, except that property grid uses wxEditEnumProperty instead of wxEnumProperty
         type_file,
@@ -31,6 +33,8 @@ namespace GenEnum
         type_int,
         type_option,
         type_path,
+        type_radiobox_item,
+        type_statbar_fields,
         type_string,
         type_string_code_single,   // includes single-line custom editor, does not process escapes
         type_string_edit,          // includes a button that triggers a small text editor dialog

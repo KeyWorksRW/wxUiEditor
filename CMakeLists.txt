@@ -61,7 +61,7 @@ if (INTERNAL_BLD_TESTING)
 
     # In addition to enabling testing-only functionality, this enables ASSERT(), ASSERT_MSG(),
     # and FAIL_MSG() in a Release build.
-    add_compile_definitions(INTERNAL_BLD_TESTING)
+    add_compile_definitions(INTERNAL_TESTING)
 endif()
 
 if (NOT INTERNAL_BLD_FORK)

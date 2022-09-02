@@ -67,6 +67,17 @@ inline constexpr auto txt_main_window_config = "/main_window";
 
 */
 
+namespace evt_flags
+{
+    enum size_t
+    {
+        no_event = 0,
+        fire_event = 1 << 0,
+        queue_event = 1 << 1,      // Queue event (overrides fire_event)
+        force_selection = 1 << 2,  // Force node selection even if already selected
+    };
+};
+
 class MainFrame : public MainFrameBase
 {
 public:
@@ -103,7 +114,7 @@ public:
     void FireProjectUpdatedEvent();
     void FirePropChangeEvent(NodeProperty* prop);
     void FireMultiPropEvent(ModifyProperties* undo_cmd);
-    void FireSelectedEvent(Node* node);
+    void FireSelectedEvent(Node* node, size_t flags = evt_flags::fire_event);
 
     // These are just here for convenience so you don't have to remember whether you have the raw pointer or the shared
     // pointer.
@@ -116,9 +127,9 @@ public:
     {
         FireDeletedEvent(node.get());
     }
-    void FireSelectedEvent(NodeSharedPtr node)
+    void FireSelectedEvent(NodeSharedPtr node, size_t flags = evt_flags::fire_event)
     {
-        FireSelectedEvent(node.get());
+        FireSelectedEvent(node.get(), flags);
     }
 
     void ChangeEventHandler(NodeEvent* event, const ttlib::cstr& value);
@@ -161,13 +172,16 @@ public:
         return (m_clipboard ? m_clip_hash : 0);
     }
 
-    // Node will not be selected if it already is selected, unless force == true.
-    // Returns true if selection changed, false if already selected or selection removed.
-    bool SelectNode(Node* node, bool force = false, bool notify = true);
+    // No event will be fired if the node is already selected, unless evt_flags::force_selection
+    // is set.
+    //
+    // Returns true if selection changed, false if already selected or selection
+    // removed.
+    bool SelectNode(Node* node, size_t flags = evt_flags::fire_event);
 
-    bool SelectNode(NodeSharedPtr node, bool force = false, bool notify = true)
+    bool SelectNode(NodeSharedPtr node, size_t flags = evt_flags::fire_event)
     {
-        return SelectNode(node.get(), force, notify);
+        return SelectNode(node.get(), flags);
     }
 
     bool MoveNode(Node* node, MoveDirection where, bool check_only = false);
@@ -337,6 +351,7 @@ protected:
     void OnAuiNotebookPageChanged(wxAuiNotebookEvent& event);
 
     void OnNodeSelected(CustomEvent& event);
+    void OnQueueSelect(CustomEvent& event);
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void OnCodeCompare(wxCommandEvent& event);

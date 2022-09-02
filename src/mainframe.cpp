@@ -726,15 +726,8 @@ void MainFrame::ProjectLoaded()
     }
 
     m_selected_node = wxGetApp().GetProjectPtr();
-
-    // We can't use FireSelectedEvent() here because we need to let other event handlers finish with the project load
-    // event handling.
-
-    CustomEvent node_event(EVT_NodeSelected, m_selected_node.get());
-    for (auto handler: m_custom_event_handlers)
-    {
-        handler->AddPendingEvent(node_event);
-    }
+    // Queue the event so that everyone finishes process project loaded event.
+    FireSelectedEvent(m_selected_node, evt_flags::queue_event);
 }
 
 void MainFrame::ProjectSaved()
@@ -749,13 +742,13 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
     // check to see if the current selection has any kind of issu that we should warn the user about.
     m_info_bar->Dismiss();
 
-    auto sel_node = event.GetNode();
+    auto evt_flags = event.GetNode();
 
-    if (sel_node->isGen(gen_wxToolBar))
+    if (evt_flags->isGen(gen_wxToolBar))
     {
-        if (sel_node->GetParent()->IsSizer())
+        if (evt_flags->GetParent()->IsSizer())
         {
-            auto grandparent = sel_node->GetParent()->GetParent();
+            auto grandparent = evt_flags->GetParent()->GetParent();
             if (grandparent->isGen(gen_wxFrame) || grandparent->isGen(gen_wxAuiMDIChildFrame))
             {
                 // Caution! In wxWidgets 3.1.3 The info bar will wrap the first word if it starts with "If".
@@ -769,7 +762,7 @@ void MainFrame::OnNodeSelected(CustomEvent& event)
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     g_pMsgLogging->OnNodeSelected();
-    m_imnportPanel->OnNodeSelected(sel_node);
+    m_imnportPanel->OnNodeSelected(evt_flags);
 #endif
 
     UpdateFrame();
@@ -1262,7 +1255,7 @@ Node* MainFrame::GetSelectedForm()
     return m_selected_node->get_form();
 }
 
-bool MainFrame::SelectNode(Node* node, bool force, bool notify)
+bool MainFrame::SelectNode(Node* node, size_t flags)
 {
     if (!node)
     {
@@ -1270,16 +1263,26 @@ bool MainFrame::SelectNode(Node* node, bool force, bool notify)
         return false;
     }
 
-    if (node == m_selected_node.get() && !force)
+    if (node == m_selected_node.get() && !(flags & evt_flags::force_selection))
     {
         return false;  // already selected
     }
 
     m_selected_node = node->GetSharedPtr();
-    if (notify)
+
+    if (flags & evt_flags::queue_event)
+    {
+        CustomEvent node_event(EVT_NodeSelected, m_selected_node.get());
+        for (auto handler: m_custom_event_handlers)
+        {
+            handler->QueueEvent(node_event.Clone());
+        }
+    }
+    else if (flags & evt_flags::fire_event)
     {
         FireSelectedEvent(node);
     }
+
     return true;
 }
 
@@ -1404,7 +1407,7 @@ void MainFrame::PasteNode(Node* parent)
     auto pos = parent->FindInsertionPos(m_selected_node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     FireCreatedEvent(new_node);
-    SelectNode(new_node, true, true);
+    SelectNode(new_node, evt_flags::fire_event & evt_flags::force_selection);
 }
 
 void MainFrame::DuplicateNode(Node* node)
@@ -1420,7 +1423,7 @@ void MainFrame::DuplicateNode(Node* node)
     auto new_node = g_NodeCreator.MakeCopy(node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     FireCreatedEvent(new_node);
-    SelectNode(new_node, true, true);
+    SelectNode(new_node, evt_flags::queue_event);
 }
 
 bool MainFrame::CanCopyNode()
@@ -1828,7 +1831,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
             auto found_node = FindChildNode(start_node, result->second);
             if (found_node)
             {
-                SelectNode(found_node, true);
+                SelectNode(found_node, evt_flags::fire_event & evt_flags::force_selection);
             }
             else
             {

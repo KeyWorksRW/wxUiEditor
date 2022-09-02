@@ -50,20 +50,20 @@ void XrcPreview::OnCreate(wxCommandEvent& WXUNUSED(event))
 
 void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
 {
-    auto sel_node = wxGetFrame().GetSelectedNode();
+    auto evt_flags = wxGetFrame().GetSelectedNode();
 
-    if (!sel_node)
+    if (!evt_flags)
     {
         wxMessageBox("You need to select a form first.", "XRC Dialog Preview");
         return;
     }
 
-    if (!sel_node->IsForm())
+    if (!evt_flags->IsForm())
     {
-        sel_node = sel_node->get_form();
+        evt_flags = evt_flags->get_form();
     }
 
-    auto doc_str = GenerateXrcStr(sel_node, sel_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
+    auto doc_str = GenerateXrcStr(evt_flags, evt_flags->isGen(gen_PanelForm) ? xrc::previewing : 0);
 
     m_scintilla->ClearAll();
     m_scintilla->AddTextRaw(doc_str.c_str(), (to_int) doc_str.size());
@@ -73,19 +73,19 @@ void XrcPreview::OnXrcCopy(wxCommandEvent& WXUNUSED(event))
     m_view.ReadString(doc_str);
 
     ttlib::cstr search("name=\"");
-    sel_node = wxGetFrame().GetSelectedNode();
+    evt_flags = wxGetFrame().GetSelectedNode();
 
-    if (sel_node->HasProp(prop_id) && sel_node->prop_as_string(prop_id) != "wxID_ANY")
+    if (evt_flags->HasProp(prop_id) && evt_flags->prop_as_string(prop_id) != "wxID_ANY")
     {
-        search << sel_node->prop_as_string(prop_id);
+        search << evt_flags->prop_as_string(prop_id);
     }
-    else if (sel_node->HasValue(prop_var_name))
+    else if (evt_flags->HasValue(prop_var_name))
     {
-        search << sel_node->prop_as_string(prop_var_name);
+        search << evt_flags->prop_as_string(prop_var_name);
     }
     else
     {
-        search << sel_node->prop_as_string(prop_class_name);
+        search << evt_flags->prop_as_string(prop_class_name);
     }
 
     int line = (to_int) m_view.FindLineContaining(search);

@@ -759,7 +759,7 @@ Node* Node::CreateChildNode(GenName name)
     if (new_node)
     {
         frame.FireCreatedEvent(new_node.get());
-        frame.SelectNode(new_node.get(), true, true);
+        frame.SelectNode(new_node.get(), evt_flags::fire_event & evt_flags::force_selection);
     }
     return new_node.get();
 }

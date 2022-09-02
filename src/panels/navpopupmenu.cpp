@@ -757,7 +757,7 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::sview widget)
         wxGetFrame().GetNavigationPanel()->InsertNode(new_sizer.get());
 
         wxGetFrame().PushUndoAction(std::make_shared<ChangeParentAction>(node, new_sizer.get()));
-        wxGetFrame().SelectNode(node, true, true);
+        wxGetFrame().SelectNode(node, evt_flags::fire_event & evt_flags::force_selection);
         wxGetFrame().Thaw();
     }
 }

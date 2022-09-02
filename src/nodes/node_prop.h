@@ -24,7 +24,7 @@ struct NODEPROP_STATUSBAR_FIELD
 struct NODEPROP_CHECKLIST_ITEM
 {
     ttlib::cstr label;
-    ttlib::cstr checked;  // 1 is true, or or empty is false
+    ttlib::cstr checked;  // 1 is true, 0 or empty is false
 };
 
 struct NODEPROP_RADIOBOX_ITEM

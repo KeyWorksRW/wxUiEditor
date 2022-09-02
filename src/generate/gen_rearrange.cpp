@@ -12,6 +12,7 @@
 #include "node.h"           // Node class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
 
 #include "gen_rearrange.h"
 
@@ -21,12 +22,15 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
                                       DlgSize(parent, node, prop_size), wxArrayInt(), wxArrayString(),
                                       node->prop_as_int(prop_type) | GetStyleInt(node));
 
-    auto& items = node->prop_as_string(prop_contents);
+    auto items = node->as_checklist_items(prop_contents);
     if (items.size())
     {
-        auto array = ConvertToArrayString(items);
-        for (auto& iter: array)
-            widget->GetList()->Append(wxString::FromUTF8(iter));
+        for (auto& iter: items)
+        {
+            auto pos = widget->GetList()->Append(iter.label.wx_str());
+            if (iter.checked.wx_str() == "1")
+                widget->GetList()->Check(pos);
+        }
 
         if (node->prop_as_string(prop_selection_string).size())
         {
@@ -35,7 +39,7 @@ wxObject* RearrangeCtrlGenerator::CreateMockup(Node* node, wxObject* parent)
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < (to_int) array.size())
+            if (sel > -1 && sel < (to_int) widget->GetList()->GetCount())
                 widget->GetList()->SetSelection(sel);
         }
     }
@@ -92,7 +96,7 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
 
@@ -103,14 +107,43 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_
         code << node->get_node_name() << "->SetFocus()";
     }
 
-    if (node->prop_as_string(prop_contents).size())
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
-        for (auto& iter: array)
+        auto contents = node->as_checklist_items(prop_contents);
+        bool checked_item = false;
+        for (auto& iter: contents)
         {
-            if (code.size())
-                code << "\n";
-            code << node->get_node_name() << "->GetList()->Append(" << GenerateQuotedString(iter) << ");";
+            if (iter.checked == "1")
+            {
+                checked_item = true;
+                break;
+            }
+        }
+
+        if (!checked_item)
+        {
+            for (auto& iter: contents)
+            {
+                if (code.size())
+                    code << "\n";
+                code << node->get_node_name() << "->GetList()->Append(" << GenerateQuotedString(iter.label) << ");";
+            }
+        }
+        else
+        {
+            auto_indent = indent::auto_keep_whitespace;
+            code << "{\n\t";
+            code << "int item_position;";
+            for (auto& iter: contents)
+            {
+                code << "\n\t";
+                if (iter.checked == "1")
+                    code << "item_position = ";
+                code << node->get_node_name() << "->GetList()->Append(" << GenerateQuotedString(iter.label) << ");";
+                if (iter.checked == "1")
+                    code << "\n\t" << node->get_node_name() << "->GetList()->Check(item_position);";
+            }
+            code << "\n}";
         }
 
         if (node->prop_as_string(prop_selection_string).size())
@@ -122,11 +155,10 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < (to_int) array.size())
+            if (sel > -1 && sel < (to_int) contents.size())
             {
                 code << "\n";
-                code << node->get_node_name() << "->GetList()->SetSelection(" << node->prop_as_string(prop_selection_int)
-                     << ");";
+                code << node->get_node_name() << "->GetList()->SetSelection(" << node->value(prop_selection_int) << ");";
             }
         }
     }
@@ -137,6 +169,16 @@ std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenSettings(Node* node, size_
 std::optional<ttlib::cstr> RearrangeCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int RearrangeCtrlGenerator::GetRequiredVersion(Node* node)
+{
+    if (node->HasValue(prop_contents))
+    {
+        return minRequiredVer + 1;
+    }
+
+    return minRequiredVer;
 }
 
 bool RearrangeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

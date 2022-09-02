@@ -20,3 +20,4 @@ Release summary...
 - XRC files now include a comment warning that regeneration will eliminate any hand edits.
 - `Generate XRC files...` on Tools menu now launches a dialog allowing you to choose between combined or individually generated XRC files.
 - wxStatusBar `fields` property now supports unique width and style for each field.
+- `contents` property for wxRearrangeCtrl now supports setting initial checked state for each string.

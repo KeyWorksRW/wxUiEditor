@@ -95,8 +95,8 @@ inline const char* widgets_xml = R"===(<?xml version="1.0"?>
 			help="Selects the item with the specified string in the control. Note that this is case-insensitive, i.e. the string is compared with all the elements of the control case-insensitively and the first matching entry is selected, even if it doesn't have exactly the same case as this string and there is an exact match afterwards." />
 		<property name="selection_int" type="int"
 			help="Sets the selection to the value unless it is -1. Ignored if the selection_string property contains a value.">-1</property>
-		<property name="contents" type="stringlist"
-			help="List of default values." />
+		<property name="contents" type="checklist_item"
+			help="List of default values and their checked state." />
 		<property name="type" type="option">
 			<option name="wxLB_SINGLE"
 				help="Single-selection list." />

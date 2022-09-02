@@ -48,6 +48,7 @@
 #include "../customprops/pg_animation.h"      // PropertyGrid_Animation -- Custom property grid class for animations
 #include "../customprops/pg_image.h"          // PropertyGrid_Image -- Custom property grid class for images
 #include "../customprops/pg_point.h"          // CustomPointProperty -- custom wxPGProperty for handling wxPoint
+#include "../customprops/rearrange_prop.h"    // RearrangeProperty -- Property editor for rearranging items
 #include "../customprops/sb_fields_prop.h"    // SBarFieldsProperty -- Property editor for status bar fields
 #include "../customprops/txt_string_prop.h"   // EditStringProperty -- dialog for editing single-line strings
 
@@ -278,6 +279,10 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         case type_statbar_fields:
             // This includes a button that triggers a dialog to edit the fields.
             return new SBarFieldsProperty(prop->DeclName().wx_str(), prop);
+
+        case type_checklist_item:
+            // This includes a button that triggers a dialog to edit the fields.
+            return new RearrangeProperty(prop->DeclName().wx_str(), prop);
 
         case type_string_code_single:
             // This includes a button that triggers a small single-line custom text editor dialog
@@ -913,6 +918,7 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         case type_int:
         case type_uint:
         case type_statbar_fields:
+        case type_checklist_item:
             {
                 ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));
                 break;

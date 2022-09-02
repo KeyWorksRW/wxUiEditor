@@ -521,6 +521,18 @@ std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
 {
     std::vector<NODEPROP_CHECKLIST_ITEM> result;
 
+    if (m_value.size() && m_value[0] == '"' && wxGetApp().GetProjectVersion() <= minRequiredVer)
+    {
+        auto array = ConvertToArrayString(m_value);
+        for (auto& iter: array)
+        {
+            NODEPROP_CHECKLIST_ITEM item;
+            item.label = iter;
+            result.emplace_back(item);
+        }
+        return result;
+    }
+
     ttlib::multistr fields(m_value, ';');
     for (auto& field: fields)
     {

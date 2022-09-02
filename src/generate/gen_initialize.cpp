@@ -209,6 +209,7 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_wxToolBar, ToolBarGenerator)
     SET_GENERATOR(gen_tool, ToolGenerator)
     SET_GENERATOR(gen_toolSeparator, ToolSeparatorGenerator)
+    SET_GENERATOR(gen_toolStretchable, ToolStretchableGenerator)
 
     SET_GENERATOR(gen_RibbonBar, RibbonBarFormGenerator)
     SET_GENERATOR(gen_wxRibbonBar, RibbonBarGenerator)

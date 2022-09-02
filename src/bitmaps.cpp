@@ -104,6 +104,7 @@ static const ImageMap png_headers[] = {
     { "toggle_button", toggle_button_png, sizeof(toggle_button_png) },
     { "tool", tool_png, sizeof(tool_png) },
     { "toolseparator", toolseparator_png, sizeof(toolseparator_png) },
+    { "toolStretchable", toolStretchable_png, sizeof(toolStretchable_png) },
     { "tree_ctrl", tree_ctrl_png, sizeof(tree_ctrl_png) },
     { "treelistctrl", treelistctrl_png, sizeof(treelistctrl_png) },
     { "treelistctrlcolumn", treelistctrlcolumn_png, sizeof(treelistctrlcolumn_png) },

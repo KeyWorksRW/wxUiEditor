@@ -7,6 +7,7 @@ Release summary...
 
 ### Added
 
+- Stretchable space can now be added to toolbars.
 - XRC now generates XML for toolbar separators.
 
 ### Changed

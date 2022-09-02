@@ -2920,8 +2920,13 @@
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/toolseparator.png"
-                  help="Tool Separator"
+                  help="Separator"
                   id="gen_toolSeparator" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/toolStretchable.png"
+                  help="Stretchable space"
+                  id="gen_toolStretchable" />
               </node>
             </node>
             <node

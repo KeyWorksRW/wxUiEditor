@@ -90,6 +90,7 @@ public:
 
         MenuADD_TOOL,
         MenuADD_TOOL_SEPARATOR,
+        MenuADD_TOOL_STRETCHABLE_SPACE,
 
         MenuADD_WIZARD_PAGE,
 

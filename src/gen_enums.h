@@ -555,6 +555,7 @@ namespace GenEnum
         gen_submenu,
         gen_tool,
         gen_toolSeparator,
+        gen_toolStretchable,
         gen_wxActivityIndicator,
         gen_wxAnimationCtrl,
         gen_wxAuiMDIChildFrame,

@@ -506,10 +506,42 @@ void NavPopupMenu::MenuAddCommands(Node* node)
             }
             break;
 
+        case gen_wxAuiToolBar:
+        case gen_auitool:
+            add_sizer = false;
+            Append(MenuADD_TOOL, "Add Tool");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().CreateToolNode(gen_auitool);
+                },
+                MenuADD_TOOL);
+
+            Append(MenuADD_TOOL_SEPARATOR, "Add Separator");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().CreateToolNode(gen_toolSeparator);
+                },
+                MenuADD_TOOL_SEPARATOR);
+
+            Append(MenuADD_TOOL_STRETCHABLE_SPACE, "Add Stretchable space");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().CreateToolNode(gen_toolStretchable);
+                },
+                MenuADD_TOOL_STRETCHABLE_SPACE);
+            break;
+
         case gen_wxToolBar:
         case gen_ToolBar:
         case gen_tool:
         case gen_toolSeparator:
+        case gen_toolStretchable:
             add_sizer = false;
             Append(MenuADD_TOOL, "Add Tool");
             Bind(
@@ -528,6 +560,15 @@ void NavPopupMenu::MenuAddCommands(Node* node)
                     wxGetFrame().CreateToolNode(gen_toolSeparator);
                 },
                 MenuADD_TOOL_SEPARATOR);
+
+            Append(MenuADD_TOOL_STRETCHABLE_SPACE, "Add Stretchable space");
+            Bind(
+                wxEVT_MENU,
+                [](wxCommandEvent&)
+                {
+                    wxGetFrame().CreateToolNode(gen_toolStretchable);
+                },
+                MenuADD_TOOL_STRETCHABLE_SPACE);
             break;
 
         case gen_wxMenuBar:

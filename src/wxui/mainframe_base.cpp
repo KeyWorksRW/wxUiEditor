@@ -34,6 +34,8 @@ inline wxBitmapBundle wxueBundleSVG(const unsigned char* data,
 namespace wxue_img
 {
     extern const unsigned char import_svg[418];
+    extern const unsigned char redo_svg[919];
+    extern const unsigned char undo_svg[882];
     extern const unsigned char wxlogo_svg[1331];
 }
 
@@ -122,11 +124,11 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuEdit = new wxMenu();
 
     auto menu_undo = new wxMenuItem(m_menuEdit, wxID_UNDO, wxEmptyString);
-    menu_undo->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_UNDO, wxART_MENU));
+    menu_undo->SetBitmap(wxue_img::bundle_undo_svg(16, 16));
     m_menuEdit->Append(menu_undo);
 
     auto menu_redo = new wxMenuItem(m_menuEdit, wxID_REDO, wxEmptyString);
-    menu_redo->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_REDO, wxART_MENU));
+    menu_redo->SetBitmap(wxue_img::bundle_redo_svg(16, 16));
     m_menuEdit->Append(menu_redo);
 
     m_menuEdit->AppendSeparator();
@@ -303,10 +305,10 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_UNDO, wxART_TOOLBAR),
+    m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxue_img::bundle_undo_svg(16, 16),
             "Undo");
 
-    m_toolbar->AddTool(wxID_REDO, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_REDO, wxART_TOOLBAR),
+    m_toolbar->AddTool(wxID_REDO, wxEmptyString, wxue_img::bundle_redo_svg(16, 16),
             "Redo");
 
     m_toolbar->AddSeparator();

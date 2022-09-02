@@ -14,6 +14,8 @@ wxImage wxueImage(const unsigned char* data, size_t size_data);
 
 namespace wxue_img
 {
+    wxBitmapBundle bundle_redo_svg(int width, int height);
+    wxBitmapBundle bundle_undo_svg(int width, int height);
     wxBitmapBundle bundle_wxlogo_svg(int width, int height);
 
     wxBitmapBundle bundle_default_png();
@@ -72,6 +74,7 @@ namespace wxue_img
     extern const unsigned char logo32_png[1470];
     extern const unsigned char logo64_png[1718];
     extern const unsigned char project_png[899];
+    extern const unsigned char redo_svg[919];
     extern const unsigned char ribbon_bar_png[844];
     extern const unsigned char ribbon_buttonbar_png[300];
     extern const unsigned char ribbon_gallery_png[215];
@@ -82,6 +85,7 @@ namespace wxue_img
     extern const unsigned char stddialogbuttonsizer_png[524];
     extern const unsigned char title_close_png[144];
     extern const unsigned char toggle_button_png[277];
+    extern const unsigned char undo_svg[882];
     extern const unsigned char unknown_png[1699];
     extern const unsigned char wxButton_png[500];
     extern const unsigned char wxCheckBox_png[202];

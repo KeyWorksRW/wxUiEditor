@@ -132,6 +132,12 @@
       <node
         class="embedded_image"
         bitmap="SVG;../art_src/wxlogo.svg;[16,16]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/undo.svg;[16,16]" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/redo.svg;[16,16]" />
     </node>
     <node
       class="wxDialog"
@@ -972,7 +978,7 @@
           var_name="m_menuEdit">
           <node
             class="wxMenuItem"
-            bitmap="Art;wxART_UNDO|wxART_MENU"
+            bitmap="SVG;../art_src/undo.svg;[16,16]"
             id="wxID_UNDO"
             label=""
             var_name="menu_undo"
@@ -980,7 +986,7 @@
             wxEVT_UPDATE_UI="[](wxUpdateUIEvent&amp; event)@@{@@event.Enable(wxGetFrame().CanUndo());@@}" />
           <node
             class="wxMenuItem"
-            bitmap="Art;wxART_REDO|wxART_MENU"
+            bitmap="SVG;../art_src/redo.svg;[16,16]"
             id="wxID_REDO"
             label=""
             var_name="menu_redo"
@@ -1304,14 +1310,14 @@
           class="toolSeparator" />
         <node
           class="tool"
-          bitmap="Art;wxART_UNDO|wxART_TOOLBAR"
+          bitmap="SVG;../art_src/undo.svg;[16,16]"
           id="wxID_UNDO"
           label=""
           tooltip="Undo"
           var_name="Undo" />
         <node
           class="tool"
-          bitmap="Art;wxART_REDO|wxART_TOOLBAR"
+          bitmap="SVG;../art_src/redo.svg;[16,16]"
           id="wxID_REDO"
           label=""
           tooltip="Redo"

@@ -7,6 +7,8 @@ Release summary...
 
 ### Added
 
+- XRC now generates XML for toolbar separators.
+
 ### Changed
 
 - A user can no longer enter an invalid C++ variable name.

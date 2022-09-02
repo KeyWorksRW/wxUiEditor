@@ -472,3 +472,10 @@ std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
 
     return code;
 }
+
+int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& object, size_t /* xrc_flags */)
+{
+    object.append_attribute("class").set_value("separator");
+
+    return BaseGenerator::xrc_updated;
+}

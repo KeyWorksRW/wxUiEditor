@@ -7,13 +7,6 @@ Release summary...
 
 ### Added
 
-### Fixed
-
-- Code generation for button without a label fixed.
-- Code generation for wxGrid with positive row label size fixed.
-- Code generation for wxGrid with non-default SetSelectionMode fixed.
-- Code generation for wxPanel events fixed.
-
 ### Changed
 
 - A user can no longer enter an invalid C++ variable name.
@@ -21,3 +14,10 @@ Release summary...
 - `Generate XRC files...` on Tools menu now launches a dialog allowing you to choose between combined or individually generated XRC files.
 - wxStatusBar `fields` property now supports unique width and style for each field.
 - `contents` property for wxRearrangeCtrl now supports setting initial checked state for each string.
+
+### Fixed
+
+- Code generation for button without a label fixed.
+- Code generation for wxGrid with positive row label size fixed.
+- Code generation for wxGrid with non-default SetSelectionMode fixed.
+- Code generation for wxPanel events fixed.

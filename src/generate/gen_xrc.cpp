@@ -333,7 +333,8 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
             if (child_result == BaseGenerator::xrc_not_supported)
             {
                 object.remove_child(child_object);
-                break;
+                // REVIEW: [Randalphwa - 09-02-2022] In most cases, we can simply skip over the unsupported node. If not, we
+                // need to special-case it rather than just breaking out of the loop.
             }
         }
         return result;

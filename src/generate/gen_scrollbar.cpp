@@ -33,7 +33,7 @@ std::optional<ttlib::cstr> ScrollBarGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     code << '\t';  // lead with tab since we add a second line
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code);

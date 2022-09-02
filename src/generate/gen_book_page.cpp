@@ -203,7 +203,7 @@ std::optional<ttlib::cstr> BookPageGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
 
     if (node->GetParent()->isGen(gen_BookPage))

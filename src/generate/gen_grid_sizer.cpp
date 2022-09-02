@@ -34,7 +34,7 @@ std::optional<ttlib::cstr> GridSizerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxGridSizer(";
     auto rows = node->prop_as_int(prop_rows);
     auto cols = node->prop_as_int(prop_cols);

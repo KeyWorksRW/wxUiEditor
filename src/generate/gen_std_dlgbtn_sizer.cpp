@@ -80,7 +80,7 @@ std::optional<ttlib::cstr> StdDialogButtonSizerGenerator::GenConstruction(Node* 
 
     ttlib::cstr code("\t");
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     // Unfortunately, the CreateStdDialogButtonSizer() code does not support a wxID_SAVE or wxID_CONTEXT_HELP button
     // even though wxStdDialogButtonSizer does support it. Worse, CreateStdDialogButtonSizer() calls Realize() which

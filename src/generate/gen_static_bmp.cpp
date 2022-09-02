@@ -54,7 +54,7 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
         }
 
         if (node->IsLocal())
-            code << "auto ";
+            code << "auto* ";
 
         bool use_generic_version = (node->prop_as_string(prop_scale_mode) != "None");
         if (use_generic_version)
@@ -131,7 +131,7 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenConstruction(Node* node)
     else
     {
         if (node->IsLocal())
-            code << "auto ";
+            code << "auto* ";
 
         bool use_generic_version = (node->prop_as_string(prop_scale_mode) != "None");
         if (use_generic_version)

@@ -63,7 +63,7 @@ std::optional<ttlib::cstr> HyperlinkGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node, !node->prop_as_bool(prop_underlined));
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";

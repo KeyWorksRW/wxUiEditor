@@ -165,7 +165,7 @@ std::optional<ttlib::cstr> MenuBarGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxMenuBar(";
     GenStyle(node, code);
     code << ");";
@@ -349,7 +349,7 @@ std::optional<ttlib::cstr> MenuGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     // BUGBUG: [KeyWorks - 05-20-2021] This never gets deleted!
     code << node->get_node_name() << " = new wxMenu();";
@@ -437,7 +437,7 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     code << node->get_node_name() << " = new wxMenu();\n";
 
@@ -491,14 +491,14 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& aut
             code << bundle_code;
             code << "\t";
             if (node->IsLocal())
-                code << "auto ";
+                code << "auto* ";
             code << node->get_node_name() << "Item->SetBitmap(wxBitmapBundle::FromBitmaps(bitmaps));";
             code << "\n}";
             if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n";
                 if (node->IsLocal())
-                    code << "auto ";
+                    code << "auto* ";
 
                 code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
                      << ");";
@@ -512,13 +512,13 @@ std::optional<ttlib::cstr> SubMenuGenerator::GenSettings(Node* node, size_t& aut
                 code << "#if wxCHECK_VERSION(3, 1, 6)\n";
             }
             if (node->IsLocal())
-                code << "auto ";
+                code << "auto* ";
             code << node->get_node_name() << "Item->SetBitmap(" << bundle_code << ");";
             if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n";
                 if (node->IsLocal())
-                    code << "auto ";
+                    code << "auto* ";
 
                 code << node->get_node_name() << "Item->SetBitmap(" << GenerateBitmapCode(node->prop_as_string(prop_bitmap))
                      << ");";
@@ -555,7 +555,7 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     if (node->GetParent()->isGen(gen_PopupMenu))
     {

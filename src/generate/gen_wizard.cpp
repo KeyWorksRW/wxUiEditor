@@ -365,7 +365,7 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
     if (!node->HasValue(prop_bitmap))
     {
         if (node->IsLocal())
-            code << "auto ";
+            code << "auto* ";
         code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this);";
     }
     else
@@ -383,7 +383,7 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
 
             code << '\t' << bundle_code << "\t\t";
             if (node->IsLocal())
-                code << "auto ";
+                code << "auto* ";
             code << node->prop_as_string(prop_var_name)
                  << " = new wxWizardPageSimple(this, nullptr, nullptr, wxBitmapBundle::FromBitmaps(bitmaps));";
             code << "\n\t}";
@@ -391,7 +391,7 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
             {
                 code << "\n#else\n\t";
                 if (node->IsLocal())
-                    code << "auto ";
+                    code << "auto* ";
                 code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this, nullptr, nullptr, ";
                 code << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
                 code << "\n#endif";
@@ -400,14 +400,14 @@ std::optional<ttlib::cstr> WizardPageGenerator::GenConstruction(Node* node)
         else
         {
             if (node->IsLocal())
-                code << "auto ";
+                code << "auto* ";
             code << node->prop_as_string(prop_var_name) << " = new wxWizardPageSimple(this, nullptr, nullptr, ";
             code << bundle_code << ");";
             if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n";
                 if (node->IsLocal())
-                    code << "auto ";
+                    code << "auto* ";
                 code << node->value(prop_var_name) << " = new wxWizardPageSimple(this, nullptr, nullptr, ";
                 code << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
                 code << "\n#endif";

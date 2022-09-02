@@ -31,7 +31,7 @@ std::optional<ttlib::cstr> WrapSizerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxWrapSizer(" << node->prop_as_string(prop_orientation);
     auto wrap_flags = node->prop_as_string(prop_wrap_flags);
     if (wrap_flags.empty())

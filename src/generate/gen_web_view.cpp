@@ -32,7 +32,7 @@ std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = wxWebView::New(";
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", "

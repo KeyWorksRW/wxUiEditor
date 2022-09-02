@@ -73,7 +73,7 @@ std::optional<ttlib::cstr> FlexGridSizerGenerator::GenConstruction(Node* node)
     // The leading tab is in case we indent in a brace block later on
     ttlib::cstr code("\t");
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     code << node->get_node_name() << " = new wxFlexGridSizer(";
     auto rows = node->prop_as_int(prop_rows);

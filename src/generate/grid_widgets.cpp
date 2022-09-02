@@ -89,7 +89,7 @@ std::optional<ttlib::cstr> PropertyGridManagerGenerator::GenConstruction(Node* n
 {
     ttlib::cstr code("\t");
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxPGMAN_DEFAULT_STYLE");
@@ -137,7 +137,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
             code << '\t' << bundle_code;
             code << "\t\t";
             if (node->IsLocal())
-                code << "auto ";
+                code << "auto* ";
             code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
             code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
                  << "wxBitmapBundle::FromBitmaps(bitmaps));";
@@ -146,7 +146,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
             {
                 code << "\n#else\n\t";
                 if (node->IsLocal())
-                    code << "auto ";
+                    code << "auto* ";
                 code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
                 code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
                      << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
@@ -160,14 +160,14 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
                 code << "#if wxCHECK_VERSION(3, 1, 6)\n";
             }
             if (node->IsLocal())
-                code << "auto ";
+                code << "auto* ";
             code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
             code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", " << bundle_code << ");";
             if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
             {
                 code << "\n#else\n";
                 if (node->IsLocal())
-                    code << "auto ";
+                    code << "auto* ";
                 code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
                 code << GenerateQuotedString(node->prop_as_string(prop_label)) << ", "
                      << GenerateBitmapCode(node->prop_as_string(prop_bitmap)) << ");";
@@ -178,7 +178,7 @@ std::optional<ttlib::cstr> PropertyGridPageGenerator::GenConstruction(Node* node
     else
     {
         if (node->IsLocal())
-            code << "auto ";
+            code << "auto* ";
         code << node->get_node_name() << " = " << node->get_parent_name() << "->AddPage(";
         code << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
     }

@@ -58,7 +58,7 @@ std::optional<ttlib::cstr> SliderGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", " << node->prop_as_string(prop_position);
     code << ", " << node->prop_as_string(prop_minValue) << ", " << node->prop_as_string(prop_maxValue);

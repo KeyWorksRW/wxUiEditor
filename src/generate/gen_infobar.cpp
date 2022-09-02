@@ -40,7 +40,7 @@ std::optional<ttlib::cstr> InfoBarGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node) << GetParentName(node) << ");";
 
     return code;

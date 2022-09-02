@@ -30,7 +30,7 @@ std::optional<ttlib::cstr> CustomControl::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new ";
     if (node->HasValue(prop_namespace))
         code << node->prop_as_string(prop_namespace) << "::";

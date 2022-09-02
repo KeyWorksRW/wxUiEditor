@@ -66,7 +66,7 @@ std::optional<ttlib::cstr> PropertyGridGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code("\t");
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, false, "wxPG_DEFAULT_STYLE");

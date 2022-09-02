@@ -48,7 +48,7 @@ std::optional<ttlib::cstr> StaticBoxSizerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     ttlib::cstr parent_name("this");
     if (!node->GetParent()->IsForm())

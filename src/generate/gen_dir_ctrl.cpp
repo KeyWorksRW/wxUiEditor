@@ -35,7 +35,7 @@ std::optional<ttlib::cstr> GenericDirCtrlGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     code << '\t';
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
     if (node->HasValue(prop_defaultfolder))

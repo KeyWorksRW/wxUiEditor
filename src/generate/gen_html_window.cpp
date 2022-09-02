@@ -60,7 +60,7 @@ std::optional<ttlib::cstr> HtmlWindowGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
 
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);

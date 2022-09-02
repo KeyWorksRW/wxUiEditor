@@ -30,7 +30,7 @@ std::optional<ttlib::cstr> ScrolledCanvasGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     code << node->get_node_name() << " = new wxScrolled<wxWindow>(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
@@ -85,7 +85,7 @@ std::optional<ttlib::cstr> ScrolledWindowGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     code << node->get_node_name() << " = new wxScrolled<wxPanel>(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);

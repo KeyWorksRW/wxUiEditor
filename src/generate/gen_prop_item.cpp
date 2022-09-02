@@ -18,7 +18,7 @@ std::optional<ttlib::cstr> PropertyGridItemGenerator::GenConstruction(Node* node
     ttlib::cstr code;
 
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = " << node->get_parent_name();
 
     if (node->prop_as_string(prop_type) == "Category")

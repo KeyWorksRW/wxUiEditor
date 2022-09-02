@@ -83,7 +83,7 @@ std::optional<ttlib::cstr> AuiToolBarGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->prop_as_string(prop_var_name);
 
     code << " = new wxAuiToolBar(" << GetParentName(node) << ", " << node->prop_as_string(prop_id);

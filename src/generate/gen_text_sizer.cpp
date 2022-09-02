@@ -26,7 +26,7 @@ std::optional<ttlib::cstr> TextSizerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     code << node->get_node_name();
     auto parent = node->GetParent();

@@ -29,7 +29,7 @@ std::optional<ttlib::cstr> StaticLineGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxStaticLine(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 

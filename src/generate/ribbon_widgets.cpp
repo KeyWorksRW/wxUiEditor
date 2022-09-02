@@ -153,7 +153,7 @@ std::optional<ttlib::cstr> RibbonBarGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxRibbonBar(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 
@@ -245,7 +245,7 @@ std::optional<ttlib::cstr> RibbonPageGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxRibbonPage(";
     code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
     code << ", ";
@@ -329,7 +329,7 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code("\t");
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxRibbonPanel(";
     code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
     code << ", ";
@@ -436,7 +436,7 @@ std::optional<ttlib::cstr> RibbonButtonBarGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxRibbonButtonBar(";
     code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
 
@@ -563,7 +563,7 @@ std::optional<ttlib::cstr> RibbonToolBarGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxRibbonToolBar(";
     code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
 
@@ -688,7 +688,7 @@ std::optional<ttlib::cstr> RibbonGalleryGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxRibbonGallery(";
     code << node->get_parent_name() << ", " << node->prop_as_string(prop_id);
 

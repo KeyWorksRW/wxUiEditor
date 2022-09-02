@@ -84,7 +84,7 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenConstruction(Node* node)
         num_fields = node->prop_as_int(prop_fields);
 
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = CreateStatusBar(";
 
     if (node->prop_as_string(prop_window_name).size())

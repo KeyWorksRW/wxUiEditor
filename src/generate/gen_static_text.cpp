@@ -74,7 +74,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name()
          << GenerateNewAssignment(node, (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
 

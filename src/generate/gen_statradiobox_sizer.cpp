@@ -83,7 +83,7 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenConstruction(Node
     }
 
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
 
     ttlib::cstr parent_name("this");
     if (!node->GetParent()->IsForm())

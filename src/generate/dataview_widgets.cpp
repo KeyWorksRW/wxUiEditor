@@ -126,7 +126,7 @@ std::optional<ttlib::cstr> DataViewCtrl::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, true);
@@ -246,7 +246,7 @@ std::optional<ttlib::cstr> DataViewListCtrl::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, true);
@@ -308,7 +308,7 @@ std::optional<ttlib::cstr> DataViewTreeCtrl::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, true);
@@ -362,7 +362,7 @@ std::optional<ttlib::cstr> DataViewColumn::GenConstruction(Node* node)
 {
     ttlib::cstr code("\t");
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
     code << node->prop_as_string(prop_type) << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
          << ",\n\t\t\t";
@@ -391,7 +391,7 @@ std::optional<ttlib::cstr> DataViewListColumn::GenConstruction(Node* node)
 {
     ttlib::cstr code("\t");
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = " << node->get_parent_name() << "->Append";
     code << node->prop_as_string(prop_type) << "Column(" << GenerateQuotedString(node->prop_as_string(prop_label))
          << ",\n\t\t\t";

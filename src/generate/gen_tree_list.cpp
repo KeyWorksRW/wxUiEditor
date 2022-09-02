@@ -38,7 +38,7 @@ std::optional<ttlib::cstr> TreeListCtrlGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxTreeListCtrl(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
     GeneratePosSizeFlags(node, code, true, "wxTL_DEFAULT_STYLE");

@@ -53,7 +53,7 @@ std::optional<ttlib::cstr> SpinCtrlGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxEmptyString, ";
     GenPos(node, code);
@@ -177,7 +177,7 @@ std::optional<ttlib::cstr> SpinCtrlDoubleGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << GenerateNewAssignment(node);
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", wxEmptyString, ";
 

@@ -50,7 +50,7 @@ std::optional<ttlib::cstr> ToolbookGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxToolbook(";
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id);
 

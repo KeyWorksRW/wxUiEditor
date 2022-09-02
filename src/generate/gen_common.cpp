@@ -1818,7 +1818,7 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
     if (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount())
     {
         if (node->IsLocal())
-            code << "auto ";
+            code << "auto* ";
         code << node->get_node_name() << " = ";
     }
 

@@ -30,7 +30,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxBoxSizer(" << node->prop_as_string(prop_orientation) << ");";
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);

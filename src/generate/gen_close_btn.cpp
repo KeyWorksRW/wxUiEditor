@@ -29,7 +29,7 @@ std::optional<ttlib::cstr> CloseButtonGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->get_node_name() << " = new wxBitmapButton;\n";
     code << node->get_node_name() << "->CreateCloseButton(" << GetParentName(node) << ", ";
     if (!node->HasValue(prop_id))

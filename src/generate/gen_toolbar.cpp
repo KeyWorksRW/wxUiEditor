@@ -267,7 +267,7 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
     if (node->IsLocal())
-        code << "auto ";
+        code << "auto* ";
     code << node->prop_as_string(prop_var_name);
 
     if (node->isParent(gen_wxFrame))

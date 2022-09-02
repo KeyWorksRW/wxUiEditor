@@ -62,6 +62,10 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
         {
             toolbar->AddSeparator();
         }
+        else if (childObj->isGen(gen_toolStretchable))
+        {
+            toolbar->AddStretchSpacer();
+        }
         else
         {
             const wxObject* child;

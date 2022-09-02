@@ -114,4 +114,5 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 	</gen>
 
 	<gen class="toolSeparator" image="toolseparator" type="tool" />
+	<gen class="toolStretchable" image="toolStretchable" type="tool" />
 </GeneratorDefinitions>)===";

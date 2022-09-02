@@ -95,6 +95,7 @@ namespace wxue_img
     extern const unsigned char submenu_png[760];
     extern const unsigned char text_sizer_png[157];
     extern const unsigned char timepicker_png[227];
+    extern const unsigned char toolStretchable_png[578];
     extern const unsigned char tool_png[629];
     extern const unsigned char toolseparator_png[581];
     extern const unsigned char tree_ctrl_png[246];

@@ -64,6 +64,10 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
         {
             toolbar->AddSeparator();
         }
+        else if (childObj->isGen(gen_toolStretchable))
+        {
+            toolbar->AddStretchableSpace();
+        }
         else
         {
             const wxObject* child;
@@ -245,6 +249,10 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
         else if (childObj->isGen(gen_toolSeparator))
         {
             toolbar->AddSeparator();
+        }
+        else if (childObj->isGen(gen_toolStretchable))
+        {
+            toolbar->AddStretchableSpace();
         }
         else
         {
@@ -461,7 +469,7 @@ std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxRibbonToolBar))
+    if (node->isParent(gen_wxToolBar) || node->isParent(gen_wxRibbonToolBar) || node->isParent(gen_wxAuiToolBar))
     {
         code << node->get_parent_name() << "->AddSeparator();";
     }
@@ -476,6 +484,35 @@ std::optional<ttlib::cstr> ToolSeparatorGenerator::GenConstruction(Node* node)
 int ToolSeparatorGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& object, size_t /* xrc_flags */)
 {
     object.append_attribute("class").set_value("separator");
+
+    return BaseGenerator::xrc_updated;
+}
+
+//////////////////////////////////////////  ToolStretchableGenerator  //////////////////////////////////////////
+
+std::optional<ttlib::cstr> ToolStretchableGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+
+    if (node->isParent(gen_wxToolBar))
+    {
+        code << node->get_parent_name() << "->AddStretchableSpace();";
+    }
+    else if (node->isParent(gen_wxAuiToolBar))
+    {
+        code << node->get_parent_name() << "->AddStretchSpacer();";
+    }
+    else
+    {
+        code << "AddStretchableSpace();";
+    }
+
+    return code;
+}
+
+int ToolStretchableGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& object, size_t /* xrc_flags */)
+{
+    object.append_attribute("class").set_value("space");
 
     return BaseGenerator::xrc_updated;
 }

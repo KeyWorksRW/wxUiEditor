@@ -528,6 +528,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_submenu, "submenu" },
     { gen_tool, "tool" },
     { gen_toolSeparator, "toolSeparator" },
+    { gen_toolStretchable, "toolStretchable" },
     { gen_wxActivityIndicator, "wxActivityIndicator" },
     { gen_wxAnimationCtrl, "wxAnimationCtrl" },
     { gen_wxAuiMDIChildFrame, "wxAuiMDIChildFrame" },

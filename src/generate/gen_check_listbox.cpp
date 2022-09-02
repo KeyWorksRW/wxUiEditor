@@ -12,10 +12,9 @@
 #include "node.h"           // Node class
 #include "pugixml.hpp"      // xml read/write/create/process
 #include "utils.h"          // Utility functions that work with properties
+#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
 
 #include "gen_check_listbox.h"
-
-//////////////////////////////////////////  CheckListBoxGenerator  //////////////////////////////////////////
 
 wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
 {
@@ -23,12 +22,15 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         new wxCheckListBox(wxStaticCast(parent, wxWindow), wxID_ANY, DlgPoint(parent, node, prop_pos),
                            DlgSize(parent, node, prop_size), 0, nullptr, node->prop_as_int(prop_type) | GetStyleInt(node));
 
-    auto& items = node->prop_as_string(prop_contents);
+    auto items = node->as_checklist_items(prop_contents);
     if (items.size())
     {
-        auto array = ConvertToArrayString(items);
-        for (auto& iter: array)
-            widget->Append(wxString::FromUTF8(iter));
+        for (auto& iter: items)
+        {
+            auto pos = widget->Append(iter.label.wx_str());
+            if (iter.checked.wx_str() == "1")
+                widget->Check(pos);
+        }
 
         if (node->prop_as_string(prop_selection_string).size())
         {
@@ -37,7 +39,7 @@ wxObject* CheckListBoxGenerator::CreateMockup(Node* node, wxObject* parent)
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < (to_int) array.size())
+            if (sel > -1 && sel < (to_int) widget->GetCount())
                 widget->SetSelection(sel);
         }
     }
@@ -101,7 +103,7 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
 
@@ -112,14 +114,43 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
         code << node->get_node_name() << "->SetFocus()";
     }
 
-    if (node->prop_as_string(prop_contents).size())
+    if (node->HasValue(prop_contents))
     {
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
-        for (auto& iter: array)
+        auto contents = node->as_checklist_items(prop_contents);
+        bool checked_item = false;
+        for (auto& iter: contents)
         {
-            if (code.size())
-                code << "\n";
-            code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter) << ");";
+            if (iter.checked == "1")
+            {
+                checked_item = true;
+                break;
+            }
+        }
+
+        if (!checked_item)
+        {
+            for (auto& iter: contents)
+            {
+                if (code.size())
+                    code << "\n";
+                code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter.label) << ");";
+            }
+        }
+        else
+        {
+            auto_indent = indent::auto_keep_whitespace;
+            code << "{\n\t";
+            code << "int item_position;";
+            for (auto& iter: contents)
+            {
+                code << "\n\t";
+                if (iter.checked == "1")
+                    code << "item_position = ";
+                code << node->get_node_name() << "->Append(" << GenerateQuotedString(iter.label) << ");";
+                if (iter.checked == "1")
+                    code << "\n\t" << node->get_node_name() << "->Check(item_position);";
+            }
+            code << "\n}";
         }
 
         if (node->prop_as_string(prop_selection_string).size())
@@ -131,10 +162,10 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
         else
         {
             int sel = node->prop_as_int(prop_selection_int);
-            if (sel > -1 && sel < (to_int) array.size())
+            if (sel > -1 && sel < (to_int) contents.size())
             {
                 code << "\n";
-                code << node->get_node_name() << "->SetSelection(" << node->prop_as_string(prop_selection_int) << ");";
+                code << node->get_node_name() << "->SetSelection(" << node->value(prop_selection_int) << ");";
             }
         }
     }
@@ -145,6 +176,16 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
 std::optional<ttlib::cstr> CheckListBoxGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
+}
+
+int CheckListBoxGenerator::GetRequiredVersion(Node* node)
+{
+    if (node->HasValue(prop_contents))
+    {
+        return minRequiredVer + 1;
+    }
+
+    return minRequiredVer;
 }
 
 bool CheckListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
@@ -166,10 +207,15 @@ int CheckListBoxGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size
     if (node->HasValue(prop_contents))
     {
         auto content = item.append_child("content");
-        auto array = ConvertToArrayString(node->prop_as_string(prop_contents));
+        auto array = node->as_checklist_items(prop_contents);
         for (auto& iter: array)
         {
-            content.append_child("item").text().set(iter);
+            auto child = content.append_child("item");
+            child.text().set(iter.label);
+            if (iter.checked == "1")
+            {
+                child.append_attribute("checked").set_value("1");
+            }
         }
     }
 

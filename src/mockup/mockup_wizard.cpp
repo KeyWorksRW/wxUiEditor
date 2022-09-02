@@ -190,7 +190,7 @@ void MockupWizard::OnBackOrNext(wxCommandEvent& event)
 
     if (m_cur_page_index < m_wizard_node->GetChildCount())
     {
-        wxGetFrame().SelectNode(m_wizard_node->GetChild(m_cur_page_index), false, true);
+        wxGetFrame().SelectNode(m_wizard_node->GetChild(m_cur_page_index), evt_flags::fire_event);
     }
 }
 

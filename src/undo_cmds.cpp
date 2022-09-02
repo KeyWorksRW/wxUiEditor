@@ -58,7 +58,7 @@ void InsertNodeAction::Change()
 
     // Probably not necessary, but with both parameters set to false, this simply ensures the mainframe has it's selection
     // node set correctly.
-    wxGetFrame().SelectNode(m_node.get(), false, false);
+    wxGetFrame().SelectNode(m_node.get(), evt_flags::no_event);
 }
 
 void InsertNodeAction::Revert()
@@ -110,7 +110,7 @@ void RemoveNodeAction::Revert()
     m_node->SetParent(m_parent);
     m_parent->ChangeChildPosition(m_node, m_old_pos);
 
-    wxGetFrame().SelectNode(m_old_selected.get(), true, false);
+    wxGetFrame().SelectNode(m_old_selected.get(), evt_flags::force_selection);
 }
 
 ///////////////////////////////// ModifyPropertyAction ////////////////////////////////////
@@ -421,7 +421,7 @@ void AppendGridBagAction::Change()
     }
 
     wxGetFrame().FireCreatedEvent(m_node);
-    wxGetFrame().SelectNode(m_node, true, true);
+    wxGetFrame().SelectNode(m_node, evt_flags::fire_event & evt_flags::force_selection);
 }
 
 void AppendGridBagAction::Revert()

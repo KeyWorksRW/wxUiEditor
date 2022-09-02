@@ -21,6 +21,7 @@ wxDEFINE_EVENT(EVT_PositionChanged, CustomEvent);
 wxDEFINE_EVENT(EVT_NodeCreated, CustomEvent);
 wxDEFINE_EVENT(EVT_NodeDeleted, CustomEvent);
 wxDEFINE_EVENT(EVT_NodeSelected, CustomEvent);
+wxDEFINE_EVENT(EVT_QueueSelect, CustomEvent);
 
 wxDEFINE_EVENT(EVT_NodePropChange, CustomEvent);
 wxDEFINE_EVENT(EVT_MultiPropChange, CustomEvent);
@@ -38,12 +39,23 @@ void MainFrame::FireProjectLoadedEvent()
     }
 }
 
-void MainFrame::FireSelectedEvent(Node* node)
+void MainFrame::FireSelectedEvent(Node* node, size_t flags)
 {
     CustomEvent node_event(EVT_NodeSelected, node);
-    for (auto handler: m_custom_event_handlers)
+
+    if (flags & evt_flags::queue_event)
     {
-        handler->ProcessEvent(node_event);
+        for (auto handler: m_custom_event_handlers)
+        {
+            handler->QueueEvent(node_event.Clone());
+        }
+    }
+    else
+    {
+        for (auto handler: m_custom_event_handlers)
+        {
+            handler->ProcessEvent(node_event);
+        }
     }
 }
 

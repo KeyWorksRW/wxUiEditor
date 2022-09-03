@@ -29,11 +29,11 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto menubar = new wxMenuBar();
+    auto* menubar = new wxMenuBar();
 
-    auto menu_file = new wxMenu();
+    auto* menu_file = new wxMenu();
 
-    auto menu_item_saveas = new wxMenuItem(menu_file, wxID_SAVEAS, wxEmptyString);
+    auto* menu_item_saveas = new wxMenuItem(menu_file, wxID_SAVEAS, wxEmptyString);
 #if wxCHECK_VERSION(3, 1, 6)
     menu_item_saveas->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_FILE_SAVE_AS, wxART_MENU));
 #else
@@ -43,7 +43,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     menu_file->AppendSeparator();
 
-    auto menu_item_clear = new wxMenuItem(menu_file, wxID_CLEAR, wxEmptyString);
+    auto* menu_item_clear = new wxMenuItem(menu_file, wxID_CLEAR, wxEmptyString);
 #if wxCHECK_VERSION(3, 1, 6)
     menu_item_clear->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_MENU));
 #else
@@ -51,7 +51,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 #endif  // wxCHECK_VERSION(3, 1, 6)
     menu_file->Append(menu_item_clear);
 
-    auto menu_item_hide = new wxMenuItem(menu_file, id_hide, "&Hide");
+    auto* menu_item_hide = new wxMenuItem(menu_file, id_hide, "&Hide");
 #if wxCHECK_VERSION(3, 1, 6)
     menu_item_hide->SetBitmap(wxBitmapBundle::FromBitmap(wxueImage(wxue_img::hide_png, sizeof(wxue_img::hide_png))));
 #else
@@ -60,7 +60,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     menu_file->Append(menu_item_hide);
     menubar->Append(menu_file, "&File");
 
-    auto menu_view = new wxMenu();
+    auto* menu_view = new wxMenu();
 
     m_menu_item_warnings = new wxMenuItem(menu_view, id_warning_msgs, "Warnings",
         wxEmptyString, wxITEM_CHECK);
@@ -92,7 +92,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     SetMenuBar(menubar);
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_notebook = new wxNotebook(this, wxID_ANY);
     m_notebook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
@@ -102,7 +102,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_notebook->AddPage(m_page_log, "Log");
     m_page_log->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
-    auto log_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* log_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_textCtrl = new wxTextCtrl(m_page_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxHSCROLL);
     m_textCtrl->SetMinSize(wxSize(350, 300));
@@ -114,18 +114,18 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_notebook->AddPage(m_page_node, "Node");
     m_page_node->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
-    auto node_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* node_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto static_box_2 = new wxStaticBoxSizer(wxVERTICAL, m_page_node, "Selected Node");
+    auto* static_box_2 = new wxStaticBoxSizer(wxVERTICAL, m_page_node, "Selected Node");
     node_sizer->Add(static_box_2, wxSizerFlags().Expand().Border(wxALL));
 
-    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
     static_box_2->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     m_txt_generator = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Name:");
     box_sizer->Add(m_txt_generator, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto btn = new wxButton(static_box_2->GetStaticBox(), wxID_ANY, "Parent...");
+    auto* btn = new wxButton(static_box_2->GetStaticBox(), wxID_ANY, "Parent...");
     box_sizer->Add(btn, wxSizerFlags().Center().Border(wxALL));
 
     m_txt_type = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Type:");
@@ -138,7 +138,7 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
         wxHL_DEFAULT_STYLE);
     static_box_2->Add(m_hyperlink, wxSizerFlags().Expand().Border(wxALL));
 
-    auto static_box = new wxStaticBoxSizer(wxVERTICAL, m_page_node, "Memory Usage");
+    auto* static_box = new wxStaticBoxSizer(wxVERTICAL, m_page_node, "Memory Usage");
     node_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_txt_project = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Project:");
@@ -153,9 +153,9 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_notebook->AddPage(m_page_xrc, "XRC");
     m_page_xrc->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
-    auto page_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* page_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     page_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_scintilla = new wxStyledTextCtrl(m_page_xrc, wxID_ANY);
@@ -181,7 +181,6 @@ MsgFrameBase::MsgFrameBase(wxWindow* parent, wxWindowID id, const wxString& titl
         m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
         m_scintilla->SetBackSpaceUnIndents(true);
     }
-    m_scintilla->SetInitialSize(ConvertDialogToPixels(wxSize(-2 > GetBestSize().x ? -2 : -1, -1)));
     box_sizer_3->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_page_xrc->SetSizerAndFit(page_sizer);

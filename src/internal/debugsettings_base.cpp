@@ -18,15 +18,15 @@ bool DebugSettingsBase::Create(wxWindow* parent, wxWindowID id, const wxString& 
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, "MSG Window Settings");
+    auto* static_box = new wxStaticBoxSizer(wxVERTICAL, this, "MSG Window Settings");
     parent_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
-    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
     static_box->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    auto checkBox = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG Window");
+    auto* checkBox = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG Window");
     checkBox->SetValidator(wxGenericValidator(&m_DisplayMsgWindow));
     checkBox->SetToolTip("If checked, the MSG window will be displayed the first time it receives a non-filtered MSG. If unchecked, the window is never displayed unless you go here and click the Show Now button.");
     box_sizer->Add(checkBox, wxSizerFlags().Center().Border(wxALL));
@@ -36,27 +36,27 @@ bool DebugSettingsBase::Create(wxWindow* parent, wxWindowID id, const wxString& 
     m_btn = new wxButton(static_box->GetStaticBox(), wxID_ANY, "Show Now");
     box_sizer->Add(m_btn, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer2 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer2 = new wxBoxSizer(wxVERTICAL);
     static_box->Add(box_sizer2, wxSizerFlags().Expand().Border(wxALL));
 
-    auto checkBox2 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG_INFO() messages");
+    auto* checkBox2 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG_INFO() messages");
     checkBox2->SetValidator(wxGenericValidator(&m_DisplayMsgInfo));
     box_sizer2->Add(checkBox2, wxSizerFlags().Border(wxALL));
 
-    auto checkBox3 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG_EVENT() messages");
+    auto* checkBox3 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG_EVENT() messages");
     checkBox3->SetValidator(wxGenericValidator(&m_DisplayMsgEvent));
     box_sizer2->Add(checkBox3, wxSizerFlags().Border(wxALL));
 
-    auto checkBox4 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG_WARNING() messages");
+    auto* checkBox4 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display MSG_WARNING() messages");
     checkBox4->SetValidator(wxGenericValidator(&m_DisplayMsgWarnng));
     box_sizer2->Add(checkBox4, wxSizerFlags().Border(wxALL));
 
     static_box->AddSpacer(10);
 
-    auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);
     static_box->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
-    auto checkBox_2 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display creation info");
+    auto* checkBox_2 = new wxCheckBox(static_box->GetStaticBox(), wxID_ANY, "Display creation info");
     checkBox_2->SetValidator(wxGenericValidator(&m_FireCreationMsgs));
     checkBox_2->SetToolTip("MSG_INFO called when nav, prop, and mockup panels have their contents recreated.");
     box_sizer_2->Add(checkBox_2, wxSizerFlags().Border(wxALL));

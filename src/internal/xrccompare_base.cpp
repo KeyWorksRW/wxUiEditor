@@ -19,10 +19,10 @@ bool XrcCompareBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_flex_grid_sizer = new wxFlexGridSizer(2, 0, 20);
     m_flex_grid_sizer->SetFlexibleDirection(wxVERTICAL);
 
-    auto staticText = new wxStaticText(this, wxID_ANY, "C++ Generated");
+    auto* staticText = new wxStaticText(this, wxID_ANY, "C++ Generated");
     m_flex_grid_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
-    auto staticText_2 = new wxStaticText(this, wxID_ANY, "XRC Generated");
+    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "XRC Generated");
     m_flex_grid_sizer->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
     SetSizerAndFit(m_flex_grid_sizer);

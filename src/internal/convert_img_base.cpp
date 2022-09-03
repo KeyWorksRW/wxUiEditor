@@ -25,16 +25,16 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer, wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    auto collapsiblePane = new wxCollapsiblePane(this, wxID_ANY, "Dialog Description");
+    auto* collapsiblePane = new wxCollapsiblePane(this, wxID_ANY, "Dialog Description");
     collapsiblePane->Collapse();
     box_sizer->Add(collapsiblePane, wxSizerFlags(1).Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    auto box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer2 = new wxBoxSizer(wxHORIZONTAL);
 
     m_staticDescription = new wxStaticText(collapsiblePane->GetPane(), wxID_ANY, "This dialog can be used to convert an image into a file that can be #included into a source file. The original image can be any file format that wxWidgets supports.\n\nThe header output type is an array containing the image data in whatever format you choose. While the disk file size might be larger than an XPM file, the size in your executable will typically be quite a bit smaller.");
     m_staticDescription->Wrap(400);
@@ -42,7 +42,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     collapsiblePane->GetPane()->SetSizerAndFit(box_sizer2);
 
-    auto flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
+    auto* flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
     {
         flex_grid_sizer->AddGrowableCol(1);
     }
@@ -64,23 +64,23 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
         wxFLP_SAVE|wxFLP_USE_TEXTCTRL);
     flex_grid_sizer->Add(m_fileOutput, wxSizerFlags().Expand().Border(wxALL));
 
-    auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, "Output Type");
+    auto* static_box = new wxStaticBoxSizer(wxVERTICAL, this, "Output Type");
     parent_sizer->Add(static_box, wxSizerFlags().Border(wxALL));
 
     m_choicebook = new wxChoicebook(static_box->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxCHB_LEFT);
     static_box->Add(m_choicebook, wxSizerFlags().Border(wxALL));
 
-    auto header_page = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    auto* header_page = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     m_choicebook->AddPage(header_page, "Header");
     header_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
-    auto parent_sizer_2 = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer_2 = new wxBoxSizer(wxVERTICAL);
 
-    auto hdr_static_box = new wxStaticBoxSizer(wxVERTICAL, header_page, "Settings");
+    auto* hdr_static_box = new wxStaticBoxSizer(wxVERTICAL, header_page, "Settings");
     parent_sizer_2->Add(hdr_static_box, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);
     hdr_static_box->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
     m_check_make_png = new wxCheckBox(hdr_static_box->GetStaticBox(), wxID_ANY, "Convert to &PNG");
@@ -92,7 +92,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     m_ForceHdrMask->SetToolTip("Check this to override any mask specified in the original image file.");
     box_sizer_2->Add(m_ForceHdrMask, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_2->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
     box_sizer_3->AddSpacer(10);
@@ -100,7 +100,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     m_comboHdrMask = new wxComboBox(hdr_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
     box_sizer_3->Add(m_comboHdrMask, wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    auto box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_2->Add(box_sizer_5, wxSizerFlags().Border(wxLEFT|wxRIGHT, wxSizerFlags::GetDefaultBorder()));
 
     box_sizer_5->AddSpacer(10);
@@ -110,16 +110,16 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     header_page->SetSizerAndFit(parent_sizer_2);
 
-    auto xpm_page = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    auto* xpm_page = new wxPanel(m_choicebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     m_choicebook->AddPage(xpm_page, "XPM");
     xpm_page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
-    auto parent_sizer_3 = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer_3 = new wxBoxSizer(wxVERTICAL);
 
-    auto mask_static_box = new wxStaticBoxSizer(wxVERTICAL, xpm_page, "Settings");
+    auto* mask_static_box = new wxStaticBoxSizer(wxVERTICAL, xpm_page, "Settings");
     parent_sizer_3->Add(mask_static_box, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer7 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer7 = new wxBoxSizer(wxVERTICAL);
     mask_static_box->Add(box_sizer7, wxSizerFlags().Expand().Border(wxALL));
 
     m_ConvertAlphaChannel = new wxCheckBox(mask_static_box->GetStaticBox(), wxID_ANY, "&Alpha Channel to Mask");
@@ -131,7 +131,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     m_ForceXpmMask->SetToolTip("Check this to override any mask specified in the original image file.");
     box_sizer7->Add(m_ForceXpmMask, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer7->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
     box_sizer_4->AddSpacer(10);
@@ -139,7 +139,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     m_comboXpmMask = new wxComboBox(mask_static_box->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(150, -1), 0, nullptr, wxCB_READONLY);
     box_sizer_4->Add(m_comboXpmMask, wxSizerFlags().Left().Border(wxLEFT|wxRIGHT|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
-    auto box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer7->Add(box_sizer_6, wxSizerFlags().Border(wxLEFT|wxRIGHT, wxSizerFlags::GetDefaultBorder()));
 
     box_sizer_6->AddSpacer(10);
@@ -149,14 +149,14 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
 
     xpm_page->SetSizerAndFit(parent_sizer_3);
 
-    auto box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer6, wxSizerFlags().Expand().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
     m_staticDimensions = new wxStaticText(this, wxID_ANY, "16 x 16");
     m_staticDimensions->Hide();
     box_sizer6->Add(m_staticDimensions, wxSizerFlags(1).Center().Border(wxLEFT|wxRIGHT|wxTOP, wxSizerFlags::GetDefaultBorder()));
 
-    auto grid_sizer2 = new wxGridSizer(2);
+    auto* grid_sizer2 = new wxGridSizer(2);
     parent_sizer->Add(grid_sizer2, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_staticOriginal = new wxStaticText(this, wxID_ANY, "Source");
@@ -175,7 +175,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     m_bmpOutput->Hide();
     grid_sizer2->Add(m_bmpOutput, wxSizerFlags().Center().Border(wxALL));
 
-    auto flex_grid_sizer2 = new wxFlexGridSizer(2, 1, 0, 0);
+    auto* flex_grid_sizer2 = new wxFlexGridSizer(2, 1, 0, 0);
     parent_sizer->Add(flex_grid_sizer2, wxSizerFlags().Expand().Border(wxALL));
 
     m_staticSave = new wxStaticText(this, wxID_ANY, "save");
@@ -186,7 +186,7 @@ bool ConvertImageBase::Create(wxWindow* parent, wxWindowID id, const wxString& t
     m_staticSize->Hide();
     flex_grid_sizer2->Add(m_staticSize, wxSizerFlags().Expand().Border(wxALL));
 
-    auto grid_sizer = new wxGridSizer(2);
+    auto* grid_sizer = new wxGridSizer(2);
     parent_sizer->Add(grid_sizer, wxSizerFlags().Expand().Border(wxALL));
 
     m_btnConvert = new wxButton(this, wxID_ANY, "Convert");

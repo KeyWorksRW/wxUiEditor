@@ -16,16 +16,16 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
     m_staticText = new wxStaticText(this, wxID_ANY, "If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.\n");
     m_staticText->Wrap(250);
     box_sizer->Add(m_staticText, wxSizerFlags().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, "&Changed Classes:");
+    auto* staticText = new wxStaticText(this, wxID_ANY, "&Changed Classes:");
     box_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_list_changes = new wxListBox(this, wxID_ANY);
@@ -42,7 +42,7 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_btn->Enable(false);
     box_sizer->Add(m_btn, wxSizerFlags().Border(wxALL));
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
     stdBtn->GetCancelButton()->SetDefault();
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 

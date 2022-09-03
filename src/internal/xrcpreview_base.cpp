@@ -16,18 +16,18 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
     m_staticText = new wxStaticText(this, wxID_ANY, "Preview only works with Dialogs. Be certain the dialog will be visible and has a close box in the title bar!");
     box_sizer_4->Add(m_staticText, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
     m_btn_2 = new wxButton(this, wxID_ANY, "&Blank");
@@ -50,7 +50,7 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_searchCtrl->ShowSearchButton(true);
     box_sizer_2->Add(m_searchCtrl, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_scintilla = new wxStyledTextCtrl(this, wxID_ANY);
@@ -75,10 +75,9 @@ bool XrcPreviewBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
         m_scintilla->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND);
         m_scintilla->SetBackSpaceUnIndents(true);
     }
-    m_scintilla->SetInitialSize(ConvertDialogToPixels(wxSize(-2 > GetBestSize().x ? -2 : -1, -1)));
     box_sizer_3->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizer(dlg_sizer);

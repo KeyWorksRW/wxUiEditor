@@ -57,7 +57,7 @@
 #if defined(INTERNAL_TESTING)
     #include "internal/code_compare_base.h"  // CodeCompare
     #include "internal/import_panel.h"       // ImportPanel -- Panel to display original imported file
-    #include "internal/nodeinfo_base.h"      // NodeInfo
+    #include "internal/node_info.h"          // NodeInfo
 #endif
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)

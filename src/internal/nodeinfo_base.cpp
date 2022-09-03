@@ -10,15 +10,15 @@
 
 #include "nodeinfo_base.h"
 
-bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
+bool NodeInfoBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         const wxPoint& pos, const wxSize& size, long style, const wxString &name)
 {
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto static_box_2 = new wxStaticBoxSizer(wxVERTICAL, this, "Selected Node");
+    auto* static_box_2 = new wxStaticBoxSizer(wxVERTICAL, this, "Selected Node");
     parent_sizer->Add(static_box_2, wxSizerFlags().Border(wxALL));
 
     m_txt_generator = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Name:");
@@ -30,7 +30,7 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_txt_memory = new wxStaticText(static_box_2->GetStaticBox(), wxID_ANY, "Memory:");
     static_box_2->Add(m_txt_memory, wxSizerFlags().Border(wxALL));
 
-    auto static_box = new wxStaticBoxSizer(wxVERTICAL, this, "Memory Usage");
+    auto* static_box = new wxStaticBoxSizer(wxVERTICAL, this, "Memory Usage");
     parent_sizer->Add(static_box, wxSizerFlags().Expand().Border(wxALL));
 
     m_txt_project = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Project:");
@@ -39,7 +39,7 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_txt_clipboard = new wxStaticText(static_box->GetStaticBox(), wxID_ANY, "Clipboard:");
     static_box->Add(m_txt_clipboard, wxSizerFlags().Border(wxALL));
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxCLOSE|wxNO_DEFAULT);
     stdBtn->GetCancelButton()->SetDefault();
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
@@ -47,7 +47,7 @@ bool NodeInfo::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Centre(wxBOTH);
 
     // Event handlers
-    Bind(wxEVT_INIT_DIALOG, &NodeInfo::OnInit, this);
+    Bind(wxEVT_INIT_DIALOG, &NodeInfoBase::OnInit, this);
 
     return true;
 }

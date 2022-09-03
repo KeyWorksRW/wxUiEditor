@@ -9,7 +9,7 @@
     #error "INTERNAL_TESTING must be defined if you include this moduel!"
 #endif
 
-#include "nodeinfo_base.h"  // auto-generated: nodeinfo_base.h and nodeinfo_base.cpp
+#include "node_info.h"  // auto-generated: nodeinfo_base.h and nodeinfo_base.cpp
 
 #include "mainapp.h"        // App -- Main application class
 #include "mainframe.h"      // Main window frame
@@ -34,12 +34,20 @@ static void CalcNodeMemory(Node* node, NodeMemory& node_memory)
     }
 }
 
+// If this constructor is used, the caller must call Create(parent)
+NodeInfo::NodeInfo() {}
+
+NodeInfo::NodeInfo(wxWindow* parent)
+{
+    Create(parent);
+}
+
 void NodeInfo::OnInit(wxInitDialogEvent& /* event */)
 {
     ttlib::cstr label;
     NodeMemory node_memory;
 
-    auto cur_sel = wxGetFrame().GetSelectedNode();
+    auto* cur_sel = m_node ? m_node : wxGetFrame().GetSelectedNode();
     if (cur_sel)
     {
         label.clear();

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wxUiEditorData
-  data_version="14">
+  data_version="15">
   <node
     class="Project"
     cmake_file="wxui_internal.cmake"
@@ -617,7 +617,6 @@
                   fold_margin="1"
                   lexer="XML"
                   read_only="1"
-                  smart_size="-2,-1d"
                   flags="wxEXPAND"
                   proportion="1" />
               </node>
@@ -629,10 +628,11 @@
     <node
       class="wxDialog"
       base_file="nodeinfo_base"
-      class_name="NodeInfo"
+      class_name="NodeInfoBase"
+      derived_class_name="NodeInfo"
+      derived_file="node_info"
       private_members="1"
       title="Node Information"
-      use_derived_class="0"
       wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
@@ -746,7 +746,6 @@
               class="wxStyledTextCtrl"
               fold_margin="1"
               lexer="XML"
-              smart_size="-2,-1d"
               flags="wxEXPAND"
               proportion="1" />
           </node>

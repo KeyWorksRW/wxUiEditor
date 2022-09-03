@@ -23,7 +23,7 @@
 #include "pugixml.hpp"
 
 #if defined(INTERNAL_TESTING)
-    #include "internal/nodeinfo_base.h"  // NodeInfo -- Node memory usage dialog
+    #include "internal/node_info.h"  // NodeInfo -- Node memory usage dialog
 #endif
 
 struct NodeMemory
@@ -380,6 +380,7 @@ void MsgFrame::OnParent(wxCommandEvent& WXUNUSED(event))
         {
 #if defined(INTERNAL_TESTING)
             NodeInfo dlg(this);
+            dlg.SetNode(parent);
             dlg.ShowModal();
 #endif
         }

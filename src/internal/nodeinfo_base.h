@@ -11,11 +11,11 @@
 #include <wx/gdicmn.h>
 #include <wx/stattext.h>
 
-class NodeInfo : public wxDialog
+class NodeInfoBase : public wxDialog
 {
 public:
-    NodeInfo() {}
-    NodeInfo(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
+    NodeInfoBase() {}
+    NodeInfoBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = "Node Information",
         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE, const wxString &name = wxDialogNameStr)
     {
@@ -28,11 +28,9 @@ public:
 
 protected:
 
-    // Event handlers
+    // Virtual event handlers -- override them in your derived class
 
-    void OnInit(wxInitDialogEvent& event);
-
-private:
+    virtual void OnInit(wxInitDialogEvent& event) { event.Skip(); }
 
     // Class member variables
 

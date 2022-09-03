@@ -155,7 +155,6 @@ if (INTERNAL_BLD_TESTING)
         # in Release builds.
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/convert_img.cpp>
-        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/nodeinfo.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/xrccompare.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/xrcpreview.cpp>
         $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/mockup_preview.cpp>

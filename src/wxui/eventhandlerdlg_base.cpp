@@ -16,9 +16,9 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_static_bind_text = new wxStaticText(this, wxID_ANY, "...");
@@ -40,7 +40,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_lambda_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,m_radio_use_lambda), wxVERTICAL);
     box_sizer->Add(m_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     m_lambda_box->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
     m_check_capture_this = new wxCheckBox(m_lambda_box->GetStaticBox(), wxID_ANY, "&Capture this");
@@ -49,7 +49,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_check_include_event = new wxCheckBox(m_lambda_box->GetStaticBox(), wxID_ANY, "&Include event parameter");
     box_sizer_2->Add(m_check_include_event, wxSizerFlags().Border(wxALL));
 
-    auto staticText = new wxStaticText(m_lambda_box->GetStaticBox(), wxID_ANY, "Lambda body:");
+    auto* staticText = new wxStaticText(m_lambda_box->GetStaticBox(), wxID_ANY, "Lambda body:");
     m_lambda_box->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_stc = new wxStyledTextCtrl(m_lambda_box->GetStaticBox(), wxID_ANY);
@@ -82,7 +82,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     parent_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);

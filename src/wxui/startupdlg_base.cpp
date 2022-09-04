@@ -43,12 +43,12 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     SetIcon(wxueBundleSVG(wxue_img::logo_svg, 1943, 7265, wxSize(16, 16)).GetIconFor(this));
 
-    auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_6 = new wxBoxSizer(wxHORIZONTAL);
     dlg_sizer->Add(box_sizer_6, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto bmp_4 = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::logo_svg, 1943, 7265, wxSize(64, 64)));
+    auto* bmp_4 = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::logo_svg, 1943, 7265, wxSize(64, 64)));
     box_sizer_6->Add(bmp_4, wxSizerFlags().Border(wxALL));
 
     box_sizer_6->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
@@ -61,13 +61,13 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     }
     box_sizer_6->Add(m_name_version, wxSizerFlags(1).Center().Border(wxALL));
 
-    auto box_sizer_8 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_8 = new wxBoxSizer(wxHORIZONTAL);
     dlg_sizer->Add(box_sizer_8, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
     box_sizer_8->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, "Recent");
+    auto* staticText = new wxStaticText(this, wxID_ANY, "Recent");
     {
         wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
         font.SetSymbolicSize(wxFONTSIZE_X_LARGE);
@@ -87,13 +87,13 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     }
     box_sizer->Add(m_recent_flex_grid, wxSizerFlags().Border(wxALL));
 
-    auto static_line_2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL);
+    auto* static_line_2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL);
     box_sizer_8->Add(static_line_2, wxSizerFlags().Expand().Border(wxALL, 20));
 
-    auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);
     box_sizer_8->Add(box_sizer_2, wxSizerFlags().Border(wxLEFT|wxRIGHT, 15));
 
-    auto staticText_2 = new wxStaticText(this, wxID_ANY, "Start");
+    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "Start");
     {
         wxFont font(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
         font.SetSymbolicSize(wxFONTSIZE_X_LARGE);
@@ -102,49 +102,49 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     }
     box_sizer_2->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_2->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
-    auto bmp_2 = new wxStaticBitmap(this, wxID_ANY, wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_TOOLBAR));
+    auto* bmp_2 = new wxStaticBitmap(this, wxID_ANY, wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_TOOLBAR));
     box_sizer_4->Add(bmp_2, wxSizerFlags().Border(wxALL));
 
-    auto hyperlink_2 = new wxGenericHyperlinkCtrl(this, wxID_ANY, "Open...", wxEmptyString, wxDefaultPosition, wxDefaultSize,
+    auto* hyperlink_2 = new wxGenericHyperlinkCtrl(this, wxID_ANY, "Open...", wxEmptyString, wxDefaultPosition, wxDefaultSize,
         wxHL_DEFAULT_STYLE);
     hyperlink_2->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
     hyperlink_2->SetHoverColour(hyperlink_2->GetNormalColour());
     box_sizer_4->Add(hyperlink_2, wxSizerFlags().Center().Border(wxALL));
 
-    auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_2->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto bmp = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::import_svg, 418, 1013, wxSize(24, 24)));
+    auto* bmp = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::import_svg, 418, 1013, wxSize(24, 24)));
     box_sizer_3->Add(bmp, wxSizerFlags().Border(wxALL));
 
-    auto hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, "Import...", wxEmptyString, wxDefaultPosition, wxDefaultSize,
+    auto* hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, "Import...", wxEmptyString, wxDefaultPosition, wxDefaultSize,
         wxHL_DEFAULT_STYLE);
     hyperlink->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
     hyperlink->SetHoverColour(hyperlink->GetNormalColour());
     box_sizer_3->Add(hyperlink, wxSizerFlags().Center().Border(wxALL));
 
-    auto box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_5 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_2->Add(box_sizer_5, wxSizerFlags().Border(wxALL));
 
-    auto bmp_3 = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, wxSize(24, 24)));
+    auto* bmp_3 = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::new_project_svg, 921, 2208, wxSize(24, 24)));
     box_sizer_5->Add(bmp_3, wxSizerFlags().Border(wxALL));
 
-    auto hyperlink_3 = new wxGenericHyperlinkCtrl(this, wxID_ANY, "New", wxEmptyString, wxDefaultPosition, wxDefaultSize,
+    auto* hyperlink_3 = new wxGenericHyperlinkCtrl(this, wxID_ANY, "New", wxEmptyString, wxDefaultPosition, wxDefaultSize,
         wxHL_DEFAULT_STYLE);
     hyperlink_3->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
     hyperlink_3->SetHoverColour(hyperlink_3->GetNormalColour());
     box_sizer_5->Add(hyperlink_3, wxSizerFlags().Center().Border(wxALL));
 
-    auto box_sizer_7 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer_7 = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer_7, wxSizerFlags().Expand().Border(wxALL));
 
-    auto static_line = new wxStaticLine(this);
+    auto* static_line = new wxStaticLine(this);
     box_sizer_7->Add(static_line, wxSizerFlags().Expand().Border(wxALL));
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxCANCEL|wxNO_DEFAULT);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxCANCEL|wxNO_DEFAULT);
     stdBtn->GetCancelButton()->SetDefault();
     box_sizer_7->Add(stdBtn, wxSizerFlags(1).Center().Border(wxALL));
 

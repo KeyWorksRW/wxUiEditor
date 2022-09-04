@@ -18,13 +18,13 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     SetIcon(wxArtProvider::GetBitmapBundle(wxART_EDIT, wxART_MENU).GetIconFor(this));
 
-    auto box_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
     box_sizer->SetMinSize(300, 400);
 
-    auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, "&Name:");
+    auto* staticText = new wxStaticText(this, wxID_ANY, "&Name:");
     box_sizer_2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
     m_text_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
@@ -32,14 +32,14 @@ bool InsertWidget::Create(wxWindow* parent, wxWindowID id, const wxString& title
     m_text_name->SetToolTip("Use Up/Down arrows to change list selection");
     box_sizer_2->Add(m_text_name, wxSizerFlags(1).Border(wxALL));
 
-    auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
-    auto staticText_2 = new wxStaticText(this, wxID_ANY, "Only widgets that can be a child of the currently selected widget are shown. If the list is empty, no children can be added.");
+    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "Only widgets that can be a child of the currently selected widget are shown. If the list is empty, no children can be added.");
     staticText_2->Wrap(300);
     box_sizer_4->Add(staticText_2, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_listbox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 300), 0, nullptr, wxLB_SINGLE|wxLB_SORT);

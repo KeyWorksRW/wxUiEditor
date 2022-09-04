@@ -18,7 +18,7 @@ bool GenerateXrcDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_radio_combined = new wxRadioButton(this, wxID_ANY, "Combined File");
     m_radio_combined->SetValidator(wxGenericValidator(&m_create_combined));
@@ -36,14 +36,14 @@ bool GenerateXrcDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     m_separate_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,m_radio_separate), wxVERTICAL);
     dlg_sizer->Add(m_separate_box, wxSizerFlags().Expand().Border(wxALL));
 
-    auto staticText = new wxStaticText(m_separate_box->GetStaticBox(), wxID_ANY, "Forms not listed do not have xrc_file set.");
+    auto* staticText = new wxStaticText(m_separate_box->GetStaticBox(), wxID_ANY, "Forms not listed do not have xrc_file set.");
     m_separate_box->Add(staticText, wxSizerFlags().Border(wxALL));
 
     m_listbox = new wxListBox(m_separate_box->GetStaticBox(), wxID_ANY);
     m_listbox->SetMinSize(ConvertDialogToPixels(wxSize(-1, 50)));
     m_separate_box->Add(m_listbox, wxSizerFlags(1).Expand().Border(wxALL));
 
-    auto stdBtn = new wxStdDialogButtonSizer();
+    auto* stdBtn = new wxStdDialogButtonSizer();
     stdBtn->AddButton(new wxButton(this, wxID_SAVE));
     stdBtn->AddButton(new wxButton(this, wxID_CANCEL));
     stdBtn->Realize();

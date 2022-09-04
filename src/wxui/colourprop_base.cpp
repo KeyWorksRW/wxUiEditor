@@ -16,12 +16,12 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer_3 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
 
-    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_3->Add(box_sizer, wxSizerFlags().Center().Border(wxALL));
 
     m_colour_rect = new wxue_ctrl::ColourRectCtrl(this);
@@ -33,7 +33,7 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
 
     dlg_sizer->AddSpacer(5 + wxSizerFlags::GetDefaultBorder());
 
-    auto box_sizer_2 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
     m_radio_default = new wxRadioButton(this, wxID_ANY, "Let wxWidgets choose the colour");
@@ -63,13 +63,13 @@ bool ColourPropBase::Create(wxWindow* parent, wxWindowID id, const wxString& tit
     m_combo_system->Enable(false);
     m_staticbox_system->Add(m_combo_system, wxSizerFlags().Border(wxALL));
 
-    auto staticText = new wxStaticText(m_staticbox_system->GetStaticBox(), wxID_ANY, "Caution: On Windows, these are classic colours. They may not be the colours the user has set via a Theme or Dark Mode.");
+    auto* staticText = new wxStaticText(m_staticbox_system->GetStaticBox(), wxID_ANY, "Caution: On Windows, these are classic colours. They may not be the colours the user has set via a Theme or Dark Mode.");
     staticText->Wrap(250);
     m_staticbox_system->Add(staticText, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->AddSpacer(5 + wxSizerFlags::GetDefaultBorder());
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(dlg_sizer);

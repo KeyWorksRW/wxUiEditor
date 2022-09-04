@@ -32,12 +32,12 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
 
     SetIcon(wxueBundleSVG(wxue_img::import_svg, 418, 1013, wxSize(16, 16)).GetIconFor(this));
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_import_staticbox = new wxStaticBoxSizer(wxVERTICAL, this, "Import Type");
     parent_sizer->Add(m_import_staticbox, wxSizerFlags().Expand().Border(wxALL));
 
-    auto flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
+    auto* flex_grid_sizer = new wxFlexGridSizer(2, 0, 0);
     m_import_staticbox->Add(flex_grid_sizer, wxSizerFlags().Border(wxALL));
 
     m_radio_wxCrafter = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "wx&Crafter Project(s)", wxDefaultPosition, wxDefaultSize,
@@ -59,7 +59,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_XRC = new wxRadioButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&XRC File(s)");
     flex_grid_sizer->Add(m_radio_XRC, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
     m_import_staticbox->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
     m_combo_recent_dirs = new wxComboBox(m_import_staticbox->GetStaticBox(), wxID_ANY, wxEmptyString);
@@ -70,7 +70,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_btnRemove->Hide();
     box_sizer->Add(m_btnRemove, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer6 = new wxBoxSizer(wxHORIZONTAL);
     m_import_staticbox->Add(box_sizer6, wxSizerFlags().Expand().Border(wxALL));
 
     m_btnAddFile = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Directory...");
@@ -81,7 +81,7 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
         wxST_ELLIPSIZE_MIDDLE);
     box_sizer6->Add(m_static_cwd, wxSizerFlags(1).Center().Border(wxALL));
 
-    auto box_sizer7 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer7 = new wxBoxSizer(wxVERTICAL);
     m_import_staticbox->Add(box_sizer7, wxSizerFlags(1).Expand().Border(wxALL));
 
     m_staticImportList = new wxStaticText(m_import_staticbox->GetStaticBox(), wxID_ANY, "&Files:");
@@ -91,13 +91,13 @@ bool ImportBase::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_checkListProjects->SetMinSize(wxSize(-1, 240));
     box_sizer7->Add(m_checkListProjects, wxSizerFlags().Expand().Border(wxALL));
 
-    auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer7->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
-    auto btn_2 = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "Select &All");
+    auto* btn_2 = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "Select &All");
     box_sizer_2->Add(btn_2, wxSizerFlags().Border(wxALL));
 
-    auto btn__2 = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "Select &None");
+    auto* btn__2 = new wxButton(m_import_staticbox->GetStaticBox(), wxID_ANY, "Select &None");
     box_sizer_2->Add(btn__2, wxSizerFlags().Border(wxALL));
 
     m_stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);

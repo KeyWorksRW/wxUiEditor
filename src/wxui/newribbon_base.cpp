@@ -16,12 +16,12 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto box_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer_3 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     box_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the ribbon bar is created.");
+    auto* staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the ribbon bar is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
@@ -32,7 +32,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_class_sizer = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(m_class_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
+    auto* staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
     staticText->SetToolTip("Change this to something unique to your project.");
     m_class_sizer->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
@@ -41,7 +41,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_classname->SetToolTip("Change this to something unique to your project.");
     m_class_sizer->Add(m_classname, wxSizerFlags(1).Border(wxALL));
 
-    auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
     m_staticText = new wxStaticText(this, wxID_ANY, "&Type:");
@@ -55,10 +55,10 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_comboBox->SetValidator(wxGenericValidator(&m_panel_type));
     box_sizer_2->Add(m_comboBox, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxALL));
 
-    auto staticText_4 = new wxStaticText(this, wxID_ANY, "&Pages:");
+    auto* staticText_4 = new wxStaticText(this, wxID_ANY, "&Pages:");
     box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_spinCtrlPages = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
@@ -66,7 +66,7 @@ bool NewRibbon::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_spinCtrlPages->SetValidator(wxGenericValidator(&m_num_pages));
     box_sizer_4->Add(m_spinCtrlPages, wxSizerFlags().Border(wxALL));
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     box_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(box_sizer);

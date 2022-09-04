@@ -17,7 +17,7 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
     m_splitter->SetSashGravity(0.0);
@@ -59,7 +59,7 @@ bool EditHtmlDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     m_htmlWin = new wxHtmlWindow(m_splitter);
     m_splitter->SplitVertically(m_scintilla, m_htmlWin);
 
-    auto stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn_2), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);

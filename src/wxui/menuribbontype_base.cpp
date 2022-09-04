@@ -25,12 +25,12 @@ MenuRibbonType::MenuRibbonType() : wxMenu()
     if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
         wxImage::AddHandler(new wxPNGHandler);
 
-    auto menu_item = Append(gen_wxRibbonButtonBar, "Insert wxRibbonButtonBar");
+    auto* menu_item = Append(gen_wxRibbonButtonBar, "Insert wxRibbonButtonBar");
     menu_item->SetBitmap(wxue_img::bundle_ribbon_buttonbar_png());
 
-    auto menu_item_2 = Append(gen_wxRibbonToolBar, "Insert wxRibbonToolBar");
+    auto* menu_item_2 = Append(gen_wxRibbonToolBar, "Insert wxRibbonToolBar");
     menu_item_2->SetBitmap(wxue_img::bundle_ribbon_bar_png());
 
-    auto menu_item_3 = Append(gen_wxRibbonGallery, "Insert wxRibbonGallery");
+    auto* menu_item_3 = Append(gen_wxRibbonGallery, "Insert wxRibbonGallery");
     menu_item_3->SetBitmap(wxue_img::bundle_ribbon_gallery_png());
 }

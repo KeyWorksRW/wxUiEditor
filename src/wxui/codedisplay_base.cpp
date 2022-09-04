@@ -13,7 +13,7 @@ bool CodeDisplayBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     if (!wxPanel::Create(parent, id, pos, size, style, name))
         return false;
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_scintilla = new wxStyledTextCtrl(this, wxID_ANY);
     {

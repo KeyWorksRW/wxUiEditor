@@ -17,7 +17,7 @@ bool EditStringDialogBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_static_hdr_text = new wxStaticText(this, wxID_ANY, wxEmptyString);
     m_static_hdr_text->Hide();
@@ -28,7 +28,7 @@ bool EditStringDialogBase::Create(wxWindow* parent, wxWindowID id, const wxStrin
     m_textCtrl->SetMinSize(wxSize(500, -1));
     parent_sizer->Add(m_textCtrl, wxSizerFlags().Expand().TripleBorder(wxALL));
 
-    auto stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn_2), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);

@@ -21,9 +21,9 @@ bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
     m_prop_label = new wxStaticText(this, wxID_ANY, "property label");
@@ -63,7 +63,7 @@ bool GridPropertyDlg::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     m_help_text->Hide();
     dlg_sizer->Add(m_help_text, wxSizerFlags().Border(wxALL));
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(dlg_sizer);

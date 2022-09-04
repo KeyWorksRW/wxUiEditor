@@ -19,12 +19,12 @@ bool NewPanel::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto dlg_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* dlg_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer_3 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the panel is created.");
+    auto* staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the panel is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
@@ -35,7 +35,7 @@ bool NewPanel::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_class_sizer = new wxBoxSizer(wxHORIZONTAL);
     dlg_sizer->Add(m_class_sizer, wxSizerFlags().Expand().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
+    auto* staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
     staticText->SetToolTip("Change this to something unique to your project.");
     m_class_sizer->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
@@ -44,13 +44,13 @@ bool NewPanel::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_classname->SetToolTip("Change this to something unique to your project.");
     m_class_sizer->Add(m_classname, wxSizerFlags(1).Border(wxALL));
 
-    auto box_sizer = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
-    auto staticText_2 = new wxStaticText(this, wxID_ANY, "&Parent sizer type:");
+    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "&Parent sizer type:");
     box_sizer->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
-    auto comboBox = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+    auto* comboBox = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
     comboBox->Append("Box");
     comboBox->Append("FlexGrid");
     comboBox->Append("Grid");
@@ -61,16 +61,16 @@ bool NewPanel::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     comboBox->SetValidator(wxGenericValidator(&m_sizer_type));
     box_sizer->Add(comboBox, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     dlg_sizer->Add(box_sizer_2, wxSizerFlags().Border(wxALL));
 
-    auto checkTabTraversal = new wxCheckBox(this, wxID_ANY, "&Tab traversal");
+    auto* checkTabTraversal = new wxCheckBox(this, wxID_ANY, "&Tab traversal");
     checkTabTraversal->SetValue(true);
     checkTabTraversal->SetValidator(wxGenericValidator(&m_tab_traversal));
     checkTabTraversal->SetToolTip("Checking this will cause the tab key to traverse child windows.");
     box_sizer_2->Add(checkTabTraversal, wxSizerFlags().Border(wxALL));
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(dlg_sizer);

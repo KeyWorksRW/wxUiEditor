@@ -17,7 +17,7 @@ bool EditCodeDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_stc = new wxStyledTextCtrl(this, wxID_ANY);
     {
@@ -47,7 +47,7 @@ bool EditCodeDialogBase::Create(wxWindow* parent, wxWindowID id, const wxString&
     }
     parent_sizer->Add(m_stc, wxSizerFlags(1).Expand().DoubleBorder(wxALL));
 
-    auto stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn_2 = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn_2), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);

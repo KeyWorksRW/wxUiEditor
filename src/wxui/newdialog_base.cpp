@@ -18,12 +18,12 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     if (!wxDialog::Create(parent, id, title, pos, size, style, name))
         return false;
 
-    auto parent_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* parent_sizer = new wxBoxSizer(wxVERTICAL);
 
-    auto box_sizer_3 = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer_3 = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the dialog is created.");
+    auto* staticText_3 = new wxStaticText(this, wxID_ANY, "These are initial values -- all of them can be changed after the dialog is created.");
     staticText_3->Wrap(300);
     box_sizer_3->Add(staticText_3, wxSizerFlags().Border(wxALL));
 
@@ -31,10 +31,10 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_infoBar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
     box_sizer_3->Add(m_infoBar, wxSizerFlags().Expand().Border(wxALL));
 
-    auto box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_2 = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer_2, wxSizerFlags().Expand().Border(wxALL));
 
-    auto staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
+    auto* staticText = new wxStaticText(this, wxID_ANY, "&Base class name:");
     staticText->SetToolTip("Change this to something unique to your project.");
     box_sizer_2->Add(staticText, wxSizerFlags().Center().Border(wxALL));
 
@@ -43,10 +43,10 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_classname->SetToolTip("Change this to something unique to your project.");
     box_sizer_2->Add(m_classname, wxSizerFlags(1).Border(wxALL));
 
-    auto box_sizer__2 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer__2 = new wxBoxSizer(wxHORIZONTAL);
     parent_sizer->Add(box_sizer__2, wxSizerFlags().Expand().Border(wxALL));
 
-    auto staticText_2 = new wxStaticText(this, wxID_ANY, "&Title:");
+    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "&Title:");
     box_sizer__2->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
     m_textCtrl_title = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
@@ -54,10 +54,10 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_textCtrl_title->SetValidator(wxTextValidator(wxFILTER_NONE, &m_title));
     box_sizer__2->Add(m_textCtrl_title, wxSizerFlags(1).Border(wxALL));
 
-    auto box_sizer = new wxBoxSizer(wxVERTICAL);
+    auto* box_sizer = new wxBoxSizer(wxVERTICAL);
     parent_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
-    auto box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
+    auto* box_sizer_4 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer->Add(box_sizer_4, wxSizerFlags().Border(wxRIGHT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_check_tabs = new wxCheckBox(this, wxID_ANY, "Tabbed &Dialog");
@@ -65,7 +65,7 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_check_tabs->SetToolTip("If checked, creates a wxNotebook");
     box_sizer_4->Add(m_check_tabs, wxSizerFlags().Center().Border(wxALL));
 
-    auto staticText_4 = new wxStaticText(this, wxID_ANY, "Tab&s:");
+    auto* staticText_4 = new wxStaticText(this, wxID_ANY, "Tab&s:");
     box_sizer_4->Add(staticText_4, wxSizerFlags().Center().Border(wxLEFT|wxTOP|wxBOTTOM, wxSizerFlags::GetDefaultBorder()));
 
     m_spinCtrlTabs = new wxSpinCtrl(this, wxID_ANY, wxEmptyString,
@@ -74,12 +74,12 @@ bool NewDialog::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_spinCtrlTabs->Enable(false);
     box_sizer_4->Add(m_spinCtrlTabs, wxSizerFlags().Center().Border(wxALL));
 
-    auto checkBox_2 = new wxCheckBox(this, wxID_ANY, "&Standard Buttons");
+    auto* checkBox_2 = new wxCheckBox(this, wxID_ANY, "&Standard Buttons");
     checkBox_2->SetValue(true);
     checkBox_2->SetValidator(wxGenericValidator(&m_has_std_btns));
     box_sizer->Add(checkBox_2, wxSizerFlags().Border(wxALL));
 
-    auto stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
+    auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     parent_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 
     SetSizerAndFit(parent_sizer);

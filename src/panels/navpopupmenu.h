@@ -91,6 +91,7 @@ public:
         MenuADD_TOOL,
         MenuADD_TOOL_CHECKBOX,
         MenuADD_TOOL_COMBOBOX,
+        MenuADD_TOOL_DROPDOWN,
         MenuADD_TOOL_RADIOBOX,
         MenuADD_TOOL_SLIDER,
         MenuADD_TOOL_SPINCTRL,

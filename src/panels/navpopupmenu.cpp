@@ -514,32 +514,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         case gen_wxAuiToolBar:
         case gen_auitool:
             add_sizer = false;
-            Append(MenuADD_TOOL, "Add Tool");
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_auitool);
-                },
-                MenuADD_TOOL);
-
-            Append(MenuADD_TOOL_SEPARATOR, "Add Separator");
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_toolSeparator);
-                },
-                MenuADD_TOOL_SEPARATOR);
-
-            Append(MenuADD_TOOL_STRETCHABLE_SPACE, "Add Stretchable space");
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_toolStretchable);
-                },
-                MenuADD_TOOL_STRETCHABLE_SPACE);
+            AddToolbarCommands(node);
             break;
 
         case gen_wxToolBar:
@@ -568,6 +543,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         case gen_wxMenuItem:
         case gen_submenu:
         case gen_separator:
+        case gen_tool_dropdown:
             add_sizer = false;
             Append(MenuADD_MENUITEM, "Add Menu Item");
             Bind(
@@ -805,14 +781,18 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
 
     bool is_aui_toolbar = (node->gen_name() == gen_wxAuiToolBar || node->GetParent()->gen_name() == gen_wxAuiToolBar);
 
-    menu_item = sub_menu->Append(MenuADD_TOOL, "Button (tool)");
+    menu_item = sub_menu->Append(MenuADD_TOOL, "Normal");
     menu_item->SetBitmap(GetInternalImage("tool"));
     menu_item = sub_menu->Append(MenuADD_TOOL_CHECKBOX, "Checkbox (toggle)");
     menu_item->SetBitmap(GetInternalImage("wxCheckBox"));
-    menu_item = sub_menu->Append(MenuADD_TOOL_COMBOBOX, "Combobox");
-    menu_item->SetBitmap(GetInternalImage("wxComboBox"));
+    menu_item = sub_menu->Append(MenuADD_TOOL_DROPDOWN, "Dropdown");
+    menu_item->SetBitmap(GetInternalImage("tool_dropdown"));
     menu_item = sub_menu->Append(MenuADD_TOOL_RADIOBOX, "Radio button");
     menu_item->SetBitmap(GetInternalImage("wxRadioButton"));
+    sub_menu->AppendSeparator();
+
+    menu_item = sub_menu->Append(MenuADD_TOOL_COMBOBOX, "Combobox");
+    menu_item->SetBitmap(GetInternalImage("wxComboBox"));
     menu_item = sub_menu->Append(MenuADD_TOOL_SLIDER, "Slider");
     menu_item->SetBitmap(GetInternalImage("slider"));
     menu_item = sub_menu->Append(MenuADD_TOOL_SPINCTRL, "Spin control");
@@ -837,6 +817,13 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
             wxGetFrame().CreateToolNode(gen_tool);
         },
         MenuADD_TOOL);
+    Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().CreateToolNode(gen_tool_dropdown);
+        },
+        MenuADD_TOOL_DROPDOWN);
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)

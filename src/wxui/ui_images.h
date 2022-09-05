@@ -58,6 +58,7 @@ namespace wxue_img
     wxBitmapBundle bundle_wxStaticCheckBoxSizer_png();
     wxBitmapBundle bundle_wxStaticRadioBtnSizer_png();
     wxBitmapBundle bundle_wxEditListBox_png();
+    wxBitmapBundle bundle_tool_dropdown_png();
 
     extern const unsigned char auitoolbar_png[476];
     extern const unsigned char bmp_combo_box_png[492];
@@ -85,6 +86,7 @@ namespace wxue_img
     extern const unsigned char stddialogbuttonsizer_png[524];
     extern const unsigned char title_close_png[144];
     extern const unsigned char toggle_button_png[277];
+    extern const unsigned char tool_dropdown_png[447];
     extern const unsigned char undo_svg[882];
     extern const unsigned char unknown_png[1699];
     extern const unsigned char wxButton_png[500];

@@ -1495,6 +1495,52 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->Realize();");
             return;
         }
+        else if (type == type_tool_dropdown && node->GetChildCount())
+        {
+            m_source->writeLine("{");
+            m_source->Indent();
+            m_source->writeLine("wxMenu* menu = new wxMenu;");
+            auto menu_node_ptr = g_NodeCreator.NewNode(gen_wxMenu);
+            menu_node_ptr->prop_set_value(prop_var_name, "menu");
+            for (const auto& child: node->GetChildNodePtrs())
+            {
+                auto old_parent = child->GetParent();
+                child->SetParent(menu_node_ptr.get());
+                auto child_generator = child->GetNodeDeclaration()->GetGenerator();
+                if (auto result = child_generator->GenConstruction(child.get()); result)
+                    m_source->writeLine(result.value());
+                GenSettings(child.get());
+                // A submenu can have children
+                if (child->GetChildCount())
+                {
+                    for (const auto& grandchild: child->GetChildNodePtrs())
+                    {
+                        auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
+                        if (auto result = grandchild_generator->GenConstruction(grandchild.get()); result)
+                            m_source->writeLine(result.value());
+                        GenSettings(grandchild.get());
+                        // A submenu menu item can also be a submenu with great grandchildren.
+                        if (grandchild->GetChildCount())
+                        {
+                            for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
+                            {
+                                auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
+                                if (auto result = great_grandchild_generator->GenConstruction(great_grandchild.get());
+                                    result)
+                                    m_source->writeLine(result.value());
+                                GenSettings(great_grandchild.get());
+                                // It's possible to have even more levels of submenus, but we'll stop here.
+                            }
+                        }
+                    }
+                }
+                child->SetParent(old_parent);
+            }
+            m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->SetDropdownMenu(menu);");
+            m_source->Unindent();
+            m_source->writeLine("}");
+            return;
+        }
 
         auto parent = node->GetParent();
 

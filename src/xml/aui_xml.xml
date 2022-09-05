@@ -129,4 +129,19 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 			help="" />
 	</gen>
 
+	<gen class="auitool_label" image="wxStaticText" type="aui_tool">
+		<property name="var_name" type="string">tool</property>
+		<property name="label" type="string_escapes" />
+	</gen>
+
+	<gen class="auitool_spacer" image="wxStaticText" type="aui_tool">
+		<property name="var_name" type="string">tool</property>
+		<property name="width" type="uint">5</property>
+	</gen>
+
+	<gen class="auitool_stretchable" image="toolStretchable" type="aui_tool">
+		<property name="var_name" type="string">tool</property>
+		<property name="proportion" type="uint">1</property>
+	</gen>
+
 </GeneratorDefinitions>)===";

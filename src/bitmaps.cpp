@@ -103,6 +103,7 @@ static const ImageMap png_headers[] = {
     { "timepicker", timepicker_png, sizeof(timepicker_png) },
     { "toggle_button", toggle_button_png, sizeof(toggle_button_png) },
     { "tool", tool_png, sizeof(tool_png) },
+    { "tool_dropdown", tool_dropdown_png, sizeof(tool_dropdown_png) },
     { "toolseparator", toolseparator_png, sizeof(toolseparator_png) },
     { "toolStretchable", toolStretchable_png, sizeof(toolStretchable_png) },
     { "tree_ctrl", tree_ctrl_png, sizeof(tree_ctrl_png) },

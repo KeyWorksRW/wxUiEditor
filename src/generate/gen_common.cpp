@@ -1860,7 +1860,11 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
 
     if (!node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
     {
-        if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
+        if (node->isGen(gen_tool_dropdown))
+        {
+            code << ", wxEmptyString, wxITEM_DROPDOWN";
+        }
+        else if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
         {
             code << ", wxEmptyString, " << node->prop_as_string(prop_kind);
         }
@@ -1872,7 +1876,11 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
     if (node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
     {
         code << ",\n\t\t\t" << GenerateQuotedString(node->prop_as_string(prop_tooltip));
-        if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
+        if (node->isGen(gen_tool_dropdown))
+        {
+            code << ", wxITEM_DROPDOWN";
+        }
+        else if (node->prop_as_string(prop_kind) != "wxITEM_NORMAL")
         {
             code << ", " << node->prop_as_string(prop_kind);
         }

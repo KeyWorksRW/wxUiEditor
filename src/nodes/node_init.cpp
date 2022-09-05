@@ -142,14 +142,6 @@ struct ParentChild
 // A child node can only be created if it is listed below as valid for the current parent.
 static const ParentChild lstParentChild[] = {
 
-    { type_aui_toolbar, type_aui_tool, infinite },
-
-    // This is a bit risky -- we need to allow this type to pickup gen_toolSeparator, However, gen_tool has the wrong events.
-    // It shouldn't happen, as we already have code to convert gen_tool to gen_auitool when appropriate. The only way around
-    // this would be to create a type_separator.
-    { type_aui_toolbar, type_tool, infinite },
-    // { type_aui_toolbar, type_widget, infinite },
-
     // Books
 
     { type_bookpage, type_gbsizer, one },
@@ -288,6 +280,22 @@ static const ParentChild lstParentChild[] = {
     { type_sizer, type_widget, infinite },
     { type_sizer, type_staticbox, infinite },
 
+    // Toolbars
+
+    { type_aui_toolbar, type_aui_tool, infinite },
+    { type_aui_toolbar, type_tool_dropdown, infinite },
+    { type_aui_toolbar, type_widget, infinite },
+
+    // This is a bit risky -- we need to allow this type to pickup gen_toolSeparator, However, gen_tool has the wrong events.
+    // It shouldn't happen, as we already have code to convert gen_tool to gen_auitool when appropriate. The only way around
+    // this would be to create a type_separator.
+    { type_aui_toolbar, type_tool, infinite },
+
+    { type_toolbar, type_tool, infinite },
+    { type_toolbar, type_tool_dropdown, infinite },
+    { type_toolbar, type_widget, infinite },
+    { type_tool_dropdown, type_menuitem, infinite },
+
     // wxStaticBox
 
     { type_staticbox, type_widget, infinite },
@@ -310,9 +318,6 @@ static const ParentChild lstParentChild[] = {
     { type_splitter, type_splitter, two },
     { type_splitter, type_treelistctrl, two },
     { type_splitter, type_widget, two },
-
-    { type_toolbar, type_tool, infinite },
-    { type_toolbar, type_widget, infinite },
 
     { type_treelistctrl, type_treelistctrlcolumn, infinite },
 

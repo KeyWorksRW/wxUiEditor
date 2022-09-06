@@ -35,6 +35,7 @@ namespace wxue_img
     extern const unsigned char scrollbar_png[214];
     extern const unsigned char spin_ctrl_png[300];
     extern const unsigned char stddialogbuttonsizer_png[524];
+    extern const unsigned char toolspacer_png[459];
     extern const unsigned char wxButton_png[500];
     extern const unsigned char wxListBox_png[310];
     extern const unsigned char wxStaticBoxSizer_png[199];
@@ -290,6 +291,7 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     auto* bars_bar_tool = new wxRibbonToolBar(panel_bars_tool, wxID_ANY);
     {
         bars_bar_tool->AddTool(gen_wxToolBar, wxueImage(wxue_img::wxtoolBar_png, sizeof(wxue_img::wxtoolBar_png)), "wxToolBar", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_tool->AddSeparator();
         bars_bar_tool->AddTool(gen_wxAuiToolBar, wxueImage(wxue_img::auitoolbar_png, sizeof(wxue_img::auitoolbar_png)), "wxAuiToolBar", wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(gen_tool, wxueImage(wxue_img::tool_png, sizeof(wxue_img::tool_png)), "Tool", wxRIBBON_BUTTON_NORMAL);
         bars_bar_tool->AddTool(gen_toolSeparator, wxueImage(wxue_img::toolseparator_png, sizeof(wxue_img::toolseparator_png)), "Separator", wxRIBBON_BUTTON_NORMAL);
@@ -306,7 +308,7 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
         bars_bar_ribbon->AddTool(gen_wxRibbonPanel, wxueImage(wxue_img::ribbon_panel_png, sizeof(wxue_img::ribbon_panel_png)), "wxRibbonPanel", wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(NewRibbonType, wxueImage(wxue_img::ribbon_buttonbar_png, sizeof(wxue_img::ribbon_buttonbar_png)), "Ribbon Bar Type", wxRIBBON_BUTTON_DROPDOWN);
         bars_bar_ribbon->AddTool(gen_ribbonButton, wxueImage(wxue_img::ribbon_button_png, sizeof(wxue_img::ribbon_button_png)), "Ribbon Button", wxRIBBON_BUTTON_NORMAL);
-        bars_bar_ribbon->AddTool(gen_ribbonSeparator, wxueImage(wxue_img::toolseparator_png, sizeof(wxue_img::toolseparator_png)), "Tool Separator", wxRIBBON_BUTTON_NORMAL);
+        bars_bar_ribbon->AddTool(gen_ribbonSeparator, wxueImage(wxue_img::toolspacer_png, sizeof(wxue_img::toolspacer_png)), "Tool Separator", wxRIBBON_BUTTON_NORMAL);
         bars_bar_ribbon->AddTool(gen_ribbonGalleryItem, wxueImage(wxue_img::ribbon_gallery_item_png, sizeof(wxue_img::ribbon_gallery_item_png)), "Ribbon Gallery Item", wxRIBBON_BUTTON_NORMAL);
     }
     bars_bar_ribbon->Realize();

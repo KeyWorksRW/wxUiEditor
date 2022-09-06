@@ -3383,6 +3383,8 @@
                   help="wxToolBar"
                   id="gen_wxToolBar" />
                 <node
+                  class="ribbonSeparator" />
+                <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/auitoolbar.png"
                   help="wxAuiToolBar"
@@ -3441,7 +3443,7 @@
                   id="gen_ribbonButton" />
                 <node
                   class="ribbonTool"
-                  bitmap="Embed;../art_src/toolseparator.png"
+                  bitmap="Embed;../art_src/toolspacer.png"
                   help="Tool Separator"
                   id="gen_ribbonSeparator" />
                 <node

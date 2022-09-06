@@ -89,16 +89,21 @@ public:
         MenuADD_MENU_SEPARATOR,
 
         MenuADD_TOOL,
-        MenuADD_TOOL_CHECKBOX,
         MenuADD_TOOL_COMBOBOX,
         MenuADD_TOOL_DROPDOWN,
-        MenuADD_TOOL_RADIOBOX,
         MenuADD_TOOL_SLIDER,
         MenuADD_TOOL_SPINCTRL,
         MenuADD_TOOL_STATICTEXT,
         MenuADD_TOOL_SEPARATOR,
-        MenuADD_TOOL_SPACE,  // only used for wxAuiToolBar
+
+        // These are only used for wxToolBar
+
         MenuADD_TOOL_STRETCHABLE_SPACE,
+
+        // These are only used for wxAuiToolBar
+        MenuADD_TOOL_LABEL,
+        MenuADD_TOOL_SPACER,
+        MenuADD_TOOL_STRETCHABLE_SPACER,
 
         MenuADD_WIZARD_PAGE,
 

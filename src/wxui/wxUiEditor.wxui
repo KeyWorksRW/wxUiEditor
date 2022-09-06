@@ -141,6 +141,9 @@
       <node
         class="embedded_image"
         bitmap="Embed;../art_src/tool_dropdown.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/toolspacer.png" />
     </node>
     <node
       class="wxDialog"

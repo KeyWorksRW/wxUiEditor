@@ -105,6 +105,7 @@ static const ImageMap png_headers[] = {
     { "tool", tool_png, sizeof(tool_png) },
     { "tool_dropdown", tool_dropdown_png, sizeof(tool_dropdown_png) },
     { "toolseparator", toolseparator_png, sizeof(toolseparator_png) },
+    { "toolspacer", toolspacer_png, sizeof(toolspacer_png) },
     { "toolStretchable", toolStretchable_png, sizeof(toolStretchable_png) },
     { "tree_ctrl", tree_ctrl_png, sizeof(tree_ctrl_png) },
     { "treelistctrl", treelistctrl_png, sizeof(treelistctrl_png) },

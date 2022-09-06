@@ -777,53 +777,53 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
 {
     auto sub_menu = new wxMenu;
     wxMenuItem* menu_item;
-    AppendSubMenu(sub_menu, "Add Tool");
+    AppendSubMenu(sub_menu, "Tools");
 
     bool is_aui_toolbar = (node->gen_name() == gen_wxAuiToolBar || node->GetParent()->gen_name() == gen_wxAuiToolBar);
 
-    menu_item = sub_menu->Append(MenuADD_TOOL, "Normal");
+    menu_item = sub_menu->Append(MenuADD_TOOL, "Tool (normal, check, radio)");
     menu_item->SetBitmap(GetInternalImage("tool"));
-    menu_item = sub_menu->Append(MenuADD_TOOL_CHECKBOX, "Checkbox (toggle)");
-    menu_item->SetBitmap(GetInternalImage("wxCheckBox"));
-    menu_item = sub_menu->Append(MenuADD_TOOL_DROPDOWN, "Dropdown");
-    menu_item->SetBitmap(GetInternalImage("tool_dropdown"));
-    menu_item = sub_menu->Append(MenuADD_TOOL_RADIOBOX, "Radio button");
-    menu_item->SetBitmap(GetInternalImage("wxRadioButton"));
-    sub_menu->AppendSeparator();
+    if (!is_aui_toolbar)
+    {
+        menu_item = sub_menu->Append(MenuADD_TOOL_DROPDOWN, "Dropdown");
+        menu_item->SetBitmap(GetInternalImage("tool_dropdown"));
+    }
 
+    if (is_aui_toolbar)
+    {
+        menu_item = sub_menu->Append(MenuADD_TOOL_LABEL, "Label");
+        menu_item->SetBitmap(GetInternalImage("wxStaticText"));
+    }
+
+    sub_menu->AppendSeparator();
     menu_item = sub_menu->Append(MenuADD_TOOL_COMBOBOX, "Combobox");
     menu_item->SetBitmap(GetInternalImage("wxComboBox"));
     menu_item = sub_menu->Append(MenuADD_TOOL_SLIDER, "Slider");
     menu_item->SetBitmap(GetInternalImage("slider"));
     menu_item = sub_menu->Append(MenuADD_TOOL_SPINCTRL, "Spin control");
     menu_item->SetBitmap(GetInternalImage("spin_ctrl"));
-    menu_item = sub_menu->Append(MenuADD_TOOL_STATICTEXT, "Static text");
-    menu_item->SetBitmap(GetInternalImage("wxStaticText"));
+    if (!is_aui_toolbar)  // wxAuiToolBar can use Label instead
+    {
+        menu_item = sub_menu->Append(MenuADD_TOOL_STATICTEXT, "Static text");
+        menu_item->SetBitmap(GetInternalImage("wxStaticText"));
+    }
     sub_menu->AppendSeparator();
 
     menu_item = sub_menu->Append(MenuADD_TOOL_SEPARATOR, "Separator");
     menu_item->SetBitmap(GetInternalImage("toolseparator"));
-    if (is_aui_toolbar)
+    if (!is_aui_toolbar)
     {
-        menu_item = sub_menu->Append(MenuADD_TOOL_SPACE, "Space");
+        menu_item = sub_menu->Append(MenuADD_TOOL_STRETCHABLE_SPACE, "Stretchable space");
+        menu_item->SetBitmap(GetInternalImage("toolStretchable"));
     }
-    menu_item = sub_menu->Append(MenuADD_TOOL_STRETCHABLE_SPACE, "Stretchable space");
-    menu_item->SetBitmap(GetInternalImage("toolStretchable"));
+    else
+    {
+        menu_item = sub_menu->Append(MenuADD_TOOL_SPACER, "Spacer");
+        menu_item->SetBitmap(GetInternalImage("toolspacer"));
+        menu_item = sub_menu->Append(MenuADD_TOOL_STRETCHABLE_SPACER, "Stretchable spacer");
+        menu_item->SetBitmap(GetInternalImage("toolStretchable"));
+    }
 
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            wxGetFrame().CreateToolNode(gen_tool);
-        },
-        MenuADD_TOOL);
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            wxGetFrame().CreateToolNode(gen_tool_dropdown);
-        },
-        MenuADD_TOOL_DROPDOWN);
     Bind(
         wxEVT_MENU,
         [](wxCommandEvent&)
@@ -849,29 +849,70 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
         wxEVT_MENU,
         [](wxCommandEvent&)
         {
-            wxGetFrame().CreateToolNode(gen_wxStaticText);
-        },
-        MenuADD_TOOL_STATICTEXT);
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
             wxGetFrame().CreateToolNode(gen_toolSeparator);
         },
         MenuADD_TOOL_SEPARATOR);
 
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            wxGetFrame().CreateToolNode(gen_toolStretchable);
-        },
-        MenuADD_TOOL_STRETCHABLE_SPACE);
-    Bind(
-        wxEVT_MENU,
-        [](wxCommandEvent&)
-        {
-            wxGetFrame().CreateToolNode(gen_wxMenuBar);
-        },
-        MenuADD_MENU);
+    if (!is_aui_toolbar)
+    {
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_tool);
+            },
+            MenuADD_TOOL);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_tool_dropdown);
+            },
+            MenuADD_TOOL_DROPDOWN);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_wxStaticText);
+            },
+            MenuADD_TOOL_STATICTEXT);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_toolStretchable);
+            },
+            MenuADD_TOOL_STRETCHABLE_SPACE);
+    }
+    else
+    {
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_auitool);
+            },
+            MenuADD_TOOL);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_auitool_label);
+            },
+            MenuADD_TOOL_LABEL);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_auitool_spacer);
+            },
+            MenuADD_TOOL_SPACER);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_auitool_stretchable);
+            },
+            MenuADD_TOOL_STRETCHABLE_SPACER);
+    }
 }

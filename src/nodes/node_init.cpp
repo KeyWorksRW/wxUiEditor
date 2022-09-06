@@ -96,16 +96,18 @@ inline const char* lst_xml_generators[] = {
 // var_names for these generators will default to "none" for class access
 inline const GenName lst_no_class_access[] = {
 
-    gen_auitool,
     gen_BookPage,
     gen_CloseButton,
     gen_StaticCheckboxBoxSizer,
     gen_StaticRadioBtnBoxSizer,
     gen_TextSizer,
     gen_VerticalBoxSizer,
+    gen_auitool,
+    gen_auitool_label,
     gen_separator,
     gen_submenu,
     gen_tool,
+    gen_tool_dropdown,
     gen_wxBoxSizer,
     gen_wxFlexGridSizer,
     gen_wxGridBagSizer,
@@ -283,13 +285,8 @@ static const ParentChild lstParentChild[] = {
     // Toolbars
 
     { type_aui_toolbar, type_aui_tool, infinite },
-    { type_aui_toolbar, type_tool_dropdown, infinite },
     { type_aui_toolbar, type_widget, infinite },
-
-    // This is a bit risky -- we need to allow this type to pickup gen_toolSeparator, However, gen_tool has the wrong events.
-    // It shouldn't happen, as we already have code to convert gen_tool to gen_auitool when appropriate. The only way around
-    // this would be to create a type_separator.
-    { type_aui_toolbar, type_tool, infinite },
+    // type_tool_dropdown only works in wxToolBar -- wxAuiToolBar requires the caller to create the menu on demand
 
     { type_toolbar, type_tool, infinite },
     { type_toolbar, type_tool_dropdown, infinite },

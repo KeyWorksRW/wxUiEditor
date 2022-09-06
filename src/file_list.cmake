@@ -240,11 +240,11 @@ set (file_list
     # Debug-only files
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare.cpp>    # Compare code generation
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img.cpp>     # Convert image
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/node_info.cpp>        # Node memory usage dialog
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/import_panel.cpp>    # Panel to display original imported file
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/mockup_preview.cpp>  # Preview Mockup
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/node_info.cpp>       # Node memory usage dialog
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/xrccompare.cpp>      # C++/XRC UI Comparison dialog
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/xrcpreview.cpp>      # Test XRC
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/mockup_preview.cpp>  # Preview Mockup
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/import_panel.cpp>    # Panel to display original imported file
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare_base.cpp>
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img_base.cpp>

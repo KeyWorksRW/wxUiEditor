@@ -354,6 +354,11 @@ void NavigationPanel::InsertNode(Node* node)
         AddAllChildren(node);
         ExpandAllNodes(node);
     }
+    else if (node->GetParent() && (node->GetParent()->isType(type_toolbar) || node->GetParent()->isType(type_aui_toolbar)))
+    {
+        // Insure that the toolbar is expanded when a new item is added to it
+        ChangeExpansion(node->GetParent(), false, true);
+    }
 }
 
 void NavigationPanel::AddAllChildren(Node* node_parent)

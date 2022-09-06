@@ -87,7 +87,6 @@ namespace wxue_img
     extern const unsigned char separator_png[306];
     extern const unsigned char sizer_horizontal_png[129];
     extern const unsigned char sizer_png[133];
-    extern const unsigned char slider_png[248];
     extern const unsigned char spacer_png[183];
     extern const unsigned char static_bitmap_png[778];
     extern const unsigned char static_line_png[122];
@@ -95,9 +94,6 @@ namespace wxue_img
     extern const unsigned char submenu_png[760];
     extern const unsigned char text_sizer_png[157];
     extern const unsigned char timepicker_png[227];
-    extern const unsigned char toolStretchable_png[578];
-    extern const unsigned char tool_png[629];
-    extern const unsigned char toolseparator_png[581];
     extern const unsigned char tree_ctrl_png[246];
     extern const unsigned char treelistctrl_png[425];
     extern const unsigned char treelistctrlcolumn_png[504];
@@ -112,7 +108,6 @@ namespace wxue_img
     extern const unsigned char wxPanel_png[156];
     extern const unsigned char wxPropertyGridManager_png[225];
     extern const unsigned char wxPropertyGrid_png[212];
-    extern const unsigned char wxStaticText_png[290];
     extern const unsigned char wxToolBar_png[554];
     extern const unsigned char wxToolbook_png[450];
     extern const unsigned char wxTreebook_png[484];

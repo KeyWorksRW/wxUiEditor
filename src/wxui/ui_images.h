@@ -57,9 +57,14 @@ namespace wxue_img
     wxBitmapBundle bundle_wxStaticBoxSizer_png();
     wxBitmapBundle bundle_wxStaticCheckBoxSizer_png();
     wxBitmapBundle bundle_wxStaticRadioBtnSizer_png();
+    wxBitmapBundle bundle_wxStaticText_png();
     wxBitmapBundle bundle_wxEditListBox_png();
     wxBitmapBundle bundle_tool_dropdown_png();
     wxBitmapBundle bundle_toolspacer_png();
+    wxBitmapBundle bundle_toolStretchable_png();
+    wxBitmapBundle bundle_toolseparator_png();
+    wxBitmapBundle bundle_slider_png();
+    wxBitmapBundle bundle_tool_png();
 
     extern const unsigned char auitoolbar_png[476];
     extern const unsigned char bmp_combo_box_png[492];
@@ -81,13 +86,17 @@ namespace wxue_img
     extern const unsigned char ribbon_buttonbar_png[300];
     extern const unsigned char ribbon_gallery_png[215];
     extern const unsigned char scrollbar_png[214];
+    extern const unsigned char slider_png[248];
     extern const unsigned char spin_ctrl_double_png[219];
     extern const unsigned char spin_ctrl_png[300];
     extern const unsigned char spinbtn_png[192];
     extern const unsigned char stddialogbuttonsizer_png[524];
     extern const unsigned char title_close_png[144];
     extern const unsigned char toggle_button_png[277];
+    extern const unsigned char toolStretchable_png[578];
     extern const unsigned char tool_dropdown_png[447];
+    extern const unsigned char tool_png[629];
+    extern const unsigned char toolseparator_png[581];
     extern const unsigned char toolspacer_png[459];
     extern const unsigned char undo_svg[882];
     extern const unsigned char unknown_png[1699];
@@ -105,5 +114,6 @@ namespace wxue_img
     extern const unsigned char wxStaticBoxSizer_png[199];
     extern const unsigned char wxStaticCheckBoxSizer_png[341];
     extern const unsigned char wxStaticRadioBtnSizer_png[367];
+    extern const unsigned char wxStaticText_png[290];
     extern const unsigned char wxlogo_svg[1331];
 }

@@ -128,6 +128,9 @@
         bitmap="Embed;../art_src/wxStaticRadioBtnSizer.png" />
       <node
         class="embedded_image"
+        bitmap="Embed;../art_src/wxStaticText.png" />
+      <node
+        class="embedded_image"
         bitmap="Embed;../art_src/wxEditListBox.png" />
       <node
         class="embedded_image"
@@ -144,6 +147,18 @@
       <node
         class="embedded_image"
         bitmap="Embed;../art_src/toolspacer.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/toolStretchable.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/toolseparator.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/slider.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/tool.png" />
     </node>
     <node
       class="wxDialog"
@@ -1954,6 +1969,72 @@
     </node>
     <node
       class="PopupMenu"
+      class_name="MenuAuiBar"
+      base_file="menu_auibar_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+      generate_ids="0"
+      use_derived_class="0">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/tool.png"
+        help="Insert a normal button tool"
+        id="gen_auitool"
+        label="Add Tool"
+        var_name="menu_item_6" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxStaticText.png"
+        help="Insert a Label"
+        id="gen_auitool_label"
+        label="Add Label"
+        var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/toolseparator.png"
+        help="Add space to separate tools"
+        id="gen_toolSeparator"
+        label="Add Separator"
+        var_name="menu_item_9" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/toolspacer.png"
+        help="Add space to separate tools"
+        id="gen_auitool_spacer"
+        label="Add Spacer"
+        var_name="menu_item_4" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/toolStretchable.png"
+        help="Add space to separate tools"
+        id="gen_auitool_stretchable"
+        label="Add Stretchable Space"
+        var_name="menu_item_5" />
+      <node
+        class="separator" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxComboBox.png"
+        help="Add a wxComboBox control"
+        id="gen_wxComboBox"
+        label="Add Combobox"
+        var_name="menu_item_3" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/slider.png"
+        help="Add a wxSlider control"
+        id="gen_wxSlider"
+        label="Add Slider"
+        var_name="menu_item_7" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/spin_ctrl.png"
+        help="Add a wxSpinCtrl control"
+        id="gen_wxSpinCtrl"
+        label="Add Spin Control"
+        var_name="menu_item_8" />
+    </node>
+    <node
+      class="PopupMenu"
       class_name="MenuButton"
       base_file="menubutton_base"
       base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
@@ -1988,6 +2069,64 @@
         id="gen_CloseButton"
         label="Insert Close Button"
         var_name="menu_item_5" />
+    </node>
+    <node
+      class="PopupMenu"
+      class_name="MenuBarTools"
+      base_file="menu_bartools_base"
+      base_src_includes="#include &quot;ribbon_ids.h&quot;@@#include &quot;gen_enums.h&quot;     // Enumerations for generators@@@@using namespace GenEnum;"
+      generate_ids="0"
+      use_derived_class="0">
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/tool.png"
+        help="Insert a normal button tool"
+        id="gen_tool"
+        label="Add Tool" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/tool_dropdown.png"
+        help="Add Dropdown tool that you can add menu items to."
+        id="gen_tool_dropdown"
+        label="Add Dropdown"
+        var_name="menu_item_2" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/toolspacer.png"
+        help="Add space to separate tools"
+        id="gen_toolSeparator"
+        label="Add Space"
+        var_name="menu_item_4" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/toolStretchable.png"
+        help="Add space to separate tools"
+        id="gen_toolStretchable"
+        label="Add Stretchable Space"
+        var_name="menu_item_5" />
+      <node
+        class="separator" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/wxComboBox.png"
+        help="Add a wxComboBox control"
+        id="gen_wxComboBox"
+        label="Add Combobox"
+        var_name="menu_item_3" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/slider.png"
+        help="Add a wxSlider control"
+        id="gen_wxSlider"
+        label="Add Slider"
+        var_name="menu_item_6" />
+      <node
+        class="wxMenuItem"
+        bitmap="Embed;../art_src/spin_ctrl.png"
+        help="Add a wxSpinCtrl control"
+        id="gen_wxSpinCtrl"
+        label="Add Spin Control"
+        var_name="menu_item_7" />
     </node>
     <node
       class="PopupMenu"
@@ -3376,12 +3515,18 @@
               <node
                 class="wxRibbonToolBar"
                 var_name="bars_bar_tool"
-                wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick">
+                wxEVT_RIBBONTOOLBAR_CLICKED="OnToolClick"
+                wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED="OnDropDown">
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/wxtoolBar.png"
                   help="wxToolBar"
                   id="gen_wxToolBar" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/tool.png"
+                  id="BarTools"
+                  kind="wxRIBBON_BUTTON_DROPDOWN" />
                 <node
                   class="ribbonSeparator" />
                 <node
@@ -3392,18 +3537,8 @@
                 <node
                   class="ribbonTool"
                   bitmap="Embed;../art_src/tool.png"
-                  help="Tool"
-                  id="gen_tool" />
-                <node
-                  class="ribbonTool"
-                  bitmap="Embed;../art_src/toolseparator.png"
-                  help="Separator"
-                  id="gen_toolSeparator" />
-                <node
-                  class="ribbonTool"
-                  bitmap="Embed;../art_src/toolStretchable.png"
-                  help="Stretchable space"
-                  id="gen_toolStretchable" />
+                  id="AuiBarTools"
+                  kind="wxRIBBON_BUTTON_DROPDOWN" />
               </node>
             </node>
             <node

@@ -802,11 +802,6 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
     menu_item->SetBitmap(GetInternalImage("slider"));
     menu_item = sub_menu->Append(MenuADD_TOOL_SPINCTRL, "Spin control");
     menu_item->SetBitmap(GetInternalImage("spin_ctrl"));
-    if (!is_aui_toolbar)  // wxAuiToolBar can use Label instead
-    {
-        menu_item = sub_menu->Append(MenuADD_TOOL_STATICTEXT, "Static text");
-        menu_item->SetBitmap(GetInternalImage("wxStaticText"));
-    }
     sub_menu->AppendSeparator();
 
     menu_item = sub_menu->Append(MenuADD_TOOL_SEPARATOR, "Separator");
@@ -869,13 +864,6 @@ void NavPopupMenu::AddToolbarCommands(Node* node)
                 wxGetFrame().CreateToolNode(gen_tool_dropdown);
             },
             MenuADD_TOOL_DROPDOWN);
-        Bind(
-            wxEVT_MENU,
-            [](wxCommandEvent&)
-            {
-                wxGetFrame().CreateToolNode(gen_wxStaticText);
-            },
-            MenuADD_TOOL_STATICTEXT);
         Bind(
             wxEVT_MENU,
             [](wxCommandEvent&)

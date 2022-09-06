@@ -13,6 +13,8 @@ enum
     NewRibbonType,
     NewScrolled,
     NewStaticSizer,
+    BarTools,
+    AuiBarTools,
     CreateNewDialog,
     CreateNewFrame,
     CreateNewPanel,

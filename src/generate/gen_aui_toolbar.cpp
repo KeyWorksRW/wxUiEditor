@@ -44,10 +44,10 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
     {
         return;
     }
-    auto count = node->GetChildCount();
-    for (size_t i = 0; i < count; ++i)
+
+    size_t idx_child = 0;
+    for (auto& childObj: node->GetChildNodePtrs())
     {
-        auto childObj = node->GetChild(i);
         if (childObj->isGen(gen_auitool))
         {
             auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
@@ -58,27 +58,36 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
                              (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
                              wxEmptyString, nullptr);
         }
+        else if (childObj->isGen(gen_auitool_label))
+        {
+            toolbar->AddLabel(wxID_ANY, childObj->as_wxString(prop_label), childObj->as_int(prop_width));
+        }
         else if (childObj->isGen(gen_toolSeparator))
         {
             toolbar->AddSeparator();
         }
-        else if (childObj->isGen(gen_toolStretchable))
+        else if (childObj->isGen(gen_auitool_spacer))
         {
-            toolbar->AddStretchSpacer();
+            toolbar->AddSpacer(childObj->as_int(prop_width));
+        }
+        else if (childObj->isGen(gen_auitool_stretchable))
+        {
+            toolbar->AddStretchSpacer(childObj->as_int(prop_proportion));
         }
         else
         {
             const wxObject* child;
             if (!is_preview)
-                child = GetMockup()->GetChild(wxobject, i);
+                child = GetMockup()->GetChild(wxobject, idx_child);
             else
-                child = node->GetChild(i)->GetMockupObject();
+                child = node->GetChild(idx_child)->GetMockupObject();
 
-            if (auto control = wxDynamicCast(child, wxControl); control)
+            if (auto* control = wxDynamicCast(child, wxControl); control)
             {
                 toolbar->AddControl(control);
             }
         }
+        ++idx_child;
     }
     toolbar->Realize();
 }
@@ -139,7 +148,7 @@ std::optional<ttlib::cstr> AuiToolBarGenerator::GenEvents(NodeEvent* event, cons
 
 bool AuiToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
-    InsertGeneratorInclude(node, "#include <wx/toolbar.h>", set_src, set_hdr);
+    InsertGeneratorInclude(node, "#include <wx/aui/auibar.h>", set_src, set_hdr);
 
     return true;
 }
@@ -192,6 +201,9 @@ void AuiToolBarGenerator::RequiredHandlers(Node* /* node */, std::set<std::strin
 }
 
 //////////////////////////////////////////  AuiToolGenerator  //////////////////////////////////////////
+
+// The code generation between gen_tool and gen_auitool is idenical, but they *MUST* be separate classes because the
+// interface specifies different events for each (e.g., wxEVT_AUITOOLBAR_BEGIN_DRAG)
 
 std::optional<ttlib::cstr> AuiToolGenerator::GenConstruction(Node* node)
 {
@@ -247,6 +259,97 @@ int AuiToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xr
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "tool");
     GenXrcToolProps(node, item, xrc_flags);
+
+    return BaseGenerator::xrc_updated;
+}
+
+//////////////////////////////////////////  AuiToolLabelGenerator  //////////////////////////////////////////
+
+std::optional<ttlib::cstr> AuiToolLabelGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+
+    if (node->isParent(gen_wxAuiToolBar))
+    {
+        code << node->get_parent_name() << "->AddLabel(";
+    }
+    else
+    {
+        code << "AddLabel(";
+    }
+
+    code << node->value(prop_id) << ", " << GenerateQuotedString(node->value(prop_label)) << ", " << node->value(prop_width)
+         << ");";
+
+    return code;
+}
+
+std::optional<ttlib::cstr> AuiToolLabelGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+int AuiToolLabelGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "label");
+    GenXrcToolProps(node, item, xrc_flags);
+
+    return BaseGenerator::xrc_updated;
+}
+
+//////////////////////////////////////////  AuiToolSpacerGenerator  //////////////////////////////////////////
+
+std::optional<ttlib::cstr> AuiToolSpacerGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+
+    if (node->isParent(gen_wxAuiToolBar))
+    {
+        code << node->get_parent_name() << "->AddSpacer(";
+    }
+    else
+    {
+        code << "AddSpacer(";
+    }
+    code << node->get_parent_name() << "->FromDIP(" << node->value(prop_width) << "));";
+
+    return code;
+}
+
+int AuiToolSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "space");
+    item.append_child("width").text().set(node->prop_as_string(prop_width));
+
+    return BaseGenerator::xrc_updated;
+}
+
+//////////////////////////////////////////  AuiToolStretchSpacerGenerator  //////////////////////////////////////////
+
+std::optional<ttlib::cstr> AuiToolStretchSpacerGenerator::GenConstruction(Node* node)
+{
+    ttlib::cstr code;
+
+    if (node->isParent(gen_wxAuiToolBar))
+    {
+        code << node->get_parent_name() << "->AddStretchSpacer(";
+    }
+    else
+    {
+        code << "AddStretchSpacer(";
+    }
+    code << node->value(prop_proportion) << ");";
+
+    return code;
+}
+
+int AuiToolStretchSpacerGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t /* xrc_flags */)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "space");
+    item.append_child("proportion").text().set(node->prop_as_string(prop_proportion));
 
     return BaseGenerator::xrc_updated;
 }

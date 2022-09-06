@@ -58,6 +58,15 @@ public:
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
 
+class ToolDropDownGenerator : public BaseGenerator
+{
+public:
+    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+};
+
 class ToolSeparatorGenerator : public BaseGenerator
 {
 public:

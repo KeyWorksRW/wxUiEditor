@@ -418,7 +418,7 @@ void GenXrcToolProps(Node* node, pugi::xml_node& item, size_t xrc_flags)
         item.append_child("radio").text().set("1");
     else if (node->value(prop_kind) == "wxITEM_CHECK")
         item.append_child("toggle").text().set("1");
-    else if (node->value(prop_kind) == "wxITEM_DROPDOWN")
+    else if (node->value(prop_kind) == "wxITEM_DROPDOWN" && !node->isGen(gen_tool_dropdown))
         item.append_child("dropdown").text().set("1");
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_PROP(prop_tooltip, "tooltip")

@@ -326,6 +326,11 @@ int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
     }
     else if (result == BaseGenerator::xrc_updated)
     {
+        if (node->isGen(gen_tool_dropdown))
+        {
+            return result;  // The dropdown tool will already have handled it's children.
+        }
+
         for (const auto& child: node->GetChildNodePtrs())
         {
             auto child_object = object.append_child("object");

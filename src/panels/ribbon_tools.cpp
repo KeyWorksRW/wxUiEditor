@@ -25,6 +25,8 @@
 
 #include "ribbon_ids.h"
 
+#include "menu_auibar_base.h"
+#include "menu_bartools_base.h"
 #include "menubutton_base.h"
 #include "menucheckbox_base.h"
 #include "menucombobox_base.h"
@@ -147,6 +149,43 @@ void RibbonPanel::OnDropDown(wxRibbonToolBarEvent& event)
                 MenuCheckbox popup_menu;
                 popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
                 event.PopupMenu(&popup_menu);
+                return;
+            }
+
+        case BarTools:
+            {
+                const auto* cur_sel = wxGetFrame().GetSelectedNode();
+                if (cur_sel && (cur_sel->isGen(gen_wxAuiToolBar) || cur_sel->GetParent()->isGen(gen_wxAuiToolBar)))
+                {
+                    MenuAuiBar popup_menu;
+                    popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                    event.PopupMenu(&popup_menu);
+                }
+                else
+                {
+                    MenuBarTools popup_menu;
+                    popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                    event.PopupMenu(&popup_menu);
+                }
+                return;
+            }
+
+        case AuiBarTools:
+            {
+                const auto* cur_sel = wxGetFrame().GetSelectedNode();
+                if (cur_sel && (cur_sel->isGen(gen_wxToolBar) || cur_sel->isGen(gen_ToolBar) ||
+                                cur_sel->GetParent()->isGen(gen_wxToolBar) || cur_sel->GetParent()->isGen(gen_ToolBar)))
+                {
+                    MenuBarTools popup_menu;
+                    popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                    event.PopupMenu(&popup_menu);
+                }
+                else
+                {
+                    MenuAuiBar popup_menu;
+                    popup_menu.Bind(wxEVT_MENU, &RibbonPanel::OnMenuEvent, this, wxID_ANY);
+                    event.PopupMenu(&popup_menu);
+                }
                 return;
             }
 

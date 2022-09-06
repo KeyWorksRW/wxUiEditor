@@ -60,7 +60,7 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 		<property name="packing" type="uint"
 			help="Value used for spacing tools. The packing is used for spacing in the vertical direction if the toolbar is horizontal, and for spacing in the horizontal direction if the toolbar is vertical.">1</property>
 		<property name="separation" type="uint"
-			help="The default separator size. This is the size between each toolbar tool.">5</property>
+			help="The default separator size. This is the size between each toolbar tool set.">5</property>
 		<property name="style" type="bitlist">
 			<option name="wxAUI_TB_TEXT"
 				help="Shows the text in the toolbar buttons; by default only icons are shown. " />
@@ -114,7 +114,7 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 			help="This string is shown in the statusbar (if any) of the parent frame when the mouse pointer is inside the tool." />
 		<property name="id" type="id">wxID_ANY</property>
 		<event name="wxEVT_TOOL" class="wxCommandEvent"
-			help="Same as wxEVT_MENU -- generated when the item is chosen in the toolbar or menu (if the same id was added to a menu)." />
+		help="Same as wxEVT_MENU -- generated when the item is chosen in the toolbar or menu (if the same id was added to a menu)." />
 		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"
 			help="" />
 		<event name="wxEVT_AUITOOLBAR_TOOL_DROPDOWN" class="wxAuiToolBarEvent"
@@ -127,6 +127,33 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 			help="" />
 		<event name="wxEVT_AUITOOLBAR_BEGIN_DRAG" class="wxAuiToolBarEvent"
 			help="" />
+	</gen>
+
+	<gen class="auitool_label" image="wxStaticText" type="aui_tool">
+		<property name="var_name" type="string">tool</property>
+		<property name="label" type="string_escapes">My Label</property>
+		<property name="width" type="int">-1</property>
+		<property name="id" type="id">wxID_ANY</property>
+		<event name="wxEVT_TOOL" class="wxCommandEvent"
+			help="Same as wxEVT_MENU -- generated when the item is chosen in the toolbar or menu (if the same id was added to a menu)." />
+		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"
+			help="" />
+		<event name="wxEVT_AUITOOLBAR_OVERFLOW_CLICK" class="wxAuiToolBarEvent"
+			help="" />
+		<event name="wxEVT_AUITOOLBAR_RIGHT_CLICK" class="wxAuiToolBarEvent"
+			help="" />
+		<event name="wxEVT_AUITOOLBAR_MIDDLE_CLICK" class="wxAuiToolBarEvent"
+			help="" />
+		<event name="wxEVT_AUITOOLBAR_BEGIN_DRAG" class="wxAuiToolBarEvent"
+			help="" />
+	</gen>
+
+	<gen class="auitool_spacer" image="toolspacer" type="aui_tool">
+		<property name="width" type="uint">10</property>
+	</gen>
+
+	<gen class="auitool_stretchable" image="toolStretchable" type="aui_tool">
+		<property name="proportion" type="uint">1</property>
 	</gen>
 
 </GeneratorDefinitions>)===";

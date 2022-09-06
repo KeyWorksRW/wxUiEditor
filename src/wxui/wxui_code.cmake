@@ -19,6 +19,8 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/importwinres_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/insertwidget_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mainframe_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/menu_auibar_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/menu_bartools_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menubutton_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menucheckbox_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/menucombobox_base.cpp

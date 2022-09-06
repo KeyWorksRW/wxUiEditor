@@ -39,3 +39,31 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
+
+class AuiToolLabelGenerator : public BaseGenerator
+{
+public:
+    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }
+};
+
+class AuiToolSpacerGenerator : public BaseGenerator
+{
+public:
+    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }
+};
+
+class AuiToolStretchSpacerGenerator : public BaseGenerator
+{
+public:
+    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+
+    int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
+    int GetRequiredVersion(Node* /*node*/) override { return minRequiredVer + 1; }
+};

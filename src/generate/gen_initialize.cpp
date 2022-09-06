@@ -205,9 +205,13 @@ void NodeCreator::InitGenerators()
 
     SET_GENERATOR(gen_wxAuiToolBar, AuiToolBarGenerator)
     SET_GENERATOR(gen_auitool, AuiToolGenerator)
+    SET_GENERATOR(gen_auitool_label, AuiToolLabelGenerator)
+    SET_GENERATOR(gen_auitool_spacer, AuiToolSpacerGenerator)
+    SET_GENERATOR(gen_auitool_stretchable, AuiToolStretchSpacerGenerator)
     SET_GENERATOR(gen_ToolBar, ToolBarFormGenerator)
     SET_GENERATOR(gen_wxToolBar, ToolBarGenerator)
     SET_GENERATOR(gen_tool, ToolGenerator)
+    SET_GENERATOR(gen_tool_dropdown, ToolDropDownGenerator)
     SET_GENERATOR(gen_toolSeparator, ToolSeparatorGenerator)
     SET_GENERATOR(gen_toolStretchable, ToolStretchableGenerator)
 

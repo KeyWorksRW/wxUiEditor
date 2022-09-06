@@ -190,5 +190,5 @@ inline const char* ribbon_xml = R"===(<?xml version="1.0"?>
 			help="The bitmap to display for the item. Note that all items must have equally sized bitmaps. " />
 	</gen>
 
-	<gen class="ribbonSeparator" image="toolseparator" type="ribbontool" />
+	<gen class="ribbonSeparator" image="toolspacer" type="ribbontool" />
 </GeneratorDefinitions>)===";

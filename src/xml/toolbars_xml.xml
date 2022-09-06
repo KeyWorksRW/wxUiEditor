@@ -113,6 +113,20 @@ inline const char* toolbars_xml = R"===(<?xml version="1.0"?>
 			help="" />
 	</gen>
 
+	<gen class="tool_dropdown" image="tool_dropdown" type="tool_dropdown">
+		<property name="var_name" type="string">tool_dropdown</property>
+		<property name="label" type="string_escapes" />
+		<property name="bitmap" type="image"
+			help="Tool bitmap." />
+		<property name="tooltip" type="string_edit"
+			help="String to display in the tooltip." />
+		<property name="statusbar" type="string_edit"
+			help="This string is shown in the statusbar (if any) of the parent frame when the mouse pointer is inside the tool." />
+		<property name="id" type="id">wxID_ANY</property>
+		<event name="wxEVT_UPDATE_UI" class="wxUpdateUIEvent"
+			help="" />
+	</gen>
+
 	<gen class="toolSeparator" image="toolseparator" type="tool" />
 	<gen class="toolStretchable" image="toolStretchable" type="tool" />
 </GeneratorDefinitions>)===";

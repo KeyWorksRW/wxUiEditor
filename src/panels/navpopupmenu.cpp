@@ -33,6 +33,11 @@ NavPopupMenu::NavPopupMenu(Node* node) : m_node(node)
         return;  // theoretically impossible, but don't crash if it happens
     }
 
+    if (node->GetParent() && (node->GetParent()->isGen(gen_wxToolBar) || node->GetParent()->isGen(gen_wxAuiToolBar)))
+    {
+        m_is_parent_toolbar = true;
+    }
+
     if (node->IsSizer())
     {
         CreateSizerMenu(node);
@@ -509,32 +514,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         case gen_wxAuiToolBar:
         case gen_auitool:
             add_sizer = false;
-            Append(MenuADD_TOOL, "Add Tool");
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_auitool);
-                },
-                MenuADD_TOOL);
-
-            Append(MenuADD_TOOL_SEPARATOR, "Add Separator");
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_toolSeparator);
-                },
-                MenuADD_TOOL_SEPARATOR);
-
-            Append(MenuADD_TOOL_STRETCHABLE_SPACE, "Add Stretchable space");
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_toolStretchable);
-                },
-                MenuADD_TOOL_STRETCHABLE_SPACE);
+            AddToolbarCommands(node);
             break;
 
         case gen_wxToolBar:
@@ -543,32 +523,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         case gen_toolSeparator:
         case gen_toolStretchable:
             add_sizer = false;
-            Append(MenuADD_TOOL, "Add Tool");
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_tool);
-                },
-                MenuADD_TOOL);
-
-            Append(MenuADD_TOOL_SEPARATOR, "Add Separator");
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_toolSeparator);
-                },
-                MenuADD_TOOL_SEPARATOR);
-
-            Append(MenuADD_TOOL_STRETCHABLE_SPACE, "Add Stretchable space");
-            Bind(
-                wxEVT_MENU,
-                [](wxCommandEvent&)
-                {
-                    wxGetFrame().CreateToolNode(gen_toolStretchable);
-                },
-                MenuADD_TOOL_STRETCHABLE_SPACE);
+            AddToolbarCommands(node);
             break;
 
         case gen_wxMenuBar:
@@ -588,6 +543,7 @@ void NavPopupMenu::MenuAddCommands(Node* node)
         case gen_wxMenuItem:
         case gen_submenu:
         case gen_separator:
+        case gen_tool_dropdown:
             add_sizer = false;
             Append(MenuADD_MENUITEM, "Add Menu Item");
             Bind(
@@ -619,7 +575,15 @@ void NavPopupMenu::MenuAddCommands(Node* node)
             break;
 
         default:
-            Append(MenuNEW_CHILD_SPACER, "Add spacer");
+            if (m_is_parent_toolbar)
+            {
+                add_sizer = false;
+                AddToolbarCommands(node);
+            }
+            else
+            {
+                Append(MenuNEW_CHILD_SPACER, "Add spacer");
+            }
             break;
     }
 
@@ -678,7 +642,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_DOWN, wxART_MENU));
 
     auto gen = node->GetGenerator();
-    if (gen && gen->CanChangeParent(node))
+    if (!m_is_parent_toolbar && gen && gen->CanChangeParent(node))
     {
         menu_item = sub_menu->Append(MenuMOVE_LEFT, "Left\tAlt+Left", "Moves selected item left");
         menu_item->SetBitmap(wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_MENU));
@@ -687,7 +651,7 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
     }
     AppendSubMenu(sub_menu, "Move");
 
-    if (gen && gen->CanChangeParent(node))
+    if (!m_is_parent_toolbar && gen && gen->CanChangeParent(node))
     {
         sub_menu = new wxMenu;
         menu_item = sub_menu->Append(MenuNEW_PARENT_BOX_SIZER, "wxBoxSizer");
@@ -807,4 +771,136 @@ void NavPopupMenu::ChangeSizer(GenEnum::GenName new_sizer_gen)
 {
     wxWindowUpdateLocker freeze(wxGetFrame().GetWindow());
     wxGetFrame().PushUndoAction(std::make_shared<ChangeSizerType>(m_node, new_sizer_gen));
+}
+
+void NavPopupMenu::AddToolbarCommands(Node* node)
+{
+    auto sub_menu = new wxMenu;
+    wxMenuItem* menu_item;
+    AppendSubMenu(sub_menu, "Tools");
+
+    bool is_aui_toolbar = (node->gen_name() == gen_wxAuiToolBar || node->GetParent()->gen_name() == gen_wxAuiToolBar);
+
+    menu_item = sub_menu->Append(MenuADD_TOOL, "Tool (normal, check, radio)");
+    menu_item->SetBitmap(GetInternalImage("tool"));
+    if (!is_aui_toolbar)
+    {
+        menu_item = sub_menu->Append(MenuADD_TOOL_DROPDOWN, "Dropdown");
+        menu_item->SetBitmap(GetInternalImage("tool_dropdown"));
+    }
+
+    if (is_aui_toolbar)
+    {
+        menu_item = sub_menu->Append(MenuADD_TOOL_LABEL, "Label");
+        menu_item->SetBitmap(GetInternalImage("wxStaticText"));
+    }
+
+    sub_menu->AppendSeparator();
+    menu_item = sub_menu->Append(MenuADD_TOOL_COMBOBOX, "Combobox");
+    menu_item->SetBitmap(GetInternalImage("wxComboBox"));
+    menu_item = sub_menu->Append(MenuADD_TOOL_SLIDER, "Slider");
+    menu_item->SetBitmap(GetInternalImage("slider"));
+    menu_item = sub_menu->Append(MenuADD_TOOL_SPINCTRL, "Spin control");
+    menu_item->SetBitmap(GetInternalImage("spin_ctrl"));
+    sub_menu->AppendSeparator();
+
+    menu_item = sub_menu->Append(MenuADD_TOOL_SEPARATOR, "Separator");
+    menu_item->SetBitmap(GetInternalImage("toolseparator"));
+    if (!is_aui_toolbar)
+    {
+        menu_item = sub_menu->Append(MenuADD_TOOL_STRETCHABLE_SPACE, "Stretchable space");
+        menu_item->SetBitmap(GetInternalImage("toolStretchable"));
+    }
+    else
+    {
+        menu_item = sub_menu->Append(MenuADD_TOOL_SPACER, "Spacer");
+        menu_item->SetBitmap(GetInternalImage("toolspacer"));
+        menu_item = sub_menu->Append(MenuADD_TOOL_STRETCHABLE_SPACER, "Stretchable spacer");
+        menu_item->SetBitmap(GetInternalImage("toolStretchable"));
+    }
+
+    Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().CreateToolNode(gen_wxComboBox);
+        },
+        MenuADD_TOOL_COMBOBOX);
+    Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().CreateToolNode(gen_wxSlider);
+        },
+        MenuADD_TOOL_SLIDER);
+    Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().CreateToolNode(gen_wxSpinCtrl);
+        },
+        MenuADD_TOOL_SPINCTRL);
+    Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().CreateToolNode(gen_toolSeparator);
+        },
+        MenuADD_TOOL_SEPARATOR);
+
+    if (!is_aui_toolbar)
+    {
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_tool);
+            },
+            MenuADD_TOOL);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_tool_dropdown);
+            },
+            MenuADD_TOOL_DROPDOWN);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_toolStretchable);
+            },
+            MenuADD_TOOL_STRETCHABLE_SPACE);
+    }
+    else
+    {
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_auitool);
+            },
+            MenuADD_TOOL);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_auitool_label);
+            },
+            MenuADD_TOOL_LABEL);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_auitool_spacer);
+            },
+            MenuADD_TOOL_SPACER);
+        Bind(
+            wxEVT_MENU,
+            [](wxCommandEvent&)
+            {
+                wxGetFrame().CreateToolNode(gen_auitool_stretchable);
+            },
+            MenuADD_TOOL_STRETCHABLE_SPACER);
+    }
 }

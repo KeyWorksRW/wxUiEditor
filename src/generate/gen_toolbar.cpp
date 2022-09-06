@@ -60,6 +60,15 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
                              (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
                              wxEmptyString, nullptr);
         }
+        else if (childObj->isGen(gen_tool_dropdown))
+        {
+            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
+            if (!bmp.IsOk())
+                bmp = GetInternalImage("default");
+
+            toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap, wxITEM_DROPDOWN,
+                             childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
+        }
         else if (childObj->isGen(gen_toolSeparator))
         {
             toolbar->AddSeparator();
@@ -245,6 +254,15 @@ void ToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/,
             toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
                              (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
                              wxEmptyString, nullptr);
+        }
+        else if (childObj->isGen(gen_tool_dropdown))
+        {
+            auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
+            if (!bmp.IsOk())
+                bmp = GetInternalImage("default");
+
+            toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap, wxITEM_DROPDOWN,
+                             childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_toolSeparator))
         {
@@ -459,6 +477,113 @@ int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_f
     auto item = InitializeXrcObject(node, object);
     GenXrcObjectAttributes(node, item, "tool");
     GenXrcToolProps(node, item, xrc_flags);
+
+    return BaseGenerator::xrc_updated;
+}
+
+//////////////////////////////////////////  ToolDropDownGenerator  //////////////////////////////////////////
+
+std::optional<ttlib::cstr> ToolDropDownGenerator::GenConstruction(Node* node)
+{
+    if (node->HasValue(prop_bitmap))
+    {
+        ttlib::cstr code;
+        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        {
+            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+        }
+
+        ttlib::cstr bundle_code;
+        bool is_code_block = GenerateBundleCode(node->prop_as_string(prop_bitmap), bundle_code);
+        if (is_code_block)
+        {
+            // GenerateBundleCode assumes an indent within an indent
+            bundle_code.Replace("\t\t\t", "\t\t", true);
+            code << '\t' << bundle_code;
+            code << '\t' << GenToolCode(node, "wxBitmapBundle::FromBitmaps(bitmaps)");
+            code << "\n\t}";
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
+                code << "\n#endif";
+            }
+        }
+        else
+        {
+            code << GenToolCode(node, bundle_code);
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#else\n";
+                code << GenToolCode(node, GenerateBitmapCode(node->prop_as_string(prop_bitmap)));
+                code << "\n#endif";
+            }
+        }
+        return code;
+    }
+    else
+    {
+        return GenToolCode(node);
+    }
+}
+
+std::optional<ttlib::cstr> ToolDropDownGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+{
+    return GenEventCode(event, class_name);
+}
+
+int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
+{
+    auto item = InitializeXrcObject(node, object);
+    GenXrcObjectAttributes(node, item, "tool");
+    GenXrcToolProps(node, item, xrc_flags);
+
+    if (node->GetChildCount())
+    {
+        object = object.append_child("dropdown");
+        object = object.append_child("object");
+        object.append_attribute("class").set_value("wxMenu");
+
+        for (const auto& child: node->GetChildNodePtrs())
+        {
+            auto child_object = object.append_child("object");
+            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
+            if (child_generator->GenXrcObject(child.get(), child_object, xrc_flags) == BaseGenerator::xrc_not_supported)
+            {
+                object.remove_child(child_object);
+            }
+
+            // A submenu can have children
+            if (child->GetChildCount())
+            {
+                for (const auto& grandchild: child->GetChildNodePtrs())
+                {
+                    auto grandchild_object = child_object.append_child("object");
+                    auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
+                    if (grandchild_generator->GenXrcObject(grandchild.get(), grandchild_object, xrc_flags) ==
+                        BaseGenerator::xrc_not_supported)
+                    {
+                        child_object.remove_child(grandchild_object);
+                    }
+                    // A submenu menu item can also be a submenu with great grandchildren.
+                    if (grandchild->GetChildCount())
+                    {
+                        for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
+                        {
+                            auto great_grandchild_object = grandchild_object.append_child("object");
+                            auto great_grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
+                            if (great_grandchild_generator->GenXrcObject(great_grandchild.get(), great_grandchild_object,
+                                                                         xrc_flags) == BaseGenerator::xrc_not_supported)
+                            {
+                                grandchild_object.remove_child(grandchild_object);
+                            }
+                            // It's possible to have even more levels of submenus, but we'll stop here.
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     return BaseGenerator::xrc_updated;
 }

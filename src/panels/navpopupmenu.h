@@ -89,8 +89,21 @@ public:
         MenuADD_MENU_SEPARATOR,
 
         MenuADD_TOOL,
+        MenuADD_TOOL_COMBOBOX,
+        MenuADD_TOOL_DROPDOWN,
+        MenuADD_TOOL_SLIDER,
+        MenuADD_TOOL_SPINCTRL,
+        MenuADD_TOOL_STATICTEXT,
         MenuADD_TOOL_SEPARATOR,
+
+        // These are only used for wxToolBar
+
         MenuADD_TOOL_STRETCHABLE_SPACE,
+
+        // These are only used for wxAuiToolBar
+        MenuADD_TOOL_LABEL,
+        MenuADD_TOOL_SPACER,
+        MenuADD_TOOL_STRETCHABLE_SPACER,
 
         MenuADD_WIZARD_PAGE,
 
@@ -106,6 +119,7 @@ public:
     };
 
 protected:
+    void AddToolbarCommands(Node* node);
     void OnMenuEvent(wxCommandEvent& event);
     void OnUpdateEvent(wxUpdateUIEvent& event);
 
@@ -136,4 +150,5 @@ private:
     GenEnum::GenName m_tool_name { GenEnum::GenName::gen_name_array_size };
 
     bool m_isPasteAllowed { true };
+    bool m_is_parent_toolbar { false };  // true if parent is wxToolBar or wxAuiToolBar
 };

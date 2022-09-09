@@ -1413,17 +1413,25 @@ void MainFrame::PasteNode(Node* parent)
 void MainFrame::DuplicateNode(Node* node)
 {
     ASSERT(node);
-
     ASSERT(node->GetParent());
-    auto parent = node->GetParent();
 
-    ttlib::cstr undo_str("duplicate ");
-    undo_str << node->DeclName();
-    auto pos = parent->FindInsertionPos(m_selected_node);
     auto new_node = g_NodeCreator.MakeCopy(node);
-    PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
-    FireCreatedEvent(new_node);
-    SelectNode(new_node, evt_flags::queue_event);
+    auto* parent = node->GetParent();
+    if (parent->isGen(gen_wxGridBagSizer))
+    {
+        GridBag grid_bag(parent);
+        grid_bag.InsertNode(parent, new_node.get());
+        // GridBag::InsertNode() will have already fired events
+    }
+    else
+    {
+        ttlib::cstr undo_str("duplicate ");
+        undo_str << node->DeclName();
+        auto pos = parent->FindInsertionPos(m_selected_node);
+        PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
+        FireCreatedEvent(new_node);
+        SelectNode(new_node, evt_flags::queue_event);
+    }
 }
 
 bool MainFrame::CanCopyNode()

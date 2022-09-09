@@ -30,8 +30,7 @@ void InsertNodeAction::Change()
 {
     m_node->SetParent(m_parent);
 
-    ASSERT_MSG(!m_parent->isGen(gen_wxGridBagSizer),
-               "Only use AppendGridBagAction or InsertGridBagAction to add items to a wxGridBagSizer!");
+    ASSERT_MSG(!m_parent->isGen(gen_wxGridBagSizer), "Only use AppendGridBagAction to add items to a wxGridBagSizer!");
 
     if (m_pos == -1 && m_parent->IsSizer() && m_parent->GetChildCount() > 0 &&
         m_parent->GetChildPtr(m_parent->GetChildCount() - 1)->isGen(gen_wxStdDialogButtonSizer))

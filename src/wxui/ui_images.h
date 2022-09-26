@@ -17,6 +17,7 @@ namespace wxue_img
     wxBitmapBundle bundle_redo_svg(int width, int height);
     wxBitmapBundle bundle_undo_svg(int width, int height);
     wxBitmapBundle bundle_wxlogo_svg(int width, int height);
+    wxBitmapBundle bundle_xrc_compare_svg(int width, int height);
 
     wxBitmapBundle bundle_default_png();
     wxBitmapBundle bundle_empty_png();
@@ -116,4 +117,5 @@ namespace wxue_img
     extern const unsigned char wxStaticRadioBtnSizer_png[367];
     extern const unsigned char wxStaticText_png[290];
     extern const unsigned char wxlogo_svg[1331];
+    extern const unsigned char xrc_compare_svg[260];
 }

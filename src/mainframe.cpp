@@ -156,6 +156,7 @@ MainFrame::MainFrame() :
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     auto menuInternal = new wxMenu;
+    wxMenuItem* item;
 
     menuInternal->Append(id_CodeDiffDlg, "Compare Code &Generation...",
                          "Dialog showing what class have changed, and optional viewing in WinMerge");
@@ -173,7 +174,9 @@ MainFrame::MainFrame() :
 
     menuInternal->AppendSeparator();
     menuInternal->Append(id_MockupPreview, "Mockup Preview...\tF6", "Mockup Preview");
-    menuInternal->Append(id_CompareXrcDlg, "Compare C++/XRC...\tF7", "Generate both C++ and XRC, display side by side");
+    item =
+        menuInternal->Append(id_CompareXrcDlg, "Compare C++/XRC...\tF7", "Generate both C++ and XRC, display side by side");
+    item->SetBitmap(bundle_xrc_compare_svg(16, 16));
     menuInternal->Append(id_XrcPreviewDlg, "XRC Preview Dialog...\tF8", "Dialog for previewing any XRC");
 
     m_submenu_import_recent = new wxMenu();
@@ -190,6 +193,11 @@ MainFrame::MainFrame() :
     Bind(wxEVT_MENU, &MainFrame::OnImportRecent, this, wxID_FILE1 + 1000, wxID_FILE9 + 1000);
 
     m_menubar->Append(menuInternal, "&Internal");
+
+    m_toolbar->AddTool(id_CompareXrcDlg, "Compare C++/XRC...", bundle_xrc_compare_svg(24, 24),
+                       "Compare C++/XRC generated forms", wxITEM_CHECK);
+    m_toolbar->Realize();
+
 #endif
 
     CreateStatusBar(StatusPanels);

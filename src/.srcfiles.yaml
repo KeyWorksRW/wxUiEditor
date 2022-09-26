@@ -264,7 +264,6 @@ Files:
     internal/debugsettings.cpp   # Settings while running the Debug version of wxUiEditor
     internal/msg_logging.cpp     # Message logging class
     internal/msgframe.cpp        # Stores messages
-    internal/nodeinfo.cpp        # Node memory usage dialog
     internal/xrcpreview.cpp      # Preview XRC code
     internal/mockup_preview.cpp  # Preview Mockup
     internal/xrccompare.cpp      # C++/XRC UI Comparison dialog

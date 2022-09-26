@@ -7,8 +7,9 @@
 #pragma once
 
 #include <wx/dialog.h>
+#include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
-#include <wx/sizer.h>
+#include <wx/statline.h>
 
 class XrcCompareBase : public wxDialog
 {
@@ -29,5 +30,6 @@ protected:
 
     // Class member variables
 
-    wxFlexGridSizer* m_flex_grid_sizer;
+    wxGridBagSizer* m_grid_bag_sizer;
+    wxStaticLine* m_static_line;
 };

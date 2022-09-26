@@ -765,27 +765,49 @@
       class_name="XrcCompareBase"
       derived_class_name="XrcCompare"
       derived_file="xrccompare"
-      persist="1"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Compare C++/XRC Generated UI">
       <node
-        class="wxFlexGridSizer"
+        class="wxGridBagSizer"
         class_access="protected:"
-        var_name="m_flex_grid_sizer"
-        minimum_size="900,700d"
-        flexible_direction="wxVERTICAL"
-        growablerows="1"
-        hgap="20">
+        var_name="m_grid_bag_sizer"
+        flags="wxEXPAND">
         <node
-          class="wxStaticText"
-          class_access="none"
-          label="C++ Generated"
-          var_name="staticText" />
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          borders="wxTOP|wxRIGHT|wxLEFT">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="C++ Generated"
+            var_name="staticText"
+            font="default family,9,,,underlined"
+            foreground_colour="255,0,0" />
+        </node>
         <node
-          class="wxStaticText"
-          class_access="none"
-          label="XRC Generated"
-          var_name="staticText_2" />
+          class="wxStaticLine"
+          class_access="protected:"
+          style="wxLI_VERTICAL"
+          var_name="m_static_line"
+          size="-1,100d"
+          column="1"
+          proportion="1"
+          rowspan="3" />
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_2"
+          borders="wxTOP|wxRIGHT|wxLEFT"
+          column="2">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="XRC Generated"
+            var_name="staticText_2"
+            font="default family,9,,,underlined"
+            foreground_colour="0,128,0"
+            column="2" />
+        </node>
       </node>
     </node>
   </node>

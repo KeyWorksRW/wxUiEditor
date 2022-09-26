@@ -1325,12 +1325,13 @@ ttlib::cstr GenFontColourSettings(Node* node)
             code << node->get_node_name() << "->SetForegroundColour(";
         }
         if (fg_clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << fg_clr << "));";
+            code << "wxSystemSettings::GetColour(" << fg_clr << ")";
         else
         {
             wxColour colour = ConvertToColour(fg_clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
+            code << ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
         }
+        code << ");";
     }
 
     auto& bg_clr = node->prop_as_string(prop_background_colour);
@@ -1345,12 +1346,13 @@ ttlib::cstr GenFontColourSettings(Node* node)
             code << node->get_node_name() << "->SetBackgroundColour(";
         }
         if (bg_clr.contains("wx"))
-            code << "wxSystemSettings::GetColour(" << bg_clr << "));";
+            code << "wxSystemSettings::GetColour(" << bg_clr << ")";
         else
         {
             wxColour colour = ConvertToColour(bg_clr);
-            code << ttlib::cstr().Format("wxColour(%i, %i, %i);", colour.Red(), colour.Green(), colour.Blue());
+            code << ttlib::cstr().Format("wxColour(%i, %i, %i)", colour.Red(), colour.Green(), colour.Blue());
         }
+        code << ");";
     }
 
     return code;

@@ -159,6 +159,9 @@
       <node
         class="embedded_image"
         bitmap="Embed;../art_src/tool.png" />
+      <node
+        class="embedded_image"
+        bitmap="SVG;../art_src/xrc_compare.svg;[16,16]" />
     </node>
     <node
       class="wxDialog"

@@ -91,21 +91,24 @@ XrcCompare::~XrcCompare()
 
 bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
 {
-    if (!wxDialog::Create(parent, wxID_ANY, "Compare C++/XRC Generated UI", wxDefaultPosition, wxDefaultSize,
-                          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER))
+    if (!XrcCompareBase::Create(parent, wxID_ANY, "Compare C++/XRC Generated UI", wxDefaultPosition, wxDefaultSize,
+                                wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER))
         return false;
 
-    // Everything below up to the customization section is a direct copy of the XrcCompareBase::Create() function
+        // Everything below up to the customization section is a direct copy of the XrcCompareBase::Create() function
+#if 0
+    m_grid_bag_sizer = new wxGridBagSizer();
 
-    m_flex_grid_sizer = new wxFlexGridSizer(2, 0, 20);
-    m_flex_grid_sizer->SetFlexibleDirection(wxVERTICAL);
+    auto* staticText = new wxStaticText(this, wxID_ANY, "C++ Generated");
+    m_grid_bag_sizer->Add(staticText, wxGBPosition(0, 0), wxGBSpan(1, 1), wxALL, 5);
 
-    auto staticText = new wxStaticText(this, wxID_ANY, "C++ Generated");
-    m_flex_grid_sizer->Add(staticText, wxSizerFlags().Border(wxALL));
+    m_static_line =
+        new wxStaticLine(this, wxID_ANY, wxDefaultPosition, ConvertDialogToPixels(wxSize(-1, 100)), wxLI_VERTICAL);
+    m_grid_bag_sizer->Add(m_static_line, wxGBPosition(0, 1), wxGBSpan(2, 1), wxALL, 5);
 
-    auto staticText_2 = new wxStaticText(this, wxID_ANY, "XRC Generated");
-    m_flex_grid_sizer->Add(staticText_2, wxSizerFlags().Border(wxALL));
-
+    auto* staticText_2 = new wxStaticText(this, wxID_ANY, "XRC Generated");
+    m_grid_bag_sizer->Add(staticText_2, wxGBPosition(0, 2), wxGBSpan(1, 1), wxALL, 5);
+#endif
     // Customization section
 
     // TODO: [KeyWorks - 06-09-2022] Add the C++ and XRC top level sizers here
@@ -116,14 +119,14 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
     {
         case gen_PanelForm:
             {
-                CreateMockupChildren(form_node, this, nullptr, m_flex_grid_sizer, this);
+                CreateMockupChildren(form_node, this, nullptr, m_grid_bag_sizer, this);
 
                 if (!InitXrc(form_node))
                     return false;
 
                 if (auto object = xrc_resource->LoadObject(this, form_node->value(prop_class_name), "wxPanel"); object)
                 {
-                    m_flex_grid_sizer->Add(wxStaticCast(object, wxPanel));
+                    m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
                 }
                 else
                 {
@@ -142,9 +145,9 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
                 }
 
                 // The wxDialog generator will create a wxPanel as the mockup
-                CreateMockupChildren(form_node, this, nullptr, m_flex_grid_sizer, this);
+                CreateMockupChildren(form_node, this, nullptr, m_grid_bag_sizer, this);
 
-                // In theory, we should be able to start from the sizer and pass that to m_flex_grid_sizer. In practice, it
+                // In theory, we should be able to start from the sizer and pass that to m_grid_bag_sizer. In practice, it
                 // causes wxWidgets to crash. I'm not sure why, but setting both the C++ and XRC generators to use wxPanel
                 // solves the problem.
 
@@ -154,7 +157,7 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
 
                 if (auto object = xrc_resource->LoadObject(this, txt_dlg_name, "wxPanel"); object)
                 {
-                    m_flex_grid_sizer->Add(wxStaticCast(object, wxPanel));
+                    m_grid_bag_sizer->Add(wxStaticCast(object, wxPanel), wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL, 5);
                 }
                 else
                 {
@@ -169,8 +172,9 @@ bool XrcCompare::DoCreate(wxWindow* parent, Node* form_node)
             return false;
     }
 
-    SetSizerAndFit(m_flex_grid_sizer);
-    Centre(wxBOTH);
+    SetSizerAndFit(m_grid_bag_sizer);
+    // Centre(wxBOTH);
+    // Fit();
 
     wxPersistentRegisterAndRestore(this, "XrcCompare");
 

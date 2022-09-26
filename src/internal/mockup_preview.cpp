@@ -86,6 +86,8 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 
         // REVIEW: [KeyWorks - 06-09-2022] MockupContent::CreateChildren returns here because there is no form,
         // whereas we need to continue processing children
+
+        // BUGBUG: [Randalphwa - 09-09-2022] Er, why are we returning?
         return;
     }
     else if (node->IsSizer() || node->isGen(gen_wxStdDialogButtonSizer) || node->isGen(gen_TextSizer))
@@ -188,10 +190,21 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 
     if (parent_sizer)
     {
-        if (created_window && !node->IsStaticBoxSizer())
-            parent_sizer->Add(created_window, wxSizerFlags().Expand());
-        else if (created_sizer)
-            parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());
+        if (parent_sizer->IsKindOf(wxCLASSINFO(wxGridBagSizer)))
+        {
+            auto* gb_sizer = wxStaticCast(parent_sizer, wxGridBagSizer);
+            if (created_window && !node->IsStaticBoxSizer())
+                gb_sizer->Add(created_window, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
+            else if (created_sizer)
+                gb_sizer->Add(created_sizer, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
+        }
+        else
+        {
+            if (created_window && !node->IsStaticBoxSizer())
+                parent_sizer->Add(created_window, wxSizerFlags().Expand());
+            else if (created_sizer)
+                parent_sizer->Add(created_sizer, wxSizerFlags(1).Expand());
+        }
     }
 
     else if ((created_sizer && wxDynamicCast(parent_object, wxWindow)) || (!parent_object && created_sizer))

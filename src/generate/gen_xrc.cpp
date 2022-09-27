@@ -550,7 +550,8 @@ bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
         root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
         root.append_attribute("version") = "2.5.3.0";
 
-        GenXrcObject(form.get(), root, false);
+        auto form_object = root.append_child("object");
+        GenXrcObject(form.get(), form_object, false);
 
         if (out_file.file_exists())
         {

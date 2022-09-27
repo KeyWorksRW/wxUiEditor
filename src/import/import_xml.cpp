@@ -11,7 +11,6 @@
 #include "gen_enums.h"       // Enumerations for generators
 #include "mainframe.h"       // Main window frame
 #include "node.h"            // Node class
-#include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator class
 #include "project_class.h"   // Project class
 #include "utils.h"           // Utility functions that work with properties
@@ -712,6 +711,22 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
         {
             return;  // since we don't add anything to a wxTreeCtrl, we can't set something as the focus
         }
+        else if (ttlib::is_sameas(iter.name(), "dropdown", tt::CASE::either) && node->isGen(gen_tool_dropdown))
+        {
+            if (auto child_node = iter.child("object"); child_node)
+            {
+                // XRC will have a wxMenu as the child of the dropdown object, but what we
+                // want is the wxMenuItem that is the child of the wxMenu.
+                for (auto& menu_item: child_node)
+                {
+                    CreateXrcNode(menu_item, node);
+                }
+            }
+            else
+            {
+                MSG_INFO(ttlib::cstr() << "Unrecognized property: " << iter.name() << " for " << node->DeclName());
+            }
+        }
         else
         {
             MSG_INFO(ttlib::cstr() << "Unrecognized property: " << iter.name() << " for " << node->DeclName());
@@ -849,6 +864,18 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
                     gen_name = gen_Check3State;
                 break;
             }
+        }
+    }
+
+    if (gen_name == gen_tool)
+    {
+        if (xml_obj.find_node(
+                [](const pugi::xml_node& node)
+                {
+                    return ttlib::is_sameas(node.name(), "dropdown", tt::CASE::either);
+                }))
+        {
+            gen_name = gen_tool_dropdown;
         }
     }
 

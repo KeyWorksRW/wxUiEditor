@@ -26,3 +26,4 @@ Release summary...
 - Code generation for wxGrid with non-default SetSelectionMode fixed.
 - Code generation for wxPanel events fixed.
 - Code generation for setting custom foreground colour for wxStaticText fixed.
+- Fixed browsing for an XRC output file to generate XRC to -- it now defaults to the current project directory, and can handle a relative path.

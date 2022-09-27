@@ -445,6 +445,14 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "C++ Files|*.cpp;*.cc;*.cxx");
         }
+        else if (prop->isProp(prop_xrc_file) || prop->isProp(prop_combined_xrc_file))
+        {
+            new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "XRC filename");
+            new_pg_property->SetAttribute(wxPG_FILE_INITIAL_PATH, GetProject()->GetBaseDirectory());
+            new_pg_property->SetAttribute(wxPG_FILE_SHOW_RELATIVE_PATH, GetProject()->GetProjectPath());
+            new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
+            new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "XRC Files|*.xrc");
+        }
         else if (prop->isProp(prop_derived_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Derived class filename");

@@ -53,7 +53,7 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 		</property>
 		<property name="center" type="option"
 			help="Centers the window on the desktop in the chosen direction.">
-			<option name="" />
+			<option name="no" />
 			<option name="wxHORIZONTAL" />
 			<option name="wxVERTICAL" />
 			<option name="wxBOTH" />

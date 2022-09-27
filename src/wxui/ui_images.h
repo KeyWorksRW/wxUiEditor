@@ -14,6 +14,7 @@ wxImage wxueImage(const unsigned char* data, size_t size_data);
 
 namespace wxue_img
 {
+    wxBitmapBundle bundle_import_svg(int width, int height);
     wxBitmapBundle bundle_redo_svg(int width, int height);
     wxBitmapBundle bundle_undo_svg(int width, int height);
     wxBitmapBundle bundle_wxlogo_svg(int width, int height);
@@ -78,6 +79,7 @@ namespace wxue_img
     extern const unsigned char debug_32_png[1701];
     extern const unsigned char default_png[518];
     extern const unsigned char empty_png[101];
+    extern const unsigned char import_svg[418];
     extern const unsigned char logo16_png[639];
     extern const unsigned char logo32_png[1470];
     extern const unsigned char logo64_png[1718];

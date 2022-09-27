@@ -256,5 +256,7 @@ set (file_list
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/msgframe.cpp>       # Stores messages
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/msgframe_base.cpp>       # wxUiEditor generated file
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/debugsettings_base.cpp>   # wxUiEditor generated file
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/debugsettings_base.cpp>  # wxUiEditor generated file
+
+    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/tests/test_xrc_import.cpp>  # XRC Import tests
 )

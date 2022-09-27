@@ -64,7 +64,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuFile->AppendSubMenu(m_submenu_recent, "Open &Recent");
 
     auto* menu_import = new wxMenuItem(m_menuFile, wxID_ANY, "&Import...");
-    menu_import->SetBitmap(wxueBundleSVG(wxue_img::import_svg, 418, 1013, wxSize(16, 16)));
+    menu_import->SetBitmap(wxue_img::bundle_import_svg(16, 16));
     m_menuFile->Append(menu_import);
 
     m_menuFile->AppendSeparator();

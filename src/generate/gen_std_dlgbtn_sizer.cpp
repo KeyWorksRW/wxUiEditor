@@ -213,20 +213,21 @@ int StdDialogButtonSizerGenerator::GenXrcObject(Node* node, pugi::xml_node& obje
         if (node->prop_as_bool(prop_static_line))
         {
             object.append_attribute("class").set_value("sizeritem");
-            object.append_child("flag").text().set("wxALL|wxEXPAND");
+            object.append_child("flag").text().set("wxLEFT|wxRIGHT|wxTOP|wxEXPAND");
+            object.append_child("border").text().set("5");
 
             item = object.append_child("object");
             item.append_attribute("class").set_value("wxBoxSizer");
-            item.append_child("orient").text().set("wxHORIZONTAL");
+            item.append_child("orient").text().set("wxVERTICAL");
 
             item = item.append_child("object");
             item.append_attribute("class").set_value("sizeritem");
-            item.append_child("flag").text().set("wxTOP|wxRIGHT|wxLEFT|wxALIGN_BOTTOM");
-            item.append_child("option").text().set(1);
+            item.append_child("flag").text().set("wxBOTTOM|wxEXPAND");
+            item.append_child("border").text().set("5");
 
             item = item.append_child("object");
             item.append_attribute("class").set_value("wxStaticLine");
-            item.append_child("size").text().set("20,-1");
+            // item.append_child("size").text().set("20,-1");
 
             item = object.parent().append_child("object");
             GenXrcSizerItem(node, item);

@@ -17,6 +17,7 @@ Release summary...
 - `Generate XRC files...` on Tools menu now launches a dialog allowing you to choose between combined or individually generated XRC files.
 - wxStatusBar `fields` property now supports unique width and style for each field.
 - `contents` property for wxCheckListBox and wxRearrangeCtrl now supports setting initial checked state for each string.
+- Improved XRC generation of optional static line above a standard dialog button -- this now matches what the C++ version would look like.
 
 ### Fixed
 
@@ -24,3 +25,4 @@ Release summary...
 - Code generation for wxGrid with positive row label size fixed.
 - Code generation for wxGrid with non-default SetSelectionMode fixed.
 - Code generation for wxPanel events fixed.
+- Code generation for setting custom foreground colour for wxStaticText fixed.

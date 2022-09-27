@@ -1,25 +1,6 @@
 # Directories to ignore
-bin/
-bin32/
-bin64/
-lib/
-lib32/
-lib64/
 bld/
-build/
-
 .private/
-archive/
-converted_art/
-tests/
-xpm/
-art_headers/
-
-# Generated files to ignore
-messages.po
-
-# Ignore ttBld-generated GZIP header files
-*.hgz
 
 # File extensions to ignore
 *.backup

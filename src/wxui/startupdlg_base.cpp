@@ -11,6 +11,8 @@
 #include <wx/statbmp.h>
 #include <wx/statline.h>
 
+#include "ui_images.h"
+
 #include "startupdlg_base.h"
 
 #include <wx/mstream.h>  // memory stream classes
@@ -117,7 +119,7 @@ bool StartupDlg::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
     box_sizer_2->Add(box_sizer_3, wxSizerFlags().Border(wxALL));
 
-    auto* bmp = new wxStaticBitmap(this, wxID_ANY, wxueBundleSVG(wxue_img::import_svg, 418, 1013, wxSize(24, 24)));
+    auto* bmp = new wxStaticBitmap(this, wxID_ANY, wxue_img::bundle_import_svg(24, 24));
     box_sizer_3->Add(bmp, wxSizerFlags().Border(wxALL));
 
     auto* hyperlink = new wxGenericHyperlinkCtrl(this, wxID_ANY, "Import...", wxEmptyString, wxDefaultPosition, wxDefaultSize,

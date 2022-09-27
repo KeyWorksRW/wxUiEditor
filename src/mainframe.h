@@ -364,7 +364,7 @@ protected:
 
 #if defined(_DEBUG)  // Starts debug section.
 
-    void OnDebugCurrentTest(wxCommandEvent& e);
+    void OnTestXrcImport(wxCommandEvent& e);
 
 #endif
 

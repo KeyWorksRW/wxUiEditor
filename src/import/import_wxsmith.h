@@ -17,5 +17,4 @@ public:
     WxSmith();
 
     bool Import(const ttString& filename, bool write_doc = true) override;
-    NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
 };

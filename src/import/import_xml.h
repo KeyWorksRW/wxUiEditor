@@ -29,6 +29,9 @@ public:
     // version of the name. Otherwise, it returns name unmodified.
     static ttlib::sview GetCorrectEventName(ttlib::sview name);
 
+    // Only call this from an XRC importer (e.g., wxSMITH)
+    NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
+
 protected:
     std::optional<pugi::xml_document> LoadDocFile(const ttString& file);
     GenEnum::GenName ConvertToGenName(const ttlib::cstr& object_name, Node* parent);

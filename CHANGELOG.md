@@ -28,3 +28,4 @@ Release summary...
 - Code generation for setting custom foreground colour for wxStaticText fixed.
 - Fixed browsing for an XRC output file to generate XRC to -- it now defaults to the current project directory, and can handle a relative path.
 - Fixed non-combined XRC generation.
+- Importing from XRC/wxSmith a non-centered dialog or frame now works correctly.

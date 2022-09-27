@@ -699,10 +699,11 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
                     node->prop_set_value(prop_height, mstr[1]);
             }
         }
-        else if (iter.name() == "centered" && node->isGen(gen_wxDialog))
+        else if (iter.name() == "centered" && (node->isGen(gen_wxDialog) || node->isGen(gen_wxFrame)))
         {
             if (!iter.text().as_bool())
                 node->prop_set_value(prop_center, "no");
+            return;  // default is centered, so we don't need to set it
         }
         else if (iter.name() == "focused" && node->isGen(gen_wxTreeCtrl))
         {

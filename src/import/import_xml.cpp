@@ -583,6 +583,15 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             prop->set_value(iter.text().as_string());
             continue;
         }
+        else if (node->isGen(gen_BookPage) && wxue_prop == prop_style)
+        {
+            prop = node->get_prop_ptr(prop_window_style);
+            if (prop)
+            {
+                prop->set_value(iter.text().as_string());
+                continue;
+            }
+        }
 
         // Finally, process names that are unique to XRC/ImportXML
 
@@ -850,8 +859,15 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     auto gen_name = ConvertToGenName(object_name, parent);
     if (gen_name == gen_unknown)
     {
-        MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
-        return NodeSharedPtr();
+        if (object_name.ends_with("bookpage"))
+        {
+            gen_name = gen_BookPage;
+        }
+        else
+        {
+            MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
+            return NodeSharedPtr();
+        }
     }
 
     if (gen_name == gen_wxCheckBox)
@@ -1067,6 +1083,14 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             }
         }
     }
+
+    // XRC creates a bookpage with a few properties (label, style, etc.) and then it creates
+    // a wxPanel object. We need to ignore the panel, and just process it's children. When we
+    // create XRC content, the variable name and style attribute are duplicated in the
+    // wxPanel -- but we should confirm that the bookpage information is always set.
+
+    if (gen_name == gen_BookPage)
+        child = child.child("object");
 
     while (child)
     {

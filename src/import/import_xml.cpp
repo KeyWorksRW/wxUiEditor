@@ -17,6 +17,111 @@
 
 using namespace GenEnum;
 
+// clang-format off
+
+// See g_xrc_keywords in generate/gen_xrc_utils.cpp for a list of XRC keywords
+
+namespace xrc_import
+{
+
+std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
+
+    { "accel", prop_shortcut },
+    { "art-provider", prop_art_provider },
+    { "bg", prop_background_colour },
+    { "bitmap-bg", prop_bmp_background_colour },
+    { "bitmap-minwidth", prop_bmp_min_width },
+    { "bitmap-placement", prop_bmp_placement },
+    { "bitmapposition", prop_position },
+    { "bitmapsize", prop_image_size },  // BUGBUG: [Randalphwa - 06-17-2022] should this be prop_bitmapsize?
+    { "choices", prop_contents },
+    { "class", prop_class_name },
+    { "content", prop_contents },
+    { "defaultdirectory", prop_initial_folder },
+    { "defaultfilename", prop_initial_filename },
+    { "dimension", prop_majorDimension },
+    { "effectduration", prop_duration },
+    { "empty_cellsize", prop_empty_cell_size },
+    { "fg", prop_foreground_colour },
+    { "flexibledirection", prop_flexible_direction },
+    { "gradient-end", prop_end_colour },
+    { "gradient-start", prop_start_colour },
+    { "gravity", prop_sashgravity },
+    { "hideeffect", prop_hide_effect },
+    { "hover", prop_current },
+    { "inactive-bitmap", prop_inactive_bitmap },
+    { "include_file", prop_derived_header },
+    { "linesize", prop_line_size },
+    { "longhelp", prop_statusbar },  // Used by toolbar tools
+    { "minsize", prop_min_size },
+    { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
+    { "pagesize", prop_page_size },
+    { "selmax", prop_sel_end },
+    { "selmin", prop_sel_start },
+    { "settings", prop_settings_code },
+    { "showeffect", prop_show_effect },
+    { "tab_ctrl_height", prop_tab_height },
+    { "thumb", prop_thumb_length },
+    { "tickfreq", prop_tick_frequency },
+    { "windowlabel", prop_tab_height },
+    { "wrapmode", prop_stc_wrap_mode },
+
+};
+
+ std::map<std::string_view, GenEnum::GenName, std::less<>> import_GenNames = {
+
+    { "Custom", gen_CustomControl },
+    { "Dialog", gen_wxDialog },
+    { "Frame", gen_wxFrame },
+    { "Panel", gen_PanelForm },
+    { "Wizard", gen_wxWizard },
+    { "WizardPageSimple", gen_wxWizardPageSimple },
+    { "bookpage", gen_oldbookpage },
+    { "panewindow", gen_VerticalBoxSizer },
+    { "wxBitmapButton", gen_wxButton },
+    { "wxListCtrl", gen_wxListView },
+    { "wxScintilla", gen_wxStyledTextCtrl },
+
+};
+
+std::map<std::string_view, std::string_view, std::less<>> s_map_old_events = {
+
+
+    { "wxEVT_COMMAND_BUTTON_CLICKED",          "wxEVT_BUTTON" },
+    { "wxEVT_COMMAND_CHECKBOX_CLICKED",        "wxEVT_CHECKBOX" },
+    { "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED",    "wxEVT_CHECKLISTBOX" },
+    { "wxEVT_COMMAND_CHOICE_SELECTED",         "wxEVT_CHOICE" },
+    { "wxEVT_COMMAND_COMBOBOX_CLOSEUP",        "wxEVT_COMBOBOX_CLOSEUP" },
+    { "wxEVT_COMMAND_COMBOBOX_DROPDOWN",       "wxEVT_COMBOBOX_DROPDOWN" },
+    { "wxEVT_COMMAND_COMBOBOX_SELECTED",       "wxEVT_COMBOBOX" },
+    { "wxEVT_COMMAND_LISTBOX_DOUBLECLICKED",   "wxEVT_LISTBOX_DCLICK" },
+    { "wxEVT_COMMAND_LISTBOX_SELECTED",        "wxEVT_LISTBOX" },
+    { "wxEVT_COMMAND_MENU_SELECTED",           "wxEVT_MENU" },
+    { "wxEVT_COMMAND_RADIOBOX_SELECTED",       "wxEVT_RADIOBOX" },
+    { "wxEVT_COMMAND_RADIOBUTTON_SELECTED",    "wxEVT_RADIOBUTTON" },
+    { "wxEVT_COMMAND_SCROLLBAR_UPDATED",       "wxEVT_SCROLLBAR" },
+    { "wxEVT_COMMAND_SLIDER_UPDATED",          "wxEVT_SLIDER" },
+    { "wxEVT_COMMAND_TEXT_COPY",               "wxEVT_TEXT_COPY" },
+    { "wxEVT_COMMAND_TEXT_CUT",                "wxEVT_TEXT_CUT" },
+    { "wxEVT_COMMAND_TEXT_ENTER",              "wxEVT_TEXT_ENTER" },
+    { "wxEVT_COMMAND_TEXT_MAXLEN",             "wxEVT_TEXT_MAXLEN" },
+    { "wxEVT_COMMAND_TEXT_PASTE",              "wxEVT_TEXT_PASTE" },
+    { "wxEVT_COMMAND_TEXT_UPDATED",            "wxEVT_TEXT" },
+    { "wxEVT_COMMAND_TEXT_URL",                "wxEVT_TEXT_URL" },
+    { "wxEVT_COMMAND_THREAD",                  "wxEVT_THREAD" },
+    { "wxEVT_COMMAND_TOOL_CLICKED",            "wxEVT_TOOL" },
+    { "wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED",   "wxEVT_TOOL_DROPDOWN" },
+    { "wxEVT_COMMAND_TOOL_ENTER",              "wxEVT_TOOL_ENTER" },
+    { "wxEVT_COMMAND_TOOL_RCLICKED",           "wxEVT_TOOL_RCLICKED" },
+    { "wxEVT_COMMAND_VLBOX_SELECTED",          "wxEVT_VLBOX" },
+
+};
+    // clang-format on
+
+};  // namespace xrc_import
+
+using namespace xrc_import;
+
 std::optional<pugi::xml_document> ImportXML::LoadDocFile(const ttString& file)
 {
     pugi::xml_document doc;
@@ -506,10 +611,16 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
 {
     for (auto& iter: xml_obj.children())
     {
-        auto wxue_prop = MapPropName(iter.name());
-
         if (iter.name() == "object")
         {
+            continue;
+        }
+
+        auto wxue_prop = MapPropName(iter.name());
+
+        if (wxue_prop == prop_unknown)
+        {
+            ProcessUnknownProperty(iter, node, parent);
             continue;
         }
 
@@ -555,25 +666,6 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             }
             continue;
         }
-        else if (iter.name() == "tabs")
-        {
-            ProcessNotebookTabs(iter, node);
-            continue;
-        }
-        else if (iter.name() == "option")
-        {
-            if (auto prop = node->get_prop_ptr(prop_proportion); prop)
-            {
-                prop->set_value(iter.text().as_string());
-                continue;
-            }
-            else
-            {
-                MSG_INFO(ttlib::cstr() << "option specified for node that doesn't have prop_proportion: "
-                                       << node->DeclName());
-                continue;
-            }
-        }
 
         // Now process names that are identical.
 
@@ -583,155 +675,299 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             prop->set_value(iter.text().as_string());
             continue;
         }
-
-        // Finally, process names that are unique to XRC/ImportXML
-
-        if (iter.name() == "orient")
+        else if (node->isGen(gen_BookPage) && wxue_prop == prop_style)
         {
-            prop = node->get_prop_ptr(prop_orientation);
+            prop = node->get_prop_ptr(prop_window_style);
             if (prop)
             {
                 prop->set_value(iter.text().as_string());
-            }
-        }
-        else if (iter.name() == "border")
-        {
-            node->prop_set_value(prop_border_size, iter.text().as_string());
-        }
-        else if (iter.name() == "selection" && node->isGen(gen_wxChoice))
-        {
-            node->prop_set_value(prop_selection_int, iter.text().as_int());
-        }
-        else if (iter.name() == "selected")
-        {
-            if (node->isGen(gen_oldbookpage))
-                node->prop_set_value(prop_select, iter.text().as_bool());
-            else if (prop = node->get_prop_ptr(prop_checked); prop)
-            {
-                node->prop_set_value(prop_checked, iter.text().as_bool());
-            }
-        }
-        else if (iter.name() == "enabled")
-        {
-            if (!iter.text().as_bool())
-                node->prop_set_value(prop_disabled, true);
-        }
-        else if (iter.name() == "subclass")
-        {
-            // wxFormBuilder and XRC use the same name, but but it has different meanings.
-            auto value = iter.text().as_sview();
-            if (value.empty())
                 continue;
-            if (value.contains(";"))
-            {
-                // wxFormBuilder breaks this into three fields: class, header, forward_declare. Or at least it is supposed
-                // to. In version 3.10, it doesn't properly handle an empty class name, so the header file can appear first.
-                ttlib::multistr parts(value, ';', tt::TRIM::both);
-                if (parts.size() > 0)
+            }
+        }
+
+        // Finally, process names that are unique to XRC/ImportXML
+    }
+}
+
+namespace xrc_import
+{
+    enum
+    {
+        xrc_border,
+        xrc_cellpos,
+        xrc_cellspan,
+        xrc_centered,
+        xrc_checkable,
+        xrc_creating_code,
+        xrc_depth,
+        xrc_dropdown,
+        xrc_enabled,
+        xrc_exstyle,
+        xrc_flag,
+        xrc_focused,
+        xrc_handler,
+        xrc_option,
+        xrc_orient,
+        xrc_radio,
+        xrc_selected,
+        xrc_selection,
+        xrc_size,
+        xrc_subclass,
+        xrc_tabs,
+        xrc_toggle,
+
+    };
+
+    // clang-format off
+    std::map<std::string_view, int, std::less<>> unknown_properties = {
+
+        { "border", xrc_border },
+        { "cellpos", xrc_cellpos },
+        { "cellspan", xrc_cellspan },
+        { "centered", xrc_centered },
+        { "checkable", xrc_checkable },
+        { "creating_code", xrc_creating_code },
+        { "depth", xrc_depth },
+        { "dropdown", xrc_dropdown },
+        { "enabled", xrc_enabled },
+        { "exstyle", xrc_exstyle },
+        { "flag", xrc_flag },
+        { "focused", xrc_focused },
+        { "handler", xrc_handler },
+        { "option", xrc_option },
+        { "orient", xrc_orient },
+        { "radio", xrc_radio },
+        { "selected", xrc_selected },
+        { "selection", xrc_selection },
+        { "size", xrc_size },
+        { "subclass", xrc_subclass },
+        { "tabs", xrc_tabs },
+        { "toggle", xrc_toggle },
+
+    };
+    // clang-format on
+
+};  // namespace xrc_import
+
+void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent)
+{
+    // Mapping the strings to an enum is purely for readability -- it's a lot easier to find
+    // the unknown property in a switch statement than it is to find it in a long list of
+    // strings comparisons.
+
+    if (auto result = unknown_properties.find(xml_obj.name()); result != unknown_properties.end())
+    {
+        switch (result->second)
+        {
+            case xrc_border:
+                node->prop_set_value(prop_border_size, xml_obj.text().as_string());
+                return;
+
+            case xrc_cellpos:
+                if (ttlib::multistr mstr(xml_obj.text().as_string(), ','); mstr.size())
                 {
-                    if (parts[0].contains(".h"))
+                    if (mstr[0].size())
+                        node->prop_set_value(prop_column, mstr[0]);
+                    if (mstr.size() > 1 && mstr[1].size())
+                        node->prop_set_value(prop_row, mstr[1]);
+                }
+                return;
+
+            case xrc_cellspan:
+                if (ttlib::multistr mstr(xml_obj.text().as_string(), ','); mstr.size())
+                {
+                    if (mstr[0].size() && ttlib::atoi(mstr[0]) > 0)
+                        node->prop_set_value(prop_rowspan, mstr[0]);
+                    if (mstr.size() > 1 && mstr[1].size() && ttlib::atoi(mstr[1]) > 0)
+                        node->prop_set_value(prop_colspan, mstr[1]);
+                }
+                return;
+
+            case xrc_centered:
+                if (node->isGen(gen_wxDialog) || node->isGen(gen_wxFrame))
+                {
+                    if (!xml_obj.text().as_bool())
+                        node->prop_set_value(prop_center, "no");
+                    return;  // default is centered, so we don't need to set it
+                }
+                break;
+
+            case xrc_checkable:
+                node->prop_set_value(prop_kind, "wxITEM_CHECK");
+                return;
+
+            case xrc_creating_code:
+                // TODO: [KeyWorks - 12-09-2021] This consists of macros that allow the user
+                // to override one or more macros with their own parameter.
+                return;
+
+            case xrc_depth:
+                // depth is used by wxTreeCtrl to indicate the depth of the item. wxUE should
+                // be able to calculate this, so it doesn't use the property.
+                return;
+
+            case xrc_dropdown:
+                if (node->isGen(gen_tool_dropdown))
+                {
+                    if (auto child_node = xml_obj.child("object"); child_node)
                     {
-                        node->prop_set_value(prop_derived_header, parts[0]);
+                        // XRC will have a wxMenu as the child of the dropdown object, but what we
+                        // want is the wxMenuItem that is the child of the wxMenu.
+                        for (auto& menu_item: child_node)
+                        {
+                            CreateXrcNode(menu_item, node);
+                        }
                     }
-                    else if (parts.size() > 1)
+                    else
                     {
-                        node->prop_set_value(prop_derived_class, parts[0]);
-                        if (parts[1].size())
-                            node->prop_set_value(prop_derived_header, parts[1]);
+                        MSG_INFO(ttlib::cstr()
+                                 << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
+                    }
+                    return;
+                }
+                break;
+
+            case xrc_enabled:
+                if (!xml_obj.text().as_bool())
+                    node->prop_set_value(prop_disabled, true);
+                return;
+
+            case xrc_exstyle:
+                if (node->isGen(gen_wxDialog))
+                {
+                    node->prop_set_value(prop_extra_style, xml_obj.text().as_string());
+                    return;
+                }
+                break;
+
+            case xrc_flag:
+                if (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem))
+                {
+                    HandleSizerItemProperty(xml_obj, node, parent);
+                }
+                else if (!node->isGen(gen_spacer))
+                {
+                    // spacer's don't use alignment or border styles
+                    MSG_INFO(ttlib::cstr() << xml_obj.name() << " not supported for " << node->DeclName());
+                }
+                return;
+
+            case xrc_focused:
+                if (node->isGen(gen_wxTreeCtrl))
+                {
+                    return;
+                }
+                break;
+
+            case xrc_handler:
+                ProcessHandler(xml_obj, node);
+                return;
+
+            case xrc_option:
+                if (node->HasProp(prop_proportion))
+                {
+                    node->set_value(prop_proportion, xml_obj.text().as_string());
+                }
+                else
+                {
+                    MSG_INFO(ttlib::cstr()
+                             << "\"option\" specified for node that doesn't have prop_proportion: " << node->DeclName());
+                }
+                return;
+
+            case xrc_orient:
+                if (node->HasProp(prop_orientation))
+                {
+                    node->prop_set_value(prop_orientation, xml_obj.text().as_string());
+                    return;
+                }
+                break;
+
+            case xrc_radio:
+                node->prop_set_value(prop_kind, "wxITEM_RADIO");
+                return;
+
+            case xrc_selected:
+                if (node->isGen(gen_oldbookpage) || node->isGen(gen_BookPage))
+                {
+                    node->prop_set_value(prop_select, xml_obj.text().as_bool());
+                    return;
+                }
+                // else if (auto* prop = node->get_prop_ptr(prop_checked); prop)
+                else if (node->HasProp(prop_checked))
+                {
+                    node->prop_set_value(prop_checked, xml_obj.text().as_bool());
+                    return;
+                }
+                break;
+
+            case xrc_selection:
+                if (node->isGen(gen_wxChoice))
+                {
+                    node->prop_set_value(prop_selection_int, xml_obj.text().as_int());
+                    return;
+                }
+                break;
+
+            // REVIEW: [Randalphwa - 10-03-2022] There is a prop_size, so how do we get here?
+            case xrc_size:
+                if (node->isGen(gen_spacer))
+                {
+                    if (ttlib::multistr mstr(xml_obj.text().as_string(), ','); mstr.size())
+                    {
+                        if (mstr[0].size())
+                            node->prop_set_value(prop_width, mstr[0]);
+                        if (mstr.size() > 1 && mstr[1].size())
+                            node->prop_set_value(prop_height, mstr[1]);
+                    }
+                    return;
+                }
+                break;
+
+            case xrc_subclass:
+                if (auto value = xml_obj.text().as_sview(); value.size())
+                {
+                    if (value.contains(";"))
+                    {
+                        // wxFormBuilder breaks this into three fields: class, header, forward_declare. Or at least it is
+                        // supposed to. In version 3.10, it doesn't properly handle an empty class name, so the header file
+                        // can appear first.
+                        ttlib::multistr parts(value, ';', tt::TRIM::both);
+                        if (parts.size() > 0)
+                        {
+                            if (parts[0].contains(".h"))
+                            {
+                                node->prop_set_value(prop_derived_header, parts[0]);
+                            }
+                            else if (parts.size() > 1)
+                            {
+                                node->prop_set_value(prop_derived_class, parts[0]);
+                                if (parts[1].size())
+                                    node->prop_set_value(prop_derived_header, parts[1]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        node->prop_set_value(prop_derived_class, value);
                     }
                 }
-            }
-            else
-            {
-                node->prop_set_value(prop_derived_class, value);
-            }
-        }
-        else if (iter.name() == "creating_code")
-        {
-            // TODO: [KeyWorks - 12-09-2021] This consists of macros that allow the user to override one or more macros with
-            // their own parameter.
-        }
-        else if (iter.name() == "flag")
-        {
-            if (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem))
-                HandleSizerItemProperty(iter, node, parent);
-            else if (!node->isGen(gen_spacer))
-            {  // spacer's don't use alignment or border styles
-                MSG_INFO(ttlib::cstr() << iter.name() << " not supported for " << node->DeclName());
-            }
-        }
-        else if (iter.name() == "handler")
-        {
-            ProcessHandler(iter, node);
-        }
-        else if (iter.name() == "exstyle" && node->isGen(gen_wxDialog))
-        {
-            node->prop_set_value(prop_extra_style, iter.text().as_string());
-        }
-        else if (iter.name() == "cellpos")
-        {
-            ttlib::multistr mstr(iter.text().as_string(), ',');
-            if (mstr.size())
-            {
-                if (mstr[0].size())
-                    node->prop_set_value(prop_column, mstr[0]);
-                if (mstr.size() > 1 && mstr[1].size())
-                    node->prop_set_value(prop_row, mstr[1]);
-            }
-        }
-        else if (iter.name() == "cellspan")
-        {
-            ttlib::multistr mstr(iter.text().as_string(), ',');
-            if (mstr.size())
-            {
-                if (mstr[0].size() && ttlib::atoi(mstr[0]) > 0)
-                    node->prop_set_value(prop_rowspan, mstr[0]);
-                if (mstr.size() > 1 && mstr[1].size() && ttlib::atoi(mstr[1]) > 0)
-                    node->prop_set_value(prop_colspan, mstr[1]);
-            }
-        }
-        else if (iter.name() == "size" && node->isGen(gen_spacer))
-        {
-            ttlib::multistr mstr(iter.text().as_string(), ',');
-            if (mstr.size())
-            {
-                if (mstr[0].size())
-                    node->prop_set_value(prop_width, mstr[0]);
-                if (mstr.size() > 1 && mstr[1].size())
-                    node->prop_set_value(prop_height, mstr[1]);
-            }
-        }
-        else if (iter.name() == "centered" && (node->isGen(gen_wxDialog) || node->isGen(gen_wxFrame)))
-        {
-            if (!iter.text().as_bool())
-                node->prop_set_value(prop_center, "no");
-            return;  // default is centered, so we don't need to set it
-        }
-        else if (iter.name() == "focused" && node->isGen(gen_wxTreeCtrl))
-        {
-            return;  // since we don't add anything to a wxTreeCtrl, we can't set something as the focus
-        }
-        else if (ttlib::is_sameas(iter.name(), "dropdown", tt::CASE::either) && node->isGen(gen_tool_dropdown))
-        {
-            if (auto child_node = iter.child("object"); child_node)
-            {
-                // XRC will have a wxMenu as the child of the dropdown object, but what we
-                // want is the wxMenuItem that is the child of the wxMenu.
-                for (auto& menu_item: child_node)
-                {
-                    CreateXrcNode(menu_item, node);
-                }
-            }
-            else
-            {
-                MSG_INFO(ttlib::cstr() << "Unrecognized property: " << iter.name() << " for " << node->DeclName());
-            }
-        }
-        else
-        {
-            MSG_INFO(ttlib::cstr() << "Unrecognized property: " << iter.name() << " for " << node->DeclName());
+                return;
+
+            case xrc_tabs:
+                ProcessNotebookTabs(xml_obj, node);
+                return;
+
+            case xrc_toggle:
+                node->prop_set_value(prop_kind, "wxITEM_CHECK");
+                return;
+
+            default:
+                break;
         }
     }
+
+    MSG_INFO(ttlib::cstr() << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
 }
 
 void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)
@@ -850,8 +1086,15 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     auto gen_name = ConvertToGenName(object_name, parent);
     if (gen_name == gen_unknown)
     {
-        MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
-        return NodeSharedPtr();
+        if (object_name.ends_with("bookpage"))
+        {
+            gen_name = gen_BookPage;
+        }
+        else
+        {
+            MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
+            return NodeSharedPtr();
+        }
     }
 
     if (gen_name == gen_wxCheckBox)
@@ -1068,6 +1311,14 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         }
     }
 
+    // XRC creates a bookpage with a few properties (label, style, etc.) and then it creates
+    // a wxPanel object. We need to ignore the panel, and just process it's children. When we
+    // create XRC content, the variable name and style attribute are duplicated in the
+    // wxPanel -- but we should confirm that the bookpage information is always set.
+
+    if (gen_name == gen_BookPage)
+        child = child.child("object");
+
     while (child)
     {
         CreateXrcNode(child, new_node.get());
@@ -1076,49 +1327,6 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
 
     return new_node;
 }
-
-// clang-format off
-
-// See g_xrc_keywords in generate/gen_xrc_utils.cpp for a list of XRC keywords
-
-std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
-
-    { "bg", prop_background_colour },
-    { "fg", prop_foreground_colour },
-    { "bitmapsize", prop_image_size },  // BUGBUG: [Randalphwa - 06-17-2022] should this be prop_bitmapsize?
-
-    { "bitmap-bg", prop_bmp_background_colour },
-    { "bitmap-minwidth", prop_bmp_min_width },
-    { "bitmap-placement", prop_bmp_placement },
-    { "art-provider", prop_art_provider },
-    { "empty_cellsize", prop_empty_cell_size },
-
-    { "hover", prop_current },
-    { "choices", prop_contents },
-    { "content", prop_contents },
-    { "settings", prop_settings_code },
-    { "tab_ctrl_height", prop_tab_height },
-    { "class", prop_class_name },
-    { "include_file", prop_derived_header },
-
-};
-
-std::map<std::string_view, GenEnum::GenName, std::less<>> import_GenNames = {
-
-    { "Custom", gen_CustomControl },
-    { "Dialog", gen_wxDialog },
-    { "Frame", gen_wxFrame },
-    { "Panel", gen_PanelForm },
-    { "Wizard", gen_wxWizard },
-    { "WizardPageSimple", gen_wxWizardPageSimple },
-    { "bookpage", gen_oldbookpage },
-    { "panewindow", gen_VerticalBoxSizer },
-    { "wxBitmapButton", gen_wxButton },
-    { "wxListCtrl", gen_wxListView },
-    { "wxScintilla", gen_wxStyledTextCtrl },
-
-};
-// clang-format on
 
 GenEnum::PropName ImportXML::MapPropName(std::string_view name) const
 {
@@ -1152,41 +1360,6 @@ GenEnum::GenName ImportXML::MapClassName(std::string_view name) const
     }
     return gen_unknown;
 }
-
-// clang-format off
-std::map<std::string_view, std::string_view, std::less<>> s_map_old_events = {
-
-
-    { "wxEVT_COMMAND_BUTTON_CLICKED",          "wxEVT_BUTTON" },
-    { "wxEVT_COMMAND_CHECKBOX_CLICKED",        "wxEVT_CHECKBOX" },
-    { "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED",    "wxEVT_CHECKLISTBOX" },
-    { "wxEVT_COMMAND_CHOICE_SELECTED",         "wxEVT_CHOICE" },
-    { "wxEVT_COMMAND_COMBOBOX_CLOSEUP",        "wxEVT_COMBOBOX_CLOSEUP" },
-    { "wxEVT_COMMAND_COMBOBOX_DROPDOWN",       "wxEVT_COMBOBOX_DROPDOWN" },
-    { "wxEVT_COMMAND_COMBOBOX_SELECTED",       "wxEVT_COMBOBOX" },
-    { "wxEVT_COMMAND_LISTBOX_DOUBLECLICKED",   "wxEVT_LISTBOX_DCLICK" },
-    { "wxEVT_COMMAND_LISTBOX_SELECTED",        "wxEVT_LISTBOX" },
-    { "wxEVT_COMMAND_MENU_SELECTED",           "wxEVT_MENU" },
-    { "wxEVT_COMMAND_RADIOBOX_SELECTED",       "wxEVT_RADIOBOX" },
-    { "wxEVT_COMMAND_RADIOBUTTON_SELECTED",    "wxEVT_RADIOBUTTON" },
-    { "wxEVT_COMMAND_SCROLLBAR_UPDATED",       "wxEVT_SCROLLBAR" },
-    { "wxEVT_COMMAND_SLIDER_UPDATED",          "wxEVT_SLIDER" },
-    { "wxEVT_COMMAND_TEXT_COPY",               "wxEVT_TEXT_COPY" },
-    { "wxEVT_COMMAND_TEXT_CUT",                "wxEVT_TEXT_CUT" },
-    { "wxEVT_COMMAND_TEXT_ENTER",              "wxEVT_TEXT_ENTER" },
-    { "wxEVT_COMMAND_TEXT_MAXLEN",             "wxEVT_TEXT_MAXLEN" },
-    { "wxEVT_COMMAND_TEXT_PASTE",              "wxEVT_TEXT_PASTE" },
-    { "wxEVT_COMMAND_TEXT_UPDATED",            "wxEVT_TEXT" },
-    { "wxEVT_COMMAND_TEXT_URL",                "wxEVT_TEXT_URL" },
-    { "wxEVT_COMMAND_THREAD",                  "wxEVT_THREAD" },
-    { "wxEVT_COMMAND_TOOL_CLICKED",            "wxEVT_TOOL" },
-    { "wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED",   "wxEVT_TOOL_DROPDOWN" },
-    { "wxEVT_COMMAND_TOOL_ENTER",              "wxEVT_TOOL_ENTER" },
-    { "wxEVT_COMMAND_TOOL_RCLICKED",           "wxEVT_TOOL_RCLICKED" },
-    { "wxEVT_COMMAND_VLBOX_SELECTED",          "wxEVT_VLBOX" },
-
-};
-// clang-format on
 
 ttlib::sview ImportXML::GetCorrectEventName(ttlib::sview name)
 {

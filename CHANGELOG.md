@@ -8,6 +8,8 @@ Release summary...
 ### Added
 
 - Stretchable space can now be added to toolbars.
+- Added support from dropdown toolbar items that contain menu items.
+- You can now set the style and width of each field in a wxStatusBar.
 - XRC now generates XML for toolbar separators.
 
 ### Changed

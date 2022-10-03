@@ -33,6 +33,7 @@ public:
     NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
 
 protected:
+    void ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent);
     std::optional<pugi::xml_document> LoadDocFile(const ttString& file);
     GenEnum::GenName ConvertToGenName(const ttlib::cstr& object_name, Node* parent);
 

@@ -21,6 +21,9 @@ using namespace GenEnum;
 
 // See g_xrc_keywords in generate/gen_xrc_utils.cpp for a list of XRC keywords
 
+namespace xrc_import
+{
+
 std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
 
     { "bg", prop_background_colour },
@@ -36,17 +39,21 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "choices", prop_contents },
     { "class", prop_class_name },
     { "content", prop_contents },
-    { "hover", prop_current },
+    { "flexibledirection", prop_flexible_direction },
+    { "gradient-end", prop_end_colour },
+    { "gradient-start", prop_start_colour },
     { "gravity", prop_sashgravity },
+    { "hover", prop_current },
     { "include_file", prop_derived_header },
     { "longhelp", prop_statusbar },  // Used by toolbar tools
-    { "settings", prop_settings_code },
     { "minsize", prop_min_size },
+    { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
+    { "settings", prop_settings_code },
     { "tab_ctrl_height", prop_tab_height },
 
 };
 
-std::map<std::string_view, GenEnum::GenName, std::less<>> import_GenNames = {
+ std::map<std::string_view, GenEnum::GenName, std::less<>> import_GenNames = {
 
     { "Custom", gen_CustomControl },
     { "Dialog", gen_wxDialog },
@@ -94,7 +101,11 @@ std::map<std::string_view, std::string_view, std::less<>> s_map_old_events = {
     { "wxEVT_COMMAND_VLBOX_SELECTED",          "wxEVT_VLBOX" },
 
 };
-// clang-format on
+    // clang-format on
+
+};  // namespace xrc_import
+
+using namespace xrc_import;
 
 std::optional<pugi::xml_document> ImportXML::LoadDocFile(const ttString& file)
 {
@@ -663,170 +674,259 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
     }
 }
 
+namespace xrc_import
+{
+    enum
+    {
+        xrc_border,
+        xrc_cellpos,
+        xrc_cellspan,
+        xrc_centered,
+        xrc_creating_code,
+        xrc_dropdown,
+        xrc_enabled,
+        xrc_exstyle,
+        xrc_flag,
+        xrc_focused,
+        xrc_handler,
+        xrc_option,
+        xrc_orient,
+        xrc_selected,
+        xrc_selection,
+        xrc_size,
+        xrc_tabs,
+        xrc_subclass,
+
+    };
+
+    // clang-format off
+    std::map<std::string_view, int, std::less<>> unknown_properties = {
+
+        { "border", xrc_border },
+        { "cellpos", xrc_cellpos },
+        { "cellspan", xrc_cellspan },
+        { "centered", xrc_centered },
+        { "creating_code", xrc_creating_code },
+        { "dropdown", xrc_dropdown },
+        { "enabled", xrc_enabled },
+        { "exstyle", xrc_exstyle },
+        { "flag", xrc_flag },
+        { "focused", xrc_focused },
+        { "handler", xrc_handler },
+        { "option", xrc_option },
+        { "orient", xrc_orient },
+        { "selected", xrc_selected },
+        { "selection", xrc_selection },
+        { "size", xrc_size },
+        { "tabs", xrc_tabs },
+        { "subclass", xrc_subclass },
+
+    };
+    // clang-format on
+
+};  // namespace xrc_import
+
 void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent)
 {
-    if (xml_obj.name() == "tabs")
+    // Mapping the strings to an enum is purely for readability -- it's a lot easier to find the unknown property in
+    // a switch statement than it is to find it in a long list of strings comparisons.
+
+    if (auto result = unknown_properties.find(xml_obj.name()); result != unknown_properties.end())
     {
-        ProcessNotebookTabs(xml_obj, node);
-    }
-    else if (xml_obj.name() == "option")
-    {
-        if (auto prop = node->get_prop_ptr(prop_proportion); prop)
+        switch (result->second)
         {
-            prop->set_value(xml_obj.text().as_string());
-        }
-        else
-        {
-            MSG_INFO(ttlib::cstr() << "option specified for node that doesn't have prop_proportion: " << node->DeclName());
+            case xrc_border:
+                node->prop_set_value(prop_border_size, xml_obj.text().as_string());
+                return;
+
+            case xrc_cellpos:
+                if (ttlib::multistr mstr(xml_obj.text().as_string(), ','); mstr.size())
+                {
+                    if (mstr[0].size())
+                        node->prop_set_value(prop_column, mstr[0]);
+                    if (mstr.size() > 1 && mstr[1].size())
+                        node->prop_set_value(prop_row, mstr[1]);
+                }
+                return;
+
+            case xrc_cellspan:
+                if (ttlib::multistr mstr(xml_obj.text().as_string(), ','); mstr.size())
+                {
+                    if (mstr[0].size() && ttlib::atoi(mstr[0]) > 0)
+                        node->prop_set_value(prop_rowspan, mstr[0]);
+                    if (mstr.size() > 1 && mstr[1].size() && ttlib::atoi(mstr[1]) > 0)
+                        node->prop_set_value(prop_colspan, mstr[1]);
+                }
+                return;
+
+            case xrc_centered:
+                if (node->isGen(gen_wxDialog) || node->isGen(gen_wxFrame))
+                {
+                    if (!xml_obj.text().as_bool())
+                        node->prop_set_value(prop_center, "no");
+                    return;  // default is centered, so we don't need to set it
+                }
+                break;
+
+            case xrc_creating_code:
+                // TODO: [KeyWorks - 12-09-2021] This consists of macros that allow the user to override one or more
+                // macros with their own parameter.
+                return;
+
+            case xrc_dropdown:
+                if (node->isGen(gen_tool_dropdown))
+                {
+                    if (auto child_node = xml_obj.child("object"); child_node)
+                    {
+                        // XRC will have a wxMenu as the child of the dropdown object, but what we
+                        // want is the wxMenuItem that is the child of the wxMenu.
+                        for (auto& menu_item: child_node)
+                        {
+                            CreateXrcNode(menu_item, node);
+                        }
+                    }
+                    else
+                    {
+                        MSG_INFO(ttlib::cstr()
+                                 << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
+                    }
+                    return;
+                }
+                break;
+
+            case xrc_enabled:
+                if (!xml_obj.text().as_bool())
+                    node->prop_set_value(prop_disabled, true);
+                return;
+
+            case xrc_exstyle:
+                if (node->isGen(gen_wxDialog))
+                {
+                    node->prop_set_value(prop_extra_style, xml_obj.text().as_string());
+                    return;
+                }
+                break;
+
+            case xrc_flag:
+                if (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem))
+                {
+                    HandleSizerItemProperty(xml_obj, node, parent);
+                }
+                else if (!node->isGen(gen_spacer))
+                {
+                    // spacer's don't use alignment or border styles
+                    MSG_INFO(ttlib::cstr() << xml_obj.name() << " not supported for " << node->DeclName());
+                }
+                return;
+
+            case xrc_focused:
+                if (node->isGen(gen_wxTreeCtrl))
+                {
+                    return;
+                }
+                break;
+
+            case xrc_handler:
+                ProcessHandler(xml_obj, node);
+                return;
+
+            case xrc_option:
+                if (node->HasProp(prop_proportion))
+                {
+                    node->set_value(prop_proportion, xml_obj.text().as_string());
+                }
+                else
+                {
+                    MSG_INFO(ttlib::cstr()
+                             << "\"option\" specified for node that doesn't have prop_proportion: " << node->DeclName());
+                }
+                return;
+
+            case xrc_orient:
+                if (node->HasProp(prop_orientation))
+                {
+                    node->prop_set_value(prop_orientation, xml_obj.text().as_string());
+                    return;
+                }
+                break;
+
+            case xrc_selected:
+                if (node->isGen(gen_oldbookpage))
+                {
+                    node->prop_set_value(prop_select, xml_obj.text().as_bool());
+                    return;
+                }
+                // else if (auto* prop = node->get_prop_ptr(prop_checked); prop)
+                else if (node->HasProp(prop_checked))
+                {
+                    node->prop_set_value(prop_checked, xml_obj.text().as_bool());
+                    return;
+                }
+                break;
+
+            case xrc_selection:
+                if (node->isGen(gen_wxChoice))
+                {
+                    node->prop_set_value(prop_selection_int, xml_obj.text().as_int());
+                    return;
+                }
+                break;
+
+            // REVIEW: [Randalphwa - 10-03-2022] There is a prop_size, so how do we get here?
+            case xrc_size:
+                if (node->isGen(gen_spacer))
+                {
+                    if (ttlib::multistr mstr(xml_obj.text().as_string(), ','); mstr.size())
+                    {
+                        if (mstr[0].size())
+                            node->prop_set_value(prop_width, mstr[0]);
+                        if (mstr.size() > 1 && mstr[1].size())
+                            node->prop_set_value(prop_height, mstr[1]);
+                    }
+                    return;
+                }
+                break;
+
+            case xrc_subclass:
+                if (auto value = xml_obj.text().as_sview(); value.size())
+                {
+                    if (value.contains(";"))
+                    {
+                        // wxFormBuilder breaks this into three fields: class, header, forward_declare. Or at least it is
+                        // supposed to. In version 3.10, it doesn't properly handle an empty class name, so the header file
+                        // can appear first.
+                        ttlib::multistr parts(value, ';', tt::TRIM::both);
+                        if (parts.size() > 0)
+                        {
+                            if (parts[0].contains(".h"))
+                            {
+                                node->prop_set_value(prop_derived_header, parts[0]);
+                            }
+                            else if (parts.size() > 1)
+                            {
+                                node->prop_set_value(prop_derived_class, parts[0]);
+                                if (parts[1].size())
+                                    node->prop_set_value(prop_derived_header, parts[1]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        node->prop_set_value(prop_derived_class, value);
+                    }
+                }
+                return;
+
+            case xrc_tabs:
+                ProcessNotebookTabs(xml_obj, node);
+                return;
+
+            default:
+                break;
         }
     }
 
-    if (xml_obj.name() == "orient")
-    {
-        auto* prop = node->get_prop_ptr(prop_orientation);
-        if (prop)
-        {
-            prop->set_value(xml_obj.text().as_string());
-        }
-    }
-    else if (xml_obj.name() == "border")
-    {
-        node->prop_set_value(prop_border_size, xml_obj.text().as_string());
-    }
-    else if (xml_obj.name() == "selection" && node->isGen(gen_wxChoice))
-    {
-        node->prop_set_value(prop_selection_int, xml_obj.text().as_int());
-    }
-    else if (xml_obj.name() == "selected")
-    {
-        if (node->isGen(gen_oldbookpage))
-            node->prop_set_value(prop_select, xml_obj.text().as_bool());
-        // else if (auto* prop = node->get_prop_ptr(prop_checked); prop)
-        else if (node->HasProp(prop_checked))
-        {
-            node->prop_set_value(prop_checked, xml_obj.text().as_bool());
-        }
-    }
-    else if (xml_obj.name() == "enabled")
-    {
-        if (!xml_obj.text().as_bool())
-            node->prop_set_value(prop_disabled, true);
-    }
-    else if (xml_obj.name() == "subclass")
-    {
-        // wxFormBuilder and XRC use the same name, but but it has different meanings.
-        auto value = xml_obj.text().as_sview();
-        if (value.empty())
-            return;
-        if (value.contains(";"))
-        {
-            // wxFormBuilder breaks this into three fields: class, header, forward_declare. Or at least it is supposed
-            // to. In version 3.10, it doesn't properly handle an empty class name, so the header file can appear first.
-            ttlib::multistr parts(value, ';', tt::TRIM::both);
-            if (parts.size() > 0)
-            {
-                if (parts[0].contains(".h"))
-                {
-                    node->prop_set_value(prop_derived_header, parts[0]);
-                }
-                else if (parts.size() > 1)
-                {
-                    node->prop_set_value(prop_derived_class, parts[0]);
-                    if (parts[1].size())
-                        node->prop_set_value(prop_derived_header, parts[1]);
-                }
-            }
-        }
-        else
-        {
-            node->prop_set_value(prop_derived_class, value);
-        }
-    }
-    else if (xml_obj.name() == "creating_code")
-    {
-        // TODO: [KeyWorks - 12-09-2021] This consists of macros that allow the user to override one or more macros with
-        // their own parameter.
-    }
-    else if (xml_obj.name() == "flag")
-    {
-        if (node->isGen(gen_sizeritem) || node->isGen(gen_gbsizeritem))
-            HandleSizerItemProperty(xml_obj, node, parent);
-        else if (!node->isGen(gen_spacer))
-        {  // spacer's don't use alignment or border styles
-            MSG_INFO(ttlib::cstr() << xml_obj.name() << " not supported for " << node->DeclName());
-        }
-    }
-    else if (xml_obj.name() == "handler")
-    {
-        ProcessHandler(xml_obj, node);
-    }
-    else if (xml_obj.name() == "exstyle" && node->isGen(gen_wxDialog))
-    {
-        node->prop_set_value(prop_extra_style, xml_obj.text().as_string());
-    }
-    else if (xml_obj.name() == "cellpos")
-    {
-        ttlib::multistr mstr(xml_obj.text().as_string(), ',');
-        if (mstr.size())
-        {
-            if (mstr[0].size())
-                node->prop_set_value(prop_column, mstr[0]);
-            if (mstr.size() > 1 && mstr[1].size())
-                node->prop_set_value(prop_row, mstr[1]);
-        }
-    }
-    else if (xml_obj.name() == "cellspan")
-    {
-        ttlib::multistr mstr(xml_obj.text().as_string(), ',');
-        if (mstr.size())
-        {
-            if (mstr[0].size() && ttlib::atoi(mstr[0]) > 0)
-                node->prop_set_value(prop_rowspan, mstr[0]);
-            if (mstr.size() > 1 && mstr[1].size() && ttlib::atoi(mstr[1]) > 0)
-                node->prop_set_value(prop_colspan, mstr[1]);
-        }
-    }
-    else if (xml_obj.name() == "size" && node->isGen(gen_spacer))
-    {
-        ttlib::multistr mstr(xml_obj.text().as_string(), ',');
-        if (mstr.size())
-        {
-            if (mstr[0].size())
-                node->prop_set_value(prop_width, mstr[0]);
-            if (mstr.size() > 1 && mstr[1].size())
-                node->prop_set_value(prop_height, mstr[1]);
-        }
-    }
-    else if (xml_obj.name() == "centered" && (node->isGen(gen_wxDialog) || node->isGen(gen_wxFrame)))
-    {
-        if (!xml_obj.text().as_bool())
-            node->prop_set_value(prop_center, "no");
-        return;  // default is centered, so we don't need to set it
-    }
-    else if (xml_obj.name() == "focused" && node->isGen(gen_wxTreeCtrl))
-    {
-        return;  // since we don't add anything to a wxTreeCtrl, we can't set something as the focus
-    }
-    else if (ttlib::is_sameas(xml_obj.name(), "dropdown", tt::CASE::either) && node->isGen(gen_tool_dropdown))
-    {
-        if (auto child_node = xml_obj.child("object"); child_node)
-        {
-            // XRC will have a wxMenu as the child of the dropdown object, but what we
-            // want is the wxMenuItem that is the child of the wxMenu.
-            for (auto& menu_item: child_node)
-            {
-                CreateXrcNode(menu_item, node);
-            }
-        }
-        else
-        {
-            MSG_INFO(ttlib::cstr() << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
-        }
-    }
-    else
-    {
-        MSG_INFO(ttlib::cstr() << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
-    }
+    MSG_INFO(ttlib::cstr() << "Unrecognized property: " << xml_obj.name() << " for " << node->DeclName());
 }
 
 void ImportXML::ProcessContent(const pugi::xml_node& xml_obj, Node* node)

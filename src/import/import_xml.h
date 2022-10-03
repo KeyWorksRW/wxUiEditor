@@ -34,6 +34,7 @@ public:
 
     // Only call this from an XRC importer (e.g., wxSMITH)
     NodeSharedPtr CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, Node* sizeritem = nullptr);
+
 protected:
     void ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent);
     std::optional<pugi::xml_document> LoadDocFile(const ttString& file);

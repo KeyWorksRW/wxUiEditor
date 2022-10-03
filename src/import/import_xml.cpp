@@ -26,30 +26,45 @@ namespace xrc_import
 
 std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
 
-    { "bg", prop_background_colour },
-    { "fg", prop_foreground_colour },
-    { "bitmapsize", prop_image_size },  // BUGBUG: [Randalphwa - 06-17-2022] should this be prop_bitmapsize?
-
+    { "accel", prop_shortcut },
     { "art-provider", prop_art_provider },
+    { "bg", prop_background_colour },
     { "bitmap-bg", prop_bmp_background_colour },
     { "bitmap-minwidth", prop_bmp_min_width },
     { "bitmap-placement", prop_bmp_placement },
-    { "empty_cellsize", prop_empty_cell_size },
-
+    { "bitmapposition", prop_position },
+    { "bitmapsize", prop_image_size },  // BUGBUG: [Randalphwa - 06-17-2022] should this be prop_bitmapsize?
     { "choices", prop_contents },
     { "class", prop_class_name },
     { "content", prop_contents },
+    { "defaultdirectory", prop_initial_folder },
+    { "defaultfilename", prop_initial_filename },
+    { "dimension", prop_majorDimension },
+    { "effectduration", prop_duration },
+    { "empty_cellsize", prop_empty_cell_size },
+    { "fg", prop_foreground_colour },
     { "flexibledirection", prop_flexible_direction },
     { "gradient-end", prop_end_colour },
     { "gradient-start", prop_start_colour },
     { "gravity", prop_sashgravity },
+    { "hideeffect", prop_hide_effect },
     { "hover", prop_current },
+    { "inactive-bitmap", prop_inactive_bitmap },
     { "include_file", prop_derived_header },
+    { "linesize", prop_line_size },
     { "longhelp", prop_statusbar },  // Used by toolbar tools
     { "minsize", prop_min_size },
     { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
+    { "pagesize", prop_page_size },
+    { "selmax", prop_sel_end },
+    { "selmin", prop_sel_start },
     { "settings", prop_settings_code },
+    { "showeffect", prop_show_effect },
     { "tab_ctrl_height", prop_tab_height },
+    { "thumb", prop_thumb_length },
+    { "tickfreq", prop_tick_frequency },
+    { "windowlabel", prop_tab_height },
+    { "wrapmode", prop_stc_wrap_mode },
 
 };
 
@@ -682,7 +697,9 @@ namespace xrc_import
         xrc_cellpos,
         xrc_cellspan,
         xrc_centered,
+        xrc_checkable,
         xrc_creating_code,
+        xrc_depth,
         xrc_dropdown,
         xrc_enabled,
         xrc_exstyle,
@@ -691,11 +708,13 @@ namespace xrc_import
         xrc_handler,
         xrc_option,
         xrc_orient,
+        xrc_radio,
         xrc_selected,
         xrc_selection,
         xrc_size,
-        xrc_tabs,
         xrc_subclass,
+        xrc_tabs,
+        xrc_toggle,
 
     };
 
@@ -706,7 +725,9 @@ namespace xrc_import
         { "cellpos", xrc_cellpos },
         { "cellspan", xrc_cellspan },
         { "centered", xrc_centered },
+        { "checkable", xrc_checkable },
         { "creating_code", xrc_creating_code },
+        { "depth", xrc_depth },
         { "dropdown", xrc_dropdown },
         { "enabled", xrc_enabled },
         { "exstyle", xrc_exstyle },
@@ -715,11 +736,13 @@ namespace xrc_import
         { "handler", xrc_handler },
         { "option", xrc_option },
         { "orient", xrc_orient },
+        { "radio", xrc_radio },
         { "selected", xrc_selected },
         { "selection", xrc_selection },
         { "size", xrc_size },
-        { "tabs", xrc_tabs },
         { "subclass", xrc_subclass },
+        { "tabs", xrc_tabs },
+        { "toggle", xrc_toggle },
 
     };
     // clang-format on
@@ -728,8 +751,9 @@ namespace xrc_import
 
 void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node, Node* parent)
 {
-    // Mapping the strings to an enum is purely for readability -- it's a lot easier to find the unknown property in
-    // a switch statement than it is to find it in a long list of strings comparisons.
+    // Mapping the strings to an enum is purely for readability -- it's a lot easier to find
+    // the unknown property in a switch statement than it is to find it in a long list of
+    // strings comparisons.
 
     if (auto result = unknown_properties.find(xml_obj.name()); result != unknown_properties.end())
     {
@@ -768,9 +792,18 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 }
                 break;
 
+            case xrc_checkable:
+                node->prop_set_value(prop_kind, "wxITEM_CHECK");
+                return;
+
             case xrc_creating_code:
-                // TODO: [KeyWorks - 12-09-2021] This consists of macros that allow the user to override one or more
-                // macros with their own parameter.
+                // TODO: [KeyWorks - 12-09-2021] This consists of macros that allow the user
+                // to override one or more macros with their own parameter.
+                return;
+
+            case xrc_depth:
+                // depth is used by wxTreeCtrl to indicate the depth of the item. wxUE should
+                // be able to calculate this, so it doesn't use the property.
                 return;
 
             case xrc_dropdown:
@@ -850,8 +883,12 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
                 }
                 break;
 
+            case xrc_radio:
+                node->prop_set_value(prop_kind, "wxITEM_RADIO");
+                return;
+
             case xrc_selected:
-                if (node->isGen(gen_oldbookpage))
+                if (node->isGen(gen_oldbookpage) || node->isGen(gen_BookPage))
                 {
                     node->prop_set_value(prop_select, xml_obj.text().as_bool());
                     return;
@@ -919,6 +956,10 @@ void ImportXML::ProcessUnknownProperty(const pugi::xml_node& xml_obj, Node* node
 
             case xrc_tabs:
                 ProcessNotebookTabs(xml_obj, node);
+                return;
+
+            case xrc_toggle:
+                node->prop_set_value(prop_kind, "wxITEM_CHECK");
                 return;
 
             default:

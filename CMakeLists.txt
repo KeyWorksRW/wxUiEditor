@@ -12,12 +12,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (MSVC)
     # /O1 often results in faster code than /O2 due to CPU caching
-    string(REPLACE "/O2" "/O1" cl_optimize ${CMAKE_CXX_FLAGS_RELEASE})
+    string(REPLACE "/O2" "/O1" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 
     # Using /Z7 instead of /Zi to avoid blocking while parallel compilers write to the pdb file.
     # This can considerably speed up build times at the cost of larger object files.
-    string(REPLACE "/Zi" "/Z7" z_seven ${CMAKE_CXX_FLAGS_DEBUG})
+    string(REPLACE "/Zi" "/Z7" z_seven "${CMAKE_CXX_FLAGS_DEBUG}")
     set(CMAKE_CXX_FLAGS_DEBUG ${z_seven} CACHE STRING "C++ Debug flags" FORCE)
 
     # Use static runtime for Release builds to run with Wine without needing to install the dlls
@@ -25,7 +25,7 @@ if (MSVC)
 else()
     # This should work for gcc and clang (including xcode which is based on clang)
     # -O2 can result in faster code than -O3 due to CPU caching.
-    string(REPLACE "-O3" "-O2" cl_optimize ${CMAKE_CXX_FLAGS_RELEASE})
+    string(REPLACE "-O3" "-O2" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 endif()
 

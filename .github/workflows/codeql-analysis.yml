@@ -6,10 +6,10 @@ on:
       - main
     paths-ignore:
       - src/art_src
+      - src/internal
       - docs
       - import_tests
-      - testing
-      - ttLib
+      - ttLib_wx
       - wxSnapshot
 
 env:

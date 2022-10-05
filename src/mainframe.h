@@ -365,6 +365,7 @@ protected:
 #if defined(_DEBUG)  // Starts debug section.
 
     void OnTestXrcImport(wxCommandEvent& e);
+    void OnTestXrcDuplicate(wxCommandEvent& e);
 
 #endif
 

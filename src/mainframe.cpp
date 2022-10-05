@@ -78,6 +78,7 @@ enum
 
     id_DebugCurrentTest,
     id_DebugXrcImport,
+    id_DebugXrcDuplicate,
     id_DebugPreferences,
     id_ConvertImage,
     id_ShowLogger,
@@ -171,9 +172,18 @@ MainFrame::MainFrame() :
     menuInternal->Append(id_DebugPreferences, "Test &Settings...", "Settings to use in testing builds");
     menuInternal->AppendSeparator();
     menuInternal->Append(id_DebugCurrentTest, "&Current Test", "Current debugging test");
+
+    ////////////////////// Debug-only menu items //////////////////////
     #if defined(_DEBUG)
-    menuInternal->Append(id_DebugXrcImport, "&Text XRC import", "Export the current form, then verify importing it");
+
+    item = menuInternal->Append(id_DebugXrcImport, "&Text XRC import", "Export the current form, then verify importing it");
+    item->SetBitmap(bundle_import_svg(16, 16));
+    menuInternal->Append(id_DebugXrcDuplicate, "&Text XRC duplication",
+                         "Duplicate the current form via Export and Import XRC");
+
     #endif
+    ////////////////////// End Debug-only menu items //////////////////////
+
     menuInternal->Append(id_ConvertImage, "&Convert Image...", "Image conversion testing...");
 
     menuInternal->AppendSeparator();
@@ -200,9 +210,11 @@ MainFrame::MainFrame() :
 
     m_toolbar->AddTool(id_CompareXrcDlg, "Compare C++/XRC...", bundle_xrc_compare_svg(24, 24),
                        "Compare C++/XRC generated forms");
+
     #if defined(_DEBUG)
     m_toolbar->AddTool(id_DebugXrcImport, "Test XRC import", bundle_import_svg(24, 24), "Test XRC import");
     #endif
+
     m_toolbar->Realize();
 
 #endif
@@ -344,6 +356,7 @@ MainFrame::MainFrame() :
 
 #if defined(_DEBUG)
     Bind(wxEVT_MENU, &MainFrame::OnTestXrcImport, this, id_DebugXrcImport);
+    Bind(wxEVT_MENU, &MainFrame::OnTestXrcDuplicate, this, id_DebugXrcDuplicate);
 #endif
 
     AddCustomEventHandler(GetEventHandler());

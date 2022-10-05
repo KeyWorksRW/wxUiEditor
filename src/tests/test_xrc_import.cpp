@@ -14,6 +14,7 @@
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
 #include "project_class.h"             // Project class
+#include "undo_cmds.h"                 // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 #include "pugixml.hpp"
 
@@ -90,5 +91,64 @@ void MainFrame::OnTestXrcImport(wxCommandEvent& /* event */)
     else
     {
         MSG_INFO("Node counts match");
+    }
+}
+
+void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
+{
+    if (!m_selected_node)
+    {
+        wxMessageBox("You need to select a form first.", "Compare");
+        return;
+    }
+
+    if (m_selected_node.get() == GetProject())
+    {
+        wxMessageBox("You cannot duplicate the entire project, only forms.", "Test XRC Duplicate");
+        return;
+    }
+
+    auto form_node = m_selected_node.get();
+    if (!form_node->IsForm())
+    {
+        form_node = form_node->get_form();
+    }
+
+    pugi::xml_document doc;
+    {
+        // Place this in a block so that the string is destroyed before we process the XML
+        // document (to save allocated memory).
+        auto doc_str = GenerateXrcStr(form_node, xrc::no_flags);
+        auto result = doc.load_string(doc_str.c_str());
+        if (!result)
+        {
+            wxMessageBox("Error parsing XRC document: " + ttlib::cstr(result.description()), "XRC Import Test");
+            return;
+        }
+    }
+
+    auto root = doc.first_child();
+    if (!ttlib::is_sameas(root.name(), "resource", tt::CASE::either))
+    {
+        wxMessageBox("Invalid XRC -- no resource object", "Import XRC Test");
+        return;
+    }
+
+    WxSmith doc_import;
+
+    auto first_child = root.first_child();
+    auto new_node = doc_import.CreateXrcNode(first_child, nullptr);
+    if (new_node)
+    {
+        ttlib::cstr undo_str("duplicate ");
+        undo_str << new_node->DeclName();
+        auto pos = GetProject()->FindInsertionPos(form_node);
+        PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), GetProject(), undo_str, pos));
+        FireCreatedEvent(new_node);
+        SelectNode(new_node, evt_flags::queue_event);
+    }
+    else
+    {
+        MSG_ERROR("Failed to create node");
     }
 }

@@ -193,7 +193,7 @@ static const auto lstStdButtonEvents = {
 
 #include "utils.h"  // for old style art indices
 
-NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
+NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent, bool check_for_duplicates)
 {
     auto class_name = xml_obj.attribute("class").as_std_str();
     if (class_name.empty())
@@ -403,6 +403,10 @@ NodeSharedPtr NodeCreator::CreateNode(pugi::xml_node& xml_obj, Node* parent)
 
     if (parent)
     {
+        // Order is important -- don't call GetProject() if check_for_duplicates is false
+        // because there may not be a project yet.
+        if (check_for_duplicates && parent == GetProject())
+            GetProject()->FixupDuplicatedNode(new_node.get());
         parent->Adopt(new_node);
     }
 
@@ -782,6 +786,7 @@ void App::AppendWinRes(const ttlib::cstr& rc_file, std::vector<ttlib::cstr>& dia
         for (const auto& child: project->GetChildNodePtrs())
         {
             auto new_node = g_NodeCreator.MakeCopy(child);
+            GetProject()->FixupDuplicatedNode(new_node.get());
             m_project->Adopt(new_node);
         }
 
@@ -811,7 +816,7 @@ void App::AppendCrafter(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get());
+                g_NodeCreator.CreateNode(form, m_project.get(), true);
                 form = form.next_sibling("node");
             }
         }
@@ -841,7 +846,7 @@ void App::AppendFormBuilder(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get());
+                g_NodeCreator.CreateNode(form, m_project.get(), true);
                 form = form.next_sibling("node");
             }
         }
@@ -871,7 +876,7 @@ void App::AppendGlade(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get());
+                g_NodeCreator.CreateNode(form, m_project.get(), true);
                 form = form.next_sibling("node");
             }
         }
@@ -901,7 +906,7 @@ void App::AppendSmith(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get());
+                g_NodeCreator.CreateNode(form, m_project.get(), true);
                 form = form.next_sibling("node");
             }
         }
@@ -932,7 +937,7 @@ void App::AppendXRC(wxArrayString& files)
             auto form = project.child("node");
             while (form)
             {
-                g_NodeCreator.CreateNode(form, m_project.get());
+                g_NodeCreator.CreateNode(form, m_project.get(), true);
                 form = form.next_sibling("node");
             }
         }

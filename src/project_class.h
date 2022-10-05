@@ -33,6 +33,9 @@ class Project : public Node
 public:
     Project(NodeDeclaration* declaration) : Node(declaration) {}
 
+    // Make class and filenames unique to the project
+    void FixupDuplicatedNode(Node* new_node);
+
     // This will parse the entire project, and ensure that each embedded image is associated
     // with the form node of the form it first appears in.
     //

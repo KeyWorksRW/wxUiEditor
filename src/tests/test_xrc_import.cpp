@@ -140,6 +140,7 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
     auto new_node = doc_import.CreateXrcNode(first_child, nullptr);
     if (new_node)
     {
+        GetProject()->FixupDuplicatedNode(new_node.get());
         ttlib::cstr undo_str("duplicate ");
         undo_str << new_node->DeclName();
         auto pos = GetProject()->FindInsertionPos(form_node);

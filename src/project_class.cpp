@@ -627,6 +627,72 @@ Node* Project::GetFirstFormChild()
     return nullptr;
 }
 
+inline static void CreateUniqueName(std::set<std::string_view>& set_names, PropName prop, Node* new_node)
+{
+    if (new_node->HasValue(prop))
+    {
+        if (set_names.contains(new_node->value(prop)))
+        {
+            ttlib::cstr new_name = new_node->value(prop);
+            if (!new_name.contains("_copy"))
+                new_name << "_copy";
+            if (set_names.contains(new_name))
+            {
+                ttlib::cstr copy_name = new_name;
+                while (ttlib::is_digit(copy_name.back()))
+                {
+                    // remove any trailing digits
+                    copy_name.erase(copy_name.size() - 1, 1);
+                }
+                if (copy_name.back() == '_')
+                {
+                    copy_name.erase(copy_name.size() - 1, 1);
+                }
+
+                for (int i = 2;; ++i)
+                {
+                    new_name.clear();
+                    new_name << copy_name << '_' << i;
+                    if (!set_names.contains(new_name))
+                        break;
+                }
+            }
+            new_node->set_value(prop, new_name);
+        }
+    }
+}
+
+void Project::FixupDuplicatedNode(Node* new_node)
+{
+    std::set<std::string_view> base_classnames;
+    std::set<std::string_view> derived_classnames;
+    std::set<std::string_view> base_filename;
+    std::set<std::string_view> derived_filename;
+    std::set<std::string_view> xrc_filename;
+
+    // Collect all of the class and filenames in use by each form so we can make sure the new
+    // form doesn't use any of them.
+    for (auto& iter: GetChildNodePtrs())
+    {
+        if (iter->HasValue(prop_class_name))
+            base_classnames.insert(iter->value(prop_class_name));
+        if (iter->HasValue(prop_derived_class_name))
+            derived_classnames.insert(iter->value(prop_derived_class_name));
+        if (iter->HasValue(prop_base_file))
+            base_filename.insert(iter->value(prop_base_file));
+        if (iter->HasValue(prop_derived_file))
+            derived_filename.insert(iter->value(prop_derived_file));
+        if (iter->HasValue(prop_xrc_file))
+            xrc_filename.insert(iter->value(prop_xrc_file));
+    }
+
+    CreateUniqueName(base_classnames, prop_class_name, new_node);
+    CreateUniqueName(derived_classnames, prop_derived_class_name, new_node);
+    CreateUniqueName(base_filename, prop_base_file, new_node);
+    CreateUniqueName(derived_filename, prop_derived_file, new_node);
+    CreateUniqueName(xrc_filename, prop_xrc_file, new_node);
+}
+
 wxBitmapBundle Project::GetBitmapBundle(const ttlib::cstr& description, Node* node)
 {
     if (description.starts_with("Embed;") || description.starts_with("XPM;") || description.starts_with("Header;") ||

@@ -59,8 +59,7 @@ public:
     // This returns the integer value of most wx constants used in various components
     int GetConstantAsInt(const std::string& name, int defValue = 0) const;
 
-    // Only use this with .wxui projects -- it will fail on a .fbp project
-    NodeSharedPtr CreateNode(pugi::xml_node& node, Node* parent = nullptr);
+    NodeSharedPtr CreateNode(pugi::xml_node& node, Node* parent = nullptr, bool check_for_duplicates = false);
 
     // Only use this with .wxui projects -- it will fail on a .fbp project
     ProjectSharedPtr CreateProjectClass(pugi::xml_node* xml_obj);

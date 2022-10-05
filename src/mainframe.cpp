@@ -1412,6 +1412,8 @@ void MainFrame::PasteNode(Node* parent)
     }
 
     auto new_node = g_NodeCreator.MakeCopy(m_clipboard);
+    if (new_node->IsForm())
+        GetProject()->FixupDuplicatedNode(new_node.get());
 
     if (!parent->IsChildAllowed(new_node))
     {
@@ -1446,6 +1448,8 @@ void MainFrame::DuplicateNode(Node* node)
     ASSERT(node->GetParent());
 
     auto new_node = g_NodeCreator.MakeCopy(node);
+    if (new_node->IsForm())
+        GetProject()->FixupDuplicatedNode(new_node.get());
     auto* parent = node->GetParent();
     if (parent->isGen(gen_wxGridBagSizer))
     {

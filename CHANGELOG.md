@@ -15,10 +15,11 @@ Release summary...
 ### Changed
 
 - A user can no longer enter an invalid C++ variable name.
-- XRC files now include a comment warning that regeneration will eliminate any hand edits.
-- `Generate XRC files...` on Tools menu now launches a dialog allowing you to choose between combined or individually generated XRC files.
 - wxStatusBar `fields` property now supports unique width and style for each field.
 - `contents` property for wxCheckListBox and wxRearrangeCtrl now supports setting initial checked state for each string.
+- When a form is duplicated, the class name and any filenames specified for the form are now unique within the project.
+- XRC files now include a comment warning that regeneration will eliminate any hand edits.
+- `Generate XRC files...` on Tools menu now launches a dialog allowing you to choose between combined or individually generated XRC files.
 - Improved XRC generation of optional static line above a standard dialog button -- this now matches what the C++ version would look like.
 
 ### Fixed

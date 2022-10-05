@@ -145,7 +145,7 @@ void MainFrame::OnTestXrcDuplicate(wxCommandEvent& /* event */)
         auto pos = GetProject()->FindInsertionPos(form_node);
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), GetProject(), undo_str, pos));
         FireCreatedEvent(new_node);
-        SelectNode(new_node);
+        SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     }
     else
     {

@@ -1461,7 +1461,7 @@ void MainFrame::DuplicateNode(Node* node)
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
         m_selected_node = new_node;
         FireCreatedEvent(new_node);
-        SelectNode(new_node);
+        SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     }
 }
 

@@ -56,6 +56,7 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "minsize", prop_min_size },
     { "nonflexiblegrowmode", prop_non_flexible_grow_mode },
     { "pagesize", prop_page_size },
+    { "running", prop_auto_start },
     { "selmax", prop_sel_end },
     { "selmin", prop_sel_start },
     { "settings", prop_settings_code },

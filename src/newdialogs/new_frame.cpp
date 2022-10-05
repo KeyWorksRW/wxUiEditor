@@ -71,7 +71,7 @@ void NewFrame::CreateNode()
     ttlib::cstr undo_str("New wxFrame");
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(form_node.get(), project, undo_str, -1));
     wxGetFrame().FireCreatedEvent(form_node);
-    wxGetFrame().SelectNode(form_node, evt_flags::fire_event & evt_flags::force_selection);
+    wxGetFrame().SelectNode(form_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(form_node.get(), true, true);
 
     // If it's a mainframe then bars were probably added, so it makes sense to switch to the Bars ribbon bar page since

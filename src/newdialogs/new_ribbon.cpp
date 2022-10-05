@@ -106,7 +106,7 @@ void NewRibbon::CreateNode()
     }
 
     wxGetFrame().FireCreatedEvent(bar_node);
-    wxGetFrame().SelectNode(bar_node, evt_flags::fire_event & evt_flags::force_selection);
+    wxGetFrame().SelectNode(bar_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(bar_node.get(), true, true);
 
     // This probably already is activated, but let's be sure

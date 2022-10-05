@@ -67,7 +67,7 @@ void NewWizard::CreateNode()
     ttlib::cstr undo_str("New wxWizard");
     wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), project, undo_str, -1));
     wxGetFrame().FireCreatedEvent(new_node);
-    wxGetFrame().SelectNode(new_node, evt_flags::fire_event & evt_flags::force_selection);
+    wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
     wxGetFrame().GetNavigationPanel()->ChangeExpansion(new_node.get(), true, true);
 }
 

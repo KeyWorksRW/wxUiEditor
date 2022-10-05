@@ -420,7 +420,7 @@ void AppendGridBagAction::Change()
     }
 
     wxGetFrame().FireCreatedEvent(m_node);
-    wxGetFrame().SelectNode(m_node, evt_flags::fire_event & evt_flags::force_selection);
+    wxGetFrame().SelectNode(m_node, evt_flags::fire_event | evt_flags::force_selection);
 }
 
 void AppendGridBagAction::Revert()

@@ -122,7 +122,7 @@ bool GridBag::InsertNode(Node* gbsizer, Node* new_node)
     new_node->SetParent(gbsizer);
     undo_cmd->Update();
     wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
-    wxGetFrame().SelectNode(new_node, evt_flags::fire_event & evt_flags::force_selection);
+    wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
 
     return true;
 }
@@ -306,7 +306,7 @@ void GridBag::MoveLeft(Node* node)
     // This needs to be called once the gbsizer has been modified
     undo_cmd->Update();
     wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
-    wxGetFrame().SelectNode(node, evt_flags::fire_event & evt_flags::force_selection);
+    wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
 }
 
 void GridBag::MoveRight(Node* node)
@@ -352,7 +352,7 @@ void GridBag::MoveRight(Node* node)
 
     undo_cmd->Update();
     wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
-    wxGetFrame().SelectNode(node, evt_flags::fire_event & evt_flags::force_selection);
+    wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
 }
 
 void GridBag::MoveUp(Node* node)
@@ -396,7 +396,7 @@ void GridBag::MoveUp(Node* node)
             ++begin_position;
         }
         undo_cmd->Update();
-        wxGetFrame().SelectNode(node, evt_flags::fire_event & evt_flags::force_selection);
+        wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
         return;
     }
 
@@ -426,7 +426,7 @@ void GridBag::MoveUp(Node* node)
 
     undo_cmd->Update();
     wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
-    wxGetFrame().SelectNode(node, evt_flags::fire_event & evt_flags::force_selection);
+    wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
 }
 
 void GridBag::MoveDown(Node* node)
@@ -470,7 +470,7 @@ void GridBag::MoveDown(Node* node)
             ++begin_position;
         }
         undo_cmd->Update();
-        wxGetFrame().SelectNode(node, evt_flags::fire_event & evt_flags::force_selection);
+        wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
         return;
     }
 
@@ -495,5 +495,5 @@ void GridBag::MoveDown(Node* node)
 
     undo_cmd->Update();
     wxGetFrame().FireGridBagActionEvent(undo_cmd.get());
-    wxGetFrame().SelectNode(node, evt_flags::fire_event & evt_flags::force_selection);
+    wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
 }

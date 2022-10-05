@@ -193,18 +193,19 @@ void NavigationPanel::OnSelChanged(wxTreeEvent& event)
 
     if (auto iter = m_tree_node_map.find(id); iter != m_tree_node_map.end())
     {
-        // Selecting a node can result in multiple selection events getting fired as the Mockup selects the current dialog,
-        // and the current book or page. In some cases a generator will also fire off a selection even when mockup set the
-        // current page (e.g., wxEVT_NOTEBOOK_PAGE_CHANGED). There's no reason for the property grid to update itself until
-        // we're done, so we lock it before the initial selection event.
+        // Selecting a node can result in multiple selection events getting fired as the
+        // Mockup selects the current dialog, and the current book or page. In some cases a
+        // generator will also fire off a selection event when mockup sets the current page
+        // (e.g., wxEVT_NOTEBOOK_PAGE_CHANGED). There's no reason for the property grid to
+        // update itself until we're done, so we lock it before the initial selection event.
 
         m_isSelChangeSuspended = true;
         m_pMainFrame->GetPropPanel()->Lock();
         m_pMainFrame->SelectNode(iter->second);
         m_pMainFrame->GetPropPanel()->UnLock();
 
-        // It's possible for Mockup to select a page, so we need to be certain everything is synced after the initial
-        // selection.
+        // It's possible for Mockup to select a page, so we need to be certain everything is
+        // synced after the initial selection.
 
         if (iter->second != m_pMainFrame->GetSelectedNode())
             m_pMainFrame->SelectNode(iter->second);

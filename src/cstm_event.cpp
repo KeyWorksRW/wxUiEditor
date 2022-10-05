@@ -37,6 +37,12 @@ void MainFrame::FireProjectLoadedEvent()
     {
         handler->ProcessEvent(event);
     }
+
+    CustomEvent node_event(EVT_NodeSelected, m_selected_node.get());
+    for (auto handler: m_custom_event_handlers)
+    {
+        handler->ProcessEvent(node_event);
+    }
 }
 
 void MainFrame::FireSelectedEvent(Node* node, size_t flags)

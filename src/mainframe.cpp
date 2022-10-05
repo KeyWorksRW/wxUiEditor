@@ -758,8 +758,6 @@ void MainFrame::ProjectLoaded()
     }
 
     m_selected_node = wxGetApp().GetProjectPtr();
-    // Queue the event so that everyone finishes process project loaded event.
-    FireSelectedEvent(m_selected_node, evt_flags::queue_event);
 }
 
 void MainFrame::ProjectSaved()
@@ -771,7 +769,7 @@ void MainFrame::ProjectSaved()
 void MainFrame::OnNodeSelected(CustomEvent& event)
 {
     // This event is normally only fired if the current selection has changed. We dismiss any previous infobar message, and
-    // check to see if the current selection has any kind of issu that we should warn the user about.
+    // check to see if the current selection has any kind of issue that we should warn the user about.
     m_info_bar->Dismiss();
 
     auto evt_flags = event.GetNode();
@@ -1439,7 +1437,7 @@ void MainFrame::PasteNode(Node* parent)
     auto pos = parent->FindInsertionPos(m_selected_node);
     PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
     FireCreatedEvent(new_node);
-    SelectNode(new_node, evt_flags::fire_event & evt_flags::force_selection);
+    SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
 }
 
 void MainFrame::DuplicateNode(Node* node)
@@ -1461,8 +1459,9 @@ void MainFrame::DuplicateNode(Node* node)
         undo_str << node->DeclName();
         auto pos = parent->FindInsertionPos(m_selected_node);
         PushUndoAction(std::make_shared<InsertNodeAction>(new_node.get(), parent, undo_str, pos));
+        m_selected_node = new_node;
         FireCreatedEvent(new_node);
-        SelectNode(new_node, evt_flags::queue_event);
+        SelectNode(new_node);
     }
 }
 
@@ -1871,7 +1870,7 @@ void MainFrame::OnFindWidget(wxCommandEvent& WXUNUSED(event))
             auto found_node = FindChildNode(start_node, result->second);
             if (found_node)
             {
-                SelectNode(found_node, evt_flags::fire_event & evt_flags::force_selection);
+                SelectNode(found_node, evt_flags::fire_event | evt_flags::force_selection);
             }
             else
             {

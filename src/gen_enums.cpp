@@ -370,6 +370,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_underlined, "underlined" },
     { prop_url, "url" },
     { prop_use_derived_class, "use_derived_class" },
+    { prop_use_generic, "use_generic" },
     { prop_use_tabs, "use_tabs" },
     { prop_user_cpp_code, "user_cpp_code" },
     { prop_validator_data_type, "validator_data_type" },

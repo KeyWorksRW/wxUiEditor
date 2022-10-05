@@ -5,7 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx/animate.h>  // wxAnimation and wxAnimationCtrl
+#include <wx/animate.h>          // wxAnimation and wxAnimationCtrl
+#include <wx/generic/animate.h>  // wxGenericAnimationCtrl
 
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
@@ -19,14 +20,30 @@
 wxObject* AnimationGenerator::CreateMockup(Node* node, wxObject* parent)
 {
     auto animation = node->prop_as_wxAnimation(prop_animation);
-    auto widget = new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
-                                      DlgSize(parent, node, prop_size), GetStyleInt(node));
+    if (!node->as_bool(prop_use_generic))
+    {
+        auto widget =
+            new wxAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
+                                DlgSize(parent, node, prop_size), GetStyleInt(node));
 
-    widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
-    if (animation.IsOk())
-        widget->Play();
+        widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+        if (animation.IsOk())
+            widget->Play();
 
-    return widget;
+        return widget;
+    }
+    else
+    {
+        auto widget =
+            new wxGenericAnimationCtrl(wxStaticCast(parent, wxWindow), wxID_ANY, animation, DlgPoint(parent, node, prop_pos),
+                                       DlgSize(parent, node, prop_size), GetStyleInt(node));
+
+        widget->Bind(wxEVT_LEFT_DOWN, &BaseGenerator::OnLeftClick, this);
+        if (animation.IsOk())
+            widget->Play();
+
+        return widget;
+    }
 }
 
 std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
@@ -34,7 +51,7 @@ std::optional<ttlib::cstr> AnimationGenerator::GenConstruction(Node* node)
     ttlib::cstr code;
     if (node->IsLocal())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
+    code << node->get_node_name() << GenerateNewAssignment(node, node->as_bool(prop_use_generic));
     code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
 
     if (node->HasValue(prop_animation))
@@ -88,7 +105,10 @@ int AnimationGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t 
     auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
     auto item = InitializeXrcObject(node, object);
 
-    GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
+    if (!node->as_bool(prop_use_generic))
+        GenXrcObjectAttributes(node, item, "wxAnimationCtrl");
+    else
+        GenXrcObjectAttributes(node, item, "wxGenericAnimationCtrl");
     GenXrcStylePosSize(node, item);
 
     if (node->HasValue(prop_animation))
@@ -136,5 +156,7 @@ void AnimationGenerator::RequiredHandlers(Node* node, std::set<std::string>& han
 bool AnimationGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/animate.h>", set_src, set_hdr);
+    if (node->as_bool(prop_use_generic))
+        InsertGeneratorInclude(node, "#include <wx/generic/animate.h>", set_src, set_hdr);
     return true;
 }

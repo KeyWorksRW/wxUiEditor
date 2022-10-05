@@ -61,7 +61,7 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
 
     if (m_errors.size())
     {
-        ttlib::cstr errMsg("Not everything in the wxSmith project could be converted:\n\n");
+        ttlib::cstr errMsg("Not everything in the project could be converted:\n\n");
         MSG_ERROR(ttlib::cstr() << "------  " << m_importProjectFile.filename().wx_str() << "------");
         for (auto& iter: m_errors)
         {
@@ -69,7 +69,7 @@ bool WxSmith::Import(const ttString& filename, bool write_doc)
             errMsg << iter << '\n';
         }
 
-        wxMessageBox(errMsg, "Import wxSmith project");
+        wxMessageBox(errMsg, "Import project");
     }
 
     return true;

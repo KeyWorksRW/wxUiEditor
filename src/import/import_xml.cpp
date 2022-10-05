@@ -1084,6 +1084,7 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         return NodeSharedPtr();
 
     bool isBitmapButton = (object_name == "wxBitmapButton");
+    bool is_generic_version = false;
     auto gen_name = ConvertToGenName(object_name, parent);
     if (gen_name == gen_unknown)
     {
@@ -1091,6 +1092,12 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
         {
             gen_name = gen_BookPage;
         }
+        else if (object_name == "wxGenericAnimationCtrl")
+        {
+            is_generic_version = true;
+            gen_name = gen_wxAnimationCtrl;
+        }
+
         else
         {
             MSG_INFO(ttlib::cstr() << "Unrecognized object: " << object_name);
@@ -1124,6 +1131,10 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     }
 
     auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
+    if (new_node && is_generic_version)
+    {
+        new_node->set_value(prop_use_generic, true);
+    }
     while (!new_node)
     {
         if (sizeritem && sizeritem->isGen(gen_oldbookpage))

@@ -376,6 +376,7 @@ namespace GenEnum
         prop_underlined,
         prop_url,
         prop_use_derived_class,
+        prop_use_generic,
         prop_use_tabs,
         prop_user_cpp_code,
         prop_validator_data_type,

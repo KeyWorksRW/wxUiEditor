@@ -473,6 +473,7 @@ namespace GenEnum
         type_submenu,
         type_tool,
         type_tool_dropdown,
+        type_tool_separator,
         type_toolbar,
         type_toolbar_form,
         type_treelistctrl,

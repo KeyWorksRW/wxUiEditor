@@ -285,11 +285,13 @@ static const ParentChild lstParentChild[] = {
     // Toolbars
 
     { type_aui_toolbar, type_aui_tool, infinite },
+    { type_aui_toolbar, type_tool_separator, infinite },
     { type_aui_toolbar, type_widget, infinite },
     // type_tool_dropdown only works in wxToolBar -- wxAuiToolBar requires the caller to create the menu on demand
 
     { type_toolbar, type_tool, infinite },
     { type_toolbar, type_tool_dropdown, infinite },
+    { type_toolbar, type_tool_separator, infinite },
     { type_toolbar, type_widget, infinite },
     { type_tool_dropdown, type_menuitem, infinite },
 

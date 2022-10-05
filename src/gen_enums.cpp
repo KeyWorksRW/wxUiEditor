@@ -454,6 +454,7 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
     { type_submenu, "submenu" },
     { type_tool, "tool" },
     { type_tool_dropdown, "tool_dropdown" },
+    { type_tool_separator, "tool_separator" },
     { type_toolbar, "toolbar" },
     { type_toolbar_form, "toolbar_form" },
     { type_treelistctrl, "treelistctrl" },

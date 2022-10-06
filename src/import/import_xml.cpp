@@ -50,6 +50,7 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "gravity", prop_sashgravity },
     { "hideeffect", prop_hide_effect },
     { "hover", prop_current },
+    { "htmlcode", prop_html_content },
     { "inactive-bitmap", prop_inactive_bitmap },
     { "include_file", prop_derived_header },
     { "linesize", prop_line_size },

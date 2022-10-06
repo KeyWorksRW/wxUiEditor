@@ -848,6 +848,29 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
         {
             ttlib::cstr code;
 
+            if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+            {
+                if (node->value(prop_platforms).contains("Windows"))
+                    code << "\n#if defined(__WINDOWS__)";
+                if (node->value(prop_platforms).contains("Unix"))
+                {
+                    if (code.size())
+                        code << " || ";
+                    else
+                        code << "\n#if ";
+                    code << "defined(__UNIX__)";
+                }
+                if (node->value(prop_platforms).contains("Mac"))
+                {
+                    if (code.size())
+                        code << " || ";
+                    else
+                        code << "\n#if ";
+                    code << "defined(__WXOSX__)";
+                }
+                code << "\n";
+            }
+
             code << val_data_type << ' ' << var_name;
 
             if (val_data_type == "bool")
@@ -895,6 +918,11 @@ void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node*
             else
             {
                 code << ';';
+            }
+
+            if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+            {
+                code << "\n#endif  // limited to specific platforms";
             }
 
             code_lines.insert(code);
@@ -1062,6 +1090,28 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
 ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 {
     ttlib::cstr code;
+    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    {
+        if (node->value(prop_platforms).contains("Windows"))
+            code << "\n#if defined(__WINDOWS__)";
+        if (node->value(prop_platforms).contains("Unix"))
+        {
+            if (code.size())
+                code << " || ";
+            else
+                code << "\n#if ";
+            code << "defined(__UNIX__)";
+        }
+        if (node->value(prop_platforms).contains("Mac"))
+        {
+            if (code.size())
+                code << " || ";
+            else
+                code << "\n#if ";
+            code << "defined(__WXOSX__)";
+        }
+        code << "\n";
+    }
 
     ttlib::cstr class_name(node->DeclName());
 
@@ -1185,6 +1235,11 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     if (node->HasValue(prop_var_comment))
     {
         code << "  // " << node->prop_as_string(prop_var_comment);
+    }
+
+    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    {
+        code << "\n#endif  // limited to specific platforms";
     }
 
     return code;
@@ -1455,211 +1510,167 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 {
     auto type = node->gen_type();
     auto declaration = node->GetNodeDeclaration();
+    auto generator = declaration->GetGenerator();
+    if (!generator)
+        return;
 
-    if (auto generator = declaration->GetGenerator(); generator)
+    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
     {
-        bool need_closing_brace = false;
-        if (auto result = generator->GenConstruction(node); result)
+        ttlib::cstr code;
+        if (node->value(prop_platforms).contains("Windows"))
+            code << "\n#if defined(__WINDOWS__)";
+        if (node->value(prop_platforms).contains("Unix"))
         {
-            // Don't add blank lines when adding tools to a toolbar
-            if (type != type_aui_tool && type != type_tool)
-            {
-                m_source->writeLine();
-            }
-
-            // Some code generation may put added lines in a { } block, in which case we need to keep indents.
-            m_source->writeLine(result.value(), (ttlib::is_found(result.value().find('{')) ||
-                                                 ttlib::is_found(result.value().find("\n\t\t"))) ?
-                                                    indent::none :
-                                                    indent::auto_no_whitespace);
-            if (result.value().starts_with("\t{"))
-            {
-                need_closing_brace = true;
-            }
+            if (code.size())
+                code << " || ";
+            else
+                code << "\n#if ";
+            code << "defined(__UNIX__)";
         }
-        GenSettings(node);
-
-        if (type == type_ribbontoolbar)
+        if (node->value(prop_platforms).contains("Mac"))
         {
-            m_source->writeLine("{");
-            m_source->Indent();
-            // A wxRibbonToolBar can only have abstract children that consist of the tools.
-            for (const auto& child: node->GetChildNodePtrs())
-            {
-                auto child_comp = child->GetNodeDeclaration()->GetGenerator();
-                if (auto result = child_comp->GenConstruction(child.get()); result)
-                    m_source->writeLine(result.value());
-            }
-            m_source->Unindent();
-            m_source->writeLine("}");
-            m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->Realize();");
-            return;
+            if (code.size())
+                code << " || ";
+            else
+                code << "\n#if ";
+            code << "defined(__WXOSX__)";
         }
-        else if (type == type_tool_dropdown && node->GetChildCount())
+        m_source->writeLine(code);
+        m_source->SetLastLineBlank();
+    }
+
+    bool need_closing_brace = false;
+    if (auto result = generator->GenConstruction(node); result)
+    {
+        // Don't add blank lines when adding tools to a toolbar
+        if (type != type_aui_tool && type != type_tool)
         {
-            m_source->writeLine("{");
-            m_source->Indent();
-            m_source->writeLine("wxMenu* menu = new wxMenu;");
-            auto menu_node_ptr = g_NodeCreator.NewNode(gen_wxMenu);
-            menu_node_ptr->prop_set_value(prop_var_name, "menu");
-            for (const auto& child: node->GetChildNodePtrs())
+            m_source->writeLine();
+        }
+
+        // Some code generation may put added lines in a { } block, in which case we need to keep indents.
+        m_source->writeLine(result.value(),
+                            (ttlib::is_found(result.value().find('{')) || ttlib::is_found(result.value().find("\n\t\t"))) ?
+                                indent::none :
+                                indent::auto_no_whitespace);
+        if (result.value().starts_with("\t{"))
+        {
+            need_closing_brace = true;
+        }
+    }
+    GenSettings(node);
+
+    if (type == type_ribbontoolbar)
+    {
+        m_source->writeLine("{");
+        m_source->Indent();
+        // A wxRibbonToolBar can only have abstract children that consist of the tools.
+        for (const auto& child: node->GetChildNodePtrs())
+        {
+            auto child_comp = child->GetNodeDeclaration()->GetGenerator();
+            if (auto result = child_comp->GenConstruction(child.get()); result)
+                m_source->writeLine(result.value());
+        }
+        m_source->Unindent();
+        m_source->writeLine("}");
+        m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->Realize();");
+        return;
+    }
+    else if (type == type_tool_dropdown && node->GetChildCount())
+    {
+        m_source->writeLine("{");
+        m_source->Indent();
+        m_source->writeLine("wxMenu* menu = new wxMenu;");
+        auto menu_node_ptr = g_NodeCreator.NewNode(gen_wxMenu);
+        menu_node_ptr->prop_set_value(prop_var_name, "menu");
+        for (const auto& child: node->GetChildNodePtrs())
+        {
+            auto old_parent = child->GetParent();
+            child->SetParent(menu_node_ptr.get());
+            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
+            if (auto result = child_generator->GenConstruction(child.get()); result)
+                m_source->writeLine(result.value());
+            GenSettings(child.get());
+            // A submenu can have children
+            if (child->GetChildCount())
             {
-                auto old_parent = child->GetParent();
-                child->SetParent(menu_node_ptr.get());
-                auto child_generator = child->GetNodeDeclaration()->GetGenerator();
-                if (auto result = child_generator->GenConstruction(child.get()); result)
-                    m_source->writeLine(result.value());
-                GenSettings(child.get());
-                // A submenu can have children
-                if (child->GetChildCount())
+                for (const auto& grandchild: child->GetChildNodePtrs())
                 {
-                    for (const auto& grandchild: child->GetChildNodePtrs())
+                    auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
+                    if (auto result = grandchild_generator->GenConstruction(grandchild.get()); result)
+                        m_source->writeLine(result.value());
+                    GenSettings(grandchild.get());
+                    // A submenu menu item can also be a submenu with great grandchildren.
+                    if (grandchild->GetChildCount())
                     {
-                        auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
-                        if (auto result = grandchild_generator->GenConstruction(grandchild.get()); result)
-                            m_source->writeLine(result.value());
-                        GenSettings(grandchild.get());
-                        // A submenu menu item can also be a submenu with great grandchildren.
-                        if (grandchild->GetChildCount())
+                        for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
                         {
-                            for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
-                            {
-                                auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
-                                if (auto result = great_grandchild_generator->GenConstruction(great_grandchild.get());
-                                    result)
-                                    m_source->writeLine(result.value());
-                                GenSettings(great_grandchild.get());
-                                // It's possible to have even more levels of submenus, but we'll stop here.
-                            }
+                            auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
+                            if (auto result = great_grandchild_generator->GenConstruction(great_grandchild.get()); result)
+                                m_source->writeLine(result.value());
+                            GenSettings(great_grandchild.get());
+                            // It's possible to have even more levels of submenus, but we'll stop here.
                         }
                     }
                 }
-                child->SetParent(old_parent);
             }
-            m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->SetDropdownMenu(menu);");
-            m_source->Unindent();
-            m_source->writeLine("}");
-            return;
+            child->SetParent(old_parent);
         }
+        m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->SetDropdownMenu(menu);");
+        m_source->Unindent();
+        m_source->writeLine("}");
+        return;
+    }
 
-        auto parent = node->GetParent();
+    auto parent = node->GetParent();
 
-        if (auto result = generator->GenAfterChildren(node); result)
+    if (auto result = generator->GenAfterChildren(node); result)
+    {
+        // If the node needs to write code after all children are constructed, then create the children first, then write
+        // the post-child code. Note that in this case, no further handling of the node is done, so GenAfterChildren() is
+        // required to handle all post-child construction code.
+
+        for (const auto& child: node->GetChildNodePtrs())
         {
-            // If the node needs to write code after all children are constructed, then create the children first, then write
-            // the post-child code. Note that in this case, no further handling of the node is done, so GenAfterChildren() is
-            // required to handle all post-child construction code.
-
-            for (const auto& child: node->GetChildNodePtrs())
-            {
-                GenConstruction(child.get());
-            }
-
-            m_source->writeLine(result.value(), indent::none);
-
-            // Code for spacer's is handled by the component's GenConstruction() call
-            if (parent->IsSizer() && !node->isGen(gen_spacer))
-            {
-                ttlib::cstr code;
-                if (code.size())
-                    code << '\n';
-
-                if (need_closing_brace)
-                    code << '\t';
-                code << '\t' << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
-
-                if (parent->isGen(gen_wxGridBagSizer))
-                {
-                    code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column)
-                         << "), ";
-                    code << "wxGBSpan(" << node->prop_as_string(prop_rowspan) << ", " << node->prop_as_string(prop_colspan)
-                         << "), ";
-                    ttlib::cstr flags(node->prop_as_string(prop_borders));
-                    if (node->prop_as_string(prop_flags).size())
-                    {
-                        if (flags.size())
-                            flags << '|';
-                        flags << node->prop_as_string(prop_flags);
-                    }
-
-                    if (flags.empty())
-                        flags << '0';
-
-                    code << flags << ", " << node->prop_as_string(prop_border_size) << ");";
-                    code.Replace(", 0, 0);", ");");
-                }
-                else
-                {
-                    code << GenerateSizerFlags(node) << ");";
-                }
-
-                if (need_closing_brace)
-                {
-                    m_source->writeLine(code, indent::auto_keep_whitespace);
-                    m_source->writeLine("\t}");
-                }
-                else
-                {
-                    m_source->writeLine(code);
-                }
-            }
-
-            return;
+            GenConstruction(child.get());
         }
 
-        if (parent->IsSizer())
+        m_source->writeLine(result.value(), indent::none);
+
+        // Code for spacer's is handled by the component's GenConstruction() call
+        if (parent->IsSizer() && !node->isGen(gen_spacer))
         {
             ttlib::cstr code;
-            if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
+            if (code.size())
+                code << '\n';
+
+            if (need_closing_brace)
+                code << '\t';
+            code << '\t' << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
+
+            if (parent->isGen(gen_wxGridBagSizer))
             {
-                if (result.value().size())
-                    m_source->writeLine(result.value(), indent::none);
+                code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column)
+                     << "), ";
+                code << "wxGBSpan(" << node->prop_as_string(prop_rowspan) << ", " << node->prop_as_string(prop_colspan)
+                     << "), ";
+                ttlib::cstr flags(node->prop_as_string(prop_borders));
+                if (node->prop_as_string(prop_flags).size())
+                {
+                    if (flags.size())
+                        flags << '|';
+                    flags << node->prop_as_string(prop_flags);
+                }
+
+                if (flags.empty())
+                    flags << '0';
+
+                code << flags << ", " << node->prop_as_string(prop_border_size) << ");";
+                code.Replace(", 0, 0);", ");");
             }
-
-            // Code for spacer's is handled by the component's GenConstruction() call
-            if (!node->isGen(gen_spacer))
+            else
             {
-                if (node->isGen(gen_wxStdDialogButtonSizer))
-                {
-                    if (node->get_form()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
-                        code << node->GetParent()->get_node_name() << "->Add(CreateSeparatedSizer(" << node->get_node_name()
-                             << "), ";
-                    else
-                        code << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
-                }
-                else
-                {
-                    if (need_closing_brace)
-                    {
-                        code << "\t";
-                    }
-                    code << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
-                }
-
-                if (parent->isGen(gen_wxGridBagSizer))
-                {
-                    code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column)
-                         << "), ";
-                    code << "wxGBSpan(" << node->prop_as_string(prop_rowspan) << ", " << node->prop_as_string(prop_colspan)
-                         << "), ";
-                    ttlib::cstr flags(node->prop_as_string(prop_borders));
-                    if (node->prop_as_string(prop_flags).size())
-                    {
-                        if (flags.size())
-                            flags << '|';
-                        flags << node->prop_as_string(prop_flags);
-                    }
-
-                    if (flags.empty())
-                        flags << '0';
-
-                    code << flags << ", " << node->prop_as_string(prop_border_size) << ");";
-                    code.Replace(", 0, 0);", ");");
-                }
-                else
-                {
-                    code << GenerateSizerFlags(node) << ");";
-                }
+                code << GenerateSizerFlags(node) << ");";
             }
 
             if (need_closing_brace)
@@ -1672,113 +1683,180 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 m_source->writeLine(code);
             }
         }
-        else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_tool_separator))
+
+        return;
+    }
+
+    if (parent->IsSizer())
+    {
+        ttlib::cstr code;
+        if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
         {
-            ttlib::cstr code;
-            if (parent->isType(type_toolbar_form))
-                code << "AddControl(" << node->prop_as_string(prop_var_name) << ");";
-            else
-                code << parent->prop_as_string(prop_var_name) << "->AddControl(" << node->prop_as_string(prop_var_name)
-                     << ");";
-            m_source->writeLine(code);
-        }
-        else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
-        {
-            ttlib::cstr code;
-            code << parent->get_node_name() << "->GetControlSizer()->Add(" << node->get_node_name();
-            code << ", wxSizerFlags().Expand().Border(wxALL));";
-            m_source->writeLine(code);
+            if (result.value().size())
+                m_source->writeLine(result.value(), indent::none);
         }
 
-        if (node->isGen(gen_PageCtrl) && node->GetChildCount())
+        // Code for spacer's is handled by the component's GenConstruction() call
+        if (!node->isGen(gen_spacer))
         {
-            // type_page will have already constructed the code for the child. However, we still need to generate
-            // settings and process any grandchildren.
-
-            auto page_child = node->GetChild(0);
-            if (page_child)
+            if (node->isGen(gen_wxStdDialogButtonSizer))
             {
-                GenSettings(page_child);
-
-                for (const auto& child: page_child->GetChildNodePtrs())
-                {
-                    GenConstruction(child.get());
-                }
+                if (node->get_form()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
+                    code << node->GetParent()->get_node_name() << "->Add(CreateSeparatedSizer(" << node->get_node_name()
+                         << "), ";
+                else
+                    code << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
             }
+            else
+            {
+                if (need_closing_brace)
+                {
+                    code << "\t";
+                }
+                code << node->GetParent()->get_node_name() << "->Add(" << node->get_node_name() << ", ";
+            }
+
+            if (parent->isGen(gen_wxGridBagSizer))
+            {
+                code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column)
+                     << "), ";
+                code << "wxGBSpan(" << node->prop_as_string(prop_rowspan) << ", " << node->prop_as_string(prop_colspan)
+                     << "), ";
+                ttlib::cstr flags(node->prop_as_string(prop_borders));
+                if (node->prop_as_string(prop_flags).size())
+                {
+                    if (flags.size())
+                        flags << '|';
+                    flags << node->prop_as_string(prop_flags);
+                }
+
+                if (flags.empty())
+                    flags << '0';
+
+                code << flags << ", " << node->prop_as_string(prop_border_size) << ");";
+                code.Replace(", 0, 0);", ");");
+            }
+            else
+            {
+                code << GenerateSizerFlags(node) << ");";
+            }
+        }
+
+        if (need_closing_brace)
+        {
+            m_source->writeLine(code, indent::auto_keep_whitespace);
+            m_source->writeLine("\t}");
         }
         else
         {
-            for (const auto& child: node->GetChildNodePtrs())
+            m_source->writeLine(code);
+        }
+    }
+    else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_tool_separator))
+    {
+        ttlib::cstr code;
+        if (parent->isType(type_toolbar_form))
+            code << "AddControl(" << node->prop_as_string(prop_var_name) << ");";
+        else
+            code << parent->prop_as_string(prop_var_name) << "->AddControl(" << node->prop_as_string(prop_var_name) << ");";
+        m_source->writeLine(code);
+    }
+    else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
+    {
+        ttlib::cstr code;
+        code << parent->get_node_name() << "->GetControlSizer()->Add(" << node->get_node_name();
+        code << ", wxSizerFlags().Expand().Border(wxALL));";
+        m_source->writeLine(code);
+    }
+
+    if (node->isGen(gen_PageCtrl) && node->GetChildCount())
+    {
+        // type_page will have already constructed the code for the child. However, we still need to generate
+        // settings and process any grandchildren.
+
+        auto page_child = node->GetChild(0);
+        if (page_child)
+        {
+            GenSettings(page_child);
+
+            for (const auto& child: page_child->GetChildNodePtrs())
             {
                 GenConstruction(child.get());
             }
         }
-
-        if (node->IsSizer())
+    }
+    else
+    {
+        for (const auto& child: node->GetChildNodePtrs())
         {
-            if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+            GenConstruction(child.get());
+        }
+    }
+
+    if (node->IsSizer())
+    {
+        if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+        {
+            // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
+            // wxPanel.
+
+            ttlib::cstr code;
+            if (parent->isGen(gen_wxRibbonPanel))
             {
-                // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
-                // wxPanel.
+                code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+            }
+            else
+            {
+                if (GetParentName(node) != "this")
+                    code << GetParentName(node) << "->";
+                code << "SetSizerAndFit(" << node->get_node_name() << ");";
+            }
 
-                ttlib::cstr code;
-                if (parent->isGen(gen_wxRibbonPanel))
-                {
-                    code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
-                }
-                else
-                {
-                    if (GetParentName(node) != "this")
-                        code << GetParentName(node) << "->";
-                    code << "SetSizerAndFit(" << node->get_node_name() << ");";
-                }
+            m_source->writeLine();
+            m_source->writeLine(code);
+        }
+    }
+    else if (type == type_splitter)
+    {
+        ttlib::cstr code(node->get_node_name());
 
+        if (node->GetChildCount() == 1)
+        {
+            code << "->Initialize(" << node->GetChild(0)->get_node_name() << ");";
+            m_source->writeLine(code);
+        }
+        else if (node->GetChildCount() > 1)
+        {
+            if (node->prop_as_string(prop_splitmode) == "wxSPLIT_VERTICAL")
+                code << "->SplitVertically(";
+            else
+                code << "->SplitHorizontally(";
+
+            code << node->GetChild(0)->get_node_name() << ", " << node->GetChild(1)->get_node_name() << ");";
+            m_source->writeLine(code);
+
+            if (auto sash_pos = node->get_prop_ptr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
+            {
+                code = node->get_node_name();
+                code << "->SetSashPosition(" << node->prop_as_string(prop_sashpos) << ");";
+                m_source->writeLine(code);
+            }
+        }
+    }
+
+    else
+    {
+        for (auto& iter: aftercode_types)
+        {
+            if (type == iter)
+            {
+                if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
+                {
+                    if (result.value().size())
+                        m_source->writeLine(result.value(), indent::none);
+                }
                 m_source->writeLine();
-                m_source->writeLine(code);
-            }
-        }
-        else if (type == type_splitter)
-        {
-            ttlib::cstr code(node->get_node_name());
-
-            if (node->GetChildCount() == 1)
-            {
-                code << "->Initialize(" << node->GetChild(0)->get_node_name() << ");";
-                m_source->writeLine(code);
-            }
-            else if (node->GetChildCount() > 1)
-            {
-                if (node->prop_as_string(prop_splitmode) == "wxSPLIT_VERTICAL")
-                    code << "->SplitVertically(";
-                else
-                    code << "->SplitHorizontally(";
-
-                code << node->GetChild(0)->get_node_name() << ", " << node->GetChild(1)->get_node_name() << ");";
-                m_source->writeLine(code);
-
-                if (auto sash_pos = node->get_prop_ptr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
-                {
-                    code = node->get_node_name();
-                    code << "->SetSashPosition(" << node->prop_as_string(prop_sashpos) << ");";
-                    m_source->writeLine(code);
-                }
-            }
-        }
-
-        else
-        {
-            for (auto& iter: aftercode_types)
-            {
-                if (type == iter)
-                {
-                    if (auto result = generator->GenAdditionalCode(code_after_children, node); result)
-                    {
-                        if (result.value().size())
-                            m_source->writeLine(result.value(), indent::none);
-                    }
-                    m_source->writeLine();
-                    break;
-                }
+                break;
             }
         }
     }
@@ -1788,6 +1866,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     if (node->isGen(gen_wxRibbonBar))
     {
         m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->Realize();");
+    }
+
+    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    {
+        m_source->writeLine("#endif  // limited to specific platforms\n");
     }
 }
 

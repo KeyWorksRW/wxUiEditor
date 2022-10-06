@@ -5,7 +5,9 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 		<inherits class="Code Generation" />
 		<inherits class="wxTopLevelWindow" />
 		<inherits class="Window Events" />
-		<inherits class="wxWindow" />
+		<inherits class="wxWindow">
+			<hide name="platforms" />
+		</inherits>
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyFrameBase</property>
 		<property name="title" type="string_escapes"
@@ -99,7 +101,9 @@ inline const char* forms_xml = R"===(<?xml version="1.0"?>
 
 	<gen class="RibbonBar" image="ribbon_bar" type="ribbonbar_form">
 		<inherits class="Code Generation" />
-		<inherits class="wxWindow" />
+		<inherits class="wxWindow">
+			<hide name="platforms" />
+		</inherits>
 		<inherits class="Window Events" />
 		<property name="class_name" type="string"
 			help="The name of the base class.">MyRibbonBarBase</property>

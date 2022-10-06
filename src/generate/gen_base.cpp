@@ -1672,7 +1672,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 m_source->writeLine(code);
             }
         }
-        else if (parent->IsToolBar() && !node->isType(type_tool))
+        else if (parent->IsToolBar() && !node->isType(type_tool) && !node->isType(type_tool_separator))
         {
             ttlib::cstr code;
             if (parent->isType(type_toolbar_form))

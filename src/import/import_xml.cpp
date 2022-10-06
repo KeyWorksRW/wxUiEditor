@@ -79,6 +79,7 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "WizardPageSimple", gen_wxWizardPageSimple },
     { "bookpage", gen_oldbookpage },
     { "panewindow", gen_VerticalBoxSizer },
+    { "unknown", gen_CustomControl },
     { "wxBitmapButton", gen_wxButton },
     { "wxListCtrl", gen_wxListView },
     { "wxScintilla", gen_wxStyledTextCtrl },
@@ -1129,6 +1130,13 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
             gen_name = gen_tool_dropdown;
         }
     }
+
+    if (gen_name == gen_wxMenuBar && parent->isGen(gen_Project))
+        // switch to the form version
+        gen_name = gen_MenuBar;
+    else if (gen_name == gen_wxToolBar && parent->isGen(gen_Project))
+        // switch to the form version
+        gen_name = gen_ToolBar;
 
     auto new_node = g_NodeCreator.CreateNode(gen_name, parent);
     if (new_node && is_generic_version)

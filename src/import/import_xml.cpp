@@ -42,6 +42,7 @@ std::map<std::string_view, GenEnum::PropName, std::less<>> import_PropNames = {
     { "dimension", prop_majorDimension },
     { "effectduration", prop_duration },
     { "empty_cellsize", prop_empty_cell_size },
+    { "extra-accels", prop_extra_accels },
     { "fg", prop_foreground_colour },
     { "flexibledirection", prop_flexible_direction },
     { "gradient-end", prop_end_colour },
@@ -666,6 +667,18 @@ void ImportXML::ProcessProperties(const pugi::xml_node& xml_obj, Node* node, Nod
             {
                 prop->set_value(label);
             }
+            continue;
+        }
+        else if (wxue_prop == prop_extra_accels)
+        {
+            ttlib::cstr accel_list;
+            for (auto& accel: iter.children())
+            {
+                if (accel_list.size())
+                    accel_list << " ";
+                accel_list << '"' << accel.text().as_string() << '"';
+            }
+            node->set_value(prop_extra_accels, accel_list);
             continue;
         }
 

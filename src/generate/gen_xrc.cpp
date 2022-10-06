@@ -70,7 +70,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
     if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm) && !form_node->isGen(gen_wxFrame) &&
         !form_node->isGen(gen_wxWizard))
     {
-        wxMessageBox("This type of form is not available in XRC.", "XRC Preview");
+        wxMessageBox("This type of form cannot be previewed in XRC.", "XRC Preview");
         return;
     }
 

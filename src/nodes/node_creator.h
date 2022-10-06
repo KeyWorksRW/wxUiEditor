@@ -65,7 +65,7 @@ public:
     ProjectSharedPtr CreateProjectClass(pugi::xml_node* xml_obj);
 
     // Makes a copy, including the entire child heirarchy. The copy does not have a parent.
-    NodeSharedPtr MakeCopy(Node* node);
+    NodeSharedPtr MakeCopy(Node* node, Node* parent = nullptr);
     NodeSharedPtr MakeCopy(NodeSharedPtr node) { return MakeCopy(node.get()); };
 
     void InitGenerators();

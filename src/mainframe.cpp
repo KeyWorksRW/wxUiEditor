@@ -1411,7 +1411,7 @@ void MainFrame::PasteNode(Node* parent)
         return;
     }
 
-    auto new_node = g_NodeCreator.MakeCopy(m_clipboard);
+    auto new_node = g_NodeCreator.MakeCopy(m_clipboard.get(), parent);
     if (new_node->IsForm())
         GetProject()->FixupDuplicatedNode(new_node.get());
 

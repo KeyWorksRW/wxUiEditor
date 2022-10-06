@@ -224,7 +224,7 @@ NodeSharedPtr NodeCreator::CreateNode(ttlib::sview name, Node* parent)
     return {};
 }
 
-NodeSharedPtr NodeCreator::MakeCopy(Node* node)
+NodeSharedPtr NodeCreator::MakeCopy(Node* node, Node* parent)
 {
     ASSERT(node);
 
@@ -243,6 +243,52 @@ NodeSharedPtr NodeCreator::MakeCopy(Node* node)
     }
 
     copyObj->CopyEventsFrom(node);
+
+    // It will be rare, but sometimes a user may want to copy a form such as FormPanel and paste it into a sizer or a book.
+    // In that case, we need to create the non-form version of the control.
+    if (parent && !parent->isGen(gen_Project) && node->IsForm())
+    {
+        NodeSharedPtr child_object;
+        if (node->isGen(gen_ToolBar))
+        {
+            child_object = CreateNode(gen_wxToolBar, parent);
+            // REVIEW: [Randalphwa - 10-06-2022] This will fail if the parent is a wxFrame and it already has a toolbar.
+            // Should we let the user know?
+        }
+        else if (node->isGen(gen_MenuBar))
+        {
+            child_object = CreateNode(gen_wxMenuBar, parent);
+        }
+        else if (node->isGen(gen_RibbonBar))
+        {
+            child_object = CreateNode(gen_wxRibbonBar, parent);
+        }
+        else if (node->isGen(gen_PanelForm))
+        {
+            if (parent->isType(type_choicebook) || parent->isType(type_listbook) || parent->isType(type_notebook) ||
+                parent->isType(type_simplebook))
+            {
+                child_object = CreateNode(gen_BookPage, parent);
+            }
+            else
+            {
+                child_object = CreateNode(gen_wxPanel, parent);
+            }
+        }
+
+        if (child_object)
+        {
+            for (auto& iter: node->get_props_vector())
+            {
+                auto copyProp = child_object->get_prop_ptr(iter.get_name());
+                // Note that due to the conversion, not all properties will actually exist
+                if (copyProp)
+                    copyProp->set_value(iter.as_string());
+            }
+            child_object->CopyEventsFrom(node);
+            copyObj = child_object;
+        }
+    }
 
 #if 0
     auto count = node->GetEventCount();

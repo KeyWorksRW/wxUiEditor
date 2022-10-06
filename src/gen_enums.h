@@ -295,6 +295,7 @@ namespace GenEnum
         prop_persist,
         prop_persist_name,
         prop_pin_button,
+        prop_platforms,
         prop_play,
         prop_pos,
         prop_position,

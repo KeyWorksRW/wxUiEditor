@@ -48,6 +48,26 @@ const char* g_xrc_keywords =
 
 void GenXrcSizerItem(Node* node, pugi::xml_node& object)
 {
+    if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
+    {
+        ttlib::cstr platforms;
+        if (node->value(prop_platforms).contains("Windows"))
+            platforms << "msw";
+        if (node->value(prop_platforms).contains("Unix"))
+        {
+            if (platforms.size())
+                platforms << "|";
+            platforms << "unix";
+        }
+        if (node->value(prop_platforms).contains("Mac"))
+        {
+            if (platforms.size())
+                platforms << "|";
+            platforms << "mac";
+        }
+        object.append_attribute("platform").set_value(platforms);
+    }
+
     object.append_attribute("class").set_value("sizeritem");
 
     if (node->GetParent()->isGen(gen_wxGridBagSizer))

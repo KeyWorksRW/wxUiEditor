@@ -41,6 +41,25 @@ ImportPanel::ImportPanel(wxWindow* parent) : wxScrolled<wxPanel>(parent)
     wxFont font(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     m_scintilla->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
+    // These are settings used in codedisplay_base
+    m_scintilla->SetWrapMode(wxSTC_WRAP_WHITESPACE);
+    m_scintilla->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
+    m_scintilla->SetWrapVisualFlagsLocation(wxSTC_WRAPVISUALFLAGLOC_END_BY_TEXT);
+    m_scintilla->SetWrapIndentMode(wxSTC_WRAPINDENT_INDENT);
+    // Sets text margin scaled appropriately for the current DPI on Windows,
+    // 5 on wxGTK or wxOSX
+    m_scintilla->SetMarginLeft(wxSizerFlags::GetDefaultBorder());
+    m_scintilla->SetMarginRight(wxSizerFlags::GetDefaultBorder());
+    m_scintilla->SetMarginWidth(1, 0);  // Remove default margin
+    m_scintilla->SetMarginWidth(0, 16);
+    m_scintilla->SetMarginType(0, wxSTC_MARGIN_SYMBOL);
+    m_scintilla->SetMarginMask(0, ~wxSTC_MASK_FOLDERS);
+    m_scintilla->SetMarginSensitive(0, false);
+    m_scintilla->SetIndentationGuides(wxSTC_IV_REAL);
+    m_scintilla->SetUseTabs(false);
+    m_scintilla->SetTabWidth(4);
+    m_scintilla->SetBackSpaceUnIndents(true);
+
     m_scintilla->MarkerDefine(node_marker, wxSTC_MARK_BOOKMARK, wxNullColour, *wxGREEN);
     parent_sizer->Add(m_scintilla, wxSizerFlags(1).Expand().Border(wxALL));
 

@@ -598,8 +598,39 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenConstruction(Node* node)
 std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;
-    bool has_bitmap = node->HasValue(prop_bitmap);
 
+    if (node->HasValue(prop_extra_accels))
+    {
+        auto_indent = indent::auto_keep_whitespace;
+        code << "{\n\t"
+             << "wxAcceleratorEntry entry;\n";
+
+        bool is_old_widgets = (wxGetProject().value(prop_wxWidgets_version) == "3.1");
+        if (is_old_widgets)
+        {
+            code << "#if wxCHECK_VERSION(3, 1, 6)\n";
+        }
+
+        ttlib::multistr accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
+        for (auto& accel: accel_list)
+        {
+            // There are spaces between the quoted strings which will create an entry that we
+            // need to ignore
+            if (accel.size())
+            {
+                code << "\tif (entry.FromString(" << GenerateQuotedString(accel) << "))\n";
+                code << "\t\t" << node->get_node_name() << "->AddExtraAccel(entry);\n";
+            }
+        }
+
+        if (is_old_widgets)
+        {
+            code << "#endif\n";
+        }
+        code << "}\n";
+    }
+
+    bool has_bitmap = node->HasValue(prop_bitmap);
     if (has_bitmap)
     {
         auto_indent = indent::auto_keep_whitespace;
@@ -745,6 +776,10 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenEvents(NodeEvent* event, const 
 bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
+    if (node->HasValue(prop_extra_accels))
+    {
+        InsertGeneratorInclude(node, "#include <wx/accel.h>", set_src, set_hdr);
+    }
 
     return true;
 }
@@ -758,6 +793,18 @@ int MenuItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t x
 
     ADD_ITEM_PROP(prop_label, "label")
     ADD_ITEM_PROP(prop_shortcut, "accel")
+    if (node->HasValue(prop_extra_accels))
+    {
+        auto child = item.append_child("extra-accels");
+        ttlib::multistr accel_list(node->as_string(prop_extra_accels), "\"", tt::TRIM::both);
+        for (auto& accel: accel_list)
+        {
+            // There are spaces between the quoted strings which will create an entry that we
+            // need to ignore
+            if (accel.size())
+                child.append_child("accel").text().set(accel);
+        }
+    }
     ADD_ITEM_PROP(prop_help, "help")
     ADD_ITEM_BOOL(prop_checked, "checked")
     if (node->as_bool(prop_disabled))

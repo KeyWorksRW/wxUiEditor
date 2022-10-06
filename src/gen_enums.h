@@ -42,6 +42,7 @@ namespace GenEnum
         type_string_edit_single,   // includes single-line text editor, does not process escapes
         type_string_escapes,       // doubles the backslash in escaped characters: \n, \t, \r, and "\""
         type_stringlist,           // includes button to edit/move multiple choices
+        type_stringlist_escapes,   // includes button to edit/move multiple choices, and supports escapes characters
         type_uint,
         type_uintpairlist,
         type_wxColour,
@@ -177,6 +178,7 @@ namespace GenEnum
         prop_enable_user_code,
         prop_end_colour,
         prop_eol_mode,
+        prop_extra_accels,
         prop_extra_style,
         prop_fields,
         prop_filter,

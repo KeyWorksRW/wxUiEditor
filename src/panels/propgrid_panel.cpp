@@ -519,6 +519,12 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
         wxVariant var_quote("\"");
         new_pg_property->DoSetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
     }
+    else if (type == type_stringlist_escapes)
+    {
+        new_pg_property = new wxArrayStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_wxArrayString());
+        wxVariant var_quote("\"");
+        new_pg_property->DoSetAttribute(wxPG_ARRAY_DELIMITER, var_quote);
+    }
     else if (type == type_uintpairlist)
     {
         new_pg_property = new wxStringProperty(prop->DeclName().wx_str(), wxPG_LABEL, prop->as_string());
@@ -1341,6 +1347,7 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 
         case type_string_edit_escapes:
         case type_string_escapes:
+        case type_stringlist_escapes:
             grid_property->SetValueFromString(prop->as_escape_text().wx_str(), 0);
             break;
 

@@ -216,6 +216,7 @@ static const ParentChild lstParentChild[] = {
     { type_menubar_form, type_menu, infinite },
     { type_ribbonbar_form, type_ribbonpage, infinite },
     { type_toolbar_form, type_tool, infinite },
+    { type_toolbar_form, type_tool_separator, infinite },
     { type_toolbar_form, type_widget, infinite },
 
     { type_images, type_embed_image, infinite },

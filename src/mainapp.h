@@ -65,6 +65,13 @@ public:
 
     enum : long
     {
+        PREVIEW_TYPE_XRC = 0,
+        PREVIEW_TYPE_BOTH,
+        PREVIEW_TYPE_CPP,
+    };
+
+    enum : long
+    {
         PREFS_PJT_ALWAYS_LOCAL = 1 << 0,
         PREFS_PJT_MEMBER_PREFIX = 1 << 1,
     };
@@ -76,6 +83,7 @@ public:
         long flags { 0 };  // BUGBUG: these need to be changed to debug-only flags
 
         long project_flags { 0 };
+        long preview_type { PREVIEW_TYPE_XRC };
 
         wxString language;  // This is used in Debug builds for forcing a different UI
     };

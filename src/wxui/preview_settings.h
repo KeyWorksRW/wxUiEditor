@@ -7,7 +7,9 @@
 #pragma once
 
 #include <wx/dialog.h>
+#include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/radiobut.h>
 #include <wx/stattext.h>
 
 class PreviewSettings : public wxDialog
@@ -34,6 +36,10 @@ public:
 
 protected:
 
+    // Event handlers
+
+    void OnInit(wxInitDialogEvent& event);
+
     // Validator variables
 
     bool type_cpp { false };
@@ -42,5 +48,6 @@ protected:
 
     // Class member variables
 
+    wxRadioButton* m_radio_XRC_CPP;
     wxStaticText* m_staticText;
 };

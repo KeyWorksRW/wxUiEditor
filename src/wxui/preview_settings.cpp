@@ -5,7 +5,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/button.h>
-#include <wx/radiobut.h>
 #include <wx/sizer.h>
 #include <wx/valgen.h>
 
@@ -29,9 +28,9 @@ bool PreviewSettings::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     radio_XRC->SetValidator(wxGenericValidator(&type_xrc));
     box_sizer->Add(radio_XRC, wxSizerFlags().Border(wxALL));
 
-    auto* radio_XRC_CPP = new wxRadioButton(this, wxID_ANY, "XRC and C++");
-    radio_XRC_CPP->SetValidator(wxGenericValidator(&type_xrc_cpp));
-    box_sizer->Add(radio_XRC_CPP, wxSizerFlags().Border(wxALL));
+    m_radio_XRC_CPP = new wxRadioButton(this, wxID_ANY, "XRC and C++");
+    m_radio_XRC_CPP->SetValidator(wxGenericValidator(&type_xrc_cpp));
+    box_sizer->Add(m_radio_XRC_CPP, wxSizerFlags().Border(wxALL));
 
     auto* radio_CPP = new wxRadioButton(this, wxID_ANY, "C++");
     radio_CPP->SetValidator(wxGenericValidator(&type_cpp));
@@ -42,6 +41,9 @@ bool PreviewSettings::Create(wxWindow* parent, wxWindowID id, const wxString& ti
 
     SetSizerAndFit(dlg_sizer);
     Centre(wxBOTH);
+
+    // Event handlers
+    Bind(wxEVT_INIT_DIALOG, &PreviewSettings::OnInit, this);
 
     return true;
 }

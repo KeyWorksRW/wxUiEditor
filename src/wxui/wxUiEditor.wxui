@@ -3877,7 +3877,8 @@
       base_file="preview_settings"
       class_name="PreviewSettings"
       title="Preview"
-      use_derived_class="0">
+      use_derived_class="0"
+      wxEVT_INIT_DIALOG="OnInit">
       <node
         class="wxBoxSizer"
         orientation="wxVERTICAL"
@@ -3898,9 +3899,8 @@
             validator_variable="type_xrc" />
           <node
             class="wxRadioButton"
-            class_access="none"
             label="XRC and C++"
-            var_name="radio_XRC_CPP"
+            var_name="m_radio_XRC_CPP"
             get_function="is_type_both"
             set_function="set_type_both"
             validator_variable="type_xrc_cpp" />

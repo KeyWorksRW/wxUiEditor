@@ -239,6 +239,8 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/ui/optionsdlg.cpp           # Dialog containing special Debugging commands
     ${CMAKE_CURRENT_LIST_DIR}/ui/xrccompare.cpp>          # C++/XRC UI Comparison dialog
 
+    ${CMAKE_CURRENT_LIST_DIR}/ui/preview_settings_events.cpp  # Event handlers for PreviewSettings dialog
+
     # Debug-only files
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare.cpp>    # Compare code generation
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img.cpp>     # Convert image

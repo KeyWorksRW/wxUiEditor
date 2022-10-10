@@ -178,8 +178,9 @@ set (file_list
 
     # Mockup panel
 
-    ${CMAKE_CURRENT_LIST_DIR}/mockup/mockup_parent.cpp    # Top-level MockUp Parent window
     ${CMAKE_CURRENT_LIST_DIR}/mockup/mockup_content.cpp   # Mockup of a form's contents
+    ${CMAKE_CURRENT_LIST_DIR}/mockup/mockup_parent.cpp    # Top-level MockUp Parent window
+    ${CMAKE_CURRENT_LIST_DIR}/mockup/mockup_preview.cpp>  # Preview Mockup
     ${CMAKE_CURRENT_LIST_DIR}/mockup/mockup_wizard.cpp    # Emulate a wxWizard
 
     # Dialogs for creating new forms
@@ -236,14 +237,15 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ${CMAKE_CURRENT_LIST_DIR}/ui/insertwidget.cpp         # Dialog to lookup and insert a widget
     ${CMAKE_CURRENT_LIST_DIR}/ui/optionsdlg.cpp           # Dialog containing special Debugging commands
+    ${CMAKE_CURRENT_LIST_DIR}/ui/xrccompare.cpp>          # C++/XRC UI Comparison dialog
+
+    ${CMAKE_CURRENT_LIST_DIR}/ui/preview_settings_events.cpp  # Event handlers for PreviewSettings dialog
 
     # Debug-only files
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare.cpp>    # Compare code generation
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/convert_img.cpp>     # Convert image
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/import_panel.cpp>    # Panel to display original imported file
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/mockup_preview.cpp>  # Preview Mockup
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/node_info.cpp>       # Node memory usage dialog
-    $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/xrccompare.cpp>      # C++/XRC UI Comparison dialog
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/xrcpreview.cpp>      # Test XRC
 
     $<$<CONFIG:Debug>:${CMAKE_CURRENT_LIST_DIR}/internal/code_compare_base.cpp>

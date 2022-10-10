@@ -42,7 +42,6 @@ NavToolbar::NavToolbar(wxWindow* parent, wxWindowID id,
             "Collapse all siblings", "Collapse selected item and all items at the same level");
 
     AddSeparator();
-
     AddTool(id_NavMoveLeft, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_GO_BACK, wxART_MENU), wxNullBitmap, wxITEM_NORMAL, 
             "Move Left", "Move the selected item left");
 

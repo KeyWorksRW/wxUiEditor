@@ -120,6 +120,7 @@ bool App::OnInit()
 
     m_prefs.flags = config->ReadLong("flags", PREFS_MSG_WINDOW | PREFS_MSG_INFO | PREFS_MSG_EVENT | PREFS_MSG_WARNING);
     m_prefs.project_flags = config->ReadLong("project_flags", PREFS_PJT_MEMBER_PREFIX);
+    m_prefs.preview_type = config->ReadLong("preview_type", PREVIEW_TYPE_XRC);
 
 #if defined(_DEBUG)
     config->Read("DebugLanguage", &m_prefs.language);

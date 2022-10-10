@@ -216,12 +216,9 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
 
 void MainFrame::OnMockupPreview(wxCommandEvent& /* event */)
 {
-    m_p_mockup_dlg = nullptr;
-    m_p_mockup_win = nullptr;
-
     if (!m_selected_node)
     {
-        wxMessageBox("You need to select a dialog first.", "XRC Dialog Preview");
+        wxMessageBox("You need to select a form first.", "Preview");
         return;
     }
 
@@ -241,15 +238,20 @@ void MainFrame::OnMockupPreview(wxCommandEvent& /* event */)
     if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm) && !form_node->isGen(gen_wxFrame) &&
         !form_node->isGen(gen_wxWizard))
     {
-        wxMessageBox("This type of form is not available for previewing", "Mockup Preview");
+        wxMessageBox("This type of form is not available for previewing", "Preview");
         return;
     }
 
+    PreviewCpp(form_node);
+}
+
+void MainFrame::PreviewCpp(Node* form_node)
+{
     if (form_node->isGen(gen_wxDialog))
     {
         if (!form_node->GetChildCount())
         {
-            wxMessageBox("You can't display a dialog with no children", "Mockup Preview");
+            wxMessageBox("You can't display a dialog without any children", "Preview");
             return;
         }
     }
@@ -437,7 +439,7 @@ void MainFrame::OnMockupPreview(wxCommandEvent& /* event */)
     catch (const std::exception& TESTING_PARAM(e))
     {
         MSG_ERROR(e.what());
-        wxMessageBox("An internal error occurred while creating a preview", "Mockup Preview");
+        wxMessageBox("An internal error occurred while creating the preview", "Preview");
     }
 
     // Restore the original style if it was temporarily changed.

@@ -30,12 +30,14 @@
 #include "gen_base.h"  // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 
 #include "../panels/propgrid_panel.h"  // PropGridPanel -- Node inspector class
+#include "../ui/xrccompare.h"          // auto-generated: xrccompare_base.h and xrccompare_base.cpp
 #include "cstm_event.h"                // CustomEvent -- Custom Event class
 #include "gen_common.h"                // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"             // Common XRC generating functions
 #include "generate_xrc_dlg.h"          // GenerateXrcDlg -- Dialog for generating XRC file(s)
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
+#include "preview_settings.h"          // PreviewSettings
 #include "project_class.h"             // Project class
 #include "utils.h"                     // Utility functions that work with properties
 #include "write_code.h"                // Write code to Scintilla or file
@@ -50,7 +52,7 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
 
     if (!m_selected_node)
     {
-        wxMessageBox("You need to select a dialog first.", "XRC Dialog Preview");
+        wxMessageBox("You need to select a top level form first.", "Preview");
         return;
     }
 
@@ -70,9 +72,54 @@ void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
     if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm) && !form_node->isGen(gen_wxFrame) &&
         !form_node->isGen(gen_wxWizard))
     {
-        wxMessageBox("This type of form cannot be previewed in XRC.", "XRC Preview");
+        wxMessageBox("This type of form cannot be previewed.", "Preview");
         return;
     }
+
+    PreviewSettings dlg_preview_settings(this);
+    auto& prefs = wxGetApp().GetPrefs();
+    if (prefs.preview_type == App::PREVIEW_TYPE_XRC)
+        dlg_preview_settings.set_type_xrc(true);
+    else if (prefs.preview_type == App::PREVIEW_TYPE_BOTH)
+        dlg_preview_settings.set_type_both(true);
+    else
+        dlg_preview_settings.set_type_cpp(true);
+
+    if (dlg_preview_settings.ShowModal() == wxID_CANCEL)
+        return;
+
+    if (dlg_preview_settings.is_type_xrc())
+        prefs.preview_type = App::PREVIEW_TYPE_XRC;
+    else if (dlg_preview_settings.is_type_both())
+        prefs.preview_type = App::PREVIEW_TYPE_BOTH;
+    else
+        prefs.preview_type = App::PREVIEW_TYPE_CPP;
+
+    if (prefs.preview_type == App::PREVIEW_TYPE_BOTH)
+    {
+        if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm))
+        {
+            wxMessageBox("You can only compare dialogs and panels", "Compare");
+            return;
+        }
+
+        XrcCompare dlg_compare;
+        if (!dlg_compare.DoCreate(this, form_node))
+        {
+            wxMessageBox("Unable to create the XrcCompare dialog box!", "Compare");
+            return;
+        }
+
+        dlg_compare.ShowModal();
+        return;
+    }
+    else if (prefs.preview_type == App::PREVIEW_TYPE_CPP)
+    {
+        PreviewCpp(form_node);
+        return;
+    }
+
+    // If we get here, it's a normal XRC preview
 
     auto xrc_resource = wxXmlResource::Get();
 

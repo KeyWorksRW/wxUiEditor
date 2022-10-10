@@ -1743,8 +1743,8 @@
             var_name="separator_2" />
           <node
             class="wxMenuItem"
-            id="id_PreviewXRC"
-            label="Preview XRC..."
+            id="id_PreviewForm"
+            label="Preview Form..."
             shortcut="F5"
             var_name="menu_item_8"
             wxEVT_MENU="OnPreviewXrc" />
@@ -1965,10 +1965,10 @@
         <node
           class="tool"
           bitmap="SVG;../art_src/xrc_preview.svg;[24,24]"
-          id="id_PreviewXRC"
+          id="id_PreviewForm"
           kind="wxITEM_CHECK"
-          label="Preview XRC..."
-          tooltip="Display form using XRC"
+          label="Preview Form..."
+          tooltip="Preview form using XRC and/or C++"
           var_name="xrc_preview"
           wxEVT_TOOL="OnPreviewXrc" />
       </node>
@@ -3869,6 +3869,103 @@
             static_line="0"
             alignment="wxALIGN_CENTER"
             proportion="1" />
+        </node>
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      base_file="preview_settings"
+      class_name="PreviewSettings"
+      title="Preview"
+      use_derived_class="0"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxStaticText"
+          label="Choose what you want to use to display the form." />
+        <node
+          class="wxBoxSizer">
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="XRC"
+            style="wxRB_GROUP"
+            var_name="radio_XRC"
+            get_function="is_type_xrc"
+            set_function="set_type_xrc"
+            validator_variable="type_xrc" />
+          <node
+            class="wxRadioButton"
+            label="XRC and C++"
+            var_name="m_radio_XRC_CPP"
+            get_function="is_type_both"
+            set_function="set_type_both"
+            validator_variable="type_xrc_cpp" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="C++"
+            var_name="radio_CPP"
+            get_function="is_type_cpp"
+            set_function="set_type_cpp"
+            validator_variable="type_cpp" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      base_file="xrccompare_base"
+      class_name="XrcCompareBase"
+      derived_class_name="XrcCompare"
+      derived_file="xrccompare"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Compare C++/XRC Generated UI">
+      <node
+        class="wxGridBagSizer"
+        class_access="protected:"
+        var_name="m_grid_bag_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          borders="wxTOP|wxRIGHT|wxLEFT">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="C++ Generated"
+            var_name="staticText"
+            font="default family,9,,,underlined"
+            foreground_colour="255,0,0" />
+        </node>
+        <node
+          class="wxStaticLine"
+          class_access="protected:"
+          style="wxLI_VERTICAL"
+          var_name="m_static_line"
+          size="-1,100d"
+          column="1"
+          proportion="1"
+          rowspan="3" />
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL"
+          var_name="box_sizer_2"
+          borders="wxTOP|wxRIGHT|wxLEFT"
+          column="2">
+          <node
+            class="wxStaticText"
+            class_access="none"
+            label="XRC Generated"
+            var_name="staticText_2"
+            font="default family,9,,,underlined"
+            foreground_colour="0,128,0"
+            column="2" />
         </node>
       </node>
     </node>

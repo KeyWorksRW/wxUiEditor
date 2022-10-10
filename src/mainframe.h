@@ -383,6 +383,8 @@ protected:
     void UpdateMoveMenu();
     void UpdateWakaTime(bool FileSavedEvent = false);
 
+    void PreviewCpp(Node* form_node);
+
 private:
     wxSplitterWindow* m_MainSplitter { nullptr };
     wxSplitterWindow* m_SecondarySplitter { nullptr };
@@ -439,9 +441,6 @@ private:
 
     wxDialog* m_pxrc_dlg { nullptr };
     wxFrame* m_pxrc_win { nullptr };
-
-    wxDialog* m_p_mockup_dlg { nullptr };
-    wxFrame* m_p_mockup_win { nullptr };
 
     bool m_isXrcResourceInitalized { false };
 

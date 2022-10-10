@@ -708,7 +708,12 @@ void MainFrame::OnClose(wxCloseEvent& event)
     m_FileHistory.Save(*config);
     m_property_panel->SaveDescBoxHeight();
 
-    // REVIEW: [KeyWorks - 01-24-2022] m_has_clipboard_data is never set to true
+    auto prefs = wxGetApp().GetPrefs();
+    config->SetPath("/preferences");
+    config->Write("project_flags", prefs.project_flags);
+    config->Write("preview_type", prefs.preview_type);
+
+    // BUGBUG: [KeyWorks - 01-24-2022] m_has_clipboard_data is never set to true
 
     // If we have clipboard data, ensure it persists after we exit
     if (m_has_clipboard_data)

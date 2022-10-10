@@ -272,7 +272,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_menuTools->AppendSeparator();
 
-    auto* menu_item_8 = new wxMenuItem(m_menuTools, id_PreviewXRC, "Preview XRC...\tF5");
+    auto* menu_item_8 = new wxMenuItem(m_menuTools, id_PreviewForm, "Preview Form...\tF5");
     m_menuTools->Append(menu_item_8);
     m_menubar->Append(m_menuTools, "&Tools");
 
@@ -304,7 +304,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
             "Generate base class code");
 
     m_toolbar->AddSeparator();
-
     m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxue_img::bundle_undo_svg(16, 16),
             "Undo");
 
@@ -312,7 +311,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
             "Redo");
 
     m_toolbar->AddSeparator();
-
     m_toolbar->AddTool(wxID_CUT, wxEmptyString, wxArtProvider::GetBitmapBundle(wxART_CUT, wxART_TOOLBAR),
             "Cut");
 
@@ -326,7 +324,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
             "Delete selected object without using clipboard.");
 
     m_toolbar->AddSeparator();
-
     m_toolbar->AddTool(id_AlignLeft, wxEmptyString, wxueBundleSVG(wxue_img::alignleft_svg, 688, 1442, wxSize(24, 24)),
             "Align left", wxITEM_CHECK);
 
@@ -337,7 +334,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
             "Align right", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
-
     m_toolbar->AddTool(id_AlignTop, wxEmptyString, wxueBundleSVG(wxue_img::aligntop_svg, 688, 1440, wxSize(24, 24)),
             "Align top", wxITEM_CHECK);
 
@@ -348,7 +344,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
             "Align bottom", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
-
     m_toolbar->AddTool(id_BorderLeft, wxEmptyString, wxueBundleSVG(wxue_img::left_svg, 585, 1857, wxSize(24, 24)),
             "Left border", wxITEM_CHECK);
 
@@ -362,20 +357,18 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
             "Bottom border", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
-
     m_toolbar->AddTool(id_Expand, wxEmptyString, wxueBundleSVG(wxue_img::expand_svg, 819, 1685, wxSize(24, 24)),
             "Expand to fill the space", wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
-
     m_toolbar->AddTool(id_ShowHidden, wxEmptyString, wxueBundleSVG(wxue_img::hidden_svg, 2111, 5129, wxSize(24, 24)),
             "Show hidden controls in Mockup panel", wxITEM_CHECK);
 
     m_toolbar->AddTool(id_Magnify, wxEmptyString, wxueBundleSVG(wxue_img::magnify_svg, 3953, 8849, wxSize(24, 24)),
             "Magnify the size of the Mockup window", wxITEM_CHECK);
 
-    m_toolbar->AddTool(id_PreviewXRC, "Preview XRC...", wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(24, 24)),
-            "Display form using XRC", wxITEM_CHECK);
+    m_toolbar->AddTool(id_PreviewForm, "Preview Form...", wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(24, 24)),
+            "Preview form using XRC and/or C++", wxITEM_CHECK);
 
     m_toolbar->Realize();
 
@@ -504,12 +497,12 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
     Bind(wxEVT_MENU, &MainFrameBase::OnGenInhertedClass, this, id_GenerateDerived);
     Bind(wxEVT_MENU, &MainFrameBase::OnExportXRC, this, menu_item_10->GetId());
-    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewXRC);
+    Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
     Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());
     Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnUpdateBrowseDocs, this, menu_item_6->GetId());
     Bind(wxEVT_TOOL, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
-    Bind(wxEVT_TOOL, &MainFrameBase::OnPreviewXrc, this, id_PreviewXRC);
+    Bind(wxEVT_TOOL, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
 }
 
 namespace wxue_img

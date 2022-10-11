@@ -14,7 +14,6 @@
 
 #include "mainapp.h"
 
-#include "appoptions.h"     // AppOptions -- Application-wide options
 #include "bitmaps.h"        // Contains various images handling functions
 #include "mainframe.h"      // MainFrame -- Main window frame
 #include "node.h"           // Node -- Node class
@@ -114,20 +113,7 @@ bool App::OnInit()
 #endif  // _DEBUG
 
     SetVendorName("KeyWorks");
-
-    auto config = wxConfig::Get();
-    config->SetPath("/preferences");
-
-    m_prefs.flags = config->ReadLong("flags", PREFS_MSG_WINDOW | PREFS_MSG_INFO | PREFS_MSG_EVENT | PREFS_MSG_WARNING);
-    m_prefs.project_flags = config->ReadLong("project_flags", PREFS_PJT_MEMBER_PREFIX);
-    m_prefs.preview_type = config->ReadLong("preview_type", PREVIEW_TYPE_XRC);
-
-#if defined(_DEBUG)
-    config->Read("DebugLanguage", &m_prefs.language);
-#endif  // _DEBUG
-
-    GetAppOptions().ReadConfig();
-    config->SetPath("/");
+    m_prefs.ReadConfig();
 
     return true;
 }
@@ -343,3 +329,31 @@ void App::DbgCurrentTest(wxCommandEvent&)
 }
 
 #endif
+
+void PREFS::ReadConfig()
+{
+    auto* config = wxConfig::Get();
+    config->SetPath("/preferences");
+
+    m_flags = config->ReadLong("flags", PREFS_MSG_WINDOW | PREFS_MSG_INFO | PREFS_MSG_EVENT | PREFS_MSG_WARNING);
+    m_project_flags = config->ReadLong("project_flags", PREFS_PJT_MEMBER_PREFIX);
+    m_preview_type = static_cast<PREVIEW_TYPE>(config->ReadLong("preview_type", PREVIEW_TYPE_XRC));
+
+    m_sizers_all_borders = config->ReadBool("all_borders", true);
+    m_sizers_always_expand = config->ReadBool("always_expand", true);
+    m_enable_wakatime = config->ReadBool("enable_wakatime", true);
+
+    config->SetPath("/");
+}
+
+void PREFS::WriteConfig()
+{
+    auto* config = wxConfig::Get();
+    config->SetPath("/preferences");
+
+    config->Write("all_borders", m_sizers_all_borders);
+    config->Write("always_expand", m_sizers_always_expand);
+    config->Write("enable_wakatime", m_enable_wakatime);
+
+    config->SetPath("/");
+}

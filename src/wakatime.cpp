@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Updates WakaTime metrics
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,7 +11,7 @@
 
 #include "wakatime.h"  // WakaTime
 
-#include "appoptions.h"     // AppOptions -- Application-wide options
+#include "mainapp.h"        // App -- Main application class
 #include "project_class.h"  // Project class
 
 WakaTime::WakaTime()
@@ -120,7 +120,7 @@ constexpr const intmax_t waka_interval = 120;
 
 void WakaTime::SendHeartbeat(bool FileSavedEvent)
 {
-    if (!GetAppOptions().get_isWakaTimeEnabled())
+    if (!wxGetApp().Preferences().is_WakaTimeEnabled())
     {
         return;
     }
@@ -155,19 +155,17 @@ void WakaTime::SendHeartbeat(bool FileSavedEvent)
 
 void WakaTime::ResetHeartbeat()
 {
-    if (!GetAppOptions().get_isWakaTimeEnabled())
+    if (wxGetApp().Preferences().is_WakaTimeEnabled())
     {
-        return;
-    }
+        auto result = time(nullptr);
 
-    auto result = time(nullptr);
+        if (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval))
+        {
+            // If the user just switched away for a short period of time, we'll continue sending the heartbeats normally.
+            // However, if too much time has passed, then reset the heartbeat timer so that the user doesn't get credited for
+            // time spent with another app activated.
 
-    if (result > m_last_heartbeat && (result - m_last_heartbeat >= waka_interval))
-    {
-        // If the user just switched away for a short period of time, we'll continue sending the heartbeats normally.
-        // However, if too much time has passed, then reset the heartbeat timer so that the user doesn't get credited for
-        // time spent with another app activated.
-
-        m_last_heartbeat = static_cast<intmax_t>(result);
+            m_last_heartbeat = static_cast<intmax_t>(result);
+        }
     }
 }

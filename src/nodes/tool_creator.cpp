@@ -1,14 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Functions for creating new nodes from Ribbon Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
 #include "node.h"
 
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
-#include "appoptions.h"              // AppOptions -- Application-wide options
 #include "mainframe.h"               // MainFrame -- Main window frame
 #include "node_creator.h"            // NodeCreator class
 #include "node_decl.h"               // NodeDeclaration class
@@ -134,13 +133,13 @@ bool Node::CreateToolNode(GenName name)
 
         if (auto prop = node->get_prop_ptr(prop_borders); prop)
         {
-            if (GetAppOptions().get_SizersAllBorders())
+            if (wxGetApp().Preferences().is_SizersAllBorders())
                 prop->set_value("wxALL");
         }
 
         if (auto prop = node->get_prop_ptr(prop_flags); prop)
         {
-            if (GetAppOptions().get_SizersExpand())
+            if (wxGetApp().Preferences().is_SizersExpand())
                 prop->set_value("wxEXPAND");
         }
     }

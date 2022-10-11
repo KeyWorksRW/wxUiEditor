@@ -20,7 +20,6 @@
 
 #include "propgrid_panel.h"
 
-#include "appoptions.h"      // AppOptions -- Application-wide options
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "base_panel.h"      // BasePanel -- Code generation panel
 #include "bitmaps.h"         // Map of bitmaps accessed by name

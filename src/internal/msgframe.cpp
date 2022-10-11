@@ -96,13 +96,13 @@ MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* 
         }
     }
 
-    auto& prefs = wxGetApp().GetPrefs();
+    auto& prefs = wxGetApp().Preferences();
 
-    if ((prefs.flags & App::PREFS_MSG_WARNING))
+    if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_WARNING))
         m_menu_item_warnings->Check(true);
-    if ((prefs.flags & App::PREFS_MSG_EVENT))
+    if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_EVENT))
         m_menu_item_events->Check(true);
-    if ((prefs.flags & App::PREFS_MSG_INFO))
+    if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_INFO))
         m_menu_item_info->Check(true);
 
     // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
@@ -122,7 +122,7 @@ MsgFrame::MsgFrame(std::vector<ttlib::cstr>* pMsgs, bool* pDestroyed, wxWindow* 
 
 void MsgFrame::AddWarningMsg(ttlib::sview msg)
 {
-    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_WARNING)
+    if (wxGetApp().Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
     {
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
         m_textCtrl->AppendText("Warning: ");
@@ -133,7 +133,7 @@ void MsgFrame::AddWarningMsg(ttlib::sview msg)
 
 void MsgFrame::Add_wxWarningMsg(ttlib::sview msg)
 {
-    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_WARNING)
+    if (wxGetApp().Preferences().GetDebugFlags() & PREFS::PREFS_MSG_WARNING)
     {
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
         m_textCtrl->AppendText("wxWarning: ");
@@ -144,7 +144,7 @@ void MsgFrame::Add_wxWarningMsg(ttlib::sview msg)
 
 void MsgFrame::Add_wxInfoMsg(ttlib::sview msg)
 {
-    if (wxGetApp().GetPrefs().flags & App::PREFS_MSG_INFO)
+    if (wxGetApp().Preferences().GetDebugFlags() & PREFS::PREFS_MSG_INFO)
     {
         m_textCtrl->SetDefaultStyle(wxTextAttr(*wxCYAN));
         m_textCtrl->AppendText("wxInfo: ");
@@ -217,65 +217,56 @@ void MsgFrame::OnHide(wxCommandEvent& WXUNUSED(event))
 
 void MsgFrame::OnWarnings(wxCommandEvent& WXUNUSED(event))
 {
-    auto& prefs = wxGetApp().GetPrefs();
+    auto& prefs = wxGetApp().Preferences();
 
-    if ((prefs.flags & App::PREFS_MSG_WARNING))
+    if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_WARNING))
     {
-        prefs.flags &= ~App::PREFS_MSG_WARNING;
+        prefs.SetDebugFlags(prefs.GetDebugFlags() & ~PREFS::PREFS_MSG_WARNING);
         m_menu_item_warnings->Check(false);
     }
     else
     {
-        prefs.flags |= App::PREFS_MSG_WARNING;
+        prefs.SetDebugFlags(prefs.GetDebugFlags() | PREFS::PREFS_MSG_WARNING);
         m_menu_item_warnings->Check(true);
     }
 
-    auto config = wxConfig::Get();
-    config->SetPath("/preferences");
-    config->Write("flags", prefs.flags);
-    config->SetPath("/");
+    prefs.WriteConfig();
 }
 
 void MsgFrame::OnEvents(wxCommandEvent& WXUNUSED(event))
 {
-    auto& prefs = wxGetApp().GetPrefs();
+    auto& prefs = wxGetApp().Preferences();
 
-    if ((prefs.flags & App::PREFS_MSG_EVENT))
+    if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_EVENT))
     {
-        prefs.flags &= ~App::PREFS_MSG_EVENT;
+        prefs.SetDebugFlags(prefs.GetDebugFlags() & ~PREFS::PREFS_MSG_EVENT);
         m_menu_item_events->Check(false);
     }
     else
     {
-        prefs.flags |= App::PREFS_MSG_EVENT;
+        prefs.SetDebugFlags(prefs.GetDebugFlags() | PREFS::PREFS_MSG_EVENT);
         m_menu_item_events->Check(true);
     }
 
-    auto config = wxConfig::Get();
-    config->SetPath("/preferences");
-    config->Write("flags", prefs.flags);
-    config->SetPath("/");
+    prefs.WriteConfig();
 }
 
 void MsgFrame::OnInfo(wxCommandEvent& WXUNUSED(event))
 {
-    auto& prefs = wxGetApp().GetPrefs();
+    auto& prefs = wxGetApp().Preferences();
 
-    if ((prefs.flags & App::PREFS_MSG_INFO))
+    if ((prefs.GetDebugFlags() & PREFS::PREFS_MSG_INFO))
     {
-        prefs.flags &= ~App::PREFS_MSG_INFO;
+        prefs.SetDebugFlags(prefs.GetDebugFlags() & ~PREFS::PREFS_MSG_INFO);
         m_menu_item_info->Check(false);
     }
     else
     {
-        prefs.flags |= App::PREFS_MSG_INFO;
+        prefs.SetDebugFlags(prefs.GetDebugFlags() | PREFS::PREFS_MSG_INFO);
         m_menu_item_info->Check(true);
     }
 
-    auto config = wxConfig::Get();
-    config->SetPath("/preferences");
-    config->Write("flags", prefs.flags);
-    config->SetPath("/");
+    prefs.WriteConfig();
 }
 
 void MsgFrame::OnPageChanged(wxBookCtrlEvent& WXUNUSED(event))

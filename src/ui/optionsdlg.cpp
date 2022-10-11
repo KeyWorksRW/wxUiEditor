@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Dialog containing special Debugging commands
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,8 +9,7 @@
 
 #include "optionsdlg.h"  // auto-generated: optionsdlg_base.h and optionsdlg_base.cpp
 
-#include "appoptions.h"  // AppOptions -- Application-wide options
-#include "mainframe.h"   // MainFrame -- Main window frame
+#include "mainframe.h"  // MainFrame -- Main window frame
 
 void MainFrame::OnOptionsDlg(wxCommandEvent& WXUNUSED(event))
 {
@@ -20,10 +19,10 @@ void MainFrame::OnOptionsDlg(wxCommandEvent& WXUNUSED(event))
 
 void OptionsDlg::OnInit(wxInitDialogEvent& event)
 {
-    auto& options = GetAppOptions();
-    m_sizers_all_borders = options.get_SizersAllBorders();
-    m_sizers_always_expand = options.get_SizersExpand();
-    m_isWakaTimeEnabled = options.get_isWakaTimeEnabled();
+    auto& preferences = wxGetApp().Preferences();
+    m_sizers_all_borders = preferences.is_SizersAllBorders();
+    m_sizers_always_expand = preferences.is_SizersExpand();
+    m_isWakaTimeEnabled = preferences.is_WakaTimeEnabled();
 
     event.Skip();  // transfer all validator data to their windows and update UI
 }
@@ -32,30 +31,30 @@ void OptionsDlg::OnAffirmative(wxCommandEvent& WXUNUSED(event))
 {
     TransferDataFromWindow();
 
-    auto& options = GetAppOptions();
+    auto& preferences = wxGetApp().Preferences();
     bool option_changed = false;
 
-    if (m_sizers_all_borders != options.get_SizersAllBorders())
+    if (m_sizers_all_borders != preferences.is_SizersAllBorders())
     {
-        options.set_SizersAllBorders(m_sizers_all_borders);
+        preferences.set_SizersAllBorders(m_sizers_all_borders);
         option_changed = true;
     }
 
-    if (m_sizers_always_expand != options.get_SizersExpand())
+    if (m_sizers_always_expand != preferences.is_SizersExpand())
     {
-        options.set_SizersExpand(m_sizers_always_expand);
+        preferences.set_SizersExpand(m_sizers_always_expand);
         option_changed = true;
     }
 
-    if (m_isWakaTimeEnabled != options.get_isWakaTimeEnabled())
+    if (m_isWakaTimeEnabled != preferences.is_WakaTimeEnabled())
     {
-        options.set_isWakaTimeEnabled(m_isWakaTimeEnabled);
+        preferences.set_isWakaTimeEnabled(m_isWakaTimeEnabled);
         option_changed = true;
     }
 
     if (option_changed)
     {
-        options.WriteConfig();
+        preferences.WriteConfig();
     }
 
     EndModal(wxID_OK);

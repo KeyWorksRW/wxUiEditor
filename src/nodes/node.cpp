@@ -10,7 +10,6 @@
 
 #include "node.h"
 
-#include "appoptions.h"     // AppOptions -- Application-wide options
 #include "gridbag_item.h"   // GridBagItem -- Dialog for inserting an item into a wxGridBagSizer node
 #include "image_bundle.h"   // This will #include wx/bmpbndl.h and wx/bitmap.h
 #include "mainframe.h"      // MainFrame -- Main window frame

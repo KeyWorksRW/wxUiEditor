@@ -28,7 +28,6 @@
 
 #include "mainframe.h"
 
-#include "appoptions.h"      // AppOptions -- Application-wide options
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "bitmaps.h"         // Map of bitmaps accessed by name
 #include "clipboard.h"       // wxUiEditorData -- Handles reading and writing OS clipboard data
@@ -694,11 +693,6 @@ void MainFrame::OnClose(wxCloseEvent& event)
     config->SetPath(txt_main_window_config);
     m_FileHistory.Save(*config);
     m_property_panel->SaveDescBoxHeight();
-
-    auto prefs = wxGetApp().GetPrefs();
-    config->SetPath("/preferences");
-    config->Write("project_flags", prefs.project_flags);
-    config->Write("preview_type", prefs.preview_type);
 
     // BUGBUG: [KeyWorks - 01-24-2022] m_has_clipboard_data is never set to true
 
@@ -1790,7 +1784,7 @@ Node* MainFrame::FindChildSizerItem(Node* node, bool include_splitter)
 
 void MainFrame::UpdateWakaTime(bool FileSavedEvent)
 {
-    if (m_wakatime && GetAppOptions().get_isWakaTimeEnabled())
+    if (m_wakatime && wxGetApp().Preferences().is_WakaTimeEnabled())
     {
         m_wakatime->SendHeartbeat(FileSavedEvent);
     }

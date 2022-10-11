@@ -6,7 +6,6 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/mainframe.cpp         # Main window frame
     ${CMAKE_CURRENT_LIST_DIR}/assertion_dlg.cpp     # Assertion Dialog
 
-    ${CMAKE_CURRENT_LIST_DIR}/appoptions.cpp        # Application-wide options
     ${CMAKE_CURRENT_LIST_DIR}/bitmaps.cpp           # Map of bitmaps accessed by name
     ${CMAKE_CURRENT_LIST_DIR}/clipboard.cpp         # Handles reading and writing OS clipboard data
     ${CMAKE_CURRENT_LIST_DIR}/cstm_event.cpp        # Custom Event handling

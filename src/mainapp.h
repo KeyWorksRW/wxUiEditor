@@ -27,6 +27,66 @@ struct ImageBundle;
 
 constexpr const auto ImportProjectVersion = 13;
 
+struct PREFS
+{
+    enum PREVIEW_TYPE
+    {
+        PREVIEW_TYPE_XRC = 0,
+        PREVIEW_TYPE_BOTH,
+        PREVIEW_TYPE_CPP,
+    };
+
+    void ReadConfig();
+    void WriteConfig();
+
+    bool is_SizersAllBorders() const { return m_sizers_all_borders; }
+    bool is_SizersExpand() const { return m_sizers_always_expand; }
+    bool is_WakaTimeEnabled() const { return m_enable_wakatime; }
+
+    void set_SizersAllBorders(bool setting) { m_sizers_all_borders = setting; }
+    void set_SizersExpand(bool setting) { m_sizers_always_expand = setting; }
+    void set_isWakaTimeEnabled(bool setting) { m_enable_wakatime = setting; }
+
+    long GetDebugFlags() const { return m_flags; }
+    void SetDebugFlags(long flags) { m_flags = flags; }
+
+    long GetProjectFlags() const { return m_project_flags; }
+    void SetProjectFlags(long flags) { m_project_flags = flags; }
+
+    PREVIEW_TYPE GetPreviewType() const { return m_preview_type; }
+    void SetPreviewType(PREVIEW_TYPE type) { m_preview_type = type; }
+
+    // clang-format off
+    enum : long
+    {
+        PREFS_MSG_WINDOW    = 1 << 2,   // automatically create CMsgFrame window
+        PREFS_MSG_INFO      = 1 << 3,   // filter AddInfoMsg
+        PREFS_MSG_EVENT     = 1 << 4,   // filter AddEventMsg
+        PREFS_MSG_WARNING   = 1 << 5,   // filter AddWarningMsg
+
+        PREFS_CREATION_MSG  = 1 << 6,  // Calls MSG_INFO when nav, prop, or mockup contents recreated
+    };
+
+    enum : long
+    {
+        PREFS_PJT_ALWAYS_LOCAL = 1 << 0,
+        PREFS_PJT_MEMBER_PREFIX = 1 << 1,
+    };
+
+    // clang-format on
+
+private:
+    // These store both Debug and INTERNAL flags
+    long m_flags { 0 };
+
+    long m_project_flags { 0 };
+    PREVIEW_TYPE m_preview_type { PREVIEW_TYPE_XRC };
+
+    bool m_sizers_all_borders { true };
+    bool m_sizers_always_expand { true };
+    bool m_enable_wakatime { true };
+};
+
 class App : public wxApp
 {
 public:
@@ -52,47 +112,11 @@ public:
 
     Project* GetProject() { return m_project.get(); };
 
-    // clang-format off
-    enum : long
-    {
-        PREFS_MSG_WINDOW    = 1 << 2,   // automatically create CMsgFrame window
-        PREFS_MSG_INFO      = 1 << 3,   // filter AddInfoMsg
-        PREFS_MSG_EVENT     = 1 << 4,   // filter AddEventMsg
-        PREFS_MSG_WARNING   = 1 << 5,   // filter AddWarningMsg
+    PREFS& Preferences() { return m_prefs; }
 
-        PREFS_CREATION_MSG  = 1 << 6,  // Calls MSG_INFO when nav, prop, or mockup contents recreated
-    };
+    bool isFireCreationMsgs() const { return (m_prefs.GetDebugFlags() & PREFS::PREFS_CREATION_MSG); }
 
-    enum : long
-    {
-        PREVIEW_TYPE_XRC = 0,
-        PREVIEW_TYPE_BOTH,
-        PREVIEW_TYPE_CPP,
-    };
-
-    enum : long
-    {
-        PREFS_PJT_ALWAYS_LOCAL = 1 << 0,
-        PREFS_PJT_MEMBER_PREFIX = 1 << 1,
-    };
-
-    // clang-format on
-
-    struct uiPREFERENCES
-    {
-        long flags { 0 };  // BUGBUG: these need to be changed to debug-only flags
-
-        long project_flags { 0 };
-        long preview_type { PREVIEW_TYPE_XRC };
-
-        wxString language;  // This is used in Debug builds for forcing a different UI
-    };
-
-    uiPREFERENCES& GetPrefs() { return m_prefs; }
-
-    bool isFireCreationMsgs() const noexcept { return (m_prefs.flags & PREFS_CREATION_MSG); }
-
-    bool IsPjtMemberPrefix() const noexcept { return (m_prefs.project_flags & PREFS_PJT_MEMBER_PREFIX); }
+    bool IsPjtMemberPrefix() const { return (m_prefs.GetProjectFlags() & PREFS::PREFS_PJT_MEMBER_PREFIX); }
 
     void SetLanguage(wxLanguage language) { m_lang = language; }
     wxLanguage GetLanguage() { return m_lang; }
@@ -100,9 +124,9 @@ public:
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
 
     void ShowMsgWindow();
-    bool AutoMsgWindow()
+    bool AutoMsgWindow() const
     {
-        return (m_prefs.flags & PREFS_MSG_WINDOW);
+        return (m_prefs.GetDebugFlags() & PREFS::PREFS_MSG_WINDOW);
     }
 
     void DbgCurrentTest(wxCommandEvent& event);
@@ -159,12 +183,12 @@ private:
 
     // ProjectSettings* m_pjtSettings { nullptr };
 
-    uiPREFERENCES m_prefs;
-
     MainFrame* m_frame { nullptr };
 
     wxLanguage m_lang;  // language specified by user
     wxLocale m_locale;  // locale we'll be using
+
+    PREFS m_prefs;
 
     int m_ProjectVersion;
     bool m_isMainFrameClosing { false };

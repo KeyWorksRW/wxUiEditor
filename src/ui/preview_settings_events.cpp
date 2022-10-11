@@ -12,9 +12,20 @@
 
 void PreviewSettings::OnInit(wxInitDialogEvent& event)
 {
-    auto* cur_selection = GetMainFrame()->GetSelectedNode();
+    auto* form_node = GetMainFrame()->GetSelectedNode();
+    if (!form_node->IsForm())
+    {
+        if (form_node->isGen(gen_Project) && form_node->GetChildCount())
+        {
+            form_node = form_node->GetChild(0);
+        }
+        else
+        {
+            form_node = form_node->get_form();
+        }
+    }
 
-    if (!cur_selection->isGen(gen_wxDialog) && !cur_selection->isGen(gen_PanelForm))
+    if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm))
     {
         if (is_type_both())
         {

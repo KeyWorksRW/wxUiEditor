@@ -30,6 +30,17 @@
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxSizer* parent_sizer,
                           wxWindow* form_window)
 {
+#if defined(__WINDOWS__)
+    if (node->HasValue(prop_platforms) && !node->value(prop_platforms).contains("Windows"))
+        return;
+#elif defined(__UNIX__)
+    if (node->HasValue(prop_platforms) && !node->value(prop_platforms).contains("Unix"))
+        return;
+#elif defined(__WXOSX__)
+    if (node->HasValue(prop_platforms) && !node->value(prop_platforms).contains("Mac"))
+        return;
+#endif
+
     auto generator = node->GetGenerator();
     ASSERT_MSG(generator, ttlib::cstr() << "Missing component for " << node->DeclName());
     if (!generator)

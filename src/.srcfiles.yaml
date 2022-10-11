@@ -200,9 +200,10 @@ Files:
     import/import_wxsmith.cpp      # Process XRC files
     import/import_xml.cpp          # Base class for XML importing
 
-    mockup/mockup_parent.cpp    # Top-level MockUp Parent window
-    mockup/mockup_content.cpp   # Mockup of a form's contents
-    mockup/mockup_wizard.cpp    # Emulate a wxWizard
+    mockup/mockup_content.cpp    # Mockup of a form's contents
+    mockup/mockup_parent.cpp     # Top-level MockUp Parent window
+    mockup/mockup_preview.cpp    # Preview Mockup
+    mockup/mockup_wizard.cpp     # Emulate a wxWizard
 
     newdialogs/new_common.cpp    # Contains code common between all new_ dialogs
     newdialogs/new_dialog.cpp    # Dialog for creating a new project dialog
@@ -252,22 +253,22 @@ Files:
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file
     ui/insertwidget.cpp         # Dialog to lookup and insert a widget
     ui/optionsdlg.cpp           # Dialog containing special Debugging commands
+    ui/xrccompare.cpp           # C++/XRC UI Comparison dialog
 
     # wxUiEditor generated files
     wxui/wxui_code.cmake
 
-    # Internal Files -- only valid if INTERNAL_WIDGETS is defined
+    # Internal Files -- only valid if INTERNAL_BLD_TESTING is specified for CMake
     internal/wxui_internal.cmake
 
     internal/code_compare.cpp    # Compare code generation
     internal/convert_img.cpp     # Convert image to Header (.h) or XPM (.xpm) file
     internal/debugsettings.cpp   # Settings while running the Debug version of wxUiEditor
+    internal/import_panel.cpp    # Panel to display original imported file
     internal/msg_logging.cpp     # Message logging class
     internal/msgframe.cpp        # Stores messages
+    internal/node_info.cpp>      # Node memory usage dialog
     internal/xrcpreview.cpp      # Preview XRC code
-    internal/mockup_preview.cpp  # Preview Mockup
-    internal/xrccompare.cpp      # C++/XRC UI Comparison dialog
-    internal/import_panel.cpp    # Panel to display original imported file
 
     # ttLib_wx submodule files (see https://github.com/KeyWorksRW/ttLib_wx repository)
 

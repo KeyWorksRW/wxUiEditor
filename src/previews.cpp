@@ -55,14 +55,14 @@ void MainFrame::OnXrcKeyUp(wxKeyEvent& event)
     }
 }
 
-void MainFrame::OnXrcClose(wxCloseEvent& /* event */)
+void MainFrame::OnPreviewWinClose(wxCloseEvent& /* event */)
 {
     if (m_pxrc_win)
         m_pxrc_win->Destroy();
     m_pxrc_win = nullptr;
 }
 
-void MainFrame::OnXrcActivate(wxActivateEvent& event)
+void MainFrame::OnPreviewWinActivate(wxActivateEvent& event)
 {
     if (!event.GetActive())
     {
@@ -73,6 +73,8 @@ void MainFrame::OnXrcActivate(wxActivateEvent& event)
     else
         event.Skip();
 }
+
+////////////////////////////// Top level Preview function //////////////////////////////
 
 void Preview(Node* form_node)
 {
@@ -207,8 +209,8 @@ void PreviewXrc(Node* form_node)
             if (xrc_resource->LoadFrame(*(GetMainFrame()->GetXrcWinPtr()), wxGetFrame().GetWindow(),
                                         form_node->prop_as_wxString(prop_class_name)))
             {
-                frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnXrcClose, GetMainFrame());
-                frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnXrcActivate, GetMainFrame());
+                frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, GetMainFrame());
+                frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, GetMainFrame());
                 frame->Show();
             }
             else

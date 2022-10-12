@@ -316,8 +316,11 @@ public:
     // The following event handlers are used when previewing an XRC form
 
     void OnXrcKeyUp(wxKeyEvent& event);
-    void OnXrcClose(wxCloseEvent& event);
-    void OnXrcActivate(wxActivateEvent& event);
+    void OnPreviewWinClose(wxCloseEvent& event);
+
+    // If the Window is deactivated (switching to another window will do this), this will
+    // destroy the preview window.
+    void OnPreviewWinActivate(wxActivateEvent& event);
 
     auto GetXrcDlgPtr()
     {

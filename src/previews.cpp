@@ -181,65 +181,82 @@ void PreviewXrc(Node* form_node)
             return;
         }
 
-        // If it's a form, then the xml-generator has already created a parent dialog.
-        if (form_node->isGen(gen_wxDialog) || form_node->isGen(gen_PanelForm))
+        switch (form_node->gen_name())
         {
-            wxDialog dlg;
-            *(GetMainFrame()->GetXrcDlgPtr()) = &dlg;  // so event handlers can access it
-            dlg.Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, GetMainFrame());
+            case gen_wxDialog:
+            case gen_PanelForm:
+                {
+                    // If it's a form, then the xml-generator has already created a parent dialog.
+                    wxDialog dlg;
+                    *(GetMainFrame()->GetXrcDlgPtr()) = &dlg;  // so event handlers can access it
+                    dlg.Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, GetMainFrame());
 
-            wxString dlg_name =
-                form_node->isGen(gen_wxDialog) ? form_node->prop_as_wxString(prop_class_name) : wxString(txt_dlg_name);
-            if (xrc_resource->LoadDialog(&dlg, wxGetFrame().GetWindow(), dlg_name))
-            {
-                dlg.Centre(wxBOTH);
-                dlg.ShowModal();
-            }
-            else
-            {
-                wxMessageBox(ttlib::cstr("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
-                             "XRC Preview");
-            }
-            *(GetMainFrame()->GetXrcDlgPtr()) = nullptr;
-        }
-        else if (form_node->isGen(gen_wxFrame))
-        {
-            auto* frame = new wxFrame;
-            *(GetMainFrame()->GetXrcWinPtr()) = frame;
-            if (xrc_resource->LoadFrame(*(GetMainFrame()->GetXrcWinPtr()), wxGetFrame().GetWindow(),
-                                        form_node->prop_as_wxString(prop_class_name)))
-            {
-                frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, GetMainFrame());
-                frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, GetMainFrame());
-                frame->Show();
-            }
-            else
-            {
-                wxMessageBox(ttlib::cstr("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
-                             "XRC Preview");
-            }
-        }
-        else if (form_node->isGen(gen_wxWizard))
-        {
-            if (auto object = xrc_resource->LoadObject(NULL, form_node->prop_as_string(prop_class_name), "wxWizard"); object)
-            {
-                auto wizard = wxStaticCast(object, wxWizard);
-                if (form_node->GetChildCount())
-                {
-                    auto first_page = wizard->FindWindow(form_node->GetChild(0)->prop_as_wxString(prop_var_name));
-                    wizard->RunWizard(wxStaticCast(first_page, wxWizardPageSimple));
-                    wizard->Destroy();
+                    wxString dlg_name = form_node->isGen(gen_wxDialog) ? form_node->prop_as_wxString(prop_class_name) :
+                                                                         wxString(txt_dlg_name);
+                    if (xrc_resource->LoadDialog(&dlg, wxGetFrame().GetWindow(), dlg_name))
+                    {
+                        dlg.Centre(wxBOTH);
+                        dlg.ShowModal();
+                    }
+                    else
+                    {
+                        wxMessageBox(ttlib::cstr("Could not load ")
+                                         << form_node->prop_as_string(prop_class_name) << " resource.",
+                                     "XRC Preview");
+                    }
+                    *(GetMainFrame()->GetXrcDlgPtr()) = nullptr;
                 }
-                else
+                break;
+
+            case gen_wxFrame:
                 {
-                    wxMessageBox("You can't run a wizard that doesn't have any pages.", "XRC Preview");
+                    auto* frame = new wxFrame;
+                    *(GetMainFrame()->GetXrcWinPtr()) = frame;
+                    if (xrc_resource->LoadFrame(*(GetMainFrame()->GetXrcWinPtr()), wxGetFrame().GetWindow(),
+                                                form_node->prop_as_wxString(prop_class_name)))
+                    {
+                        frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, GetMainFrame());
+                        frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, GetMainFrame());
+                        frame->Show();
+                    }
+                    else
+                    {
+                        wxMessageBox(ttlib::cstr("Could not load ")
+                                         << form_node->prop_as_string(prop_class_name) << " resource.",
+                                     "XRC Preview");
+                    }
                 }
-            }
-            else
-            {
-                wxMessageBox(ttlib::cstr("Could not load ") << form_node->prop_as_string(prop_class_name) << " resource.",
-                             "XRC Preview");
-            }
+                break;
+
+            case gen_wxWizard:
+                {
+                    if (auto object = xrc_resource->LoadObject(NULL, form_node->prop_as_string(prop_class_name), "wxWizard");
+                        object)
+                    {
+                        auto wizard = wxStaticCast(object, wxWizard);
+                        if (form_node->GetChildCount())
+                        {
+                            auto first_page = wizard->FindWindow(form_node->GetChild(0)->prop_as_wxString(prop_var_name));
+                            wizard->RunWizard(wxStaticCast(first_page, wxWizardPageSimple));
+                            wizard->Destroy();
+                        }
+                        else
+                        {
+                            wxMessageBox("You can't run a wizard that doesn't have any pages.", "XRC Preview");
+                        }
+                    }
+                    else
+                    {
+                        wxMessageBox(ttlib::cstr("Could not load ")
+                                         << form_node->prop_as_string(prop_class_name) << " resource.",
+                                     "XRC Preview");
+                    }
+                }
+                break;
+
+            default:
+                wxMessageBox("This type of form cannot be previewed.", "XRC Preview");
+                break;
         }
     }
     catch (const std::exception& TESTING_PARAM(e))

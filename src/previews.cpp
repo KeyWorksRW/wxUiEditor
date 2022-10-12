@@ -129,8 +129,6 @@ void Preview(Node* form_node)
 
 void PreviewXrc(Node* form_node)
 {
-    // If we get here, it's a normal XRC preview
-
     auto* xrc_resource = wxXmlResource::Get();
 
     if (!g_isXrcResourceInitalized)
@@ -145,27 +143,28 @@ void PreviewXrc(Node* form_node)
         xrc_resource->AddHandler(new wxStyledTextCtrlXmlHandler);
     }
 
-    ttlib::cstr style = form_node->prop_as_string(prop_style);
+    // Our directory is probably already set correctly, but this will make certain that it is.
+    ttSaveCwd save_cwd;
+    wxSetWorkingDirectory(wxGetApp().GetProject()->GetProjectPath());
 
+    ttlib::cstr style = form_node->prop_as_string(prop_style);
+    if (form_node->isGen(gen_wxDialog) &&
+        (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
+    {
+        ttlib::cstr modified_style("wxCLOSE_BOX|wxCAPTION");
+        if (style.size())
+            modified_style << '|' << style;
+        form_node->prop_set_value(prop_style, modified_style);
+        wxMessageBox("Caption and Close box temporarily added so that you can close the preview dialog.", "XRC Preview",
+                     wxICON_INFORMATION);
+    }
+
+    // This needs to be outside of the try block so that xrc_resource->Unload(res_name) can
+    // be called after the catch block.
     wxString res_name("wxuiPreview");
+
     try
     {
-        // Our directory is probably already set correctly, but this will make certain that it is.
-
-        ttSaveCwd save_cwd;
-        wxSetWorkingDirectory(wxGetApp().GetProject()->GetProjectPath());
-
-        if (form_node->isGen(gen_wxDialog) &&
-            (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
-        {
-            ttlib::cstr modified_style("wxCLOSE_BOX|wxCAPTION");
-            if (style.size())
-                modified_style << '|' << style;
-            form_node->prop_set_value(prop_style, modified_style);
-            wxMessageBox("Caption and Close box temporarily added so that you can close the preview dialog.",
-                         "wxDialog Preview", wxICON_INFORMATION);
-        }
-
         auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
@@ -186,17 +185,16 @@ void PreviewXrc(Node* form_node)
             case gen_wxDialog:
             case gen_PanelForm:
                 {
-                    // If it's a form, then the xml-generator has already created a parent dialog.
-                    wxDialog dlg;
-                    *(GetMainFrame()->GetXrcDlgPtr()) = &dlg;  // so event handlers can access it
-                    dlg.Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, GetMainFrame());
-
                     wxString dlg_name = form_node->isGen(gen_wxDialog) ? form_node->prop_as_wxString(prop_class_name) :
                                                                          wxString(txt_dlg_name);
-                    if (xrc_resource->LoadDialog(&dlg, wxGetFrame().GetWindow(), dlg_name))
+                    if (auto* dlg = xrc_resource->LoadDialog(GetMainFrame()->GetWindow(), dlg_name); dlg)
                     {
-                        dlg.Centre(wxBOTH);
-                        dlg.ShowModal();
+                        GetMainFrame()->SetPreviewDlgPtr(dlg);  // so event handlers can access it
+                        dlg->Bind(wxEVT_KEY_UP, &MainFrame::OnXrcKeyUp, GetMainFrame());
+                        dlg->Centre(wxBOTH);
+                        dlg->ShowModal();
+                        delete dlg;
+                        GetMainFrame()->SetPreviewDlgPtr(nullptr);
                     }
                     else
                     {
@@ -204,53 +202,50 @@ void PreviewXrc(Node* form_node)
                                          << form_node->prop_as_string(prop_class_name) << " resource.",
                                      "XRC Preview");
                     }
-                    *(GetMainFrame()->GetXrcDlgPtr()) = nullptr;
                 }
                 break;
 
             case gen_wxFrame:
+                if (auto* frame =
+                        xrc_resource->LoadFrame(GetMainFrame()->GetWindow(), form_node->prop_as_wxString(prop_class_name));
+                    frame)
                 {
-                    auto* frame = new wxFrame;
-                    *(GetMainFrame()->GetXrcWinPtr()) = frame;
-                    if (xrc_resource->LoadFrame(*(GetMainFrame()->GetXrcWinPtr()), wxGetFrame().GetWindow(),
-                                                form_node->prop_as_wxString(prop_class_name)))
-                    {
-                        frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, GetMainFrame());
-                        frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, GetMainFrame());
-                        frame->Show();
-                    }
-                    else
-                    {
-                        wxMessageBox(ttlib::cstr("Could not load ")
-                                         << form_node->prop_as_string(prop_class_name) << " resource.",
-                                     "XRC Preview");
-                    }
+                    GetMainFrame()->SetPreviewWinPtr(frame);
+                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, GetMainFrame());
+                    frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, GetMainFrame());
+                    frame->Centre(wxBOTH);
+                    frame->Show();
+                    // The wxFrame will be deleted when the window is deactivated or closed
+                }
+                else
+                {
+                    wxMessageBox(ttlib::cstr("Could not load ")
+                                     << form_node->prop_as_string(prop_class_name) << " resource.",
+                                 "XRC Preview");
                 }
                 break;
 
             case gen_wxWizard:
+                if (auto* object = xrc_resource->LoadObject(NULL, form_node->prop_as_string(prop_class_name), "wxWizard");
+                    object)
                 {
-                    if (auto object = xrc_resource->LoadObject(NULL, form_node->prop_as_string(prop_class_name), "wxWizard");
-                        object)
+                    auto* wizard = wxStaticCast(object, wxWizard);
+                    if (form_node->GetChildCount())
                     {
-                        auto wizard = wxStaticCast(object, wxWizard);
-                        if (form_node->GetChildCount())
-                        {
-                            auto first_page = wizard->FindWindow(form_node->GetChild(0)->prop_as_wxString(prop_var_name));
-                            wizard->RunWizard(wxStaticCast(first_page, wxWizardPageSimple));
-                            wizard->Destroy();
-                        }
-                        else
-                        {
-                            wxMessageBox("You can't run a wizard that doesn't have any pages.", "XRC Preview");
-                        }
+                        auto first_page = wizard->FindWindow(form_node->GetChild(0)->prop_as_wxString(prop_var_name));
+                        wizard->RunWizard(wxStaticCast(first_page, wxWizardPageSimple));
+                        wizard->Destroy();
                     }
                     else
                     {
-                        wxMessageBox(ttlib::cstr("Could not load ")
-                                         << form_node->prop_as_string(prop_class_name) << " resource.",
-                                     "XRC Preview");
+                        wxMessageBox("You can't run a wizard that doesn't have any pages.", "XRC Preview");
                     }
+                }
+                else
+                {
+                    wxMessageBox(ttlib::cstr("Could not load ")
+                                     << form_node->prop_as_string(prop_class_name) << " resource.",
+                                 "XRC Preview");
                 }
                 break;
 
@@ -284,20 +279,19 @@ void MainFrame::PreviewCpp(Node* form_node)
     }
 
     ttlib::cstr style = form_node->prop_as_string(prop_style);
+    if (form_node->isGen(gen_wxDialog) &&
+        (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
+    {
+        ttlib::cstr modified_style("wxCLOSE_BOX|wxCAPTION");
+        if (style.size())
+            modified_style << '|' << style;
+        form_node->prop_set_value(prop_style, modified_style);
+        wxMessageBox("Caption and Close box temporarily added so that you can close the preview dialog.", "C++ Preview",
+                     wxICON_INFORMATION);
+    }
 
     try
     {
-        if (form_node->isGen(gen_wxDialog) &&
-            (style.empty() || (!style.contains("wxDEFAULT_DIALOG_STYLE") && !style.contains("wxCLOSE_BOX"))))
-        {
-            ttlib::cstr modified_style("wxCLOSE_BOX|wxCAPTION");
-            if (style.size())
-                modified_style << '|' << style;
-            form_node->prop_set_value(prop_style, modified_style);
-            wxMessageBox("Caption and Close box temporarily added so that you can close the preview dialog.", "C++ Preview",
-                         wxICON_INFORMATION);
-        }
-
         switch (form_node->gen_name())
         {
             case gen_PanelForm:

@@ -367,6 +367,23 @@ void MainFrame::PreviewCpp(Node* form_node)
                 }
                 break;
 
+            case gen_wxFrame:
+                if (auto* frame =
+                        new wxFrame(nullptr, wxID_ANY, form_node->value(prop_title), DlgPoint(this, form_node, prop_pos),
+                                    DlgSize(this, form_node, prop_size), GetStyleInt(form_node));
+                    frame)
+                {
+                    CreateMockupChildren(form_node->GetChild(0), frame, frame, nullptr, frame);
+
+                    GetMainFrame()->SetPreviewWinPtr(frame);
+                    frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, GetMainFrame());
+                    frame->Bind(wxEVT_ACTIVATE, &MainFrame::OnPreviewWinActivate, GetMainFrame());
+                    frame->Centre(wxBOTH);
+                    frame->Show();
+                    // The wxFrame will be deleted when the window is deactivated or closed
+                }
+                break;
+
             case gen_wxWizard:
                 {
                     wxWizard wizard;

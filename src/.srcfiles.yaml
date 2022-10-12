@@ -45,6 +45,7 @@ Files:
     image_bundle.cpp      # Functions for working with wxBitmapBundle
     lambdas.cpp           # Functions for formatting and storage of lamda events
     paths.cpp             # Handles *_directory properties
+    previews.cpp          # Top level Preview functions
     project_class.cpp     # Project class
     startup_dlg.cpp       # Startup dialog
     undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd

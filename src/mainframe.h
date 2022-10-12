@@ -311,6 +311,23 @@ public:
 
     void ToggleBorderFlag(Node* node, int border);
 
+    void PreviewCpp(Node* form_node);
+
+    // The following event handlers are used when previewing an XRC form
+
+    void OnXrcKeyUp(wxKeyEvent& event);
+    void OnXrcClose(wxCloseEvent& event);
+    void OnXrcActivate(wxActivateEvent& event);
+
+    auto GetXrcDlgPtr()
+    {
+        return &m_pxrc_dlg;
+    }
+    auto GetXrcWinPtr()
+    {
+        return &m_pxrc_win;
+    }
+
 protected:
     void OnExportXRC(wxCommandEvent& event) override;
     void OnAbout(wxCommandEvent& event) override;
@@ -366,12 +383,6 @@ protected:
 
 #endif
 
-    // The following event handlers are used when previewing an XRC form
-
-    void OnXrcKeyUp(wxKeyEvent& event);
-    void OnXrcClose(wxCloseEvent& event);
-    void OnXrcActivate(wxActivateEvent& event);
-
     wxWindow* CreateNoteBook(wxWindow* parent);
 
     void CreateSplitters();
@@ -379,8 +390,6 @@ protected:
     void UpdateLayoutTools();
     void UpdateMoveMenu();
     void UpdateWakaTime(bool FileSavedEvent = false);
-
-    void PreviewCpp(Node* form_node);
 
 private:
     wxSplitterWindow* m_MainSplitter { nullptr };

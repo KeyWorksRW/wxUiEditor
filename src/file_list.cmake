@@ -14,6 +14,7 @@ set (file_list
     ${CMAKE_CURRENT_LIST_DIR}/image_bundle.cpp      # Functions for working with wxBitmapBundle
     ${CMAKE_CURRENT_LIST_DIR}/lambdas.cpp           # Functions for formatting and storage of lamda events
     ${CMAKE_CURRENT_LIST_DIR}/paths.cpp             # Handles *_directory properties
+    ${CMAKE_CURRENT_LIST_DIR}/previews.cpp          # Top level Preview functions
     ${CMAKE_CURRENT_LIST_DIR}/project_class.cpp     # Project class
     ${CMAKE_CURRENT_LIST_DIR}/startup_dlg.cpp       # Startup dialog
     ${CMAKE_CURRENT_LIST_DIR}/undo_cmds.cpp         # Undoable command classes derived from UndoStackCmd

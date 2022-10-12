@@ -322,13 +322,13 @@ public:
     // destroy the preview window.
     void OnPreviewWinActivate(wxActivateEvent& event);
 
-    auto GetXrcDlgPtr()
+    void SetPreviewDlgPtr(wxDialog* dlg)
     {
-        return &m_pxrc_dlg;
+        m_pxrc_dlg = dlg;
     }
-    auto GetXrcWinPtr()
+    void SetPreviewWinPtr(wxFrame* frame)
     {
-        return &m_pxrc_win;
+        m_pxrc_win = frame;
     }
 
 protected:

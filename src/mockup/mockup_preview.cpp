@@ -225,37 +225,6 @@ void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object,
     }
 }
 
-void MainFrame::OnMockupPreview(wxCommandEvent& /* event */)
-{
-    if (!m_selected_node)
-    {
-        wxMessageBox("You need to select a form first.", "Preview");
-        return;
-    }
-
-    auto form_node = m_selected_node.get();
-    if (!form_node->IsForm())
-    {
-        if (form_node->isGen(gen_Project) && form_node->GetChildCount())
-        {
-            form_node = GetProject()->GetFirstFormChild();
-        }
-        else
-        {
-            form_node = form_node->get_form();
-        }
-    }
-
-    if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm) && !form_node->isGen(gen_wxFrame) &&
-        !form_node->isGen(gen_wxWizard))
-    {
-        wxMessageBox("This type of form is not available for previewing", "Preview");
-        return;
-    }
-
-    PreviewCpp(form_node);
-}
-
 void MainFrame::PreviewCpp(Node* form_node)
 {
     if (form_node->isGen(gen_wxDialog))

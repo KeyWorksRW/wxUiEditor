@@ -34,10 +34,53 @@
 void CreateMockupChildren(Node* node, wxWindow* parent, wxObject* parent_object, wxSizer* parent_sizer,
                           wxWindow* form_window);
 void PreviewXrc(Node* form_node);
+void Preview(Node* form_node);
 
 static bool g_isXrcResourceInitalized { false };
 
 extern const char* txt_dlg_name;  // Defined in gen_xrc.cpp ("_wxue_temp_dlg")
+
+void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
+{
+    m_pxrc_dlg = nullptr;
+
+    if (!m_selected_node)
+    {
+        wxMessageBox("You need to select a top level form first.", "Preview");
+        return;
+    }
+
+    auto form_node = m_selected_node.get();
+    if (!form_node->IsForm())
+    {
+        if (form_node->isGen(gen_Project) && form_node->GetChildCount())
+        {
+            form_node = form_node->GetChild(0);
+        }
+        else
+        {
+            form_node = form_node->get_form();
+        }
+    }
+
+    switch (form_node->gen_name())
+    {
+        case gen_wxDialog:
+        case gen_wxFrame:
+        case gen_PanelForm:
+        case gen_wxWizard:
+        case gen_MenuBar:
+        case gen_RibbonBar:
+        case gen_ToolBar:
+            break;
+
+        default:
+            wxMessageBox("This type of form cannot be previewed.", "Preview");
+            return;
+    }
+
+    Preview(form_node);
+}
 
 ////////////////////////////// Bind Events //////////////////////////////
 
@@ -165,7 +208,7 @@ void PreviewXrc(Node* form_node)
 
     try
     {
-        auto doc_str = GenerateXrcStr(form_node, form_node->isGen(gen_PanelForm) ? xrc::previewing : 0);
+        auto doc_str = GenerateXrcStr(form_node, xrc::previewing);
         wxMemoryInputStream stream(doc_str.c_str(), doc_str.size());
         wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(stream, "UTF-8"));
         if (!xmlDoc->IsOk())
@@ -184,6 +227,9 @@ void PreviewXrc(Node* form_node)
         {
             case gen_wxDialog:
             case gen_PanelForm:
+            case gen_MenuBar:
+            case gen_RibbonBar:
+            case gen_ToolBar:
                 {
                     wxString dlg_name = form_node->isGen(gen_wxDialog) ? form_node->prop_as_wxString(prop_class_name) :
                                                                          wxString(txt_dlg_name);

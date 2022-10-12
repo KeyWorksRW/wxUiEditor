@@ -37,6 +37,7 @@
 #include "generate_xrc_dlg.h"          // GenerateXrcDlg -- Dialog for generating XRC file(s)
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
+#include "node_creator.h"              // NodeCreator -- Class used to create nodes
 #include "preview_settings.h"          // PreviewSettings
 #include "project_class.h"             // Project class
 #include "utils.h"                     // Utility functions that work with properties
@@ -45,41 +46,6 @@
 #include "pugixml.hpp"
 
 const char* txt_dlg_name = "_wxue_temp_dlg";
-
-void Preview(Node* form_node);
-
-void MainFrame::OnPreviewXrc(wxCommandEvent& /* event */)
-{
-    m_pxrc_dlg = nullptr;
-
-    if (!m_selected_node)
-    {
-        wxMessageBox("You need to select a top level form first.", "Preview");
-        return;
-    }
-
-    auto form_node = m_selected_node.get();
-    if (!form_node->IsForm())
-    {
-        if (form_node->isGen(gen_Project) && form_node->GetChildCount())
-        {
-            form_node = form_node->GetChild(0);
-        }
-        else
-        {
-            form_node = form_node->get_form();
-        }
-    }
-
-    if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm) && !form_node->isGen(gen_wxFrame) &&
-        !form_node->isGen(gen_wxWizard))
-    {
-        wxMessageBox("This type of form cannot be previewed.", "Preview");
-        return;
-    }
-
-    Preview(form_node);
-}
 
 void MainFrame::OnExportXRC(wxCommandEvent& WXUNUSED(event))
 {
@@ -243,6 +209,20 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
     root.append_attribute("xmlns") = "http://www.wxwidgets.org/wxxrc";
     root.append_attribute("version") = "2.5.3.0";
 
+    NodeSharedPtr temp_form = nullptr;
+    if (node_start->isGen(gen_MenuBar) || node_start->isGen(gen_RibbonBar) || node_start->isGen(gen_ToolBar))
+    {
+        temp_form = g_NodeCreator.CreateNode(gen_PanelForm, nullptr);
+        if (temp_form)
+        {
+            auto sizer = g_NodeCreator.CreateNode(gen_VerticalBoxSizer, temp_form.get());
+            temp_form->Adopt(sizer);
+            auto node_copy = g_NodeCreator.MakeCopy(node_start, sizer.get());
+            sizer->Adopt(node_copy);
+            node_start = temp_form.get();
+        }
+    }
+
     if (!node_start)
     {
         root.append_child("object");
@@ -269,6 +249,7 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
 
         GenXrcObject(node_start, object, xrc_flags);
     }
+#if 0
     else if ((xrc_flags & xrc::previewing) && node_start->isGen(gen_wxDialog))
     {
         auto object = root.append_child("object");
@@ -277,6 +258,7 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags)
         object = object.append_child("object");
         GenXrcObject(node_start->GetChild(0), object, xrc_flags);
     }
+#endif
     else
     {
         auto object = root.append_child("object");

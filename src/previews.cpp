@@ -373,7 +373,11 @@ void MainFrame::PreviewCpp(Node* form_node)
                                     DlgSize(this, form_node, prop_size), GetStyleInt(form_node));
                     frame)
                 {
-                    CreateMockupChildren(form_node->GetChild(0), frame, frame, nullptr, frame);
+                    for (auto& iter: form_node->GetChildNodePtrs())
+                    {
+                        CreateMockupChildren(iter.get(), frame, nullptr, nullptr, frame);
+                    }
+                    // CreateMockupChildren(form_node->GetChild(0), frame, frame, nullptr, frame);
 
                     GetMainFrame()->SetPreviewWinPtr(frame);
                     frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnPreviewWinClose, GetMainFrame());

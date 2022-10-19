@@ -421,7 +421,7 @@ void GenXrcObjectAttributes(Node* node, pugi::xml_node& object, std::string_view
 
 pugi::xml_node InitializeXrcObject(Node* node, pugi::xml_node& object)
 {
-    if (node->GetParent()->IsSizer() || node->GetParent()->isGen(gen_wxStaticBox))
+    if (node->GetParent() && (node->GetParent()->IsSizer() || node->GetParent()->isGen(gen_wxStaticBox)))
     {
         GenXrcSizerItem(node, object);
         return object.append_child("object");

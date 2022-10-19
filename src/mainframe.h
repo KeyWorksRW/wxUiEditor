@@ -311,6 +311,26 @@ public:
 
     void ToggleBorderFlag(Node* node, int border);
 
+    void PreviewCpp(Node* form_node);
+
+    // The following event handlers are used when previewing an XRC form
+
+    void OnXrcKeyUp(wxKeyEvent& event);
+    void OnPreviewWinClose(wxCloseEvent& event);
+
+    // If the Window is deactivated (switching to another window will do this), this will
+    // destroy the preview window.
+    void OnPreviewWinActivate(wxActivateEvent& event);
+
+    void SetPreviewDlgPtr(wxDialog* dlg)
+    {
+        m_pxrc_dlg = dlg;
+    }
+    void SetPreviewWinPtr(wxFrame* frame)
+    {
+        m_pxrc_win = frame;
+    }
+
 protected:
     void OnExportXRC(wxCommandEvent& event) override;
     void OnAbout(wxCommandEvent& event) override;
@@ -357,9 +377,6 @@ protected:
     void OnCodeCompare(wxCommandEvent& event);
     void OnConvertImageDlg(wxCommandEvent& event);
     void OnFindWidget(wxCommandEvent& event);
-    void OnXrcPreviewDlg(wxCommandEvent& event);
-    void OnCompareXrcDlg(wxCommandEvent& event);
-    void OnMockupPreview(wxCommandEvent& event);
 #endif
 
 #if defined(_DEBUG)  // Starts debug section.
@@ -369,12 +386,6 @@ protected:
 
 #endif
 
-    // The following event handlers are used when previewing an XRC form
-
-    void OnXrcKeyUp(wxKeyEvent& event);
-    void OnXrcClose(wxCloseEvent& event);
-    void OnXrcActivate(wxActivateEvent& event);
-
     wxWindow* CreateNoteBook(wxWindow* parent);
 
     void CreateSplitters();
@@ -382,8 +393,6 @@ protected:
     void UpdateLayoutTools();
     void UpdateMoveMenu();
     void UpdateWakaTime(bool FileSavedEvent = false);
-
-    void PreviewCpp(Node* form_node);
 
 private:
     wxSplitterWindow* m_MainSplitter { nullptr };

@@ -206,7 +206,9 @@ std::optional<ttlib::cstr> PanelFormGenerator::GenAdditionalCode(GenEnum::GenCod
 
 int PanelFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
-    auto result = node->GetParent()->IsSizer() ? BaseGenerator::xrc_sizer_item_created : BaseGenerator::xrc_updated;
+    auto result = BaseGenerator::xrc_updated;
+    if (node->GetParent() && node->GetParent()->IsSizer())
+        result = BaseGenerator::xrc_sizer_item_created;
     auto item = InitializeXrcObject(node, object);
 
     item.append_attribute("class").set_value("wxPanel");

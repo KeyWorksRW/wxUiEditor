@@ -26,12 +26,6 @@
 
 const int node_marker = 1;
 
-void MainFrame::OnXrcPreviewDlg(wxCommandEvent& /* event */)
-{
-    XrcPreview dlg(this);
-    dlg.ShowModal();
-}
-
 // If this constructor is used, the caller must call Create(parent)
 XrcPreview::XrcPreview() {}
 

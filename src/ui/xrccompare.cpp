@@ -34,43 +34,6 @@ std::string GenerateXrcStr(Node* node_start, size_t xrc_flags);
 
 extern const char* txt_dlg_name;
 
-void MainFrame::OnCompareXrcDlg(wxCommandEvent& /* event */)
-{
-    if (!m_selected_node)
-    {
-        wxMessageBox("You need to select a form first.", "Compare");
-        return;
-    }
-
-    auto form_node = m_selected_node.get();
-    if (!form_node->IsForm())
-    {
-        if (form_node->isGen(gen_Project) && form_node->GetChildCount())
-        {
-            form_node = GetProject()->GetFirstFormChild();
-        }
-        else
-        {
-            form_node = form_node->get_form();
-        }
-    }
-
-    if (!form_node->isGen(gen_wxDialog) && !form_node->isGen(gen_PanelForm))
-    {
-        wxMessageBox("You can only compare dialogs and panels", "Compare");
-        return;
-    }
-
-    XrcCompare dlg_compare;
-    if (!dlg_compare.DoCreate(this, form_node))
-    {
-        wxMessageBox("Unable to create the XrcCompare dialog box!", "Compare");
-        return;
-    }
-
-    dlg_compare.ShowModal();
-}
-
 // If this constructor is used, the caller must call Create(parent)
 XrcCompare::XrcCompare()
 {

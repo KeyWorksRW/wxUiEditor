@@ -71,57 +71,18 @@ if (NOT INTERNAL_BLD_FORK)
     # This will build wxCLib.lib and wxWidgets.lib
     add_subdirectory(${widget_cmake_dir})
 else()
-    message(NOTICE "Building with forked wxWidgets libraries")
-
-    add_compile_definitions(INTERNAL_BLD_FORK)
-
-    set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets)
-    set (widget_cmake_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
-
-    # Note that for INTERNAL_BLD_FORK with INTERNAL_BLD_WX_CMAKE to work, you must build the wxWidgets libraries yourself
-    # (add_subdirectory is not used in this case). You will need to set the cmake configuration for wxWidgets to build mondo
-    # static (including static runtime). Do *not* use this for an official release build as you cannot optimize or profile
-    # the wxWidgets library when using their cmake build.
-
-    # Alternaticely, you can use the following -- but that means creating the CMakeLists.txt file yourself (you can use the
-    # version in wxSnapshot as a template).
-
-    if (NOT INTERNAL_BLD_WX_CMAKE)
-        # This will build wxCLib and wxWidgets. wxCLib can NOT be used in a UNIX build
-        add_subdirectory(../wxWidgets/bld ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
-    endif()
-
-    # Using MSVC, this will build in lib/vc_x64_lib:
-    #     wxmsw33ud wxexpatd wxjpegd wxpngd wxregexud wxscintillad wxtiffd wxzlibd
-    # add_subdirectory(../wxWidgets ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld)
-
-    if (MSVC)
-        # Both debug and release libraries are in this directory
-        if (INTERNAL_BLD_WX_CMAKE)
-            set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/lib/vc_x64_lib)
-        else()
-            set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/build)
-        endif()
-    else()
-        set (widget_lib_dir ${CMAKE_CURRENT_LIST_DIR}/../wxWidgets/bld/lib)
-    endif()
+    include( internal.cmake )
 endif()
 
 if (WIN32)
     if (NOT INTERNAL_BLD_FORK)
         set(setup_dir ${widget_cmake_dir}/win)
-    else()
-        if (INTERNAL_BLD_WX_CMAKE)
-            set(setup_dir ${widget_cmake_dir}/lib/vc_x64_lib/mswud)
-        else()
-            set(setup_dir ${widget_cmake_dir}/win)
-        endif()
+        # internal.cmake will have handled the INTERNAL_BLD_FORK settings
     endif()
 else()
     if (NOT INTERNAL_BLD_FORK)
         set(setup_dir ${widget_cmake_dir}/unix)
-    else()
-        set(setup_dir ${widget_cmake_dir}/lib/wx/include/gtk3-unicode-static-3.3)
+        # internal.cmake will have handled the INTERNAL_BLD_FORK settings
     endif()
 endif()
 
@@ -134,8 +95,8 @@ target_precompile_headers(ttLib_wx PRIVATE "src/pch.h")
 target_include_directories(ttLib_wx PRIVATE
     ${widget_dir}/include
     ${setup_dir}
-    src/
-    ttLib_wx/src
+    ${CMAKE_CURRENT_LIST_DIR}/src/
+    ${CMAKE_CURRENT_LIST_DIR}/ttLib_wx/src
 )
 
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates. Specifying the full path and extension
@@ -144,27 +105,6 @@ target_include_directories(ttLib_wx PRIVATE
 include( src/wxui/wxui_code.cmake )  # This will set ${wxue_generated_code} with list of generated files
 include( src/file_list.cmake )       # This will set ${file_list} with a list of source files
 list(TRANSFORM file_list PREPEND "${file_list_dir}/")
-
-if (INTERNAL_BLD_TESTING)
-    include( src/internal/wxui_internal.cmake )  # This will set ${wxui_internal} with a list of source files
-
-    # Note that setting the INTERNAL_BLD_TESTING doesn't just add these modules, it also enables the three assertion macros
-    # in a Release build, and may change other functionality as well. It should NEVER be used for a production build!
-
-    set (wxui_internal ${wxui_internal}
-        # These are always included in Debug builds, with INTERNAL_BLD_TESTING we also need them
-        # in Release builds.
-        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/code_compare.cpp>
-        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/convert_img.cpp>
-        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/import_panel.cpp>
-        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/node_info.cpp>
-        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/xrcpreview.cpp>
-
-        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/msg_logging.cpp>
-        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/msgframe.cpp>
-        $<$<CONFIG:Release>:${CMAKE_CURRENT_LIST_DIR}/src/internal/debugsettings.cpp>
-    )
-endif()
 
 # Note the requirement that --config Debug is used to get the additional debug files
 add_executable(wxUiEditor WIN32
@@ -190,27 +130,7 @@ else()
         if (INTERNAL_BLD_WX_CMAKE)
             # Both Debug and Release libaries are in the same location
             target_link_directories(wxUiEditor PRIVATE ${widget_lib_dir})
-            target_link_libraries(wxUiEditor PRIVATE ttLib_wx
-                $<$<CONFIG:Debug>:wxmsw33ud>
-                $<$<CONFIG:Debug>:wxexpatd>
-                $<$<CONFIG:Debug>:wxjpegd>
-                $<$<CONFIG:Debug>:wxpngd>
-                $<$<CONFIG:Debug>:wxregexud>
-                $<$<CONFIG:Debug>:wxscintillad>
-                $<$<CONFIG:Debug>:wxtiffd>
-                $<$<CONFIG:Debug>:wxzlibd>
-
-                $<$<CONFIG:Release>:wxmsw33u>
-                $<$<CONFIG:Release>:wxexpat>
-                $<$<CONFIG:Release>:wxjpeg>
-                $<$<CONFIG:Release>:wxpng>
-                $<$<CONFIG:Release>:wxregexu>
-                $<$<CONFIG:Release>:wxscintilla>
-                $<$<CONFIG:Release>:wxtiff>
-                $<$<CONFIG:Release>:wxzlib>
-
-                 comctl32 Imm32 Shlwapi Version UxTheme
-            )
+            target_link_libraries(wxUiEditor PRIVATE ttLib_wx ${fork_wxlibraries})
         else()
             target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
         endif()
@@ -261,30 +181,30 @@ target_include_directories(wxUiEditor PRIVATE
     ${widget_dir}/include
     ${setup_dir}
 
-    src/
-    src/nodes
-    src/generate
-    src/utils
-    src/customprops
-    src/ui
-    src/wxui
-    pugixml
-    ttLib_wx/src
+    ${CMAKE_CURRENT_LIST_DIR}/src/
+    ${CMAKE_CURRENT_LIST_DIR}/src/nodes
+    ${CMAKE_CURRENT_LIST_DIR}/src/generate
+    ${CMAKE_CURRENT_LIST_DIR}/src/utils
+    ${CMAKE_CURRENT_LIST_DIR}/src/customprops
+    ${CMAKE_CURRENT_LIST_DIR}/src/ui
+    ${CMAKE_CURRENT_LIST_DIR}/src/wxui
+    ${CMAKE_CURRENT_LIST_DIR}/pugixml
+    ${CMAKE_CURRENT_LIST_DIR}/ttLib_wx/src
 )
 
 target_include_directories(check_build PRIVATE
     ${widget_dir}/include
     ${setup_dir}
 
-    src/
-    src/nodes
-    src/generate
-    src/utils
-    src/customprops
-    src/ui
-    src/wxui
-    pugixml
-    ttLib_wx/src
+    ${CMAKE_CURRENT_LIST_DIR}/src/
+    ${CMAKE_CURRENT_LIST_DIR}/src/nodes
+    ${CMAKE_CURRENT_LIST_DIR}/src/generate
+    ${CMAKE_CURRENT_LIST_DIR}/src/utils
+    ${CMAKE_CURRENT_LIST_DIR}/src/customprops
+    ${CMAKE_CURRENT_LIST_DIR}/src/ui
+    ${CMAKE_CURRENT_LIST_DIR}/src/wxui
+    ${CMAKE_CURRENT_LIST_DIR}/pugixml
+    ${CMAKE_CURRENT_LIST_DIR}/ttLib_wx/src
 )
 
 # Packaging Instructions

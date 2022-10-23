@@ -128,7 +128,7 @@ endif()
 add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 # Instructions for building the ttlib_wx library using this project's precompiled header
-include(ttLib_wx/src/ttlib_file_list.cmake)
+include( ttLib_wx/src/ttlib_file_list.cmake )
 add_library(ttLib_wx STATIC ${ttlib_file_list})
 target_precompile_headers(ttLib_wx PRIVATE "src/pch.h")
 target_include_directories(ttLib_wx PRIVATE
@@ -141,11 +141,12 @@ target_include_directories(ttLib_wx PRIVATE
 # Setting CMAKE_MODULE_PATH causes ninja to fail rebuilding until CMake re-generates. Specifying the full path and extension
 # means ninja sees this as a normal dependency that didn't change any time one of the files it specifies changes.
 
-include(src/wxui/wxui_code.cmake)  # This will set ${wxue_generated_code} with list of generated files
-include(src/file_list.cmake)       # This will set ${file_list} with a list of source files
+include( src/wxui/wxui_code.cmake )  # This will set ${wxue_generated_code} with list of generated files
+include( src/file_list.cmake )       # This will set ${file_list} with a list of source files
+list(TRANSFORM file_list PREPEND "${file_list_dir}/")
 
 if (INTERNAL_BLD_TESTING)
-    include(src/internal/wxui_internal.cmake)  # This will set ${wxui_internal} with a list of source files
+    include( src/internal/wxui_internal.cmake )  # This will set ${wxui_internal} with a list of source files
 
     # Note that setting the INTERNAL_BLD_TESTING doesn't just add these modules, it also enables the three assertion macros
     # in a Release build, and may change other functionality as well. It should NEVER be used for a production build!

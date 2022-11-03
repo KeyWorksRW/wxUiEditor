@@ -205,6 +205,8 @@ set (file_list
     nodes/node_prop.cpp         # NodeProperty class
     nodes/tool_creator.cpp      # Functions for creating new nodes from Ribbon Panel
 
+    # Panels
+
     panels/cstm_propgrid.cpp    # Derived wxPropertyGrid class
     panels/code_display.cpp     # Display code in scintilla control
     panels/base_panel.cpp       # Code generation panel
@@ -212,6 +214,8 @@ set (file_list
     panels/navpopupmenu.cpp     # Context-menu for Navigation panel
     panels/propgrid_panel.cpp   # Property panel
     panels/ribbon_tools.cpp     # Displays node creation tools in a wxRibbonBar
+
+    # Misc
 
     project/loadproject.cpp     # Load wxUiEditor project
     project/saveproject.cpp     # Save a wxUiEditor project file

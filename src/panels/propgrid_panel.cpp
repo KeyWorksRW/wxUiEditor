@@ -1537,7 +1537,7 @@ void PropGridPanel::CreatePropCategory(ttlib::sview name, Node* node, NodeDeclar
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
     }
-    else if (name.contains("Code"))
+    else if (node->isGen(gen_Project) && name.contains("Code"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e7f4e4"));
     }

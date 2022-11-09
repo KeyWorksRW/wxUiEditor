@@ -506,12 +506,22 @@ std::vector<NODEPROP_STATUSBAR_FIELD> NodeProperty::as_statusbar_fields() const
     for (auto& field: fields)
     {
         ttlib::multistr parts(field, '|');
+        auto& item = result.emplace_back();
         if (parts.size() == 2)
-            result.emplace_back(parts[0], parts[1]);
+        {
+            item.style = parts[0];
+            item.width = parts[1];
+        }
         else if (parts.size() > 0)
-            result.emplace_back(parts[0], "-1");
+        {
+            item.style = parts[0];
+            item.width = "-1";
+        }
         else
-            result.emplace_back("wxSB_NORMAL", "-1");
+        {
+            item.style = "wxSB_NORMAL";
+            item.width = "-1";
+        }
     }
 
     return result;
@@ -536,13 +546,17 @@ std::vector<NODEPROP_CHECKLIST_ITEM> NodeProperty::as_checklist_items() const
     ttlib::multistr fields(m_value, ';');
     for (auto& field: fields)
     {
+        NODEPROP_CHECKLIST_ITEM item;
         ttlib::multistr parts(field, '|');
-        if (parts.size() == 2)
-            result.emplace_back(parts[0], parts[1]);
-        else if (parts.size() > 0)
-            result.emplace_back(parts[0], "");
-        else
-            result.emplace_back("", "");
+        if (parts.size())
+        {
+            item.label = parts[0];
+            if (parts.size() > 1)
+            {
+                item.checked = parts[1];
+            }
+        }
+        result.emplace_back(item);
     }
 
     return result;
@@ -555,13 +569,17 @@ std::vector<NODEPROP_BMP_COMBO_ITEM> NodeProperty::as_bmp_combo_items() const
     ttlib::multistr fields(m_value, ';');
     for (auto& field: fields)
     {
+        NODEPROP_BMP_COMBO_ITEM item;
         ttlib::multistr parts(field, '|');
-        if (parts.size() == 2)
-            result.emplace_back(parts[0], parts[1]);
-        else if (parts.size() > 0)
-            result.emplace_back(parts[0], "");
-        else
-            result.emplace_back("", "");
+        if (parts.size())
+        {
+            item.label = parts[0];
+            if (parts.size() > 1)
+            {
+                item.bitmap = parts[1];
+            }
+        }
+        result.emplace_back(item);
     }
 
     return result;

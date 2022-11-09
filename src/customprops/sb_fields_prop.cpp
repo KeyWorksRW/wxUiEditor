@@ -51,7 +51,7 @@ void SBarFieldsDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
         fields.push_back(field);
     }
 
-    if (fields.size() > m_grid->GetNumberRows())
+    if ((to_int) fields.size() > m_grid->GetNumberRows())
     {
         m_grid->AppendRows(to_int(fields.size()) - m_grid->GetNumberRows());
     }

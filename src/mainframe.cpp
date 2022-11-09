@@ -157,7 +157,6 @@ MainFrame::MainFrame() :
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     auto menuInternal = new wxMenu;
-    wxMenuItem* item;
 
     menuInternal->Append(id_CodeDiffDlg, "Compare Code &Generation...",
                          "Dialog showing what class have changed, and optional viewing in WinMerge");
@@ -175,6 +174,7 @@ MainFrame::MainFrame() :
     ////////////////////// Debug-only menu items //////////////////////
     #if defined(_DEBUG)
 
+    wxMenuItem* item;
     item = menuInternal->Append(id_DebugXrcImport, "&Text XRC import", "Export the current form, then verify importing it");
     item->SetBitmap(bundle_import_svg(16, 16));
     menuInternal->Append(id_DebugXrcDuplicate, "&Text XRC duplication",

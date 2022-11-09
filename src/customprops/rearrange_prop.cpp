@@ -34,7 +34,7 @@ void RearrangeDialog::OnInit(wxInitDialogEvent& WXUNUSED(event))
     m_grid->SetColFormatCustom(1, wxGRID_VALUE_STRING);
 
     auto contents = m_prop->as_checklist_items();
-    if (contents.size() > m_grid->GetNumberRows())
+    if ((to_int) contents.size() > m_grid->GetNumberRows())
     {
         m_grid->AppendRows(to_int(contents.size()) - m_grid->GetNumberRows());
     }

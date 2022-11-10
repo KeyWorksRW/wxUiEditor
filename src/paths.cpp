@@ -64,7 +64,7 @@ void AllowDirectoryChange(wxPropertyGridEvent& event, NodeProperty* /* prop */, 
 
 void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
 {
-    if (prop->isProp(prop_base_file))
+    if (prop->isProp(prop_base_file) || prop->isProp(prop_xrc_file))
     {
         ttString newValue = event.GetPropertyValue().GetString();
         if (newValue.empty())
@@ -81,23 +81,51 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
         {
             if (child.get() == node)
                 continue;
-            if (child->prop_as_string(prop_base_file).filename() == filename)
+            if (prop->isProp(prop_base_file))
             {
-                auto focus = wxWindow::FindFocus();
-
-                wxMessageBox(wxString() << "The base filename \"" << filename << "\" is already in use by "
-                                        << child->prop_as_string(prop_class_name)
-                                        << "\n\nEither change the name, or press ESC to restore the original name.",
-                             "Duplicate base filename", wxICON_STOP);
-                if (focus)
+                if (child->prop_as_string(prop_base_file).filename() == filename)
                 {
-                    focus->SetFocus();
-                }
+                    auto focus = wxWindow::FindFocus();
 
-                event.Veto();
-                event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
-                wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
-                return;
+                    wxMessageBox(wxString() << "The base filename \"" << filename << "\" is already in use by "
+                                            << child->prop_as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                 "Duplicate base filename", wxICON_STOP);
+                    if (focus)
+                    {
+                        focus->SetFocus();
+                    }
+
+                    event.Veto();
+                    event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
+                    wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+                    return;
+                }
+            }
+            else
+            {
+                // Currently, XRC files don't have a directory property, so the full path
+                // relative to the project file is what we check. It *is* valid to have the
+                // same filename provided it is in a different directory.
+                if (child->prop_as_string(prop_xrc_file) == filename)
+                {
+                    auto focus = wxWindow::FindFocus();
+
+                    wxMessageBox(wxString() << "The xrc filename \"" << filename << "\" is already in use by "
+                                            << child->prop_as_string(prop_class_name)
+                                            << "\n\nEither change the name, or press ESC to restore the original name.",
+                                 "Duplicate xrc filename", wxICON_STOP);
+
+                    if (focus)
+                    {
+                        focus->SetFocus();
+                    }
+
+                    event.Veto();
+                    event.SetValidationFailureBehavior(wxPG_VFB_MARK_CELL | wxPG_VFB_STAY_IN_PROPERTY);
+                    wxGetFrame().SetStatusField("Either change the name, or press ESC to restore the original value.");
+                    return;
+                }
             }
         }
 

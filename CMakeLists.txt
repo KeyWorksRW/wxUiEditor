@@ -70,9 +70,9 @@ if (NOT INTERNAL_BLD_FORK)
 
     # This will build wxCLib.lib and wxWidgets.lib
     add_subdirectory(${widget_cmake_dir})
-else()
-    include( internal.cmake )
 endif()
+
+include( internal.cmake )
 
 if (WIN32)
     if (NOT INTERNAL_BLD_FORK)
@@ -110,7 +110,7 @@ list(TRANSFORM file_list PREPEND "${file_list_dir}/")
 add_executable(wxUiEditor WIN32
     ${file_list}
     ${wxue_generated_code}
-    ${wxui_internal}
+    ${wxui_internal_files}
 )
 
 # This is just used by a github action to confirm that all the source code can be compiled

@@ -60,7 +60,7 @@ if (INTERNAL_BLD_TESTING)
     # Note that setting the INTERNAL_BLD_TESTING doesn't just add these modules, it also enables the three assertion macros
     # in a Release build, and may change other functionality as well. It should NEVER be used for a production build!
 
-    set (wxui_internal ${wxui_internal}
+    set (wxui_internal_files ${wxui_internal}
         # These are always included in Debug builds, with INTERNAL_BLD_TESTING we also need them
         # in Release builds.
         $<$<CONFIG:Release>:src/internal/code_compare.cpp>

@@ -6,6 +6,44 @@ project(wxUiEditor
     DESCRIPTION "wxWidgets UI designer"
     HOMEPAGE_URL "https://github.com/KeyWorksRW/wxUiEditor")
 
+####################### Options #######################
+
+option(BUILD_SHARED_LIBS "Build with wxWidgets shared libraries" OFF)
+
+if (BUILD_SHARED_LIBS)
+    message(NOTICE "Building with wxWidgets shared libraries")
+endif()
+
+option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
+
+# This option is designed to make it possible to check changes to a wxWidgets fork, and/or to build with the current
+# wxWidgets sources (assuming the wxWidgets fork is in sync). Realistically, this is only going to be usable by the
+# maintainers of this project.
+option(INTERNAL_BLD_FORK "Assumes the existance of ../wxWidgets/bld/CMakeLists.txt")
+
+# If this is set, you must build the library yourself. This is required if you build a UNIX version as otherwise wxCLib will
+# conflict with Unix dll versions of the sub-libraries such as wxpng.
+option(INTERNAL_BLD_WX_CMAKE "When building fork, use wxWidgets build system")
+
+####################### Check for Multi-Config Generator #######################
+
+get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if (NOT isMultiConfig)
+    message("\nBecause you are using a single target generator, you MUST specify")
+    message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
+
+    set(allowedBuildTypes Debug Release)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
+
+    if (NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
+    elseif (NOT CMAKE_BUILD_TYPE IN_LIST allowedBuildTypes)
+        message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
+    endif()
+endif()
+
+####################### General Settings #######################
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -21,40 +59,15 @@ if (MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG ${z_seven} CACHE STRING "C++ Debug flags" FORCE)
 
     # Use static runtime for Release builds to run with Wine without needing to install the dlls
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    if (NOT BUILD_SHARED_LIBS)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
 else()
     # This should work for gcc and clang (including xcode which is based on clang)
     # -O2 can result in faster code than -O3 due to CPU caching.
     string(REPLACE "-O3" "-O2" cl_optimize "${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_CXX_FLAGS_RELEASE ${cl_optimize} CACHE STRING "C++ Release flags" FORCE)
 endif()
-
-get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-
-if (NOT isMultiConfig)
-    message("\nBecause you are using a single target generator, you MUST specify")
-    message("    a \"--config [Debug|Release]\" option with the cmake --build command\n")
-
-    set(allowedBuildTypes Debug Release)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "${allowedBuildTypes}")
-
-    if (NOT CMAKE_BUILD_TYPE)
-        set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
-    elseif (NOT CMAKE_BUILD_TYPE IN_LIST allowedBuildTypes)
-        message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
-    endif()
-endif()
-
-option(INTERNAL_BLD_TESTING "Build with internal testing functionality")
-
-# This option is designed to make it possible to check changes to a wxWidgets fork, and/or to build with the current
-# wxWidgets sources (assuming the wxWidgets fork is in sync). Realistically, this is only going to be usable by the
-# maintainers of this project.
-option(INTERNAL_BLD_FORK "Assumes the existance of ../wxWidgets/bld/CMakeLists.txt")
-
-# If this is set, you must build the library yourself. This is required if you build a UNIX version as otherwise wxCLib will
-# conflict with Unix dll versions of the sub-libraries such as wxpng.
-option(INTERNAL_BLD_WX_CMAKE "When building fork, use wxWidgets build system")
 
 if (INTERNAL_BLD_TESTING)
     message(NOTICE "Building internal testing version")
@@ -63,6 +76,26 @@ if (INTERNAL_BLD_TESTING)
     # and FAIL_MSG() in a Release build.
     add_compile_definitions(INTERNAL_TESTING)
 endif()
+
+add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
+
+set(stageDir ${CMAKE_CURRENT_BINARY_DIR}/stage)
+
+include(GNUInstallDirs)
+
+if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_BINDIR})
+endif()
+
+if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_LIBDIR})
+endif()
+
+if(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_LIBDIR})
+endif()
+
+####################### Set wxWidgets location macros #######################
 
 if (NOT INTERNAL_BLD_FORK)
     set (widget_dir ${CMAKE_CURRENT_LIST_DIR}/wxSnapshot)
@@ -86,7 +119,7 @@ else()
     endif()
 endif()
 
-add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
+####################### Libraries and Executables #######################
 
 # Instructions for building the ttlib_wx library using this project's precompiled header
 include( ttLib_wx/src/ttlib_file_list.cmake )
@@ -119,11 +152,20 @@ add_library(check_build STATIC EXCLUDE_FROM_ALL
     ${wxue_generated_code}
 )
 
+if (BUILD_SHARED_LIBS)
+    target_compile_definitions(wxUiEditor PRIVATE WXUSINGDLL)
+    target_compile_definitions(ttLib_wx PRIVATE WXUSINGDLL)
+    target_compile_definitions(check_build PRIVATE WXUSINGDLL)
+else()
+    # This is built into wxWidgets if a shared library is created
+    set(CLib wxCLib)
+endif()
+
 if (NOT INTERNAL_BLD_FORK)
     if (WIN32)
-        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib comctl32 Imm32 Shlwapi Version UxTheme)
+        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets ${CLib} comctl32 Imm32 Shlwapi Version UxTheme)
     else()
-        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
+        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets ${CLib})
     endif()
 else()
     if (WIN32)
@@ -132,10 +174,10 @@ else()
             target_link_directories(wxUiEditor PRIVATE ${widget_lib_dir})
             target_link_libraries(wxUiEditor PRIVATE ttLib_wx ${fork_wxlibraries})
         else()
-            target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
+            target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets ${CLib})
         endif()
     else()
-        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets wxCLib)
+        target_link_libraries(wxUiEditor PRIVATE ttLib_wx wxWidgets ${CLib})
         target_link_directories(wxUiEditor PRIVATE
             $<$<CONFIG:Debug>:${widget_lib_dir}>
             $<$<CONFIG:Release>:${widget_lib_dir}>
@@ -207,7 +249,9 @@ target_include_directories(check_build PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/ttLib_wx/src
 )
 
-# Packaging Instructions
+####################### Packaging Instructions #######################
+
+# Note: packing is currently only set for a static wxWidgets library build
 
 set(CPACK_PACKAGE_VENDOR "KeyWorks Software")
 set(CPACK_VERBATIM_VARIABLES YES)

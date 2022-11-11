@@ -9,6 +9,7 @@ Release summary...
 
 - Stretchable space can now be added to toolbars.
 - Added support for dropdown toolbar items that contain menu items.
+- wxToolBar and wxAuiToolBar individual tools now have a disabled property.
 - wxStatusBar `fields` property now supports unique width and style for each field.
 - New `platforms` property for most controls that inherit from **wxWindow**. This gives you the option of limiting the creation of a control to specific platforms.
 - Menu items can now contain multiple accelerators (requires wxWidgets 3.1.6 or later)

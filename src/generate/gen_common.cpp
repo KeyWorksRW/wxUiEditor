@@ -1817,7 +1817,7 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
     ttlib::cstr code;
     code << '\t';
 
-    if (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount())
+    if (node->prop_as_bool(prop_disabled) || (node->prop_as_string(prop_id) == "wxID_ANY" && node->GetInUseEventCount()))
     {
         if (node->IsLocal())
             code << "auto* ";
@@ -1870,12 +1870,9 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
         {
             code << ", wxEmptyString, " << node->prop_as_string(prop_kind);
         }
-
-        code << ");";
-        return code;
     }
 
-    if (node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
+    else if (node->HasValue(prop_tooltip) && !node->HasValue(prop_statusbar))
     {
         code << ",\n\t\t\t" << GenerateQuotedString(node->prop_as_string(prop_tooltip));
         if (node->isGen(gen_tool_dropdown))
@@ -1906,6 +1903,11 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode)
     }
 
     code << ");";
+
+    if (node->prop_as_bool(prop_disabled))
+    {
+        code << "\n\t" << node->get_node_name() << "->Enable(false);";
+    }
 
     return code;
 }

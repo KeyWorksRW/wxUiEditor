@@ -50,15 +50,16 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
     for (size_t i = 0; i < count; ++i)
     {
         auto childObj = node->GetChild(i);
+        wxToolBarToolBase* added_tool = nullptr;
         if (childObj->isGen(gen_tool))
         {
             auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
-                             (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
-                             wxEmptyString, nullptr);
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
+                                          (wxItemKind) childObj->prop_as_int(prop_kind),
+                                          childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_tool_dropdown))
         {
@@ -66,8 +67,8 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap, wxITEM_DROPDOWN,
-                             childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
+                                          wxITEM_DROPDOWN, childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_toolSeparator))
         {
@@ -87,8 +88,13 @@ void ToolBarFormGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparen
 
             if (auto control = wxDynamicCast(child, wxControl); control)
             {
-                toolbar->AddControl(control);
+                added_tool = toolbar->AddControl(control);
             }
+        }
+
+        if (added_tool && childObj->prop_as_bool(prop_disabled))
+        {
+            toolbar->EnableTool(added_tool->GetId(), false);
         }
     }
     toolbar->Realize();

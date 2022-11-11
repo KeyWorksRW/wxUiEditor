@@ -106,6 +106,8 @@ inline const char* aui_xml = R"===(<?xml version="1.0"?>
 				help="A checkable tool which makes part of a radio group of tools each of which is automatically unchecked whenever another button in the group is checked." />
 			wxITEM_NORMAL
 		</property>
+		<property name="disabled" type="bool"
+			help="Creates the tool in a disabled state. Some platforms will change the visible state of the tool to indicate that it is disabled.">0</property>
 		<property name="context_menu" type="bool"
 			help="Specifies that a drop-down menu button will appear next to the tool button. Used only with wxAuiToolBar.">0</property>
 		<property name="tooltip" type="string_edit"

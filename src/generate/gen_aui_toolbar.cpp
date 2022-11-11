@@ -48,15 +48,16 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
     size_t idx_child = 0;
     for (auto& childObj: node->GetChildNodePtrs())
     {
+        wxAuiToolBarItem* added_tool = nullptr;
         if (childObj->isGen(gen_auitool))
         {
             auto bmp = childObj->prop_as_wxBitmapBundle(prop_bitmap);
             if (!bmp.IsOk())
                 bmp = GetInternalImage("default");
 
-            toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
-                             (wxItemKind) childObj->prop_as_int(prop_kind), childObj->prop_as_wxString(prop_help),
-                             wxEmptyString, nullptr);
+            added_tool = toolbar->AddTool(wxID_ANY, childObj->prop_as_wxString(prop_label), bmp, wxNullBitmap,
+                                          (wxItemKind) childObj->prop_as_int(prop_kind),
+                                          childObj->prop_as_wxString(prop_help), wxEmptyString, nullptr);
         }
         else if (childObj->isGen(gen_auitool_label))
         {
@@ -84,9 +85,15 @@ void AuiToolBarGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent
 
             if (auto* control = wxDynamicCast(child, wxControl); control)
             {
-                toolbar->AddControl(control);
+                added_tool = toolbar->AddControl(control);
             }
         }
+
+        if (added_tool && childObj->prop_as_bool(prop_disabled))
+        {
+            toolbar->EnableTool(added_tool->GetId(), false);
+        }
+
         ++idx_child;
     }
     toolbar->Realize();

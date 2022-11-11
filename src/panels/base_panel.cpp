@@ -45,15 +45,22 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
     m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook->SetArtProvider(new wxAuiGenericTabArt());
 
-    if (m_panel_type == PANEL_GENERATED || m_panel_type == PANEL_DERIVED)
+    if (m_panel_type == PANEL_CPLUSPLUS)
     {
         m_cppPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
         m_hPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
+
+        m_inherit_src_panel = new CodeDisplay(m_notebook);
+        m_notebook->AddPage(m_inherit_src_panel, "inherit_src", false, wxWithImages::NO_IMAGE);
+
+        m_inherit_hdr_panel = new CodeDisplay(m_notebook);
+        m_notebook->AddPage(m_inherit_hdr_panel, "inherit_hdr", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == PANEL_XRC || m_panel_type == PANEL_LUA || m_panel_type == PANEL_PYTHON || m_panel_type == PANEL_PHP)
+    else if (m_panel_type == PANEL_XRC || m_panel_type == PANEL_LUA || m_panel_type == PANEL_PYTHON ||
+             m_panel_type == PANEL_PHP)
     {
         m_cppPanel = new CodeDisplay(m_notebook, true);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
@@ -147,9 +154,17 @@ void BasePanel::OnFind(wxFindDialogEvent& event)
     {
         m_cppPanel->GetEventHandler()->ProcessEvent(event);
     }
+    else if (text == "inherit_src")
+    {
+        m_inherit_src_panel->GetEventHandler()->ProcessEvent(event);
+    }
     else if (text == "header" || text == "info")
     {
         m_hPanel->GetEventHandler()->ProcessEvent(event);
+    }
+    else if (text == "inherit_hdr")
+    {
+        m_inherit_hdr_panel->GetEventHandler()->ProcessEvent(event);
     }
 }
 
@@ -162,7 +177,7 @@ void BasePanel::GenerateBaseClass()
 
     // If no form is selected, display the first child form of the project
     m_cur_form = wxGetFrame().GetSelectedForm();
-    if (!m_cur_form && (m_panel_type == PANEL_GENERATED || m_panel_type == PANEL_DERIVED))
+    if (!m_cur_form && (m_panel_type == PANEL_CPLUSPLUS))
     {
         if (project->GetChildCount() > 0)
         {
@@ -172,6 +187,10 @@ void BasePanel::GenerateBaseClass()
         {
             m_cppPanel->Clear();
             m_hPanel->Clear();
+            if (m_inherit_src_panel)
+                m_inherit_src_panel->Clear();
+            if (m_inherit_hdr_panel)
+                m_inherit_hdr_panel->Clear();
             return;
         }
     }
@@ -181,7 +200,7 @@ void BasePanel::GenerateBaseClass()
     PANEL_PAGE panel_page = CPP_PANEL;
     if (auto page = m_notebook->GetCurrentPage(); page)
     {
-        if (page == m_hPanel)
+        if (page == m_hPanel || page == m_inherit_hdr_panel)
         {
             panel_page = HDR_PANEL;
         }
@@ -197,11 +216,14 @@ void BasePanel::GenerateBaseClass()
 
     switch (m_panel_type)
     {
-        case PANEL_GENERATED:
+        case PANEL_CPLUSPLUS:
             codegen.GenerateBaseClass(m_cur_form, panel_page);
-            break;
 
-        case PANEL_DERIVED:
+            m_inherit_src_panel->Clear();
+            codegen.SetSrcWriteCode(m_inherit_src_panel);
+            m_inherit_hdr_panel->Clear();
+            codegen.SetHdrWriteCode(m_inherit_hdr_panel);
+
             codegen.GenerateDerivedClass(project, m_cur_form, panel_page);
             break;
 
@@ -218,10 +240,19 @@ void BasePanel::GenerateBaseClass()
     {
         m_cppPanel->CodeGenerationComplete();
         m_cppPanel->OnNodeSelected(wxGetFrame().GetSelectedNode());
+        if (m_panel_type == PANEL_CPLUSPLUS)
+        {
+            m_inherit_src_panel->CodeGenerationComplete();
+            m_inherit_src_panel->OnNodeSelected(wxGetFrame().GetSelectedNode());
+        }
     }
     else
     {
         m_hPanel->CodeGenerationComplete();
+        if (m_panel_type == PANEL_CPLUSPLUS)
+        {
+            m_inherit_hdr_panel->CodeGenerationComplete();
+        }
     }
 }
 
@@ -238,18 +269,15 @@ void BasePanel::OnNodeSelected(CustomEvent& event)
         GenerateBaseClass();
     }
 
-    if (m_panel_type != PANEL_DERIVED)
+    if (auto page = m_notebook->GetCurrentPage(); page)
     {
-        if (auto page = m_notebook->GetCurrentPage(); page)
+        if (page == m_hPanel)
         {
-            if (page == m_hPanel)
-            {
-                m_hPanel->OnNodeSelected(event.GetNode());
-            }
-            else
-            {
-                m_cppPanel->OnNodeSelected(event.GetNode());
-            }
+            m_hPanel->OnNodeSelected(event.GetNode());
+        }
+        else
+        {
+            m_cppPanel->OnNodeSelected(event.GetNode());
         }
     }
 }

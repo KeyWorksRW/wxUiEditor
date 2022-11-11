@@ -53,7 +53,7 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
         m_hPanel = new CodeDisplay(m_notebook);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == PANEL_XRC)
+    else if (m_panel_type == PANEL_XRC || m_panel_type == PANEL_LUA || m_panel_type == PANEL_PYTHON || m_panel_type == PANEL_PHP)
     {
         m_cppPanel = new CodeDisplay(m_notebook, true);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);

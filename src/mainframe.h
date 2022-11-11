@@ -408,7 +408,13 @@ private:
 
     BasePanel* m_generatedPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };
+
+    // Language panels
+    BasePanel* m_luaPanel { nullptr };
+    BasePanel* m_phpPanel { nullptr };
+    BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
+
 #if defined(INTERNAL_TESTING)
     ImportPanel* m_imnportPanel { nullptr };
 #endif

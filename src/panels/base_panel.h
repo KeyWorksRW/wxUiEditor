@@ -26,7 +26,11 @@ public:
     {
         PANEL_GENERATED,
         PANEL_DERIVED,
+
         PANEL_XRC,
+        PANEL_LUA,
+        PANEL_PYTHON,
+        PANEL_PHP
     };
 
     BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode);

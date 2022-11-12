@@ -227,6 +227,18 @@ void BasePanel::GenerateBaseClass()
             codegen.GenerateDerivedClass(project, m_cur_form, panel_page);
             break;
 
+        case PANEL_PYTHON:
+            codegen.GeneratePythonClass(m_cur_form, panel_page);
+            break;
+
+        case PANEL_LUA:
+            codegen.GenerateLuaClass(m_cur_form, panel_page);
+            break;
+
+        case PANEL_PHP:
+            codegen.GeneratePhpClass(m_cur_form, panel_page);
+            break;
+
         case PANEL_XRC:
             codegen.GenerateXrcClass(m_cur_form, panel_page);
             break;

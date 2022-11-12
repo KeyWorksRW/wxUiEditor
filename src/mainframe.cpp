@@ -1083,17 +1083,9 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
         {
             m_mockupPanel->CreateContent();
         }
-        else if (page == m_generatedPanel)
+        else
         {
-            m_generatedPanel->GenerateBaseClass();
-        }
-        else if (page == m_derivedPanel)
-        {
-            m_derivedPanel->GenerateBaseClass();
-        }
-        else if (page == m_xrcPanel)
-        {
-            m_xrcPanel->GenerateBaseClass();
+            static_cast<BasePanel*>(page)->GenerateBaseClass();
         }
     }
 }

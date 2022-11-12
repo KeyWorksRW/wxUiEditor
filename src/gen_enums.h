@@ -246,6 +246,7 @@ namespace GenEnum
         prop_line_numbers,
         prop_line_size,
         prop_local_pch_file,
+        prop_lua_directory,
         prop_lua_file,
         prop_main_label,
         prop_majorDimension,
@@ -295,6 +296,7 @@ namespace GenEnum
         prop_paste_multiple,
         prop_persist,
         prop_persist_name,
+        prop_php_directory,
         prop_php_file,
         prop_pin_button,
         prop_platforms,
@@ -305,6 +307,7 @@ namespace GenEnum
         prop_pressed_bmp,
         prop_private_members,
         prop_proportion,
+        prop_python_directory,
         prop_python_file,
         prop_radiobtn_var_name,
         prop_range,
@@ -407,6 +410,7 @@ namespace GenEnum
         prop_wrap_flags,
         prop_wxWidgets_version,
         prop_xrc_art_directory,
+        prop_xrc_directory,
         prop_xrc_file,
 
         // This must always be the last item as it is used to calculate the array size needed to store all items

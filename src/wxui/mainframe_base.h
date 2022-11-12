@@ -40,7 +40,6 @@ public:
         id_BorderTop,
         id_Expand,
         id_GenerateCode,
-        id_GenerateDerived,
         id_Magnify,
         id_MoveDown,
         id_MoveLeft,
@@ -73,9 +72,7 @@ protected:
     virtual void OnCut(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDuplicate(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnExportXRC(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindDialog(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnGenInhertedClass(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGenerateCode(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImportWindowsResource(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInsertWidget(wxCommandEvent& event) { event.Skip(); }

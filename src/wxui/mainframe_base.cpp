@@ -258,21 +258,14 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     m_menuTools = new wxMenu();
 
-    auto* menu_item19 = new wxMenuItem(m_menuTools, id_GenerateCode, "Generate &Base Code",
-        "Generates C++ Code for each top level form", wxITEM_NORMAL);
+    auto* menu_item19 = new wxMenuItem(m_menuTools, id_GenerateCode, "Generate &Code...",
+        "Generates code for the selected language", wxITEM_NORMAL);
     menu_item19->SetBitmap(wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(16, 16)));
     m_menuTools->Append(menu_item19);
 
-    auto* menu_item20 = new wxMenuItem(m_menuTools, id_GenerateDerived, "Generate &Derived Code",
-        "Creates the files and classes that derive from the generated base classes", wxITEM_NORMAL);
-    m_menuTools->Append(menu_item20);
-
-    auto* menu_item_10 = new wxMenuItem(m_menuTools, wxID_ANY, "Generate &XRC files...");
-    m_menuTools->Append(menu_item_10);
-
-    m_menuTools->AppendSeparator();
-
-    auto* menu_item_8 = new wxMenuItem(m_menuTools, id_PreviewForm, "Preview Form...\tF5");
+    auto* menu_item_8 = new wxMenuItem(m_menuTools, id_PreviewForm, "&Preview Form...\tF5",
+        "Preview form using XRC and/or C++", wxITEM_NORMAL);
+    menu_item_8->SetBitmap(wxueBundleSVG(wxue_img::xrc_preview_svg, 469, 1326, wxSize(16, 16)));
     m_menuTools->Append(menu_item_8);
     m_menubar->Append(m_menuTools, "&Tools");
 
@@ -301,7 +294,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
             "Save current project");
 
     m_toolbar->AddTool(id_GenerateCode, wxEmptyString, wxueBundleSVG(wxue_img::generate_svg, 780, 2716, wxSize(24, 24)),
-            "Generate base class code");
+            "Generate code");
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_UNDO, wxEmptyString, wxue_img::bundle_undo_svg(16, 16),
@@ -495,8 +488,6 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     Bind(wxEVT_MENU, &MainFrameBase::OnChangeBorder, this, id_BorderBottom);
     Bind(wxEVT_MENU, &MainFrameBase::OnToggleExpandLayout, this, id_Expand);
     Bind(wxEVT_MENU, &MainFrameBase::OnGenerateCode, this, id_GenerateCode);
-    Bind(wxEVT_MENU, &MainFrameBase::OnGenInhertedClass, this, id_GenerateDerived);
-    Bind(wxEVT_MENU, &MainFrameBase::OnExportXRC, this, menu_item_10->GetId());
     Bind(wxEVT_MENU, &MainFrameBase::OnPreviewXrc, this, id_PreviewForm);
     Bind(wxEVT_MENU, &MainFrameBase::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MainFrameBase::OnBrowseDocs, this, menu_item_6->GetId());

@@ -846,6 +846,72 @@
     </node>
     <node
       class="wxDialog"
+      base_file="generatedlg_base"
+      class_name="GenerateDlgBase"
+      derived_class_name="GenerateDlg"
+      derived_file="generatedlg"
+      title="Generate Code"
+      wxEVT_INIT_DIALOG="OnInit">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxStaticText"
+          label="Choose the code you want to generate:" />
+        <node
+          class="wxBoxSizer"
+          orientation="wxVERTICAL">
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="C++ &amp;Base"
+            style="wxRB_GROUP"
+            var_name="radioBtn"
+            get_function="is_gen_base"
+            validator_variable="m_gen_base_code" />
+          <node
+            class="wxRadioButton"
+            label="C++ &amp;Inherited"
+            var_name="m_radioBtn_2"
+            get_function="is_gen_inherited"
+            validator_variable="m_gen_inherited_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;Python"
+            var_name="radioBtn_2"
+            get_function="is_gen_python"
+            validator_variable="m_gen_python_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;Lua"
+            var_name="radioBtn_3"
+            get_function="is_gen_lua"
+            validator_variable="m_gen_lua_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="P&amp;HP"
+            var_name="radioBtn_4"
+            get_function="is_gen_php"
+            validator_variable="m_gen_php_code" />
+          <node
+            class="wxRadioButton"
+            class_access="none"
+            label="&amp;XRC"
+            var_name="radioBtn_5"
+            get_function="is_gen_xrc"
+            validator_variable="m_gen_xrc_code" />
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
       base_file="generate_xrc_dlg_base"
       class_name="GenerateXrcDlgBase"
       derived_class_name="GenerateXrcDlg"
@@ -1721,30 +1787,17 @@
           <node
             class="wxMenuItem"
             bitmap="SVG;../art_src/generate.svg;[16,16]"
-            help="Generates C++ Code for each top level form"
+            help="Generates code for the selected language"
             id="id_GenerateCode"
-            label="Generate &amp;Base Code"
+            label="Generate &amp;Code..."
             var_name="menu_item19"
             wxEVT_MENU="OnGenerateCode" />
           <node
             class="wxMenuItem"
-            help="Creates the files and classes that derive from the generated base classes"
-            id="id_GenerateDerived"
-            label="Generate &amp;Derived Code"
-            var_name="menu_item20"
-            wxEVT_MENU="OnGenInhertedClass" />
-          <node
-            class="wxMenuItem"
-            label="Generate &amp;XRC files..."
-            var_name="menu_item_10"
-            wxEVT_MENU="OnExportXRC" />
-          <node
-            class="separator"
-            var_name="separator_2" />
-          <node
-            class="wxMenuItem"
+            bitmap="SVG;../art_src/xrc_preview.svg;[16,16]"
+            help="Preview form using XRC and/or C++"
             id="id_PreviewForm"
-            label="Preview Form..."
+            label="&amp;Preview Form..."
             shortcut="F5"
             var_name="menu_item_8"
             wxEVT_MENU="OnPreviewXrc" />
@@ -1799,7 +1852,7 @@
           bitmap="SVG;../art_src/generate.svg;[24,24]"
           id="id_GenerateCode"
           label=""
-          tooltip="Generate base class code"
+          tooltip="Generate code"
           var_name="Generate"
           wxEVT_TOOL="OnGenerateCode" />
         <node
@@ -3923,7 +3976,6 @@
       base_file="xrccompare_base"
       class_name="XrcCompareBase"
       derived_class_name="XrcCompare"
-      derived_file="xrccompare"
       style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
       title="Compare C++/XRC Generated UI">
       <node

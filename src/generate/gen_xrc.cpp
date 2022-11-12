@@ -47,7 +47,7 @@
 
 const char* txt_dlg_name = "_wxue_temp_dlg";
 
-void MainFrame::OnExportXRC(wxCommandEvent& WXUNUSED(event))
+void MainFrame::ExportXRC()
 {
     auto project = GetProject();
     if (project->GetChildCount() == 0)

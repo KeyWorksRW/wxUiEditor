@@ -332,7 +332,6 @@ public:
     }
 
 protected:
-    void OnExportXRC(wxCommandEvent& event) override;
     void OnAbout(wxCommandEvent& event) override;
     void OnAppendCrafter(wxCommandEvent& event) override;
     void OnAppendFormBuilder(wxCommandEvent& event) override;
@@ -347,7 +346,6 @@ protected:
     void OnCut(wxCommandEvent& event) override;
     void OnDelete(wxCommandEvent& event) override;
     void OnDuplicate(wxCommandEvent& event) override;
-    void OnGenInhertedClass(wxCommandEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;
     void OnImportProject(wxCommandEvent& event);
     void OnImportRecent(wxCommandEvent& event);
@@ -372,6 +370,9 @@ protected:
 
     void OnNodeSelected(CustomEvent& event);
     void OnQueueSelect(CustomEvent& event);
+
+    void GenInhertedClass();
+    void ExportXRC();
 
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void OnCodeCompare(wxCommandEvent& event);
@@ -408,7 +409,13 @@ private:
 
     BasePanel* m_generatedPanel { nullptr };
     BasePanel* m_derivedPanel { nullptr };
+
+    // Language panels
+    BasePanel* m_luaPanel { nullptr };
+    BasePanel* m_phpPanel { nullptr };
+    BasePanel* m_pythonPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
+
 #if defined(INTERNAL_TESTING)
     ImportPanel* m_imnportPanel { nullptr };
 #endif

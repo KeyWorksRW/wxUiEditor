@@ -622,21 +622,6 @@ void MainFrame::OnImportProject(wxCommandEvent&)
     wxGetApp().NewProject();
 }
 
-// This generates the base class files. For the derived class files, see OnGenInhertedClass()
-// in generate/gen_codefiles.cpp
-void MainFrame::OnGenerateCode(wxCommandEvent&)
-{
-    GetProject()->UpdateEmbedNodes();
-    m_isProject_generated = GenerateCodeFiles(this);
-    UpdateWakaTime();
-
-    // m_isProject_generated = true;
-    // m_isProject_generated = true;
-
-    m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
-    m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
-}
-
 namespace wxue_img
 {
     extern const unsigned char logo_svg[1943];
@@ -869,8 +854,8 @@ void MainFrame::UpdateFrame()
     }
     SetTitle(filename);
 
-    m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
-    m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
+    // m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
+    // m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
 
     wxString menu_text = "Undo";
     if (m_undo_stack.IsUndoAvailable())
@@ -1147,11 +1132,16 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_mockupPanel = new MockupParent(m_notebook, this);
     m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
 
-    m_generatedPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_GENERATED);
-    m_notebook->AddPage(m_generatedPanel, "Generated", false, wxWithImages::NO_IMAGE);
+    m_generatedPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_CPLUSPLUS);
+    m_notebook->AddPage(m_generatedPanel, "C++", false, wxWithImages::NO_IMAGE);
 
-    m_derivedPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_DERIVED);
-    m_notebook->AddPage(m_derivedPanel, "Derived", false, wxWithImages::NO_IMAGE);
+    // Placing the Python panel first as it's the most commonly used language after C++
+    m_pythonPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_PYTHON);
+    m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
+    m_luaPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_LUA);
+    m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
+    m_phpPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_PHP);
+    m_notebook->AddPage(m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
 
     m_xrcPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);

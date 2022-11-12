@@ -24,9 +24,12 @@ class BasePanel : public wxPanel
 public:
     enum
     {
-        PANEL_GENERATED,
-        PANEL_DERIVED,
+        PANEL_CPLUSPLUS,
+
         PANEL_XRC,
+        PANEL_LUA,
+        PANEL_PYTHON,
+        PANEL_PHP
     };
 
     BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode);
@@ -42,6 +45,8 @@ protected:
 private:
     CodeDisplay* m_cppPanel;
     CodeDisplay* m_hPanel;
+    CodeDisplay* m_inherit_src_panel { nullptr };
+    CodeDisplay* m_inherit_hdr_panel { nullptr };
     wxAuiNotebook* m_notebook;
     Node* m_cur_form { nullptr };
 

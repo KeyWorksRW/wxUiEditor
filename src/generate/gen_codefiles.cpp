@@ -208,7 +208,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
     return generate_result;
 }
 
-void MainFrame::OnGenInhertedClass(wxCommandEvent& WXUNUSED(e))
+void MainFrame::GenInhertedClass()
 {
     auto project = GetProject();
     ttlib::cwd cwd;

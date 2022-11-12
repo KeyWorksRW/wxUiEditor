@@ -82,6 +82,9 @@ public:
 
     // Generate the code used to construct the object
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
+    virtual std::optional<ttlib::cstr> GenLuaConstruction(Node*) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPhpConstruction(Node*) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPythonConstruction(Node*) { return {}; }
 
     // Return true if all construction and settings code was written to src_code
     virtual bool GenConstruction(Node*, BaseCodeGenerator* /* code_gen */) { return false; }

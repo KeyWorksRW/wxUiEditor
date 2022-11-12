@@ -77,9 +77,8 @@ GenerateDlg::GenerateDlg(wxWindow* parent)
 
 void GenerateDlg::OnInit(wxInitDialogEvent& event)
 {
-
-// TODO: [Randalphwa - 11-11-2022] It would be really helpful if we checked to see if any of these files should be written,
-// and if so, added a " (*modified)" to the end of the relevant radio button.
+    // TODO: [Randalphwa - 11-11-2022] It would be really helpful if we checked to see if any of these files should be
+    // written, and if so, added a " (*modified)" to the end of the relevant radio button.
 
     auto config = wxConfig::Get();
     auto cur_setting = config->ReadLong("GenCode", GEN_BASE_CODE);

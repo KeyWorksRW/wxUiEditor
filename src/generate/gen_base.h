@@ -59,7 +59,18 @@ int WriteCMakeFile(bool test_only = true);  // See gen_cmake.cpp
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at
 // least one file needs to be generated. If pClassList is non-null, it will contain the base
 // class name of every form that needs updating.
+//
+// gen_codefiles.cpp
 bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+
+// gen_python.cpp
+bool GeneratePythonFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+
+// gen_lua.cpp
+bool GenerateLuaFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+
+// gen_php.cpp
+bool GeneratePhpFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
 
 #if defined(INTERNAL_TESTING)
 void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root);

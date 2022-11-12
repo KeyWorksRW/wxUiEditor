@@ -56,6 +56,18 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
                 GenInhertedClass();
                 break;
 
+            case GEN_PYTHON_CODE:
+                GeneratePythonFiles(this);
+                break;
+
+            case GEN_LUA_CODE:
+                GenerateLuaFiles(this);
+                break;
+
+            case GEN_PHP_CODE:
+                GeneratePhpFiles(this);
+                break;
+
             case GEN_XRC_CODE:
                 ExportXRC();
                 break;

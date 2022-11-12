@@ -54,6 +54,9 @@ set (file_list
     generate/gen_cmake.cpp         # Auto-generate a .cmake file
     generate/gen_codefiles.cpp     # Generate code files
     generate/gen_derived.cpp       # Generate Derived class code
+    generate/gen_python.cpp        # Generate Python code files
+    generate/gen_lua.cpp           # Generate Lua code files
+    generate/gen_php.cpp           # Generate PHP code files
     generate/gen_xrc.cpp           # Generate XRC file
     generate/write_code.cpp        # Write code to Scintilla or file
 

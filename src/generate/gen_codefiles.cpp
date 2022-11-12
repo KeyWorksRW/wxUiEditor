@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Generate code files
+// Purpose:   Generate C++ Base code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 

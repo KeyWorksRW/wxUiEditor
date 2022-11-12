@@ -47,28 +47,28 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
 
     if (m_panel_type == PANEL_CPLUSPLUS)
     {
-        m_cppPanel = new CodeDisplay(m_notebook);
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
-        m_hPanel = new CodeDisplay(m_notebook);
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
 
-        m_inherit_src_panel = new CodeDisplay(m_notebook);
+        m_inherit_src_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_inherit_src_panel, "inherit_src", false, wxWithImages::NO_IMAGE);
 
-        m_inherit_hdr_panel = new CodeDisplay(m_notebook);
+        m_inherit_hdr_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_inherit_hdr_panel, "inherit_hdr", false, wxWithImages::NO_IMAGE);
     }
     else if (m_panel_type == PANEL_XRC || m_panel_type == PANEL_LUA || m_panel_type == PANEL_PYTHON ||
              m_panel_type == PANEL_PHP)
     {
-        m_cppPanel = new CodeDisplay(m_notebook, true);
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
         // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
         // which properties are not supported.
 
-        m_hPanel = new CodeDisplay(m_notebook);
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
     else
@@ -77,10 +77,10 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
 
         // Add default panel creation just to prevent crashing
 
-        m_cppPanel = new CodeDisplay(m_notebook);
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
-        m_hPanel = new CodeDisplay(m_notebook);
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
     }
 

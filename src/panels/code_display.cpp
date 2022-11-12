@@ -10,6 +10,7 @@
 
 #include "code_display.h"  // auto-generated: wxui/codedisplay_base.h and wxui/codedisplay_base.cpp
 
+#include "base_panel.h"      // BasePanel -- Base class for all panels
 #include "mainframe.h"       // MainFrame -- Main window frame
 #include "node.h"            // Node class
 #include "node_creator.h"    // NodeCreator -- Class used to create nodes
@@ -23,13 +24,30 @@ extern const char* g_u8_cpp_keywords;
 
 const int node_marker = 1;
 
-// Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC generators
-// support more XRC controls.
+// XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC generators support more XRC controls.
 extern const char* g_xrc_keywords;
 
-CodeDisplay::CodeDisplay(wxWindow* parent, bool is_XML) : CodeDisplayBase(parent), m_isXML(is_XML)
+
+// clang-format off
+
+const char* g_python_keywords =
+    "False None True and as assert async break class continue def del elif else except finally for from global if import in is lambda "
+    "nonlocal not or pass raise return try while with yield";
+
+const char* g_lua_keywords =
+    "and break do else elseif end false for function if in local nil not or repeat return then true until while";
+
+const char* g_php_keywords =
+    "abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare "
+    "endfor endforeach endif endswitch endwhile eval exit extends final finally for foreach function global goto if implements include "
+    "include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return "
+    "static switch throw trait try unset use var while xor yield";
+
+// clang-format on
+
+CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(parent), m_panel_type(panel_type)
 {
-    if (m_isXML)
+    if (panel_type == BasePanel::PANEL_XRC)
     {
         m_scintilla->SetLexer(wxSTC_LEX_XML);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
@@ -44,7 +62,44 @@ CodeDisplay::CodeDisplay(wxWindow* parent, bool is_XML) : CodeDisplayBase(parent
         m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
     }
-    else
+    else if (panel_type == BasePanel::PANEL_PYTHON)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_PYTHON);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_python_keywords);
+
+        m_scintilla->StyleSetForeground(wxSTC_P_WORD, *wxBLUE);
+        m_scintilla->StyleSetForeground(wxSTC_P_WORD2, wxColour("#E91AFF"));
+        m_scintilla->StyleSetForeground(wxSTC_P_STRING, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_P_STRINGEOL, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, *wxRED);
+    }
+    else if (panel_type == BasePanel::PANEL_LUA)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_LUA);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
+
+        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, *wxBLUE);
+        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD2, wxColour("#E91AFF"));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_STRING, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_STRINGEOL, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINE, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_LUA_NUMBER, *wxRED);
+    }
+    else if (panel_type == BasePanel::PANEL_PHP)
+    {
+        m_scintilla->SetLexer(wxSTC_LEX_HTML);
+        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
+        m_scintilla->SendMsg(SCI_SETKEYWORDS, 4, (wxIntPtr) g_php_keywords);
+
+        m_scintilla->StyleSetForeground(wxSTC_HPHP_WORD, *wxBLUE);
+        m_scintilla->StyleSetForeground(wxSTC_HPHP_COMMENTLINE, wxColour(0, 128, 0));
+        m_scintilla->StyleSetForeground(wxSTC_HPHP_NUMBER, *wxRED);
+        m_scintilla->StyleSetForeground(wxSTC_HPHP_SIMPLESTRING, wxColour(0, 128, 0));
+    }
+    else // C++
     {
         // On Windows, this saves converting the UTF16 characters to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);
@@ -172,7 +227,7 @@ void CodeDisplay::CodeGenerationComplete()
 
 void CodeDisplay::OnNodeSelected(Node* node)
 {
-    if (!node->HasProp(prop_var_name) && !m_isXML)
+    if (!node->HasProp(prop_var_name) && m_panel_type != BasePanel::PANEL_XRC)
     {
         return;  // probably a form, spacer, or image
     }
@@ -194,7 +249,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
             line = (to_int) m_view.FindLineContaining(name);
         }
     }
-    else if (m_isXML)
+    else if (m_panel_type == BasePanel::PANEL_XRC)
     {
         ttlib::cstr search("name=\"");
         if (node->HasProp(prop_id) && node->prop_as_string(prop_id) != "wxID_ANY")

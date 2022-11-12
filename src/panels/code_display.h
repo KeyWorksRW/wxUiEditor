@@ -26,7 +26,7 @@ class Node;
 class CodeDisplay : public CodeDisplayBase, public WriteCode
 {
 public:
-    CodeDisplay(wxWindow* parent, bool is_XML = false);
+    CodeDisplay(wxWindow* parent, int panel_type);
 
     // Clears scintilla and internal buffer, removes read-only flag in scintilla
     void Clear() override;
@@ -48,5 +48,5 @@ protected:
 
 private:
     ttlib::viewfile m_view;
-    bool m_isXML;
+    int m_panel_type;
 };

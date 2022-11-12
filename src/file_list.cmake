@@ -238,6 +238,7 @@ set (file_list
     ../pugixml/pugixml.cpp      # XML parser
 
     ui/generate_xrc_dlg.cpp     # Dialog for generating XRC file(s)
+    ui/generate_dlg.cpp
     ui/gridbag_item.cpp         # Dialog for inserting an item into a wxGridBagSizer node
     ui/import_dlg.cpp           # Dialog to import one or more projects
     ui/importwinresdlg.cpp      # Dialog for Importing a Windows resource file

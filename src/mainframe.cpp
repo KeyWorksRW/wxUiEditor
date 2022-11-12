@@ -622,21 +622,6 @@ void MainFrame::OnImportProject(wxCommandEvent&)
     wxGetApp().NewProject();
 }
 
-// This generates the base class files. For the derived class files, see OnGenInhertedClass()
-// in generate/gen_codefiles.cpp
-void MainFrame::OnGenerateCode(wxCommandEvent&)
-{
-    GetProject()->UpdateEmbedNodes();
-    m_isProject_generated = GenerateCodeFiles(this);
-    UpdateWakaTime();
-
-    // m_isProject_generated = true;
-    // m_isProject_generated = true;
-
-    m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
-    m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
-}
-
 namespace wxue_img
 {
     extern const unsigned char logo_svg[1943];
@@ -869,8 +854,8 @@ void MainFrame::UpdateFrame()
     }
     SetTitle(filename);
 
-    m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
-    m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
+    // m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
+    // m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
 
     wxString menu_text = "Undo";
     if (m_undo_stack.IsUndoAvailable())

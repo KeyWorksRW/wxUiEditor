@@ -380,11 +380,11 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPhpAdditionalCode(GenEnum::Ge
 
         if (min_size == wxDefaultSize && max_size == wxDefaultSize)
         {
-            code << "\t\tSetSizerAndFit(" << node->get_node_name() << ");";
+            code << "\t\tSetSizerAndFit($" << node->get_node_name() << ");";
         }
         else
         {
-            code << "\t\tSetSizer(" << node->get_node_name() << ");";
+            code << "\t\tSetSizer($" << node->get_node_name() << ");";
             if (min_size != wxDefaultSize)
             {
                 code << "\n\t\tSetMinSize(new wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
@@ -510,6 +510,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPhpConstruction(Node* node)
     }
 
     code << "class " << dlg_name << " extends wxDialog\n{";
+    code << "\n\tpublic function __construct($parent=null)\n\t{";
     code << "\n\t\tparent::__construct($parent, wxID_ANY, ";
     if (node->HasValue(prop_title))
         code << GeneratePhpQuotedString(node, prop_title) << ",\n\t\t\t";
@@ -526,7 +527,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPhpConstruction(Node* node)
     if (size == wxDefaultSize)
         code << "new wxSize(-1, -1), ";
     else
-        code << "new wxSize(" << size.x << ", " << size.y << "),";
+        code << "new wxSize(" << size.x << ", " << size.y << "), ";
 
     if (node->HasValue(prop_style) && !node->prop_as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
         code << node->prop_as_string(prop_style);

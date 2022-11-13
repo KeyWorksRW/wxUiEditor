@@ -47,7 +47,7 @@ const char* g_php_keywords =
 
 CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(parent), m_panel_type(panel_type)
 {
-    if (panel_type == BasePanel::PANEL_XRC)
+    if (panel_type == GEN_LANG_XRC)
     {
         m_scintilla->SetLexer(wxSTC_LEX_XML);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
@@ -62,7 +62,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_H_DOUBLESTRING, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_H_SINGLESTRING, wxColour(0, 128, 0));
     }
-    else if (panel_type == BasePanel::PANEL_PYTHON)
+    else if (panel_type == GEN_LANG_PYTHON)
     {
         m_scintilla->SetLexer(wxSTC_LEX_PYTHON);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
@@ -75,7 +75,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, *wxRED);
     }
-    else if (panel_type == BasePanel::PANEL_LUA)
+    else if (panel_type == GEN_LANG_LUA)
     {
         m_scintilla->SetLexer(wxSTC_LEX_LUA);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
@@ -88,7 +88,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINE, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_LUA_NUMBER, *wxRED);
     }
-    else if (panel_type == BasePanel::PANEL_PHP)
+    else if (panel_type == GEN_LANG_PHP)
     {
         m_scintilla->SetLexer(wxSTC_LEX_HTML);
         // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
@@ -227,7 +227,7 @@ void CodeDisplay::CodeGenerationComplete()
 
 void CodeDisplay::OnNodeSelected(Node* node)
 {
-    if (!node->HasProp(prop_var_name) && m_panel_type != BasePanel::PANEL_XRC)
+    if (!node->HasProp(prop_var_name) && m_panel_type != GEN_LANG_XRC)
     {
         return;  // probably a form, spacer, or image
     }
@@ -249,7 +249,7 @@ void CodeDisplay::OnNodeSelected(Node* node)
             line = (to_int) m_view.FindLineContaining(name);
         }
     }
-    else if (m_panel_type == BasePanel::PANEL_XRC)
+    else if (m_panel_type == GEN_LANG_XRC)
     {
         ttlib::cstr search("name=\"");
         if (node->HasProp(prop_id) && node->prop_as_string(prop_id) != "wxID_ANY")

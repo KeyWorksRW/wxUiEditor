@@ -1124,18 +1124,18 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_mockupPanel = new MockupParent(m_notebook, this);
     m_notebook->AddPage(m_mockupPanel, "Mock Up", false, wxWithImages::NO_IMAGE);
 
-    m_generatedPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_CPLUSPLUS);
+    m_generatedPanel = new BasePanel(m_notebook, this, GEN_LANG_CPLUSPLUS);
     m_notebook->AddPage(m_generatedPanel, "C++", false, wxWithImages::NO_IMAGE);
 
     // Placing the Python panel first as it's the most commonly used language after C++
-    m_pythonPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_PYTHON);
+    m_pythonPanel = new BasePanel(m_notebook, this, GEN_LANG_PYTHON);
     m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
-    m_luaPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_LUA);
+    m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
     m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
-    m_phpPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_PHP);
+    m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
     m_notebook->AddPage(m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
 
-    m_xrcPanel = new BasePanel(m_notebook, this, BasePanel::PANEL_XRC);
+    m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);
 
 #if defined(INTERNAL_TESTING)

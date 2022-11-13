@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Code generation panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -22,16 +22,6 @@ class wxStyledTextCtrl;
 class BasePanel : public wxPanel
 {
 public:
-    enum
-    {
-        PANEL_CPLUSPLUS,
-
-        PANEL_XRC,
-        PANEL_LUA,
-        PANEL_PYTHON,
-        PANEL_PHP
-    };
-
     BasePanel(wxWindow* parent, MainFrame* frame, int GenerateDerivedCode);
     ~BasePanel() override;
 

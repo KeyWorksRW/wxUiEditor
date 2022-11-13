@@ -55,7 +55,7 @@ bool GeneratePhpFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttl
 
         try
         {
-            BaseCodeGenerator codegen;
+            BaseCodeGenerator codegen(GEN_LANG_PHP);
 
             auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
             codegen.SetHdrWriteCode(h_cw.get());

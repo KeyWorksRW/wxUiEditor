@@ -221,6 +221,48 @@ ttlib::cstr GenerateQuotedString(const ttlib::cstr& str)
     return code;
 }
 
+ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str)
+{
+    ttlib::cstr code;
+
+    if (str.size())
+    {
+        auto str_with_escapes = ConvertToPythonString(str);
+
+        bool has_utf_char = false;
+        for (auto iter: str_with_escapes)
+        {
+            if (iter < 0)
+            {
+                has_utf_char = true;
+                break;
+            }
+        }
+
+        if (has_utf_char)
+        {
+            // While this may not be necessary for non-Windows systems, it does ensure the code compiles on all platforms.
+            if (GetProject()->prop_as_bool(prop_internationalize))
+                code << "_(u\"" << str_with_escapes << "\")";
+            else
+                code << "u\"" << str_with_escapes << "\")";
+        }
+        else
+        {
+            if (GetProject()->prop_as_bool(prop_internationalize))
+                code << "_(\"" << str_with_escapes << "\")";
+            else
+                code << "\"" << str_with_escapes << "\"";
+        }
+    }
+    else
+    {
+        code << "wx.EmptyString";
+    }
+
+    return code;
+}
+
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
     if (node->HasValue(prop_name))
@@ -230,6 +272,18 @@ ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
     else
     {
         return ttlib::cstr("wxEmptyString");
+    }
+}
+
+ttlib::cstr GeneratePythonQuotedString(Node* node, GenEnum::PropName prop_name)
+{
+    if (node->HasValue(prop_name))
+    {
+        return GeneratePythonQuotedString(node->prop_as_string(prop_name));
+    }
+    else
+    {
+        return ttlib::cstr("wx.EmptyString");
     }
 }
 
@@ -1396,6 +1450,49 @@ ttlib::cstr ConvertToCodeString(const ttlib::cstr& text)
     return result;
 }
 
+// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string. Used when generating
+// code.
+ttlib::cstr ConvertToPythonString(const ttlib::cstr& text)
+{
+    ttlib::cstr result;
+
+    for (auto c: text)
+    {
+        switch (c)
+        {
+            case '"':
+                result += "\\\"";
+                break;
+
+            case '\\':
+                result += "\\\\";
+                break;
+
+            case '\t':
+                result += "\\t";
+                break;
+
+            case '\n':
+                result += "\\n";
+                break;
+
+            case '\r':
+                result += "\\r";
+                break;
+
+            // The above also work for C++, this one is specific to Python
+            case '\'':
+                result += "\\'";
+                break;
+
+            default:
+                result += c;
+                break;
+        }
+    }
+    return result;
+}
+
 ttlib::cstr GenerateNewAssignment(Node* node, bool use_generic)
 {
     ttlib::cstr code(" = new ");
@@ -1671,6 +1768,12 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
         code << "SetHelpText(" << GenerateQuotedString(node->prop_as_string(prop_context_help)) << ");";
     }
 }
+
+void GeneratePythonWindowSettings(Node* /* node */, ttlib::cstr& /* code */) {}
+
+void GenerateLuaWindowSettings(Node* /* node */, ttlib::cstr& /* code */) {}
+
+void GeneratePhpWindowSettings(Node* /* node */, ttlib::cstr& /* code */) {}
 
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything needed to set the
 // window's icon.

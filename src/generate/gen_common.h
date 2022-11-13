@@ -44,13 +44,20 @@ ttlib::cstr GenerateSizerFlags(Node* node);
 //
 // Will return "wxEmptyString" if prop_name is empty.
 ttlib::cstr GenerateQuotedString(const ttlib::cstr& str);
+ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str);
+ttlib::cstr GenerateLuaQuotedString(const ttlib::cstr& str);
+ttlib::cstr GeneratePhpQuotedString(const ttlib::cstr& str);
 
-// Places the string in wxString::FromUTF8(), adds C++ escapes around any characters the
-// compiler wouldn't accept as a normal part of a string, and wraps it all in _() if
-// prop_internationalize is true.
-//
-// Will return "wxEmptyString" if prop_name is empty.
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name);
+ttlib::cstr GeneratePythonQuotedString(Node* node, GenEnum::PropName prop_name);
+ttlib::cstr GenerateLuaQuotedString(Node* node, GenEnum::PropName prop_name);
+ttlib::cstr GeneratePhpQuotedString(Node* node, GenEnum::PropName prop_name);
+
+// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
+ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
+ttlib::cstr ConvertToPythonString(const ttlib::cstr& text);
+ttlib::cstr ConvertToLuaString(const ttlib::cstr& text);
+ttlib::cstr ConvertToPhpString(const ttlib::cstr& text);
 
 // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
 // Generates wxNullColour if the property is empty.
@@ -73,6 +80,9 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
 
 // Generate any non-default wxWindow settings
 void GenerateWindowSettings(Node* node, ttlib::cstr& code);
+void GeneratePythonWindowSettings(Node* node, ttlib::cstr& code);
+void GenerateLuaWindowSettings(Node* node, ttlib::cstr& code);
+void GeneratePhpWindowSettings(Node* node, ttlib::cstr& code);
 
 // Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
 //
@@ -122,9 +132,6 @@ ttlib::cstr GenFormSettings(Node* node);
 
 // Generates font, foreground, and background settings if any of them have been specified.
 ttlib::cstr GenFontColourSettings(Node* node);
-
-// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
-ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
 
 // Generates " = new class(" -- with class being the derived_class (if specified) or the
 // normal class name. If use_generic specified, Generic will be inserted into the class name.

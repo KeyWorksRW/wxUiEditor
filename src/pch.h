@@ -101,6 +101,17 @@ enum class MoveDirection
     Right
 };
 
+// This is used to determine the type of file that is being generated
+enum
+{
+    GEN_LANG_CPLUSPLUS,
+
+    GEN_LANG_XRC,
+    GEN_LANG_LUA,
+    GEN_LANG_PYTHON,
+    GEN_LANG_PHP
+};
+
 namespace xrc
 {
     enum : size_t

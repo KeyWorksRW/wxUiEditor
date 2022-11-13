@@ -55,7 +55,7 @@ bool GenerateLuaFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttl
 
         try
         {
-            BaseCodeGenerator codegen;
+            BaseCodeGenerator codegen(GEN_LANG_LUA);
 
             auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
             codegen.SetHdrWriteCode(h_cw.get());

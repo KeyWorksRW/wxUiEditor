@@ -11,8 +11,9 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-#include "gen_enums.h"  // Enumerations for generators
-#include "gen_xrc.h"    // BaseXrcGenerator -- Generate XRC file
+#include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
+#include "gen_enums.h"             // Enumerations for generators
+#include "gen_xrc.h"               // BaseXrcGenerator -- Generate XRC file
 
 class ProjectSettings;
 class NodeCreator;
@@ -79,7 +80,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 class BaseCodeGenerator
 {
 public:
-    BaseCodeGenerator();
+    BaseCodeGenerator(int language);
 
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
@@ -154,6 +155,9 @@ protected:
 
     // Generate node construction code
     void GenConstruction(Node* node);
+    void GenPythonConstruction(Node* node);
+    void GenLuaConstruction(Node* node);
+    void GenPhpConstruction(Node* node);
 
     // This allows generators to create calls to a widget after it has been created.
     void GenSettings(Node* node);
@@ -181,6 +185,8 @@ private:
     Project* m_project { nullptr };
 
     PANEL_PAGE m_panel_type { NOT_PANEL };
+
+    int m_language { GEN_LANG_CPLUSPLUS };
 
     bool m_is_derived_class { true };
 

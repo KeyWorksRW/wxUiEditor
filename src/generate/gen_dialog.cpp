@@ -425,7 +425,13 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Node* node
 {
     ttlib::cstr code;
 
-    code << "class " << node->get_node_name() << "(wx.Dialog):\n";
+    ttlib::cstr dlg_name(node->get_node_name());
+    if (dlg_name.size() > 4 && dlg_name.ends_with("Base") && node->get_form()->prop_as_bool(prop_use_derived_class))
+    {
+        dlg_name.resize(dlg_name.size() - 4);
+    }
+
+    code << "class " << dlg_name << "(wx.Dialog):\n";
     code << "\tdef __init__(self, parent, id=wx.ID_ANY, title=";
     if (node->HasValue(prop_title))
         code << GeneratePythonQuotedString(node, prop_title) << ",\n\t\t";
@@ -460,7 +466,13 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenLuaConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    code << "ui." << node->get_node_name() << " = wx.wxDialog(parent, wx.wxID_ANY, ";
+    ttlib::cstr dlg_name(node->get_node_name());
+    if (dlg_name.size() > 4 && dlg_name.ends_with("Base") && node->get_form()->prop_as_bool(prop_use_derived_class))
+    {
+        dlg_name.resize(dlg_name.size() - 4);
+    }
+
+    code << "ui." << dlg_name << " = wx.wxDialog(parent, wx.wxID_ANY, ";
     if (node->HasValue(prop_title))
         code << GenerateLuaQuotedString(node, prop_title) << ",\n\t\t";
     else
@@ -491,8 +503,13 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPhpConstruction(Node* node)
 {
     ttlib::cstr code;
 
-    code << "class " << node->get_node_name() << " extends wxDialog {";
-    code << "\n\tfunction __construct($parent=null) {";
+    ttlib::cstr dlg_name(node->get_node_name());
+    if (dlg_name.size() > 4 && dlg_name.ends_with("Base") && node->get_form()->prop_as_bool(prop_use_derived_class))
+    {
+        dlg_name.resize(dlg_name.size() - 4);
+    }
+
+    code << "class " << dlg_name << " extends wxDialog\n{";
     code << "\n\t\tparent::__construct($parent, wxID_ANY, ";
     if (node->HasValue(prop_title))
         code << GeneratePhpQuotedString(node, prop_title) << ",\n\t\t\t";

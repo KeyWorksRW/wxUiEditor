@@ -305,8 +305,7 @@ void BaseCodeGenerator::GenLuaConstruction(Node* node)
                         for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
                         {
                             auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
-                            if (auto result = great_grandchild_generator->GenLuaConstruction(great_grandchild.get());
-                                result)
+                            if (auto result = great_grandchild_generator->GenLuaConstruction(great_grandchild.get()); result)
                                 m_source->writeLine(result.value());
                             GenSettings(great_grandchild.get());
                             // It's possible to have even more levels of submenus, but we'll stop here.

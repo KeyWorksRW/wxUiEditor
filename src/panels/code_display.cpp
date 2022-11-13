@@ -27,7 +27,6 @@ const int node_marker = 1;
 // XRC Keywords are defined in gen_xrc_utils.cpp so they can easily be updated as XRC generators support more XRC controls.
 extern const char* g_xrc_keywords;
 
-
 // clang-format off
 
 const char* g_python_keywords =
@@ -99,7 +98,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_HPHP_NUMBER, *wxRED);
         m_scintilla->StyleSetForeground(wxSTC_HPHP_SIMPLESTRING, wxColour(0, 128, 0));
     }
-    else // C++
+    else  // C++
     {
         // On Windows, this saves converting the UTF16 characters to ANSI.
         m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_u8_cpp_keywords);

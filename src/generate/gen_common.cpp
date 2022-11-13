@@ -293,10 +293,10 @@ ttlib::cstr GeneratePhpQuotedString(const ttlib::cstr& str)
     if (str.size())
     {
         auto str_with_escapes = ConvertToCodeString(str);
-            if (GetProject()->prop_as_bool(prop_internationalize))
-                code << "_(\"" << str_with_escapes << "\")";
-            else
-                code << "\"" << str_with_escapes << "\"";
+        if (GetProject()->prop_as_bool(prop_internationalize))
+            code << "_(\"" << str_with_escapes << "\")";
+        else
+            code << "\"" << str_with_escapes << "\"";
     }
     else
     {

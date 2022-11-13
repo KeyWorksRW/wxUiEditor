@@ -15,6 +15,10 @@ public:
     wxObject* CreateMockup(Node* node, wxObject* /*parent*/) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenPythonConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenLuaConstruction(Node* node) override;
+    std::optional<ttlib::cstr> GenPhpConstruction(Node* node) override;
+
     std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;

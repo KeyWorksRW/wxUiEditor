@@ -42,6 +42,50 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
+std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonConstruction(Node* node)
+{
+    ttlib::cstr code;
+    code << node->get_node_name() << " = wx.BoxSizer(" << node->prop_as_string(prop_orientation) << ")";
+
+    auto min_size = node->prop_as_wxSize(prop_minimum_size);
+    if (min_size.GetX() != -1 || min_size.GetY() != -1)
+    {
+        code << "\n\t" << node->get_node_name() << ".SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ")";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> BoxSizerGenerator::GenLuaConstruction(Node* node)
+{
+    ttlib::cstr code;
+    code << "ui." << node->get_node_name() << " = wx.wxBoxSizer(wx." << node->prop_as_string(prop_orientation) << ")";
+
+    auto min_size = node->prop_as_wxSize(prop_minimum_size);
+    if (min_size.GetX() != -1 || min_size.GetY() != -1)
+    {
+        code << "\n\tui." << node->get_node_name() << ":SetMinSize(wx.wxSize(" << min_size.GetX() << ", " << min_size.GetY()
+             << "))";
+    }
+
+    return code;
+}
+
+std::optional<ttlib::cstr> BoxSizerGenerator::GenPhpConstruction(Node* node)
+{
+    ttlib::cstr code;
+    code << '$' << node->get_node_name() << " = new wxBoxSizer(" << node->prop_as_string(prop_orientation) << ");";
+
+    auto min_size = node->prop_as_wxSize(prop_minimum_size);
+    if (min_size.GetX() != -1 || min_size.GetY() != -1)
+    {
+        code << "\n\t$" << node->get_node_name() << "->SetMinSize(new wxSize(" << min_size.GetX() << ", " << min_size.GetY()
+             << "))";
+    }
+
+    return code;
+}
+
 void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
 {
     if (node->as_bool(prop_hide_children))

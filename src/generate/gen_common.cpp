@@ -263,6 +263,49 @@ ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str)
     return code;
 }
 
+ttlib::cstr GenerateLuaQuotedString(const ttlib::cstr& str)
+{
+    ttlib::cstr code;
+
+    if (str.size())
+    {
+        auto str_with_escapes = ConvertToCodeString(str);
+
+        // Lua assumes all strings are utf8 so there's no need to convert to utf8.
+
+        if (GetProject()->prop_as_bool(prop_internationalize))
+            code << "wx.wxTranslate(\"" << str_with_escapes << "\")";
+        else
+            code << "\"" << str_with_escapes << "\"";
+    }
+    else
+    {
+        code << "\"\"";
+    }
+
+    return code;
+}
+
+ttlib::cstr GeneratePhpQuotedString(const ttlib::cstr& str)
+{
+    ttlib::cstr code;
+
+    if (str.size())
+    {
+        auto str_with_escapes = ConvertToCodeString(str);
+            if (GetProject()->prop_as_bool(prop_internationalize))
+                code << "_(\"" << str_with_escapes << "\")";
+            else
+                code << "\"" << str_with_escapes << "\"";
+    }
+    else
+    {
+        code << "wxEmptyString";
+    }
+
+    return code;
+}
+
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
     if (node->HasValue(prop_name))
@@ -284,6 +327,30 @@ ttlib::cstr GeneratePythonQuotedString(Node* node, GenEnum::PropName prop_name)
     else
     {
         return ttlib::cstr("wx.EmptyString");
+    }
+}
+
+ttlib::cstr GenerateLuaQuotedString(Node* node, GenEnum::PropName prop_name)
+{
+    if (node->HasValue(prop_name))
+    {
+        return GenerateLuaQuotedString(node->prop_as_string(prop_name));
+    }
+    else
+    {
+        return ttlib::cstr("wx.EmptyString");
+    }
+}
+
+ttlib::cstr GeneratePhpQuotedString(Node* node, GenEnum::PropName prop_name)
+{
+    if (node->HasValue(prop_name))
+    {
+        return GeneratePhpQuotedString(node->prop_as_string(prop_name));
+    }
+    else
+    {
+        return ttlib::cstr("wxEmptyString");
     }
 }
 

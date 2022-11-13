@@ -11,8 +11,9 @@
 
 #include "node_classes.h"  // Forward defintions of Node classes
 
-#include "gen_enums.h"  // Enumerations for generators
-#include "gen_xrc.h"    // BaseXrcGenerator -- Generate XRC file
+#include "../panels/base_panel.h"  // BasePanel -- Base class for all code generation panels
+#include "gen_enums.h"             // Enumerations for generators
+#include "gen_xrc.h"               // BaseXrcGenerator -- Generate XRC file
 
 class ProjectSettings;
 class NodeCreator;
@@ -59,7 +60,18 @@ int WriteCMakeFile(bool test_only = true);  // See gen_cmake.cpp
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at
 // least one file needs to be generated. If pClassList is non-null, it will contain the base
 // class name of every form that needs updating.
+//
+// gen_codefiles.cpp
 bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+
+// gen_python.cpp
+bool GeneratePythonFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+
+// gen_lua.cpp
+bool GenerateLuaFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+
+// gen_php.cpp
+bool GeneratePhpFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
 
 #if defined(INTERNAL_TESTING)
 void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root);
@@ -68,12 +80,15 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 class BaseCodeGenerator
 {
 public:
-    BaseCodeGenerator();
+    BaseCodeGenerator(int language);
 
     void SetHdrWriteCode(WriteCode* cw) { m_header = cw; }
     void SetSrcWriteCode(WriteCode* cw) { m_source = cw; }
 
     void GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GeneratePythonClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
+    void GeneratePhpClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
 
@@ -140,6 +155,9 @@ protected:
 
     // Generate node construction code
     void GenConstruction(Node* node);
+    void GenPythonConstruction(Node* node);
+    void GenLuaConstruction(Node* node);
+    void GenPhpConstruction(Node* node);
 
     // This allows generators to create calls to a widget after it has been created.
     void GenSettings(Node* node);
@@ -167,6 +185,8 @@ private:
     Project* m_project { nullptr };
 
     PANEL_PAGE m_panel_type { NOT_PANEL };
+
+    int m_language { GEN_LANG_CPLUSPLUS };
 
     bool m_is_derived_class { true };
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Generate code files
+// Purpose:   Generate C++ Base code files
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -81,7 +81,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
 
         try
         {
-            BaseCodeGenerator codegen;
+            BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
 
             path.replace_extension(header_ext);
             auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
@@ -268,7 +268,7 @@ void MainFrame::GenInhertedClass()
             continue;
         }
 
-        BaseCodeGenerator codegen;
+        BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
 
         path.replace_extension(header_ext);
         auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
@@ -419,7 +419,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 
             if (class_name.is_sameas(iter_class))
             {
-                BaseCodeGenerator codegen;
+                BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
 
                 // At this point we know which form has changes, but we don't know if it's the src file, the header file, or
                 // both, so we need to check again.

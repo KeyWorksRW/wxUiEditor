@@ -240,6 +240,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_line_numbers, "line_numbers" },  // previously used in wxStyledTextCtrl, but now uses margins
     { prop_line_size, "line_size" },
     { prop_local_pch_file, "local_pch_file" },
+    { prop_lua_directory, "lua_directory" },
+    { prop_lua_file, "lua_file" },
     { prop_main_label, "main_label" },
     { prop_majorDimension, "majorDimension" },
     { prop_margin_height, "margin_height" },
@@ -288,6 +290,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_paste_multiple, "paste_multiple" },
     { prop_persist, "persist" },
     { prop_persist_name, "persist_name" },
+    { prop_php_directory, "php_directory" },
+    { prop_php_file, "php_file" },
     { prop_pin_button, "pin_button" },
     { prop_platforms, "platforms" },
     { prop_play, "play" },
@@ -297,6 +301,8 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_pressed_bmp, "pressed_bmp" },
     { prop_private_members, "private_members" },
     { prop_proportion, "proportion" },
+    { prop_python_directory, "python_directory" },
+    { prop_python_file, "python_file" },
     { prop_radiobtn_var_name, "radiobtn_var_name" },
     { prop_range, "range" },
     { prop_read_only, "read_only" },
@@ -398,6 +404,7 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_wrap_flags, "wrap_flags" },
     { prop_wxWidgets_version, "wxWidgets_version" },
     { prop_xrc_art_directory, "xrc_art_directory" },
+    { prop_xrc_directory, "xrc_directory" },
     { prop_xrc_file, "xrc_file" },
 
 };

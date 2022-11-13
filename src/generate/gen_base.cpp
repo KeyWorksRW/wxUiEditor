@@ -78,8 +78,10 @@ std::map<wxBitmapType, std::string> g_map_types;
 
 #define ADD_TYPE(name) g_map_types[name] = #name;
 
-BaseCodeGenerator::BaseCodeGenerator()
+BaseCodeGenerator::BaseCodeGenerator(int language)
 {
+    m_language = language;
+
     if (g_map_types.empty())
     {
         ADD_TYPE(wxBITMAP_TYPE_BMP);  // We include this, but the handler is always loaded
@@ -111,6 +113,8 @@ BaseCodeGenerator::BaseCodeGenerator()
 
 void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     m_CtxMenuEvents.clear();
     m_embedded_images.clear();
     m_type_generated.clear();
@@ -596,6 +600,8 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
 void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     ASSERT_MSG(events.size(), "GenSrcEventBinding() shouldn't be called if there are no events");
     if (events.empty())
     {
@@ -661,6 +667,8 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
 
 void BaseCodeGenerator::GenHdrEvents(const EventVector& events)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     if (events.size() || m_CtxMenuEvents.size())
     {
         std::set<ttlib::cstr> code_lines;
@@ -824,6 +832,8 @@ void BaseCodeGenerator::CollectValidatorVariables(Node* node, std::set<std::stri
 
 void BaseCodeGenerator::GenValidatorFunctions(Node* node)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     if (node->HasValue(prop_validator_variable))
     {
         auto result = GenGetSetCode(node);
@@ -841,6 +851,8 @@ void BaseCodeGenerator::GenValidatorFunctions(Node* node)
 
 void BaseCodeGenerator::GenValVarsBase(const NodeDeclaration* declaration, Node* node, std::set<std::string>& code_lines)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     if (auto& var_name = node->prop_as_string(prop_validator_variable); var_name.size())
     {
         // All validators must have a validator_data_type property, so we don't check if it exists.
@@ -1247,6 +1259,8 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
 
 void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& events)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     if (form_node->isType(type_images))
     {
         // The Images form is not a class
@@ -1350,6 +1364,8 @@ void BaseCodeGenerator::GenerateClassHeader(Node* form_node, const EventVector& 
 
 void BaseCodeGenerator::GenEnumIds(Node* class_node)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     if (!class_node->prop_as_bool(prop_generate_ids))
         return;
 
@@ -1386,6 +1402,8 @@ void BaseCodeGenerator::GenEnumIds(Node* class_node)
 
 void BaseCodeGenerator::GenerateClassConstructor(Node* form_node, const EventVector& events)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     m_source->writeLine();
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
@@ -1508,6 +1526,8 @@ constexpr const GenType aftercode_types[] = {
 
 void BaseCodeGenerator::GenConstruction(Node* node)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     auto type = node->gen_type();
     auto declaration = node->GetNodeDeclaration();
     auto generator = declaration->GetGenerator();
@@ -1921,26 +1941,74 @@ void BaseCodeGenerator::GenSettings(Node* node)
     size_t auto_indent = indent::auto_no_whitespace;
     auto generator = node->GetNodeDeclaration()->GetGenerator();
 
-    if (auto result = generator->GenSettings(node, auto_indent); result)
+    switch (m_language)
     {
-        if (result.value().size())
-        {
-            m_source->writeLine(result.value(), auto_indent);
-        }
-    }
+        case GEN_LANG_CPLUSPLUS:
+            if (auto result = generator->GenSettings(node, auto_indent); result && result.value().size())
+            {
+                m_source->writeLine(result.value(), auto_indent);
+            }
+            break;
 
-    // If the node has a window_extra_style property, then generate any possible validator settings as
-    // well as any window settings.
+        case GEN_LANG_PYTHON:
+            if (auto result = generator->GenPythonSettings(node, auto_indent); result && result.value().size())
+            {
+                m_source->writeLine(result.value(), auto_indent);
+            }
+            break;
+
+        case GEN_LANG_LUA:
+            if (auto result = generator->GenLuaSettings(node, auto_indent); result && result.value().size())
+            {
+                m_source->writeLine(result.value(), auto_indent);
+            }
+            break;
+
+        case GEN_LANG_PHP:
+            if (auto result = generator->GenPhpSettings(node, auto_indent); result && result.value().size())
+            {
+                m_source->writeLine(result.value(), auto_indent);
+            }
+            break;
+
+        default:
+            FAIL_MSG("Unknown language")
+            break;
+    }
 
     if (node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
-        if (auto result = GenValidatorSettings(node); result)
+        if (m_language == GEN_LANG_CPLUSPLUS)
         {
-            m_source->writeLine(result.value());
+            if (auto result = GenValidatorSettings(node); result)
+            {
+                m_source->writeLine(result.value());
+            }
+        }
+        switch (m_language)
+        {
+            case GEN_LANG_CPLUSPLUS:
+                GenerateWindowSettings(node, code);
+                break;
+
+            case GEN_LANG_PYTHON:
+                GeneratePythonWindowSettings(node, code);
+                break;
+
+            case GEN_LANG_LUA:
+                GenerateLuaWindowSettings(node, code);
+                break;
+
+            case GEN_LANG_PHP:
+                GeneratePhpWindowSettings(node, code);
+                break;
+
+            default:
+                FAIL_MSG("Unknown language")
+                break;
         }
 
-        GenerateWindowSettings(node, code);
         if (code.size())
             m_source->writeLine(code, indent::auto_keep_whitespace);
     }
@@ -2172,6 +2240,8 @@ void BaseCodeGenerator::WriteSetLines(WriteCode* out, std::set<std::string>& cod
 
 void BaseCodeGenerator::GenContextMenuHandler(Node* form_node, Node* node_ctx_menu)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     m_source->writeLine();
 
     m_source->writeLine(ttlib::cstr() << "void " << form_node->get_node_name()
@@ -2216,6 +2286,8 @@ void BaseCodeGenerator::GenContextMenuHandler(Node* form_node, Node* node_ctx_me
 
 void BaseCodeGenerator::GenCtxConstruction(Node* node)
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     auto declaration = node->GetNodeDeclaration();
 
     if (auto generator = declaration->GetGenerator(); generator)
@@ -2255,6 +2327,8 @@ void BaseCodeGenerator::GenCtxConstruction(Node* node)
 
 void BaseCodeGenerator::GenerateHandlers()
 {
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+
     if (m_embedded_images.size())
     {
         for (auto& iter_img: m_embedded_images)

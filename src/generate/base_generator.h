@@ -74,25 +74,61 @@ public:
 
     MockupParent* GetMockup();
 
-    // Create an object to use in the Mockup panel (typically a sizer or widget).
-    virtual wxObject* CreateMockup(Node* /*node*/, wxObject* /*parent*/) { return nullptr; }
-
-    // Called by Mockup after all children have been created
-    virtual void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) {}
-
     // Generate the code used to construct the object
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenLuaConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenPhpConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonConstruction(Node*) { return {}; }
 
-    // Return true if all construction and settings code was written to src_code
+    // Return true if all construction and settings code was written to src_code.
+    //
+    // This variant of GenConstruction requires the caller to write the ctor
+    // code, and is only called when output C++ code.
     virtual bool GenConstruction(Node*, BaseCodeGenerator* /* code_gen */) { return false; }
+
+    // Generate specific additional code
+    virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPythonAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */)
+    {
+        return {};
+    }
+    virtual std::optional<ttlib::cstr> GenLuaAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */)
+    {
+        return {};
+    }
+    virtual std::optional<ttlib::cstr> GenPhpAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */)
+    {
+        return {};
+    }
+
+    // Generate code after any children have been constructed
+    //
+    // Code will be written with indent::none set
+    virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPythonAfterChildren(Node* /* node */) { return {}; }
+    virtual std::optional<ttlib::cstr> GenLuaAfterChildren(Node* /* node */) { return {}; }
+    virtual std::optional<ttlib::cstr> GenAPhpfterChildren(Node* /* node */) { return {}; }
+
+    virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPythonEvents(NodeEvent*, const std::string&) { return {}; }
+    virtual std::optional<ttlib::cstr> GenLuaEvents(NodeEvent*, const std::string&) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPhpEvents(NodeEvent*, const std::string&) { return {}; }
+
+    virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPythonSettings(Node*, size_t&) { return {}; }
+    virtual std::optional<ttlib::cstr> GenLuaSettings(Node*, size_t&) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPhpSettings(Node*, size_t&) { return {}; }
 
     // Add attributes to object, and all properties
     //
     // Return an xrc_ enum (e.g. xrc_sizer_item_created)
     virtual int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) { return xrc_not_supported; }
+
+    // Called by Mockup after all children have been created
+    virtual void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) {}
+
+    // Create an object to use in the Mockup panel (typically a sizer or widget).
+    virtual wxObject* CreateMockup(Node* /*node*/, wxObject* /*parent*/) { return nullptr; }
 
     // Return the required wxXmlResourceHandler
     virtual void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) {}
@@ -104,17 +140,6 @@ public:
     // this if the generator or any of it's non-default properties require a newer version of
     // wxUiEditor.
     virtual int GetRequiredVersion(Node* /*node*/) { return minRequiredVer; }
-
-    // Generate specific additional code
-    virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }
-
-    // Generate code after any children have been constructed
-    //
-    // Code will be written with indent::none set
-    virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
-
-    virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
-    virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }
 
     // Add any required include files to base source and/or header file
     virtual bool GetIncludes(Node*, std::set<std::string>& /* set_src */, std::set<std::string>& /* set_hdr */)

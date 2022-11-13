@@ -45,30 +45,30 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
     m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_TOP);
     m_notebook->SetArtProvider(new wxAuiGenericTabArt());
 
-    if (m_panel_type == PANEL_CPLUSPLUS)
+    if (m_panel_type == GEN_LANG_CPLUSPLUS)
     {
-        m_cppPanel = new CodeDisplay(m_notebook);
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
-        m_hPanel = new CodeDisplay(m_notebook);
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
 
-        m_inherit_src_panel = new CodeDisplay(m_notebook);
+        m_inherit_src_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_inherit_src_panel, "inherit_src", false, wxWithImages::NO_IMAGE);
 
-        m_inherit_hdr_panel = new CodeDisplay(m_notebook);
+        m_inherit_hdr_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_inherit_hdr_panel, "inherit_hdr", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == PANEL_XRC || m_panel_type == PANEL_LUA || m_panel_type == PANEL_PYTHON ||
-             m_panel_type == PANEL_PHP)
+    else if (m_panel_type == GEN_LANG_XRC || m_panel_type == GEN_LANG_LUA || m_panel_type == GEN_LANG_PYTHON ||
+             m_panel_type == GEN_LANG_PHP)
     {
-        m_cppPanel = new CodeDisplay(m_notebook, true);
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
         // A lot of code expects m_hPanel to exist. This will give us something to add additional information to, such as
         // which properties are not supported.
 
-        m_hPanel = new CodeDisplay(m_notebook);
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "info", false, wxWithImages::NO_IMAGE);
     }
     else
@@ -77,10 +77,10 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
 
         // Add default panel creation just to prevent crashing
 
-        m_cppPanel = new CodeDisplay(m_notebook);
+        m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
 
-        m_hPanel = new CodeDisplay(m_notebook);
+        m_hPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_hPanel, "header", false, wxWithImages::NO_IMAGE);
     }
 
@@ -177,7 +177,7 @@ void BasePanel::GenerateBaseClass()
 
     // If no form is selected, display the first child form of the project
     m_cur_form = wxGetFrame().GetSelectedForm();
-    if (!m_cur_form && (m_panel_type == PANEL_CPLUSPLUS))
+    if (!m_cur_form)
     {
         if (project->GetChildCount() > 0)
         {
@@ -206,7 +206,7 @@ void BasePanel::GenerateBaseClass()
         }
     }
 
-    BaseCodeGenerator codegen;
+    BaseCodeGenerator codegen(m_panel_type);
 
     m_cppPanel->Clear();
     codegen.SetSrcWriteCode(m_cppPanel);
@@ -216,7 +216,7 @@ void BasePanel::GenerateBaseClass()
 
     switch (m_panel_type)
     {
-        case PANEL_CPLUSPLUS:
+        case GEN_LANG_CPLUSPLUS:
             codegen.GenerateBaseClass(m_cur_form, panel_page);
 
             m_inherit_src_panel->Clear();
@@ -227,7 +227,19 @@ void BasePanel::GenerateBaseClass()
             codegen.GenerateDerivedClass(project, m_cur_form, panel_page);
             break;
 
-        case PANEL_XRC:
+        case GEN_LANG_PYTHON:
+            codegen.GeneratePythonClass(m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_LUA:
+            codegen.GenerateLuaClass(m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_PHP:
+            codegen.GeneratePhpClass(m_cur_form, panel_page);
+            break;
+
+        case GEN_LANG_XRC:
             codegen.GenerateXrcClass(m_cur_form, panel_page);
             break;
 
@@ -240,7 +252,7 @@ void BasePanel::GenerateBaseClass()
     {
         m_cppPanel->CodeGenerationComplete();
         m_cppPanel->OnNodeSelected(wxGetFrame().GetSelectedNode());
-        if (m_panel_type == PANEL_CPLUSPLUS)
+        if (m_panel_type == GEN_LANG_CPLUSPLUS)
         {
             m_inherit_src_panel->CodeGenerationComplete();
             m_inherit_src_panel->OnNodeSelected(wxGetFrame().GetSelectedNode());
@@ -249,7 +261,7 @@ void BasePanel::GenerateBaseClass()
     else
     {
         m_hPanel->CodeGenerationComplete();
-        if (m_panel_type == PANEL_CPLUSPLUS)
+        if (m_panel_type == GEN_LANG_CPLUSPLUS)
         {
             m_inherit_hdr_panel->CodeGenerationComplete();
         }

@@ -52,9 +52,6 @@ set (file_list
 
     generate/gen_base.cpp          # Generate Src and Hdr files for Base and Derived Class
     generate/gen_cmake.cpp         # Auto-generate a .cmake file
-    generate/gen_codefiles.cpp     # Generate code files
-    generate/gen_derived.cpp       # Generate Derived class code
-    generate/gen_xrc.cpp           # Generate XRC file
     generate/write_code.cpp        # Write code to Scintilla or file
 
     generate/base_generator.cpp    # Base widget generator class
@@ -62,6 +59,16 @@ set (file_list
     generate/gen_common.cpp        # Common widget generation functions
     generate/gen_xrc_utils.cpp     # Common XRC generating functions
     generate/gen_book_utils.cpp    # Common Book utilities
+
+    # Code generation output languages
+
+    generate/gen_codefiles.cpp     # Generate code files
+    generate/gen_derived.cpp       # Generate Derived class code
+    generate/gen_python.cpp        # Generate Python code files
+    generate/gen_lua.cpp           # Generate Lua code files
+    generate/gen_php.cpp           # Generate PHP code files
+    generate/gen_xrc.cpp           # Generate XRC file
+
 
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++ and XRC code.

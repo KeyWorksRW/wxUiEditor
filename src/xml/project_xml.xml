@@ -15,13 +15,21 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file." />
 		<property name="derived_directory" type="path"
 			help="The generated derived class output directory. Leave blank to generate them in the same directory as the project file." />
-		<property name="source_ext" type="option" help="Specifies the file extension to use when create source files.">
+		<property name="python_directory" type="path"
+			help="The directory to generate python files in. Leave blank to generate them in the same directory as the project file." />
+		<property name="lua_directory" type="path"
+			help="The directory to generate lua files in. Leave blank to generate them in the same directory as the project file." />
+		<property name="php_directory" type="path"
+			help="The directory to generate php files in. Leave blank to generate them in the same directory as the project file." />
+		<property name="xrc_directory" type="path"
+			help="The directory to generate xrc files in. Leave blank to generate them in the same directory as the project file." />
+		<property name="source_ext" type="option" help="Specifies the file extension to use when creating C++ source files.">
 			<option name=".cpp" />
 			<option name=".cc" />
 			<option name=".cxx" />
 			.cpp
 		</property>
-		<property name="header_ext" type="option" help="Specifies the file extension to use when create header files.">
+		<property name="header_ext" type="option" help="Specifies the file extension to use when creating C++ header files.">
 			<option name=".h" />
 			<option name=".hh" />
 			<option name=".hpp" />

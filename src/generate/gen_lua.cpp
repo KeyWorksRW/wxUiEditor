@@ -1,0 +1,323 @@
+/////////////////////////////////////////////////////////////////////////////
+// Purpose:   Generate Lua code files
+// Author:    Ralph Walden
+// Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
+// License:   Apache License -- see ../../LICENSE
+/////////////////////////////////////////////////////////////////////////////
+
+#include "ttcwd_wx.h"  // cwd -- Class for storing and optionally restoring the current directory
+
+#include "mainframe.h"
+
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "gen_base.h"        // BaseCodeGenerator -- Generate Base class
+#include "gen_common.h"      // Common component functions
+#include "node.h"            // Node class
+#include "project_class.h"   // Project class
+#include "write_code.h"      // Write code to Scintilla or file
+
+bool GenerateLuaFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
+{
+    auto project = GetProject();
+    if (project->GetChildCount() == 0)
+    {
+        if (NeedsGenerateCheck)
+            return false;
+
+        wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
+        return false;
+    }
+    ttSaveCwd cwd;
+    GetProject()->GetProjectPath().ChangeDir();
+    ttlib::cstr path;
+    std::vector<ttlib::cstr> results;
+
+    size_t currentFiles = 0;
+
+    bool generate_result = true;
+    for (const auto& form: project->GetChildNodePtrs())
+    {
+        if (auto& base_file = form->prop_as_string(prop_lua_file); base_file.size())
+        {
+            path = base_file;
+            path.backslashestoforward();
+            if (GetProject()->HasValue(prop_lua_directory) && !path.contains("/"))
+            {
+                path = GetProject()->GetBaseDirectory().utf8_string();
+                path.append_filename(base_file);
+            }
+            path.make_absolute();
+            path.backslashestoforward();
+        }
+        else
+        {
+            results.emplace_back() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n';
+            continue;
+        }
+
+        try
+        {
+            BaseCodeGenerator codegen(GEN_LANG_LUA);
+
+            auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+            codegen.SetHdrWriteCode(h_cw.get());
+
+            path.replace_extension(".lua");
+            auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+            codegen.SetSrcWriteCode(cpp_cw.get());
+
+            codegen.GenerateLuaClass(form.get());
+
+            auto retval = cpp_cw->WriteFile(NeedsGenerateCheck);
+
+            if (retval > 0)
+            {
+                if (!NeedsGenerateCheck)
+                {
+                    results.emplace_back() << path.filename() << " saved" << '\n';
+                }
+                else
+                {
+                    if (pClassList)
+                    {
+                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                        continue;
+                    }
+                    else
+                    {
+                        return generate_result;
+                    }
+                }
+            }
+
+            else if (retval < 0)
+            {
+                results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            }
+            else  // retval == result::exists
+            {
+                ++currentFiles;
+            }
+        }
+        catch (const std::exception& TESTING_PARAM(e))
+        {
+            MSG_ERROR(e.what());
+            wxMessageBox(ttlib::cstr("An internal error occurred generating code files for ")
+                             << form->prop_as_string(prop_lua_file),
+                         "Code generation");
+            continue;
+        }
+    }
+
+    if (results.size())
+    {
+        ttlib::cstr msg;
+        for (auto& iter: results)
+        {
+            msg += iter;
+        }
+
+        if (currentFiles)
+        {
+            msg << '\n' << "The other " << currentFiles << " generated files are current";
+        }
+
+        wxMessageBox(msg.wx_str(), "Code Generation", wxOK, parent);
+    }
+    else if (currentFiles && parent)
+    {
+        ttlib::cstr msg;
+        msg << '\n' << "All " << currentFiles << " generated files are current";
+        wxMessageBox(msg, "Code Generation", wxOK, parent);
+    }
+    return generate_result;
+}
+
+using namespace GenEnum;
+
+// clang-format off
+
+// REVIEW: [Randalphwa - 11-13-2022] I'm default to using "ui" as the prefix for all Lua variables. However, that doesn't
+// seem like way to set it. A better option would be to let the user both name it and specify whether or not it should be set
+// to local.
+
+inline constexpr const auto txt_LuaCmtBlock =
+R"===(---------------------------------------------------------------------------------
+-- Code generated by wxUiEditor -- see https://github.com/KeyWorksRW/wxUiEditor/
+--
+-- DO NOT EDIT THIS FILE! Your changes will be lost if it is re-generated!
+---------------------------------------------------------------------------------
+
+package.cpath = package.cpath..";./?.dll;./?.so;../lib/?.so;../lib/vc_dll/?.dll;../lib/bcc_dll/?.dll;../lib/mingw_dll/?.dll;"
+require("wx")
+
+ui = {}
+
+)===";
+
+// clang-format on
+
+void BaseCodeGenerator::GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type)
+{
+    if (form_node->isGen(gen_Images))
+    {
+        return;
+    }
+
+    m_project = GetProject();
+    m_form_node = form_node;
+
+    m_panel_type = panel_type;
+
+    EventVector events;
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+
+    for (const auto& form: m_project->GetChildNodePtrs())
+    {
+        if (form->isGen(gen_Images))
+        {
+            m_ImagesForm = form.get();
+            break;
+        }
+    }
+
+    m_header->Clear();
+    m_source->Clear();
+
+    m_source->writeLine(txt_LuaCmtBlock);
+    m_header->writeLine("-- wxLua is available at https://github.com/pkulchenko/wxlua");
+    m_header->writeLine("-- Lua information is available at https://www.lua.org/home.html");
+    m_header->writeLine("-- LuaJIT information is available at https://luajit.org/");
+
+    thrd_get_events.join();
+
+    auto generator = form_node->GetNodeDeclaration()->GetGenerator();
+
+    if (auto result = generator->GenLuaConstruction(form_node); result)
+    {
+        m_source->writeLine(result.value(), indent::none);
+        m_source->writeLine();
+        m_source->Indent();
+    }
+
+    size_t auto_indent = indent::auto_no_whitespace;
+    if (auto result = generator->GenLuaSettings(form_node, auto_indent); result)
+    {
+        if (result.value().size())
+        {
+            m_source->writeLine(result.value(), indent::auto_keep_whitespace);
+            m_source->writeLine();
+        }
+    }
+
+    if (form_node->get_prop_ptr(prop_window_extra_style))
+    {
+        ttlib::cstr code;
+        GenerateLuaWindowSettings(form_node, code);
+        if (code.size())
+        {
+            // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.
+            m_source->writeLine(code, indent::auto_keep_whitespace);
+        }
+    }
+
+    m_source->SetLastLineBlank();
+    for (const auto& child: form_node->GetChildNodePtrs())
+    {
+        if (child->isGen(gen_wxContextMenuEvent))
+            continue;
+        GenLuaConstruction(child.get());
+    }
+
+    if (auto result = generator->GenLuaAdditionalCode(code_after_children, form_node); result)
+    {
+        if (result.value().size())
+        {
+            m_source->writeLine();
+            m_source->writeLine(result.value(), indent::none);
+        }
+    }
+
+    // Make certain indentation is reset after all construction code is written
+    m_source->ResetIndent();
+}
+
+void BaseCodeGenerator::GenLuaConstruction(Node* node)
+{
+    auto type = node->gen_type();
+    auto declaration = node->GetNodeDeclaration();
+    auto generator = declaration->GetGenerator();
+    if (!generator)
+        return;
+
+    if (auto result = generator->GenLuaConstruction(node); result)
+    {
+        m_source->writeLine(result.value());
+    }
+    GenSettings(node);
+
+    if (type == type_ribbontoolbar)
+    {
+        // m_source->writeLine("{");
+        m_source->Indent();
+        // A wxRibbonToolBar can only have abstract children that consist of the tools.
+        for (const auto& child: node->GetChildNodePtrs())
+        {
+            auto child_comp = child->GetNodeDeclaration()->GetGenerator();
+            if (auto result = child_comp->GenConstruction(child.get()); result)
+                m_source->writeLine(result.value());
+        }
+        m_source->Unindent();
+        // m_source->writeLine("}");
+        m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->Realize();");
+        return;
+    }
+    else if (type == type_tool_dropdown && node->GetChildCount())
+    {
+        // TODO: [Randalphwa - 11-13-2022] This is just a placeholder for now. It definitely doesn't generate the correct
+        // code.
+
+        // m_source->writeLine("{");
+        m_source->Indent();
+        m_source->writeLine("wxMenu* menu = new wxMenu;");
+        auto menu_node_ptr = g_NodeCreator.NewNode(gen_wxMenu);
+        menu_node_ptr->prop_set_value(prop_var_name, "menu");
+        for (const auto& child: node->GetChildNodePtrs())
+        {
+            auto old_parent = child->GetParent();
+            child->SetParent(menu_node_ptr.get());
+            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
+            if (auto result = child_generator->GenLuaConstruction(child.get()); result)
+                m_source->writeLine(result.value());
+            GenSettings(child.get());
+            // A submenu can have children
+            if (child->GetChildCount())
+            {
+                for (const auto& grandchild: child->GetChildNodePtrs())
+                {
+                    auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
+                    if (auto result = grandchild_generator->GenLuaConstruction(grandchild.get()); result)
+                        m_source->writeLine(result.value());
+                    GenSettings(grandchild.get());
+                    // A submenu menu item can also be a submenu with great grandchildren.
+                    if (grandchild->GetChildCount())
+                    {
+                        for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
+                        {
+                            auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
+                            if (auto result = great_grandchild_generator->GenLuaConstruction(great_grandchild.get()); result)
+                                m_source->writeLine(result.value());
+                            GenSettings(great_grandchild.get());
+                            // It's possible to have even more levels of submenus, but we'll stop here.
+                        }
+                    }
+                }
+            }
+            child->SetParent(old_parent);
+        }
+        m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->SetDropdownMenu(menu);");
+        m_source->Unindent();
+        // m_source->writeLine("}");
+        return;
+    }
+}

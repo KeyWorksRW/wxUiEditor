@@ -29,6 +29,7 @@ public:
         if (m_indent > 0)
             --m_indent;
     }
+    void ResetIndent() { m_indent = 0; }
 
     // Write one or more lines, adding a trailing \n to the final line. Multiple lines
     // are indicated if the supplied string contains one or more \n characters.

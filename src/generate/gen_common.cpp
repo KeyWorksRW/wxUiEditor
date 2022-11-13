@@ -227,7 +227,7 @@ ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str)
 
     if (str.size())
     {
-        auto str_with_escapes = ConvertToPythonString(str);
+        auto str_with_escapes = ConvertToCodeString(str);
 
         bool has_utf_char = false;
         for (auto iter: str_with_escapes)
@@ -1426,63 +1426,25 @@ ttlib::cstr ConvertToCodeString(const ttlib::cstr& text)
                 result += "\\\"";
                 break;
 
-            case '\\':
-                result += "\\\\";
-                break;
-
-            case '\t':
-                result += "\\t";
-                break;
-
-            case '\n':
-                result += "\\n";
-                break;
-
-            case '\r':
-                result += "\\r";
-                break;
-
-            default:
-                result += c;
-                break;
-        }
-    }
-    return result;
-}
-
-// Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string. Used when generating
-// code.
-ttlib::cstr ConvertToPythonString(const ttlib::cstr& text)
-{
-    ttlib::cstr result;
-
-    for (auto c: text)
-    {
-        switch (c)
-        {
-            case '"':
-                result += "\\\"";
-                break;
-
-            case '\\':
-                result += "\\\\";
-                break;
-
-            case '\t':
-                result += "\\t";
-                break;
-
-            case '\n':
-                result += "\\n";
-                break;
-
-            case '\r':
-                result += "\\r";
-                break;
-
-            // The above also work for C++, this one is specific to Python
+            // This generally isn't needed for C++, but is needed for Python, Lua and PHP
             case '\'':
                 result += "\\'";
+                break;
+
+            case '\\':
+                result += "\\\\";
+                break;
+
+            case '\t':
+                result += "\\t";
+                break;
+
+            case '\n':
+                result += "\\n";
+                break;
+
+            case '\r':
+                result += "\\r";
                 break;
 
             default:

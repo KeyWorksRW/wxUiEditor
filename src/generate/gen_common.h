@@ -55,9 +55,6 @@ ttlib::cstr GeneratePhpQuotedString(Node* node, GenEnum::PropName prop_name);
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
-ttlib::cstr ConvertToPythonString(const ttlib::cstr& text);
-ttlib::cstr ConvertToLuaString(const ttlib::cstr& text);
-ttlib::cstr ConvertToPhpString(const ttlib::cstr& text);
 
 // Creates a string using either wxSystemSettings::GetColour(name) or wxColour(r, g, b).
 // Generates wxNullColour if the property is empty.

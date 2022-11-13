@@ -185,6 +185,7 @@ void BaseCodeGenerator::GeneratePhpClass(Node* form_node, PANEL_PAGE panel_type)
         m_source->writeLine(result.value(), indent::none);
         m_source->writeLine();
         m_source->Indent();
+        m_source->Indent();
     }
 
     size_t auto_indent = indent::auto_no_whitespace;
@@ -224,7 +225,8 @@ void BaseCodeGenerator::GeneratePhpClass(Node* form_node, PANEL_PAGE panel_type)
             m_source->writeLine(result.value(), indent::none);
         }
     }
-    m_source->writeLine("\t}");
+    m_source->Unindent();
+    m_source->writeLine("}");
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();

@@ -9,10 +9,12 @@
 
 #include "mainframe.h"
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Base class
-#include "node.h"           // Node class
-#include "project_class.h"  // Project class
-#include "write_code.h"     // Write code to Scintilla or file
+#include "base_generator.h"  // BaseGenerator -- Base widget generator class
+#include "gen_base.h"        // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"      // Common component functions
+#include "node.h"            // Node class
+#include "project_class.h"   // Project class
+#include "write_code.h"      // Write code to Scintilla or file
 
 bool GeneratePhpFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
 {
@@ -152,6 +154,19 @@ void BaseCodeGenerator::GeneratePhpClass(Node* form_node, PANEL_PAGE panel_type)
 {
     m_project = GetProject();
     m_form_node = form_node;
+    m_ImagesForm = nullptr;
+
+    EventVector events;
+    std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+
+    for (const auto& form: m_project->GetChildNodePtrs())
+    {
+        if (form->isGen(gen_Images))
+        {
+            m_ImagesForm = form.get();
+            break;
+        }
+    }
 
     m_panel_type = panel_type;
 
@@ -161,6 +176,138 @@ void BaseCodeGenerator::GeneratePhpClass(Node* form_node, PANEL_PAGE panel_type)
     m_source->writeLine(txt_PhpCmtBlock);
     m_header->writeLine("# wxPHP is available at https://github.com/wxphp/wxphp");
 
+    thrd_get_events.join();
+
+    auto generator = form_node->GetNodeDeclaration()->GetGenerator();
+
+    if (auto result = generator->GenPhpConstruction(form_node); result)
+    {
+        m_source->writeLine(result.value(), indent::none);
+        m_source->writeLine();
+        m_source->Indent();
+    }
+
+    size_t auto_indent = indent::auto_no_whitespace;
+    if (auto result = generator->GenPhpSettings(form_node, auto_indent); result)
+    {
+        if (result.value().size())
+        {
+            m_source->writeLine(result.value(), indent::auto_keep_whitespace);
+            m_source->writeLine();
+        }
+    }
+
+    if (form_node->get_prop_ptr(prop_window_extra_style))
+    {
+        ttlib::cstr code;
+        GeneratePhpWindowSettings(form_node, code);
+        if (code.size())
+        {
+            // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.
+            m_source->writeLine(code, indent::auto_keep_whitespace);
+        }
+    }
+
+    m_source->SetLastLineBlank();
+    for (const auto& child: form_node->GetChildNodePtrs())
+    {
+        if (child->isGen(gen_wxContextMenuEvent))
+            continue;
+        GenPhpConstruction(child.get());
+    }
+
+    if (auto result = generator->GenPhpAdditionalCode(code_after_children, form_node); result)
+    {
+        if (result.value().size())
+        {
+            m_source->writeLine();
+            m_source->writeLine(result.value(), indent::none);
+        }
+    }
+    m_source->writeLine("\t}");
+
+    // Make certain indentation is reset after all construction code is written
+    m_source->ResetIndent();
+
+    m_source->writeLine("}");
     m_source->writeLine();
     m_source->writeLine("?>");
+}
+
+void BaseCodeGenerator::GenPhpConstruction(Node* node)
+{
+    auto type = node->gen_type();
+    auto declaration = node->GetNodeDeclaration();
+    auto generator = declaration->GetGenerator();
+    if (!generator)
+        return;
+
+    if (auto result = generator->GenPhpConstruction(node); result)
+    {
+        m_source->writeLine(result.value());
+    }
+    GenSettings(node);
+
+    if (type == type_ribbontoolbar)
+    {
+        // m_source->writeLine("{");
+        m_source->Indent();
+        // A wxRibbonToolBar can only have abstract children that consist of the tools.
+        for (const auto& child: node->GetChildNodePtrs())
+        {
+            auto child_comp = child->GetNodeDeclaration()->GetGenerator();
+            if (auto result = child_comp->GenConstruction(child.get()); result)
+                m_source->writeLine(result.value());
+        }
+        m_source->Unindent();
+        // m_source->writeLine("}");
+        m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->Realize();");
+        return;
+    }
+    else if (type == type_tool_dropdown && node->GetChildCount())
+    {
+        // m_source->writeLine("{");
+        m_source->Indent();
+        m_source->writeLine("wxMenu* menu = new wxMenu;");
+        auto menu_node_ptr = g_NodeCreator.NewNode(gen_wxMenu);
+        menu_node_ptr->prop_set_value(prop_var_name, "menu");
+        for (const auto& child: node->GetChildNodePtrs())
+        {
+            auto old_parent = child->GetParent();
+            child->SetParent(menu_node_ptr.get());
+            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
+            if (auto result = child_generator->GenPhpConstruction(child.get()); result)
+                m_source->writeLine(result.value());
+            GenSettings(child.get());
+            // A submenu can have children
+            if (child->GetChildCount())
+            {
+                for (const auto& grandchild: child->GetChildNodePtrs())
+                {
+                    auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
+                    if (auto result = grandchild_generator->GenPhpConstruction(grandchild.get()); result)
+                        m_source->writeLine(result.value());
+                    GenSettings(grandchild.get());
+                    // A submenu menu item can also be a submenu with great grandchildren.
+                    if (grandchild->GetChildCount())
+                    {
+                        for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
+                        {
+                            auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
+                            if (auto result = great_grandchild_generator->GenPhpConstruction(great_grandchild.get());
+                                result)
+                                m_source->writeLine(result.value());
+                            GenSettings(great_grandchild.get());
+                            // It's possible to have even more levels of submenus, but we'll stop here.
+                        }
+                    }
+                }
+            }
+            child->SetParent(old_parent);
+        }
+        m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->SetDropdownMenu(menu);");
+        m_source->Unindent();
+        // m_source->writeLine("}");
+        return;
+    }
 }

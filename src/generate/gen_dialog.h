@@ -17,9 +17,11 @@ public:
     // Return true if all construction and settings code was written to src_code
     bool GenConstruction(Node*, BaseCodeGenerator* code_gen) override;
     std::optional<ttlib::cstr> GenPythonConstruction(Node*) override;
+    std::optional<ttlib::cstr> GenLuaConstruction(Node*) override;
 
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
     std::optional<ttlib::cstr> GenPythonAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
+    std::optional<ttlib::cstr> GenLuaAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
 
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 

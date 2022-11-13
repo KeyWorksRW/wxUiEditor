@@ -261,24 +261,87 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPythonAdditionalCode(GenEnum:
             code << "\tself.SetSizer(" << node->get_node_name() << ");";
             if (min_size != wxDefaultSize)
             {
-                code << "\n\tself.SetMinSize(wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
+                code << "\n\tself.SetMinSize(wx.Size(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
             }
             if (max_size != wxDefaultSize)
             {
-                code << "\n\tself.SetMaxSize(wxSize(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
+                code << "\n\tself.SetMaxSize(wx.Size(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
             }
             code << "\n\tself.Fit();";
         }
 
         if (size != wxDefaultSize)
         {
-            code << "\n\tself.SetSize(wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
+            code << "\n\tself.SetSize(wx.Size(" << size.GetWidth() << ", " << size.GetHeight() << "));";
         }
 
         auto& center = dlg->prop_as_string(prop_center);
         if (center.size() && !center.is_sameas("no"))
         {
             code << "\n\tself.Centre(" << center << ");";
+        }
+
+        return code;
+    }
+    else
+    {
+        return {};
+    }
+}
+
+std::optional<ttlib::cstr> DialogFormGenerator::GenLuaAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+{
+    if (cmd == code_after_children)
+    {
+        ttlib::cstr code;
+
+        Node* dlg;
+        if (node->IsForm())
+        {
+            dlg = node;
+            ASSERT_MSG(dlg->GetChildCount(), "Trying to generate code for a dialog with no children.")
+            if (!dlg->GetChildCount())
+                return {};  // empty dialog, so nothing to do
+            ASSERT_MSG(dlg->GetChild(0)->IsSizer(), "Expected first child of a dialog to be a sizer.");
+            if (dlg->GetChild(0)->IsSizer())
+                node = dlg->GetChild(0);
+        }
+        else
+        {
+            dlg = node->get_form();
+        }
+
+        auto min_size = dlg->prop_as_wxSize(prop_minimum_size);
+        auto max_size = dlg->prop_as_wxSize(prop_maximum_size);
+        auto size = dlg->prop_as_wxSize(prop_size);
+
+        if (min_size == wxDefaultSize && max_size == wxDefaultSize)
+        {
+            code << "\tui.:SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+        else
+        {
+            code << "\tui.:SetSizer(" << node->get_node_name() << ");";
+            if (min_size != wxDefaultSize)
+            {
+                code << "\n\tui.:SetMinSize(wx.wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
+            }
+            if (max_size != wxDefaultSize)
+            {
+                code << "\n\tui.:SetMaxSize(wx.wxSize(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
+            }
+            code << "\n\tui.:Fit();";
+        }
+
+        if (size != wxDefaultSize)
+        {
+            code << "\n\tui.:SetSize(wx.wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
+        }
+
+        auto& center = dlg->prop_as_string(prop_center);
+        if (center.size() && !center.is_sameas("no"))
+        {
+            code << "\n\tui.:Centre(" << center << ");";
         }
 
         return code;
@@ -325,6 +388,37 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Node* node
         code << node->prop_as_string(prop_style);
     else
         code << "wx.DEFAULT_DIALOG_STYLE";
+    code << ")";
+
+    return code;
+}
+
+std::optional<ttlib::cstr> DialogFormGenerator::GenLuaConstruction(Node* node)
+{
+    ttlib::cstr code;
+
+    code << "ui." << node->get_node_name() << " = wx.wxDialog(parent, wx.wxID_ANY, ";
+    if (node->HasValue(prop_title))
+        code << GenerateLuaQuotedString(node, prop_title) << ",\n\t\t";
+    else
+        code << "wx.wxEmptyString,\n\t\t";
+
+    auto position = node->prop_as_wxPoint(prop_pos);
+    if (position == wxDefaultPosition)
+        code << "wx.wxDefaultPosition, ";
+    else
+        code << "wx.wxPoint(" << position.x << ", " << position.y << "), ";
+
+    auto size = node->prop_as_wxSize(prop_size);
+    if (size == wxDefaultSize)
+        code << "wx.wxDefaultSize,";
+    else
+        code << "wx.wxSize(" << size.x << ", " << size.y << "),";
+
+    if (node->HasValue(prop_style) && !node->prop_as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
+        code << node->prop_as_string(prop_style);
+    else
+        code << "wx.wxDEFAULT_DIALOG_STYLE";
     code << ")";
 
     return code;

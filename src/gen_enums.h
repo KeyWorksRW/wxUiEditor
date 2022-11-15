@@ -246,7 +246,6 @@ namespace GenEnum
         prop_line_numbers,
         prop_line_size,
         prop_local_pch_file,
-        prop_lua_directory,
         prop_lua_file,
         prop_main_label,
         prop_majorDimension,
@@ -296,7 +295,6 @@ namespace GenEnum
         prop_paste_multiple,
         prop_persist,
         prop_persist_name,
-        prop_php_directory,
         prop_php_file,
         prop_pin_button,
         prop_platforms,
@@ -307,7 +305,6 @@ namespace GenEnum
         prop_pressed_bmp,
         prop_private_members,
         prop_proportion,
-        prop_python_directory,
         prop_python_file,
         prop_radiobtn_var_name,
         prop_range,
@@ -413,6 +410,24 @@ namespace GenEnum
         prop_xrc_directory,
         prop_xrc_file,
 
+        prop_python_combine_forms,
+        prop_python_combined_file,
+        prop_python_copy_art,  // Copy art files to output folder
+        prop_python_output_folder,
+        prop_python_use_xrc,
+
+        prop_lua_combine_forms,
+        prop_lua_combined_file,
+        prop_lua_copy_art,
+        prop_lua_output_folder,
+        prop_lua_use_xrc,
+
+        prop_php_combine_forms,
+        prop_php_combined_file,
+        prop_php_copy_art,
+        prop_php_output_folder,
+        prop_php_use_xrc,
+
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
         prop_unknown = prop_name_array_size,
@@ -511,7 +526,6 @@ namespace GenEnum
 
         gen_Bitmaps,
         gen_Boolean_Validator,
-        gen_CMake,
         gen_Choice_Validator,
         gen_Code,
         gen_Code_Generation,
@@ -521,12 +535,15 @@ namespace GenEnum
         gen_String_Validator,
         gen_Text_Validator,
         gen_Window_Events,
+        gen_XRC,
         gen_flexgridsizerbase,
         gen_sizer_child,
         gen_sizeritem_settings,
+        gen_wxLua,
+        gen_wxPHP,
+        gen_wxPython,
         gen_wxTopLevelWindow,
         gen_wxWindow,
-        gen_XRC,
 
         // The following are the rergular generators
 

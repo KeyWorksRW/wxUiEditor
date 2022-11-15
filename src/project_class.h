@@ -62,7 +62,7 @@ public:
     ttlib::cstr getArtDirectory();
     ttString GetArtDirectory();
 
-    ttString GetBaseDirectory();
+    ttString GetBaseDirectory(int language = GEN_LANG_CPLUSPLUS);
     ttString GetDerivedDirectory();
 
     // Returns the first project child that is a form, or nullptr if not form children found.

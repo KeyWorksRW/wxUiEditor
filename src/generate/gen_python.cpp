@@ -41,9 +41,9 @@ bool GeneratePythonFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<
         {
             path = base_file;
             path.backslashestoforward();
-            if (GetProject()->HasValue(prop_python_directory) && !path.contains("/"))
+            if (GetProject()->HasValue(prop_php_output_folder) && !path.contains("/"))
             {
-                path = GetProject()->GetBaseDirectory().utf8_string();
+                path = GetProject()->GetBaseDirectory(GEN_LANG_PYTHON).utf8_string();
                 path.append_filename(base_file);
             }
             path.make_absolute();

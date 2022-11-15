@@ -41,9 +41,9 @@ bool GeneratePhpFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttl
         {
             path = base_file;
             path.backslashestoforward();
-            if (GetProject()->HasValue(prop_php_directory) && !path.contains("/"))
+            if (GetProject()->HasValue(prop_php_output_folder) && !path.contains("/"))
             {
-                path = GetProject()->GetBaseDirectory().utf8_string();
+                path = GetProject()->GetBaseDirectory(GEN_LANG_PHP).utf8_string();
                 path.append_filename(base_file);
             }
             path.make_absolute();

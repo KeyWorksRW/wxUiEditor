@@ -240,7 +240,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_line_numbers, "line_numbers" },  // previously used in wxStyledTextCtrl, but now uses margins
     { prop_line_size, "line_size" },
     { prop_local_pch_file, "local_pch_file" },
-    { prop_lua_directory, "lua_directory" },
     { prop_lua_file, "lua_file" },
     { prop_main_label, "main_label" },
     { prop_majorDimension, "majorDimension" },
@@ -290,7 +289,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_paste_multiple, "paste_multiple" },
     { prop_persist, "persist" },
     { prop_persist_name, "persist_name" },
-    { prop_php_directory, "php_directory" },
     { prop_php_file, "php_file" },
     { prop_pin_button, "pin_button" },
     { prop_platforms, "platforms" },
@@ -301,7 +299,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_pressed_bmp, "pressed_bmp" },
     { prop_private_members, "private_members" },
     { prop_proportion, "proportion" },
-    { prop_python_directory, "python_directory" },
     { prop_python_file, "python_file" },
     { prop_radiobtn_var_name, "radiobtn_var_name" },
     { prop_range, "range" },
@@ -407,6 +404,24 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_xrc_directory, "xrc_directory" },
     { prop_xrc_file, "xrc_file" },
 
+    { prop_python_combine_forms, "python_combine_forms" },
+    { prop_python_combined_file, "python_combined_file" },
+    { prop_python_copy_art, "python_copy_art" },
+    { prop_python_output_folder, "python_output_folder" },
+    { prop_python_use_xrc, "python_use_xrc" },
+
+    { prop_lua_combine_forms, "lua_combine_forms" },
+    { prop_lua_combined_file, "lua_combined_file" },
+    { prop_lua_copy_art, "lua_copy_art" },
+    { prop_lua_output_folder, "lua_output_folder" },
+    { prop_lua_use_xrc, "lua_use_xrc" },
+
+    { prop_php_combine_forms, "php_combine_forms" },
+    { prop_php_combined_file, "php_combined_file" },
+    { prop_php_copy_art, "php_copy_art" },
+    { prop_php_output_folder, "php_output_folder" },
+    { prop_php_use_xrc, "php_use_xrc" },
+
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
@@ -484,9 +499,8 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
     { gen_Bitmaps, "Bitmaps" },
     { gen_Boolean_Validator, "Boolean Validator" },
-    { gen_CMake, "CMake" },
     { gen_Choice_Validator, "Choice Validator" },
-    { gen_Code, "Code" },
+    { gen_Code, "C++" },
     { gen_Code_Generation, "Code Generation" },
     { gen_Command_Bitmaps, "Command Bitmaps" },
     { gen_Integer_Validator, "Integer Validator" },
@@ -494,12 +508,15 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_String_Validator, "String Validator" },
     { gen_Text_Validator, "Text Validator" },
     { gen_Window_Events, "Window Events" },
+    { gen_XRC, "XRC" },
     { gen_flexgridsizerbase, "flexgridsizerbase" },
     { gen_sizer_child, "sizer_child" },
     { gen_sizeritem_settings, "sizeritem_settings" },
+    { gen_wxLua, "wxLua" },
+    { gen_wxPHP, "wxPHP" },
+    { gen_wxPython, "wxPython" },
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },
     { gen_wxWindow, "wxWindow" },
-    { gen_XRC, "XRC" },
 
     // The following are the regular generators
 

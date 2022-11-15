@@ -1,28 +1,11 @@
 inline const char* project_xml = R"===(<?xml version="1.0"?>
 <!DOCTYPE GeneratorDefinitions SYSTEM "gen.dtd">
 <GeneratorDefinitions>
-	<gen class="CMake" type="interface">
-		<property name="generate_cmake" type="bool"
-			help="If checked, this will auto-generate a .cmake file whenever the Generate Base Code command is chosen.">0</property>
-		<property name="cmake_file" type="file"
-			help="The filename of the cmake file to create. By default, this will be created in the same directory as the project file.">wxui_code.cmake</property>
-		<property name="cmake_varname" type="string"
-			help="The variable name to set in the .cmake file. This will contain paths to every generated class.">wxue_generated_code</property>
-	</gen>
-
-	<gen class="Code" type="interface">
+	<gen class="C++" type="interface">
 		<property name="base_directory" type="path"
 			help="The generated base class output directory. If a form's base_file contains only a filename (without a path), the files will be generated in this directory. Leave blank to generate the in the same directory as the project file." />
 		<property name="derived_directory" type="path"
 			help="The generated derived class output directory. Leave blank to generate them in the same directory as the project file." />
-		<property name="python_directory" type="path"
-			help="The directory to generate python files in. Leave blank to generate them in the same directory as the project file." />
-		<property name="lua_directory" type="path"
-			help="The directory to generate lua files in. Leave blank to generate them in the same directory as the project file." />
-		<property name="php_directory" type="path"
-			help="The directory to generate php files in. Leave blank to generate them in the same directory as the project file." />
-		<property name="xrc_directory" type="path"
-			help="The directory to generate xrc files in. Leave blank to generate them in the same directory as the project file." />
 		<property name="source_ext" type="option" help="Specifies the file extension to use when creating C++ source files.">
 			<option name=".cpp" />
 			<option name=".cc" />
@@ -36,14 +19,23 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			<option name=".hxx" />
 			.h
 		</property>
-		<property name="wxWidgets_version" type="option" help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
-			<option name="3.1" />
-			<option name="3.2.0" />
-			3.1
-		</property>
+		<property name="local_pch_file" type="file"
+			help="The filename of a local precompiled header file. The file will be included in quotes." />
+		<property name="src_preamble" type="code_edit"
+			help="Code to generate at the top of the source file after the inclusion of any local precompiled header file. This can include header files, comments, macros, etc." />
+		<property name="name_space" type="string"
+			help="Namespace to enclose class declarations in. Separate nested namespaces with a double colon (e.g. company::app::subname)" />
+		<property name="generate_cmake" type="bool"
+			help="If checked, this will auto-generate a .cmake file whenever C++ code is generated.">0</property>
+		<property name="cmake_file" type="file"
+			help="The filename of the cmake file to create. By default, this will be created in the same directory as the project file.">wxui_code.cmake</property>
+		<property name="cmake_varname" type="string"
+			help="The variable name to set in the .cmake file. This will contain paths to every generated class.">wxue_generated_code</property>
 	</gen>
 
 	<gen class="XRC" type="interface">
+		<property name="xrc_directory" type="path"
+			help="The directory to generate xrc files in. Leave blank to generate them in the same directory as the project file." />
 		<property name="combine_all_forms" type="bool"
 			help="If checked, Export XRC (File menu) will create a single XRC file containing all forms.">1</property>
 		<property name="combined_xrc_file" type="file"
@@ -52,18 +44,61 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			help="The directory containing the images your XRC file will load." />
 	</gen>
 
+	<gen class="wxPython" type="interface">
+		<property name="python_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all python code. It will also be used for generated xrc and art files if the matching options below are checked." />
+		<property name="python_combined_file" type="file"
+			help="This filename will be used to write all python code to unless you unchecked the python_combine_forms property above." />
+		<property name="python_combine_forms" type="bool"
+			help="If checked, will create a single file containing all python generated forms.">0</property>
+		<property name="python_copy_art" type="bool"
+			help="If checked, art files will be copied to the python_output_folder. BMP files will be converted to PNG, XPM and SVG files may be reduced in size." />
+		<property name="python_use_xrc" type="bool"
+			help="If checked, python code generation will use XRC file(s) which will be generated in the python_output_folder specified above. This will use the settings in the XRC category above for determining if a combined or individual XRC files should be created, and what the combined filename will be if XRC combining is chosen." />
+	</gen>
+
+	<gen class="wxLua" type="interface">
+		<property name="lua_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all lua code. It will also be used for generated xrc and art files if the matching options below are checked." />
+		<property name="lua_combined_file" type="file"
+			help="This filename will be used to write all lua code to unless you unchecked the lua_combine_forms property above." />
+		<property name="lua_combine_forms" type="bool"
+			help="If checked, will create a single file containing all lua generated forms.">0</property>
+		<property name="lua_copy_art" type="bool"
+			help="If checked, art files will be copied to the lua_output_folder. BMP files will be converted to PNG, XPM and SVG files may be reduced in size." />
+		<property name="lua_use_xrc" type="bool"
+			help="If checked, lua code generation will use XRC file(s) which will be generated in the lua_output_folder specified above. This will use the settings in the XRC category above for determining if a combined or individual XRC files should be created, and what the combined filename will be if XRC combining is chosen." />
+	</gen>
+
+	<gen class="wxPHP" type="interface">
+		<property name="php_output_folder" type="path"
+			help="If a folder name is specified, it will be used for all php code. It will also be used for generated xrc and art files if the matching options below are checked." />
+		<property name="php_combined_file" type="file"
+			help="This filename will be used to write all php code to unless you unchecked the php_combine_forms property above." />
+		<property name="php_combine_forms" type="bool"
+			help="If checked, will create a single file containing all php generated forms.">0</property>
+		<property name="php_copy_art" type="bool"
+			help="If checked, art files will be copied to the php_output_folder. BMP files will be converted to PNG, XPM and SVG files may be reduced in size." />
+		<property name="php_use_xrc" type="bool"
+			help="If checked, php code generation will use XRC file(s) which will be generated in the php_output_folder specified above. This will use the settings in the XRC category above for determining if a combined or individual XRC files should be created, and what the combined filename will be if XRC combining is chosen." />
+	</gen>
+
 	<gen class="Project" type="project" image="project">
-		<inherits class="CMake" />
-		<inherits class="Code" />
+		<inherits class="C++" />
+		<inherits class="wxPython" />
+		<inherits class="wxLua" />
+		<inherits class="wxPHP" />
 		<inherits class="XRC" />
-		<property name="local_pch_file" type="file"
-			help="The filename of a local precompiled header file. The file will be included in quotes." />
-		<property name="src_preamble" type="code_edit"
-			help="Code to generate at the top of the source file after the inclusion of any local precompiled header file. This can include header files, comments, macros, etc." />
 		<property name="art_directory" type="path"
 			help="The directory containing your images (png, ico, xpm, etc.)." />
 		<property name="internationalize" type="bool"
 			help="Wrap strings in a _() macro which expands into a call to wxGetTranslation().">0</property>
+		<property name="wxWidgets_version" type="option"
+			help="If you specify a control or property that requires a wxWidgets version later than this number, then the code will be generated within a conditional block.">
+			<option name="3.1" />
+			<option name="3.2.0" />
+			3.1
+		</property>
 		<property name="help_provider" type="option"
 			help="The class of help provider to use for context-sensitive help.">
 			<option name="none"
@@ -74,7 +109,5 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 				help="Use wxHelpControllerHelpProvider to provide context-sensitive help." />
 			none
 		</property>
-		<property name="name_space" type="string"
-			help="Namespace to enclose class declarations in. Separate nested namespaces with a double colon (e.g. company::app::subname)" />
 	</gen>
 </GeneratorDefinitions>)===";

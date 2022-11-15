@@ -598,10 +598,18 @@ ttString Project::GetArtDirectory()
         return ttString() << m_projectPath.wx_str();
 }
 
-ttString Project::GetBaseDirectory()
+ttString Project::GetBaseDirectory(int language)
 {
-    if (HasValue(prop_base_directory))
+    if (language == GEN_LANG_CPLUSPLUS && HasValue(prop_base_directory))
         return as_wxString(prop_base_directory);
+    else if (language == GEN_LANG_LUA && HasValue(prop_lua_output_folder))
+        return as_wxString(prop_lua_output_folder);
+    else if (language == GEN_LANG_PYTHON && HasValue(prop_python_output_folder))
+        return as_wxString(prop_python_output_folder);
+    else if (language == GEN_LANG_PHP && HasValue(prop_php_output_folder))
+        return as_wxString(prop_php_output_folder);
+    else if (language == GEN_LANG_XRC && HasValue(prop_xrc_directory))
+        return as_wxString(prop_xrc_directory);
     else
         return GetProjectPath();
 }

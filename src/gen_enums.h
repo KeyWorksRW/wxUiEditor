@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enumerations for generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -692,3 +692,6 @@ namespace GenEnum
     extern std::unordered_map<std::string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> rmap_GenNames;
 
 }  // namespace GenEnum
+
+extern std::map<GenEnum::PropName, const char*> map_PropMacros;
+extern std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps;

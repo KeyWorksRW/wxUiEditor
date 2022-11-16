@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Initialize NodeCreator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +9,6 @@
 
 #include "bitmaps.h"     // Contains various images handling functions
 #include "gen_enums.h"   // Enumerations for generators
-#include "gen_enums.h"   // Enumerations for nodes
 #include "node.h"        // Node class
 #include "node_types.h"  // NodeType -- Class for storing node types and allowable child count
 #include "prop_decl.h"   // PropChildDeclaration and PropDeclaration classes
@@ -342,6 +341,11 @@ void NodeCreator::Initialize()
     for (auto& iter: GenEnum::map_PropNames)
     {
         GenEnum::rmap_PropNames[iter.second] = iter.first;
+    }
+
+    for (auto& iter: map_PropMacros)
+    {
+        map_MacroProps[iter.second] = iter.first;
     }
 
     for (auto& iter: GenEnum::map_GenNames)

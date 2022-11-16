@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Enumerations for generators
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -658,3 +658,25 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
 
 };
 std::unordered_map<std::string_view, GenEnum::GenName, str_view_hash, std::equal_to<>> GenEnum::rmap_GenNames;
+
+std::map<GenEnum::PropName, const char*> map_PropMacros = {
+
+    { prop_id, "${id}" },
+    { prop_pos, "${pos}" },
+    { prop_size, "${size}" },
+    { prop_window_extra_style, "${window_extra_style}" },
+    { prop_window_name, "${window_name}" },
+    { prop_window_style, "${window_style}" },
+
+    // Same as above, but supports those who prefer macros to be upper case
+    { prop_id, "${ID}" },
+    { prop_pos, "${POS}" },
+    { prop_size, "${SIZE}" },
+    { prop_window_extra_style, "${WINDOW_EXTRA_STYLE}" },
+    { prop_window_name, "${WINDOW_NAME}" },
+    { prop_window_style, "${WINDOW_STYLE}" },
+
+};
+
+// This is the opposite of map_PropMacros, and is initialized in NodeCreator::Initialize()
+std::map<std::string_view, GenEnum::PropName, std::less<>> map_MacroProps;

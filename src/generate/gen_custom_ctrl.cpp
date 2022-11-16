@@ -34,7 +34,22 @@ std::optional<ttlib::cstr> CustomControl::GenConstruction(Node* node)
     code << node->get_node_name() << " = new ";
     if (node->HasValue(prop_namespace))
         code << node->prop_as_string(prop_namespace) << "::";
-    code << node->prop_as_string(prop_class_name) << node->prop_as_string(prop_parameters) << ';';
+
+    ttlib::cstr parameters(node->prop_as_string(prop_parameters));
+    parameters.Replace("${parent}", node->get_parent_name(), tt::REPLACE::all);
+
+    for (auto& iter: map_MacroProps)
+    {
+        if (parameters.find(iter.first) != tt::npos)
+        {
+            if (iter.second == prop_window_style && node->prop_as_string(iter.second).empty())
+                parameters.Replace(iter.first, "0");
+            else
+                parameters.Replace(iter.first, node->prop_as_string(iter.second));
+        }
+    }
+
+    code << node->prop_as_string(prop_class_name) << parameters << ';';
 
     return code;
 }
@@ -51,7 +66,7 @@ std::optional<ttlib::cstr> CustomControl::GenSettings(Node* node, size_t& auto_i
     }
     else
     {
-        return {};
+        return std::nullopt;
     }
 }
 

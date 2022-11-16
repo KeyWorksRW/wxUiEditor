@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Undoable command classes derived from UndoAction
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -164,6 +164,24 @@ private:
     NodeSharedPtr m_old_node;
     NodeSharedPtr m_parent;
     GenEnum::GenName m_new_gen_sizer;
+};
+
+// Specify current node and new node gen_ name.
+class ChangeNodeType : public UndoAction
+{
+public:
+    ChangeNodeType(Node* node, GenEnum::GenName new_node);
+    void Change() override;
+    void Revert() override;
+
+    Node* GetOldNode() { return m_old_node.get(); }
+    Node* GetNode() { return m_node.get(); }
+
+private:
+    NodeSharedPtr m_node;
+    NodeSharedPtr m_old_node;
+    NodeSharedPtr m_parent;
+    GenEnum::GenName m_new_gen_node;
 };
 
 // Specify node and parent node, and optional position

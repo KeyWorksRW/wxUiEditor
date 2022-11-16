@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Context-menu for Navigation Panel
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -60,6 +60,34 @@ public:
         MenuChangeTo_GRID_SIZER,
         MenuChangeTo_STATIC_SIZER,
         MenuChangeTo_WRAP_SIZER,
+
+        // This can only be used if there is just one possibility
+        MenuChangeTo_NEW_NODE,
+
+        // 2-state wxCheckBox, 3-state wxCheckBox, wxRadioBox
+
+        MenuChangeTo_2STATE_CHECKBOX,
+        MenuChangeTo_3STATE_CHECKBOX,
+        MenuChangeTo_RADIO_BUTTON,
+
+        // wxChoice, wxComboBox, wxListBox
+
+        MenuChangeTo_CHOICE_BOX,
+        MenuChangeTo_COMBO_BOX,
+        MenuChangeTo_LIST_BOX,
+
+        // wxAuiNotebook, wxChoicebook
+        MenuChangeTo_AUI_BOOK,
+        MenuChangeTo_CHOICE_BOOK,
+        MenuChangeTo_LIST_BOOK,
+        MenuChangeTo_NOTE_BOOK,
+        MenuChangeTo_SIMPLE_BOOK,
+
+        // REVIEW: [Randalphwa - 11-16-2022] Because the children are so different, I don't think
+        // switching these is going to work.
+
+        // MenuChangeTo_TOOL_BOOK,
+        // MenuChangeTo_TREE_BOOK,
 
         MenuNEW_CHILD_SPACER,
         MenuNEW_SIBLING_SPACER,
@@ -140,6 +168,7 @@ protected:
     // into new sizer.
     void MenuAddMoveCommands(Node* node);
 
+    void ChangeNode(GenEnum::GenName new_node_gen);
     void ChangeSizer(GenEnum::GenName new_sizer_gen);
     void CreateSizerParent(Node* node, ttlib::sview widget);
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Undoable command classes derived from UndoAction
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2021-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -303,6 +303,113 @@ void ChangeSizerType::Change()
 }
 
 void ChangeSizerType::Revert()
+{
+    auto pos = m_parent->GetChildPosition(m_node.get());
+    m_parent->RemoveChild(m_node);
+    m_node->SetParent(NodeSharedPtr());
+    m_parent->Adopt(m_old_node);
+    m_parent->ChangeChildPosition(m_old_node, pos);
+
+    wxGetFrame().FireDeletedEvent(m_node.get());
+    wxGetFrame().FireCreatedEvent(m_old_node);
+    wxGetFrame().SelectNode(m_old_node.get());
+}
+
+///////////////////////////////// ChangeNodeType ////////////////////////////////////
+
+static auto lst_common_properties = {
+
+    prop_alignment,
+    prop_background_colour,
+    prop_border_size,
+    prop_borders,
+    prop_class_access,
+    prop_disabled,
+    prop_flags,
+    prop_font,
+    prop_foreground_colour,
+    prop_hidden,
+    prop_hint,
+    prop_label,
+    prop_max_size,
+    prop_min_size,
+    prop_platforms,
+    prop_pos,
+    prop_proportion,
+    prop_size,
+    prop_tooltip,
+    prop_var_comment,
+    prop_variant,
+    prop_window_extra_style,
+    prop_window_style,
+    prop_contents,
+    prop_selection_string,
+    prop_selection_int,
+
+    prop_validator_variable,
+    prop_validator_data_type,
+    prop_validator_type,
+    prop_validator_style,
+    prop_get_function,
+    prop_set_function,
+
+};
+
+static void CopyCommonProperties(Node* old_node, Node* new_node)
+{
+    for (auto prop: lst_common_properties)
+    {
+        if (new_node->HasProp(prop) && old_node->HasProp(prop))
+        {
+            new_node->prop_set_value(prop, old_node->prop_as_string(prop));
+        }
+    }
+}
+
+ChangeNodeType::ChangeNodeType(Node* node, GenEnum::GenName new_node)
+{
+    m_undo_string << "change widget type";
+
+    m_old_node = node->GetSharedPtr();
+    m_parent = node->GetParentPtr();
+    m_new_gen_node = new_node;
+
+    m_node = g_NodeCreator.NewNode(m_new_gen_node);
+    ASSERT(m_node);
+    if (m_node)
+    {
+        CopyCommonProperties(m_old_node.get(), m_node.get());
+        if (m_new_gen_node == gen_wxCheckBox || m_new_gen_node == gen_wxRadioBox)
+        {
+            m_node->prop_set_value(prop_checked, m_old_node->prop_as_bool(prop_checked));
+        }
+
+        for (const auto& iter: m_old_node->GetChildNodePtrs())
+        {
+            m_node->Adopt(g_NodeCreator.MakeCopy(iter.get()));
+        }
+    }
+}
+
+void ChangeNodeType::Change()
+{
+    auto pos = m_parent->GetChildPosition(m_old_node.get());
+    m_parent->RemoveChild(m_old_node);
+    m_old_node->SetParent(NodeSharedPtr());
+    m_parent->Adopt(m_node);
+    if (auto parent_form = m_parent->get_form(); parent_form)
+    {
+        parent_form->FixDuplicateNodeNames();
+    }
+    m_parent->ChangeChildPosition(m_node, pos);
+
+    wxGetFrame().FireDeletedEvent(m_old_node.get());
+    wxGetFrame().FireCreatedEvent(m_node);
+    wxGetFrame().SelectNode(m_node.get());
+    wxGetFrame().GetNavigationPanel()->ChangeExpansion(m_node.get(), true, true);
+}
+
+void ChangeNodeType::Revert()
 {
     auto pos = m_parent->GetChildPosition(m_node.get());
     m_parent->RemoveChild(m_node);

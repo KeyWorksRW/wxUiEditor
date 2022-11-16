@@ -5,8 +5,6 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "node.h"                  // Node class
-#include "node_prop.h"             // NodeProperty -- NodeProperty class
 #include <wx/event.h>              // Event classes
 #include <wx/propgrid/manager.h>   // wxPropertyGridManager
 #include <wx/propgrid/propgrid.h>  // wxPropertyGrid

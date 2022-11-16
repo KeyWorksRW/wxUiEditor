@@ -232,6 +232,50 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             ChangeSizer(gen_wxFlexGridSizer);
             break;
 
+        case MenuChangeTo_AUI_BOOK:
+            ChangeNode(gen_wxAuiNotebook);
+            break;
+
+        case MenuChangeTo_CHOICE_BOOK:
+            ChangeNode(gen_wxChoicebook);
+            break;
+
+        case MenuChangeTo_LIST_BOOK:
+            ChangeNode(gen_wxListbook);
+            break;
+
+        case MenuChangeTo_NOTE_BOOK:
+            ChangeNode(gen_wxNotebook);
+            break;
+
+        case MenuChangeTo_SIMPLE_BOOK:
+            ChangeNode(gen_wxSimplebook);
+            break;
+
+        case MenuChangeTo_2STATE_CHECKBOX:
+            ChangeNode(gen_wxCheckBox);
+            break;
+
+        case MenuChangeTo_3STATE_CHECKBOX:
+            ChangeNode(gen_Check3State);
+            break;
+
+        case MenuChangeTo_RADIO_BUTTON:
+            ChangeNode(gen_wxRadioButton);
+            break;
+
+        case MenuChangeTo_CHOICE_BOX:
+            ChangeNode(gen_wxChoice);
+            break;
+
+        case MenuChangeTo_COMBO_BOX:
+            ChangeNode(gen_wxComboBox);
+            break;
+
+        case MenuChangeTo_LIST_BOX:
+            ChangeNode(gen_wxListBox);
+            break;
+
         case MenuChangeTo_GRID_SIZER:
             ChangeSizer(gen_wxGridSizer);
             break;
@@ -669,6 +713,126 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
 
         AppendSubMenu(sub_menu, "&Move into new sizer");
     }
+
+    if (node->isGen(gen_wxRadioButton))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_2STATE_CHECKBOX, "2-state wxCheckBox");
+        menu_item->SetBitmap(GetInternalImage("wxCheckBox"));
+        menu_item = sub_menu->Append(MenuChangeTo_3STATE_CHECKBOX, "3-state wxCheckBox");
+        menu_item->SetBitmap(GetInternalImage("check3state"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_wxCheckBox))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_3STATE_CHECKBOX, "3-state wxCheckBox");
+        menu_item->SetBitmap(GetInternalImage("check3state"));
+        menu_item = sub_menu->Append(MenuChangeTo_RADIO_BUTTON, "wxRadioButton");
+        menu_item->SetBitmap(GetInternalImage("wxRadioButton"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_Check3State))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_2STATE_CHECKBOX, "2-state wxCheckBox");
+        menu_item->SetBitmap(GetInternalImage("wxCheckBox"));
+        menu_item = sub_menu->Append(MenuChangeTo_RADIO_BUTTON, "wxRadioButton");
+        menu_item->SetBitmap(GetInternalImage("wxRadioButton"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_wxChoice))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_COMBO_BOX, "wxComboBox");
+        menu_item->SetBitmap(GetInternalImage("wxComboBox"));
+        menu_item = sub_menu->Append(MenuChangeTo_LIST_BOX, "wxListBox");
+        menu_item->SetBitmap(GetInternalImage("wxListBox"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_wxComboBox))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOX, "wxChoice");
+        menu_item->SetBitmap(GetInternalImage("wxChoice"));
+        menu_item = sub_menu->Append(MenuChangeTo_LIST_BOX, "wxListBox");
+        menu_item->SetBitmap(GetInternalImage("wxListBox"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_wxListBox))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOX, "wxChoice");
+        menu_item->SetBitmap(GetInternalImage("wxChoice"));
+        menu_item = sub_menu->Append(MenuChangeTo_COMBO_BOX, "wxComboBox");
+        menu_item->SetBitmap(GetInternalImage("wxComboBox"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_wxAuiNotebook))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOOK, "wxChoicebook");
+        menu_item->SetBitmap(GetInternalImage("wxChoicebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_LIST_BOOK, "wxListbook");
+        menu_item->SetBitmap(GetInternalImage("wxListbook"));
+        menu_item = sub_menu->Append(MenuChangeTo_NOTE_BOOK, "wxNotebook");
+        menu_item->SetBitmap(GetInternalImage("wxNotebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_SIMPLE_BOOK, "wxSimplebook");
+        menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_wxChoicebook))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_AUI_BOOK, "wxAuiNotebook");
+        menu_item->SetBitmap(GetInternalImage("auinotebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_LIST_BOOK, "wxListbook");
+        menu_item->SetBitmap(GetInternalImage("wxListbook"));
+        menu_item = sub_menu->Append(MenuChangeTo_NOTE_BOOK, "wxNotebook");
+        menu_item->SetBitmap(GetInternalImage("wxNotebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_SIMPLE_BOOK, "wxSimplebook");
+        menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_wxListbook))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_AUI_BOOK, "wxAuiNotebook");
+        menu_item->SetBitmap(GetInternalImage("auinotebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOOK, "wxChoicebook");
+        menu_item->SetBitmap(GetInternalImage("wxChoicebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_NOTE_BOOK, "wxNotebook");
+        menu_item->SetBitmap(GetInternalImage("wxNotebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_SIMPLE_BOOK, "wxSimplebook");
+        menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_wxNotebook))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_AUI_BOOK, "wxAuiNotebook");
+        menu_item->SetBitmap(GetInternalImage("auinotebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOOK, "wxChoicebook");
+        menu_item->SetBitmap(GetInternalImage("wxChoicebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_LIST_BOOK, "wxListbook");
+        menu_item->SetBitmap(GetInternalImage("wxListbook"));
+        menu_item = sub_menu->Append(MenuChangeTo_SIMPLE_BOOK, "wxSimplebook");
+        menu_item->SetBitmap(GetInternalImage("wxSimplebook"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
+    else if (node->isGen(gen_wxSimplebook))
+    {
+        sub_menu = new wxMenu;
+        menu_item = sub_menu->Append(MenuChangeTo_AUI_BOOK, "wxAuiNotebook");
+        menu_item->SetBitmap(GetInternalImage("auinotebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_CHOICE_BOOK, "wxChoicebook");
+        menu_item->SetBitmap(GetInternalImage("wxChoicebook"));
+        menu_item = sub_menu->Append(MenuChangeTo_LIST_BOOK, "wxListbook");
+        menu_item->SetBitmap(GetInternalImage("wxListbook"));
+        menu_item = sub_menu->Append(MenuChangeTo_NOTE_BOOK, "wxNotebook");
+        menu_item->SetBitmap(GetInternalImage("wxNotebook"));
+        AppendSubMenu(sub_menu, "&Change widget to");
+    }
 }
 
 void NavPopupMenu::MenuAddStandardCommands(Node* node)
@@ -771,6 +935,12 @@ void NavPopupMenu::ChangeSizer(GenEnum::GenName new_sizer_gen)
 {
     wxWindowUpdateLocker freeze(wxGetFrame().GetWindow());
     wxGetFrame().PushUndoAction(std::make_shared<ChangeSizerType>(m_node, new_sizer_gen));
+}
+
+void NavPopupMenu::ChangeNode(GenEnum::GenName new_node_gen)
+{
+    wxWindowUpdateLocker freeze(wxGetFrame().GetWindow());
+    wxGetFrame().PushUndoAction(std::make_shared<ChangeNodeType>(m_node, new_node_gen));
 }
 
 void NavPopupMenu::AddToolbarCommands(Node* node)

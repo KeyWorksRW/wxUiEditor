@@ -15,6 +15,12 @@ Release summary...
 - Menu items can now contain multiple accelerators (requires wxWidgets 3.1.6 or later)
 - XRC now generates XML for toolbar separators.
 
+The right-click menu for a widget in the Navigation Panel will sometimes have a `Change to` option. The 1.0 release supported changing most sizers. New to 1.1 is the ability to change some widgets as well. The following widgets can be changed to another widget in the group:
+
+- 2-state wxCheckBox, 3-state wxCheckBox, wxRadioBox
+- wxChoice, wxComboBox, wxListBox
+- wxAuibook, wxChoicebook, wxListbook, wxNotebook, wxSimplebook
+
 ### Changed
 
 - A user can no longer enter an invalid C++ variable name.

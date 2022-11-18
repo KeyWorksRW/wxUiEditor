@@ -18,9 +18,11 @@ public:
 class FolderGenerator : public BaseGenerator
 {
 public:
+    bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;
 };
 
 class SubFolderGenerator : public BaseGenerator
 {
 public:
+    bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;
 };

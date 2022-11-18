@@ -27,6 +27,7 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
     menu->Append(NavPopupMenu::MenuPROJECT_ADD_DIALOG, "Add new dialog...");
     menu->Append(NavPopupMenu::MenuPROJECT_ADD_WINDOW, "Add new window...");
     menu->Append(NavPopupMenu::MenuPROJECT_ADD_WIZARD, "Add new wizard...");
+    menu->Append(NavPopupMenu::MenuPROJECT_ADD_FOLDER, "Add folder");
     menu->AppendSeparator();
     menu->Append(NavPopupMenu::MenuPROJECT_SORT_FORMS, "Sort Forms");
 
@@ -57,6 +58,138 @@ bool ProjectGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */
             }
         },
         NavPopupMenu::MenuPROJECT_ADD_DIALOG);
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().CreateToolNode(gen_folder);
+        },
+        NavPopupMenu::MenuPROJECT_ADD_FOLDER);
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            NewFrame dlg(wxGetFrame().GetWindow());
+            if (dlg.ShowModal() == wxID_OK)
+            {
+                dlg.CreateNode();
+            }
+        },
+        NavPopupMenu::MenuPROJECT_ADD_WINDOW);
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            NewWizard dlg(wxGetFrame().GetWindow());
+            if (dlg.ShowModal() == wxID_OK)
+            {
+                dlg.CreateNode();
+            }
+        },
+        NavPopupMenu::MenuPROJECT_ADD_WIZARD);
+
+    return true;
+}
+
+bool FolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
+{
+    menu->Append(NavPopupMenu::MenuPROJECT_ADD_DIALOG, "Add new dialog...");
+    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WINDOW, "Add new window...");
+    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WIZARD, "Add new wizard...");
+    menu->Append(NavPopupMenu::MenuPROJECT_ADD_FOLDER, "Add folder");
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().PasteNode(GetProject());
+        },
+        wxID_PASTE);
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            NewDialog dlg(wxGetFrame().GetWindow());
+            if (dlg.ShowModal() == wxID_OK)
+            {
+                dlg.CreateNode();
+            }
+        },
+        NavPopupMenu::MenuPROJECT_ADD_DIALOG);
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().CreateToolNode(gen_sub_folder);
+        },
+        NavPopupMenu::MenuPROJECT_ADD_FOLDER);
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            NewFrame dlg(wxGetFrame().GetWindow());
+            if (dlg.ShowModal() == wxID_OK)
+            {
+                dlg.CreateNode();
+            }
+        },
+        NavPopupMenu::MenuPROJECT_ADD_WINDOW);
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            NewWizard dlg(wxGetFrame().GetWindow());
+            if (dlg.ShowModal() == wxID_OK)
+            {
+                dlg.CreateNode();
+            }
+        },
+        NavPopupMenu::MenuPROJECT_ADD_WIZARD);
+
+    return true;
+}
+
+bool SubFolderGenerator::PopupMenuAddCommands(NavPopupMenu* menu, Node* /* node */)
+{
+    menu->Append(NavPopupMenu::MenuPROJECT_ADD_DIALOG, "Add new dialog...");
+    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WINDOW, "Add new window...");
+    menu->Append(NavPopupMenu::MenuPROJECT_ADD_WIZARD, "Add new wizard...");
+    menu->Append(NavPopupMenu::MenuPROJECT_ADD_FOLDER, "Add folder");
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().PasteNode(GetProject());
+        },
+        wxID_PASTE);
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            NewDialog dlg(wxGetFrame().GetWindow());
+            if (dlg.ShowModal() == wxID_OK)
+            {
+                dlg.CreateNode();
+            }
+        },
+        NavPopupMenu::MenuPROJECT_ADD_DIALOG);
+
+    menu->Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent&)
+        {
+            wxGetFrame().CreateToolNode(gen_sub_folder);
+        },
+        NavPopupMenu::MenuPROJECT_ADD_FOLDER);
 
     menu->Bind(
         wxEVT_MENU,

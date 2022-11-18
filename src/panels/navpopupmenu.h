@@ -140,6 +140,7 @@ public:
         MenuPROJECT_ADD_DIALOG,
         MenuPROJECT_ADD_WINDOW,
         MenuPROJECT_ADD_WIZARD,
+        MenuPROJECT_ADD_FOLDER,
         MenuPROJECT_SORT_FORMS,
 
         MenuEXPAND_ALL,

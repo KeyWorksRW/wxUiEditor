@@ -55,44 +55,10 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
     }
 
     bool generate_result = true;
-    Node* node_folder = nullptr;
-    Node* form;
-    size_t folder_idx = (to_size_t) -1;
-    for (size_t idx = (to_size_t) -1;;)
+    std::vector<Node*> forms;
+    project->CollectForms(forms);
+    for (const auto& form: forms)
     {
-        if (node_folder)
-        {
-            ++folder_idx;
-            if (folder_idx + idx >= project->GetChildCount())
-            {
-                break;
-            }
-            else if (folder_idx >= node_folder->GetChildCount())
-            {
-                node_folder = nullptr;
-
-                // With node_folder set to nullptr, the next iteration will increment idx and
-                // get the next form or folder after the current folder.
-
-                continue;
-            }
-            form = node_folder->GetChild(folder_idx);
-        }
-        else
-        {
-            ++idx;
-            if (idx >= project->GetChildCount())
-                break;
-
-            form = project->GetChild(idx);
-            if (form->isGen(gen_folder))
-            {
-                node_folder = form;
-                folder_idx = (to_size_t) -1;
-                continue;
-            }
-        }
-
         if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
         {
             path = base_file;

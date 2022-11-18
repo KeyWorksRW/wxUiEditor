@@ -97,7 +97,10 @@ wxBitmapBundle LoadSVG(EmbeddedImage* embed, ttlib::sview size_description)
 
 void Project::CollectBundles()
 {
-    for (const auto& form: GetProject()->GetChildNodePtrs())
+    std::vector<Node*> forms;
+    GetProject()->CollectForms(forms);
+
+    for (const auto& form: forms)
     {
         CollectNodeBundles(form, form);
 
@@ -105,13 +108,13 @@ void Project::CollectBundles()
         {
             if (!m_bundles.contains(ConvertToLookup(form->prop_as_string(prop_icon))))
             {
-                ProcessBundleProperty(form->prop_as_string(prop_icon), form.get());
+                ProcessBundleProperty(form->prop_as_string(prop_icon), form);
             }
         }
     }
 }
 
-void Project::CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr& form)
+void Project::CollectNodeBundles(Node* node, Node* form)
 {
     for (auto& iter: node->get_props_vector())
     {
@@ -122,7 +125,7 @@ void Project::CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr&
         {
             if (!m_bundles.contains(ConvertToLookup(iter.as_string())))
             {
-                ProcessBundleProperty(iter.as_string(), form.get());
+                ProcessBundleProperty(iter.as_string(), form);
             }
         }
         else if (iter.type() == type_animation)
@@ -135,13 +138,17 @@ void Project::CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr&
                 {
                     if (!m_map_embedded.contains(parts[IndexImage].filename()))
                     {
-                        AddEmbeddedImage(parts[IndexImage], form.get());
+                        AddEmbeddedImage(parts[IndexImage], form);
                     }
                 }
             }
         }
     }
-    for (const auto& child: node->GetChildNodePtrs())
+
+    std::vector<Node*> forms;
+    GetProject()->CollectForms(forms);
+
+    for (const auto& child: forms)
     {
         CollectNodeBundles(child, form);
     }

@@ -1070,7 +1070,10 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                 {
                     if (auto function_name = GetProject()->GetBundleFuncName(iter.as_string()); function_name.size())
                     {
-                        for (const auto& form: GetProject()->GetChildNodePtrs())
+                        std::vector<Node*> forms;
+                        GetProject()->CollectForms(forms);
+
+                        for (const auto& form: forms)
                         {
                             if (form->isGen(gen_Images))
                             {

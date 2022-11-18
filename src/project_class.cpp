@@ -174,7 +174,7 @@ wxImage Project::GetPropertyBitmap(const ttlib::multistr& parts, bool check_imag
 
 void Project::UpdateBundle(const ttlib::multistr& parts, Node* node)
 {
-    if (parts.size() < 2 || node->isGen(gen_folder))
+    if (parts.size() < 2 || node->IsFormParent())
         return;
 
     ttlib::cstr lookup_str;
@@ -524,7 +524,7 @@ bool Project::UpdateEmbedNodes()
 
 bool Project::CheckNode(const NodeSharedPtr& node)
 {
-    if (node->isGen(gen_folder))
+    if (node->IsFormParent())
         return false;
 
     bool is_changed = false;
@@ -808,4 +808,27 @@ namespace wxue_img
         144, 25,  141, 105, 144, 144, 33,  0,   59
     };
 
+}
+
+void Project::CollectForms(std::vector<Node*>& forms, Node* node_start)
+{
+    if (!node_start)
+    {
+        node_start = this;
+    }
+
+    for (const auto& child: node_start->GetChildNodePtrs())
+    {
+        if (child->IsForm())
+        {
+            forms.push_back(child.get());
+        }
+        else
+        {
+            if (child->isGen(gen_folder) || child->isGen(gen_sub_folder))
+            {
+                CollectForms(forms, child.get());
+            }
+        }
+    }
 }

@@ -33,6 +33,8 @@ class Project : public Node
 public:
     Project(NodeDeclaration* declaration) : Node(declaration) {}
 
+    void CollectForms(std::vector<Node*>& forms, Node* node_start = nullptr);
+
     // Make class and filenames unique to the project
     void FixupDuplicatedNode(Node* new_node);
 
@@ -128,7 +130,7 @@ public:
 protected:
     bool CheckNode(const NodeSharedPtr& node);
 
-    void CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr& form);
+    void CollectNodeBundles(Node* node, Node* form);
 
     bool AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form);
 

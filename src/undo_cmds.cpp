@@ -641,6 +641,15 @@ void GridBagAction::Update()
 
 static bool CompareClassNames(NodeSharedPtr a, NodeSharedPtr b)
 {
+    // Sort folders first, then forms
+    if (a->isGen(gen_folder) && !b->isGen(gen_folder))
+        return true;
+    else if (a->isGen(gen_folder) && b->isGen(gen_folder))
+        return (a->prop_as_string(prop_label).compare(b->prop_as_string(prop_label)) < 0);
+    else if (a->isGen(gen_sub_folder) && !b->isGen(gen_sub_folder))
+        return true;
+    else if (a->isGen(gen_sub_folder) && b->isGen(gen_sub_folder))
+        return (a->prop_as_string(prop_label).compare(b->prop_as_string(prop_label)) < 0);
     return (a->prop_as_string(prop_class_name).compare(b->prop_as_string(prop_class_name)) < 0);
 }
 
@@ -664,8 +673,30 @@ void SortProjectAction::Change()
     auto& children = project->GetChildNodePtrs();
     std::sort(children.begin(), children.end(), CompareClassNames);
 
+    for (auto& iter: project->GetChildNodePtrs())
+    {
+        if (iter->isGen(gen_folder))
+        {
+            SortFolder(iter.get());
+        }
+    }
+
     wxGetFrame().FireProjectUpdatedEvent();
     wxGetFrame().SelectNode(project);
+}
+
+void SortProjectAction::SortFolder(Node* folder)
+{
+    auto& children = folder->GetChildNodePtrs();
+    std::sort(children.begin(), children.end(), CompareClassNames);
+
+    for (auto& iter: folder->GetChildNodePtrs())
+    {
+        if (iter->isGen(gen_sub_folder))
+        {
+            SortFolder(iter.get());
+        }
+    }
 }
 
 void SortProjectAction::Revert()

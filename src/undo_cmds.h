@@ -235,6 +235,9 @@ public:
     void Change() override;
     void Revert() override;
 
+protected:
+    void SortFolder(Node* folder);
+
 private:
     NodeSharedPtr m_old_project;
 };

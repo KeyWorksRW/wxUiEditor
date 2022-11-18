@@ -66,7 +66,7 @@ public:
     ttString GetDerivedDirectory();
 
     // Returns the first project child that is a form, or nullptr if not form children found.
-    Node* GetFirstFormChild();
+    Node* GetFirstFormChild(Node* node = nullptr);
 
     wxImage GetImage(const ttlib::cstr& description);
 

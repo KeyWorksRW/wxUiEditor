@@ -50,7 +50,7 @@ bool NewWizard::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     box_sizer__2->Add(staticText_2, wxSizerFlags().Center().Border(wxALL));
 
     m_textCtrl_title = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_textCtrl_title->SetHint("Text for wizard's Title Bar");
+    m_textCtrl_title->SetHint("Text for wizard\'s Title Bar");
     m_textCtrl_title->SetValidator(wxTextValidator(wxFILTER_NONE, &m_title));
     box_sizer__2->Add(m_textCtrl_title, wxSizerFlags(1).Border(wxALL));
 

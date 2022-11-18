@@ -440,6 +440,7 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
     { type_dataviewlistctrl, "dataviewlistctrl" },
     { type_dataviewtreectrl, "dataviewtreectrl" },
     { type_embed_image, "embed_image" },
+    { type_folder, "folder" },
     { type_form, "form" },
     { type_frame_form, "frame_form" },
     { type_gbsizer, "gbsizer" },
@@ -477,6 +478,7 @@ std::map<GenType, std::string_view> GenEnum::map_GenTypes = {
     { type_splitteritem, "splitteritem" },
     { type_staticbox, "staticbox" },
     { type_statusbar, "statusbar" },
+    { type_sub_folder, "sub_folder" },
     { type_submenu, "submenu" },
     { type_tool, "tool" },
     { type_tool_dropdown, "tool_dropdown" },
@@ -518,13 +520,19 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },
     { gen_wxWindow, "wxWindow" },
 
+    // These are special purpose generators. gen_Images is used for code, but gen_folder is
+    // just for organtizing forms in the Navigation panel.
+
+    { gen_Images, "Images" },
+    { gen_folder, "folder" },
+    { gen_sub_folder, "sub_folder" },
+
     // The following are the regular generators
 
     { gen_BookPage, "BookPage" },
     { gen_Check3State, "Check3State" },
     { gen_CloseButton, "CloseButton" },
     { gen_CustomControl, "CustomControl" },
-    { gen_Images, "Images" },
     { gen_MenuBar, "MenuBar" },
     { gen_PageCtrl, "PageCtrl" },
     { gen_PanelForm, "PanelForm" },

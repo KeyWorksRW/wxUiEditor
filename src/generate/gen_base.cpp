@@ -113,7 +113,8 @@ BaseCodeGenerator::BaseCodeGenerator(int language)
 
 void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type)
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+    ASSERT(form_node)
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS)
 
     m_CtxMenuEvents.clear();
     m_embedded_images.clear();
@@ -125,7 +126,20 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
     for (const auto& form: m_project->GetChildNodePtrs())
     {
-        if (form->isGen(gen_Images))
+        if (form->isGen(gen_folder))
+        {
+            for (const auto& child_form: form->GetChildNodePtrs())
+            {
+                if (child_form->isGen(gen_Images))
+                {
+                    m_ImagesForm = child_form.get();
+                    break;
+                }
+            }
+            break;
+        }
+
+        else if (form->isGen(gen_Images))
         {
             m_ImagesForm = form.get();
             break;
@@ -979,7 +993,7 @@ void BaseCodeGenerator::CollectIncludes(Node* node, std::set<std::string>& set_s
 
 void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
-    if (node->isGen(gen_Images))
+    if (node->isGen(gen_Images) || node->isGen(gen_folder))
     {
         return;
     }
@@ -1914,6 +1928,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
 
 void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
 {
+    ASSERT(node);
     for (auto& iter: node->GetMapEvents())
     {
         if (iter.second.get_value().size())
@@ -2130,6 +2145,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 // wx/artprov.h header is needed
 void BaseCodeGenerator::ParseImageProperties(Node* node)
 {
+    ASSERT(node);
     if (node->IsForm() && node->HasValue(prop_icon))
     {
         ttlib::multiview parts(node->prop_as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);

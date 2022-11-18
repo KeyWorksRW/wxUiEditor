@@ -108,6 +108,7 @@ public:
     bool IsRibbonBar() const noexcept { return isType(type_ribbonbar); }
 
     bool IsForm() const noexcept;
+    bool IsFormParent() const noexcept { return (isGen(gen_Project) || isGen(gen_folder) || isGen(gen_sub_folder)); };
 
     bool IsStaticBoxSizer() const noexcept
     {

@@ -36,7 +36,7 @@ bool ImportWinRes::Create(wxWindow* parent, wxWindowID id, const wxString& title
 
     m_checkListResUI = new wxCheckListBox(this, wxID_ANY);
     m_checkListResUI->SetMinSize(wxSize(-1, 160));
-    m_checkListResUI->SetToolTip("Uncheck any resources you don't want converted.");
+    m_checkListResUI->SetToolTip("Uncheck any resources you don\'t want converted.");
     box_sizer5->Add(m_checkListResUI, wxSizerFlags().Expand().Border(wxALL));
 
     auto* box_sizer = new wxBoxSizer(wxHORIZONTAL);

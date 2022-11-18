@@ -4,8 +4,8 @@
   <node
     class="Project"
     art_directory="../art_src"
-    generate_cmake="1"
-    wxWidgets_version="3.1.6">
+    wxWidgets_version="3.1.6"
+    generate_cmake="1">
     <node
       class="Images"
       base_file="ui_images">
@@ -21,6 +21,9 @@
       <node
         class="embedded_image"
         bitmap="Embed;../art_src/project.png" />
+      <node
+        class="embedded_image"
+        bitmap="Embed;../art_src/folder.png" />
       <node
         class="embedded_image"
         bitmap="Embed;../art_src/title_close.png" />

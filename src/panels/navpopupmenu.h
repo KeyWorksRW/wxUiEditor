@@ -40,6 +40,8 @@ public:
         MenuNEW_PARENT_FLEX_GRID_SIZER,
         MenuNEW_PARENT_GRIDBAG_SIZER,
 
+        MenuNEW_PARENT_FOLDER,
+
         MenuNEW_CHILD_BOX_SIZER,
         MenuNEW_CHILD_STATIC_SIZER,
         MenuNEW_CHILD_WRAP_SIZER,

@@ -174,7 +174,7 @@ wxImage Project::GetPropertyBitmap(const ttlib::multistr& parts, bool check_imag
 
 void Project::UpdateBundle(const ttlib::multistr& parts, Node* node)
 {
-    if (parts.size() < 2)
+    if (parts.size() < 2 || node->isGen(gen_folder))
         return;
 
     ttlib::cstr lookup_str;
@@ -524,6 +524,9 @@ bool Project::UpdateEmbedNodes()
 
 bool Project::CheckNode(const NodeSharedPtr& node)
 {
+    if (node->isGen(gen_folder))
+        return false;
+
     bool is_changed = false;
 
     Node* node_form = node->get_form();
@@ -622,13 +625,19 @@ ttString Project::GetDerivedDirectory()
         return GetProjectPath();
 }
 
-Node* Project::GetFirstFormChild()
+Node* Project::GetFirstFormChild(Node* node)
 {
-    for (const auto& child: GetChildNodePtrs())
+    if (!node)
+        node = this;
+    for (const auto& child: node->GetChildNodePtrs())
     {
         if (child->IsForm())
         {
             return child.get();
+        }
+        else if (child->isGen(gen_folder) || child->isGen(gen_sub_folder))
+        {
+            return GetFirstFormChild(child.get());
         }
     }
 

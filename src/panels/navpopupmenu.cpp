@@ -228,6 +228,10 @@ void NavPopupMenu::OnMenuEvent(wxCommandEvent& event)
             CreateSizerParent(m_node, "wxGridBagSizer");
             break;
 
+        case MenuNEW_PARENT_FOLDER:
+            CreateSizerParent(m_node, "folder");
+            break;
+
         case MenuChangeTo_FLEX_GRID_SIZER:
             ChangeSizer(gen_wxFlexGridSizer);
             break;
@@ -713,6 +717,11 @@ void NavPopupMenu::MenuAddMoveCommands(Node* node)
 
         AppendSubMenu(sub_menu, "&Move into new sizer");
     }
+    else if (node->IsForm())
+    {
+        menu_item = sub_menu->Append(MenuNEW_PARENT_FOLDER, "Move into new folder");
+        menu_item->SetBitmap(GetInternalImage("folder"));
+    }
 
     if (node->isGen(gen_wxRadioButton))
     {
@@ -897,9 +906,12 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::sview widget)
 
     auto childPos = parent->GetChildPosition(node);
 
-    while (parent && !parent->IsSizer())
+    if (!parent->IsFormParent())
     {
-        parent = parent->GetParent();
+        while (parent && !parent->IsSizer())
+        {
+            parent = parent->GetParent();
+        }
     }
 
     if (!parent)
@@ -909,23 +921,30 @@ void NavPopupMenu::CreateSizerParent(Node* node, ttlib::sview widget)
         return;
     }
 
-    // Avoid the temptation to set new_sizer to the raw pointer so that .get() doesn't have to be called below. Doing so will
-    // result in the reference count being decremented before we are done hooking it up, and you end up crashing.
+    if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
+        widget = "sub_folder";
 
-    auto new_sizer = g_NodeCreator.CreateNode(widget, parent);
-    if (new_sizer)
+    // Avoid the temptation to set new_parent to the raw pointer so that .get() doesn't have to be called below. Doing so
+    // will result in the reference count being decremented before we are done hooking it up, and you end up crashing.
+
+    auto new_parent = g_NodeCreator.CreateNode(widget, parent);
+    if (new_parent)
     {
         wxGetFrame().Freeze();
-        wxGetFrame().PushUndoAction(
-            std::make_shared<InsertNodeAction>(new_sizer.get(), parent, "Insert new sizer", childPos));
+        ttlib::cstr undo_string("Insert new ");
+        if (widget == "folder" || widget == "sub_folder")
+            undo_string << "folder";
+        else
+            undo_string << "sizer";
+        wxGetFrame().PushUndoAction(std::make_shared<InsertNodeAction>(new_parent.get(), parent, undo_string, childPos));
 
         // InsertNodeAction does not fire the creation event since that's usually handled by the caller as needed. We don't
         // want to fire an event because we don't want the Mockup or Code panels to update until we have changed the parent.
         // However we *do* need to let the navigation panel know that a new node has been added.
 
-        wxGetFrame().GetNavigationPanel()->InsertNode(new_sizer.get());
+        wxGetFrame().GetNavigationPanel()->InsertNode(new_parent.get());
 
-        wxGetFrame().PushUndoAction(std::make_shared<ChangeParentAction>(node, new_sizer.get()));
+        wxGetFrame().PushUndoAction(std::make_shared<ChangeParentAction>(node, new_parent.get()));
         wxGetFrame().SelectNode(node, evt_flags::fire_event | evt_flags::force_selection);
         wxGetFrame().Thaw();
     }

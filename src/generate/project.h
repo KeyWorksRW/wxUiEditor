@@ -14,3 +14,13 @@ class ProjectGenerator : public BaseGenerator
 public:
     bool PopupMenuAddCommands(NavPopupMenu*, Node*) override;
 };
+
+class FolderGenerator : public BaseGenerator
+{
+public:
+};
+
+class SubFolderGenerator : public BaseGenerator
+{
+public:
+};

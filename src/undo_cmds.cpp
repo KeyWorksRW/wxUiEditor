@@ -24,6 +24,11 @@ InsertNodeAction::InsertNodeAction(Node* node, Node* parent, const ttlib::cstr& 
     m_old_selected = wxGetFrame().GetSelectedNodePtr();
     m_node = node->GetSharedPtr();
     m_parent = parent->GetSharedPtr();
+
+    if (m_node->isGen(gen_folder) || m_node->isGen(gen_sub_folder))
+    {
+        m_fix_duplicate_names = false;
+    }
 }
 
 void InsertNodeAction::Change()

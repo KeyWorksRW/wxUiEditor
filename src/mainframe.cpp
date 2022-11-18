@@ -884,7 +884,7 @@ void MainFrame::UpdateFrame()
 #if defined(_DEBUG)
     m_menuEdit->Enable(id_insert_widget, true);
 #else
-    m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->isGen(gen_Project));
+    m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->IsFormParent());
 #endif  // _DEBUG
 
     UpdateMoveMenu();

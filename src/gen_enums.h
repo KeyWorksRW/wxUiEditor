@@ -459,6 +459,7 @@ namespace GenEnum
         type_dataviewlistctrl,
         type_dataviewtreectrl,
         type_embed_image,
+        type_folder,
         type_form,
         type_frame_form,
         type_gbsizer,
@@ -496,6 +497,7 @@ namespace GenEnum
         type_splitteritem,
         type_staticbox,
         type_statusbar,
+        type_sub_folder,
         type_submenu,
         type_tool,
         type_tool_dropdown,
@@ -545,13 +547,16 @@ namespace GenEnum
         gen_wxTopLevelWindow,
         gen_wxWindow,
 
+        gen_Images,
+        gen_folder,
+        gen_sub_folder,
+
         // The following are the rergular generators
 
         gen_BookPage,
         gen_Check3State,
         gen_CloseButton,
         gen_CustomControl,
-        gen_Images,
         gen_MenuBar,
         gen_PageCtrl,
         gen_PanelForm,

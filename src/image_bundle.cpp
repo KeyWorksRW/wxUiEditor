@@ -145,12 +145,9 @@ void Project::CollectNodeBundles(Node* node, Node* form)
         }
     }
 
-    std::vector<Node*> forms;
-    GetProject()->CollectForms(forms);
-
-    for (const auto& child: forms)
+    for (const auto& child: node->GetChildNodePtrs())
     {
-        CollectNodeBundles(child, form);
+        CollectNodeBundles(child.get(), form);
     }
 }
 

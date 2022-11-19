@@ -35,7 +35,9 @@ bool GeneratePythonFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<
     size_t currentFiles = 0;
 
     bool generate_result = true;
-    for (const auto& form: project->GetChildNodePtrs())
+    std::vector<Node*> forms;
+    project->CollectForms(forms);
+    for (const auto& form: forms)
     {
         if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())
         {
@@ -66,7 +68,7 @@ bool GeneratePythonFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<
             auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
             codegen.SetSrcWriteCode(cpp_cw.get());
 
-            codegen.GeneratePythonClass(form.get());
+            codegen.GeneratePythonClass(form);
 
             auto retval = cpp_cw->WriteFile(NeedsGenerateCheck);
 
@@ -167,12 +169,14 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+    std::vector<Node*> forms;
+    m_project->CollectForms(forms);
 
-    for (const auto& form: m_project->GetChildNodePtrs())
+    for (const auto& form: forms)
     {
         if (form->isGen(gen_Images))
         {
-            m_ImagesForm = form.get();
+            m_ImagesForm = form;
             break;
         }
     }

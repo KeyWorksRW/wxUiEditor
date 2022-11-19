@@ -508,9 +508,10 @@ EmbeddedImage* Project::GetEmbeddedImage(ttlib::sview path)
 bool Project::UpdateEmbedNodes()
 {
     bool is_changed = false;
-    auto project = GetProject();
+    std::vector<Node*> forms;
+    GetProject()->CollectForms(forms);
 
-    for (const auto& form: project->GetChildNodePtrs())
+    for (const auto& form: forms)
     {
         if (CheckNode(form))
             is_changed = true;
@@ -522,7 +523,7 @@ bool Project::UpdateEmbedNodes()
 // all nodes initially, and the only reason this would be needed is if adding or changing a bitmap property did not get set
 // up correctly (highly unlikely).
 
-bool Project::CheckNode(const NodeSharedPtr& node)
+bool Project::CheckNode(Node* node)
 {
     if (node->IsFormParent())
         return false;
@@ -578,7 +579,7 @@ bool Project::CheckNode(const NodeSharedPtr& node)
 
     for (const auto& child: node->GetChildNodePtrs())
     {
-        if (CheckNode(child))
+        if (CheckNode(child.get()))
             is_changed = true;
     }
 
@@ -689,7 +690,9 @@ void Project::FixupDuplicatedNode(Node* new_node)
 
     // Collect all of the class and filenames in use by each form so we can make sure the new
     // form doesn't use any of them.
-    for (auto& iter: GetChildNodePtrs())
+    std::vector<Node*> forms;
+    CollectForms(forms);
+    for (auto& iter: forms)
     {
         if (iter->HasValue(prop_class_name))
             base_classnames.insert(iter->value(prop_class_name));

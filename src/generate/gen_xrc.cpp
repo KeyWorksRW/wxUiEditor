@@ -366,8 +366,10 @@ bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
 
     std::vector<ttlib::cstr> results;
     size_t currentFiles = 0;
+    std::vector<Node*> forms;
+    project->CollectForms(forms);
 
-    for (auto& form: project->GetChildNodePtrs())
+    for (auto& form: forms)
     {
         if (!form->HasValue(prop_xrc_file))
         {
@@ -393,7 +395,7 @@ bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
         root.append_attribute("version") = "2.5.3.0";
 
         auto form_object = root.append_child("object");
-        GenXrcObject(form.get(), form_object, false);
+        GenXrcObject(form, form_object, false);
 
         if (out_file.file_exists())
         {

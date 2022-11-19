@@ -28,8 +28,10 @@ void GenerateXrcDlg::OnInit(wxInitDialogEvent& event)
         m_filename = m_project->value(prop_combined_xrc_file).wx_str();
         m_filePicker->SetPath(m_filename);
     }
+    std::vector<Node*> forms;
+    m_project->CollectForms(forms);
 
-    for (auto& form: m_project->GetChildNodePtrs())
+    for (auto& form: forms)
     {
         if (form->HasValue(prop_xrc_file))
         {

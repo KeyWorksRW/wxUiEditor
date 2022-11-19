@@ -62,8 +62,10 @@ int WriteCMakeFile(bool test_only)
     out.emplace_back();
 
     std::set<ttlib::cstr> base_files;
+    std::vector<Node*> forms;
+    project->CollectForms(forms);
 
-    for (const auto& iter: project->GetChildNodePtrs())
+    for (const auto& iter: forms)
     {
         if (!iter->HasValue(prop_base_file))
             continue;

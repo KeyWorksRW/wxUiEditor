@@ -77,9 +77,11 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
         auto filename = newValue.sub_cstr();
         auto project = GetProject();
 
-        for (const auto& child: project->GetChildNodePtrs())
+        std::vector<Node*> forms;
+        project->CollectForms(forms);
+        for (const auto& child: forms)
         {
-            if (child.get() == node)
+            if (child == node)
                 continue;
             if (prop->isProp(prop_base_file))
             {

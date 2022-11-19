@@ -128,7 +128,7 @@ public:
     void CollectBundles();
 
 protected:
-    bool CheckNode(const NodeSharedPtr& node);
+    bool CheckNode(Node* node);
 
     void CollectNodeBundles(Node* node, Node* form);
 

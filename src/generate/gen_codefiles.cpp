@@ -67,7 +67,12 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             if (path == "filename_base")
                 continue;
             path.backslashestoforward();
-            if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
+            if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
+            {
+                path = node_folder->as_string(prop_folder_base_directory);
+                path.append_filename(base_file.filename());
+            }
+            else if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
             {
                 path = GetProject()->GetBaseDirectory().utf8_string();
                 path.append_filename(base_file);

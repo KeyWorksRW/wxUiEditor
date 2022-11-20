@@ -76,7 +76,12 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     {
         derived_file = m_form_node->prop_as_string(prop_derived_file);
         derived_file.backslashestoforward();
-        if (GetProject()->HasValue(prop_derived_directory) && !derived_file.contains("/"))
+        if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_derived_directory))
+        {
+            derived_file = node_folder->as_string(prop_folder_derived_directory);
+            derived_file.append_filename(m_form_node->prop_as_string(prop_derived_file).filename());
+        }
+        else if (GetProject()->HasValue(prop_derived_directory) && !derived_file.contains("/"))
         {
             derived_file = GetProject()->as_string(prop_derived_directory);
             derived_file.append_filename(m_form_node->prop_as_string(prop_derived_file));
@@ -114,7 +119,12 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     {
         baseFile = file;
         baseFile.backslashestoforward();
-        if (GetProject()->HasValue(prop_base_directory) && !baseFile.contains("/"))
+        if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
+        {
+            baseFile = node_folder->as_string(prop_folder_base_directory);
+            baseFile.append_filename(file.filename());
+        }
+        else if (GetProject()->HasValue(prop_base_directory) && !baseFile.contains("/"))
         {
             baseFile = GetProject()->GetBaseDirectory();
             baseFile.append_filename(file);
@@ -132,7 +142,12 @@ int BaseCodeGenerator::GenerateDerivedClass(Node* project, Node* form, PANEL_PAG
     ttlib::cstr namespace_using_name;
 
     // Make a copy of the string so that we can tweak it
-    if (auto namespace_prop = project->prop_as_string(prop_name_space); namespace_prop.size())
+    ttlib::cstr namespace_prop = m_project->prop_as_string(prop_name_space);
+    if (auto* node_namespace = form->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
+    {
+        namespace_prop = node_namespace->as_string(prop_folder_namespace);
+    }
+    if (namespace_prop.size())
     {
         // BUGBUG: [KeyWorks - 01-25-2021] Need to look for base_class_name property of all children, and add each name
         // as a forwarded class.

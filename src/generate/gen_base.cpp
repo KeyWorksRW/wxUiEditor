@@ -363,6 +363,10 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
     // Make a copy of the string so that we can tweak it
     ttlib::cstr namespace_prop = m_project->prop_as_string(prop_name_space);
+    if (auto* node_namespace = form_node->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
+    {
+        namespace_prop = node_namespace->as_string(prop_folder_namespace);
+    }
     size_t indent = 0;
     ttlib::multistr names;
     if (namespace_prop.size())
@@ -1256,8 +1260,14 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name.is_sameas("CustomControl"))
     {
-        if (node->HasValue(prop_namespace))
+        if (auto* node_namespace = node->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
+        {
+            code << node_namespace->as_string(prop_folder_namespace) << "::";
+        }
+        else if (node->HasValue(prop_namespace))
+        {
             code << node->prop_as_string(prop_namespace) << "::";
+        }
         code << node->prop_as_string(prop_class_name) << "* " << node->get_node_name() << ';';
     }
 

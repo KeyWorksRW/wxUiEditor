@@ -88,7 +88,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files, s
 
         if (parent_node == project)
         {
-            if (auto* node_folder = project->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
+            if (auto* node_folder = iter->get_folder(); node_folder && node_folder->HasValue(prop_folder_cmake_file))
             {
                 // This file already got added to a different .cmake file
                 continue;

@@ -79,7 +79,6 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             // generated.
             if (path == "filename_base")
                 continue;
-            path.backslashestoforward();
             if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
             {
                 path = node_folder->as_string(prop_folder_base_directory);

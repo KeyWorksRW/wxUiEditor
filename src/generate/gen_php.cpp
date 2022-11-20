@@ -16,14 +16,11 @@
 #include "project_class.h"   // Project class
 #include "write_code.h"      // Write code to Scintilla or file
 
-bool GeneratePhpFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
+bool GeneratePhpFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
 {
     auto project = GetProject();
     if (project->GetChildCount() == 0)
     {
-        if (NeedsGenerateCheck)
-            return false;
-
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
@@ -43,8 +40,12 @@ bool GeneratePhpFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttl
         if (auto& base_file = form->prop_as_string(prop_php_file); base_file.size())
         {
             path = base_file;
-            path.backslashestoforward();
-            if (GetProject()->HasValue(prop_php_output_folder) && !path.contains("/"))
+            if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_php_output_folder))
+            {
+                path = node_folder->as_string(prop_folder_php_output_folder);
+                path.append_filename(base_file.filename());
+            }
+            else if (GetProject()->HasValue(prop_php_output_folder) && !path.contains("/"))
             {
                 path = GetProject()->GetBaseDirectory(GEN_LANG_PHP).utf8_string();
                 path.append_filename(base_file);
@@ -71,25 +72,18 @@ bool GeneratePhpFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttl
 
             codegen.GeneratePhpClass(form);
 
-            auto retval = cpp_cw->WriteFile(NeedsGenerateCheck);
+            auto retval = cpp_cw->WriteFile();
 
             if (retval > 0)
             {
-                if (!NeedsGenerateCheck)
+                if (!pClassList)
                 {
                     results.emplace_back() << path.filename() << " saved" << '\n';
                 }
                 else
                 {
-                    if (pClassList)
-                    {
-                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
-                        continue;
-                    }
-                    else
-                    {
-                        return generate_result;
-                    }
+                    pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                    continue;
                 }
             }
 

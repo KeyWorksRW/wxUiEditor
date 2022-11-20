@@ -66,13 +66,13 @@ int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files,
 bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList = nullptr);
 
 // gen_python.cpp
-bool GeneratePythonFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+bool GeneratePythonFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList = nullptr);
 
 // gen_lua.cpp
-bool GenerateLuaFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+bool GenerateLuaFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList = nullptr);
 
 // gen_php.cpp
-bool GeneratePhpFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+bool GeneratePhpFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList = nullptr);
 
 #if defined(INTERNAL_TESTING)
 void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root);

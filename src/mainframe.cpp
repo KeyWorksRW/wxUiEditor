@@ -702,16 +702,11 @@ void MainFrame::ProjectLoaded()
     setStatusText("Project loaded");
     if (!m_isImported)
     {
-        m_isProject_generated = !GenerateCodeFiles(this, true);
         if (!GetProject()->GetProjectFile().filename().is_sameas(txtEmptyProject))
         {
             m_FileHistory.AddFileToHistory(GetProject()->GetProjectFile());
         }
         m_isProject_modified = false;
-    }
-    else
-    {
-        m_isProject_generated = false;
     }
 
     m_undo_stack.clear();
@@ -850,12 +845,8 @@ void MainFrame::UpdateFrame()
     if (m_isProject_modified)
     {
         filename.insert(0, "*");
-        m_isProject_generated = false;
     }
     SetTitle(filename);
-
-    // m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
-    // m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
 
     wxString menu_text = "Undo";
     if (m_undo_stack.IsUndoAvailable())

@@ -53,7 +53,7 @@ CodeCompare::~CodeCompare()
 
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
-    if (GenerateCodeFiles(this, true, &m_class_list))
+    if (GenerateCodeFiles(this, &m_class_list))
     {
         for (auto& iter: m_class_list)
         {

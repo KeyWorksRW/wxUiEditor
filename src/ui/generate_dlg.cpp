@@ -73,9 +73,6 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
                 break;
         }
         UpdateWakaTime();
-
-        // m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
-        // m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
     }
 }
 

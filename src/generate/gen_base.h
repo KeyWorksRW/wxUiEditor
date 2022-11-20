@@ -62,7 +62,7 @@ int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& results);  // Se
 // class name of every form that needs updating.
 //
 // gen_codefiles.cpp
-bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);
+bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList = nullptr);
 
 // gen_python.cpp
 bool GeneratePythonFiles(wxWindow* parent, bool NeedsGenerateCheck = false, std::vector<ttlib::cstr>* pClassList = nullptr);

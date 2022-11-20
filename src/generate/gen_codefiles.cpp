@@ -14,14 +14,11 @@
 #include "project_class.h"  // Project class
 #include "write_code.h"     // Write code to Scintilla or file
 
-bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
+bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
 {
     auto project = GetProject();
     if (project->GetChildCount() == 0)
     {
-        if (NeedsGenerateCheck)
-            return false;
-
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
@@ -31,7 +28,7 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
     size_t currentFiles = 0;
     std::vector<ttlib::cstr> results;
 
-    if (project->prop_as_bool(prop_generate_cmake) && !NeedsGenerateCheck && !pClassList)
+    if (project->prop_as_bool(prop_generate_cmake) && !pClassList)
     {
         for (auto& iter: project->GetChildNodePtrs())
         {
@@ -114,34 +111,27 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             codegen.GenerateBaseClass(form);
 
             path.replace_extension(header_ext);
-            auto retval = h_cw->WriteFile(NeedsGenerateCheck);
+            auto retval = h_cw->WriteFile();
 
             if (retval > 0)
             {
-                if (!NeedsGenerateCheck)
+                if (!pClassList)
                 {
                     results.emplace_back() << path.filename() << " saved" << '\n';
                 }
                 else
                 {
-                    if (pClassList)
+                    if (form->isGen(gen_Images))
                     {
-                        if (form->isGen(gen_Images))
-                        {
-                            // While technically this is a "form" it doesn't have the usual properties set
+                        // While technically this is a "form" it doesn't have the usual properties set
 
-                            pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
-                        }
-                        else
-                        {
-                            pClassList->emplace_back(form->prop_as_string(prop_class_name));
-                        }
-                        continue;
+                        pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
                     }
                     else
                     {
-                        return true;
+                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
                     }
+                    continue;
                 }
             }
             else if (retval < 0)
@@ -155,25 +145,18 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             }
 
             path.replace_extension(source_ext);
-            retval = cpp_cw->WriteFile(NeedsGenerateCheck);
+            retval = cpp_cw->WriteFile();
 
             if (retval > 0)
             {
-                if (!NeedsGenerateCheck)
+                if (!pClassList)
                 {
                     results.emplace_back() << path.filename() << " saved" << '\n';
                 }
                 else
                 {
-                    if (pClassList)
-                    {
-                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
-                        continue;
-                    }
-                    else
-                    {
-                        return generate_result;
-                    }
+                    pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                    continue;
                 }
             }
 
@@ -194,14 +177,6 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
                          "Code generation");
             continue;
         }
-    }
-
-    if (NeedsGenerateCheck)
-    {
-        if (pClassList && pClassList->size())
-            return generate_result;
-        else
-            return false;
     }
 
     if (results.size())

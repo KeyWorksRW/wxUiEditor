@@ -273,10 +273,6 @@ public:
     bool SaveWarning();
     void UpdateFrame();
 
-    bool IsGenerateNeeded()
-    {
-        return !m_isProject_generated;
-    }
     bool IsModified()
     {
         return m_isProject_modified;
@@ -460,7 +456,6 @@ private:
 
     bool m_isXrcResourceInitalized { false };
 
-    bool m_isProject_generated { false };
     bool m_isProject_modified { false };
 
     bool m_iswakatime_bound { false };

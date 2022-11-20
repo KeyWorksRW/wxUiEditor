@@ -65,7 +65,12 @@ int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files, s
     out.emplace_back();
 
     out.emplace_back();
-    out.at(out.size() - 1) << "set (" << project->prop_as_string(prop_cmake_varname);
+    ttlib::cstr var_name(project->as_string(prop_cmake_varname));
+    if (parent_node->isGen(gen_folder) && parent_node->HasValue(prop_folder_cmake_varname))
+    {
+        var_name = parent_node->as_string(prop_folder_cmake_varname);
+    }
+    out.at(out.size() - 1) << "set (" << var_name;
     out.emplace_back();
 
     std::set<ttlib::cstr> base_files;

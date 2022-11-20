@@ -55,7 +55,8 @@ namespace result
 
 constexpr int max_image_line_length { 125 };
 
-int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& results);  // See gen_cmake.cpp
+int WriteCMakeFile(Node* parent_node, std::vector<ttlib::cstr>& updated_files,
+                   std::vector<ttlib::cstr>& results);  // See gen_cmake.cpp
 
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at
 // least one file needs to be generated. If pClassList is non-null, it will contain the base

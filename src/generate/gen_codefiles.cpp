@@ -29,6 +29,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
 
     size_t currentFiles = 0;
     std::vector<ttlib::cstr> results;
+    std::vector<ttlib::cstr> updated_files;
 
     if (project->prop_as_bool(prop_generate_cmake) && !pClassList)
     {
@@ -36,7 +37,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
         {
             if (iter->isGen(gen_folder) && iter->HasValue(prop_folder_cmake_file))
             {
-                if (WriteCMakeFile(iter.get(), results) == result::created)
+                if (WriteCMakeFile(iter.get(), updated_files, results) == result::created)
                 {
                     ++currentFiles;
                 }
@@ -44,7 +45,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
         }
         if (project->HasValue(prop_cmake_file))
         {
-            if (WriteCMakeFile(project, results) == result::created)
+            if (WriteCMakeFile(project, updated_files, results) == result::created)
             {
                 ++currentFiles;
             }
@@ -69,7 +70,6 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
     bool generate_result = true;
     std::vector<Node*> forms;
     project->CollectForms(forms);
-    std::vector<ttlib::cstr> updated_files;
     for (const auto& form: forms)
     {
         if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())

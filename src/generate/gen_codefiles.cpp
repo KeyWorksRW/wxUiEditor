@@ -14,6 +14,8 @@
 #include "project_class.h"  // Project class
 #include "write_code.h"     // Write code to Scintilla or file
 
+#include "../wxui/dlg_gen_results.h"
+
 bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
 {
     auto project = GetProject();
@@ -67,6 +69,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
     bool generate_result = true;
     std::vector<Node*> forms;
     project->CollectForms(forms);
+    std::vector<ttlib::cstr> updated_files;
     for (const auto& form: forms)
     {
         if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
@@ -117,7 +120,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             {
                 if (!pClassList)
                 {
-                    results.emplace_back() << path.filename() << " saved" << '\n';
+                    updated_files.emplace_back(path);
                 }
                 else
                 {
@@ -151,7 +154,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             {
                 if (!pClassList)
                 {
-                    results.emplace_back() << path.filename() << " saved" << '\n';
+                    updated_files.emplace_back(path);
                 }
                 else
                 {
@@ -179,20 +182,27 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
         }
     }
 
-    if (results.size())
+    if (updated_files.size() || results.size())
     {
-        ttlib::cstr msg;
+        GeneratedResultsDlg dlg;
+        dlg.Create(wxGetFrame().GetWindow());
+        for (auto& iter: updated_files)
+        {
+            iter.make_relative(GetProject()->getProjectPath());
+            dlg.m_lb_files->Append(iter);
+        }
+
+        if (updated_files.size() == 1)
+            results.emplace_back("1 file was updated");
+        else
+            results.emplace_back() << updated_files.size() << " files were updated";
+
         for (auto& iter: results)
         {
-            msg += iter;
+            dlg.m_lb_info->Append(iter);
         }
 
-        if (currentFiles)
-        {
-            msg << '\n' << "The other " << currentFiles << " generated files are current";
-        }
-
-        wxMessageBox(msg.wx_str(), "Code Generation", wxOK, parent);
+        dlg.ShowModal();
     }
     else if (currentFiles && parent)
     {

@@ -4024,5 +4024,47 @@
         </node>
       </node>
     </node>
+    <node
+      class="wxDialog"
+      base_file="dlg_gen_results"
+      class_name="GeneratedResultsDlg"
+      persist="1"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      title="Generated Code Results"
+      use_derived_class="0">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxStaticText"
+          class_access="none"
+          label="Updated files:"
+          var_name="staticText" />
+        <node
+          class="wxListBox"
+          class_access="public:"
+          var_name="m_lb_files"
+          minimum_size="150,100d"
+          flags="wxEXPAND"
+          proportion="1" />
+        <node
+          class="wxStaticText"
+          class_access="none"
+          label="Additional information:"
+          var_name="staticText_2" />
+        <node
+          class="wxListBox"
+          class_access="public:"
+          var_name="m_lb_info"
+          minimum_size="100,40d"
+          flags="wxEXPAND" />
+        <node
+          class="wxStdDialogButtonSizer"
+          Cancel="0"
+          default_button="none"
+          flags="wxEXPAND" />
+      </node>
+    </node>
   </node>
 </wxUiEditorData>

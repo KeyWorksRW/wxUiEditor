@@ -168,15 +168,28 @@ void NavigationPanel::OnProjectUpdated()
 
         AddAllChildren(project);
 
-        // First we expand everything
+        // First we expand everything, then we collapse all forms and folders
         ExpandAllNodes(project);
 
-        // Now we collapse all the project's immediate children
-        for (const auto& form: project->GetChildNodePtrs())
+        std::vector<Node*> forms;
+        GetProject()->CollectForms(forms);
+
+        for (const auto& form: forms)
         {
-            if (auto result = m_node_tree_map.find(form.get()); result != m_node_tree_map.end())
+            if (auto result = m_node_tree_map.find(form); result != m_node_tree_map.end())
             {
                 m_tree_ctrl->Collapse(result->second);
+            }
+        }
+
+        for (const auto& folder: project->GetChildNodePtrs())
+        {
+            if (folder->isGen(gen_folder))
+            {
+                if (auto result = m_node_tree_map.find(folder.get()); result != m_node_tree_map.end())
+                {
+                    m_tree_ctrl->Collapse(result->second);
+                }
             }
         }
     }

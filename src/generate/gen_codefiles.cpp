@@ -27,8 +27,32 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
     }
     ttSaveCwd cwd;
     GetProject()->GetProjectPath().ChangeDir();
-    ttlib::cstr path;
+
+    size_t currentFiles = 0;
     std::vector<ttlib::cstr> results;
+
+    if (project->prop_as_bool(prop_generate_cmake) && !NeedsGenerateCheck && !pClassList)
+    {
+        for (auto& iter: project->GetChildNodePtrs())
+        {
+            if (iter->isGen(gen_folder) && iter->HasValue(prop_folder_cmake_file))
+            {
+                if (WriteCMakeFile(iter.get(), results) == result::created)
+                {
+                    ++currentFiles;
+                }
+            }
+        }
+        if (project->HasValue(prop_cmake_file))
+        {
+            if (WriteCMakeFile(project, results) == result::created)
+            {
+                ++currentFiles;
+            }
+        }
+    }
+
+    ttlib::cstr path;
 
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
@@ -41,17 +65,6 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
     if (auto& extProp = project->prop_as_string(prop_header_ext); extProp.size())
     {
         header_ext = extProp;
-    }
-
-    size_t currentFiles = 0;
-
-    if (WriteCMakeFile(NeedsGenerateCheck) != result::exists)
-    {
-        if (NeedsGenerateCheck && !pClassList)
-            return true;
-
-        ++currentFiles;
-        results.emplace_back() << project->prop_as_string(prop_cmake_file) << " saved" << '\n';
     }
 
     bool generate_result = true;

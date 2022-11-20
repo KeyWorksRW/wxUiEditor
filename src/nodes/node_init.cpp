@@ -547,6 +547,11 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
             auto class_name = elem_obj.attribute("class").as_string();
             auto class_info = GetNodeDeclaration(class_name);
 
+            // This can happen if the project file is corrupted, or it it a newer version of the project file
+            // that the current version doesn't support.
+            if (!class_info)
+                break;
+
             auto elem_base = elem_obj.child("inherits");
             while (elem_base)
             {

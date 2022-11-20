@@ -404,23 +404,38 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_xrc_directory, "xrc_directory" },
     { prop_xrc_file, "xrc_file" },
 
+    { prop_folder_base_directory, "folder_base_directory" },
+    { prop_folder_derived_directory, "folder_derived_directory" },
+    { prop_folder_namespace, "folder_namespace" },
+    { prop_folder_cmake_file, "folder_cmake_file" },
+    { prop_folder_cmake_varname, "folder_cmake_varname" },
+
+    { prop_folder_xrc_directory, "folder_xrc_directory" },
+    { prop_folder_combined_xrc_file, "folder_combined_xrc_file" },
+
     { prop_python_combine_forms, "python_combine_forms" },
     { prop_python_combined_file, "python_combined_file" },
     { prop_python_copy_art, "python_copy_art" },
     { prop_python_output_folder, "python_output_folder" },
     { prop_python_use_xrc, "python_use_xrc" },
+    { prop_folder_python_output_folder, "folder_python_output_folder" },
+    { prop_folder_python_combined_file, "folder_python_combined_file" },
 
     { prop_lua_combine_forms, "lua_combine_forms" },
     { prop_lua_combined_file, "lua_combined_file" },
     { prop_lua_copy_art, "lua_copy_art" },
     { prop_lua_output_folder, "lua_output_folder" },
     { prop_lua_use_xrc, "lua_use_xrc" },
+    { prop_folder_lua_output_folder, "folder_lua_output_folder" },
+    { prop_folder_lua_combined_file, "folder_lua_combined_file" },
 
     { prop_php_combine_forms, "php_combine_forms" },
     { prop_php_combined_file, "php_combined_file" },
     { prop_php_copy_art, "php_copy_art" },
     { prop_php_output_folder, "php_output_folder" },
     { prop_php_use_xrc, "php_use_xrc" },
+    { prop_folder_php_output_folder, "folder_php_output_folder" },
+    { prop_folder_php_combined_file, "folder_php_combined_file" },
 
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
@@ -503,6 +518,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_Boolean_Validator, "Boolean Validator" },
     { gen_Choice_Validator, "Choice Validator" },
     { gen_Code, "C++" },
+    { gen_folder_Code, "Folder C++ Overrides" },
     { gen_Code_Generation, "Code Generation" },
     { gen_Command_Bitmaps, "Command Bitmaps" },
     { gen_Integer_Validator, "Integer Validator" },
@@ -517,6 +533,10 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_wxLua, "wxLua" },
     { gen_wxPHP, "wxPHP" },
     { gen_wxPython, "wxPython" },
+    { gen_folder_wxLua, "Folder wxLua Overrides" },
+    { gen_folder_wxPHP, "Folder wxPHP Overrides" },
+    { gen_folder_wxPython, "Folder wxPython Overrides" },
+    { gen_folder_XRC, "Folder XRC Overrides" },
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },
     { gen_wxWindow, "wxWindow" },
 

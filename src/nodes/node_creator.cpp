@@ -30,6 +30,9 @@ NodeDeclaration* NodeCreator::GetNodeDeclaration(ttlib::sview className)
         return m_a_declarations[result->second];
     }
 
+    // Failure can happen for a new category that didn't get added to the interface section
+    // of map_GenNames in gen_enums.cpp
+
     FAIL_MSG(ttlib::cstr() << "Attempt to get non-existant node declaration for " << className);
     return nullptr;
 }

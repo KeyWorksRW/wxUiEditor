@@ -113,7 +113,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             codegen.GenerateBaseClass(form);
 
             path.replace_extension(header_ext);
-            auto retval = h_cw->WriteFile();
+            auto retval = h_cw->WriteFile(pClassList != nullptr);
 
             if (retval > 0)
             {
@@ -147,7 +147,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             }
 
             path.replace_extension(source_ext);
-            retval = cpp_cw->WriteFile();
+            retval = cpp_cw->WriteFile(pClassList != nullptr);
 
             if (retval > 0)
             {
@@ -181,7 +181,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
         }
     }
 
-    if (updated_files.size() || results.size())
+    if (updated_files.size() || results.size() && !pClassList)
     {
         GeneratedResultsDlg dlg;
         dlg.Create(wxGetFrame().GetWindow());
@@ -203,7 +203,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
 
         dlg.ShowModal();
     }
-    else if (currentFiles && parent)
+    else if (currentFiles && parent && !pClassList)
     {
         ttlib::cstr msg;
         msg << '\n' << "All " << currentFiles << " generated files are current";

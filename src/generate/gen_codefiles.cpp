@@ -181,7 +181,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
         }
     }
 
-    if (updated_files.size() || results.size() && !pClassList)
+    if ((updated_files.size() || results.size()) && !pClassList)
     {
         GeneratedResultsDlg dlg;
         dlg.Create(wxGetFrame().GetWindow());

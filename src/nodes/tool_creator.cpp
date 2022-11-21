@@ -7,11 +7,13 @@
 
 #include "node.h"
 
+#include "../panels/nav_panel.h"     // NavigationPanel -- Navigation Panel
 #include "../panels/ribbon_tools.h"  // RibbonPanel -- Displays component tools in a wxRibbonBar
 #include "mainframe.h"               // MainFrame -- Main window frame
 #include "node_creator.h"            // NodeCreator class
 #include "node_decl.h"               // NodeDeclaration class
 #include "node_prop.h"               // NodeProperty -- NodeProperty class
+#include "undo_cmds.h"               // InsertNodeAction -- Undoable command classes derived from UndoAction
 
 using namespace GenEnum;
 
@@ -66,6 +68,42 @@ bool Node::CreateToolNode(GenName name)
         else if (name == gen_wxToolBar)
         {
             name = gen_ToolBar;
+        }
+    }
+    else if (name == gen_folder)
+    {
+        if (!IsFormParent() && !IsForm())
+        {
+            wxMessageBox("A folder can only be created when a form, another folder or the project is selected.",
+                         "Cannot create folder", wxOK | wxICON_ERROR);
+            return true;  // indicate that we have full processed creation even though it's just an error message
+        }
+        auto* parent = IsForm() ? GetParent() : this;
+        if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
+            name = gen_sub_folder;
+
+        if (auto new_node = g_NodeCreator.CreateNode(name, parent); new_node)
+        {
+            wxGetFrame().Freeze();
+            ttlib::cstr undo_string("Insert new folder");
+            auto childPos = IsForm() ? parent->GetChildPosition(this) : 0;
+            wxGetFrame().PushUndoAction(
+                std::make_shared<InsertNodeAction>(new_node.get(), parent, "Insert new folder", childPos));
+
+            // InsertNodeAction does not fire the creation event since that's usually handled by the caller as
+            // needed. We don't want to fire an event because we don't want the Mockup or Code panels to update until
+            // we have changed the parent. However we *do* need to let the navigation panel know that a new node has
+            // been added.
+
+            wxGetFrame().GetNavigationPanel()->InsertNode(new_node.get());
+
+            if (IsForm())
+            {
+                wxGetFrame().PushUndoAction(std::make_shared<ChangeParentAction>(this, new_node.get()));
+            }
+            wxGetFrame().SelectNode(new_node, evt_flags::fire_event | evt_flags::force_selection);
+            wxGetFrame().Thaw();
+            return true;
         }
     }
 

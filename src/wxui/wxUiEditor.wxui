@@ -3069,7 +3069,7 @@
             </node>
             <node
               class="wxRibbonPanel"
-              label="Images"
+              label="Other"
               var_name="panel_wizard_2">
               <node
                 class="wxRibbonToolBar"
@@ -3085,6 +3085,11 @@
                   bitmap="Embed;../art_src/static_bitmap.png"
                   help="Add an embedded image to an Images file"
                   id="gen_embedded_image" />
+                <node
+                  class="ribbonTool"
+                  bitmap="Embed;../art_src/folder.png"
+                  help="Create a folder that can be used to organize forms."
+                  id="gen_folder" />
               </node>
             </node>
           </node>

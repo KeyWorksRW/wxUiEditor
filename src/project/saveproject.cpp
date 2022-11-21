@@ -28,7 +28,7 @@ void Node::AddNodeToDoc(pugi::xml_node& node, int& project_version)
 {
     if (project_version < curSupportedVer)
     {
-        // Don't check if the version is alreay as high as we support -- this speeds up the process
+        // Don't check if the version is already as high as we support -- this speeds up the process
         if (auto gen = GetGenerator(); gen)
         {
             if (gen->GetRequiredVersion(this) > project_version)

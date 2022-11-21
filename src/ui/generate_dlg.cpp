@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Purpose:   Dialog for generating XRC file(s)
+// Purpose:   Dialog for choosing and generating specific language file(s)
 // Author:    Ralph Walden
 // Copyright: Copyright (c) 2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
@@ -73,9 +73,6 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
                 break;
         }
         UpdateWakaTime();
-
-        // m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
-        // m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
     }
 }
 

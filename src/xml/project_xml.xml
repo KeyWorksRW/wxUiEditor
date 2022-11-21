@@ -110,4 +110,60 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			none
 		</property>
 	</gen>
+
+	<gen class="Folder C++ Overrides" type="interface">
+		<property name="folder_base_directory" type="path"
+			help="Overrides any project setting of generated base class output directory. Only affects the forms within this folder." />
+		<property name="folder_derived_directory" type="path"
+			help="Overrides any project setting of derived class output directory. Only affects the forms within this folder." />
+		<property name="folder_namespace" type="string"
+			help="Overrides any project setting of namespace to enclose class declarations in. Only affects the forms within this folder." />
+		<property name="folder_cmake_file" type="file"
+			help="Overrides any project setting of filename of the cmake file to create.  Only affects the forms within this folder." />
+		<property name="folder_cmake_varname" type="string"
+			help="Overrides any project setting of the variable name to set in the .cmake file. Only affects the forms within this folder." />
+	</gen>
+
+	<gen class="Folder wxPython Overrides" type="interface">
+		<property name="folder_python_output_folder" type="path"
+			help="Overrides any project setting of the output folder used for all generated python code. Only affects the forms within this folder." />
+		<property name="folder_python_combined_file" type="file"
+			help="Overrides any project setting of the combined filename. Only affects the forms within this folder." />
+	</gen>
+
+	<gen class="Folder wxLua Overrides" type="interface">
+		<property name="folder_lua_output_folder" type="path"
+			help="Overrides any project setting of the output folder used for all generated Lua code. Only affects the forms within this folder." />
+		<property name="folder_lua_combined_file" type="file"
+			help="Overrides any project setting of the combined filename. Only affects the forms within this folder." />
+	</gen>
+
+	<gen class="Folder wxPHP Overrides" type="interface">
+		<property name="folder_php_output_folder" type="path"
+			help="Overrides any project setting of the output folder used for all generated PHP code. Only affects the forms within this folder." />
+		<property name="folder_php_combined_file" type="file"
+			help="Overrides any project setting of the combined filename. Only affects the forms within this folder." />
+	</gen>
+
+	<gen class="Folder XRC Overrides" type="interface">
+		<property name="folder_xrc_directory" type="path"
+			help="Overrides any project setting of the output folder used for all generated XRC code. Only affects the forms within this folder. Ignored if Python, Lua or PHP are using the generated XRC file(s)" />
+		<property name="folder_combined_xrc_file" type="file"
+			help="Overrides any project setting of the combined filename. Only affects the forms within this folder." />
+	</gen>
+
+	<gen class="folder" image="folder" type="folder">
+		<inherits class="Folder C++ Overrides" />
+		<inherits class="Folder wxPython Overrides" />
+		<inherits class="Folder wxLua Overrides" />
+		<inherits class="Folder wxPHP Overrides" />
+		<inherits class="Folder XRC Overrides" />
+		<property name="label" type="string"
+			help="The name of the folder.">my_forms</property>
+	</gen>
+
+	<gen class="sub_folder" image="folder" type="sub_folder">
+		<property name="label" type="string"
+			help="The name of the folder.">my_forms</property>
+	</gen>
 </GeneratorDefinitions>)===";

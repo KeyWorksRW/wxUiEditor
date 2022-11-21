@@ -7,6 +7,7 @@ set (wxue_generated_code
     ${CMAKE_CURRENT_LIST_DIR}/artpropdlg_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/codedisplay_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/colourprop_base.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/dlg_gen_results.cpp
     ${CMAKE_CURRENT_LIST_DIR}/edit_html_dialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editcodedialog_base.cpp
     ${CMAKE_CURRENT_LIST_DIR}/editstringdialog_base.cpp

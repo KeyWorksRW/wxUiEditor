@@ -222,6 +222,7 @@ static const ParentChild lstParentChild[] = {
     { type_wizard, type_wizardpagesimple, infinite },
 
     { type_project, type_form, infinite },
+    { type_project, type_folder, infinite },
     { type_project, type_frame_form, infinite },
     { type_project, type_images, one },
     { type_project, type_menubar_form, infinite },
@@ -229,6 +230,31 @@ static const ParentChild lstParentChild[] = {
     { type_project, type_ribbonbar_form, infinite },
     { type_project, type_toolbar_form, infinite },
     { type_project, type_wizard, infinite },
+
+    // type_images is not allowed because there can only be one for the entire project.
+
+    // There is a lot of code that iterates over the top level forms. It's fairly straight
+    // forward to add a single additional loop to iterate over the forms within a folder, but
+    // nested folders would require a recursive function, which would significantly
+    // complicate the code. For now, don't allow folders to have a folder child.
+
+    { type_folder, type_sub_folder, infinite },
+    { type_folder, type_form, infinite },
+    { type_folder, type_frame_form, infinite },
+    { type_folder, type_menubar_form, infinite },
+    { type_folder, type_popup_menu, infinite },
+    { type_folder, type_ribbonbar_form, infinite },
+    { type_folder, type_toolbar_form, infinite },
+    { type_folder, type_wizard, infinite },
+
+    { type_sub_folder, type_form, infinite },
+    { type_sub_folder, type_sub_folder, infinite },
+    { type_sub_folder, type_frame_form, infinite },
+    { type_sub_folder, type_menubar_form, infinite },
+    { type_sub_folder, type_popup_menu, infinite },
+    { type_sub_folder, type_ribbonbar_form, infinite },
+    { type_sub_folder, type_toolbar_form, infinite },
+    { type_sub_folder, type_wizard, infinite },
 
     // Containers
 
@@ -520,6 +546,11 @@ void NodeCreator::ParseGeneratorFile(const char* xml_data)
         {
             auto class_name = elem_obj.attribute("class").as_string();
             auto class_info = GetNodeDeclaration(class_name);
+
+            // This can happen if the project file is corrupted, or it it a newer version of the project file
+            // that the current version doesn't support.
+            if (!class_info)
+                break;
 
             auto elem_base = elem_obj.child("inherits");
             while (elem_base)

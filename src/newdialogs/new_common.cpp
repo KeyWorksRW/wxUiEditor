@@ -59,9 +59,13 @@ void UpdateFormClass(Node* form_node)
 bool IsClassNameUnique(wxString classname)
 {
     auto new_classname = classname.utf8_string();
-    for (const auto& iter: GetProject()->GetChildNodePtrs())
+
+    std::vector<Node*> forms;
+    GetProject()->CollectForms(forms);
+
+    for (const auto& iter: forms)
     {
-        if (iter.get()->prop_as_string(prop_class_name).is_sameas(new_classname))
+        if (iter->prop_as_string(prop_class_name).is_sameas(new_classname))
         {
             return false;
         }

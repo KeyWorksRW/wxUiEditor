@@ -113,7 +113,8 @@ BaseCodeGenerator::BaseCodeGenerator(int language)
 
 void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type)
 {
-    ASSERT(m_language == GEN_LANG_CPLUSPLUS);
+    ASSERT(form_node)
+    ASSERT(m_language == GEN_LANG_CPLUSPLUS)
 
     m_CtxMenuEvents.clear();
     m_embedded_images.clear();
@@ -125,7 +126,20 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
     for (const auto& form: m_project->GetChildNodePtrs())
     {
-        if (form->isGen(gen_Images))
+        if (form->isGen(gen_folder))
+        {
+            for (const auto& child_form: form->GetChildNodePtrs())
+            {
+                if (child_form->isGen(gen_Images))
+                {
+                    m_ImagesForm = child_form.get();
+                    break;
+                }
+            }
+            break;
+        }
+
+        else if (form->isGen(gen_Images))
         {
             m_ImagesForm = form.get();
             break;
@@ -349,6 +363,10 @@ void BaseCodeGenerator::GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type
 
     // Make a copy of the string so that we can tweak it
     ttlib::cstr namespace_prop = m_project->prop_as_string(prop_name_space);
+    if (auto* node_namespace = form_node->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
+    {
+        namespace_prop = node_namespace->as_string(prop_folder_namespace);
+    }
     size_t indent = 0;
     ttlib::multistr names;
     if (namespace_prop.size())
@@ -979,7 +997,7 @@ void BaseCodeGenerator::CollectIncludes(Node* node, std::set<std::string>& set_s
 
 void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
-    if (node->isGen(gen_Images))
+    if (node->isGen(gen_Images) || node->isGen(gen_folder))
     {
         return;
     }
@@ -1056,7 +1074,10 @@ void BaseCodeGenerator::GatherGeneratorIncludes(Node* node, std::set<std::string
                 {
                     if (auto function_name = GetProject()->GetBundleFuncName(iter.as_string()); function_name.size())
                     {
-                        for (const auto& form: GetProject()->GetChildNodePtrs())
+                        std::vector<Node*> forms;
+                        GetProject()->CollectForms(forms);
+
+                        for (const auto& form: forms)
                         {
                             if (form->isGen(gen_Images))
                             {
@@ -1239,8 +1260,14 @@ ttlib::cstr BaseCodeGenerator::GetDeclaration(Node* node)
     }
     else if (class_name.is_sameas("CustomControl"))
     {
-        if (node->HasValue(prop_namespace))
+        if (auto* node_namespace = node->get_folder(); node_namespace && node_namespace->HasValue(prop_folder_namespace))
+        {
+            code << node_namespace->as_string(prop_folder_namespace) << "::";
+        }
+        else if (node->HasValue(prop_namespace))
+        {
             code << node->prop_as_string(prop_namespace) << "::";
+        }
         code << node->prop_as_string(prop_class_name) << "* " << node->get_node_name() << ';';
     }
 
@@ -1914,6 +1941,7 @@ void BaseCodeGenerator::CollectIDs(Node* node, std::set<std::string>& set_ids)
 
 void BaseCodeGenerator::CollectEventHandlers(Node* node, EventVector& events)
 {
+    ASSERT(node);
     for (auto& iter: node->GetMapEvents())
     {
         if (iter.second.get_value().size())
@@ -2130,6 +2158,7 @@ void BaseCodeGenerator::CollectImageHeaders(Node* node, std::set<std::string>& e
 // wx/artprov.h header is needed
 void BaseCodeGenerator::ParseImageProperties(Node* node)
 {
+    ASSERT(node);
     if (node->IsForm() && node->HasValue(prop_icon))
     {
         ttlib::multiview parts(node->prop_as_string(prop_icon), BMP_PROP_SEPARATOR, tt::TRIM::both);

@@ -14,21 +14,45 @@
 #include "project_class.h"  // Project class
 #include "write_code.h"     // Write code to Scintilla or file
 
-bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
+#include "../wxui/dlg_gen_results.h"
+
+bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
 {
     auto project = GetProject();
     if (project->GetChildCount() == 0)
     {
-        if (NeedsGenerateCheck)
-            return false;
-
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
     ttSaveCwd cwd;
     GetProject()->GetProjectPath().ChangeDir();
-    ttlib::cstr path;
+
+    size_t currentFiles = 0;
     std::vector<ttlib::cstr> results;
+    std::vector<ttlib::cstr> updated_files;
+
+    if (project->prop_as_bool(prop_generate_cmake) && !pClassList)
+    {
+        for (auto& iter: project->GetChildNodePtrs())
+        {
+            if (iter->isGen(gen_folder) && iter->HasValue(prop_folder_cmake_file))
+            {
+                if (WriteCMakeFile(iter.get(), updated_files, results) == result::created)
+                {
+                    ++currentFiles;
+                }
+            }
+        }
+        if (project->HasValue(prop_cmake_file))
+        {
+            if (WriteCMakeFile(project, updated_files, results) == result::created)
+            {
+                ++currentFiles;
+            }
+        }
+    }
+
+    ttlib::cstr path;
 
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
@@ -43,19 +67,10 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         header_ext = extProp;
     }
 
-    size_t currentFiles = 0;
-
-    if (WriteCMakeFile(NeedsGenerateCheck) != result::exists)
-    {
-        if (NeedsGenerateCheck && !pClassList)
-            return true;
-
-        ++currentFiles;
-        results.emplace_back() << project->prop_as_string(prop_cmake_file) << " saved" << '\n';
-    }
-
     bool generate_result = true;
-    for (const auto& form: project->GetChildNodePtrs())
+    std::vector<Node*> forms;
+    project->CollectForms(forms);
+    for (const auto& form: forms)
     {
         if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
         {
@@ -64,8 +79,12 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             // generated.
             if (path == "filename_base")
                 continue;
-            path.backslashestoforward();
-            if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
+            if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_base_directory))
+            {
+                path = node_folder->as_string(prop_folder_base_directory);
+                path.append_filename(base_file.filename());
+            }
+            else if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
             {
                 path = GetProject()->GetBaseDirectory().utf8_string();
                 path.append_filename(base_file);
@@ -91,37 +110,30 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
             codegen.SetSrcWriteCode(cpp_cw.get());
 
-            codegen.GenerateBaseClass(form.get());
+            codegen.GenerateBaseClass(form);
 
             path.replace_extension(header_ext);
-            auto retval = h_cw->WriteFile(NeedsGenerateCheck);
+            auto retval = h_cw->WriteFile(pClassList != nullptr);
 
             if (retval > 0)
             {
-                if (!NeedsGenerateCheck)
+                if (!pClassList)
                 {
-                    results.emplace_back() << path.filename() << " saved" << '\n';
+                    updated_files.emplace_back(path);
                 }
                 else
                 {
-                    if (pClassList)
+                    if (form->isGen(gen_Images))
                     {
-                        if (form->isGen(gen_Images))
-                        {
-                            // While technically this is a "form" it doesn't have the usual properties set
+                        // While technically this is a "form" it doesn't have the usual properties set
 
-                            pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
-                        }
-                        else
-                        {
-                            pClassList->emplace_back(form->prop_as_string(prop_class_name));
-                        }
-                        continue;
+                        pClassList->emplace_back(GenEnum::map_GenNames[gen_Images]);
                     }
                     else
                     {
-                        return true;
+                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
                     }
+                    continue;
                 }
             }
             else if (retval < 0)
@@ -135,25 +147,18 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
             }
 
             path.replace_extension(source_ext);
-            retval = cpp_cw->WriteFile(NeedsGenerateCheck);
+            retval = cpp_cw->WriteFile(pClassList != nullptr);
 
             if (retval > 0)
             {
-                if (!NeedsGenerateCheck)
+                if (!pClassList)
                 {
-                    results.emplace_back() << path.filename() << " saved" << '\n';
+                    updated_files.emplace_back(path);
                 }
                 else
                 {
-                    if (pClassList)
-                    {
-                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
-                        continue;
-                    }
-                    else
-                    {
-                        return generate_result;
-                    }
+                    pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                    continue;
                 }
             }
 
@@ -176,30 +181,29 @@ bool GenerateCodeFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<tt
         }
     }
 
-    if (NeedsGenerateCheck)
+    if ((updated_files.size() || results.size()) && !pClassList)
     {
-        if (pClassList && pClassList->size())
-            return generate_result;
-        else
-            return false;
-    }
+        GeneratedResultsDlg dlg;
+        dlg.Create(wxGetFrame().GetWindow());
+        for (auto& iter: updated_files)
+        {
+            iter.make_relative(GetProject()->getProjectPath());
+            dlg.m_lb_files->Append(iter);
+        }
 
-    if (results.size())
-    {
-        ttlib::cstr msg;
+        if (updated_files.size() == 1)
+            results.emplace_back("1 file was updated");
+        else
+            results.emplace_back() << updated_files.size() << " files were updated";
+
         for (auto& iter: results)
         {
-            msg += iter;
+            dlg.m_lb_info->Append(iter);
         }
 
-        if (currentFiles)
-        {
-            msg << '\n' << "The other " << currentFiles << " generated files are current";
-        }
-
-        wxMessageBox(msg.wx_str(), "Code Generation", wxOK, parent);
+        dlg.ShowModal();
     }
-    else if (currentFiles && parent)
+    else if (currentFiles && parent && !pClassList)
     {
         ttlib::cstr msg;
         msg << '\n' << "All " << currentFiles << " generated files are current";
@@ -230,8 +234,10 @@ void MainFrame::GenInhertedClass()
     }
 
     size_t currentFiles = 0;
+    std::vector<Node*> forms;
+    project->CollectForms(forms);
 
-    for (const auto& form: project->GetChildNodePtrs())
+    for (const auto& form: forms)
     {
         if (auto& file = form->prop_as_string(prop_derived_file); file.size())
         {
@@ -278,7 +284,7 @@ void MainFrame::GenInhertedClass()
         auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
         codegen.SetSrcWriteCode(cpp_cw.get());
 
-        auto retval = codegen.GenerateDerivedClass(project, form.get());
+        auto retval = codegen.GenerateDerivedClass(project, form);
         if (retval == result::fail)
         {
             results.emplace_back() << "Cannot create or write to the file " << path << '\n';
@@ -405,9 +411,12 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
         header_ext = extProp;
     }
 
+    std::vector<Node*> forms;
+    project->CollectForms(forms);
+
     for (auto& iter_class: ClassList)
     {
-        for (const auto& form: project->GetChildNodePtrs())
+        for (const auto& form: forms)
         {
             // The Images class doesn't have a prop_class_name, so use "Images". Note that this will fail if there is a real
             // form where the user set the class name to "Images". If this wasn't an Internal function, then we would need to
@@ -435,7 +444,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                 auto cpp_cw = std::make_unique<FileCodeWriter>(base_file.wx_str());
                 codegen.SetSrcWriteCode(cpp_cw.get());
 
-                codegen.GenerateBaseClass(form.get());
+                codegen.GenerateBaseClass(form);
 
                 base_file.replace_extension(header_ext);
                 bool new_hdr = (h_cw->WriteFile(true) > 0);
@@ -459,7 +468,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                     cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
                     codegen.SetSrcWriteCode(cpp_cw.get());
 
-                    codegen.GenerateBaseClass(form.get());
+                    codegen.GenerateBaseClass(form);
 
                     path.replace_extension(header_ext);
                     h_cw->WriteFile();
@@ -489,7 +498,7 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                     cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
                     codegen.SetSrcWriteCode(cpp_cw.get());
 
-                    codegen.GenerateBaseClass(form.get());
+                    codegen.GenerateBaseClass(form);
 
                     path.replace_extension(source_ext);
                     cpp_cw->WriteFile();

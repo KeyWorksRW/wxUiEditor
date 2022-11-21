@@ -40,6 +40,8 @@ public:
         MenuNEW_PARENT_FLEX_GRID_SIZER,
         MenuNEW_PARENT_GRIDBAG_SIZER,
 
+        MenuNEW_PARENT_FOLDER,
+
         MenuNEW_CHILD_BOX_SIZER,
         MenuNEW_CHILD_STATIC_SIZER,
         MenuNEW_CHILD_WRAP_SIZER,
@@ -138,6 +140,7 @@ public:
         MenuPROJECT_ADD_DIALOG,
         MenuPROJECT_ADD_WINDOW,
         MenuPROJECT_ADD_WIZARD,
+        MenuPROJECT_ADD_FOLDER,
         MenuPROJECT_SORT_FORMS,
 
         MenuEXPAND_ALL,

@@ -33,6 +33,8 @@ class Project : public Node
 public:
     Project(NodeDeclaration* declaration) : Node(declaration) {}
 
+    void CollectForms(std::vector<Node*>& forms, Node* node_start = nullptr);
+
     // Make class and filenames unique to the project
     void FixupDuplicatedNode(Node* new_node);
 
@@ -66,7 +68,7 @@ public:
     ttString GetDerivedDirectory();
 
     // Returns the first project child that is a form, or nullptr if not form children found.
-    Node* GetFirstFormChild();
+    Node* GetFirstFormChild(Node* node = nullptr);
 
     wxImage GetImage(const ttlib::cstr& description);
 
@@ -126,9 +128,9 @@ public:
     void CollectBundles();
 
 protected:
-    bool CheckNode(const NodeSharedPtr& node);
+    bool CheckNode(Node* node);
 
-    void CollectNodeBundles(const NodeSharedPtr& node, const NodeSharedPtr& form);
+    void CollectNodeBundles(Node* node, Node* form);
 
     bool AddNewEmbeddedBundle(const ttlib::multistr& parts, ttlib::cstr path, Node* form);
 

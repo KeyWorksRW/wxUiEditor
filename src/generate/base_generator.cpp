@@ -203,13 +203,16 @@ bool BaseGenerator::AllowPropertyChange(wxPropertyGridEvent* event, NodeProperty
         if (newValue.empty())
             return true;
 
-        for (const auto& iter: GetProject()->GetChildNodePtrs())
+        std::vector<Node*> forms;
+        GetProject()->CollectForms(forms);
+
+        for (const auto& iter: forms)
         {
-            if (iter.get() == prop->GetNode())
+            if (iter == prop->GetNode())
             {
                 continue;
             }
-            else if (iter.get()->prop_as_string(prop_class_name).is_sameas(newValue))
+            else if (iter->prop_as_string(prop_class_name).is_sameas(newValue))
             {
                 event->SetValidationFailureMessage("The name you have chosen is already in use by another class.");
                 event->Veto();

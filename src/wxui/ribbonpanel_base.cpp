@@ -30,6 +30,7 @@ namespace wxue_img
 {
     extern const unsigned char auitoolbar_png[476];
     extern const unsigned char dataview_ctrl_png[231];
+    extern const unsigned char folder_png[641];
     extern const unsigned char ribbon_bar_png[844];
     extern const unsigned char ribbon_buttonbar_png[300];
     extern const unsigned char scrollbar_png[214];
@@ -99,12 +100,13 @@ bool RibbonPanelBase::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos
     }
     forms_bar_bars_2->Realize();
 
-    auto* panel_wizard_2 = new wxRibbonPanel(page_forms, wxID_ANY, "Images");
+    auto* panel_wizard_2 = new wxRibbonPanel(page_forms, wxID_ANY, "Other");
 
     auto* forms_bar_images = new wxRibbonToolBar(panel_wizard_2, wxID_ANY);
     {
         forms_bar_images->AddTool(gen_Images, wxueImage(wxue_img::pagectrl_png, sizeof(wxue_img::pagectrl_png)), "Create a file containing embedded images", wxRIBBON_BUTTON_NORMAL);
         forms_bar_images->AddTool(gen_embedded_image, wxueImage(wxue_img::static_bitmap_png, sizeof(wxue_img::static_bitmap_png)), "Add an embedded image to an Images file", wxRIBBON_BUTTON_NORMAL);
+        forms_bar_images->AddTool(gen_folder, wxueImage(wxue_img::folder_png, sizeof(wxue_img::folder_png)), "Create a folder that can be used to organize forms.", wxRIBBON_BUTTON_NORMAL);
     }
     forms_bar_images->Realize();
 

@@ -135,6 +135,21 @@ Node* Node::get_form() noexcept
     return nullptr;
 }
 
+Node* Node::get_folder() noexcept
+{
+    auto parent = GetParent();
+    while (parent)
+    {
+        if (parent->isGen(gen_folder))
+        {
+            return parent;
+        }
+        parent = parent->GetParent();
+    }
+
+    return nullptr;
+}
+
 bool Node::Adopt(NodeSharedPtr child)
 {
     ASSERT_MSG(child != GetSharedPtr(), "A node can't adopt itself!");

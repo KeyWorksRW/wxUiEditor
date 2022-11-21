@@ -77,9 +77,11 @@ void AllowFileChange(wxPropertyGridEvent& event, NodeProperty* prop, Node* node)
         auto filename = newValue.sub_cstr();
         auto project = GetProject();
 
-        for (const auto& child: project->GetChildNodePtrs())
+        std::vector<Node*> forms;
+        project->CollectForms(forms);
+        for (const auto& child: forms)
         {
-            if (child.get() == node)
+            if (child == node)
                 continue;
             if (prop->isProp(prop_base_file))
             {
@@ -181,7 +183,10 @@ void ChangeDerivedDirectory(ttlib::cstr& path)
     auto undo_derived = std::make_shared<ModifyProperties>("Derived directory");
     undo_derived->AddProperty(GetProject()->get_prop_ptr(prop_derived_directory), path);
 
-    for (auto& form: GetProject()->GetChildNodePtrs())
+    std::vector<Node*> forms;
+    GetProject()->CollectForms(forms);
+
+    for (auto& form: forms)
     {
         if (form->prop_as_bool(prop_use_derived_class) && form->HasValue(prop_derived_file))
         {
@@ -218,7 +223,10 @@ void ChangeBaseDirectory(ttlib::cstr& path)
     auto undo_derived = std::make_shared<ModifyProperties>("Base directory");
     undo_derived->AddProperty(GetProject()->get_prop_ptr(prop_base_directory), path);
 
-    for (const auto& form: GetProject()->GetChildNodePtrs())
+    std::vector<Node*> forms;
+    GetProject()->CollectForms(forms);
+
+    for (const auto& form: forms)
     {
         if (form->HasValue(prop_base_file))
         {

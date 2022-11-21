@@ -16,14 +16,11 @@
 #include "project_class.h"   // Project class
 #include "write_code.h"      // Write code to Scintilla or file
 
-bool GenerateLuaFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttlib::cstr>* pClassList)
+bool GenerateLuaFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
 {
     auto project = GetProject();
     if (project->GetChildCount() == 0)
     {
-        if (NeedsGenerateCheck)
-            return false;
-
         wxMessageBox("You cannot generate any code until you have added a top level form.", "Code Generation");
         return false;
     }
@@ -35,13 +32,20 @@ bool GenerateLuaFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttl
     size_t currentFiles = 0;
 
     bool generate_result = true;
-    for (const auto& form: project->GetChildNodePtrs())
+    std::vector<Node*> forms;
+    project->CollectForms(forms);
+
+    for (const auto& form: forms)
     {
         if (auto& base_file = form->prop_as_string(prop_lua_file); base_file.size())
         {
             path = base_file;
-            path.backslashestoforward();
-            if (GetProject()->HasValue(prop_lua_output_folder) && !path.contains("/"))
+            if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_folder_lua_output_folder))
+            {
+                path = node_folder->as_string(prop_folder_lua_output_folder);
+                path.append_filename(base_file.filename());
+            }
+            else if (GetProject()->HasValue(prop_lua_output_folder) && !path.contains("/"))
             {
                 path = GetProject()->GetBaseDirectory(GEN_LANG_LUA).utf8_string();
                 path.append_filename(base_file);
@@ -66,27 +70,20 @@ bool GenerateLuaFiles(wxWindow* parent, bool NeedsGenerateCheck, std::vector<ttl
             auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
             codegen.SetSrcWriteCode(cpp_cw.get());
 
-            codegen.GenerateLuaClass(form.get());
+            codegen.GenerateLuaClass(form);
 
-            auto retval = cpp_cw->WriteFile(NeedsGenerateCheck);
+            auto retval = cpp_cw->WriteFile();
 
             if (retval > 0)
             {
-                if (!NeedsGenerateCheck)
+                if (!pClassList)
                 {
                     results.emplace_back() << path.filename() << " saved" << '\n';
                 }
                 else
                 {
-                    if (pClassList)
-                    {
-                        pClassList->emplace_back(form->prop_as_string(prop_class_name));
-                        continue;
-                    }
-                    else
-                    {
-                        return generate_result;
-                    }
+                    pClassList->emplace_back(form->prop_as_string(prop_class_name));
+                    continue;
                 }
             }
 
@@ -171,12 +168,14 @@ void BaseCodeGenerator::GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type)
 
     EventVector events;
     std::thread thrd_get_events(&BaseCodeGenerator::CollectEventHandlers, this, form_node, std::ref(events));
+    std::vector<Node*> forms;
+    m_project->CollectForms(forms);
 
-    for (const auto& form: m_project->GetChildNodePtrs())
+    for (const auto& form: forms)
     {
         if (form->isGen(gen_Images))
         {
-            m_ImagesForm = form.get();
+            m_ImagesForm = form;
             break;
         }
     }

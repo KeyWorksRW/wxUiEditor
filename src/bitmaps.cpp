@@ -67,6 +67,7 @@ static const ImageMap png_headers[] = {
     { "dirPicker", dirPicker_png, sizeof(dirPicker_png) },
     { "doc_mdi_parent_frame", doc_mdi_parent_frame_png, sizeof(doc_mdi_parent_frame_png) },
     { "filePicker", filePicker_png, sizeof(filePicker_png) },
+    { "folder", folder_png, sizeof(folder_png) },
     { "fontPicker", fontPicker_png, sizeof(fontPicker_png) },
     { "gauge", gauge_png, sizeof(gauge_png) },
     { "genericdir_ctrl", genericdir_ctrl_png, sizeof(genericdir_ctrl_png) },

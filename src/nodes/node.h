@@ -45,9 +45,6 @@ public:
     NodeSharedPtr GetParentPtr() const noexcept { return m_parent; }
     Node* GetParent() const noexcept { return m_parent.get(); }
 
-    // Returns this if the node is a form, else walks up node tree to find the parent form.
-    Node* get_form() noexcept;
-
     void SetParent(NodeSharedPtr parent) { m_parent = parent; }
     void SetParent(Node* parent) { m_parent = parent->GetSharedPtr(); }
 
@@ -108,6 +105,7 @@ public:
     bool IsRibbonBar() const noexcept { return isType(type_ribbonbar); }
 
     bool IsForm() const noexcept;
+    bool IsFormParent() const noexcept { return (isGen(gen_Project) || isGen(gen_folder) || isGen(gen_sub_folder)); };
 
     bool IsStaticBoxSizer() const noexcept
     {
@@ -133,8 +131,14 @@ public:
     // Returns the value of the parent property "var_name" or "class_name"
     const ttlib::cstr& get_parent_name() const;
 
+    // Returns this if the node is a form, else walks up node tree to find the parent form.
+    Node* get_form() noexcept;
+
     // Finds the parent form and returns the value of the it's property "class_name"
     const ttlib::cstr& get_form_name();
+
+    // Returns the folder node if there is one, nullptr otherwise.
+    Node* get_folder() noexcept;
 
     NodeDeclaration* GetNodeDeclaration() { return m_declaration; }
 

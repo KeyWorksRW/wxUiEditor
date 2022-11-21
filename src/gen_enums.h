@@ -410,23 +410,38 @@ namespace GenEnum
         prop_xrc_directory,
         prop_xrc_file,
 
+        prop_folder_base_directory,
+        prop_folder_derived_directory,
+        prop_folder_namespace,
+        prop_folder_cmake_file,
+        prop_folder_cmake_varname,
+
+        prop_folder_xrc_directory,
+        prop_folder_combined_xrc_file,
+
         prop_python_combine_forms,
         prop_python_combined_file,
         prop_python_copy_art,  // Copy art files to output folder
         prop_python_output_folder,
         prop_python_use_xrc,
+        prop_folder_python_output_folder,
+        prop_folder_python_combined_file,
 
         prop_lua_combine_forms,
         prop_lua_combined_file,
         prop_lua_copy_art,
         prop_lua_output_folder,
         prop_lua_use_xrc,
+        prop_folder_lua_output_folder,
+        prop_folder_lua_combined_file,
 
         prop_php_combine_forms,
         prop_php_combined_file,
         prop_php_copy_art,
         prop_php_output_folder,
         prop_php_use_xrc,
+        prop_folder_php_output_folder,
+        prop_folder_php_combined_file,
 
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
@@ -459,6 +474,7 @@ namespace GenEnum
         type_dataviewlistctrl,
         type_dataviewtreectrl,
         type_embed_image,
+        type_folder,
         type_form,
         type_frame_form,
         type_gbsizer,
@@ -496,6 +512,7 @@ namespace GenEnum
         type_splitteritem,
         type_staticbox,
         type_statusbar,
+        type_sub_folder,
         type_submenu,
         type_tool,
         type_tool_dropdown,
@@ -528,6 +545,7 @@ namespace GenEnum
         gen_Boolean_Validator,
         gen_Choice_Validator,
         gen_Code,
+        gen_folder_Code,
         gen_Code_Generation,
         gen_Command_Bitmaps,
         gen_Integer_Validator,
@@ -542,8 +560,16 @@ namespace GenEnum
         gen_wxLua,
         gen_wxPHP,
         gen_wxPython,
+        gen_folder_wxLua,
+        gen_folder_wxPHP,
+        gen_folder_wxPython,
+        gen_folder_XRC,
         gen_wxTopLevelWindow,
         gen_wxWindow,
+
+        gen_Images,
+        gen_folder,
+        gen_sub_folder,
 
         // The following are the rergular generators
 
@@ -551,7 +577,6 @@ namespace GenEnum
         gen_Check3State,
         gen_CloseButton,
         gen_CustomControl,
-        gen_Images,
         gen_MenuBar,
         gen_PageCtrl,
         gen_PanelForm,

@@ -702,16 +702,11 @@ void MainFrame::ProjectLoaded()
     setStatusText("Project loaded");
     if (!m_isImported)
     {
-        m_isProject_generated = !GenerateCodeFiles(this, true);
         if (!GetProject()->GetProjectFile().filename().is_sameas(txtEmptyProject))
         {
             m_FileHistory.AddFileToHistory(GetProject()->GetProjectFile());
         }
         m_isProject_modified = false;
-    }
-    else
-    {
-        m_isProject_generated = false;
     }
 
     m_undo_stack.clear();
@@ -850,12 +845,8 @@ void MainFrame::UpdateFrame()
     if (m_isProject_modified)
     {
         filename.insert(0, "*");
-        m_isProject_generated = false;
     }
     SetTitle(filename);
-
-    // m_menuTools->Enable(id_GenerateCode, !m_isProject_generated);
-    // m_toolbar->EnableTool(id_GenerateCode, !m_isProject_generated);
 
     wxString menu_text = "Undo";
     if (m_undo_stack.IsUndoAvailable())
@@ -884,7 +875,7 @@ void MainFrame::UpdateFrame()
 #if defined(_DEBUG)
     m_menuEdit->Enable(id_insert_widget, true);
 #else
-    m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->isGen(gen_Project));
+    m_menuEdit->Enable(id_insert_widget, m_selected_node && !m_selected_node->IsFormParent());
 #endif  // _DEBUG
 
     UpdateMoveMenu();
@@ -1644,6 +1635,21 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
 
     if (where == MoveDirection::Left)
     {
+        if (node->isGen(gen_folder))
+            return false;
+        else if (node->isGen(gen_sub_folder) && parent->isGen(gen_folder))
+            return false;  // You can't have Project as the parent of a sub_folder
+
+        if (parent->isGen(gen_folder) || parent->isGen(gen_sub_folder))
+        {
+            if (!check_only)
+            {
+                wxWindowUpdateLocker freeze(this);
+                PushUndoAction(std::make_shared<ChangeParentAction>(node, parent->GetParent()));
+            }
+            return true;
+        }
+
         auto grandparent = parent->GetParent();
         while (grandparent && !grandparent->IsSizer())
         {
@@ -1663,9 +1669,53 @@ bool MainFrame::MoveNode(Node* node, MoveDirection where, bool check_only)
     }
     else if (where == MoveDirection::Right)
     {
+        if (node->isGen(gen_folder))
+            return false;
+
         auto pos = parent->GetChildPosition(node) - 1;
         if (pos < parent->GetChildCount())
         {
+            if (node->IsForm() && pos >= 0)
+            {
+                auto* new_parent = parent->GetChild(pos);
+                if (new_parent->IsForm())
+                {
+                    if (!check_only)
+                        wxMessageBox("You cannot move a form to the right of another form.", "Move item");
+                    return false;
+                }
+                else if (new_parent->isGen(gen_folder) || new_parent->isGen(gen_sub_folder))
+                {
+                    if (!check_only)
+                    {
+                        wxWindowUpdateLocker freeze(this);
+                        PushUndoAction(std::make_shared<ChangeParentAction>(node, new_parent));
+                    }
+                    return true;
+                }
+            }
+            else if (node->isGen(gen_sub_folder) && pos >= 0)
+            {
+                auto* new_parent = parent->GetChild(pos);
+                while (new_parent->IsForm())
+                {
+                    if (pos == 0)
+                    {
+                        if (!check_only)
+                            wxMessageBox("You cannot move a folder to the right of a form.", "Move item");
+                        return false;
+                    }
+                }
+                if (new_parent->isGen(gen_folder) || new_parent->isGen(gen_sub_folder))
+                {
+                    if (!check_only)
+                    {
+                        wxWindowUpdateLocker freeze(this);
+                        PushUndoAction(std::make_shared<ChangeParentAction>(node, new_parent));
+                    }
+                    return true;
+                }
+            }
             parent = FindChildSizerItem(parent->GetChild(pos), true);
 
             if (check_only)

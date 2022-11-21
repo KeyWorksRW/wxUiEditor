@@ -254,6 +254,8 @@ void NodeCreator::InitGenerators()
     SET_GENERATOR(gen_CustomControl, CustomControl)
 
     SET_GENERATOR(gen_Project, ProjectGenerator)
+    SET_GENERATOR(gen_folder, FolderGenerator)
+    SET_GENERATOR(gen_sub_folder, SubFolderGenerator)
 
     AddAllConstants();
 }

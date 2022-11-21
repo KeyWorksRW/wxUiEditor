@@ -24,6 +24,7 @@ namespace wxue_img
     wxBitmapBundle bundle_empty_png();
     wxBitmapBundle bundle_unknown_png();
     wxBitmapBundle bundle_project_png();
+    wxBitmapBundle bundle_folder_png();
     wxBitmapBundle bundle_title_close_png();
     wxBitmapBundle bundle_debug_16_png();
     wxBitmapBundle bundle_debug_32_png();
@@ -79,6 +80,7 @@ namespace wxue_img
     extern const unsigned char debug_32_png[1701];
     extern const unsigned char default_png[518];
     extern const unsigned char empty_png[101];
+    extern const unsigned char folder_png[641];
     extern const unsigned char import_svg[418];
     extern const unsigned char logo16_png[639];
     extern const unsigned char logo32_png[1470];

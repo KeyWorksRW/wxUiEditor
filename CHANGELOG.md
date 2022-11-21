@@ -15,6 +15,8 @@ Release summary...
 - Menu items can now contain multiple accelerators (requires wxWidgets 3.1.6 or later)
 - XRC now generates XML for toolbar separators.
 
+You can now place forms inside of folders to make it easier to organize your project when you have a large number of forms. Besides organizing the Navigation pane, folders also let you override properties such as the output folder for just the forms contains within that folder. The new folder command is available on the right side of the Forms panel of the toolbar, or from the Move sub-menu when you right-click on a form.
+
 The right-click menu for a widget in the Navigation Panel will sometimes have a `Change to` option. The 1.0 release supported changing most sizers. New to 1.1 is the ability to change some widgets as well. The following widgets can be changed to another widget in the group:
 
 - 2-state wxCheckBox, 3-state wxCheckBox, wxRadioBox

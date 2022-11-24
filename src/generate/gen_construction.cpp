@@ -43,15 +43,18 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     bool need_closing_brace = false;
 
-    std::optional<ttlib::cstr> result;
-    if (m_language == GEN_LANG_CPLUSPLUS)
-        result = generator->GenConstruction(node);
-    else if (m_language == GEN_LANG_PYTHON)
-        result = generator->GenPythonConstruction(node);
-    else if (m_language == GEN_LANG_LUA)
-        result = generator->GenLuaConstruction(node);
-    else if (m_language == GEN_LANG_PHP)
-        result = generator->GenPhpConstruction(node);
+    auto result = generator->GenConstruction(node, m_language);
+    if (!result)
+    {
+        if (m_language == GEN_LANG_CPLUSPLUS)
+            result = generator->GenConstruction(node);
+        else if (m_language == GEN_LANG_PYTHON)
+            result = generator->GenPythonConstruction(node);
+        else if (m_language == GEN_LANG_LUA)
+            result = generator->GenLuaConstruction(node);
+        else if (m_language == GEN_LANG_PHP)
+            result = generator->GenPhpConstruction(node);
+    }
 
     if (result)
     {
@@ -85,8 +88,21 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         // A wxRibbonToolBar can only have abstract children that consist of the tools.
         for (const auto& child: node->GetChildNodePtrs())
         {
-            auto child_comp = child->GetNodeDeclaration()->GetGenerator();
-            if (result = child_comp->GenConstruction(child.get()); result)
+            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
+            result = child_generator->GenConstruction(child.get(), m_language);
+            if (!result)
+            {
+                if (m_language == GEN_LANG_CPLUSPLUS)
+                    result = child_generator->GenConstruction(child.get());
+                else if (m_language == GEN_LANG_PYTHON)
+                    result = child_generator->GenPythonConstruction(child.get());
+                else if (m_language == GEN_LANG_LUA)
+                    result = child_generator->GenLuaConstruction(child.get());
+                else if (m_language == GEN_LANG_PHP)
+                    result = child_generator->GenPhpConstruction(child.get());
+            }
+
+            if (result)
                 m_source->writeLine(result.value());
         }
         EndBrace();
@@ -104,8 +120,22 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             auto old_parent = child->GetParent();
             child->SetParent(menu_node_ptr.get());
             auto child_generator = child->GetNodeDeclaration()->GetGenerator();
-            if (result = child_generator->GenConstruction(child.get()); result)
+
+            result = child_generator->GenConstruction(child.get(), m_language);
+            if (!result)
+            {
+                if (m_language == GEN_LANG_CPLUSPLUS)
+                    result = child_generator->GenConstruction(child.get());
+                else if (m_language == GEN_LANG_PYTHON)
+                    result = child_generator->GenPythonConstruction(child.get());
+                else if (m_language == GEN_LANG_LUA)
+                    result = child_generator->GenLuaConstruction(child.get());
+                else if (m_language == GEN_LANG_PHP)
+                    result = child_generator->GenPhpConstruction(child.get());
+            }
+            if (result)
                 m_source->writeLine(result.value());
+
             GenSettings(child.get());
             // A submenu can have children
             if (child->GetChildCount())
@@ -113,7 +143,19 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 for (const auto& grandchild: child->GetChildNodePtrs())
                 {
                     auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
-                    if (result = grandchild_generator->GenConstruction(grandchild.get()); result)
+                    result = grandchild_generator->GenConstruction(grandchild.get(), m_language);
+                    if (!result)
+                    {
+                        if (m_language == GEN_LANG_CPLUSPLUS)
+                            result = grandchild_generator->GenConstruction(grandchild.get());
+                        else if (m_language == GEN_LANG_PYTHON)
+                            result = grandchild_generator->GenPythonConstruction(grandchild.get());
+                        else if (m_language == GEN_LANG_LUA)
+                            result = grandchild_generator->GenLuaConstruction(grandchild.get());
+                        else if (m_language == GEN_LANG_PHP)
+                            result = grandchild_generator->GenPhpConstruction(grandchild.get());
+                    }
+                    if (result)
                         m_source->writeLine(result.value());
                     GenSettings(grandchild.get());
                     // A submenu menu item can also be a submenu with great grandchildren.
@@ -122,7 +164,19 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                         for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
                         {
                             auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
-                            if (result = great_grandchild_generator->GenConstruction(great_grandchild.get()); result)
+                            result = great_grandchild_generator->GenConstruction(great_grandchild.get(), m_language);
+                            if (!result)
+                            {
+                                if (m_language == GEN_LANG_CPLUSPLUS)
+                                    result = great_grandchild_generator->GenConstruction(great_grandchild.get());
+                                else if (m_language == GEN_LANG_PYTHON)
+                                    result = great_grandchild_generator->GenPythonConstruction(great_grandchild.get());
+                                else if (m_language == GEN_LANG_LUA)
+                                    result = great_grandchild_generator->GenLuaConstruction(great_grandchild.get());
+                                else if (m_language == GEN_LANG_PHP)
+                                    result = great_grandchild_generator->GenPhpConstruction(great_grandchild.get());
+                            }
+                            if (result)
                                 m_source->writeLine(result.value());
                             GenSettings(great_grandchild.get());
                             // It's possible to have even more levels of submenus, but we'll stop here.
@@ -245,14 +299,18 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         {
             if (type == aftercode_types[idx])
             {
-                if (m_language == GEN_LANG_CPLUSPLUS)
-                    result = generator->GenAdditionalCode(code_after_children, node);
-                else if (m_language == GEN_LANG_PYTHON)
-                    result = generator->GenPythonAdditionalCode(code_after_children, node);
-                else if (m_language == GEN_LANG_LUA)
-                    result = generator->GenLuaAdditionalCode(code_after_children, node);
-                else if (m_language == GEN_LANG_PHP)
-                    result = generator->GenPhpAdditionalCode(code_after_children, node);
+                result = generator->GenAdditionalCode(code_after_children, node, m_language);
+                if (!result)
+                {
+                    if (m_language == GEN_LANG_CPLUSPLUS)
+                        result = generator->GenAdditionalCode(code_after_children, node);
+                    else if (m_language == GEN_LANG_PYTHON)
+                        result = generator->GenPythonAdditionalCode(code_after_children, node);
+                    else if (m_language == GEN_LANG_LUA)
+                        result = generator->GenLuaAdditionalCode(code_after_children, node);
+                    else if (m_language == GEN_LANG_PHP)
+                        result = generator->GenPhpAdditionalCode(code_after_children, node);
+                }
 
                 if (result && result.value().size())
                 {
@@ -496,16 +554,18 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
     auto declaration = node->GetNodeDeclaration();
     auto generator = declaration->GetGenerator();
 
-    std::optional<ttlib::cstr> result;
-    if (m_language == GEN_LANG_CPLUSPLUS)
-        result = generator->GenAfterChildren(node);
-    else if (m_language == GEN_LANG_PYTHON)
-        result = generator->GenPythonAfterChildren(node);
-    else if (m_language == GEN_LANG_LUA)
-        result = generator->GenLuaAfterChildren(node);
-    else if (m_language == GEN_LANG_PHP)
-        result = generator->GenPhpfterChildren(node);
-
+    auto result = generator->GenAfterChildren(node, m_language);
+    if (!result)
+    {
+        if (m_language == GEN_LANG_CPLUSPLUS)
+            result = generator->GenAfterChildren(node);
+        else if (m_language == GEN_LANG_PYTHON)
+            result = generator->GenPythonAfterChildren(node);
+        else if (m_language == GEN_LANG_LUA)
+            result = generator->GenLuaAfterChildren(node);
+        else if (m_language == GEN_LANG_PHP)
+            result = generator->GenPhpfterChildren(node);
+    }
     if (result)
     {
         // If the node needs to write code after all children are constructed, then create the children first, then write
@@ -583,15 +643,18 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     auto declaration = node->GetNodeDeclaration();
     auto generator = declaration->GetGenerator();
 
-    std::optional<ttlib::cstr> result;
-    if (m_language == GEN_LANG_CPLUSPLUS)
-        result = generator->GenAdditionalCode(code_after_children, node);
-    else if (m_language == GEN_LANG_PYTHON)
-        result = generator->GenPythonAdditionalCode(code_after_children, node);
-    else if (m_language == GEN_LANG_LUA)
-        result = generator->GenLuaAdditionalCode(code_after_children, node);
-    else if (m_language == GEN_LANG_PHP)
-        result = generator->GenPhpAdditionalCode(code_after_children, node);
+    auto result = generator->GenAdditionalCode(code_after_children, node, m_language);
+    if (!result)
+    {
+        if (m_language == GEN_LANG_CPLUSPLUS)
+            result = generator->GenAdditionalCode(code_after_children, node);
+        else if (m_language == GEN_LANG_PYTHON)
+            result = generator->GenPythonAdditionalCode(code_after_children, node);
+        else if (m_language == GEN_LANG_LUA)
+            result = generator->GenLuaAdditionalCode(code_after_children, node);
+        else if (m_language == GEN_LANG_PHP)
+            result = generator->GenPhpAdditionalCode(code_after_children, node);
+    }
 
     ttlib::cstr code;
     if (result && result.value().size())

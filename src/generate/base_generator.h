@@ -74,6 +74,9 @@ public:
 
     MockupParent* GetMockup();
 
+    // Override this to use a single GenConstruction() for all 4 languages
+    virtual std::optional<ttlib::cstr> GenConstruction(Node*, int /* language */) { return {}; }
+
     // Generate the code used to construct the object
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenLuaConstruction(Node*) { return {}; }
@@ -85,6 +88,12 @@ public:
     // This variant of GenConstruction requires the caller to write the ctor
     // code, and is only called when output C++ code.
     virtual bool GenConstruction(Node*, BaseCodeGenerator* /* code_gen */) { return false; }
+
+    // Override this to use a single GenConstruction() for all 4 languages
+    virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node*, int /* language */)
+    {
+        return {};
+    }
 
     // Generate specific additional code
     virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }
@@ -101,6 +110,9 @@ public:
         return {};
     }
 
+    // Override this to use a single GenAfterChildren() for all 4 languages
+    virtual std::optional<ttlib::cstr> GenAfterChildren(Node*, int /* language */) { return {}; }
+
     // Generate code after any children have been constructed
     //
     // Code will be written with indent::none set
@@ -113,6 +125,9 @@ public:
     virtual std::optional<ttlib::cstr> GenPythonEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenLuaEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenPhpEvents(NodeEvent*, const std::string&) { return {}; }
+
+    // Override this to use a single GenSettings() for all 4 languages
+    virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&, int /* language */) { return {}; }
 
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonSettings(Node*, size_t&) { return {}; }

@@ -42,45 +42,38 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonConstruction(Node* node)
+std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node, int language)
 {
-    ttlib::cstr code;
-    code << node->get_node_name() << " = wx.BoxSizer(" << node->prop_as_string(prop_orientation) << ")";
+    if (language == GEN_LANG_CPLUSPLUS)
+        return GenConstruction(node);
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
-    if (min_size.GetX() != -1 || min_size.GetY() != -1)
+    ttlib::cstr code;
+    switch (language)
     {
-        code << "\n\t" << node->get_node_name() << ".SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ")";
+        case GEN_LANG_PHP:
+            code << node->get_node_name(language) << " = new wxBoxSizer(";
+            break;
+
+        case GEN_LANG_PYTHON:
+        case GEN_LANG_LUA:
+            code << node->get_node_name() << " = " << GetWidgetName("wxBoxSizer", language) << '(';
+            break;
     }
-
-    return code;
-}
-
-std::optional<ttlib::cstr> BoxSizerGenerator::GenLuaConstruction(Node* node)
-{
-    ttlib::cstr code;
-    code << "ui." << node->get_node_name() << " = wx.wxBoxSizer(wx." << node->prop_as_string(prop_orientation) << ")";
+    code << node->prop_as_string(prop_orientation) << ")";
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n\tui." << node->get_node_name() << ":SetMinSize(wx.wxSize(" << min_size.GetX() << ", " << min_size.GetY()
-             << "))";
-    }
-
-    return code;
-}
-
-std::optional<ttlib::cstr> BoxSizerGenerator::GenPhpConstruction(Node* node)
-{
-    ttlib::cstr code;
-    code << '$' << node->get_node_name() << " = new wxBoxSizer(" << node->prop_as_string(prop_orientation) << ");";
-
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
-    if (min_size.GetX() != -1 || min_size.GetY() != -1)
-    {
-        code << "\n\t$" << node->get_node_name() << "->SetMinSize(new wxSize(" << min_size.GetX() << ", " << min_size.GetY()
-             << "))";
+        if (language == GEN_LANG_PHP)
+        {
+            code << "\n\t" << node->get_node_name(language) << "->SetMinSize(new wxSize(" << min_size.GetX() << ", "
+                 << min_size.GetY() << "))";
+        }
+        else
+        {
+            code << "\n\t" << node->get_node_name() << LangPtr(language) << "SetMinSize(" << min_size.GetX() << ", "
+                 << min_size.GetY() << ")";
+        }
     }
 
     return code;
@@ -131,12 +124,15 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node)
         return {};
 }
 
-std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonAfterChildren(Node* node)
+std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node, int language)
 {
+    if (language == GEN_LANG_CPLUSPLUS)
+        return GenAfterChildren(node);
+
     ttlib::cstr code;
     if (node->as_bool(prop_hide_children))
     {
-        code << "\t" << node->get_node_name() << ".ShowItems(false);";
+        code << "\t" << node->get_node_name(language) << LangPtr(language) << "ShowItems(false)";
     }
 
     auto parent = node->GetParent();
@@ -151,13 +147,14 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonAfterChildren(Node* node)
 
         if (parent->isGen(gen_wxRibbonPanel))
         {
-            code << parent->get_node_name() << ".SetSizerAndFit(" << node->get_node_name() << ");";
+            code << parent->get_node_name(language) << LangPtr(language) << "SetSizerAndFit("
+                 << node->get_node_name(language) << ")";
         }
         else
         {
-            if (GetParentName(node) != "self")
-                code << GetParentName(node) << ".";
-            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+            if (GetParentName(node) != "this")
+                code << GetParentName(node, language) << LangPtr(language);
+            code << "SetSizerAndFit(" << node->get_node_name(language) << ")";
         }
     }
 

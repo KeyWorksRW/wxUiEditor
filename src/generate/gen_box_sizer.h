@@ -14,13 +14,17 @@ class BoxSizerGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* /*parent*/) override;
 
+    // C++ version
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenPythonConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenLuaConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenPhpConstruction(Node* node) override;
 
+    // Multi-language version
+    std::optional<ttlib::cstr> GenConstruction(Node* node, int language) override;
+
+    // C++ version
     std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
-    std::optional<ttlib::cstr> GenPythonAfterChildren(Node*) override;
+
+    // Multi-language version
+    std::optional<ttlib::cstr> GenAfterChildren(Node* node, int language) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
     void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;

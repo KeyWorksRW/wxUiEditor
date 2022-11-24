@@ -322,10 +322,30 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
     }
     std::vector<Node*> forms;
     project->CollectForms(forms);
+    ttlib::cstr path;
 
     for (auto& form: forms)
     {
-        if (!form->HasValue(prop_xrc_file))
+        if (auto& base_file = form->prop_as_string(prop_xrc_file); base_file.size())
+        {
+            path = base_file;
+            if (path.empty())
+                continue;
+
+            if (auto* node_folder = form->get_folder();
+                node_folder && node_folder->HasValue(prop_xrc_directory))
+            {
+                path = node_folder->as_string(prop_xrc_directory);
+                path.append_filename(base_file.filename());
+            }
+            else if (GetProject()->HasValue(prop_xrc_directory) && !path.contains("/"))
+            {
+                path = GetProject()->GetBaseDirectory(GEN_LANG_XRC).utf8_string();
+                path.append_filename(base_file);
+            }
+            path.backslashestoforward();
+        }
+        else
         {
             // If the form type is supported, warn the user about not having an XRC file for it.
             if (!form->isGen(gen_Images) && !form->isGen(gen_wxPopupTransientWindow))
@@ -333,10 +353,9 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
                     << "No XRC filename specified for " << form->prop_as_string(prop_class_name) << '\n';
             continue;
         }
-        out_file = form->value(prop_xrc_file);
-        if (out_file.extension().empty())
+        if (path.extension().empty())
         {
-            out_file.replace_extension(".xrc");
+            path.replace_extension(".xrc");
         }
 
         pugi::xml_document doc_new;
@@ -352,14 +371,14 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
         auto form_object = root.append_child("object");
         GenXrcObject(form, form_object, false);
 
-        if (out_file.file_exists())
+        if (path.file_exists())
         {
             std::ostringstream xml_stream;
             doc_new.save(xml_stream, "\t");
             auto new_str = xml_stream.str();
 
             pugi::xml_document doc_old;
-            if (doc_old.load_file(out_file.c_str()))
+            if (doc_old.load_file(path.c_str()))
             {
                 std::ostringstream xml_old_stream;
                 doc_old.save(xml_old_stream, "\t");
@@ -372,13 +391,13 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
             }
         }
 
-        if (!doc_new.save_file(out_file.c_str(), "\t"))
+        if (!doc_new.save_file(path.c_str(), "\t"))
         {
-            results.msgs.emplace_back() << "Cannot create or write to the file " << out_file << '\n';
+            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
         }
         else
         {
-            results.updated_files.emplace_back(out_file);
+            results.updated_files.emplace_back(path);
         }
     }
 

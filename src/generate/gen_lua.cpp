@@ -48,7 +48,6 @@ bool GenerateLuaFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
                 path = GetProject()->GetBaseDirectory(GEN_LANG_LUA).utf8_string();
                 path.append_filename(base_file);
             }
-            path.make_absolute();
             path.backslashestoforward();
         }
         else

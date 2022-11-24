@@ -51,7 +51,6 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
                 path = GetProject()->GetBaseDirectory(GEN_LANG_PYTHON).utf8_string();
                 path.append_filename(base_file);
             }
-            path.make_absolute();
             path.backslashestoforward();
         }
         else

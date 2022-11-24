@@ -367,9 +367,6 @@ protected:
     void OnNodeSelected(CustomEvent& event);
     void OnQueueSelect(CustomEvent& event);
 
-    void GenInhertedClass();
-    void ExportXRC();
-
 #if defined(_DEBUG) || defined(INTERNAL_TESTING)
     void OnCodeCompare(wxCommandEvent& event);
     void OnConvertImageDlg(wxCommandEvent& event);

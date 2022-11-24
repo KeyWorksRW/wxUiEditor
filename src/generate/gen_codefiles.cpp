@@ -10,13 +10,12 @@
 #include "mainframe.h"
 
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Base class
+#include "generate_dlg.h"   // GenerateDlg -- Dialog for choosing and generating specific language file(s)
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 #include "write_code.h"     // Write code to Scintilla or file
 
-#include "../wxui/dlg_gen_results.h"
-
-bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
+bool GenerateCodeFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
 {
     auto project = GetProject();
     if (project->GetChildCount() == 0)
@@ -27,27 +26,23 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
     ttSaveCwd cwd;
     GetProject()->GetProjectPath().ChangeDir();
 
-    size_t currentFiles = 0;
-    std::vector<ttlib::cstr> results;
-    std::vector<ttlib::cstr> updated_files;
-
     if (project->prop_as_bool(prop_generate_cmake) && !pClassList)
     {
         for (auto& iter: project->GetChildNodePtrs())
         {
             if (iter->isGen(gen_folder) && iter->HasValue(prop_folder_cmake_file))
             {
-                if (WriteCMakeFile(iter.get(), updated_files, results) == result::created)
+                if (WriteCMakeFile(iter.get(), results.updated_files, results.msgs) == result::created)
                 {
-                    ++currentFiles;
+                    ++results.file_count;
                 }
             }
         }
         if (project->HasValue(prop_cmake_file))
         {
-            if (WriteCMakeFile(project, updated_files, results) == result::created)
+            if (WriteCMakeFile(project, results.updated_files, results.msgs) == result::created)
             {
-                ++currentFiles;
+                ++results.file_count;
             }
         }
     }
@@ -94,7 +89,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
         }
         else
         {
-            results.emplace_back() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n';
+            results.msgs.emplace_back() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n';
             continue;
         }
 
@@ -119,7 +114,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             {
                 if (!pClassList)
                 {
-                    updated_files.emplace_back(path);
+                    results.updated_files.emplace_back(path);
                 }
                 else
                 {
@@ -138,12 +133,12 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             }
             else if (retval < 0)
             {
-                results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
                 generate_result = false;
             }
             else  // retval == result::exists)
             {
-                ++currentFiles;
+                ++results.file_count;
             }
 
             path.replace_extension(source_ext);
@@ -153,7 +148,7 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             {
                 if (!pClassList)
                 {
-                    updated_files.emplace_back(path);
+                    results.updated_files.emplace_back(path);
                 }
                 else
                 {
@@ -164,11 +159,11 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
 
             else if (retval < 0)
             {
-                results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
             }
             else  // retval == result::exists
             {
-                ++currentFiles;
+                ++results.file_count;
             }
         }
         catch (const std::exception& TESTING_PARAM(e))
@@ -180,45 +175,15 @@ bool GenerateCodeFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             continue;
         }
     }
-
-    if ((updated_files.size() || results.size()) && !pClassList)
-    {
-        GeneratedResultsDlg dlg;
-        dlg.Create(wxGetFrame().GetWindow());
-        for (auto& iter: updated_files)
-        {
-            iter.make_relative(GetProject()->getProjectPath());
-            dlg.m_lb_files->Append(iter);
-        }
-
-        if (updated_files.size() == 1)
-            results.emplace_back("1 file was updated");
-        else
-            results.emplace_back() << updated_files.size() << " files were updated";
-
-        for (auto& iter: results)
-        {
-            dlg.m_lb_info->Append(iter);
-        }
-
-        dlg.ShowModal();
-    }
-    else if (currentFiles && parent && !pClassList)
-    {
-        ttlib::cstr msg;
-        msg << '\n' << "All " << currentFiles << " generated files are current";
-        wxMessageBox(msg, "Code Generation", wxOK, parent);
-    }
     return generate_result;
 }
 
-void MainFrame::GenInhertedClass()
+void GenInhertedClass(GenResults& results)
 {
     auto project = GetProject();
     ttlib::cwd cwd;
     ttlib::ChangeDir(GetProject()->getProjectPath());
     ttlib::cstr path;
-    std::vector<ttlib::cstr> results;
 
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
@@ -233,7 +198,6 @@ void MainFrame::GenInhertedClass()
         header_ext = extProp;
     }
 
-    size_t currentFiles = 0;
     std::vector<Node*> forms;
     project->CollectForms(forms);
 
@@ -259,12 +223,12 @@ void MainFrame::GenInhertedClass()
                 path.replace_extension(header_ext);
                 if (path.file_exists())
                 {
-                    currentFiles += 2;
+                    results.file_count += 2;
                     continue;
                 }
                 else
                 {
-                    ++currentFiles;
+                    ++results.file_count;
                 }
             }
             path.remove_extension();
@@ -287,7 +251,7 @@ void MainFrame::GenInhertedClass()
         auto retval = codegen.GenerateDerivedClass(project, form);
         if (retval == result::fail)
         {
-            results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
             continue;
         }
         else if (retval == result::exists)
@@ -295,7 +259,7 @@ void MainFrame::GenInhertedClass()
             path.replace_extension(header_ext);
             if (path.file_exists())
             {
-                ++currentFiles;
+                ++results.file_count;
                 continue;
             }
 
@@ -303,15 +267,15 @@ void MainFrame::GenInhertedClass()
             retval = h_cw->WriteFile();
             if (retval == result::fail)
             {
-                results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
             }
             else if (retval == result::exists)
             {
-                ++currentFiles;
+                ++results.file_count;
             }
             else
             {
-                results.emplace_back() << path.filename() << " saved" << '\n';
+                results.updated_files.emplace_back(path);
             }
             continue;
         }
@@ -329,59 +293,31 @@ void MainFrame::GenInhertedClass()
 
         if (retval == result::fail)
         {
-            results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
         }
         else if (retval == result::exists)
         {
-            ++currentFiles;
+            ++results.file_count;
         }
         else
         {
-            results.emplace_back() << path.filename() << " saved" << '\n';
+            results.updated_files.emplace_back(path);
         }
 
         path.replace_extension(source_ext);
         retval = cpp_cw->WriteFile();
         if (retval == result::fail)
         {
-            results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+            results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
         }
         else if (retval == result::exists)
         {
-            ++currentFiles;
+            ++results.file_count;
         }
         else
         {
-            results.emplace_back() << path.filename() << " saved" << '\n';
+            results.updated_files.emplace_back(path);
         }
-    }
-
-    if (results.size())
-    {
-        ttlib::cstr msg;
-        for (auto& iter: results)
-        {
-            msg += iter;
-        }
-
-        if (currentFiles)
-        {
-            msg << '\n' << "The other " << currentFiles << " derived files have already been created";
-        }
-
-        wxMessageBox(msg.wx_str(), "Code Generation", wxOK);
-    }
-    else if (currentFiles)
-    {
-        ttlib::cstr msg;
-        msg << '\n' << "All " << currentFiles << " derived files have already been created";
-        wxMessageBox(msg, "Code Generation", wxOK);
-    }
-    else
-    {
-        wxMessageBox("There were no derived filenames specified -- nothing to generate.\n\nAdd a filename to the "
-                     "derived_filename property to generate a derived file.",
-                     "Code Generation", wxOK);
     }
 }
 

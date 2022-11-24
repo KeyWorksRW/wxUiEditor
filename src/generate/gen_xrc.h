@@ -20,14 +20,4 @@ namespace pugi
 std::string GenerateXrcStr(Node* node_start, size_t xrc_flags);
 
 int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags);
-
-// If out_file contains a file, it will override project xrc_file and combine_xrc settings.
-//
-// If NeedsGenerateCheck is true, this will not write any files, but will return true if at
-// least one file needs to be generated.
-//
-// If pClassList is non-null, it will contain the base class name of every form that needs
-// updating.
-bool GenerateXrcFiles(ttlib::cstr out_file = {}, bool NeedsGenerateCheck = false);
-
 extern const char* txt_dlg_name;  // "_wxue_temp_dlg";

@@ -16,6 +16,7 @@
 #include "internal/code_compare_base.h"
 
 #include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "generate_dlg.h"   // GenerateDlg -- Dialog for choosing and generating specific language file(s)
 #include "node.h"           // Node class
 #include "project_class.h"  // Project class
 
@@ -53,7 +54,9 @@ CodeCompare::~CodeCompare()
 
 void CodeCompare::OnInit(wxInitDialogEvent& /* event */)
 {
-    if (GenerateCodeFiles(this, &m_class_list))
+    GenResults results;
+
+    if (GenerateCodeFiles(results, &m_class_list))
     {
         for (auto& iter: m_class_list)
         {

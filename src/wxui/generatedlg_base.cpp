@@ -24,29 +24,29 @@ bool GenerateDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
     dlg_sizer->Add(box_sizer, wxSizerFlags().Border(wxALL));
 
-    auto* radioBtn = new wxRadioButton(this, wxID_ANY, "C++ &Base", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-    radioBtn->SetValidator(wxGenericValidator(&m_gen_base_code));
-    box_sizer->Add(radioBtn, wxSizerFlags().Border(wxALL));
+    auto* checkBox = new wxCheckBox(this, wxID_ANY, "C++ &Base");
+    checkBox->SetValidator(wxGenericValidator(&m_gen_base_code));
+    box_sizer->Add(checkBox, wxSizerFlags().Border(wxALL));
 
-    m_radioBtn_2 = new wxRadioButton(this, wxID_ANY, "C++ &Inherited");
-    m_radioBtn_2->SetValidator(wxGenericValidator(&m_gen_inherited_code));
-    box_sizer->Add(m_radioBtn_2, wxSizerFlags().Border(wxALL));
+    checkBox_6 = new wxCheckBox(this, wxID_ANY, "C++ &Inherited");
+    checkBox_6->SetValidator(wxGenericValidator(&m_gen_inherited_code));
+    box_sizer->Add(checkBox_6, wxSizerFlags().Border(wxALL));
 
-    auto* radioBtn_2 = new wxRadioButton(this, wxID_ANY, "&Python");
-    radioBtn_2->SetValidator(wxGenericValidator(&m_gen_python_code));
-    box_sizer->Add(radioBtn_2, wxSizerFlags().Border(wxALL));
+    auto* checkBox_5 = new wxCheckBox(this, wxID_ANY, "&Python");
+    checkBox_5->SetValidator(wxGenericValidator(&m_gen_python_code));
+    box_sizer->Add(checkBox_5, wxSizerFlags().Border(wxALL));
 
-    auto* radioBtn_3 = new wxRadioButton(this, wxID_ANY, "&Lua");
-    radioBtn_3->SetValidator(wxGenericValidator(&m_gen_lua_code));
-    box_sizer->Add(radioBtn_3, wxSizerFlags().Border(wxALL));
+    auto* checkBox_4 = new wxCheckBox(this, wxID_ANY, "&Lua");
+    checkBox_4->SetValidator(wxGenericValidator(&m_gen_lua_code));
+    box_sizer->Add(checkBox_4, wxSizerFlags().Border(wxALL));
 
-    auto* radioBtn_4 = new wxRadioButton(this, wxID_ANY, "P&HP");
-    radioBtn_4->SetValidator(wxGenericValidator(&m_gen_php_code));
-    box_sizer->Add(radioBtn_4, wxSizerFlags().Border(wxALL));
+    auto* checkBox_3 = new wxCheckBox(this, wxID_ANY, "P&HP");
+    checkBox_3->SetValidator(wxGenericValidator(&m_gen_php_code));
+    box_sizer->Add(checkBox_3, wxSizerFlags().Border(wxALL));
 
-    auto* radioBtn_5 = new wxRadioButton(this, wxID_ANY, "&XRC");
-    radioBtn_5->SetValidator(wxGenericValidator(&m_gen_xrc_code));
-    box_sizer->Add(radioBtn_5, wxSizerFlags().Border(wxALL));
+    auto* checkBox_2 = new wxCheckBox(this, wxID_ANY, "&XRC");
+    checkBox_2->SetValidator(wxGenericValidator(&m_gen_xrc_code));
+    box_sizer->Add(checkBox_2, wxSizerFlags().Border(wxALL));
 
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));

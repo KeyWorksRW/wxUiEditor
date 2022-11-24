@@ -34,6 +34,7 @@
 #include "cstm_event.h"                // CustomEvent -- Custom Event class
 #include "gen_common.h"                // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"             // Common XRC generating functions
+#include "generate_dlg.h"              // GenerateDlg -- Dialog for choosing and generating specific language file(s)
 #include "generate_xrc_dlg.h"          // GenerateXrcDlg -- Dialog for generating XRC file(s)
 #include "mainframe.h"                 // MainFrame -- Main window frame
 #include "node.h"                      // Node class
@@ -46,47 +47,6 @@
 #include "pugixml.hpp"
 
 const char* txt_dlg_name = "_wxue_temp_dlg";
-
-void MainFrame::ExportXRC()
-{
-    auto project = GetProject();
-    if (project->GetChildCount() == 0)
-    {
-        wxMessageBox("This project does not yet contain any forms -- nothing to save!", "Export XRC");
-        return;
-    }
-
-    GenerateXrcDlg dlg(this);
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        if (!dlg.CombineFiles())
-        {
-            GenerateXrcFiles();
-        }
-        else
-        {
-            ttlib::cstr out_file = dlg.GetCombinedFilename();
-            if (out_file.size() && out_file.extension().empty())
-            {
-                out_file.replace_extension(".xrc");
-            }
-            if (GenerateXrcFiles(out_file))
-            {
-                wxMessageBox(wxString() << out_file.wx_str() << " saved.", "Export XRC", wxOK | wxCENTRE);
-            }
-
-            if (!project->HasValue(prop_combined_xrc_file))
-            {
-                project->set_value(prop_combined_xrc_file, out_file);
-                CustomEvent node_event(EVT_NodePropChange, project->get_prop_ptr(prop_combined_xrc_file));
-                m_property_panel->OnNodePropChange(node_event);
-                m_isProject_modified = true;
-            }
-        }
-    }
-
-    UpdateWakaTime();
-}
 
 int GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
@@ -319,14 +279,11 @@ void BaseCodeGenerator::GenerateXrcClass(Node* form_node, PANEL_PAGE panel_type)
     }
 }
 
-bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
+bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttlib::cstr>* /* pClassList */)
 {
     auto project = GetProject();
     if (project->GetChildCount() == 0)
     {
-        if (NeedsGenerateCheck)
-            return false;
-
         wxMessageBox("This project does not yet contain any forms -- nothing to save!", "Export XRC");
         return false;
     }
@@ -363,9 +320,6 @@ bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
         }
         return true;
     }
-
-    std::vector<ttlib::cstr> results;
-    size_t currentFiles = 0;
     std::vector<Node*> forms;
     project->CollectForms(forms);
 
@@ -375,7 +329,8 @@ bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
         {
             // If the form type is supported, warn the user about not having an XRC file for it.
             if (!form->isGen(gen_Images) && !form->isGen(gen_wxPopupTransientWindow))
-                results.emplace_back() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n';
+                results.msgs.emplace_back()
+                    << "No XRC filename specified for " << form->prop_as_string(prop_class_name) << '\n';
             continue;
         }
         out_file = form->value(prop_xrc_file);
@@ -411,48 +366,20 @@ bool GenerateXrcFiles(ttlib::cstr out_file, bool NeedsGenerateCheck)
                 auto old_str = xml_old_stream.str();
                 if (old_str == new_str)
                 {
-                    ++currentFiles;
+                    ++results.file_count;
                     continue;
                 }
             }
         }
 
-        if (NeedsGenerateCheck)
-            return true;
-
         if (!doc_new.save_file(out_file.c_str(), "\t"))
         {
-            results.emplace_back() << "Cannot create or write to the file " << out_file << '\n';
+            results.msgs.emplace_back() << "Cannot create or write to the file " << out_file << '\n';
         }
         else
         {
-            results.emplace_back() << out_file.filename() << " saved" << '\n';
+            results.updated_files.emplace_back(out_file);
         }
-    }
-
-    if (NeedsGenerateCheck)
-        return false;
-
-    if (results.size())
-    {
-        ttlib::cstr msg;
-        for (auto& iter: results)
-        {
-            msg += iter;
-        }
-
-        if (currentFiles)
-        {
-            msg << '\n' << "The other " << currentFiles << " generated files are current";
-        }
-
-        wxMessageBox(msg.wx_str(), "Code Generation", wxOK);
-    }
-    else if (currentFiles)
-    {
-        ttlib::cstr msg;
-        msg << '\n' << "All " << currentFiles << " XRC file(s) are current";
-        wxMessageBox(msg, "Code Generation", wxOK);
     }
 
     return true;

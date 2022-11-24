@@ -13,14 +13,16 @@
 
 #include "generate_dlg.h"  // auto-generated: generatedlg_base.h and generatedlg_base.cpp
 
+#include "../wxui/dlg_gen_results.h"
+
 enum
 {
-    GEN_BASE_CODE = 1,
-    GEN_INHERITED_CODE,
-    GEN_LUA_CODE,
-    GEN_PHP_CODE,
-    GEN_PYTHON_CODE,
-    GEN_XRC_CODE
+    GEN_BASE_CODE = 1 << 0,
+    GEN_INHERITED_CODE = 1 << 1,
+    GEN_LUA_CODE = 1 << 2,
+    GEN_PHP_CODE = 1 << 3,
+    GEN_PYTHON_CODE = 1 << 4,
+    GEN_XRC_CODE = 1 << 5
 };
 
 // This generates the base class files. For the derived class files, see OnGenInhertedClass()
@@ -33,45 +35,75 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     {
         long cur_setting = GEN_BASE_CODE;
         if (dlg.is_gen_inherited())
-            cur_setting = GEN_INHERITED_CODE;
-        else if (dlg.is_gen_lua())
-            cur_setting = GEN_LUA_CODE;
-        else if (dlg.is_gen_php())
-            cur_setting = GEN_PHP_CODE;
-        else if (dlg.is_gen_python())
-            cur_setting = GEN_PYTHON_CODE;
-        else if (dlg.is_gen_xrc())
-            cur_setting = GEN_XRC_CODE;
+            cur_setting |= GEN_INHERITED_CODE;
+        if (dlg.is_gen_lua())
+            cur_setting |= GEN_LUA_CODE;
+        if (dlg.is_gen_php())
+            cur_setting |= GEN_PHP_CODE;
+        if (dlg.is_gen_python())
+            cur_setting |= GEN_PYTHON_CODE;
+        if (dlg.is_gen_xrc())
+            cur_setting |= GEN_XRC_CODE;
 
         auto config = wxConfig::Get();
         config->Write("GenCode", cur_setting);
 
-        switch (cur_setting)
+        GenResults results;
+
+        if (cur_setting & GEN_BASE_CODE)
         {
-            case GEN_BASE_CODE:
-                GenerateCodeFiles(this);
-                break;
-
-            case GEN_INHERITED_CODE:
-                GenInhertedClass();
-                break;
-
-            case GEN_PYTHON_CODE:
-                GeneratePythonFiles(this);
-                break;
-
-            case GEN_LUA_CODE:
-                GenerateLuaFiles(this);
-                break;
-
-            case GEN_PHP_CODE:
-                GeneratePhpFiles(this);
-                break;
-
-            case GEN_XRC_CODE:
-                ExportXRC();
-                break;
+            GenerateCodeFiles(results);
         }
+        if (cur_setting & GEN_INHERITED_CODE)
+        {
+            GenInhertedClass(results);
+        }
+        if (cur_setting & GEN_LUA_CODE)
+        {
+            GenerateLuaFiles(results);
+        }
+        if (cur_setting & GEN_PHP_CODE)
+        {
+            GeneratePhpFiles(results);
+        }
+        if (cur_setting & GEN_PYTHON_CODE)
+        {
+            GeneratePythonFiles(results);
+        }
+        if (cur_setting & GEN_XRC_CODE)
+        {
+            GenerateXrcFiles(results);
+        }
+
+        if ((results.updated_files.size() || results.msgs.size()))
+        {
+            GeneratedResultsDlg results_dlg;
+            results_dlg.Create(this);
+            for (auto& iter: results.updated_files)
+            {
+                iter.make_relative(GetProject()->getProjectPath());
+                results_dlg.m_lb_files->Append(iter);
+            }
+
+            if (results.updated_files.size() == 1)
+                results.msgs.emplace_back("1 file was updated");
+            else
+                results.msgs.emplace_back() << results.updated_files.size() << " files were updated";
+
+            for (auto& iter: results.msgs)
+            {
+                results_dlg.m_lb_info->Append(iter);
+            }
+
+            results_dlg.ShowModal();
+        }
+        else if (results.file_count)
+        {
+            ttlib::cstr msg;
+            msg << '\n' << "All " << results.file_count << " generated files are current";
+            wxMessageBox(msg, "Code Generation", wxOK, this);
+        }
+
         UpdateWakaTime();
     }
 }
@@ -92,34 +124,18 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     auto config = wxConfig::Get();
     auto cur_setting = config->ReadLong("GenCode", GEN_BASE_CODE);
 
-    switch (cur_setting)
-    {
-        case GEN_BASE_CODE:
-            m_gen_base_code = true;
-            break;
-
-        case GEN_INHERITED_CODE:
-            m_gen_inherited_code = true;
-            break;
-
-        case GEN_LUA_CODE:
-            m_gen_lua_code = true;
-            break;
-
-        case GEN_PHP_CODE:
-            m_gen_php_code = true;
-            break;
-
-        case GEN_PYTHON_CODE:
-            m_gen_python_code = true;
-            break;
-
-        case GEN_XRC_CODE:
-            m_gen_xrc_code = true;
-            break;
-    }
-
-    FindWindow(GetAffirmativeId())->SetLabel("Generate");
+    if (cur_setting & GEN_BASE_CODE)
+        m_gen_base_code = true;
+    if (cur_setting & GEN_INHERITED_CODE)
+        m_gen_inherited_code = true;
+    if (cur_setting & GEN_LUA_CODE)
+        m_gen_lua_code = true;
+    if (cur_setting & GEN_PHP_CODE)
+        m_gen_php_code = true;
+    if (cur_setting & GEN_PYTHON_CODE)
+        m_gen_python_code = true;
+    if (cur_setting & GEN_XRC_CODE)
+        m_gen_xrc_code = true;
 
     event.Skip();
 }

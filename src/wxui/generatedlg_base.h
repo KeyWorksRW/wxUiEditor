@@ -6,10 +6,10 @@
 
 #pragma once
 
+#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/radiobut.h>
 #include <wx/stattext.h>
 
 class GenerateDlgBase : public wxDialog
@@ -51,6 +51,6 @@ protected:
 
     // Class member variables
 
-    wxRadioButton* m_radioBtn_2;
+    wxCheckBox* checkBox_6;
     wxStaticText* m_staticText;
 };

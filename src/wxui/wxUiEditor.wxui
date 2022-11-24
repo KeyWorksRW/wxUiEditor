@@ -870,45 +870,44 @@
           class="wxBoxSizer"
           orientation="wxVERTICAL">
           <node
-            class="wxRadioButton"
+            class="wxCheckBox"
             class_access="none"
             label="C++ &amp;Base"
-            style="wxRB_GROUP"
-            var_name="radioBtn"
+            var_name="checkBox"
             get_function="is_gen_base"
             validator_variable="m_gen_base_code" />
           <node
-            class="wxRadioButton"
+            class="wxCheckBox"
             label="C++ &amp;Inherited"
-            var_name="m_radioBtn_2"
+            var_name="checkBox_6"
             get_function="is_gen_inherited"
             validator_variable="m_gen_inherited_code" />
           <node
-            class="wxRadioButton"
+            class="wxCheckBox"
             class_access="none"
             label="&amp;Python"
-            var_name="radioBtn_2"
+            var_name="checkBox_5"
             get_function="is_gen_python"
             validator_variable="m_gen_python_code" />
           <node
-            class="wxRadioButton"
+            class="wxCheckBox"
             class_access="none"
             label="&amp;Lua"
-            var_name="radioBtn_3"
+            var_name="checkBox_4"
             get_function="is_gen_lua"
             validator_variable="m_gen_lua_code" />
           <node
-            class="wxRadioButton"
+            class="wxCheckBox"
             class_access="none"
             label="P&amp;HP"
-            var_name="radioBtn_4"
+            var_name="checkBox_3"
             get_function="is_gen_php"
             validator_variable="m_gen_php_code" />
           <node
-            class="wxRadioButton"
+            class="wxCheckBox"
             class_access="none"
             label="&amp;XRC"
-            var_name="radioBtn_5"
+            var_name="checkBox_2"
             get_function="is_gen_xrc"
             validator_variable="m_gen_xrc_code" />
         </node>

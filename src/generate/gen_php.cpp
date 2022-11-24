@@ -12,11 +12,12 @@
 #include "base_generator.h"  // BaseGenerator -- Base widget generator class
 #include "gen_base.h"        // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"      // Common component functions
+#include "generate_dlg.h"    // GenerateDlg -- Dialog for choosing and generating specific language file(s)
 #include "node.h"            // Node class
 #include "project_class.h"   // Project class
 #include "write_code.h"      // Write code to Scintilla or file
 
-bool GeneratePhpFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
+bool GeneratePhpFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
 {
     auto project = GetProject();
     if (project->GetChildCount() == 0)
@@ -27,9 +28,6 @@ bool GeneratePhpFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
     ttSaveCwd cwd;
     GetProject()->GetProjectPath().ChangeDir();
     ttlib::cstr path;
-    std::vector<ttlib::cstr> results;
-
-    size_t currentFiles = 0;
 
     bool generate_result = true;
     std::vector<Node*> forms;
@@ -55,7 +53,7 @@ bool GeneratePhpFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
         }
         else
         {
-            results.emplace_back() << "No filename specified for " << form->prop_as_string(prop_class_name) << '\n';
+            results.msgs.emplace_back() << "No PHP filename specified for " << form->prop_as_string(prop_class_name) << '\n';
             continue;
         }
 
@@ -78,7 +76,7 @@ bool GeneratePhpFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
             {
                 if (!pClassList)
                 {
-                    results.emplace_back() << path.filename() << " saved" << '\n';
+                    results.updated_files.emplace_back(path);
                 }
                 else
                 {
@@ -89,11 +87,11 @@ bool GeneratePhpFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
 
             else if (retval < 0)
             {
-                results.emplace_back() << "Cannot create or write to the file " << path << '\n';
+                results.msgs.emplace_back() << "Cannot create or write to the file " << path << '\n';
             }
             else  // retval == result::exists
             {
-                ++currentFiles;
+                ++results.file_count;
             }
         }
         catch (const std::exception& TESTING_PARAM(e))
@@ -104,28 +102,6 @@ bool GeneratePhpFiles(wxWindow* parent, std::vector<ttlib::cstr>* pClassList)
                          "Code generation");
             continue;
         }
-    }
-
-    if (results.size())
-    {
-        ttlib::cstr msg;
-        for (auto& iter: results)
-        {
-            msg += iter;
-        }
-
-        if (currentFiles)
-        {
-            msg << '\n' << "The other " << currentFiles << " generated files are current";
-        }
-
-        wxMessageBox(msg.wx_str(), "Code Generation", wxOK, parent);
-    }
-    else if (currentFiles && parent)
-    {
-        ttlib::cstr msg;
-        msg << '\n' << "All " << currentFiles << " generated files are current";
-        wxMessageBox(msg, "Code Generation", wxOK, parent);
     }
     return generate_result;
 }

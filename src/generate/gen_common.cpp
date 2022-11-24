@@ -410,6 +410,42 @@ ttlib::cstr GetParentName(Node* node)
     return ttlib::cstr("internal error");
 }
 
+ttlib::cstr GetParentName(Node* node, int language)
+{
+    auto parent = node->GetParent();
+    while (parent)
+    {
+        if (parent->IsSizer())
+        {
+            if (parent->IsStaticBoxSizer())
+            {
+                return (ttlib::cstr() << parent->get_node_name(language) << LangPtr(language) << "GetStaticBox()");
+            }
+        }
+        if (parent->IsForm())
+        {
+            return ttlib::cstr("this");
+        }
+
+        for (auto iter: s_GenParentTypes)
+        {
+            if (parent->isType(iter))
+            {
+                ttlib::cstr name = parent->get_node_name(language);
+                if (parent->isGen(gen_wxCollapsiblePane))
+                {
+                    name << LangPtr(language) << "GetPane()";
+                }
+                return name;
+            }
+        }
+        parent = parent->GetParent();
+    }
+
+    ASSERT_MSG(parent, ttlib::cstr() << node->get_node_name(language) << " has no parent!");
+    return ttlib::cstr("internal error");
+}
+
 void GenPos(Node* node, ttlib::cstr& code)
 {
     auto point = node->prop_as_wxPoint(prop_pos);
@@ -2057,4 +2093,56 @@ ttlib::cstr GenerateWxSize(Node* node, PropName prop)
         code << "wxSize(" << size.x << ", " << size.y << ")";
     }
     return code;
+}
+
+const char* LangPtr(int language)
+{
+    switch (language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+        case GEN_LANG_PHP:
+            return "->";
+
+        case GEN_LANG_PYTHON:
+            return ".";
+
+        case GEN_LANG_LUA:
+            return ":";
+
+        default:
+            FAIL_MSG("Unsupported language!")
+            return "";
+    }
+}
+
+const char* LineEnding(int language)
+{
+    switch (language)
+    {
+        case GEN_LANG_CPLUSPLUS:
+        case GEN_LANG_PHP:
+            return ";";
+
+        default:
+            return "";
+    }
+}
+
+ttlib::cstr GetWidgetName(ttlib::sview name, int language)
+{
+    ttlib::cstr widget_name;
+    if (language == GEN_LANG_CPLUSPLUS || language == GEN_LANG_PHP)
+    {
+        widget_name = name;
+    }
+    else if (language == GEN_LANG_PYTHON)
+    {
+        name.remove_prefix(2);
+        widget_name << "wx." << name;
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        widget_name << "wx." << name;
+    }
+    return widget_name;
 }

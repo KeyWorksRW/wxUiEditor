@@ -106,7 +106,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 m_source->writeLine(result.value());
         }
         EndBrace();
-        m_source->writeLine(ttlib::cstr() << node->get_node_name() << LangPtr() << "Realize();");
+        m_source->writeLine(ttlib::cstr() << node->get_node_name(m_language) << LangPtr() << "Realize();");
         return;
     }
     else if (type == type_tool_dropdown && node->GetChildCount())
@@ -186,7 +186,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             }
             child->SetParent(old_parent);
         }
-        m_source->writeLine(ttlib::cstr() << node->get_node_name() << LangPtr() << "SetDropdownMenu(menu);");
+        m_source->writeLine(ttlib::cstr() << node->get_node_name(m_language) << LangPtr() << "SetDropdownMenu(menu);");
         EndBrace();
         return;
     }
@@ -213,7 +213,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     else if (node->gen_type() == type_widget && parent->isGen(gen_wxChoicebook))
     {
         ttlib::cstr code;
-        code << parent->get_node_name() << LangPtr() << "GetControlSizer()" << LangPtr() << "Add(" << node->get_node_name();
+        code << parent->get_node_name(m_language) << LangPtr() << "GetControlSizer()" << LangPtr() << "Add("
+             << node->get_node_name(m_language);
         code << ", wxSizerFlags().Expand().Border(wxALL));";
         m_source->writeLine(code);
     }
@@ -252,13 +253,14 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             ttlib::cstr code;
             if (parent->isGen(gen_wxRibbonPanel))
             {
-                code << parent->get_node_name() << LangPtr() << "SetSizerAndFit(" << node->get_node_name() << ");";
+                code << parent->get_node_name(m_language) << LangPtr() << "SetSizerAndFit("
+                     << node->get_node_name(m_language) << ");";
             }
             else
             {
                 if (GetParentName(node) != "this")
                     code << GetParentName(node) << LangPtr();
-                code << "SetSizerAndFit(" << node->get_node_name() << ");";
+                code << "SetSizerAndFit(" << node->get_node_name(m_language) << ");";
             }
 
             m_source->writeLine();
@@ -267,11 +269,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     }
     else if (type == type_splitter)
     {
-        ttlib::cstr code(node->get_node_name());
+        ttlib::cstr code(node->get_node_name(m_language));
 
         if (node->GetChildCount() == 1)
         {
-            code << LangPtr() << "Initialize(" << node->GetChild(0)->get_node_name() << ");";
+            code << LangPtr() << "Initialize(" << node->GetChild(0)->get_node_name(m_language) << ");";
             m_source->writeLine(code);
         }
         else if (node->GetChildCount() > 1)
@@ -281,12 +283,13 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             else
                 code << LangPtr() << "SplitHorizontally(";
 
-            code << node->GetChild(0)->get_node_name() << ", " << node->GetChild(1)->get_node_name() << ");";
+            code << node->GetChild(0)->get_node_name(m_language) << ", " << node->GetChild(1)->get_node_name(m_language)
+                 << ");";
             m_source->writeLine(code);
 
             if (auto sash_pos = node->get_prop_ptr(prop_sashpos)->as_int(); sash_pos != 0 && sash_pos != -1)
             {
-                code = node->get_node_name();
+                code = node->get_node_name(m_language);
                 code << LangPtr() << "SetSashPosition(" << node->prop_as_string(prop_sashpos) << ");";
                 m_source->writeLine(code);
             }
@@ -326,7 +329,7 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     if (node->isGen(gen_wxRibbonBar))
     {
-        m_source->writeLine(ttlib::cstr() << node->get_node_name() << LangPtr() << "Realize();");
+        m_source->writeLine(ttlib::cstr() << node->get_node_name(m_language) << LangPtr() << "Realize();");
     }
 
     if (node->HasValue(prop_platforms) && node->value(prop_platforms) != "Windows|Unix|Mac")
@@ -589,7 +592,8 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 
             if (need_closing_brace)
                 code << '\t';
-            code << '\t' << node->GetParent()->get_node_name() << LangPtr() << "Add(" << node->get_node_name() << ", ";
+            code << '\t' << node->GetParent()->get_node_name(m_language) << LangPtr() << "Add("
+                 << node->get_node_name(m_language) << ", ";
 
             if (parent->isGen(gen_wxGridBagSizer))
             {
@@ -668,10 +672,11 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         if (node->isGen(gen_wxStdDialogButtonSizer))
         {
             if (node->get_form()->isGen(gen_wxDialog) && node->prop_as_bool(prop_static_line))
-                code << node->GetParent()->get_node_name() << LangPtr() << "Add(CreateSeparatedSizer("
-                     << node->get_node_name() << "), ";
+                code << node->GetParent()->get_node_name(m_language) << LangPtr() << "Add(CreateSeparatedSizer("
+                     << node->get_node_name(m_language) << "), ";
             else
-                code << node->GetParent()->get_node_name() << LangPtr() << "Add(" << node->get_node_name() << ", ";
+                code << node->GetParent()->get_node_name(m_language) << LangPtr() << "Add("
+                     << node->get_node_name(m_language) << ", ";
         }
         else
         {
@@ -679,7 +684,8 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
             {
                 code << "\t";
             }
-            code << node->GetParent()->get_node_name() << LangPtr() << "Add(" << node->get_node_name() << ", ";
+            code << node->GetParent()->get_node_name(m_language) << LangPtr() << "Add(" << node->get_node_name(m_language)
+                 << ", ";
         }
 
         if (node->GetParent()->isGen(gen_wxGridBagSizer))

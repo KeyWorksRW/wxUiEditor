@@ -1074,10 +1074,17 @@ void MainFrame::OnAuiNotebookPageChanged(wxAuiNotebookEvent&)
         {
             m_mockupPanel->CreateContent();
         }
+#if defined(INTERNAL_TESTING)
+        else if (page != m_imnportPanel)
+        {
+            static_cast<BasePanel*>(page)->GenerateBaseClass();
+        }
+#else
         else
         {
             static_cast<BasePanel*>(page)->GenerateBaseClass();
         }
+#endif
     }
 }
 

@@ -200,7 +200,7 @@ void BaseCodeGenerator::GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type)
     {
         if (child->isGen(gen_wxContextMenuEvent))
             continue;
-        GenLuaConstruction(child.get());
+        GenConstruction(child.get());
     }
 
     if (auto result = generator->GenLuaAdditionalCode(code_after_children, form_node); result)
@@ -214,84 +214,4 @@ void BaseCodeGenerator::GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type)
 
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
-}
-
-void BaseCodeGenerator::GenLuaConstruction(Node* node)
-{
-    auto type = node->gen_type();
-    auto declaration = node->GetNodeDeclaration();
-    auto generator = declaration->GetGenerator();
-    if (!generator)
-        return;
-
-    if (auto result = generator->GenLuaConstruction(node); result)
-    {
-        m_source->writeLine(result.value());
-    }
-    GenSettings(node);
-
-    if (type == type_ribbontoolbar)
-    {
-        // m_source->writeLine("{");
-        m_source->Indent();
-        // A wxRibbonToolBar can only have abstract children that consist of the tools.
-        for (const auto& child: node->GetChildNodePtrs())
-        {
-            auto child_comp = child->GetNodeDeclaration()->GetGenerator();
-            if (auto result = child_comp->GenConstruction(child.get()); result)
-                m_source->writeLine(result.value());
-        }
-        m_source->Unindent();
-        // m_source->writeLine("}");
-        m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->Realize();");
-        return;
-    }
-    else if (type == type_tool_dropdown && node->GetChildCount())
-    {
-        // TODO: [Randalphwa - 11-13-2022] This is just a placeholder for now. It definitely doesn't generate the correct
-        // code.
-
-        // m_source->writeLine("{");
-        m_source->Indent();
-        m_source->writeLine("wxMenu* menu = new wxMenu;");
-        auto menu_node_ptr = g_NodeCreator.NewNode(gen_wxMenu);
-        menu_node_ptr->prop_set_value(prop_var_name, "menu");
-        for (const auto& child: node->GetChildNodePtrs())
-        {
-            auto old_parent = child->GetParent();
-            child->SetParent(menu_node_ptr.get());
-            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
-            if (auto result = child_generator->GenLuaConstruction(child.get()); result)
-                m_source->writeLine(result.value());
-            GenSettings(child.get());
-            // A submenu can have children
-            if (child->GetChildCount())
-            {
-                for (const auto& grandchild: child->GetChildNodePtrs())
-                {
-                    auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
-                    if (auto result = grandchild_generator->GenLuaConstruction(grandchild.get()); result)
-                        m_source->writeLine(result.value());
-                    GenSettings(grandchild.get());
-                    // A submenu menu item can also be a submenu with great grandchildren.
-                    if (grandchild->GetChildCount())
-                    {
-                        for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
-                        {
-                            auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
-                            if (auto result = great_grandchild_generator->GenLuaConstruction(great_grandchild.get()); result)
-                                m_source->writeLine(result.value());
-                            GenSettings(great_grandchild.get());
-                            // It's possible to have even more levels of submenus, but we'll stop here.
-                        }
-                    }
-                }
-            }
-            child->SetParent(old_parent);
-        }
-        m_source->writeLine(ttlib::cstr() << node->get_node_name() << "->SetDropdownMenu(menu);");
-        m_source->Unindent();
-        // m_source->writeLine("}");
-        return;
-    }
 }

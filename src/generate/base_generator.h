@@ -107,7 +107,7 @@ public:
     virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonAfterChildren(Node* /* node */) { return {}; }
     virtual std::optional<ttlib::cstr> GenLuaAfterChildren(Node* /* node */) { return {}; }
-    virtual std::optional<ttlib::cstr> GenAPhpfterChildren(Node* /* node */) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPhpfterChildren(Node* /* node */) { return {}; }
 
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonEvents(NodeEvent*, const std::string&) { return {}; }

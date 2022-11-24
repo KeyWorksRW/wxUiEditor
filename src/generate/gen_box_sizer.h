@@ -20,6 +20,7 @@ public:
     std::optional<ttlib::cstr> GenPhpConstruction(Node* node) override;
 
     std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
+    std::optional<ttlib::cstr> GenPythonAfterChildren(Node*) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
     void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;

@@ -134,11 +134,8 @@ protected:
     // wx/artprov.h is needed
     void ParseImageProperties(Node* class_node);
 
-    // Generate node construction code
+    // implemented in gen_construction.cpp
     void GenConstruction(Node* node);
-    void GenPythonConstruction(Node* node);
-    void GenLuaConstruction(Node* node);
-    void GenPhpConstruction(Node* node);
 
     // This allows generators to create calls to a widget after it has been created.
     void GenSettings(Node* node);
@@ -148,6 +145,21 @@ protected:
 
     // Called after base class is fully constructed
     void GenContextMenuHandler(Node* form_node, Node* node_ctx_menu);
+
+protected:
+    const char* LangPtr() const;
+    void BeginPlatformCode(Node* node);
+    void EndPlatformCode();
+    bool GenAfterChildren(Node* node, bool need_closing_brace);
+
+    // Call if GenAfterChildren() returns false and node's parent is a sizer
+    void GenParentSizer(Node* node, bool need_closing_brace);
+
+    // In C++ adds a line with "{" and indents. Other languages just indent.
+    void BeginBrace();
+
+    // In C++ unindents, then adds a line with "}". Other languages just unindent.
+    void EndBrace();
 
 private:
     WriteCode* m_header;

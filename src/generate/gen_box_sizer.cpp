@@ -131,6 +131,42 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node)
         return {};
 }
 
+std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonAfterChildren(Node* node)
+{
+    ttlib::cstr code;
+    if (node->as_bool(prop_hide_children))
+    {
+        code << "\t" << node->get_node_name() << ".ShowItems(false);";
+    }
+
+    auto parent = node->GetParent();
+    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
+    {
+        if (code.size())
+            code << '\n';
+        code << "\n\t";
+
+        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
+        // wxPanel.
+
+        if (parent->isGen(gen_wxRibbonPanel))
+        {
+            code << parent->get_node_name() << ".SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+        else
+        {
+            if (GetParentName(node) != "self")
+                code << GetParentName(node) << ".";
+            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+        }
+    }
+
+    if (code.size())
+        return code;
+    else
+        return {};
+}
+
 bool BoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);

@@ -332,8 +332,7 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
             if (path.empty())
                 continue;
 
-            if (auto* node_folder = form->get_folder();
-                node_folder && node_folder->HasValue(prop_xrc_directory))
+            if (auto* node_folder = form->get_folder(); node_folder && node_folder->HasValue(prop_xrc_directory))
             {
                 path = node_folder->as_string(prop_xrc_directory);
                 path.append_filename(base_file.filename());
@@ -373,20 +372,25 @@ bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file, std::vector<ttl
 
         if (path.file_exists())
         {
-            std::ostringstream xml_stream;
-            doc_new.save(xml_stream, "\t");
-            auto new_str = xml_stream.str();
-
-            pugi::xml_document doc_old;
-            if (doc_old.load_file(path.c_str()))
+            wxFile file_original(path.wx_str(), wxFile::read);
+            if (file_original.IsOpened())
             {
-                std::ostringstream xml_old_stream;
-                doc_old.save(xml_old_stream, "\t");
-                auto old_str = xml_old_stream.str();
-                if (old_str == new_str)
+                std::ostringstream xml_stream;
+                doc_new.save(xml_stream, "\t");
+                auto new_str = xml_stream.str();
+
+                auto in_size = file_original.Length();
+                if (new_str.size() == (to_size_t) in_size)
                 {
-                    ++results.file_count;
-                    continue;
+                    auto buffer = std::make_unique<unsigned char[]>(in_size);
+                    if (file_original.Read(buffer.get(), in_size) == in_size)
+                    {
+                        if (std::memcmp(buffer.get(), new_str.data(), in_size) == 0)
+                        {
+                            ++results.file_count;
+                            continue;
+                        }
+                    }
                 }
             }
         }

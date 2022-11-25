@@ -68,8 +68,6 @@ void InsertGeneratorInclude(Node* node, const std::string& include, std::set<std
 // wxCollapsiblePane parents as well as "normal" parents
 ttlib::cstr GetParentName(Node* node);
 
-ttlib::cstr GetParentName(Node* node, int language);
-
 // Check for pos, size, flags, window_flags, and window name, and generate code if needed
 // starting with a comma, e.g. -- ", wxPoint(x, y), wxSize(x, y), styles, name);"
 //
@@ -153,7 +151,3 @@ ttlib::cstr GenToolCode(Node* node, ttlib::sview BitmapCode = "");
 //
 // wxSize will be converted to dialog units if the size contains a 'd' character.
 ttlib::cstr GenerateWxSize(Node* node, PropName prop);
-
-const char* LangPtr(int language);
-const char* LineEnding(int language);
-ttlib::cstr GetWidgetName(ttlib::sview name, int language);

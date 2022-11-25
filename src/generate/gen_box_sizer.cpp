@@ -7,8 +7,9 @@
 
 #include <wx/sizer.h>
 
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
+#include "gen_common.h"       // Common component functions
+#include "gen_lang_common.h"  // Common mulit-language functions
+#include "node.h"             // Node class
 
 #include "pugixml.hpp"  // xml read/write/create/process
 
@@ -56,7 +57,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node, int la
 
         case GEN_LANG_PYTHON:
         case GEN_LANG_LUA:
-            code << node->get_node_name() << " = " << GetWidgetName("wxBoxSizer", language) << '(';
+            code << node->get_node_name() << " = " << GetWidgetName(language, "wxBoxSizer") << '(';
             break;
     }
     code << node->prop_as_string(prop_orientation) << ")";
@@ -153,7 +154,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node, int l
         else
         {
             if (GetParentName(node) != "this")
-                code << GetParentName(node, language) << LangPtr(language);
+                code << GetParentName(language, node) << LangPtr(language);
             code << "SetSizerAndFit(" << node->get_node_name(language) << ")";
         }
     }

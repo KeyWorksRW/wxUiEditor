@@ -23,7 +23,7 @@ There are two submodules: `ttLib` and `wxSnapshot`.
 
 # Developer notes
 
-If you are planning on contributing code, the following sections contain information about the code that might not be immediately obvious. Reading these sections may make the code easier to understand, as well as ensuring that PR's are written in a way that matches the rest of the code base.
+If you are planning on contributing code, the following sections contain information about the code that might not be immediately obvious. Reading these sections may make the code easier to understand, as well as ensuring that PR's are written in a way that matches the rest of the code base. In addition, some of the directories also have README files that provide explanations specific to the files in that directory. See [generate](../src/generate/README.md), [nodes](../src/nodes/README.md), [winres](../src/winres/README.md) and [xml](../src/xml/README.md).
 
 Note that the code requires a C++20 compliant compiler -- which means you should be using C++20 coding conventions. That includes using `std::string_view` (or `ttlib::sview`) for strings when practical. See the **Strings** section below for information about working with `wxString`.
 

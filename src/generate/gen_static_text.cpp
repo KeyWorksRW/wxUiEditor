@@ -10,11 +10,12 @@
 // Blank line added because wx/stattext.h must be included first
 #include <wx/generic/stattextg.h>  // wxGenericStaticText header
 
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
+#include "gen_common.h"       // Common component functions
+#include "gen_lang_common.h"  // Common mulit-language functions
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
 
 #include "gen_static_text.h"
 
@@ -70,6 +71,7 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
     return false;
 }
 
+// C++ version
 std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node)
 {
     ttlib::cstr code;
@@ -104,11 +106,51 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node)
     return code;
 }
 
+// Multi-language version
+std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node, int language)
+{
+    if (language == GEN_LANG_CPLUSPLUS)
+        return GenConstruction(node);
+
+    ttlib::cstr code;
+    code << node->get_node_name(language)
+         << GenerateNewAssignment(node, (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
+
+    code << GetParentName(language, node) << ", " << node->prop_as_string(prop_id) << ", ";
+
+    // If the label is going to be set via SetLabelMarkup(), then there is no reason to initialize it here and then
+    // replace it on the next line of code (which will be the call to SetLabelMarkUp())
+    if (node->prop_as_bool(prop_markup))
+    {
+        code << GetWidgetName(language, "wxEmptyString");
+    }
+    else
+    {
+        auto& label = node->prop_as_string(prop_label);
+        if (label.size())
+        {
+            code << GenerateQuotedString(language, label);
+        }
+        else
+        {
+            code << GetWidgetName(language, "wxEmptyString");
+        }
+    }
+
+    GeneratePosSizeFlags(node, code);
+
+    if (language != GEN_LANG_PHP)
+        code.Replace(";", "", true);
+
+    return code;
+}
+
 std::optional<ttlib::cstr> StaticTextGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
 {
     return GenEventCode(event, class_name);
 }
 
+// C++ version
 std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     ttlib::cstr code;
@@ -128,6 +170,36 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& 
             code << '\n';
         code << node->get_node_name() << "->Wrap(" << node->prop_as_string(prop_wrap) << ");";
     }
+    return code;
+}
+
+// Multi-language version
+std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& auto_indent, int language)
+{
+    if (language == GEN_LANG_CPLUSPLUS)
+        return GenSettings(node, auto_indent);
+
+    ttlib::cstr code;
+
+    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name(language) << LangPtr(language) << "SetLabelMarkup("
+             << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
+    }
+
+    // Note that wrap MUST be called after the text is set, otherwise it will be ignored.
+    if (node->prop_as_int(prop_wrap) > 0)
+    {
+        if (code.size())
+            code << '\n';
+        code << node->get_node_name() << LangPtr(language) << "Wrap(" << node->prop_as_string(prop_wrap) << ");";
+    }
+
+    if (language != GEN_LANG_PHP)
+        code.Replace(";", "", true);
+
     return code;
 }
 

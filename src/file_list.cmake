@@ -289,7 +289,9 @@ set (doc_list
     ../docs/import_formbuilder.md
     ../docs/import_winres.md
     ../docs/xrc.md
+    generate/README.md
     nodes/README.md
+    winres/README.md
     xml/README.md
 
 )

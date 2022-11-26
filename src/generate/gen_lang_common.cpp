@@ -5,6 +5,8 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include <ttmultistr_wx.h>  // ttMultiString -- Class for handling multiple strings
+
 #include "gen_lang_common.h"
 
 #include "gen_common.h"     // Common component functions
@@ -50,20 +52,30 @@ ttlib::cstr GetWidgetName(int language, ttlib::sview name)
     if (language == GEN_LANG_CPLUSPLUS || language == GEN_LANG_PHP)
     {
         widget_name = name;
+        return widget_name;
     }
-    else if (language == GEN_LANG_PYTHON)
+
+    ttlib::multistr multistr(name, "|", tt::TRIM::both);
+    for (auto& iter: multistr)
     {
-        if (name == "wxEmptyString")
-            widget_name = "\"\"";
-        else
+        if (iter.empty())
+            continue;
+        if (widget_name.size())
+            widget_name << "|";
+        if (language == GEN_LANG_PYTHON)
         {
-            name.remove_prefix(2);
-            widget_name << "wx." << name;
+            if (iter == "wxEmptyString")
+                widget_name = "\"\"";
+            else
+            {
+                iter.erase(0, 2);
+                widget_name << "wx." << iter;
+            }
         }
-    }
-    else if (language == GEN_LANG_LUA)
-    {
-        widget_name << "wx." << name;
+        else if (language == GEN_LANG_LUA)
+        {
+            widget_name << "wx." << iter;
+        }
     }
     return widget_name;
 }
@@ -90,6 +102,8 @@ ttlib::cstr GetParentName(int language, Node* node)
         }
         if (parent->IsForm())
         {
+            if (language == GEN_LANG_PYTHON)
+                return ttlib::cstr("self");
             return ttlib::cstr("this");
         }
 
@@ -134,7 +148,7 @@ ttlib::cstr GenerateNewAssignment(int language, Node* node, bool use_generic)
     }
     else
     {
-        code << node->DeclName();
+        code << GetWidgetName(language, node->DeclName());
     }
     code << '(';
 
@@ -172,7 +186,6 @@ ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str)
                 code << "_(" << GetWidgetName(language, "wxString") << LangPtr(language);
                 code << str_with_escapes << "\")";
             }
-
         }
         else
         {
@@ -185,6 +198,246 @@ ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str)
     else
     {
         code << GetWidgetName(language, "wxEmptyString");
+    }
+
+    return code;
+}
+
+ttlib::cstr GenerateSizerFlags(int language, Node* node)
+{
+    if (language == GEN_LANG_CPLUSPLUS)
+        return GenerateSizerFlags(node);
+
+    ttlib::cstr code;
+
+    // wxPython does not support wxSizerFlags
+
+    if (language == GEN_LANG_PYTHON)
+    {
+        code << node->prop_as_string(prop_proportion) << ", ";
+        ttlib::cstr flags;
+        if (auto& prop = node->prop_as_string(prop_alignment); prop.size())
+        {
+            if (prop.contains("wxALIGN_CENTER"))
+            {
+                flags << "wx.ALIGN_CENTER";
+            }
+
+            if (prop.contains("wxALIGN_LEFT"))
+            {
+                if (flags.size())
+                    flags << "|";
+                flags << "wx.ALIGN_LEFT";
+            }
+            else if (prop.contains("wxALIGN_RIGHT"))
+            {
+                if (flags.size())
+                    flags << "|";
+                flags << "wx.ALIGN_RIGHT";
+            }
+
+            if (prop.contains("wxALIGN_TOP"))
+            {
+                if (flags.size())
+                    flags << "|";
+                flags << "wx.ALIGN_TOP";
+            }
+            else if (prop.contains("wxALIGN_BOTTOM"))
+            {
+                if (flags.size())
+                    flags << "|";
+                flags << "wx.ALIGN_BOTTOM";
+            }
+
+            if (prop.contains("wxEXPAND"))
+            {
+                if (flags.size())
+                    flags << "|";
+                flags << "wx.EXPAND";
+            }
+            if (prop.contains("wxSHAPED"))
+            {
+                if (flags.size())
+                    flags << "|";
+                flags << "wx.SHAPED";
+            }
+            if (prop.contains("wxFIXED_MINSIZE"))
+            {
+                if (flags.size())
+                    flags << "|";
+                flags << "wx.FIXED_MINSIZE";
+            }
+            if (prop.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
+            {
+                if (flags.size())
+                    flags << "|";
+                flags << "wx.RESERVE_SPACE_EVEN_IF_HIDDEN";
+            }
+
+            if (prop.contains("wxALL"))
+            {
+                if (flags.size())
+                    flags << "|";
+                flags << "wx.ALL";
+            }
+            else
+            {
+                if (prop.contains("wxLEFT"))
+                {
+                    if (flags.size())
+                        flags << "|";
+                    flags << "wx.LEFT";
+                }
+                if (prop.contains("wxRIGHT"))
+                {
+                    if (flags.size())
+                        flags << "|";
+                    flags << "wx.RIGHT";
+                }
+                if (prop.contains("wxTOP"))
+                {
+                    if (flags.size())
+                        flags << "|";
+                    flags << "wx.TOP";
+                }
+                if (prop.contains("wxBOTTOM"))
+                {
+                    if (flags.size())
+                        flags << "|";
+                    flags << "wx.BOTTOM";
+                }
+            }
+        }
+        if (flags.empty())
+                flags << "0";
+        code << flags << ", ";
+
+        auto border_size = node->prop_as_string(prop_border_size);
+        if (border_size.empty())
+            border_size = "0";
+        code << border_size;
+    }
+    else
+    {
+        code << (GetWidgetName(language, "wxSizerFlags"));
+
+        if (auto& prop = node->prop_as_string(prop_proportion); prop != "0")
+        {
+            code << '(' << prop << ')';
+        }
+        else
+        {
+            code << "()";
+        }
+
+        if (auto& prop = node->prop_as_string(prop_alignment); prop.size())
+        {
+            if (prop.contains("wxALIGN_CENTER"))
+            {
+                // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
+                // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't
+                // support it. Center() just works without the assertion check.
+                code << ".Center()";
+            }
+
+            if (prop.contains("wxALIGN_LEFT"))
+            {
+                code << ".Left()";
+            }
+            else if (prop.contains("wxALIGN_RIGHT"))
+            {
+                code << ".Right()";
+            }
+
+            if (prop.contains("wxALIGN_TOP"))
+            {
+                code << ".Top()";
+            }
+            else if (prop.contains("wxALIGN_BOTTOM"))
+            {
+                code << ".Bottom()";
+            }
+        }
+
+        if (auto& prop = node->prop_as_string(prop_flags); prop.size())
+        {
+            if (prop.contains("wxEXPAND"))
+            {
+                code << ".Expand()";
+            }
+            if (prop.contains("wxSHAPED"))
+            {
+                code << ".Shaped()";
+            }
+            if (prop.contains("wxFIXED_MINSIZE"))
+            {
+                code << ".FixedMinSize()";
+            }
+            if (prop.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
+            {
+                code << ".ReserveSpaceEvenIfHidden()";
+            }
+        }
+
+        if (auto& prop = node->prop_as_string(prop_borders); prop.size())
+        {
+            auto border_size = node->prop_as_string(prop_border_size);
+            if (prop.contains("wxALL"))
+            {
+                if (border_size == "5")
+                    code << ".Border(" << GetWidgetName(language, "wxALL") << ")";
+                else if (border_size == "10")
+                    code << ".DoubleBorder(" << GetWidgetName(language, "wxALL") << ")";
+                else if (border_size == "15")
+                    code << ".TripleBorder(" << GetWidgetName(language, "wxALL") << ")";
+                else
+                {
+                    code << ".Border(" << GetWidgetName(language, "wxALL") << ", " << border_size << ')';
+                }
+            }
+            else
+            {
+                code << ".Border(";
+                ttlib::cstr border_flags;
+
+                if (prop.contains("wxLEFT"))
+                {
+                    if (border_flags.size())
+                        border_flags << '|';
+                    border_flags << GetWidgetName(language, "wxLEFT");
+                }
+                if (prop.contains("wxRIGHT"))
+                {
+                    if (border_flags.size())
+                        border_flags << '|';
+                    border_flags << GetWidgetName(language, "wxRIGHT");
+                }
+                if (prop.contains("wxTOP"))
+                {
+                    if (border_flags.size())
+                        border_flags << '|';
+                    border_flags << GetWidgetName(language, "wxTOP");
+                }
+                if (prop.contains("wxBOTTOM"))
+                {
+                    if (border_flags.size())
+                        border_flags << '|';
+                    border_flags << GetWidgetName(language, "wxBOTTOM");
+                }
+                if (border_flags.empty())
+                    border_flags = "0";
+
+                code << border_flags << ", ";
+                if (border_size == "5")
+                {
+                    code << GetWidgetName(language, "wxSizerFlags") << LangPtr(language) << "GetDefaultBorder())";
+                }
+                else
+                {
+                    code << border_size << ')';
+                }
+            }
+        }
     }
 
     return code;

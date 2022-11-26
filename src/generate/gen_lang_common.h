@@ -25,3 +25,7 @@ ttlib::cstr GenerateNewAssignment(int language, Node* node, bool use_generic = f
 //
 // Will return "wxEmptyString" if prop_name is empty.
 ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str);
+
+// Generate wxSizerFlags() function based on prop_proportion, prop_alignment, prop_flags,
+// prop_borders and prop_border_size
+ttlib::cstr GenerateSizerFlags(int language, Node* node);

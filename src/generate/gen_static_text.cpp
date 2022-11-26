@@ -114,9 +114,9 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node, int 
 
     ttlib::cstr code;
     code << node->get_node_name(language)
-         << GenerateNewAssignment(node, (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
+         << GenerateNewAssignment(language, node, (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
 
-    code << GetParentName(language, node) << ", " << node->prop_as_string(prop_id) << ", ";
+    code << GetParentName(language, node) << ", " << GetWidgetName(language, node->prop_as_string(prop_id)) << ", ";
 
     // If the label is going to be set via SetLabelMarkup(), then there is no reason to initialize it here and then
     // replace it on the next line of code (which will be the call to SetLabelMarkUp())

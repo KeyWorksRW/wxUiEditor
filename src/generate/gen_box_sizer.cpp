@@ -60,7 +60,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node, int la
             code << node->get_node_name() << " = " << GetWidgetName(language, "wxBoxSizer") << '(';
             break;
     }
-    code << node->prop_as_string(prop_orientation) << ")";
+    code << GetWidgetName(language, node->prop_as_string(prop_orientation)) << ")";
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
@@ -72,7 +72,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node, int la
         }
         else
         {
-            code << "\n\t" << node->get_node_name() << LangPtr(language) << "SetMinSize(" << min_size.GetX() << ", "
+            code << "\n\t" << node->get_node_name(language) << LangPtr(language) << "SetMinSize(" << min_size.GetX() << ", "
                  << min_size.GetY() << ")";
         }
     }

@@ -8,7 +8,6 @@
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
 
 const char* LangPtr(int language);
-const char* LineEnding(int language);
 ttlib::cstr GetWidgetName(int language, ttlib::sview name);
 
 // This is *NOT* the same as get_node_name() -- this will handle wxStaticBox and

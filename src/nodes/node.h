@@ -128,8 +128,6 @@ public:
     // Returns the value of the property "var_name" or "class_name"
     const ttlib::cstr& get_node_name() const;
 
-    ttlib::cstr get_node_name(int language) const;
-
     // Returns the value of the parent property "var_name" or "class_name"
     const ttlib::cstr& get_parent_name() const;
 

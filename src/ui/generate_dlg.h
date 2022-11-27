@@ -31,9 +31,6 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
 // ../generate/gen_lua.cpp
 bool GenerateLuaFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList = nullptr);
 
-// ../generate/gen_php.cpp
-bool GeneratePhpFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList = nullptr);
-
 // If out_file contains a file, it will override project xrc_file and combine_xrc settings.
 //
 // If NeedsGenerateCheck is true, this will not write any files, but will return true if at

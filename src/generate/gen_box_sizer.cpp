@@ -49,32 +49,14 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node, int la
         return GenConstruction(node);
 
     ttlib::cstr code;
-    switch (language)
-    {
-        case GEN_LANG_PHP:
-            code << node->get_node_name(language) << " = new wxBoxSizer(";
-            break;
-
-        case GEN_LANG_PYTHON:
-        case GEN_LANG_LUA:
-            code << node->get_node_name() << " = " << GetWidgetName(language, "wxBoxSizer") << '(';
-            break;
-    }
-    code << GetWidgetName(language, node->prop_as_string(prop_orientation)) << ")" << LineEnding(language);
+    code << node->get_node_name() << " = " << GetWidgetName(language, "wxBoxSizer") << '(';
+    code << GetWidgetName(language, node->prop_as_string(prop_orientation)) << ")";
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        if (language == GEN_LANG_PHP)
-        {
-            code << "\n\t" << node->get_node_name(language) << "->SetMinSize(new wxSize(" << min_size.GetX() << ", "
-                 << min_size.GetY() << "));";
-        }
-        else
-        {
-            code << "\n\t" << node->get_node_name(language) << LangPtr(language) << "SetMinSize(" << min_size.GetX() << ", "
-                 << min_size.GetY() << ")";
-        }
+        code << "\n\t" << node->get_node_name() << LangPtr(language) << "SetMinSize(" << min_size.GetX() << ", "
+             << min_size.GetY() << ")";
     }
 
     return code;
@@ -133,7 +115,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node, int l
     ttlib::cstr code;
     if (node->as_bool(prop_hide_children))
     {
-        code << "\t" << node->get_node_name(language) << LangPtr(language) << "ShowItems(false)" << LineEnding(language);
+        code << "\t" << node->get_node_name() << LangPtr(language) << "ShowItems(false)";
     }
 
     auto parent = node->GetParent();
@@ -148,14 +130,13 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node, int l
 
         if (parent->isGen(gen_wxRibbonPanel))
         {
-            code << parent->get_node_name(language) << LangPtr(language) << "SetSizerAndFit("
-                 << node->get_node_name(language) << ")";
+            code << parent->get_node_name() << LangPtr(language) << "SetSizerAndFit(" << node->get_node_name() << ")";
         }
         else
         {
             if (GetParentName(node) != "this")
                 code << GetParentName(language, node) << LangPtr(language);
-            code << "SetSizerAndFit(" << node->get_node_name(language) << ")" << LineEnding(language);
+            code << "SetSizerAndFit(" << node->get_node_name() << ")";
         }
     }
 

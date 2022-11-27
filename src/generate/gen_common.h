@@ -46,12 +46,10 @@ ttlib::cstr GenerateSizerFlags(Node* node);
 ttlib::cstr GenerateQuotedString(const ttlib::cstr& str);
 ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str);
 ttlib::cstr GenerateLuaQuotedString(const ttlib::cstr& str);
-ttlib::cstr GeneratePhpQuotedString(const ttlib::cstr& str);
 
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name);
 ttlib::cstr GeneratePythonQuotedString(Node* node, GenEnum::PropName prop_name);
 ttlib::cstr GenerateLuaQuotedString(Node* node, GenEnum::PropName prop_name);
-ttlib::cstr GeneratePhpQuotedString(Node* node, GenEnum::PropName prop_name);
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);
@@ -79,7 +77,6 @@ void GeneratePosSizeFlags(Node* node, ttlib::cstr& code, bool uses_def_validator
 void GenerateWindowSettings(Node* node, ttlib::cstr& code);
 void GeneratePythonWindowSettings(Node* node, ttlib::cstr& code);
 void GenerateLuaWindowSettings(Node* node, ttlib::cstr& code);
-void GeneratePhpWindowSettings(Node* node, ttlib::cstr& code);
 
 // Used for controls that need to call SetBitmap(bitmap). Returns true if wxVector generated.
 //

@@ -113,7 +113,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node, int 
         return GenConstruction(node);
 
     ttlib::cstr code;
-    code << node->get_node_name(language)
+    code << node->get_node_name()
          << GenerateNewAssignment(language, node, (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
 
     code << GetParentName(language, node) << ", " << GetWidgetName(language, node->prop_as_string(prop_id)) << ", ";
@@ -138,9 +138,8 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node, int 
     }
 
     GeneratePosSizeFlags(node, code);
-
-    if (language != GEN_LANG_PHP)
-        code.Replace(";", "", true);
+    if (code.back() == ';')
+        code.pop_back();
 
     return code;
 }
@@ -185,8 +184,8 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& 
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name(language) << LangPtr(language) << "SetLabelMarkup("
-             << GenerateQuotedString(node->prop_as_string(prop_label)) << ");";
+        code << node->get_node_name() << LangPtr(language) << "SetLabelMarkup("
+             << GenerateQuotedString(node->prop_as_string(prop_label)) << ")";
     }
 
     // Note that wrap MUST be called after the text is set, otherwise it will be ignored.
@@ -194,11 +193,8 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& 
     {
         if (code.size())
             code << '\n';
-        code << node->get_node_name() << LangPtr(language) << "Wrap(" << node->prop_as_string(prop_wrap) << ");";
+        code << node->get_node_name() << LangPtr(language) << "Wrap(" << node->prop_as_string(prop_wrap) << ")";
     }
-
-    if (language != GEN_LANG_PHP)
-        code.Replace(";", "", true);
 
     return code;
 }

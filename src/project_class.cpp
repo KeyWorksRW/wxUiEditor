@@ -610,8 +610,6 @@ ttString Project::GetBaseDirectory(int language)
         return as_wxString(prop_lua_output_folder);
     else if (language == GEN_LANG_PYTHON && HasValue(prop_python_output_folder))
         return as_wxString(prop_python_output_folder);
-    else if (language == GEN_LANG_PHP && HasValue(prop_php_output_folder))
-        return as_wxString(prop_php_output_folder);
     else if (language == GEN_LANG_XRC && HasValue(prop_xrc_directory))
         return as_wxString(prop_xrc_directory);
     else

@@ -286,26 +286,6 @@ ttlib::cstr GenerateLuaQuotedString(const ttlib::cstr& str)
     return code;
 }
 
-ttlib::cstr GeneratePhpQuotedString(const ttlib::cstr& str)
-{
-    ttlib::cstr code;
-
-    if (str.size())
-    {
-        auto str_with_escapes = ConvertToCodeString(str);
-        if (GetProject()->prop_as_bool(prop_internationalize))
-            code << "_(\"" << str_with_escapes << "\")";
-        else
-            code << "\"" << str_with_escapes << "\"";
-    }
-    else
-    {
-        code << "wxEmptyString";
-    }
-
-    return code;
-}
-
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name)
 {
     if (node->HasValue(prop_name))
@@ -339,18 +319,6 @@ ttlib::cstr GenerateLuaQuotedString(Node* node, GenEnum::PropName prop_name)
     else
     {
         return ttlib::cstr("wx.EmptyString");
-    }
-}
-
-ttlib::cstr GeneratePhpQuotedString(Node* node, GenEnum::PropName prop_name)
-{
-    if (node->HasValue(prop_name))
-    {
-        return GeneratePhpQuotedString(node->prop_as_string(prop_name));
-    }
-    else
-    {
-        return ttlib::cstr("wxEmptyString");
     }
 }
 
@@ -1493,7 +1461,7 @@ ttlib::cstr ConvertToCodeString(const ttlib::cstr& text)
                 result += "\\\"";
                 break;
 
-            // This generally isn't needed for C++, but is needed for Python, Lua and PHP
+            // This generally isn't needed for C++, but is needed for Python and Lua
             case '\'':
                 result += "\\'";
                 break;
@@ -1801,8 +1769,6 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
 void GeneratePythonWindowSettings(Node* /* node */, ttlib::cstr& /* code */) {}
 
 void GenerateLuaWindowSettings(Node* /* node */, ttlib::cstr& /* code */) {}
-
-void GeneratePhpWindowSettings(Node* /* node */, ttlib::cstr& /* code */) {}
 
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything needed to set the
 // window's icon.

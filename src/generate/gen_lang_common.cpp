@@ -18,7 +18,6 @@ const char* LangPtr(int language)
     switch (language)
     {
         case GEN_LANG_CPLUSPLUS:
-        case GEN_LANG_PHP:
             return "->";
 
         case GEN_LANG_PYTHON:
@@ -33,23 +32,10 @@ const char* LangPtr(int language)
     }
 }
 
-const char* LineEnding(int language)
-{
-    switch (language)
-    {
-        case GEN_LANG_CPLUSPLUS:
-        case GEN_LANG_PHP:
-            return ";";
-
-        default:
-            return "";
-    }
-}
-
 ttlib::cstr GetWidgetName(int language, ttlib::sview name)
 {
     ttlib::cstr widget_name;
-    if (language == GEN_LANG_CPLUSPLUS || language == GEN_LANG_PHP)
+    if (language == GEN_LANG_CPLUSPLUS)
     {
         widget_name = name;
         return widget_name;
@@ -97,7 +83,7 @@ ttlib::cstr GetParentName(int language, Node* node)
         {
             if (parent->IsStaticBoxSizer())
             {
-                return (ttlib::cstr() << parent->get_node_name(language) << LangPtr(language) << "GetStaticBox()");
+                return (ttlib::cstr() << parent->get_node_name() << LangPtr(language) << "GetStaticBox()");
             }
         }
         if (parent->IsForm())
@@ -105,7 +91,7 @@ ttlib::cstr GetParentName(int language, Node* node)
             if (language == GEN_LANG_PYTHON)
                 return ttlib::cstr("self");
             else if (language == GEN_LANG_LUA)
-                return ttlib::cstr(parent->get_node_name(language));
+                return ttlib::cstr(parent->get_node_name());
             else
                 return ttlib::cstr("this");
         }
@@ -114,7 +100,7 @@ ttlib::cstr GetParentName(int language, Node* node)
         {
             if (parent->isType(iter))
             {
-                ttlib::cstr name = parent->get_node_name(language);
+                ttlib::cstr name = parent->get_node_name();
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
                     name << LangPtr(language) << "GetPane()";
@@ -125,14 +111,14 @@ ttlib::cstr GetParentName(int language, Node* node)
         parent = parent->GetParent();
     }
 
-    ASSERT_MSG(parent, ttlib::cstr() << node->get_node_name(language) << " has no parent!");
+    ASSERT_MSG(parent, ttlib::cstr() << node->get_node_name() << " has no parent!");
     return ttlib::cstr("internal error");
 }
 
 ttlib::cstr GenerateNewAssignment(int language, Node* node, bool use_generic)
 {
     ttlib::cstr code(" = ");
-    if (language == GEN_LANG_CPLUSPLUS || language == GEN_LANG_PHP)
+    if (language == GEN_LANG_CPLUSPLUS)
         code << "new ";
     if (language == GEN_LANG_CPLUSPLUS && node->HasValue(prop_derived_class))
     {

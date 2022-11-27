@@ -1130,8 +1130,6 @@ wxWindow* MainFrame::CreateNoteBook(wxWindow* parent)
     m_notebook->AddPage(m_pythonPanel, "Python", false, wxWithImages::NO_IMAGE);
     m_luaPanel = new BasePanel(m_notebook, this, GEN_LANG_LUA);
     m_notebook->AddPage(m_luaPanel, "Lua", false, wxWithImages::NO_IMAGE);
-    m_phpPanel = new BasePanel(m_notebook, this, GEN_LANG_PHP);
-    m_notebook->AddPage(m_phpPanel, "PHP", false, wxWithImages::NO_IMAGE);
 
     m_xrcPanel = new BasePanel(m_notebook, this, GEN_LANG_XRC);
     m_notebook->AddPage(m_xrcPanel, "XRC", false, wxWithImages::NO_IMAGE);

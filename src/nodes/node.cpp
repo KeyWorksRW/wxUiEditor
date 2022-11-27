@@ -547,22 +547,6 @@ const ttlib::cstr& Node::get_node_name() const
         return tt_empty_cstr;
 }
 
-ttlib::cstr Node::get_node_name(int language) const
-{
-    ttlib::cstr result;
-    if (language == GEN_LANG_PHP)
-        result << '$';
-
-    if (auto it = m_prop_indices.find(prop_var_name); it != m_prop_indices.end())
-        result << m_properties[it->second].as_string();
-    else if (it = m_prop_indices.find(prop_class_name); it != m_prop_indices.end())
-        result << m_properties[it->second].as_string();
-    else
-        result.clear();
-
-    return result;
-}
-
 const ttlib::cstr& Node::get_parent_name() const
 {
     if (m_parent)

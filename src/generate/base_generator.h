@@ -80,7 +80,6 @@ public:
     // Generate the code used to construct the object
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenLuaConstruction(Node*) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPhpConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonConstruction(Node*) { return {}; }
 
     // Return true if all construction and settings code was written to src_code.
@@ -105,10 +104,6 @@ public:
     {
         return {};
     }
-    virtual std::optional<ttlib::cstr> GenPhpAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */)
-    {
-        return {};
-    }
 
     // Override this to use a single GenAfterChildren() for all 4 languages
     virtual std::optional<ttlib::cstr> GenAfterChildren(Node*, int /* language */) { return {}; }
@@ -119,12 +114,10 @@ public:
     virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonAfterChildren(Node* /* node */) { return {}; }
     virtual std::optional<ttlib::cstr> GenLuaAfterChildren(Node* /* node */) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPhpfterChildren(Node* /* node */) { return {}; }
 
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenLuaEvents(NodeEvent*, const std::string&) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPhpEvents(NodeEvent*, const std::string&) { return {}; }
 
     // Override this to use a single GenSettings() for all 4 languages
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&, int /* language */) { return {}; }
@@ -132,7 +125,6 @@ public:
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonSettings(Node*, size_t&) { return {}; }
     virtual std::optional<ttlib::cstr> GenLuaSettings(Node*, size_t&) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPhpSettings(Node*, size_t&) { return {}; }
 
     // Add attributes to object, and all properties
     //

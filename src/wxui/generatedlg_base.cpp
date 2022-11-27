@@ -40,10 +40,6 @@ bool GenerateDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString& ti
     checkBox_4->SetValidator(wxGenericValidator(&m_gen_lua_code));
     box_sizer->Add(checkBox_4, wxSizerFlags().Border(wxALL));
 
-    auto* checkBox_3 = new wxCheckBox(this, wxID_ANY, "P&HP");
-    checkBox_3->SetValidator(wxGenericValidator(&m_gen_php_code));
-    box_sizer->Add(checkBox_3, wxSizerFlags().Border(wxALL));
-
     auto* checkBox_2 = new wxCheckBox(this, wxID_ANY, "&XRC");
     checkBox_2->SetValidator(wxGenericValidator(&m_gen_xrc_code));
     box_sizer->Add(checkBox_2, wxSizerFlags().Border(wxALL));

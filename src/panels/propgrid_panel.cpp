@@ -476,6 +476,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "Lua Files|*.lua");
         }
+#if 0
         else if (prop->isProp(prop_php_file) || prop->isProp(prop_php_combined_file))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "PHP filename");
@@ -484,6 +485,7 @@ wxPGProperty* PropGridPanel::CreatePGProperty(NodeProperty* prop)
             new_pg_property->SetAttribute(wxPG_FILE_DIALOG_STYLE, wxFD_SAVE);
             new_pg_property->SetAttribute(wxPG_FILE_WILDCARD, "PHP Files|*.php");
         }
+#endif
         else if (prop->isProp(prop_header))
         {
             new_pg_property->SetAttribute(wxPG_DIALOG_TITLE, "Custom Control Header");

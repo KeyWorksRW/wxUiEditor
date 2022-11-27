@@ -36,11 +36,13 @@ const char* g_python_keywords =
 const char* g_lua_keywords =
     "and break do else elseif end false for function if in local nil not or repeat return then true until while";
 
+#if 0
 const char* g_php_keywords =
     "abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare "
     "endfor endforeach endif endswitch endwhile eval exit extends final finally for foreach function global goto if implements include "
     "include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return "
     "static switch throw trait try unset use var while xor yield";
+#endif
 
 // clang-format on
 
@@ -87,6 +89,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINE, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_LUA_NUMBER, *wxRED);
     }
+#if 0
     else if (panel_type == GEN_LANG_PHP)
     {
         m_scintilla->SetLexer(wxSTC_LEX_HTML);
@@ -98,6 +101,7 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_HPHP_NUMBER, *wxRED);
         m_scintilla->StyleSetForeground(wxSTC_HPHP_SIMPLESTRING, wxColour(0, 128, 0));
     }
+#endif
     else  // C++
     {
         // On Windows, this saves converting the UTF16 characters to ANSI.

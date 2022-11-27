@@ -69,7 +69,6 @@ public:
     void GenerateBaseClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
     void GeneratePythonClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
     void GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
-    void GeneratePhpClass(Node* form_node, PANEL_PAGE panel_type = NOT_PANEL);
 
     // GenerateDerivedClass() is in gen_derived.cpp
 

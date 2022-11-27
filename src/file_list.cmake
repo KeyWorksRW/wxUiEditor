@@ -68,7 +68,7 @@ set (file_list
     generate/gen_derived.cpp       # Generate Derived class code
     generate/gen_python.cpp        # Generate Python code files
     generate/gen_lua.cpp           # Generate Lua code files
-    generate/gen_php.cpp           # Generate PHP code files
+    # generate/gen_php.cpp           # Generate PHP code files
     generate/gen_xrc.cpp           # Generate XRC file
 
 

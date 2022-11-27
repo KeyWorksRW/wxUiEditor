@@ -19,6 +19,8 @@ The following sections cover specific differences about the language versus the 
 
 wxWidget names are prefixed with `wx.` followed by the name of the widget without the "wx" prefix (e.g. `wx.StaticText` for `wxStaticText`). wxEmptyString is special-cased to use `""` instead of `wxEmptyString`.
 
+Python uses indentation as the equivalent to braces in C++ -- which makes correct indentation critical.
+
 ## wxLua
 
 wxWidget names are prefixed with `wx.` followed by the full wxWidget name (e.g. `wx.wxStaticText`).

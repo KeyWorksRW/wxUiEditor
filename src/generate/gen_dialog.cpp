@@ -318,31 +318,31 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenLuaAdditionalCode(GenEnum::Ge
 
         if (min_size == wxDefaultSize && max_size == wxDefaultSize)
         {
-            code << "\tSetSizerAndFit(" << node->get_node_name() << ");";
+            code << "\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetSizerAndFit(" << node->get_node_name() << ");";
         }
         else
         {
-            code << "\tSetSizer(" << node->get_node_name() << ");";
+            code << "\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetSizer(" << node->get_node_name() << ");";
             if (min_size != wxDefaultSize)
             {
-                code << "\n\tSetMinSize(wx.wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
+                code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetMinSize(wx.wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
             }
             if (max_size != wxDefaultSize)
             {
-                code << "\n\tSetMaxSize(wx.wxSize(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
+                code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetMaxSize(wx.wxSize(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
             }
-            code << "\n\tFit();";
+            code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":Fit();";
         }
 
         if (size != wxDefaultSize)
         {
-            code << "\n\tSetSize(wx.wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
+            code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetSize(wx.wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
         }
 
         auto& center = dlg->prop_as_string(prop_center);
         if (center.size() && !center.is_sameas("no"))
         {
-            code << "\n\tCentre(" << center << ");";
+            code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":Centre(" << GetWidgetName(GEN_LANG_LUA, center) << ");";
         }
 
         return code;
@@ -473,7 +473,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenLuaConstruction(Node* node)
         dlg_name.resize(dlg_name.size() - 4);
     }
 
-    code << dlg_name << " = wx.wxDialog(parent, wx.wxID_ANY, ";
+    code << dlg_name << " = wx.wxDialog(wx.NULL, wx.wxID_ANY, ";
     if (node->HasValue(prop_title))
         code << GenerateLuaQuotedString(node, prop_title) << ",\n\t\t";
     else
@@ -492,7 +492,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenLuaConstruction(Node* node)
         code << "wx.wxSize(" << size.x << ", " << size.y << "),";
 
     if (node->HasValue(prop_style) && !node->prop_as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-        code << "wx." << node->prop_as_string(prop_style);
+        code << GetWidgetName(GEN_LANG_LUA, node->prop_as_string(prop_style));
     else
         code << "wx.wxDEFAULT_DIALOG_STYLE";
     code << ")";
@@ -534,7 +534,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPhpConstruction(Node* node)
         code << node->prop_as_string(prop_style);
     else
         code << "wxDEFAULT_DIALOG_STYLE";
-    code << ")";
+    code << ");";
 
     return code;
 }

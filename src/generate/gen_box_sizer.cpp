@@ -60,7 +60,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node, int la
             code << node->get_node_name() << " = " << GetWidgetName(language, "wxBoxSizer") << '(';
             break;
     }
-    code << GetWidgetName(language, node->prop_as_string(prop_orientation)) << ")";
+    code << GetWidgetName(language, node->prop_as_string(prop_orientation)) << ")" << LineEnding(language);
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
@@ -68,7 +68,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node, int la
         if (language == GEN_LANG_PHP)
         {
             code << "\n\t" << node->get_node_name(language) << "->SetMinSize(new wxSize(" << min_size.GetX() << ", "
-                 << min_size.GetY() << "))";
+                 << min_size.GetY() << "));";
         }
         else
         {
@@ -133,7 +133,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node, int l
     ttlib::cstr code;
     if (node->as_bool(prop_hide_children))
     {
-        code << "\t" << node->get_node_name(language) << LangPtr(language) << "ShowItems(false)";
+        code << "\t" << node->get_node_name(language) << LangPtr(language) << "ShowItems(false)" << LineEnding(language);
     }
 
     auto parent = node->GetParent();
@@ -155,7 +155,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node, int l
         {
             if (GetParentName(node) != "this")
                 code << GetParentName(language, node) << LangPtr(language);
-            code << "SetSizerAndFit(" << node->get_node_name(language) << ")";
+            code << "SetSizerAndFit(" << node->get_node_name(language) << ")" << LineEnding(language);
         }
     }
 

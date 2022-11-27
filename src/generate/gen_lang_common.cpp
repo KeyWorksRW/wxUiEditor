@@ -104,7 +104,10 @@ ttlib::cstr GetParentName(int language, Node* node)
         {
             if (language == GEN_LANG_PYTHON)
                 return ttlib::cstr("self");
-            return ttlib::cstr("this");
+            else if (language == GEN_LANG_LUA)
+                return ttlib::cstr(parent->get_node_name(language));
+            else
+                return ttlib::cstr("this");
         }
 
         for (auto iter: s_GenParentTypes)
@@ -131,7 +134,7 @@ ttlib::cstr GenerateNewAssignment(int language, Node* node, bool use_generic)
     ttlib::cstr code(" = ");
     if (language == GEN_LANG_CPLUSPLUS || language == GEN_LANG_PHP)
         code << "new ";
-    if (node->HasValue(prop_derived_class))
+    if (language == GEN_LANG_CPLUSPLUS && node->HasValue(prop_derived_class))
     {
         code << node->prop_as_string(prop_derived_class);
     }
@@ -309,7 +312,7 @@ ttlib::cstr GenerateSizerFlags(int language, Node* node)
             }
         }
         if (flags.empty())
-                flags << "0";
+            flags << "0";
         code << flags << ", ";
 
         auto border_size = node->prop_as_string(prop_border_size);
@@ -337,25 +340,25 @@ ttlib::cstr GenerateSizerFlags(int language, Node* node)
                 // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
                 // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't
                 // support it. Center() just works without the assertion check.
-                code << ".Center()";
+                code << LangPtr(language) << "Center()";
             }
 
             if (prop.contains("wxALIGN_LEFT"))
             {
-                code << ".Left()";
+                code << LangPtr(language) << "Left()";
             }
             else if (prop.contains("wxALIGN_RIGHT"))
             {
-                code << ".Right()";
+                code << LangPtr(language) << "Right()";
             }
 
             if (prop.contains("wxALIGN_TOP"))
             {
-                code << ".Top()";
+                code << LangPtr(language) << "Top()";
             }
             else if (prop.contains("wxALIGN_BOTTOM"))
             {
-                code << ".Bottom()";
+                code << LangPtr(language) << "Bottom()";
             }
         }
 
@@ -363,19 +366,19 @@ ttlib::cstr GenerateSizerFlags(int language, Node* node)
         {
             if (prop.contains("wxEXPAND"))
             {
-                code << ".Expand()";
+                code << LangPtr(language) << "Expand()";
             }
             if (prop.contains("wxSHAPED"))
             {
-                code << ".Shaped()";
+                code << LangPtr(language) << "Shaped()";
             }
             if (prop.contains("wxFIXED_MINSIZE"))
             {
-                code << ".FixedMinSize()";
+                code << LangPtr(language) << "FixedMinSize()";
             }
             if (prop.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
             {
-                code << ".ReserveSpaceEvenIfHidden()";
+                code << LangPtr(language) << "ReserveSpaceEvenIfHidden()";
             }
         }
 
@@ -385,19 +388,19 @@ ttlib::cstr GenerateSizerFlags(int language, Node* node)
             if (prop.contains("wxALL"))
             {
                 if (border_size == "5")
-                    code << ".Border(" << GetWidgetName(language, "wxALL") << ")";
+                    code << LangPtr(language) << "Border(" << GetWidgetName(language, "wxALL") << ")";
                 else if (border_size == "10")
-                    code << ".DoubleBorder(" << GetWidgetName(language, "wxALL") << ")";
+                    code << LangPtr(language) << "DoubleBorder(" << GetWidgetName(language, "wxALL") << ")";
                 else if (border_size == "15")
-                    code << ".TripleBorder(" << GetWidgetName(language, "wxALL") << ")";
+                    code << LangPtr(language) << "TripleBorder(" << GetWidgetName(language, "wxALL") << ")";
                 else
                 {
-                    code << ".Border(" << GetWidgetName(language, "wxALL") << ", " << border_size << ')';
+                    code << LangPtr(language) << "Border(" << GetWidgetName(language, "wxALL") << ", " << border_size << ')';
                 }
             }
             else
             {
-                code << ".Border(";
+                code << LangPtr(language) << "Border(";
                 ttlib::cstr border_flags;
 
                 if (prop.contains("wxLEFT"))

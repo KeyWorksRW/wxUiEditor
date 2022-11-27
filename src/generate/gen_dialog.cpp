@@ -7,13 +7,14 @@
 
 #include <wx/dialog.h>  // wxDialogBase class
 
-#include "gen_base.h"       // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"     // GeneratorLibrary -- Generator classes
-#include "gen_xrc_utils.h"  // Common XRC generating functions
-#include "node.h"           // Node class
-#include "pugixml.hpp"      // xml read/write/create/process
-#include "utils.h"          // Utility functions that work with properties
-#include "write_code.h"     // WriteCode -- Write code to Scintilla or file
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"       // Common component functions
+#include "gen_lang_common.h"  // Common mulit-language functions
+#include "gen_xrc_utils.h"    // Common XRC generating functions
+#include "node.h"             // Node class
+#include "pugixml.hpp"        // xml read/write/create/process
+#include "utils.h"            // Utility functions that work with properties
+#include "write_code.h"       // WriteCode -- Write code to Scintilla or file
 
 #include "gen_dialog.h"
 
@@ -254,11 +255,11 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPythonAdditionalCode(GenEnum:
 
         if (min_size == wxDefaultSize && max_size == wxDefaultSize)
         {
-            code << "\tself.SetSizerAndFit(" << node->get_node_name() << ");";
+            code << "\tself.SetSizerAndFit(" << node->get_node_name(GEN_LANG_PYTHON) << ");";
         }
         else
         {
-            code << "\tself.SetSizer(" << node->get_node_name() << ");";
+            code << "\tself.SetSizer(" << node->get_node_name(GEN_LANG_PYTHON) << ");";
             if (min_size != wxDefaultSize)
             {
                 code << "\n\tself.SetMinSize(wx.Size(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
@@ -278,7 +279,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPythonAdditionalCode(GenEnum:
         auto& center = dlg->prop_as_string(prop_center);
         if (center.size() && !center.is_sameas("no"))
         {
-            code << "\n\tself.Centre(" << center << ");";
+            code << "\n\tself.Centre(" << GetWidgetName(GEN_LANG_PYTHON, center) << ")";
         }
 
         return code;
@@ -317,31 +318,31 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenLuaAdditionalCode(GenEnum::Ge
 
         if (min_size == wxDefaultSize && max_size == wxDefaultSize)
         {
-            code << "\tui.:SetSizerAndFit(" << node->get_node_name() << ");";
+            code << "\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetSizerAndFit(" << node->get_node_name() << ");";
         }
         else
         {
-            code << "\tui.:SetSizer(" << node->get_node_name() << ");";
+            code << "\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetSizer(" << node->get_node_name() << ");";
             if (min_size != wxDefaultSize)
             {
-                code << "\n\tui.:SetMinSize(wx.wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
+                code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetMinSize(wx.wxSize(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
             }
             if (max_size != wxDefaultSize)
             {
-                code << "\n\tui.:SetMaxSize(wx.wxSize(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
+                code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetMaxSize(wx.wxSize(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
             }
-            code << "\n\tui.:Fit();";
+            code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":Fit();";
         }
 
         if (size != wxDefaultSize)
         {
-            code << "\n\tui.:SetSize(wx.wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
+            code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":SetSize(wx.wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
         }
 
         auto& center = dlg->prop_as_string(prop_center);
         if (center.size() && !center.is_sameas("no"))
         {
-            code << "\n\tui.:Centre(" << center << ");";
+            code << "\n\t" << dlg->get_node_name(GEN_LANG_LUA) << ":Centre(" << GetWidgetName(GEN_LANG_LUA, center) << ");";
         }
 
         return code;
@@ -432,13 +433,13 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Node* node
     }
 
     code << "class " << dlg_name << "(wx.Dialog):\n";
-    code << "\tdef __init__(self, parent, id=wx.ID_ANY, title=";
+    code << "\tdef __init__(self, parent):\n\t\twx.Dialog.__init__(self, parent, id=wx.ID_ANY,\n\t\t\ttitle=";
     if (node->HasValue(prop_title))
-        code << GeneratePythonQuotedString(node, prop_title) << ",\n\t\t";
+        code << GeneratePythonQuotedString(node, prop_title) << ",";
     else
-        code << "wx.EmptyString,\n\t\t";
+        code << "wx.EmptyString,";
 
-    code << "pos=";
+    code << "\n\t\t\tpos=";
     auto position = node->prop_as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
         code << "wx.DefaultPosition, ";
@@ -452,9 +453,9 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Node* node
     else
         code << "wx.Size(" << size.x << ", " << size.y << ")";
 
-    code << ", style=";
+    code << ",\n\t\t\tstyle=";
     if (node->HasValue(prop_style) && !node->prop_as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-        code << node->prop_as_string(prop_style);
+        code << GetWidgetName(GEN_LANG_PYTHON, node->prop_as_string(prop_style));
     else
         code << "wx.DEFAULT_DIALOG_STYLE";
     code << ")";
@@ -472,7 +473,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenLuaConstruction(Node* node)
         dlg_name.resize(dlg_name.size() - 4);
     }
 
-    code << "ui." << dlg_name << " = wx.wxDialog(parent, wx.wxID_ANY, ";
+    code << dlg_name << " = wx.wxDialog(wx.NULL, wx.wxID_ANY, ";
     if (node->HasValue(prop_title))
         code << GenerateLuaQuotedString(node, prop_title) << ",\n\t\t";
     else
@@ -491,7 +492,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenLuaConstruction(Node* node)
         code << "wx.wxSize(" << size.x << ", " << size.y << "),";
 
     if (node->HasValue(prop_style) && !node->prop_as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-        code << "wx." << node->prop_as_string(prop_style);
+        code << GetWidgetName(GEN_LANG_LUA, node->prop_as_string(prop_style));
     else
         code << "wx.wxDEFAULT_DIALOG_STYLE";
     code << ")";
@@ -533,7 +534,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPhpConstruction(Node* node)
         code << node->prop_as_string(prop_style);
     else
         code << "wxDEFAULT_DIALOG_STYLE";
-    code << ")";
+    code << ");";
 
     return code;
 }

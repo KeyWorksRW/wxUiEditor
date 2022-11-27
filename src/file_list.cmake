@@ -58,6 +58,7 @@ set (file_list
     generate/base_generator.cpp    # Base widget generator class
     generate/gen_initialize.cpp    # Initialize all widget generate classes
     generate/gen_common.cpp        # Common widget generation functions
+    generate/gen_lang_common.cpp   # Common mulit-language functions
     generate/gen_xrc_utils.cpp     # Common XRC generating functions
     generate/gen_book_utils.cpp    # Common Book utilities
 
@@ -288,7 +289,9 @@ set (doc_list
     ../docs/import_formbuilder.md
     ../docs/import_winres.md
     ../docs/xrc.md
+    generate/README.md
     nodes/README.md
+    winres/README.md
     xml/README.md
 
 )

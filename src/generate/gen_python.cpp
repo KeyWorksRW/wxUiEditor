@@ -172,6 +172,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         m_source->writeLine(result.value(), indent::none);
         m_source->writeLine();
         m_source->Indent();
+        m_source->Indent();
     }
 
     size_t auto_indent = indent::auto_no_whitespace;
@@ -208,7 +209,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         if (result.value().size())
         {
             m_source->writeLine();
-            m_source->writeLine(result.value(), indent::none);
+            m_source->writeLine(result.value());
         }
     }
 

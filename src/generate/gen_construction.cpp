@@ -5,11 +5,12 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
-#include "gen_base.h"    // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"  // GeneratorLibrary -- Generator classes
-#include "node.h"        // Node class
-#include "node_decl.h"   // NodeDeclaration class
-#include "write_code.h"  // Write code to Scintilla or file
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"       // Common component functions
+#include "gen_lang_common.h"  // Common mulit-language functions
+#include "node.h"             // Node class
+#include "node_decl.h"        // NodeDeclaration class
+#include "write_code.h"       // Write code to Scintilla or file
 
 // clang-format off
 
@@ -194,7 +195,9 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     auto parent = node->GetParent();
 
     if (GenAfterChildren(node, need_closing_brace))
+    {
         return;
+    }
 
     if (parent->IsSizer())
     {
@@ -215,7 +218,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         ttlib::cstr code;
         code << parent->get_node_name(m_language) << LangPtr() << "GetControlSizer()" << LangPtr() << "Add("
              << node->get_node_name(m_language);
-        code << ", wxSizerFlags().Expand().Border(wxALL));";
+        code << ", " << GetWidgetName(m_language, "wxSizerFlags") << "().Expand().Border("
+             << GetWidgetName(m_language, "wxALL") << "))" << LineEnding(m_language);
         m_source->writeLine(code);
     }
 
@@ -617,7 +621,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
             }
             else
             {
-                code << GenerateSizerFlags(node) << ");";
+                code << GenerateSizerFlags(m_language, node) << ")" << LineEnding(m_language);
             }
 
             if (need_closing_brace)
@@ -708,7 +712,7 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
         }
         else
         {
-            code << GenerateSizerFlags(node) << ");";
+            code << GenerateSizerFlags(m_language, node) << ")" << LineEnding(m_language);
         }
     }
 

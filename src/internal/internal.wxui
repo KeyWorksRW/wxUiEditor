@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wxUiEditorData
-  data_version="15">
+  data_version="17">
   <node
     class="Project"
     cmake_file="wxui_internal.cmake"
@@ -25,18 +25,46 @@
           orientation="wxVERTICAL">
           <node
             class="wxStaticText"
+            class_access="none"
             label="If you have WinMergeU.exe installed, and you have previously generated classes, then you can use this to compare what would be generated now. This can be helpful if you need to confirm code generation changes without having to actually write out the code.&#10;"
-            wrap="250" />
+            var_name="staticText_2"
+            wrap="320"
+            borders="wxTOP|wxRIGHT|wxLEFT" />
+          <node
+            class="wxGridSizer"
+            cols="3"
+            alignment="wxALIGN_CENTER_HORIZONTAL">
+            <node
+              class="wxRadioButton"
+              label="&amp;C++"
+              style="wxRB_GROUP"
+              var_name="m_radio_cplusplus"
+              wxEVT_RADIOBUTTON="OnCPlusPlus" />
+            <node
+              class="wxRadioButton"
+              label="&amp;Python"
+              var_name="m_radio_python"
+              wxEVT_RADIOBUTTON="OnPython" />
+            <node
+              class="wxRadioButton"
+              label="&amp;Lua"
+              var_name="m_radio_Lua"
+              wxEVT_RADIOBUTTON="OnLua" />
+          </node>
+          <node
+            class="spacer"
+            height="15" />
           <node
             class="wxStaticText"
             class_access="none"
-            label="&amp;Changed Classes:"
+            label="C&amp;hanged Classes:"
             var_name="staticText" />
           <node
             class="wxListBox"
             var_name="m_list_changes"
             disabled="1"
-            minimum_size="250,200" />
+            minimum_size="250,200"
+            flags="wxEXPAND" />
           <node
             class="wxButton"
             label="&amp;WinMerge..."

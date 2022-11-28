@@ -74,7 +74,7 @@ bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassLi
 
             codegen.GeneratePythonClass(form);
 
-            auto retval = cpp_cw->WriteFile();
+            auto retval = cpp_cw->WriteFile(pClassList ? true : false);
 
             if (retval > 0)
             {

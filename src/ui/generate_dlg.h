@@ -43,7 +43,7 @@ bool GenerateLuaFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList 
 bool GenerateXrcFiles(GenResults& results, ttlib::cstr out_file = {}, std::vector<ttlib::cstr>* pClassList = nullptr);
 
 #if defined(INTERNAL_TESTING)
-void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root);
+void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root, int language = GEN_LANG_CPLUSPLUS);
 #endif
 
 class GenerateDlg : public GenerateDlgBase

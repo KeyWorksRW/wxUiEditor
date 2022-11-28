@@ -325,7 +325,7 @@ void GenInhertedClass(GenResults& results)
 
     #include "pugixml.hpp"
 
-void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root)
+void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node root, int language)
 {
     auto project = GetProject();
 
@@ -337,14 +337,34 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
     ttlib::cstr source_ext(".cpp");
     ttlib::cstr header_ext(".h");
 
-    if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
+    if (language == GEN_LANG_CPLUSPLUS)
     {
-        source_ext = extProp;
+        if (auto& extProp = project->prop_as_string(prop_source_ext); extProp.size())
+        {
+            source_ext = extProp;
+        }
+        else
+        {
+            source_ext = ".cpp";
+        }
+        if (auto& extProp = project->prop_as_string(prop_header_ext); extProp.size())
+        {
+            header_ext = extProp;
+        }
+        else
+        {
+            header_ext = ".h";
+        }
     }
-
-    if (auto& extProp = project->prop_as_string(prop_header_ext); extProp.size())
+    else if (language == GEN_LANG_PYTHON)
     {
-        header_ext = extProp;
+        source_ext = ".py";
+        header_ext = ".py";
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        source_ext = ".lua";
+        header_ext = ".lua";
     }
 
     std::vector<Node*> forms;
@@ -360,91 +380,172 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
 
             ttlib::cstr class_name(form->prop_as_string(prop_class_name));
             if (form->isGen(gen_Images))
+            {
+                if (language != GEN_LANG_CPLUSPLUS)
+                    continue;
                 class_name = "Images";
+            }
 
             if (class_name.is_sameas(iter_class))
             {
-                BaseCodeGenerator codegen(GEN_LANG_CPLUSPLUS);
-
-                // At this point we know which form has changes, but we don't know if it's the src file, the header file, or
-                // both, so we need to check again.
-                ttlib::cstr base_file(form->prop_as_string(prop_base_file));
-                base_file.replace_extension(header_ext);
-                base_file.make_absolute();
-
-                base_file.replace_extension(header_ext);
-                auto h_cw = std::make_unique<FileCodeWriter>(base_file.wx_str());
-                codegen.SetHdrWriteCode(h_cw.get());
-
-                base_file.replace_extension(source_ext);
-                auto cpp_cw = std::make_unique<FileCodeWriter>(base_file.wx_str());
-                codegen.SetSrcWriteCode(cpp_cw.get());
-
-                codegen.GenerateBaseClass(form);
-
-                base_file.replace_extension(header_ext);
-                bool new_hdr = (h_cw->WriteFile(true) > 0);
-
-                base_file.replace_extension(source_ext);
-                bool new_src = (cpp_cw->WriteFile(true) > 0);
-
-                if (new_hdr)
+                path.clear();
+                if (language == GEN_LANG_CPLUSPLUS)
                 {
-                    path = base_file;
-                    if (auto pos_file = path.find_filename(); ttlib::is_found(pos_file))
+                    if (auto& base_file = form->prop_as_string(prop_base_file); base_file.size())
                     {
-                        path.insert(pos_file, "~wxue_");
+                        path = base_file;
+                        // "filename_base" is the default filename given to all form files. Unless it's changed, no code will
+                        // be generated.
+                        if (path == "filename_base")
+                            continue;
+                        if (auto* node_folder = form->get_folder();
+                            node_folder && node_folder->HasValue(prop_folder_base_directory))
+                        {
+                            path = node_folder->as_string(prop_folder_base_directory);
+                            path.append_filename(base_file.filename());
+                        }
+                        else if (GetProject()->HasValue(prop_base_directory) && !path.contains("/"))
+                        {
+                            path = GetProject()->GetBaseDirectory().utf8_string();
+                            path.append_filename(base_file);
+                        }
+                        path.backslashestoforward();
                     }
+                }
+                else if (language == GEN_LANG_PYTHON)
+                {
+                    if (auto& base_file = form->prop_as_string(prop_python_file); base_file.size())
+                    {
+                        path = base_file;
+                        if (path.empty())
+                            continue;
 
-                    path.replace_extension(header_ext);
-                    h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
-                    codegen.SetHdrWriteCode(h_cw.get());
-
-                    path.replace_extension(source_ext);
-                    cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
-                    codegen.SetSrcWriteCode(cpp_cw.get());
-
-                    codegen.GenerateBaseClass(form);
-
-                    path.replace_extension(header_ext);
-                    h_cw->WriteFile();
-
-                    auto paths = root.append_child("paths");
-                    base_file.replace_extension(header_ext);
-                    paths.append_child("left").text().set(base_file.c_str());
-                    paths.append_child("left-readonly").text().set("0");
-
-                    paths.append_child("right").text().set(path.c_str());
-                    paths.append_child("right-readonly").text().set("1");
+                        if (auto* node_folder = form->get_folder();
+                            node_folder && node_folder->HasValue(prop_folder_python_output_folder))
+                        {
+                            path = node_folder->as_string(prop_folder_python_output_folder);
+                            path.append_filename(base_file.filename());
+                        }
+                        else if (GetProject()->HasValue(prop_python_output_folder) && !path.contains("/"))
+                        {
+                            path = GetProject()->GetBaseDirectory(GEN_LANG_PYTHON).utf8_string();
+                            path.append_filename(base_file);
+                        }
+                        path.backslashestoforward();
+                    }
+                }
+                else if (language == GEN_LANG_LUA)
+                {
+                    if (auto& base_file = form->prop_as_string(prop_lua_file); base_file.size())
+                    {
+                        path = base_file;
+                        if (auto* node_folder = form->get_folder();
+                            node_folder && node_folder->HasValue(prop_folder_lua_output_folder))
+                        {
+                            path = node_folder->as_string(prop_folder_lua_output_folder);
+                            path.append_filename(base_file.filename());
+                        }
+                        else if (GetProject()->HasValue(prop_lua_output_folder) && !path.contains("/"))
+                        {
+                            path = GetProject()->GetBaseDirectory(GEN_LANG_LUA).utf8_string();
+                            path.append_filename(base_file);
+                        }
+                        path.backslashestoforward();
+                    }
                 }
 
-                if (new_src)
+                if (path.empty())
+                    continue;
+
+                BaseCodeGenerator codegen(language);
+
+                path.replace_extension(header_ext);
+                auto h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                codegen.SetHdrWriteCode(h_cw.get());
+
+                path.replace_extension(source_ext);
+                auto cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                codegen.SetSrcWriteCode(cpp_cw.get());
+
+                if (language == GEN_LANG_CPLUSPLUS)
                 {
-                    path = base_file;
+                    codegen.GenerateBaseClass(form);
+                }
+                else if (language == GEN_LANG_PYTHON)
+                {
+                    codegen.GeneratePythonClass(form);
+                }
+                else if (language == GEN_LANG_LUA)
+                {
+                    codegen.GenerateLuaClass(form);
+                }
+
+                bool new_hdr = false;
+                if (language == GEN_LANG_CPLUSPLUS)
+                {
+                    // Currently, only C++ generates code from h_cw
+                    new_hdr = (h_cw->WriteFile(true) > 0);
+                }
+
+                bool new_src = (cpp_cw->WriteFile(true) > 0);
+
+                if (new_hdr || new_src)
+                {
+                    ttlib::cstr tmp_path(path);
                     if (auto pos_file = path.find_filename(); ttlib::is_found(pos_file))
                     {
-                        path.insert(pos_file, "~wxue_");
+                        tmp_path.insert(pos_file, "~wxue_");
                     }
 
-                    path.replace_extension(header_ext);
-                    h_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                    tmp_path.replace_extension(header_ext);
+                    h_cw = std::make_unique<FileCodeWriter>(tmp_path.wx_str());
                     codegen.SetHdrWriteCode(h_cw.get());
 
-                    path.replace_extension(source_ext);
-                    cpp_cw = std::make_unique<FileCodeWriter>(path.wx_str());
+                    tmp_path.replace_extension(source_ext);
+                    cpp_cw = std::make_unique<FileCodeWriter>(tmp_path.wx_str());
                     codegen.SetSrcWriteCode(cpp_cw.get());
 
-                    codegen.GenerateBaseClass(form);
+                    if (language == GEN_LANG_CPLUSPLUS)
+                    {
+                        codegen.GenerateBaseClass(form);
+                    }
+                    else if (language == GEN_LANG_PYTHON)
+                    {
+                        codegen.GeneratePythonClass(form);
+                    }
+                    else if (language == GEN_LANG_LUA)
+                    {
+                        codegen.GenerateLuaClass(form);
+                    }
 
-                    path.replace_extension(source_ext);
-                    cpp_cw->WriteFile();
+                    // WinMerge accepts an XML file the provides the left and right filenames
+                    // to compare. After we write a file, we update the XML file with the
+                    // name pair.
 
-                    auto paths = root.append_child("paths");
-                    base_file.replace_extension(source_ext);
-                    paths.append_child("left").text().set(base_file.c_str());
-                    paths.append_child("left-readonly").text().set("0");
-                    paths.append_child("right").text().set(path.c_str());
-                    paths.append_child("right-readonly").text().set("1");
+                    if (new_hdr)
+                    {
+                        auto paths = root.append_child("paths");
+                        tmp_path.replace_extension(header_ext);
+                        h_cw->WriteFile();
+                        path.replace_extension(header_ext);
+                        paths.append_child("left").text().set(path.c_str());
+                        paths.append_child("left-readonly").text().set("0");
+
+                        paths.append_child("right").text().set(tmp_path.c_str());
+                        paths.append_child("right-readonly").text().set("1");
+                    }
+                    if (new_src)
+                    {
+                        auto paths = root.append_child("paths");
+                        tmp_path.replace_extension(source_ext);
+                        cpp_cw->WriteFile();
+                        path.replace_extension(source_ext);
+                        paths.append_child("left").text().set(path.c_str());
+                        paths.append_child("left-readonly").text().set("0");
+
+                        paths.append_child("right").text().set(tmp_path.c_str());
+                        paths.append_child("right-readonly").text().set("1");
+                    }
                 }
             }
         }

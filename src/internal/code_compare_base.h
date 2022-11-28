@@ -14,7 +14,7 @@
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/listbox.h>
-#include <wx/stattext.h>
+#include <wx/radiobut.h>
 
 class CodeCompare : public wxDialog
 {
@@ -40,7 +40,10 @@ protected:
 
     // Event handlers
 
+    void OnCPlusPlus(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
+    void OnLua(wxCommandEvent& event);
+    void OnPython(wxCommandEvent& event);
     void OnWinMerge(wxCommandEvent& event);
 
 private:
@@ -49,5 +52,7 @@ private:
 
     wxButton* m_btn;
     wxListBox* m_list_changes;
-    wxStaticText* m_staticText;
+    wxRadioButton* m_radio_Lua;
+    wxRadioButton* m_radio_cplusplus;
+    wxRadioButton* m_radio_python;
 };

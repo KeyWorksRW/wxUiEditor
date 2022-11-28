@@ -527,7 +527,7 @@
               class="StaticRadioBtnBoxSizer"
               checked="0"
               class_access="protected:"
-              label="Use lambda"
+              label="Use C++ lambda"
               radiobtn_var_name="m_radio_use_lambda"
               var_name="m_lambda_box"
               flags="wxEXPAND"

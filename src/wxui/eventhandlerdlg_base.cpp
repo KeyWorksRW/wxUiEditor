@@ -36,7 +36,7 @@ bool EventHandlerDlgBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     box_sizer->AddSpacer(10 + wxSizerFlags::GetDefaultBorder());
 
-    m_radio_use_lambda = new wxRadioButton(this, wxID_ANY, "Use lambda");
+    m_radio_use_lambda = new wxRadioButton(this, wxID_ANY, "Use C++ lambda");
     m_lambda_box = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY,m_radio_use_lambda), wxVERTICAL);
     box_sizer->Add(m_lambda_box, wxSizerFlags(1).Expand().Border(wxALL));
 

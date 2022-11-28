@@ -109,7 +109,7 @@ enum
     GEN_LANG_XRC,
     GEN_LANG_LUA,
     GEN_LANG_PYTHON,
-    GEN_LANG_PHP
+    // GEN_LANG_PHP
 };
 
 namespace xrc

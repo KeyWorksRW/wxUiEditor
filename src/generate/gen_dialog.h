@@ -20,8 +20,7 @@ public:
     std::optional<ttlib::cstr> GenLuaConstruction(Node*) override;
 
     std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
-    std::optional<ttlib::cstr> GenPythonAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
-    std::optional<ttlib::cstr> GenLuaAdditionalCode(GenEnum::GenCodeType cmd, Node* node) override;
+    std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node, int language) override;
 
     std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 

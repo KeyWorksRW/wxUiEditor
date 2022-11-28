@@ -227,7 +227,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCo
     }
 }
 
-std::optional<ttlib::cstr> DialogFormGenerator::GenPythonAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
+std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node, int language)
 {
     if (cmd == code_after_children)
     {
@@ -253,99 +253,32 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPythonAdditionalCode(GenEnum:
         auto max_size = dlg->prop_as_wxSize(prop_maximum_size);
         auto size = dlg->prop_as_wxSize(prop_size);
 
-        if (min_size == wxDefaultSize && max_size == wxDefaultSize)
+        ttlib::cstr parent_name;
+        if (language == GEN_LANG_PYTHON)
         {
-            code << "\tself.SetSizerAndFit(" << node->get_node_name() << ");";
+            parent_name = "self.";
         }
-        else
+        else if (language == GEN_LANG_LUA)
         {
-            code << "\tself.SetSizer(" << node->get_node_name() << ");";
-            if (min_size != wxDefaultSize)
-            {
-                code << "\n\tself.SetMinSize(wx.Size(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "));";
-            }
-            if (max_size != wxDefaultSize)
-            {
-                code << "\n\tself.SetMaxSize(wx.Size(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "));";
-            }
-            code << "\n\tself.Fit();";
+            parent_name << dlg->get_node_name() << ':';
         }
-
-        if (size != wxDefaultSize)
-        {
-            code << "\n\tself.SetSize(wx.Size(" << size.GetWidth() << ", " << size.GetHeight() << "));";
-        }
-
-        auto& center = dlg->prop_as_string(prop_center);
-        if (center.size() && !center.is_sameas("no"))
-        {
-            code << "\n\tself.Centre(" << GetWidgetName(GEN_LANG_PYTHON, center) << ")";
-        }
-
-        return code;
-    }
-    else
-    {
-        return {};
-    }
-}
-
-std::optional<ttlib::cstr> DialogFormGenerator::GenLuaAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
-{
-    if (cmd == code_after_children)
-    {
-        ttlib::cstr code;
-
-        Node* dlg;
-        if (node->IsForm())
-        {
-            dlg = node;
-            ASSERT_MSG(dlg->GetChildCount(), "Trying to generate code for a dialog with no children.")
-            if (!dlg->GetChildCount())
-                return {};  // empty dialog, so nothing to do
-            ASSERT_MSG(dlg->GetChild(0)->IsSizer(), "Expected first child of a dialog to be a sizer.");
-            if (dlg->GetChild(0)->IsSizer())
-                node = dlg->GetChild(0);
-        }
-        else
-        {
-            dlg = node->get_form();
-        }
-
-        auto min_size = dlg->prop_as_wxSize(prop_minimum_size);
-        auto max_size = dlg->prop_as_wxSize(prop_maximum_size);
-        auto size = dlg->prop_as_wxSize(prop_size);
 
         if (min_size == wxDefaultSize && max_size == wxDefaultSize)
         {
-            code << "\t" << dlg->get_node_name() << ":SetSizerAndFit(" << node->get_node_name() << ");";
+            code << "\t" << parent_name << "SetSizerAndFit(" << node->get_node_name() << ")";
         }
         else
         {
-            code << "\t" << dlg->get_node_name() << ":SetSizer(" << node->get_node_name() << ");";
+            code << "\t" << parent_name << "SetSizer(" << node->get_node_name() << ")";
             if (min_size != wxDefaultSize)
             {
-                code << "\n\t" << dlg->get_node_name() << ":SetMinSize(wx.wxSize(" << min_size.GetWidth() << ", "
-                     << min_size.GetHeight() << "));";
+                code << "\n\t" << parent_name << "SetMinSize(wx.Size(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "))";
             }
             if (max_size != wxDefaultSize)
             {
-                code << "\n\t" << dlg->get_node_name() << ":SetMaxSize(wx.wxSize(" << max_size.GetWidth() << ", "
-                     << max_size.GetHeight() << "));";
+                code << "\n\t" << parent_name << "SetMaxSize(wx.Size(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "))";
             }
-            code << "\n\t" << dlg->get_node_name() << ":Fit();";
-        }
-
-        if (size != wxDefaultSize)
-        {
-            code << "\n\t" << dlg->get_node_name() << ":SetSize(wx.wxSize(" << size.GetWidth() << ", " << size.GetHeight()
-                 << "));";
-        }
-
-        auto& center = dlg->prop_as_string(prop_center);
-        if (center.size() && !center.is_sameas("no"))
-        {
-            code << "\n\t" << dlg->get_node_name() << ":Centre(" << GetWidgetName(GEN_LANG_LUA, center) << ");";
+            code << "\n\t" << parent_name << "Fit()";
         }
 
         return code;

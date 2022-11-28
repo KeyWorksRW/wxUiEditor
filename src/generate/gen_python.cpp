@@ -168,7 +168,10 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
 
-    if (auto result = generator->GenPythonConstruction(form_node); result)
+    auto result = generator->GenConstruction(form_node, GEN_LANG_PYTHON);
+    if (!result)
+        result = generator->GenPythonConstruction(form_node);
+    if (result)
     {
         m_source->writeLine(result.value(), indent::none);
         m_source->writeLine();
@@ -177,7 +180,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     }
 
     size_t auto_indent = indent::auto_no_whitespace;
-    if (auto result = generator->GenSettings(form_node, auto_indent, GEN_LANG_PYTHON); result)
+    if (result = generator->GenSettings(form_node, auto_indent, GEN_LANG_PYTHON); result)
     {
         if (result.value().size())
         {
@@ -205,7 +208,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         GenConstruction(child.get());
     }
 
-    if (auto result = generator->GenAdditionalCode(code_after_children, form_node, GEN_LANG_PYTHON); result)
+    if (result = generator->GenAdditionalCode(code_after_children, form_node, GEN_LANG_PYTHON); result)
     {
         if (result.value().size())
         {

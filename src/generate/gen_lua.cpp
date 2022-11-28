@@ -168,7 +168,10 @@ void BaseCodeGenerator::GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type)
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
 
-    if (auto result = generator->GenLuaConstruction(form_node); result)
+    auto result = generator->GenConstruction(form_node, GEN_LANG_LUA);
+    if (!result)
+        result = generator->GenLuaConstruction(form_node);
+    if (result)
     {
         m_source->writeLine(result.value(), indent::none);
         m_source->writeLine();
@@ -176,7 +179,7 @@ void BaseCodeGenerator::GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type)
     }
 
     size_t auto_indent = indent::auto_no_whitespace;
-    if (auto result = generator->GenSettings(form_node, auto_indent, GEN_LANG_LUA); result)
+    if (result = generator->GenSettings(form_node, auto_indent, GEN_LANG_LUA); result)
     {
         if (result.value().size())
         {
@@ -204,7 +207,7 @@ void BaseCodeGenerator::GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type)
         GenConstruction(child.get());
     }
 
-    if (auto result = generator->GenAdditionalCode(code_after_children, form_node, GEN_LANG_LUA); result)
+    if (result = generator->GenAdditionalCode(code_after_children, form_node, GEN_LANG_LUA); result)
     {
         if (result.value().size())
         {

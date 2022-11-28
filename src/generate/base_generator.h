@@ -96,14 +96,6 @@ public:
 
     // Generate specific additional code
     virtual std::optional<ttlib::cstr> GenAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPythonAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */)
-    {
-        return {};
-    }
-    virtual std::optional<ttlib::cstr> GenLuaAdditionalCode(GenEnum::GenCodeType /* command */, Node* /* node */)
-    {
-        return {};
-    }
 
     // Override this to use a single GenAfterChildren() for all 4 languages
     virtual std::optional<ttlib::cstr> GenAfterChildren(Node*, int /* language */) { return {}; }

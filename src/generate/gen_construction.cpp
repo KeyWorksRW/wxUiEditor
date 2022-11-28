@@ -300,10 +300,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 {
                     if (m_language == GEN_LANG_CPLUSPLUS)
                         result = generator->GenAdditionalCode(code_after_children, node);
-                    else if (m_language == GEN_LANG_PYTHON)
-                        result = generator->GenPythonAdditionalCode(code_after_children, node);
-                    else if (m_language == GEN_LANG_LUA)
-                        result = generator->GenLuaAdditionalCode(code_after_children, node);
+                    else
+                        result = generator->GenAdditionalCode(code_after_children, node, m_language);
                 }
 
                 if (result && result.value().size())
@@ -596,10 +594,8 @@ void BaseCodeGenerator::GenParentSizer(Node* node, bool need_closing_brace)
     {
         if (m_language == GEN_LANG_CPLUSPLUS)
             result = generator->GenAdditionalCode(code_after_children, node);
-        else if (m_language == GEN_LANG_PYTHON)
-            result = generator->GenPythonAdditionalCode(code_after_children, node);
-        else if (m_language == GEN_LANG_LUA)
-            result = generator->GenLuaAdditionalCode(code_after_children, node);
+        else
+            result = generator->GenAdditionalCode(code_after_children, node, m_language);
     }
 
     ttlib::cstr code;

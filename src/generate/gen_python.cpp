@@ -205,7 +205,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         GenConstruction(child.get());
     }
 
-    if (auto result = generator->GenPythonAdditionalCode(code_after_children, form_node); result)
+    if (auto result = generator->GenAdditionalCode(code_after_children, form_node, GEN_LANG_PYTHON); result)
     {
         if (result.value().size())
         {

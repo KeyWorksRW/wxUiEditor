@@ -204,7 +204,7 @@ void BaseCodeGenerator::GenerateLuaClass(Node* form_node, PANEL_PAGE panel_type)
         GenConstruction(child.get());
     }
 
-    if (auto result = generator->GenLuaAdditionalCode(code_after_children, form_node); result)
+    if (auto result = generator->GenAdditionalCode(code_after_children, form_node, GEN_LANG_LUA); result)
     {
         if (result.value().size())
         {

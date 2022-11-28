@@ -121,7 +121,7 @@ set (file_list
     generate/gen_search_ctrl.cpp    # wxSearchCtrl generator
     generate/gen_slider.cpp         # wxSlider generator
     generate/gen_spin_btn.cpp       # wxSpinButton generator
-    generate/gen_spin_ctrl.cpp      # wxSpinButton generator
+    generate/gen_spin_ctrl.cpp      # wxSpinCtrl generator
     generate/gen_split_win.cpp      # wxSplitterWindow generator
     generate/gen_static_bmp.cpp     # wxStaticBitmap generator
     generate/gen_static_box.cpp     # wxStaticBox generator
@@ -289,6 +289,7 @@ set (doc_list
     ../docs/import_formbuilder.md
     ../docs/import_winres.md
     ../docs/xrc.md
+    generate/CONTENTS.md
     generate/README.md
     nodes/README.md
     winres/README.md

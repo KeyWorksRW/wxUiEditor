@@ -272,11 +272,13 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCo
             code << "\t" << parent_name << "SetSizer(" << node->get_node_name() << ")";
             if (min_size != wxDefaultSize)
             {
-                code << "\n\t" << parent_name << "SetMinSize(wx.Size(" << min_size.GetWidth() << ", " << min_size.GetHeight() << "))";
+                code << "\n\t" << parent_name << "SetMinSize(wx.Size(" << min_size.GetWidth() << ", " << min_size.GetHeight()
+                     << "))";
             }
             if (max_size != wxDefaultSize)
             {
-                code << "\n\t" << parent_name << "SetMaxSize(wx.Size(" << max_size.GetWidth() << ", " << max_size.GetHeight() << "))";
+                code << "\n\t" << parent_name << "SetMaxSize(wx.Size(" << max_size.GetWidth() << ", " << max_size.GetHeight()
+                     << "))";
             }
             code << "\n\t" << parent_name << "Fit()";
         }
@@ -295,79 +297,56 @@ bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     return true;
 }
 
-std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Node* node)
+std::optional<ttlib::cstr> DialogFormGenerator::GenConstruction(Node* node, int language)
 {
+    ASSERT(language != GEN_LANG_CPLUSPLUS)
     ttlib::cstr code;
 
     ttlib::cstr dlg_name(node->get_node_name());
-    if (dlg_name.size() > 4 && dlg_name.ends_with("Base") && node->get_form()->prop_as_bool(prop_use_derived_class))
+    if (language == GEN_LANG_PYTHON)
     {
-        dlg_name.resize(dlg_name.size() - 4);
+        code << "class " << dlg_name << "(wx.Dialog):\n";
+        code << "\tdef __init__(self, parent):\n\t\twx.Dialog.__init__(self, parent, id=wx.ID_ANY,\n\t\t\ttitle=";
+    }
+    else if (language == GEN_LANG_LUA)
+    {
+        code << dlg_name << " = wx.wxDialog(wx.NULL, wx.wxID_ANY, ";
     }
 
-    code << "class " << dlg_name << "(wx.Dialog):\n";
-    code << "\tdef __init__(self, parent):\n\t\twx.Dialog.__init__(self, parent, id=wx.ID_ANY,\n\t\t\ttitle=";
     if (node->HasValue(prop_title))
-        code << GeneratePythonQuotedString(node, prop_title) << ",";
+        code << GenerateQuotedString(language, node->as_string(prop_title));
     else
-        code << "wx.EmptyString,";
+        code << GetWidgetName(language, "wxEmptyString");
 
-    code << "\n\t\t\tpos=";
-    auto position = node->prop_as_wxPoint(prop_pos);
-    if (position == wxDefaultPosition)
-        code << "wx.DefaultPosition, ";
-    else
-        code << "wx.Point(" << position.x << ", " << position.y << "), ";
+    code << ",\n\t\t\t";
 
-    code << "size=";
-    auto size = node->prop_as_wxSize(prop_size);
-    if (size == wxDefaultSize)
-        code << "wx.DefaultSize";
-    else
-        code << "wx.Size(" << size.x << ", " << size.y << ")";
-
-    code << ",\n\t\t\tstyle=";
-    if (node->HasValue(prop_style) && !node->prop_as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-        code << GetWidgetName(GEN_LANG_PYTHON, node->prop_as_string(prop_style));
-    else
-        code << "wx.DEFAULT_DIALOG_STYLE";
-    code << ")";
-
-    return code;
-}
-
-std::optional<ttlib::cstr> DialogFormGenerator::GenLuaConstruction(Node* node)
-{
-    ttlib::cstr code;
-
-    ttlib::cstr dlg_name(node->get_node_name());
-    if (dlg_name.size() > 4 && dlg_name.ends_with("Base") && node->get_form()->prop_as_bool(prop_use_derived_class))
-    {
-        dlg_name.resize(dlg_name.size() - 4);
-    }
-
-    code << dlg_name << " = wx.wxDialog(wx.NULL, wx.wxID_ANY, ";
-    if (node->HasValue(prop_title))
-        code << GenerateLuaQuotedString(node, prop_title) << ",\n\t\t";
-    else
-        code << "wx.wxEmptyString,\n\t\t";
+    if (language == GEN_LANG_PYTHON)
+        code << "pos=";
 
     auto position = node->prop_as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
-        code << "wx.wxDefaultPosition, ";
+        code << GetWidgetName(language, "wxDefaultPosition") << ", ";
     else
-        code << "wx.wxPoint(" << position.x << ", " << position.y << "), ";
+        code << GetWidgetName(language, "wxPoint") << "(" << position.x << ", " << position.y << "), ";
+
+    if (language == GEN_LANG_PYTHON)
+        code << "size=";
 
     auto size = node->prop_as_wxSize(prop_size);
     if (size == wxDefaultSize)
-        code << "wx.wxDefaultSize,";
+        code << GetWidgetName(language, "wxDefaultSize");
     else
-        code << "wx.wxSize(" << size.x << ", " << size.y << "),";
+        code << GetWidgetName(language, "wxSize") << "(" << size.x << ", " << size.y << ")";
+
+    code << ",\n\t\t\t";
+
+    if (language == GEN_LANG_PYTHON)
+        code << "style=";
 
     if (node->HasValue(prop_style) && !node->prop_as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-        code << GetWidgetName(GEN_LANG_LUA, node->prop_as_string(prop_style));
+        code << GetWidgetName(language, node->prop_as_string(prop_style));
     else
-        code << "wx.wxDEFAULT_DIALOG_STYLE";
+        code << GetWidgetName(language, "wxDEFAULT_DIALOG_STYLE");
     code << ")";
 
     return code;

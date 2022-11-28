@@ -28,3 +28,6 @@ ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str);
 // Generate wxSizerFlags() function based on prop_proportion, prop_alignment, prop_flags,
 // prop_borders and prop_border_size
 ttlib::cstr GenerateSizerFlags(int language, Node* node);
+
+// Generate any non-default wxWindow settings
+void GenerateWindowSettings(int language, Node* node, ttlib::cstr& code);

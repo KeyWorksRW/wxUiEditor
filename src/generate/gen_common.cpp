@@ -1766,10 +1766,6 @@ void GenerateWindowSettings(Node* node, ttlib::cstr& code)
     }
 }
 
-void GeneratePythonWindowSettings(Node* /* node */, ttlib::cstr& /* code */) {}
-
-void GenerateLuaWindowSettings(Node* /* node */, ttlib::cstr& /* code */) {}
-
 // Generates code for any class inheriting from wxTopLevelWindow -- this will generate everything needed to set the
 // window's icon.
 

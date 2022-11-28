@@ -123,8 +123,6 @@ public:
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&, int /* language */) { return {}; }
 
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPythonSettings(Node*, size_t&) { return {}; }
-    virtual std::optional<ttlib::cstr> GenLuaSettings(Node*, size_t&) { return {}; }
 
     // Add attributes to object, and all properties
     //

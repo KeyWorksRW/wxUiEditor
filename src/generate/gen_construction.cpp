@@ -464,33 +464,16 @@ void BaseCodeGenerator::GenSettings(Node* node)
 {
     size_t auto_indent = indent::auto_no_whitespace;
     auto generator = node->GetNodeDeclaration()->GetGenerator();
+    std::optional<ttlib::cstr> result;
 
-    switch (m_language)
+    if (m_language == GEN_LANG_CPLUSPLUS)
+        result = generator->GenSettings(node, auto_indent);
+    else
+        result = generator->GenSettings(node, auto_indent, m_language);
+
+    if (result && result.value().size())
     {
-        case GEN_LANG_CPLUSPLUS:
-            if (auto result = generator->GenSettings(node, auto_indent); result && result.value().size())
-            {
-                m_source->writeLine(result.value(), auto_indent);
-            }
-            break;
-
-        case GEN_LANG_PYTHON:
-            if (auto result = generator->GenPythonSettings(node, auto_indent); result && result.value().size())
-            {
-                m_source->writeLine(result.value(), auto_indent);
-            }
-            break;
-
-        case GEN_LANG_LUA:
-            if (auto result = generator->GenLuaSettings(node, auto_indent); result && result.value().size())
-            {
-                m_source->writeLine(result.value(), auto_indent);
-            }
-            break;
-
-        default:
-            FAIL_MSG("Unknown language")
-            break;
+        m_source->writeLine(result.value(), auto_indent);
     }
 
     if (node->get_prop_ptr(prop_window_extra_style))
@@ -498,29 +481,16 @@ void BaseCodeGenerator::GenSettings(Node* node)
         ttlib::cstr code;
         if (m_language == GEN_LANG_CPLUSPLUS)
         {
-            if (auto result = GenValidatorSettings(node); result)
+            if (result = GenValidatorSettings(node); result)
             {
                 m_source->writeLine(result.value());
             }
         }
-        switch (m_language)
-        {
-            case GEN_LANG_CPLUSPLUS:
-                GenerateWindowSettings(node, code);
-                break;
 
-            case GEN_LANG_PYTHON:
-                GeneratePythonWindowSettings(node, code);
-                break;
-
-            case GEN_LANG_LUA:
-                GenerateLuaWindowSettings(node, code);
-                break;
-
-            default:
-                FAIL_MSG("Unknown language")
-                break;
-        }
+        if (m_language == GEN_LANG_CPLUSPLUS)
+            GenerateWindowSettings(node, code);
+        else
+            GenerateWindowSettings(m_language, node, code);
 
         if (code.size())
             m_source->writeLine(code, indent::auto_keep_whitespace);

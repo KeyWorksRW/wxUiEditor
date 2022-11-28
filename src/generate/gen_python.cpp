@@ -9,13 +9,14 @@
 
 #include "mainframe.h"
 
-#include "base_generator.h"  // BaseGenerator -- Base widget generator class
-#include "gen_base.h"        // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
-#include "gen_common.h"      // Common component functions
-#include "generate_dlg.h"    // GenerateDlg -- Dialog for choosing and generating specific language file(s)
-#include "node.h"            // Node class
-#include "project_class.h"   // Project class
-#include "write_code.h"      // Write code to Scintilla or file
+#include "base_generator.h"   // BaseGenerator -- Base widget generator class
+#include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
+#include "gen_common.h"       // Common component functions
+#include "gen_lang_common.h"  // Common mulit-language functions
+#include "generate_dlg.h"     // GenerateDlg -- Dialog for choosing and generating specific language file(s)
+#include "node.h"             // Node class
+#include "project_class.h"    // Project class
+#include "write_code.h"       // Write code to Scintilla or file
 
 bool GeneratePythonFiles(GenResults& results, std::vector<ttlib::cstr>* pClassList)
 {
@@ -176,7 +177,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     }
 
     size_t auto_indent = indent::auto_no_whitespace;
-    if (auto result = generator->GenPythonSettings(form_node, auto_indent); result)
+    if (auto result = generator->GenSettings(form_node, auto_indent, GEN_LANG_PYTHON); result)
     {
         if (result.value().size())
         {
@@ -188,7 +189,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
     if (form_node->get_prop_ptr(prop_window_extra_style))
     {
         ttlib::cstr code;
-        GeneratePythonWindowSettings(form_node, code);
+        GenerateWindowSettings(GEN_LANG_PYTHON, form_node, code);
         if (code.size())
         {
             // GenerateWindowSettings() can result in code within braces, so keep any leading whitespace.

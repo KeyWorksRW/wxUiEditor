@@ -135,6 +135,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCo
             code << "\n\tFit();";
         }
 
+        // REVIEW: [Randalphwa - 11-28-2022] Why are we setting this *after* calling Fit()?
         if (size != wxDefaultSize)
         {
             code << "\n\tSetSize(wxSize(" << size.GetWidth() << ", " << size.GetHeight() << "));";
@@ -281,6 +282,12 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCo
                      << "))";
             }
             code << "\n\t" << parent_name << "Fit()";
+        }
+
+        auto& center = dlg->prop_as_string(prop_center);
+        if (center.size() && !center.is_sameas("no"))
+        {
+            code << "\n\t" << parent_name << "Centre(" << GetWidgetName(language, center) << ")";
         }
 
         return code;

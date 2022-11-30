@@ -650,7 +650,7 @@ void PropGridPanel::AddProperties(ttlib::sview name, Node* node, NodeCategory& c
                 }
             }
 
-            if (name.is_sameas("wxWindow") || category.GetName() == "Window Settings")
+            if (name.is_sameas("wxWindow") || category.GetName().Contains("Window Settings"))
                 m_prop_grid->SetPropertyBackgroundColour(pg, wxColour("#e7f4e4"));
 
             // Automatically collapse properties that are rarely used
@@ -1559,17 +1559,21 @@ void PropGridPanel::CreatePropCategory(ttlib::sview name, Node* node, NodeDeclar
         if (node->isGen(gen_wxButton) || node->isGen(gen_wxStaticText))
             m_prop_grid->Collapse(id);
     }
-    else if (name.contains("wxPython") || name.contains("wxLua") || name.contains("wxPHP"))
+    else if (name.contains("wxPython"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
     }
-    else if ((node->isGen(gen_Project) || node->isGen(gen_folder)) && name.contains("C++"))
+    else if (name.contains("wxLua"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e7f4e4"));
+        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#dce4ef"));
+    }
+    else if (name.contains("C++"))
+    {
+        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));
     }
     else if (name.contains("XRC"))
     {
-        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#e1f3f8"));
+        m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));
     }
 
     if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());

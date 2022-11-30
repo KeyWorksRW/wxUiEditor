@@ -21,11 +21,13 @@
 #include "../xml/sizer_child_xml.xml"
 #include "../xml/validators_xml.xml"
 #include "../xml/window_interfaces_xml.xml"
+#include "../xml/lang_settings.xml"
 
 // clang-format off
 inline const char* lst_xml_interfaces[] = {
 
     // Note that interface_xml must *not* be added to this list! It is loaded as the root document.
+    language_xml,
     sizer_child_xml,
     validators_xml,
     window_interfaces_xml,

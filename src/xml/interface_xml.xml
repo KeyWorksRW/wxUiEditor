@@ -158,14 +158,25 @@ inline const char* interface_xml = R"===(<?xml version="1.0"?>
 			help="This specifies the keyword or macro to add to the class declaration (such as __declspec(dllexport) )." />
 		<property name="generate_ids" type="bool"
 			help="If checked, any non-wxWidgets ids will be created as an enumerated list. If you want to use your own id values, uncheck this and add the header file containing the ids to either base_src_includes or base_hdr_includes.">1</property>
-		<property name="python_file" type="file"
-			help="The filename to use if generating code for wxPython." />
-		<property name="lua_file" type="file"
-			help="The filename to use if generating code for wxLua." />
-		<property name="php_file" type="file"
-			help="The filename to use if generating code for wxPHP." />
-		<property name="xrc_file" type="file"
-			help="The filename to suse if generating XRC." />
+	</gen>
+
+	<gen class="Dialog Window Settings" type="interface">
+		<property name="id" type="id"
+			help="An identifier for the dialog.">wxID_ANY</property>
+		<property name="pos" type="wxPoint"
+			help="Sets the dialog position. The default is (-1, -1) which indicates that wxWidgets should generate a default position for the dialog." />
+		<property name="size" type="wxSize"
+			help="Sets the dialog size. The default is (-1, -1) which indicates that wxWidgets should generate a default size for the dialog, large enough to display all visible elements." />
+		<property name="minimum_size" type="wxSize"
+			help="Sets the minimum size of the dialog. The default is (-1, -1) which indicates wxWidgets should calculate a minimum size large enough to display all visible elements." />
+		<property name="maximum_size" type="wxSize"
+			help="Sets the maximum size of the dialog." />
+		<property name="background_colour" type="wxColour"
+			help="Sets the background colour of the dialog. Use &quot;Window&quot; to let wxWidgets choose the color, otherwise specify one of the system colors in the list." />
+		<property name="window_name" type="string_escapes"
+			help="Used to associate a name with the window, allowing the application user to set Motif resource values for individual dialog boxes." />
+		<property name="derived_class" type="string"
+			help="If you have derived a class from wxDialog and you want to use your derived class, then specify that class name here. You will need to add the header file for your class to the base_hdr_includes property. Note that your base class must specify a constructor with no parameters to match a wxDialog() constructor." />
 	</gen>
 
 </GeneratorDefinitions>)===";

@@ -892,13 +892,6 @@
           <node
             class="wxCheckBox"
             class_access="none"
-            label="&amp;Lua"
-            var_name="checkBox_4"
-            get_function="is_gen_lua"
-            validator_variable="m_gen_lua_code" />
-          <node
-            class="wxCheckBox"
-            class_access="none"
             label="&amp;XRC"
             var_name="checkBox_2"
             get_function="is_gen_xrc"

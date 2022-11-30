@@ -19,10 +19,8 @@ enum
 {
     GEN_BASE_CODE = 1 << 0,
     GEN_INHERITED_CODE = 1 << 1,
-    GEN_LUA_CODE = 1 << 2,
-    GEN_PHP_CODE = 1 << 3,
-    GEN_PYTHON_CODE = 1 << 4,
-    GEN_XRC_CODE = 1 << 5
+    GEN_PYTHON_CODE = 1 << 2,
+    GEN_XRC_CODE = 1 << 3
 };
 
 // This generates the base class files. For the derived class files, see OnGenInhertedClass()
@@ -36,8 +34,6 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
         long cur_setting = GEN_BASE_CODE;
         if (dlg.is_gen_inherited())
             cur_setting |= GEN_INHERITED_CODE;
-        if (dlg.is_gen_lua())
-            cur_setting |= GEN_LUA_CODE;
         if (dlg.is_gen_python())
             cur_setting |= GEN_PYTHON_CODE;
         if (dlg.is_gen_xrc())
@@ -55,10 +51,6 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
         if (cur_setting & GEN_INHERITED_CODE)
         {
             GenInhertedClass(results);
-        }
-        if (cur_setting & GEN_LUA_CODE)
-        {
-            GenerateLuaFiles(results);
         }
         if (cur_setting & GEN_PYTHON_CODE)
         {
@@ -122,8 +114,6 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
         m_gen_base_code = true;
     if (cur_setting & GEN_INHERITED_CODE)
         m_gen_inherited_code = true;
-    if (cur_setting & GEN_LUA_CODE)
-        m_gen_lua_code = true;
     if (cur_setting & GEN_PYTHON_CODE)
         m_gen_python_code = true;
     if (cur_setting & GEN_XRC_CODE)

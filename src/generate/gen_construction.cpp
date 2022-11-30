@@ -51,8 +51,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             result = generator->GenConstruction(node);
         else if (m_language == GEN_LANG_PYTHON)
             result = generator->GenPythonConstruction(node);
-        else if (m_language == GEN_LANG_LUA)
-            result = generator->GenLuaConstruction(node);
     }
 
     if (result)
@@ -95,8 +93,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                     result = child_generator->GenConstruction(child.get());
                 else if (m_language == GEN_LANG_PYTHON)
                     result = child_generator->GenPythonConstruction(child.get());
-                else if (m_language == GEN_LANG_LUA)
-                    result = child_generator->GenLuaConstruction(child.get());
             }
 
             if (result)
@@ -125,8 +121,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                     result = child_generator->GenConstruction(child.get());
                 else if (m_language == GEN_LANG_PYTHON)
                     result = child_generator->GenPythonConstruction(child.get());
-                else if (m_language == GEN_LANG_LUA)
-                    result = child_generator->GenLuaConstruction(child.get());
             }
             if (result)
                 m_source->writeLine(result.value());
@@ -145,8 +139,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                             result = grandchild_generator->GenConstruction(grandchild.get());
                         else if (m_language == GEN_LANG_PYTHON)
                             result = grandchild_generator->GenPythonConstruction(grandchild.get());
-                        else if (m_language == GEN_LANG_LUA)
-                            result = grandchild_generator->GenLuaConstruction(grandchild.get());
                     }
                     if (result)
                         m_source->writeLine(result.value());
@@ -164,8 +156,6 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                                     result = great_grandchild_generator->GenConstruction(great_grandchild.get());
                                 else if (m_language == GEN_LANG_PYTHON)
                                     result = great_grandchild_generator->GenPythonConstruction(great_grandchild.get());
-                                else if (m_language == GEN_LANG_LUA)
-                                    result = great_grandchild_generator->GenLuaConstruction(great_grandchild.get());
                             }
                             if (result)
                                 m_source->writeLine(result.value());
@@ -337,9 +327,6 @@ const char* BaseCodeGenerator::LangPtr() const
         case GEN_LANG_PYTHON:
             return ".";
 
-        case GEN_LANG_LUA:
-            return ":";
-
         default:
             FAIL_MSG("Unsupported language!")
             return "";
@@ -359,10 +346,6 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
 
             case GEN_LANG_PYTHON:
                 code << "\nif defined(__WINDOWS__)";
-                break;
-
-            case GEN_LANG_LUA:
-                code << "\n#ifdef __WINDOWS__";
                 break;
         }
     }
@@ -385,11 +368,6 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                     code << "\nif ";
                 code << "defined(__UNIX__)";
                 break;
-
-            case GEN_LANG_LUA:
-                if (code.empty())
-                    code << "\n#ifdef __UNIX__";
-                break;
         }
     }
     if (node->value(prop_platforms).contains("Mac"))
@@ -411,17 +389,12 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                     code << "\nif ";
                 code << "defined(__WXOSX__)";
                 break;
-
-            case GEN_LANG_LUA:
-                if (code.empty())
-                    code << "\n#ifdef __WXOSX__";
-                break;
         }
     }
 
     m_source->writeLine(code);
     m_source->SetLastLineBlank();
-    if (m_language == GEN_LANG_PYTHON || m_language == GEN_LANG_LUA)
+    if (m_language == GEN_LANG_PYTHON)
         m_source->Indent();
 }
 
@@ -435,11 +408,6 @@ void BaseCodeGenerator::EndPlatformCode()
 
         case GEN_LANG_PYTHON:
             m_source->Unindent();
-            break;
-
-        case GEN_LANG_LUA:
-            m_source->Unindent();
-            m_source->writeLine("#endif  // limited to specific platforms\n");
             break;
     }
 }
@@ -507,8 +475,6 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
             result = generator->GenAfterChildren(node);
         else if (m_language == GEN_LANG_PYTHON)
             result = generator->GenPythonAfterChildren(node);
-        else if (m_language == GEN_LANG_LUA)
-            result = generator->GenLuaAfterChildren(node);
     }
     if (result)
     {

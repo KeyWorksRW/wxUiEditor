@@ -259,10 +259,6 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCo
         {
             parent_name = "self.";
         }
-        else if (language == GEN_LANG_LUA)
-        {
-            parent_name << dlg->get_node_name() << ':';
-        }
 
         if (min_size == wxDefaultSize && max_size == wxDefaultSize)
         {
@@ -314,10 +310,6 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenConstruction(Node* node, int 
     {
         code << "class " << dlg_name << "(wx.Dialog):\n";
         code << "\tdef __init__(self, parent):\n\t\twx.Dialog.__init__(self, parent, id=wx.ID_ANY,\n\t\t\ttitle=";
-    }
-    else if (language == GEN_LANG_LUA)
-    {
-        code << dlg_name << " = wx.wxDialog(wx.NULL, wx.wxID_ANY, ";
     }
 
     if (node->HasValue(prop_title))

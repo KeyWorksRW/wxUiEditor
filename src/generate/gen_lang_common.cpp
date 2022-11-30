@@ -24,9 +24,6 @@ const char* LangPtr(int language)
         case GEN_LANG_PYTHON:
             return ".";
 
-        case GEN_LANG_LUA:
-            return ":";
-
         default:
             FAIL_MSG("Unsupported language!")
             return "";
@@ -59,10 +56,6 @@ ttlib::cstr GetWidgetName(int language, ttlib::sview name)
                 widget_name << "wx." << iter;
             }
         }
-        else if (language == GEN_LANG_LUA)
-        {
-            widget_name << "wx." << iter;
-        }
     }
     return widget_name;
 }
@@ -91,8 +84,6 @@ ttlib::cstr GetParentName(int language, Node* node)
         {
             if (language == GEN_LANG_PYTHON)
                 return ttlib::cstr("self");
-            else if (language == GEN_LANG_LUA)
-                return ttlib::cstr(parent->get_node_name());
             else
                 return ttlib::cstr("this");
         }
@@ -166,7 +157,7 @@ ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str)
         if (has_utf_char)
         {
             // While this may not be necessary for non-Windows systems, it does ensure the code compiles on all platforms.
-            if (GetProject()->prop_as_bool(prop_internationalize) && language != GEN_LANG_LUA)
+            if (GetProject()->prop_as_bool(prop_internationalize))
             {
                 code << "_(" << GetWidgetName(language, "wxString") << LangPtr(language);
                 code << str_with_escapes << "\"))";
@@ -179,7 +170,7 @@ ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str)
         }
         else
         {
-            if (GetProject()->prop_as_bool(prop_internationalize) && language != GEN_LANG_LUA)
+            if (GetProject()->prop_as_bool(prop_internationalize))
                 code << "_(\"" << str_with_escapes << "\")";
             else
                 code << "\"" << str_with_escapes << "\"";

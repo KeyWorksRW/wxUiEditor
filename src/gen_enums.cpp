@@ -240,7 +240,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_line_numbers, "line_numbers" },  // previously used in wxStyledTextCtrl, but now uses margins
     { prop_line_size, "line_size" },
     { prop_local_pch_file, "local_pch_file" },
-    { prop_lua_file, "lua_file" },
     { prop_main_label, "main_label" },
     { prop_majorDimension, "majorDimension" },
     { prop_margin_height, "margin_height" },
@@ -425,15 +424,6 @@ std::map<GenEnum::PropName, const char*> GenEnum::map_PropNames = {
     { prop_python_variable_args, "python_variable_args" },
     { prop_python_xrc_file, "python_xrc_file" },
 
-    { prop_folder_lua_combined_file, "folder_lua_combined_file" },
-    { prop_folder_lua_output_folder, "folder_lua_output_folder" },
-    { prop_lua_combine_forms, "lua_combine_forms" },
-    { prop_lua_combined_file, "lua_combined_file" },
-    { prop_lua_copy_art, "lua_copy_art" },
-    { prop_lua_inherit_name, "lua_inherit_name" },
-    { prop_lua_output_folder, "lua_output_folder" },
-    { prop_lua_xrc_file, "lua_xrc_file" },
-
 };
 std::map<std::string_view, GenEnum::PropName, std::less<>> GenEnum::rmap_PropNames;
 
@@ -517,7 +507,6 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_Code, "C++" },
     { gen_CPlusSettings, "C++ Settings" },
     { gen_PythonSettings, "wxPython Settings" },
-    { gen_LuaSettings, "wxLua Settings" },
     { gen_XrcSettings, "XRC Settings" },
     { gen_DlgWindowSettings, "Dialog Window Settings" },
     { gen_folder_Code, "Folder C++ Overrides" },
@@ -532,11 +521,7 @@ std::map<GenEnum::GenName, const char*> GenEnum::map_GenNames = {
     { gen_flexgridsizerbase, "flexgridsizerbase" },
     { gen_sizer_child, "sizer_child" },
     { gen_sizeritem_settings, "sizeritem_settings" },
-    { gen_wxLua, "wxLua" },
-    { gen_wxPHP, "wxPHP" },
     { gen_wxPython, "wxPython" },
-    { gen_folder_wxLua, "Folder wxLua Overrides" },
-    { gen_folder_wxPHP, "Folder wxPHP Overrides" },
     { gen_folder_wxPython, "Folder wxPython Overrides" },
     { gen_folder_XRC, "Folder XRC Overrides" },
     { gen_wxTopLevelWindow, "wxTopLevelWindow" },

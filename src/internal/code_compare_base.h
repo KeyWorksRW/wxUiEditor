@@ -42,7 +42,6 @@ protected:
 
     void OnCPlusPlus(wxCommandEvent& event);
     void OnInit(wxInitDialogEvent& event);
-    void OnLua(wxCommandEvent& event);
     void OnPython(wxCommandEvent& event);
     void OnWinMerge(wxCommandEvent& event);
 
@@ -52,7 +51,6 @@ private:
 
     wxButton* m_btn;
     wxListBox* m_list_changes;
-    wxRadioButton* m_radio_Lua;
     wxRadioButton* m_radio_cplusplus;
     wxRadioButton* m_radio_python;
 };

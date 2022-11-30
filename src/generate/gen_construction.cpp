@@ -44,14 +44,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     bool need_closing_brace = false;
 
-    auto result = generator->GenConstruction(node, m_language);
-    if (!result)
-    {
-        if (m_language == GEN_LANG_CPLUSPLUS)
-            result = generator->GenConstruction(node);
-        else if (m_language == GEN_LANG_PYTHON)
-            result = generator->GenPythonConstruction(node);
-    }
+    auto result =
+        (m_language == GEN_LANG_CPLUSPLUS) ? generator->GenConstruction(node) : generator->GenPythonConstruction(node);
 
     if (result)
     {
@@ -86,15 +80,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         for (const auto& child: node->GetChildNodePtrs())
         {
             auto child_generator = child->GetNodeDeclaration()->GetGenerator();
-            result = child_generator->GenConstruction(child.get(), m_language);
-            if (!result)
-            {
-                if (m_language == GEN_LANG_CPLUSPLUS)
-                    result = child_generator->GenConstruction(child.get());
-                else if (m_language == GEN_LANG_PYTHON)
-                    result = child_generator->GenPythonConstruction(child.get());
-            }
-
+            result = (m_language == GEN_LANG_CPLUSPLUS) ? child_generator->GenConstruction(child.get()) :
+                                                          child_generator->GenPythonConstruction(child.get());
             if (result)
                 m_source->writeLine(result.value());
         }
@@ -112,53 +99,40 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         {
             auto old_parent = child->GetParent();
             child->SetParent(menu_node_ptr.get());
-            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
-
-            result = child_generator->GenConstruction(child.get(), m_language);
-            if (!result)
+            if (auto gen = child->GetNodeDeclaration()->GetGenerator(); gen)
             {
-                if (m_language == GEN_LANG_CPLUSPLUS)
-                    result = child_generator->GenConstruction(child.get());
-                else if (m_language == GEN_LANG_PYTHON)
-                    result = child_generator->GenPythonConstruction(child.get());
+                result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(child.get()) :
+                                                              gen->GenPythonConstruction(child.get());
+                if (result)
+                    m_source->writeLine(result.value());
             }
-            if (result)
-                m_source->writeLine(result.value());
-
             GenSettings(child.get());
             // A submenu can have children
             if (child->GetChildCount())
             {
                 for (const auto& grandchild: child->GetChildNodePtrs())
                 {
-                    auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
-                    result = grandchild_generator->GenConstruction(grandchild.get(), m_language);
-                    if (!result)
+                    if (auto gen = grandchild->GetNodeDeclaration()->GetGenerator(); gen)
                     {
-                        if (m_language == GEN_LANG_CPLUSPLUS)
-                            result = grandchild_generator->GenConstruction(grandchild.get());
-                        else if (m_language == GEN_LANG_PYTHON)
-                            result = grandchild_generator->GenPythonConstruction(grandchild.get());
+                        result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(grandchild.get()) :
+                                                                      gen->GenPythonConstruction(grandchild.get());
+                        if (result)
+                            m_source->writeLine(result.value());
                     }
-                    if (result)
-                        m_source->writeLine(result.value());
                     GenSettings(grandchild.get());
                     // A submenu menu item can also be a submenu with great grandchildren.
                     if (grandchild->GetChildCount())
                     {
                         for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
                         {
-                            auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
-                            result = great_grandchild_generator->GenConstruction(great_grandchild.get(), m_language);
-                            if (!result)
+                            if (auto gen = great_grandchild->GetNodeDeclaration()->GetGenerator(); gen)
                             {
-                                if (m_language == GEN_LANG_CPLUSPLUS)
-                                    result = great_grandchild_generator->GenConstruction(great_grandchild.get());
-                                else if (m_language == GEN_LANG_PYTHON)
-                                    result = great_grandchild_generator->GenPythonConstruction(great_grandchild.get());
+                                result = (m_language == GEN_LANG_CPLUSPLUS) ?
+                                             gen->GenConstruction(great_grandchild.get()) :
+                                             gen->GenPythonConstruction(great_grandchild.get());
+                                if (result)
+                                    m_source->writeLine(result.value());
                             }
-                            if (result)
-                                m_source->writeLine(result.value());
                             GenSettings(great_grandchild.get());
                             // It's possible to have even more levels of submenus, but we'll stop here.
                         }

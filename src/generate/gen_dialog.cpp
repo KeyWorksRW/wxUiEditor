@@ -300,52 +300,45 @@ bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     return true;
 }
 
-std::optional<ttlib::cstr> DialogFormGenerator::GenConstruction(Node* node, int language)
+std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Node* node)
 {
-    ASSERT(language != GEN_LANG_CPLUSPLUS)
     ttlib::cstr code;
 
     ttlib::cstr dlg_name(node->get_node_name());
-    if (language == GEN_LANG_PYTHON)
-    {
-        code << "class " << dlg_name << "(wx.Dialog):\n";
-        code << "\tdef __init__(self, parent):\n\t\twx.Dialog.__init__(self, parent, id=wx.ID_ANY,\n\t\t\ttitle=";
-    }
+    code << "class " << dlg_name << "(wx.Dialog):\n";
+    code << "\tdef __init__(self, parent):\n\t\twx.Dialog.__init__(self, parent, id=wx.ID_ANY,\n\t\t\ttitle=";
 
     if (node->HasValue(prop_title))
-        code << GenerateQuotedString(language, node->as_string(prop_title));
+        code << GeneratePythonQuotedString(node->as_string(prop_title));
     else
-        code << GetWidgetName(language, "wxEmptyString");
+        code << "\"\"";
 
     code << ",\n\t\t\t";
 
-    if (language == GEN_LANG_PYTHON)
-        code << "pos=";
+    code << "pos=";
 
     auto position = node->prop_as_wxPoint(prop_pos);
     if (position == wxDefaultPosition)
-        code << GetWidgetName(language, "wxDefaultPosition") << ", ";
+        code << "wx.DefaultPosition, ";
     else
-        code << GetWidgetName(language, "wxPoint") << "(" << position.x << ", " << position.y << "), ";
+        code << "wx.Point(" << position.x << ", " << position.y << "), ";
 
-    if (language == GEN_LANG_PYTHON)
-        code << "size=";
+    code << "size=";
 
     auto size = node->prop_as_wxSize(prop_size);
     if (size == wxDefaultSize)
-        code << GetWidgetName(language, "wxDefaultSize");
+        code << "wx.DefaultSize";
     else
-        code << GetWidgetName(language, "wxSize") << "(" << size.x << ", " << size.y << ")";
+        code << "wx.Size(" << size.x << ", " << size.y << ")";
 
     code << ",\n\t\t\t";
 
-    if (language == GEN_LANG_PYTHON)
-        code << "style=";
+    code << "style=";
 
     if (node->HasValue(prop_style) && !node->prop_as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-        code << GetWidgetName(language, node->prop_as_string(prop_style));
+        code << GetPythonName(node->prop_as_string(prop_style));
     else
-        code << GetWidgetName(language, "wxDEFAULT_DIALOG_STYLE");
+        code << "wx.DEFAULT_DIALOG_STYLE";
     code << ")";
 
     return code;

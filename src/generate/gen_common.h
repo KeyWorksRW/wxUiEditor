@@ -44,10 +44,8 @@ ttlib::cstr GenerateSizerFlags(Node* node);
 //
 // Will return "wxEmptyString" if prop_name is empty.
 ttlib::cstr GenerateQuotedString(const ttlib::cstr& str);
-ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str);
 
 ttlib::cstr GenerateQuotedString(Node* node, GenEnum::PropName prop_name);
-ttlib::cstr GeneratePythonQuotedString(Node* node, GenEnum::PropName prop_name);
 
 // Add C++ escapes around any characters the compiler wouldn't accept as a normal part of a string.
 ttlib::cstr ConvertToCodeString(const ttlib::cstr& text);

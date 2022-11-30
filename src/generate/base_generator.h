@@ -74,9 +74,6 @@ public:
 
     MockupParent* GetMockup();
 
-    // Override this to use a single GenConstruction() for all 4 languages
-    virtual std::optional<ttlib::cstr> GenConstruction(Node*, int /* language */) { return {}; }
-
     // Generate the code used to construct the object
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonConstruction(Node*) { return {}; }

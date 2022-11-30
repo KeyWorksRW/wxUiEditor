@@ -107,33 +107,31 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node)
 }
 
 // Multi-language version
-std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node, int language)
+std::optional<ttlib::cstr> StaticTextGenerator::GenPythonConstruction(Node* node)
 {
-    if (language == GEN_LANG_CPLUSPLUS)
-        return GenConstruction(node);
-
     ttlib::cstr code;
     code << node->get_node_name()
-         << GenerateNewAssignment(language, node, (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
+         << GenerateNewAssignment(GEN_LANG_PYTHON, node,
+                                  (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
 
-    code << GetParentName(language, node) << ", " << GetWidgetName(language, node->prop_as_string(prop_id)) << ", ";
+    code << GetPythonParentName(node) << ", " << GetPythonName(node->prop_as_string(prop_id)) << ", ";
 
     // If the label is going to be set via SetLabelMarkup(), then there is no reason to initialize it here and then
     // replace it on the next line of code (which will be the call to SetLabelMarkUp())
     if (node->prop_as_bool(prop_markup))
     {
-        code << GetWidgetName(language, "wxEmptyString");
+        code << "\"\"";
     }
     else
     {
         auto& label = node->prop_as_string(prop_label);
         if (label.size())
         {
-            code << GenerateQuotedString(language, label);
+            code << GeneratePythonQuotedString(label);
         }
         else
         {
-            code << GetWidgetName(language, "wxEmptyString");
+            code << "\"\"";
         }
     }
 

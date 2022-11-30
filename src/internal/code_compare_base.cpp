@@ -35,9 +35,6 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     m_radio_python = new wxRadioButton(this, wxID_ANY, "&Python");
     grid_sizer->Add(m_radio_python, wxSizerFlags().Border(wxALL));
 
-    m_radio_Lua = new wxRadioButton(this, wxID_ANY, "&Lua");
-    grid_sizer->Add(m_radio_Lua, wxSizerFlags().Border(wxALL));
-
     box_sizer->AddSpacer(15);
 
     auto* staticText = new wxStaticText(this, wxID_ANY, "C&hanged Classes:");
@@ -68,7 +65,6 @@ bool CodeCompare::Create(wxWindow* parent, wxWindowID id, const wxString& title,
     Bind(wxEVT_INIT_DIALOG, &CodeCompare::OnInit, this);
     m_radio_cplusplus->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnCPlusPlus, this);
     m_radio_python->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnPython, this);
-    m_radio_Lua->Bind(wxEVT_RADIOBUTTON, &CodeCompare::OnLua, this);
     m_btn->Bind(wxEVT_BUTTON, &CodeCompare::OnWinMerge, this);
 
     return true;

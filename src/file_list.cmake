@@ -67,10 +67,7 @@ set (file_list
     generate/gen_codefiles.cpp     # Generate code files
     generate/gen_derived.cpp       # Generate Derived class code
     generate/gen_python.cpp        # Generate Python code files
-    generate/gen_lua.cpp           # Generate Lua code files
-    # generate/gen_php.cpp           # Generate PHP code files
     generate/gen_xrc.cpp           # Generate XRC file
-
 
     # Generators are responsible for displaying the widget in the Mockup window,
     # and generating both C++ and XRC code.

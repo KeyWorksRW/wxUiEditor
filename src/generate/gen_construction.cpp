@@ -44,16 +44,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     bool need_closing_brace = false;
 
-    auto result = generator->GenConstruction(node, m_language);
-    if (!result)
-    {
-        if (m_language == GEN_LANG_CPLUSPLUS)
-            result = generator->GenConstruction(node);
-        else if (m_language == GEN_LANG_PYTHON)
-            result = generator->GenPythonConstruction(node);
-        else if (m_language == GEN_LANG_LUA)
-            result = generator->GenLuaConstruction(node);
-    }
+    auto result =
+        (m_language == GEN_LANG_CPLUSPLUS) ? generator->GenConstruction(node) : generator->GenPythonConstruction(node);
 
     if (result)
     {
@@ -88,17 +80,8 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         for (const auto& child: node->GetChildNodePtrs())
         {
             auto child_generator = child->GetNodeDeclaration()->GetGenerator();
-            result = child_generator->GenConstruction(child.get(), m_language);
-            if (!result)
-            {
-                if (m_language == GEN_LANG_CPLUSPLUS)
-                    result = child_generator->GenConstruction(child.get());
-                else if (m_language == GEN_LANG_PYTHON)
-                    result = child_generator->GenPythonConstruction(child.get());
-                else if (m_language == GEN_LANG_LUA)
-                    result = child_generator->GenLuaConstruction(child.get());
-            }
-
+            result = (m_language == GEN_LANG_CPLUSPLUS) ? child_generator->GenConstruction(child.get()) :
+                                                          child_generator->GenPythonConstruction(child.get());
             if (result)
                 m_source->writeLine(result.value());
         }
@@ -116,59 +99,40 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         {
             auto old_parent = child->GetParent();
             child->SetParent(menu_node_ptr.get());
-            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
-
-            result = child_generator->GenConstruction(child.get(), m_language);
-            if (!result)
+            if (auto gen = child->GetNodeDeclaration()->GetGenerator(); gen)
             {
-                if (m_language == GEN_LANG_CPLUSPLUS)
-                    result = child_generator->GenConstruction(child.get());
-                else if (m_language == GEN_LANG_PYTHON)
-                    result = child_generator->GenPythonConstruction(child.get());
-                else if (m_language == GEN_LANG_LUA)
-                    result = child_generator->GenLuaConstruction(child.get());
+                result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(child.get()) :
+                                                              gen->GenPythonConstruction(child.get());
+                if (result)
+                    m_source->writeLine(result.value());
             }
-            if (result)
-                m_source->writeLine(result.value());
-
             GenSettings(child.get());
             // A submenu can have children
             if (child->GetChildCount())
             {
                 for (const auto& grandchild: child->GetChildNodePtrs())
                 {
-                    auto grandchild_generator = grandchild->GetNodeDeclaration()->GetGenerator();
-                    result = grandchild_generator->GenConstruction(grandchild.get(), m_language);
-                    if (!result)
+                    if (auto gen = grandchild->GetNodeDeclaration()->GetGenerator(); gen)
                     {
-                        if (m_language == GEN_LANG_CPLUSPLUS)
-                            result = grandchild_generator->GenConstruction(grandchild.get());
-                        else if (m_language == GEN_LANG_PYTHON)
-                            result = grandchild_generator->GenPythonConstruction(grandchild.get());
-                        else if (m_language == GEN_LANG_LUA)
-                            result = grandchild_generator->GenLuaConstruction(grandchild.get());
+                        result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(grandchild.get()) :
+                                                                      gen->GenPythonConstruction(grandchild.get());
+                        if (result)
+                            m_source->writeLine(result.value());
                     }
-                    if (result)
-                        m_source->writeLine(result.value());
                     GenSettings(grandchild.get());
                     // A submenu menu item can also be a submenu with great grandchildren.
                     if (grandchild->GetChildCount())
                     {
                         for (const auto& great_grandchild: grandchild->GetChildNodePtrs())
                         {
-                            auto great_grandchild_generator = great_grandchild->GetNodeDeclaration()->GetGenerator();
-                            result = great_grandchild_generator->GenConstruction(great_grandchild.get(), m_language);
-                            if (!result)
+                            if (auto gen = great_grandchild->GetNodeDeclaration()->GetGenerator(); gen)
                             {
-                                if (m_language == GEN_LANG_CPLUSPLUS)
-                                    result = great_grandchild_generator->GenConstruction(great_grandchild.get());
-                                else if (m_language == GEN_LANG_PYTHON)
-                                    result = great_grandchild_generator->GenPythonConstruction(great_grandchild.get());
-                                else if (m_language == GEN_LANG_LUA)
-                                    result = great_grandchild_generator->GenLuaConstruction(great_grandchild.get());
+                                result = (m_language == GEN_LANG_CPLUSPLUS) ?
+                                             gen->GenConstruction(great_grandchild.get()) :
+                                             gen->GenPythonConstruction(great_grandchild.get());
+                                if (result)
+                                    m_source->writeLine(result.value());
                             }
-                            if (result)
-                                m_source->writeLine(result.value());
                             GenSettings(great_grandchild.get());
                             // It's possible to have even more levels of submenus, but we'll stop here.
                         }
@@ -337,9 +301,6 @@ const char* BaseCodeGenerator::LangPtr() const
         case GEN_LANG_PYTHON:
             return ".";
 
-        case GEN_LANG_LUA:
-            return ":";
-
         default:
             FAIL_MSG("Unsupported language!")
             return "";
@@ -359,10 +320,6 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
 
             case GEN_LANG_PYTHON:
                 code << "\nif defined(__WINDOWS__)";
-                break;
-
-            case GEN_LANG_LUA:
-                code << "\n#ifdef __WINDOWS__";
                 break;
         }
     }
@@ -385,11 +342,6 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                     code << "\nif ";
                 code << "defined(__UNIX__)";
                 break;
-
-            case GEN_LANG_LUA:
-                if (code.empty())
-                    code << "\n#ifdef __UNIX__";
-                break;
         }
     }
     if (node->value(prop_platforms).contains("Mac"))
@@ -411,17 +363,12 @@ void BaseCodeGenerator::BeginPlatformCode(Node* node)
                     code << "\nif ";
                 code << "defined(__WXOSX__)";
                 break;
-
-            case GEN_LANG_LUA:
-                if (code.empty())
-                    code << "\n#ifdef __WXOSX__";
-                break;
         }
     }
 
     m_source->writeLine(code);
     m_source->SetLastLineBlank();
-    if (m_language == GEN_LANG_PYTHON || m_language == GEN_LANG_LUA)
+    if (m_language == GEN_LANG_PYTHON)
         m_source->Indent();
 }
 
@@ -435,11 +382,6 @@ void BaseCodeGenerator::EndPlatformCode()
 
         case GEN_LANG_PYTHON:
             m_source->Unindent();
-            break;
-
-        case GEN_LANG_LUA:
-            m_source->Unindent();
-            m_source->writeLine("#endif  // limited to specific platforms\n");
             break;
     }
 }
@@ -507,8 +449,6 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
             result = generator->GenAfterChildren(node);
         else if (m_language == GEN_LANG_PYTHON)
             result = generator->GenPythonAfterChildren(node);
-        else if (m_language == GEN_LANG_LUA)
-            result = generator->GenLuaAfterChildren(node);
     }
     if (result)
     {

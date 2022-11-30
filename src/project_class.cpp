@@ -606,8 +606,6 @@ ttString Project::GetBaseDirectory(int language)
 {
     if (language == GEN_LANG_CPLUSPLUS && HasValue(prop_base_directory))
         return as_wxString(prop_base_directory);
-    else if (language == GEN_LANG_LUA && HasValue(prop_lua_output_folder))
-        return as_wxString(prop_lua_output_folder);
     else if (language == GEN_LANG_PYTHON && HasValue(prop_python_output_folder))
         return as_wxString(prop_python_output_folder);
     else if (language == GEN_LANG_XRC && HasValue(prop_xrc_directory))

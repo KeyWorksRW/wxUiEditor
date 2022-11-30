@@ -24,9 +24,6 @@ const char* LangPtr(int language)
         case GEN_LANG_PYTHON:
             return ".";
 
-        case GEN_LANG_LUA:
-            return ":";
-
         default:
             FAIL_MSG("Unsupported language!")
             return "";
@@ -49,24 +46,37 @@ ttlib::cstr GetWidgetName(int language, ttlib::sview name)
             continue;
         if (widget_name.size())
             widget_name << "|";
-        if (language == GEN_LANG_PYTHON)
+        if (iter == "wxEmptyString")
+            widget_name = "\"\"";
+        else
         {
-            if (iter == "wxEmptyString")
-                widget_name = "\"\"";
-            else
-            {
-                iter.erase(0, 2);
-                widget_name << "wx." << iter;
-            }
-        }
-        else if (language == GEN_LANG_LUA)
-        {
+            iter.erase(0, 2);
             widget_name << "wx." << iter;
         }
     }
     return widget_name;
 }
 
+ttlib::cstr GetPythonName(ttlib::sview name)
+{
+    ttlib::cstr widget_name;
+    ttlib::multistr multistr(name, "|", tt::TRIM::both);
+    for (auto& iter: multistr)
+    {
+        if (iter.empty())
+            continue;
+        if (widget_name.size())
+            widget_name << "|";
+        if (iter == "wxEmptyString")
+            widget_name = "\"\"";
+        else
+        {
+            iter.erase(0, 2);
+            widget_name << "wx." << iter;
+        }
+    }
+    return widget_name;
+}
 // List of valid component parent types
 static constexpr GenType s_GenParentTypes[] = {
 
@@ -75,7 +85,7 @@ static constexpr GenType s_GenParentTypes[] = {
 
 };
 
-ttlib::cstr GetParentName(int language, Node* node)
+ttlib::cstr GetPythonParentName(Node* node)
 {
     auto parent = node->GetParent();
     while (parent)
@@ -84,17 +94,12 @@ ttlib::cstr GetParentName(int language, Node* node)
         {
             if (parent->IsStaticBoxSizer())
             {
-                return (ttlib::cstr() << parent->get_node_name() << LangPtr(language) << "GetStaticBox()");
+                return (ttlib::cstr() << parent->get_node_name() << ".GetStaticBox()");
             }
         }
         if (parent->IsForm())
         {
-            if (language == GEN_LANG_PYTHON)
-                return ttlib::cstr("self");
-            else if (language == GEN_LANG_LUA)
-                return ttlib::cstr(parent->get_node_name());
-            else
-                return ttlib::cstr("this");
+            return ttlib::cstr("self");
         }
 
         for (auto iter: s_GenParentTypes)
@@ -104,7 +109,7 @@ ttlib::cstr GetParentName(int language, Node* node)
                 ttlib::cstr name = parent->get_node_name();
                 if (parent->isGen(gen_wxCollapsiblePane))
                 {
-                    name << LangPtr(language) << "GetPane()";
+                    name << ".GetPane()";
                 }
                 return name;
             }
@@ -145,7 +150,7 @@ ttlib::cstr GenerateNewAssignment(int language, Node* node, bool use_generic)
     return code;
 }
 
-ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str)
+ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str)
 {
     ttlib::cstr code;
 
@@ -166,20 +171,18 @@ ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str)
         if (has_utf_char)
         {
             // While this may not be necessary for non-Windows systems, it does ensure the code compiles on all platforms.
-            if (GetProject()->prop_as_bool(prop_internationalize) && language != GEN_LANG_LUA)
+            if (GetProject()->prop_as_bool(prop_internationalize))
             {
-                code << "_(" << GetWidgetName(language, "wxString") << LangPtr(language);
-                code << str_with_escapes << "\"))";
+                code << "_(wx.String.FromUTF8(\"" << str_with_escapes << "\"))";
             }
             else
             {
-                code << "_(" << GetWidgetName(language, "wxString") << LangPtr(language);
-                code << str_with_escapes << "\")";
+                code << "wx.String.FromUTF8(\"" << str_with_escapes << "\")";
             }
         }
         else
         {
-            if (GetProject()->prop_as_bool(prop_internationalize) && language != GEN_LANG_LUA)
+            if (GetProject()->prop_as_bool(prop_internationalize))
                 code << "_(\"" << str_with_escapes << "\")";
             else
                 code << "\"" << str_with_escapes << "\"";
@@ -187,7 +190,7 @@ ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str)
     }
     else
     {
-        code << GetWidgetName(language, "wxEmptyString");
+        code << "\"\"";
     }
 
     return code;

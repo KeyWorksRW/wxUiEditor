@@ -33,17 +33,6 @@ const char* g_python_keywords =
     "False None True and as assert async break class continue def del elif else except finally for from global if import in is lambda "
     "nonlocal not or pass raise return try while with yield";
 
-const char* g_lua_keywords =
-    "and break do else elseif end false for function if in local nil not or repeat return then true until while";
-
-#if 0
-const char* g_php_keywords =
-    "abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare "
-    "endfor endforeach endif endswitch endwhile eval exit extends final finally for foreach function global goto if implements include "
-    "include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return "
-    "static switch throw trait try unset use var while xor yield";
-#endif
-
 // clang-format on
 
 CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(parent), m_panel_type(panel_type)
@@ -76,32 +65,6 @@ CodeDisplay::CodeDisplay(wxWindow* parent, int panel_type) : CodeDisplayBase(par
         m_scintilla->StyleSetForeground(wxSTC_P_COMMENTLINE, wxColour(0, 128, 0));
         m_scintilla->StyleSetForeground(wxSTC_P_NUMBER, *wxRED);
     }
-    else if (panel_type == GEN_LANG_LUA)
-    {
-        m_scintilla->SetLexer(wxSTC_LEX_LUA);
-        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 0, (wxIntPtr) g_lua_keywords);
-
-        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD, *wxBLUE);
-        m_scintilla->StyleSetForeground(wxSTC_LUA_WORD2, wxColour("#E91AFF"));
-        m_scintilla->StyleSetForeground(wxSTC_LUA_STRING, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_LUA_STRINGEOL, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_LUA_COMMENTLINE, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_LUA_NUMBER, *wxRED);
-    }
-#if 0
-    else if (panel_type == GEN_LANG_PHP)
-    {
-        m_scintilla->SetLexer(wxSTC_LEX_HTML);
-        // On Windows, this saves converting the UTF8 to UTF16 and then back to ANSI.
-        m_scintilla->SendMsg(SCI_SETKEYWORDS, 4, (wxIntPtr) g_php_keywords);
-
-        m_scintilla->StyleSetForeground(wxSTC_HPHP_WORD, *wxBLUE);
-        m_scintilla->StyleSetForeground(wxSTC_HPHP_COMMENTLINE, wxColour(0, 128, 0));
-        m_scintilla->StyleSetForeground(wxSTC_HPHP_NUMBER, *wxRED);
-        m_scintilla->StyleSetForeground(wxSTC_HPHP_SIMPLESTRING, wxColour(0, 128, 0));
-    }
-#endif
     else  // C++
     {
         // On Windows, this saves converting the UTF16 characters to ANSI.

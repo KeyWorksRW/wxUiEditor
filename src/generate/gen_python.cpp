@@ -168,9 +168,7 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
 
     auto generator = form_node->GetNodeDeclaration()->GetGenerator();
 
-    auto result = generator->GenConstruction(form_node, GEN_LANG_PYTHON);
-    if (!result)
-        result = generator->GenPythonConstruction(form_node);
+    auto result = generator->GenPythonConstruction(form_node);
     if (result)
     {
         m_source->writeLine(result.value(), indent::none);

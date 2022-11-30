@@ -59,7 +59,7 @@ BasePanel::BasePanel(wxWindow* parent, MainFrame* frame, int panel_type) : wxPan
         m_inherit_hdr_panel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_inherit_hdr_panel, "inherit_hdr", false, wxWithImages::NO_IMAGE);
     }
-    else if (m_panel_type == GEN_LANG_XRC || m_panel_type == GEN_LANG_LUA || m_panel_type == GEN_LANG_PYTHON)
+    else if (m_panel_type == GEN_LANG_XRC || m_panel_type == GEN_LANG_PYTHON)
     {
         m_cppPanel = new CodeDisplay(m_notebook, panel_type);
         m_notebook->AddPage(m_cppPanel, "source", false, wxWithImages::NO_IMAGE);
@@ -228,10 +228,6 @@ void BasePanel::GenerateBaseClass()
 
         case GEN_LANG_PYTHON:
             codegen.GeneratePythonClass(m_cur_form, panel_page);
-            break;
-
-        case GEN_LANG_LUA:
-            codegen.GenerateLuaClass(m_cur_form, panel_page);
             break;
 
         case GEN_LANG_XRC:

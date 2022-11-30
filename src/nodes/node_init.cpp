@@ -18,10 +18,10 @@
 // The following are interfaces
 
 #include "../xml/interface_xml.xml"
+#include "../xml/lang_settings.xml"
 #include "../xml/sizer_child_xml.xml"
 #include "../xml/validators_xml.xml"
 #include "../xml/window_interfaces_xml.xml"
-#include "../xml/lang_settings.xml"
 
 // clang-format off
 inline const char* lst_xml_interfaces[] = {

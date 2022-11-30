@@ -405,7 +405,6 @@ private:
 
     // Language panels
     BasePanel* m_pythonPanel { nullptr };
-    BasePanel* m_luaPanel { nullptr };
     BasePanel* m_xrcPanel { nullptr };
 
 #if defined(INTERNAL_TESTING)

@@ -361,11 +361,6 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
         source_ext = ".py";
         header_ext = ".py";
     }
-    else if (language == GEN_LANG_LUA)
-    {
-        source_ext = ".lua";
-        header_ext = ".lua";
-    }
 
     std::vector<Node*> forms;
     project->CollectForms(forms);
@@ -434,25 +429,6 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                         path.backslashestoforward();
                     }
                 }
-                else if (language == GEN_LANG_LUA)
-                {
-                    if (auto& base_file = form->prop_as_string(prop_lua_file); base_file.size())
-                    {
-                        path = base_file;
-                        if (auto* node_folder = form->get_folder();
-                            node_folder && node_folder->HasValue(prop_folder_lua_output_folder))
-                        {
-                            path = node_folder->as_string(prop_folder_lua_output_folder);
-                            path.append_filename(base_file.filename());
-                        }
-                        else if (GetProject()->HasValue(prop_lua_output_folder) && !path.contains("/"))
-                        {
-                            path = GetProject()->GetBaseDirectory(GEN_LANG_LUA).utf8_string();
-                            path.append_filename(base_file);
-                        }
-                        path.backslashestoforward();
-                    }
-                }
 
                 if (path.empty())
                     continue;
@@ -474,10 +450,6 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                 else if (language == GEN_LANG_PYTHON)
                 {
                     codegen.GeneratePythonClass(form);
-                }
-                else if (language == GEN_LANG_LUA)
-                {
-                    codegen.GenerateLuaClass(form);
                 }
 
                 bool new_hdr = false;
@@ -512,10 +484,6 @@ void GenerateTmpFiles(const std::vector<ttlib::cstr>& ClassList, pugi::xml_node 
                     else if (language == GEN_LANG_PYTHON)
                     {
                         codegen.GeneratePythonClass(form);
-                    }
-                    else if (language == GEN_LANG_LUA)
-                    {
-                        codegen.GenerateLuaClass(form);
                     }
 
                     // WinMerge accepts an XML file the provides the left and right filenames

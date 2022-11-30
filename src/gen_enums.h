@@ -246,7 +246,6 @@ namespace GenEnum
         prop_line_numbers,
         prop_line_size,
         prop_local_pch_file,
-        prop_lua_file,
         prop_main_label,
         prop_majorDimension,
         prop_margin_height,
@@ -431,15 +430,6 @@ namespace GenEnum
         prop_python_variable_args,
         prop_python_xrc_file,
 
-        prop_folder_lua_combined_file,
-        prop_folder_lua_output_folder,  // applies to Folder nodes, overrides Project settings
-        prop_lua_combine_forms,
-        prop_lua_combined_file,
-        prop_lua_copy_art,
-        prop_lua_inherit_name,
-        prop_lua_output_folder,
-        prop_lua_xrc_file,
-
         // This must always be the last item as it is used to calculate the array size needed to store all items
         prop_name_array_size,
         prop_unknown = prop_name_array_size,
@@ -544,7 +534,6 @@ namespace GenEnum
         gen_Code,
         gen_CPlusSettings,
         gen_PythonSettings,
-        gen_LuaSettings,
         gen_XrcSettings,
         gen_DlgWindowSettings,
         gen_folder_Code,
@@ -559,10 +548,7 @@ namespace GenEnum
         gen_flexgridsizerbase,
         gen_sizer_child,
         gen_sizeritem_settings,
-        gen_wxLua,
-        gen_wxPHP,
         gen_wxPython,
-        gen_folder_wxLua,
         gen_folder_wxPHP,
         gen_folder_wxPython,
         gen_folder_XRC,

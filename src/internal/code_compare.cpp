@@ -83,23 +83,6 @@ void CodeCompare::OnCPlusPlus(wxCommandEvent& /* event */)
     }
 }
 
-void CodeCompare::OnLua(wxCommandEvent& /* event */)
-{
-    GenResults results;
-
-    m_class_list.clear();
-    m_list_changes->Clear();
-
-    if (GenerateLuaFiles(results, &m_class_list))
-    {
-        for (auto& iter: m_class_list)
-        {
-            m_list_changes->AppendString(iter.wx_str());
-        }
-        m_btn->Enable();
-    }
-}
-
 void CodeCompare::OnPython(wxCommandEvent& /* event */)
 {
     GenResults results;
@@ -149,8 +132,6 @@ void CodeCompare::OnWinMerge(wxCommandEvent& /* event */)
     int language = GEN_LANG_CPLUSPLUS;
     if (m_radio_python->GetValue())
         language = GEN_LANG_PYTHON;
-    else if (m_radio_Lua->GetValue())
-        language = GEN_LANG_LUA;
 
     GenerateTmpFiles(m_class_list, root, language);
 

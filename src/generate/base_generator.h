@@ -74,12 +74,8 @@ public:
 
     MockupParent* GetMockup();
 
-    // Override this to use a single GenConstruction() for all 4 languages
-    virtual std::optional<ttlib::cstr> GenConstruction(Node*, int /* language */) { return {}; }
-
     // Generate the code used to construct the object
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
-    virtual std::optional<ttlib::cstr> GenLuaConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonConstruction(Node*) { return {}; }
 
     // Return true if all construction and settings code was written to src_code.
@@ -105,11 +101,9 @@ public:
     // Code will be written with indent::none set
     virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonAfterChildren(Node* /* node */) { return {}; }
-    virtual std::optional<ttlib::cstr> GenLuaAfterChildren(Node* /* node */) { return {}; }
 
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonEvents(NodeEvent*, const std::string&) { return {}; }
-    virtual std::optional<ttlib::cstr> GenLuaEvents(NodeEvent*, const std::string&) { return {}; }
 
     // Override this to use a single GenSettings() for all 4 languages
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&, int /* language */) { return {}; }

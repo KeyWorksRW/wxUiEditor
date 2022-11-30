@@ -37,18 +37,9 @@ inline const char* language_xml = R"===(<?xml version="1.0"?>
             help="If specified, then this XRC file will be generated when Python code is generated, and the form will be initialized to use the generated XRC file." />
     </gen>
 
-    <gen class="wxLua Settings" type="interface">
-        <property name="lua_file" type="file"
-            help="The filename to use if generating code for wxLua." />
-        <property name="lua_xrc_file" type="string"
-            help="If specified, then this XRC file will be generated when LUA code is generated, and the form will be initialized to use the generated XRC file." />
-        <property name="lua_inherit_name" type="string"
-            help="The name to use for an inherited class. If specified, the base class will include a new(o) function, and the info tab in the Lua panel will include a template for creating an inherited class." />
-    </gen>
-
     <gen class="XRC Settings" type="interface">
         <property name="xrc_file" type="file"
-            help="The filename to use if generating XRC (wxPython and wxLua can override this with their own file name)." />
+            help="The filename to use if generating XRC (wxPython can override this with its own file name)." />
         <property name="xrc_no_whitespace" type="bool"
             help="If checked, no leading whitespace will be used. This makes the file smaller, but less readable.">0</property>
     </gen>

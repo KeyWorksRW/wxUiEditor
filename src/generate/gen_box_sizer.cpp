@@ -43,20 +43,16 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node, int language)
+std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonConstruction(Node* node)
 {
-    if (language == GEN_LANG_CPLUSPLUS)
-        return GenConstruction(node);
-
     ttlib::cstr code;
-    code << node->get_node_name() << " = " << GetWidgetName(language, "wxBoxSizer") << '(';
-    code << GetWidgetName(language, node->prop_as_string(prop_orientation)) << ")";
+    code << node->get_node_name() << " = wx.BoxSizer(";
+    code << GetPythonName(node->prop_as_string(prop_orientation)) << ")";
 
     auto min_size = node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n\t" << node->get_node_name() << LangPtr(language) << "SetMinSize(" << min_size.GetX() << ", "
-             << min_size.GetY() << ")";
+        code << "\n\t" << node->get_node_name() << ".SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ")";
     }
 
     return code;
@@ -107,15 +103,12 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node)
         return {};
 }
 
-std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node, int language)
+std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonAfterChildren(Node* node)
 {
-    if (language == GEN_LANG_CPLUSPLUS)
-        return GenAfterChildren(node);
-
     ttlib::cstr code;
     if (node->as_bool(prop_hide_children))
     {
-        code << "\t" << node->get_node_name() << LangPtr(language) << "ShowItems(false)";
+        code << "\t" << node->get_node_name() << ".ShowItems(false)";
     }
 
     auto parent = node->GetParent();
@@ -125,18 +118,15 @@ std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node, int l
             code << '\n';
         code << "\n\t";
 
-        // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
-        // wxPanel.
-
         if (parent->isGen(gen_wxRibbonPanel))
         {
-            code << parent->get_node_name() << LangPtr(language) << "SetSizerAndFit(" << node->get_node_name() << ")";
+            code << parent->get_node_name() << ".SetSizerAndFit(" << node->get_node_name() << ")";
         }
         else
         {
             if (GetParentName(node) != "this")
-                code << GetParentName(language, node) << LangPtr(language);
-            code << "SetSizerAndFit(" << node->get_node_name() << ")";
+                code << GetPythonParentName(node) << '.';
+            code << ".SetSizerAndFit(" << node->get_node_name() << ")";
         }
     }
 

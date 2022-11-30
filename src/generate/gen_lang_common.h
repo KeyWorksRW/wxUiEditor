@@ -10,9 +10,12 @@
 const char* LangPtr(int language);
 ttlib::cstr GetWidgetName(int language, ttlib::sview name);
 
+// Python breaks classes and constants into wx.name -- e.g., wxID_ANY becomes wx.ID_ANY
+ttlib::cstr GetPythonName(ttlib::sview name);
+
 // This is *NOT* the same as get_node_name() -- this will handle wxStaticBox and
 // wxCollapsiblePane parents as well as "normal" parents
-ttlib::cstr GetParentName(int language, Node* node);
+ttlib::cstr GetPythonParentName(Node* node);
 
 // Generates " = new class(" -- with class being the derived_class (if specified) or the
 // normal class name. If use_generic specified, Generic will be inserted into the class name.
@@ -23,7 +26,7 @@ ttlib::cstr GenerateNewAssignment(int language, Node* node, bool use_generic = f
 // prop_internationalize is true.
 //
 // Will return "wxEmptyString" if prop_name is empty.
-ttlib::cstr GenerateQuotedString(int language, const ttlib::cstr& str);
+ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str);
 
 // Generate wxSizerFlags() function based on prop_proportion, prop_alignment, prop_flags,
 // prop_borders and prop_border_size

@@ -51,30 +51,9 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			help="If checked, art files will be copied to the python_output_folder. BMP files will be converted to PNG, XPM and SVG files may be reduced in size." />
 	</gen>
 
-	<gen class="wxLua" type="interface">
-		<property name="lua_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all lua code. It will also be used for generated xrc and art files if the matching options below are checked." />
-		<property name="lua_copy_art" type="bool"
-			help="If checked, art files will be copied to the lua_output_folder. BMP files will be converted to PNG, XPM and SVG files may be reduced in size." />
-	</gen>
-
-	<!-- <gen class="wxPHP" type="interface">
-		<property name="php_output_folder" type="path"
-			help="If a folder name is specified, it will be used for all php code. It will also be used for generated xrc and art files if the matching options below are checked." />
-		<property name="php_combined_file" type="file"
-			help="This filename will be used to write all php code to unless you unchecked the php_combine_forms property above." />
-		<property name="php_combine_forms" type="bool"
-			help="If checked, will create a single file containing all php generated forms.">0</property>
-		<property name="php_copy_art" type="bool"
-			help="If checked, art files will be copied to the php_output_folder. BMP files will be converted to PNG, XPM and SVG files may be reduced in size." />
-		<property name="php_use_xrc" type="bool"
-			help="If checked, php code generation will use XRC file(s) which will be generated in the php_output_folder specified above. This will use the settings in the XRC category above for determining if a combined or individual XRC files should be created, and what the combined filename will be if XRC combining is chosen." />
-	</gen> -->
-
 	<gen class="Project" type="project" image="project">
 		<inherits class="C++" />
 		<inherits class="wxPython" />
-		<inherits class="wxLua" />
 		<inherits class="XRC" />
 		<property name="art_directory" type="path"
 			help="The directory containing your images (png, ico, xpm, etc.)." />
@@ -118,20 +97,6 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 			help="Overrides any project setting of the combined filename. Only affects the forms within this folder." />
 	</gen>
 
-	<gen class="Folder wxLua Overrides" type="interface">
-		<property name="folder_lua_output_folder" type="path"
-			help="Overrides any project setting of the output folder used for all generated Lua code. Only affects the forms within this folder." />
-		<property name="folder_lua_combined_file" type="file"
-			help="Overrides any project setting of the combined filename. Only affects the forms within this folder." />
-	</gen>
-
-	<!-- <gen class="Folder wxPHP Overrides" type="interface">
-		<property name="folder_php_output_folder" type="path"
-			help="Overrides any project setting of the output folder used for all generated PHP code. Only affects the forms within this folder." />
-		<property name="folder_php_combined_file" type="file"
-			help="Overrides any project setting of the combined filename. Only affects the forms within this folder." />
-	</gen> -->
-
 	<gen class="Folder XRC Overrides" type="interface">
 		<property name="folder_xrc_directory" type="path"
 			help="Overrides any project setting of the output folder used for all generated XRC code. Only affects the forms within this folder." />
@@ -142,8 +107,6 @@ inline const char* project_xml = R"===(<?xml version="1.0"?>
 	<gen class="folder" image="folder" type="folder">
 		<inherits class="Folder C++ Overrides" />
 		<inherits class="Folder wxPython Overrides" />
-		<inherits class="Folder wxLua Overrides" />
-		<inherits class="Folder wxPHP Overrides" />
 		<inherits class="Folder XRC Overrides" />
 		<property name="label" type="string"
 			help="The name of the folder.">my_forms</property>

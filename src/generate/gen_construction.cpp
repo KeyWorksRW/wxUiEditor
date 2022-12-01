@@ -5,6 +5,7 @@
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
+#include "code.h"             // Code -- Helper class for generating code
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_lang_common.h"  // Common mulit-language functions
@@ -43,9 +44,12 @@ void BaseCodeGenerator::GenConstruction(Node* node)
     }
 
     bool need_closing_brace = false;
+    Code gen_code(node, m_language);
+    auto result = generator->CommonConstruction(gen_code);
 
-    auto result =
-        (m_language == GEN_LANG_CPLUSPLUS) ? generator->GenConstruction(node) : generator->GenPythonConstruction(node);
+    if (!result)
+        result =
+            (m_language == GEN_LANG_CPLUSPLUS) ? generator->GenConstruction(node) : generator->GenPythonConstruction(node);
 
     if (result)
     {
@@ -79,11 +83,19 @@ void BaseCodeGenerator::GenConstruction(Node* node)
         // A wxRibbonToolBar can only have abstract children that consist of the tools.
         for (const auto& child: node->GetChildNodePtrs())
         {
-            auto child_generator = child->GetNodeDeclaration()->GetGenerator();
-            result = (m_language == GEN_LANG_CPLUSPLUS) ? child_generator->GenConstruction(child.get()) :
-                                                          child_generator->GenPythonConstruction(child.get());
-            if (result)
-                m_source->writeLine(result.value());
+            gen_code.clear();
+            if (auto gen_result = child->GetGenerator()->CommonConstruction(gen_code); gen_result)
+            {
+                m_source->writeLine(gen_result.value());
+            }
+            else
+            {
+                auto child_generator = child->GetGenerator();
+                if (gen_result = (m_language == GEN_LANG_CPLUSPLUS) ? child_generator->GenConstruction(child.get()) :
+                                                                      child_generator->GenPythonConstruction(child.get());
+                    gen_result)
+                    m_source->writeLine(result.value());
+            }
         }
         EndBrace();
         m_source->writeLine(ttlib::cstr() << node->get_node_name() << LangPtr() << "Realize();");
@@ -101,8 +113,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             child->SetParent(menu_node_ptr.get());
             if (auto gen = child->GetNodeDeclaration()->GetGenerator(); gen)
             {
-                result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(child.get()) :
-                                                              gen->GenPythonConstruction(child.get());
+                gen_code.clear();
+                result = gen->CommonConstruction(gen_code);
+                if (!result)
+                    result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(child.get()) :
+                                                                  gen->GenPythonConstruction(child.get());
                 if (result)
                     m_source->writeLine(result.value());
             }
@@ -114,8 +129,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                 {
                     if (auto gen = grandchild->GetNodeDeclaration()->GetGenerator(); gen)
                     {
-                        result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(grandchild.get()) :
-                                                                      gen->GenPythonConstruction(grandchild.get());
+                        gen_code.clear();
+                        result = gen->CommonConstruction(gen_code);
+                        if (!result)
+                            result = (m_language == GEN_LANG_CPLUSPLUS) ? gen->GenConstruction(grandchild.get()) :
+                                                                          gen->GenPythonConstruction(grandchild.get());
                         if (result)
                             m_source->writeLine(result.value());
                     }
@@ -127,9 +145,12 @@ void BaseCodeGenerator::GenConstruction(Node* node)
                         {
                             if (auto gen = great_grandchild->GetNodeDeclaration()->GetGenerator(); gen)
                             {
-                                result = (m_language == GEN_LANG_CPLUSPLUS) ?
-                                             gen->GenConstruction(great_grandchild.get()) :
-                                             gen->GenPythonConstruction(great_grandchild.get());
+                                gen_code.clear();
+                                result = gen->CommonConstruction(gen_code);
+                                if (!result)
+                                    result = (m_language == GEN_LANG_CPLUSPLUS) ?
+                                                 gen->GenConstruction(great_grandchild.get()) :
+                                                 gen->GenPythonConstruction(great_grandchild.get());
                                 if (result)
                                     m_source->writeLine(result.value());
                             }
@@ -439,10 +460,9 @@ void BaseCodeGenerator::GenSettings(Node* node)
 
 bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
 {
-    auto declaration = node->GetNodeDeclaration();
-    auto generator = declaration->GetGenerator();
-
-    auto result = generator->GenAfterChildren(node, m_language);
+    auto generator = node->GetGenerator();
+    Code gen_code(node, m_language);
+    auto result = generator->CommonAfterChildren(gen_code);
     if (!result)
     {
         if (m_language == GEN_LANG_CPLUSPLUS)
@@ -450,6 +470,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
         else if (m_language == GEN_LANG_PYTHON)
             result = generator->GenPythonAfterChildren(node);
     }
+
     if (result)
     {
         // If the node needs to write code after all children are constructed, then create the children first, then write

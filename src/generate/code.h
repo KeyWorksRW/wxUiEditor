@@ -23,6 +23,10 @@ public:
     void clear() { m_code.clear(); }
     auto size() { return m_code.size(); }
 
+    bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
+    bool is_python() const { return m_language == GEN_LANG_PYTHON; }
+    bool is_local_var() const;
+
     Code& Eol()
     {
         m_code << '\n';

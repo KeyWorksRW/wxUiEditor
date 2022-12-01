@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Purpose:   Base widget generator class
 // Author:    Ralph Walden
-// Copyright: Copyright (c) 2020-2021 KeyWorks Software (Ralph Walden)
+// Copyright: Copyright (c) 2020-2022 KeyWorks Software (Ralph Walden)
 // License:   Apache License -- see ../../LICENSE
 /////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +22,8 @@ class wxObject;
 class wxPropertyGridEvent;
 class wxPropertyGridManager;
 class wxWindow;
+
+class Code;
 
 namespace pugi
 {
@@ -75,6 +77,7 @@ public:
     MockupParent* GetMockup();
 
     // Generate the code used to construct the object
+    virtual std::optional<ttlib::cstr> CommonConstruction(Code&) { return {}; }
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonConstruction(Node*) { return {}; }
 
@@ -99,6 +102,7 @@ public:
     // Generate code after any children have been constructed
     //
     // Code will be written with indent::none set
+    virtual std::optional<ttlib::cstr> CommonAfterChildren(Code&) { return {}; }
     virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonAfterChildren(Node* /* node */) { return {}; }
 

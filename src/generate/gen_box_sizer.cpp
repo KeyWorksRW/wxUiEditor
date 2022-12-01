@@ -27,8 +27,11 @@ wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-void BoxSizerGenerator::CommonConstruction(Code& code)
+std::optional<ttlib::cstr> BoxSizerGenerator::CommonConstruction(Code& code)
 {
+    if (code.is_cpp() && code.is_local_var())
+        code << "auto* ";
+
     code.NodeName().Assign("wxBoxSizer(").as_string(prop_orientation).EndFunction();
 
     auto min_size = code.m_node->prop_as_wxSize(prop_minimum_size);
@@ -37,23 +40,6 @@ void BoxSizerGenerator::CommonConstruction(Code& code)
         code.Eol().Tab().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
         code.EndFunction();
     }
-}
-
-std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
-{
-    Code code(node);
-    if (node->IsLocal())
-        code << "auto* ";
-
-    CommonConstruction(code);
-
-    return code.m_code;
-}
-
-std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonConstruction(Node* node)
-{
-    Code code(node, GEN_LANG_PYTHON);
-    CommonConstruction(code);
 
     return code.m_code;
 }
@@ -67,7 +53,7 @@ void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/
     }
 }
 
-void BoxSizerGenerator::CommonAfterChildren(Code& code)
+std::optional<ttlib::cstr> BoxSizerGenerator::CommonAfterChildren(Code& code)
 {
     if (code.m_node->as_bool(prop_hide_children))
     {
@@ -94,22 +80,7 @@ void BoxSizerGenerator::CommonAfterChildren(Code& code)
             code.Add("SetSizerAndFit(").NodeName().EndFunction();
         }
     }
-}
 
-std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node)
-{
-    Code code(node);
-    CommonAfterChildren(code);
-    if (code.size())
-        return code.m_code;
-    else
-        return {};
-}
-
-std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonAfterChildren(Node* node)
-{
-    Code code(node, GEN_LANG_PYTHON);
-    CommonAfterChildren(code);
     if (code.size())
         return code.m_code;
     else

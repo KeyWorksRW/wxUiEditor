@@ -127,3 +127,8 @@ Code& Code::ParentName()
     m_code << m_node->GetParent()->get_node_name();
     return *this;
 }
+
+bool Code::is_local_var() const
+{
+    return m_node->IsLocal();
+}

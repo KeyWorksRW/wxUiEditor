@@ -15,11 +15,8 @@ class BoxSizerGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* /*parent*/) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenPythonConstruction(Node* node) override;
-
-    std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
-    std::optional<ttlib::cstr> GenPythonAfterChildren(Node* node) override;
+    std::optional<ttlib::cstr> CommonConstruction(Code& code) override;
+    std::optional<ttlib::cstr> CommonAfterChildren(Code& code) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;
     void AfterCreation(wxObject* /*wxobject*/, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
@@ -28,6 +25,4 @@ public:
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
 
 protected:
-    void CommonConstruction(Code& code);
-    void CommonAfterChildren(Code& code);
 };

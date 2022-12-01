@@ -153,9 +153,3 @@ The following tables list classes, objects and functions that wxUiEditor can gen
 | ToolSeparator | yes |  ?? | yes | gen_toolbar.cpp |
 | ToolStretchable | yes |  ?? | yes | gen_toolbar.cpp |
 | TreeListCtrlColumn | yes |  ?? | no | gen_tree_list.cpp |
-
-# Functions
-
-| Function | C++ | Lua | Python | file |
------------|-----|-----|--------|------|
-| wxSizerFlags | yes | yes | no | gen_common.cpp |

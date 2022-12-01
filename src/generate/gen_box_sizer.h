@@ -8,6 +8,7 @@
 #pragma once
 
 #include "base_generator.h"  // BaseGenerator -- Base Generator class
+#include "code.h"            // Code -- Helper class for generating code
 
 class BoxSizerGenerator : public BaseGenerator
 {
@@ -25,4 +26,8 @@ public:
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
     void RequiredHandlers(Node*, std::set<std::string>& /* handlers */) override;
+
+protected:
+    void CommonConstruction(Code& code);
+    void CommonAfterChildren(Code& code);
 };

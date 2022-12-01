@@ -27,35 +27,35 @@ wxObject* BoxSizerGenerator::CreateMockup(Node* node, wxObject* parent)
     return sizer;
 }
 
-std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
+void BoxSizerGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
-        code << "auto* ";
-    code << node->get_node_name() << " = new wxBoxSizer(" << node->prop_as_string(prop_orientation) << ");";
+    code.NodeName().Assign("wxBoxSizer(").as_string(prop_orientation).EndFunction();
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
+    auto min_size = code.m_node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)
     {
-        code << "\n\t" << node->get_node_name() << "->SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ");";
+        code.Eol().Tab().NodeName().Function("SetMinSize(") << min_size.GetX() << ", " << min_size.GetY();
+        code.EndFunction();
     }
+}
 
-    return code;
+std::optional<ttlib::cstr> BoxSizerGenerator::GenConstruction(Node* node)
+{
+    Code code(node);
+    if (node->IsLocal())
+        code << "auto* ";
+
+    CommonConstruction(code);
+
+    return code.m_code;
 }
 
 std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonConstruction(Node* node)
 {
-    ttlib::cstr code;
-    code << node->get_node_name() << " = wx.BoxSizer(";
-    code << GetPythonName(node->prop_as_string(prop_orientation)) << ")";
+    Code code(node, GEN_LANG_PYTHON);
+    CommonConstruction(code);
 
-    auto min_size = node->prop_as_wxSize(prop_minimum_size);
-    if (min_size.GetX() != -1 || min_size.GetY() != -1)
-    {
-        code << "\n\t" << node->get_node_name() << ".SetMinSize(" << min_size.GetX() << ", " << min_size.GetY() << ")";
-    }
-
-    return code;
+    return code.m_code;
 }
 
 void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* node, bool /* is_preview */)
@@ -67,71 +67,51 @@ void BoxSizerGenerator::AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/
     }
 }
 
-std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node)
+void BoxSizerGenerator::CommonAfterChildren(Code& code)
 {
-    ttlib::cstr code;
-    if (node->as_bool(prop_hide_children))
+    if (code.m_node->as_bool(prop_hide_children))
     {
-        code << "\t" << node->get_node_name() << "->ShowItems(false);";
+        code.Tab().NodeName().Function("ShowItems(false").EndFunction();
     }
-
-    auto parent = node->GetParent();
+    auto parent = code.m_node->GetParent();
     if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
     {
         if (code.size())
-            code << '\n';
-        code << "\n\t";
+            code.Eol();
+        code.Eol().Tab();
 
         // The parent node is not a sizer -- which is expected if this is the parent sizer underneath a form or
         // wxPanel.
 
         if (parent->isGen(gen_wxRibbonPanel))
         {
-            code << parent->get_node_name() << "->SetSizerAndFit(" << node->get_node_name() << ");";
+            code.Add(parent->get_node_name()).Function("SetSizerAndFit(").NodeName().EndFunction();
         }
         else
         {
-            if (GetParentName(node) != "this")
-                code << GetParentName(node) << "->";
-            code << "SetSizerAndFit(" << node->get_node_name() << ");";
+            if (GetParentName(code.m_node) != "this")
+                code.Add(GetParentName(code.m_node)).Function("");
+            code.Add("SetSizerAndFit(").NodeName().EndFunction();
         }
     }
+}
 
+std::optional<ttlib::cstr> BoxSizerGenerator::GenAfterChildren(Node* node)
+{
+    Code code(node);
+    CommonAfterChildren(code);
     if (code.size())
-        return code;
+        return code.m_code;
     else
         return {};
 }
 
 std::optional<ttlib::cstr> BoxSizerGenerator::GenPythonAfterChildren(Node* node)
 {
-    ttlib::cstr code;
-    if (node->as_bool(prop_hide_children))
-    {
-        code << "\t" << node->get_node_name() << ".ShowItems(false)";
-    }
-
-    auto parent = node->GetParent();
-    if (!parent->IsSizer() && !parent->isGen(gen_wxDialog) && !parent->isGen(gen_PanelForm))
-    {
-        if (code.size())
-            code << '\n';
-        code << "\n\t";
-
-        if (parent->isGen(gen_wxRibbonPanel))
-        {
-            code << parent->get_node_name() << ".SetSizerAndFit(" << node->get_node_name() << ")";
-        }
-        else
-        {
-            if (GetParentName(node) != "this")
-                code << GetPythonParentName(node) << '.';
-            code << ".SetSizerAndFit(" << node->get_node_name() << ")";
-        }
-    }
-
+    Code code(node, GEN_LANG_PYTHON);
+    CommonAfterChildren(code);
     if (code.size())
-        return code;
+        return code.m_code;
     else
         return {};
 }

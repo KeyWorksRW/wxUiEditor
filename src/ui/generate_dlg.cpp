@@ -31,7 +31,9 @@ void MainFrame::OnGenerateCode(wxCommandEvent&)
     GenerateDlg dlg(this);
     if (dlg.ShowModal() == wxID_OK)
     {
-        long cur_setting = GEN_BASE_CODE;
+        long cur_setting = 0;
+        if (dlg.is_gen_base())
+            cur_setting |= GEN_BASE_CODE;
         if (dlg.is_gen_inherited())
             cur_setting |= GEN_INHERITED_CODE;
         if (dlg.is_gen_python())
@@ -108,7 +110,16 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
     // written, and if so, added a " (*modified)" to the end of the relevant radio button.
 
     auto config = wxConfig::Get();
-    auto cur_setting = config->ReadLong("GenCode", GEN_BASE_CODE);
+
+    if (GetProject()->prop_as_bool(prop_prefer_python_code))
+    {
+        m_gen_python_code = true;
+        m_gen_base_code = false;
+        m_gen_xrc_code = true;
+    }
+
+    auto cur_setting =
+        config->ReadLong("GenCode", GetProject()->prop_as_bool(prop_prefer_python_code) ? GEN_PYTHON_CODE : GEN_BASE_CODE);
 
     if (cur_setting & GEN_BASE_CODE)
         m_gen_base_code = true;

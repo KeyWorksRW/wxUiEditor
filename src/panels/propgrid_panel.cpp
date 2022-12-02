@@ -1548,10 +1548,18 @@ void PropGridPanel::CreatePropCategory(ttlib::sview name, Node* node, NodeDeclar
     else if (name.contains("C++"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));
+        if (GetProject()->prop_as_bool(prop_prefer_python_code))
+        {
+            m_prop_grid->Collapse(id);
+        }
     }
     else if (name.contains("XRC"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));
+        if (GetProject()->prop_as_bool(prop_prefer_python_code))
+        {
+            m_prop_grid->Collapse(id);
+        }
     }
 
     if (auto it = m_expansion_map.find(GetCategoryDisplayName(category.GetName()).ToStdString());

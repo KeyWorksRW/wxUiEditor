@@ -109,7 +109,7 @@ public:
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonEvents(NodeEvent*, const std::string&) { return {}; }
 
-    // Override this to use a single GenSettings() for all 4 languages
+    virtual std::optional<ttlib::cstr> CommonSettings(Code&) { return {}; }
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&, int /* language */) { return {}; }
 
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }

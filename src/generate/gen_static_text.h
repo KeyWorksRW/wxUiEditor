@@ -14,13 +14,10 @@ class StaticTextGenerator : public BaseGenerator
 public:
     wxObject* CreateMockup(Node* node, wxObject* parent) override;
 
-    std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenPythonConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
-    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
+    std::optional<ttlib::cstr> CommonConstruction(Code& code) override;
+    std::optional<ttlib::cstr> CommonSettings(Code&) override;
 
-    // Multi-language versions
-    std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent, int language) override;
+    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 

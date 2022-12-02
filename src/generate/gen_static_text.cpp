@@ -10,6 +10,7 @@
 // Blank line added because wx/stattext.h must be included first
 #include <wx/generic/stattextg.h>  // wxGenericStaticText header
 
+#include "code.h"             // Code -- Helper class for generating code
 #include "gen_common.h"       // Common component functions
 #include "gen_lang_common.h"  // Common mulit-language functions
 #include "gen_xrc_utils.h"    // Common XRC generating functions
@@ -56,7 +57,7 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
         // If the text was wrapped previously, then it already has \n characters inserted in it, so we need to restore
         // it to it's original state before wrapping again.
 
-        auto ctrl = wxStaticCast(widget, wxStaticText);
+        auto ctrl = wxStaticCast(widget, wxStaticTextBase);
         if (node->prop_as_bool(prop_markup))
             ctrl->SetLabelMarkup(node->prop_as_wxString(prop_label));
         else
@@ -71,75 +72,33 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
     return false;
 }
 
-// C++ version
-std::optional<ttlib::cstr> StaticTextGenerator::GenConstruction(Node* node)
+std::optional<ttlib::cstr> StaticTextGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name()
-         << GenerateNewAssignment(node, (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
-
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-
-    // If the label is going to be set via SetLabelMarkup(), then there is no reason to initialize it here and then
-    // replace it on the next line of code (which will be the call to SetLabelMarkUp())
-    if (node->prop_as_bool(prop_markup))
+    code.NodeName().CreateClass((code.m_node->prop_as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0));
+    code.GetParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
+    if (code.m_node->prop_as_bool(prop_markup))
     {
-        code << "wxEmptyString";
+        code.EmptyString();
     }
+
     else
     {
-        auto& label = node->prop_as_string(prop_label);
+        auto& label = code.m_node->prop_as_string(prop_label);
         if (label.size())
         {
-            code << GenerateQuotedString(label);
+            code.QuotedString(prop_label);
         }
         else
         {
-            code << "wxEmptyString";
+            code.EmptyString();
         }
     }
 
-    GeneratePosSizeFlags(node, code);
+    code.PosSizeFlags();
 
-    return code;
-}
-
-// Multi-language version
-std::optional<ttlib::cstr> StaticTextGenerator::GenPythonConstruction(Node* node)
-{
-    ttlib::cstr code;
-    code << node->get_node_name()
-         << GenerateNewAssignment(GEN_LANG_PYTHON, node,
-                                  (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0));
-
-    code << GetPythonParentName(node) << ", " << GetPythonName(node->prop_as_string(prop_id)) << ", ";
-
-    // If the label is going to be set via SetLabelMarkup(), then there is no reason to initialize it here and then
-    // replace it on the next line of code (which will be the call to SetLabelMarkUp())
-    if (node->prop_as_bool(prop_markup))
-    {
-        code << "\"\"";
-    }
-    else
-    {
-        auto& label = node->prop_as_string(prop_label);
-        if (label.size())
-        {
-            code << GeneratePythonQuotedString(label);
-        }
-        else
-        {
-            code << "\"\"";
-        }
-    }
-
-    GeneratePosSizeFlags(node, code);
-    if (code.back() == ';')
-        code.pop_back();
-
-    return code;
+    return code.m_code;
 }
 
 std::optional<ttlib::cstr> StaticTextGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
@@ -147,54 +106,22 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenEvents(NodeEvent* event, cons
     return GenEventCode(event, class_name);
 }
 
-// C++ version
-std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
+std::optional<ttlib::cstr> StaticTextGenerator::CommonSettings(Code& code)
 {
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
+    if (code.m_node->prop_as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0)
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetLabelMarkup(" << GenerateQuotedString(node->prop_as_string(prop_label))
-             << ");";
+        code.NodeName().Function("SetLabelMarkup(");
+        code << GenerateQuotedString(code.m_node->prop_as_string(prop_label));
+        code.EndFunction();
     }
 
     // Note that wrap MUST be called after the text is set, otherwise it will be ignored.
-    if (node->prop_as_int(prop_wrap) > 0)
+    if (code.node()->prop_as_int(prop_wrap) > 0)
     {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->Wrap(" << node->prop_as_string(prop_wrap) << ");";
-    }
-    return code;
-}
-
-// Multi-language version
-std::optional<ttlib::cstr> StaticTextGenerator::GenSettings(Node* node, size_t& auto_indent, int language)
-{
-    if (language == GEN_LANG_CPLUSPLUS)
-        return GenSettings(node, auto_indent);
-
-    ttlib::cstr code;
-
-    if (node->prop_as_bool(prop_markup) && node->prop_as_int(prop_wrap) <= 0)
-    {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << LangPtr(language) << "SetLabelMarkup("
-             << GenerateQuotedString(node->prop_as_string(prop_label)) << ")";
+        code.Eol(true).NodeName().Function("Wrap(").as_string(prop_wrap).EndFunction();
     }
 
-    // Note that wrap MUST be called after the text is set, otherwise it will be ignored.
-    if (node->prop_as_int(prop_wrap) > 0)
-    {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << LangPtr(language) << "Wrap(" << node->prop_as_string(prop_wrap) << ")";
-    }
-
-    return code;
+    return code.m_code;
 }
 
 int StaticTextGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

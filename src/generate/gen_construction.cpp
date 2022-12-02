@@ -45,6 +45,11 @@ void BaseCodeGenerator::GenConstruction(Node* node)
 
     bool need_closing_brace = false;
     Code gen_code(node, m_language);
+
+    // Always start with a tab in case there are line breaks. The leading tab will be ignored
+    // if the line is not broken.
+    gen_code.Add((m_language == GEN_LANG_CPLUSPLUS) ? "\t" : "\t\t");
+    gen_code.SetBreakAt(80);
     auto result = generator->CommonConstruction(gen_code);
 
     if (!result)
@@ -59,20 +64,15 @@ void BaseCodeGenerator::GenConstruction(Node* node)
             m_source->writeLine();
         }
 
-        if (m_language == GEN_LANG_CPLUSPLUS)
-        {  // Some code generation may put added lines in a { } block, in which case we need to keep indents.
-            m_source->writeLine(result.value(), (ttlib::is_found(result.value().find('{')) ||
-                                                 ttlib::is_found(result.value().find("\n\t\t"))) ?
-                                                    indent::none :
-                                                    indent::auto_no_whitespace);
-            if (result.value().starts_with("\t{"))
-            {
-                need_closing_brace = true;
-            }
-        }
-        else
+        // Check for any indentation via a brace or line break with multiple tabs, and if so,
+        // don't remove the whitespace
+        m_source->writeLine(result.value(),
+                            (ttlib::is_found(result.value().find('{')) || ttlib::is_found(result.value().find("\n\t\t"))) ?
+                                indent::none :
+                                indent::auto_no_whitespace);
+        if (result.value().starts_with("\t{"))
         {
-            m_source->writeLine(result.value());
+            need_closing_brace = true;
         }
     }
     GenSettings(node);
@@ -424,13 +424,17 @@ void BaseCodeGenerator::EndBrace()
 void BaseCodeGenerator::GenSettings(Node* node)
 {
     size_t auto_indent = indent::auto_no_whitespace;
-    auto generator = node->GetNodeDeclaration()->GetGenerator();
+    auto generator = node->GetGenerator();
     std::optional<ttlib::cstr> result;
-
-    if (m_language == GEN_LANG_CPLUSPLUS)
-        result = generator->GenSettings(node, auto_indent);
-    else
-        result = generator->GenSettings(node, auto_indent, m_language);
+    Code gen_code(node, m_language);
+    result = generator->CommonSettings(gen_code);
+    if (!result)
+    {
+        if (m_language == GEN_LANG_CPLUSPLUS)
+            result = generator->GenSettings(node, auto_indent);
+        else
+            result = generator->GenSettings(node, auto_indent, m_language);
+    }
 
     if (result && result.value().size())
     {

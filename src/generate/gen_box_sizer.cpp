@@ -32,7 +32,7 @@ std::optional<ttlib::cstr> BoxSizerGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
 
-    code.NodeName().Assign("wxBoxSizer(").as_string(prop_orientation).EndFunction();
+    code.NodeName().CreateClass().as_string(prop_orientation).EndFunction();
 
     auto min_size = code.m_node->prop_as_wxSize(prop_minimum_size);
     if (min_size.GetX() != -1 || min_size.GetY() != -1)

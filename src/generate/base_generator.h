@@ -109,7 +109,7 @@ public:
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonEvents(NodeEvent*, const std::string&) { return {}; }
 
-    virtual std::optional<ttlib::cstr> CommonSettings(Code&) { return {}; }
+    virtual std::optional<ttlib::cstr> CommonSettings(Code&, size_t& /* auto_indent */) { return {}; }
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&, int /* language */) { return {}; }
 
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&) { return {}; }

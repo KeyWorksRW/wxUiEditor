@@ -31,6 +31,14 @@ public:
     bool is_python() const { return m_language == GEN_LANG_PYTHON; }
     bool is_local_var() const;
 
+    bool HasValue(GenEnum::PropName prop_name) const;
+
+    // Equivalent to calling m_node->prop_as_bool(prop_name)
+    bool IsTrue(GenEnum::PropName prop_name) const;
+
+    // Equivalent to calling m_node->prop_as_string(prop_name).contains(text)
+    bool PropContains(GenEnum::PropName prop_name, ttlib::sview text) const;
+
     Node* node() const { return m_node; }
 
     Code& itoa(int val)

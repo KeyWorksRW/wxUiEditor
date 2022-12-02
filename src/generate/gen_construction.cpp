@@ -427,7 +427,7 @@ void BaseCodeGenerator::GenSettings(Node* node)
     auto generator = node->GetGenerator();
     std::optional<ttlib::cstr> result;
     Code gen_code(node, m_language);
-    result = generator->CommonSettings(gen_code);
+    result = generator->CommonSettings(gen_code, auto_indent);
     if (!result)
     {
         if (m_language == GEN_LANG_CPLUSPLUS)

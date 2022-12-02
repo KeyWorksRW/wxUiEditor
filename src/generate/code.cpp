@@ -188,6 +188,21 @@ bool Code::is_local_var() const
     return m_node->IsLocal();
 }
 
+bool Code::HasValue(GenEnum::PropName prop_name) const
+{
+    return m_node->HasValue(prop_name);
+}
+
+bool Code::IsTrue(GenEnum::PropName prop_name) const
+{
+    return m_node->prop_as_bool(prop_name);
+}
+
+bool Code::PropContains(GenEnum::PropName prop_name, ttlib::sview text) const
+{
+    return m_node->prop_as_string(prop_name).contains(text);
+}
+
 // clang-format off
 
 // List of valid component parent types
@@ -470,15 +485,15 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
         Comma().CheckLineLength();
         Pos().Comma().CheckLineLength().WxSize().Comma().CheckLineLength();
         Style();
-        if (uses_def_validator && is_cpp())
-            m_code += ", wxDefaultValidator";
+        if (uses_def_validator)
+            Comma().CheckLineLength().Add("wxDefaultValidator");
         Comma().CheckLineLength();
         QuotedString(prop_window_name).EndFunction();
         return *this;
     }
 
     // Do we need a style and/or a default validator?
-    if ((uses_def_validator && is_cpp()) || m_node->HasValue(prop_style) ||
+    if (m_node->HasValue(prop_style) ||
         (m_node->HasValue(prop_tab_position) && !m_node->prop_as_string(prop_tab_position).is_sameas("wxBK_DEFAULT")) ||
         (m_node->HasValue(prop_orientation) && !m_node->prop_as_string(prop_orientation).is_sameas("wxGA_HORIZONTAL")) ||
         m_node->isGen(gen_wxRichTextCtrl) || m_node->isGen(gen_wxRichTextCtrl) || m_node->HasValue(prop_window_style) ||
@@ -486,11 +501,7 @@ Code& Code::PosSizeFlags(bool uses_def_validator, ttlib::sview def_style)
     {
         Comma().CheckLineLength();
         Pos().Comma().CheckLineLength().WxSize().Comma().CheckLineLength().Style();
-        if (uses_def_validator && is_cpp())
-        {
-            m_code += ", wxDefaultValidator";
-        }
-        else if (def_style.size() && m_code.ends_with(def_style))
+        if (def_style.size() && m_code.ends_with(def_style))
         {
             m_code.erase(m_code.size() - def_style.size());
         }

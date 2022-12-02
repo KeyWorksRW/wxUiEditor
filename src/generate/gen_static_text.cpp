@@ -106,7 +106,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::GenEvents(NodeEvent* event, cons
     return GenEventCode(event, class_name);
 }
 
-std::optional<ttlib::cstr> StaticTextGenerator::CommonSettings(Code& code)
+std::optional<ttlib::cstr> StaticTextGenerator::CommonSettings(Code& code, size_t& /* auto_indent */)
 {
     if (code.m_node->prop_as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0)
     {

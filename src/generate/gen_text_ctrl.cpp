@@ -9,6 +9,7 @@
 #include <wx/propgrid/manager.h>  // wxPropertyGridManager
 #include <wx/textctrl.h>          // wxTextAttr and wxTextCtrlBase class - the interface of wxTextCtrl
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "mainframe.h"      // MainFrame -- Main window frame
@@ -96,109 +97,110 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     return false;
 }
 
-std::optional<ttlib::cstr> TextCtrlGenerator::GenConstruction(Node* node)
+std::optional<ttlib::cstr> TextCtrlGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << GenerateNewAssignment(node);
+    code.NodeName().CreateClass();
+    code.GetParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
+    code.QuotedString(prop_value).CheckLineLength();
+    code.PosSizeFlags(true);
 
-    code << GetParentName(node) << ", " << node->prop_as_string(prop_id) << ", ";
-    if (node->prop_as_string(prop_value).size())
-        code << GenerateQuotedString(node->prop_as_string(prop_value));
-    else
-        code << "wxEmptyString";
-
-    if (node->prop_as_string(prop_window_name).empty())
-        GeneratePosSizeFlags(node, code);
-    else
-    {
-        // We have to generate a default validator before the window name, which GeneratePosSizeFlags doesn't do. We don't
-        // actually need that validator, since GenSettings will create it, but we have to supply something before the window
-        // name.
-
-        code << ", ";
-        GenPos(node, code);
-        code << ", ";
-        GenSize(node, code);
-        code << ", ";
-        GenStyle(node, code);
-        code << ", wxDefaultValidator, " << node->prop_as_string(prop_window_name);
-        code << ");";
-    }
-
-    return code;
+    return code.m_code;
 }
 
-std::optional<ttlib::cstr> TextCtrlGenerator::GenSettings(Node* node, size_t& auto_indent)
+std::optional<ttlib::cstr> TextCtrlGenerator::CommonSettings(Code& code, size_t& auto_indent)
 {
-    ttlib::cstr code;
-
-    if (node->HasValue(prop_hint))
-    {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetHint(" << GenerateQuotedString(node->prop_as_string(prop_hint)) << ");";
-    }
-
-    if (node->prop_as_bool(prop_focus))
-    {
-        if (code.size())
-            code << '\n';
-        code << node->get_node_name() << "->SetFocus()";
-    }
-
-    if (node->prop_as_bool(prop_maxlength))
-    {
-        if (code.size())
-            code << '\n';
-        if (node->prop_as_string(prop_style).contains("wxTE_MULTILINE"))
-        {
-            code << "#if !defined(__WXGTK__))\n\t";
-            code << node->get_node_name() << "->SetMaxLength(" << node->prop_as_string(prop_maxlength) << ");\n";
-            code << "#endif";
-            auto_indent = false;
-        }
-        else
-        {
-            code << node->get_node_name() << "->SetMaxLength(" << node->prop_as_string(prop_maxlength) << ");";
-        }
-    }
-
-    if (node->HasValue(prop_auto_complete))
-    {
+    if ((code.IsTrue(prop_maxlength) && code.PropContains(prop_style, "wxTE_MULTILINE")) ||
+        code.HasValue(prop_auto_complete))
         auto_indent = false;
-        code << "\t{\n\t\twxArrayString tmp_array;\n";
-        auto array = ConvertToArrayString(node->prop_as_string(prop_auto_complete));
-        for (auto& iter: array)
-        {
-            code << "\t\ttmp_array.push_back(wxString::FromUTF8(\"" << iter << "\"));\n";
-        }
-        code << "\t\t" << node->get_node_name() << "->AutoComplete(tmp_array);\n";
-        code << "\t}";
-    }
 
-    if (node->prop_as_string(prop_spellcheck).contains("enabled"))
+    if (code.HasValue(prop_hint))
     {
-        if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+        code.Eol(true);
+        if (!auto_indent)
+            code.Tab(code.is_cpp() ? 1 : 3);
+        code.Eol(true).NodeName().Function("SetHint(").QuotedString(prop_hint).EndFunction();
+    }
+    if (code.IsTrue(prop_focus))
+    {
+        code.Eol(true);
+        if (!auto_indent)
+            code.Tab(code.is_cpp() ? 1 : 2);
+        code.NodeName().Function("SetFocus(").EndFunction();
+    }
+    if (code.IsTrue(prop_maxlength))
+    {
+        code.Eol(true);
+        if (!auto_indent)
+            code.Tab(code.is_cpp() ? 1 : 2);
+        if (code.PropContains(prop_style, "wxTE_MULTILINE"))
         {
-            code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
-            code << node->get_node_name() << "->EnableProofCheck(wxTextProofOptions::Default()";
-            if (node->prop_as_string(prop_spellcheck).contains("grammar"))
-                code << ".GrammarCheck()";
-            code << ");";
-            code << "\n#endif";
+            if (code.is_cpp())
+            {
+                code << "#if !defined(__WXGTK__))\n\t";
+                code.NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+                code << "#endif";
+            }
+            else
+            {
+                code.Add("if wx.Platform != \'__WXGTK__\':\n\t\t\t");
+                code.NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+            }
         }
         else
         {
-            code << node->get_node_name() << "->EnableProofCheck(wxTextProofOptions::Default()";
-            if (node->prop_as_string(prop_spellcheck).contains("grammar"))
-                code << ".GrammarCheck()";
-            code << ");";
+            code.NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
+        }
+    }
+    if (code.HasValue(prop_auto_complete))
+    {
+        if (code.is_cpp())
+        {
+            code << "\t{\n\t\twxArrayString tmp_array;\n";
+            auto array = ConvertToArrayString(code.node()->prop_as_string(prop_auto_complete));
+            for (auto& iter: array)
+            {
+                code << "\t\ttmp_array.push_back(wxString::FromUTF8(\"" << iter << "\"));\n";
+            }
+            code << "\t\t" << code.node()->get_node_name() << "->AutoComplete(tmp_array);\n";
+            code << "\t}";
+        }
+
+        // TODO: [Randalphwa - 12-02-2022] Add Python code
+    }
+
+    if (code.PropContains(prop_spellcheck, "enabled"))
+    {
+        if (code.is_cpp())
+        {
+            if (wxGetProject().value(prop_wxWidgets_version) == "3.1")
+            {
+                code << "\n#if wxCHECK_VERSION(3, 1, 6)\n\t";
+                code << code.node()->get_node_name() << "->EnableProofCheck(wxTextProofOptions::Default()";
+                if (code.PropContains(prop_spellcheck, "grammar"))
+                    code << ".GrammarCheck()";
+                code << ");";
+                code << "\n#endif";
+            }
+            else
+            {
+                code.NodeName() << "->EnableProofCheck(wxTextProofOptions::Default()";
+                if (code.PropContains(prop_spellcheck, "grammar"))
+                    code << ".GrammarCheck()";
+                code << ");";
+            }
+        }
+        else
+        {
+            code.Eol();
+            if (!auto_indent)
+                code.Tab(2);
+            code.Add("# wxPython 4.2.0 does not support wxTextProofOptions\n");
         }
     }
 
-    return code;
+    return code.m_code;
 }
 
 std::optional<ttlib::cstr> TextCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)

@@ -919,6 +919,59 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
         return;
 
     auto prop = it->second;
+    if (prop->get_name() == prop_code_preference)
+    {
+        ModifyProperty(prop, m_prop_grid->GetPropertyValueAsString(property));
+        auto grid_iterator = m_prop_grid->GetCurrentPage()->GetIterator(wxPG_ITERATE_CATEGORIES);
+        while (!grid_iterator.AtEnd())
+        {
+            auto grid_property = grid_iterator.GetProperty();
+            if (grid_property->GetLabel().Contains("C++"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "C++")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                }
+            }
+            else if (grid_property->GetLabel().Contains("Python"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "Python")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                }
+            }
+            else if (grid_property->GetLabel().Contains("XRC"))
+            {
+                if (prop->as_string() != "any" && prop->as_string() != "XRC")
+                {
+                    m_prop_grid->Collapse(grid_property);
+                }
+                else
+                {
+                    m_prop_grid->Expand(grid_property);
+                }
+            }
+            grid_iterator.Next();
+        }
+
+        // This will cause GenerateDlg to initialize the code generation choice to the
+        // preferred language, clearing any previously selected language. We can't just use
+        // the property, because the dialog needs to know if inherited C++ code should be
+        // written.
+        auto config = wxConfig::Get();
+        config->Write("GenCode", 0);
+
+        return;
+    }
+
     auto node = prop->GetNode();
 
     switch (prop->type())
@@ -978,10 +1031,10 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 {
                     if (prop->isProp(prop_validator_data_type) && selected_node->isGen(gen_wxTextCtrl))
                     {
-                        // You can only use a wxTextValidator if the validator data type is wxString. If it's not a string,
-                        // the program will compile just fine, but the data member will not be read or written to. To prevent
-                        // that, we switch the validator type to match the data type. The downside is that this is two
-                        // actions, and so it takes two calls to Undo to get back to where we were.
+                        // You can only use a wxTextValidator if the validator data type is wxString. If it's not a
+                        // string, the program will compile just fine, but the data member will not be read or written
+                        // to. To prevent that, we switch the validator type to match the data type. The downside is that
+                        // this is two actions, and so it takes two calls to Undo to get back to where we were.
 
                         if (value == "wxString")
                         {
@@ -1008,9 +1061,9 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                     {
                         // TODO: [KeyWorks - 08-23-2020] This needs to be a preference
 
-                        // If access is changed to local and the name starts with "m_", then the "m_" will be stripped off.
-                        // Conversely, if the name is changed from local to a class member, a "m_" is added as a prefix (if
-                        // it doesn't already have one).
+                        // If access is changed to local and the name starts with "m_", then the "m_" will be stripped
+                        // off. Conversely, if the name is changed from local to a class member, a "m_" is added as a
+                        // prefix (if it doesn't already have one).
                         ttlib::cstr name = node->prop_as_string(prop_var_name);
                         if (value == "none" && name.starts_with("m_"))
                         {
@@ -1144,8 +1197,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
             {
                 ttString newValue = property->GetValueAsString();
 
-                // The base_file property was already processed in OnPropertyGridChanging so only modify the value if it's a
-                // different property
+                // The base_file property was already processed in OnPropertyGridChanging so only modify the value if
+                // it's a different property
                 if (!prop->isProp(prop_base_file))
                 {
                     if (newValue.size())
@@ -1188,8 +1241,8 @@ void PropGridPanel::OnPropertyGridChanged(wxPropertyGridEvent& event)
                 else if (prop->isProp(prop_contents))
                 {
 #if defined(_WIN32)
-                    // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped. Adding
-                    // a trailing space prevents this clipping.
+                    // Under Windows 10 using wxWidgets 3.1.3, the last character of the string is partially clipped.
+                    // Adding a trailing space prevents this clipping.
 
                     if (m_currentSel->isGen(gen_wxRadioBox) && newValue.size())
                     {
@@ -1323,9 +1376,10 @@ void PropGridPanel::OnNodePropChange(CustomEvent& event)
 {
     if (m_isPropChangeSuspended)
     {
-        // If the property was modified in the property grid, then we are receiving this event after the node in the property
-        // has already been changed. We don't need to process it since we already saw it, but we can use the oppoprtunity to
-        // do some additional processing, such as notifying the user that the Mockup can't display the property change.
+        // If the property was modified in the property grid, then we are receiving this event after the node in the
+        // property has already been changed. We don't need to process it since we already saw it, but we can use the
+        // oppoprtunity to do some additional processing, such as notifying the user that the Mockup can't display the
+        // property change.
 
         OnPostPropChange(event);
         return;
@@ -1544,11 +1598,16 @@ void PropGridPanel::CreatePropCategory(ttlib::sview name, Node* node, NodeDeclar
     else if (name.contains("wxPython"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#fff1d2"));
+        if (GetProject()->as_string(prop_code_preference) != "any" &&
+            GetProject()->as_string(prop_code_preference) != "Python")
+        {
+            m_prop_grid->Collapse(id);
+        }
     }
     else if (name.contains("C++"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccccff"));
-        if (GetProject()->prop_as_bool(prop_prefer_python_code))
+        if (GetProject()->as_string(prop_code_preference) != "any" && GetProject()->as_string(prop_code_preference) != "C++")
         {
             m_prop_grid->Collapse(id);
         }
@@ -1556,7 +1615,7 @@ void PropGridPanel::CreatePropCategory(ttlib::sview name, Node* node, NodeDeclar
     else if (name.contains("XRC"))
     {
         m_prop_grid->SetPropertyBackgroundColour(id, wxColour("#ccffcc"));
-        if (GetProject()->prop_as_bool(prop_prefer_python_code))
+        if (GetProject()->as_string(prop_code_preference) != "any" && GetProject()->as_string(prop_code_preference) != "XRC")
         {
             m_prop_grid->Collapse(id);
         }

@@ -111,15 +111,26 @@ void GenerateDlg::OnInit(wxInitDialogEvent& event)
 
     auto config = wxConfig::Get();
 
-    if (GetProject()->prop_as_bool(prop_prefer_python_code))
+    if (GetProject()->as_string(prop_code_preference) == "Python")
     {
         m_gen_python_code = true;
         m_gen_base_code = false;
+        m_gen_xrc_code = false;
+    }
+    else if (GetProject()->as_string(prop_code_preference) == "XRC")
+    {
+        m_gen_python_code = false;
+        m_gen_base_code = false;
         m_gen_xrc_code = true;
     }
+    else
+    {
+        m_gen_python_code = false;
+        m_gen_base_code = true;
+        m_gen_xrc_code = false;
+    }
 
-    auto cur_setting =
-        config->ReadLong("GenCode", GetProject()->prop_as_bool(prop_prefer_python_code) ? GEN_PYTHON_CODE : GEN_BASE_CODE);
+    auto cur_setting = config->ReadLong("GenCode", 0);
 
     if (cur_setting & GEN_BASE_CODE)
         m_gen_base_code = true;

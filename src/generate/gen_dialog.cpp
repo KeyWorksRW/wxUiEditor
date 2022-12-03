@@ -252,7 +252,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCo
 
         auto min_size = dlg->prop_as_wxSize(prop_minimum_size);
         auto max_size = dlg->prop_as_wxSize(prop_maximum_size);
-        auto size = dlg->prop_as_wxSize(prop_size);
+        // auto size = dlg->prop_as_wxSize(prop_size);
 
         ttlib::cstr parent_name;
         if (language == GEN_LANG_PYTHON)

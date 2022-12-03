@@ -623,7 +623,7 @@ NodeSharedPtr FormBuilder::CreateFbpNode(pugi::xml_node& xml_obj, Node* parent, 
             return newobject;
         }
 
-        if (newobject->isGen(gen_wxStdDialogButtonSizer))
+        if (newobject->isGen(gen_wxStdDialogButtonSizer) && parent)
         {
             // wxFormBuilder isn't able to add a sizer using CreateSeparatedSizer(), so the user has to add a static line
             // above wxStdDialogButtonSizer. The problem with that approach is that if the program is compiled for MAC then

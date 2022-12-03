@@ -77,13 +77,6 @@ ttlib::cstr GetPythonName(ttlib::sview name)
     }
     return widget_name;
 }
-// List of valid component parent types
-static constexpr GenType s_GenParentTypes[] = {
-
-    type_auinotebook, type_bookpage,    type_choicebook, type_container, type_listbook,
-    type_notebook,    type_ribbonpanel, type_simplebook, type_splitter,  type_wizardpagesimple,
-
-};
 
 ttlib::cstr GeneratePythonQuotedString(const ttlib::cstr& str)
 {

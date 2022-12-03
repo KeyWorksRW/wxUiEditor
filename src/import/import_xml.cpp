@@ -540,7 +540,7 @@ GenEnum::GenName ImportXML::ConvertToGenName(const ttlib::cstr& object_name, Nod
     {
         return gen_toolSeparator;
     }
-    else if (gen_name == gen_tool && parent->isGen(gen_wxAuiToolBar))
+    else if (gen_name == gen_tool && parent && parent->isGen(gen_wxAuiToolBar))
     {
         gen_name = gen_auitool;
     }
@@ -1213,7 +1213,6 @@ NodeSharedPtr ImportXML::CreateXrcNode(pugi::xml_node& xml_obj, Node* parent, No
     if (isBitmapButton)
     {
         new_node->prop_set_value(prop_label, "");
-        isBitmapButton = false;
     }
 
     if (parent)

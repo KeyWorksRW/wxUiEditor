@@ -7,6 +7,7 @@
 
 #include <wx/dialog.h>  // wxDialogBase class
 
+#include "code.h"             // Code -- Helper class for generating code
 #include "gen_base.h"         // BaseCodeGenerator -- Generate Src and Hdr files for Base Class
 #include "gen_common.h"       // Common component functions
 #include "gen_lang_common.h"  // Common mulit-language functions
@@ -300,48 +301,28 @@ bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     return true;
 }
 
-std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Node* node)
+std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Code& code)
 {
-    ttlib::cstr code;
+    code.Add("class ").NodeName().Add("(wx.Dialog):\n");
+    code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
+    code << "wx.Dialog.__init__(self, parent, id=";
+    code.as_string(prop_id).Comma().Eol().Tab(3).Add("title=");
 
-    ttlib::cstr dlg_name(node->get_node_name());
-    code << "class " << dlg_name << "(wx.Dialog):\n";
-    code << "\tdef __init__(self, parent):\n\t\twx.Dialog.__init__(self, parent, id=wx.ID_ANY,\n\t\t\ttitle=";
-
-    if (node->HasValue(prop_title))
-        code << GeneratePythonQuotedString(node->as_string(prop_title));
+    if (code.HasValue(prop_title))
+        code.QuotedString(prop_title);
     else
         code << "\"\"";
 
-    code << ",\n\t\t\t";
-
-    code << "pos=";
-
-    auto position = node->prop_as_wxPoint(prop_pos);
-    if (position == wxDefaultPosition)
-        code << "wx.DefaultPosition, ";
-    else
-        code << "wx.Point(" << position.x << ", " << position.y << "), ";
-
-    code << "size=";
-
-    auto size = node->prop_as_wxSize(prop_size);
-    if (size == wxDefaultSize)
-        code << "wx.DefaultSize";
-    else
-        code << "wx.Size(" << size.x << ", " << size.y << ")";
-
-    code << ",\n\t\t\t";
-
-    code << "style=";
-
-    if (node->HasValue(prop_style) && !node->prop_as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
-        code << GetPythonName(node->prop_as_string(prop_style));
+    code.Comma().Eol().Tab(3).Add("pos=").Pos(prop_pos);
+    code.Comma().Add("size=").WxSize(prop_size);
+    code.Comma().Eol().Tab(3).Add("style=");
+    if (code.HasValue(prop_style) && !code.node()->as_string(prop_style).is_sameas("wxDEFAULT_DIALOG_STYLE"))
+        code.Style();
     else
         code << "wx.DEFAULT_DIALOG_STYLE";
     code << ")";
 
-    return code;
+    return code.m_code;
 }
 
 int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

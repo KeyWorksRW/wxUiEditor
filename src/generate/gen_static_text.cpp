@@ -77,7 +77,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::CommonConstruction(Code& code)
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
     code.NodeName().CreateClass((code.m_node->prop_as_bool(prop_markup) && code.m_node->prop_as_int(prop_wrap) <= 0));
-    code.GetParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
+    code.GetParentName().Comma().as_string(prop_id).Comma();
     if (code.m_node->prop_as_bool(prop_markup))
     {
         code.EmptyString();
@@ -88,7 +88,7 @@ std::optional<ttlib::cstr> StaticTextGenerator::CommonConstruction(Code& code)
         auto& label = code.m_node->prop_as_string(prop_label);
         if (label.size())
         {
-            code.QuotedString(prop_label);
+            code.CheckLineLength().QuotedString(prop_label);
         }
         else
         {

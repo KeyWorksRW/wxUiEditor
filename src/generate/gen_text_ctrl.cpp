@@ -103,7 +103,7 @@ std::optional<ttlib::cstr> TextCtrlGenerator::CommonConstruction(Code& code)
         code << "auto* ";
     code.NodeName().CreateClass();
     code.GetParentName().Comma().as_string(prop_id).Comma().CheckLineLength();
-    code.QuotedString(prop_value).CheckLineLength();
+    code.QuotedString(prop_value);
     code.PosSizeFlags(true);
 
     return code.m_code;

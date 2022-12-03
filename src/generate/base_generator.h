@@ -79,7 +79,7 @@ public:
     // Generate the code used to construct the object
     virtual std::optional<ttlib::cstr> CommonConstruction(Code&) { return {}; }
     virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPythonConstruction(Node*) { return {}; }
+    virtual std::optional<ttlib::cstr> GenPythonConstruction(Code&) { return {}; }
 
     // Return true if all construction and settings code was written to src_code.
     //

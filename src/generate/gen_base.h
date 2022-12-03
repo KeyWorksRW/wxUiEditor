@@ -87,6 +87,8 @@ public:
 
     PANEL_PAGE GetPanelType() { return m_panel_type; }
 
+    bool is_cpp() const { return m_language == GEN_LANG_CPLUSPLUS; }
+
 protected:
     void WritePropSourceCode(Node* node, GenEnum::PropName prop);
     void WritePropHdrCode(Node* node, GenEnum::PropName prop);

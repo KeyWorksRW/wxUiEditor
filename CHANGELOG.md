@@ -42,3 +42,4 @@ The right-click menu for a widget in the Navigation Panel will sometimes have a 
 - Fixed browsing for an XRC output file to generate XRC to -- it now defaults to the current project directory, and can handle a relative path.
 - Fixed non-combined XRC generation.
 - Fixed several problems when importing XRC files.
+- #include \<wx/aui/auibar.h\> now added when creating a wxAuiToolBar

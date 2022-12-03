@@ -7,6 +7,7 @@
 
 #include <wx/statusbr.h>  // wxStatusBar class interface
 
+#include "code.h"           // Code -- Helper class for generating code
 #include "gen_common.h"     // GeneratorLibrary -- Generator classes
 #include "gen_xrc_utils.h"  // Common XRC generating functions
 #include "node.h"           // Node class
@@ -71,45 +72,45 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
     return widget;
 }
-
-std::optional<ttlib::cstr> StatusBarGenerator::GenConstruction(Node* node)
+std::optional<ttlib::cstr> StatusBarGenerator::CommonConstruction(Code& code)
 {
-    ttlib::cstr code;
-
+    Node* node = code.node();  // This is just for convenience
     int num_fields;
     auto fields = node->as_statusbar_fields(prop_fields);
+
+    // GetRequiredVersion() checks see if the value starts with a digit -- if so, it's the
+    // old style. If it isn't a digit, then it's a style which returns minRequiredVer+1.
     if (GetRequiredVersion(node) > minRequiredVer)
         num_fields = to_int(fields.size());
     else
         num_fields = node->prop_as_int(prop_fields);
 
-    if (node->IsLocal())
+    if (code.is_cpp() && code.is_local_var())
         code << "auto* ";
-    code << node->get_node_name() << " = CreateStatusBar(";
 
-    if (node->prop_as_string(prop_window_name).size())
+    // REVIEW: [Randalphwa - 12-02-2022] Does wxPython need this to be self.CreateStatusBar ?
+    code.NodeName() << " = CreateStatusBar(";
+    if (node->HasValue(prop_window_name))
     {
-        code << num_fields << ", " << node->prop_as_string(prop_id);
-        GenStyle(node, code);
-        code << ", " << node->prop_as_string(prop_window_name);
+        code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();
+        code.Comma().QuotedString(prop_window_name);
     }
     else if (node->prop_as_int(prop_style) != wxSTB_DEFAULT_STYLE || node->prop_as_int(prop_window_style) > 0)
     {
-        code << num_fields << ", " << node->prop_as_string(prop_id);
-        GenStyle(node, code);
+        code.itoa(num_fields).Comma().as_string(prop_id).Comma().Style();
     }
     else if (node->prop_as_string(prop_id) != "wxID_ANY")
     {
-        code << num_fields << ", " << node->prop_as_string(prop_id);
+        code.itoa(num_fields).Comma().as_string(prop_id);
     }
     else if (num_fields > 1)
     {
-        code << num_fields;
+        code.itoa(num_fields);
     }
 
-    code << ");";
+    code.EndFunction();
 
-    return code;
+    return code.m_code;
 }
 
 std::optional<ttlib::cstr> StatusBarGenerator::GenSettings(Node* node, size_t& auto_indent)

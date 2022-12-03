@@ -532,3 +532,127 @@ Code& Code::CheckLineLength()
 
     return *this;
 }
+
+Code& Code::GenSizerFlags()
+{
+    Add("wxSizerFlags");
+    if (auto& prop = m_node->prop_as_string(prop_proportion); prop != "0")
+    {
+        m_code << '(' << prop << ')';
+    }
+    else
+    {
+        m_code << "()";
+    }
+
+    if (auto& prop = m_node->prop_as_string(prop_alignment); prop.size())
+    {
+        if (prop.contains("wxALIGN_CENTER"))
+        {
+            // Note that CenterHorizontal() and CenterVertical() require wxWidgets 3.1 or higher. Their advantage is
+            // generating an assert if you try to use one that is invalid if the sizer parent's orientation doesn't support
+            // it. Center() just works without the assertion check.
+            m_code << ".Center()";
+        }
+
+        if (prop.contains("wxALIGN_LEFT"))
+        {
+            m_code += ".Left()";
+        }
+        else if (prop.contains("wxALIGN_RIGHT"))
+        {
+            m_code += ".Right()";
+        }
+
+        if (prop.contains("wxALIGN_TOP"))
+        {
+            m_code += ".Top()";
+        }
+        else if (prop.contains("wxALIGN_BOTTOM"))
+        {
+            m_code += ".Bottom()";
+        }
+    }
+
+    if (auto& prop = m_node->prop_as_string(prop_flags); prop.size())
+    {
+        if (prop.contains("wxEXPAND"))
+        {
+            m_code += ".Expand()";
+        }
+        if (prop.contains("wxSHAPED"))
+        {
+            m_code += ".Shaped()";
+        }
+        if (prop.contains("wxFIXED_MINSIZE"))
+        {
+            m_code += ".FixedMinSize()";
+        }
+        if (prop.contains("wxRESERVE_SPACE_EVEN_IF_HIDDEN"))
+        {
+            m_code += ".ReserveSpaceEvenIfHidden()";
+        }
+    }
+
+    if (auto& prop = m_node->prop_as_string(prop_borders); prop.size())
+    {
+        auto border_size = m_node->prop_as_string(prop_border_size);
+        if (prop.contains("wxALL"))
+        {
+            if (border_size == "5")
+                Add(".Border(").Add("wxALL)");
+            else if (border_size == "10")
+                Add(".DoubleBorder(").Add("wxALL)");
+            else if (border_size == "15")
+                Add(".TripleBorder(").Add("wxALL)");
+            else
+            {
+                Add(".Border(").Add("wxAll, ") << border_size << ')';
+            }
+        }
+        else
+        {
+            m_code << ".Border(";
+            ttlib::cstr border_flags;
+
+            if (prop.contains("wxLEFT"))
+            {
+                if (border_flags.size())
+                    border_flags << '|';
+                border_flags += is_cpp() ? "wxLEFT" : "wx.LEFT";
+            }
+            if (prop.contains("wxRIGHT"))
+            {
+                if (border_flags.size())
+                    border_flags << '|';
+                border_flags += is_cpp() ? "wxRIGHT" : "wx.RIGHT";
+            }
+            if (prop.contains("wxTOP"))
+            {
+                if (border_flags.size())
+                    border_flags << '|';
+                border_flags += is_cpp() ? "wxTOP" : "wx.TOP";
+            }
+            if (prop.contains("wxBOTTOM"))
+            {
+                if (border_flags.size())
+                    border_flags << '|';
+                border_flags += is_cpp() ? "wxBOTTOM" : "wx.BOTTOM";
+            }
+            if (border_flags.empty())
+                border_flags = "0";
+
+            m_code << border_flags << ", ";
+            if (border_size == "5")
+            {
+                m_code += is_cpp() ? "wxSizerFlags::GetDefaultBorder())" : "wx.SizerFlags.GetDefaultBorder())";
+            }
+            else
+            {
+                m_code << border_size << ')';
+            }
+        }
+    }
+
+    return *this;
+}

@@ -132,6 +132,8 @@ public:
     // If the only style specified is def_style, then it will not be added.
     Code& PosSizeFlags(bool uses_def_validator = false, ttlib::sview def_style = tt_empty_cstr);
 
+    Code& GenSizerFlags();
+
     Code& operator<<(std::string_view str)
     {
         m_code += str;

@@ -492,44 +492,40 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
         // Code for spacer's is handled by the component's GenConstruction() call
         if (parent->IsSizer() && !node->isGen(gen_spacer))
         {
-            ttlib::cstr code;
-            if (code.size())
-                code << '\n';
+            gen_code.clear();
 
             if (need_closing_brace)
-                code << '\t';
-            code << '\t' << node->GetParent()->get_node_name() << LangPtr() << "Add(" << node->get_node_name() << ", ";
+                gen_code.Tab();
+            gen_code.Tab().ParentName().Function("Add(").NodeName().Comma();
 
             if (parent->isGen(gen_wxGridBagSizer))
             {
-                code << "wxGBPosition(" << node->prop_as_string(prop_row) << ", " << node->prop_as_string(prop_column)
-                     << "), ";
-                code << "wxGBSpan(" << node->prop_as_string(prop_rowspan) << ", " << node->prop_as_string(prop_colspan)
-                     << "), ";
-                ttlib::cstr flags(node->prop_as_string(prop_borders));
+                gen_code.Add("wxGBPosition(").as_string(prop_row).Comma().as_string(prop_column) << "), ";
+                gen_code.Add("wxGBSpan(").as_string(prop_rowspan).Comma().as_string(prop_colspan) << "), ";
+
+                if (node->HasValue(prop_borders))
+                    gen_code.as_string(prop_borders);
                 if (node->prop_as_string(prop_flags).size())
                 {
-                    if (flags.size())
-                        flags << '|';
-                    flags << node->prop_as_string(prop_flags);
+                    if (node->HasValue(prop_borders))
+                        gen_code.m_code += '|';
+                    gen_code.as_string(prop_flags);
                 }
 
-                if (flags.empty())
-                    flags << '0';
+                if (!node->HasValue(prop_borders) && !node->HasValue(prop_flags))
+                     gen_code.m_code += '0';
 
-                code << flags << ", " << node->prop_as_string(prop_border_size) << ");";
-                code.Replace(", 0, 0);", ");");
+                gen_code.as_string(prop_border_size).EndFunction();
+                gen_code.m_code.Replace(", 0, 0)", ")");
             }
             else
             {
-                code << GenerateSizerFlags(m_language, node) << ")";
-                if (m_language == GEN_LANG_CPLUSPLUS)
-                    code << ';';
+                gen_code.GenSizerFlags().EndFunction();
             }
 
             if (need_closing_brace)
             {
-                m_source->writeLine(code, indent::auto_keep_whitespace);
+                m_source->writeLine(gen_code.m_code, indent::auto_keep_whitespace);
                 if (m_language == GEN_LANG_CPLUSPLUS)
                 {
                     m_source->writeLine("\t}");
@@ -537,7 +533,7 @@ bool BaseCodeGenerator::GenAfterChildren(Node* node, bool need_closing_brace)
             }
             else
             {
-                m_source->writeLine(code);
+                m_source->writeLine(gen_code.m_code);
             }
         }
 

@@ -140,7 +140,7 @@ std::optional<ttlib::cstr> TextCtrlGenerator::CommonSettings(Code& code, size_t&
             {
                 code << "#if !defined(__WXGTK__))\n\t";
                 code.NodeName().Function("SetMaxLength(").as_string(prop_maxlength).EndFunction().Eol();
-                code << "#endif";
+                code << "\t#endif";
             }
             else
             {

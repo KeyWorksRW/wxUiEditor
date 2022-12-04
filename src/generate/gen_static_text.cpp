@@ -72,7 +72,7 @@ bool StaticTextGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePro
     return false;
 }
 
-std::optional<ttlib::cstr> StaticTextGenerator::CommonConstruction(Code& code)
+std::optional<ttlib::sview> StaticTextGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";

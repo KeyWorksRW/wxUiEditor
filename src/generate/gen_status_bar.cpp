@@ -72,7 +72,8 @@ wxObject* StatusBarGenerator::CreateMockup(Node* node, wxObject* parent)
 
     return widget;
 }
-std::optional<ttlib::cstr> StatusBarGenerator::CommonConstruction(Code& code)
+
+std::optional<ttlib::sview> StatusBarGenerator::CommonConstruction(Code& code)
 {
     Node* node = code.node();  // This is just for convenience
     int num_fields;

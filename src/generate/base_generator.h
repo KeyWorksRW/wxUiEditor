@@ -76,10 +76,14 @@ public:
 
     MockupParent* GetMockup();
 
-    // Generate the code used to construct the object
-    virtual std::optional<ttlib::cstr> CommonConstruction(Code&) { return {}; }
-    virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPythonConstruction(Code&) { return {}; }
+    // Generate the code used to construct the object using either C++ or Python
+    virtual std::optional<ttlib::sview> CommonConstruction(Code&) { return {}; }
+
+    // Generate the C++ code used to construct the object.
+    virtual std::optional<ttlib::cstr> GenConstruction(Node*) { return {}; }  //
+
+    // Generate the code needed to create a Python form class
+    virtual bool GenPythonForm(Code&) { return false; }
 
     // Return true if all construction and settings code was written to src_code.
     //
@@ -106,8 +110,8 @@ public:
     virtual std::optional<ttlib::cstr> GenAfterChildren(Node* /* node */) { return {}; }
     virtual std::optional<ttlib::cstr> GenPythonAfterChildren(Node* /* node */) { return {}; }
 
+    // Generate code to bind the event to a handler
     virtual std::optional<ttlib::cstr> GenEvents(NodeEvent*, const std::string&) { return {}; }
-    virtual std::optional<ttlib::cstr> GenPythonEvents(NodeEvent*, const std::string&) { return {}; }
 
     virtual std::optional<ttlib::cstr> CommonSettings(Code&, size_t& /* auto_indent */) { return {}; }
     virtual std::optional<ttlib::cstr> GenSettings(Node*, size_t&, int /* language */) { return {}; }

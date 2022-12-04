@@ -97,7 +97,7 @@ bool TextCtrlGenerator::OnPropertyChange(wxObject* widget, Node* node, NodePrope
     return false;
 }
 
-std::optional<ttlib::cstr> TextCtrlGenerator::CommonConstruction(Code& code)
+std::optional<ttlib::sview> TextCtrlGenerator::CommonConstruction(Code& code)
 {
     if (code.is_cpp() && code.is_local_var())
         code << "auto* ";

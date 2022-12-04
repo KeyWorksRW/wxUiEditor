@@ -301,7 +301,7 @@ bool DialogFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src
     return true;
 }
 
-std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Code& code)
+bool DialogFormGenerator::GenPythonForm(Code& code)
 {
     code.Add("class ").NodeName().Add("(wx.Dialog):\n");
     code.Tab().Add("def __init__(self, parent):").Eol().Tab(2);
@@ -322,7 +322,7 @@ std::optional<ttlib::cstr> DialogFormGenerator::GenPythonConstruction(Code& code
         code << "wx.DEFAULT_DIALOG_STYLE";
     code << ")";
 
-    return code.m_code;
+    return true;
 }
 
 int DialogFormGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

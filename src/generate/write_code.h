@@ -36,7 +36,7 @@ public:
     void writeLine(std::string& lines, size_t indentation = indent::auto_no_whitespace);
 
     // This will NOT right trim a single line
-    void writeLine(ttlib::sview, bool auto_indent = true);
+    void writeLine(ttlib::sview, size_t indentation = indent::auto_no_whitespace);
 
     // Write an empty line (unless the previous line was also empty)
     void writeLine();

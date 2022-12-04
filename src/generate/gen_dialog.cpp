@@ -87,11 +87,6 @@ bool DialogFormGenerator::GenConstruction(Node* node, BaseCodeGenerator* code_ge
     return true;
 }
 
-std::optional<ttlib::cstr> DialogFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 std::optional<ttlib::cstr> DialogFormGenerator::GenAdditionalCode(GenEnum::GenCodeType cmd, Node* node)
 {
     if (cmd == code_after_children)

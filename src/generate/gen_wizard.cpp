@@ -208,11 +208,6 @@ std::optional<ttlib::cstr> WizardFormGenerator::GenAdditionalCode(GenEnum::GenCo
     return code;
 }
 
-std::optional<ttlib::cstr> WizardFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool WizardFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/wizard.h>", set_src, set_hdr);

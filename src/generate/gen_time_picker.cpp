@@ -38,11 +38,6 @@ std::optional<ttlib::cstr> TimePickerCtrlGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> TimePickerCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool TimePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/timectrl.h>", set_src, set_hdr);

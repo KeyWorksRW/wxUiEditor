@@ -115,11 +115,6 @@ std::optional<ttlib::cstr> ToggleButtonGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> ToggleButtonGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 std::optional<ttlib::cstr> ToggleButtonGenerator::GenSettings(Node* node, size_t& auto_indent)
 {
     ttlib::cstr code;

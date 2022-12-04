@@ -203,11 +203,6 @@ std::optional<ttlib::cstr> TextCtrlGenerator::CommonSettings(Code& code, size_t&
     return code.m_code;
 }
 
-std::optional<ttlib::cstr> TextCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 void TextCtrlGenerator::ChangeEnableState(wxPropertyGridManager* prop_grid, NodeProperty* changed_prop)
 {
     if (changed_prop->isProp(prop_spellcheck))

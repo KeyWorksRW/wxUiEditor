@@ -36,7 +36,6 @@ public:
     void AfterCreation(wxObject* wxobject, wxWindow* /*wxparent*/, Node* /* node */, bool /* is_preview */) override;
 
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
     std::optional<ttlib::cstr> GenSettings(Node* node, size_t& auto_indent) override;
     std::optional<ttlib::cstr> GenAfterChildren(Node* node) override;
 
@@ -53,7 +52,6 @@ class ToolGenerator : public BaseGenerator
 {
 public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };
@@ -62,7 +60,6 @@ class ToolDropDownGenerator : public BaseGenerator
 {
 public:
     std::optional<ttlib::cstr> GenConstruction(Node* node) override;
-    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
 
     int GenXrcObject(Node*, pugi::xml_node& /* object */, size_t /* xrc_flags */) override;
 };

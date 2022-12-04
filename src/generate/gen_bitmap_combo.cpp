@@ -162,11 +162,6 @@ std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenSettings(Node* node, size
     return code;
 }
 
-std::optional<ttlib::cstr> BitmapComboBoxGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool BitmapComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/bmpcbox.h>", set_src, set_hdr);

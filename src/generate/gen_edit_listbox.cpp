@@ -73,11 +73,6 @@ std::optional<ttlib::cstr> EditListBoxGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> EditListBoxGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool EditListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/editlbox.h>", set_src, set_hdr);

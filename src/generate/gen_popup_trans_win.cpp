@@ -46,11 +46,6 @@ std::optional<ttlib::cstr> PopupWinGenerator::GenAdditionalCode(GenEnum::GenCode
     return {};
 }
 
-std::optional<ttlib::cstr> PopupWinGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 std::optional<ttlib::cstr> PopupWinGenerator::GenSettings(Node* node, size_t& /* auto_indent */)
 {
     auto code = GenFontColourSettings(node);

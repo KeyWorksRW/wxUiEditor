@@ -89,10 +89,6 @@ std::optional<ttlib::cstr> GenericDirCtrlGenerator::GenSettings(Node* node, size
 
         return {};
 }
-std::optional<ttlib::cstr> GenericDirCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
 
 bool GenericDirCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {

@@ -74,11 +74,6 @@ std::optional<ttlib::cstr> GaugeGenerator::GenSettings(Node* node, size_t& /* au
     return code;
 }
 
-std::optional<ttlib::cstr> GaugeGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool GaugeGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/gauge.h>", set_src, set_hdr);

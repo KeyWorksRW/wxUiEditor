@@ -134,11 +134,6 @@ std::optional<ttlib::cstr> DataViewCtrl::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> DataViewCtrl::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool DataViewCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
@@ -254,11 +249,6 @@ std::optional<ttlib::cstr> DataViewListCtrl::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> DataViewListCtrl::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool DataViewListCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/dataview.h>", set_src, set_hdr);
@@ -314,11 +304,6 @@ std::optional<ttlib::cstr> DataViewTreeCtrl::GenConstruction(Node* node)
     GeneratePosSizeFlags(node, code, true);
 
     return code;
-}
-
-std::optional<ttlib::cstr> DataViewTreeCtrl::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 bool DataViewTreeCtrl::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

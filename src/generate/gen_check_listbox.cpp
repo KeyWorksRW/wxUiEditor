@@ -173,11 +173,6 @@ std::optional<ttlib::cstr> CheckListBoxGenerator::GenSettings(Node* node, size_t
     return code;
 }
 
-std::optional<ttlib::cstr> CheckListBoxGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 int CheckListBoxGenerator::GetRequiredVersion(Node* node)
 {
     if (node->HasValue(prop_contents))

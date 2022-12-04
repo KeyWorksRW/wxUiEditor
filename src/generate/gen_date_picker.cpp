@@ -54,11 +54,6 @@ std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenSettings(Node* node, size
     return {};
 }
 
-std::optional<ttlib::cstr> DatePickerCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool DatePickerCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/datectrl.h>", set_src, set_hdr);

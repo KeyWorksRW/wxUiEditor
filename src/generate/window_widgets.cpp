@@ -56,11 +56,6 @@ std::optional<ttlib::cstr> ScrolledCanvasGenerator::GenSettings(Node* node, size
     return code;
 }
 
-std::optional<ttlib::cstr> ScrolledCanvasGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool ScrolledCanvasGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/scrolwin.h>", set_src, set_hdr);
@@ -109,11 +104,6 @@ std::optional<ttlib::cstr> ScrolledWindowGenerator::GenSettings(Node* node, size
     }
 
     return code;
-}
-
-std::optional<ttlib::cstr> ScrolledWindowGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 bool ScrolledWindowGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

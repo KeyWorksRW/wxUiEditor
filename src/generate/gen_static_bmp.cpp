@@ -162,11 +162,6 @@ std::optional<ttlib::cstr> StaticBitmapGenerator::GenSettings(Node* node, size_t
     return code;
 }
 
-std::optional<ttlib::cstr> StaticBitmapGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool StaticBitmapGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     if (node->prop_as_string(prop_scale_mode) != "None")

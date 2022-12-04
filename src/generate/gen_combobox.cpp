@@ -142,11 +142,6 @@ std::optional<ttlib::cstr> ComboBoxGenerator::GenSettings(Node* node, size_t& /*
     return code;
 }
 
-std::optional<ttlib::cstr> ComboBoxGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool ComboBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/combobox.h>", set_src, set_hdr);

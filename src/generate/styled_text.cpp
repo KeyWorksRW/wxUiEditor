@@ -906,11 +906,6 @@ std::optional<ttlib::cstr> StyledTextGenerator::GenSettings(Node* node, size_t& 
     return code;
 }
 
-std::optional<ttlib::cstr> StyledTextGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool StyledTextGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/stc/stc.h>", set_src, set_hdr);

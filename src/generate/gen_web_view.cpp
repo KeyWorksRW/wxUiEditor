@@ -52,7 +52,6 @@ std::optional<ttlib::cstr> WebViewGenerator::GenConstruction(Node* node)
         if (!isPosSet)
         {
             code << ", wxDefaultPosition";
-            isPosSet = true;
         }
         code << ", wxSize(" << size.x << ", " << size.y << ")";
     }

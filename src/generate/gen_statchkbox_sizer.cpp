@@ -195,11 +195,6 @@ std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenAfterChildren(Nod
         return {};
 }
 
-std::optional<ttlib::cstr> StaticCheckboxBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool StaticCheckboxBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);

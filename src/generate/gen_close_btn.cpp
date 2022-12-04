@@ -44,11 +44,6 @@ std::optional<ttlib::cstr> CloseButtonGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> CloseButtonGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool CloseButtonGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/bmpbuttn.h>", set_src, set_hdr);

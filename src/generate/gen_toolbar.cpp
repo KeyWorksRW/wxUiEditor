@@ -373,11 +373,6 @@ std::optional<ttlib::cstr> ToolBarGenerator::GenSettings(Node* node, size_t& /* 
     return code;
 }
 
-std::optional<ttlib::cstr> ToolBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool ToolBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/toolbar.h>", set_src, set_hdr);
@@ -473,11 +468,6 @@ std::optional<ttlib::cstr> ToolGenerator::GenConstruction(Node* node)
     }
 }
 
-std::optional<ttlib::cstr> ToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 int ToolGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
 {
     auto item = InitializeXrcObject(node, object);
@@ -531,11 +521,6 @@ std::optional<ttlib::cstr> ToolDropDownGenerator::GenConstruction(Node* node)
     {
         return GenToolCode(node);
     }
-}
-
-std::optional<ttlib::cstr> ToolDropDownGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 int ToolDropDownGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

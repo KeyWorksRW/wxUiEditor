@@ -104,11 +104,6 @@ std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenSettings(Node* node, size
     return code;
 }
 
-std::optional<ttlib::cstr> CommandLinkBtnGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool CommandLinkBtnGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/commandlinkbutton.h>", set_src, set_hdr);

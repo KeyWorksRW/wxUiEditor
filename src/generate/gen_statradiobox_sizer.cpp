@@ -185,11 +185,6 @@ std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenAfterChildren(Nod
         return {};
 }
 
-std::optional<ttlib::cstr> StaticRadioBtnBoxSizerGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool StaticRadioBtnBoxSizerGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/sizer.h>", set_src, set_hdr);

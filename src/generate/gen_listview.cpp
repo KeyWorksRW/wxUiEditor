@@ -114,11 +114,6 @@ std::optional<ttlib::cstr> ListViewGenerator::GenSettings(Node* node, size_t& au
     return code;
 }
 
-std::optional<ttlib::cstr> ListViewGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool ListViewGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/listctrl.h>", set_src, set_hdr);

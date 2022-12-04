@@ -187,11 +187,6 @@ std::optional<ttlib::cstr> MenuBarGenerator::GenAdditionalCode(GenEnum::GenCodeT
     return {};
 }
 
-std::optional<ttlib::cstr> MenuBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool MenuBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/menu.h>", set_src, set_hdr);
@@ -766,11 +761,6 @@ std::optional<ttlib::cstr> MenuItemGenerator::GenSettings(Node* node, size_t& au
     }
 
     return code;
-}
-
-std::optional<ttlib::cstr> MenuItemGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 bool MenuItemGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

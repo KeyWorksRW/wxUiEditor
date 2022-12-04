@@ -52,11 +52,6 @@ std::optional<ttlib::cstr> NotebookGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> NotebookGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool NotebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/notebook.h>", set_src, set_hdr);

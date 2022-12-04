@@ -17,8 +17,6 @@ public:
     std::optional<ttlib::sview> CommonConstruction(Code& code) override;
     std::optional<ttlib::cstr> CommonSettings(Code&, size_t& auto_indent) override;
 
-    std::optional<ttlib::cstr> GenEvents(NodeEvent* event, const std::string& class_name) override;
-
     bool OnPropertyChange(wxObject* widget, Node* node, NodeProperty* prop) override;
 
     bool GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr) override;

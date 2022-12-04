@@ -148,11 +148,6 @@ std::optional<ttlib::cstr> HtmlListBoxGenerator::GenSettings(Node* node, size_t&
     return code;
 }
 
-std::optional<ttlib::cstr> HtmlListBoxGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool HtmlListBoxGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/htmllbox.h>", set_src, set_hdr);

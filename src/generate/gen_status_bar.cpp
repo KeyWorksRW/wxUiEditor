@@ -143,11 +143,6 @@ std::optional<ttlib::cstr> StatusBarGenerator::GenSettings(Node* node, size_t& a
     return code;
 }
 
-std::optional<ttlib::cstr> StatusBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 int StatusBarGenerator::GetRequiredVersion(Node* node)
 {
     if (!node->HasValue(prop_fields))

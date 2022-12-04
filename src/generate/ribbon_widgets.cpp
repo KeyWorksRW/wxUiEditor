@@ -177,11 +177,6 @@ std::optional<ttlib::cstr> RibbonBarGenerator::GenSettings(Node* node, size_t& /
     return code;
 }
 
-std::optional<ttlib::cstr> RibbonBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool RibbonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/art.h>", set_src, set_hdr);
@@ -275,11 +270,6 @@ std::optional<ttlib::cstr> RibbonPageGenerator::GenSettings(Node* node, size_t& 
     return code;
 }
 
-std::optional<ttlib::cstr> RibbonPageGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool RibbonPageGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/page.h>", set_src, set_hdr);
@@ -364,11 +354,6 @@ std::optional<ttlib::cstr> RibbonPanelGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> RibbonPanelGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool RibbonPanelGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/panel.h>", set_src, set_hdr);
@@ -445,11 +430,6 @@ std::optional<ttlib::cstr> RibbonButtonBarGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> RibbonButtonBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool RibbonButtonBarGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/buttonbar.h>", set_src, set_hdr);
@@ -494,11 +474,6 @@ std::optional<ttlib::cstr> RibbonButtonGenerator::GenConstruction(Node* node)
     code << ", " << node->prop_as_string(prop_kind) << ");";
 
     return code;
-}
-
-std::optional<ttlib::cstr> RibbonButtonGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 int RibbonButtonGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)
@@ -592,11 +567,6 @@ std::optional<ttlib::cstr> RibbonToolBarGenerator::GenSettings(Node* node, size_
     return code;
 }
 
-std::optional<ttlib::cstr> RibbonToolBarGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool RibbonToolBarGenerator::GetIncludes(Node* /* node */, std::set<std::string>& /* set_src */,
                                          std::set<std::string>& set_hdr)
 {
@@ -642,11 +612,6 @@ std::optional<ttlib::cstr> RibbonToolGenerator::GenConstruction(Node* node)
     code << ", " << node->prop_as_string(prop_kind) << ");";
 
     return code;
-}
-
-std::optional<ttlib::cstr> RibbonToolGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 int RibbonToolGenerator::GenXrcObject(Node* /* node */, pugi::xml_node& /* object */, size_t /* xrc_flags */)
@@ -697,11 +662,6 @@ std::optional<ttlib::cstr> RibbonGalleryGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> RibbonGalleryGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool RibbonGalleryGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/ribbon/gallery.h>", set_src, set_hdr);
@@ -733,11 +693,6 @@ std::optional<ttlib::cstr> RibbonGalleryItemGenerator::GenConstruction(Node* nod
     code << ", wxID_ANY);";
 
     return code;
-}
-
-std::optional<ttlib::cstr> RibbonGalleryItemGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
 }
 
 int RibbonGalleryItemGenerator::GenXrcObject(Node* node, pugi::xml_node& object, size_t xrc_flags)

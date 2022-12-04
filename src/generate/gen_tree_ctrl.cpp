@@ -39,11 +39,6 @@ std::optional<ttlib::cstr> TreeCtrlGenerator::GenConstruction(Node* node)
     return code;
 }
 
-std::optional<ttlib::cstr> TreeCtrlGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool TreeCtrlGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/treectrl.h>", set_src, set_hdr);

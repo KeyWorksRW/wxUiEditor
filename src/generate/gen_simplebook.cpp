@@ -76,11 +76,6 @@ std::optional<ttlib::cstr> SimplebookGenerator::GenSettings(Node* node, size_t& 
     }
 }
 
-std::optional<ttlib::cstr> SimplebookGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
-{
-    return GenEventCode(event, class_name);
-}
-
 bool SimplebookGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)
 {
     InsertGeneratorInclude(node, "#include <wx/Simplebk.h>", set_src, set_hdr);

@@ -587,11 +587,11 @@ bool GenEventCode(Code& code, NodeEvent* event, const std::string& class_name)
             code.Add("self.");
         if (event->get_name() == "wxEVT_CHECKBOX")
         {
-            code.as_string(prop_checkbox_var_name);
+            code.Add(event->GetNode()->as_string(prop_checkbox_var_name));
         }
         else if (event->get_name() == "wxEVT_RADIOBUTTON")
         {
-            code.as_string(prop_radiobtn_var_name);
+            code.Add(event->GetNode()->as_string(prop_radiobtn_var_name));
         }
         else
         {
@@ -607,11 +607,11 @@ bool GenEventCode(Code& code, NodeEvent* event, const std::string& class_name)
         if (code.is_python())
             code.Add("self.");
         code << "Bind(" << handler.m_code << comma;
-        if (event->GetNode()->prop_as_string(prop_id) != "wxID_ANY")
+        if (event->GetNode()->as_string(prop_id) != "wxID_ANY")
         {
             if (code.is_python())
                 code.Add("id=");
-            code << event->GetNode()->prop_as_string(prop_id);
+            code.Add(event->GetNode()->as_string(prop_id));
             code.EndFunction();
         }
         else
@@ -626,7 +626,7 @@ bool GenEventCode(Code& code, NodeEvent* event, const std::string& class_name)
     {
         if (code.is_python())
             code.Add("self.");
-        if (event->GetNode()->prop_as_string(prop_id).empty())
+        if (!event->GetNode()->HasValue(prop_id))
         {
             code.m_code += (code.is_cpp() ? "// " : "# ");
             code << "**WARNING** -- tool id not specified, event handler may never be called\n";
@@ -636,7 +636,7 @@ bool GenEventCode(Code& code, NodeEvent* event, const std::string& class_name)
         else
         {
             code << "Bind(" << handler.m_code << comma;
-            code.Add(event->GetNode()->prop_as_string(prop_id)).EndFunction();
+            code.Add(event->GetNode()->as_string(prop_id)).EndFunction();
         }
     }
     else if (event->GetNode()->IsForm())

@@ -643,8 +643,8 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
     {
         if (auto generator = iter->GetNode()->GetNodeDeclaration()->GetGenerator(); generator)
         {
-            Code gen_code(node, m_language);
-            auto scode = generator->GenEvents(gen_code, iter, class_name);
+            Code code(node, m_language);
+            auto scode = generator->GenEvents(code, iter, class_name);
 #if defined(_DEBUG)
             if (is_cpp())
             {
@@ -658,8 +658,8 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
             {
                 if (!scode->contains("["))
                 {
-                    m_source->writeLine(*scode,
-                                        scode->contains("\n") ? indent::auto_keep_whitespace : indent::auto_no_whitespace);
+                    size_t indentation = scode->contains("\n") ? indent::auto_keep_whitespace : indent::auto_no_whitespace;
+                    m_source->writeLine(*scode, indentation);
                 }
                 else  // this is a lambda
                 {
@@ -673,21 +673,22 @@ void BaseCodeGenerator::GenSrcEventBinding(Node* node, const EventVector& events
                         convert.Replace("@@", "\n", tt::REPLACE::all);
                         ttlib::multistr lines(convert, '\n');
                         bool initial_bracket = false;
-                        for (auto& code: lines)
+                        for (auto& line: lines)
                         {
-                            if (code.contains("}"))
+                            if (line.contains("}"))
                             {
                                 m_source->Unindent();
                             }
-                            else if (!initial_bracket && code.contains("["))
+                            else if (!initial_bracket && line.contains("["))
                             {
                                 initial_bracket = true;
                                 m_source->Indent();
                             }
 
-                            m_source->writeLine(code, indent::auto_no_whitespace);
+                            size_t indentation = indent::auto_no_whitespace;
+                            m_source->writeLine(line, indentation);
 
-                            if (code.contains("{"))
+                            if (line.contains("{"))
                             {
                                 m_source->Indent();
                             }
@@ -1850,7 +1851,8 @@ void BaseCodeGenerator::GenContextMenuHandler(Node* form_node, Node* node_ctx_me
     {
         if (auto generator = iter->GetNode()->GetNodeDeclaration()->GetGenerator(); generator)
         {
-            if (auto result = generator->GenEvents(iter, form_node->get_node_name()); result)
+            Code code(form_node, m_language);
+            if (auto result = generator->GenEvents(code, iter, form_node->get_node_name()); result)
             {
                 m_source->write("menu.");
                 m_source->writeLine(result.value(), result.value().contains("\n") ? indent::auto_keep_whitespace :

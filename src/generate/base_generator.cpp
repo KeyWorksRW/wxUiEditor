@@ -11,12 +11,14 @@
 
 #include "base_generator.h"
 
-#include "mainframe.h"      // MainFrame -- Main window frame
-#include "node.h"           // Node class
-#include "node_decl.h"      // NodeDeclaration class
-#include "node_prop.h"      // NodeProperty -- NodeProperty class
-#include "project_class.h"  // Project class
-#include "utils.h"          // Utility functions that work with properties
+#include "code.h"             // Code -- Helper class for generating code
+#include "gen_lang_common.h"  // Common mulit-language functions
+#include "mainframe.h"        // MainFrame -- Main window frame
+#include "node.h"             // Node class
+#include "node_decl.h"        // NodeDeclaration class
+#include "node_prop.h"        // NodeProperty -- NodeProperty class
+#include "project_class.h"    // Project class
+#include "utils.h"            // Utility functions that work with properties
 
 #include "../mockup/mockup_parent.h"  // Top-level MockUp Parent window
 
@@ -555,4 +557,16 @@ bool BaseGenerator::CanChangeParent(Node* node)
     }
 
     return true;
+}
+
+std::optional<ttlib::sview> BaseGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)
+{
+    if (GenEventCode(code, event, class_name))
+    {
+        return code.m_code;
+    }
+    else
+    {
+        return {};
+    }
 }

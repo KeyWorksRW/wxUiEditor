@@ -216,6 +216,53 @@ void BaseCodeGenerator::GeneratePythonClass(Node* form_node, PANEL_PAGE panel_ty
         }
     }
 
+    // TODO: [Randalphwa - 12-04-2022] Python supports persistence, though it's not as easy as it is in C++.
+    // See https://docs.wxpython.org/wx.lib.agw.persist.html?highlight=persist#module-wx.lib.agw.persist
+
+    if (events.size())
+    {
+        m_source->writeLine();
+        m_source->writeLine("# Bind Event handlers");
+        GenSrcEventBinding(form_node, events);
+
+        m_source->ResetIndent();
+        m_source->writeLine();
+        m_source->Indent();
+        GenPythonEventHandlers(events);
+    }
+
     // Make certain indentation is reset after all construction code is written
     m_source->ResetIndent();
+}
+
+void BaseCodeGenerator::GenPythonEventHandlers(const EventVector& events)
+{
+    // Multiple events can be bound to the same function, so use a set to make sure we only generate each function once.
+    std::set<ttlib::cstr> code_lines;
+
+    for (auto& event: events)
+    {
+        // Ignore lambda's and functions in another class
+        if (event->get_value().contains("[") || event->get_value().contains("::"))
+            continue;
+
+        ttlib::cstr code("\tdef ");
+        code << event->get_value() << "(self, event):\n\t\t";
+        if (event->GetNode()->get_form()->prop_as_bool(prop_python_call_skip))
+            code << "event.Skip()";
+        else
+            code << "pass";
+        code_lines.emplace(code);
+    }
+
+    if (code_lines.size())
+    {
+        m_source->writeLine();
+        m_source->writeLine("# Event handler functions");
+        for (const auto& code: code_lines)
+        {
+            m_source->writeLine(code, false);
+            m_source->writeLine();
+        }
+    }
 }

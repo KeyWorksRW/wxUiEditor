@@ -8,6 +8,7 @@
 #include <wx/toolbar.h>  // wxToolBar interface declaration
 
 #include "bitmaps.h"     // Map of bitmaps accessed by name
+#include "code.h"        // Code -- Helper class for generating code
 #include "gen_common.h"  // GeneratorLibrary -- Generator classes
 #include "mainframe.h"   // MainFrame -- Main window frame
 #include "node.h"        // Node class
@@ -158,12 +159,13 @@ std::optional<ttlib::cstr> ToolBarFormGenerator::GenSettings(Node* node, size_t&
     return code;
 }
 
-std::optional<ttlib::cstr> ToolBarFormGenerator::GenEvents(NodeEvent* event, const std::string& class_name)
+std::optional<ttlib::sview> ToolBarFormGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    auto code = GenEventCode(event, class_name);
+    BaseGenerator::GenEvents(code, event, class_name);
+
     // Since this is the base class, we don't want to use the pointer that GenEventCode() would normally create
-    code.Replace(ttlib::cstr() << event->GetNode()->prop_as_string(prop_var_name) << "->", "");
-    return code;
+    code.m_code.Replace(ttlib::cstr() << event->GetNode()->as_string(prop_var_name) << "->", "");
+    return code.m_code;
 }
 
 bool ToolBarFormGenerator::GetIncludes(Node* node, std::set<std::string>& set_src, std::set<std::string>& set_hdr)

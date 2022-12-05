@@ -28,5 +28,3 @@ ttlib::cstr GenerateSizerFlags(int language, Node* node);
 
 // Generate any non-default wxWindow settings
 void GenerateWindowSettings(int language, Node* node, ttlib::cstr& code);
-
-bool GenEventCode(Code& code, NodeEvent* event, const std::string& class_name);

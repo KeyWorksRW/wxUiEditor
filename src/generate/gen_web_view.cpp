@@ -87,7 +87,7 @@ std::optional<ttlib::sview> WebViewGenerator::GenEvents(Code& code, NodeEvent* e
     }
     else
     {
-        return GenEventCode(event, class_name);
+        return BaseGenerator::GenEvents(code, event, class_name);
     }
 }
 

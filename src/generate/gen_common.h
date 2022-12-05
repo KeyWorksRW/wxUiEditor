@@ -96,8 +96,6 @@ bool GenerateVectorCode(const ttlib::cstr& description, ttlib::cstr& code);
 // generated.
 bool GenerateBundleCode(const ttlib::cstr& description, ttlib::cstr& code);
 
-ttlib::cstr GenEventCode(NodeEvent* event, const std::string& class_name);
-
 // Will generate "wxDefaultPosition" if prop_pos is -1;-1
 void GenPos(Node* node, ttlib::cstr& code);
 void GenSize(Node* node, ttlib::cstr& code);

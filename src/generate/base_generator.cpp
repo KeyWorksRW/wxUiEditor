@@ -13,6 +13,7 @@
 
 #include "code.h"             // Code -- Helper class for generating code
 #include "gen_lang_common.h"  // Common mulit-language functions
+#include "lambdas.h"          // Functions for formatting and storage of lamda events
 #include "mainframe.h"        // MainFrame -- Main window frame
 #include "node.h"             // Node class
 #include "node_decl.h"        // NodeDeclaration class
@@ -561,12 +562,117 @@ bool BaseGenerator::CanChangeParent(Node* node)
 
 std::optional<ttlib::sview> BaseGenerator::GenEvents(Code& code, NodeEvent* event, const std::string& class_name)
 {
-    if (GenEventCode(code, event, class_name))
+    Code handler(event->GetNode(), code.m_language);
+
+    // This is what we normally use if an ID is needed. However, a lambda needs to put the ID on it's own line, so we
+    // use a string for this to allow the lambda processing code to replace it.
+    std::string comma(", ");
+
+    bool is_lambda { false };
+
+    if (event->get_value().contains("["))
     {
-        return code.m_code;
+        if (!code.is_cpp())
+            return {};
+        handler << event->get_name() << ',' << event->get_value();
+        // Put the lambda expression on it's own line
+        handler.m_code.Replace("[", "\n\t[");
+        comma = ",\n\t";
+        is_lambda = true;
+        ExpandLambda(handler.m_code);
+    }
+    else if (event->get_value().contains("::"))
+    {
+        handler.Add(event->get_name()) << ", ";
+        if (event->get_value()[0] != '&' && handler.is_cpp())
+            handler << '&';
+        handler << event->get_value();
     }
     else
     {
-        return {};
+        handler.Add(event->get_name());
+        if (code.is_cpp())
+            handler << ", &" << class_name << "::" << event->get_value() << ", this";
+        else
+            handler.Add(", self.") << event->get_value();
     }
+
+    // Do *NOT* assume that code.m_node is the same as event->GetNode()!
+
+    if (event->GetNode()->IsStaticBoxSizer())
+    {
+        if (code.is_python())
+            code.Add("self.");
+        if (event->get_name() == "wxEVT_CHECKBOX")
+        {
+            code.Add(event->GetNode()->as_string(prop_checkbox_var_name));
+        }
+        else if (event->get_name() == "wxEVT_RADIOBUTTON")
+        {
+            code.Add(event->GetNode()->as_string(prop_radiobtn_var_name));
+        }
+        else
+        {
+            code.NodeName().Function("GetStaticBox()");
+        }
+        code.Function("Bind(") << handler.m_code;
+        if (is_lambda)
+            code << " ";
+        code.EndFunction();
+    }
+    else if (event->GetNode()->isGen(gen_wxMenuItem) || event->GetNode()->isGen(gen_tool))
+    {
+        if (code.is_python())
+            code.Add("self.");
+        code << "Bind(" << handler.m_code << comma;
+        if (event->GetNode()->as_string(prop_id) != "wxID_ANY")
+        {
+            if (code.is_python())
+                code.Add("id=");
+            code.Add(event->GetNode()->as_string(prop_id));
+            code.EndFunction();
+        }
+        else
+        {
+            if (code.is_python())
+                code.Add("id=");
+            code << event->GetNode()->get_node_name();
+            code.Function("GetId()").EndFunction();
+        }
+    }
+    else if (event->GetNode()->isGen(gen_ribbonTool))
+    {
+        if (code.is_python())
+            code.Add("self.");
+        if (!event->GetNode()->HasValue(prop_id))
+        {
+            code.m_code += (code.is_cpp() ? "// " : "# ");
+            code << "**WARNING** -- tool id not specified, event handler may never be called\n";
+            code << "Bind(" << handler.m_code << comma;
+            code.Add("wxID_ANY").EndFunction();
+        }
+        else
+        {
+            code << "Bind(" << handler.m_code << comma;
+            code.Add(event->GetNode()->as_string(prop_id)).EndFunction();
+        }
+    }
+    else if (event->GetNode()->IsForm())
+    {
+        if (code.is_python())
+            code.Add("self.");
+        code << "Bind(" << handler.m_code;
+        if (is_lambda)
+            code << " ";
+        code.EndFunction();
+    }
+    else
+    {
+        code.Add(event->GetNode()->get_node_name()).Function("Bind(") << handler.m_code;
+        if (is_lambda)
+            code << " ";
+        code.EndFunction();
+    }
+
+    return code.m_code;
 }

@@ -35,7 +35,7 @@ inline const char* language_xml = R"===(<?xml version="1.0"?>
 			help="If checked, event handlers in the base class will call event.Skip() instead of using pass.">0</property>
 		<property name="python_use_xrc" type="bool"
 			help="If checked, the form will load the file specified in python_xrc_file and use that for the UI instead of using Python to create the wxWidgets controls.">0</property>
-		<property name="python_xrc_file" type="string"
+		<property name="python_xrc_file" type="file"
 			help="If specified and python_use_xrc is checked, then this XRC file will be generated when Python code is generated, and the form will be initialized to use the generated XRC file." />
 	</gen>
 

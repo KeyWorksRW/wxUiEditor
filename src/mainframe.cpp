@@ -1344,7 +1344,6 @@ void MainFrame::CopyNode(Node* node)
                 // ourselves.
                 delete u8_data;
             }
-
         }
     }
 }
